@@ -57,6 +57,8 @@ public class DashboardPanel extends FlexTable
                     new SpamPlayersDialog().show();
                 }
             }));
+
+            controls.add(new Button("Exchange", Link.createListener(Pages.ADMINZ, "exchange")));
         }
 
         // support controls

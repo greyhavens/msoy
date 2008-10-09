@@ -326,13 +326,6 @@ public class MoneyRepository extends DepotRepository
                 MoneyTransactionRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp)))));
     }
 
-    public int deleteOldExchangeRecords (long maxAge)
-    {
-        final long oldestTimestamp = System.currentTimeMillis() - maxAge;
-        return deleteAll(ExchangeRecord.class, new Where(new Conditionals.LessThan(
-            ExchangeRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp))));
-    }
-
     public List<MoneyTransactionRecord> getTransactions (final Set<Integer> ids)
     {
         return loadAll(MoneyTransactionRecord.class, ids);
@@ -364,6 +357,24 @@ public class MoneyRepository extends DepotRepository
         updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, fieldValues);
 
         insert(new ExchangeRecord(barDelta, coinDelta, rate, referenceTxId));
+    }
+
+    public List<ExchangeRecord> getExchangeData (int start, int count)
+    {
+        return findAll(ExchangeRecord.class, OrderBy.descending(ExchangeRecord.TIMESTAMP_C),
+            new Limit(start, count));
+    }
+    
+    public int getExchangeDataCount ()
+    {
+        return load(CountRecord.class, new FromOverride(ExchangeRecord.class)).count;
+    }
+
+    public int deleteOldExchangeRecords (long maxAge)
+    {
+        final long oldestTimestamp = System.currentTimeMillis() - maxAge;
+        return deleteAll(ExchangeRecord.class, new Where(new Conditionals.LessThan(
+            ExchangeRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp))));
     }
 
     /**

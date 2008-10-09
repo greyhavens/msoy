@@ -43,12 +43,15 @@ import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutInfo;
+import com.threerings.msoy.money.data.all.ExchangeData;
+import com.threerings.msoy.money.data.all.ExchangeStatusData;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.persist.BlingCashOutRecord;
+import com.threerings.msoy.money.server.persist.ExchangeRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
@@ -540,6 +543,19 @@ public class MoneyLogic
         int memberId, EnumSet<TransactionType> transactionTypes, Currency currency)
     {
         return _repo.getTransactionCount(memberId, transactionTypes, currency);
+    }
+
+    /**
+     * Get current exchange status.
+     */
+    public ExchangeStatusData getExchangeStatus (int start, int count)
+    {
+        List<ExchangeData> page = Lists.newArrayList(Iterables.transform(
+            _repo.getExchangeData(start, count), ExchangeRecord.TO_EXCHANGE_DATA));
+
+        int total = _repo.getExchangeDataCount();
+
+        return new ExchangeStatusData(total, page, _exchange.getRate(), _repo.getBarPool());
     }
 
     /**

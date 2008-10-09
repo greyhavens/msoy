@@ -13,6 +13,7 @@ import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.ExchangeStatusData;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -68,5 +69,11 @@ public interface MoneyService extends RemoteService
      * Used by support to deduct coins from a player as a logged transaction.
      */
     void supportAdjust (int memberId, Currency currency, int delta)
+        throws ServiceException;
+
+    /**
+     * Used by admins to view exchange status.
+     */
+    ExchangeStatusData getExchangeStatus (int start, int count)
         throws ServiceException;
 }

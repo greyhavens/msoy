@@ -12,6 +12,7 @@ import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.ExchangeStatusData;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -59,5 +60,10 @@ public interface MoneyServiceAsync
      * The asynchronous version of {@link MoneyService#cancelCashOut}.
      */
     void cancelCashOut (int memberId, String reason, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link MoneyService#getExchangeStatus}.
+     */
+    void getExchangeStatus (int start, int count, AsyncCallback<ExchangeStatusData> callback);
 }
 

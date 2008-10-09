@@ -49,6 +49,9 @@ public class AdminPage extends Page
 
         } else if (action.equals("cashout")) {
             setContent(_msgs.cashOutTitle(), new BlingCashOutPanel());
+
+        } else if (action.equals("exchange")) {
+            setContent("Exchange", new ExchangePanel());
             
         } else {
             setContent(_msgs.title(), new DashboardPanel());
