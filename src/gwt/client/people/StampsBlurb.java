@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -54,7 +55,8 @@ public class StampsBlurb extends Blurb
             add(MsoyUI.createImage(badge.imageUrl(), "BadgeImage"));
             String badgeName =  Integer.toHexString(badge.badgeCode);
             try {
-                badgeName = _dmsgs.xlate("badge_" + badgeName);
+                badgeName = _dmsgs.xlate("badge_" + badgeName) +
+                    " " + Badge.getLevelName(badge.level);
             } catch (MissingResourceException mre) {
                 // displaying the hex code is the failure case - make sure to test all new badges
                 // before letting them out to production.
