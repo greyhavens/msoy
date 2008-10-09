@@ -30,20 +30,7 @@ public class MoneyNotification extends Notification
     @Override
     public String getAnnouncement ()
     {
-        String key = _msg;
-        int amt = delta;
-
-        if (key == null) {
-            // generic announcement
-            if (amt < 0) {
-                key = "m.money_lost";
-                amt = -amt; // positivity!
-            } else {
-                key = "m.money_gained";
-            }
-        }
-
-        return MessageBundle.compose(key, MessageBundle.tcompose(currency.getKey(), amt));
+        return null; // client-side only
     }
 
     /** The translation key, or null to use a generic message. */
