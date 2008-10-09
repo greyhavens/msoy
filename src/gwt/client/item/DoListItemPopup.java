@@ -40,7 +40,8 @@ public class DoListItemPopup extends VerticalPanel
 
     public static void show (Item item, CatalogListing listing, ListedListener listener)
     {
-        String title = item.catalogId == 0 ? _imsgs.doListCreateTitle() : _imsgs.doListUpdateTitle();
+        String title = (item.catalogId == 0) ? _imsgs.doListCreateTitle()
+                                             : _imsgs.doListUpdateTitle();
         CShell.frame.showDialog(title, new DoListItemPopup(item, listing, listener));
     }
 
@@ -91,8 +92,8 @@ public class DoListItemPopup extends VerticalPanel
 
             int row = pricing.addText(_imsgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
-            int selectedPricingIndex = (_item instanceof SubItem && !((SubItem) _item).isSalable()) ?
-                                        0 /* hidden */ : 1 /* manual */;
+            int selectedPricingIndex = (_item instanceof SubItem && !((SubItem) _item).isSalable())
+                ? 0 /* hidden */ : 1 /* manual */;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
                 _pricingBox.addItem(_dmsgs.xlate(key));
@@ -113,7 +114,7 @@ public class DoListItemPopup extends VerticalPanel
             _pricingBox.addChangeListener(tipper);
 
             pricing.setWidget(row, 2, _pricingTip = new Label(""), 2, "Blurb");
-            pricing.getFlexCellFormatter().setRowSpan(row, 2, 3);
+            pricing.getFlexCellFormatter().setRowSpan(row, 2, 2);
 
             _salesTargetLabel = new Label(_imsgs.doListSalesTarget());
             row = pricing.addWidget(_salesTargetLabel, 1, "rightLabel");
@@ -121,12 +122,6 @@ public class DoListItemPopup extends VerticalPanel
             int salesTarget = (listing == null) ? DEFAULT_SALES_TARGET : listing.salesTarget;
             _salesTarget.setText(String.valueOf(salesTarget));
 
-            row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
-            pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 5, 5), 1, null);
-            int cost = (listing == null) ? DEFAULT_COIN_COST : listing.quote.getListedAmount();
-            _cost.setText(String.valueOf(cost));
-
-            // TODO: You know what this needs? A mockup
             if (CShell.barsEnabled()) {
                 _currencyBox = new ListBox();
                 for (int i=0; i<LISTABLE_CURRENCIES.length; ++i) {
@@ -136,9 +131,16 @@ public class DoListItemPopup extends VerticalPanel
                         _currencyBox.setSelectedIndex(i);
                     }
                 }
-                row = pricing.addWidget(new Label("Currency:"), 1, "rightLabel");
+                row = pricing.addWidget(new Label(_imsgs.doListCurrency()), 1, "rightLabel");
                 pricing.setWidget(row, 1, _currencyBox);
+                pricing.setWidget(row, 2, new Label(_imsgs.doListCurrencyTip()), 1, "Blurb");
+                pricing.getFlexCellFormatter().setRowSpan(row, 2, 2);
             }
+
+            row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
+            pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 5, 5), 1, null);
+            int cost = (listing == null) ? DEFAULT_COIN_COST : listing.quote.getListedAmount();
+            _cost.setText(String.valueOf(cost));
 
             add(MsoyUI.createLabel(_imsgs.doListPricingHeader(), "Header"));
             add(pricing);
