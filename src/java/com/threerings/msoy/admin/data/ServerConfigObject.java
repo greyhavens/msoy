@@ -65,6 +65,9 @@ public class ServerConfigObject extends ConfigObject
 
     /** The field name of the <code>minimumBlingCashOut</code> field. */
     public static final String MINIMUM_BLING_CASH_OUT = "minimumBlingCashOut";
+
+    /** The field name of the <code>targetExchangeRate</code> field. */
+    public static final String TARGET_EXCHANGE_RATE = "targetExchangeRate";
     // AUTO-GENERATED: FIELDS END
 
     /** Whether or not to allow non-admins to log on. */
@@ -117,6 +120,14 @@ public class ServerConfigObject extends ConfigObject
     
     /** The minimum amount of bling (NOT centibling) that can be cashed out at a time. */
     public int minimumBlingCashOut = 500;
+
+    /** The target bar/coin exchange rate. 
+     * Value / time, from Puzzle Pirates: $0.25 / hr
+     * hourly coin rate = 3000
+     * therefore 3000 coins = $.25
+     * bars are valued at $.10
+     * therefore 1 bar = 1200 coins */
+    public float targetExchangeRate = 1200;
     
     @Override // documentation inherited
     public JPanel getEditor (PresentsContext ctx, Field field)
@@ -388,6 +399,22 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             MINIMUM_BLING_CASH_OUT, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.minimumBlingCashOut = value;
+    }
+
+    /**
+     * Requests that the <code>targetExchangeRate</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setTargetExchangeRate (float value)
+    {
+        float ovalue = this.targetExchangeRate;
+        requestAttributeChange(
+            TARGET_EXCHANGE_RATE, Float.valueOf(value), Float.valueOf(ovalue));
+        this.targetExchangeRate = value;
     }
     // AUTO-GENERATED: METHODS END
 }

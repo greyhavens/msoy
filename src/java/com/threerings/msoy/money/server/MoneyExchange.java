@@ -8,6 +8,8 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
+
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
@@ -95,7 +97,7 @@ public class MoneyExchange
         int pool = _moneyRepo.getBarPool();
         // the more bars in the pool: the lower the exchange rate
         // TODO: asymptotic snazziness
-        _rate = (BAR_POOL_TARGET * EXPECTED_RATE) / pool;
+        _rate = (BAR_POOL_TARGET * RuntimeConfig.server.targetExchangeRate) / pool;
 
         // schedule the next recalculation, always a minute from now
         _recalcInterval.schedule(RECALCULATE_INTERVAL);
@@ -117,14 +119,4 @@ public class MoneyExchange
     /** How often we re-check the exchange rate, even if no cross-currency purchases have been
      * made during this time. */
     protected static final long RECALCULATE_INTERVAL = 60 * 1000L; // every minute
-
-    /** Our initial guess at an exchange rate.
-     *
-     * Value / time, from Puzzle Pirates: $0.25 / hr
-     * hourly coin rate = 3000
-     * therefore 3000 coins = $.25
-     * bars are valued at $.10
-     * therefore 1 bar = 1200 coins
-     */
-    protected static final float EXPECTED_RATE = 1200;
 }
