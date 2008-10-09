@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -294,18 +293,12 @@ public class FeedPanel extends TongueBox
             case 105: // FRIEND_WON_BADGE
                 String badgeName;
                 int badgeCode = Integer.parseInt(message.data[0]);
-                try {
-                    String badgeHexCode = Integer.toHexString(badgeCode);
-                    badgeName = _dmsgs.xlate("badge_" + badgeHexCode);
-                } catch (MissingResourceException e) {
-                    badgeName = "MISSING NAME (code=" + badgeCode + ")";
-                }
-
                 int badgeLevel = Integer.parseInt(message.data[1]);
+                String badgeHexCode = Integer.toHexString(badgeCode);
+                badgeName = _dmsgs.get("badge_" + badgeHexCode, Badge.getLevelName(badgeLevel));
+
                 int memberId = ((FriendFeedMessage)message).friend.getMemberId();
-                return Link.createHtml(
-                    badgeName + " " + Badge.getLevelName(badgeLevel), Pages.ME,
-                    Args.compose("passport", memberId));
+                return Link.createHtml(badgeName, Pages.ME, Args.compose("passport", memberId));
             }
 
             return null;
