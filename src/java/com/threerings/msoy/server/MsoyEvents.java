@@ -111,6 +111,21 @@ public class MsoyEvents
         }
     }
 
+    @Event(name="ExchangeRate") // note: do not change this event name
+    public static class ExchangeRate implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public String serverName;
+        @Field final public double rate;
+
+        public ExchangeRate (String serverName, double rate)
+        {
+            this.timestamp = new Date();
+            this.serverName = serverName;
+            this.rate = rate;
+        }
+    }
+
     @Event(name="FlowTransaction") // note: do not change this event name
     public static class FlowTransaction implements MsoyEvent
     {

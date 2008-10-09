@@ -24,6 +24,7 @@ import com.threerings.presents.server.net.ConnectionManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
@@ -58,26 +59,8 @@ public class MsoyAdminManager
         _conmgrStatsUpdater.schedule(5000L, true);
 
         // start up the system "snapshot" logger
-        new Interval(_omgr) {
-            public void expired () {
-                // iterate over the list of members, adding up a total, as well as counting up
-                // subsets of active users and guest users
-                int total = 0, active = 0, guests = 0, viewers = 0;
-                for (MemberObject memobj : _locator.getMembersOnline()) {
-                    total++;
-                    active += (memobj.status == OccupantInfo.ACTIVE) ? 1 : 0;
-                    if (memobj.isGuest()) {
-                        if (memobj.getMemberId() == 0) {
-                            viewers++;
-                        } else {
-                            guests++;
-                        }
-                    }
-                }
-                // this simply posts a message to a queue and returns
-                _eventLog.currentMemberStats(ServerConfig.nodeName, total, active, guests, viewers);
-            }
-        }.schedule(0, STATS_DELAY);
+        _snapshotLogger = new SnapshotLogger();
+        _snapshotLogger.schedule(0, STATS_DELAY);
 
         // initialize our reboot manager
         _rebmgr.init();
@@ -168,6 +151,36 @@ public class MsoyAdminManager
         }
     }
 
+    /** Logs a 'snapshot' of the server state on a regular basis. */
+    protected class SnapshotLogger extends Interval
+    {
+        public SnapshotLogger ()
+        {
+            super(_omgr);
+        }
+
+        public void expired () {
+            // iterate over the list of members, adding up a total, as well as counting up
+            // subsets of active users and guest users
+            int total = 0, active = 0, guests = 0, viewers = 0;
+            for (MemberObject memobj : _locator.getMembersOnline()) {
+                total++;
+                active += (memobj.status == OccupantInfo.ACTIVE) ? 1 : 0;
+                if (memobj.isGuest()) {
+                    if (memobj.getMemberId() == 0) {
+                        viewers++;
+                    } else {
+                        guests++;
+                    }
+                }
+            }
+            _eventLog.currentMemberStats(ServerConfig.nodeName, total, active, guests, viewers);
+
+            // now log the current money exchange rate
+            _eventLog.moneyExchangeRate(ServerConfig.nodeName, _exchange.getRate());
+        }
+    }
+
     /** This reads the status from the connection manager and stuffs it into
      * our server status object every 5 seconds. Because it reads synchronized
      * data and then just posts an event, it's OK that it runs directly on the
@@ -178,6 +191,9 @@ public class MsoyAdminManager
         }
     };
 
+    /** Logs a snapshot of the running server every 10 minutes. */
+    protected SnapshotLogger _snapshotLogger;
+
     protected MsoyRebootManager _rebmgr;
 
     @Inject protected ShutdownManager _shutmgr;
@@ -186,6 +202,7 @@ public class MsoyAdminManager
     @Inject protected ConnectionManager _conmgr;
     @Inject protected MemberLocator _locator;
     @Inject protected ChatProvider _chatprov;
+    @Inject protected MoneyExchange _exchange;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;

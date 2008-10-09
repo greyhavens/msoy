@@ -107,6 +107,11 @@ public class MsoyEventLogger
             action.memberId, action.type.getNumber(), currency, amountDelta));
     }
 
+    public void moneyExchangeRate (String serverName, float rate)
+    {
+        post(new MsoyEvents.ExchangeRate(serverName, rate));
+    }
+
     public void itemPurchased (int memberId, byte itemType, int itemId, Currency currency,
         int amountPaid)
     {
