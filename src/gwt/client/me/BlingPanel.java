@@ -62,7 +62,7 @@ public class BlingPanel extends FlowPanel
         SmartTable exchange = new SmartTable(0, 10);
         exchange.setText(0, 0, _msgs.exchangeBlingDescription(), 3, null);
         exchange.setText(1, 0, _msgs.exchangeAmount(), 1, "rightLabel");
-        exchange.setWidget(1, 1, _exchangeBox = new NumberTextBox(true));
+        exchange.setWidget(1, 1, _exchangeBox = new NumberTextBox(false));
         exchange.setWidget(1, 2, _exchangeBtn = new Button(_msgs.exchangeButton(), new ClickListener() {
             public void onClick (Widget sender) {
                 doExchange(_model.memberId);
