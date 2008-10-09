@@ -33,8 +33,6 @@ import com.threerings.msoy.person.gwt.GalleryServiceAsync;
  */
 public class GalleryPanel extends FlowPanel
 {
-    public static final String GALLERIES_ACTION = "galleries";
-
     public GalleryPanel (final int memberId)
     {
         addStyleName("galleryPanel");
@@ -57,7 +55,7 @@ public class GalleryPanel extends FlowPanel
         add(galleries);
         for (int i = 0; i < data.galleries.size(); i++) {
             Gallery gallery = data.galleries.get(i);
-            String args = Args.compose(GalleryViewPanel.VIEW_ACTION, "" + gallery.galleryId);
+            String args = Args.compose(GalleryActions.VIEW, gallery.galleryId);
             Widget click = new ClickBox(gallery.thumbMedia, getGalleryLabel(gallery, data.owner),
                 Pages.PEOPLE, args);
             galleries.add(click);
@@ -66,11 +64,7 @@ public class GalleryPanel extends FlowPanel
         // add a create gallery button if player is looking at their own galleries
         if (CShell.getMemberId() == data.owner.getMemberId()) {
             PushButton create = MsoyUI.createButton(MsoyUI.LONG_THIN,
-                _pmsgs.galleryCreate(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.PEOPLE, GalleryEditPanel.CREATE_ACTION);
-                }
-            });
+                _pmsgs.galleryCreate(), Link.createListener(Pages.PEOPLE, GalleryActions.CREATE));
             create.addStyleName("CreateButton");
             add(create);
         }

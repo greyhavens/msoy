@@ -14,6 +14,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
+import client.person.GalleryActions;
 import client.person.GalleryEditPanel;
 import client.person.GalleryPanel;
 import client.person.GalleryViewPanel;
@@ -62,13 +63,12 @@ public class GalleriesBlurb extends Blurb
         // links to create gallery and/or see all galleries
         FlowPanel footerLinks = new FlowPanel();
         if (CShell.getMemberId() == _name.getMemberId()) {
-            footerLinks.add(Link.create(_msgs.createGallery(), Pages.PEOPLE,
-                GalleryEditPanel.CREATE_ACTION));
+            footerLinks.add(Link.create(_msgs.createGallery(), Pages.PEOPLE, GalleryActions.CREATE));
         }
         if (pdata.galleries != null && pdata.galleries.size() > NUM_GALLERIES) {
             footerLinks.add(WidgetUtil.makeShim(10, 10));
-            footerLinks.add(Link.create(_msgs.seeAll(), Pages.PEOPLE, Args.compose(
-                GalleryPanel.GALLERIES_ACTION, _name.getMemberId())));
+            footerLinks.add(Link.create(_msgs.seeAll(), Pages.PEOPLE,
+                Args.compose(GalleryActions.GALLERIES, _name.getMemberId())));
         }
         setFooter(footerLinks);
     }
@@ -83,8 +83,7 @@ public class GalleriesBlurb extends Blurb
 
             ClickListener clickListener = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
-                        gallery.galleryId));
+                    Link.go(Pages.PEOPLE, Args.compose(GalleryActions.VIEW, gallery.galleryId));
                 }
             };
             add(new ThumbBox(gallery.thumbMedia, clickListener));

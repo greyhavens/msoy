@@ -5,9 +5,10 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
+import client.person.GalleryActions;
 import client.person.GalleryEditPanel;
-import client.person.GalleryViewPanel;
 import client.person.GalleryPanel;
+import client.person.GalleryViewPanel;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
@@ -35,20 +36,19 @@ public class PeoplePage extends Page
         } else if (action.equals("rooms")) {
             setContent(new RoomsPanel(args.get(1, 0)));
 
-        } else if (action.equals(GalleryPanel.GALLERIES_ACTION)) {
-            int memberId = args.get(1, CShell.getMemberId());
-            setContent(_msgs.galleriesTitle(), new GalleryPanel(memberId));
+        } else if (action.equals(GalleryActions.GALLERIES)) {
+            setContent(_msgs.galleriesTitle(), new GalleryPanel(args.get(1, CShell.getMemberId())));
 
-        } else if (action.equals(GalleryViewPanel.VIEW_ACTION)) {
+        } else if (action.equals(GalleryActions.VIEW)) {
             setContent(_msgs.galleriesTitle(), _galleryViewPanel = new GalleryViewPanel());
             _galleryViewPanel.setArgs(args, false);
 
-        } else if (action.equals(GalleryViewPanel.VIEW_PROFILE_ACTION)) {
+        } else if (action.equals(GalleryActions.VIEW_PROFILE)) {
             // unlike VIEW_PHOTO_ACTION, this will always refresh the gallery data
             setContent(_msgs.galleriesTitle(), _galleryViewPanel = new GalleryViewPanel());
             _galleryViewPanel.setArgs(args, true);
 
-        } else if (action.equals(GalleryViewPanel.VIEW_PHOTO_ACTION)) {
+        } else if (action.equals(GalleryActions.VIEW_PHOTO)) {
             // keep the gallery if one is already there
             if (_galleryViewPanel == null) {
                 _galleryViewPanel = new GalleryViewPanel();
@@ -60,21 +60,21 @@ public class PeoplePage extends Page
         } else if (CShell.isGuest()) {
             setContent(new PeoplePanel());
 
+        } else if (action.equals(GalleryActions.CREATE_PROFILE)) { // !guest
+            setContent(_msgs.galleriesTitle(), new GalleryEditPanel(true));
+
+        } else if (action.equals(GalleryActions.CREATE)) { // !guest
+            setContent(_msgs.galleriesTitle(), new GalleryEditPanel(false));
+
+        } else if (action.equals(GalleryActions.EDIT)) { // !guest
+            int galleryId = args.get(1, -1);
+            setContent(_msgs.galleriesTitle(), new GalleryEditPanel(galleryId));
+
         } else if (action.equals("me")) { // !guest
             setContent(new ProfilePanel(CShell.getMemberId()));
 
         } else if (action.equals("invites")) { // !guest
             setContent(_msgs.inviteTitle(), new InvitePanel());
-
-        } else if (action.equals(GalleryEditPanel.CREATE_PROFILE_ACTION)) { // !guest
-            setContent(_msgs.galleriesTitle(), new GalleryEditPanel(true));
-
-        } else if (action.equals(GalleryEditPanel.CREATE_ACTION)) { // !guest
-            setContent(_msgs.galleriesTitle(), new GalleryEditPanel(false));
-
-        } else if (action.equals(GalleryEditPanel.EDIT_ACTION)) { // !guest
-            int galleryId = args.get(1, -1);
-            setContent(_msgs.galleriesTitle(), new GalleryEditPanel(galleryId));
 
         } else { // !guest
             setContent(new FriendsPanel(CShell.getMemberId()));

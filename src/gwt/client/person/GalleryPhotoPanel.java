@@ -201,7 +201,7 @@ public class GalleryPhotoPanel extends FlowPanel
     public void gotoPhotoIndex (int photoIndex)
     {
         Photo photo = photoIndex >= 0 ? _galleryData.photos.get(photoIndex) : null;
-        Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_PHOTO_ACTION,
+        Link.go(Pages.PEOPLE, Args.compose(GalleryActions.VIEW_PHOTO,
             _galleryData.gallery.galleryId, photo == null ? 0 : photo.itemId));
     }
 

@@ -53,10 +53,6 @@ import com.threerings.msoy.person.gwt.GalleryServiceAsync;
  */
 public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to support drag-n-drop
 {
-    public static final String EDIT_ACTION = "editgallery";
-    public static final String CREATE_ACTION = "creategallery";
-    public static final String CREATE_PROFILE_ACTION = "createprofilegallery";
-
     /**
      * Creating a new Gallery
      */
@@ -121,10 +117,10 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         Button cancelButton = new Button("Cancel", new ClickListener() {
             public void onClick (Widget sender) {
                 if (_newGallery) {
-                    Link.go(Pages.PEOPLE, Args.compose(GalleryPanel.GALLERIES_ACTION,
+                    Link.go(Pages.PEOPLE, Args.compose(GalleryActions.GALLERIES,
                         CShell.getMemberId()));
                 } else {
-                    Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
+                    Link.go(Pages.PEOPLE, Args.compose(GalleryActions.VIEW,
                         _galleryData.gallery.galleryId));
                 }
             }
@@ -261,7 +257,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             saveButton.setEnabled(true);
         }
         if (backToView) {
-            Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
+            Link.go(Pages.PEOPLE, Args.compose(GalleryActions.VIEW,
                 _galleryData.gallery.galleryId));
         }
     }
