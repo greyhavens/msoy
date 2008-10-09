@@ -445,6 +445,10 @@ img, embed, applet, object {
   border: 0px none;
 }
 
+.pagedGrid .Button[disabled] {
+  cursor: default;
+}
+
 .pagedGrid .PrevButton {
   text-align: right;
   padding-right: 8px;
