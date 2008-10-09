@@ -53,8 +53,8 @@ public class Stub extends Sprite
     /** The id of the game we'd like to load. */
     public static const GAME_ID :int = 8;
 
-    //public static const CLIENT_URL :String = "http://www.whirled.com/clients/world-client.swf";
-    public static const CLIENT_URL :String = "http://tasman.sea.earth.threerings.net:8080/clients/world-client.swf";
+    public static const CLIENT_URL :String = "http://www.whirled.com/clients/world-client.swf";
+    //public static const CLIENT_URL :String = "http://tasman.sea.earth.threerings.net:8080/clients/world-client.swf";
 
     public function Stub ()
     {
