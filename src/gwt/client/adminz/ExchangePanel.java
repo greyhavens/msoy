@@ -31,10 +31,10 @@ public class ExchangePanel extends SmartTable
         super("exchangePanel", 0, 10);
 
         int row = 0;
-        setText(row, 0, "Current rate:");
-        setText(row++, 2, "Target rate:");
-        setText(row, 0, "Bar pool balance:");
-        setText(row++, 2, "Target bar pool:");
+        setText(row, 0, "Current rate:", 1, "rightLabel");
+        setText(row++, 2, "Target rate:", 1, "rightLabel");
+        setText(row, 0, "Bar pool balance:", 1, "rightLabel");
+        setText(row++, 2, "Target bar pool:", 1, "rightLabel");
 
         addWidget(new RecentExchanges(new ExchangeDataDataModel()), 4, null);
     }
