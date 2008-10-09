@@ -187,8 +187,7 @@ public class StuffServlet extends MsoyServiceServlet
             items.addAll(Lists.transform(repo.loadOriginalItems(memrec.memberId, 0), toItem));
             items.addAll(Lists.transform(repo.loadClonedItems(memrec.memberId, 0), toItem));
         } else {
-            items.addAll(Lists.transform(repo.findOriginalItems(memrec.memberId, query), toItem));
-            items.addAll(Lists.transform(repo.findClonedItems(memrec.memberId, query), toItem));
+            items.addAll(Lists.transform(repo.findItems(memrec.memberId, query), toItem));
         }
         Collections.sort(items);
 

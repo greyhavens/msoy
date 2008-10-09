@@ -286,20 +286,6 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Finds all items owned by the specified player that match the supplied query.
-     */
-    public List<T> findOriginalItems (int ownerId, String query)
-    {
-        // original items only match on the text and creator (they cannot be tagged)
-        List<SQLOperator> matches = Lists.newArrayList();
-        addTextMatchClause(matches, query);
-        addCreatorMatchClause(matches, query);
-        return findAll(getItemClass(), new Where(
-            new And(new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
-                    makeSearchClause(matches))));
-    }
-
-    /**
      * Loads all cloned items owned by the specified member.
      */
     public List<T> loadClonedItems (int ownerId, int suiteId)
@@ -315,18 +301,30 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Finds all items owned by the specified player that match the supplied query.
+     * Finds all (original and cloned) items owned by the specified player that match the supplied
+     * query.
      */
-    public List<T> findClonedItems (int ownerId, String query)
+    public List<T> findItems (int ownerId, String query)
     {
-        // cloned items can match on their text, creator or tags
+        // original items only match on the text and creator (they cannot be tagged)
         List<SQLOperator> matches = Lists.newArrayList();
         addTextMatchClause(matches, query);
         addCreatorMatchClause(matches, query);
-        addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), query);
-        return loadClonedItems(new Where(
-            new And(new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
+
+        // locate all matching original items
+        List<T> results = findAll(getItemClass(), new Where(
+            new And(new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
                     makeSearchClause(matches))));
+
+        // now add the tag match as cloned items can match tags
+        addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), query);
+
+        // add all matching cloned items
+        results.addAll(loadClonedItems(new Where(
+            new And(new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
+                    makeSearchClause(matches)))));
+
+        return results;
     }
 
     /**
