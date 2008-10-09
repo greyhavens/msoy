@@ -6,6 +6,7 @@ package client.util;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
@@ -74,8 +75,12 @@ public abstract class ClickCallback<T>
     {
         CShell.log("Callback failure [for=" + _trigger + "]", cause);
         setEnabled(true);
-        if (getErrorNear() != null) {
-            MsoyUI.errorNear(convertError(cause), getErrorNear());
+        Widget errorNear = getErrorNear();
+        if (errorNear != null) {
+            if (errorNear instanceof FocusWidget) {
+                ((FocusWidget)errorNear).setFocus(true);
+            }
+            MsoyUI.errorNear(convertError(cause), errorNear);
         } else {
             MsoyUI.error(convertError(cause));
         }

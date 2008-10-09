@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -560,10 +561,13 @@ public class MsoyUI
 
     /**
      * Displays error feedback to the user in a non-offensive way. The error feedback is displayed
-     * near the supplied component.
+     * near the supplied component and if the component supports focus, it is focused.
      */
     public static void errorNear (String message, Widget source)
     {
+        if (source instanceof FocusWidget) {
+            ((FocusWidget)source).setFocus(true);
+        }
         // TODO: style this differently than info feedback
         new InfoPopup(message).showNear(source);
     }
