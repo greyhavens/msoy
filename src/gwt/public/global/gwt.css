@@ -913,6 +913,10 @@ img, embed, applet, object {
   width: 400px;
 }
 
+.floatleft {
+  float: left;
+}
+
 /** Place <div style="clear"/> to force a line break after floating elements */
 .clear {
   clear: both;
