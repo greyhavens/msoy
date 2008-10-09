@@ -82,7 +82,11 @@
   background-color: #FFFFFF;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  padding: 10px 0;
+  height: 100%;
+}
+
+.SlideshowMode {
+  background-color: #000000;
 }
 
 .galleryViewPanel .Error {
@@ -119,35 +123,53 @@
   margin-top: 5px;
 }
 
-.galleryViewPanel .CurrentPhoto {
+.galleryPhotoPanel {
   width: 100%;
-  height: 500px;
+  height: 100%;
+  min-height: 500px;
 }
-    
-.galleryViewPanel .CurrentPhoto .LargePhotoName {
+
+.galleryPhotoPanel .NameAndCreator {
+  margin: 0 0 5px 20px;
+  padding-top: 10px;
+}
+
+.galleryPhotoPanel .NameAndCreator .GalleryName {
   color: #247393;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-weight: bold;
   font-size: 24px;
 }
 
-.galleryViewPanel .CurrentPhoto .creator, 
-.galleryViewPanel .CurrentPhoto .creator a {
-  color: #154676;
+.galleryPhotoPanel .NameAndCreator .creator, 
+.galleryPhotoPanel .NameAndCreator .creator a {
+  color: #7799A5;
   font-size: 14px;
 }
 
-.galleryViewPanel .CurrentPhoto .LargePhoto {
+.galleryPhotoPanel .PhotoName {
+  color: #247393;
+  font-size: 16px;
+  margin: 5px 0 5px 20px;
+}
+
+.galleryPhotoPanel .LargePhoto {
   width: 100%;
+  height: 400px;
   text-align: center;
 }
-.galleryViewPanel .CurrentPhoto .LargePhoto img {
+.galleryPhotoPanel .LargePhoto img {
   border: 1px solid #CCCCCC;
 }
 
-.galleryViewPanel .CurrentPhoto .ViewFullSize {
-  color: #247393;
-  margin-top: 10px;
+.galleryPhotoPanel .Controls {
+  height: 30px;
+  margin: 10px 0 10px 20px;
+  color: #8B8B8B;
+}
+
+.galleryPhotoPanel .Controls a {
+  color: #8B8B8B;
 }
 
 
@@ -159,7 +181,7 @@
   background: url(/images/people/gallery_details_box.png) no-repeat;
   width: 666px;
   height: 99px;
-  margin: 0 0 10px 10px;
+  margin: 10px 0 10px 10px;
 }
 
 .galleryDetailPanel .GalleryThumbnail {

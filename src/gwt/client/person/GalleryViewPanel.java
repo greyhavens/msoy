@@ -6,7 +6,6 @@ package client.person;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
-import client.ui.CreatorLabel;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -15,10 +14,6 @@ import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -80,7 +75,7 @@ public class GalleryViewPanel extends FlowPanel
 
         if (_galleryData != null && _galleryData.gallery.galleryId == galleryId) {
             // don't refetch gallery data, just display the right image
-            setPhotoArg(photoId);
+            setPhoto(photoId);
             return;
         }
 
@@ -88,9 +83,36 @@ public class GalleryViewPanel extends FlowPanel
         _gallerysvc.loadGallery(galleryId, new MsoyCallback<GalleryData>() {
             public void onSuccess (GalleryData galleryData) {
                 displayGallery(galleryData);
-                setPhotoArg(photoId);
+                setPhoto(photoId);
             }
         });
+    }
+
+    /**
+     * Change which photo is being shown by photo itemId. If photoId is 0, clear the current photo
+     * instead and display the list of all photos.
+     */
+    protected void setPhoto (final int photoId)
+    {
+        // get the location in the photo in our set, if it exists
+        int tempPhotoIndex = -1;
+        if (photoId != 0) {
+            for (Photo photo : _galleryData.photos) {
+                if (photo.itemId == photoId) {
+                    tempPhotoIndex = _galleryData.photos.indexOf(photo);
+                    break;
+                }
+            }
+        }
+        final int photoIndex = tempPhotoIndex;
+        if (photoIndex == -1) {
+            remove(_currentPhoto);
+            add(_galleryView);
+        } else {
+            remove(_galleryView);
+            add(_currentPhoto);
+            _currentPhoto.setPhoto(photoIndex);
+        }
     }
 
     /**
@@ -133,12 +155,23 @@ public class GalleryViewPanel extends FlowPanel
         }
         _galleryData = galleryData;
 
+        // this will be filled with the full size image
+        _currentPhoto = new GalleryPhotoPanel(galleryData);
+
         add(_galleryView = new FlowPanel());
 
         _galleryView.add(new GalleryDetailPanel(galleryData));
 
-        // slieshow | view all galleries | edit actions
+        // slieshow | view all galleries | edit | delete actions
         InlinePanel actions = new InlinePanel("Actions");
+        actions.add(MsoyUI.createActionLabel(_pmsgs.gallerySlideshowStart(),
+                new ClickListener() {
+                    public void onClick (Widget sender) {
+                        _currentPhoto.startSlideshow();
+                    }
+            }));
+        actions.add(new Label("|"));
+
         final String viewGalleriesArgs = Args.compose(GalleryPanel.GALLERIES_ACTION,
             _galleryData.owner.getMemberId());
         actions.add(MsoyUI.createActionLabel(_pmsgs.galleryViewAll(),
@@ -178,7 +211,7 @@ public class GalleryViewPanel extends FlowPanel
             // clicking on an image will bring up the full view of it
             ClickListener thumbClickListener = new ClickListener() {
                 public void onClick (Widget sender) {
-                    gotoPhotoIndex(photoIndex);
+                    _currentPhoto.gotoPhotoIndex(photoIndex);
                 }
             };
 
@@ -194,183 +227,6 @@ public class GalleryViewPanel extends FlowPanel
             photoList.add(thumbnail);
         }
         _galleryView.add(photoList);
-
-        // this will be filled with the full size image
-        _currentPhoto = new AbsolutePanel();
-        _currentPhoto.addStyleName("CurrentPhoto");
-    }
-
-    /**
-     * Change which photo is being shown by photo itemId. If photoId is < 0, clear the current
-     * photo. The photoId should be fetched from the page args; other calls to display a photo
-     * should use gotoPhoto() instead.
-     */
-    protected void setPhotoArg (final int photoId)
-    {
-        // get the location in the photo in our set, if it exists
-        int tempPhotoIndex = -1;
-        if (photoId != 0) {
-            for (Photo photo : _galleryData.photos) {
-                if (photo.itemId == photoId) {
-                    tempPhotoIndex = _galleryData.photos.indexOf(photo);
-                    break;
-                }
-            }
-        }
-        final int photoIndex = tempPhotoIndex;
-
-        _currentPhoto.clear();
-        _currentPhotoIndex = photoIndex;
-
-        if (photoIndex < 0 || photoIndex >= _galleryData.photos.size()) {
-            remove(_currentPhoto);
-            add(_galleryView);
-            return;
-        }
-        final Photo photo = _galleryData.photos.get(photoIndex);
-        remove(_galleryView);
-        add(_currentPhoto);
-
-        // Photo and creator name are inline
-        InlinePanel nameAndCreator = new InlinePanel("NameAndCreator");
-        nameAndCreator.add(MsoyUI.createLabel(photo.name, "LargePhotoName"));
-        nameAndCreator.add(new CreatorLabel(_galleryData.owner));
-        _currentPhoto.add(nameAndCreator, 10, 0);
-
-        // back to gallery overview button
-        _currentPhoto.add(MsoyUI.createActionImage("/images/ui/back_arrow.png",
-            _pmsgs.galleryBack(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    stopSlideshow();
-                    gotoPhotoIndex(-1);
-                }
-            }), 430, 35);
-
-        // prev and next buttons
-        ClickListener onPrev = new ClickListener() {
-            public void onClick (Widget sender) {
-                stopSlideshow();
-                gotoPhotoIndex(photoIndex == 0 ? _galleryData.photos.size() - 1 : photoIndex - 1);
-            }
-        };
-        ClickListener onNext = new ClickListener() {
-            public void onClick (Widget sender) {
-                stopSlideshow();
-                gotoPhotoIndex((photoIndex + 1) % _galleryData.photos.size());
-            }
-        };
-        _currentPhoto.add(MsoyUI.createPrevNextButtons(onPrev, onNext), 455, 35);
-
-        // slideshow button
-        ClickListener slideshowClick = new ClickListener() {
-            public void onClick (Widget sender) {
-                Button button = (Button)sender;
-                // toggle slideshow and text of this link
-                if (button.getText().equals(_pmsgs.gallerySlideshowStart())) {
-                    button.setText(_pmsgs.gallerySlideshowStop());
-                    startSlideshow();
-                } else {
-                    button.setText(_pmsgs.gallerySlideshowStart());
-                    stopSlideshow();
-                }
-            }
-        };
-        _currentPhoto.add(new Button(_slideshowTimer == null ? _pmsgs.gallerySlideshowStart()
-            : _pmsgs.gallerySlideshowStop(), slideshowClick), 570, 35);
-
-        // determine the width of the most constrained side and override the media constraint
-        int width = photo.photoWidth;
-        int height = photo.photoHeight;
-        if (width > MAX_PHOTO_WIDTH) {
-            width = MAX_PHOTO_WIDTH;
-            height = Math.round((MAX_PHOTO_WIDTH / (float)photo.photoWidth) * photo.photoHeight);
-        } else {
-            width = 0;
-        }
-        if (height > MAX_PHOTO_HEIGHT) {
-            height = MAX_PHOTO_HEIGHT;
-            width = 0;
-        } else {
-            height = 0;
-        }
-        byte constraint = MediaDesc.NOT_CONSTRAINED;
-        if (width > 0) {
-            constraint = MediaDesc.HORIZONTALLY_CONSTRAINED;
-        } else if (height > 0) {
-            constraint = MediaDesc.VERTICALLY_CONSTRAINED;
-        }
-        photo.photoMedia.constraint = constraint;
-
-        // clear the photo onclick
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget sender) {
-                stopSlideshow();
-                gotoPhotoIndex((photoIndex + 1) % _galleryData.photos.size());
-            }
-        };
-        Widget largePhoto = MediaUtil.createMediaView(photo.photoMedia, width, height, onClick);
-        FlowPanel largePhotoContainer = MsoyUI.createFlowPanel("LargePhoto");
-        largePhotoContainer.add(largePhoto);
-
-        // if this image has been scaled down, link to the full size
-        if (photo.photoMedia.constraint != MediaDesc.NOT_CONSTRAINED) {
-            largePhotoContainer.add(MsoyUI.createActionLabel(_pmsgs.galleryFullSize(),
-                "ViewFullSize", new ClickListener() {
-                    public void onClick (Widget sender) {
-                        // open the full image in a new window
-                        Window.open(photo.photoMedia.getMediaPath(), "_blank", null);
-                    }
-                }));
-        }
-        _currentPhoto.add(largePhotoContainer, 0, 65);
-    }
-
-    /**
-     * Moves the page to the appropriate photo based on it's location in the list of photos. Use
-     * itemId instead of photo index in case the order of photos changes.
-     */
-    protected void gotoPhotoIndex (int photoIndex)
-    {
-        Photo photo = photoIndex >= 0 ? _galleryData.photos.get(photoIndex) : null;
-        Link.go(Pages.PEOPLE, Args.compose(VIEW_PHOTO_ACTION, _galleryData.gallery.galleryId,
-            photo == null ? 0 : photo.itemId));
-    }
-
-    /**
-     * Start the slideshow immediately at the first photo or next photo if one is being shown.
-     */
-    protected void startSlideshow ()
-    {
-        _slideshowTimer = new Timer() {
-            @Override public void run() {
-                advanceSlideshow();
-            }
-        };
-        _slideshowTimer.schedule(1);
-    }
-
-    /**
-     * Display the next image in the gallery and schedule another change in 5 seconds.
-     */
-    protected void advanceSlideshow ()
-    {
-        if (_currentPhotoIndex < 0) {
-            gotoPhotoIndex(0);
-        } else {
-            gotoPhotoIndex((_currentPhotoIndex + 1) % _galleryData.photos.size());
-        }
-        _slideshowTimer.schedule(5000);
-    }
-
-    /**
-     * Halt the slideshow and return to the list of photos.
-     */
-    protected void stopSlideshow ()
-    {
-        if (_slideshowTimer != null) {
-            _slideshowTimer.cancel();
-            _slideshowTimer = null;
-        }
     }
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
@@ -380,21 +236,12 @@ public class GalleryViewPanel extends FlowPanel
     /** List of photos and gallery details */
     protected GalleryData _galleryData;
 
-    /** The index of the photo currently being displayed, used for slideshow */
-    protected int _currentPhotoIndex;
-
-    /** Fires every 5 seconds while slideshow is running */
-    protected Timer _slideshowTimer;
-
     /** Gallery details and list of photos; hidden while viewing one photo in full */
     protected FlowPanel _galleryView;
 
     /** Panel to display the photo currently being displayed in full */
-    protected AbsolutePanel _currentPhoto;
+    protected GalleryPhotoPanel _currentPhoto;
 
     /** If this is a profile gallery, whose profile is this */
     protected int _profileMemberId = 0;
-
-    protected static int MAX_PHOTO_WIDTH = 600;
-    protected static int MAX_PHOTO_HEIGHT = 400;
 }

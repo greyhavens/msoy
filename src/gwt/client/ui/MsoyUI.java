@@ -283,6 +283,17 @@ public class MsoyUI
     }
 
     /**
+     * Creates a PushButton with default(up), mouseover and mousedown states.
+     */
+    public static PushButton createPushButton (Image defaultImage, Image overImage,
+        Image downImage, ClickListener listener)
+    {
+        PushButton button = new PushButton(defaultImage, downImage, listener);
+        button.getUpHoveringFace().setImage(overImage);
+        return button;
+    }
+
+    /**
      * Creates an orange button of the specified size with the supplied text.
      */
     public static PushButton createButton (String size, String label, ClickListener listener)
