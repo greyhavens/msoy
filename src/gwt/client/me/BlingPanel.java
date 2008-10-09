@@ -139,15 +139,6 @@ public class BlingPanel extends FlowPanel
         }
     }
 
-    protected boolean requireField (TextBox box, String fieldName)
-    {
-        if (StringUtil.isBlank(box.getText())) {
-            MsoyUI.errorNear(_msgs.fieldRequired(fieldName), box);
-            return false;
-        }
-        return true;
-    }
-
     /**
      * Converts the amount of pennies into a string to display to the user as a valid currency.
      * Note: there are some other utilities around to do this, but they're either in a different
@@ -161,6 +152,15 @@ public class BlingPanel extends FlowPanel
         int cents = pennies % 100;
         return "USD $" + NumberFormat.getDecimalFormat().format(dollars) + '.' +
             (cents < 10 ? '0' : "") + cents;
+    }
+
+    protected static boolean requireField (TextBox box, String fieldName)
+    {
+        if (StringUtil.isBlank(box.getText())) {
+            MsoyUI.errorNear(_msgs.fieldRequired(fieldName), box);
+            return false;
+        }
+        return true;
     }
 
     protected class CashOutForm extends SmartTable
@@ -181,46 +181,40 @@ public class BlingPanel extends FlowPanel
                 }
             });
             setWidget(row++, 1, MsoyUI.createButtonPair(_cashOutBox, worthLabel), 2, null);
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutPassword()), 1, "rightLabel");
-            setWidget(row++, 1, _passwordBox = new PasswordTextBox());
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutPayPalEmail()), 1, "rightLabel");
-            setWidget(row++, 1, _paypalEmailBox = new TextBox());
-            _paypalEmailBox.setText(CShell.creds.accountName);
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutConfirmPayPalEmail()), 1, "rightLabel");
-            setWidget(row++, 1, _paypalEmailConfirmBox = new TextBox());
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutFirstName()), 1, "rightLabel");
-            setWidget(row++, 1, _firstNameBox = new TextBox());
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutLastName()), 1, "rightLabel");
-            setWidget(row++, 1, _lastNameBox = new TextBox());
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutPhoneNumber()), 1, "rightLabel");
-            setWidget(row++, 1, _phoneNumberBox = new TextBox());
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutStreetAddress()), 1, "rightLabel");
-            setWidget(row++, 1, _streetAddressBox = new TextBox());
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutCity()), 1, "rightLabel");
-            setWidget(row++, 1, _cityBox = new TextBox());
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutState()), 1, "rightLabel");
-            setWidget(row++, 1, _stateBox = new TextBox());
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutPostalCode()), 1, "rightLabel");
-            setWidget(row++, 1, _postalCodeBox = new TextBox());
-            setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutCountry()), 1, "rightLabel");
-            setWidget(row++, 1, _countryBox = new TextBox());
+
+            for (int ii = 0; ii < _labels.length; ii++) {
+                setText(row, 0, _msgs.fieldTemplate(_labels[ii]), 1, "rightLabel");
+                setWidget(row++, 1, _boxes[ii]);
+            }
+
+            _boxes[1].setText(CShell.creds.accountName);
 
             setWidget(row++, 2, _cashOutBtn = new Button(_msgs.blingCashOutButton()));
             new ClickCallback<BlingInfo>(_cashOutBtn) {
                 public boolean callService () {
                     // validate the data
                     int blingAmount = _cashOutBox.getValue().intValue();
-                    if (blingAmount > 1) {
+                    if (blingAmount < 1) {
                         MsoyUI.errorNear(_msgs.blingInvalidAmount(), _cashOutBox);
                         return false;
                     }
-                    CashOutBillingInfo info = getInfo();
-                    if (info == null) {
-                        return false; // error will have been reported
+                    // make sure none of our boxes are empty
+                    for (int ii = 0; ii < _boxes.length; ii++) {
+                        if (!requireField(_boxes[ii], _labels[ii])) {
+                            return false;
+                        }
                     }
-                    _moneysvc.requestCashOutBling(
-                        _model.memberId, blingAmount, CShell.frame.md5hex(_passwordBox.getText()),
-                        info, this);
+                    // make sure our paypal email matches
+                    if (!_boxes[1].getText().equals(_boxes[2].getText())) {
+                        MsoyUI.errorNear(_msgs.cashOutEmailsDontMatch(), _boxes[2]);
+                        return false;
+                    }
+                    CashOutBillingInfo info = new CashOutBillingInfo(
+                        _boxes[3].getText(), _boxes[4].getText(), _boxes[1].getText(),
+                        _boxes[5].getText(), _boxes[6].getText(), _boxes[7].getText(),
+                        _boxes[8].getText(), _boxes[9].getText(), _boxes[10].getText());
+                    String passwd = CShell.frame.md5hex(_boxes[0].getText());
+                    _moneysvc.requestCashOutBling(_model.memberId, blingAmount, passwd, info, this);
                     return true;
                 }
                 public boolean gotResult (BlingInfo result) {
@@ -232,43 +226,36 @@ public class BlingPanel extends FlowPanel
             };
         }
 
-        protected CashOutBillingInfo getInfo () {
-            if (!requireField(_passwordBox, _msgs.cashOutPassword()) ||
-                !requireField(_firstNameBox, _msgs.cashOutFirstName()) ||
-                !requireField(_lastNameBox, _msgs.cashOutLastName()) ||
-                !requireField(_paypalEmailBox, _msgs.cashOutPayPalEmail()) ||
-                !requireField(_phoneNumberBox, _msgs.cashOutPhoneNumber()) ||
-                !requireField(_streetAddressBox, _msgs.cashOutStreetAddress()) ||
-                !requireField(_cityBox, _msgs.cashOutCity()) ||
-                !requireField(_stateBox, _msgs.cashOutState()) ||
-                !requireField(_postalCodeBox, _msgs.cashOutPostalCode()) ||
-                !requireField(_countryBox, _msgs.cashOutCountry())) {
-                return null;
-            }
-            if (!_paypalEmailBox.getText().equals(_paypalEmailConfirmBox.getText())) {
-                MsoyUI.errorNear(_msgs.cashOutEmailsDontMatch(), _paypalEmailConfirmBox);
-                return null;
-            }
-            return new CashOutBillingInfo(
-                _firstNameBox.getText(), _lastNameBox.getText(), _paypalEmailBox.getText(),
-                _phoneNumberBox.getText(), _streetAddressBox.getText(), _cityBox.getText(),
-                _stateBox.getText(), _postalCodeBox.getText(),_countryBox.getText());
-        }
-
         protected NumberTextBox _cashOutBox;
-        protected PasswordTextBox _passwordBox;
-        protected TextBox _firstNameBox;
-        protected TextBox _lastNameBox;
-        protected TextBox _paypalEmailBox;
-        protected TextBox _paypalEmailConfirmBox;
-        protected TextBox _phoneNumberBox;
-        protected TextBox _streetAddressBox;
-        protected TextBox _cityBox;
-        protected TextBox _stateBox;
-        protected TextBox _postalCodeBox;
-        protected TextBox _countryBox;
-
         protected Button _cashOutBtn;
+
+        protected String[] _labels = new String[] {
+            _msgs.cashOutPassword(),
+            _msgs.cashOutPayPalEmail(),
+            _msgs.cashOutConfirmPayPalEmail(),
+            _msgs.cashOutFirstName(),
+            _msgs.cashOutLastName(),
+            _msgs.cashOutPhoneNumber(),
+            _msgs.cashOutStreetAddress(),
+            _msgs.cashOutCity(),
+            _msgs.cashOutState(),
+            _msgs.cashOutPostalCode(),
+            _msgs.cashOutCountry(),
+        };
+
+        protected TextBox[] _boxes = new TextBox[] {
+            new PasswordTextBox(),
+            new TextBox(),
+            new TextBox(),
+            new TextBox(),
+            new TextBox(),
+            new TextBox(),
+            new TextBox(),
+            new TextBox(),
+            new TextBox(),
+            new TextBox(),
+            new TextBox(),
+        };
     }
 
     protected Label _blingBalance;
