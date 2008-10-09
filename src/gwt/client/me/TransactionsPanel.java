@@ -18,6 +18,7 @@ import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.ui.StretchButton;
+import client.ui.TongueBox;
 import client.util.NaviUtil;
 import client.util.Link;
 
@@ -69,7 +70,7 @@ public class TransactionsPanel extends FlowPanel
         if (report == ReportType.BLING) {
             add(new BlingPanel(model));
         } else if (CShell.isSupport() && report == ReportType.COINS) {
-            add(new DeductPanel(memberId));
+            add(new TongueBox("Deduct coins", new DeductPanel(memberId)));
         }
     }
 

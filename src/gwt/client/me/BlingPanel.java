@@ -9,9 +9,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -28,15 +30,15 @@ import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
+import client.ui.TongueBox;
 import client.util.ServiceUtil;
 import client.util.StringUtil;
 import client.util.events.StatusChangeEvent;
 
-public class BlingPanel extends SmartTable
+public class BlingPanel extends FlowPanel
 {
     public BlingPanel (final MoneyTransactionDataModel model)
     {
-        setCellSpacing(10);
         setStyleName("bling");
         
         _model = model;
@@ -46,23 +48,29 @@ public class BlingPanel extends SmartTable
     protected void init ()
     {
         int row = 0;
-        setText(row++, 0, _msgs.blingHeader(), 3, "header");
-        setText(row, 0, _msgs.blingBalance(), 1, "rightLabel");
-        setWidget(row++, 1, _blingBalance = new Label());
-        setText(row, 0, _msgs.blingWorth(), 1, "rightLabel");
-        setWidget(row++, 1, _blingWorth = new Label());
-        setText(row++, 1, " ", 3, null);
-        setText(row++, 0, _msgs.exchangeBlingForBars(), 3, "header");
-        setText(row++, 0, _msgs.exchangeBlingDescription(), 3, null);
-        setText(row, 0, _msgs.exchangeAmount(), 1, "rightLabel");
-        setWidget(row, 1, _exchangeBox = new NumberTextBox(true));
-        setWidget(row++, 2, _exchangeBtn = new Button(_msgs.exchangeButton(), new ClickListener() {
+
+        SmartTable balance = new SmartTable(0, 10);
+        balance.setText(0, 0, _msgs.blingBalance(), 1, "rightLabel");
+        balance.setWidget(0, 1, _blingBalance = new Label());
+        balance.setText(1, 0, _msgs.blingWorth(), 1, "rightLabel");
+        balance.setWidget(1, 1, _blingWorth = new Label());
+
+        add(new TongueBox(_msgs.blingHeader(), balance));
+
+        SmartTable exchange = new SmartTable(0, 10);
+        exchange.setText(0, 0, _msgs.exchangeBlingDescription(), 3, null);
+        exchange.setText(1, 0, _msgs.exchangeAmount(), 1, "rightLabel");
+        exchange.setWidget(1, 1, _exchangeBox = new NumberTextBox(true));
+        exchange.setWidget(1, 2, _exchangeBtn = new Button(_msgs.exchangeButton(), new ClickListener() {
             public void onClick (Widget sender) {
                 doExchange(_model.memberId);
             }
         }));
-        setText(row++, 0, _msgs.blingCashOutHeader(), 3, "header");
-        _cashOutRow = row;
+
+        add(new TongueBox(_msgs.exchangeBlingForBars(), exchange));
+
+        _cashOutPanel = new SimplePanel();
+        add(new TongueBox(_msgs.blingCashOutHeader(), _cashOutPanel));
 
         _model.addBlingCallback(new AsyncCallback<BlingInfo>() {
             public void onFailure (Throwable caught) {
@@ -79,10 +87,11 @@ public class BlingPanel extends SmartTable
         _blingBalance.setText(Currency.BLING.format(result.bling));
         _blingWorth.setText(formatUSD((int)(result.worthPerBling * result.bling)));
         if (result.cashOut != null) {
-            setWidget(_cashOutRow, 0, new Label(_msgs.cashedOutBling(
+            HorizontalPanel row = new HorizontalPanel();
+            row.add(MsoyUI.createLabel(_msgs.cashedOutBling(
                 Currency.BLING.format(result.cashOut.blingAmount),
-                formatUSD(result.cashOut.blingWorth))), 3, "Success");
-            setWidget(_cashOutRow, 1, new Button(_cmsgs.cancel(), new ClickListener() {
+                formatUSD(result.cashOut.blingWorth)), "Success"));
+            row.add(new Button(_cmsgs.cancel(), new ClickListener() {
                 public void onClick (final Widget sender) {
                     _moneysvc.cancelCashOut(_model.memberId, "m.user_cancelled", new AsyncCallback<Void>() {
                         public void onFailure (Throwable cause) {
@@ -97,12 +106,13 @@ public class BlingPanel extends SmartTable
                     });
                 }
             }));
+            _cashOutPanel.setWidget(row);
         } else {
             if (result.bling >= result.minCashOutBling) {
-                setWidget(_cashOutRow, 0, new CashOutForm(result.worthPerBling), 3, "bling");
+                _cashOutPanel.setWidget(new CashOutForm(result.worthPerBling));
             } else {
-                setWidget(_cashOutRow, 0, new Label(_msgs.cashOutBelowMinimum(
-                    Float.toString(result.minCashOutBling/100.0f))), 3, "Error");
+                _cashOutPanel.setWidget(MsoyUI.createLabel(_msgs.cashOutBelowMinimum(
+                    Float.toString(result.minCashOutBling/100.0f)), "Error"));
             }
             _cashedOutBling.setText("");
         }
@@ -290,7 +300,7 @@ public class BlingPanel extends SmartTable
     protected NumberTextBox _exchangeBox;
     protected Button _exchangeBtn;
     
-    protected int _cashOutRow;
+    protected SimplePanel _cashOutPanel;
 
     protected MoneyTransactionDataModel _model;
     
