@@ -25,7 +25,10 @@ public class PeoplePage extends Page
     {
         String action = args.get(0, "");
         if (action.equals("search")) {
-            displaySearch(args);
+            SearchPanel search = (getContent() instanceof SearchPanel) ?
+                (SearchPanel)getContent() : new SearchPanel();
+            search.setArgs(args);
+            setContent(search);
 
         } else if (args.get(0, 0) != 0) {
             setContent(_msgs.profileTitle(), new ProfilePanel(args.get(0, 0)));
@@ -90,18 +93,6 @@ public class PeoplePage extends Page
     {
         return Pages.PEOPLE;
     }
-
-    protected void displaySearch (Args args)
-    {
-        if (_search == null) {
-            _search = new SearchPanel();
-        }
-        _search.setArgs(args);
-        setContent(_search);
-    }
-
-    protected int _memberId = -1;
-    protected SearchPanel _search;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }
