@@ -151,7 +151,7 @@ public class GalleryViewPanel extends FlowPanel
         // this will be filled with the full size image
         _currentPhoto = new GalleryPhotoPanel(galleryData);
 
-        add(_galleryView = new FlowPanel());
+        add(_galleryView = MsoyUI.createFlowPanel("GalleryViewContainer"));
 
         _galleryView.add(new GalleryDetailPanel(galleryData));
 

@@ -59,10 +59,10 @@ public class GalleryDetailEditPanel extends AbsolutePanel
                     PayloadWidget<?> droppings = (PayloadWidget<?>) context.draggable;
                     if (droppings.getPayload() instanceof Photo) {
                         Photo image = (Photo) droppings.getPayload();
-                        gallery.thumbMedia = image.thumbMedia;
+                        gallery.thumbMedia = image.getThumbnailMedia();
                         galleryData.hasUnsavedChanges = true;
                         thumbnailPanel.clear();
-                        thumbnailPanel.add(MediaUtil.createMediaView(image.thumbMedia,
+                        thumbnailPanel.add(MediaUtil.createMediaView(image.getThumbnailMedia(),
                             MediaDesc.THUMBNAIL_SIZE));
                     }
                 }

@@ -98,7 +98,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         // add editable gallery detail panel
         final GalleryDetailEditPanel detailPanel = new GalleryDetailEditPanel(_galleryData,
             _dragController);
-        add(detailPanel, 0, 0);
+        add(detailPanel, 0, 10);
 
         // add "save" and "cancel" buttons
         PushButton saveButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
@@ -149,7 +149,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         });
         DropPanel<Photo> dropPanel = new DropPanel<Photo>(_dragController, dropModel) {
             @Override protected Widget createWidget (Photo photo) {
-                return new CenteredBox(MediaUtil.createMediaView(photo.thumbMedia,
+                return new CenteredBox(MediaUtil.createMediaView(photo.getThumbnailMedia(),
                     MediaDesc.THUMBNAIL_SIZE), "ThumbnailImage");
             }
         };
@@ -324,7 +324,8 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         protected Widget createWidget (Photo photo) {
             PayloadWidget<Photo> payload = new PayloadWidget<Photo>(
                 this, new CenteredBox(MediaUtil.createMediaView(
-                    photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE), "ThumbnailImage"), photo);
+                    photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE),
+                "ThumbnailImage"), photo);
             _dragController.makeDraggable(payload);
             return payload;
         }

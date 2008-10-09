@@ -35,6 +35,9 @@ public class Photo extends Item
     @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
+        if (furniMedia == null && thumbMedia == null) {
+            return photoMedia;
+        }
         return (furniMedia != null) ? furniMedia : thumbMedia;
     }
 
