@@ -44,7 +44,8 @@ public class TransactionsPanel extends FlowPanel
         blurb.setWidget(0, 1, billing);
         blurb.getCellFormatter().setStyleName(0, 1, "Billing");
 
-        add(blurb);
+        // we use titleless tongue boxes here to make the indentation work
+        add(new TongueBox(null, blurb));
 
         ReportType report = ReportType.fromIndex(reportIndex);
         // The data model is used in both the balance panel and the bling panel.
@@ -63,12 +64,13 @@ public class TransactionsPanel extends FlowPanel
         });
         reportBox.setSelectedIndex(reportIndex-1);
 
-        add((report == ReportType.CREATOR) ?
-            new IncomePanel(model, reportBox) : new BalancePanel(model, reportBox));
+        // we use titleless tongue boxes here to make the indentation work
+        add(new TongueBox(null, (report == ReportType.CREATOR) ?
+            new IncomePanel(model, reportBox) : new BalancePanel(model, reportBox)));
 
-        // Extra bits
+        // extra bits
         if (report == ReportType.BLING) {
-            add(new BlingPanel(model));
+            add(new BlingPanel(model)); // does its own tongue-boxing
         } else if (CShell.isSupport() && report == ReportType.COINS) {
             add(new TongueBox("Deduct coins", new DeductPanel(memberId)));
         }

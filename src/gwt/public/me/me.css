@@ -426,12 +426,7 @@
    MONEY / TRANSACTIONS
 -------------------------------------*/
 
-.transactions {
-  padding: 15px;
-}
-
 .transactions .Blurb {
-  margin-bottom: 15px;
   width: 100%;
 }
 
