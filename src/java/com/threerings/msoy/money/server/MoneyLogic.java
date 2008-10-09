@@ -555,7 +555,9 @@ public class MoneyLogic
 
         int total = _repo.getExchangeDataCount();
 
-        return new ExchangeStatusData(total, page, _exchange.getRate(), _repo.getBarPool());
+        return new ExchangeStatusData(total, page,
+            _exchange.getRate(), RuntimeConfig.server.targetExchangeRate,
+            _repo.getBarPool(), MoneyExchange.BAR_POOL_TARGET);
     }
 
     /**

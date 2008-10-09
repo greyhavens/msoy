@@ -32,11 +32,15 @@ public class ExchangePanel extends VerticalPanel
         HorizontalPanel hpan = new HorizontalPanel();
         hpan.add(MsoyUI.createLabel("current Rate: ", null));
         hpan.add(_rate = new Label());
+        hpan.add(MsoyUI.createLabel("target Rate: ", null));
+        hpan.add(_targetRate = new Label());
         add(hpan);
 
         hpan = new HorizontalPanel();
         hpan.add(MsoyUI.createLabel("bar pool balance: ", null));
         hpan.add(_barPool = new Label());
+        hpan.add(MsoyUI.createLabel("target bar pool: ", null));
+        hpan.add(_targetBarPool = new Label());
         add(hpan);
 
         add(new RecentExchanges(new ExchangeDataDataModel()));
@@ -71,7 +75,9 @@ public class ExchangePanel extends VerticalPanel
             super.onSuccess(result, callback);
 
             _rate.setText(String.valueOf(result.rate));
+            _targetRate.setText(String.valueOf(result.targetRate));
             _barPool.setText(String.valueOf(result.barPool));
+            _targetBarPool.setText(String.valueOf(result.targetBarPool));
         }
     }
 
@@ -123,6 +129,8 @@ public class ExchangePanel extends VerticalPanel
 
     protected Label _rate;
     protected Label _barPool;
+    protected Label _targetRate;
+    protected Label _targetBarPool;
 
     protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
         ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);
