@@ -108,7 +108,7 @@ public enum Currency
     }
 
     /**
-     * Used to display just the name of the currency.
+     * Used to display just the name of the currency. "Coins", "Bars"
      */
     public String getLabel ()
     {
@@ -116,12 +116,8 @@ public enum Currency
     }
 
     /**
-     * Used when translating a currency with a value:
-     * MessageBundle.get(currency.getKey(), amount) == "5 bars", or "1 bar"
+     * Used when translating a currency name as part of a larger message: "coins", "bars".
      */
-    // TODO: because we want to use format(), too, and that will obliterate the
-    // plurality of the argument. So I'll probably break down and have separate
-    // m.bar and m.bars translations. grumb.
     public String getKey ()
     {
         return "m." + toString().toLowerCase();
