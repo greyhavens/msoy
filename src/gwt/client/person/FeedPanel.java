@@ -291,11 +291,11 @@ public class FeedPanel extends TongueBox
                 return message.data[0];
 
             case 105: // FRIEND_WON_BADGE
-                String badgeName;
                 int badgeCode = Integer.parseInt(message.data[0]);
                 int badgeLevel = Integer.parseInt(message.data[1]);
                 String badgeHexCode = Integer.toHexString(badgeCode);
-                badgeName = _dmsgs.get("badge_" + badgeHexCode, Badge.getLevelName(badgeLevel));
+                String badgeName =
+                    _dmsgs.get("badge_" + badgeHexCode, Badge.getLevelName(badgeLevel));
 
                 int memberId = ((FriendFeedMessage)message).friend.getMemberId();
                 return Link.createHtml(badgeName, Pages.ME, Args.compose("passport", memberId));
