@@ -13,6 +13,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 import com.threerings.msoy.server.MsoyEvents.Experience.Type;
@@ -100,10 +101,10 @@ public class MsoyEventLogger
         post(new MsoyEvents.CurrentMemberStats(serverName, total, active, guests, viewers));
     }
 
-    public void flowTransaction (UserAction action, int deltaFlow, int newTotal)
+    public void moneyTransaction (UserAction action, Currency currency, int amountDelta)
     {
-        post(new MsoyEvents.FlowTransaction(action.memberId, action.type.getNumber(), deltaFlow,
-            newTotal));
+        post(new MsoyEvents.FlowTransaction(
+            action.memberId, action.type.getNumber(), currency, amountDelta));
     }
 
     public void itemPurchased (int memberId, byte itemType, int itemId, Currency currency,
@@ -124,7 +125,7 @@ public class MsoyEventLogger
     public void userLoggedIn (int memberId, String tracker, boolean firstLogin, long createdOn,
         String sessionToken)
     {
-        if (memberId != 0) {
+        if (!MemberName.isViewer(memberId)) {
             post(new MsoyEvents.Experience(Type.ACCOUNT_LOGIN, memberId, tracker));
         }
         post(new MsoyEvents.Login(memberId, firstLogin, sessionToken, createdOn));
@@ -169,10 +170,12 @@ public class MsoyEventLogger
         post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
     }
 
-    public void roomEntered (int playerId, boolean isWhirled, String tracker)
+    public void roomEntered (int memberId, boolean isWhirled, String tracker)
     {
-        Type type = isWhirled ? Type.VISIT_WHIRLED : Type.VISIT_ROOM;
-        post(new MsoyEvents.Experience(type, playerId, tracker));
+        if (!MemberName.isViewer(memberId)) {
+            Type type = isWhirled ? Type.VISIT_WHIRLED : Type.VISIT_ROOM;
+            post(new MsoyEvents.Experience(type, memberId, tracker));
+        }
     }
 
     public void roomLeft (int playerId, int sceneId, boolean isWhirled, int secondsInRoom,

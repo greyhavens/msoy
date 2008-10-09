@@ -118,15 +118,17 @@ public class MsoyEvents
         @Field final public int memberId;
         @Field final public int actionType;
         @Field final public int deltaFlow;
-        @Field final public int newtotal;
+        @Field final public int deltaBars;
+        @Field final public int deltaBling;
 
-        public FlowTransaction (int memberId, int actionType, int deltaFlow, int newtotal)
+        public FlowTransaction (int memberId, int actionType, Currency currency, int amountDelta)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
             this.actionType = actionType;
-            this.deltaFlow = deltaFlow;
-            this.newtotal = newtotal;
+            this.deltaFlow = (currency == Currency.COINS) ? amountDelta : 0;
+            this.deltaBars = (currency == Currency.BARS) ? amountDelta : 0;
+            this.deltaBling = (currency == Currency.BLING) ? amountDelta : 0;
         }
     }
 

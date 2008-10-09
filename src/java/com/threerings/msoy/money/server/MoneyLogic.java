@@ -61,7 +61,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Facade for all money (coins, bars, and bling) transactions. This is the starting place to
  * access these services.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */
@@ -383,15 +383,15 @@ public class MoneyLogic
             memberId, Currency.BLING, amount,
             TransactionType.CASHED_OUT, MessageBundle.tcompose("m.cashed_out", payment), null);
         _repo.commitBlingCashOutRequest(memberId, amount);
-        
+
         // if that didn't throw a NotEnoughMoneyException, we're good to go.
         _nodeActions.moneyUpdated(deductTx);
     }
-    
+
     /**
      * Cancels a request to cash out bling.  This is done by support / admins only when there are
      * cases when they cannot cash out or suspect illicit activity.
-     * 
+     *
      * @param memberId The member whose request should be canceled.
      * @param reason A reason for canceling the request, to be included on the transaction log for
      * the user.
@@ -400,12 +400,12 @@ public class MoneyLogic
     {
         _repo.cancelBlingCashOutRequest(memberId, reason);
     }
-    
+
     /**
      * Requests a bling cash out for a particular user.  This will not immediately deduct any bling.
      * The user must have the specified amount of bling currently in their account, and they must
      * not already be waiting for a cash out request to be fulfilled.
-     * 
+     *
      * @param memberId ID of the member making the request.
      * @param amount Amount of bling (NOT centibling) to cash out.
      * @throws NotEnoughMoneyException The user does not currently have the amount of bling in their
@@ -419,14 +419,14 @@ public class MoneyLogic
         throws NotEnoughMoneyException, AlreadyCashedOutException, BelowMinimumBlingException
     {
         MemberAccountRecord account = _repo.load(memberId);
-        
+
         // If the user does not have the minimum amount required to cash out bling, don't allow
         // them to proceed
         if (amount < RuntimeConfig.server.minimumBlingCashOut) {
-            throw new BelowMinimumBlingException(memberId, amount, 
+            throw new BelowMinimumBlingException(memberId, amount,
                 RuntimeConfig.server.minimumBlingCashOut);
         }
-        
+
         // Ensure the account has the requested amount of bling and that it is currently not
         // requesting a cash out.
         int blingAmount = amount * 100;
@@ -436,11 +436,11 @@ public class MoneyLogic
         if (_repo.getCurrentCashOutRequest(memberId) != null) {
             throw new AlreadyCashedOutException(memberId, account.cashOutBling);
         }
-        
+
         // Add a cash out record for this member.
-        BlingCashOutRecord cashOut = _repo.createCashOut(memberId, blingAmount, 
+        BlingCashOutRecord cashOut = _repo.createCashOut(memberId, blingAmount,
             RuntimeConfig.server.blingWorth, info);
-        
+
         return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, BlingCashOutRecord>(
                 account, cashOut));
     }
@@ -467,7 +467,7 @@ public class MoneyLogic
             memberId, Currency.BARS, blingAmount,
             TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null);
         _nodeActions.moneyUpdated(accumTx);
-        
+
         return new BlingExchangeResult(accumTx.balance, getBlingInfo(memberId));
     }
 
@@ -480,7 +480,7 @@ public class MoneyLogic
         return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, BlingCashOutRecord>(
                 _repo.load(memberId), _repo.getCurrentCashOutRequest(memberId)));
     }
-    
+
     /**
      * Finds all members currently requesting bling cash outs and returns bling information for
      * each of them.
@@ -488,7 +488,7 @@ public class MoneyLogic
     public Map<Integer, CashOutInfo> getBlingCashOutRequests ()
     {
         List<BlingCashOutRecord> accounts = _repo.getAccountsCashingOut();
-        
+
         // First transform List<CashOutRecord> into Map<Integer, CashOutRecord>, then
         // transform into Map<Integer, CashOutInfo>.
         return transformMap(Maps.uniqueIndex(accounts, new Function<BlingCashOutRecord, Integer>() {
@@ -651,21 +651,9 @@ public class MoneyLogic
         _userActionRepo.logUserAction(action);
 
         // record this to panopticon for the greater glory of our future AI overlords
-        switch (tx.currency) {
-        case COINS:
-            _eventLog.flowTransaction(action, tx.amount, tx.balance);
-            break;
-
-        case BARS: // TODO
-            log.info("TODO: log bars to panopticon");
-            break;
-
-        case BLING: // TODO
-            log.info("TODO: log bling to panopticon");
-            break;
-        }
+        _eventLog.moneyTransaction(action, tx.currency, tx.amount);
     }
-    
+
     /**
      * Converts the amount of pennies into a string to display to the user as a valid currency.
      * Note: there are some other utilities around to do this, but they're either in a different
@@ -680,11 +668,11 @@ public class MoneyLogic
         return "USD $" + NumberFormat.getNumberInstance().format(dollars) + '.' +
             (cents < 10 ? '0' : "") + cents;
     }
-    
+
     /**
      * Transforms the values in a map from one type to another, as dictated by the given function.
      * I'm surprised this isn't currently in Google collections...
-     * 
+     *
      * @param <K> Type of the map's key.
      * @param <V1> Type of the source values.
      * @param <V2> Type of the destination values.
@@ -707,12 +695,12 @@ public class MoneyLogic
         TO_BLING_INFO =
         new Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>() {
             public BlingInfo apply (Tuple<MemberAccountRecord, BlingCashOutRecord> records) {
-                return new BlingInfo(records.left.bling, RuntimeConfig.server.blingWorth, 
-                    RuntimeConfig.server.minimumBlingCashOut * 100, 
+                return new BlingInfo(records.left.bling, RuntimeConfig.server.blingWorth,
+                    RuntimeConfig.server.minimumBlingCashOut * 100,
                     records.right == null ? null : records.right.toInfo());
             }
         };
-        
+
     /** A Function that transforms a CashOutRecord into a CashOutInfo. */
     protected static Function<BlingCashOutRecord, CashOutInfo> TO_CASH_OUT_INFO =
         new Function<BlingCashOutRecord, CashOutInfo>() {
