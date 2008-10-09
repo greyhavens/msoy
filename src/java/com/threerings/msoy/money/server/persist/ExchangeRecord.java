@@ -22,7 +22,8 @@ import com.threerings.msoy.money.data.all.ExchangeData;
 /**
  * Records money exchanges.
  */
-@Entity
+@Entity(indices = {
+    @Index(name = "ixTimestamp", fields = { ExchangeRecord.TIMESTMAP }) })
 public class ExchangeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
