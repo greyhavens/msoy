@@ -129,10 +129,10 @@ public class DoListItemPopup extends VerticalPanel
             // TODO: You know what this needs? A mockup
             if (CShell.barsEnabled()) {
                 _currencyBox = new ListBox();
-                for (int i=0; i<CURRENCY_LABELS.length; ++i) {
-                    _currencyBox.addItem(CURRENCY_LABELS[i]);
+                for (int i=0; i<LISTABLE_CURRENCIES.length; ++i) {
+                    _currencyBox.addItem(_dmsgs.xlate(LISTABLE_CURRENCIES[i].getKey()));
                     if (listing != null &&
-                        CURRENCY_VALUES[i] == listing.quote.getListedCurrency()) {
+                        LISTABLE_CURRENCIES[i] == listing.quote.getListedCurrency()) {
                         _currencyBox.setSelectedIndex(i);
                     }
                 }
@@ -237,7 +237,7 @@ public class DoListItemPopup extends VerticalPanel
     protected Currency getCurrency ()
     {
         return (_currencyBox == null) ? Currency.COINS :
-            CURRENCY_VALUES[_currencyBox.getSelectedIndex()];
+            LISTABLE_CURRENCIES[_currencyBox.getSelectedIndex()];
     }
 
     protected int getCost ()
@@ -266,8 +266,5 @@ public class DoListItemPopup extends VerticalPanel
     protected static final int DEFAULT_COIN_COST = 100;
     protected static final int DEFAULT_SALES_TARGET = 500;
 
-    protected static final Currency[] CURRENCY_VALUES = { Currency.COINS, Currency.BARS };
-    protected static final String[] CURRENCY_LABELS = {
-        _imsgs.currencyCoins(), _imsgs.currencyBars()
-    };
+    protected static final Currency[] LISTABLE_CURRENCIES = { Currency.COINS, Currency.BARS };
 }
