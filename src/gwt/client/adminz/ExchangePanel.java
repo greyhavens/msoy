@@ -31,12 +31,12 @@ public class ExchangePanel extends SmartTable
         super("exchangePanel", 0, 10);
 
         int row = 0;
-        setText(row++, 0, "Current rate:");
-        setText(row++, 0, "Target rate:");
-        setText(row++, 0, "Bar pool balance:");
-        setText(row++, 0, "Target bar pool:");
+        setText(row, 0, "Current rate:");
+        setText(row++, 2, "Target rate:");
+        setText(row, 0, "Bar pool balance:");
+        setText(row++, 2, "Target bar pool:");
 
-        addWidget(new RecentExchanges(new ExchangeDataDataModel()), 2, null);
+        addWidget(new RecentExchanges(new ExchangeDataDataModel()), 4, null);
     }
 
     protected class ExchangeDataDataModel
@@ -68,10 +68,10 @@ public class ExchangePanel extends SmartTable
             super.onSuccess(result, callback);
 
             int row = 0;
-            setText(row++, 1, String.valueOf(result.rate));
-            setText(row++, 1, String.valueOf(result.targetRate));
-            setText(row++, 1, String.valueOf(result.barPool));
-            setText(row++, 1, String.valueOf(result.targetBarPool));
+            setText(row, 1, String.valueOf(result.rate));
+            setText(row++, 3, String.valueOf(result.targetRate));
+            setText(row, 1, String.valueOf(result.barPool));
+            setText(row++, 3, String.valueOf(result.targetBarPool));
         }
     }
 
