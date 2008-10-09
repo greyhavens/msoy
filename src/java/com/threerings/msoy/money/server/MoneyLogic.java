@@ -575,6 +575,7 @@ public class MoneyLogic
      */
     public void init ()
     {
+        _exchange.init();
         _msgReceiver.start();
 
         // Bling distributor should only be started if bars are enabled.

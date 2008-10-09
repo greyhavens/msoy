@@ -50,6 +50,7 @@ import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
 
+import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 
 import static com.threerings.msoy.Log.log;
@@ -329,7 +330,33 @@ public class MoneyRepository extends DepotRepository
     {
         return loadAll(MoneyTransactionRecord.class, ids);
     }
-    
+
+    /**
+     * Get the number of bars in the bar pool.
+     */
+    public int getBarPool ()
+    {
+        BarPoolRecord bpRec = load(BarPoolRecord.class, BarPoolRecord.KEY);
+        if (bpRec == null) {
+            bpRec = createBarPoolRecord();
+        }
+        return bpRec.barPool;
+    }
+
+    /**
+     * Adjust the bar pool as a result of an exchange.
+     *
+     * @param delta a positive number if bars were used to purchase coin-listed stuff
+     *              a negative number if coins were used to purchase bar-listed stuff.
+     */
+    public void adjustBarPool (int delta)
+    {
+        Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
+            .put(BarPoolRecord.BAR_POOL, new Arithmetic.Add(BarPoolRecord.BAR_POOL_C, delta))
+            .build();
+        updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, fieldValues);
+    }
+
     /**
      * Loads the current money configuration record, optionally locking on the record.
      * 
@@ -461,6 +488,28 @@ public class MoneyRepository extends DepotRepository
         return findAll(BlingCashOutRecord.class, new Where(
             new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED_C)));
     }
+
+    /**
+     * Create the singleton BarPoolRecord in the database.
+     */
+    protected BarPoolRecord createBarPoolRecord ()
+    {
+        BarPoolRecord bpRec = new BarPoolRecord();
+        bpRec.id = BarPoolRecord.RECORD_ID;
+        bpRec.barPool = MoneyExchange.BAR_POOL_TARGET;
+        try {
+            insert(bpRec);
+            // log a warning, hopefully we ever only do this once.
+            log.warning("Populated initial exchange bar pool");
+        } catch (Exception e) {
+            // hmm, beaten to the punch?
+            bpRec = load(BarPoolRecord.class, BarPoolRecord.KEY);
+            if (bpRec == null) {
+                throw new DatabaseException("What in the whirled? Can't populate BarPoolRecord.");
+            }
+        }
+        return bpRec;
+    }
     
     /** Cache invalidator that invalidates a member's current cash out record. */
     protected static class ActiveCashOutInvalidator extends TraverseWithFilter<BlingCashOutRecord>
@@ -505,5 +554,6 @@ public class MoneyRepository extends DepotRepository
         classes.add(MoneyTransactionRecord.class);
         classes.add(MoneyConfigRecord.class);
         classes.add(BlingCashOutRecord.class);
+        classes.add(BarPoolRecord.class);
     }
 }
