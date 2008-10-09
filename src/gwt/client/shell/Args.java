@@ -6,6 +6,8 @@ package client.shell;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+
 /**
  * Used to parse the arguments supplied to the page.
  */
@@ -147,6 +149,17 @@ public class Args
      */
     public void setToken (String token)
     {
+        // enforce a lack of upper case letters in our URLs
+        if (DeploymentConfig.devDeployment) {
+            for (int ii = 0; ii < token.length(); ii++) {
+                if (Character.isUpperCase(token.charAt(ii))) {
+                    CShell.log("Rejecting token with upper case letters '" + token + "'.");
+                    token = "";
+                    break;
+                }
+            }
+        }
+
         do {
             int didx = token.indexOf(ARG_SEP);
             if (didx == -1) {
