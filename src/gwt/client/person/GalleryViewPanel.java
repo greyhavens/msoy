@@ -222,6 +222,17 @@ public class GalleryViewPanel extends FlowPanel
         _galleryView.add(photoList);
     }
 
+    @Override // from Widget
+    protected void onUnload ()
+    {
+        super.onUnload();
+
+        // stop any running slideshow when we're removed from the DOM
+        if (_currentPhoto != null) {
+            _currentPhoto.stopSlideshow();
+        }
+    }
+
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
     protected static final GalleryServiceAsync _gallerysvc = (GalleryServiceAsync)
         ServiceUtil.bind(GWT.create(GalleryService.class), GalleryService.ENTRY_POINT);

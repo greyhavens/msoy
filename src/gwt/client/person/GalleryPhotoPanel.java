@@ -143,7 +143,6 @@ public class GalleryPhotoPanel extends FlowPanel
 
         // controls for when slideshow is running (or paused)
         if (_slideshowTimer != null) {
-
             final int leftOffset = 380;
             // play and pause buttons swap when clicked
             _playButton = MsoyUI.createPushButton(
@@ -219,6 +218,17 @@ public class GalleryPhotoPanel extends FlowPanel
     }
 
     /**
+     * Halts any active slideshow.
+     */
+    protected void stopSlideshow ()
+    {
+        if (_slideshowTimer != null) {
+            _slideshowTimer.cancel();
+            _slideshowTimer = null;
+        }
+    }
+
+    /**
      * Display the next image in the gallery and schedule another change in 5 seconds.
      */
     protected void advanceSlideshow ()
@@ -231,17 +241,6 @@ public class GalleryPhotoPanel extends FlowPanel
             }
         }
         // timer will also be rescheduled after the new image loads
-    }
-
-    /**
-     * Halt the slideshow and return to the list of photos.
-     */
-    protected void stopSlideshow ()
-    {
-        if (_slideshowTimer != null) {
-            _slideshowTimer.cancel();
-            _slideshowTimer = null;
-        }
     }
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);

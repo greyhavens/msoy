@@ -40,22 +40,26 @@ public class PeoplePage extends Page
             setContent(_msgs.galleriesTitle(), new GalleryPanel(args.get(1, CShell.getMemberId())));
 
         } else if (action.equals(GalleryActions.VIEW)) {
-            setContent(_msgs.galleriesTitle(), _galleryViewPanel = new GalleryViewPanel());
-            _galleryViewPanel.setArgs(args, false);
+            GalleryViewPanel panel = new GalleryViewPanel();
+            setContent(_msgs.galleriesTitle(), panel);
+            panel.setArgs(args, false);
 
         } else if (action.equals(GalleryActions.VIEW_PROFILE)) {
             // unlike VIEW_PHOTO_ACTION, this will always refresh the gallery data
-            setContent(_msgs.galleriesTitle(), _galleryViewPanel = new GalleryViewPanel());
-            _galleryViewPanel.setArgs(args, true);
+            GalleryViewPanel panel = new GalleryViewPanel();
+            setContent(_msgs.galleriesTitle(), panel);
+            panel.setArgs(args, true);
 
         } else if (action.equals(GalleryActions.VIEW_PHOTO)) {
             // keep the gallery if one is already there
-            if (_galleryViewPanel == null) {
-                _galleryViewPanel = new GalleryViewPanel();
+            GalleryViewPanel panel = (getContent() instanceof GalleryViewPanel) ?
+                (GalleryViewPanel)getContent() : new GalleryViewPanel();
+            // don't reset it as content if it's already set as it needs to do special things when
+            // it is really removed from the DOM because it's going away
+            if (!panel.isAttached()) {
+                setContent(_msgs.galleriesTitle(), panel);
             }
-            setContent(_msgs.galleriesTitle(), _galleryViewPanel);
-            // this will only reload gallery data if a different gallery is being viewed
-            _galleryViewPanel.setArgs(args, false);
+            panel.setArgs(args, false);
 
         } else if (CShell.isGuest()) {
             setContent(new PeoplePanel());
@@ -98,7 +102,6 @@ public class PeoplePage extends Page
 
     protected int _memberId = -1;
     protected SearchPanel _search;
-    protected GalleryViewPanel _galleryViewPanel;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }
