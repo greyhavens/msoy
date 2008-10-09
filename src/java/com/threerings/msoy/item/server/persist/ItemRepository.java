@@ -290,13 +290,13 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> findOriginalItems (int ownerId, String query)
     {
-        // buildSearchStringClause requires a left join on CatalogRecord
-        Join joinClause = new Join(getItemClass(), ItemRecord.ITEM_ID, getCatalogClass(),
-            CatalogRecord.LISTED_ITEM_ID);
-        joinClause.setType(Join.Type.LEFT_OUTER);
+        // original items only match on the text and creator (they cannot be tagged)
+        List<SQLOperator> matches = Lists.newArrayList();
+        addTextMatchClause(matches, query);
+        addCreatorMatchClause(matches, query);
         return findAll(getItemClass(), new Where(
             new And(new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
-                    buildSearchStringClause(query))), joinClause);
+                    makeSearchClause(matches))));
     }
 
     /**
@@ -319,13 +319,14 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> findClonedItems (int ownerId, String query)
     {
-        // buildSearchStringClause requires a left join on CatalogRecord
-        Join joinClause = new Join(getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID,
-            getCatalogClass(), CatalogRecord.LISTED_ITEM_ID);
-        joinClause.setType(Join.Type.LEFT_OUTER);
+        // cloned items can match on their text, creator or tags
+        List<SQLOperator> matches = Lists.newArrayList();
+        addTextMatchClause(matches, query);
+        addCreatorMatchClause(matches, query);
+        addTagMatchClause(matches, getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), query);
         return loadClonedItems(new Where(
             new And(new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
-                    buildSearchStringClause(query))), joinClause);
+                    makeSearchClause(matches))));
     }
 
     /**
@@ -1093,25 +1094,32 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Return an sql operator representing a search for the given string in the item's
-     * name, description, tags and creator name.
-     *
-     * an item matches the search query either if there is a full-text match against name
-     * and/or description, or if one or more of the search words match one or more of the
-     * item's tags; this is accomplished with an 'exists' subquery
+     * Adds a full-text match on item name and description to the supplied list.
      */
-    protected SQLOperator buildSearchStringClause (String search)
+    protected void addTextMatchClause (List<SQLOperator> matches, String search)
     {
-        List<SQLOperator> matches = Lists.newArrayList();
         // search item name and description
         matches.add(new FullTextMatch(getItemClass(), ItemRecord.FTS_ND, search));
+    }
 
+    /**
+     * Adds a match on the name of the creator to the supplied list.
+     */
+    protected void addCreatorMatchClause (List<SQLOperator> matches, String search)
+    {
         // look up the first 100 members whose name matches the search term exactly
         List<Integer> memberIds = _memberRepo.findMembersByDisplayName(search, true, 100);
         if (memberIds.size() > 0) {
             matches.add(new In(getItemColumn(ItemRecord.CREATOR_ID), memberIds));
         }
+    }
 
+    /**
+     * Searches for any tags that match the search string and matches all catalog master items that
+     * are tagged with those tags.
+     */
+    protected void addTagMatchClause (List<SQLOperator> matches, ColumnExp itemColumn, String search)
+    {
         // to match tags we first have to split our search up into words
         String[] searchTerms = search.toLowerCase().split("\\W+");
         if (searchTerms.length > 0 && searchTerms[0].length() == 0) {
@@ -1129,13 +1137,18 @@ public abstract class ItemRepository<T extends ItemRecord>
         // build a query to check tags if one or more tags exists
         if (tagIds.size() > 0) {
             Where where = new Where(
-                new And(new Equals(getTagColumn(TagRecord.TARGET_ID),
-                                   getCatalogColumn(CatalogRecord.LISTED_ITEM_ID)),
+                new And(new Equals(getTagColumn(TagRecord.TARGET_ID), itemColumn),
                         new In(getTagColumn(TagRecord.TAG_ID), tagIds)));
             matches.add(new Exists<TagRecord>(new SelectClause<TagRecord>(
                 getTagRepository().getTagClass(), new String[] { TagRecord.TAG_ID }, where)));
         }
+    }
 
+    /**
+     * Composes the supplied list of search match clauses into a single operator.
+     */
+    protected SQLOperator makeSearchClause (List<SQLOperator> matches)
+    {
         // if we ended up with multiple match clauses, OR them all together
         return (matches.size() == 1) ? matches.get(0) : new Or(matches);
     }
@@ -1148,8 +1161,13 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
 
+        // add our search clauses if we have a search string
         if (search != null && search.length() > 0) {
-            whereBits.add(buildSearchStringClause(search));
+            List<SQLOperator> matches = Lists.newArrayList();
+            addTextMatchClause(matches, search);
+            addCreatorMatchClause(matches, search);
+            addTagMatchClause(matches, getCatalogColumn(CatalogRecord.LISTED_ITEM_ID), search);
+            whereBits.add(makeSearchClause(matches));
         }
 
         if (tag > 0) {
