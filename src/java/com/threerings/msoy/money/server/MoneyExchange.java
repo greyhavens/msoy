@@ -17,8 +17,6 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
  * Handles exchanges between coins and bars as part of a purchase.
  */
 // TODO: register as a shutdowner, stop recalculation???
-// TODO: return the current rate inside the Quote, use to halt sales on quotes that have
-// changed too much?
 @Singleton
 public class MoneyExchange
 {
@@ -34,24 +32,32 @@ public class MoneyExchange
     }
 
     /**
+     * Get the current exchange rate, in terms of how many coins 1 bar is worth.
+     */
+    public float getRate ()
+    {
+        return _rate;
+    }
+
+    /**
      * Secure a price quote based on the current exchange rate.
      */
     public PriceQuote secureQuote (Currency listedCurrency, int amount)
     {
-        int exRate = (int) Math.ceil(_exchangeRate);
+        int exRate = (int) Math.ceil(_rate);
         switch (listedCurrency) {
         case COINS:
             // NOTE: exchange rate is a floating point number, but we round it up to the
             // nearest integer first and then divide, then round the result up to the nearest
             // int to get the bar amount.
             int bars = (int) Math.ceil(amount / (float)exRate);
-            return new PriceQuote(listedCurrency, amount, bars, (bars * exRate) - amount);
+            return new PriceQuote(listedCurrency, amount, bars, (bars * exRate) - amount, _rate);
 
         case BARS:
             // NOTE: Currently I track the exchange rate as a floating point number.
             // To generate the coin quote, we round-up the # of coins in a bar first, then
             // multiply by the number of bars.
-            return new PriceQuote(listedCurrency, exRate * amount, amount, 0);
+            return new PriceQuote(listedCurrency, exRate * amount, amount, 0, _rate);
 
         default:
             throw new RuntimeException("Error: listing not in bars or coins?");
@@ -78,15 +84,6 @@ public class MoneyExchange
     }
 
     /**
-     * Get the current exchange rate, in terms of how many coins 1 bar is worth.
-     */
-    // depending on our implementation, maybe we end up exposing this..
-    protected float getExchangeRate ()
-    {
-        return _exchangeRate;
-    }
-
-    /**
      * Recalculate the exchange rate.
      */
     protected void recalculateRate ()
@@ -94,7 +91,7 @@ public class MoneyExchange
         int pool = _moneyRepo.getBarPool();
         // the more bars in the pool: the lower the exchange rate
         // TODO: asymptotic snazziness
-        _exchangeRate = (BAR_POOL_TARGET * EXPECTED_RATE) / pool;
+        _rate = (BAR_POOL_TARGET * EXPECTED_RATE) / pool;
 
         // schedule the next recalculation, always a minute from now
         _recalcInterval.schedule(RECALCULATE_INTERVAL);
@@ -108,7 +105,7 @@ public class MoneyExchange
     };
 
     /** The current exchange rate. */
-    protected float _exchangeRate;
+    protected float _rate;
 
     /** Our money repository. */
     @Inject protected MoneyRepository _moneyRepo;

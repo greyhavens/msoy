@@ -21,16 +21,36 @@ import com.threerings.msoy.money.data.all.Currency;
 public class PriceQuote extends SimpleStreamableObject
     implements Serializable, IsSerializable
 {
-    public PriceQuote (Currency listedCurrency, int coins, int bars, int coinChangeForBars)
+    public PriceQuote (
+        Currency listedCurrency, int coins, int bars, int coinChangeForBars, float rate)
     {
         _listedCurrency = listedCurrency;
         _coins = coins;
         _bars = bars;
         _coinChange = coinChangeForBars;
+        _rate = rate;
     }
 
     /** For serialization. */
     public PriceQuote () { }
+
+    /**
+     * Is the specified purchase valid?
+     */
+    public boolean isPurchaseValid (
+        Currency buyCurrency, int authorizedAmount, float currentExchangeRate)
+    {
+        // the current exchange rate can't vary too much..
+        if (buyCurrency != _listedCurrency) {
+            float variance = _rate / currentExchangeRate;
+            if ((variance > (1 + MAX_RATE_VARIANCE)) || (variance < (1 - MAX_RATE_VARIANCE))) {
+                return false;
+            }
+        }
+
+        // otherwise, as long as they have authorized enough dough...
+        return (getAmount(buyCurrency) <= authorizedAmount);
+    }
 
     /**
      * Get the currency with which this item was listed.
@@ -87,4 +107,8 @@ public class PriceQuote extends SimpleStreamableObject
     protected int _coins;
     protected int _bars;
     protected transient int _coinChange; // we don't stream this to the client
+    protected transient float _rate; // also not sent to the client
+
+    /** The maximum amount the exchange rate can vary at purchase time. */
+    protected static final float MAX_RATE_VARIANCE = .05f;
 }

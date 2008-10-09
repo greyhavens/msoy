@@ -245,12 +245,13 @@ public class MoneyLogic
 
         // Get the secured prices for the item.
         PriceQuote quote = _priceCache.getQuote(buyerId, item);
-        if (quote == null || quote.getAmount(buyCurrency) > authedAmount) {
+        if (quote == null ||
+                !quote.isPurchaseValid(buyCurrency, authedAmount, _exchange.getRate())) {
             // In the unlikely scenarios that there was either no secured price (expired) or
             // they provided an out-of-date authed amount, we go ahead and secure a new price
             // right now and see if that works.
             quote = securePrice(buyerId, item, listedCurrency, listedAmount);
-            if (quote.getAmount(buyCurrency) > authedAmount) {
+            if (!quote.isPurchaseValid(buyCurrency, authedAmount, _exchange.getRate())) {
                 // doh, it doesn't work, so we need to tell them about this new latest price
                 // we've secured for them
                 throw new NotSecuredException(buyerId, item, quote);
@@ -313,7 +314,8 @@ public class MoneyLogic
                     affiliateTx = _repo.accumulateAndStoreTransaction(affiliateId,
                         affiliatePayout.currency, affiliatePayout.amount,
                         TransactionType.AFFILIATE_PAYOUT,
-                        MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
+                        MessageBundle.tcompose("m.item_affiliate",
+                            buyerRec.name, buyerRec.memberId),
                         item, buyerTx.id, buyerId);
 
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
@@ -346,7 +348,6 @@ public class MoneyLogic
             _priceCache.removeQuote(buyerId, item);
             // Inform the exchange that we've actually made the exchange
             if (!magicFree) {
-                // TODO: possibly pass detailed info into the exchange
                 _exchange.processPurchase(quote, buyCurrency);
             }
 
