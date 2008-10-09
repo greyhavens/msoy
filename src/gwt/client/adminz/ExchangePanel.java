@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -68,14 +69,14 @@ public class ExchangePanel extends SmartTable
             super.onSuccess(result, callback);
 
             int row = 0;
-            setText(row, 1, String.valueOf(result.rate));
-            setText(row++, 3, String.valueOf(result.targetRate));
+            setText(row, 1, _rateFormat.format(result.rate));
+            setText(row++, 3, _rateFormat.format(result.targetRate));
             setText(row, 1, String.valueOf(result.barPool));
             setText(row++, 3, String.valueOf(result.targetBarPool));
         }
     }
 
-    protected static class RecentExchanges extends PagedTable<ExchangeData>
+    protected class RecentExchanges extends PagedTable<ExchangeData>
     {
         public RecentExchanges (ExchangeDataDataModel model)
         {
@@ -92,9 +93,9 @@ public class ExchangePanel extends SmartTable
             time.setWordWrap(false);
             row.add(time);
 
-            row.add(MsoyUI.createLabel(String.valueOf(data.bars), null));
-            row.add(MsoyUI.createLabel(String.valueOf(data.coins), null));
-            row.add(MsoyUI.createLabel(String.valueOf(data.rate), null));
+            row.add(MsoyUI.createLabel(String.valueOf(data.bars), "rightLabel"));
+            row.add(MsoyUI.createLabel(String.valueOf(data.coins), "rightLabel"));
+            row.add(MsoyUI.createLabel(_rateFormat.format(data.rate), "rightLabel"));
             // TODO: reference tx
 
             return row;
@@ -106,9 +107,9 @@ public class ExchangePanel extends SmartTable
             List<Widget> header = new ArrayList<Widget>();
 
             header.add(MsoyUI.createLabel("When", null));
-            header.add(MsoyUI.createLabel("Bars", null));
-            header.add(MsoyUI.createLabel("Coins", null));
-            header.add(MsoyUI.createLabel("Rate", null));
+            header.add(MsoyUI.createLabel("Bars", "rightLabel"));
+            header.add(MsoyUI.createLabel("Coins", "rightLabel"));
+            header.add(MsoyUI.createLabel("Rate", "rightLabel"));
             // TODO: reference tx
 
             return header;
@@ -120,6 +121,8 @@ public class ExchangePanel extends SmartTable
             return ""; // not gonna happen
         }
     }
+
+    protected NumberFormat _rateFormat = NumberFormat.getFormat("0.00");
 
     protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
         ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);
