@@ -42,15 +42,13 @@ public class BlingPanel extends FlowPanel
     public BlingPanel (final MoneyTransactionDataModel model)
     {
         setStyleName("bling");
-        
+
         _model = model;
         init();
     }
-    
+
     protected void init ()
     {
-        int row = 0;
-
         SmartTable balance = new SmartTable(0, 10);
         balance.setText(0, 0, _msgs.blingBalance(), 1, "rightLabel");
         balance.setWidget(0, 1, _blingBalance = new Label());
@@ -83,7 +81,7 @@ public class BlingPanel extends FlowPanel
             }
         });
     }
-    
+
     protected void update (final BlingInfo result)
     {
         _blingBalance.setText(Currency.BLING.format(result.bling));
@@ -119,13 +117,13 @@ public class BlingPanel extends FlowPanel
             _cashedOutBling.setText("");
         }
     }
-    
+
     protected class CashOutForm extends SmartTable
     {
         public CashOutForm (final float worthPerBling)
         {
             setCellSpacing(10);
-            
+
             int row = 0;
             setText(row++, 0, _msgs.blingCashOutDescription(), 3, null);
             setText(row, 0, _msgs.blingCashOutAmount(), 1, "rightLabel");
@@ -170,7 +168,7 @@ public class BlingPanel extends FlowPanel
                 }
             }));
         }
-        
+
         protected void doCashOut (int memberId)
         {
             // Validate the data
@@ -194,15 +192,15 @@ public class BlingPanel extends FlowPanel
                 MsoyUI.errorNear(_msgs.cashOutEmailsDontMatch(), _paypalEmailConfirmBox);
                 return;
             }
-            
+
             // Ensure the amount is valid.
             _cashOutBtn.setEnabled(false);
             try {
                 String password = CShell.frame.md5hex(_passwordBox.getText());
-                _moneysvc.requestCashOutBling(memberId, blingAmount, password, 
-                    new CashOutBillingInfo(_firstNameBox.getText(), _lastNameBox.getText(), 
-                    _paypalEmailBox.getText(), _phoneNumberBox.getText(), _streetAddressBox.getText(), 
-                    _cityBox.getText(), _stateBox.getText(), _postalCodeBox.getText(), 
+                _moneysvc.requestCashOutBling(memberId, blingAmount, password,
+                    new CashOutBillingInfo(_firstNameBox.getText(), _lastNameBox.getText(),
+                    _paypalEmailBox.getText(), _phoneNumberBox.getText(), _streetAddressBox.getText(),
+                    _cityBox.getText(), _stateBox.getText(), _postalCodeBox.getText(),
                     _countryBox.getText()), new AsyncCallback<BlingInfo>() {
                     public void onFailure (Throwable cause) {
                         MsoyUI.error(CShell.serverError(cause));
@@ -217,7 +215,7 @@ public class BlingPanel extends FlowPanel
                 _cashOutBtn.setEnabled(true);
             }
         }
-        
+
         protected NumberTextBox _cashOutBox;
         protected PasswordTextBox _passwordBox;
         protected TextBox _firstNameBox;
@@ -230,10 +228,10 @@ public class BlingPanel extends FlowPanel
         protected TextBox _stateBox;
         protected TextBox _postalCodeBox;
         protected TextBox _countryBox;
-        
+
         protected Button _cashOutBtn;
     }
-    
+
     protected void doExchange (final int memberId)
     {
         // Validate the data
@@ -241,21 +239,22 @@ public class BlingPanel extends FlowPanel
         if (blingAmount == 0) {
             return;
         }
-        
-        final AsyncCallback onConfirm = new AsyncCallback<BlingExchangeResult>() {
-            public void onFailure (Throwable cause) {
-                _exchangeBtn.setEnabled(true);
-                MsoyUI.errorNear(CShell.serverError(cause), _exchangeBox);
-            }
-            public void onSuccess (BlingExchangeResult result) {
-                _exchangeBtn.setEnabled(true);
-                MsoyUI.info(_msgs.blingExchangeSuccessful());
-                _exchangeBox.setText("");
-                update(result.blingInfo);
-                CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, 
-                    result.barBalance, 0));
-            }
-        };
+
+        final AsyncCallback<BlingExchangeResult> onConfirm =
+            new AsyncCallback<BlingExchangeResult>() {
+                public void onFailure (Throwable cause) {
+                    _exchangeBtn.setEnabled(true);
+                    MsoyUI.errorNear(CShell.serverError(cause), _exchangeBox);
+                }
+                public void onSuccess (BlingExchangeResult result) {
+                    _exchangeBtn.setEnabled(true);
+                    MsoyUI.info(_msgs.blingExchangeSuccessful());
+                    _exchangeBox.setText("");
+                    update(result.blingInfo);
+                    CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS,
+                        result.barBalance, 0));
+                }
+            };
         PromptPopup confirm = new PromptPopup(_msgs.exchangeConfirm(""+blingAmount), new Command() {
             public void execute () {
                 _exchangeBtn.setEnabled(false);
@@ -265,7 +264,7 @@ public class BlingPanel extends FlowPanel
 
         confirm.prompt();
     }
-    
+
     protected boolean requireField (TextBox box, String fieldName)
     {
         if (StringUtil.isBlank(box.getText())) {
@@ -274,7 +273,7 @@ public class BlingPanel extends FlowPanel
         }
         return true;
     }
-    
+
     protected int getValidAmount (NumberTextBox box, String invalidMessage)
     {
         final int blingAmount = box.getValue().intValue();
@@ -284,7 +283,7 @@ public class BlingPanel extends FlowPanel
         }
         return blingAmount;
     }
-    
+
     /**
      * Converts the amount of pennies into a string to display to the user as a valid currency.
      * Note: there are some other utilities around to do this, but they're either in a different
@@ -303,14 +302,14 @@ public class BlingPanel extends FlowPanel
     protected Label _blingBalance;
     protected Label _blingWorth;
     protected Label _cashedOutBling;
-    
+
     protected NumberTextBox _exchangeBox;
     protected Button _exchangeBtn;
-    
+
     protected SimplePanel _cashOutPanel;
 
     protected MoneyTransactionDataModel _model;
-    
+
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)

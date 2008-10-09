@@ -39,7 +39,6 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
