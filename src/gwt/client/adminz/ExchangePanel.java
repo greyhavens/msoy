@@ -8,12 +8,11 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.money.data.all.ExchangeData;
 import com.threerings.msoy.money.data.all.ExchangeStatusData;
@@ -25,25 +24,19 @@ import client.ui.MsoyUI;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
-public class ExchangePanel extends VerticalPanel
+public class ExchangePanel extends SmartTable
 {
     public ExchangePanel ()
     {
-        HorizontalPanel hpan = new HorizontalPanel();
-        hpan.add(MsoyUI.createLabel("current Rate: ", null));
-        hpan.add(_rate = new Label());
-        hpan.add(MsoyUI.createLabel("target Rate: ", null));
-        hpan.add(_targetRate = new Label());
-        add(hpan);
+        super("exchangePanel", 0, 10);
 
-        hpan = new HorizontalPanel();
-        hpan.add(MsoyUI.createLabel("bar pool balance: ", null));
-        hpan.add(_barPool = new Label());
-        hpan.add(MsoyUI.createLabel("target bar pool: ", null));
-        hpan.add(_targetBarPool = new Label());
-        add(hpan);
+        int row = 0;
+        setText(row++, 0, "Current rate:");
+        setText(row++, 0, "Target rate:");
+        setText(row++, 0, "Bar pool balance:");
+        setText(row++, 0, "Target bar pool:");
 
-        add(new RecentExchanges(new ExchangeDataDataModel()));
+        addWidget(new RecentExchanges(new ExchangeDataDataModel()), 2, null);
     }
 
     protected class ExchangeDataDataModel
@@ -74,10 +67,11 @@ public class ExchangePanel extends VerticalPanel
         {
             super.onSuccess(result, callback);
 
-            _rate.setText(String.valueOf(result.rate));
-            _targetRate.setText(String.valueOf(result.targetRate));
-            _barPool.setText(String.valueOf(result.barPool));
-            _targetBarPool.setText(String.valueOf(result.targetBarPool));
+            int row = 0;
+            setText(row++, 1, String.valueOf(result.rate));
+            setText(row++, 1, String.valueOf(result.targetRate));
+            setText(row++, 1, String.valueOf(result.barPool));
+            setText(row++, 1, String.valueOf(result.targetBarPool));
         }
     }
 
@@ -126,11 +120,6 @@ public class ExchangePanel extends VerticalPanel
             return ""; // not gonna happen
         }
     }
-
-    protected Label _rate;
-    protected Label _barPool;
-    protected Label _targetRate;
-    protected Label _targetBarPool;
 
     protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
         ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);
