@@ -63,8 +63,9 @@ public class BlingPanel extends FlowPanel
         new ClickCallback<BlingExchangeResult>(_exchangeBtn) {
             protected void takeAction (boolean confirmed) {
                 // validate the bling amount before we trigger our confirm popup
-                _blingAmount = getValidAmount(_exchangeBox, _msgs.blingInvalidAmount());
-                if (_blingAmount == 0) {
+                _blingAmount = _exchangeBox.getValue().intValue();
+                if (_blingAmount < 1) {
+                    MsoyUI.errorNear(_msgs.blingInvalidAmount(), _exchangeBox);
                     return;
                 }
                 _confirmMessage = _msgs.exchangeConfirm(""+_blingAmount);
@@ -142,21 +143,9 @@ public class BlingPanel extends FlowPanel
     {
         if (StringUtil.isBlank(box.getText())) {
             MsoyUI.errorNear(_msgs.fieldRequired(fieldName), box);
-            box.setFocus(true);
             return false;
         }
         return true;
-    }
-
-    protected int getValidAmount (NumberTextBox box, String invalidMessage)
-    {
-        final int blingAmount = box.getValue().intValue();
-        if (blingAmount < 1) {
-            MsoyUI.errorNear(invalidMessage, box);
-            box.setFocus(true);
-            return 0;
-        }
-        return blingAmount;
     }
 
     /**
@@ -215,21 +204,35 @@ public class BlingPanel extends FlowPanel
             setWidget(row++, 1, _postalCodeBox = new TextBox());
             setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutCountry()), 1, "rightLabel");
             setWidget(row++, 1, _countryBox = new TextBox());
-            setWidget(row++, 2, _cashOutBtn =
-                      new Button(_msgs.blingCashOutButton(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    doCashOut(_model.memberId);
+
+            setWidget(row++, 2, _cashOutBtn = new Button(_msgs.blingCashOutButton()));
+            new ClickCallback<BlingInfo>(_cashOutBtn) {
+                public boolean callService () {
+                    // validate the data
+                    int blingAmount = _cashOutBox.getValue().intValue();
+                    if (blingAmount > 1) {
+                        MsoyUI.errorNear(_msgs.blingInvalidAmount(), _cashOutBox);
+                        return false;
+                    }
+                    CashOutBillingInfo info = getInfo();
+                    if (info == null) {
+                        return false; // error will have been reported
+                    }
+                    _moneysvc.requestCashOutBling(
+                        _model.memberId, blingAmount, CShell.frame.md5hex(_passwordBox.getText()),
+                        info, this);
+                    return true;
                 }
-            }));
+                public boolean gotResult (BlingInfo result) {
+                    MsoyUI.info(_msgs.cashOutRequestSuccessful());
+                    _cashOutBox.setText("");
+                    update(result);
+                    return true;
+                }
+            };
         }
 
-        protected void doCashOut (int memberId)
-        {
-            // Validate the data
-            int blingAmount = getValidAmount(_cashOutBox, _msgs.blingInvalidAmount());
-            if (blingAmount == 0) {
-                return;
-            }
+        protected CashOutBillingInfo getInfo () {
             if (!requireField(_passwordBox, _msgs.cashOutPassword()) ||
                 !requireField(_firstNameBox, _msgs.cashOutFirstName()) ||
                 !requireField(_lastNameBox, _msgs.cashOutLastName()) ||
@@ -240,33 +243,16 @@ public class BlingPanel extends FlowPanel
                 !requireField(_stateBox, _msgs.cashOutState()) ||
                 !requireField(_postalCodeBox, _msgs.cashOutPostalCode()) ||
                 !requireField(_countryBox, _msgs.cashOutCountry())) {
-                return;
+                return null;
             }
             if (!_paypalEmailBox.getText().equals(_paypalEmailConfirmBox.getText())) {
                 MsoyUI.errorNear(_msgs.cashOutEmailsDontMatch(), _paypalEmailConfirmBox);
-                _paypalEmailBox.setFocus(true);
-                return;
+                return null;
             }
-
-            // Ensure the amount is valid.
-            _cashOutBtn.setEnabled(false);
-            try {
-                CashOutBillingInfo info = new CashOutBillingInfo(
-                    _firstNameBox.getText(), _lastNameBox.getText(), _paypalEmailBox.getText(),
-                    _phoneNumberBox.getText(), _streetAddressBox.getText(), _cityBox.getText(),
-                    _stateBox.getText(), _postalCodeBox.getText(),_countryBox.getText());
-                String password = CShell.frame.md5hex(_passwordBox.getText());
-                _moneysvc.requestCashOutBling(memberId, blingAmount, password, info,
-                    new MsoyCallback<BlingInfo>() {
-                    public void onSuccess (BlingInfo result) {
-                        MsoyUI.info(_msgs.cashOutRequestSuccessful());
-                        _cashOutBox.setText("");
-                        update(result);
-                    }
-                });
-            } finally {
-                _cashOutBtn.setEnabled(true);
-            }
+            return new CashOutBillingInfo(
+                _firstNameBox.getText(), _lastNameBox.getText(), _paypalEmailBox.getText(),
+                _phoneNumberBox.getText(), _streetAddressBox.getText(), _cityBox.getText(),
+                _stateBox.getText(), _postalCodeBox.getText(),_countryBox.getText());
         }
 
         protected NumberTextBox _cashOutBox;
