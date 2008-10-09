@@ -8,6 +8,8 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
 
+import com.threerings.presents.server.ShutdownManager;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -18,15 +20,20 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
 /**
  * Handles exchanges between coins and bars as part of a purchase.
  */
-// TODO: register as a shutdowner, stop recalculation???
 @Singleton
 public class MoneyExchange
+    implements ShutdownManager.Shutdowner
 {
     /** The target numbers of bars in the pool. */
     public static final int BAR_POOL_TARGET = 100000;
 
+    @Inject public MoneyExchange (ShutdownManager shutmgr)
+    {
+        shutmgr.registerShutdowner(this);
+    }
+
     /**
-     * Initialize the money exchange.
+     * Initialize the money exchange once the database is ready to roll.
      */
     public void init ()
     {
@@ -89,6 +96,13 @@ public class MoneyExchange
         recalculateRate();
     }
 
+    // from interface ShutdownManager.Shutdowner
+    public void shutdown ()
+    {
+        _recalcInterval.cancel();
+        _recalcInterval = null;
+    }
+
     /**
      * Recalculate the exchange rate.
      */
@@ -99,11 +113,14 @@ public class MoneyExchange
         // TODO: asymptotic snazziness
         _rate = (BAR_POOL_TARGET * RuntimeConfig.server.targetExchangeRate) / pool;
 
-        // schedule the next recalculation, always a minute from now
-        _recalcInterval.schedule(RECALCULATE_INTERVAL);
+        // If not shutting down, schedule the next recalculation, always a minute from now
+        if (_recalcInterval != null) {
+            _recalcInterval.schedule(RECALCULATE_INTERVAL);
+        }
     }
 
-    /** The interval to recalculate the exchange rate every minute. */
+    /** The interval to recalculate the exchange rate every minute,
+     * or null if we're shutting down. */
     protected Interval _recalcInterval = new Interval() {
         public void expired () {
             recalculateRate();
