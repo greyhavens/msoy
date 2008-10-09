@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.notify.data;
 
-import com.threerings.util.MessageBundle;
-
 import com.threerings.msoy.money.data.all.Currency;
 
 /**
