@@ -348,7 +348,7 @@ public class MoneyLogic
             _priceCache.removeQuote(buyerId, item);
             // Inform the exchange that we've actually made the exchange
             if (!magicFree) {
-                _exchange.processPurchase(quote, buyCurrency);
+                _exchange.processPurchase(quote, buyCurrency, buyerTx.id);
             }
 
             return new BuyResult(magicFree, buyerTx.toMoneyTransaction(),

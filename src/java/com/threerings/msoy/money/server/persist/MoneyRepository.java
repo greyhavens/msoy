@@ -326,6 +326,13 @@ public class MoneyRepository extends DepotRepository
                 MoneyTransactionRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp)))));
     }
 
+    public int deleteOldExchangeRecords (long maxAge)
+    {
+        final long oldestTimestamp = System.currentTimeMillis() - maxAge;
+        return deleteAll(ExchangeRecord.class, new Where(new Conditionals.LessThan(
+            ExchangeRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp))));
+    }
+
     public List<MoneyTransactionRecord> getTransactions (final Set<Integer> ids)
     {
         return loadAll(MoneyTransactionRecord.class, ids);
@@ -346,15 +353,17 @@ public class MoneyRepository extends DepotRepository
     /**
      * Adjust the bar pool as a result of an exchange.
      *
-     * @param delta a positive number if bars were used to purchase coin-listed stuff
-     *              a negative number if coins were used to purchase bar-listed stuff.
+     * @param barDelta a positive number if bars were used to purchase coin-listed stuff
+     *                 a negative number if coins were used to purchase bar-listed stuff.
      */
-    public void adjustBarPool (int delta)
+    public void recordExchange (int barDelta, int coinDelta, float rate, int referenceTxId)
     {
         Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
-            .put(BarPoolRecord.BAR_POOL, new Arithmetic.Add(BarPoolRecord.BAR_POOL_C, delta))
+            .put(BarPoolRecord.BAR_POOL, new Arithmetic.Add(BarPoolRecord.BAR_POOL_C, barDelta))
             .build();
         updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, fieldValues);
+
+        insert(new ExchangeRecord(barDelta, coinDelta, rate, referenceTxId));
     }
 
     /**
@@ -555,5 +564,6 @@ public class MoneyRepository extends DepotRepository
         classes.add(MoneyConfigRecord.class);
         classes.add(BlingCashOutRecord.class);
         classes.add(BarPoolRecord.class);
+        classes.add(ExchangeRecord.class);
     }
 }

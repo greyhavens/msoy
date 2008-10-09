@@ -96,6 +96,14 @@ public class PriceQuote extends SimpleStreamableObject
         return _coinChange;
     }
 
+    /**
+     * Get the raw exchange rate at the time the quote was generated.
+     */
+    public float getExchangeRate ()
+    {
+        return _rate;
+    }
+
     /* For debugging */
     public String toString ()
     {

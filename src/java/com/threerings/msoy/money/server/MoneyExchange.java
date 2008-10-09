@@ -67,17 +67,21 @@ public class MoneyExchange
     /**
      * The specified sale has completed, factor it into the exchange rate.
      */
-    public void processPurchase (PriceQuote quote, Currency purchaseCurrency)
+    public void processPurchase (PriceQuote quote, Currency purchaseCurrency, int txId)
     {
         if (purchaseCurrency == quote.getListedCurrency()) {
             // the purchase was made at the listed currency, the exchange was not involved.
             return;
         }
 
+        boolean barsCreated = (purchaseCurrency == Currency.COINS);
         // If they coin-bought, then bars were removed from the pool. Otherwise, bars
         // were added to the pool.
-        _moneyRepo.adjustBarPool(quote.getBars() *
-            ((purchaseCurrency == Currency.COINS) ? -1 : 1));
+        int bars = quote.getBars() * (barsCreated ? -1 : 1);
+        int coins = quote.getCoins() * (barsCreated ? 1 : -1);
+
+        // record everything about the exchange
+        _moneyRepo.recordExchange(bars, coins, quote.getExchangeRate(), txId);
 
         // immediately recalculate
         recalculateRate();
