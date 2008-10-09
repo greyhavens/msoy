@@ -65,12 +65,12 @@ public class NumberTextBox extends TextBox
     }
 
     /**
-     * Get the number value for the contents of this box.
+     * Get the number value for the contents of this box. Returns 0 if the box is empty.
      */
     public Number getValue ()
     {
-        return _allowFloatingPoint ? (Number)(new Double(getText())) :
-            (Number)(new Integer(getText()));
+        String valstr = getText().length() == 0 ? "0" : getText();
+        return _allowFloatingPoint ? (Number)(new Double(valstr)) : (Number)(new Integer(valstr));
     }
 
     protected boolean _allowFloatingPoint;
