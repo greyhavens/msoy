@@ -3,7 +3,6 @@
 
 package client.me;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -31,7 +30,6 @@ import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
-import client.ui.PromptPopup;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
 import client.util.MsoyCallback;

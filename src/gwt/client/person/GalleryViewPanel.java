@@ -51,7 +51,6 @@ public class GalleryViewPanel extends FlowPanel
 
     /**
      * Constructor.
-     * @param memberId If > 0, fetch the data for the member's profile gallery.
      */
     public GalleryViewPanel ()
     {
