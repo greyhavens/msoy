@@ -15,9 +15,6 @@ import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.person.GalleryActions;
-import client.person.GalleryEditPanel;
-import client.person.GalleryPanel;
-import client.person.GalleryViewPanel;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;

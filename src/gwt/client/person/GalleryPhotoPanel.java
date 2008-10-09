@@ -3,13 +3,6 @@
 
 package client.person;
 
-import client.images.slideshow.SlideshowImages;
-import client.shell.Args;
-import client.shell.Pages;
-import client.ui.CreatorLabel;
-import client.ui.MsoyUI;
-import client.util.Link;
-import client.util.MediaUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -19,9 +12,18 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlinePanel;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.GalleryData;
+
+import client.images.slideshow.SlideshowImages;
+import client.shell.Args;
+import client.shell.Pages;
+import client.ui.CreatorLabel;
+import client.ui.MsoyUI;
+import client.util.Link;
+import client.util.MediaUtil;
 
 /**
  * View a single image in a gallery. This panel will be a child of GalleryViewPanel which contains
@@ -31,7 +33,6 @@ public class GalleryPhotoPanel extends FlowPanel
 {
     /**
      * Constructor.
-     * @param memberId If > 0, fetch the data for the member's profile gallery.
      */
     public GalleryPhotoPanel (GalleryData galleryData)
     {
