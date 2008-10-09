@@ -7,7 +7,6 @@ import com.threerings.msoy.money.data.all.Currency;
 
 /**
  * Tracks a Currency and an amount.
- * TODO?: we could move this to /data and use it more frequently...
  */
 public class CurrencyAmount
 {

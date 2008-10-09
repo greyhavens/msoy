@@ -60,9 +60,9 @@ public class MoneyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        // TODO: I guess someday we'll allow support+ to exchange for others, but for now
-        // the memberId parameter is sorta worthless...
         if (mrec.memberId != memberId) {
+            // I guess someday we'll allow support+ to exchange for others, but for now
+            // the memberId parameter is sorta worthless...
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
         try {

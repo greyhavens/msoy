@@ -199,7 +199,6 @@ public class MoneyLogic
      *
      * @param support Logged name of the acting support member.
      */
-    // TODO Fucking return something for fuck's sake!!! We just fucking changed shit!!!
     public void supportAdjust (
         int memberId, Currency currency, int delta, MemberName support)
         throws NotEnoughMoneyException
