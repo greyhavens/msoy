@@ -17,14 +17,14 @@
   font-size: 14px;
 }
 
+.titledListPanel .Header a {
+  white-space: nowrap;
+  color: #FFFFFF;
+}
+
 .titledListPanel .Header .Whirled {
   padding-left: 5px;
   width: 50px;
-}
-
-.titledListPanel .Header .Whirled a {
-  white-space: nowrap;
-  color: #FFFFFF;
 }
 
 .titledListPanel .Header .RSS {

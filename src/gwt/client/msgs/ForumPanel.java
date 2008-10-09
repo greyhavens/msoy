@@ -15,9 +15,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.images.msgs.MsgsImages;
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.util.Link;
@@ -39,7 +37,7 @@ public class ForumPanel extends TitledListPanel
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayGroupThreads(groupId, _fmodels);
-        setContents(createHeader(groupId, _mmsgs.groupThreadListHeader(""), threads), threads);
+        setContents(createHeader(groupId, _mmsgs.groupThreadListHeader(), threads), threads);
 
         // set up a callback to configure our page title when we learn this group's name
         _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback<GroupName>() {
@@ -99,10 +97,7 @@ public class ForumPanel extends TitledListPanel
     protected void setGroupTitle (int groupId, String groupName)
     {
         if (groupId > 0) {
-            String title = _mmsgs.groupThreadListHeader(groupName);
-            Label titleLink = MsoyUI.createActionLabel(
-                title, Link.createListener(Pages.WHIRLEDS, Args.compose("d", groupId)));
-            _title.setWidget(titleLink);
+            _title.setWidget(Link.groupView(groupName, groupId));
         }
     }
 

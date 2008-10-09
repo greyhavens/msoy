@@ -84,9 +84,8 @@ public class ThreadPanel extends TitledListPanel
     {
         _thread = thread;
         _theader.setText(0, 2, _thread.subject);
-        _theader.setWidget(0, 1, Link.create(
-                               _thread.group + ":", Pages.WHIRLEDS,
-                               Args.compose("f", _thread.group.getGroupId())));
+        _theader.setWidget(0, 1, Link.create(_mmsgs.threadTitle(""+_thread.group), Pages.WHIRLEDS,
+                                             Args.compose("f", _thread.group.getGroupId())));
     }
 
     public void editFlags ()
