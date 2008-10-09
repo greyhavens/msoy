@@ -198,7 +198,16 @@ public class UberClient
         if (lastdot != -1) {
             host = host.substring(lastdot + 1);
         }
-        return host;
+        return massageHost(host);
+    }
+
+    // TEMP?
+    protected static function massageHost (host :String) :String
+    {
+        switch (host) {
+        case "ungrounded": return "newgrounds";
+        default: return host;
+        }
     }
 
     protected static var _app :Application;
