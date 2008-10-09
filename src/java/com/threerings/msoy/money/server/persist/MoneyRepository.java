@@ -442,7 +442,8 @@ public class MoneyRepository extends DepotRepository
         Where where = new Where(new And(
             new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID_C, memberId),
             new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED_C)));
-        return updatePartial(BlingCashOutRecord.class, where, new ActiveCashOutInvalidator(memberId),
+        return updatePartial(BlingCashOutRecord.class, where,
+            new ActiveCashOutInvalidator(memberId),
             BlingCashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
             BlingCashOutRecord.ACTUAL_CASHED_OUT, actualAmount,
             BlingCashOutRecord.SUCCESSFUL, false);
@@ -461,7 +462,8 @@ public class MoneyRepository extends DepotRepository
         Where where = new Where(new And(
             new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID_C, memberId),
             new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED_C)));
-        return updatePartial(BlingCashOutRecord.class, where, new ActiveCashOutInvalidator(memberId),
+        return updatePartial(BlingCashOutRecord.class, where,
+            new ActiveCashOutInvalidator(memberId),
             BlingCashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
             BlingCashOutRecord.CANCEL_REASON, reason,
             BlingCashOutRecord.SUCCESSFUL, false);

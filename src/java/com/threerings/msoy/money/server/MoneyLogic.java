@@ -506,7 +506,7 @@ public class MoneyLogic
      * @param memberId ID of the member to retrieve money for.
      * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
      *      transactionTypes will be retrieved.
-     * @param currency Money type to retrieve logs for. If null, then records for all money types are
+     * @param currency Money type to retrieve logs for. If null, then records for all types are
      * returned.
      * @param start Zero-based index of the first log item to return.
      * @param count The number of log items to return. If Integer.MAX_VALUE, this will return all
@@ -690,8 +690,8 @@ public class MoneyLogic
      * @param function Function to do the transformation.
      * @return The transformed map.
      */
-    protected static <K, V1, V2> Map<K, V2> transformMap (Map<K, V1> values, 
-        Function<? super V1, ? extends V2> function)
+    protected static <K, V1, V2> Map<K, V2> transformMap (
+        Map<K, V1> values, Function<? super V1, ? extends V2> function)
     {
         Map<K, V2> newMap = Maps.newHashMap();
         for (Map.Entry<K, V1> value : values.entrySet()) {
@@ -701,7 +701,8 @@ public class MoneyLogic
     }
 
     /** A Function that transforms a MemberArroundRecord and CashOutRecord to BlingInfo. */
-    protected static Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo> TO_BLING_INFO =
+    protected static Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>
+        TO_BLING_INFO =
         new Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>() {
             public BlingInfo apply (Tuple<MemberAccountRecord, BlingCashOutRecord> records) {
                 return new BlingInfo(records.left.bling, RuntimeConfig.server.blingWorth, 
