@@ -130,7 +130,7 @@ public class DoListItemPopup extends VerticalPanel
             if (CShell.barsEnabled()) {
                 _currencyBox = new ListBox();
                 for (int i=0; i<LISTABLE_CURRENCIES.length; ++i) {
-                    _currencyBox.addItem(_dmsgs.xlate(LISTABLE_CURRENCIES[i].getKey()));
+                    _currencyBox.addItem(_dmsgs.xlate(LISTABLE_CURRENCIES[i].getLabel()));
                     if (listing != null &&
                         LISTABLE_CURRENCIES[i] == listing.quote.getListedCurrency()) {
                         _currencyBox.setSelectedIndex(i);
