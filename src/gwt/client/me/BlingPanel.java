@@ -3,6 +3,7 @@
 
 package client.me;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -30,6 +31,7 @@ import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
+import client.ui.PromptPopup;
 import client.ui.TongueBox;
 import client.util.ServiceUtil;
 import client.util.StringUtil;
@@ -232,18 +234,15 @@ public class BlingPanel extends FlowPanel
         protected Button _cashOutBtn;
     }
     
-    protected void doExchange (int memberId)
+    protected void doExchange (final int memberId)
     {
         // Validate the data
-        int blingAmount = getValidAmount(_exchangeBox, _msgs.blingInvalidAmount());
+        final int blingAmount = getValidAmount(_exchangeBox, _msgs.blingInvalidAmount());
         if (blingAmount == 0) {
             return;
         }
         
-        // Ensure the amount is valid.
-        _exchangeBtn.setEnabled(false);
-        _moneysvc.exchangeBlingForBars(memberId, blingAmount,
-            new AsyncCallback<BlingExchangeResult>() {
+        final AsyncCallback onConfirm = new AsyncCallback<BlingExchangeResult>() {
             public void onFailure (Throwable cause) {
                 _exchangeBtn.setEnabled(true);
                 MsoyUI.errorNear(CShell.serverError(cause), _exchangeBox);
@@ -256,7 +255,15 @@ public class BlingPanel extends FlowPanel
                 CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, 
                     result.barBalance, 0));
             }
+        };
+        PromptPopup confirm = new PromptPopup(_msgs.exchangeConfirm(""+blingAmount), new Command() {
+            public void execute () {
+                _exchangeBtn.setEnabled(false);
+                _moneysvc.exchangeBlingForBars(memberId, blingAmount, onConfirm);
+            }
         });
+
+        confirm.prompt();
     }
     
     protected boolean requireField (TextBox box, String fieldName)
