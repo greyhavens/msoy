@@ -33,6 +33,8 @@ import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
 import client.ui.PromptPopup;
 import client.ui.TongueBox;
+import client.util.ClickCallback;
+import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 import client.util.StringUtil;
 import client.util.events.StatusChangeEvent;
@@ -44,11 +46,7 @@ public class BlingPanel extends FlowPanel
         setStyleName("bling");
 
         _model = model;
-        init();
-    }
 
-    protected void init ()
-    {
         SmartTable balance = new SmartTable(0, 10);
         balance.setText(0, 0, _msgs.blingBalance(), 1, "rightLabel");
         balance.setWidget(0, 1, _blingBalance = new Label());
@@ -61,11 +59,36 @@ public class BlingPanel extends FlowPanel
         exchange.setText(0, 0, _msgs.exchangeBlingDescription(), 3, null);
         exchange.setText(1, 0, _msgs.exchangeAmount(), 1, "rightLabel");
         exchange.setWidget(1, 1, _exchangeBox = new NumberTextBox(false));
-        exchange.setWidget(1, 2, _exchangeBtn = new Button(_msgs.exchangeButton(), new ClickListener() {
-            public void onClick (Widget sender) {
-                doExchange(_model.memberId);
+        exchange.setWidget(1, 2, _exchangeBtn = new Button(_msgs.exchangeButton()));
+
+        // this will handle the exchange proecss
+        new ClickCallback<BlingExchangeResult>(_exchangeBtn) {
+            protected void takeAction (boolean confirmed) {
+                // validate the bling amount before we trigger our confirm popup
+                _blingAmount = getValidAmount(_exchangeBox, _msgs.blingInvalidAmount());
+                if (_blingAmount == 0) {
+                    return;
+                }
+                _confirmMessage = _msgs.exchangeConfirm(""+_blingAmount);
+                super.takeAction(confirmed);
             }
-        }));
+            public boolean callService () {
+                _moneysvc.exchangeBlingForBars(_model.memberId, _blingAmount, this);
+                return true;
+            }
+            public boolean gotResult (BlingExchangeResult result) {
+                MsoyUI.info(_msgs.blingExchangeSuccessful());
+                _exchangeBox.setText("");
+                update(result.blingInfo);
+                CShell.frame.dispatchEvent(
+                    new StatusChangeEvent(StatusChangeEvent.BARS, result.barBalance, 0));
+                return true;
+            }
+            protected Widget getErrorNear () {
+                return _exchangeBox;
+            }
+            protected int _blingAmount;
+        };
 
         add(new TongueBox(_msgs.exchangeBlingForBars(), exchange));
 
@@ -92,11 +115,9 @@ public class BlingPanel extends FlowPanel
                 Currency.BLING.format(result.cashOut.blingAmount),
                 formatUSD(result.cashOut.blingWorth)), "Success"));
             row.add(new Button(_cmsgs.cancel(), new ClickListener() {
-                public void onClick (final Widget sender) {
-                    _moneysvc.cancelCashOut(_model.memberId, "m.user_cancelled", new AsyncCallback<Void>() {
-                        public void onFailure (Throwable cause) {
-                            MsoyUI.errorNear(CShell.serverError(cause), sender);
-                        }
+                public void onClick (Widget sender) {
+                    _moneysvc.cancelCashOut(_model.memberId, "m.user_cancelled",
+                                            new MsoyCallback<Void>(sender) {
                         public void onSuccess (Void v) {
                             MsoyUI.info(_msgs.cancelCashOutSuccess());
                             // Show the cash out form
@@ -107,6 +128,7 @@ public class BlingPanel extends FlowPanel
                 }
             }));
             _cashOutPanel.setWidget(row);
+
         } else {
             if (result.bling >= result.minCashOutBling) {
                 _cashOutPanel.setWidget(new CashOutForm(result.worthPerBling));
@@ -118,6 +140,42 @@ public class BlingPanel extends FlowPanel
         }
     }
 
+    protected boolean requireField (TextBox box, String fieldName)
+    {
+        if (StringUtil.isBlank(box.getText())) {
+            MsoyUI.errorNear(_msgs.fieldRequired(fieldName), box);
+            box.setFocus(true);
+            return false;
+        }
+        return true;
+    }
+
+    protected int getValidAmount (NumberTextBox box, String invalidMessage)
+    {
+        final int blingAmount = box.getValue().intValue();
+        if (blingAmount < 1) {
+            MsoyUI.errorNear(invalidMessage, box);
+            box.setFocus(true);
+            return 0;
+        }
+        return blingAmount;
+    }
+
+    /**
+     * Converts the amount of pennies into a string to display to the user as a valid currency.
+     * Note: there are some other utilities around to do this, but they're either in a different
+     * project (and there's some concern about exposing them directly), or they don't properly
+     * take into account floating-point round off errors.  This may get replaced or expanded
+     * later on.
+     */
+    protected static String formatUSD (int pennies)
+    {
+        int dollars = pennies / 100;
+        int cents = pennies % 100;
+        return "USD $" + NumberFormat.getDecimalFormat().format(dollars) + '.' +
+            (cents < 10 ? '0' : "") + cents;
+    }
+
     protected class CashOutForm extends SmartTable
     {
         public CashOutForm (final float worthPerBling)
@@ -127,17 +185,15 @@ public class BlingPanel extends FlowPanel
             int row = 0;
             setText(row++, 0, _msgs.blingCashOutDescription(), 3, null);
             setText(row, 0, _msgs.blingCashOutAmount(), 1, "rightLabel");
-            FlowPanel panel = new FlowPanel();
             final Label worthLabel = new InlineLabel();
-            panel.add(_cashOutBox = new NumberTextBox(true));
-            panel.add(worthLabel);
-            setWidget(row++, 1, panel, 2, null);
+            _cashOutBox = new NumberTextBox(true);
             _cashOutBox.addKeyboardListener(new KeyboardListenerAdapter() {
                 public void onKeyUp (Widget sender, char keyCode, int modifiers) {
                     worthLabel.setText(_msgs.cashOutAmountWorth(formatUSD(
                         (int)(_cashOutBox.getValue().floatValue() * 100.0f * worthPerBling))));
                 }
             });
+            setWidget(row++, 1, MsoyUI.createButtonPair(_cashOutBox, worthLabel), 2, null);
             setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutPassword()), 1, "rightLabel");
             setWidget(row++, 1, _passwordBox = new PasswordTextBox());
             setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutPayPalEmail()), 1, "rightLabel");
@@ -190,21 +246,20 @@ public class BlingPanel extends FlowPanel
             }
             if (!_paypalEmailBox.getText().equals(_paypalEmailConfirmBox.getText())) {
                 MsoyUI.errorNear(_msgs.cashOutEmailsDontMatch(), _paypalEmailConfirmBox);
+                _paypalEmailBox.setFocus(true);
                 return;
             }
 
             // Ensure the amount is valid.
             _cashOutBtn.setEnabled(false);
             try {
+                CashOutBillingInfo info = new CashOutBillingInfo(
+                    _firstNameBox.getText(), _lastNameBox.getText(), _paypalEmailBox.getText(),
+                    _phoneNumberBox.getText(), _streetAddressBox.getText(), _cityBox.getText(),
+                    _stateBox.getText(), _postalCodeBox.getText(),_countryBox.getText());
                 String password = CShell.frame.md5hex(_passwordBox.getText());
-                _moneysvc.requestCashOutBling(memberId, blingAmount, password,
-                    new CashOutBillingInfo(_firstNameBox.getText(), _lastNameBox.getText(),
-                    _paypalEmailBox.getText(), _phoneNumberBox.getText(), _streetAddressBox.getText(),
-                    _cityBox.getText(), _stateBox.getText(), _postalCodeBox.getText(),
-                    _countryBox.getText()), new AsyncCallback<BlingInfo>() {
-                    public void onFailure (Throwable cause) {
-                        MsoyUI.error(CShell.serverError(cause));
-                    }
+                _moneysvc.requestCashOutBling(memberId, blingAmount, password, info,
+                    new MsoyCallback<BlingInfo>() {
                     public void onSuccess (BlingInfo result) {
                         MsoyUI.info(_msgs.cashOutRequestSuccessful());
                         _cashOutBox.setText("");
@@ -232,80 +287,12 @@ public class BlingPanel extends FlowPanel
         protected Button _cashOutBtn;
     }
 
-    protected void doExchange (final int memberId)
-    {
-        // Validate the data
-        final int blingAmount = getValidAmount(_exchangeBox, _msgs.blingInvalidAmount());
-        if (blingAmount == 0) {
-            return;
-        }
-
-        final AsyncCallback<BlingExchangeResult> onConfirm =
-            new AsyncCallback<BlingExchangeResult>() {
-                public void onFailure (Throwable cause) {
-                    _exchangeBtn.setEnabled(true);
-                    MsoyUI.errorNear(CShell.serverError(cause), _exchangeBox);
-                }
-                public void onSuccess (BlingExchangeResult result) {
-                    _exchangeBtn.setEnabled(true);
-                    MsoyUI.info(_msgs.blingExchangeSuccessful());
-                    _exchangeBox.setText("");
-                    update(result.blingInfo);
-                    CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS,
-                        result.barBalance, 0));
-                }
-            };
-        PromptPopup confirm = new PromptPopup(_msgs.exchangeConfirm(""+blingAmount), new Command() {
-            public void execute () {
-                _exchangeBtn.setEnabled(false);
-                _moneysvc.exchangeBlingForBars(memberId, blingAmount, onConfirm);
-            }
-        });
-
-        confirm.prompt();
-    }
-
-    protected boolean requireField (TextBox box, String fieldName)
-    {
-        if (StringUtil.isBlank(box.getText())) {
-            MsoyUI.errorNear(_msgs.fieldRequired(fieldName), box);
-            return false;
-        }
-        return true;
-    }
-
-    protected int getValidAmount (NumberTextBox box, String invalidMessage)
-    {
-        final int blingAmount = box.getValue().intValue();
-        if (blingAmount < 1) {
-            MsoyUI.errorNear(invalidMessage, box);
-            return 0;
-        }
-        return blingAmount;
-    }
-
-    /**
-     * Converts the amount of pennies into a string to display to the user as a valid currency.
-     * Note: there are some other utilities around to do this, but they're either in a different
-     * project (and there's some concern about exposing them directly), or they don't properly
-     * take into account floating-point round off errors.  This may get replaced or expanded
-     * later on.
-     */
-    protected static String formatUSD (int pennies)
-    {
-        int dollars = pennies / 100;
-        int cents = pennies % 100;
-        return "USD $" + NumberFormat.getDecimalFormat().format(dollars) + '.' +
-            (cents < 10 ? '0' : "") + cents;
-    }
-
     protected Label _blingBalance;
     protected Label _blingWorth;
     protected Label _cashedOutBling;
 
     protected NumberTextBox _exchangeBox;
     protected Button _exchangeBtn;
-
     protected SimplePanel _cashOutPanel;
 
     protected MoneyTransactionDataModel _model;
