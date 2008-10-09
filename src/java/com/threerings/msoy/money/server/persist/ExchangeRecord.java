@@ -13,6 +13,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.money.data.all.ExchangeData;
@@ -21,7 +22,7 @@ import com.threerings.msoy.money.data.all.ExchangeData;
  * Records money exchanges.
  */
 @Entity(indices = {
-    @Index(name = "ixTimestamp", fields = { ExchangeRecord.TIMESTMAP }) })
+    @Index(name = "ixTimestamp", fields = { ExchangeRecord.TIMESTAMP }) })
 public class ExchangeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
