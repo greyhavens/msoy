@@ -1152,6 +1152,19 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Builds a search clause that matches item text, creator name and tags (against listed catalog
+     * items).
+     */
+    protected SQLOperator buildSearchClause (String search)
+    {
+        List<SQLOperator> matches = Lists.newArrayList();
+        addTextMatchClause(matches, search);
+        addCreatorMatchClause(matches, search);
+        addTagMatchClause(matches, getCatalogColumn(CatalogRecord.LISTED_ITEM_ID), search);
+        return makeSearchClause(matches);
+    }
+
+    /**
      * Helper function for {@link #countListings} and {@link #loadCatalog}.
      */
     protected void addSearchClause (List<QueryClause> clauses, boolean mature, String search,
@@ -1161,11 +1174,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // add our search clauses if we have a search string
         if (search != null && search.length() > 0) {
-            List<SQLOperator> matches = Lists.newArrayList();
-            addTextMatchClause(matches, search);
-            addCreatorMatchClause(matches, search);
-            addTagMatchClause(matches, getCatalogColumn(CatalogRecord.LISTED_ITEM_ID), search);
-            whereBits.add(makeSearchClause(matches));
+            whereBits.add(buildSearchClause(search));
         }
 
         if (tag > 0) {

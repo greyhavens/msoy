@@ -94,9 +94,9 @@ public class GameRepository extends ItemRepository<GameRecord>
      *
      * @param genre the genre of game record to load or -1 to load all (listed) games.
      * @param limit a limit to the number of records loaded or <= 0 to load all records.
-     * @param searchQuery string to search for in the title, tags and description
+     * @param search string to search for in the title, tags and description
      */
-    public List<GameRecord> loadGenre (byte genre, int limit, String searchQuery)
+    public List<GameRecord> loadGenre (byte genre, int limit, String search)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Join(getItemClass(), ItemRecord.ITEM_ID,
@@ -117,8 +117,8 @@ public class GameRepository extends ItemRepository<GameRecord>
         if (genre >= 0) {
             whereBits.add(new Conditionals.Equals(GameRecord.GENRE_C, genre));
         }
-        if (searchQuery != null && searchQuery.length() > 0) {
-            whereBits.add(buildSearchStringClause(searchQuery));
+        if (search != null && search.length() > 0) {
+            whereBits.add(buildSearchClause(search));
         }
         if (whereBits.size() > 0) {
             clauses.add(new Where(new And(whereBits)));
