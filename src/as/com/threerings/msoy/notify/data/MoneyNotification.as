@@ -40,7 +40,7 @@ public class MoneyNotification extends Notification
             }
         }
 
-        return MessageBundle.compose(key, MessageBundle.tcompose(currency.getKey(), amt));
+        return MessageBundle.compose(key, currency.compose(amt));
     }
 
     override public function getCategory () :int

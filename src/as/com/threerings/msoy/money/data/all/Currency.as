@@ -4,6 +4,7 @@
 package com.threerings.msoy.money.data.all {
 
 import com.threerings.util.Enum;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
@@ -64,20 +65,28 @@ public final class Currency extends Enum
     }
 
     /**
-     * Used to display just the name of the currency.
+     * Compose an amount of this currency into a translatable String.
      */
-    public function getLabel () :String
+    public function compose (value :int) :String
     {
-        return "l." + toString().toLowerCase();
-    }
+        var key :String = "m." + toString().toLowerCase();
+        if (this != BLING) { // bling doesn't pluralize
+            switch (value) {
+            case 0:
+                key += ".0";
+                break;
 
-    /**
-     * Used when translating a currency with a value:
-     * MessageBundle.get(currency.getKey(), amount) == "5 bars", or "1 bar"
-     */
-    public function getKey () :String
-    {
-        return "m." + toString().toLowerCase();
+            case 1:
+                key += ".1";
+                break;
+
+            default:
+                key += ".n";
+                break;
+            }
+        }
+
+        return MessageBundle.tcompose(key, format(value));
     }
 
     /**
