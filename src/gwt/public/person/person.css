@@ -129,28 +129,27 @@
   min-height: 500px;
 }
 
+.galleryPhotoPanel .PhotoName {
+  color: #247393;
+  font-size: 16px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  padding: 5px 0px 0px 20px;
+}
+
 .galleryPhotoPanel .NameAndCreator {
-  margin: 0 0 5px 20px;
-  padding-top: 10px;
+  margin: 0px 0px 10px 20px;
+  font-size: 12px;
 }
 
 .galleryPhotoPanel .NameAndCreator .GalleryName {
   color: #247393;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-weight: bold;
-  font-size: 24px;
 }
 
 .galleryPhotoPanel .NameAndCreator .creator, 
 .galleryPhotoPanel .NameAndCreator .creator a {
   color: #7799A5;
-  font-size: 14px;
-}
-
-.galleryPhotoPanel .PhotoName {
-  color: #247393;
-  font-size: 16px;
-  margin: 5px 0 5px 20px;
 }
 
 .galleryPhotoPanel .LargePhoto {

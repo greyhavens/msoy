@@ -15,7 +15,6 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -58,20 +57,20 @@ public class GalleryPhotoPanel extends FlowPanel
         final Photo photo = _galleryData.photos.get(photoIndex);
         clear();
 
-        // Gallery and creator name are inline and onclick takes you back to the gallery
-        InlinePanel nameAndCreator = new InlinePanel("");
-        nameAndCreator.add(MsoyUI.createLabel(_galleryData.gallery.name, "GalleryName"));
-        nameAndCreator.add(new CreatorLabel(_galleryData.owner));
-        FocusPanel galleryNameFocusPanel = new FocusPanel(nameAndCreator);
-        galleryNameFocusPanel.addStyleName("NameAndCreator");
-        galleryNameFocusPanel.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    stopSlideshow();
-                    gotoPhotoIndex(-1);
-                }
-            });
-        add(galleryNameFocusPanel);
         add(MsoyUI.createLabel(photo.name, "PhotoName"));
+
+        // clicking the gallery name takes you back to the gallery
+        InlinePanel nameAndCreator = new InlinePanel("");
+        nameAndCreator.addStyleName("NameAndCreator");
+        String gname = GalleryPanel.getGalleryLabel(_galleryData.gallery, _galleryData.owner);
+        nameAndCreator.add(MsoyUI.createActionLabel(gname, "GalleryName", new ClickListener() {
+            public void onClick (Widget sender) {
+                stopSlideshow();
+                gotoPhotoIndex(-1);
+            }
+        }));
+        nameAndCreator.add(new CreatorLabel(_galleryData.owner));
+        add(nameAndCreator);
 
         // determine the width of the most constrained side and override the media constraint
         int width = photo.photoWidth;
