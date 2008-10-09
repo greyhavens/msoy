@@ -74,7 +74,11 @@ public abstract class ClickCallback<T>
     {
         CShell.log("Callback failure [for=" + _trigger + "]", cause);
         setEnabled(true);
-        MsoyUI.error(convertError(cause));
+        if (getErrorNear() != null) {
+            MsoyUI.errorNear(convertError(cause), getErrorNear());
+        } else {
+            MsoyUI.error(convertError(cause));
+        }
     }
 
     /**
@@ -142,6 +146,11 @@ public abstract class ClickCallback<T>
                 tlabel.addStyleName("actionLabel");
             }
         }
+    }
+
+    protected Widget getErrorNear ()
+    {
+        return null;
     }
 
     protected ClickListener _onClick = new ClickListener() {

@@ -4,6 +4,7 @@
 package client.util;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
@@ -20,11 +21,31 @@ public abstract class MsoyCallback<T> implements AsyncCallback<T>
         }
     };
 
+    /**
+     * Creates a callback that will display its error in the middle of the page.
+     */
+    public MsoyCallback ()
+    {
+    }
+
+    /**
+     * Creates a callback that will display its error near the supplied widget.
+     */
+    public MsoyCallback (Widget errorNear)
+    {
+        _errorNear = errorNear;
+    }
+
     // from AsyncCallback
     public void onFailure (Throwable cause)
     {
-        MsoyUI.error(CShell.serverError(cause));
+        if (_errorNear == null) {
+            MsoyUI.error(CShell.serverError(cause));
+        } else {
+            MsoyUI.errorNear(CShell.serverError(cause), _errorNear);
+        }
         CShell.log("Service request failed", cause);
+
         // TODO: It seems 3 possible things happen on failure:
         // 1) The failure comes back and this displays a message and everything is fine.
         // 2) The URL was changed in the browser, then this failure occurs retrieving
@@ -36,4 +57,6 @@ public abstract class MsoyCallback<T> implements AsyncCallback<T>
         // 2 & 3 should be handled, and for #3 the user should be directed to the home page or
         // given a 404-type page that has a link to the home page.
     }
+
+    protected Widget _errorNear;
 }
