@@ -33,7 +33,6 @@ import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
-import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.NaviUtil;
