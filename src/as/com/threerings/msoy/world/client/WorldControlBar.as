@@ -29,6 +29,8 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.item.data.all.Item;
+
 import com.threerings.msoy.notify.client.NotificationDisplay;
 
 import com.threerings.msoy.room.client.RoomObjectView;
@@ -197,7 +199,7 @@ public class WorldControlBar extends ControlBar
 
             var go :SimpleButton = (_avatarIntro.getChildByName("btn_gotoshop") as SimpleButton);
             go.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                _wctx.getWorldController().handleViewAvatarCatalog();
+                _wctx.getWorldController().handleViewShop(Item.AVATAR);
                 fadeOutAndRemove(_avatarIntro);
             });
 

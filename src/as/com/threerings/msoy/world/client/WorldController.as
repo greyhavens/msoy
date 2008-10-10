@@ -121,11 +121,11 @@ public class WorldController extends MsoyController
     /** Command to visit a member's current location */
     public static const VISIT_MEMBER :String = "VisitMember";
 
-    /** Command to view the "my avatars" page. */
-    public static const VIEW_MY_AVATARS :String= "ViewMyAvatars";
+    /** Command to view a "stuff" page. Arg: [ itemType ] */
+    public static const VIEW_STUFF :String= "ViewStuff";
 
-    /** Command to view the "my avatars" page. */
-    public static const VIEW_MY_FURNITURE :String= "ViewMyFurniture";
+    /** Command to view a "shop" page. Arg: [ itemType ] */
+    public static const VIEW_SHOP :String= "ViewShop";
 
     /** Command to view the "mail" page. */
     public static const VIEW_MAIL :String= "ViewMail";
@@ -520,6 +520,22 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_STUFF command.
+     */
+    public function handleViewStuff (itemType :int) :void
+    {
+        displayPage("stuff", ""+itemType);
+    }
+
+    /**
+     * Handles the VIEW_SHOP command.
+     */
+    public function handleViewShop (itemType :int) :void
+    {
+        displayPage("shop", ""+itemType);
+    }
+
+    /**
      * Handles VIEW_GAME_SHOP.
      */
     public function handleViewGameShop (gameId :int, itemType :int = 0, catalogId :int = 0) :void
@@ -535,30 +551,6 @@ public class WorldController extends MsoyController
             }
         }
         displayPage("shop", args);
-    }
-
-    /**
-     * Handles the VIEW_MY_AVATARS command.
-     */
-    public function handleViewMyAvatars () :void
-    {
-        displayPage("stuff", ""+Item.AVATAR);
-    }
-
-    /**
-     * Handles the VIEW_MY_FURNITURE command.
-     */
-    public function handleViewMyFurniture () :void
-    {
-        displayPage("stuff", "" + Item.FURNITURE);
-    }
-
-    /**
-     * Handles the VIEW_AVATAR_CATALOG command.
-     */
-    public function handleViewAvatarCatalog () :void
-    {
-        displayPage("shop", ""+Item.AVATAR);
     }
 
     /**

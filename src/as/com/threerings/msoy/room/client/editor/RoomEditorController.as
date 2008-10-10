@@ -114,6 +114,8 @@ public class RoomEditorController
         var id :ItemIdent = _entranceSprite.getFurniData().getItemIdent();
         _names.put(id, { label: Msgs.EDITING.get("l.entrance"), data: id });
 
+        _panel.setDecor((scene.getSceneModel() as MsoySceneModel).decor);
+
         // hide advanced ui
         actionAdvancedEditing(false);
     }
@@ -146,6 +148,8 @@ public class RoomEditorController
             // update sprite data
             _entranceSprite.getFurniData().loc.set(up.entrance);
             _entranceSprite.update(_entranceSprite.getFurniData());
+            _panel.setDecor(up.decor);
+
             refreshTarget();
 
         } else if (update is FurniUpdate_Add) {

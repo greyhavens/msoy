@@ -403,7 +403,7 @@ public class RoomObjectController extends RoomController
 
         avItems.push({ type: "separator" });
         avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
-            command: WorldController.VIEW_MY_AVATARS,
+            command: WorldController.VIEW_STUFF, arg: Item.AVATAR,
             enabled: !_wdctx.getWorldClient().isEmbedded() });
 
         // return a menu item for changing their avatar

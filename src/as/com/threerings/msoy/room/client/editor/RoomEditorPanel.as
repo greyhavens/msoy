@@ -12,6 +12,7 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.ComboBox;
 import mx.controls.HRule;
+import mx.controls.Label;
 import mx.controls.Text;
 import mx.core.Container;
 import mx.core.UIComponent;
@@ -19,6 +20,7 @@ import mx.events.ListEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.msoy.ui.FloatingPanel;
@@ -27,6 +29,9 @@ import com.threerings.msoy.ui.SkinnableImage;
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.TopPanel;
+
+import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
@@ -143,6 +148,11 @@ public class RoomEditorPanel extends FloatingPanel
         }
     }
 
+    public function setDecor (decor :Decor) :void
+    {
+        _decorLabel.text = decor.name || Msgs.EDITING.get("m.none");
+    }
+
     public function setHomeButtonEnabled (enabled :Boolean) :void
     {
         _room.setHomeButtonEnabled(enabled);
@@ -221,7 +231,7 @@ public class RoomEditorPanel extends FloatingPanel
     /** Displays the furniture inventory. */
     protected function displayFurnitureInventory () :void
     {
-        CommandEvent.dispatch(this, WorldController.VIEW_MY_FURNITURE);
+        CommandEvent.dispatch(this, WorldController.VIEW_STUFF, Item.FURNITURE);
         selectInNameList(null);
     }
     
@@ -303,9 +313,19 @@ public class RoomEditorPanel extends FloatingPanel
         contents.styleName = "roomEditContents";
         contents.percentWidth = 100;
         addChild(contents);
-        
+
+        // decor name
+        var decorBox :Box = new HBox();
+        decorBox.percentWidth = 100;
+        decorBox.addChild(FlexUtil.createLabel(Msgs.EDITING.get("l.decor")));
+        decorBox.addChild(_decorLabel = FlexUtil.createLabel(""));
+        _decorLabel.maxWidth = 100; // 100 pixels. Flex sucks and I can't limit this. Fuck!
+        decorBox.addChild(new CommandButton(
+            Msgs.EDITING.get("b.change"), WorldController.VIEW_STUFF, Item.DECOR));
+        GridUtil.addRow(contents, decorBox, [3, 1]);
+
         // item name combo box
-        
+
         var box :Box = new HBox();
         box.styleName = "roomEditButtonBar";
         box.percentWidth = 100;
@@ -362,7 +382,6 @@ public class RoomEditorPanel extends FloatingPanel
             };
         };
 
-        
         GridUtil.addRow(leftgrid,
                         makeActionButton(
                             makeScaleFn(1 / SCALEMULTI, 1 / SCALEMULTI),
@@ -497,6 +516,8 @@ public class RoomEditorPanel extends FloatingPanel
     protected var _makeLinkButton :UIComponent;
     protected var _removeLinkButton :UIComponent;
     protected var _customConfigButton :UIComponent;
+
+    protected var _decorLabel :Label;
 
     protected var _curTarget :FurniSprite;
     
