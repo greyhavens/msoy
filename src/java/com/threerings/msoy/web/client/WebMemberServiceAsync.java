@@ -82,21 +82,18 @@ public interface WebMemberServiceAsync
     void trackVisitorInfoCreation (VisitorInfo info, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of
-     * {@link WebMemberService#trackVectorAssociation(VisitorInfo, String)}.
+     * The asynchronous version of {@link WebMemberService#trackVectorAssociation}.
      */
     void trackVectorAssociation (VisitorInfo info, String vector, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of
-     * {@link WebMemberService#trackHttpReferrerAssociation(VisitorInfo, String)}.
+     * The asynchronous version of {@link WebMemberService#trackHttpReferrerAssociation}.
      */
     void trackHttpReferrerAssociation (VisitorInfo info, String referrer,
                                        AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of
-     * {@link WebMemberService#trackSessionStatusChange(VisitorInfo, boolean)}.
+     * The asynchronous version of {@link WebMemberService#trackSessionStatusChange}.
      */
     void trackSessionStatusChange (VisitorInfo info, boolean guest, boolean newInfo,
                                    AsyncCallback<Void> callback);
