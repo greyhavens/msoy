@@ -1,6 +1,8 @@
 /**
- * General styles
+ * Overrides some default Underwire styles.
  */
+
+/** underwire.css overrides. */
 .uDialogBox {
   border: 1px solid #0D4163;
   background: #FFFFFF;
@@ -63,173 +65,31 @@
 }
 
 .uInfoPopup {
-  border: 1px solid;
-  padding: 5px;
   background: #FFFFFF;
-  text-align: left;
 }
 
 .uInputPopup {
-  border: 1px solid;
-  padding: 5px;
   background: #FFFFFF;
   text-align: left;
 }
 
-.uLinkLabel {
-  text-decoration: underline;
-  cursor: pointer;
-  cursor: hand;
-  display: inline;
-}
-
-.uRowPanelCell {
-  padding-right: 10px;
-  vertical-align: bottom;
-}
-
-.uStackPanelCell {
-  padding-bottom: 10px;
-}
-
-.uLoginPanel {
-  border: 1px solid;
-  width: 100%;
-  padding: 5px;
-}
-
 .uMessagePanel {
-  border: 1px solid;
-  padding: 5px;
   width: 90%;
 }
 
-.uMessagePanel .MessageDate {
-  font-style: italic;
-}
-
-/**
- * User Section
- */
-
-.uRegisterPetition {
-  width: 600px;
-}
-
-.uRegisterPetition td {
-  padding: 5px;
-}
-
-.uMyPetitionsPanel {
-  width: 700px;
-  margin-top: 10px;
-}
-
-.uMyPetitionsPanel .header {
-  font-weight: bold;
-}
-
-.uPetitionPanel {
-  width: 100%;
-  border: 1px solid;
-  padding: 5px;
-  margin-top: 10px;
-}
-
-.uEditorPanel {
-  padding: 15px;
-}
-
-.uFaqTitle {
-  font-size: 18px;
-}
-
-.uFaqCategory {
-  font-weight: bold;
-}
-
-.uFaqAnswer {
-  width: 600px;
-  text-align: left;
-  padding: 5px;
-}
-
-/**
- * Admin Section.
- */
-.uAccountSearchPanel {
-  border: 1px solid;
-  padding: 5px;
-}
-
-.uAccountSearchPanel td {
-  padding: 5px;
-}
-
-.uAccountListPanel {
-  width: 400px;
-}
-
-.uAccountPanel {
-  padding: 5px;
-  width: 800px;
-}
-
-.uIdentBanned {
-  color: #FF00FF;
-  font-weight: bold;
-}
-
-.uIdentTainted {
-  color: red;
-}
-
-.uAccountLabel {
-  font-size: small;
-}
-
-.uAccountBanned {
-  font-size: small;
-  color :red;
-}
-
-.uEventsPanel {
-  margin-top: 15px;
-}
-
-.uEventsTable {
-  border-left: 1px solid;
-  border-right: 1px solid;
-  border-bottom: 1px solid;
-}
-
-.uEventsTable td {
-  border-top: 1px solid;
-}
-
+/** admin.css overrides. */
 .uEventsTable .unclaimed {
-  border-top: 1px solid;
-  background: #FFCCCC;
   font-size: small;
 }
 
 .uEventsTable .claimed {
-  border-top: 1px solid;
-  background: #99CCFF;
   font-size: small;
 }
 
 .uEventsTable .closed {
-  border-top: 1px solid;
-  background: #CCCCFF;
   font-size: small;
 }
 
-.uEventPanel {
-  padding: 5px;
+.uAccountPanel {
+  width: 100%;
 }
-
-.uEventPanelScroll {
-  width: 800px;
-}
-

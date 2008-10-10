@@ -1,9 +1,6 @@
 <module>
   <inherits name="page"/>
-
-  <source path="com/threerings/underwire/gwt/client"/>
-  <source path="com/threerings/underwire/web/data"/>
-  <source path="com/threerings/underwire/web/client"/>
+  <inherits name="com.threerings.underwire.Admin"/>
 
   <source path="client/support"/>
 

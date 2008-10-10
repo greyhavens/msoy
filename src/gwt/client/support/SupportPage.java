@@ -41,7 +41,7 @@ public class SupportPage extends Page
             ainfo.name.gameName = CSupport.creds.name.toString();
             ainfo.email = CSupport.creds.accountName;
             ainfo.isAdmin = CSupport.isSupport();
-            ainfo.gameURL = "#admin-info_";
+            ainfo.gameURL = "/#adminz-info_";
             _webctx.ainfo = ainfo;
         }
 
