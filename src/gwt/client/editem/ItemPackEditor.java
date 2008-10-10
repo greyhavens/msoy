@@ -43,7 +43,7 @@ public class ItemPackEditor extends SubItemEditor
             Item.FURNI_MEDIA, TYPE_ANY, ItemMediaUploader.MODE_NORMAL, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: validate media type
-                _item.furniMedia = desc;
+                _item.setFurniMedia(desc);
                 return null;
             }
         });

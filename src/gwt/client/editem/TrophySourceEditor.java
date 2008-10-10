@@ -64,7 +64,7 @@ public class TrophySourceEditor extends SubItemEditor
                     !desc.isImage()) {
                     return _emsgs.errInvalidTrophy();
                 }
-                _item.thumbMedia = desc;
+                _item.setThumbnailMedia(desc);
                 return null;
             }
         }));

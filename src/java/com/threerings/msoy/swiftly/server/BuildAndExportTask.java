@@ -111,14 +111,14 @@ public class BuildAndExportTask extends AbstractBuildTask
             // can't use switch since Item.* are not constants
             if (_itemType == Item.AVATAR) {
                 Avatar avatar = new Avatar();
-                avatar.avatarMedia = new MediaDesc(
-                    MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                avatar.avatarMedia = new MediaDesc(MediaDesc.stringToHash(uploadFile.getHash()),
+                                                   uploadFile.getMimeType());
                 item = avatar;
 
             } else if (_itemType == Item.GAME) {
                 Game game = new Game();
-                game.gameMedia = new MediaDesc(
-                    MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                game.gameMedia = new MediaDesc(MediaDesc.stringToHash(uploadFile.getHash()),
+                                               uploadFile.getMimeType());
                 // game.config cannot be null so just set it to blank and the user can
                 // tweak the config settings through the item editor
                 game.config = "";
@@ -126,14 +126,14 @@ public class BuildAndExportTask extends AbstractBuildTask
 
             } else if (_itemType == Item.FURNITURE) {
                 Furniture furniture = new Furniture();
-                furniture.furniMedia = new MediaDesc(
-                    MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                furniture.setFurniMedia(new MediaDesc(MediaDesc.stringToHash(uploadFile.getHash()),
+                                                      uploadFile.getMimeType()));
                 item = furniture;
 
             } else if (_itemType == Item.PET) {
                 Pet pet = new Pet();
-                pet.furniMedia = new MediaDesc(
-                    MediaDesc.stringToHash(uploadFile.getHash()), uploadFile.getMimeType());
+                pet.setFurniMedia(new MediaDesc(MediaDesc.stringToHash(uploadFile.getHash()),
+                                                uploadFile.getMimeType()));
                 item = pet;
 
             } else {

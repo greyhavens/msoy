@@ -32,9 +32,6 @@ public class GameSummary extends SimpleStreamableObject
     /** The mime type of this game's client media (SWF or JAR). */
     public var gameMediaType :int;
 
-    /** The thumbnail of the game - used as a game icon */
-    public var thumbMedia :MediaDesc;
-
     public function GameSummary (game :Game = null)
     {
         // only used for unserialization
@@ -45,7 +42,7 @@ public class GameSummary extends SimpleStreamableObject
      */
     public function getThumbMedia () :MediaDesc
     {
-        return thumbMedia != null ? thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
+        return _thumbMedia != null ? _thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
     }
 
     // documentation from Cloneable
@@ -55,7 +52,7 @@ public class GameSummary extends SimpleStreamableObject
         data.gameId = this.gameId;
         data.name = this.name;
         data.avrGame = this.avrGame;
-        data.thumbMedia = this.thumbMedia;
+        data._thumbMedia = _thumbMedia;
         return data;
     }
 
@@ -77,7 +74,7 @@ public class GameSummary extends SimpleStreamableObject
         name = (ins.readField(String) as String);
         avrGame = ins.readBoolean();
         gameMediaType = ins.readByte();
-        thumbMedia = (ins.readObject() as MediaDesc);
+        _thumbMedia = (ins.readObject() as MediaDesc);
     }
 
     // documntation from Streamable
@@ -88,7 +85,10 @@ public class GameSummary extends SimpleStreamableObject
         out.writeField(name);
         out.writeBoolean(avrGame);
         out.writeByte(gameMediaType);
-        out.writeObject(thumbMedia);
+        out.writeObject(_thumbMedia);
     }
+
+    /** The thumbnail of the game - used as a game icon */
+    protected var _thumbMedia :MediaDesc;
 }
 }

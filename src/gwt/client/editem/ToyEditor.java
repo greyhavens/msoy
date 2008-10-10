@@ -41,7 +41,7 @@ public class ToyEditor extends ItemEditor
                 if (!isValidPrimaryMedia(desc)) {
                     return invalidPrimaryMediaMessage();
                 }
-                _item.furniMedia = desc;
+                _item.setFurniMedia(desc);
                 return null;
             }
         }), getFurniTitleText());

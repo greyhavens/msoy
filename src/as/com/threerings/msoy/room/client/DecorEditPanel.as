@@ -110,7 +110,7 @@ public class DecorEditPanel extends FlyingPanel
         _decor.horizon = _horizon.value;
         _decor.scale = _scale.value;
 
-        if (_decor.furniMedia != null) {
+        if (_decor.getRawFurniMedia() != null) {
             updateDecorInViewer();
             updateDecorOnPage();
         }
@@ -118,8 +118,7 @@ public class DecorEditPanel extends FlyingPanel
 
     protected function updateMedia (path :String) :void
     {
-        _decor.furniMedia = new StudioMediaDesc(path);
-
+        _decor.setFurniMedia(new StudioMediaDesc(path));
         updateDecorInViewer();
     }
 

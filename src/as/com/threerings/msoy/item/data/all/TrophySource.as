@@ -38,7 +38,7 @@ public class TrophySource extends SubItem
     // from Item
     override public function getPreviewMedia () :MediaDesc
     {
-        return thumbMedia;
+        return _thumbMedia;
     }
 
     // from interface Streamable

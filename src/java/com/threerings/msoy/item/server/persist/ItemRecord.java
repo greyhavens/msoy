@@ -344,10 +344,10 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.attrs = attrs;
         item.mature = mature;
         if (furniMediaHash != null) {
-            item.furniMedia = new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
+            item.setFurniMedia(new MediaDesc(furniMediaHash, furniMimeType, furniConstraint));
         }
         if (thumbMediaHash != null) {
-            item.thumbMedia = new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
+            item.setThumbnailMedia(new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint));
         }
         return item;
     }
@@ -373,15 +373,17 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         // lastTouched = not user editable
         name = (item.name == null) ? "" : item.name;
         description = (item.description == null) ? "" : item.description;
-        if (item.thumbMedia != null) {
-            thumbMediaHash = item.thumbMedia.hash;
-            thumbMimeType = item.thumbMedia.mimeType;
-            thumbConstraint = item.thumbMedia.constraint;
+        MediaDesc media = item.getRawThumbnailMedia();
+        if (media != null) {
+            thumbMediaHash = media.hash;
+            thumbMimeType = media.mimeType;
+            thumbConstraint = media.constraint;
         }
-        if (item.furniMedia != null) {
-            furniMediaHash = item.furniMedia.hash;
-            furniMimeType = item.furniMedia.mimeType;
-            furniConstraint = item.furniMedia.constraint;
+        media = item.getRawFurniMedia();
+        if (media != null) {
+            furniMediaHash = media.hash;
+            furniMimeType = media.mimeType;
+            furniConstraint = media.constraint;
         }
     }
 

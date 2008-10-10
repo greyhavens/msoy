@@ -46,7 +46,7 @@ public class DecorEditor extends ItemEditor
                 if (!isValidPrimaryMedia(desc)) {
                     return _emsgs.errFurniNotFlash();
                 }
-                _item.furniMedia = desc;
+                _item.setFurniMedia(desc);
                 if (width > 0 && height > 0) {
                     // set dimensions
                     _decor.width = (short) width;
@@ -112,8 +112,8 @@ public class DecorEditor extends ItemEditor
      */
     protected void sendDecorUpdateToFlash ()
     {
-        if (_decor.furniMedia != null) {
-            mediaUpdateHelper(_decor.furniMedia.getMediaPath());
+        if (_decor.getRawFurniMedia() != null) {
+            mediaUpdateHelper(_decor.getRawFurniMedia().getMediaPath());
         }
         decorUpdateHelper(_decor.type, _decor.hideWalls, _decor.width, _decor.height,
             _decor.depth, _decor.horizon, _decor.scale, _decor.offsetX, _decor.offsetY);

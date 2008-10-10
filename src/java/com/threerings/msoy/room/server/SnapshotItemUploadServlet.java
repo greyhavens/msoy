@@ -23,8 +23,8 @@ import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
 {
     @Override
-    protected void sendResponse (UploadContext ctx, Client client, List<String> mediaIds, 
-        List<MediaInfo> mediaInfos)
+    protected void sendResponse (UploadContext ctx, Client client,
+                                 List<String> mediaIds, List<MediaInfo> mediaInfos)
         throws IOException
     {
         Photo image = new Photo();
@@ -34,9 +34,9 @@ public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
             String mediaId = mediaIds.get(ii);
             MediaInfo info = mediaInfos.get(ii);
             if (Item.THUMB_MEDIA.equals(mediaId)) {
-                image.thumbMedia = createMediaDesc(info);
+                image.setThumbnailMedia(createMediaDesc(info));
             } else if (Item.FURNI_MEDIA.equals(mediaId)) {
-                image.furniMedia = createMediaDesc(info);
+                image.setFurniMedia(createMediaDesc(info));
             } else {
                 image.photoMedia = createMediaDesc(info);
                 image.photoWidth = info.width;

@@ -37,19 +37,19 @@ public class TrophySource extends SubItem
     @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
-        return thumbMedia;
+        return _thumbMedia;
     }
 
     @Override // from Item
     public MediaDesc getPrimaryMedia ()
     {
-        return thumbMedia;
+        return _thumbMedia;
     }
 
     @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (thumbMedia != null);
+        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (_thumbMedia != null);
     }
 
     @Override // from SubItem

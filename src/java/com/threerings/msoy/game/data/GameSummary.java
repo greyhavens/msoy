@@ -27,9 +27,6 @@ public class GameSummary extends SimpleStreamableObject
     /** The mime type of this game's client media (SWF or JAR). */
     public byte gameMediaType;
 
-    /** The thumbnail of the game - used as a game icon */
-    protected MediaDesc thumbMedia;
-
     /** Used for unserialization. */
     public GameSummary ()
     {
@@ -44,7 +41,7 @@ public class GameSummary extends SimpleStreamableObject
         name = game.name;
         avrGame = game.isInWorld();
         gameMediaType = game.gameMedia.mimeType;
-        thumbMedia = game.thumbMedia;
+        _thumbMedia = game.getRawThumbnailMedia();
     }
 
     /**
@@ -52,7 +49,7 @@ public class GameSummary extends SimpleStreamableObject
      */
     public MediaDesc getThumbMedia ()
     {
-        return thumbMedia != null ? thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
+        return _thumbMedia != null ? _thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
     }
 
     @Override // from Object
@@ -74,4 +71,7 @@ public class GameSummary extends SimpleStreamableObject
             throw new RuntimeException(cnse); // not going to happen
         }
     }
+
+    /** The thumbnail of the game - used as a game icon */
+    protected MediaDesc _thumbMedia;
 }

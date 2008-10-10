@@ -156,8 +156,8 @@ public class Game extends Item
     @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
-        if (furniMedia != null) {
-            return furniMedia;
+        if (_furniMedia != null) {
+            return _furniMedia;
         }
         return getThumbnailMedia();
     }

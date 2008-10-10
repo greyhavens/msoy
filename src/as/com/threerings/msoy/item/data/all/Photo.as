@@ -30,7 +30,14 @@ public class Photo extends Item
     // from Item
     override public function getPreviewMedia () :MediaDesc
     {
-        return (furniMedia != null) ? furniMedia : thumbMedia;
+        return (_furniMedia != null) ? _furniMedia : getThumbnailMedia();
+    }
+
+    // from Item
+    override public function getFurniMedia () :MediaDesc
+    {
+        // on the flash side only, always use the full media when displaying an image in a room
+        return photoMedia;
     }
 
     // from Item
@@ -55,13 +62,6 @@ public class Photo extends Item
         out.writeObject(photoMedia);
         out.writeInt(photoWidth);
         out.writeInt(photoHeight);
-    }
-
-    // from Item
-    override public function getFurniMedia () :MediaDesc
-    {
-        // on the flash side only, always use the full media when displaying an image in a room
-        return photoMedia;
     }
 }
 }

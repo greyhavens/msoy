@@ -41,7 +41,7 @@ public class FurnitureEditor extends ItemEditor
                 if (!isValidPrimaryMedia(desc)) {
                     return _emsgs.errFurniNotFlash();
                 }
-                _item.furniMedia = desc;
+                _item.setFurniMedia(desc);
                 return null;
             }
         }), _emsgs.editorFurniTitle());

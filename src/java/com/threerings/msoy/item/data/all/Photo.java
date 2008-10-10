@@ -35,7 +35,7 @@ public class Photo extends Item
     @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
-        return (furniMedia != null) ? furniMedia : getThumbnailMedia();
+        return (_furniMedia != null) ? _furniMedia : getThumbnailMedia();
     }
 
     @Override // from Item

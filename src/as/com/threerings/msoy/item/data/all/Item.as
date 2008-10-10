@@ -162,12 +162,6 @@ public /*abstract*/ class Item
     /** Whether or not this item represents mature content. */
     public var mature :Boolean;
 
-    /** The media used to display this item's thumbnail representation. */
-    public var thumbMedia :MediaDesc;
-
-    /** The media used to display this item's furniture representation. */
-    public var furniMedia :MediaDesc;
-
     /**
      * Get the item class corresponding to the specified type.
      */
@@ -309,7 +303,23 @@ public /*abstract*/ class Item
      */
     public function getThumbnailMedia () :MediaDesc
     {
-        return (thumbMedia == null) ? getDefaultThumbnailMedia() : thumbMedia;
+        return (_thumbMedia == null) ? getDefaultThumbnailMedia() : _thumbMedia;
+    }
+
+    /**
+     * Returns our raw thumbnail media which may be null. Don't call this method.
+     */
+    public function getRawThumbnailMedia () :MediaDesc
+    {
+        return _furniMedia;
+    }
+
+    /**
+     * Configures this item's thumbnail media.
+     */
+    public function setThumbnailMedia (thumbMedia :MediaDesc) :void
+    {
+        _thumbMedia = thumbMedia;
     }
 
     /**
@@ -318,7 +328,23 @@ public /*abstract*/ class Item
      */
     public function getFurniMedia () :MediaDesc
     {
-        return (furniMedia == null) ? getDefaultFurniMedia() : furniMedia;
+        return (_furniMedia == null) ? getDefaultFurniMedia() : _furniMedia;
+    }
+
+    /**
+     * Returns our raw furniture media which may be null. Don't call this method.
+     */
+    public function getRawFurniMedia () :MediaDesc
+    {
+        return _furniMedia;
+    }
+
+    /**
+     * Configures this item's furniture media.
+     */
+    public function setFurniMedia (furniMedia :MediaDesc) :void
+    {
+        _furniMedia = furniMedia;
     }
 
     /**
@@ -385,8 +411,8 @@ public /*abstract*/ class Item
         out.writeField(name);
         out.writeField(description);
         out.writeBoolean(mature);
-        out.writeObject(thumbMedia);
-        out.writeObject(furniMedia);
+        out.writeObject(_thumbMedia);
+        out.writeObject(_furniMedia);
     }
 
     // from Streamable
@@ -407,8 +433,8 @@ public /*abstract*/ class Item
         name = (ins.readField(String) as String);
         description = (ins.readField(String) as String);
         mature = ins.readBoolean();
-        thumbMedia = (ins.readObject() as MediaDesc);
-        furniMedia = (ins.readObject() as MediaDesc);
+        _thumbMedia = (ins.readObject() as MediaDesc);
+        _furniMedia = (ins.readObject() as MediaDesc);
     }
 
     /**
@@ -470,6 +496,12 @@ public /*abstract*/ class Item
     {
         MethodQueue.callLater(registerAll);
     }
+
+    /** The media used to display this item's thumbnail representation. */
+    protected var _thumbMedia :MediaDesc;
+
+    /** The media used to display this item's furniture representation. */
+    protected var _furniMedia :MediaDesc;
 
     staticInit();
     private static var _mapping :HashMap;

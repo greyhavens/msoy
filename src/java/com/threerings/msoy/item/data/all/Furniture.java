@@ -30,7 +30,7 @@ public class Furniture extends Item
     @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (furniMedia != null);
+        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (_furniMedia != null);
     }
 
     @Override // from Item

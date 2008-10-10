@@ -163,12 +163,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /** Whether or not this item represents mature content. */
     public boolean mature;
 
-    /** The media used to display this item's thumbnail representation. */
-    public MediaDesc thumbMedia;
-
-    /** The media used to display this item's furniture representation. */
-    public MediaDesc furniMedia;
-
     /**
      * Returns a {@link MediaDesc} configured to display the default furniture media for items of
      * the specified type.
@@ -383,7 +377,23 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public MediaDesc getThumbnailMedia ()
     {
-        return (thumbMedia == null) ? getDefaultThumbnailMedia() : thumbMedia;
+        return (_thumbMedia == null) ? getDefaultThumbnailMedia() : _thumbMedia;
+    }
+
+    /**
+     * Returns our raw thumbnail media which may be null. Don't call this method.
+     */
+    public MediaDesc getRawThumbnailMedia ()
+    {
+        return _furniMedia;
+    }
+
+    /**
+     * Configures this item's thumbnail media.
+     */
+    public void setThumbnailMedia (MediaDesc thumbMedia)
+    {
+        _thumbMedia = thumbMedia;
     }
 
     /**
@@ -392,7 +402,23 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public MediaDesc getFurniMedia ()
     {
-        return (furniMedia == null) ? getDefaultFurniMedia() : furniMedia;
+        return (_furniMedia == null) ? getDefaultFurniMedia() : _furniMedia;
+    }
+
+    /**
+     * Returns our raw furniture media which may be null. Don't call this method.
+     */
+    public MediaDesc getRawFurniMedia ()
+    {
+        return _furniMedia;
+    }
+
+    /**
+     * Configures this item's furniture media.
+     */
+    public void setFurniMedia (MediaDesc furniMedia)
+    {
+        _furniMedia = furniMedia;
     }
 
     /**
@@ -402,7 +428,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public MediaDesc getPrimaryMedia ()
     {
-        return furniMedia;
+        return _furniMedia;
     }
 
     /**
@@ -410,7 +436,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public void setPrimaryMedia (MediaDesc desc)
     {
-        furniMedia = desc;
+        _furniMedia = desc;
     }
 
     /**
@@ -419,11 +445,11 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public void checkConsolidateMedia ()
     {
-        if (thumbMedia != null && getThumbnailMedia().equals(getDefaultThumbnailMedia())) {
-            thumbMedia = null;
+        if (_thumbMedia != null && getThumbnailMedia().equals(getDefaultThumbnailMedia())) {
+            _thumbMedia = null;
         }
-        if (furniMedia != null && getFurniMedia().equals(getDefaultFurniMedia())) {
-            furniMedia = null;
+        if (_furniMedia != null && getFurniMedia().equals(getDefaultFurniMedia())) {
+            _furniMedia = null;
         }
     }
 
@@ -529,6 +555,12 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
 
         return type;
     }
+
+    /** The media used to display this item's thumbnail representation. */
+    protected MediaDesc _thumbMedia;
+
+    /** The media used to display this item's furniture representation. */
+    protected MediaDesc _furniMedia;
 
     private static HashMap<Byte, Class<? extends Item>> _mapping;
     private static HashMap<Class<? extends Item>, Byte> _reverseMapping;

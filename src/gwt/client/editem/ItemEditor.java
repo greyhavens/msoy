@@ -252,7 +252,7 @@ public abstract class ItemEditor extends FlexTable
                 if (!isValidPrimaryMedia(desc)) {
                     return invalidPrimaryMediaMessage();
                 }
-                _item.furniMedia = desc;
+                _item.setFurniMedia(desc);
                 return null;
             }
         }), getFurniTitleText());
@@ -276,7 +276,7 @@ public abstract class ItemEditor extends FlexTable
                 if (!desc.isImage()) {
                     return _emsgs.errThumbNotImage();
                 }
-                _item.thumbMedia = desc;
+                _item.setThumbnailMedia(desc);
                 return null;
             }
         }), _emsgs.editorThumbTitle());

@@ -37,8 +37,8 @@ public class Pet extends Item
     @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (furniMedia != null) && nonBlank(name, MAX_NAME_LENGTH) &&
-            (furniMedia.isSWF() || furniMedia.isRemixable());
+        return super.isConsistent() && (_furniMedia != null) && nonBlank(name, MAX_NAME_LENGTH) &&
+            (_furniMedia.isSWF() || _furniMedia.isRemixable());
     }
 
     @Override // from Item

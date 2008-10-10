@@ -36,7 +36,7 @@ public class PetEditor extends ItemEditor
                 if (!isValidPrimaryMedia(desc)) {
                     return _emsgs.errPetNotFlash();
                 }
-                _item.furniMedia = desc;
+                _item.setFurniMedia(desc);
                 return null;
             }
         }), _emsgs.petTip());

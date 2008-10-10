@@ -31,6 +31,6 @@ public class ItemPack extends SubItem
     @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (furniMedia != null);
+        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (_furniMedia != null);
     }
 }

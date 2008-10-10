@@ -141,11 +141,11 @@ public class RoomStudioController extends RoomController
             decor.scale = Number(params.decorScale);
             decor.offsetX = Number(params.decorOffsetX);
             decor.offsetY = Number(params.decorOffsetY);
-            decor.furniMedia = new StudioMediaDesc(params.media as String);
+            decor.setFurniMedia(new StudioMediaDesc(params.media as String));
 
         } else {
             decor = MsoySceneModel.defaultMsoySceneModelDecor();
-            decor.furniMedia = null; // the view does some stuff to render a line drawing instead
+            decor.setFurniMedia(null); // the view does some stuff to render a line drawing instead
         }
 
         model.decor = decor;

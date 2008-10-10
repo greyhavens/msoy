@@ -36,7 +36,7 @@ public class PropEditor extends SubItemEditor
                 if (!desc.hasFlashVisual()) {
                     return _emsgs.errPropNotFlash();
                 }
-                _item.furniMedia = desc;
+                _item.setFurniMedia(desc);
                 return null;
             }
         }), _emsgs.propTip());
