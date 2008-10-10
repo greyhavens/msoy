@@ -130,7 +130,7 @@ public class StuffPage extends Page
         } else {
             // otherwise we're viewing our inventory
             byte type = (byte)args.get(0, Item.AVATAR);
-            ItemPanel panel = getItemPanel(type);
+            StuffPanel panel = getStuffPanel(type);
             panel.setArgs(args.get(1, -1), args.get(2, ""));
             String title = _msgs.stuffTitleMain();
             setContent(title, panel);
@@ -185,17 +185,17 @@ public class StuffPage extends Page
         _stuffsvc.loadItem(new ItemIdent(type, itemId), callback);
     }
 
-    protected ItemPanel getItemPanel (byte itemType)
+    protected StuffPanel getStuffPanel (byte itemType)
     {
-        ItemPanel panel = _itemPanels.get(itemType);
+        StuffPanel panel = _stuffPanels.get(itemType);
         if (panel == null) {
-            _itemPanels.put(itemType, panel = new ItemPanel(_models, itemType));
+            _stuffPanels.put(itemType, panel = new StuffPanel(_models, itemType));
         }
         return panel;
     }
 
     protected InventoryModels _models = new InventoryModels();
-    protected HashMap<Byte, ItemPanel> _itemPanels = new HashMap<Byte, ItemPanel>();
+    protected HashMap<Byte, StuffPanel> _stuffPanels = new HashMap<Byte, StuffPanel>();
     protected ItemDetail _detail;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

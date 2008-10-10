@@ -24,7 +24,7 @@ public class SubItemPanel extends PagedGrid<Item>
 {
     public SubItemPanel (InventoryModels models, byte type, Item parent)
     {
-        super(ROWS, ItemPanel.COLUMNS, PagedGrid.NAV_ON_BOTTOM);
+        super(ROWS, StuffPanel.COLUMNS, PagedGrid.NAV_ON_BOTTOM);
         addStyleName("subInventoryContents");
 
         _models = models;

@@ -42,12 +42,12 @@ import client.util.NaviUtil;
  * Displays all items of a particular type in a player's inventory, or display the main inventory
  * page with a list of recent items of all types.
  */
-public class ItemPanel extends FlowPanel
+public class StuffPanel extends FlowPanel
 {
     /** The number of columns of items to display. */
     public static final int COLUMNS = 5;
 
-    public ItemPanel (InventoryModels models, byte type)
+    public StuffPanel (InventoryModels models, byte type)
     {
         setStyleName("itemPanel");
 
