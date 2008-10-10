@@ -139,7 +139,6 @@ public class DecorEditor extends ItemEditor
         $wnd.updateDecor = function (type, hideWalls, width, height, depth, horizon, scale,
                                      offsetX, offsetY)
         {
-            alert("Got update: " + depth);
             editor.@client.editem.DecorEditor::updateDecorFromFlash(BZSSSFFFF)(
                 type, hideWalls, width, height, depth, horizon, scale, offsetX, offsetY);
         };
