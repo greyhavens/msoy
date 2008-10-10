@@ -74,9 +74,7 @@ public class DecorEditPanel extends FlyingPanel
         // maybe we're being used as a tester in the SDK....
         var media :String = MsoyParameters.get()["media"] as String;
         if (media != null) {
-            updateMedia(media);
-            _studioView.getBackground().addEventListener(
-                MediaContainer.SIZE_KNOWN, handleTestingSizeKnown);
+            updateMedia(media, true);
             return;
         }
 
@@ -116,10 +114,14 @@ public class DecorEditPanel extends FlyingPanel
         }
     }
 
-    protected function updateMedia (path :String) :void
+    protected function updateMedia (path :String, figureAttrs :Boolean) :void
     {
         _decor.setFurniMedia(new StudioMediaDesc(path));
         updateDecorInViewer();
+        if (figureAttrs) {
+            _studioView.getBackground().addEventListener(
+                MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        }
     }
 
     protected function updateParameters (
@@ -294,12 +296,17 @@ public class DecorEditPanel extends FlyingPanel
         }
     }
 
-    protected function handleTestingSizeKnown (event :ValueEvent) :void
+    /**
+     * Called when we know the size of the backdrop media, and are supposed to fill-in the
+     * initial values of the decor ourselves.
+     */
+    protected function handleSizeKnown (event :ValueEvent) :void
     {
         const w :int = int(event.value[0]);
         const h :int = int(event.value[1]);
 
         updateParameters(Decor.IMAGE_OVERLAY, false, w, h, h, .5, 1, 0, 0);
+        updateDecorOnPage();
     }
 
     protected var log :Log = Log.getLog(this);

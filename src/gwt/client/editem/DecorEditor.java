@@ -23,6 +23,8 @@ public class DecorEditor extends ItemEditor
     @Override // from ItemEditor
     public Item createBlankItem ()
     {
+        _attrsNeedFiguring = true;
+
         Decor d = new Decor();
         // some sample values. dimensions will be overwritten once a new image gets uploaded.
         d.type = Decor.IMAGE_OVERLAY;
@@ -46,17 +48,9 @@ public class DecorEditor extends ItemEditor
                 if (!isValidPrimaryMedia(desc)) {
                     return _emsgs.errFurniNotFlash();
                 }
+                _attrsNeedFiguring = true;
                 _item.setFurniMedia(desc);
-                if (width > 0 && height > 0) {
-                    // set dimensions
-                    _decor.width = (short) width;
-                    _decor.height = (short) height;
-                    _decor.depth = (short) height;
-                    // clear offsets
-                    _decor.offsetX = _decor.offsetY = 0;
-                    _decor.scale = 1;
-                    sendDecorUpdateToFlash();
-                }
+                sendDecorUpdateToFlash();
                 return null;
             }
         }), _emsgs.decorTip());
@@ -85,8 +79,20 @@ public class DecorEditor extends ItemEditor
     {
         super.setItem(item);
         _decor = (Decor)item;
-
+        _attrsNeedFiguring = false;
         sendDecorUpdateToFlash();
+    }
+
+    @Override
+    protected void prepareItem ()
+        throws Exception
+    {
+        super.prepareItem();
+
+        if (_attrsNeedFiguring) {
+            // this could only really happen if flash is turned off or if it hasn't initialized yet
+            throw new Exception(_emsgs.editorNotConsistent());
+        }
     }
 
     /**
@@ -105,6 +111,8 @@ public class DecorEditor extends ItemEditor
         _decor.scale = scale;
         _decor.offsetX = offsetX;
         _decor.offsetY = offsetY;
+
+        _attrsNeedFiguring = false;
     }
 
     /**
@@ -113,10 +121,12 @@ public class DecorEditor extends ItemEditor
     protected void sendDecorUpdateToFlash ()
     {
         if (_decor.getRawFurniMedia() != null) {
-            mediaUpdateHelper(_decor.getRawFurniMedia().getMediaPath());
+            mediaUpdateHelper(_decor.getRawFurniMedia().getMediaPath(), _attrsNeedFiguring);
         }
-        decorUpdateHelper(_decor.type, _decor.hideWalls, _decor.width, _decor.height,
-            _decor.depth, _decor.horizon, _decor.scale, _decor.offsetX, _decor.offsetY);
+        if (!_attrsNeedFiguring) {
+            decorUpdateHelper(_decor.type, _decor.hideWalls, _decor.width, _decor.height,
+                _decor.depth, _decor.horizon, _decor.scale, _decor.offsetX, _decor.offsetY);
+        }
     }
 
     /**
@@ -129,6 +139,7 @@ public class DecorEditor extends ItemEditor
         $wnd.updateDecor = function (type, hideWalls, width, height, depth, horizon, scale,
                                      offsetX, offsetY)
         {
+            alert("Got update: " + depth);
             editor.@client.editem.DecorEditor::updateDecorFromFlash(BZSSSFFFF)(
                 type, hideWalls, width, height, depth, horizon, scale, offsetX, offsetY);
         };
@@ -144,14 +155,18 @@ public class DecorEditor extends ItemEditor
         }
     }-*/;
 
-    protected static native void mediaUpdateHelper (String mediaPath) /*-{
+    protected static native void mediaUpdateHelper (String mediaPath, boolean figureAttrs) /*-{
         var viewer = $doc.getElementById("decorViewer");
         if (viewer) {
-            viewer.updateMedia(mediaPath);
+            viewer.updateMedia(mediaPath, figureAttrs);
         }
     }-*/;
 
     protected Decor _decor;
+
+    /** True if the flash client needs to figure out initial attributes for the decor
+     * based on the media. */
+    protected boolean _attrsNeedFiguring;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }
