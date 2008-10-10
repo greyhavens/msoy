@@ -56,7 +56,7 @@ public class StuffNaviBar extends FloatPanel
     static {
         UP_IMAGES.put(Item.AVATAR, _images.avatar());
         UP_IMAGES.put(Item.FURNITURE, _images.furniture());
-        UP_IMAGES.put(Item.DECOR, _images.decor());
+        UP_IMAGES.put(Item.DECOR, _images.backdrop());
         UP_IMAGES.put(Item.TOY, _images.toy());
         UP_IMAGES.put(Item.PET, _images.pet());
         UP_IMAGES.put(Item.GAME, _images.game());
@@ -67,7 +67,7 @@ public class StuffNaviBar extends FloatPanel
     static {
         DOWN_IMAGES.put(Item.AVATAR, _images.avatar_d());
         DOWN_IMAGES.put(Item.FURNITURE, _images.furniture_d());
-        DOWN_IMAGES.put(Item.DECOR, _images.decor_d());
+        DOWN_IMAGES.put(Item.DECOR, _images.backdrop_d());
         DOWN_IMAGES.put(Item.TOY, _images.toy_d());
         DOWN_IMAGES.put(Item.PET, _images.pet_d());
         DOWN_IMAGES.put(Item.GAME, _images.game_d());
@@ -78,7 +78,7 @@ public class StuffNaviBar extends FloatPanel
     static {
         SELECTED_IMAGES.put(Item.AVATAR, _images.avatar_s());
         SELECTED_IMAGES.put(Item.FURNITURE, _images.furniture_s());
-        SELECTED_IMAGES.put(Item.DECOR, _images.decor_s());
+        SELECTED_IMAGES.put(Item.DECOR, _images.backdrop_s());
         SELECTED_IMAGES.put(Item.TOY, _images.toy_s());
         SELECTED_IMAGES.put(Item.PET, _images.pet_s());
         SELECTED_IMAGES.put(Item.GAME, _images.game_s());

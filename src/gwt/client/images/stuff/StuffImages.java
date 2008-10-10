@@ -30,14 +30,14 @@ public interface StuffImages extends ImageBundle
     @Resource("avatars_down.png")
     AbstractImagePrototype avatar_d ();
 
-    @Resource("decor_default.png")
-    AbstractImagePrototype decor ();
+    @Resource("backdrops_default.png")
+    AbstractImagePrototype backdrop ();
 
-    @Resource("decor_selected.png")
-    AbstractImagePrototype decor_s ();
+    @Resource("backdrops_selected.png")
+    AbstractImagePrototype backdrop_s ();
 
-    @Resource("decor_down.png")
-    AbstractImagePrototype decor_d ();
+    @Resource("backdrops_down.png")
+    AbstractImagePrototype backdrop_d ();
 
     @Resource("furni_default.png")
     AbstractImagePrototype furniture ();
