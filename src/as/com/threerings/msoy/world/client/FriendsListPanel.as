@@ -55,8 +55,11 @@ public class FriendsListPanel extends FlyingPanel
 
     override public function close () :void
     {
-        _wctx.getMemberObject().removeListener(this);
-        _wctx.getMemberObject().removeListener(_friendsList);
+        var memObj :MemberObject = _wctx.getMemberObject();
+        if (memObj != null) {
+            memObj.removeListener(this);
+            memObj.removeListener(_friendsList);
+        }
         _wctx.getClient().removeClientObserver(_cliObs);
 
         super.close();
