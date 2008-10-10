@@ -121,4 +121,10 @@ public interface WebMemberService extends RemoteService
      */
     void trackHttpReferrerAssociation (VisitorInfo info, String referrer)
         throws ServiceException;
+
+    /**
+     * Records a change in session status: is this a registered player or not,
+     * and if not, was this a guest visit?
+     */
+    void trackSessionStatusChange (VisitorInfo info, boolean guest, boolean newInfo);
 }

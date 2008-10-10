@@ -563,6 +563,32 @@ public class MsoyEvents
     }
 
     /**
+     * Web-side equivalent of a PlayerLogin, except it works for guest visitors as well.
+     * Should be fired when someone loads up GWT and authenticates (or fails to authenticate).
+     */
+    @Event(name="WebSessionStatusChanged") // note: do not change this event name
+    public static class WebSessionStatusChanged implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public String tracker;
+        @Field final public boolean player;
+        @Field final public boolean guest;
+        @Field final public boolean other;
+        @Field final public boolean newInfo;
+
+        public WebSessionStatusChanged (
+            String tracker, boolean player, boolean guest, boolean other, boolean newInfo)
+        {
+            this.timestamp = new Date();
+            this.tracker = tracker;
+            this.player = player;
+            this.guest = guest;
+            this.other = other;
+            this.newInfo = newInfo;
+        }
+    }
+
+    /**
      * Generic one-shot experiences being logged about players.
      */
     @Event(name="Experience") // note: do not change this event name

@@ -197,6 +197,12 @@ public class MemberServlet extends MsoyServiceServlet
         _eventLog.referrerAssociated(info, referrer);
     }
 
+    // from WebMemberService
+    public void trackSessionStatusChange (VisitorInfo info, boolean guest, boolean newInfo)
+    {
+        _eventLog.webSessionStatusChanged(info, guest, newInfo);
+    }
+
     // our dependencies
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;

@@ -117,7 +117,7 @@ public class StatusPanel extends SmartTable
         // add a logoff link
         setWidget(0, idx++, MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
             public void onClick (Widget sender) {
-                Session.didLogoff();
+                Session.didLogoff(Session.LogoffCondition.LOGOFF_REQUESTED);
             }
         }));
     }

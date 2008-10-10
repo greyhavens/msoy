@@ -30,6 +30,16 @@ import client.util.ServiceUtil;
  */
 public class Session
 {
+    public enum LogoffCondition
+    {
+        /** Player hit the 'logoff' button. */
+        LOGOFF_REQUESTED,
+        /** Player tried to log on, and failed. */
+        LOGON_ATTEMPT_FAILED,
+        /** Visitor showed up without a credentials cookie - probably a new visitor. */
+        NO_CREDENTIALS;
+    }
+
     /** An interface used for observing logon and logoff. */
     public static interface Observer {
         /** Called when we have just logged on. */
@@ -72,7 +82,7 @@ public class Session
             // some later time after the current call stack has completed
             DeferredCommand.addCommand(new Command() {
                 public void execute () {
-                    didLogoff();
+                    didLogoff(LogoffCondition.NO_CREDENTIALS);
                 }
             });
             return;
@@ -82,13 +92,13 @@ public class Session
         AsyncCallback<SessionData> onValidate = new AsyncCallback<SessionData>() {
             public void onSuccess (SessionData data) {
                 if (data == null) {
-                    didLogoff();
+                    didLogoff(LogoffCondition.LOGON_ATTEMPT_FAILED);
                 } else {
                     didLogon(data);
                 }
             }
             public void onFailure (Throwable t) {
-                didLogoff();
+                didLogoff(LogoffCondition.LOGON_ATTEMPT_FAILED);
             }
         };
         _usersvc.validateSession(DeploymentConfig.version, token, 1, onValidate);
@@ -110,6 +120,9 @@ public class Session
         VisitorCookie.clear();
         CShell.visitor = data.visitor;
 
+        // tell it from the mountain
+        _membersvc.trackSessionStatusChange(data.visitor, false, false, new NoopAsyncCallback());
+
         // let our observers know that we've just logged on
         for (Observer observer : _observers) {
             try {
@@ -124,7 +137,7 @@ public class Session
      * Call this method if you know we've just logged off and want to let everyone who cares know
      * about it.
      */
-    public static void didLogoff ()
+    public static void didLogoff (LogoffCondition condition)
     {
         // clear out our credentials cookie
         CookieUtil.clear("/", WebCreds.credsCookie());
@@ -134,15 +147,22 @@ public class Session
 
         // we're logged out, or maybe we're just a guest player.
         // if we don't already have a visitor token, create a brand new shiny one
+        boolean newInfo = false;
         if (! VisitorCookie.exists()) {
             VisitorInfo info = new VisitorInfo();
             VisitorCookie.save(info, false);
             CShell.visitor = info;
             _membersvc.trackVisitorInfoCreation(info, new NoopAsyncCallback());
+            newInfo = true;
         } else {
             // we already have one, just load it back in
             CShell.visitor = VisitorCookie.get();
         }
+
+        // log me
+        boolean guest = (condition == LogoffCondition.NO_CREDENTIALS);
+        _membersvc.trackSessionStatusChange(
+            CShell.visitor, guest, newInfo, new NoopAsyncCallback());
 
         // let our observers know that we've just logged off
         for (Observer observer : _observers) {

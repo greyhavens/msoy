@@ -263,6 +263,17 @@ public class MsoyEventLogger
         }
     }
 
+    public void webSessionStatusChanged (VisitorInfo info, boolean guest, boolean newInfo)
+    {
+        if (info != null) {
+            boolean player = info.isAuthoritative;
+            boolean other = player ? false : !guest;
+            post(new MsoyEvents.WebSessionStatusChanged(info.id, player, guest, other, newInfo));
+        } else {
+            log.warning("Got null VisitorInfo during web status change", "guest", guest);
+        }
+    }
+
     public void accountCreated (int newMemberId, String inviteId, String tracker)
     {
         post(new MsoyEvents.Experience(Type.ACCOUNT_CREATED, newMemberId, tracker));
@@ -349,9 +360,9 @@ public class MsoyEventLogger
     /** Dump a message to logs. */
     protected void dumpMessage (MsoyEvent message)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer("MsoyEventLogger posting event:\n  ");
         sb.append(message.getClass().getSimpleName());
-        sb.append(" [ ");
+        sb.append("\n  [ ");
 
         for (Field field : message.getClass().getFields()) {
             sb.append(field.getName());
@@ -365,7 +376,7 @@ public class MsoyEventLogger
         }
         sb.append("]");
 
-        log.info("MsoyEventLogger posting event: " + sb.toString());
+        log.info(sb.toString());
     }
 
     /** Should we display debug info about what's being logged? */
