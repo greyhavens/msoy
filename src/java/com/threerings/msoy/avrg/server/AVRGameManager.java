@@ -442,7 +442,7 @@ public class AVRGameManager extends PlaceManager
         _watchmgr.clearWatch(memberId);
 
         // clear out from our internal record
-        Scene scene = _players.remove(memberId);
+        Scene scene = _playerScenes.remove(memberId);
         if (scene == null) {
             log.warning("Leaving body has no scene", "memberId", memberId);
         } else {
@@ -493,7 +493,7 @@ public class AVRGameManager extends PlaceManager
         }
 
         // Update our internal records
-        Scene oldScene = _players.get(memberId);
+        Scene oldScene = _playerScenes.get(memberId);
         if (oldScene != null && sceneId == oldScene.sceneId) {
             log.info("Player entered scene twice", "memberId", memberId, "scene", oldScene);
 
@@ -502,7 +502,7 @@ public class AVRGameManager extends PlaceManager
             if (scene == null) {
                 _scenes.put(sceneId, scene = new Scene(sceneId));
             }
-            _players.put(memberId, scene);
+            _playerScenes.put(memberId, scene);
             scene.addPlayer(memberId);
             if (oldScene != null) {
                 oldScene.removePlayer(memberId);
@@ -673,7 +673,7 @@ public class AVRGameManager extends PlaceManager
     protected HashIntMap<Scene> _scenes = new HashIntMap<Scene>();
 
     /** The map of player ids to scenes, many to one. */
-    protected HashIntMap<Scene> _players = new HashIntMap<Scene>();
+    protected HashIntMap<Scene> _playerScenes = new HashIntMap<Scene>();
 
     /** Interval to run our scene checker. */
     protected Interval _sceneCheck;
