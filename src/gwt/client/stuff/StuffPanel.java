@@ -97,10 +97,7 @@ public class StuffPanel extends FlowPanel
         if (isCatalogType) {
             used += BLURB_HEIGHT;
         }
-        int boxHeight = BOX_HEIGHT;
-        if (FlashClients.clientExists()) {
-            boxHeight += ACTIVATOR_HEIGHT;
-        }
+        int boxHeight = BOX_HEIGHT + ACTIVATOR_HEIGHT;
         int rows = Math.max(1, (Window.getClientHeight() - used) / boxHeight);
 
         // now create our grid of items
@@ -274,8 +271,7 @@ public class StuffPanel extends FlowPanel
     }
 
     protected static final int NAV_BAR_ETC = 80 /* item navi */ + 24 /* shop */ +
-        29 /* grid navi */
-        + 20 /* margin */+ 50;
+        29 /* grid navi */ + 20 /* margin */+ 50;
     protected static final int BLURB_HEIGHT = 33 /* title */ + 71 /* contents */;
     protected static final int BOX_HEIGHT = 104;
     protected static final int ACTIVATOR_HEIGHT = 22;
