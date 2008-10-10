@@ -75,7 +75,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         });
 
         // record this edit to the grindy log
-        _eventLog.roomUpdated(memId, scene.getId());
+        _eventLog.roomUpdated(memId, scene.getId(), user.getVisitorId());
     }
 
     // from interface MsoySceneProvider

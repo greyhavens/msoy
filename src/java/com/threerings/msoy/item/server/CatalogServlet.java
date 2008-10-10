@@ -363,8 +363,8 @@ public class CatalogServlet extends MsoyServiceServlet
         _itemLogic.itemUpdated(null, master);
 
         // note in the event log that an item was listed
-        _eventLog.itemListedInCatalog(master.creatorId, master.getType(), master.itemId,
-            currency, cost, pricing, salesTarget);
+        _eventLog.itemListedInCatalog(master.creatorId, mrec.visitorId, master.getType(),
+            master.itemId, currency, cost, pricing, salesTarget);
 
         return record.catalogId;
     }

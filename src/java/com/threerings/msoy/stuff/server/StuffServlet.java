@@ -70,6 +70,9 @@ public class StuffServlet extends MsoyServiceServlet
                 memrec.memberId, StatType.BACKDROPS_CREATED, StatType.ITEM_UPLOADED);
         }
 
+        // note in the event log that an item was uploaded
+        _eventLog.itemUploaded(memrec.memberId, memrec.visitorId);
+
         return item;
     }
 

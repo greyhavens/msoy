@@ -602,8 +602,7 @@ public class MsoyEvents
          * reports will need to be changed to cope with the data change.
          */
         enum Type {
-            // NOTE: do not change existing string tokens if you don't know how it will affect
-            // Panopticon reports!
+            // NOTE: do not change existing string tokens
             GAME_SINGLEPLAYER  ("GS"),
             GAME_MULTIPLAYER   ("GM"),
             GAME_AVRG          ("GA"),
@@ -614,8 +613,14 @@ public class MsoyEvents
             SHOP_BROWSED       ("SB"),
             SHOP_DETAILS       ("SD"),
             SHOP_PURCHASED     ("SP"),
+            EDIT_PROFILE       ("EP"),
+            EDIT_ROOM          ("ER"),
+            ITEM_UPLOADED      ("IU"),
+            ITEM_LISTED        ("IL"),
             ACCOUNT_CREATED    ("AC"),
             ACCOUNT_LOGIN      ("AL");
+            // more events go here. if needed, update aggregators in Panopticon:
+            // DailyAllGuestBehavior.properties, DailyExperience*.properties
 
             /** Package-protected string that gets logged in Panopticon. */
             final String token;

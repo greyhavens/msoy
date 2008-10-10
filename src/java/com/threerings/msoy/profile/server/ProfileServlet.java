@@ -160,7 +160,7 @@ public class ProfileServlet extends MsoyServiceServlet
         } else {
             _userActionRepo.logUserAction(UserAction.updatedProfile(memrec.memberId));
         }
-        _eventLog.profileUpdated(memrec.memberId);
+        _eventLog.profileUpdated(memrec.memberId, memrec.visitorId);
 
         // handle a display name change if necessary
         final boolean nameChanged = memrec.name == null || !memrec.name.equals(displayName);

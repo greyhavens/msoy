@@ -118,13 +118,19 @@ public class MsoyEventLogger
         post(new MsoyEvents.ItemPurchase(memberId, itemType, itemId, currency, amountPaid));
     }
 
-    public void itemListedInCatalog (int creatorId, byte itemType, int itemId,
+    public void itemUploaded (int creatorId, String tracker)
+    {
+        post(new MsoyEvents.Experience(Type.ITEM_UPLOADED, creatorId, tracker));
+    }
+
+    public void itemListedInCatalog (int creatorId, String tracker, byte itemType, int itemId,
         Currency currency, int cost, int pricing, int salesTarget)
     {
         int flowCost = (currency == Currency.COINS) ? cost : 0;
         int goldCost = (currency == Currency.BARS) ? cost : 0;
         post(new MsoyEvents.ItemCatalogListing(creatorId, itemType, itemId, flowCost, goldCost,
             pricing, salesTarget));
+        post(new MsoyEvents.Experience(Type.ITEM_LISTED, creatorId, tracker));
     }
 
     public void userLoggedIn (int memberId, String tracker, boolean firstLogin, long createdOn,
@@ -280,13 +286,15 @@ public class MsoyEventLogger
         post(new MsoyEvents.AccountCreated(newMemberId, inviteId, tracker));
     }
 
-    public void roomUpdated (int memberId, int sceneId)
+    public void roomUpdated (int memberId, int sceneId, String tracker)
     {
+        post(new MsoyEvents.Experience(Type.EDIT_ROOM, memberId, tracker));
         post(new MsoyEvents.RoomUpdated(memberId, sceneId));
     }
 
-    public void profileUpdated (int memberId)
+    public void profileUpdated (int memberId, String tracker)
     {
+        post(new MsoyEvents.Experience(Type.EDIT_PROFILE, memberId, tracker));
         post(new MsoyEvents.ProfileUpdated(memberId));
     }
 
