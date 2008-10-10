@@ -332,15 +332,15 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
-     * Get the number of bars in the bar pool.
+     * Get the number of bars and the coin balance in the bar pool.
      */
-    public int getBarPool ()
+    public int[] getBarPool ()
     {
         BarPoolRecord bpRec = load(BarPoolRecord.class, BarPoolRecord.KEY);
         if (bpRec == null) {
             bpRec = createBarPoolRecord();
         }
-        return bpRec.barPool;
+        return new int[] { bpRec.barPool, bpRec.coinBalance };
     }
 
     /**
@@ -353,6 +353,8 @@ public class MoneyRepository extends DepotRepository
     {
         Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
             .put(BarPoolRecord.BAR_POOL, new Arithmetic.Add(BarPoolRecord.BAR_POOL_C, barDelta))
+            .put(BarPoolRecord.COIN_BALANCE,
+                new Arithmetic.Add(BarPoolRecord.COIN_BALANCE_C, coinDelta))
             .build();
         updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, fieldValues);
 

@@ -24,9 +24,12 @@ public class ExchangeStatusData extends PagedResult<ExchangeData>
     /** The target bar pool amount. */
     public int targetBarPool;
 
+    /** The number of coins up or down. */
+    public int coinBalance;
+
     public ExchangeStatusData (
         int total, List<ExchangeData> page,
-        float rate, float targetRate, int barPool, int targetBarPool)
+        float rate, float targetRate, int barPool, int targetBarPool, int coinBalance)
     {
         this.total = total;
         this.page = page;
@@ -34,6 +37,7 @@ public class ExchangeStatusData extends PagedResult<ExchangeData>
         this.targetRate = targetRate;
         this.barPool = barPool;
         this.targetBarPool = targetBarPool;
+        this.coinBalance = coinBalance;
     }
 
     /** Suitable for unserialization. */

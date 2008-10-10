@@ -36,6 +36,7 @@ public class ExchangePanel extends SmartTable
         setText(row++, 2, "Target rate:", 1, "rightLabel");
         setText(row, 0, "Bar pool balance:", 1, "rightLabel");
         setText(row++, 2, "Target bar pool:", 1, "rightLabel");
+        setText(row, 0, "Coin balance:", 1, "rightLabel");
 
         addWidget(new RecentExchanges(new ExchangeDataDataModel()), 4, null);
     }
@@ -73,6 +74,7 @@ public class ExchangePanel extends SmartTable
             setText(row++, 3, _rateFormat.format(result.targetRate));
             setText(row, 1, String.valueOf(result.barPool));
             setText(row++, 3, String.valueOf(result.targetBarPool));
+            setText(row, 1, String.valueOf(result.coinBalance));
         }
     }
 

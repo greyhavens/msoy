@@ -108,7 +108,7 @@ public class MoneyExchange
      */
     protected void recalculateRate ()
     {
-        int pool = _moneyRepo.getBarPool();
+        int pool = _moneyRepo.getBarPool()[0];
         // the more bars in the pool: the lower the exchange rate
         // TODO: asymptotic snazziness
         _rate = (BAR_POOL_TARGET * RuntimeConfig.server.targetExchangeRate) / pool;

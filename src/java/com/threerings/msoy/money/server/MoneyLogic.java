@@ -551,12 +551,12 @@ public class MoneyLogic
     {
         List<ExchangeData> page = Lists.newArrayList(Iterables.transform(
             _repo.getExchangeData(start, count), ExchangeRecord.TO_EXCHANGE_DATA));
-
         int total = _repo.getExchangeDataCount();
+        int[] barPoolData = _repo.getBarPool();
 
         return new ExchangeStatusData(total, page,
             _exchange.getRate(), RuntimeConfig.server.targetExchangeRate,
-            _repo.getBarPool(), MoneyExchange.BAR_POOL_TARGET);
+            barPoolData[0], MoneyExchange.BAR_POOL_TARGET, barPoolData[1]);
     }
 
     /**

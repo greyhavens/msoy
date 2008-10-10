@@ -28,10 +28,17 @@ public class BarPoolRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #barPool} field. */
     public static final ColumnExp BAR_POOL_C =
         new ColumnExp(BarPoolRecord.class, BAR_POOL);
+
+    /** The column identifier for the {@link #coinBalance} field. */
+    public static final String COIN_BALANCE = "coinBalance";
+
+    /** The qualified column identifier for the {@link #coinBalance} field. */
+    public static final ColumnExp COIN_BALANCE_C =
+        new ColumnExp(BarPoolRecord.class, COIN_BALANCE);
     // AUTO-GENERATED: FIELDS END
 
     /** This can be incremented when we change this record. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The singleton record id. */
     public static final int RECORD_ID = 1;
@@ -45,6 +52,9 @@ public class BarPoolRecord extends PersistentRecord
 
     /** The number of bars in the bar pool. */
     public int barPool;
+
+    /** The number of coins created or destroyed. */
+    public int coinBalance;
 
     // AUTO-GENERATED: METHODS START
     /**
