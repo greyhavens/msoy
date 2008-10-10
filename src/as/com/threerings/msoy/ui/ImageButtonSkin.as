@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.ui {
 
 import flash.display.BitmapData;
@@ -72,21 +75,22 @@ public class ImageButtonSkin extends ProgrammaticSkin
             source = new defaultImage();
         }
 
-        // Brighten or darken
-        // TODO: disabledSkin isn't used in msoy, would probably need a better effect
         var adjust :ColorTransform = null;
-        if (name == "overSkin" || name == "downSkin") {
-            adjust = new ColorTransform(1, 1, 1, 25, 25, 25);
-        } else if (name == "disabledSkin") {
-            adjust = new ColorTransform(1, 1, 1, -25, -25, -25);
+        if (["overSkin", "downSkin", "selectedOverSkin", "selectedDownSkin"].indexOf(name) >= 0) {
+            // Brighten on 'over' and 'down' states
+            adjust = new ColorTransform(1.25, 1.25, 1.25);
+        } else if (["disabledSkin", "selectedDisabledSkin"].indexOf(name) >= 0) {
+            // Darken on 'disabled' states
+            adjust = new ColorTransform(0.5, 0.5, 0.5);
         }
 
         // Scale
         var scale :Matrix = new Matrix();
-        scale.scale(w / source.width, h / source.height);
+        // All our control bar image heights are off by one pixel, so adjust before scaling
+        scale.scale(w / source.width, h / (source.height-1));
 
         // Translate if pressed
-        if (name == "downSkin") {
+        if (name == "downSkin" || name.indexOf("selected") == 0) {
             scale.translate(0, 1);
         }
 

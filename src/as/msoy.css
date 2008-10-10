@@ -366,6 +366,17 @@ TabNavigator, TabBar {
   selectedTabTextStyleName: "selectedMsoyTabButton";
 }
 
+ImageButton {
+  upSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  downSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  overSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  disabledSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  selectedUpSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  selectedOverSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  selectedDownSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  selectedDisabledSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+}
+
 .msoyTabButton {
   color: #b4cbd7;
   fontFamily: Arial;
@@ -512,66 +523,35 @@ TabNavigator, TabBar {
 }
 
 .controlBarButtonChat {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/chatoptions.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/chatoptions_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/chatoptions_down.png");
-  /** UNUSED downSkin: Embed(source="../../rsrc/media/skins/controlbar/chatoptions_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/chatoptions.png");
 }
 
 .controlBarButtonEdit {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_disabled.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_over.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_down.png");
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/editroom.png");
 }
 
 .controlBarButtonVolume {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/volume.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_down.png");
-  /** UNUSED downSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/volume.png");
 }
 
 .controlBarButtonZoom {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_disabled.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_down.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_down.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_down.png");
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_disabled.png");
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/zoom.png");
 }
 
 .controlBarButtonComment {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/comment.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/comment.png");
 }
 
 .controlBarButtonInstructions {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/instructions_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/instructions_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/instructions_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
 }
 
 .controlBarButtonShare {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/share.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/share_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/share_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/share_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/share.png");
 }
 
 .controlBarButtonScores {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/score.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/score_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/score_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/score_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/score.png");
 }
 
 .controlBarHoverZone {
@@ -579,47 +559,26 @@ TabNavigator, TabBar {
 }
 
 .controlBarButtonSnapshot {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/snapshot.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/snapshot_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/snapshot_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/snapshot_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/snapshot.png");
 }
 
 .controlBarFriendButton {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/friends.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/friends.png");
 }
 
 .controlBarTalkButton {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/talk.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/talk_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/talk_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/talk_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/talk.png");
 }
 
 .controlBarIdleButton {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/idle.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/idle_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/idle_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/idle_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/idle.png");
 }
 
 .controlBarScaleButton {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/scale.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/scale_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/scale_down.png");
-  /* The disabled state is used briefly while the sprite is loading, I refuse to link in
-     another graphic just for that. */
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/scale.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/scale_disabled.png"); */
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/scale.png");
 }
 
 .controlBarAVRGButton {
-  upSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  downSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  overSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   defaultImage: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
 }
 

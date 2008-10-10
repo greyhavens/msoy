@@ -20,6 +20,7 @@ import com.threerings.util.MultiLoader;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.ImageButton;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
@@ -98,16 +99,14 @@ public class WorldControlBar extends ControlBar
     {
         super.createControls();
 
-        _roomeditBtn = new CommandButton();
-        _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
+        _roomeditBtn = new ImageButton("controlBarButtonEdit");
         _roomeditBtn.setCommand(WorldController.ROOM_EDIT);
-        _roomeditBtn.styleName = "controlBarButtonEdit";
+        _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
         _roomeditBtn.enabled = false;
 
-        _zoomBtn = new CommandButton();
-        _zoomBtn.styleName = "controlBarButtonZoom";
-        _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
+        _zoomBtn = new ImageButton("controlBarButtonZoom");
         _zoomBtn.setCallback(handleToggleZoom);
+        _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
 
         _hotZoneBtn = new CommandButton();
         _hotZoneBtn.toolTip = Msgs.GENERAL.get("i.hover");
@@ -124,20 +123,18 @@ public class WorldControlBar extends ControlBar
         _hotZoneBtn.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
         _hotZoneBtn.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
 
-        _snapBtn = new CommandButton();
-        _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
+        _snapBtn = new ImageButton("controlBarButtonSnapshot");
         _snapBtn.setCallback(FloatingPanel.createPopper(function () :SnapshotPanel {
             return new SnapshotPanel(_wctx);
         }, _snapBtn));
-        _snapBtn.styleName = "controlBarButtonSnapshot";
-        _snapBtn.enabled = true;
+        _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
+        _snapBtn.enabled = true; // TODO: Redundant?
 
-        _friendsBtn = new CommandButton();
-        _friendsBtn.toolTip = Msgs.GENERAL.get("i.friends");
+        _friendsBtn = new ImageButton("controlBarFriendButton");
         _friendsBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return new FriendsListPanel(_wctx);
         }, _friendsBtn));
-        _friendsBtn.styleName = "controlBarFriendButton";
+        _friendsBtn.toolTip = Msgs.GENERAL.get("i.friends");
     }
 
     // from ControlBar

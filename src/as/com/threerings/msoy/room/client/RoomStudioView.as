@@ -27,6 +27,7 @@ import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.UberClient;
 
+import com.threerings.msoy.ui.ImageButton;
 import com.threerings.msoy.ui.SliderPopup;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -232,8 +233,8 @@ public class RoomStudioView extends RoomView
         _testingSprite = _avatar;
 
         addTalkControl();
-        var idle :CommandButton = new CommandButton(null, emulateIdle);
-        idle.styleName = "controlBarIdleButton";
+        var idle :CommandButton = new ImageButton("controlBarIdleButton");
+        idle.setCallback(emulateIdle);
         idle.toolTip = Msgs.STUDIO.get("i.idle")
         const bar :ControlBar = _ctx.getTopPanel().getControlBar();
         bar.addCustomButton(idle);
@@ -317,9 +318,9 @@ public class RoomStudioView extends RoomView
 
     protected function addTalkControl () :void
     {
-        var talk :CommandButton = new CommandButton(null, emulateChat);
+        var talk :CommandButton = new ImageButton("controlBarTalkButton");
+        talk.setCallback(emulateChat);
         talk.toolTip = Msgs.STUDIO.get("i.talk");
-        talk.styleName = "controlBarTalkButton";
 
         const bar :ControlBar = _ctx.getTopPanel().getControlBar();
         bar.addCustomButton(talk);
@@ -327,8 +328,8 @@ public class RoomStudioView extends RoomView
 
     protected function createSpriteScaleControls () :void
     {
-        _scaleButton = new CommandButton(null, showSpriteScaler);
-        _scaleButton.styleName = "controlBarScaleButton";
+        _scaleButton = new ImageButton("controlBarScaleButton");
+        _scaleButton.setCallback(showSpriteScaler);
         _scaleButton.toolTip = Msgs.STUDIO.get("i.sprite_scale");
         _scaleButton.enabled = false;
 
