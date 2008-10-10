@@ -4,6 +4,8 @@
 package client.stuff;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
@@ -141,8 +143,9 @@ public class StuffPage extends Page
             public void editComplete (Item item) {
                 if (item != null) {
                     _models.itemUpdated(item);
-                    Link.go(Pages.STUFF,
-                        Args.compose("d", "" + item.getType(), "" + item.itemId));
+                    String args = BULK_TYPES.contains(item.getType()) ?
+                        (""+item.getType()) : Args.compose("d", item.getType(), item.itemId);
+                    Link.go(Pages.STUFF, args);
                 } else {
                     History.back();
                 }
@@ -199,4 +202,13 @@ public class StuffPage extends Page
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
         ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
+
+    /** Denotes item types that might be uploaded in bulk. */
+    protected static final Set<Byte> BULK_TYPES = new HashSet<Byte>();
+    static {
+        BULK_TYPES.add(Item.PHOTO);
+        BULK_TYPES.add(Item.DOCUMENT);
+        BULK_TYPES.add(Item.AUDIO);
+        BULK_TYPES.add(Item.VIDEO);
+    }
 }
