@@ -3,6 +3,8 @@
 
 package client.ui;
 
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -15,6 +17,16 @@ public class StretchButton extends FocusPanel
     public static final String
         ORANGE_THICK = "orangeThick",
         BLUE_THICK = "blueThick";
+
+    public StretchButton (String styleName, String textContent, ClickListener listener)
+    {
+        // create a content label with the appropraite styling
+        this(styleName, new Label(textContent));
+
+        if (listener != null) {
+            addClickListener(listener);
+        }
+    }
 
     public StretchButton (String styleName, Widget content)
     {

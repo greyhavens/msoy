@@ -8,18 +8,16 @@ import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
@@ -28,11 +26,11 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.item.StuffNaviBar;
 import client.shell.Args;
-import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
+import client.ui.StretchButton;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.NaviUtil;
@@ -92,12 +90,8 @@ public class StuffPanel extends FlowPanel
         });
 
         // compute the number of rows of items we can fit on the page
-        int used = NAV_BAR_ETC;
-        if (isCatalogType) {
-            used += BLURB_HEIGHT;
-        }
-        int boxHeight = BOX_HEIGHT + ACTIVATOR_HEIGHT;
-        int rows = Math.max(1, (Window.getClientHeight() - used) / boxHeight);
+        int used = isCatalogType ? NAVIGATION_HEIGHT + GET_STUFF_HEIGHT : NAVIGATION_HEIGHT;
+        int rows = Math.max(1, (Window.getClientHeight() - used) / ITEM_BOX_HEIGHT);
 
         // now create our grid of items
         _contents = new PagedGrid<Item>(rows, COLUMNS) {
@@ -162,28 +156,17 @@ public class StuffPanel extends FlowPanel
 
     protected void createUploadInterface ()
     {
-        // this will allow us to create new items
-        _upload = new SmartTable("Upload", 0, 0);
-        _upload.setText(0, 0, _dmsgs.xlate("itemUploadTitle" + _type), 2, "Header");
-
-        // add the various "why to upload" pitches
-        String why = getPitch("a") + "<br>" + getPitch("b") + "<br>" + getPitch("c");
-        _upload.setWidget(1, 0, MsoyUI.createHTML(why, null));
-        _upload.getFlexCellFormatter().setStyleName(1, 0, "Pitch");
-
-        // add the create button
-        _upload.setWidget(1, 1, new Button(_msgs.panelCreateNew(),
-                                           NaviUtil.onCreateItem(_type, (byte)0, 0)), 1, "Button");
-        _upload.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
-    }
-
-    protected String getPitch (String postfix)
-    {
-        String pitch = _dmsgs.xlate("itemUploadPitch" + _type + postfix);
-        if (-1 != pitch.indexOf("@MEMBER_ID@")) {
-            return pitch.replaceAll("@MEMBER_ID@", "" + CShell.getMemberId());
-        }
-        return pitch;
+        _upload = new AbsolutePanel();
+        _upload.setStyleName("GetStuff");
+        _upload.add(MsoyUI.createLabel(_msgs.getStuffTitle(), "GetStuffTitle"), 60, 10);
+        _upload.add(MsoyUI.createHTML(_dmsgs.xlate("getStuffBuy" + _type), "GetStuffBuy"), 165,
+            85);
+        _upload.add(MsoyUI.createHTML(_dmsgs.xlate("getStuffCreate" + _type), "GetStuffCreate"),
+            360, 85);
+        _upload.add(new StretchButton(StretchButton.BLUE_THICK, _msgs.getStuffShop(),
+            Link.createListener(Pages.SHOP, _type + "")), 10, 90);
+        _upload.add(MsoyUI.createButton(MsoyUI.MEDIUM_THICK, _msgs.getStuffUpload(),
+            NaviUtil.onCreateItem(_type, (byte)0, 0)), 535, 90);
     }
 
     /**
@@ -232,7 +215,7 @@ public class StuffPanel extends FlowPanel
     protected SearchBox _searchBox;
     protected ListBox _filters;
     protected PagedGrid<Item> _contents;
-    protected SmartTable _upload;
+    protected AbsolutePanel _upload;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
@@ -269,9 +252,9 @@ public class StuffPanel extends FlowPanel
         });
     }
 
-    protected static final int NAV_BAR_ETC = 80 /* item navi */ + 24 /* shop */ +
-        29 /* grid navi */ + 20 /* margin */+ 50;
-    protected static final int BLURB_HEIGHT = 33 /* title */ + 71 /* contents */;
-    protected static final int BOX_HEIGHT = 104;
-    protected static final int ACTIVATOR_HEIGHT = 22;
+    /** Height of page above items. Main top navigation is outside of iframe so not counted. */
+    protected static final int NAVIGATION_HEIGHT = 50 /* search */+ 70 /* item navi */
+    + 50 /* grid top */;
+    protected static final int ITEM_BOX_HEIGHT = 120;
+    protected static final int GET_STUFF_HEIGHT = 160;
 }

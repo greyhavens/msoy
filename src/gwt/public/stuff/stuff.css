@@ -87,6 +87,42 @@
   color: #3776A0;
 }
 
+.itemPanel .GetStuff {
+  width: 664px;
+  height: 150px;
+  background: url(/images/stuff/get_stuff_bg.png) no-repeat;
+  margin-left: 10px;
+}
+
+.itemPanel .GetStuffTitle {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 22px;
+  color: #ffffff;
+}
+
+.itemPanel .GetStuffBuy,
+.itemPanel .GetStuffCreate {
+  width: 155px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.itemPanel .GetStuffBuy, 
+.itemPanel .GetStuffBuy a {
+  color: #C1E4F8;
+}
+
+.itemPanel .GetStuffCreate,
+.itemPanel .GetStuffCreate a {
+  color: #1d6f9f;
+}
+
+.itemPanel .mediumThickOrangeButton {
+  font-size: 25px;
+  height: 37px;
+  padding-top: 7px;
+}
+
 .itemPanel .Upload {
   background: url(/images/item/upload_bg.png) no-repeat top;
   margin-left: 10px;
