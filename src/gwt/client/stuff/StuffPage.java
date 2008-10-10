@@ -60,10 +60,11 @@ public class StuffPage extends Page
         }
 
         String arg0 = args.get(0, "");
+        byte type = Item.NOT_A_TYPE;
 
         // if we're displaying an item's detail, do that
         if ("d".equals(arg0)) {
-            byte type = (byte)args.get(1, Item.AVATAR);
+            type = (byte)args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
 
             // otherwise we're display a particular item's details
@@ -97,7 +98,7 @@ public class StuffPage extends Page
 
         // if we're editing an item, display that interface
         } else if ("e".equals(arg0) || "c".equals(arg0)) {
-            byte type = (byte)args.get(1, Item.AVATAR);
+            type = (byte)args.get(1, Item.AVATAR);
             final ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
             if ("e".equals(arg0)) {
                 int itemId = args.get(2, 0);
@@ -117,7 +118,7 @@ public class StuffPage extends Page
 
         // or maybe we're remixing an item
         } else if ("r".equals(arg0)) {
-            byte type = (byte) args.get(1, Item.AVATAR);
+            type = (byte) args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
             final ItemRemixer remixer = new ItemRemixer();
             getItem(type, itemId, new MsoyCallback<Item>() {
@@ -129,11 +130,16 @@ public class StuffPage extends Page
 
         } else {
             // otherwise we're viewing our inventory
-            byte type = (byte)args.get(0, Item.AVATAR);
+            type = (byte)args.get(0, Item.AVATAR);
             StuffPanel panel = getStuffPanel(type);
             panel.setArgs(args.get(1, -1), args.get(2, ""));
             String title = _msgs.stuffTitleMain();
             setContent(title, panel);
+        }
+
+        // add a sub-navi link for our active item type
+        if (type != Item.NOT_A_TYPE) {
+            CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.STUFF, ""+type, 1);
         }
     }
 
