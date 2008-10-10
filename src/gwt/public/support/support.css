@@ -3,12 +3,11 @@
  */
 
 /** underwire.css overrides. */
-.uDialogBox {
-  border: 1px solid #0D4163;
+.uTitledBox {
   background: #FFFFFF;
 }
 
-.uDialogBox .Caption {
+.uTitledBox .Caption {
   text-align: center;
   font-weight: bold;
   background: none;
@@ -16,49 +15,49 @@
   white-space: nowrap;
 }
 
-.uDialogBox .TopLeft {
+.uTitledBox .TopLeft {
   width: 2px;
   height: 2px;
   background-image: url(/images/ui/quads/nw_in.png);
 }
 
-.uDialogBox .Top {
+.uTitledBox .Top {
   width: 2px;
   height: 2px;
   background-image: url(/images/ui/quads/n.png);
 }
 
-.uDialogBox .TopRight {
+.uTitledBox .TopRight {
   width: 2px;
   height: 2px;
   background-image: url(/images/ui/quads/ne_in.png);
 }
 
-.uDialogBox .Right {
+.uTitledBox .Right {
   width: 2px;
   height: 2px;
   background-image: url(/images/ui/quads/e.png);
 }
 
-.uDialogBox .BottomRight {
+.uTitledBox .BottomRight {
   height: 2px;
   width: 2px;
   background-image: url(/images/ui/quads/se_in.png);
 }
 
-.uDialogBox .Bottom {
+.uTitledBox .Bottom {
   width: 2px;
   height: 2px;
   background-image: url(/images/ui/quads/s.png);
 }
 
-.uDialogBox .BottomLeft {
+.uTitledBox .BottomLeft {
   width: 2px;
   height: 2px;
   background-image: url(/images/ui/quads/sw_in.png);
 }
 
-.uDialogBox .Left {
+.uTitledBox .Left {
   width: 2px;
   height: 2px;
   background-image: url(/images/ui/quads/w.png);
