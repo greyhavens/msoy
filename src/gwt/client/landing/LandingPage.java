@@ -26,6 +26,7 @@ public class LandingPage extends Page
     public static String CREATORS_MAIN = "creators";
     public static String CREATORS_INFO = "creatorsinfo";
     public static String CREATORS_LINKS = "creatorslinks";
+    public static String DEVIANT_CONTEST = "dacontest";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -43,6 +44,10 @@ public class LandingPage extends Page
         // landing page for content creators, with a multitude of links
         } else if (action.equals(CREATORS_LINKS)) {
             setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
+
+        // landing page for deviant art contest
+        } else if (action.equals(DEVIANT_CONTEST)) {
+            setContent(_msgs.titleDAContest(), new DAContestPanel());
 
         } else {
             setContent(_msgs.landingTitle(), new LandingPanel());
