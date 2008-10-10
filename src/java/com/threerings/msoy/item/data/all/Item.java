@@ -419,13 +419,10 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public void checkConsolidateMedia ()
     {
-        if (thumbMedia != null &&
-            getThumbnailMedia().equals(getDefaultThumbnailMedia())) {
+        if (thumbMedia != null && getThumbnailMedia().equals(getDefaultThumbnailMedia())) {
             thumbMedia = null;
         }
-
-        if (furniMedia != null &&
-            getFurniMedia().equals(getDefaultFurniMedia())) {
+        if (furniMedia != null && getFurniMedia().equals(getDefaultFurniMedia())) {
             furniMedia = null;
         }
     }
