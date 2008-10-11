@@ -12,7 +12,7 @@ import com.threerings.msoy.item.data.all.Item;
 /**
  * A class for creating and editing {@link Audio} digital items.
  */
-public class AudioEditor extends ItemEditor
+public class AudioEditor extends BulkMediaEditor
 {
     @Override // from ItemEditor
     public void setItem (Item item)
@@ -28,8 +28,8 @@ public class AudioEditor extends ItemEditor
         return new Audio();
     }
 
-    @Override // from ItemEditor
-    protected void addExtras ()
+    @Override // from BulkMediaEditor
+    protected void addMainUploader ()
     {
         addRow(_emsgs.audioLabel(), createMainUploader(TYPE_AUDIO, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
@@ -41,8 +41,6 @@ public class AudioEditor extends ItemEditor
                 return null;
             }
         }), _emsgs.audioTip());
-
-        super.addExtras();
     }
 
     protected Audio _audio;

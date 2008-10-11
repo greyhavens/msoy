@@ -11,7 +11,7 @@ import com.threerings.msoy.item.data.all.Photo;
 /**
  * A class for creating and editing {@link Photo} digital items.
  */
-public class PhotoEditor extends ItemEditor
+public class PhotoEditor extends BulkMediaEditor
 {
     @Override // from ItemEditor
     public void setItem (Item item)
@@ -27,14 +27,9 @@ public class PhotoEditor extends ItemEditor
         return new Photo();
     }
 
-    @Override // from ItemEditor
-    protected void addInfo ()
+    @Override // from BulkMediaEditor
+    protected void addMainUploader ()
     {
-        super.addInfo();
-
-        addSpacer();
-        addTab(_emsgs.photoTabMain());
-
         addRow(_emsgs.photoLabel(), createMainUploader(TYPE_IMAGE, true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
@@ -47,15 +42,6 @@ public class PhotoEditor extends ItemEditor
                 return null;
             }
         }), _emsgs.photoTip());
-
-        addTab(_emsgs.photoTabExtras());
-    }
-
-    @Override // from ItemEditor
-    protected void addDescription ()
-    {
-        switchToTab(0);
-        super.addDescription();
     }
 
     @Override // from ItemEditor

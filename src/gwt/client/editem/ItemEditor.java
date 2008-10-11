@@ -379,7 +379,7 @@ public abstract class ItemEditor extends FlowPanel
     {
         int row = _currentTab.getRowCount();
         // this aims to make the label column skinny; it even works on some browsers...
-        _currentTab.getFlexCellFormatter().setWidth(row, 0, "50px");
+        _currentTab.getFlexCellFormatter().setWidth(row, 0, "150px");
         if (tip != null) {
             FlowPanel flow = new FlowPanel();
             flow.add(MsoyUI.createLabel(label, "nowrapLabel"));

@@ -12,7 +12,7 @@ import com.threerings.msoy.item.data.all.Item;
 /**
  * A class for creating and editing {@link Video} digital items.
  */
-public class VideoEditor extends ItemEditor
+public class VideoEditor extends BulkMediaEditor
 {
     @Override // from ItemEditor
     public void setItem (Item item)
@@ -28,8 +28,8 @@ public class VideoEditor extends ItemEditor
         return new Video();
     }
 
-    @Override // from ItemEditor
-    protected void addExtras ()
+    @Override // from BulkMediaEditor
+    protected void addMainUploader ()
     {
         addRow(_emsgs.videoLabel(), createMainUploader(TYPE_VIDEO, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
@@ -41,8 +41,6 @@ public class VideoEditor extends ItemEditor
                 return null;
             }
         }), _emsgs.videoTip());
-
-        super.addExtras();
     }
 
     protected Video _video;
