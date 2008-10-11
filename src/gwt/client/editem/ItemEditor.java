@@ -355,6 +355,16 @@ public abstract class ItemEditor extends FlowPanel
     }
 
     /**
+     * Switches to the tab with the specified index. New components added via {@link #addRow},
+     * etc. will go onto the specified tab. This of course requires that {@link #addTab} has been
+     * called to add the tab in question.
+     */
+    protected void switchToTab (int tabIdx)
+    {
+        _currentTab = (FlexTable)_tabs.getWidget(tabIdx);
+    }
+
+    /**
      * Helper function for overriders of {@link #addInfo} etc.
      */
     protected void addRow (String label, Widget widget)

@@ -32,6 +32,9 @@ public class PhotoEditor extends ItemEditor
     {
         super.addInfo();
 
+        addSpacer();
+        addTab(_emsgs.photoTabMain());
+
         addRow(_emsgs.photoLabel(), createMainUploader(TYPE_IMAGE, true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
@@ -44,9 +47,18 @@ public class PhotoEditor extends ItemEditor
                 return null;
             }
         }), _emsgs.photoTip());
+
+        addTab(_emsgs.photoTabExtras());
     }
 
-    @Override// from ItemEditor
+    @Override // from ItemEditor
+    protected void addDescription ()
+    {
+        switchToTab(0);
+        super.addDescription();
+    }
+
+    @Override // from ItemEditor
     protected String getFurniTabText ()
     {
         return _emsgs.editorPhotoFurniTab();
