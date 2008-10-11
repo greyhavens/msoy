@@ -109,17 +109,6 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Exposed as a convenience.
-     */
-    public function createButton (style :String, tipKey :String) :CommandButton
-    {
-        var cb :CommandButton = new CommandButton();
-        cb.styleName = style;
-        cb.toolTip = Msgs.GENERAL.get(tipKey);
-        return cb;
-    }
-
-    /**
      * Called by the TopPanel when we move to a new location. This should some day take over for
      * setLocation().
      */
@@ -210,6 +199,14 @@ public class ControlBar extends HBox
 
         _avrgBtn = createButton("controlBarAVRGButton", "i.avrg");
         _avrgBtn.setCommand(WorldController.POP_AVRG_MENU, _avrgBtn);
+    }
+
+    protected function createButton (style :String, tipKey :String) :CommandButton
+    {
+        var cb :CommandButton = new CommandButton();
+        cb.styleName = style;
+        cb.toolTip = Msgs.GENERAL.get(tipKey);
+        return cb;
     }
 
     /**
