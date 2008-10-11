@@ -166,6 +166,7 @@ public class GameEditor extends ItemEditor
             _genre.addItem(_dmsgs.xlate("genre" + genre));
         }
         addRow(_emsgs.gameGenre(), _genre);
+        addSpacer();
 
         addTab(_emsgs.gameTabConfig());
 
