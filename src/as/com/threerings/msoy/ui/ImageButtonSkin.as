@@ -3,130 +3,130 @@
 
 package com.threerings.msoy.ui {
 
-import flash.display.BitmapData;
 import flash.display.DisplayObject;
-import flash.display.Graphics;
 
 import flash.geom.ColorTransform;
-import flash.geom.Matrix;
 
-import mx.skins.ProgrammaticSkin;
+import mx.core.UIComponent;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import mx.states.State;
 
-import com.threerings.util.MultiLoader;
-
-/**
- * Class to use as the default image when the source image is not set. This is also used to
- * determine the "measured" size of the skin.
- *  
- * @default null
- */
-[Style(name="defaultImage", type="Class", inherit="no")]
+/** The image used to be the buttons skin. Is automatically lightened/darkened/offset. */
+[Style(name="image")]
 
 /**
- * Display object to use as the source image for the skin. This will be scaled to the width and
- * height being displayed. The color will also be adjusted depending on how name given to the skin.
- * 
- * @default null
+ * Uses the 'image' style as the skin for a button.
  */
-[Style(name="source", type="DisplayObject", inherit="no")]
-
-/**
- * Implements button skinning using a single image set at runtime. Brightens the image for roll
- * over and translates it down when clicked.
- * 
- */
-public class ImageButtonSkin extends ProgrammaticSkin
+public class ImageButtonSkin extends UIComponent
 {
-    /** @inheritDoc */
-    // from ProgrammaticSkin
-    override public function get measuredWidth () :Number
+    public function ImageButtonSkin ()
     {
-        measure();
-        return _measuredWidth;
+        states = [ addState("up"), addState("over"), addState("down"), addState("disabled"),
+            addState("selectedUp"), addState("selectedOver"), addState("selectedDown"),
+            addState("selectedDisabled") ];
     }
 
-    /** @inheritDoc */
-    // from ProgrammaticSkin
-    override public function get measuredHeight () :Number
+    override public function styleChanged (styleProp :String) :void
     {
-        measure();
-        return _measuredHeight;
+        super.styleChanged(styleProp);
+        if (styleProp == "image") {
+            readImageFromStyle();
+        }
     }
 
-    /** @inheritDoc */
-    // from ProgrammaticSkin
-    override protected function updateDisplayList (w :Number, h :Number) :void
+// TODO: needed?
+//    override public function set styleName (value :Object) :void
+//    {
+//        super.styleName = value;
+//        readImageFromStyle();
+//    }
+
+    override public function stylesInitialized () :void
     {
-        // Non-positive values will crash the bitmap render, just bail
-        if (w <= 0 || h <= 0) {
-            return;
-        }
+        super.stylesInitialized();
+        readImageFromStyle();
+    }
 
-        // Fall back to default if no source is given
-        var source :DisplayObject = getStyle("source") as DisplayObject;
-        if (source == null) {
-            var defaultImage :Class = getStyle("defaultImage") as Class;
-            if (defaultImage == null) {
-                return;
-            }
-            
-            source = new defaultImage();
-        }
-
-        var adjust :ColorTransform = null;
-        if (["overSkin", "downSkin", "selectedOverSkin", "selectedDownSkin"].indexOf(name) >= 0) {
-            // Brighten on 'over' and 'down' states
-            adjust = new ColorTransform(1.25, 1.25, 1.25);
-        } else if (["disabledSkin", "selectedDisabledSkin"].indexOf(name) >= 0) {
-            // Darken on 'disabled' states
-            adjust = new ColorTransform(0.5, 0.5, 0.5);
-        }
-
-        // Scale
-        var scale :Matrix = new Matrix();
-        // All our control bar image heights are off by one pixel, so adjust before scaling
-        scale.scale(w / source.width, h / (source.height-1));
-
-        // Translate if pressed
-        if (name == "downSkin" || name.indexOf("selected") == 0) {
-            scale.translate(0, 1);
-        }
-
-        // Scale to bitmap
-        var bmd :BitmapData = new BitmapData(w, h, true, 0x000000);
-        bmd.draw(source, scale, adjust);
-
-        // Render onto skin
-        var g:Graphics = graphics;
-        g.clear();
-        g.beginBitmapFill(bmd);
-        g.drawRect(0, 0, w, h);
-        g.endFill();
+    override public function set currentState (newState :String) :void
+    {
+        super.currentState = newState;
+        updateDisplayedState();
     }
 
     /**
-     * Fills in the measured width and height using the default image.
+     * Re-read the image out of our style specification.
      */
-    protected function measure () :void
+    protected function readImageFromStyle () :void
     {
-        if (_measured) {
+        if (_image != null) {
+            removeChild(_image);
+            _image = null;
+        }
+
+        // the "image" style may be a class or a DisplayObject
+        var rsrc :* = getStyle("image");
+        if (rsrc is Class) {
+            rsrc = new (Class(rsrc))();
+        }
+        if (rsrc == null) {
             return;
         }
 
-        var defaultImage :Class = getStyle("defaultImage") as Class;
-        if (defaultImage != null) {
-            var image :DisplayObject = new defaultImage();
-            _measuredWidth = image.width;
-            _measuredHeight = image.height;
-        }
-
-        _measured = true;
+        _image = DisplayObject(rsrc);
+        addChild(_image);
+        invalidateSize();
+        updateDisplayedState();
     }
 
-    protected var _measuredWidth :Number = 50;
-    protected var _measuredHeight :Number = 22;
-    protected var _measured :Boolean;
+    /**
+     * Update the state we're displaying with this skin.
+     */
+    protected function updateDisplayedState () :void
+    {
+        var state :String = currentState;
+        if (state == null || _image == null) {
+            return; // not yet set up 
+        }
+
+        state = state.toLowerCase();
+        if (state.indexOf("disabled") != -1) {
+            // Darken on 'disabled' states
+            _image.transform.colorTransform = new ColorTransform(0.5, 0.5, 0.5);
+        } else if (state.indexOf("over") != -1 || state.indexOf("down") != -1) {
+            // Brighten on 'over' and 'down' states
+            _image.transform.colorTransform = new ColorTransform(1.25, 1.25, 1.25);
+        } else {
+            _image.transform.colorTransform = new ColorTransform();
+        }
+
+        // Translate if pressed
+        if (state.indexOf("down") != -1 || state.indexOf("selected") != -1) {
+            _image.y = 1;
+        } else {
+            _image.y = 0;
+        }
+    }
+
+    /** Convenience to create a State. */
+    protected function addState (name :String) :State
+    {
+        var s :State = new State();
+        s.name = name;
+        return s;
+    }
+
+    override protected function measure () :void
+    {
+        if (_image == null) {
+            super.measure();
+
+        } else {
+            measuredWidth = _image.width;
+            measuredHeight = _image.height + 1;
+        }
+    }
+
+    /** The image we're using for all states of the skin. */
+    protected var _image :DisplayObject;
 }
 }

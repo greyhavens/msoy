@@ -367,14 +367,16 @@ TabNavigator, TabBar {
 }
 
 ImageButton {
-  upSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  downSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  overSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  disabledSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  selectedUpSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  selectedOverSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  selectedDownSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  selectedDisabledSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
 }
 
 .msoyTabButton {
@@ -523,35 +525,35 @@ ImageButton {
 }
 
 .controlBarButtonChat {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/chatoptions.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/chatoptions.png");
 }
 
 .controlBarButtonEdit {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/editroom.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/editroom.png");
 }
 
 .controlBarButtonVolume {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/volume.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/volume.png");
 }
 
 .controlBarButtonZoom {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/zoom.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/zoom.png");
 }
 
 .controlBarButtonComment {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/comment.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/comment.png");
 }
 
 .controlBarButtonInstructions {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
 }
 
 .controlBarButtonShare {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/share.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/share.png");
 }
 
 .controlBarButtonScores {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/score.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/score.png");
 }
 
 .controlBarHoverZone {
@@ -559,34 +561,31 @@ ImageButton {
 }
 
 .controlBarButtonSnapshot {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/snapshot.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/snapshot.png");
 }
 
 .controlBarFriendButton {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/friends.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/friends.png");
 }
 
 .controlBarTalkButton {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/talk.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/talk.png");
 }
 
 .controlBarIdleButton {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/idle.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/idle.png");
 }
 
 .controlBarScaleButton {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/scale.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/scale.png");
 }
 
 .controlBarAVRGButton {
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
 }
 
 .tickButton {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/tick.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_disabled.png"); */
+  image: Embed(source="../../rsrc/media/skins/controlbar/tick.png");
 }
 
 .roomEditPanel {

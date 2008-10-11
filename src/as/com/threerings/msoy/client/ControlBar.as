@@ -196,6 +196,7 @@ public class ControlBar extends HBox
         _commentBtn.toolTip = Msgs.GENERAL.get("i.comment");
 
         _shareBtn = new ImageButton("controlBarButtonShare");
+        _shareBtn.toggle = true;
         _shareBtn.toolTip = Msgs.GENERAL.get("i.share");
         _shareBtn.setCallback(FloatingPanel.createPopper(function () :ShareDialog {
             return new ShareDialog(_ctx);

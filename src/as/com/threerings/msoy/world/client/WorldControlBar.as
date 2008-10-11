@@ -109,8 +109,8 @@ public class WorldControlBar extends ControlBar
         _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
 
         _hotZoneBtn = new CommandButton();
-        _hotZoneBtn.toolTip = Msgs.GENERAL.get("i.hover");
         _hotZoneBtn.styleName = "controlBarHoverZone";
+        _hotZoneBtn.toolTip = Msgs.GENERAL.get("i.hover");
         _hotZoneBtn.enabled = false;
         _hotZoneBtn.focusEnabled = false;
         var hotHandler :Function = function (event :MouseEvent) :void {
@@ -131,6 +131,7 @@ public class WorldControlBar extends ControlBar
         _snapBtn.enabled = true; // TODO: Redundant?
 
         _friendsBtn = new ImageButton("controlBarFriendButton");
+        _friendsBtn.toggle = true;
         _friendsBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return new FriendsListPanel(_wctx);
         }, _friendsBtn));
