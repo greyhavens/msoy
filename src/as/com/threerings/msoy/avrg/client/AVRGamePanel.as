@@ -17,15 +17,17 @@ import flash.utils.getTimer;
 import mx.core.UIComponent;
 import mx.events.ResizeEvent;
 
+import com.threerings.util.Log;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
+
 import com.threerings.flash.MediaContainer;
-import com.threerings.util.Log;
-import com.threerings.util.MultiLoader;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -60,7 +62,7 @@ public class AVRGamePanel extends UIComponent
         log.info("Leaving AVRG [plobj=" + plobj + "]");
 
         // Clear out our thumbnail from the control bar (so the next game won't have it briefly)
-        getControlBar().avrgBtn.setStyle("source", null);
+        getControlBar().avrgBtn.styleName = "controlBarAVRGButton";
 
         getControlBar().setInAVRGame(false);
 
@@ -90,9 +92,9 @@ public class AVRGamePanel extends UIComponent
         addEventListener(ResizeEvent.RESIZE, handleResize);
 
         // Give the control bar button our thumbnail
-        MultiLoader.getContents(cfg.thumbnail.getMediaPath(), function (obj :Object) :void {
-            getControlBar().avrgBtn.setStyle("source", DisplayObject(obj));
-        });
+        var smc :ScalingMediaContainer = new ScalingMediaContainer(22, 22);
+        smc.setMediaDesc(cfg.thumbnail);
+        getControlBar().avrgBtn.setStyle("image", smc);
     }
 
     // from PlaceLayer

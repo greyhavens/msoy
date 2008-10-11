@@ -15,12 +15,13 @@ import mx.states.State;
 [Style(name="image")]
 
 /**
- * Uses the 'image' style as the skin for a button.
+ * A stateful button skin. Uses one image and modifies colors and offsets to indicate state.
  */
 public class ImageButtonSkin extends UIComponent
 {
     public function ImageButtonSkin ()
     {
+        // register our states
         states = [ addState("up"), addState("over"), addState("down"), addState("disabled"),
             addState("selectedUp"), addState("selectedOver"), addState("selectedDown"),
             addState("selectedDisabled") ];
