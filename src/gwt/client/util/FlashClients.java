@@ -78,7 +78,7 @@ public class FlashClients
 
         html.setHTML(WidgetUtil.createFlashObjectDefinition("decorViewer",
             "/clients/" + DeploymentConfig.version + "/world-client.swf", 600, 400,
-            "mode=" + UberClientModes.DECOR_EDITOR));
+            "mode=" + UberClientModes.DECOR_EDITOR + "&username=Tester"));
     }
 
     /**

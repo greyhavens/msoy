@@ -48,14 +48,11 @@ public class Decor extends Item
     /** Specifies whether side walls should be displayed. */
     public var hideWalls :Boolean;
 
-    /** Bitmap offset along the x axis, in room units. */
-    public var offsetX :Number;
+    /** The adjusted scale of actors in this room. */
+    public var actorScale :Number;
 
-    /** Bitmap offset along the y axis, in room units. */
-    public var offsetY :Number;
-
-    /** The adjusted scale of entities in this room. */
-    public var scale :Number;
+    /** The adjusted scale of furni in this room. */
+    public var furniScale :Number;
 
     public function Decor ()
     {
@@ -83,9 +80,8 @@ public class Decor extends Item
         depth = ins.readShort();
         horizon = ins.readFloat();
         hideWalls = ins.readBoolean();
-        offsetX = ins.readFloat();
-        offsetY = ins.readFloat();
-        scale = ins.readFloat();
+        actorScale = ins.readFloat();
+        furniScale = ins.readFloat();
     }
 
     // from interface Streamable
@@ -98,9 +94,8 @@ public class Decor extends Item
         out.writeShort(depth);
         out.writeFloat(horizon);
         out.writeBoolean(hideWalls);
-        out.writeFloat(offsetX);
-        out.writeFloat(offsetY);
-        out.writeFloat(scale);
+        out.writeFloat(actorScale);
+        out.writeFloat(furniScale);
     }
 
     // from Item

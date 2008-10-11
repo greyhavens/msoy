@@ -32,10 +32,9 @@ public class DecorEditor extends ItemEditor
         d.height = 400;
         d.depth = 400;
         d.horizon = 0.5f;
-        d.offsetX = 0;
-        d.offsetY = 0;
         d.hideWalls = false;
-        d.scale = 1;
+        d.actorScale = 1;
+        d.furniScale = 1;
         return d;
     }
 
@@ -100,7 +99,7 @@ public class DecorEditor extends ItemEditor
      */
     protected void updateDecorFromFlash (
         byte type, boolean hideWalls, short width, short height, short depth,
-        float horizon, float scale, float offsetX, float offsetY)
+        float horizon, float actorScale, float furniScale)
     {
         _decor.type = type;
         _decor.hideWalls = hideWalls;
@@ -108,9 +107,8 @@ public class DecorEditor extends ItemEditor
         _decor.height = height;
         _decor.depth = depth;
         _decor.horizon = horizon;
-        _decor.scale = scale;
-        _decor.offsetX = offsetX;
-        _decor.offsetY = offsetY;
+        _decor.actorScale = actorScale;
+        _decor.furniScale = furniScale;
 
         _attrsNeedFiguring = false;
     }
@@ -125,7 +123,7 @@ public class DecorEditor extends ItemEditor
         }
         if (!_attrsNeedFiguring) {
             decorUpdateHelper(_decor.type, _decor.hideWalls, _decor.width, _decor.height,
-                _decor.depth, _decor.horizon, _decor.scale, _decor.offsetX, _decor.offsetY);
+                _decor.depth, _decor.horizon, _decor.actorScale, _decor.furniScale);
         }
     }
 
@@ -136,21 +134,21 @@ public class DecorEditor extends ItemEditor
         $wnd.updateDecorInit = function () {
             editor.@client.editem.DecorEditor::sendDecorUpdateToFlash()();
         };
-        $wnd.updateDecor = function (type, hideWalls, width, height, depth, horizon, scale,
-                                     offsetX, offsetY)
+        $wnd.updateDecor = function (type, hideWalls, width, height, depth, horizon,
+                                     actorScale, furniScale)
         {
-            editor.@client.editem.DecorEditor::updateDecorFromFlash(BZSSSFFFF)(
-                type, hideWalls, width, height, depth, horizon, scale, offsetX, offsetY);
+            editor.@client.editem.DecorEditor::updateDecorFromFlash(BZSSSFFF)(
+                type, hideWalls, width, height, depth, horizon, actorScale, furniScale);
         };
     }-*/;
 
     protected static native void decorUpdateHelper (
-        byte type, boolean hideWalls, int width, int height, int depth, float horizon, float scale,
-        float offsetX, float offsetY) /*-{
+        byte type, boolean hideWalls, int width, int height, int depth, float horizon,
+        float actorScale, float furniScale) /*-{
         var viewer = $doc.getElementById("decorViewer");
         if (viewer) {
             viewer.updateParameters(
-                type, hideWalls, width, height, depth, horizon, scale, offsetX, offsetY);
+                type, hideWalls, width, height, depth, horizon, actorScale, furniScale);
         }
     }-*/;
 

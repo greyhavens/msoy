@@ -98,7 +98,7 @@ public class DecorSprite extends FurniSprite
         furniData.media = decor.getRawFurniMedia();
 
         // sprite location: center and up-front, but shifted by specified offset
-        furniData.loc = new MsoyLocation(0.5 + decor.offsetX, 0 + decor.offsetY, 0);
+        furniData.loc = new MsoyLocation(0.5, 0, 0);
         
         return furniData;
     }

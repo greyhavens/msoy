@@ -157,9 +157,8 @@ public class ItemUtil
     {
         return "decorType=" + decor.type + "&decorHideWalls=" + decor.hideWalls +
             "&decorWidth=" + decor.width + "&decorHeight=" + decor.height +
-            "&decorDepth=" + decor.depth +
-            "&decorHorizon=" + decor.horizon + "&decorScale=" + decor.scale +
-            "&decorOffsetX=" + decor.offsetX + "&decorOffsetY=" + decor.offsetY +
+            "&decorDepth=" + decor.depth + "&decorHorizon=" + decor.horizon +
+            "&decorActorScale=" + decor.actorScale + "&decorFurniScale=" + decor.furniScale +
             "&username=Test%20Avatar"; // add a name for the test avatar..
     }
 

@@ -138,9 +138,8 @@ public class RoomStudioController extends RoomController
             decor.height = int(params.decorHeight);
             decor.depth = int(params.decorDepth);
             decor.horizon = Number(params.decorHorizon);
-            decor.scale = Number(params.decorScale);
-            decor.offsetX = Number(params.decorOffsetX);
-            decor.offsetY = Number(params.decorOffsetY);
+            decor.actorScale = Number(params.decorActorScale);
+            decor.furniScale = Number(params.decorFurniScale);
             decor.setFurniMedia(new StudioMediaDesc(params.media as String));
 
         } else {

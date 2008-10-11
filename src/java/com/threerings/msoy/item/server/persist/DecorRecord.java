@@ -61,26 +61,19 @@ public class DecorRecord extends ItemRecord
     public static final ColumnExp HIDE_WALLS_C =
         new ColumnExp(DecorRecord.class, HIDE_WALLS);
 
-    /** The column identifier for the {@link #offsetX} field. */
-    public static final String OFFSET_X = "offsetX";
+    /** The column identifier for the {@link #actorScale} field. */
+    public static final String ACTOR_SCALE = "actorScale";
 
-    /** The qualified column identifier for the {@link #offsetX} field. */
-    public static final ColumnExp OFFSET_X_C =
-        new ColumnExp(DecorRecord.class, OFFSET_X);
+    /** The qualified column identifier for the {@link #actorScale} field. */
+    public static final ColumnExp ACTOR_SCALE_C =
+        new ColumnExp(DecorRecord.class, ACTOR_SCALE);
 
-    /** The column identifier for the {@link #offsetY} field. */
-    public static final String OFFSET_Y = "offsetY";
+    /** The column identifier for the {@link #furniScale} field. */
+    public static final String FURNI_SCALE = "furniScale";
 
-    /** The qualified column identifier for the {@link #offsetY} field. */
-    public static final ColumnExp OFFSET_Y_C =
-        new ColumnExp(DecorRecord.class, OFFSET_Y);
-
-    /** The column identifier for the {@link #scale} field. */
-    public static final String SCALE = "scale";
-
-    /** The qualified column identifier for the {@link #scale} field. */
-    public static final ColumnExp SCALE_C =
-        new ColumnExp(DecorRecord.class, SCALE);
+    /** The qualified column identifier for the {@link #furniScale} field. */
+    public static final ColumnExp FURNI_SCALE_C =
+        new ColumnExp(DecorRecord.class, FURNI_SCALE);
 
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
@@ -181,17 +174,15 @@ public class DecorRecord extends ItemRecord
     /** Specifies whether side walls should be displayed. */
     public boolean hideWalls;
 
-    /** Bitmap offset along the x axis, in room units. */
-    public float offsetX;
-
-    /** Bitmap offset along the y axis, in room units. */
-    public float offsetY;
-
-    /** The adjusted scale of entities in this room. */
+    /** The adjusted scale of actors in this room. */
     @Column(defaultValue="1")
-    public float scale;
+    public float actorScale;
 
-    public static final int SCHEMA_VERSION = 3 +
+    /** The adjusted scale of furni in this room. */
+    @Column(defaultValue="1")
+    public float furniScale;
+
+    public static final int SCHEMA_VERSION = 4 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     @Override // from ItemRecord
@@ -212,9 +203,8 @@ public class DecorRecord extends ItemRecord
         depth = decor.depth;
         horizon = decor.horizon;
         hideWalls = decor.hideWalls;
-        offsetX = decor.offsetX;
-        offsetY = decor.offsetY;
-        scale = decor.scale;
+        actorScale = decor.actorScale;
+        furniScale = decor.furniScale;
     }
 
     @Override // from ItemRecord
@@ -227,15 +217,8 @@ public class DecorRecord extends ItemRecord
         object.depth = depth;
         object.horizon = horizon;
         object.hideWalls = hideWalls;
-        // TEMP TODO
-        // Oh my goodness! How did this bug get in here! It seems legacy decors have
-        // had their offsets zeroed out. Oh me, oh my. What a problem.
-        // Let's see if anyone notices. I have an inkling that the only decors using these
-        // are tweaky/wacky decors that nobody cares about anyway.
-        // Ray, Oct 6, 2008.
-        //object.offsetX = offsetX;
-        //object.offsetY = offsetY;
-        object.scale = scale;
+        object.actorScale = actorScale;
+        object.furniScale = furniScale;
         return object;
     }
 

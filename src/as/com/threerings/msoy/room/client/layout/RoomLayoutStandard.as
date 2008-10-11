@@ -13,7 +13,9 @@ import com.threerings.util.Log;
 import com.threerings.flash.Vector3;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.room.client.ClickLocation;
+import com.threerings.msoy.room.client.ActorSprite;
 import com.threerings.msoy.room.client.DecorSprite;
+import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.client.RoomView;
@@ -342,10 +344,14 @@ public class RoomLayoutStandard implements RoomLayout
 
     protected function getDecorScale (element :RoomElement) :Number
     {
-        if (element is DecorSprite) {
-            return 1; // The decor scale actually applies to everything but the decor. Smoke that!
+        if (element is ActorSprite) {
+            return _decor.actorScale;
         }
-        return _decor.scale;
+        if ((element is FurniSprite) && !(element is DecorSprite)) {
+            return _decor.furniScale;
+        }
+        // other sprites could use furniScale, I suppose..
+        return 1;
     }
 
     /**

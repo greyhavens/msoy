@@ -106,7 +106,8 @@ public class DecorEditPanel extends FlyingPanel
         readRoomType();
         _decor.depth = _depth.value;
         _decor.horizon = _horizon.value;
-        _decor.scale = _scale.value;
+        _decor.actorScale = _actorScale.value;
+        _decor.furniScale = _furniScale.value;
 
         if (_decor.getRawFurniMedia() != null) {
             updateDecorInViewer();
@@ -126,7 +127,7 @@ public class DecorEditPanel extends FlyingPanel
 
     protected function updateParameters (
         type :int, hideWalls :Boolean, width :int, height :int, depth :int,
-        horizon :Number, scale :Number, offsetX :Number, offsetY :Number) :void
+        horizon :Number, actorScale :Number, furniScale :Number) :void
     {
         _decor.type = type;
         _decor.hideWalls = hideWalls;
@@ -134,9 +135,8 @@ public class DecorEditPanel extends FlyingPanel
         _decor.height = height;
         _decor.depth = depth;
         _decor.horizon = horizon;
-        _decor.scale = scale;
-        _decor.offsetX = offsetX;
-        _decor.offsetY = offsetY;
+        _decor.actorScale = actorScale;
+        _decor.furniScale = furniScale;
 
         _suppressSaves = true;
         try {
@@ -145,7 +145,8 @@ public class DecorEditPanel extends FlyingPanel
             _depth.value = depth;
             _depth.tickValues = [ height ];
             _horizon.value = horizon;
-            _scale.value = scale;
+            _actorScale.value = actorScale;
+            _furniScale.value = furniScale;
             _checkRoomTypes()
         } finally {
             _suppressSaves = false;
@@ -173,7 +174,7 @@ public class DecorEditPanel extends FlyingPanel
 
             ExternalInterface.call("updateDecor",
                 _decor.type, _decor.hideWalls, _decor.width, _decor.height, _decor.depth,
-                _decor.horizon, _decor.scale, _decor.offsetX, _decor.offsetY);
+                _decor.horizon, _decor.actorScale, _decor.furniScale);
 
         } catch (e :Error) {
             log.warning("Unable to send decor to hosting page.", e);
@@ -192,11 +193,17 @@ public class DecorEditPanel extends FlyingPanel
         _roomType.dataProvider = types;
         _roomType.addEventListener(Event.CHANGE, saveChanges);
 
-        _scale = new VSlider();
-        _scale.liveDragging = true;
-        _scale.maximum = 4;
-        _scale.minimum = .25;
-        _scale.tickValues = [ 1 ];
+        _actorScale = new VSlider();
+        _actorScale.liveDragging = true;
+        _actorScale.maximum = 4;
+        _actorScale.minimum = .25;
+        _actorScale.tickValues = [ 1 ];
+
+        _furniScale = new VSlider();
+        _furniScale.liveDragging = true;
+        _furniScale.maximum = 4;
+        _furniScale.minimum = .25;
+        _furniScale.tickValues = [ 1 ];
 
         _horizon = new VSlider();
         _horizon.liveDragging = true;
@@ -213,16 +220,19 @@ public class DecorEditPanel extends FlyingPanel
         GridUtil.addRow(typeP, Msgs.STUDIO.get("l.room_type"), _roomType);
 
         var slideP :Grid = new Grid();
-        var scaleP :Grid = new Grid();
+        var ascaleP :Grid = new Grid();
+        var fscaleP :Grid = new Grid();
         var horzP :Grid = new Grid();
         var depthP :Grid = new Grid();
-        GridUtil.addRow(scaleP, Msgs.STUDIO.get("l.scale"));
-        GridUtil.addRow(scaleP, _scale);
+        GridUtil.addRow(ascaleP, Msgs.STUDIO.get("l.actor_scale"));
+        GridUtil.addRow(ascaleP, _actorScale);
+        GridUtil.addRow(fscaleP, Msgs.STUDIO.get("l.furni_scale"));
+        GridUtil.addRow(fscaleP, _furniScale);
         GridUtil.addRow(horzP, Msgs.STUDIO.get("l.horizon"));
         GridUtil.addRow(horzP, _horizon);
         GridUtil.addRow(depthP, Msgs.STUDIO.get("l.depth"));
         GridUtil.addRow(depthP, _depth);
-        GridUtil.addRow(slideP, scaleP, horzP, depthP);
+        GridUtil.addRow(slideP, ascaleP, fscaleP, horzP, depthP);
 
         _checkRoomTypes = function ( ... ignored) :void {
             // turn depth and horizon off for flatland
@@ -242,7 +252,8 @@ public class DecorEditPanel extends FlyingPanel
         // now bind everything up so that these widgets change things
         _suppressSaves = true;
         try {
-            BindingUtils.bindSetter(saveChanges, _scale, "value");
+            BindingUtils.bindSetter(saveChanges, _actorScale, "value");
+            BindingUtils.bindSetter(saveChanges, _furniScale, "value");
             BindingUtils.bindSetter(saveChanges, _horizon, "value");
             BindingUtils.bindSetter(saveChanges, _depth, "value");
         } finally {
@@ -305,7 +316,7 @@ public class DecorEditPanel extends FlyingPanel
         const w :int = int(event.value[0]);
         const h :int = int(event.value[1]);
 
-        updateParameters(Decor.IMAGE_OVERLAY, false, w, h, h, .5, 1, 0, 0);
+        updateParameters(Decor.IMAGE_OVERLAY, false, w, h, h, .5, 1, 1);
         updateDecorOnPage();
     }
 
@@ -328,7 +339,8 @@ public class DecorEditPanel extends FlyingPanel
     protected const ROOM_KEYS :Array = [ "m.room_normal", "m.room_no_walls", "m.room_flat" ];
 
     protected var _roomType :ComboBox;
-    protected var _scale :VSlider;
+    protected var _actorScale :VSlider;
+    protected var _furniScale :VSlider;
     protected var _horizon :VSlider;
     protected var _depth :VSlider;
 
