@@ -20,8 +20,7 @@ public abstract class ListingGrid extends PagedGrid<ListingCard>
 {
     public ListingGrid (int headerHeight)
     {
-        super(Math.max(1, (Window.getClientHeight() - headerHeight - NAV_BAR_ETC) / BOX_HEIGHT),
-              COLUMNS);
+        super(Math.max(2, (Window.getClientHeight()-headerHeight-NAV_BAR_ETC)/BOX_HEIGHT), COLUMNS);
         addStyleName("listingGrid");
     }
 

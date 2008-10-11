@@ -91,7 +91,7 @@ public class StuffPanel extends FlowPanel
 
         // compute the number of rows of items we can fit on the page
         int used = isCatalogType ? NAVIGATION_HEIGHT + GET_STUFF_HEIGHT : NAVIGATION_HEIGHT;
-        int rows = Math.max(1, (Window.getClientHeight() - used) / ITEM_BOX_HEIGHT);
+        int rows = Math.max(2, (Window.getClientHeight() - used) / ITEM_BOX_HEIGHT);
 
         // now create our grid of items
         _contents = new PagedGrid<Item>(rows, COLUMNS) {
