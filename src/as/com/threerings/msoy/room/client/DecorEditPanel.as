@@ -232,7 +232,7 @@ public class DecorEditPanel extends FlyingPanel
         GridUtil.addRow(horzP, _horizon);
         GridUtil.addRow(depthP, Msgs.STUDIO.get("l.depth"));
         GridUtil.addRow(depthP, _depth);
-        GridUtil.addRow(slideP, ascaleP, fscaleP, horzP, depthP);
+        GridUtil.addRow(slideP, depthP, horzP, ascaleP, fscaleP);
 
         _checkRoomTypes = function ( ... ignored) :void {
             // turn depth and horizon off for flatland
