@@ -324,8 +324,11 @@ public class MediaDesc
         }
     }
 
-    /**
-     * Returns the URL that references this media.
+    /** 
+     * Returns the URL that references this media. Tip: if you are ever calling MediaDesc.getPath(),
+     * you are probably doing something wrong. getPath() is only for end-level things that are
+     * geared towards actually displaying the media. Media should almost always be displayed in
+     * some subclass of MsoyMediaContainer so that it can be bleeped.
      */
     public function getMediaPath () :String
     {
