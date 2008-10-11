@@ -14,7 +14,7 @@ import com.threerings.msoy.client.Msgs;
 /**
  * A button that can be associated with a Slider, that jumps to the next tick value.
  */
-public class TickButton extends ImageButton
+public class TickButton extends CommandButton
 {
     /**
      * Construct a TickButton for the specified slider.
@@ -22,10 +22,11 @@ public class TickButton extends ImageButton
      */
     public function TickButton (slider :Slider)
     {
-        super("tickButton");
+        super();
+        styleName = "tickButton";
+        toolTip = Msgs.GENERAL.get("i.tickButton");
         setCallback(function () :void {}); // dummy, in case none other is set
         _slider = slider;
-        toolTip = Msgs.GENERAL.get("i.tickButton");
     }
 
     /**

@@ -20,7 +20,6 @@ import com.threerings.util.MultiLoader;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.ImageButton;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
@@ -99,18 +98,14 @@ public class WorldControlBar extends ControlBar
     {
         super.createControls();
 
-        _roomeditBtn = new ImageButton("controlBarButtonEdit");
+        _roomeditBtn = createButton("controlBarButtonEdit", "i.editScene");
         _roomeditBtn.setCommand(WorldController.ROOM_EDIT);
-        _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
         _roomeditBtn.enabled = false;
 
-        _zoomBtn = new ImageButton("controlBarButtonZoom");
+        _zoomBtn = createButton("controlBarButtonZoom", "i.zoom");
         _zoomBtn.setCallback(handleToggleZoom);
-        _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
 
-        _hotZoneBtn = new CommandButton();
-        _hotZoneBtn.styleName = "controlBarHoverZone";
-        _hotZoneBtn.toolTip = Msgs.GENERAL.get("i.hover");
+        _hotZoneBtn = createButton("controlBarHoverZone", "i.hover");
         _hotZoneBtn.enabled = false;
         _hotZoneBtn.focusEnabled = false;
         var hotHandler :Function = function (event :MouseEvent) :void {
@@ -123,19 +118,17 @@ public class WorldControlBar extends ControlBar
         _hotZoneBtn.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
         _hotZoneBtn.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
 
-        _snapBtn = new ImageButton("controlBarButtonSnapshot");
+        _snapBtn = createButton("controlBarButtonSnapshot", "i.snapshot");
+        _snapBtn.toggle = true;
         _snapBtn.setCallback(FloatingPanel.createPopper(function () :SnapshotPanel {
             return new SnapshotPanel(_wctx);
         }, _snapBtn));
-        _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
-        _snapBtn.enabled = true; // TODO: Redundant?
 
-        _friendsBtn = new ImageButton("controlBarFriendButton");
+        _friendsBtn = createButton("controlBarFriendButton", "i.friends");
         _friendsBtn.toggle = true;
         _friendsBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return new FriendsListPanel(_wctx);
         }, _friendsBtn));
-        _friendsBtn.toolTip = Msgs.GENERAL.get("i.friends");
     }
 
     // from ControlBar

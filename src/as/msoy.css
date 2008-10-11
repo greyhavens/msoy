@@ -366,19 +366,6 @@ TabNavigator, TabBar {
   selectedTabTextStyleName: "selectedMsoyTabButton";
 }
 
-ImageButton {
-  upSkin: ClassReference(null);
-  downSkin: ClassReference(null);
-  overSkin: ClassReference(null);
-  disabledSkin: ClassReference(null);
-  selectedUpSkin: ClassReference(null);
-  selectedOverSkin: ClassReference(null);
-  selectedDownSkin: ClassReference(null);
-  selectedDisabledSkin: ClassReference(null);
-
-  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-}
-
 .msoyTabButton {
   color: #b4cbd7;
   fontFamily: Arial;
@@ -525,34 +512,114 @@ ImageButton {
 }
 
 .controlBarButtonChat {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/chatoptions.png");
 }
 
 .controlBarButtonEdit {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/editroom.png");
 }
 
 .controlBarButtonVolume {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/volume.png");
 }
 
 .controlBarButtonZoom {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/zoom.png");
 }
 
 .controlBarButtonComment {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/comment.png");
 }
 
 .controlBarButtonInstructions {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
 }
 
 .controlBarButtonShare {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/share.png");
 }
 
 .controlBarButtonScores {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/score.png");
 }
 
@@ -561,30 +628,100 @@ ImageButton {
 }
 
 .controlBarButtonSnapshot {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/snapshot.png");
 }
 
 .controlBarFriendButton {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/friends.png");
 }
 
 .controlBarTalkButton {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/talk.png");
 }
 
 .controlBarIdleButton {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/idle.png");
 }
 
 .controlBarScaleButton {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/scale.png");
 }
 
 .controlBarAVRGButton {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
 }
 
 .tickButton {
+  upSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  selectedUpSkin: ClassReference(null);
+  selectedOverSkin: ClassReference(null);
+  selectedDownSkin: ClassReference(null);
+  selectedDisabledSkin: ClassReference(null);
+
+  skin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   image: Embed(source="../../rsrc/media/skins/controlbar/tick.png");
 }
 

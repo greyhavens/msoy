@@ -29,7 +29,6 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.ImageButton;
 
 import com.threerings.msoy.world.client.WorldController;
 
@@ -110,6 +109,17 @@ public class ControlBar extends HBox
     }
 
     /**
+     * Exposed as a convenience.
+     */
+    public function createButton (style :String, tipKey :String) :CommandButton
+    {
+        var cb :CommandButton = new CommandButton();
+        cb.styleName = style;
+        cb.toolTip = Msgs.GENERAL.get(tipKey);
+        return cb;
+    }
+
+    /**
      * Called by the TopPanel when we move to a new location. This should some day take over for
      * setLocation().
      */
@@ -177,38 +187,29 @@ public class ControlBar extends HBox
      */
     protected function createControls () :void
     {
-        _chatOptsBtn = new ImageButton("controlBarButtonChat");
+        _chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
         _chatOptsBtn.setCommand(WorldController.POP_CHANNEL_MENU, _chatOptsBtn);
-        _chatOptsBtn.toolTip = Msgs.GENERAL.get("i.channel");
-        _chatOptsBtn.width = 22; // TODO: No idea why, but it stretches this one button out to 50 px
-                                 // if this line isn't here.
 
-        _volBtn = new ImageButton("controlBarButtonVolume");
+        _volBtn = createButton("controlBarButtonVolume", "i.volume");
         _volBtn.setCommand(MsoyController.POP_VOLUME, _volBtn);
-        _volBtn.toolTip = Msgs.GENERAL.get("i.volume");
 
-        _fullBtn = new ImageButton("controlBarButtonFull");
+        _fullBtn = createButton("controlBarButtonFull", "i.full");
         _fullBtn.setCallback(handleFullScreen);
-        _fullBtn.toolTip = Msgs.GENERAL.get("i.full");
 
-        _commentBtn = new ImageButton("controlBarButtonComment");
+        _commentBtn = createButton("controlBarButtonComment", "i.comment");
         _commentBtn.setCommand(MsoyController.VIEW_COMMENT_PAGE);
-        _commentBtn.toolTip = Msgs.GENERAL.get("i.comment");
 
-        _shareBtn = new ImageButton("controlBarButtonShare");
+        _shareBtn = createButton("controlBarButtonShare", "i.share");
         _shareBtn.toggle = true;
-        _shareBtn.toolTip = Msgs.GENERAL.get("i.share");
         _shareBtn.setCallback(FloatingPanel.createPopper(function () :ShareDialog {
             return new ShareDialog(_ctx);
         }));
 
-        _instructBtn = new ImageButton("controlBarButtonInstructions");
+        _instructBtn = createButton("controlBarButtonInstructions", "i.instructions");
         _instructBtn.setCommand(MsoyController.VIEW_GAME_INSTRUCTIONS);
-        _instructBtn.toolTip = Msgs.GENERAL.get("i.instructions");
 
-        _avrgBtn = new ImageButton("controlBarAVRGButton");
+        _avrgBtn = createButton("controlBarAVRGButton", "i.avrg");
         _avrgBtn.setCommand(WorldController.POP_AVRG_MENU, _avrgBtn);
-        _avrgBtn.toolTip = Msgs.GENERAL.get("i.avrg");
     }
 
     /**
