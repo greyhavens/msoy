@@ -209,7 +209,7 @@ public class GameEditor extends ItemEditor
         _watchable.setChecked(true);
 
         addRow(_emsgs.gameDefinition(), _extras = new TextArea());
-        _extras.setCharacterWidth(60);
+        _extras.setCharacterWidth(55);
         _extras.setVisibleLines(5);
 
         addTab(_emsgs.gameTabCode());
