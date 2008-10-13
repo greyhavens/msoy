@@ -52,7 +52,7 @@ public class MsoyGameConfig extends WhirledGameConfig
     {
         super.readObject(ins);
         name = (ins.readField(String) as String);
-        thumbnail = (ins.readObject() as MediaDesc)
+        thumbnail = MediaDesc(ins.readObject())
         groupId = ins.readInt();
     }
 

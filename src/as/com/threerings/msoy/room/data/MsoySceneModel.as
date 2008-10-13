@@ -236,12 +236,12 @@ public class MsoySceneModel extends SceneModel
         accessControl = ins.readByte();
         ownerType = ins.readByte();
         ownerId = ins.readInt();
-        ownerName = (ins.readObject() as Name);
+        ownerName = Name(ins.readObject());
         gameId = ins.readInt();
-        furnis = (ins.readObject() as TypedArray);
-        entrance = (ins.readObject() as MsoyLocation);
-        decor = (ins.readObject() as Decor);
-        audioData = (ins.readObject() as AudioData);
+        furnis = TypedArray(ins.readObject());
+        entrance = MsoyLocation(ins.readObject());
+        decor = Decor(ins.readObject());
+        audioData = AudioData(ins.readObject());
     }
 
     override public function toString () :String

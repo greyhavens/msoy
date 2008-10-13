@@ -60,7 +60,7 @@ public class MsoyPortal extends Portal
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        dest = (ins.readObject() as MsoyLocation);
+        dest = MsoyLocation(ins.readObject());
     }
 
     // from interface Streamable

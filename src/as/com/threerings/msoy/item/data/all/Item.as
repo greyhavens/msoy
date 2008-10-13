@@ -433,8 +433,8 @@ public /*abstract*/ class Item
         name = (ins.readField(String) as String);
         description = (ins.readField(String) as String);
         mature = ins.readBoolean();
-        _thumbMedia = (ins.readObject() as MediaDesc);
-        _furniMedia = (ins.readObject() as MediaDesc);
+        _thumbMedia = MediaDesc(ins.readObject());
+        _furniMedia = MediaDesc(ins.readObject());
     }
 
     /**

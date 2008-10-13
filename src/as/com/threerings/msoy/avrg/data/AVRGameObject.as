@@ -93,12 +93,12 @@ public class AVRGameObject extends PlaceObject
      */
     protected function readDefaultFields (ins :ObjectInputStream) :void
     {
-        playerLocs = (ins.readObject() as DSet);
-        gameData = (ins.readObject() as TypedArray);
-        avrgService = (ins.readObject() as AVRGameMarshaller);
-        prizeService = (ins.readObject() as PrizeMarshaller);
-        messageService = (ins.readObject() as WhirledGameMessageMarshaller);
-        propertiesService = (ins.readObject() as PropertySpaceMarshaller);
+        playerLocs = DSet(ins.readObject());
+        gameData = TypedArray(ins.readObject());
+        avrgService = AVRGameMarshaller(ins.readObject());
+        prizeService = PrizeMarshaller(ins.readObject());
+        messageService = WhirledGameMessageMarshaller(ins.readObject());
+        propertiesService = PropertySpaceMarshaller(ins.readObject());
     }
 
     /** The raw properties set by the game. */

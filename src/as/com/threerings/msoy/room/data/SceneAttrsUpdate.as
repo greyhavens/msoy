@@ -63,9 +63,9 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         name = (ins.readField(String) as String);
         accessControl = ins.readByte();
-        decor = (ins.readObject() as Decor);
-        audioData = (ins.readObject() as AudioData);
-        entrance = (ins.readObject() as MsoyLocation);
+        decor = Decor(ins.readObject());
+        audioData = AudioData(ins.readObject());
+        entrance = MsoyLocation(ins.readObject());
     }
 }
 }

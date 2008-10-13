@@ -51,7 +51,7 @@ public class MoneyNotification extends Notification
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        currency = ins.readObject() as Currency;
+        currency = Currency(ins.readObject());
         delta = ins.readInt();
         _msg = ins.readField(String) as String;
     }

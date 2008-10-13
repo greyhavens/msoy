@@ -62,8 +62,8 @@ public class ActorInfo extends OccupantInfo
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        _media = (ins.readObject() as MediaDesc);
-        _ident = (ins.readObject() as ItemIdent);
+        _media = MediaDesc(ins.readObject());
+        _ident = ItemIdent(ins.readObject());
         _state = (ins.readField(String) as String);
     }
 

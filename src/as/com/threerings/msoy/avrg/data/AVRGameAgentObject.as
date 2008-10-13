@@ -35,10 +35,10 @@ public class AVRGameAgentObject extends AgentObject
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        scenes = (ins.readObject() as DSet);
+        scenes = DSet(ins.readObject());
         gameOid = ins.readInt();
         gameId = ins.readInt();
-        agentService = ins.readObject() as AVRGameAgentMarshaller;
+        agentService = AVRGameAgentMarshaller(ins.readObject());
     }
 }
 

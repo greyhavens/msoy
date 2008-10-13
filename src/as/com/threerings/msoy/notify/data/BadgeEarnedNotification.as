@@ -50,7 +50,7 @@ public class BadgeEarnedNotification extends Notification
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        _badge = ins.readObject() as EarnedBadge;
+        _badge = EarnedBadge(ins.readObject());
     }
 
     protected var _badge :EarnedBadge;

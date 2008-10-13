@@ -89,7 +89,7 @@ public class AudioData
     public function readObject (ins :ObjectInputStream) :void
     {
         itemId = ins.readInt();
-        media = ins.readObject() as MediaDesc;
+        media = MediaDesc(ins.readObject());
         volume = ins.readFloat();
     }
 

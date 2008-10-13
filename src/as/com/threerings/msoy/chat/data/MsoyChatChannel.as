@@ -162,7 +162,7 @@ public class MsoyChatChannel extends ChatChannel
     {
         super.readObject(ins);
         type = ins.readInt();
-        ident = (ins.readObject() as Name);
+        ident = Name(ins.readObject());
     }
 
     // from interface Streamable

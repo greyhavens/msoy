@@ -74,7 +74,7 @@ public class GameSummary extends SimpleStreamableObject
         name = (ins.readField(String) as String);
         avrGame = ins.readBoolean();
         gameMediaType = ins.readByte();
-        _thumbMedia = (ins.readObject() as MediaDesc);
+        _thumbMedia = MediaDesc(ins.readObject());
     }
 
     // documntation from Streamable

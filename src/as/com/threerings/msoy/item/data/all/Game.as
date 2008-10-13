@@ -65,10 +65,10 @@ public class Game extends Item
         super.readObject(ins);
         genre = ins.readByte();
         config = (ins.readField(String) as String);
-        gameMedia = (ins.readObject() as MediaDesc);
+        gameMedia = MediaDesc(ins.readObject());
         gameId = ins.readInt();
-        shotMedia = (ins.readObject() as MediaDesc);
-        serverMedia = (ins.readObject() as MediaDesc);
+        shotMedia = MediaDesc(ins.readObject());
+        serverMedia = MediaDesc(ins.readObject());
         groupId = (ins.readInt());
         shopTag = (ins.readField(String) as String);
     }

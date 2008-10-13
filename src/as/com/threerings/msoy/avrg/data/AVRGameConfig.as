@@ -62,9 +62,9 @@ public class AVRGameConfig extends PlaceConfig
     {
         super.readObject(ins);
         name = ins.readField(String) as String;
-        thumbnail = (ins.readObject() as MediaDesc);
+        thumbnail = MediaDesc(ins.readObject());
         _gameId = ins.readInt();
-        _gameDef = ins.readObject() as GameDefinition;
+        _gameDef = GameDefinition(ins.readObject());
     }
 
     // from interface Streamable

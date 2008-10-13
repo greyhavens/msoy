@@ -42,7 +42,7 @@ public class Trophy extends SimpleStreamableObject
         gameId = ins.readInt();
         name = (ins.readField(String) as String);
         description = (ins.readField(String) as String);
-        trophyMedia = (ins.readObject() as MediaDesc);
+        trophyMedia = MediaDesc(ins.readObject());
         whenEarned = (ins.readField(Long) as Long);
     }
 

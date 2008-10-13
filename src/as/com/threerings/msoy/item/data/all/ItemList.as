@@ -38,8 +38,8 @@ public class ItemList
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        info = (ins.readObject() as ItemListInfo);
-        items = (ins.readObject() as TypedArray);
+        info = ItemListInfo(ins.readObject());
+        items = TypedArray(ins.readObject());
     }
 
     // from interface Streamable

@@ -35,7 +35,7 @@ public /*abstract*/ class FurniUpdate extends SceneUpdate
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        data = (ins.readObject() as FurniData);
+        data = FurniData(ins.readObject());
     }
 
     protected /*abstract*/ function doUpdate (model :MsoySceneModel) :void

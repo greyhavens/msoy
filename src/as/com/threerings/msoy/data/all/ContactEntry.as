@@ -80,7 +80,7 @@ public class ContactEntry
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        name = (ins.readObject() as JabberName);
+        name = JabberName(ins.readObject());
         online = ins.readBoolean();
     }
 

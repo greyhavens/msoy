@@ -26,7 +26,7 @@ public class VizMemberName extends MemberName
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        _photo = (ins.readObject() as MediaDesc);
+        _photo = MediaDesc(ins.readObject());
     }
 
     // from OccupantInfo

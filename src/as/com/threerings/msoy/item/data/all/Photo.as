@@ -50,7 +50,7 @@ public class Photo extends Item
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        photoMedia = (ins.readObject() as MediaDesc);
+        photoMedia = MediaDesc(ins.readObject());
         photoWidth = ins.readInt();
         photoHeight = ins.readInt();
     }

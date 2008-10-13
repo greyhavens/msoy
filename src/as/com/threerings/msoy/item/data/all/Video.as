@@ -42,7 +42,7 @@ public class Video extends Item
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        videoMedia = (ins.readObject() as MediaDesc);
+        videoMedia = MediaDesc(ins.readObject());
     }
 
     // from interface Streamable

@@ -70,7 +70,7 @@ public class MemberInfo extends ActorInfo
     {
         super.readObject(ins);
         _scale = ins.readFloat();
-        _game = (ins.readObject() as GameSummary);
+        _game = GameSummary(ins.readObject());
     }
 
     /** @inheritDoc */

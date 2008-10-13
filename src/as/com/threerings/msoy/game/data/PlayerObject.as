@@ -168,13 +168,13 @@ public class PlayerObject extends WhirledPlayerObject
      */
     protected function readDefaultFields (ins :ObjectInputStream) :void
     {
-        memberName = (ins.readObject() as VizMemberName);
-        tokens = (ins.readObject() as MsoyTokenRing);
+        memberName = VizMemberName(ins.readObject());
+        tokens = MsoyTokenRing(ins.readObject());
         humanity = ins.readInt();
-        friends = (ins.readObject() as DSet);
-        gameContent = (ins.readObject() as DSet);
-        visitorInfo = (ins.readObject() as VisitorInfo);
-        propertyService = (ins.readObject() as PropertySpaceMarshaller);
+        friends = DSet(ins.readObject());
+        gameContent = DSet(ins.readObject());
+        visitorInfo = VisitorInfo(ins.readObject());
+        propertyService = PropertySpaceMarshaller(ins.readObject());
     }
 
     /** The raw properties set by the game. */

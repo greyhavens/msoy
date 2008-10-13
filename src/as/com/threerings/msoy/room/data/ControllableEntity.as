@@ -33,7 +33,7 @@ public class ControllableEntity extends Controllable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        _ident = (ins.readObject() as ItemIdent);
+        _ident = ItemIdent(ins.readObject());
     }
 
     // from interface Streamable

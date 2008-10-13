@@ -55,7 +55,7 @@ public class Avatar extends Item
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        avatarMedia = (ins.readObject() as MediaDesc);
+        avatarMedia = MediaDesc(ins.readObject());
         scale = ins.readFloat();
     }
 

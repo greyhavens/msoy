@@ -39,8 +39,8 @@ public class RoomPropertiesObject extends DObject
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        propertiesService = (ins.readObject() as PropertySpaceMarshaller);
-        messageService = (ins.readObject() as WhirledGameMessageMarshaller);
+        propertiesService = PropertySpaceMarshaller(ins.readObject());
+        messageService = WhirledGameMessageMarshaller(ins.readObject());
         PropertySpaceHelper.readProperties(this, ins);
     }
 

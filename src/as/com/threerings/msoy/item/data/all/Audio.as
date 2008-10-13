@@ -36,7 +36,7 @@ public class Audio extends Item
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        audioMedia = (ins.readObject() as MediaDesc);
+        audioMedia = MediaDesc(ins.readObject());
     }
 
     // from interface Streamable

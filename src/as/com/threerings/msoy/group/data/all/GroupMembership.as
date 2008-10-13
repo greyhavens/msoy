@@ -55,7 +55,7 @@ public class GroupMembership
     // from Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        group = (ins.readObject() as GroupName);
+        group = GroupName(ins.readObject());
         rank = ins.readByte();
     }
 

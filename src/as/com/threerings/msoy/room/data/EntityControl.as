@@ -36,7 +36,7 @@ public class EntityControl extends SimpleStreamableObject
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        controlled = (ins.readObject() as Controllable);
+        controlled = Controllable(ins.readObject());
         controllerOid = ins.readInt();
     }
 

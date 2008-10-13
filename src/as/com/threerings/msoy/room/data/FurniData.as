@@ -265,8 +265,8 @@ public class FurniData
         id = ins.readShort();
         itemType = ins.readByte();
         itemId = ins.readInt();
-        media = (ins.readObject() as MediaDesc);
-        loc = (ins.readObject() as MsoyLocation);
+        media = MediaDesc(ins.readObject());
+        loc = MsoyLocation(ins.readObject());
         layoutInfo = ins.readByte();
         scaleX = ins.readFloat();
         scaleY = ins.readFloat();

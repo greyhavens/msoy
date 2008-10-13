@@ -71,10 +71,10 @@ public class RoomObject extends SpotSceneObject
     {
         super.readObject(ins);
 
-        roomService = (ins.readObject() as RoomMarshaller);
-        memories = (ins.readObject() as DSet);
-        controllers = (ins.readObject() as DSet);
-        propertySpaces = (ins.readObject() as DSet);
+        roomService = RoomMarshaller(ins.readObject());
+        memories = DSet(ins.readObject());
+        controllers = DSet(ins.readObject());
+        propertySpaces = DSet(ins.readObject());
     }
 }
 }

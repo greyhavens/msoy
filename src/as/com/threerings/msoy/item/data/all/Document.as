@@ -36,7 +36,7 @@ public class Document extends Item
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        docMedia = (ins.readObject() as MediaDesc);
+        docMedia = MediaDesc(ins.readObject());
     }
 
     // from interface Streamable

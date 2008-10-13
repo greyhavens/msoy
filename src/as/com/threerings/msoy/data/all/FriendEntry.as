@@ -96,9 +96,9 @@ public class FriendEntry
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        name = (ins.readObject() as MemberName);
+        name = MemberName(ins.readObject());
         online = ins.readBoolean();
-        photo = (ins.readObject() as MediaDesc);
+        photo = MediaDesc(ins.readObject());
         status = (ins.readField(String) as String);
     }
 

@@ -69,7 +69,7 @@ public class EntityMemoryEntry
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        item = (ins.readObject() as ItemIdent);
+        item = ItemIdent(ins.readObject());
         key = (ins.readField(String) as String);
         value = (ins.readField(ByteArray) as ByteArray);
     }

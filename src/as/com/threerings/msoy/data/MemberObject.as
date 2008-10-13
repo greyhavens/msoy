@@ -314,32 +314,32 @@ public class MemberObject extends MsoyBodyObject
     {
         super.readObject(ins);
 
-        memberName = (ins.readObject() as VizMemberName);
+        memberName = VizMemberName(ins.readObject());
         avrGameId = ins.readInt();
         coins = ins.readInt();
         accCoins = ins.readInt();
         bars = ins.readInt();
         level = ins.readInt();
         availability = ins.readInt();
-        following = (ins.readObject() as MemberName);
-        followers = (ins.readObject() as DSet);
-//        recentScenes = (ins.readObject() as DSet);
-//        ownedScenes = (ins.readObject() as DSet);
-        tokens = (ins.readObject() as MsoyTokenRing);
+        following = MemberName(ins.readObject());
+        followers = DSet(ins.readObject());
+//        recentScenes = DSet(ins.readObject());
+//        ownedScenes = DSet(ins.readObject());
+        tokens = MsoyTokenRing(ins.readObject());
         homeSceneId = ins.readInt();
-        avatar = (ins.readObject() as Avatar);
-        avatarCache = (ins.readObject() as DSet);
-        friends = (ins.readObject() as DSet);
-        gateways = (ins.readObject() as DSet);
-        imContacts = (ins.readObject() as DSet);
-        groups = (ins.readObject() as DSet);
+        avatar = Avatar(ins.readObject());
+        avatarCache = DSet(ins.readObject());
+        friends = DSet(ins.readObject());
+        gateways = DSet(ins.readObject());
+        imContacts = DSet(ins.readObject());
+        groups = DSet(ins.readObject());
         newMailCount = ins.readInt();
-        game = (ins.readObject() as GameSummary);
-        lists = (ins.readObject() as DSet);
+        game = GameSummary(ins.readObject());
+        lists = DSet(ins.readObject());
         viewOnly = ins.readBoolean();
         walkingId = ins.readInt();
         headline = ins.readField(String) as String;
-        visitorInfo = (ins.readObject() as VisitorInfo);
+        visitorInfo = VisitorInfo(ins.readObject());
     }
 }
 }

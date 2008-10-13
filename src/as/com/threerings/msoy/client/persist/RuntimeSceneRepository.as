@@ -51,7 +51,7 @@ public class RuntimeSceneRepository
         ba2.position = 0;
         ba2.uncompress();
         var ins :ObjectInputStream = new ObjectInputStream(ba2);
-        return (ins.readObject() as SceneModel);
+        return SceneModel(ins.readObject());
     }
 
     // from SceneRepository

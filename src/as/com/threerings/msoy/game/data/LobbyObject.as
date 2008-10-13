@@ -89,10 +89,10 @@ public class LobbyObject extends DObject implements TableLobbyObject
     {
         super.readObject(ins);
 
-        game = (ins.readObject() as Game);
-        gameDef = (ins.readObject() as GameDefinition);
-        tables = (ins.readObject() as DSet);
-        tableService = (ins.readObject() as TableMarshaller);
+        game = Game(ins.readObject());
+        gameDef = GameDefinition(ins.readObject());
+        tables = DSet(ins.readObject());
+        tableService = TableMarshaller(ins.readObject());
         groupId = (ins.readInt());
     }
 }
