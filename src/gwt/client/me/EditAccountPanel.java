@@ -81,7 +81,7 @@ public class EditAccountPanel extends SmartTable
         setText(row++, 0, _msgs.editEmailHeader(), 3, "Header");
 
         setText(row, 0, _msgs.editEmail(), 1, "rightLabel");
-        setWidget(row, 1, _email = new TextBox());
+        setWidget(row, 1, _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1));
         _email.setText(CShell.creds.accountName);
         _email.addKeyboardListener(_valemail);
         _upemail = new Button(_cmsgs.update(), new ClickListener() {

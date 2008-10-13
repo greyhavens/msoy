@@ -72,7 +72,9 @@ public class CreateAccountPanel extends FlowPanel
         add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
         add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
 
-        add(new LabeledBox(_msgs.createEmail(), _email = new TextBox(), _msgs.createEmailTip()));
+        add(new LabeledBox(_msgs.createEmail(),
+                           _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1),
+                           _msgs.createEmailTip()));
         _email.addKeyboardListener(_onType);
         Invitation invite = CShell.frame.getActiveInvitation();
         if (invite != null && invite.inviteeEmail.matches(MsoyUI.EMAIL_REGEX)) {

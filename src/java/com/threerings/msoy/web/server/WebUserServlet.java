@@ -111,6 +111,12 @@ public class WebUserServlet extends MsoyServiceServlet
             ignoreRestrict = true;
         }
 
+        // make sure the email is valid and not too long (this is also validated on the client)
+        if (!MailUtil.isValidAddress(info.email) ||
+            info.email.length() > MemberName.MAX_EMAIL_LENGTH) {
+            throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
+        }
+
         // validate display name length (this is enforced on the client)
         String displayName = info.displayName.trim();
         if (!MemberName.isValidDisplayName(displayName) ||
@@ -273,7 +279,9 @@ public class WebUserServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
 
-        if (!MailUtil.isValidAddress(newEmail)) {
+        // make sure the email is valid and not too long (this is also validated on the client)
+        if (!MailUtil.isValidAddress(newEmail) ||
+            newEmail.length() > MemberName.MAX_EMAIL_LENGTH) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         }
 

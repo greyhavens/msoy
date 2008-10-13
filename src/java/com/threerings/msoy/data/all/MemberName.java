@@ -21,11 +21,14 @@ public class MemberName extends Name
     /** The maximum allowable length of a permaname. */
     public static final int MAXIMUM_PERMANAME_LENGTH = 12;
 
+    /** The minimum length for a display name. */
+    public static final int MIN_DISPLAY_NAME_LENGTH = 3;
+
     /** The maximum length for a display name. */
     public static final int MAX_DISPLAY_NAME_LENGTH = 30;
 
-    /** The minimum length for a display name. */
-    public static final int MIN_DISPLAY_NAME_LENGTH = 3;
+    /** The maximum length for an account name (email address). */
+    public static final int MAX_EMAIL_LENGTH = 128;
 
     /** Used to reprepsent a member that has been deleted but is still referenced as an item
      * creator or mail message sender, etc. */
