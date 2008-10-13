@@ -30,6 +30,7 @@ public class MoneyExchange
     @Inject public MoneyExchange (ShutdownManager shutmgr)
     {
         shutmgr.registerShutdowner(this);
+        //runTests();
     }
 
     /**
@@ -53,20 +54,18 @@ public class MoneyExchange
      */
     public PriceQuote secureQuote (Currency listedCurrency, int amount)
     {
-        int exRate = (int) Math.ceil(_rate);
         switch (listedCurrency) {
         case COINS:
-            // NOTE: exchange rate is a floating point number, but we round it up to the
-            // nearest integer first and then divide, then round the result up to the nearest
-            // int to get the bar amount.
-            int bars = (int) Math.ceil(amount / (float)exRate);
-            return new PriceQuote(listedCurrency, amount, bars, (bars * exRate) - amount, _rate);
+            // if the coin price is 0, the bar price is 0.
+            // but otherwise never let the bar price get below 1.
+            int bars = (amount == 0) ? 0 : Math.max(1, ((int) Math.ceil(amount / _rate)));
+            return new PriceQuote(listedCurrency, amount, bars,
+                (int) (Math.floor(bars * _rate) - amount), _rate);
 
         case BARS:
-            // NOTE: Currently I track the exchange rate as a floating point number.
-            // To generate the coin quote, we round-up the # of coins in a bar first, then
-            // multiply by the number of bars.
-            return new PriceQuote(listedCurrency, exRate * amount, amount, 0, _rate);
+            int coins = (amount == 0) ? 0 : Math.max(1, ((int) Math.ceil(amount * _rate)));
+            return new PriceQuote(listedCurrency, coins, amount,
+                0, _rate);
 
         default:
             throw new RuntimeException("Error: listing not in bars or coins?");
@@ -110,12 +109,33 @@ public class MoneyExchange
     {
         int pool = _moneyRepo.getBarPool()[0];
         // the more bars in the pool: the lower the exchange rate
-        // TODO: asymptotic snazziness
-        _rate = (BAR_POOL_TARGET * RuntimeConfig.server.targetExchangeRate) / pool;
+        calculateRate(pool);
 
         // If not shutting down, schedule the next recalculation, always a minute from now
         if (_recalcInterval != null) {
             _recalcInterval.schedule(RECALCULATE_INTERVAL);
+        }
+    }
+
+    /**
+     * Calculate the rate based on the number of bars in the pool. The more bars: the lower
+     * the exchange rate.
+     */
+    protected void calculateRate (int pool)
+    {
+        if (pool <= 0) {
+            _rate = Float.POSITIVE_INFINITY;
+
+        } else if (pool >= (BAR_POOL_TARGET * 2)) {
+            _rate = 0;
+
+        } else if (pool >= BAR_POOL_TARGET) {
+            float x = 1 - ((pool - BAR_POOL_TARGET) / ((float) BAR_POOL_TARGET));
+            _rate = (RuntimeConfig.server.targetExchangeRate / (1 / x));
+
+        } else {
+            float x = pool / ((float) BAR_POOL_TARGET);
+            _rate = (RuntimeConfig.server.targetExchangeRate * (1 / x));
         }
     }
 
@@ -127,7 +147,57 @@ public class MoneyExchange
         }
     };
 
-    /** The current exchange rate. */
+    protected void runTests ()
+    {
+//        System.err.println("Rate 0: " + calcRate((int) (0.0 * BAR_POOL_TARGET)));
+//        System.err.println("Rate .125: " + calcRate((int) (0.125 * BAR_POOL_TARGET)));
+//        System.err.println("Rate .25: " + calcRate((int) (.25 * BAR_POOL_TARGET)));
+//        System.err.println("Rate .50: " + calcRate((int) (.5 * BAR_POOL_TARGET)));
+//        System.err.println("Rate .75: " + calcRate((int) (.75 * BAR_POOL_TARGET)));
+//        System.err.println("Rate 1.0: " + calcRate((int) (1.0 * BAR_POOL_TARGET)));
+//        System.err.println("Rate 1.25: " + calcRate((int) (1.25 * BAR_POOL_TARGET)));
+//        System.err.println("Rate 1.5: " + calcRate((int) (1.5 * BAR_POOL_TARGET)));
+//        System.err.println("Rate 1.75: " + calcRate((int) (1.75 * BAR_POOL_TARGET)));
+//        System.err.println("Rate 2.0: " + calcRate((int) (2.0 * BAR_POOL_TARGET)));
+//
+//        System.err.println("maxinf casted: " + ((int) (Float.POSITIVE_INFINITY * 2)));
+
+        System.err.println("Draining bar pool...");
+        calculateRate(0);
+        testPrices();
+
+        System.err.println("Overfilling bar pool...");
+        calculateRate(2 * BAR_POOL_TARGET);
+        testPrices();
+
+        System.err.println("Half-overfilling bar pool...");
+        calculateRate((int) (1.5 * BAR_POOL_TARGET));
+        testPrices();
+
+        System.err.println("Half-filling bar pool...");
+        calculateRate((int) (.5 * BAR_POOL_TARGET));
+        testPrices();
+    }
+
+    protected void testPrices ()
+    {
+        PriceQuote p;
+        p = secureQuote(Currency.COINS, 0);
+        System.err.println("coins:0, bars: " + p.getBars());
+        p = secureQuote(Currency.COINS, 1);
+        System.err.println("coins:1, bars: " + p.getBars());
+        p = secureQuote(Currency.COINS, 1000000);
+        System.err.println("coins:1000000, bars: " + p.getBars());
+
+        p = secureQuote(Currency.BARS, 0);
+        System.err.println("bars:0, coins: " + p.getCoins());
+        p = secureQuote(Currency.BARS, 1);
+        System.err.println("bars:1, coins: " + p.getCoins());
+        p = secureQuote(Currency.BARS, 1000000);
+        System.err.println("bars:1000000, coins: " + p.getCoins());
+    }
+
+    /** The current exchange rate. Can vary from 0 to Float.POSITIVE_INFINITY. */
     protected float _rate;
 
     /** Our money repository. */
