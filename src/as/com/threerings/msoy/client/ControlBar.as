@@ -29,6 +29,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.SliderPopup;
 
 import com.threerings.msoy.world.client.WorldController;
 
@@ -179,8 +180,8 @@ public class ControlBar extends HBox
         _chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
         _chatOptsBtn.setCommand(WorldController.POP_CHANNEL_MENU, _chatOptsBtn);
 
-        _volBtn = createButton("controlBarButtonVolume", "i.volume");
-        _volBtn.setCommand(MsoyController.POP_VOLUME, _volBtn);
+        _volBtn = createButton(getVolumeStyle(Prefs.getSoundVolume()), "i.volume");
+        _volBtn.setCallback(handlePopVolume);
 
         _fullBtn = createButton("controlBarButtonFull", "i.full");
         _fullBtn.setCallback(handleFullScreen);
@@ -332,6 +333,29 @@ public class ControlBar extends HBox
         } else {
             return UI_BASE;
         }
+    }
+
+    protected function getVolumeStyle (level :Number) :String
+    {
+        // if the level is 0, we want to show icon 0,
+        // otherwise show a smooth transition between levels 1 and 4
+        const icon :int = (level == 0) ? 0 : (1 + Math.round(level * 3));
+        return "controlBarButtonVolume" + icon;
+    }
+
+    protected function handlePopVolume () :void
+    {
+        var dfmt :Function = function (value :Number) :String {
+            return Msgs.GENERAL.get("i.percent_fmt", ""+Math.floor(value*100));
+        };
+        SliderPopup.toggle(_volBtn, Prefs.getSoundVolume(), updateVolume,
+            { styleName: "volumeSlider", tickValues: [ 0, 1 ], dataTipFormatFunction: dfmt });
+    }
+
+    protected function updateVolume (level :Number) :void
+    {
+        Prefs.setSoundVolume(level);
+        _volBtn.styleName = getVolumeStyle(level);
     }
 
     protected function handleFullScreen () :void

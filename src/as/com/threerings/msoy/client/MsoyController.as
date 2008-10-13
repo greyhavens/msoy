@@ -79,9 +79,6 @@ public class MsoyController extends Controller
     /** Command to edit preferences. */
     public static const CHAT_PREFS :String = "ChatPrefs";
 
-    /** Command to display a volume slider. */
-    public static const POP_VOLUME :String = "PopVolume";
-
     /** Command to display the go menu. */
     public static const POP_GO_MENU :String = "PopGoMenu";
 
@@ -403,18 +400,6 @@ public class MsoyController extends Controller
     public function handleChatPrefs () :void
     {
         new ChatPrefsDialog(_mctx);
-    }
-
-    /**
-     * Handles the POP_VOLUME command.
-     */
-    public function handlePopVolume (trigger :Button) :void
-    {
-        var dfmt :Function = function (value :Number) :String {
-            return Msgs.GENERAL.get("i.percent_fmt", ""+Math.floor(value*100));
-        };
-        SliderPopup.toggle(trigger, Prefs.getSoundVolume(), Prefs.setSoundVolume,
-            { styleName: "volumeSlider", tickValues: [ 0, 1 ], dataTipFormatFunction: dfmt });
     }
 
     /**
