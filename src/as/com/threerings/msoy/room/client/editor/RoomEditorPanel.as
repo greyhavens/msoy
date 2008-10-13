@@ -319,7 +319,7 @@ public class RoomEditorPanel extends FlyingPanel
         decorBox.percentWidth = 100;
         decorBox.addChild(FlexUtil.createLabel(Msgs.EDITING.get("l.decor")));
         decorBox.addChild(_decorLabel = FlexUtil.createLabel(""));
-        _decorLabel.maxWidth = 100; // 100 pixels. Flex sucks and I can't limit this. Fuck!
+        _decorLabel.width = 100; // force to be 100 pixels, since flex sucks.
         decorBox.addChild(new CommandButton(
             Msgs.EDITING.get("b.change"), WorldController.VIEW_STUFF, Item.DECOR));
         GridUtil.addRow(contents, decorBox, [3, 1]);
