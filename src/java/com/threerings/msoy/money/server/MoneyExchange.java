@@ -77,7 +77,7 @@ public class MoneyExchange
      */
     public void processPurchase (PriceQuote quote, Currency purchaseCurrency, int txId)
     {
-        if (purchaseCurrency == quote.getListedCurrency()) {
+        if (purchaseCurrency == quote.getListedCurrency() || quote.getListedAmount() == 0) {
             // the purchase was made at the listed currency, the exchange was not involved.
             return;
         }

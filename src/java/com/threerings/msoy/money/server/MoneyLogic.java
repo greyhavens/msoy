@@ -260,6 +260,11 @@ public class MoneyLogic
             }
         }
 
+        // if the listed price is 0, always buy in the listed currency
+        if (quote.getListedAmount() == 0) {
+            buyCurrency = quote.getListedCurrency();
+        }
+
         // Note that from here on, we're going to use the buyCost, which *could* be lower
         // than what the user authorized. Good for them.
         int buyCost = quote.getAmount(buyCurrency);
