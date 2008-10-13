@@ -15,6 +15,22 @@ import com.threerings.presents.dobj.DSet;
 public class MemberName extends Name
     implements DSet.Entry
 {
+    /** The minimum allowable length of a permaname. */
+    public static final int MINIMUM_PERMANAME_LENGTH = 4;
+
+    /** The maximum allowable length of a permaname. */
+    public static final int MAXIMUM_PERMANAME_LENGTH = 12;
+
+    /** The maximum length for a display name. */
+    public static final int MAX_DISPLAY_NAME_LENGTH = 30;
+
+    /** The minimum length for a display name. */
+    public static final int MIN_DISPLAY_NAME_LENGTH = 3;
+
+    /** Used to reprepsent a member that has been deleted but is still referenced as an item
+     * creator or mail message sender, etc. */
+    public static final MemberName DELETED_MEMBER = new MemberName("", -1);
+
     /** A comparator for sorting Names by their display portion, case insensitively. */
     public static final Comparator<MemberName> BY_DISPLAY_NAME = new Comparator<MemberName>() {
         public int compare (MemberName name1, MemberName name2) {
@@ -51,10 +67,8 @@ public class MemberName extends Name
     }
 
     /**
-     * Called after isValidDisplayName, if the user is not support.
+     * Called after {@link #isValidDisplayName}, if the user is not support.
      */
-    @SuppressWarnings("deprecation") // GWT needs isSpace(), but it's deprecated in favor of
-    // isWhitespace() in the Java library.
     public static boolean isValidNonSupportName (String name)
     {
         name = name.toLowerCase();
@@ -67,7 +81,7 @@ public class MemberName extends Name
         int lastDex = 2;
         do {
             int dex = name.indexOf("gent ", lastDex);
-            if (dex != -1 && Character.isSpace(name.charAt(dex - 2)) &&
+            if (dex != -1 && isWhitespace(name.charAt(dex - 2)) &&
                     isPossibleA(name.charAt(dex - 1))) {
                 return false;
             }
@@ -75,30 +89,6 @@ public class MemberName extends Name
         } while (lastDex > 0);
         return true;
     }
-
-    /** Helper for isValidNonSupportName. */
-    private static boolean isPossibleA (char c)
-    {
-        // it's an A, or it's something unicodey: kill.
-        // I don't want to enumerate all possible unicode A characters.
-        return (c == 'a') || (c > 127);
-    }
-
-    /** Used to reprepsent a member that has been deleted but is still referenced as an item
-     * creator or mail message sender, etc. */
-    public static final MemberName DELETED_MEMBER = new MemberName("", -1);
-
-    /** The minimum allowable length of a permaname. */
-    public static final int MINIMUM_PERMANAME_LENGTH = 4;
-
-    /** The maximum allowable length of a permaname. */
-    public static final int MAXIMUM_PERMANAME_LENGTH = 12;
-
-    /** The maximum length for a display name. */
-    public static final int MAX_DISPLAY_NAME_LENGTH = 30;
-
-    /** The minimum length for a display name. */
-    public static final int MIN_DISPLAY_NAME_LENGTH = 3;
 
     /**
      * Returns true if the supplied member id represents an anonymous viewer.
@@ -192,6 +182,23 @@ public class MemberName extends Name
     protected String normalize (String name)
     {
         return name; // do not adjust
+    }
+
+    /**
+     * GWT needs isSpace(), but it's deprecated in favor of isWhitespace() in the Java library.
+     */
+    @SuppressWarnings("deprecation")
+    protected static boolean isWhitespace (char c)
+    {
+        return Character.isSpace(c);
+    }
+
+    /** Helper for {@link #isValidNonSupportName}. */
+    protected static boolean isPossibleA (char c)
+    {
+        // it's an A, or it's something unicodey: kill; I don't want to enumerate all possible
+        // unicode A characters
+        return (c == 'a') || (c > 127);
     }
 
     /** The member id of the member we represent. */
