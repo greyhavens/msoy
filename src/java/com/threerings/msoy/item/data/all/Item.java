@@ -385,7 +385,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public MediaDesc getRawThumbnailMedia ()
     {
-        return _furniMedia;
+        return _thumbMedia;
     }
 
     /**
