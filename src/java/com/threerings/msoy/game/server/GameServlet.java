@@ -445,7 +445,8 @@ public class GameServlet extends MsoyServiceServlet
             // filter out all the games in this genre
             List<GameInfo> ggames = Lists.newArrayList();
             for (GameRecord grec : games.values()) {
-                if (grec.genre == gcode) {
+                // games rated less than 3 don't get on the main page
+                if (grec.genre == gcode && grec.rating >= MIN_ARCADE_RATING) {
                     GameInfo info = grec.toGameInfo();
                     PopularPlacesSnapshot.Place ppg = pps.getGame(grec.gameId);
                     if (ppg != null) {
@@ -719,6 +720,7 @@ public class GameServlet extends MsoyServiceServlet
 
     protected static final int MAX_RANKINGS = 10;
     protected static final int ARCADE_RAW_COUNT = 200;
+    protected static final float MIN_ARCADE_RATING = 3.0f;
 
     /** Players that haven't played a rated game in 14 days are not included in top-ranked. */
     protected static final long RATING_CUTOFF = 14 * 24*60*60*1000L;
