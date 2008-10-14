@@ -284,15 +284,29 @@ public class WebUserServlet extends MsoyServiceServlet
             newEmail.length() > MemberName.MAX_EMAIL_LENGTH) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         }
+        final String oldEmail = mrec.accountName;
 
+        // first update their MemberRecord and fail if they request a duplicate name
         try {
             _memberRepo.configureAccountName(mrec.memberId, newEmail);
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
         }
 
-        // let the authenticator know that we updated our account name
-        _author.updateAccount(mrec.accountName, newEmail, null, null);
+        try {
+            // let the authenticator know that we updated our account name
+            _author.updateAccount(mrec.accountName, newEmail, null, null);
+        } catch (ServiceException se) {
+            // we need to roll back the account name change to preserve a proper mapping between
+            // MemberRecord and the authenticator's record
+            try {
+                _memberRepo.configureAccountName(mrec.memberId, oldEmail);
+            } catch (Exception e) {
+                log.warning("Failed to roll back account name change", "who", mrec.who(),
+                            "newEmail", newEmail, "oldEmail", oldEmail, e);
+            }
+            throw se;
+        }
     }
 
     // from interface WebUserService
