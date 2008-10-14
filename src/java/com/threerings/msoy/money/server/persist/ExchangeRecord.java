@@ -70,7 +70,7 @@ public class ExchangeRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     /** Increment when you change fields. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The ID of this record. */
     @Id
