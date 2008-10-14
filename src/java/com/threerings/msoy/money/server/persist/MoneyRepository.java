@@ -120,6 +120,8 @@ public class MoneyRepository extends DepotRepository
                 return false;
             }
         });
+        ctx.registerMigration(ExchangeRecord.class,
+            new SchemaMigration.Retype(2, ExchangeRecord.RATE));
     }
 
     /**

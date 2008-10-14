@@ -70,7 +70,7 @@ public class ExchangeRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     /** Increment when you change fields. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The ID of this record. */
     @Id
@@ -87,7 +87,7 @@ public class ExchangeRecord extends PersistentRecord
     public int coins;
 
     /** The exact exchange rate that was used for this exchange. */
-    public float rate;
+    public double rate;
 
     /** The reference id of the MoneyTransaction. */
     public int referenceTxId;
@@ -96,8 +96,7 @@ public class ExchangeRecord extends PersistentRecord
     public static Function<ExchangeRecord, ExchangeData> TO_EXCHANGE_DATA =
         new Function<ExchangeRecord, ExchangeData>() {
             public ExchangeData apply (ExchangeRecord record) {
-                return new ExchangeData(record.timestamp, record.bars, record.coins, record.rate,
-                    record.referenceTxId);
+                return record.toData();
             }
         };
 
@@ -109,13 +108,24 @@ public class ExchangeRecord extends PersistentRecord
         this.timestamp = new Timestamp(System.currentTimeMillis());
         this.bars = bars;
         this.coins = coins;
-        this.rate = rate;
+        // NOTE: for some fucked-up reason when this column was a Float I couldn't store
+        // MAX_VALUE, but I can as a double. I can't store an INFINITY either way, so we
+        // convert Float's infinity into double's MAX_VALUE and decode on the other end
+        this.rate = (rate == Float.POSITIVE_INFINITY) ? Double.MAX_VALUE : rate;
         this.referenceTxId = referenceTxId;
     }
 
     /** Suitable for unserialization. */
     public ExchangeRecord ()
     {
+    }
+
+    public ExchangeData toData ()
+    {
+        return new ExchangeData(timestamp, bars, coins,
+            // Decode the rate.. Ferfuck's sake
+            (rate == Double.MAX_VALUE) ? Float.POSITIVE_INFINITY : (float)rate,
+            referenceTxId);
     }
 
     // AUTO-GENERATED: METHODS START
