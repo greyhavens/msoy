@@ -311,7 +311,7 @@ public /*abstract*/ class Item
      */
     public function getRawThumbnailMedia () :MediaDesc
     {
-        return _furniMedia;
+        return _thumbMedia;
     }
 
     /**
