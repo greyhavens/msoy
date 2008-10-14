@@ -9,6 +9,8 @@ import flash.display.Graphics;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
 
+import flash.events.MouseEvent;
+
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -613,6 +615,7 @@ public class ChatOverlay
                 _historyBar = new VScrollBar();
                 _historyBar.addEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
                 _historyBar.addEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
+                _target.addEventListener(MouseEvent.MOUSE_WHEEL, handleHistoryWheel);
                 _historyBar.includeInLayout = false;
                 _target.addChild(_historyBar);
             }
@@ -1041,10 +1044,20 @@ public class ChatOverlay
         glyphs.length = 0; // array truncation
     }
 
-    protected function handleHistoryScroll (event :ScrollEvent) :void
+    protected function handleHistoryScroll (... ignored) :void
     {
         if (!_settingBar) {
             showCurrentHistory();
+        }
+    }
+
+    protected function handleHistoryWheel (event :MouseEvent) :void
+    {
+        if (_targetBounds.contains(event.localX, event.localY)) { 
+            _historyBar.scrollPosition =
+                Math.max(_historyBar.minScrollPosition, Math.min(_historyBar.maxScrollPosition,
+                _historyBar.scrollPosition - event.delta*_historyBar.lineScrollSize));
+            handleHistoryScroll();
         }
     }
 
