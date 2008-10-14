@@ -316,7 +316,7 @@ public class ProfileServlet extends MsoyServiceServlet
             final GameRecord record = _mgameRepo.loadGameRecord(gameId);
             if (record == null) {
                 log.warning("Player has rating for non-existent game [id=" + gameId + "].");
-                entry.getValue().gameName = "";
+                result.remove(entry.getValue());
             } else {
                 entry.getValue().gameName = record.name;
                 entry.getValue().gameThumb = record.getThumbMediaDesc();
