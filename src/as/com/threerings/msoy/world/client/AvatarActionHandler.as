@@ -60,6 +60,7 @@ public class AvatarActionHandler extends CommandHandler
         } else {
             roomView.getRoomController().doAvatarAction(match);
         }
+        history[0] = cmd + " " + match;
         _wctx.getChatDirector().displayFeedback(MsoyCodes.CHAT_MSGS,
             MessageBundle.tcompose(_states ? "m.changed_state" : "m.changed_action", match));
         return ChatCodes.SUCCESS;
