@@ -247,18 +247,19 @@ public class MsoyAuthenticator extends Authenticator
      * Updates any of the supplied authentication information for the supplied account. Any of the
      * new values may be null to indicate that they are not to be updated.
      */
-    public void updateAccount (String email, final String newAccountName, final String newPermaName,
-                               final String newPassword)
+    public void updateAccount (String oldEmail, String newEmail, String newPermaName, String newPass)
         throws ServiceException
     {
         try {
-            // make sure we're dealing with a lower cased email
-            email = email.toLowerCase();
-            getDomain(email).updateAccount(email, newAccountName, newPermaName, newPassword);
+            // make sure we're dealing with a lower cased email and account name
+            oldEmail = oldEmail.toLowerCase();
+            if (newEmail != null) {
+                newEmail = newEmail.toLowerCase();
+            }
+            getDomain(oldEmail).updateAccount(oldEmail, newEmail, newPermaName, newPass);
         } catch (final RuntimeException e) {
-            log.warning("Error updating account [for=" + email +
-                    ", nan=" + newAccountName + ", npn=" + newPermaName +
-                    ", npass=" + newPassword + "].", e);
+            log.warning("Error updating account", "for", oldEmail, "nemail", newEmail,
+                        "nperma", newPermaName, "npass", newPass, e);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
