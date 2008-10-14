@@ -25,6 +25,15 @@ public class Furniture extends Item
     /** The y position of the hot spot to use for this furniture. */
     public var hotSpotY :int;
 
+    /**
+     * Returns a {@link MediaDesc} configured to display a testing piece of furni.
+     */
+    public static function getTestingFurniMedia () :MediaDesc
+    {
+        return new DefaultItemMediaDesc(
+            MediaDesc.APPLICATION_SHOCKWAVE_FLASH, FURNITURE, "testing");
+    }
+
     public function Furniture ()
     {
     }

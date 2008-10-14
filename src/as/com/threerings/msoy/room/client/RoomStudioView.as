@@ -31,6 +31,7 @@ import com.threerings.msoy.ui.SliderPopup;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -268,12 +269,14 @@ public class RoomStudioView extends RoomView
     protected function initEditDecor (params :Object) :void
     {
         initViewDecor(params);
+        addDefaultFurni();
 
         _backdropOverlay = new BackdropOverlay();
         addChild(_backdropOverlay);
         _layout.updateScreenLocation(_backdropOverlay);
 
-        var decorEditor :DecorEditPanel = new DecorEditPanel(_ctx, this);
+        // open the panel
+        new DecorEditPanel(_ctx, this);
     }
 
     protected function initViewFurni (params :Object) :void
@@ -298,21 +301,43 @@ public class RoomStudioView extends RoomView
         if (Security.sandboxType != Security.LOCAL_WITH_FILE) {
             avatarPath = Avatar.getDefaultMemberAvatarMedia().getMediaPath();
         } else {
-            var url :String = this.root.loaderInfo.url;
-            var fileSep :String = (-1 != Capabilities.os.indexOf("Windows")) ? "\\" : "/";
-            var dex :int = url.lastIndexOf(fileSep);
-            if (dex == -1) {
-                avatarPath = "file:";
-            } else {
-                avatarPath = url.substring(0, dex + 1);
-            }
-            avatarPath += "default-avatar.swf";
+            avatarPath = findSDKMediaPath() + "default-avatar.swf";
         }
         _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx, avatarPath));
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         addSprite(_avatar);
         setCenterSprite(_avatar);
         addTalkControl();
+    }
+
+    protected function addDefaultFurni () :void
+    {
+        var furniPath :String;
+        if (Security.sandboxType != Security.LOCAL_WITH_FILE) {
+            furniPath = Furniture.getTestingFurniMedia().getMediaPath();
+        } else {
+            furniPath = findSDKMediaPath() + "testing-furni.swf";
+        }
+
+        var furni :FurniData = new FurniData();
+        furni.id = _scene.getNextFurniId(0);
+        furni.itemType = Item.FURNITURE;
+        furni.itemId = 300;
+        furni.media = new StudioMediaDesc(furniPath);
+        furni.loc = new MsoyLocation(.2, 0, .8);
+        addFurni(furni);
+    }
+
+    protected function findSDKMediaPath () :String
+    {
+        var url :String = this.root.loaderInfo.url;
+        var fileSep :String = (-1 != Capabilities.os.indexOf("Windows")) ? "\\" : "/";
+        var dex :int = url.lastIndexOf(fileSep);
+        if (dex == -1) {
+            return "file:";
+        } else {
+            return url.substring(0, dex + 1);
+        }
     }
 
     protected function addTalkControl () :void
