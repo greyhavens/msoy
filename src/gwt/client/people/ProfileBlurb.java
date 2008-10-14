@@ -73,11 +73,9 @@ public class ProfileBlurb extends Blurb
         // create our photo section with various buttons
         FlowPanel photo = new FlowPanel();
         photo.setStyleName("Photo");
-        String mepics = Args.compose("pgallery", _name.getMemberId());
         ClickListener onClick = null;
-        onClick = Link.createListener(Pages.PEOPLE, mepics);
+        onClick = Link.createListener(Pages.PEOPLE, Args.compose("pgallery", _name.getMemberId()));
         photo.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
-        photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, mepics));
 
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
@@ -159,6 +157,8 @@ public class ProfileBlurb extends Blurb
                   Pages.PEOPLE, Args.compose("rooms", _name.getMemberId()));
         addButton(buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
                   Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
+        addButton(buttons, "/images/profile/photosofme.png", _msgs.photosOfMe(), Pages.PEOPLE,
+            Args.compose("pgallery", _name.getMemberId()));
 
         // display all of our sections in a nice little layout
         SmartTable content = new SmartTable("Profile", 0, 0);
