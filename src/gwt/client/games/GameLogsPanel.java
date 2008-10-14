@@ -3,6 +3,10 @@
 
 package client.games;
 
+import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
@@ -33,7 +37,7 @@ public class GameLogsPanel extends VerticalPanel
     public void setVisible (boolean visible)
     {
         super.setVisible(visible);
-        if (!visible || _logs != null) {
+        if (!visible || _gotLogs) {
             return;
         }
 
@@ -51,12 +55,19 @@ public class GameLogsPanel extends VerticalPanel
 
     protected void gotLogs (GameLogs logs)
     {
-        _logs = logs;
+        _gotLogs = true;
+
         clear();
 
         if (logs.logIds.length == 0) {
             add(new Label(_msgs.glpNoLogs()));
             return;
+        }
+
+        // Sort logs here so database doesn't have to
+        TreeMap<Date, Integer> sortedLogs = new TreeMap<Date, Integer>();
+        for (int ii = 0; ii < logs.logIds.length; ++ii) {
+            sortedLogs.put(logs.logTimes[ii], logs.logIds[ii]);
         }
 
         add(MsoyUI.createLabel(_msgs.glpLogsHeader(), "Header"));
@@ -71,24 +82,26 @@ public class GameLogsPanel extends VerticalPanel
 
         int row = 0;
         int col = 0;
-        for (int ii = 0; ii < logs.logIds.length; ii ++) {
-            String href = "/gamelogs?gameId=" + _gameId + "&logId=" + logs.logIds[ii];
-            String label = MsoyUI.formatDateTime(logs.logTimes[ii]);
+        int ii = 0;
+        for (Map.Entry<Date, Integer> log : sortedLogs.entrySet()) {
+            String href = "/gamelogs?gameId=" + _gameId + "&logId=" + log.getValue();
+            String label = MsoyUI.formatDateTime(log.getKey());
 
             table.setWidget(
                 row, col, MsoyUI.createHTML("<a href='" + href + "'>" + label + "</a>", null));
             row ++;
-            if (row * (TABLE_COLUMNS - col - 1) >= (logs.logIds.length - ii)) {
+            if (row * (TABLE_COLUMNS - col - 1) >= (sortedLogs.size() - ii)) {
                 row = 0;
                 col ++;
             }
+            ii ++;
         }
 
         add(table);
     }
 
     protected int _gameId;
-    protected GameLogs _logs;
+    protected boolean _gotLogs;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
