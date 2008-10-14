@@ -122,12 +122,12 @@ public class ServerConfigObject extends ConfigObject
     public int minimumBlingCashOut = 500;
 
     /** The target bar/coin exchange rate. 
-     * Value / time, from Puzzle Pirates: $0.25 / hr
+     * Value / time, from Puzzle Pirates: $0.25 / hr  [ but using $0.10 / hr ]
      * hourly coin rate = 3000
-     * therefore 3000 coins = $.25
+     * therefore 3000 coins = $.10
      * bars are valued at $.10
-     * therefore 1 bar = 1200 coins */
-    public float targetExchangeRate = 1200;
+     * therefore 1 bar = 3000 coins */
+    public float targetExchangeRate = 3000;
     
     @Override // documentation inherited
     public JPanel getEditor (PresentsContext ctx, Field field)
