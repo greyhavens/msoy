@@ -251,7 +251,7 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         try {
-            // make sure we're dealing with a lower cased email and account name
+            // make sure we're dealing with lower cased email addresses
             oldEmail = oldEmail.toLowerCase();
             if (newEmail != null) {
                 newEmail = newEmail.toLowerCase();
