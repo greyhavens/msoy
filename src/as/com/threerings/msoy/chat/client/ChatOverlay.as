@@ -179,6 +179,7 @@ public class ChatOverlay
             if (_historyBar != null && _target.contains(_historyBar)) {
                 _target.removeChild(_historyBar);
             }
+            _target.removeEventListener(MouseEvent.MOUSE_WHEEL, handleHistoryWheel);
         }
     }
 
@@ -615,13 +616,20 @@ public class ChatOverlay
                 _historyBar = new VScrollBar();
                 _historyBar.addEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
                 _historyBar.addEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
-                _target.addEventListener(MouseEvent.MOUSE_WHEEL, handleHistoryWheel);
                 _historyBar.includeInLayout = false;
                 _target.addChild(_historyBar);
             }
             configureHistoryBarSize();
             resetHistoryOffset();
             updateHistoryBar();
+
+            if (_chatContainer != null) {
+                _target.removeEventListener(MouseEvent.MOUSE_WHEEL, handleHistoryWheel);
+                _chatContainer.addEventListener(MouseEvent.MOUSE_WHEEL, handleHistoryWheel);
+            } else {
+                _target.addEventListener(MouseEvent.MOUSE_WHEEL, handleHistoryWheel);
+            }
+
         } else {
             if (_historyBar != null && _target.contains(_historyBar)) {
                 _target.removeChild(_historyBar);
