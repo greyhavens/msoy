@@ -209,10 +209,7 @@
   background: #C6E2F8 url(/images/shop/navi_bg_cell.png) repeat top;
   padding: 3px 0px 0px 5px;
   white-space: nowrap;
-}
-
-.sideBar .NaviPanel .LongCell {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .sideBar .NaviPanel .Selected {
