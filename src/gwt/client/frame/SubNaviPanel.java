@@ -80,6 +80,7 @@ public class SubNaviPanel extends FlowPanel
         case HELP:
             addLink(null, "Help", Pages.HELP, "");
             addLink(null, "Contact Us", Pages.SUPPORT, "");
+            addLink(null, "Report Bug", Pages.WHIRLEDS, Args.compose("f", 72));
             if (CShell.isSupport()) {
                 addLink(null, "Admin", Pages.SUPPORT, "admin");
             }
