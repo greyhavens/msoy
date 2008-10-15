@@ -102,12 +102,17 @@ public class BureauFileAppender extends OOOFileAppender
             summary.append(bsummary.substring(mpos + marker.length()));
         }
 
-        // Prepend header
         if (summary.length() > 0) {
+            // prepend header showing all the bureaus summarized
             StringBuffer header = new StringBuffer("Bureaus: ");
             header.append(StringUtil.join(overallFormat.bureaus.toArray()));
             header.append("\n\n");
             summary.insert(0, header);
+            
+            // append footer showing how long the summary took to generate
+            summary.append("\n(Generation time: ");
+            summary.append(StringUtil.intervalToString(System.currentTimeMillis() - nowStamp));
+            summary.append(")\n");
         }
         
         // Prune & write out message timestamps
