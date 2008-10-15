@@ -33,17 +33,16 @@ import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexWrapper;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.utils.TextUtil;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
-
-import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.notify.data.Notification;
 
 public class NotificationDisplay extends HBox
 {
-    public function NotificationDisplay (ctx :WorldContext) :void
+    public function NotificationDisplay (ctx :MsoyContext) :void
     {
         _ctx = ctx;
     }
@@ -281,7 +280,7 @@ public class NotificationDisplay extends HBox
 
     protected static const log :Log = Log.getLog(NotificationDisplay);
 
-    protected var _ctx :WorldContext;
+    protected var _ctx :MsoyContext;
     protected var _canvas :Canvas;
     protected var _popupBtn :CommandCheckBox;
     protected var _pendingNotifications :Array = [];

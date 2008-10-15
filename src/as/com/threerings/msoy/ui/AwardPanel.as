@@ -23,6 +23,7 @@ import com.threerings.util.MultiLoader;
 
 import com.threerings.msoy.badge.data.all.Badge;
 
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -30,13 +31,12 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.world.client.WorldContext;
 
 public class AwardPanel
 {
-    public function AwardPanel (wctx :WorldContext)
+    public function AwardPanel (ctx :MsoyContext)
     {
-        _wctx = wctx;
+        _ctx = ctx;
     }
 
     /**
@@ -45,7 +45,7 @@ public class AwardPanel
     public function close () :void
     {
         if (_panel.parent != null) {
-            _wctx.getTopPanel().getPlaceContainer().removeOverlay(_panel);
+            _ctx.getTopPanel().getPlaceContainer().removeOverlay(_panel);
         }
     }
 
@@ -88,7 +88,7 @@ public class AwardPanel
             var trophy :Trophy = (award as Trophy);
             msg = MessageBundle.tcompose("m.trophy_earned", trophy.name);
             name = trophy.name;
-            title = _wctx.xlate(MsoyCodes.GAME_MSGS, "m.trophy_title");
+            title = _ctx.xlate(MsoyCodes.GAME_MSGS, "m.trophy_title");
             mediaDesc = trophy.trophyMedia;
             messageBundle = MsoyCodes.GAME_MSGS;
 
@@ -96,16 +96,16 @@ public class AwardPanel
             var item :Item = (award as Item);
             msg = MessageBundle.tcompose("m.prize_earned", item.name);
             name = item.name;
-            title = _wctx.xlate(MsoyCodes.GAME_MSGS, "m.prize_title");
+            title = _ctx.xlate(MsoyCodes.GAME_MSGS, "m.prize_title");
             mediaDesc = item.getThumbnailMedia();
             messageBundle = MsoyCodes.GAME_MSGS;
 
         } else if (award is Badge) {
             var badge :Badge = (award as Badge);
             var level :String = badge.levelName;
-            name = _wctx.xlate(MsoyCodes.PASSPORT_MSGS, badge.nameProp, level);
+            name = _ctx.xlate(MsoyCodes.PASSPORT_MSGS, badge.nameProp, level);
             msg = MessageBundle.tcompose("m.badge_awarded", name, badge.coinValue);
-            title = _wctx.xlate(MsoyCodes.PASSPORT_MSGS, "t.badge_awarded");
+            title = _ctx.xlate(MsoyCodes.PASSPORT_MSGS, "t.badge_awarded");
             mediaUrl = badge.imageUrl;
             messageBundle = MsoyCodes.PASSPORT_MSGS;
 
@@ -116,7 +116,7 @@ public class AwardPanel
         }
 
         // display a chat message reporting their award
-        _wctx.getChatDirector().displayInfo(messageBundle, msg);
+        _ctx.getChatDirector().displayInfo(messageBundle, msg);
 
         // configure the award display panel with the award info
         (_panel.getChildByName("statement") as TextField).text = title;
@@ -132,7 +132,7 @@ public class AwardPanel
 
         // add ourselves to the stage now so that the logic that checks if it's used will
         // be able to detect its state properly
-        var container :PlaceBox = _wctx.getTopPanel().getPlaceContainer();
+        var container :PlaceBox = _ctx.getTopPanel().getPlaceContainer();
         if (container.width < _panel.width * 0.9) {
             // if the place box is too small to show at least 90% of the award panel, don't
             // show it all.  Also, none of the other pending awards will get shown, so we
@@ -162,7 +162,7 @@ public class AwardPanel
     }
 
     /** Provides access to main client services. */
-    protected var _wctx :WorldContext;
+    protected var _ctx :MsoyContext;
 
     /** The award display movie. */
     protected var _panel :DisplayObjectContainer;

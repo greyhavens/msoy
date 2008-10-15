@@ -250,7 +250,7 @@ public class GameLiaison
         const name :String = event.getName();
         const args :Array = event.getArgs();
         if (name == MsoyGameCodes.TROPHY_AWARDED || name == MsoyGameCodes.PRIZE_AWARDED) {
-            _wctx.displayAward(args[0]);
+            _wctx.getNotificationDirector().displayAward(args[0]);
 
         } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE) {
             const coins :int = int(args[0]);

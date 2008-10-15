@@ -9,7 +9,6 @@ import com.threerings.whirled.util.WhirledContext;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.game.client.GameDirector;
-import com.threerings.msoy.notify.client.NotificationDirector;
 import com.threerings.msoy.room.client.MediaDirector;
 import com.threerings.msoy.room.client.MsoySceneDirector;
 import com.threerings.msoy.room.client.WorldProperties;
@@ -35,10 +34,8 @@ public class WorldContext extends MsoyContext
     {
         super(client);
 
-        // some directors we create here,
+        // some directors we create here (unsuppressed)
         _mediaDir = new MediaDirector(this);
-        // and some we want suppressed in StudioContext
-        createWorldDirectors();
         _controller = new WorldController(this, _topPanel);
     }
 
@@ -70,14 +67,6 @@ public class WorldContext extends MsoyContext
     public function getMediaDirector () :MediaDirector
     {
         return _mediaDir;
-    }
-
-    /**
-     * Get the notification director.
-     */
-    public function getNotificationDirector () :NotificationDirector
-    {
-        return _notifyDir;
     }
 
     /**
@@ -120,15 +109,6 @@ public class WorldContext extends MsoyContext
         return _controller;
     }
 
-    /**
-     * Displays an award in a fancy animated popdown.  Check {@link AwardPanel} for valid award 
-     * object types.
-     */
-    public function displayAward (award :Object) :void
-    {
-        _notifyDir.displayAward(award);
-    }
-
     // from MsoyContext
     override public function getTokens () :MsoyTokenRing
     {
@@ -154,16 +134,14 @@ public class WorldContext extends MsoyContext
         return new WorldChatDirector(this);
     }
 
-    /**
-     * Create world-specific directors. Overridden in StudioContext to .. not.
-     */
-    protected function createWorldDirectors () :void
+    override protected function createAdditionalDirectors () :void
     {
+        super.createAdditionalDirectors();
+
         _sceneDir = new MsoySceneDirector(this, _locDir, new RuntimeSceneRepository());
         _spotDir = new SpotSceneDirector(this, _locDir, _sceneDir);
         _gameDir = new GameDirector(this);
         _worldDir = new WorldDirector(this);
-        _notifyDir = new NotificationDirector(this);
         _memberDir = new MemberDirector(this);
     }
 
@@ -174,7 +152,6 @@ public class WorldContext extends MsoyContext
     protected var _gameDir :GameDirector;
     protected var _mediaDir :MediaDirector;
     protected var _worldDir :WorldDirector;
-    protected var _notifyDir :NotificationDirector;
     protected var _memberDir :MemberDirector;
 }
 }

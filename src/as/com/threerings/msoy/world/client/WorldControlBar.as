@@ -31,8 +31,6 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.all.Item;
 
-import com.threerings.msoy.notify.client.NotificationDisplay;
-
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomStudioView;
 import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
@@ -64,13 +62,6 @@ public class WorldControlBar extends ControlBar
         updateZoomButton();
     }
 
-    public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
-    {
-        _notificationDisplay = notificationDisplay;
-        setupControls();
-        updateUI();
-    }
-
     // from ControlBar
     override public function locationDidChange (place :PlaceObject) :void
     {
@@ -80,16 +71,6 @@ public class WorldControlBar extends ControlBar
         if (place is RoomObject && !_wctx.getGameDirector().isGaming()) {
             // maybe show the avatar introduction
             maybeDisplayAvatarIntro();
-        }
-    }
-
-    // from Container
-    override public function setActualSize (uw :Number, uh :Number) :void
-    {
-        super.setActualSize(uw, uh);
-
-        if (_notificationDisplay != null && _notificationDisplay.visible) {
-            callLater(_notificationDisplay.updatePopupLocation);
         }
     }
 
@@ -141,13 +122,6 @@ public class WorldControlBar extends ControlBar
 
         addButton(_snapBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
         addButton(_roomeditBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
-
-        // TODO: notifications are global, yes? They should be in ControlBar
-        if (_notificationDisplay != null) {
-            addControl(
-                _notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ],
-                NOTIFICATION_SECTION);
-        }
 
         // TODO: enable friends for guests, even if it just goads them into signup
         // TODO: friends are global, yes? They should be in ControlBar
@@ -263,9 +237,6 @@ public class WorldControlBar extends ControlBar
 
     /** A button for popping up the friends list. */
     protected var _friendsBtn :CommandButton;
-
-    /** The little gray area that displays incoming notifications. */
-    protected var _notificationDisplay :NotificationDisplay;
 
     /** An introduction to avatars shown to brand new players. */
     protected var _avatarIntro :DisplayObjectContainer;

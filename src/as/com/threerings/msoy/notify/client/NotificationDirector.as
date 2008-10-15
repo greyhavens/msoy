@@ -22,13 +22,11 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.msoy.ui.AwardPanel;
 
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.MemberObject;
-
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
@@ -44,18 +42,16 @@ import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 public class NotificationDirector extends BasicDirector
     implements AttributeChangeListener, SetListener, MessageListener
 {
-    public function NotificationDirector (ctx :WorldContext)
+    public function NotificationDirector (ctx :MsoyContext)
     {
         super(ctx);
-        _wctx = ctx;
+        _mctx = ctx;
         _membersLoggingOff = new ExpiringSet(MEMBER_EXPIRE_TIME);
         _currentNotifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME);
         _currentNotifications.addEventListener(ExpiringSet.ELEMENT_EXPIRED, notificationExpired);
 
-        var controlBar :WorldControlBar = ctx.getTopPanel().getControlBar() as WorldControlBar;
-        if (controlBar != null) {
-            controlBar.setNotificationDisplay(_notificationDisplay = new NotificationDisplay(ctx));
-        }
+        ctx.getTopPanel().getControlBar().setNotificationDisplay(
+            _notificationDisplay = new NotificationDisplay(ctx));
 
         // ensure that the compiler includes these necessary symbols
         var c :Class;
@@ -74,8 +70,9 @@ public class NotificationDirector extends BasicDirector
     {
         var name :String = event.getName();
         if (name == MemberObject.NEW_MAIL_COUNT) {
-            if (event.getValue() > 0 && !event.getOldValue()) {
-                notifyNewMail();
+            const diff :int = int(event.getValue()) - int(event.getOldValue());
+            if (diff > 0) {
+                notifyNewMail(diff);
             }
         }
     }
@@ -170,7 +167,7 @@ public class NotificationDirector extends BasicDirector
     public function displayAward (award :Object) :void
     {
         if (_awardPanel == null) {
-            _awardPanel = new AwardPanel(_wctx);
+            _awardPanel = new AwardPanel(_mctx);
         }
         _awardPanel.displayAward(award);
     }
@@ -192,20 +189,21 @@ public class NotificationDirector extends BasicDirector
      */
     protected function showStartupNotifications () :void
     {
-        var us :MemberObject = _wctx.getMemberObject();
-        if (us.newMailCount > 0) {
-            notifyNewMail();
+        const client :Client = _ctx.getClient();
+        const clobj :Object = client.getClientObject();
+        const newMail :int = (clobj is MemberObject) ? MemberObject(clobj).newMailCount : 0;
+        if (newMail > 0) {
+            notifyNewMail(newMail);
         }
 
         // tell the server to go ahead and dispatch any notifications it had saved up.
-        var client :Client = _ctx.getClient();
-        var msvc :MemberService = client.requireService(MemberService) as MemberService;
+        const msvc :MemberService = client.requireService(MemberService) as MemberService;
         msvc.dispatchDeferredNotifications(client);
     }
 
-    protected function notifyNewMail () :void
+    protected function notifyNewMail (count :int) :void
     {
-        addGenericNotification("m.new_mail", Notification.PERSONAL);
+        addGenericNotification(MessageBundle.tcompose("m.new_mail", count), Notification.PERSONAL);
     }
 
     protected function addGenericNotification (announcement :String, category :int) :void
@@ -242,7 +240,8 @@ public class NotificationDirector extends BasicDirector
     /** Give notifications 15 minutes to be relevant. */
     protected static const NOTIFICATION_EXPIRE_TIME :int = 15 * 60; // in seconds
 
-    protected var _wctx :WorldContext;
+    protected var _mctx :MsoyContext;
+
     protected var _notificationDisplay :NotificationDisplay;
 
     /** An ExpiringSet to track members that may only be switching servers. */

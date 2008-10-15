@@ -26,6 +26,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.chat.client.CurseFilter;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
+import com.threerings.msoy.notify.client.NotificationDirector;
+
 /**
  * Provides services shared by all clients.
  */
@@ -51,6 +53,9 @@ public /*abstract*/ class MsoyContext
 
         // the top panel's constructor will add it to the app's UI hierarchy
         _topPanel = new TopPanel(this, createControlBar());
+
+        // we create some of our directors in a method that can be overridden
+        createAdditionalDirectors();
     }
 
     /**
@@ -174,6 +179,14 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
+     * Get the notification director.
+     */
+    public function getNotificationDirector () :NotificationDirector
+    {
+        return _notifyDir;
+    }
+
+    /**
      * Get the message manager.
      */
     public function getMessageManager () :MessageManager
@@ -216,6 +229,14 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
+     * Create extra directors that we may want to suppress in certain subclasses.
+     */
+    protected function createAdditionalDirectors () :void
+    {
+        _notifyDir = new NotificationDirector(this);
+    }
+
+    /**
      * Creates a potentially custom version of our control bar.
      */
     protected function createControlBar () :ControlBar
@@ -239,6 +260,7 @@ public /*abstract*/ class MsoyContext
     protected var _locDir :LocationDirector;
     protected var _occDir :OccupantDirector;
     protected var _chatDir :MsoyChatDirector;
+    protected var _notifyDir :NotificationDirector;
 }
 }
 

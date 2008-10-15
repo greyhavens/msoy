@@ -31,6 +31,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.SliderPopup;
 
+import com.threerings.msoy.notify.client.NotificationDisplay;
+
 import com.threerings.msoy.world.client.WorldController;
 
 /**
@@ -97,6 +99,13 @@ public class ControlBar extends HBox
         if (_chatControl != null) {
             _chatControl.setChatDirector(chatDtr);
         }
+    }
+
+    public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
+    {
+        _notificationDisplay = notificationDisplay;
+        setupControls();
+        updateUI();
     }
 
     /**
@@ -170,6 +179,16 @@ public class ControlBar extends HBox
     public function setChatColor (color :int) :void
     {
         _chatControl.setChatColor(color);
+    }
+
+    // from Container
+    override public function setActualSize (uw :Number, uh :Number) :void
+    {
+        super.setActualSize(uw, uh);
+
+        if (_notificationDisplay != null && _notificationDisplay.visible) {
+            callLater(_notificationDisplay.updatePopupLocation);
+        }
     }
 
     /**
@@ -264,6 +283,11 @@ public class ControlBar extends HBox
         addButton(_shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
         addButton(_commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
         addButton(_avrgBtn, [ UI_AVRGAME ], PLACE_PRIORITY + 1);
+
+        if (_notificationDisplay != null) {
+            addControl(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ],
+                NOTIFICATION_SECTION);
+        }
     }
 
     /**
@@ -420,5 +444,8 @@ public class ControlBar extends HBox
 
     /** Indicates AVRG media loading and handles AVRG menu. */
     protected var _avrgBtn :CommandButton;
+
+    /** Displays incoming notifications. */
+    protected var _notificationDisplay :NotificationDisplay;
 }
 }

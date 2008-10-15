@@ -36,7 +36,7 @@ public class StudioContext extends WorldContext
         return _name;
     }
 
-    override protected function createWorldDirectors () :void
+    override protected function createAdditionalDirectors () :void
     {
         // suppress super
     }
