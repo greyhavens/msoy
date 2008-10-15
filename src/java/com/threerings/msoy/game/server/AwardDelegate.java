@@ -70,8 +70,8 @@ public class AwardDelegate extends RatingDelegate
             }
         });
         if (record != null) {
-            log.info("OMG, we're actually paying out pending earnings.", "playerId", playerId,
-                     "coins", record._unnotedAward);
+            log.info("OMG, we're actually paying out pending earnings.", "where", where(),
+                     "playerId", playerId, "coins", record._unnotedAward);
             // payout their pending earnings (this will NOOP if they have nothing pending)
             payoutCoins(record.memberId, record.getAndNoteAward(), record.getAndNoteSecondsPlayed());
         }
@@ -258,10 +258,10 @@ public class AwardDelegate extends RatingDelegate
         final int avgDuration = Math.round(60 * getAverageGameDuration(perPlayerDuration));
         final int capDuration = 5 * avgDuration / 4;
         if (perPlayerDuration > capDuration) {
+            totalMinutes = Math.round(capDuration * _totalTrackedGames / 60f);
             log.info("Capping player minutes at 120% of average", "game", where(),
                      "pgames", _totalTrackedGames, "average", avgDuration,
-                     "current", perPlayerDuration, "capped", capDuration);
-            totalMinutes = capDuration * _totalTrackedGames;
+                     "current", perPlayerDuration, "capped", capDuration, "totalMins", totalMinutes);
         }
 
         // record that games were played and potentially update our payout factor
@@ -406,8 +406,8 @@ public class AwardDelegate extends RatingDelegate
         rating.experience++;
         rating.modified = true;
 
-        log.info("Updated rating", "who", rating.playerName, "orat", orat, "erat", erat,
-                 "diff", pctdiff, "K", K, "nrat", nrat);
+        log.info("Updated rating", "where", where(), "who", rating.playerName, "orat", orat,
+                 "erat", erat, "diff", pctdiff, "K", K, "nrat", nrat);
     }
 
     protected void awardFlow (final IntMap<Player> players, final int payoutType)
