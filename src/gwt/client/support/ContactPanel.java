@@ -27,6 +27,8 @@ public class ContactPanel extends FlowPanel
 {
     public ContactPanel (WebContext ctx)
     {
+        setStyleName("contactPanel");
+
         _ctx = ctx;
         _ctx.page = this;
 
@@ -57,7 +59,7 @@ public class ContactPanel extends FlowPanel
 
     protected void showPetitionPanel ()
     {
-        _petitions = new MyPetitionsPanel(_ctx);
+        _contents.add(_petitions = new MyPetitionsPanel(_ctx));
         _contents.add(new NewPetitionBox(_ctx, _petitions));
         /*
         _submitNew = new Label(_ctx.cmsgs.submitNewPetition());
@@ -65,7 +67,6 @@ public class ContactPanel extends FlowPanel
         _submitNew.addClickListener(_popper);
         _contents.add(_submitNew);
         */
-        _contents.add(_petitions);
     }
 
     protected void showMessagePanel ()

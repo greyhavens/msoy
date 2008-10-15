@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
@@ -20,7 +21,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.underwire.gwt.client.MyPetitionsPanel;
-import com.threerings.underwire.gwt.client.TitledBox;
 import com.threerings.underwire.gwt.client.WebContext;
 import com.threerings.underwire.gwt.client.UUI;
 
@@ -29,13 +29,13 @@ import com.threerings.underwire.web.data.Message;
 import com.threerings.underwire.web.data.UserPetition;
 
 import client.shell.Pages;
+import client.ui.MsoyUI;
 import client.util.Link;
 
 /**
  * Displays an interface for submitting a new petition.
  */
-
-public class NewPetitionBox extends TitledBox
+public class NewPetitionBox extends FlowPanel
 {
     public NewPetitionBox (WebContext ctx, MyPetitionsPanel parent)
     {
@@ -43,15 +43,14 @@ public class NewPetitionBox extends TitledBox
         _parent = parent;
         _anonymous = _ctx.ainfo == null;
 
-        setText(_ctx.cmsgs.fileNewPetition());
+        add(MsoyUI.createLabel(_ctx.cmsgs.fileNewPetition(), "Title"));
 
-        VerticalPanel content = new VerticalPanel();
         FlexTable create = new FlexTable();
         create.setStyleName("uRegisterPetition");
 
         int row = 0;
-        create.setText(row, 0, (_anonymous ?
-                CSupport.msgs.newAnonymousPetitionHelp() : CSupport.msgs.newPetitionHelp()));
+        create.setText(row, 0, (_anonymous ? CSupport.msgs.newAnonymousPetitionHelp() :
+                                CSupport.msgs.newPetitionHelp()));
         create.getFlexCellFormatter().setColSpan(row++, 0, 2);
 
         KeyboardListenerAdapter clearer = new KeyboardListenerAdapter() {
@@ -73,6 +72,7 @@ public class NewPetitionBox extends TitledBox
             create.setWidget(row++, 1, rowp);
             _permaname.setVisibleLength(SMALL_VISIBLE_COLUMNS);
             _permaname.setMaxLength(MAX_PERMANAME_LENGTH);
+
         } else {
             rowp.add(_curemail = new Label(_ctx.cmsgs.newPetitionEmail(_ctx.ainfo.email)));
             rowp.add(Link.create(_ctx.cmsgs.newPetitionUpdate(), Pages.ME, "account"));
@@ -112,17 +112,16 @@ public class NewPetitionBox extends TitledBox
         };
         create.setWidget(row, 1, new Button(ctx.cmsgs.submitBtn(), submitListener));
         /*
-        if (_anonymous) {
-        } else {
-            create.setWidget(row, 1, UUI.createSubmitCancel(_ctx, this, submitListener));
-        }
+          if (_anonymous) {
+          } else {
+          create.setWidget(row, 1, UUI.createSubmitCancel(_ctx, this, submitListener));
+          }
         */
         create.getFlexCellFormatter().setAlignment(
             row++, 1, VerticalPanel.ALIGN_RIGHT, VerticalPanel.ALIGN_TOP);
-        content.add(create);
+        add(create);
 
-        content.add(_status = new Label(""));
-        setWidget(content);
+        add(_status = new Label(""));
     }
 
     protected void submitPetition (final Button submitBtn)
@@ -156,22 +155,21 @@ public class NewPetitionBox extends TitledBox
             }
 
             submitBtn.setEnabled(false);
-            _ctx.undersvc.registerAnonymousPetition(email, petition, message,
-                new AsyncCallback() {
+            _ctx.undersvc.registerAnonymousPetition(email, petition, message, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     submitSuccess();
                 }
-
                 public void onFailure (Throwable cause) {
                     submitFailure(submitBtn, cause);
                 }
             });
-        } else {
-            final String fmessage = message;
 
+        } else {
             submitBtn.setEnabled(false);
-            _ctx.undersvc.registerPetition(_ctx.ainfo.authtok, petition, fmessage,
-                new AsyncCallback<Integer>() {
+
+            final String fmessage = message;
+            _ctx.undersvc.registerPetition(
+                _ctx.ainfo.authtok, petition, fmessage, new AsyncCallback<Integer>() {
                 public void onSuccess (Integer result) {
                     submitSuccess();
 
@@ -205,8 +203,9 @@ public class NewPetitionBox extends TitledBox
 
     protected void submitSuccess ()
     {
-        setText(CSupport.msgs.submitSuccessTitle());
-        setWidget(new Label(CSupport.msgs.submitSuccessMsg()));
+        clear();
+        add(MsoyUI.createLabel(CSupport.msgs.submitSuccessTitle(), "Title"));
+        add(MsoyUI.createLabel(CSupport.msgs.submitSuccessMsg(), null));
     }
 
     protected WebContext _ctx;

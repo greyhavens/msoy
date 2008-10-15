@@ -73,7 +73,7 @@
 }
 
 .uMessagePanel {
-  width: 90%;
+  background: #99D7FF;
 }
 
 /** admin.css overrides. */
@@ -100,9 +100,20 @@
 
 .uMyPetitionsPanel {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 0px;
+  margin-bottom: 10px;
 }
 
 .uMyPetitionsPanel .verticalPanel {
   width: 100%;
+}
+
+/** ContactPanel styles */
+.contactPanel {
+  padding: 10px;
+}
+
+.contactPanel .Title {
+  font-weight: bold;
+  text-align: center;
 }
