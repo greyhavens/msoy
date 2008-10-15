@@ -56,7 +56,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      * A canonical ordering of our item types for use on the inventory page.
      */
     public static final byte[] STUFF_TYPES = {
-        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO, LEVEL_PACK, ITEM_PACK
+        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, LEVEL_PACK, ITEM_PACK, PHOTO, AUDIO, VIDEO
     };
 
     /**
