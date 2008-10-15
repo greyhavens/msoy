@@ -14,12 +14,12 @@ import com.samskivert.util.StringUtil;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MemberHelper;
-import com.threerings.msoy.person.server.MailLogic;
 
 import com.threerings.underwire.server.GameActionHandler;
 
@@ -72,24 +72,14 @@ public class MsoyGameActionHandler extends GameActionHandler
     @Override // from GameActionHandler
     public void sendMessage (String senderAccount, String recipAccount, String message)
     {
-        MemberRecord sendRec = _memberRepo.loadMember(getMemberId(senderAccount));
-        if (sendRec == null) {
-            return;
-        }
         MemberRecord recRec = _memberRepo.loadMember(getMemberId(recipAccount));
         if (recRec == null) {
+            log.info("Cannot send support updated email as recipient account does not exist",
+                     "recip", recipAccount);
             return;
         }
-        String subj = _serverMsgs.getBundle("server").xlate(
-                MessageBundle.tcompose("m.support_request_subject", message));
-        String body = _serverMsgs.getBundle("server").xlate(
-                MessageBundle.tcompose("m.support_request_body", message));
-        try {
-            _mailLogic.startConversation(sendRec, recRec, subj, body, null);
-        } catch (ServiceException se) {
-            log.warning("Failed to send support request mail", "sendRec", sendRec.who(),
-                    "recRec", recRec.who(), se);
-        }
+        _mailer.sendTemplateEmail(recRec.accountName, ServerConfig.getFromAddress(), "supportReply",
+                                  "reqsub", message, "server_url", ServerConfig.getServerURL());
     }
 
     /**
@@ -117,6 +107,5 @@ public class MsoyGameActionHandler extends GameActionHandler
     // our dependencies
     @Inject protected MemberHelper _mhelper;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected MailLogic _mailLogic;
-    @Inject protected ServerMessages _serverMsgs;
+    @Inject protected MailSender _mailer;
 }
