@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.underwire.gwt.client.MyPetitionsPanel;
 import com.threerings.underwire.gwt.client.WebContext;
-import com.threerings.underwire.gwt.client.UUI;
 
 import com.threerings.underwire.web.data.Event;
 import com.threerings.underwire.web.data.Message;
@@ -155,8 +154,9 @@ public class NewPetitionBox extends FlowPanel
             }
 
             submitBtn.setEnabled(false);
-            _ctx.undersvc.registerAnonymousPetition(email, petition, message, new AsyncCallback() {
-                public void onSuccess (Object result) {
+            _ctx.undersvc.registerAnonymousPetition(
+                email, petition, message, new AsyncCallback<Integer>() {
+                public void onSuccess (Integer result) {
                     submitSuccess();
                 }
                 public void onFailure (Throwable cause) {

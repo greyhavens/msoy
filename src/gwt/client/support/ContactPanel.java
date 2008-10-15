@@ -11,11 +11,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.WidgetUtil;
-
 import com.threerings.underwire.gwt.client.MyPetitionsPanel;
 import com.threerings.underwire.gwt.client.NewPetitionPopup;
-import com.threerings.underwire.gwt.client.UnderwireAuthListener;
 import com.threerings.underwire.gwt.client.WebContext;
 
 /**
