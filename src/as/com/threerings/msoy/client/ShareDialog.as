@@ -68,7 +68,8 @@ public class ShareDialog extends FloatingPanel
         cord.addChild(createEmbedBox());
 
         // TODO: allow creating game stubs too
-        if (!_inGame && _ctx.getMsoyController().canManagePlace()) {
+        if ((DeploymentConfig.devDeployment || _ctx.getTokens().isAdmin()) &&
+                !_inGame && _ctx.getMsoyController().canManagePlace()) {
             cord.addChild(createStubBox("room=" + _placeId));
             cord.height += 35;
         }
