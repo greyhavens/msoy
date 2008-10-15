@@ -46,6 +46,7 @@ import com.threerings.msoy.fora.server.ForumServlet;
 import com.threerings.msoy.fora.server.IssueServlet;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.server.GameServlet;
+import com.threerings.msoy.game.server.GameStubServlet;
 import com.threerings.msoy.game.server.GameTraceLogServlet;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.server.GroupServlet;
@@ -313,6 +314,7 @@ public class MsoyHttpServer extends Server
         .put(WebUserService.ENTRY_POINT, WebUserServlet.class)
         .put(WebRoomService.ENTRY_POINT, WebRoomServlet.class)
         .put("/facebook", FacebookServlet.class)
+        .put("/gamestubsvc", GameStubServlet.class)
         .put("/remixuploadsvc", UploadRemixMediaServlet.class)
         .put("/scenethumbsvc", SceneThumbnailUploadServlet.class)
         .put("/snapshotsvc", SnapshotItemUploadServlet.class)
