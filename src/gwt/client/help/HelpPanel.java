@@ -29,19 +29,8 @@ public class HelpPanel extends VerticalPanel
     {
         setStyleName("helpPanel");
 
-        // header table includes report bug tab, help title, and thank you box
-        SmartTable header = new SmartTable(0, 0);
-        HTML reportBug = MsoyUI.createHTML(_msgs.helpReportBug(), "reportBug");
-        header.setWidget(0, 0, reportBug);
-        header.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-        header.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-        header.setWidget(0, 1, new Image("/images/help/help_header.png"), 1, "helpTitle");
-        header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
-        header.setWidget(1, 0, WidgetUtil.makeShim(10, 10), 2, "");
-        header.setWidget(2, 0, MsoyUI.createHTML(_msgs.helpIntro(), null), 2, "helpIntro");
-        header.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_CENTER);
-        add(header);
-        add(WidgetUtil.makeShim(10, 15));
+        // thanks and introduction
+        add(MsoyUI.createHTML(_msgs.helpIntro(), "helpIntro"));
 
         // wiki info
         add(new TongueBox(_msgs.helpWikiTitle(), _msgs.helpWiki(), true));

@@ -8,6 +8,7 @@
   color: #2E729F;
   font-weight: normal;
   font-size: 14px;
+  padding-top: 10px;
 }
 
 .helpPanel .reportBug {
@@ -28,10 +29,9 @@
   background-image: url(/images/help/thankyoumsg.png);
   background-repeat: no-repeat;
   background-position: top center;
-  height: 72px;
+  height: 77px;
   color: white;
-  padding-right: 20px;
-  padding-left: 50px;
+  padding: 10px 20px 0px 50px;
   text-indent: -30px;
 }
 
