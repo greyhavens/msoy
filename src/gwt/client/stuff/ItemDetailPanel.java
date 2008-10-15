@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
@@ -59,9 +60,11 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
 
         if (isRemixable()) {
-            _indeets.add(WidgetUtil.makeShim(10, 10));
-            _indeets.add(new RemixButton(_msgs.detailRemix(),
+            HorizontalPanel extras = new HorizontalPanel();
+            extras.setStyleName("Extras");
+            extras.add(new RemixButton(_msgs.detailRemix(),
                 NaviUtil.onRemixItem(_item.getType(), _item.itemId)));
+            _indeets.add(extras);
         }
 
         // only add owner buttons for owners and support

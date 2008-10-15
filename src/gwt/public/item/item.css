@@ -82,6 +82,17 @@
   color: #000000;
 }
 
+.itemDetailPanel .Extras {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.itemDetailPanel .remixLabel {
+  color: #56abd7;
+  font-weight: bold;
+  font-size: small;
+}
+
 .itemDetailPanel .gwt-Hyperlink {
   display: inline;
 }

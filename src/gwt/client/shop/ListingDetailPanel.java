@@ -49,16 +49,14 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _models = models;
         _listing = listing;
 
+        HorizontalPanel extras = new HorizontalPanel();
+        extras.setStyleName("Extras");
+
         if (!CShell.isGuest() && isRemixable()) {
-            _indeets.add(WidgetUtil.makeShim(10, 10));
-            _indeets.add(new RemixButton(_msgs.listingRemix(),
+            extras.add(new RemixButton(_msgs.listingRemix(),
                 Link.createListener(Pages.SHOP, Args.compose(ShopPage.REMIX,
                     _item.getType(), _item.itemId, _listing.catalogId))));
         }
-
-//         _indeets.add(WidgetUtil.makeShim(10, 10));
-//         Currency listedCur = _listing.quote.getListedCurrency();
-//         _indeets.add(_priceLabel = new PriceLabel(listedCur, _listing.quote.getListedAmount()));
 
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 0);
@@ -70,7 +68,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 ""+_listing.purchases);
         info.setText(2, 0, _msgs.favoritesCount(), 1, "What");
         info.setText(2, 1, "" + _listing.favoriteCount);
-        _indeets.add(info);
+        extras.add(info);
+
+        _indeets.add(extras);
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_detail.creator.getMemberId() == CShell.getMemberId() || CShell.isSupport()) {
