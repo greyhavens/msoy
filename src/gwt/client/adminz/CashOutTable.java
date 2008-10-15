@@ -9,7 +9,6 @@ import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
-import client.ui.NumberTextBox;
 import client.util.Link;
 import client.util.ServiceUtil;
 
@@ -22,6 +21,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
@@ -186,8 +186,8 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             {
                 add(new InlineLabel(_msgs.cashOutEntryCashOutPanelAmount()));
                 
-                _amountBox = new NumberTextBox(true);
-                _amountBox.setText(String.valueOf((float)initialAmount/100));
+                _amountBox = new TextBox();
+                _amountBox.setText(Currency.BLING.format(initialAmount));
                 add(_amountBox);
                 
                 Button btn = new Button(_msgs.cashOutEntryCashOutPanelButton());
@@ -212,7 +212,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             
             protected void doCashOut()
             {
-                int blingAmount = (int)(_amountBox.getValue().floatValue() * 100.0);
+                int blingAmount = Currency.BLING.parse(_amountBox.getText());
                 _moneysvc.cashOutBling(entry.memberId, blingAmount, new AsyncCallback<Void>() {
                     public void onFailure (Throwable cause) {
                         MsoyUI.error(CShell.serverError(cause));
@@ -224,7 +224,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
                 });
             }
             
-            protected final NumberTextBox _amountBox;
+            protected final TextBox _amountBox;
             protected final InlineLabel _status;
         }
         

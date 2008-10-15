@@ -107,6 +107,15 @@ public enum Currency
         return s + postfix;
     }
 
+    public int parse (String text)
+    {
+        float value = Float.valueOf(text.replace(",", ""));
+        if (this == BLING) {
+            value *= 100;
+        }
+        return (int)value;
+    }
+
     /**
      * Used to display just the name of the currency. "Coins", "Bars"
      */
