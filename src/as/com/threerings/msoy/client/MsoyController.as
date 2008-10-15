@@ -231,6 +231,14 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Can we "manage" the current place.
+     */
+    public function canManagePlace () :Boolean
+    {
+        return false;
+    }
+
+    /**
      * Add a function for populating the "go" menu. Adds the returned menu items.
      * signature: function () :Array;
      */

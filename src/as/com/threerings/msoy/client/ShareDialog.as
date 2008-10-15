@@ -5,6 +5,9 @@ package com.threerings.msoy.client {
 
 import flash.events.MouseEvent;
 
+import flash.net.FileReference;
+import flash.net.URLRequest;
+
 import mx.events.FlexEvent;
 
 import mx.containers.Accordion;
@@ -17,6 +20,8 @@ import mx.controls.RadioButtonGroup;
 import mx.controls.Text;
 import mx.controls.TextArea;
 import mx.controls.TextInput;
+
+import mx.core.UIComponent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
@@ -61,6 +66,12 @@ public class ShareDialog extends FloatingPanel
 //        }
         cord.addChild(createLinkBox());
         cord.addChild(createEmbedBox());
+
+        // TODO: allow creating game stubs too
+        if (!_inGame && _ctx.getMsoyController().canManagePlace()) {
+            cord.addChild(createStubBox("room=" + _placeId));
+            cord.height += 35;
+        }
 
         addChild(cord);
 
@@ -119,6 +130,27 @@ public class ShareDialog extends FloatingPanel
         box.addChild(row);
         box.defaultButton = send;
 
+        return box;
+    }
+
+    protected function createStubBox (stubArgs :String) :VBox
+    {
+        const memName :MemberName = _ctx.getMyName();
+        if (!memName.isGuest()) {
+            stubArgs += "&aff=" + memName.getMemberId();
+        }
+        const url :String = DeploymentConfig.serverURL + "stubdlsvc?args=" +
+            encodeURIComponent(stubArgs);
+
+        var box :VBox = createContainer("t.stub_share");
+        var txt :Text = new Text();
+        txt.width = 300;
+        txt.selectable = false;
+        txt.text = Msgs.GENERAL.get("m.stub_share");
+        box.addChild(txt);
+        var btn :CommandButton = new CommandButton(Msgs.GENERAL.get("b.stub_share"));
+        btn.setCallback(startDownload, [ url, "RoomStub.swf", btn ]);
+        box.addChild(btn);
         return box;
     }
 
@@ -249,9 +281,20 @@ public class ShareDialog extends FloatingPanel
         close(); // and make like the proverbial audi 5000
     }
 
+    protected function startDownload (url :String, localFile :String, btn :UIComponent) :void
+    {
+        btn.enabled = false;
+        _fileRef = new FileReference();
+        _fileRef.download(new URLRequest(url), localFile);
+        // TODO: listeners, re-enable button
+    }
+
     protected var _inGame :Boolean;
     protected var _placeName :String;
     protected var _placeId :int;
+
+    /** We need to keep this in scope or the download will halt. */
+    protected var _fileRef :FileReference;
 
     protected var _sizeGroup :RadioButtonGroup = new RadioButtonGroup();
     protected var _status :Text;

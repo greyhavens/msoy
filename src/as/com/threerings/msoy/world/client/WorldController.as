@@ -66,6 +66,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
+import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoySceneModel;
 
 /**
@@ -973,6 +974,14 @@ public class WorldController extends MsoyController
                 return [ false, null, 0 ];
             }
         }
+    }
+
+    // from MsoyController
+    override public function canManagePlace () :Boolean
+    {
+        // TODO: handle games?
+        const view :Object = _topPanel.getPlaceView();
+        return (view is RoomView) && RoomView(view).getRoomController().canManageRoom();
     }
 
     // from MsoyController
