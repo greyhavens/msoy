@@ -1,0 +1,385 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
+<meta content="Throttle,com.threerings.util.Throttle,_oldestOp,_ops,_period,getLatestOperation,noteOp,reinit,throttleOp,throttleOpAt,toString,wouldThrottle" name="keywords">
+<title>com.threerings.util.Throttle</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'Throttle - Whirled API Documentation';
+				var baseRef = '../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/Throttle.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Throttle</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Throttle"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.threerings.util</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class Throttle</td>
+</tr>
+</table>
+<p></p>
+ A throttle is used to prevent code from attempting a particular operation too often. Often it is
+ desirable to retry an operation under failure conditions, but simplistic approaches to retrying
+ operations can lead to large numbers of spurious attempts to do something that will obviously
+ fail. The throttle class provides a mechanism for limiting such attempts by measuring whether or
+ not an activity has been performed N times in the last M seconds. The user of the class decides
+ the appropriate throttle parameters and then simply calls through to throttle to determine
+ whether or not to go ahead with the operation.
+  <p> For example:
+  <pre>
+ protected Throttle _throttle = new Throttle(5, 60000L);
+  public void performOp ()
+     throws UnavailableException
+ {
+     if (_throttle.throttleOp()) {
+         throw new UnavailableException();
+     }
+      // perform operation
+ }
+ </pre>
+ <p></p>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_oldestOp">_oldestOp</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_ops">_ops</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_period">_period</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#Throttle()">Throttle</a>(operations:int, period:int)</div>
+<div class="summaryTableDescription">
+     Constructs a new throttle instance that will allow the specified number of operations to
+     proceed within the specified period (the period is measured in milliseconds).</div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getLatestOperation()">getLatestOperation</a>():int</div>
+<div class="summaryTableDescription">
+     Returns the timestamp of the most recently recorded operation.</div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#noteOp()">noteOp</a>(timeStamp:int):void</div>
+<div class="summaryTableDescription">
+     Note that an operation occurred at the specified timestamp.</div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#reinit()">reinit</a>(operations:int, period:int):void</div>
+<div class="summaryTableDescription">
+     Updates the number of operations for this throttle to a new maximum, retaining the current
+     history of operations if the limit is being increased and truncating the oldest operations
+     if the limit is decreased.</div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#throttleOp()">throttleOp</a>():Boolean</div>
+<div class="summaryTableDescription">
+     Registers an attempt at an operation and returns true if the operation should be performed
+     or false if it should be throttled (meaning N operations have already been performed in the
+     last M seconds).</div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#throttleOpAt()">throttleOpAt</a>(timeStamp:int):Boolean</div>
+<div class="summaryTableDescription">
+     Registers an attempt at an operation and returns true if the operation should be performed
+     or false if it should be throttled (meaning N operations have already been performed in the
+     last M seconds).</div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#toString()">toString</a>():String</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#wouldThrottle()">wouldThrottle</a>(timeStamp:int):Boolean</div>
+<div class="summaryTableDescription">
+     Check to see if we would throttle an operation occuring at the specified timestamp.</div>
+</td><td class="summaryTableOwnerCol">Throttle</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_oldestOp"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_oldestOp</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _oldestOp:int</code>
+</div>
+<a name="_ops"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_ops</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _ops:Array</code>
+</div>
+<a name="_period"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_period</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _period:int</code>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="Throttle()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">Throttle</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function Throttle(operations:int, period:int)</code><p>
+     Constructs a new throttle instance that will allow the specified number of operations to
+     proceed within the specified period (the period is measured in milliseconds).
+          </p><p> As operations and period define a ratio, use the smallest value possible for
+     <code>operations</code> as an array is created to track the time at which each operation was
+     performed (e.g. use 6 ops per 10 seconds rather than 60 ops per 100 seconds if
+     possible). However, note that you may not always want to reduce the ratio as much as
+     possible if you wish to allow bursts of operations up to some large value.
+     <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">operations</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">period</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="getLatestOperation()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getLatestOperation</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getLatestOperation():int</code><p>
+     Returns the timestamp of the most recently recorded operation.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="noteOp()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">noteOp</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function noteOp(timeStamp:int):void</code><p>
+     Note that an operation occurred at the specified timestamp. This method should be used with
+     {</p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">timeStamp</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="reinit()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">reinit</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function reinit(operations:int, period:int):void</code><p>
+     Updates the number of operations for this throttle to a new maximum, retaining the current
+     history of operations if the limit is being increased and truncating the oldest operations
+     if the limit is decreased.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">operations</span>:int</code> &mdash; the new maximum number of operations.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">period</span>:int</code> &mdash; the new period (in milliseconds).
+     </td>
+</tr>
+</table>
+</div>
+<a name="throttleOp()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">throttleOp</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function throttleOp():Boolean</code><p>
+     Registers an attempt at an operation and returns true if the operation should be performed
+     or false if it should be throttled (meaning N operations have already been performed in the
+     last M seconds).
+          </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the throttle is activated, false if the operation can proceed.
+     </td>
+</tr>
+</table>
+</div>
+<a name="throttleOpAt()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">throttleOpAt</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function throttleOpAt(timeStamp:int):Boolean</code><p>
+     Registers an attempt at an operation and returns true if the operation should be performed
+     or false if it should be throttled (meaning N operations have already been performed in the
+     last M seconds).
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">timeStamp</span>:int</code> &mdash; the timestamp at which this operation is being attempted.
+          </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if the throttle is activated, false if the operation can proceed.
+     </td>
+</tr>
+</table>
+</div>
+<a name="toString()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">toString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function toString():String</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="wouldThrottle()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">wouldThrottle</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function wouldThrottle(timeStamp:int):Boolean</code><p>
+     Check to see if we would throttle an operation occuring at the specified timestamp.
+     Typically used in conjunction with {</p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">timeStamp</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">Copyright&nbsp;&copy;&nbsp;2008 Three Rings Design, Inc.</center>
+</div>
+</body>
+</html>
+<!--Copyright © 2008 Three Rings Design, Inc.-->

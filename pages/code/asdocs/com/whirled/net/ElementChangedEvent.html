@@ -88,11 +88,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Get the property's previous value (handy!).</div>
 </td><td class="summaryTableOwnerCol"><a href="PropertyChangedEvent.html">PropertyChangedEvent</a></td>
 </tr>
-<tr class="hideInheritedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="PropertyChangedEvent.html#targetId">targetId</a> : int<div class="summaryTableDescription">
-     Access the id of the recipient of this message.</div>
-</td><td class="summaryTableOwnerCol"><a href="PropertyChangedEvent.html">PropertyChangedEvent</a></td>
-</tr>
 </table>
 </div>
 <a name="methodSummary"></a>
@@ -105,7 +100,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#ElementChangedEvent()">ElementChangedEvent</a>(type:String, targetId:int, propName:String, newValue:Object, oldValue:Object, key:int)</div>
+<a class="signatureLink" href="#ElementChangedEvent()">ElementChangedEvent</a>(type:String, propName:String, newValue:Object, oldValue:Object, key:int)</div>
 <div class="summaryTableDescription">
      Constructor.</div>
 </td><td class="summaryTableOwnerCol">ElementChangedEvent</td>
@@ -197,18 +192,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function ElementChangedEvent(type:String, targetId:int, propName:String, newValue:Object, oldValue:Object, key:int)</code><p>
+<code>public function ElementChangedEvent(type:String, propName:String, newValue:Object, oldValue:Object, key:int)</code><p>
      Constructor.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">type</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">targetId</span>:int</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>

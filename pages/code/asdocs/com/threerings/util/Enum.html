@@ -47,8 +47,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
   To use, you'll want to subclass and have something like the following:
   public final class Foo extends Enum
  {
-     public static const ONE = new Foo("ONE");
-     public static const TWO = new Foo("TWO");
+     public static const ONE :Foo = new Foo("ONE");
+     public static const TWO :Foo = new Foo("TWO");
      finishedEnumerating(Foo);
       // {at}private
      public function Foo (name :String)
@@ -57,7 +57,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      }
       public static function valueOf (name :String) :Foo
      {
-         return Enum.valueOf(Foo, name);
+         return Enum.valueOf(Foo, name) as Foo;
      }
       public static function values () :Array
      {

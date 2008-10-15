@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="TickedMessageManager,com.whirled.contrib.simplegame.net.TickedMessageManager,isReady,unprocessedTickCount,addMessageFactory,canSendMessage,getNextTick,sendMessage,setup,shutdown" name="keywords">
+<meta content="TickedMessageManager,com.whirled.contrib.simplegame.net.TickedMessageManager,isReady,unprocessedTickCount,addMessageType,canSendMessage,getNextTick,run,sendMessage,stop" name="keywords">
 <title>com.whirled.contrib.simplegame.net.TickedMessageManager</title>
 </head>
 <body>
@@ -54,11 +54,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isReady">isReady</a> : Boolean<div class="summaryTableDescription">[read-only]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isReady">isReady</a> : Boolean<div class="summaryTableDescription">[read-only]
+     Returns true when the TickedMessageManager is ready to begin sending and receiving messages.</div>
 </td><td class="summaryTableOwnerCol">TickedMessageManager</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#unprocessedTickCount">unprocessedTickCount</a> : uint<div class="summaryTableDescription">[read-only]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#unprocessedTickCount">unprocessedTickCount</a> : uint<div class="summaryTableDescription">[read-only]
+     </div>
 </td><td class="summaryTableOwnerCol">TickedMessageManager</td>
 </tr>
 </table>
@@ -81,43 +83,50 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addMessageFactory()">addMessageFactory</a>(messageName:String, factory:<a href="MessageFactory.html">MessageFactory</a>):void</div>
-<div class="summaryTableDescription"></div>
+<a class="signatureLink" href="#addMessageType()">addMessageType</a>(messageClass:Class):void</div>
+<div class="summaryTableDescription">
+     Registers a message type with the TickedMessageManager.</div>
 </td><td class="summaryTableOwnerCol">TickedMessageManager</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#canSendMessage()">canSendMessage</a>():Boolean</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     </div>
 </td><td class="summaryTableOwnerCol">TickedMessageManager</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#getNextTick()">getNextTick</a>():Array</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     </div>
+</td><td class="summaryTableOwnerCol">TickedMessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#run()">run</a>():void</div>
+<div class="summaryTableDescription">
+     Should be called when the the TickedMessageManager should start listening for and
+     and processing game ticks.</div>
 </td><td class="summaryTableOwnerCol">TickedMessageManager</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#sendMessage()">sendMessage</a>(msg:<a href="Message.html">Message</a>):void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Sends a message to all other players in the game.</div>
 </td><td class="summaryTableOwnerCol">TickedMessageManager</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setup()">setup</a>():void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">TickedMessageManager</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#shutdown()">shutdown</a>():void</div>
-<div class="summaryTableDescription"></div>
+<a class="signatureLink" href="#stop()">stop</a>():void</div>
+<div class="summaryTableDescription">
+     Stops the TickedMessageManager from processing game ticks.</div>
 </td><td class="summaryTableOwnerCol">TickedMessageManager</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -143,7 +152,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>isReady:Boolean</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>isReady:Boolean</code>&nbsp;&nbsp;[read-only]<p>
+     Returns true when the TickedMessageManager is ready to begin sending and receiving messages.
+     This will happen after run() is called, but not necessarily immediately, depending on any
+     network handshaking that needs to happen.
+     </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get isReady():Boolean</code>
 <br>
@@ -155,30 +168,35 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>unprocessedTickCount:uint</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>unprocessedTickCount:uint</code>&nbsp;&nbsp;[read-only]<p>
+     </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get unprocessedTickCount():uint</code>
 <br>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../net/TickedMessageManager.html#getNextTick" target="">getNextTick</a>
+</div>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="addMessageFactory()"></a>
+<a name="addMessageType()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">addMessageFactory</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">addMessageType</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function addMessageFactory(messageName:String, factory:<a href="MessageFactory.html">MessageFactory</a>):void</code><span class="label">Parameters</span>
+<code>public function addMessageType(messageClass:Class):void</code><p>
+     Registers a message type with the TickedMessageManager. Shortly after setup() is called,
+     this function should be called once for each message type that the game will send or
+     receive.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">messageName</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">factory</span>:<a href="MessageFactory.html">MessageFactory</a></code></td>
+<td width="20px"></td><td><code><span class="label">messageClass</span>:Class</code></td>
 </tr>
 </table>
 </div>
@@ -189,12 +207,15 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function canSendMessage():Boolean</code>
-<p></p>
+<code>public function canSendMessage():Boolean</code><p>
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Boolean</code></td>
+<td width="20"></td><td><code>Boolean</code> &mdash; true if a call to sendMessage() will succeed. Games generally don't need to be
+     concerned with this function; it should only return false if the TickedMessageManager is
+     overloaded with too many pending messages.
+     </td>
 </tr>
 </table>
 </div>
@@ -205,15 +226,29 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getNextTick():Array</code>
-<p></p>
+<code>public function getNextTick():Array</code><p>
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Array</code></td>
+<td width="20"></td><td><code>Array</code> &mdash; an Array containing the messages that were received during the oldest unprocessed
+     tick, or null if there are no unprocessed ticks remaining.
+     </td>
 </tr>
 </table>
 </div>
+<a name="run()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">run</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function run():void</code><p>
+     Should be called when the the TickedMessageManager should start listening for and
+     and processing game ticks. In a multiplayer game, this is usually immediately after the
+     GAME_STARTED event is received.
+     </p></div>
 <a name="sendMessage()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -221,31 +256,26 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function sendMessage(msg:<a href="Message.html">Message</a>):void</code><span class="label">Parameters</span>
+<code>public function sendMessage(msg:<a href="Message.html">Message</a>):void</code><p>
+     Sends a message to all other players in the game.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">msg</span>:<a href="Message.html">Message</a></code></td>
 </tr>
 </table>
 </div>
-<a name="setup()"></a>
+<a name="stop()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">setup</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">stop</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setup():void</code>
-</div>
-<a name="shutdown()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">shutdown</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function shutdown():void</code>
-</div>
+<code>public function stop():void</code><p>
+     Stops the TickedMessageManager from processing game ticks. The manager can be restarted
+     by calling run() again.
+     </p></div>
 <br>
 <br>
 <hr>

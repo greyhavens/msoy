@@ -77,6 +77,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
      Get the names of all currently-set properties that begin with the specified prefix.</div>
 </td><td class="summaryTableOwnerCol"><a href="PropertyGetSubControl.html">PropertyGetSubControl</a></td>
 </tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="PropertyGetSubControl.html#getTargetId()">getTargetId</a>():int</div>
+<div class="summaryTableDescription">
+     Get the targetId on which this control operates.</div>
+</td><td class="summaryTableOwnerCol"><a href="PropertyGetSubControl.html">PropertyGetSubControl</a></td>
+</tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -109,25 +117,33 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <a name="eventSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Events</div>
-<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
+<div class="showHideLinks">
+<div class="hideInheritedEvent" id="hideInheritedEvent">
+<a onclick="javascript:setInheritedVisible(false,'Event');" href="#eventSummary" class="showHideLink"><img src="../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Events</a>
+</div>
+<div class="showInheritedEvent" id="showInheritedEvent">
+<a onclick="javascript:setInheritedVisible(true,'Event');" href="#eventSummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Events</a>
+</div>
+</div>
+<table id="summaryTableEvent" class="summaryTable hideInheritedEvent" cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#event:ElemChanged">ElemChanged</a>
+<a class="signatureLink" href="PropertyGetSubControl.html#event:ElemChanged">ElemChanged</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when an element inside a property has changed in the shared game state.</td><td class="summaryTableOwnerCol">PropertySubControl</td>
+ Dispatched when an element inside a property has changed in the shared game state.</td><td class="summaryTableOwnerCol"><a href="PropertyGetSubControl.html">PropertyGetSubControl</a></td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#event:PropChanged">PropChanged</a>
+<a class="signatureLink" href="PropertyGetSubControl.html#event:PropChanged">PropChanged</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when a property has changed in the shared game state.</td><td class="summaryTableOwnerCol">PropertySubControl</td>
+ Dispatched when a property has changed in the shared game state.</td><td class="summaryTableOwnerCol"><a href="PropertyGetSubControl.html">PropertyGetSubControl</a></td>
 </tr>
 </table>
 </div>
@@ -309,33 +325,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<div class="detailSectionHeader">Event detail</div>
-<a name="event:ElemChanged"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">ElemChanged</td><td class="detailHeaderType">event&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<span class="label">Event object type: </span><a href="../net/ElementChangedEvent.html"><code>com.whirled.net.ElementChangedEvent</code></a>
-<br>
-<p></p><p>
- Dispatched when an element inside a property has changed in the shared game state.
- This event is a result of calling setIn() or setAt().
-  </p></div>
-<a name="event:PropChanged"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">PropChanged</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<span class="label">Event object type: </span><a href="../net/PropertyChangedEvent.html"><code>com.whirled.net.PropertyChangedEvent</code></a>
-<br>
-<p></p><p>
- Dispatched when a property has changed in the shared game state. This event is a result
- of calling set() or testAndSet().
-  </p></div>
 <br>
 <br>
 <hr>
