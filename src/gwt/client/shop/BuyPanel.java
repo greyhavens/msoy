@@ -57,6 +57,7 @@ public class BuyPanel extends FlowPanel
         Widget link = Link.buyBars(_msgs.listingBuyBars());
         link.setStyleName("GetBars");
         _barPanel.add(link);
+        add(_barPanel);
 
         _buyCoins = new BuyButton(Currency.COINS);
         add(_buyCoins);
