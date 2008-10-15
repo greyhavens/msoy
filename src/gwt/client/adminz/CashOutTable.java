@@ -115,7 +115,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             btn.addStyleName("sideButton");
             btn.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    showPanel(new CashOutPanel(Currency.BLING.format(item.cashOutInfo.blingAmount)));
+                    showPanel(new CashOutPanel(item.cashOutInfo.blingAmount));
                 }
             });
             extras.addWidget(btn, 0, null);
@@ -182,12 +182,12 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
         
         protected class CashOutPanel extends FlowPanel
         {
-            public CashOutPanel (String initialAmount)
+            public CashOutPanel (int initialAmount)
             {
                 add(new InlineLabel(_msgs.cashOutEntryCashOutPanelAmount()));
                 
                 _amountBox = new NumberTextBox(true);
-                _amountBox.setText(initialAmount);
+                _amountBox.setText(String.valueOf((float)initialAmount/100));
                 add(_amountBox);
                 
                 Button btn = new Button(_msgs.cashOutEntryCashOutPanelButton());
