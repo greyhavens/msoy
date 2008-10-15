@@ -381,8 +381,11 @@ public class MoneyLogic
     public void cashOutBling (int memberId, int amount)
         throws NotEnoughMoneyException
     {
-        MemberAccountRecord account = _repo.load(memberId);
-        String payment = formatUSD((int)(amount * account.cashOutBlingWorth));
+        BlingCashOutRecord cashOut = _repo.getCurrentCashOutRequest(memberId);
+        if (cashOut == null) {
+            return; // No effect if this member has no pending cashout
+        }
+        String payment = formatUSD((int)(amount * cashOut.blingWorth));
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
             memberId, Currency.BLING, amount,
             TransactionType.CASHED_OUT, MessageBundle.tcompose("m.cashed_out", payment), null);
