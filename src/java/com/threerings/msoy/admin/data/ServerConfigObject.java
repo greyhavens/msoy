@@ -113,10 +113,10 @@ public class ServerConfigObject extends ConfigObject
     public float affiliatePercentage = 0.3f;
     
     /** The amount of bling (NOT centibling) to grant daily to game creators. */
-    public int blingPoolSize = 0;
+    public int blingPoolSize = 403;
     
     /** The amount in USD each bling (NOT centibling) is worth. */
-    public float blingWorth = 0.05f;
+    public float blingWorth = 0.08f;
     
     /** The minimum amount of bling (NOT centibling) that can be cashed out at a time. */
     public int minimumBlingCashOut = 500;
