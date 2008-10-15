@@ -10,50 +10,6 @@
   background: #1D5884 url(/images/shop/background.png) repeat-x;
 }
 
-.sideBar {
-  margin: 15px 5px 10px 0px
-}
-
-.sideBar .Title {
-  background: #5CA5DA;
-  color: #FFFFFF;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 0px 0px 2px 4px;
-}
-
-.sideBar .Middle {
-  background: #5CA5DA;
-}
-
-.sideBar .NaviPanel {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  font-weight: bold;
-  width: 90px;
-  margin-bottom: 10px;
-  padding-top: 3px;
-}
-
-.sideBar .NaviPanel .Cell {
-  background: #C6E2F8 url(/images/shop/navi_bg_cell.png) repeat top;
-  padding: 3px 0px 0px 5px;
-  white-space: nowrap;
-}
-
-.sideBar .NaviPanel .LongCell {
-  font-size: 15px;
-}
-
-.sideBar .NaviPanel .Selected {
-  color: #E78917;
-}
-
-.sideBar .NaviPanel a {
-  color: #27628E;
-  text-decoration: none;
-}
-
 .listingGrid {
   background: white;
   width: 100%;

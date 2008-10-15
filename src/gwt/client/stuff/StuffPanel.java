@@ -24,7 +24,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 
-import client.item.StuffNaviBar;
+import client.item.SideBar;
 import client.shell.Args;
 import client.shell.DynamicLookup;
 import client.shell.Pages;
@@ -42,7 +42,7 @@ import client.util.NaviUtil;
 public class StuffPanel extends FlowPanel
 {
     /** The number of columns of items to display. */
-    public static final int COLUMNS = 5;
+    public static final int COLUMNS = 4;
 
     public StuffPanel (InventoryModels models, byte type)
     {
@@ -59,7 +59,7 @@ public class StuffPanel extends FlowPanel
         _search.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
         _search.add(MsoyUI.createLabel("Search", "SearchTitle"));
         final ListBox searchTypes = new ListBox();
-        for (byte searchType : Item.TYPES) {
+        for (byte searchType : Item.STUFF_TYPES) {
             searchTypes.addItem(_dmsgs.xlate("pItemType" + searchType), searchType + "");
             if (searchType == type) {
                 searchTypes.setSelectedIndex(searchTypes.getItemCount() - 1);
@@ -146,7 +146,7 @@ public class StuffPanel extends FlowPanel
 
     protected boolean isCatalogItem (byte type)
     {
-        for (byte element2 : Item.TYPES) {
+        for (byte element2 : Item.SHOP_TYPES) {
             if (type == element2) {
                 return true;
             }
@@ -184,8 +184,18 @@ public class StuffPanel extends FlowPanel
                 _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type));
             add(MsoyUI.createLabel(title, "TypeTitle"));
             add(_search);
-            add(new StuffNaviBar(_type));
-            add(_contents);
+            HorizontalPanel row = new HorizontalPanel();
+            row.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
+            row.add(new SideBar(new SideBar.Linker() {
+                public boolean isSelected (byte itemType) {
+                    return itemType == _type;
+                }
+                public Widget createLink (String name, byte itemType) {
+                    return Link.create(name, Pages.STUFF, ""+itemType);
+                }
+            }, Item.STUFF_TYPES, null));
+            row.add(_contents);
+            add(row);
             if (_upload != null) {
                 add(_upload);
             }
@@ -253,8 +263,7 @@ public class StuffPanel extends FlowPanel
     }
 
     /** Height of page above items. Main top navigation is outside of iframe so not counted. */
-    protected static final int NAVIGATION_HEIGHT = 50 /* search */+ 70 /* item navi */
-    + 50 /* grid top */;
+    protected static final int NAVIGATION_HEIGHT = 50 /* search */ + 50 /* grid top */;
     protected static final int ITEM_BOX_HEIGHT = 120;
     protected static final int GET_STUFF_HEIGHT = 160;
 }

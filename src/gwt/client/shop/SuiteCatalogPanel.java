@@ -5,6 +5,7 @@ package client.shop;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -16,6 +17,7 @@ import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 
 import client.item.ShopUtil;
+import client.item.SideBar;
 import client.shell.Args;
 import client.shell.DynamicLookup;
 import client.shell.Pages;
@@ -106,8 +108,8 @@ public class SuiteCatalogPanel extends SmartTable
             public boolean isSelected (byte type) {
                 return type == _curquery.itemType;
             }
-            public String composeArgs (byte type) {
-                return Args.compose(ShopPage.SUITE, _gameId, type);
+            public Widget createLink (String name, byte type) {
+                return Link.create(name, Pages.SHOP, Args.compose(ShopPage.SUITE, _gameId, type));
             }
         }, _types, null));
     }

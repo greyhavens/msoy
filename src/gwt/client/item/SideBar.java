@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shop;
+package client.item;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -13,9 +13,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.gwt.ui.SmartTable;
 
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.ui.MsoyUI;
-import client.util.Link;
 
 /**
  * Shown next to our catalog listings and our catalog landing page.
@@ -24,7 +22,7 @@ public class SideBar extends SmartTable
 {
     public interface Linker {
         public boolean isSelected (byte itemType);
-        public String composeArgs (byte itemType);
+        public Widget createLink (String name, byte itemType);
     }
 
     public SideBar (Linker linker, boolean showAll, Widget extras)
@@ -34,7 +32,7 @@ public class SideBar extends SmartTable
         if (showAll) {
             init(linker, ALL_TYPES, extras);
         } else {
-            init(linker, Item.TYPES, extras);
+            init(linker, Item.SHOP_TYPES, extras);
         }
     }
 
@@ -47,7 +45,7 @@ public class SideBar extends SmartTable
     protected void init (Linker linker, byte[] itemTypes, Widget extras)
     {
         addWidget(new Image("/images/shop/sidebar_top.png"), 1, null);
-        addText(_msgs.catalogCats(), 1, "Title");
+        addText(_msgs.sideBarCats(), 1, "Title");
 
         FlowPanel navi = new FlowPanel();
         navi.setStyleName("NaviPanel");
@@ -74,7 +72,7 @@ public class SideBar extends SmartTable
         if (linker.isSelected(itemType)) {
             itemWidget = MsoyUI.createLabel(name, "Selected");
         } else {
-            Widget link = Link.create(name, Pages.SHOP, linker.composeArgs(itemType));
+            Widget link = linker.createLink(name, itemType);
             link.removeStyleName("inline");
             itemWidget = link;
         }
@@ -89,6 +87,6 @@ public class SideBar extends SmartTable
             Item.FURNITURE, Item.DECOR, Item.TOY, Item.PET, Item.GAME, Item.PHOTO, Item.AUDIO,
             Item.VIDEO };
 
-    protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
+    protected static final ItemMessages _msgs = GWT.create(ItemMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

@@ -3,9 +3,14 @@
 
 package client.shop;
 
+import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.item.gwt.CatalogQuery;
 
 import client.item.ShopUtil;
+import client.item.SideBar;
+import client.shell.Pages;
+import client.util.Link;
 
 /**
  * Generates links to catalog pages.
@@ -24,11 +29,11 @@ public class CatalogQueryLinker implements SideBar.Linker
     }
 
     // from interface SideBar.Linker
-    public String composeArgs (byte itemType)
+    public Widget createLink (String name, byte itemType)
     {
         CatalogQuery copy = new CatalogQuery(_query);
         copy.itemType = itemType;
-        return ShopUtil.composeArgs(copy, 0);
+        return Link.create(name, Pages.SHOP, ShopUtil.composeArgs(copy, 0));
     }
 
     protected CatalogQuery _query;

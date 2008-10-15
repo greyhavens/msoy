@@ -44,21 +44,26 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     // of MemberObject to be a BitSet or something.
 
     /**
-     * A canonical ordering of our item types for use in the catalog, inventory, etc. Note that this
-     * does not contain subtypes (ie. LEVEL_PACK) as those do not have top-level categories but are
-     * only shown when viewing an item of their containing type (ie. GAME).
+     * A canonical ordering of our item types for use in the catalog. Note that this does not
+     * contain subtypes (ie. LEVEL_PACK) as those do not have top-level categories but are only
+     * shown in game shops.
      */
-    public static final byte[] TYPES = {
-        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO,
-        VIDEO
+    public static final byte[] SHOP_TYPES = {
+        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
+    };
+
+    /**
+     * A canonical ordering of our item types for use on the inventory page.
+     */
+    public static final byte[] STUFF_TYPES = {
+        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO, LEVEL_PACK, ITEM_PACK
     };
 
     /**
      * A canonical ordering of our item types for use in giving gifts.
      */
     public static final byte[] GIFT_TYPES = {
-        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO,
-        LEVEL_PACK, ITEM_PACK, PROP
+        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO, LEVEL_PACK, ITEM_PACK, PROP
     };
 
     /** A 'used' constant value to indicate that the item is unused. */

@@ -38,6 +38,7 @@ import client.shell.Args;
 import client.shell.Pages;
 
 import client.item.ItemMessages;
+import client.item.SideBar;
 
 /**
  * Displays the main catalog landing page.

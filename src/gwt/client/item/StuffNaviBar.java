@@ -28,7 +28,7 @@ public class StuffNaviBar extends FloatPanel
     {
         super("stuffNaviBar");
 
-        for (byte type : Item.TYPES) {
+        for (byte type : Item.SHOP_TYPES) {
             AbstractImagePrototype upImage = type == selectedType ? SELECTED_IMAGES.get(type)
                 : UP_IMAGES.get(type);
             // over image == selected image

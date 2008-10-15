@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -16,6 +17,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ListingCard;
 
+import client.item.SideBar;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
@@ -40,8 +42,9 @@ public class FavoritesPanel extends HorizontalPanel
             public boolean isSelected (byte type) {
                 return type == itemType;
             }
-            public String composeArgs (byte type) {
-                return Args.compose(ShopPage.FAVORITES, memberId, type);
+            public Widget createLink (String name, byte type) {
+                return Link.create(
+                    name, Pages.SHOP, Args.compose(ShopPage.FAVORITES, memberId, type));
             }
         }, true, null));
         add(WidgetUtil.makeShim(10, 10));

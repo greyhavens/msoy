@@ -60,8 +60,12 @@
 }
 
 .itemPanel .pagedGrid {
-  margin: 10px 0 10px 10px;
-  width: 660px;
+  margin: 0px 0px 10px 10px;
+  width: 580px;
+}
+
+.itemPanel .sideBar {
+  margin-top: 0px;
 }
 
 .itemPanel .pagedGrid .Header .TopLeft, 

@@ -110,9 +110,9 @@ public class GroupEdit extends FlexTable
         addRow(_msgs.editCharter(), _charter);
 
         _catalogType = new ListBox();
-        for (int ii = 0; ii < Item.TYPES.length; ii++) {
-            _catalogType.addItem(_dmsgs.xlate("itemType" + Item.TYPES[ii]));
-            if (_extras.catalogItemType == Item.TYPES[ii]) {
+        for (int ii = 0; ii < Item.SHOP_TYPES.length; ii++) {
+            _catalogType.addItem(_dmsgs.xlate("itemType" + Item.SHOP_TYPES[ii]));
+            if (_extras.catalogItemType == Item.SHOP_TYPES[ii]) {
                 _catalogType.setSelectedIndex(ii);
             }
         }
@@ -192,7 +192,7 @@ public class GroupEdit extends FlexTable
                                             _post.getSelectedIndex()+Group.PERM_ALL);
         _extras.charter = _charter.getText().trim();
         _extras.homepageUrl = _homepage.getText().trim();
-        _extras.catalogItemType = Item.TYPES[_catalogType.getSelectedIndex()];
+        _extras.catalogItemType = Item.SHOP_TYPES[_catalogType.getSelectedIndex()];
         _extras.catalogTag = _catalogTag.getText().trim();
 
         // check that the group name is valid

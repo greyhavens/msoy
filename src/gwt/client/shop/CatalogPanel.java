@@ -28,6 +28,7 @@ import com.threerings.msoy.item.gwt.CatalogQuery;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.item.ShopUtil;
+import client.item.SideBar;
 import client.item.TagCloud;
 import client.shell.Pages;
 import client.ui.Marquee;
