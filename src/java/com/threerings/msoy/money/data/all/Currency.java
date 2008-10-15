@@ -108,12 +108,23 @@ public enum Currency
     }
 
     public int parse (String text)
+        throws NumberFormatException
     {
-        float value = Float.valueOf(text.replace(",", ""));
+        float value = Float.parseFloat(text.replace(",", ""));
+        if (Float.isNaN(value) || Float.isInfinite(value)) {
+            throw new NumberFormatException(); // No weird stuff
+        }
         if (this == BLING) {
             value *= 100;
         }
-        return (int)value;
+
+        int intValue = (int)value;
+        if (intValue != value) {
+            // Fail if asked for more precision than this currency allows
+            // eg. Can't parse 6.004 bling or 4.2 coins
+            throw new NumberFormatException();
+        }
+        return intValue;
     }
 
     /**
