@@ -52,16 +52,16 @@ public class MsoyEvents
         @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public boolean firstLogin;
-        @Field final public String sessionToken;
         @Field final public long createdOn;
+        @Field final public String tracker;
 
-        public Login (int memberId, boolean firstLogin, String sessionToken, long createdOn)
+        public Login (int memberId, boolean firstLogin, long createdOn, String tracker)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
             this.firstLogin = firstLogin;
-            this.sessionToken = toValue(sessionToken);
             this.createdOn = createdOn;
+            this.tracker = toValue(tracker);
         }
     }
 
