@@ -179,7 +179,7 @@ public class NotificationDisplay extends HBox
         TextUtil.setText(text, TextUtil.parseLinks(announcement, format, true, true), format);
 
         if (forHistory) {
-            text.width = 200;
+            text.width = getHistoryWidth();
         } else {
             text.width = _canvas.width * 2;
             while (text.textWidth > _canvas.width && text.length > 4) {
@@ -206,7 +206,7 @@ public class NotificationDisplay extends HBox
 
         if (show) {
             _nHistory = new NotificationHistoryDisplay(prepareNotifications(
-                _ctx.getNotificationDirector().getCurrentNotifications()));
+                _ctx.getNotificationDirector().getCurrentNotifications()), getHistoryWidth());
             _nHistory.addEventListener(TextEvent.LINK, linkClicked);
             PopUpManager.addPopUp(_nHistory, _ctx.getTopPanel(), false);
             updatePopupLocation();
@@ -224,6 +224,11 @@ public class NotificationDisplay extends HBox
         systemManager.removeEventListener(MouseEvent.CLICK, maybeCloseHistory);
         _nHistory = null;
         _popupBtn.selected = false;
+    }
+
+    protected function getHistoryWidth () :int
+    {
+        return this.width - 40;
     }
 
     protected function linkClicked (event :TextEvent) :void
