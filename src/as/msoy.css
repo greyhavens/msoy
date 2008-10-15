@@ -1318,8 +1318,9 @@ BasePanel {
   horizontalGap: 0;
   verticalGap: 0;
   borderStyle: none;
-  paddingRight: 5px;
+  paddingRight: 10px;
   paddingBottom: 4px;
+  paddingLeft: 20px;
 }
 
 .notificationCanvas {
