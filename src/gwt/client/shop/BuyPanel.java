@@ -51,16 +51,19 @@ public class BuyPanel extends FlowPanel
         setStyleName("Buy");
 
         // Buy with bars, plus a link on how to acquire some
-        _buyBars = new BuyButton(Currency.BARS, _listing.quote.getBars());
+        _buyBars = new BuyButton(Currency.BARS);
         if (CShell.barsEnabled()) {
-            add(_buyBars);
+            _barPanel = new FlowPanel();
+            _barPanel.add(_buyBars);
             Widget link = Link.buyBars(_msgs.listingBuyBars());
             link.setStyleName("GetBars");
-            add(link);
+            _barPanel.add(link);
         }
 
-        _buyCoins = new BuyButton(Currency.COINS, _listing.quote.getCoins());
+        _buyCoins = new BuyButton(Currency.COINS);
         add(_buyCoins);
+
+        updatePrice(_listing.quote);
     }
 
     protected void itemPurchased (Item item)
@@ -107,7 +110,11 @@ public class BuyPanel extends FlowPanel
     protected void updatePrice (PriceQuote quote)
     {
         _listing.quote = quote;
-        _buyBars.setAmount(quote.getBars());
+
+        _barPanel.setVisible(quote.getCoins() > 0);
+        if (_barPanel.isVisible()) {
+            _buyBars.setAmount(quote.getBars());
+        }
         _buyCoins.setAmount(quote.getCoins());
     }
 
@@ -157,20 +164,19 @@ public class BuyPanel extends FlowPanel
 
     protected class BuyButton extends StretchButton
     {
-        public BuyButton (Currency currency, int amount)
+        public BuyButton (Currency currency)
         {
             super(currency == Currency.BARS ? ORANGE_THICK : BLUE_THICK, null);
             _currency = currency;
             addStyleName("buyButton");
             new BuyCallback(this, currency);
-            setAmount(amount);
         }
 
         public void setAmount (int amount)
         {
             HorizontalPanel horiz = new HorizontalPanel();
             horiz.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            horiz.add(MsoyUI.createLabel(_msgs.shopBuy(), null));
+            horiz.add(MsoyUI.createLabel((amount > 0) ? _msgs.shopBuy() : _msgs.shopFree(), null));
             horiz.add(WidgetUtil.makeShim(10, 1));
             horiz.add(MsoyUI.createImage(_currency.getLargeIcon(), null));
             horiz.add(WidgetUtil.makeShim(10, 1));
@@ -187,6 +193,7 @@ public class BuyPanel extends FlowPanel
     protected AsyncCallback<Item> _callback;
 
     protected BuyButton _buyBars, _buyCoins;
+    protected FlowPanel _barPanel;
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
