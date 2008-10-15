@@ -59,8 +59,7 @@ public class SupportLogic
         if (event.target == null) {
             MemberName targetName = _memberRepo.loadMemberName(targetId);
             if (targetName == null) {
-                log.warning("Unable to locate target of complaint [event=" + event +
-                            ", targetId=" + targetId + "].");
+                event.targetHandle = "Guest";
             } else {
                 event.targetHandle = targetName.toString();
                 event.target = Integer.toString(targetName.getMemberId());

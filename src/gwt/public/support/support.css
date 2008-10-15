@@ -92,3 +92,17 @@
 .uAccountPanel {
   width: 100%;
 }
+
+/** user.css overrides. */
+.uRegisterPetition {
+  width: 100%;
+}
+
+.uMyPetitionsPanel {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.uMyPetitionsPanel .verticalPanel {
+  width: 100%;
+}

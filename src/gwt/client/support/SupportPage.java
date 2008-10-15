@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.threerings.underwire.gwt.client.AdminPanel;
 import com.threerings.underwire.gwt.client.ClientMessages;
 import com.threerings.underwire.gwt.client.ServerMessages;
-import com.threerings.underwire.gwt.client.UserPanel;
 import com.threerings.underwire.gwt.client.WebContext;
 import com.threerings.underwire.web.client.UnderwireService;
 import com.threerings.underwire.web.client.UnderwireServiceAsync;
@@ -26,14 +25,8 @@ public class SupportPage extends Page
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        if (!CSupport.isSupport()) {
-            setContent(CSupport.msgs.supportTitle(),
-                       MsoyUI.createLabel(CSupport.msgs.lackPrivileges(), "infoLabel"));
-            return;
-        }
-
         // create our auth credentials if we don't already have them
-        if (_webctx.ainfo == null) {
+        if (_webctx.ainfo == null && CSupport.creds != null) {
             UnderwireService.AuthInfo ainfo = new UnderwireService.AuthInfo();
             ainfo.authtok = CSupport.creds.token;
             ainfo.name = new AccountName();
@@ -47,13 +40,17 @@ public class SupportPage extends Page
 
         String action = args.get(0, "");
         if (action.equals("admin")) {
+            if (!CSupport.isSupport()) {
+                setContent(CSupport.msgs.supportTitle(),
+                           MsoyUI.createLabel(CSupport.msgs.lackPrivileges(), "infoLabel"));
+                return;
+            }
             AdminPanel panel = new AdminPanel(_webctx);
             setContent(CSupport.msgs.supportTitle(), panel);
             panel.init();
         } else {
-            UserPanel panel = new UserPanel(_webctx);
-            setContent(CSupport.msgs.faqTitle(), panel);
-            panel.init();
+            ContactPanel panel = new ContactPanel(_webctx);
+            setContent(CSupport.msgs.contactTitle(), panel);
         }
     }
 

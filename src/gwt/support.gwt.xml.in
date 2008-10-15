@@ -1,6 +1,7 @@
 <module>
   <inherits name="page"/>
   <inherits name="com.threerings.underwire.Admin"/>
+  <inherits name="com.threerings.underwire.User"/>
 
   <source path="client/support"/>
 

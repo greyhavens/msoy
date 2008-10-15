@@ -82,7 +82,11 @@ public class MsoyGameInfoProvider extends GameInfoProvider
 
     protected static final Function<String,Integer> TO_INT = new Function<String,Integer>() {
         public Integer apply (String value) {
-            return Integer.valueOf(value);
+            try {
+                return Integer.valueOf(value);
+            } catch (NumberFormatException nfe) {
+                return 0;
+            }
         }
     };
 }
