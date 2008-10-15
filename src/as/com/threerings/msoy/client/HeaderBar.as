@@ -170,12 +170,10 @@ public class HeaderBar extends HBox
             _coinsLabel.styleName = "currencyLabel";
             addChild(_coinsLabel);
 
-            if (DeploymentConfig.barsEnabled) {
-                addCurrencyIcon(Currency.BARS);
-                _barsLabel = new Label();
-                _barsLabel.styleName = "currencyLabel";
-                addChild(_barsLabel);
-            }
+            addCurrencyIcon(Currency.BARS);
+            _barsLabel = new Label();
+            _barsLabel.styleName = "currencyLabel";
+            addChild(_barsLabel);
 
             // set up a listener to hear about userobject changes
             _ctx.getClient().addClientObserver(
@@ -211,9 +209,7 @@ public class HeaderBar extends HBox
         if (cliObj != null) {
             cliObj.addListener(new AttributeChangeAdapter(clientAttrChanged));
             _coinsLabel.text = Currency.COINS.format(cliObj.coins);
-            if (DeploymentConfig.barsEnabled) {
-                _barsLabel.text = Currency.BARS.format(cliObj.bars);
-            }
+            _barsLabel.text = Currency.BARS.format(cliObj.bars);
         }
     }
 

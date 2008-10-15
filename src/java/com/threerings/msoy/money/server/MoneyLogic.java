@@ -314,7 +314,7 @@ public class MoneyLogic
             }
 
             // load the buyer's affiliate
-            int affiliateId = (DeploymentConfig.barsEnabled) ? buyerRec.affiliateMemberId : 0;
+            int affiliateId = buyerRec.affiliateMemberId;
             MoneyTransactionRecord affiliateTx = null;
             if (affiliateId != 0 && affiliatePayout != null) {
                 try {
@@ -604,10 +604,7 @@ public class MoneyLogic
         _exchange.init();
         _msgReceiver.start();
 
-        // Bling distributor should only be started if bars are enabled.
-        if (DeploymentConfig.barsEnabled) {
-            _blingDistributor.start();
-        }
+        _blingDistributor.start();
     }
 
     /**

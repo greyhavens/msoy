@@ -122,20 +122,18 @@ public class DoListItemPopup extends VerticalPanel
             int salesTarget = (listing == null) ? DEFAULT_SALES_TARGET : listing.salesTarget;
             _salesTarget.setText(String.valueOf(salesTarget));
 
-            if (CShell.barsEnabled()) {
-                _currencyBox = new ListBox();
-                for (int i=0; i<LISTABLE_CURRENCIES.length; ++i) {
-                    _currencyBox.addItem(_dmsgs.xlate(LISTABLE_CURRENCIES[i].getLabel()));
-                    if (listing != null &&
-                        LISTABLE_CURRENCIES[i] == listing.quote.getListedCurrency()) {
-                        _currencyBox.setSelectedIndex(i);
-                    }
+            _currencyBox = new ListBox();
+            for (int i=0; i<LISTABLE_CURRENCIES.length; ++i) {
+                _currencyBox.addItem(_dmsgs.xlate(LISTABLE_CURRENCIES[i].getLabel()));
+                if (listing != null &&
+                    LISTABLE_CURRENCIES[i] == listing.quote.getListedCurrency()) {
+                    _currencyBox.setSelectedIndex(i);
                 }
-                row = pricing.addWidget(new Label(_imsgs.doListCurrency()), 1, "rightLabel");
-                pricing.setWidget(row, 1, _currencyBox);
-                pricing.setWidget(row, 2, new Label(_imsgs.doListCurrencyTip()), 1, "Blurb");
-                pricing.getFlexCellFormatter().setRowSpan(row, 2, 2);
             }
+            row = pricing.addWidget(new Label(_imsgs.doListCurrency()), 1, "rightLabel");
+            pricing.setWidget(row, 1, _currencyBox);
+            pricing.setWidget(row, 2, new Label(_imsgs.doListCurrencyTip()), 1, "Blurb");
+            pricing.getFlexCellFormatter().setRowSpan(row, 2, 2);
 
             row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
             pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 5, 5), 1, null);

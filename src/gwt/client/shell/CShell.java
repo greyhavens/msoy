@@ -74,14 +74,6 @@ public class CShell
     }
 
     /**
-     * Temp wrapper to gradually roll out bars.
-     */
-    public static boolean barsEnabled ()
-    {
-        return isSupport() || DeploymentConfig.barsEnabled;
-    }
-
-    /**
      * Initializes the shell and wires up some listeners.
      */
     public static void init (Frame frame)

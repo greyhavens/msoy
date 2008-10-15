@@ -52,13 +52,11 @@ public class BuyPanel extends FlowPanel
 
         // Buy with bars, plus a link on how to acquire some
         _buyBars = new BuyButton(Currency.BARS);
-        if (CShell.barsEnabled()) {
-            _barPanel = new FlowPanel();
-            _barPanel.add(_buyBars);
-            Widget link = Link.buyBars(_msgs.listingBuyBars());
-            link.setStyleName("GetBars");
-            _barPanel.add(link);
-        }
+        _barPanel = new FlowPanel();
+        _barPanel.add(_buyBars);
+        Widget link = Link.buyBars(_msgs.listingBuyBars());
+        link.setStyleName("GetBars");
+        _barPanel.add(link);
 
         _buyCoins = new BuyButton(Currency.COINS);
         add(_buyCoins);

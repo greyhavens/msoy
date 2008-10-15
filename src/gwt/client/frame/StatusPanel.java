@@ -167,18 +167,15 @@ public class StatusPanel extends SmartTable
 
             int idx = 0;
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            ClickListener onClick = CShell.barsEnabled() ?
-                NaviUtil.onViewTransactions(ReportType.COINS) : null;
+            ClickListener onClick = NaviUtil.onViewTransactions(ReportType.COINS);
             setWidget(0, idx++, MsoyUI.createActionImage(Currency.COINS.getLargeIcon(),
                 _cmsgs.coinsTip(), onClick), 1, "Icon");
             setText(0, _coinsIdx = idx++, "0");
 
-            if (CShell.barsEnabled()) {
-                getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-                setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getLargeIcon(),
-                    _cmsgs.barsTip(), NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
-                setText(0, _barsIdx = idx++, "0");
-            }
+            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+            setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getLargeIcon(),
+                _cmsgs.barsTip(), NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
+            setText(0, _barsIdx = idx++, "0");
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
             setWidget(0, idx++, MsoyUI.createActionImage("/images/header/symbol_level.png",
@@ -197,9 +194,7 @@ public class StatusPanel extends SmartTable
         }
 
         public void setBars (int bars) {
-            if (CShell.barsEnabled()) {
-                setText(0, _barsIdx, Currency.BARS.format(bars));
-            }
+            setText(0, _barsIdx, Currency.BARS.format(bars));
         }
 
         public void showLevelUpPopup () {
