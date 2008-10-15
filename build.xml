@@ -1174,9 +1174,10 @@
       </fileset>
     </copy>
 
-    <!-- need some xml files (msoy only) -->
+    <!-- need some xml files and the embed stub (msoy only) -->
     <copy file="${deploy.dir}/ehcache.xml" todir="${approot.server}/${deploy.dir}"/>
     <copy file="${deploy.dir}/antisamy-config.xml" todir="${approot.server}/${deploy.dir}"/>
+    <copy file="${deploy.dir}/embedstub-base.swf" todir="${approot.server}/${deploy.dir}"/>
 
     <!-- create some runtime directories (all servers) -->
     <mkdir dir="${approot.server.code}/log/lighttpd"/>
