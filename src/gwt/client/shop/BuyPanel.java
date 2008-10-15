@@ -112,9 +112,7 @@ public class BuyPanel extends FlowPanel
         _listing.quote = quote;
 
         _barPanel.setVisible(quote.getCoins() > 0);
-        if (_barPanel.isVisible()) {
-            _buyBars.setAmount(quote.getBars());
-        }
+        _buyBars.setAmount(quote.getBars());
         _buyCoins.setAmount(quote.getCoins());
     }
 
