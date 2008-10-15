@@ -14,9 +14,6 @@ package com.threerings.msoy.client {
         public static const logLevelsConfig :String = "@log_levels_config@";
         public static const billingURL :String = "@billing_url@";
         
-        /** Are bars (and bling) yet enabled on this server? */
-        public static const barsEnabled :Boolean = @dev_deployment@;
-
         private static function staticInit () :void
         {
             if (-1 != mediaURL.indexOf(serverHost)) {
