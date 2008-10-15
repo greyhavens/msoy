@@ -136,6 +136,7 @@ public class WorldControlBar extends ControlBar
         return UberClient.isRegularClient() ? super.getMode() : UI_VIEWER;
     }
 
+    // TODO: move this crap somewhere else
     protected function maybeDisplayAvatarIntro () :void
     {
         // if we have already shown the intro, they are a guest, are not wearing the tofu avatar,

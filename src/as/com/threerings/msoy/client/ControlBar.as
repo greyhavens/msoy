@@ -41,7 +41,7 @@ import com.threerings.msoy.world.client.WorldController;
 public class ControlBar extends HBox
 {
     /** The height of the control bar. This is fixed. */
-    public static const HEIGHT :int = 28;
+    public static const HEIGHT :int = 28; // if you feel like changing this, don't.
 
     /** Button priorities */
     public static const VOLUME_PRIORITY :int = 0;
@@ -419,6 +419,7 @@ public class ControlBar extends HBox
     /** Button priority levels. */
     protected var _priorities :Dictionary = new Dictionary(true);
 
+    /** Holds the 22x22 button area. */
     protected var _buttons :ButtonPalette;
 
     /** Our chat control. */

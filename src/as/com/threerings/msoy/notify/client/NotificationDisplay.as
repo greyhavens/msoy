@@ -104,13 +104,15 @@ public class NotificationDisplay extends HBox
     {
         super.createChildren();
         styleName = "notificationDisplay"; 
+        this.percentWidth = 100;
 
         addChild(_popupBtn = new CommandCheckBox(null, toggleNotificationHistory));
         _popupBtn.styleName = "panelToggle";
         
         addChild(_canvas = new Canvas());
         _canvas.styleName = "notificationCanvas";
-        _canvas.width = 200;
+        _canvas.percentWidth = 100;
+        _canvas.minWidth = 200;
         _canvas.height = 19;
         _canvas.horizontalScrollPolicy = ScrollPolicy.OFF;
         _canvas.verticalScrollPolicy = ScrollPolicy.OFF;
@@ -141,7 +143,7 @@ public class NotificationDisplay extends HBox
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
         Tweener.addTween(notification, 
-            {x: _canvas.width - notification.width, time: 0.75, transition: "easeoutquart",
+            {x: 0 /*_canvas.width - notification.width*/, time: 0.75, transition: "easeoutquart",
                 onComplete: function () :void {
                     _currentlyAnimating = false;
                     checkPendingNotifications();
@@ -179,7 +181,8 @@ public class NotificationDisplay extends HBox
         if (forHistory) {
             text.width = 200;
         } else {
-            while (text.width > _canvas.width && text.length > 4) {
+            text.width = _canvas.width * 2;
+            while (text.textWidth > _canvas.width && text.length > 4) {
                 // as odd as this looks, it replaces the last 4 characters with "..."
                 text.replaceText(text.length - 5, text.length, "...");
             }

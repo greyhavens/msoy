@@ -24,6 +24,7 @@ import caurina.transitions.Tweener;
 import com.threerings.util.CommandEvent;
 
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.FlexUtil;
 
 public class ButtonPalette extends Canvas
 {
@@ -34,7 +35,7 @@ public class ButtonPalette extends Canvas
 
         _toggle = new CommandCheckBox(null, showAll);
         _toggle.styleName = "panelToggle";
-        _toggle.y = 8;
+        _toggle.y = 5;
         addChild(_toggle);
 
         _tile = new Tile();
@@ -68,6 +69,7 @@ public class ButtonPalette extends Canvas
 
     public function recheckButtons () :void
     {
+        invalidateSize();
         const hPad :int = int(_tile.getStyle("paddingLeft")) + int(_tile.getStyle("paddingRight"));
         const vPad :int = int(_tile.getStyle("paddingTop")) + int(_tile.getStyle("paddingBottom"));
         const hGap :int = int(_tile.getStyle("horizontalGap"));
@@ -85,6 +87,19 @@ public class ButtonPalette extends Canvas
             _toggle.selected = false;
             showAll(false, false);
         }
+    }
+
+    override protected function measure () :void
+    {
+        super.measure();
+
+        const hPad :int = int(_tile.getStyle("paddingLeft")) + int(_tile.getStyle("paddingRight"));
+        const hGap :int = int(_tile.getStyle("horizontalGap"));
+        const visChildren :int = FlexUtil.countLayoutChildren(_tile);
+
+        // figure a maxWidth, so that the notification display can take the rest of the space
+        maxWidth = TOGGLE_WIDTH + hPad + (visChildren * _tile.tileWidth) +
+            ((visChildren - 1) * hGap);
     }
 
     protected function updateTileLoc (animate :Boolean = false) :void
