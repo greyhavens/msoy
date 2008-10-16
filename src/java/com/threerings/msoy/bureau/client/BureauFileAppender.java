@@ -19,6 +19,17 @@ import com.threerings.util.OOOFileAppender;
 public class BureauFileAppender extends OOOFileAppender
 {
     /**
+     * Receives notification of log rolls.
+     */
+    public interface RollObserver
+    {
+        /**
+         * Called when the file appender has rolled.
+         */
+        void logRolled (BureauFileAppender appender);
+    }
+
+    /**
      * Summarizes the log specified by the first command line argument and prints it to stdout
      * instead of sending via email.
      */
@@ -32,6 +43,21 @@ public class BureauFileAppender extends OOOFileAppender
         System.out.print(summary);
     }
     
+    public static void setRollObserver (RollObserver rollObs)
+    {
+        _rollObs = rollObs;
+    }
+    
+    @Override // from OOOFileAppender
+    protected void rollOver ()
+        throws IOException
+    {
+        super.rollOver();
+        if (_rollObs != null) {
+            _rollObs.logRolled(this);
+        }
+    }
+
     @Override // from OOOFileAppender
     protected void summarizeLog (File target)
         throws IOException
@@ -234,4 +260,7 @@ public class BureauFileAppender extends OOOFileAppender
 
         String _prefix;
     }
+    
+    /** Observer to be notified when we do a roll. */
+    protected static RollObserver _rollObs;
 }
