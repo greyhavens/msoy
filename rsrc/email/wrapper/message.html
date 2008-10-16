@@ -44,19 +44,29 @@ blockquote {
   margin-top: 5px;
   margin-bottom: 10px;
 }
+
+.wrapFooter {
+  background: url(${base_url}images/email/wrap_footer.jpg);
+  font-size: 12px;
+  text-align: center;
+  padding-top: 70px;
+  color: #FFFFFF;
+  height: 125px;
+}
 </style>
 </head>
 <body>
 <center>
-<table width="692">
-<tr><td><img src="${base_url}/images/email/header.png"></td></tr>
+<table width="642">
+<tr><td align="center">
+<img src="${base_url}images/email/wrap_header.jpg"></td></tr>
 <tr><td>
 ${content}
 </td></tr>
-<tr><td style="padding-top: 40px"><img src="${base_url}/images/email/footer.png"></td></tr>
-<tr><td style="font-size: 12px; text-align: center">
-If you no longer wish to receive announcements from Whirled, adjust your
-preferences on the <a href="${base_url}#me-account">Whirled Account</a> page.
+<tr><td class="wrapFooter">
+If you no longer wish to receive announcements from Whirled, adjust your preferences on the
+<a style="color: #FFFFFF" href="${base_url}#me-account">
+Whirled Account</a> page.
 </td></tr>
 </table>
 </center>
