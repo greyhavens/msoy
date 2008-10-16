@@ -874,14 +874,21 @@ public class GameGameRegistry
     // from AVRGameManager.LifecycleObserver
     public void avrGameDidShutdown (AVRGameManager mgr)
     {
-        int gameId = mgr.getGameId();
+        final int gameId = mgr.getGameId();
 
         // destroy our record of that avrg
         _avrgManagers.remove(gameId);
         _loadingAVRGames.remove(gameId);
 
-        // kill the bureau session
-        killBureauSession(gameId);
+        // kill the bureau session in 30 seconds if the game has not started back up so that the
+        // agent has plenty of time to finish stopping
+        new Interval(_omgr) {
+            @Override public void expired () {
+                if (!_avrgManagers.containsKey(gameId)) {
+                    killBureauSession(gameId);
+                }
+            }
+        }.schedule(30 * 1000);
 
         // let our world server know we're audi
         _worldClient.stoppedHostingGame(gameId);
