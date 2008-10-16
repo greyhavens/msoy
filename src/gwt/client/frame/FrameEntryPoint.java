@@ -791,6 +791,12 @@ public class FrameEntryPoint
                         _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
                     }
                     if (_client != null) {
+                        // if we have content, the client is in explicitly sized mode and will need
+                        // its width updated manually; if we have no content, it is width 100%
+                        if (_content != null) {
+                            int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
+                            _client.setWidth(clientWidth + "px");
+                        }
                         _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
                     }
                 }
