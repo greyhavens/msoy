@@ -22,11 +22,11 @@ import com.threerings.msoy.item.gwt.CostUpdatedException;
 import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.web.client.Pages;
 
 import client.item.ItemActivator;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.StretchButton;
 import client.util.ClickCallback;

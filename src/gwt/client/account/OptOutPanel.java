@@ -12,11 +12,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
 
-import client.shell.Pages;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

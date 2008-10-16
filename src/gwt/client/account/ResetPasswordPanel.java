@@ -17,10 +17,11 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+
+import com.threerings.msoy.web.client.Args;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 
-import client.shell.Args;
 import client.shell.CShell;
 
 import client.ui.MsoyUI;

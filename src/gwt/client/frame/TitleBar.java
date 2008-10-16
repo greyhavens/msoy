@@ -14,9 +14,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.shell.Frame;
+import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.client.Tabs;
+
 import client.shell.Page;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 
 /**
@@ -27,12 +28,12 @@ public class TitleBar extends SmartTable
     /**
      * Creates a title bar for the specified page.
      */
-    public static TitleBar create (Frame.Tabs tab, ClickListener onClose)
+    public static TitleBar create (Tabs tab, ClickListener onClose)
     {
         return new TitleBar(tab, Page.getDefaultTitle(tab), new SubNaviPanel(tab), onClose);
     }
 
-    public TitleBar (Frame.Tabs tab, String title, SubNaviPanel subnavi, ClickListener onClose)
+    public TitleBar (Tabs tab, String title, SubNaviPanel subnavi, ClickListener onClose)
     {
         super("pageTitle", 0, 0);
 
@@ -96,13 +97,13 @@ public class TitleBar extends SmartTable
         }
     }
 
-    protected Image createImage (Frame.Tabs tab)
+    protected Image createImage (Tabs tab)
     {
         String id = (tab == null) ? "solid" : tab.toString().toLowerCase();
         return new Image("/images/header/" + id + "_cap.png");
     }
 
-    protected Frame.Tabs _tab;
+    protected Tabs _tab;
     protected Label _titleLabel;
     protected SubNaviPanel _subnavi;
     protected Widget _closeBox, _closeShim;

@@ -13,9 +13,9 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
-import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.util.ClickCallback;

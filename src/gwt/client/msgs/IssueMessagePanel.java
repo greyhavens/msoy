@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Pages;
 import client.util.Link;
 
 /**

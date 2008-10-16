@@ -13,11 +13,11 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.person.GalleryActions;
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;

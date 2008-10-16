@@ -10,13 +10,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.web.client.Pages;
+
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.Link;

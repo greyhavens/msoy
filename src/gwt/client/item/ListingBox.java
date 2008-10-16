@@ -10,9 +10,9 @@ import com.google.gwt.user.client.ui.Image;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.Stars;
 

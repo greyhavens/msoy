@@ -12,7 +12,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import client.shell.Pages;
+import com.threerings.msoy.web.client.Pages;
+
 import client.util.Link;
 
 /**

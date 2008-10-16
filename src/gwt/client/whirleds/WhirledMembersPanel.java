@@ -21,10 +21,10 @@ import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MemberStatusLabel;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;

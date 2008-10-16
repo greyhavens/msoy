@@ -6,6 +6,9 @@ package client.support;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
+
 import com.threerings.underwire.gwt.client.AdminPanel;
 import com.threerings.underwire.gwt.client.ClientMessages;
 import com.threerings.underwire.gwt.client.ServerMessages;
@@ -14,9 +17,7 @@ import com.threerings.underwire.web.client.UnderwireService;
 import com.threerings.underwire.web.client.UnderwireServiceAsync;
 import com.threerings.underwire.web.data.AccountName;
 
-import client.shell.Args;
 import client.shell.Page;
-import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 

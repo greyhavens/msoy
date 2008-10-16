@@ -18,16 +18,16 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
 import client.item.RemixButton;
 import client.item.ShopUtil;
-import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;

@@ -6,8 +6,6 @@ package client.item;
 import java.util.ArrayList;
 import java.util.List;
 
-import client.shell.Args;
-import client.shell.Pages;
 import client.util.Link;
 
 import com.google.gwt.user.client.ui.FlexTable;
@@ -15,6 +13,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 /**
  * A reusable item grid.

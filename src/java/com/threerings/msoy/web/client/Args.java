@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shell;
+package com.threerings.msoy.web.client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,15 +146,20 @@ public class Args
 
     /**
      * Called by the application when configuring our arguments.
+     *
+     * @return true if the token was valid, false if it was rejected for syntactic reasons. In the
+     * latter case a blank token will have been parsed in its stead.
      */
-    public void setToken (String token)
+    public boolean setToken (String token)
     {
+        boolean valid = true;
+
         // enforce a lack of upper case letters in our URLs
         if (DeploymentConfig.devDeployment) {
             for (int ii = 0; ii < token.length(); ii++) {
                 if (Character.isUpperCase(token.charAt(ii))) {
-                    CShell.log("Rejecting token with upper case letters '" + token + "'.");
                     token = "";
+                    valid = false;
                     break;
                 }
             }
@@ -170,6 +175,8 @@ public class Args
                 token = token.substring(didx+1);
             }
         } while (token != null && token.length() > 0);
+
+        return valid;
     }
 
     /**

@@ -22,9 +22,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
+import com.threerings.msoy.web.client.Pages;
 
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.util.ClickCallback;

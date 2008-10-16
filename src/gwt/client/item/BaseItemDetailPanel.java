@@ -24,11 +24,11 @@ import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.data.TagHistory;
 
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.CreatorLabel;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;

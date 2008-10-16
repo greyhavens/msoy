@@ -14,10 +14,10 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;

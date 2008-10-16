@@ -6,8 +6,8 @@ package client.item;
 import java.util.ArrayList;
 
 import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.web.client.Args;
 
-import client.shell.Args;
 
 /**
  * Utility functions for the catalog.

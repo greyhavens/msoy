@@ -14,16 +14,16 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
 import client.remix.ItemRemixer;
 import client.remix.RemixerHost;
-import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Page;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MsoyCallback;

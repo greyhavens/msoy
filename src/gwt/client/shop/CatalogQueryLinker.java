@@ -6,10 +6,10 @@ package client.shop;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.web.client.Pages;
 
 import client.item.ShopUtil;
 import client.item.SideBar;
-import client.shell.Pages;
 import client.util.Link;
 
 /**

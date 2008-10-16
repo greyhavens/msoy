@@ -17,15 +17,15 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.item.ShopUtil;
 import client.remix.ItemRemixer;
 import client.remix.RemixerHost;
-import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Page;
-import client.shell.Pages;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

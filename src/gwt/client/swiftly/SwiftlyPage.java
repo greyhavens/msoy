@@ -10,10 +10,10 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
 import com.threerings.msoy.swiftly.gwt.SwiftlyService;
 import com.threerings.msoy.swiftly.gwt.SwiftlyServiceAsync;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
 import client.shell.Page;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 

@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.money.data.all.ReportType;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
-import client.shell.Pages;
 
 /**
  * A place where we can encapsulate the creation of arguments that link to complex pages in

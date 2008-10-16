@@ -12,10 +12,10 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 
 /**

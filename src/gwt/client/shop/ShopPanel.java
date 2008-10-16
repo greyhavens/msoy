@@ -20,6 +20,8 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
@@ -34,8 +36,6 @@ import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
-import client.shell.Args;
-import client.shell.Pages;
 
 import client.item.ItemMessages;
 import client.item.SideBar;

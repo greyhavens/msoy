@@ -5,6 +5,7 @@ package client.shell;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 
@@ -29,9 +30,6 @@ public interface Frame
 
     /** The offset of the content close button, from the left edge of the separator bar. */
     public static final int CLOSE_BUTTON_OFFSET = -16;
-
-    /** Enumerates our different header tabs. */
-    public static enum Tabs { ME, STUFF, GAMES, WHIRLEDS, SHOP, /*CREATE,*/ HELP };
 
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {

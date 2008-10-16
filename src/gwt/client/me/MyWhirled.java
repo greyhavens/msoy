@@ -14,11 +14,11 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
+import com.threerings.msoy.web.client.Pages;
 
 import client.person.FeedPanel;
 import client.person.PersonMessages;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

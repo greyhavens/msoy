@@ -24,9 +24,9 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
-import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MessagePanel;

@@ -22,12 +22,12 @@ import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.comment.CommentsPanel;
 import client.item.ItemRating;
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;

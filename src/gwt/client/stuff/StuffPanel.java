@@ -23,11 +23,11 @@ import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.item.SideBar;
-import client.shell.Args;
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.ui.StretchButton;

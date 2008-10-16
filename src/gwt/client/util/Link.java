@@ -17,10 +17,10 @@ import com.threerings.gwt.ui.Anchor;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 
 /**
  * A utility class with link-related methods.

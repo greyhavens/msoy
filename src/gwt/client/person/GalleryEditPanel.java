@@ -10,9 +10,7 @@ import client.dnd.DropModel;
 import client.dnd.DropPanel;
 import client.dnd.PayloadWidget;
 import client.dnd.SimpleDropModel;
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -45,6 +43,8 @@ import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
 import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.GalleryServiceAsync;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 /**
  * Allows a user to edit one of their galleries.

@@ -24,15 +24,15 @@ import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
 import client.item.ItemActivator;
 import client.item.RemixButton;
-import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.ClickCallback;

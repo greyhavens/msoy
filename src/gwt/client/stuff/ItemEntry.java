@@ -5,12 +5,12 @@ package client.stuff;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.item.ItemActivator;
 import client.item.ItemBox;
 import client.item.ItemUtil;
-import client.shell.Args;
-import client.shell.Pages;
 
 /**
  * Displays a thumbnail version of an item.

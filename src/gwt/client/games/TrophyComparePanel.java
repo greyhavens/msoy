@@ -16,11 +16,11 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.data.all.TrophySource;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;

@@ -16,6 +16,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.client.Tabs;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
@@ -35,7 +38,7 @@ public abstract class Page
     /**
      * Returns the default title for the specified page.
      */
-    public static String getDefaultTitle (Frame.Tabs tab)
+    public static String getDefaultTitle (Tabs tab)
     {
         try {
             return _dmsgs.xlate(tab.toString().toLowerCase()+ "Title");

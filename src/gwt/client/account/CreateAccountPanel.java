@@ -33,6 +33,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.AccountInfo;
@@ -42,7 +43,6 @@ import com.threerings.msoy.web.data.RegisterInfo;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.CShell;
-import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;

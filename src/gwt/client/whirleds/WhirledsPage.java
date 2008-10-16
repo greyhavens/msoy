@@ -7,16 +7,16 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.msgs.ForumModels;
 import client.msgs.ForumPanel;
 import client.msgs.IssueModels;
 import client.msgs.IssuePanel;
 import client.msgs.ThreadPanel;
-import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 
 public class WhirledsPage extends Page

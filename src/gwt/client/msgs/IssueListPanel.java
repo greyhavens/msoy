@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.fora.gwt.Issue;
+import com.threerings.msoy.web.client.Pages;
 
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 

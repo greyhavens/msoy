@@ -10,8 +10,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Pages;
 import client.util.Link;
 
 /**

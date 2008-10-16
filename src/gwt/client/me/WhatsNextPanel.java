@@ -26,11 +26,11 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.images.next.NextImages;
-import client.shell.Args;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.ui.TongueBox;

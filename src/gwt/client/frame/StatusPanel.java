@@ -17,6 +17,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -24,7 +25,6 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ReportType;
 
 import client.shell.CShell;
-import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;

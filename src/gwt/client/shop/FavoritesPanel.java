@@ -16,12 +16,12 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.item.SideBar;
-import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.util.Link;
 
 /**

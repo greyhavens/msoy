@@ -24,13 +24,13 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.web.client.Pages;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.item.ShopUtil;
 import client.item.SideBar;
 import client.item.TagCloud;
-import client.shell.Pages;
 import client.ui.Marquee;
 import client.util.Link;
 

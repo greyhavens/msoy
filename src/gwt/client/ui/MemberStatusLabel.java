@@ -9,11 +9,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.InlineLabel;
+
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.data.MemberCard;
 
-import client.shell.Args;
 import client.shell.ShellMessages;
-import client.shell.Pages;
 import client.util.Link;
 
 /**

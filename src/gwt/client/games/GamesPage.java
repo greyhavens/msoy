@@ -5,9 +5,10 @@ package client.games;
 
 import com.google.gwt.core.client.GWT;
 
-import client.shell.Args;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
+
 import client.shell.Page;
-import client.shell.Pages;
 import client.util.NaviUtil.GameDetails;
 
 /**

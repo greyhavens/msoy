@@ -5,13 +5,14 @@ package client.room;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
+
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
-import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.ServiceUtil;
 

@@ -21,9 +21,9 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.ui.SearchBox;

@@ -21,12 +21,12 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import com.threerings.msoy.game.gwt.GameInfo;
 
-import client.shell.Args;
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 

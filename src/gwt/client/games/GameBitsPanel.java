@@ -7,10 +7,10 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.util.Link;
 
 /**

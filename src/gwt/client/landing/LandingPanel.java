@@ -19,9 +19,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.landing.gwt.LandingData;
 import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.gwt.LandingServiceAsync;
+import com.threerings.msoy.web.client.Pages;
 
 import client.shell.LogonPanel;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.Link;

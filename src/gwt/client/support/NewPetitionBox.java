@@ -20,6 +20,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.client.Pages;
+
 import com.threerings.underwire.gwt.client.MyPetitionsPanel;
 import com.threerings.underwire.gwt.client.WebContext;
 
@@ -27,7 +29,6 @@ import com.threerings.underwire.web.data.Event;
 import com.threerings.underwire.web.data.Message;
 import com.threerings.underwire.web.data.UserPetition;
 
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 

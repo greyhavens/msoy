@@ -25,13 +25,13 @@ import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.data.TagHistory;
 
 import client.item.TagDetailPanel;
-import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
-import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;

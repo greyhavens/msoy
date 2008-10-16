@@ -14,12 +14,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.ConnectConfig;
 
 import client.shell.CShell;
-import client.shell.Pages;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

@@ -24,11 +24,11 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.images.msgs.MsgsImages;
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;

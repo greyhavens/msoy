@@ -23,12 +23,12 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.MemberInviteResult;
 import com.threerings.msoy.admin.gwt.MemberInviteStatus;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Pages;
 
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;

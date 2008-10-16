@@ -7,10 +7,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 
-import client.shell.Args;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.client.Tabs;
+
 import client.shell.CShell;
-import client.shell.Frame;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -19,7 +20,7 @@ import client.util.Link;
  */
 public class SubNaviPanel extends FlowPanel
 {
-    public SubNaviPanel (Frame.Tabs tab)
+    public SubNaviPanel (Tabs tab)
     {
         reset(tab);
     }
@@ -27,7 +28,7 @@ public class SubNaviPanel extends FlowPanel
     /**
      * Resets the subnavigation to the default for the specified tab.
      */
-    public void reset (Frame.Tabs tab)
+    public void reset (Tabs tab)
     {
         clear();
 

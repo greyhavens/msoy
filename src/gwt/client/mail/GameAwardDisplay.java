@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.mail.gwt.GameAwardPayload;
+import com.threerings.msoy.web.client.Pages;
 
-import client.shell.Pages;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.NaviUtil;

@@ -29,6 +29,8 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
@@ -37,11 +39,9 @@ import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.SessionData;
 
-import client.shell.Args;
 import client.shell.BrowserTest;
 import client.shell.CShell;
 import client.shell.HttpReferrerCookie;
-import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.VisitorCookie;
@@ -148,7 +148,11 @@ public class FrameEntryPoint
         Args args = new Args();
         int dashidx = token.indexOf("-");
         if (dashidx != -1) {
-            args.setToken(token.substring(dashidx+1));
+            String atoken = token.substring(dashidx+1);
+            if (!args.setToken(atoken)) {
+                CShell.log("Rejected invalid token '" + atoken + "' " +
+                           "(perhaps it contains upper case letters).");
+            }
         }
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
@@ -441,7 +445,6 @@ public class FrameEntryPoint
     protected ExtractedParam extractParams (String key, String pagename, String token, Args args)
     {
         int idx = args.indexOf(key);
-
         if (idx == -1 || args.getArgCount() < idx + 2) {
             return null; // we have no key, or no value
         }

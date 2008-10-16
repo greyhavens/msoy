@@ -8,10 +8,10 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.item.ListingBox;
-import client.shell.Args;
-import client.shell.Pages;
 
 /**
  * A blurb containing a few of the member's most recent favorites.

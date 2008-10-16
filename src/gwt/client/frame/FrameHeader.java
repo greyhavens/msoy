@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.client.Tabs;
 import com.threerings.msoy.web.data.SessionData;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -23,9 +25,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import client.images.navi.NaviImages;
 import client.shell.CShell;
-import client.shell.Frame;
 import client.shell.LogonPanel;
-import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
@@ -62,7 +62,7 @@ public class FrameHeader extends SmartTable
         Session.addObserver(this);
     }
 
-    public void selectTab (Frame.Tabs tab)
+    public void selectTab (Tabs tab)
     {
         for (NaviButton button : _buttons) {
             button.setSelected(button.page.getTab() == tab);

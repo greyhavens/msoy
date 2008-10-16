@@ -21,13 +21,13 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.client.Pages;
 
 import client.games.GameBitsPanel;
 import client.games.GameNamePanel;
 import client.games.GamesMessages;
 import client.games.PlayButton;
-import client.shell.Args;
-import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
