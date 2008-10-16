@@ -11,6 +11,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.Place;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.Log;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
@@ -48,8 +49,17 @@ public class PetObject extends MsoyBodyObject
             // add our memories to the room
             try {
                 roomObj.startTransaction();
+                int duplicateKeys = 0;
                 for (EntityMemoryEntry entry : memories) {
-                    roomObj.addToMemories(entry);
+                    if (roomObj.memories.contains(entry)) {
+                        duplicateKeys++;
+                    } else {
+                        roomObj.addToMemories(entry);
+                    }
+                }
+                if (duplicateKeys > 0) {
+                    Log.log.info(
+                        "Ignored duplicate memories for pet", "count", duplicateKeys, "pet", pet);
                 }
             } finally {
                 roomObj.commitTransaction();

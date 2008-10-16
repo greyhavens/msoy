@@ -507,7 +507,7 @@ public class RoomManager extends SpotSceneManager
         // TODO: verify that the caller is in the scene with this item, other item specific
         // restrictions
 
-        // verify that the memory does not exdeed legal size
+        // verify that the memory does not exceed legal size
         int totalSize = 0;
         for (EntityMemoryEntry rent : _roomObj.memories) {
             if (rent.item.equals(entry.item) && !rent.key.equals(entry.key)) {
