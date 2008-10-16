@@ -5,12 +5,16 @@
 # Command line launcher for the Msoy standalone client
 #
 # Usage:
-#   msoyclient [-nodebug] [parameters for world client] [build version]
+#   msoyclient [-9|-nodebug] [parameters for world client] [build version]
 
 BINDIR=`dirname $0`
 HOST=`egrep ^server_host $BINDIR/../dist/msoy-server.properties | awk '{print $3}'`
 
 PLAYER="flashplayer-debug"
+if [ "$1" = "-9" ]; then
+    PLAYER="flashplayer-debug-9"
+    shift
+fi
 if [ "$1" = "-nodebug" ]; then
     PLAYER="flashplayer"
     shift
