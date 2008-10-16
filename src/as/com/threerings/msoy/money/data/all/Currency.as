@@ -5,6 +5,7 @@ package com.threerings.msoy.money.data.all {
 
 import com.threerings.util.Enum;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.StringUtil;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
@@ -52,16 +53,7 @@ public final class Currency extends Enum
             postfix = "." + int(cents / 10) + (cents % 10); // always print two decimal places
         }
 
-        // put commas in, superhackystyle
-        var s :String = String(value);
-        var length :int = s.length;
-        while (length > 3) {
-            length -= 3;
-            postfix = "," + s.substring(length) + postfix;
-            s = s.substring(0, length);
-        }
-
-        return s + postfix;
+        return StringUtil.formatNumber(value) + postfix;
     }
 
     /**
