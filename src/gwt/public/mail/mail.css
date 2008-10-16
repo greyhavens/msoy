@@ -5,7 +5,7 @@
  */
 
 .mail {
-  width: 100%;
+  padding: 10px;
 }
 
 .mail .MailHeader {
@@ -38,7 +38,7 @@
 }
 
 .mail .Folder .Convo {
-  width: 650px;
+  width: 640px;
   margin: 5px 10px;
   font-size: 14px;
   text-align: left;

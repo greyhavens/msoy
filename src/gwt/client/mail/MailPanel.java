@@ -6,17 +6,17 @@ package client.mail;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.mail.gwt.Conversation;
@@ -35,32 +35,23 @@ import client.util.ServiceUtil;
 /**
  * Displays the main interface for mail.
  */
-public class MailPanel extends VerticalPanel
+public class MailPanel extends FlowPanel
 {
     public MailPanel (ConvosModel model, int page)
     {
         setStyleName("mail");
 
-//         SmartTable header = new SmartTable("MailHeader", 0, 10);
-//         header.setText(0, 0, "BIGIMAGE");
-//         header.setText(0, 1, "Inbox + Sent");
-//         header.setText(0, 2, "Compose");
-//         header.setText(0, 3, "Check Mail");
-//         header.setText(0, 4, "Search Mail");
-//         add(header);
-        add(WidgetUtil.makeShim(10, 10));
-
-        setHorizontalAlignment(ALIGN_CENTER);
-        ConvosGrid grid = new ConvosGrid();
+        int rows = Math.max(5, (Window.getClientHeight() - FLUFF) / ROW_HEIGHT);
+        ConvosGrid grid = new ConvosGrid(rows);
         add(grid);
         grid.setModel(model, page);
     }
 
     protected static class ConvosGrid extends PagedGrid<Conversation>
     {
-        public ConvosGrid ()
+        public ConvosGrid (int rows)
         {
-            super(10, 1, NAV_ON_TOP);
+            super(rows, 1, NAV_ON_TOP);
             addStyleName("Folder");
         }
 
@@ -183,4 +174,7 @@ public class MailPanel extends VerticalPanel
     protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
+
+    protected static final int FLUFF = 29 * 2 + 20;
+    protected static final int ROW_HEIGHT = 45;
 }
