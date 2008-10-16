@@ -711,41 +711,47 @@
     </condition>
     <mkdir dir="${deploy.dir}"/>
 
-    <!-- run Proguard -->
-    <taskdef resource="proguard/ant/task.properties" classpath="${extlibs.dir}/proguard.jar"/>
-    <proguard configuration="etc/${ident}-client.pro">
-      <libraryjar name="${rtClasses}"/>
-    </proguard>
+    <!-- if we're skipping this client build, do so -->
+    <if><contains string="${temp_skip_proguard}" substring="${ident}"/><then>
+      <echo>Scratch that, skipping ${ident} build.</echo>
 
-    <!-- sign the lwjgl-enabled client -->
-    <if><equals arg1="${ident}" arg2="lwjgl-game"/>
-      <then>
-        <!-- Sign the resulting jar file -->
-        <if><isset property="cert_dir"/>
-          <then>
-            <property file="${cert_dir}/certificate.properties"/>
-          </then>
-          <else>
-            <!-- No official keystore, use the development keystore -->
-            <echo message="Signing with self-signed development certificate"/>
-            <echo message="(cert_dir is not set, using development keystore)"/>
-            <property name="sign.keystore" value="lib/dev-keystore.dat"/>
-            <property name="sign.storepass" value="secret"/>
-            <property name="sign.alias" value="threerings-dev"/>
-          </else>
-        </if>
-        <signjar jar="${deploy.dir}/${ident}-client.jar" keystore="${sign.keystore}" lazy="true"
-                 alias="${sign.alias}" storepass="${sign.storepass}"/>
-      </then>
-    </if>
+    </then><else>
+      <!-- run Proguard -->
+      <taskdef resource="proguard/ant/task.properties" classpath="${extlibs.dir}/proguard.jar"/>
+      <proguard configuration="etc/${ident}-client.pro">
+        <libraryjar name="${rtClasses}"/>
+      </proguard>
 
-    <!-- Copy the resulting jar file into the document tree. -->
-    <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${version}"/>
+      <!-- sign the lwjgl-enabled client -->
+      <if><equals arg1="${ident}" arg2="lwjgl-game"/>
+        <then>
+          <!-- Sign the resulting jar file -->
+          <if><isset property="cert_dir"/>
+            <then>
+              <property file="${cert_dir}/certificate.properties"/>
+            </then>
+            <else>
+              <!-- No official keystore, use the development keystore -->
+              <echo message="Signing with self-signed development certificate"/>
+              <echo message="(cert_dir is not set, using development keystore)"/>
+              <property name="sign.keystore" value="lib/dev-keystore.dat"/>
+              <property name="sign.storepass" value="secret"/>
+              <property name="sign.alias" value="threerings-dev"/>
+            </else>
+          </if>
+          <signjar jar="${deploy.dir}/${ident}-client.jar" keystore="${sign.keystore}" lazy="true"
+                   alias="${sign.alias}" storepass="${sign.storepass}"/>
+        </then>
+      </if>
+
+      <!-- Copy the resulting jar file into the document tree. -->
+      <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients/${version}"/>
+    </else></if>
   </target>
 
   <!-- builds our Java clients -->
   <property name="jclients" value="admin,game,lwjgl-game,swiftly"/>
-  <target name="jclients" depends="dist" unless="temp_skip_proguard"
+  <target name="jclients" depends="dist"
           description="Rebuilds the Java clients. Use -Djclients=IDENT to just rebuild just one.">
     <for list="${jclients}" param="ident"><sequential>
       <antcall target="proguard"><param name="ident" value="@{ident}"/></antcall>
