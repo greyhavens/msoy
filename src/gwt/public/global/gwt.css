@@ -939,7 +939,6 @@ img, embed, applet, object {
 
 .stretchButton {
   cursor: pointer;
-  float: left;
 }
 
 .stretchButton .X {
@@ -954,9 +953,8 @@ img, embed, applet, object {
 }
 
 .orangeThick .W, .orangeThick .E, .blueThick .W, .blueThick .E {
-  width: 36px;
+  min-width: 36px;
   height: 44px;
-  display: block;
 }
 
 /** ORANGE BUTTON */
