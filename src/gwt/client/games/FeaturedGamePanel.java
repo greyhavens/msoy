@@ -39,7 +39,7 @@ public class FeaturedGamePanel extends AbsolutePanel
 
         ClickListener detailsClick =
             Link.createListener(Pages.GAMES, Args.compose("d", game.gameId));
-        add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SCREENSHOT, detailsClick), 10, 37);
+        add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SHOT_SIZE, detailsClick), 10, 37);
         if (game.playersOnline > 0) {
             add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline), "Online"), 10, 170);
         }

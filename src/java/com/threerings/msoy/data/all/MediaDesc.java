@@ -82,7 +82,7 @@ public class MediaDesc implements Streamable, IsSerializable
     public static final int SNAPSHOT_FULL_SIZE = 5;
 
     /** The full size for game screenshots. */
-    public static final int GAME_SCREENSHOT = 6;
+    public static final int GAME_SHOT_SIZE = 6;
 
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;

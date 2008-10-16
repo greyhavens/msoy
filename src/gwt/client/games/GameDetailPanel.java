@@ -79,7 +79,7 @@ public class GameDetailPanel extends SmartTable
 
         VerticalPanel shot = new VerticalPanel();
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        shot.add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SCREENSHOT, null));
+        shot.add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SHOT_SIZE, null));
         if (detail.listedItem != null) {
             shot.add(WidgetUtil.makeShim(5, 5));
             shot.add(new ItemRating(detail.listedItem, detail.memberItemInfo, false));
