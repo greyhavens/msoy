@@ -92,6 +92,41 @@ public class Args
     }
 
     /**
+     * Returns true if the specified argument is a prefixed numeric id, like <code>s2343</code>,
+     * false otherwise.
+     */
+    public boolean isPrefixedId (int index, String prefix)
+    {
+        String rawarg = get(index, "");
+        if (rawarg.startsWith(prefix)) {
+            try {
+                Integer.parseInt(rawarg.substring(prefix.length()));
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the id prefixed by the specified string, i.e. <code>s2343</code>. If the argument is
+     * invalid, non-existent or otherwise bogus, the supplied default value is returned.
+     */
+    public int getPrefixedId (int index, String prefix, int defId)
+    {
+        String rawarg = get(index, "");
+        if (rawarg.startsWith(prefix)) {
+            try {
+                return Integer.parseInt(rawarg.substring(prefix.length()));
+            } catch (Exception e) {
+                return defId;
+            }
+        }
+        return defId;
+    }
+
+    /**
      * If this args list contains the specified string, returns its index.
      * Otherwise returns the value -1.
      */
