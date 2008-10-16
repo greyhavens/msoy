@@ -170,6 +170,11 @@
         <tag name="ol" action="validate"/>
         <tag name="li" action="validate"/>
 
+        <!-- Table tags -->
+        <tag name="table" action="validate"/>
+        <tag name="tr" action="validate"/>
+        <tag name="td" action="validate"/>
+
         <!-- Anchor and anchor related tags -->
         <tag name="a" action="validate">
             <attribute name="href" onInvalid="filterTag"/>
