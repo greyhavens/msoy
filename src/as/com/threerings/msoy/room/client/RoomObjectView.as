@@ -46,6 +46,8 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.UberClient;
 
+import com.threerings.msoy.data.MsoyCodes;
+
 import com.threerings.msoy.chat.client.ChatInfoProvider;
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.chat.data.MsoyChatChannel;
@@ -404,6 +406,12 @@ public class RoomObjectView extends RoomView
 
         // start playing background audio
         _octrl.setBackgroundMusic(_scene.getAudioData());
+
+        var localOccupant :MemberInfo;
+        localOccupant = _roomObj.occupantInfo.get(_ctx.getClient().getClientOid()) as MemberInfo;
+        if (localOccupant != null && localOccupant.hasStaticAvatar()) {
+            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS, "m.static_avatar");
+        }
     }
 
     // from RoomView

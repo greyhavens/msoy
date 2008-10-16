@@ -56,12 +56,22 @@ public class MemberInfo extends ActorInfo
         _scale = scale;
     }
 
+    /**
+     * Returns true if the server has assigned this member a static avatar due to a high room
+     * population or low frame rate.
+     */
+    public function hasStaticAvatar () :Boolean
+    {
+        return _staticAvatar;
+    }
+
     // from ActorInfo
     override public function clone () :Object
     {
         var that :MemberInfo = super.clone() as MemberInfo;
         that._scale = this._scale;
         that._game = this._game;
+        that._staticAvatar = this._staticAvatar;
         return that;
     }
 
@@ -71,6 +81,7 @@ public class MemberInfo extends ActorInfo
         super.readObject(ins);
         _scale = ins.readFloat();
         _game = GameSummary(ins.readObject());
+        _staticAvatar = ins.readBoolean();
     }
 
     /** @inheritDoc */
@@ -80,9 +91,11 @@ public class MemberInfo extends ActorInfo
         super.toStringBuilder(buf);
         buf.append(", scale=", _scale);
         buf.append(", game=", _game);
+        buf.append(", staticAvatar=", _staticAvatar);
     }
 
     protected var _scale :Number;
     protected var _game :GameSummary;
+    protected var _staticAvatar :Boolean;
 }
 }

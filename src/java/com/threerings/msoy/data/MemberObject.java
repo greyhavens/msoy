@@ -25,6 +25,7 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 import com.threerings.msoy.data.all.ContactEntry;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -135,6 +136,10 @@ public class MemberObject extends MsoyBodyObject
     /** An {@link #availability} status. */
     public static final int UNAVAILABLE = 2;
 
+    /** After this level of occupancy is reached, avatars are made static. Currently only enabled
+     * for development. */
+    public static final int AVATAR_RENDERING_LIMIT = 10;
+    
     /** The name and id information for this user. */
     public VizMemberName memberName;
 
@@ -484,7 +489,8 @@ public class MemberObject extends MsoyBodyObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        return viewOnly ? new ObserverInfo(this) : new MemberInfo(this);
+        return viewOnly ? new ObserverInfo(this) : new MemberInfo(
+            this, plobj.occupantInfo.size() >= AVATAR_RENDERING_LIMIT);
     }
 
     @Override // from BodyObject

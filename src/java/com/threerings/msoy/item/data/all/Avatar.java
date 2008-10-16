@@ -32,6 +32,14 @@ public class Avatar extends Item
         return new DefaultItemMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "guest");
     }
 
+    /**
+     * Returns a {@link MediaDesc} configured to display for static image avatars.
+     */
+    public static MediaDesc getStaticImageAvatarMedia ()
+    {
+        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, AVATAR, "static");
+    }
+
     @Override // from Item
     public byte getType ()
     {

@@ -17,12 +17,17 @@ import com.threerings.msoy.data.all.MemberName;
  */
 public class MemberInfo extends ActorInfo
 {
-    public MemberInfo (MemberObject memobj)
+    public MemberInfo (MemberObject memobj, boolean useStaticImage)
     {
         super(memobj, null, null); // we'll fill these in later
 
         // configure our media and scale
-        if (memobj.avatar != null) {
+        if (useStaticImage) {
+            _media = Avatar.getStaticImageAvatarMedia();
+            _scale = 1f;
+            _ident = new ItemIdent(Item.OCCUPANT, memobj.getOid());
+            _staticAvatar = true;
+        } else if (memobj.avatar != null) {
             _media = memobj.avatar.avatarMedia;
             _scale = memobj.avatar.scale;
             _ident = memobj.avatar.getIdent();
@@ -79,4 +84,5 @@ public class MemberInfo extends ActorInfo
 
     protected float _scale;
     protected GameSummary _game;
+    protected boolean _staticAvatar;
 }
