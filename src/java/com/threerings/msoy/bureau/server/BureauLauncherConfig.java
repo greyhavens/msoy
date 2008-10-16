@@ -35,7 +35,13 @@ public class BureauLauncherConfig
     /** True if the world/game servers will be restarting when code changes (and therefore
      * probably not calling BureauLauncherSender.shutdown. */
     public static boolean worldServerWillAutoRestart;
-
+    
+    /** Number of bytes per bureau log per roll period (usually 1 day). */
+    public static int maximumLogSize;
+    
+    /** Milliseconds between summary printing. */
+    public static int summaryIntervalMillis;
+    
     /**
      * Returns a provider of JDBC connections.
      */
@@ -65,5 +71,7 @@ public class BureauLauncherConfig
         bureauSharedSecret = config.getValue("bureau_secret", "");
         windowSharedSecret = config.getValue("window_secret", "");
         worldServerWillAutoRestart = config.getValue("world_server_will_auto_restart", false);
+        maximumLogSize = config.getValue("max_log_kb", 10*1024) * 1024;
+        summaryIntervalMillis = config.getValue("summary_interval_mins", 30) * 60*1000;
     }
 }

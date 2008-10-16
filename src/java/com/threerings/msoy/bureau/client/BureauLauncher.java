@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.bureau.client;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -170,6 +171,17 @@ public class BureauLauncher
     public void run ()
     {
         _pollNodes.schedule(0, PEER_POLL_INTERVAL);
+        
+        // reset our log limit when the file is rolled
+        BureauFileAppender.setRollObserver(new BureauFileAppender.RollObserver() {
+            public void logRolled(BureauFileAppender instance) {
+                _runner.postRunnable(new Runnable() {
+                    public void run() {
+                        BureauLauncher.this.logRolled();
+                    }
+                });
+            }
+        });
 
         new Thread() {
             public void run () {
@@ -177,13 +189,13 @@ public class BureauLauncher
             }
         }.start();
 
-        // Print a status summary every 30 minutes
-        final int SUMMARY_INTERVAL = 30*60*1000;
+        // Print a status summary every 30 minutes (configurable)
+        int summaryInterval = BureauLauncherConfig.summaryIntervalMillis;
         new Interval(_runner) {
             public void expired () {
                 printSummary();
             }
-        }.schedule(SUMMARY_INTERVAL, SUMMARY_INTERVAL);
+        }.schedule(summaryInterval, summaryInterval);
 
         log.info("Starting");
         _runner.run();
@@ -201,25 +213,39 @@ public class BureauLauncher
     // from BureauLauncherReceiver
     public void launchThane (String bureauId, String token, String server, int port)
     {
-        // TODO: should this go on an invoker thread? Normally, yes, but this is only going to be
-        // called when the first instance of a game is played since the last server restart, so it
-        // is debatable.
+        // create the system command to execute
         String windowToken = StringUtil.md5hex(BureauLauncherConfig.windowSharedSecret);
         String [] command = {
             BureauLauncherConfig.serverRoot + "/bin/runthaneclient", "burl", bureauId, token, 
             server, String.valueOf(port), windowToken};
-        log.info("Attempting to launch thane", "command", command);
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream(true);
-        try {
-            Process process = builder.start();
-            // log the output of the process and prefix with bureau id
-            _activeBureaus.add(new BureauLogRedirector(bureauId, process.getInputStream()));
-            ++_totalLaunched;
 
+        // attempt to launch the process
+        Process process = null;
+        try {
+            process = builder.start();
         } catch (java.io.IOException ioe) {
             log.warning("Could not launch thane", "bureauId", bureauId, ioe);
+            return;
         }
+
+        // truncate any running log and calculate the new limit
+        int limit = BureauLauncherConfig.maximumLogSize;
+        BureauLogRedirector redirector = _logs.get(bureauId);
+        if (redirector != null) {
+            limit  = redirector.getLimit() - redirector.getWritten();
+            if (redirector.isRunning()) {
+                log.warning(
+                    "Did not expect to launch two bureaus with the same id", "bureauId", bureauId);
+                redirector.reset(0);
+            }
+        }
+
+        // log the output of the process and prefix with bureau id
+        log.info("Launched thane", "command", command, "logLimit", limit);
+        _logs.put(bureauId, new BureauLogRedirector(bureauId, process.getInputStream(), limit));
+        ++_totalLaunched;
     }
 
     // from BureauLauncherReceiver
@@ -314,15 +340,15 @@ public class BureauLauncher
     
     protected void printSummary ()
     {
-        // Prune old redirectors
-        for (Iterator<BureauLogRedirector> it = _activeBureaus.iterator(); it.hasNext();) {
-            if (!it.next().isRunning()) {
-                it.remove();
+        int activeCount = 0;
+        for (BureauLogRedirector log : _logs.values()) {
+            if (log.isRunning()) {
+                ++activeCount;
             }
         }
 
-        Object[] args = {"totalLaunched", _totalLaunched, "activeCount",
-            _activeBureaus.size(), "connectionCount", _connections._clients.size()};
+        Object[] args = {"totalLaunched", _totalLaunched, "activeCount", activeCount, 
+            "connectionCount", _connections._clients.size()};
         String msg = "Status";
 
         // Print summary to launcher log
@@ -330,6 +356,19 @@ public class BureauLauncher
 
         // Print summary to merged log
         Logger.getLogger(BureauLogRedirector.class).info(msg, args);
+    }
+    
+    protected void logRolled ()
+    {
+        log.info("Resetting bureau log limits");
+        for (Iterator<BureauLogRedirector> iter = _logs.values().iterator(); iter.hasNext(); ) {
+            BureauLogRedirector log = iter.next();
+            if (log.isRunning()) {
+                log.reset(BureauLauncherConfig.maximumLogSize);
+            } else {
+                iter.remove();
+            }
+        }
     }
 
     /** Presents run queue. */
@@ -355,7 +394,7 @@ public class BureauLauncher
     protected int _totalLaunched;
 
     /** The current set of log redirectors. Pruned periodically when printing a summary. */
-    protected HashSet<BureauLogRedirector> _activeBureaus = new HashSet<BureauLogRedirector>();
+    protected HashMap<String, BureauLogRedirector> _logs = Maps.newHashMap();
     
     /** The nodes repository. */
     @Inject protected NodeRepository _nodeRepo;
@@ -369,5 +408,4 @@ public class BureauLauncher
 
     /** Duration to perform hyper polling before switching back to normal. */
     protected static long RESUME_NORMAL_INTERVAL = 10000;
-
 }

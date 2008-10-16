@@ -38,3 +38,11 @@ db.default.password = PASSWORD
 
 # bureau_secret = you can't guess this
 # window_secret = only the computer knows
+
+# Maximum kilobytes to allow a single bureau process to output in one log rolling period
+# (usually one day, configured by relevant log4j properties file)
+max_log_kb = 10240
+
+# Number of minutes between summary posts to both the bureau launcher log and the bureau
+# log. This keeps the logs rolling over and summarizing on a regular basis.
+summary_interval_mins = 30
