@@ -52,86 +52,50 @@ import client.ui.MsoyUI;
 import client.ui.RowPanel;
 
 /**
- * A sample toolbar for use with {@link RichTextArea}. It provides a simple UI
- * for all rich text formatting, dynamically displayed only for the available
- * functionality.
+ * A sample toolbar for use with {@link RichTextArea}. It provides a simple UI for all rich text
+ * formatting, dynamically displayed only for the available functionality.
  */
 public class RichTextToolbar extends Composite
 {
     /**
-     * This {@link Constants} interface is used to make the toolbar's strings
-     * internationalizable.
+     * This {@link Constants} interface is used to make the toolbar's strings internationalizable.
      */
     public interface Strings extends Constants
     {
         String black ();
-
         String blue ();
-
         String bold ();
-
         String color ();
-
         String createLink ();
-
         String font ();
-
         String green ();
-
         String hr ();
-
         String indent ();
-
         String insertImage ();
-
         String italic ();
-
         String justifyCenter ();
-
         String justifyLeft ();
-
         String justifyRight ();
-
         String large ();
-
         String medium ();
-
         String normal ();
-
         String ol ();
-
         String outdent ();
-
         String red ();
-
         String removeFormat ();
-
         String removeLink ();
-
         String size ();
-
         String small ();
-
         String strikeThrough ();
-
         String subscript ();
-
         String superscript ();
-
         String ul ();
-
         String underline ();
-
         String white ();
-
         String xlarge ();
-
         String xsmall ();
-
         String xxlarge ();
-
         String xxsmall ();
-
         String yellow ();
     }
 
@@ -157,36 +121,36 @@ public class RichTextToolbar extends Composite
         if (basic != null) {
             topPanel.add(bold = createToggleButton(images.bold(), strings.bold()));
             topPanel.add(italic = createToggleButton(images.italic(), strings.italic()));
-            topPanel.add(underline = createToggleButton(images.underline(),
-                                                        strings.underline()));
-            topPanel.add(subscript = createToggleButton(images.subscript(),
-                                                        strings.subscript()));
-            topPanel.add(superscript = createToggleButton(images.superscript(),
-                                                          strings.superscript()));
-            topPanel.add(justifyLeft = createPushButton(images.justifyLeft(),
-                                                        strings.justifyLeft()));
-            topPanel.add(justifyCenter = createPushButton(images.justifyCenter(),
-                                                          strings.justifyCenter()));
-            topPanel.add(justifyRight = createPushButton(images.justifyRight(),
-                                                         strings.justifyRight()));
+            topPanel.add(underline =
+                         createToggleButton(images.underline(), strings.underline()));
+            topPanel.add(subscript =
+                         createToggleButton(images.subscript(), strings.subscript()));
+            topPanel.add(superscript =
+                         createToggleButton(images.superscript(), strings.superscript()));
+            topPanel.add(justifyLeft =
+                         createPushButton(images.justifyLeft(), strings.justifyLeft()));
+            topPanel.add(justifyCenter =
+                         createPushButton(images.justifyCenter(), strings.justifyCenter()));
+            topPanel.add(justifyRight =
+                         createPushButton(images.justifyRight(), strings.justifyRight()));
         }
 
         if (extended != null) {
-            topPanel.add(strikethrough = createToggleButton(images.strikeThrough(),
-                                                            strings.strikeThrough()));
+            topPanel.add(strikethrough =
+                         createToggleButton(images.strikeThrough(), strings.strikeThrough()));
             topPanel.add(indent = createPushButton(images.indent(), strings.indent()));
             topPanel.add(outdent = createPushButton(images.outdent(), strings.outdent()));
             topPanel.add(hr = createPushButton(images.hr(), strings.hr()));
             topPanel.add(ol = createPushButton(images.ol(), strings.ol()));
             topPanel.add(ul = createPushButton(images.ul(), strings.ul()));
-            topPanel.add(insertImage = createPushButton(images.insertImage(),
-                                                        strings.insertImage()));
-            topPanel.add(createLink = createPushButton(images.createLink(),
-                                                       strings.createLink()));
-            topPanel.add(removeLink = createPushButton(images.removeLink(),
-                                                       strings.removeLink()));
-            topPanel.add(removeFormat = createPushButton(images.removeFormat(),
-                                                         strings.removeFormat()));
+            topPanel.add(removeFormat =
+                         createPushButton(images.removeFormat(), strings.removeFormat()));
+            topPanel.add(createLink =
+                         createPushButton(images.createLink(), strings.createLink()));
+            topPanel.add(removeLink =
+                         createPushButton(images.removeLink(), strings.removeLink()));
+            topPanel.add(insertImage =
+                         createPushButton(images.insertImage(), strings.insertImage()));
         }
 
         if (basic != null) {
@@ -204,8 +168,8 @@ public class RichTextToolbar extends Composite
                 }), HasAlignment.ALIGN_MIDDLE);
             }
 
-            // We only use these listeners for updating status, so don't hook them up
-            // unless at least basic editing is supported.
+            // we only use these listeners for updating status, so don't hook them up unless at
+            // least basic editing is supported.
             richText.addKeyboardListener(listener);
             richText.addClickListener(listener);
         }
