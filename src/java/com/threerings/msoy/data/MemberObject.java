@@ -36,6 +36,7 @@ import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
+import com.threerings.msoy.room.data.RoomObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -135,10 +136,6 @@ public class MemberObject extends MsoyBodyObject
     /** An {@link #availability} status. */
     public static final int UNAVAILABLE = 2;
 
-    /** After this level of occupancy is reached, avatars are made static. Currently only enabled
-     * for development. */
-    public static final int AVATAR_RENDERING_LIMIT = 10;
-    
     /** The name and id information for this user. */
     public VizMemberName memberName;
 
@@ -491,13 +488,9 @@ public class MemberObject extends MsoyBodyObject
         if (viewOnly) {
             return new ObserverInfo(this);
         }
-        int avatarCount = 0;
-        for (OccupantInfo info : plobj.occupantInfo) {
-            if (info instanceof MemberInfo) {
-                ++avatarCount;
-            }
-        }
-        return new MemberInfo(this, avatarCount >= AVATAR_RENDERING_LIMIT);
+        boolean useStaticImage = 
+            (plobj instanceof RoomObject) && ((RoomObject)plobj).shouldMakeNewActorsStatic();
+        return new MemberInfo(this, useStaticImage);
     }
 
     @Override // from BodyObject

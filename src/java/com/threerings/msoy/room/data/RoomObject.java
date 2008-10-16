@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.data;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -47,6 +48,9 @@ public class RoomObject extends SpotSceneObject
      * Format: [ url ]. */
     public static final String MUSIC_ENDED = "musicEnded";
 
+    /** After this level of occupancy is reached, actors are made static. */
+    public static final int ACTOR_RENDERING_LIMIT = DeploymentConfig.devDeployment ? 10 : 999;
+    
     /** Our room service marshaller. */
     public RoomMarshaller roomService;
 
@@ -58,6 +62,18 @@ public class RoomObject extends SpotSceneObject
 
     /** The property spaces associated with this room. */
     public DSet<RoomPropertiesEntry> propertySpaces = DSet.newDSet();
+    
+    /** Server-only cache of the number of pets and avatars in this room. */
+    public transient int numActors;
+    
+    /**
+     * Tests if new actors entering the room should be rendered as static bitmaps to reduce client
+     * frame rate problems.
+     */
+    public boolean shouldMakeNewActorsStatic ()
+    {
+        return numActors >= ACTOR_RENDERING_LIMIT;
+    }
     
     // AUTO-GENERATED: METHODS START
     /**

@@ -1277,6 +1277,9 @@ public class RoomManager extends SpotSceneManager
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
                 updateAvatarIdent(null, event.getEntry());
+                if (event.getEntry() instanceof ActorInfo) {
+                    _roomObj.numActors++;
+                }
             }
         }
 
@@ -1295,6 +1298,9 @@ public class RoomManager extends SpotSceneManager
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
                 updateAvatarIdent(event.getOldEntry(), null);
+                if (event.getOldEntry() instanceof ActorInfo) {
+                    _roomObj.numActors--;
+                }
             }
         }
 

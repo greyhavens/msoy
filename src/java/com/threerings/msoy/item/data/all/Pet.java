@@ -28,6 +28,14 @@ public class Pet extends Item
      * issue this order on any pet that is bound to that room. */
     public static final int ORDER_SLEEP = 4;
 
+    /**
+     * Returns a <code>MediaDesc</code> configured to display a pet as a static image.
+     */
+    public static MediaDesc getStaticImagePetMedia ()
+    {
+        return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, PET, "static");
+    }
+    
     @Override // from Item
     public byte getType ()
     {

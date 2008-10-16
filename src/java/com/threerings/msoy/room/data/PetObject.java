@@ -35,7 +35,9 @@ public class PetObject extends MsoyBodyObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        return new PetInfo(this);
+        boolean useStaticImage = 
+            (plobj instanceof RoomObject) && ((RoomObject)plobj).shouldMakeNewActorsStatic();
+        return new PetInfo(this, useStaticImage);
     }
 
     @Override // from BodyObject

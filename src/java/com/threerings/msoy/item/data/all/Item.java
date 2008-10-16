@@ -459,7 +459,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     }
 
     /**
-     * Verifise that all the required fields in this particular Item subclass are filled in, make
+     * Verifies that all the required fields in this particular Item subclass are filled in, make
      * sense, and are consistent with each other. This is used to verify the data being edited by a
      * user during item creation, and also that the final uploaded item isn't hacked.
      */

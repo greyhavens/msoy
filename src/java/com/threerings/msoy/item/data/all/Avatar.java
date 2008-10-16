@@ -17,7 +17,7 @@ public class Avatar extends Item
     public float scale;
 
     /**
-     * Returns a {@link MediaDesc} configured to display the default non-guest avatar.
+     * Returns a <code>MediaDesc</code> configured to display the default non-guest avatar.
      */
     public static MediaDesc getDefaultMemberAvatarMedia ()
     {
@@ -25,7 +25,7 @@ public class Avatar extends Item
     }
 
     /**
-     * Returns a {@link MediaDesc} configured to display the default guest avatar.
+     * Returns a <code>MediaDesc</code> configured to display the default guest avatar.
      */
     public static MediaDesc getDefaultGuestAvatarMedia ()
     {
@@ -33,7 +33,7 @@ public class Avatar extends Item
     }
 
     /**
-     * Returns a {@link MediaDesc} configured to display for static image avatars.
+     * Returns a <code>MediaDesc</code> configured to display an avatar as a static image.
      */
     public static MediaDesc getStaticImageAvatarMedia ()
     {
