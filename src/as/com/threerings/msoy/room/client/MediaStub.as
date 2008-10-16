@@ -19,6 +19,8 @@ import flash.system.Security;
 
 import flash.utils.ByteArray;
 
+import com.threerings.flash.LoaderUtil;
+
 /**
  * The MediaStub is built and placed on the media server. It is then loaded
  * up by MsoyMediaContainers that need to display a non-image, and the
@@ -84,13 +86,7 @@ public class MediaStub extends Sprite
         for (var ii :int = numChildren - 1; ii >= 0; ii--) {
             var disp :DisplayObject = getChildAt(ii);
             if (disp is Loader) {
-                var l :Loader = Loader(disp);
-                try {
-                    l.close();
-                } catch (err :Error) {
-                    // ignore
-                }
-                l.unload();
+                LoaderUtil.unload(Loader(disp));
             }
         }
     }

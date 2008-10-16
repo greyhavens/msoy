@@ -28,6 +28,8 @@ import mx.containers.Canvas;
 
 import com.threerings.util.ValueEvent;
 
+import com.threerings.flash.LoaderUtil;
+
 /** 
  * Dispatched when the size of the image is known.
  */
@@ -65,12 +67,7 @@ public class DisplayCanvas extends Canvas
         if (_image != null) {
             getImageLayer().removeChild(_image);
             if (_image is Loader) {
-                var loader :Loader = _image as Loader;
-                try {
-                    loader.close();
-                } catch (err :Error) {
-                }
-                loader.unload();
+                LoaderUtil.unload(Loader(_image));
             }
             _image = null;
         }
