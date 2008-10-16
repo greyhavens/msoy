@@ -488,8 +488,16 @@ public class MemberObject extends MsoyBodyObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        return viewOnly ? new ObserverInfo(this) : new MemberInfo(
-            this, plobj.occupantInfo.size() >= AVATAR_RENDERING_LIMIT);
+        if (viewOnly) {
+            return new ObserverInfo(this);
+        }
+        int avatarCount = 0;
+        for (OccupantInfo info : plobj.occupantInfo) {
+            if (info instanceof MemberInfo) {
+                ++avatarCount;
+            }
+        }
+        return new MemberInfo(this, avatarCount >= AVATAR_RENDERING_LIMIT);
     }
 
     @Override // from BodyObject
