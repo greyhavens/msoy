@@ -800,27 +800,6 @@ public class RoomObjectController extends RoomController
     }
 
     /**
-     * Does this client have control over the current AVRG?
-     *
-     * @returns true, false, or null if nobody currently has control.
-     */
-    public function hasAVRGameControl () :Object
-    {
-        var gameId :int = _wdctx.getGameDirector().getGameId();
-        if (gameId == 0) {
-            log.warning("Got AVRG control request, but we don't seem to be playing one.");
-            return null;
-        }
-
-        var ctrl :EntityControl =
-            _roomObj.controllers.get(new ControllableAVRGame(gameId)) as EntityControl;
-        if (ctrl != null) {
-            return ctrl.controllerOid == _wdctx.getMemberObject().getOid();
-        }
-        return null;
-    }
-
-    /**
      * Called when the client is minimized and unminimized.
      */
     protected function miniWillChange (event :ValueEvent) :void
