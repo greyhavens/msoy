@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -78,8 +79,7 @@ public class GameDetailPanel extends SmartTable
 
         VerticalPanel shot = new VerticalPanel();
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        shot.add(new ThumbBox(game.getShotMedia(), GameDetail.SHOT_WIDTH,
-                              GameDetail.SHOT_HEIGHT, null));
+        shot.add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SCREENSHOT, null));
         if (detail.listedItem != null) {
             shot.add(WidgetUtil.makeShim(5, 5));
             shot.add(new ItemRating(detail.listedItem, detail.memberItemInfo, false));

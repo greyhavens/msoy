@@ -81,6 +81,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The full size for canonical scene snapshots. */
     public static final int SNAPSHOT_FULL_SIZE = 5;
 
+    /** The full size for game screenshots. */
+    public static final int GAME_SCREENSHOT = 6;
+
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;
 
@@ -684,5 +687,6 @@ public class MediaDesc implements Streamable, IsSerializable
         THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
         175, 100, // scene snapshot thumb size
         350, 200, // full scene snapshot image size
+        175, 125, // game screenshots
     };
 }

@@ -20,7 +20,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
-import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.web.client.Args;
 import com.threerings.msoy.web.client.Pages;
 
@@ -151,8 +150,7 @@ public class TopGamesPanel extends AbsolutePanel
 
         VerticalPanel left = new VerticalPanel();
         left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        left.add(new ThumbBox(game.getShotMedia(), GameDetail.SHOT_WIDTH, GameDetail.SHOT_HEIGHT,
-                              onClick));
+        left.add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SCREENSHOT, onClick));
 
         if (game.playersOnline > 0) {
             left.add(WidgetUtil.makeShim(10, 10));
@@ -178,7 +176,8 @@ public class TopGamesPanel extends AbsolutePanel
 
         gameInfoTable.setWidget(0, 0, left);
         gameInfoTable.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-        gameInfoTable.getFlexCellFormatter().setWidth(0, 0, GameDetail.SHOT_WIDTH + "px");
+        gameInfoTable.getFlexCellFormatter().setWidth(
+            0, 0, MediaDesc.getWidth(MediaDesc.GAME_SCREENSHOT) + "px");
         gameInfoTable.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
 
         // game text info on the right

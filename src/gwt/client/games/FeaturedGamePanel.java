@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
-import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.web.client.Args;
 import com.threerings.msoy.web.client.Pages;
 
@@ -39,8 +39,7 @@ public class FeaturedGamePanel extends AbsolutePanel
 
         ClickListener detailsClick =
             Link.createListener(Pages.GAMES, Args.compose("d", game.gameId));
-        add(new ThumbBox(game.getShotMedia(), GameDetail.SHOT_WIDTH, GameDetail.SHOT_HEIGHT,
-                         detailsClick), 10, 37);
+        add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SCREENSHOT, detailsClick), 10, 37);
         if (game.playersOnline > 0) {
             add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline), "Online"), 10, 170);
         }
