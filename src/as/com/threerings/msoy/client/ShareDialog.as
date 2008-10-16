@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.client {
 
+import flash.events.ErrorEvent;
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.events.SecurityErrorEvent;
 import flash.events.MouseEvent;
 
 import flash.net.FileReference;
@@ -149,9 +153,10 @@ public class ShareDialog extends FloatingPanel
         txt.selectable = false;
         txt.text = Msgs.GENERAL.get("m.stub_share");
         box.addChild(txt);
-        var btn :CommandButton = new CommandButton(Msgs.GENERAL.get("b.stub_share"));
-        btn.setCallback(startDownload, [ url, "RoomStub.swf", btn ]);
-        box.addChild(btn);
+        _downloadBtn = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
+            startDownload, [ url, "Whirled-room-" + _placeId + "-stub.swf" ]);
+        box.addChild(_downloadBtn);
+        box.addChild(_downloadError = FlexUtil.createLabel(""));
         return box;
     }
 
@@ -282,12 +287,25 @@ public class ShareDialog extends FloatingPanel
         close(); // and make like the proverbial audi 5000
     }
 
-    protected function startDownload (url :String, localFile :String, btn :UIComponent) :void
+    protected function startDownload (url :String, localFile :String) :void
     {
-        btn.enabled = false;
+        _downloadBtn.enabled = false;
+        _downloadError.text = "";
+
         _fileRef = new FileReference();
+        _fileRef.addEventListener(Event.CANCEL, handleDownloadStopEvent);
+        _fileRef.addEventListener(Event.COMPLETE, handleDownloadStopEvent);
+        _fileRef.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleDownloadStopEvent);
+        _fileRef.addEventListener(IOErrorEvent.IO_ERROR, handleDownloadStopEvent);
         _fileRef.download(new URLRequest(url), localFile);
-        // TODO: listeners, re-enable button
+    }
+
+    protected function handleDownloadStopEvent (event :Event) :void
+    {
+        _downloadBtn.enabled = true;
+        if (event is ErrorEvent) {
+            _downloadError.text = ErrorEvent(event).text;
+        }
     }
 
     protected var _inGame :Boolean;
@@ -299,6 +317,9 @@ public class ShareDialog extends FloatingPanel
 
     protected var _sizeGroup :RadioButtonGroup = new RadioButtonGroup();
     protected var _status :Text;
+
+    protected var _downloadBtn :CommandButton;
+    protected var _downloadError :Label;
 
     protected static const EMBED_SIZES :Array = [
         [350, 200], [400, 415], [700, 575], ["100%", 575]
