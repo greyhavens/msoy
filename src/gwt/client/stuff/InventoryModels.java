@@ -40,10 +40,14 @@ public class InventoryModels
         public final String query;
 
         public Stuff (List<Item> items, Key key) {
+            this(items, key.type, key.suiteId, key.query);
+        }
+
+        public Stuff (List<Item> items, byte type, int suiteId, String query) {
             super(items);
-            type = key.type;
-            suiteId = key.suiteId;
-            query = key.query;
+            this.type = type;
+            this.suiteId = suiteId;
+            this.query = query;
         }
 
         public boolean matches (Item item) {
@@ -57,6 +61,10 @@ public class InventoryModels
 
         public String toString () {
             return "[type=" + type + ", suiteId=" + suiteId + ", query=" + query + "]";
+        }
+
+        protected SimpleDataModel<Item> createFilteredModel (List<Item> items) {
+            return new Stuff(items, type, suiteId, query);
         }
     }
 
