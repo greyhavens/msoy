@@ -24,8 +24,11 @@ public class Decor extends Item
     /** Type constant for a room with non-standard, flat layout. */
     public static final byte FLAT_LAYOUT = 3;
 
+    /** Type constant for a room with a bird's eye view layout. */
+    public static final byte TOPDOWN_LAYOUT = 4;
+
     /** The number of type constants. */
-    public static final int TYPE_COUNT = 4;
+    public static final int TYPE_COUNT = 5;
 
     /** Room type. Specifies how the background wallpaper and layout are handled. */
     public byte type;

@@ -33,6 +33,7 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.ui.FlyingPanel;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyParameters;
@@ -236,7 +237,8 @@ public class DecorEditPanel extends FlyingPanel
 
         _checkRoomTypes = function ( ... ignored) :void {
             // turn depth and horizon off for flatland
-            const on :Boolean = _roomType.selectedIndex != ROOM_FLATLAND;
+            const on :Boolean =
+                _roomType.selectedIndex != ROOM_FLATLAND && _roomType.selectedIndex != ROOM_TOPDOWN;
             for each (var comp :UIComponent in [ horzP, depthP ]){
                 FlexUtil.setVisible(comp, on);
             }
@@ -269,6 +271,9 @@ public class DecorEditPanel extends FlyingPanel
         if (_decor.type == Decor.FLAT_LAYOUT) {
             return ROOM_FLATLAND;
 
+        } else if (_decor.type == Decor.TOPDOWN_LAYOUT) {
+            return ROOM_TOPDOWN;
+
         } else if ((_decor.type == Decor.IMAGE_OVERLAY) && _decor.hideWalls) {
             return ROOM_NO_WALLS;
 
@@ -299,6 +304,10 @@ public class DecorEditPanel extends FlyingPanel
             } finally {
                 _suppressSaves = false;
             }
+            break;
+
+        case ROOM_TOPDOWN:
+            _decor.type = Decor.TOPDOWN_LAYOUT;
             break;
 
         default:
@@ -335,8 +344,11 @@ public class DecorEditPanel extends FlyingPanel
     protected const ROOM_NORMAL :int = 0;
     protected const ROOM_NO_WALLS :int = 1;
     protected const ROOM_FLATLAND :int = 2;
+    protected const ROOM_TOPDOWN :int = 3;
 
-    protected const ROOM_KEYS :Array = [ "m.room_normal", "m.room_no_walls", "m.room_flat" ];
+    protected const ROOM_KEYS :Array =
+        [ "m.room_normal", "m.room_no_walls", "m.room_flat"].concat(
+        DeploymentConfig.devDeployment ? "m.room_topdown" : []);
 
     protected var _roomType :ComboBox;
     protected var _actorScale :VSlider;

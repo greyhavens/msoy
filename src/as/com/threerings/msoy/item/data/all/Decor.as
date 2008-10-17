@@ -27,8 +27,11 @@ public class Decor extends Item
     /** Type constant for a room with non-standard, flat layout. */
     public static const FLAT_LAYOUT :int = 3;
 
+    /** Type constant for a room with a bird's eye view layout. */
+    public static const TOPDOWN_LAYOUT :int = 4;
+
     /** The number of type constants. */
-    public static const TYPE_COUNT :int = 4;
+    public static const TYPE_COUNT :int = 5;
 
     /** Room type. Specifies how the background wallpaper and layout are handled. */
     public var type :int;

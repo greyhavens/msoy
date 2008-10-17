@@ -30,7 +30,8 @@ public class RoomBackdrop
     {
         g.clear();
 
-        if (_decor.type == Decor.FLAT_LAYOUT) {
+        // Don't draw the room lines with the freaky layouts
+        if (_decor.type == Decor.FLAT_LAYOUT || _decor.type == Decor.TOPDOWN_LAYOUT) {
             return;
         }
 
