@@ -368,7 +368,10 @@ public class RemixControls extends HBox
     {
         _saveBtn.enabled = false;
         _cancelBtn.enabled = false;
-        callLater(callLater, [ saveRemix ]);
+        _saveBtn.validateNow();
+        _cancelBtn.validateNow();
+        validateNow();
+        saveRemix();
     }
 
     protected function saveRemix () :void
