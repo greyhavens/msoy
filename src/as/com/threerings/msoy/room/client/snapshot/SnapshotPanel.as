@@ -8,10 +8,12 @@ import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
 
+import flash.geom.Rectangle;
+
 import flash.net.FileReference;
 import flash.net.URLRequest;
 
-import flash.geom.Rectangle;
+import flash.system.Capabilities;
 
 import mx.core.BitmapAsset;
 import mx.core.Container;
@@ -199,6 +201,11 @@ public class SnapshotPanel extends FloatingPanel
 
     protected function createSnapshotControls () :void
     {
+        if (int(String(Capabilities.version.split(" ")[1]).split(",")[0]) > 9) {
+            addChild(FlexUtil.createLabel(
+                "Snapshots are currently broken in Flash Player 10, we'll fix them soon."));
+        }
+
         var hPan :HBox = new HBox();
         _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
         _showOccs.selected = true;
