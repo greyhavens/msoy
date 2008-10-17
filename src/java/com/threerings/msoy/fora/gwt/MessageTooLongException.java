@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.fora.gwt;
 
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Thrown when a forum message that is too long is submitted.

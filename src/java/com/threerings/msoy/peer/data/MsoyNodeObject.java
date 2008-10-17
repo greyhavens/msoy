@@ -9,7 +9,7 @@ import com.threerings.crowd.peer.data.CrowdNodeObject;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * Maintains information on an MSOY peer server.

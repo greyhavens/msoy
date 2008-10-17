@@ -11,8 +11,8 @@ import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 import client.util.events.FlashEvents;
 import client.util.events.GotGuestIdEvent;

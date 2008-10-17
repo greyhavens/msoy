@@ -24,9 +24,9 @@ import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.TagHistory;
 
 import client.shell.CShell;
 import client.ui.CreatorLabel;

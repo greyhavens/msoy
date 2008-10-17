@@ -8,10 +8,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.gwt.LandingServiceAsync;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.client.WebMemberService;
-import com.threerings.msoy.web.client.WebMemberServiceAsync;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.shell.Page;

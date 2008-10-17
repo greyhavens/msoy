@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.group.gwt;
 
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * Extends the {@link MemberCard} with information on a group member's rank.

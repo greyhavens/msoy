@@ -35,7 +35,7 @@ import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
 
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Provides various services to servlets.

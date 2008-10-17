@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.badge.data.all.Badge;
 
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Provides information for the Me page.

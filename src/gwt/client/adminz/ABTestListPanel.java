@@ -18,8 +18,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
-import com.threerings.msoy.web.client.WebMemberService;
-import com.threerings.msoy.web.client.WebMemberServiceAsync;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;

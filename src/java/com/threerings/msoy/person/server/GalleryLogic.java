@@ -14,7 +14,7 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.server.persist.GalleryInfoRecord;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Provides shared Gallery related methods.

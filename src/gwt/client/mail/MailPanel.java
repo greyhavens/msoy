@@ -22,9 +22,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.mail.gwt.Conversation;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;

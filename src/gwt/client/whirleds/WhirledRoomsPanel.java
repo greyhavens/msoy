@@ -20,7 +20,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;

@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.TrophyCase;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.trophy.TrophyGrid;

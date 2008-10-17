@@ -17,8 +17,8 @@ import com.threerings.gwt.ui.Anchor;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 

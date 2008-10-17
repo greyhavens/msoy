@@ -39,7 +39,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.PeerProjectDispatcher;
 import com.threerings.msoy.peer.server.PeerProjectProvider;
 
-import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.web.server.UploadFile;
 

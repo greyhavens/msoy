@@ -6,7 +6,8 @@ package com.threerings.msoy.person.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
-import com.threerings.msoy.web.data.ServiceException;
+
+import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Provides gallery related functionality.

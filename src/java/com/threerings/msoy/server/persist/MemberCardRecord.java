@@ -15,7 +15,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * A computed persistent entity that's used to fetch (and cache) member name and photo info.

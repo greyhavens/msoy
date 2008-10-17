@@ -22,7 +22,7 @@ import com.threerings.msoy.item.gwt.CostUpdatedException;
 import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ItemActivator;
 import client.shell.CShell;

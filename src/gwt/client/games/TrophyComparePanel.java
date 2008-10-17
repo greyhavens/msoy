@@ -16,9 +16,9 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;

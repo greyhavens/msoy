@@ -32,8 +32,8 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.group.gwt.GroupMemberCard;
-import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 

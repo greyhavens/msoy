@@ -10,8 +10,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.DynamicLookup;
 import client.ui.CreatorLabel;

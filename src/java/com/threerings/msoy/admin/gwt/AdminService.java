@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.gwt.util.PagedResult;
 
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;

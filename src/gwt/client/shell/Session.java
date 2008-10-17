@@ -15,12 +15,12 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.web.client.WebMemberService;
-import com.threerings.msoy.web.client.WebMemberServiceAsync;
-import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.client.WebUserServiceAsync;
-import com.threerings.msoy.web.data.SessionData;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.SessionData;
+import com.threerings.msoy.web.gwt.WebCreds;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
+import com.threerings.msoy.web.gwt.WebUserService;
+import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;

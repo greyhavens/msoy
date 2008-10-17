@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.underwire.gwt.client.MyPetitionsPanel;
 import com.threerings.underwire.gwt.client.WebContext;

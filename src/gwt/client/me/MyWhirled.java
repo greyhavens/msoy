@@ -14,7 +14,7 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.person.FeedPanel;
 import client.person.PersonMessages;

@@ -10,8 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.game.data.all.Trophy;

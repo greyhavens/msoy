@@ -17,8 +17,8 @@ import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.AbstractUploadServlet;
 import com.threerings.msoy.web.server.FileItemUploadFile;
 import com.threerings.msoy.web.server.MemberHelper;

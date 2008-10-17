@@ -21,7 +21,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 import com.threerings.msoy.game.data.PlayerObject;
 

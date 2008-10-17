@@ -30,8 +30,8 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
 import com.threerings.msoy.person.gwt.GroupFeedMessage;
 import com.threerings.msoy.person.gwt.SelfFeedMessage;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;

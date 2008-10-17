@@ -36,9 +36,9 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.TagHistory;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;

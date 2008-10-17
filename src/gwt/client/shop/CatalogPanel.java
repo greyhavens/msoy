@@ -24,7 +24,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.gwt.CatalogQuery;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;

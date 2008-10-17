@@ -28,7 +28,7 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.landing.gwt.LandingData;

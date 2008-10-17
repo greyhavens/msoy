@@ -76,8 +76,8 @@ import com.threerings.msoy.swiftly.server.SwiftlyServlet;
 import com.threerings.msoy.swiftly.server.SwiftlyUploadServlet;
 import com.threerings.msoy.underwire.server.MsoyUnderwireServlet;
 
-import com.threerings.msoy.web.client.WebMemberService;
-import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebUserService;
 
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.SnapshotItemUploadServlet;

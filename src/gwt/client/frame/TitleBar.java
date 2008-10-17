@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.client.Tabs;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.Tabs;
 
 import client.shell.Page;
 import client.ui.MsoyUI;

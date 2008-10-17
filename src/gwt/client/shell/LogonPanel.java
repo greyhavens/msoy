@@ -21,10 +21,10 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.client.WebUserServiceAsync;
-import com.threerings.msoy.web.data.BannedException;
-import com.threerings.msoy.web.data.SessionData;
+import com.threerings.msoy.web.gwt.BannedException;
+import com.threerings.msoy.web.gwt.SessionData;
+import com.threerings.msoy.web.gwt.WebUserService;
+import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.ClickCallback;

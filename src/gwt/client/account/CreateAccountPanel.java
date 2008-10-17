@@ -33,14 +33,14 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.client.WebUserServiceAsync;
-import com.threerings.msoy.web.data.AccountInfo;
-import com.threerings.msoy.web.data.CaptchaException;
-import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.RegisterInfo;
-import com.threerings.msoy.web.data.SessionData;
+import com.threerings.msoy.web.gwt.AccountInfo;
+import com.threerings.msoy.web.gwt.CaptchaException;
+import com.threerings.msoy.web.gwt.Invitation;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.RegisterInfo;
+import com.threerings.msoy.web.gwt.SessionData;
+import com.threerings.msoy.web.gwt.WebUserService;
+import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;

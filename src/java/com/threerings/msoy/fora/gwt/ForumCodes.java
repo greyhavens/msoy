@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.fora.gwt;
 
-import com.threerings.msoy.web.data.ServiceCodes;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 
 /**
  * Codes and constants relating to the forum services.

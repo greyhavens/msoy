@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.threerings.gwt.ui.FloatPanel;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.images.stuff.StuffImages;
 import client.shell.CShell;

@@ -7,9 +7,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.client.Tabs;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.Tabs;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;

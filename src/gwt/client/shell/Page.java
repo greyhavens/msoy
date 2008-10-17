@@ -16,12 +16,12 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.client.Tabs;
-import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.SessionData;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Invitation;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SessionData;
+import com.threerings.msoy.web.gwt.Tabs;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 import client.ui.BorderedDialog;
 import client.util.ArrayUtil;

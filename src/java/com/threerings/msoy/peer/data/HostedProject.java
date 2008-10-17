@@ -4,7 +4,7 @@
 package com.threerings.msoy.peer.data;
 
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
-import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.gwt.ConnectConfig;
 
 /**
  * Represents a hosted Swiftly project on a particular server.

@@ -5,9 +5,9 @@ package client.shell;
 
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.SessionData;
+import com.threerings.msoy.web.gwt.Invitation;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SessionData;
 
 import client.util.events.FlashEvent;
 

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.web.gwt;
 
 import java.util.List;
 
@@ -9,8 +9,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.VisitorInfo;
 
-import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.MemberCard;
 
 /**
  * The asynchronous (client-side) version of {@link WebMemberService}.

@@ -28,9 +28,9 @@ import com.threerings.msoy.mail.server.persist.ConversationRecord;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.person.server.MailLogic;
 
-import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;

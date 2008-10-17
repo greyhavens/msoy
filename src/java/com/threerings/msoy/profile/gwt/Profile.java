@@ -6,7 +6,7 @@ package com.threerings.msoy.profile.gwt;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * Contains all member profile data for display on the profile page.

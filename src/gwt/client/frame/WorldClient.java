@@ -7,11 +7,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.client.WebUserServiceAsync;
-import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.LaunchConfig;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.ConnectConfig;
+import com.threerings.msoy.web.gwt.LaunchConfig;
+import com.threerings.msoy.web.gwt.WebCreds;
+import com.threerings.msoy.web.gwt.WebUserService;
+import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.util.FlashClients;

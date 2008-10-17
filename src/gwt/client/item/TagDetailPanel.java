@@ -30,7 +30,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
-import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.gwt.TagHistory;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;

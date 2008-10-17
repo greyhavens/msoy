@@ -21,8 +21,8 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.game.gwt.GameInfo;
 

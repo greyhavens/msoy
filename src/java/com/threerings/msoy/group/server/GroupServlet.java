@@ -35,9 +35,9 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.TagHistory;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 

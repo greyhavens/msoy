@@ -30,8 +30,8 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.web.data.LaunchConfig;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.LaunchConfig;
+import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.item.data.ItemCodes;

@@ -19,7 +19,7 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.AbstractUploadServlet;
 import com.threerings.msoy.web.server.FileItemUploadFile;
 import com.threerings.msoy.web.server.MemberHelper;

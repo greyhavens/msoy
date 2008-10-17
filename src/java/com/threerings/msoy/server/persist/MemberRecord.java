@@ -16,7 +16,7 @@ import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 /**
  * Contains persistent data stored for every member of MetaSOY.

@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.comment.gwt.Comment;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 import client.shell.ShellMessages;
 import client.ui.MessagePanel;

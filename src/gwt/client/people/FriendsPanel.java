@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.web.client.WebMemberService;
-import com.threerings.msoy.web.client.WebMemberServiceAsync;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.ui.HeaderBox;

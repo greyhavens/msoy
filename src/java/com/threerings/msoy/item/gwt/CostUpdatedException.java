@@ -4,7 +4,7 @@
 package com.threerings.msoy.item.gwt;
 
 import com.threerings.msoy.money.data.all.PriceQuote;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * An exception thrown by things that might have a cost associated with them.

@@ -15,7 +15,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.util.Link;

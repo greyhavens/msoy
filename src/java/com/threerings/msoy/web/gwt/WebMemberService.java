@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.web.gwt;
 
 import java.util.List;
 
@@ -11,9 +11,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
-import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.ServiceException;
 
 /**
  * Defines member-specific services available to the GWT/AJAX web client.

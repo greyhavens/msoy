@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.servlet.util.CookieUtil;
-import com.threerings.msoy.web.data.TrackingCookieUtil;
+
+import com.threerings.msoy.web.gwt.TrackingCookieUtil;
 
 /**
  * Wrapper for a cookie that stores HTTP "Referer" tags on the very first visit to

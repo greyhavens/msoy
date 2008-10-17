@@ -57,16 +57,16 @@ import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
-import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.data.AccountInfo;
-import com.threerings.msoy.web.data.CaptchaException;
-import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.LaunchConfig;
-import com.threerings.msoy.web.data.RegisterInfo;
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.SessionData;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.AccountInfo;
+import com.threerings.msoy.web.gwt.CaptchaException;
+import com.threerings.msoy.web.gwt.ConnectConfig;
+import com.threerings.msoy.web.gwt.LaunchConfig;
+import com.threerings.msoy.web.gwt.RegisterInfo;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.SessionData;
+import com.threerings.msoy.web.gwt.WebCreds;
+import com.threerings.msoy.web.gwt.WebUserService;
 
 /**
  * Provides the server implementation of {@link WebUserService}.

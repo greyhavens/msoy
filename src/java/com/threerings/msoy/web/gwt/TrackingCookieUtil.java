@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.web.gwt;
 
 /**
  * Utilities used by tracking cookies.

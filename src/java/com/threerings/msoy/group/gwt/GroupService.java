@@ -13,8 +13,8 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.TagHistory;
 
 /**
  * Defines group services available to the GWT/AJAX web client.

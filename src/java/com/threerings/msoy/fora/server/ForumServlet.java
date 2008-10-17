@@ -6,6 +6,8 @@ package com.threerings.msoy.fora.server;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -17,14 +19,31 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.HTMLSanitizer;
-import com.threerings.msoy.underwire.server.SupportLogic;
 
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
+
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -34,10 +53,7 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
-
-import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.msoy.underwire.server.SupportLogic;
 
 import com.threerings.msoy.fora.gwt.ForumCodes;
 import com.threerings.msoy.fora.gwt.ForumMessage;
@@ -250,9 +266,8 @@ public class ForumServlet extends MsoyServiceServlet
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
-        // sanitize and recheck the length of the message (note: we never display the subject
-        // as raw HTML so we don't need to sanitize it)
-        message = sanitizeMessage(message);
+        // sanitize this message's HTML, expand Whirled URLs and do length checking
+        message = processMessage(message);
 
         // create the thread (and first post) in the database and return its runtime form
         ForumThread thread = _forumRepo.createThread(
@@ -331,8 +346,8 @@ public class ForumServlet extends MsoyServiceServlet
         }
         checkAccess(mrec, ftr.groupId, Group.ACCESS_POST, ftr.flags);
 
-        // make sure the user is not doing anything nefarious in their HTML
-        message = sanitizeMessage(message);
+        // sanitize this message's HTML, expand Whirled URLs and do length checking
+        message = processMessage(message);
 
         // create the message in the database and return its runtime form
         ForumMessageRecord fmr = _forumRepo.postMessage(
@@ -370,8 +385,8 @@ public class ForumServlet extends MsoyServiceServlet
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
-        // make sure the user is not doing anything nefarious in their HTML
-        message = sanitizeMessage(message);
+        // sanitize this message's HTML, expand Whirled URLs and do length checking
+        message = processMessage(message);
 
         // if all is well then do the deed
         _forumRepo.updateMessage(messageId, message);
@@ -492,21 +507,130 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     /**
-     * Runs the supplied HTML message through our sanitizer and rechecks that the length of the
-     * message is within our limits. The sanitizer might make the message slightly longer.
+     * Runs the supplied HTML message through our sanitizer, expands Whirled URLs (looking up
+     * metadata for items, whirleds and games) and finally rechecks that the length of the message
+     * is within our limits. The sanitizer and/or URL expansion might make the message slightly
+     * longer.
      */
-    protected String sanitizeMessage (String message)
+    protected String processMessage (String message)
         throws ServiceException
     {
+        // freak out immediately if we're too long before we even sanitize
         if (message.length() > HTMLSanitizer.MAX_PRE_SANITIZE_LENGTH) {
             throw new MessageTooLongException(message.length());
         }
-        String sanitized = HTMLSanitizer.sanitize(message);
-        if (sanitized.length() > ForumMessage.MAX_MESSAGE_LENGTH) {
-            throw new MessageTooLongException(sanitized.length());
+
+        // run the HTML through our sanitizer
+        message = HTMLSanitizer.sanitize(message);
+
+//         // now look for URL expansions
+//         StringBuffer expbuf = new StringBuffer();
+//         Matcher m = _urlPattern.matcher(message);
+//         while (m.find()) {
+//             m.appendReplacement(expbuf, convertToken(m.group(2), m.group()));
+//         }
+//         m.appendTail(expbuf);
+//         message = expbuf.toString();
+
+        if (message.length() > ForumMessage.MAX_MESSAGE_LENGTH) {
+            throw new MessageTooLongException(message.length());
         }
-        return sanitized;
+        return message;
     }
+
+    protected String convertToken (String token, String original)
+    {
+        int didx = token.indexOf("-");
+        if (didx == -1) {
+            return original; // hrm, bogosity
+        }
+
+        Pages page;
+        try {
+            page = Enum.valueOf(Pages.class, token.substring(0, didx).toUpperCase());
+        } catch (Exception e) {
+            return original; // hrm, bogosity
+        }
+        Args args = Args.fromToken(token.substring(didx+1));
+
+        String boxArgs = null;
+        try {
+            switch (page) {
+            case SHOP:
+                // handle shop listings
+                if (args.get(0, "").equals("l")) {
+                    boxArgs = makeBoxedItem((byte)args.get(1, 0), args.get(2, 0));
+                }
+                break;
+            case GAMES:
+                // handle game detail page links
+                if (args.get(0, "").equals("d")) {
+                    boxArgs = makeBoxedGame(args.get(1, 0));
+                }
+                break;
+            case WHIRLEDS:
+                // handle whirled detail page links
+                if (args.get(0, "").equals("d")) {
+                    boxArgs = makeBoxedWhirled(args.get(1, 0));
+                }
+                break;
+            case WORLD:
+                // handle scene links
+                if (args.isPrefixedId(0, "s")) {
+                    boxArgs = makeBoxedScene(args.getPrefixedId(0, "s", 0));
+                }
+                break;
+            }
+        } catch (Exception e) {
+            log.warning("Failed to box page", "token", token, e);
+        }
+
+        if (boxArgs != null) {
+            return "_BOX_" + token + ":" + boxArgs;
+        }
+
+        return original; // hrm, bogosity
+        // return "_URL_" + token;
+    }
+
+    protected String makeBoxedItem (byte type, int catalogId)
+        throws ServiceException
+    {
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
+        CatalogRecord crec = repo.loadListing(catalogId, true);
+        Item item = (crec == null) ? null : crec.item.toItem();
+        return (item == null) ? null :
+            makeBoxArgs(item.getPreviewMedia(), MediaDesc.THUMBNAIL_SIZE, item.name);
+    }
+
+    protected String makeBoxedGame (int gameId)
+    {
+        GameRecord grec = _gameRepo.loadGameRecord(gameId);
+        return (grec == null) ? null :
+            makeBoxArgs(((Game)grec.toItem()).getShotMedia(), MediaDesc.GAME_SHOT_SIZE, grec.name);
+    }
+
+    protected String makeBoxedWhirled (int groupId)
+    {
+        GroupRecord grec = _groupRepo.loadGroup(groupId);
+        return (grec == null) ? null :
+            makeBoxArgs(grec.toLogo(), MediaDesc.THUMBNAIL_SIZE, grec.name);
+    }
+
+    protected String makeBoxedScene (int sceneId)
+    {
+        SceneRecord srec = _sceneRepo.loadScene(sceneId);
+        return (srec == null) ? null :
+            makeBoxArgs(srec.getSnapshot(), MediaDesc.SNAPSHOT_FULL_SIZE, srec.name);
+    }
+
+    protected static String makeBoxArgs (MediaDesc desc, int size, String name)
+    {
+        return MediaDesc.mdToString(desc) + ":" + size + ":" + name;
+    }
+
+    protected Pattern _urlPattern = Pattern.compile(
+        "(" + Pattern.quote(ServerConfig.getServerURL()) + "#)([-a-z0-9_]+)(<br/>)?");
 
     // dependencies
     @Inject protected MsoyEventLogger _eventLog;
@@ -516,4 +640,7 @@ public class ForumServlet extends MsoyServiceServlet
     @Inject protected MailLogic _mailLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected FeedRepository _feedRepo;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected MsoyGameRepository _gameRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
 }

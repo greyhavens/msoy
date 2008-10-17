@@ -30,8 +30,8 @@ import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.MoneyServiceAsync;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 public class CashOutTable extends PagedGrid<CashOutEntry>
 {

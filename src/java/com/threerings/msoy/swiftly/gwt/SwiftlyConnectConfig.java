@@ -4,7 +4,7 @@
 package com.threerings.msoy.swiftly.gwt;
 
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
-import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.gwt.ConnectConfig;
 
 /**
  * Wrap ConnectConfig with a SwiftlyProject.

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.web.gwt;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -17,9 +17,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.data.SessionData;
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SessionData;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ReportType;

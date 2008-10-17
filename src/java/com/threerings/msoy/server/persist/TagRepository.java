@@ -28,7 +28,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.gwt.TagHistory;
 
 /**
  * Manages the persistent side of tagging of things in the MetaSOY system (right now items and

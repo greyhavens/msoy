@@ -21,9 +21,9 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.client.WebUserServiceAsync;
-import com.threerings.msoy.web.data.AccountInfo;
+import com.threerings.msoy.web.gwt.AccountInfo;
+import com.threerings.msoy.web.gwt.WebUserService;
+import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;

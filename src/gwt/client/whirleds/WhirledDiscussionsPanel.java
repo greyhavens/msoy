@@ -17,8 +17,8 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.group.gwt.GroupDetail;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.util.Link;

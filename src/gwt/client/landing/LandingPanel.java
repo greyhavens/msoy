@@ -19,7 +19,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.landing.gwt.LandingData;
 import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.gwt.LandingServiceAsync;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;

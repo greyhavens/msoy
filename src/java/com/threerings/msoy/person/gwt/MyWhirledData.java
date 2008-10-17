@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * Contains the data that we need for the My Whirled views.

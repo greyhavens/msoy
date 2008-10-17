@@ -35,8 +35,8 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.mail.gwt.FriendInvitePayload;
 import com.threerings.msoy.mail.gwt.MailPayload;

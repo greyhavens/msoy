@@ -71,7 +71,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 import static com.threerings.msoy.Log.log;
 

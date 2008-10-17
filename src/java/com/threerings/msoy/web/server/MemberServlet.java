@@ -21,10 +21,10 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
-import com.threerings.msoy.web.client.WebMemberService;
-import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.Invitation;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.WebMemberService;
 
 import static com.threerings.msoy.Log.log;
 

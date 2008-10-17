@@ -12,8 +12,8 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 import client.ui.HeaderBox;
 import client.util.MsoyCallback;

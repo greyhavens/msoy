@@ -1,16 +1,10 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.web.data.AccountInfo;
-import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.LaunchConfig;
-import com.threerings.msoy.web.data.RegisterInfo;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.SessionData;
 
 /**
  * Defines general user services available to the GWT/AJAX web client.

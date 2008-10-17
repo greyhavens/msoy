@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.client.Tabs;
-import com.threerings.msoy.web.data.SessionData;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SessionData;
+import com.threerings.msoy.web.gwt.Tabs;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;

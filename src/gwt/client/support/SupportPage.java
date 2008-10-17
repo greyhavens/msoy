@@ -6,8 +6,8 @@ package client.support;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.underwire.gwt.client.AdminPanel;
 import com.threerings.underwire.gwt.client.ClientMessages;

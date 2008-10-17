@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.ClickBox;
 

@@ -11,7 +11,7 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
  * Defines Swiftly-related services available to the GWT/AJAX web client.

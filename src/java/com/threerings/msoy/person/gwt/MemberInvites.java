@@ -6,7 +6,8 @@ package com.threerings.msoy.person.gwt;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.threerings.msoy.web.data.Invitation;
+
+import com.threerings.msoy.web.gwt.Invitation;
 
 /**
  * Contains the number of invites aviable for a user, along with the list of pending invites.

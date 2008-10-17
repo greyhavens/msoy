@@ -7,8 +7,8 @@ import com.samskivert.servlet.util.ServiceWaiter;
 
 import com.threerings.presents.server.InvocationException;
 
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 

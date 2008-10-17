@@ -20,7 +20,7 @@ import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
-import com.threerings.msoy.web.client.Args;
+import com.threerings.msoy.web.gwt.Args;
 
 import client.util.ServiceUtil;
 import client.util.events.FlashEvents;

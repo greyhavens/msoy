@@ -8,7 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.gwt.Invitation;
 
 /**
  * Contains result information on the invitations that were requested.

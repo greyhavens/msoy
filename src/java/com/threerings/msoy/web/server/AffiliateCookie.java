@@ -11,7 +11,7 @@ import com.samskivert.util.StringUtil;
 
 import com.samskivert.servlet.util.CookieUtil;
 
-import com.threerings.msoy.web.data.TrackingCookieUtil;
+import com.threerings.msoy.web.gwt.TrackingCookieUtil;
 
 /**
  * Handles the getting and setting of the affiliate cookie.

@@ -36,7 +36,7 @@ import com.threerings.crowd.peer.server.CrowdPeerManager;
 
 import com.threerings.whirled.data.ScenePlace;
 
-import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.gwt.ConnectConfig;
 
 import com.threerings.msoy.bureau.server.BureauLauncherServerClient;
 import com.threerings.msoy.bureau.server.WindowServerClient;

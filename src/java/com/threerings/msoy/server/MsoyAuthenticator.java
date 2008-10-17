@@ -26,8 +26,9 @@ import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.web.data.BannedException;
-import com.threerings.msoy.web.data.ServiceException;
+
+import com.threerings.msoy.web.gwt.BannedException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.LurkerName;

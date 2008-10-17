@@ -25,8 +25,8 @@ import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.GalleryData;
 import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.GalleryServiceAsync;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 /**
  * A read-only view of the photos in a gallery. Also handles profile galleries which are special

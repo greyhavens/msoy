@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;

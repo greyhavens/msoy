@@ -21,7 +21,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * Contains a member's profile data.

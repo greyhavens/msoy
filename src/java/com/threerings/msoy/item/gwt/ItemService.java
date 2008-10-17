@@ -12,9 +12,9 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.web.data.ServiceException;
 
-import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.TagHistory;
 
 /**
  * Provides digital items related services.

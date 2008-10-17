@@ -19,7 +19,7 @@ import com.threerings.user.OOOUser;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.underwire.server.SupportLogic;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 

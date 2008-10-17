@@ -25,10 +25,10 @@ import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.web.data.EmailContact;
-import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.EmailContact;
+import com.threerings.msoy.web.gwt.Invitation;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.person.gwt.InvitationResults;

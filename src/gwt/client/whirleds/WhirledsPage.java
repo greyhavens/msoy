@@ -7,8 +7,8 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.msgs.ForumModels;
 import client.msgs.ForumPanel;

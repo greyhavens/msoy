@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.web.gwt;
 
 /**
  * Error codes used by our web services.

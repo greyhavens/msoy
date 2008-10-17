@@ -22,7 +22,7 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.game.server.persist.GameTraceLogRecord;
 
-import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MemberHelper;
 
 /**

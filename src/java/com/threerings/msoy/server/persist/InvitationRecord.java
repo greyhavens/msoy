@@ -8,13 +8,12 @@ import java.sql.Timestamp;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.gwt.Invitation;
 
 /**
  * Contains persistent data stored for every member of MetaSOY.

@@ -28,8 +28,8 @@ import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.InviteServiceAsync;
 import com.threerings.msoy.person.gwt.MemberInvites;
-import com.threerings.msoy.web.data.EmailContact;
-import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.gwt.EmailContact;
+import com.threerings.msoy.web.gwt.Invitation;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;

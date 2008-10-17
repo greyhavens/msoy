@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.data;
+package com.threerings.msoy.web.gwt;
 
 /**
  * A special case ServiceExeption with extended ban related information.

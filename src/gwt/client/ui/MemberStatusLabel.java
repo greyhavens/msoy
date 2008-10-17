@@ -10,9 +10,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.ShellMessages;
 import client.util.Link;

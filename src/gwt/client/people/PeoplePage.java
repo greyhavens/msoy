@@ -5,8 +5,8 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.person.GalleryActions;
 import client.person.GalleryEditPanel;

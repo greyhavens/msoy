@@ -11,7 +11,7 @@ import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.GenericUploadFile;
 import com.threerings.msoy.web.server.UploadFile;
 import com.threerings.msoy.web.server.UploadUtil;

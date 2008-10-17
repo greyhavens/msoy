@@ -23,8 +23,8 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.MemberInviteResult;
 import com.threerings.msoy.admin.gwt.MemberInviteStatus;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.gwt.ui.WidgetUtil;
 

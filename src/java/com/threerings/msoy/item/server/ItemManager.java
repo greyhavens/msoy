@@ -48,7 +48,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;

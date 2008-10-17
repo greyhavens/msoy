@@ -16,8 +16,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.ShellMessages;
 import client.util.Link;

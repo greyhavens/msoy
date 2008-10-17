@@ -21,7 +21,7 @@ import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.web.client.Pages;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;

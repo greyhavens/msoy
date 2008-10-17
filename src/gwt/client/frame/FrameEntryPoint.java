@@ -29,15 +29,15 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.web.client.Args;
-import com.threerings.msoy.web.client.Pages;
-import com.threerings.msoy.web.client.WebMemberService;
-import com.threerings.msoy.web.client.WebMemberServiceAsync;
-import com.threerings.msoy.web.client.WebUserService;
-import com.threerings.msoy.web.client.WebUserServiceAsync;
-import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.LaunchConfig;
-import com.threerings.msoy.web.data.SessionData;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Invitation;
+import com.threerings.msoy.web.gwt.LaunchConfig;
+import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.SessionData;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
+import com.threerings.msoy.web.gwt.WebUserService;
+import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.BrowserTest;
 import client.shell.CShell;

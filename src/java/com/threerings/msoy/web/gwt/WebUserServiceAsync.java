@@ -1,15 +1,10 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.data.AccountInfo;
-import com.threerings.msoy.web.data.ConnectConfig;
-import com.threerings.msoy.web.data.LaunchConfig;
-import com.threerings.msoy.web.data.RegisterInfo;
-import com.threerings.msoy.web.data.SessionData;
 
 /**
  * The asynchronous (client-side) version of {@link WebUserService}.
