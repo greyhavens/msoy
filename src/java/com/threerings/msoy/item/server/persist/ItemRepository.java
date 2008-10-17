@@ -52,6 +52,7 @@ import com.samskivert.jdbc.depot.clause.SelectClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.EpochSeconds;
+import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.expression.ValueExp;
@@ -77,6 +78,8 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
+
+import com.threerings.msoy.money.server.MoneyExchange;
 
 import static com.threerings.msoy.Log.log;
 
@@ -1223,11 +1226,10 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByPrice (List<SQLExpression> exprs, List<OrderBy.Order> orders,
                                     OrderBy.Order order)
     {
-//        exprs.add(new Arithmetic.Add(getCatalogColumn(CatalogRecord.COST),
-//                                     new Arithmetic.Mul(getCatalogColumn(CatalogRecord.GOLD_COST),
-//                                                        FLOW_FOR_GOLD)));
-        // TODO: Handle natural sorting of coins/bar prices based on the current exchange rate
-        exprs.add(getCatalogColumn(CatalogRecord.COST));
+        exprs.add(new Arithmetic.Mul(getCatalogColumn(CatalogRecord.COST),
+            new FunctionExp("GREATEST", new ValueExp(1),
+                new Arithmetic.Mul(getCatalogColumn(CatalogRecord.CURRENCY),
+                                   new ValueExp(_exchange.getRate())))));
         orders.add(order);
     }
 
@@ -1393,6 +1395,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     // our dependencies
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyExchange _exchange;
 
     /** The number of seconds that causes an equivalent drop-off of 1 star in new & hot sorting. */
     protected static int _newAndHotDropoffSeconds = 7 * 60 * 60 * 24;
