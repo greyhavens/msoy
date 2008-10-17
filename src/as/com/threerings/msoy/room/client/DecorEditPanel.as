@@ -33,7 +33,6 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.ui.FlyingPanel;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyParameters;
@@ -347,8 +346,7 @@ public class DecorEditPanel extends FlyingPanel
     protected const ROOM_TOPDOWN :int = 3;
 
     protected const ROOM_KEYS :Array =
-        [ "m.room_normal", "m.room_no_walls", "m.room_flat"].concat(
-        DeploymentConfig.devDeployment ? "m.room_topdown" : []);
+        [ "m.room_normal", "m.room_no_walls", "m.room_flat", "m.room_topdown" ];
 
     protected var _roomType :ComboBox;
     protected var _actorScale :VSlider;
