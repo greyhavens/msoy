@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.client.snapshot {
 
+import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
@@ -105,19 +106,18 @@ public class SnapshotController extends Controller
         return output;
     }
 
-    protected function handleError (event :Event) :void
+    protected function handleError (event :ErrorEvent) :void
     {
-        _panel.uploadError(Msgs.WORLD.get("e.snap"));
+        _panel.reportError(Msgs.WORLD.get("e.snap_upload", event.text));
         clearLoader();
     }
 
     protected function handleSuccess (event :Event) :void
     {
         var fn :Function = _doneFn;
-        // TODO: do the download, if applicable
-//        trace("Data: " + _loader.data);
+        var data :String = String(_loader.data);
         clearLoader();
-        fn();
+        fn(data);
     }
 
     protected function clearLoader () :void

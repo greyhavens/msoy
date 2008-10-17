@@ -4,11 +4,16 @@
 package com.threerings.msoy.room.server;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 
 import com.google.inject.Inject;
 
+import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
@@ -53,8 +58,17 @@ public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
             }
         }
 
-        // TODO:
-        // return the complete url of the main media at the end.
+        PrintStream out = new PrintStream(ctx.rsp.getOutputStream());
+        try {
+            int snapIdx = mediaIds.indexOf("snapshot");
+            if (snapIdx != -1) {
+                MediaInfo info = mediaInfos.get(snapIdx);
+                out.println(DeploymentConfig.mediaURL +
+                    info.hash + MediaDesc.mimeTypeToSuffix(info.mimeType));
+            }
+        } finally {
+            StreamUtil.close(out);
+        }
     }
 
     // our dependencies

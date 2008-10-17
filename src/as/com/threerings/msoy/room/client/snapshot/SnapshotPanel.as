@@ -3,6 +3,14 @@
 
 package com.threerings.msoy.room.client.snapshot {
 
+import flash.events.ErrorEvent;
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.events.SecurityErrorEvent;
+
+import flash.net.FileReference;
+import flash.net.URLRequest;
+
 import flash.geom.Rectangle;
 
 import mx.core.BitmapAsset;
@@ -18,7 +26,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -217,10 +224,7 @@ public class SnapshotPanel extends FloatingPanel
         addChild(_takeGalleryImage);
         _downloadImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_download"),
             enforceUIInterlocks);
-        // TODO: enable globally
-        if (DeploymentConfig.devDeployment || _ctx.getTokens().isSupport()) {
-            addChild(_downloadImage);
-        }
+        addChild(_downloadImage);
         // only add the button to take the canonical snapshot if it's enabled.
         if (_sceneThumbnailPermitted) {
             _useAsSceneThumbnail = new CommandCheckBox(Msgs.WORLD.get("b.snap_scene_thumbnail"), 
@@ -262,35 +266,55 @@ public class SnapshotPanel extends FloatingPanel
     /**
      * Second stage of the upload process.
      */
-    protected function uploadGalleryImage () :void
+    protected function uploadGalleryImage (... ignored) :void
     {
         if (shouldSaveGalleryImage || shouldDownloadImage) {
             _progressLabel.text = Msgs.WORLD.get("m.snap_upload_snap");
             galleryImage.encodeAndUpload(_ctrl.upload,
-                [ SnapshotController.SCENE_SNAPSHOT_SERVICE, shouldSaveGalleryImage,
-                    uploadingDone ]);
+                [ SnapshotController.SCENE_SNAPSHOT_SERVICE, shouldSaveGalleryImage, doDownload ]);
 
         } else {
-            uploadingDone();
+            doDownload(null);
         }
     }
 
     /**
-     * Called if uploading failed.
+     * Called if uploading or downloading failed.
      */
-    public function uploadError (message :String) :void
+    public function reportError (message :String) :void
     {
-        _progressLabel.text = Msgs.WORLD.get("e.snap_upload_fail");
+        _progressLabel.text = message;
         _cancelUploadButton.label = Msgs.GENERAL.get("b.ok");
     }
     
     /**
      * Called when uploading is complete.
      */
-    protected function uploadingDone () :void
+    protected function doDownload (downloadURL :String) :void
     {
-        // done at this point so we can close the panel
-        close();        
+        if (shouldDownloadImage && (downloadURL != null)) {
+            _progressLabel.text = Msgs.WORLD.get("m.snap_download");
+            _downloadRef = new FileReference();
+            _downloadRef.addEventListener(Event.CANCEL, handleDownloadStopEvent);
+            _downloadRef.addEventListener(Event.COMPLETE, handleDownloadStopEvent);
+            _downloadRef.addEventListener(SecurityErrorEvent.SECURITY_ERROR,
+                handleDownloadStopEvent);
+            _downloadRef.addEventListener(IOErrorEvent.IO_ERROR, handleDownloadStopEvent);
+            _downloadRef.download(new URLRequest(downloadURL), "snapshot.jpg");
+
+        } else {
+            // done at this point so we can close the panel
+            close();        
+        }
+    }
+
+    protected function handleDownloadStopEvent (event :Event) :void
+    {
+        if (event is ErrorEvent) {
+            reportError(Msgs.WORLD.get("e.snap_download", ErrorEvent(event).text));
+        } else {
+            close();
+        }
     }
 
     protected var _sceneThumbnailPermitted :Boolean;
@@ -298,6 +322,8 @@ public class SnapshotPanel extends FloatingPanel
     protected var _preview :Image;
     protected var _view :RoomView;
     protected var _ctrl :SnapshotController;
+
+    protected var _downloadRef :FileReference;
 
     // UI Elements
     protected var _showOccs :CommandCheckBox;
