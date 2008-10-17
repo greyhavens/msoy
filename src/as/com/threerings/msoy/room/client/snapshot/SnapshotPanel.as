@@ -18,6 +18,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -216,8 +217,10 @@ public class SnapshotPanel extends FloatingPanel
         addChild(_takeGalleryImage);
         _downloadImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_download"),
             enforceUIInterlocks);
-// TODO: enable
-//        addChild(_downloadImage);
+        // TODO: enable globally
+        if (DeploymentConfig.devDeployment || _ctx.getTokens().isSupport()) {
+            addChild(_downloadImage);
+        }
         // only add the button to take the canonical snapshot if it's enabled.
         if (_sceneThumbnailPermitted) {
             _useAsSceneThumbnail = new CommandCheckBox(Msgs.WORLD.get("b.snap_scene_thumbnail"), 
