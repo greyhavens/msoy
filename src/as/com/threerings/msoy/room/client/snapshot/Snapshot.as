@@ -119,11 +119,11 @@ public class Snapshot
      * Cause the snapshot to be encoded and uploaded.  Encoding is done in the background using
      * a background updater, and 
      */
-    public function encodeAndUpload (uploadOperation:Function, uploadDone:Function) :void
+    public function encodeAndUpload (uploadOperation :Function, args :Array) :void
     {
         log.debug("starting encoding");
         _uploadOperation = uploadOperation
-        _uploadDone = uploadDone;
+        _args = args;
         _encoder = new BackgroundJPGEncoder(bitmap, 70);
         _encoder.addEventListener("complete", handleJpegEncoded);
         _encoder.start();
@@ -142,18 +142,19 @@ public class Snapshot
     protected function handleJpegEncoded (event :ValueEvent) :void
     {
         log.debug("jpeg encoded");
-        
+
         // call whatever we're supposed to call with the jpeg data now that we have it
-        _uploadOperation(event.value as ByteArray);
-        
-        // now call whatever the next operation in the chain is
-        _uploadDone();
+        _args.unshift(event.value);
+        _uploadOperation.apply(null, _args);
+        //_uploadOperation(event.value as ByteArray, _createItem, _uploadDone);
     }
 
     protected var _encoder :BackgroundJPGEncoder;
 
     protected var _uploadOperation :Function;
+    protected var _args :Array;
     protected var _uploadDone :Function;
+    protected var _createItem :Boolean;
     
     protected var _view :RoomView;
     protected var _frame :Rectangle;

@@ -99,6 +99,14 @@ public class SnapshotPanel extends FloatingPanel
         return _takeGalleryImage.selected;
     }
 
+    /**
+     * Return true if the controller should download a gallery image.
+     */
+    public function get shouldDownloadImage () :Boolean
+    {
+        return _downloadImage.selected;
+    }
+
     protected function takeNewSnapshot (... ignored) :void
     {
         var occs :Boolean = _showOccs.selected;
@@ -125,7 +133,7 @@ public class SnapshotPanel extends FloatingPanel
      */
     protected function canSave () :Boolean
     {
-        return shouldSaveGalleryImage || shouldSaveSceneThumbnail;
+        return shouldSaveGalleryImage || shouldDownloadImage || shouldSaveSceneThumbnail;
     }
 
     protected function addChildIndented (component :UIComponent) :void
@@ -156,10 +164,10 @@ public class SnapshotPanel extends FloatingPanel
         var bar :ProgressBar = new ProgressBar();
         bar.percentWidth = 100;
         bar.indeterminate = true;
-        bar.label = Msgs.WORLD.get("b.snap_progress");
+        bar.label = Msgs.WORLD.get("m.snap_progress");
         addChild(bar);
         _progressLabel = new Label();
-        _progressLabel.text = Msgs.WORLD.get("b.snap_upload_starting");
+        _progressLabel.text = Msgs.WORLD.get("m.snap_upload_starting");
         addChild(_progressLabel);   
         _cancelUploadButton = new CommandButton(Msgs.WORLD.get("b.snap_cancel"), cancelUpload);     
         addChild(_cancelUploadButton);        
@@ -173,6 +181,9 @@ public class SnapshotPanel extends FloatingPanel
         // cancel any encoding processes that may be running.
         galleryImage.cancelEncoding();
         sceneThumbnail.cancelEncoding();
+
+        // cancel any in-progress upload
+        _ctrl.cancelUpload();
         
         // close the panel
         close();
@@ -180,12 +191,33 @@ public class SnapshotPanel extends FloatingPanel
 
     protected function createSnapshotControls () :void
     {
-        // take gallery image
+        var hPan :HBox = new HBox();
+        _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
+        _showOccs.selected = true;
+        hPan.addChild(_showOccs);
+        _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
+        _showChat.selected = true;
+        hPan.addChild(_showChat);
+        addChild(hPan);
+
+        hPan = new HBox();
+        hPan.addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
+        hPan.addChild(FlexUtil.createLabel(Msgs.WORLD.get("l.snap_preview")));
+        addChild(hPan);
+
+        _preview = new Image();
+        _preview.source = new BitmapAsset(sceneThumbnail.bitmap);
+        addChild(_preview);
+
+        addChild(FlexUtil.createLabel(Msgs.WORLD.get("m.snap_save_opts")));
         _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"), 
             enforceUIInterlocks);
         _takeGalleryImage.selected = true;
         addChild(_takeGalleryImage);
-
+        _downloadImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_download"),
+            enforceUIInterlocks);
+// TODO: enable
+//        addChild(_downloadImage);
         // only add the button to take the canonical snapshot if it's enabled.
         if (_sceneThumbnailPermitted) {
             _useAsSceneThumbnail = new CommandCheckBox(Msgs.WORLD.get("b.snap_scene_thumbnail"), 
@@ -193,22 +225,6 @@ public class SnapshotPanel extends FloatingPanel
             _useAsSceneThumbnail.selected = false;
             addChild(_useAsSceneThumbnail);
         }
-
-        // show occupants
-        _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
-        _showOccs.selected = true;
-        addChild(_showOccs);
-        
-        // show chat
-        _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
-        _showChat.selected = true;
-        addChild(_showChat);
-
-        addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
-
-        _preview = new Image();
-        _preview.source = new BitmapAsset(sceneThumbnail.bitmap);
-        addChild(_preview);
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
         enforceUIInterlocks();        
@@ -219,9 +235,9 @@ public class SnapshotPanel extends FloatingPanel
         if (buttonId == OK_BUTTON) {
             upload();
         } else {
-            close();            
-        }        
-    }    
+            super.buttonClicked(buttonId);
+        }
+    }
 
     /**
      * Begin the upload process, much of which happens asynchronously.
@@ -229,10 +245,12 @@ public class SnapshotPanel extends FloatingPanel
     protected function upload () :void
     {
         showProgressBar();
-        
-        if (this.shouldSaveSceneThumbnail) {
-            _progressLabel.text = Msgs.WORLD.get("b.snap_upload_thumb");
-            sceneThumbnail.encodeAndUpload(_ctrl.uploadThumbnail, uploadGalleryImage);
+
+        if (shouldSaveSceneThumbnail) {
+            _progressLabel.text = Msgs.WORLD.get("m.snap_upload_thumb");
+            sceneThumbnail.encodeAndUpload(_ctrl.upload,
+                [ SnapshotController.SCENE_THUMBNAIL_SERVICE, false, uploadGalleryImage ]);
+
         } else {
             uploadGalleryImage();
         }
@@ -243,20 +261,23 @@ public class SnapshotPanel extends FloatingPanel
      */
     protected function uploadGalleryImage () :void
     {
-        if (this.shouldSaveGalleryImage) {
-            _progressLabel.text = Msgs.WORLD.get("b.snap_upload_snap");
-            galleryImage.encodeAndUpload(_ctrl.uploadGalleryImage, uploadingDone);            
+        if (shouldSaveGalleryImage || shouldDownloadImage) {
+            _progressLabel.text = Msgs.WORLD.get("m.snap_upload_snap");
+            galleryImage.encodeAndUpload(_ctrl.upload,
+                [ SnapshotController.SCENE_SNAPSHOT_SERVICE, shouldSaveGalleryImage,
+                    uploadingDone ]);
+
         } else {
             uploadingDone();
         }
     }
-    
+
     /**
      * Called if uploading failed.
      */
     public function uploadError (message :String) :void
     {
-        _progressLabel.text = Msgs.WORLD.get("b.snap_upload_fail");
+        _progressLabel.text = Msgs.WORLD.get("e.snap_upload_fail");
         _cancelUploadButton.label = Msgs.GENERAL.get("b.ok");
     }
     
@@ -269,9 +290,6 @@ public class SnapshotPanel extends FloatingPanel
         close();        
     }
 
-    protected var _galleryImageDone :Boolean = false;
-    protected var _sceneThumbnailDone :Boolean = false;
-
     protected var _sceneThumbnailPermitted :Boolean;
 
     protected var _preview :Image;
@@ -283,9 +301,8 @@ public class SnapshotPanel extends FloatingPanel
     protected var _showChat :CommandCheckBox;
     protected var _useAsSceneThumbnail :CommandCheckBox;
     protected var _takeGalleryImage :CommandCheckBox;
+    protected var _downloadImage :CommandCheckBox;
 
-    protected var _snapPanel :Container;
-    protected var _progressPanel :Container;
     protected var _cancelUploadButton :CommandButton;
     protected var _progressLabel :Label;    
 }

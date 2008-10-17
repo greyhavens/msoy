@@ -42,46 +42,39 @@ public class SnapshotController extends Controller
         setControlledPanel(panel);
     }
 
-    /** 
-     * Called by the panel when the user clicks OK. The snapshots taken by snapshotPanel will be
-     * uploaded to the server. The canonical one will be used as the new snapshot for the scene. 
-     */
-    public function doUpload (panel :SnapshotPanel) :void
+    public function cancelUpload () :void
     {
-        //todo: save the ordinary file here... depends on 
+        if (_loader != null) {
+            try {
+                _loader.close();
+            } catch (e :Error) {
+                // ignore
+            }
+            clearLoader();
+        }
     }
-    
-    public function uploadThumbnail (data:ByteArray) :void
-    {
-        upload(data, SCENE_THUMBNAIL_SERVICE);
-    }
-    
-    public function uploadGalleryImage (data:ByteArray) :void
-    {
-        upload(data, SCENE_SNAPSHOT_SERVICE);        
-    }
-    
-    protected function upload (data :ByteArray, service :String) :void    
-    {
-        const mimeBody :ByteArray = makeMimeBody(data);
 
-        // TODO: display a progress dialog during uploading
-        // These should be local, or the dialog is a new thing. Fuck this controller, actually.
+    public function upload (
+        data :ByteArray, service :String, createItem :Boolean, doneFn :Function) :void    
+    {
+        const mimeBody :ByteArray = makeMimeBody(data, createItem);
+
         const request :URLRequest = new URLRequest();
         request.url = DeploymentConfig.serverURL + service;
         request.method = URLRequestMethod.POST;
         request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
         request.data = mimeBody;
 
-        const loader :URLLoader = new URLLoader();
-        loader.addEventListener(Event.COMPLETE, handleResult);
-        loader.addEventListener(IOErrorEvent.IO_ERROR, handleError);
-        loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
-        loader.load(request);
+        _doneFn = doneFn;
+        _loader = new URLLoader();
+        _loader.addEventListener(Event.COMPLETE, handleSuccess);
+        _loader.addEventListener(IOErrorEvent.IO_ERROR, handleError);
+        _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
+        _loader.load(request);
     }
 
     /** Creates an HTTP POST upload request. */
-    protected function makeMimeBody (data :ByteArray) :ByteArray
+    protected function makeMimeBody (data :ByteArray, createItem :Boolean) :ByteArray
     {
         var memberId :int = _ctx.getMemberObject().memberName.getMemberId();
         var scene :Scene = _ctx.getSceneDirector().getScene();
@@ -89,6 +82,7 @@ public class SnapshotController extends Controller
             Msgs.WORLD.get("m.sceneItemName", scene.getName()), MsoyCodes.MAX_NAME_LENGTH, "...");
 
         const b :String = "--" + BOUNDARY + "\r\n";
+        const mediaIds :String = "snapshot" + (createItem ? ";furni;thumb" : "");
         var output :ByteArray = new ByteArray();
         output.writeUTFBytes(
             "\r\n" + b +
@@ -100,7 +94,9 @@ public class SnapshotController extends Controller
             "\r\n" + String(scene.getId()) + "\r\n" + b +
             "Content-Disposition: form-data; name=\"name\"\r\n" +
             "\r\n" + escape(itemName) + "\r\n" + b +
-            "Content-Disposition: form-data; name=\"snapshot;furni;thumb\"; " +
+            "Content-Disposition: form-data; name=\"makeItem\"\r\n" +
+            "\r\n" + createItem + "\r\n" + b +
+            "Content-Disposition: form-data; name=\"" + mediaIds + "\"; " +
             "filename=\"snapshot.jpg\"\r\n" +
             "Content-Type: image/jpeg\r\n" +
             "\r\n");
@@ -112,16 +108,32 @@ public class SnapshotController extends Controller
     protected function handleError (event :Event) :void
     {
         _panel.uploadError(Msgs.WORLD.get("e.snap"));
+        clearLoader();
     }
 
-    protected function handleResult (event :Event) :void
+    protected function handleSuccess (event :Event) :void
     {
-        // no need to overdo it by providing even more confirmation here
+        var fn :Function = _doneFn;
+        trace("Data: " + _loader.data);
+        clearLoader();
+        fn();
+    }
+
+    protected function clearLoader () :void
+    {
+        _loader = null;
+        _doneFn = null;
     }
 
     protected var _ctx :WorldContext;
     protected var _panel :SnapshotPanel;
     protected var _view :RoomView;
+
+    /** A function to call when we're done successfully uploading. */
+    protected var _doneFn :Function;
+
+    /** The currently operating uploader. */
+    protected var _loader :URLLoader;
 
     protected static const BOUNDARY :String = "why are you reading the raw http stream?";
 }

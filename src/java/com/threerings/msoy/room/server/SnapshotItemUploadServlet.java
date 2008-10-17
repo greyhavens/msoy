@@ -27,30 +27,34 @@ public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
                                  List<String> mediaIds, List<MediaInfo> mediaInfos)
         throws IOException
     {
-        Photo image = new Photo();
-        image.name = StringUtil.decode(ctx.formFields.get("name"));
-        
-        for (int ii = 0; ii < mediaIds.size(); ii++) {
-            String mediaId = mediaIds.get(ii);
-            MediaInfo info = mediaInfos.get(ii);
-            if (Item.THUMB_MEDIA.equals(mediaId)) {
-                image.setThumbnailMedia(createMediaDesc(info));
-            } else if (Item.FURNI_MEDIA.equals(mediaId)) {
-                image.setFurniMedia(createMediaDesc(info));
-            } else {
-                image.photoMedia = createMediaDesc(info);
-                image.photoWidth = info.width;
-                image.photoHeight = info.height;
+        // always make the item, unless makeItem=false
+        if (!"false".equals(ctx.formFields.get("makeItem"))) {
+            Photo image = new Photo();
+            image.name = StringUtil.decode(ctx.formFields.get("name"));
+            
+            for (int ii = 0; ii < mediaIds.size(); ii++) {
+                String mediaId = mediaIds.get(ii);
+                MediaInfo info = mediaInfos.get(ii);
+                if (Item.THUMB_MEDIA.equals(mediaId)) {
+                    image.setThumbnailMedia(createMediaDesc(info));
+                } else if (Item.FURNI_MEDIA.equals(mediaId)) {
+                    image.setFurniMedia(createMediaDesc(info));
+                } else {
+                    image.photoMedia = createMediaDesc(info);
+                    image.photoWidth = info.width;
+                    image.photoHeight = info.height;
+                }
+            }
+
+            try {
+                _itemLogic.createItem(ctx.memrec.memberId, image);
+            } catch (ServiceException se) {
+                System.err.println("Ruh-roh: " + se);
             }
         }
 
-        try {
-            _itemLogic.createItem(ctx.memrec.memberId, image);
-        } catch (ServiceException se) {
-            System.err.println("Ruh-roh: " + se);
-        }
-
-        // TODO: some other response?
+        // TODO:
+        // return the complete url of the main media at the end.
     }
 
     // our dependencies
