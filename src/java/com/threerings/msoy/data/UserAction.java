@@ -44,6 +44,9 @@ public class UserAction extends SimpleStreamableObject
         // (purely) money related actions
         BOUGHT_BARS(50), RECEIVED_PAYOUT(51), TRANSFER_FROM_GUEST(52), SUPPORT_ADJUST(53),
 
+        // currency exchange actions
+        EXCHANGED_CURRENCY(60), CASHED_OUT_BLING(61),
+
         UNUSED(255);
 
         /** Fetch the numerical representation of this type. */
@@ -170,6 +173,16 @@ public class UserAction extends SimpleStreamableObject
     {
         String descrip = MessageBundle.tcompose("m.support_adjust", support, support.getMemberId());
         return new UserAction(Type.SUPPORT_ADJUST, memberId, descrip, null);
+    }
+
+    public static UserAction exchangedCurrency (int memberId)
+    {
+        return new UserAction(Type.EXCHANGED_CURRENCY, memberId, null);
+    }
+
+    public static UserAction cashedOutBling (int memberId)
+    {
+        return new UserAction(Type.CASHED_OUT_BLING, memberId, null);
     }
 
     /** Used for unserialization. */

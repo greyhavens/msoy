@@ -392,6 +392,7 @@ public class MoneyLogic
 
         // if that didn't throw a NotEnoughMoneyException, we're good to go.
         _nodeActions.moneyUpdated(deductTx);
+        logAction(UserAction.cashedOutBling(memberId), deductTx);
     }
 
     /**
@@ -473,6 +474,9 @@ public class MoneyLogic
             memberId, Currency.BARS, blingAmount,
             TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null);
         _nodeActions.moneyUpdated(accumTx);
+
+        logAction(UserAction.exchangedCurrency(memberId), deductTx);
+        logAction(UserAction.exchangedCurrency(memberId), accumTx);
 
         return new BlingExchangeResult(accumTx.balance, getBlingInfo(memberId));
     }
