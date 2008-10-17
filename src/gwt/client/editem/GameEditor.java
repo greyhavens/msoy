@@ -23,7 +23,6 @@ import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;

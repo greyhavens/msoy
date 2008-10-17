@@ -27,7 +27,6 @@ import com.threerings.msoy.web.client.Args;
 import com.threerings.msoy.web.client.Pages;
 
 import client.item.SideBar;
-import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;

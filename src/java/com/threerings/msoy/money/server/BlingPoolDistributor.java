@@ -40,7 +40,6 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
