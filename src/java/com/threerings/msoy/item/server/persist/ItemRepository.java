@@ -1226,6 +1226,13 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByPrice (List<SQLExpression> exprs, List<OrderBy.Order> orders,
                                     OrderBy.Order order)
     {
+        // Multiply bar prices by the current exchange rate.
+        //     adjustedCost = cost * Math.max(1, currencyByteVal * exchangeRate)
+        //
+        // This depends on two things:
+        // - We know that Currency.COINS=0, Currency.BARS=1
+        // - if the exchange rate was less than 1, this would value coins and bars equally
+        //   instead of making bars worth less... that shouldn't happen though.
         exprs.add(new Arithmetic.Mul(getCatalogColumn(CatalogRecord.COST),
             new FunctionExp("GREATEST", new ValueExp(1),
                 new Arithmetic.Mul(getCatalogColumn(CatalogRecord.CURRENCY),
