@@ -25,7 +25,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.peer.server.MsoyPeerManager.RemoteMemberObserver;
+import com.threerings.msoy.peer.server.MsoyPeerManager.MemberObserver;
 import com.threerings.msoy.world.client.WatcherReceiver;
 
 import static com.threerings.msoy.Log.log;
@@ -39,36 +39,42 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @EventThread
 public class WorldWatcherManager
-    implements RemoteMemberObserver, Shutdowner, WatcherProvider
+    implements MemberObserver, Shutdowner, WatcherProvider
 {
     @Inject public WorldWatcherManager (
         ShutdownManager shutmgr, InvocationManager invmgr, MsoyPeerManager peermgr)
     {
         shutmgr.registerShutdowner(this);
-        peermgr.addRemoteMemberObserver(this);
+        peermgr.addMemberObserver(this);
         invmgr.registerDispatcher(new WatcherDispatcher(this), WorldGameRegistry.GAME_SERVER_GROUP);
     }
 
-    // from interface RemoteMemberObserver
-    public void remoteMemberLoggedOff (MemberName member)
+    // from interface MemberObserver
+    public void memberLoggedOff (String node, MemberName member)
+    {
+        ClientObject watcher = _memberWatchers.get(member.getMemberId());
+        log.debug("Remote member logged off", "member", member, "watcher", watcher);
+        if (watcher != null) {
+            WatcherSender.memberLoggedOff(watcher, member.getMemberId());
+        }
+    }
+
+    // from interface MemberObserver
+    public void memberLoggedOn (String node, MemberName member)
     {
         // nada
     }
 
-    // from interface RemoteMemberObserver
-    public void remoteMemberLoggedOn (MemberName member)
-    {
-        // nada
-    }
-
-    // from interface RemoteMemberObserver
-    public void remoteMemberEnteredScene (MemberLocation loc, String hostname, int port)
+    // from interface .MemberObserver
+    public void memberEnteredScene (String node, MemberLocation loc)
     {
         ClientObject watcher = _memberWatchers.get(loc.memberId);
-        log.debug("remoteMemberEnteredScene", "loc", loc, "hostname", hostname, "port", port, 
-                  "watcher", watcher);
+        String host = _peerMgr.getPeerPublicHostName(node);
+        int port = _peerMgr.getPeerPort(node);
+        log.debug("Remote member entered scene", "loc", loc, "node", node, "watcher", watcher);
+        
         if (watcher != null) {
-            WatcherSender.memberMoved(watcher, loc.memberId, loc.sceneId, hostname, port);
+            WatcherSender.memberMoved(watcher, loc.memberId, loc.sceneId, host, port);
         }
     }
 
@@ -105,9 +111,7 @@ public class WorldWatcherManager
             return;
         }
         
-        String host = _peerMgr.getPeerPublicHostName(room.left);
-        int port = _peerMgr.getPeerPort(room.left);
-        remoteMemberEnteredScene(location, host, port);
+        memberEnteredScene(room.left, location);
     }
 
     // from interface WatcherProvider

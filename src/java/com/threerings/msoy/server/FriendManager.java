@@ -26,7 +26,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @EventThread
 public class FriendManager
-    implements MemberLocator.Observer, MsoyPeerManager.RemoteMemberObserver
+    implements MemberLocator.Observer, MsoyPeerManager.MemberObserver
 {
     @Inject public FriendManager (MemberLocator locator)
     {
@@ -40,7 +40,7 @@ public class FriendManager
     public void init ()
     {
         // register to hear when members log on and off of remote peers
-        _peerMan.addRemoteMemberObserver(this);
+        _peerMan.addMemberObserver(this);
     }
 
     // from interface MemberLocator.Observer
@@ -64,9 +64,6 @@ public class FriendManager
         } finally {
             memobj.commitTransaction();
         }
-
-        // let local friends know this member is online
-        updateOnlineStatus(memobj.getMemberId(), true);
     }
 
     // from interface MemberLocator.Observer
@@ -76,24 +73,26 @@ public class FriendManager
         for (FriendEntry entry : memobj.friends) {
             clearFriendInterest(memobj, entry.name.getMemberId());
         }
-
-        // let local friends know this member is offline
-        updateOnlineStatus(memobj.getMemberId(), false);
     }
 
-    // from interface MsoyPeerManager.RemoteMemberObserver
-    public void remoteMemberLoggedOn (MemberName member)
+    // from interface MsoyPeerManager.MemberObserver
+    public void memberLoggedOn (String nodeName, MemberName member)
     {
-        updateOnlineStatus(member.getMemberId(), true);
+        if (!member.isGuest()) {
+            updateOnlineStatus(member.getMemberId(), true);
+        }
     }
 
-    // from interface MsoyPeerManager.RemoteMemberObserver
-    public void remoteMemberLoggedOff (MemberName member)
+    // from interface MsoyPeerManager.MemberObserver
+    public void memberLoggedOff (String nodeName, MemberName member)
     {
-        updateOnlineStatus(member.getMemberId(), false);
+        if (!member.isGuest()) {
+            updateOnlineStatus(member.getMemberId(), false);
+        }
     }
 
-    public void remoteMemberEnteredScene (MemberLocation loc, String hostname, int port)
+    // from interface MsoyPeerManager.MemberObserver
+    public void memberEnteredScene (String nodeName, MemberLocation loc)
     {
         // nada
     }

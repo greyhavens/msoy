@@ -342,17 +342,7 @@ public class AVRGameManager extends PlaceManager
             log.warning("Non agent calling leaveGame", "caller", caller);
             return;
         }
-        PlayerObject player = _locator.lookupPlayer(playerId);
-        if (player == null) {
-            log.info("Agent requested non-player to leave", "caller", caller,
-                "playerId", playerId);
-            return;
-        }
-        _locmgr.leavePlace(player);
-
-        // Make sure we notify the world server too, since we are officially deactivating this
-        // game as opposed to just leaving it tempoararily.
-        _worldClient.leaveAVRGame(playerId);
+        leaveGame(playerId);
     }
 
     /**
@@ -374,6 +364,21 @@ public class AVRGameManager extends PlaceManager
         }
     }
 
+    protected void leaveGame (int playerId)
+    {
+        PlayerObject player = _locator.lookupPlayer(playerId);
+        if (player == null) {
+            // already left, not a big deal
+            return;
+        }
+
+        _locmgr.leavePlace(player);
+
+        // Make sure we notify the world server too, since we are officially deactivating this
+        // game as opposed to just leaving it tempoararily.
+        _worldClient.leaveAVRGame(playerId);
+    }
+    
     /**
      * Post the given member's movement to the game object for all to see.
      */
@@ -657,6 +662,10 @@ public class AVRGameManager extends PlaceManager
     protected Observer _observer = new Observer() {
         public void memberMoved (int memberId, int sceneId, String hostname, int port) {
             playerEnteredScene(memberId, sceneId, hostname, port);
+        }
+        public void memberLoggedOff (int memberId) {
+            // This would work except when a user switches servers, he also logs off 
+            //leaveGame(memberId);
         }
     };
 

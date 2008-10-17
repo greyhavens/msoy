@@ -65,17 +65,27 @@ import static com.threerings.msoy.Log.log;
 public class MsoyPeerManager extends CrowdPeerManager
     implements MsoyPeerProvider
 {
-    /** Used to notify interested parties when members log onto and off of remote servers. */
-    public static interface RemoteMemberObserver
+    /**
+     * Used to notify interested parties when members move between scenes and when they log onto and
+     * off of servers. This includes peer servers and this local server, therefore all member
+     * movement may be monitored via this interface.
+     */
+    public static interface MemberObserver
     {
-        /** Called when this member has logged onto another server. */
-        void remoteMemberLoggedOn (MemberName member);
+        /**
+         * Notifies the observer when a member has logged onto an msoy server.
+         */
+        void memberLoggedOn (String node, MemberName member);
 
-        /** Called when this member has logged off of another server. */
-        void remoteMemberLoggedOff (MemberName member);
+        /**
+         * Notifies the observer when a member has logged off of an msoy server.
+         */
+        void memberLoggedOff (String peerName, MemberName member);
 
-        /** Called when this member has entered a new scene within a world server. */
-        void remoteMemberEnteredScene (MemberLocation loc, String hostname, int port);
+        /**
+         * Notifies the observer when a member has entered a new scene.
+         */
+        void memberEnteredScene (String peerName, MemberLocation loc);
     }
 
     /** Used to participate in the member object forwarding process. */
@@ -172,7 +182,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             _mnobj.addToMemberLocs(newloc);
         }
 
-        memberEnteredScene(newloc, _self.publicHostName, _self.port);
+        memberEnteredScene(_nodeName, newloc);
     }
 
     /**
@@ -222,17 +232,17 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Registers an observer to be notified when remote player log on and off.
      */
-    public void addRemoteMemberObserver (RemoteMemberObserver obs)
+    public void addMemberObserver (MemberObserver obs)
     {
-        _remobs.add(obs);
+        _memobs.add(obs);
     }
 
     /**
      * Clears out a remote member observer registration.
      */
-    public void removeRemoteMemberObserver (RemoteMemberObserver obs)
+    public void removeMemberObserver (MemberObserver obs)
     {
-        _remobs.remove(obs);
+        _memobs.remove(obs);
     }
 
     /**
@@ -416,37 +426,42 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Called by the {@link MsoyPeerNode} when a member logs onto their server.
+     * Called when a member logs onto a server. Notifies observers.
      */
-    protected void remoteMemberLoggedOn (MsoyPeerNode node, final MsoyClientInfo info)
+    protected void memberLoggedOn (final String node, final MsoyClientInfo info)
     {
-        _remobs.apply(new ObserverList.ObserverOp<RemoteMemberObserver>() {
-            public boolean apply (RemoteMemberObserver observer) {
-                observer.remoteMemberLoggedOn((MemberName)info.visibleName);
+        _memobs.apply(new ObserverList.ObserverOp<MemberObserver>() {
+            public boolean apply (MemberObserver observer) {
+                observer.memberLoggedOn(node, (MemberName)info.visibleName);
                 return true;
             }
         });
     }
 
     /**
-     * Called by the {@link MsoyPeerNode} when a member logs off of their server.
+     * Called when a member logs off of a server. Notifies observers.
      */
-    protected void remoteMemberLoggedOff (MsoyPeerNode node, final MsoyClientInfo info)
+    protected void memberLoggedOff (final String node, final MsoyClientInfo info)
     {
-        _remobs.apply(new ObserverList.ObserverOp<RemoteMemberObserver>() {
-            public boolean apply (RemoteMemberObserver observer) {
-                observer.remoteMemberLoggedOff((MemberName)info.visibleName);
+        _memobs.apply(new ObserverList.ObserverOp<MemberObserver>() {
+            public boolean apply (MemberObserver observer) {
+                observer.memberLoggedOff(node, (MemberName)info.visibleName);
                 return true;
             }
         });
     }
 
     /**
-     * Called by the {@link MsoyPeerNode} when a member changes scene on their server.
+     * Called when a member enters a new scene. Notifies observers.
      */
-    public void remoteMemberEnteredScene (final MsoyPeerNode node, final MemberLocation loc)
+    protected void memberEnteredScene (final String node, final MemberLocation loc)
     {
-        memberEnteredScene(loc, node.getPublicHostName(), node.getPort());
+        _memobs.apply(new ObserverList.ObserverOp<MemberObserver>() {
+            public boolean apply (MemberObserver observer) {
+                observer.memberEnteredScene(node, loc);
+                return true;
+            }
+        });
     }
 
     @Override // from CrowdPeerManager
@@ -472,6 +487,9 @@ public class MsoyPeerManager extends CrowdPeerManager
 
         // register our custom invocation service
         _mnobj.setMsoyPeerService(_invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
+        
+        // notify observers
+        memberLoggedOn(_nodeName, (MsoyClientInfo)info);
     }
 
     @Override // from PeerManager
@@ -485,6 +503,9 @@ public class MsoyPeerManager extends CrowdPeerManager
             log.info("Clearing member " + _mnobj.memberLocs.get(memberId) + ".");
             _mnobj.removeFromMemberLocs(memberId);
         }
+        
+        // notify observers
+        memberLoggedOff(_nodeName, (MsoyClientInfo)info);
     }
 
     @Override // from PeerManager
@@ -546,19 +567,6 @@ public class MsoyPeerManager extends CrowdPeerManager
         }
     }
 
-    // internal method for notifying observers of a member scene change - this is called
-    // both for genuinely remote movement and for movement on this server
-    protected void memberEnteredScene (
-        final MemberLocation loc, final String hostname, final int port)
-    {
-        _remobs.apply(new ObserverList.ObserverOp<RemoteMemberObserver>() {
-            public boolean apply (RemoteMemberObserver observer) {
-                observer.remoteMemberEnteredScene(loc, hostname, port);
-                return true;
-            }
-        });
-    }
-
     /** Used to keep {@link MsoyNodeObject#memberLocs} up to date. */
     protected class LocationTracker implements AttributeChangeListener
     {
@@ -602,7 +610,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     protected MsoyNodeObject _mnobj;
 
     /** Our remote member observers. */
-    protected ObserverList<RemoteMemberObserver> _remobs = ObserverList.newFastUnsafe();
+    protected ObserverList<MemberObserver> _memobs = ObserverList.newFastUnsafe();
 
     /** A cache of forwarded member objects. */
     protected Map<Name,MemObjCacheEntry> _mobjCache = Maps.newHashMap();

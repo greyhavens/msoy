@@ -16,6 +16,18 @@ public class WatcherSender extends InvocationSender
 {
     /**
      * Issues a notification that will result in a call to {@link
+     * WatcherReceiver#memberLoggedOff} on a client.
+     */
+    public static void memberLoggedOff (
+        ClientObject target, int arg1)
+    {
+        sendNotification(
+            target, WatcherDecoder.RECEIVER_CODE, WatcherDecoder.MEMBER_LOGGED_OFF,
+            new Object[] { Integer.valueOf(arg1) });
+    }
+
+    /**
+     * Issues a notification that will result in a call to {@link
      * WatcherReceiver#memberMoved} on a client.
      */
     public static void memberMoved (

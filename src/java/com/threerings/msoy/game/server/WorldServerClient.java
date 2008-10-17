@@ -233,6 +233,9 @@ public class WorldServerClient
         public void memberMoved (int memberId, int sceneId, String hostname, int port) {
             _watchmgr.memberMoved(memberId, sceneId, hostname, port);
         }
+        public void memberLoggedOff (int memberId) {
+            _watchmgr.memberLoggedOff(memberId);
+        }
     };
 
     protected ClientAdapter _clientObs = new ClientAdapter() {

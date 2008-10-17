@@ -42,7 +42,7 @@ public class MsoyPeerNode extends PeerNode
 
         // map and issue a remoteMemberLoggedOn for all logged on members
         for (ClientInfo info : object.clients) {
-            ((MsoyPeerManager)_peermgr).remoteMemberLoggedOn(this, (MsoyClientInfo)info);
+            ((MsoyPeerManager)_peermgr).memberLoggedOn(getNodeName(), (MsoyClientInfo)info);
         }
     }
 
@@ -51,7 +51,7 @@ public class MsoyPeerNode extends PeerNode
     {
         // issue a remoteMemberLoggedOff for all members that were on this peer
         for (ClientInfo info : nodeobj.clients) {
-            ((MsoyPeerManager)_peermgr).remoteMemberLoggedOff(this, (MsoyClientInfo)info);
+            ((MsoyPeerManager)_peermgr).memberLoggedOff(getNodeName(), (MsoyClientInfo)info);
         }
         super.clientDidLogoff(client);
     }
@@ -60,12 +60,12 @@ public class MsoyPeerNode extends PeerNode
     public void entryAdded (EntryAddedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(MsoyNodeObject.MEMBER_LOCS)) {
-            ((MsoyPeerManager)_peermgr).remoteMemberEnteredScene(
-                this, (MemberLocation)event.getEntry());
+            ((MsoyPeerManager)_peermgr).memberEnteredScene(
+                getNodeName(), (MemberLocation)event.getEntry());
         }
         if (event.getName().equals(NodeObject.CLIENTS)) {
-            ((MsoyPeerManager)_peermgr).remoteMemberLoggedOn(
-                this, (MsoyClientInfo)event.getEntry());
+            ((MsoyPeerManager)_peermgr).memberLoggedOn(
+                getNodeName(), (MsoyClientInfo)event.getEntry());
         }
     }
 
@@ -73,8 +73,8 @@ public class MsoyPeerNode extends PeerNode
     public void entryUpdated (EntryUpdatedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(MsoyNodeObject.MEMBER_LOCS)) {
-            ((MsoyPeerManager)_peermgr).remoteMemberEnteredScene(
-                this, (MemberLocation)event.getEntry());
+            ((MsoyPeerManager)_peermgr).memberEnteredScene(
+                getNodeName(), (MemberLocation)event.getEntry());
         }
     }
 
@@ -82,8 +82,8 @@ public class MsoyPeerNode extends PeerNode
     public void entryRemoved (EntryRemovedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(NodeObject.CLIENTS)) {
-            ((MsoyPeerManager)_peermgr).remoteMemberLoggedOff(
-                this, (MsoyClientInfo)event.getOldEntry());
+            ((MsoyPeerManager)_peermgr).memberLoggedOff(
+                getNodeName(), (MsoyClientInfo)event.getOldEntry());
         }
     }
 

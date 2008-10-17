@@ -13,9 +13,13 @@ public class WatcherDecoder extends InvocationDecoder
     /** The generated hash code used to identify this receiver class. */
     public static final String RECEIVER_CODE = "ce12935f1f33f05cec2d1c5d78ec71f1";
 
+    /** The method id used to dispatch {@link WatcherReceiver#memberLoggedOff}
+     * notifications. */
+    public static final int MEMBER_LOGGED_OFF = 1;
+
     /** The method id used to dispatch {@link WatcherReceiver#memberMoved}
      * notifications. */
-    public static final int MEMBER_MOVED = 1;
+    public static final int MEMBER_MOVED = 2;
 
     /**
      * Creates a decoder that may be registered to dispatch invocation
@@ -36,6 +40,12 @@ public class WatcherDecoder extends InvocationDecoder
     public void dispatchNotification (int methodId, Object[] args)
     {
         switch (methodId) {
+        case MEMBER_LOGGED_OFF:
+            ((WatcherReceiver)receiver).memberLoggedOff(
+                ((Integer)args[0]).intValue()
+            );
+            return;
+
         case MEMBER_MOVED:
             ((WatcherReceiver)receiver).memberMoved(
                 ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (String)args[2], ((Integer)args[3]).intValue()

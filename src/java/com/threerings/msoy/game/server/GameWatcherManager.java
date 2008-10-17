@@ -26,8 +26,20 @@ import static com.threerings.msoy.Log.log;
 @Singleton @EventThread
 public class GameWatcherManager
 {
-    public static interface Observer {
+    /**
+     * Interface for notifying the AVRGameManager of the whereabouts of a member.
+     */
+    public static interface Observer
+    {
+        /**
+         * Notifies that a member has moved to a new scene and/or logged on.
+         */
         void memberMoved (int memberId, int sceneId, String hostname, int port);
+        
+        /**
+         * Notifies that a member has logged off.
+         */
+        void memberLoggedOff (int memberId);
     }
 
     /**
@@ -37,8 +49,7 @@ public class GameWatcherManager
     {
         Observer old = _observers.put(memberId, observer);
         if (old != null) {
-            log.warning("Displaced existing watcher [memberId=" +
-                memberId + ", observer=" + old + "]");
+            log.warning("Displaced existing watcher", "memberId", "observer", old);
         }
         _worldClient.addWatch(memberId);
     }
@@ -50,7 +61,7 @@ public class GameWatcherManager
     {
         Observer old = _observers.remove(memberId);
         if (old == null) {
-            log.warning("Attempt to clear non-existent watch [memberId=" + memberId + "]");
+            log.warning("Attempt to clear non-existent watch", "memberId", memberId);
         }
         _worldClient.clearWatch(memberId);
     }
@@ -61,10 +72,23 @@ public class GameWatcherManager
     public void memberMoved (int memberId, int sceneId, String hostname, int port)
     {
         Observer observer = _observers.get(memberId);
-        log.info("memberMoved(" + memberId + ", " + sceneId + ", " + hostname + ", " + port +
-            "): observer=" + observer);
+        log.info(
+            "Member moved", "memberId", memberId, "sceneId", sceneId, "hostname", hostname,
+            "port", port, "observer", observer);
         if (observer != null) {
             observer.memberMoved(memberId, sceneId, hostname, port);
+        }
+    }
+
+    /**
+     * Notification of member logging off, from {@link WorldServerClient}.
+     */
+    public void memberLoggedOff (int memberId)
+    {
+        Observer observer = _observers.get(memberId);
+        log.info("Member logged off", "memberId", memberId);
+        if (observer != null) {
+            observer.memberLoggedOff(memberId);
         }
     }
 
