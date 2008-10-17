@@ -27,6 +27,7 @@ import com.threerings.msoy.web.client.Args;
 import com.threerings.msoy.web.client.Pages;
 
 import client.item.SideBar;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
@@ -85,7 +86,7 @@ public class StuffPanel extends FlowPanel
         }
         _filters.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
-                showInventory(0, FILTERS.get(_filters.getSelectedIndex()), null);
+                showInventory(_mostRecentPage, null);
             }
         });
 
@@ -141,7 +142,7 @@ public class StuffPanel extends FlowPanel
         _searchBox.setText(query);
 
         // make sure we're showing and have our data
-        showInventory(page, new Predicate.TRUE<Item>(), query);
+        showInventory(page, query);
     }
 
     protected boolean isCatalogItem (byte type)
@@ -172,10 +173,10 @@ public class StuffPanel extends FlowPanel
     /**
      * Requests that the current inventory page be displayed (clearing out any currently displayed
      * item detail view).
-     * @pred a method of filtering the data. If non-null, will be applied to the list of items
+     *
      * @param query If non-null, this query is being applied so data must be reloaded from db
      */
-    protected void showInventory (final int page, final Predicate<Item> pred, final String query)
+    protected void showInventory (final int page, final String query)
     {
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
@@ -200,6 +201,9 @@ public class StuffPanel extends FlowPanel
                 add(_upload);
             }
         }
+
+        // determine which filter predicate we should be using
+        final Predicate<Item> pred = FILTERS.get(_filters.getSelectedIndex());
 
         // maybe we're changing our predicate or changing page on an already loaded model
         SimpleDataModel<Item> model = _models.getModel(_type, query);
