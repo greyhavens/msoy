@@ -65,11 +65,10 @@ public class BlingPoolDistributor
 {
     @Inject
     public BlingPoolDistributor (MoneyRepository repo, MsoyGameRepository mgameRepo,
-                                 GameRepository gameRepo, ShutdownManager sm)
+                                 ShutdownManager sm)
     {
         _repo = repo;
         _mgameRepo = mgameRepo;
-        _gameRepo = gameRepo;
 
         sm.registerShutdowner(this);
 
@@ -183,7 +182,7 @@ public class BlingPoolDistributor
         Collection<GamePlayRecord> gamePlays = _mgameRepo.getGamePlaysBetween(
             midnight1.getTimeInMillis(), midnight2.getTimeInMillis());
 
-        // Calculate a total and a map of game ID to the total minutes spent in the game
+        // Calculate a total and a map of game ID to the total minutes spent in the game.
         long totalMinutes = 0;
         Map<Integer, Long> minutesPerGame = new HashMap<Integer, Long>();
         for (GamePlayRecord gamePlay : gamePlays) {
@@ -196,9 +195,9 @@ public class BlingPoolDistributor
             }
         }
 
-        // Get all the games, since we need the creatorId from them.
+        // Load up all of the games for which we're going to award bling.
         Map<Integer, GameRecord> gameMap = new HashMap<Integer, GameRecord>();
-        for (GameRecord game : _gameRepo.loadItems(minutesPerGame.keySet())) {
+        for (GameRecord game : _mgameRepo.loadListedGameRecords(minutesPerGame.keySet())) {
             gameMap.put(game.itemId, game);
         }
 
@@ -207,7 +206,7 @@ public class BlingPoolDistributor
         if (totalMinutes > 0) {
             for (Entry<Integer, Long> entry : minutesPerGame.entrySet()) {
                 int awardedBling = (int)(blingPool * entry.getValue() / totalMinutes);
-                awardBling(gameMap.get(entry.getKey()), awardedBling);
+                awardBling(entry.getKey(), gameMap.get(entry.getKey()), awardedBling);
             }
         }
     }
@@ -218,8 +217,14 @@ public class BlingPoolDistributor
      * @param game The game that bling will be awarded for.
      * @param amount The amount of centibling to award.
      */
-    protected void awardBling (GameRecord game, int amount)
+    protected void awardBling (int gameId, GameRecord game, int amount)
     {
+        if (game == null) {
+            log.info("Unable to award bling to no longer listed game",
+                     "gameId", gameId, "amount", amount);
+            return;
+        }
+
         // Update account with the awarded bling.
         try {
             _repo.accumulateAndStoreTransaction(
@@ -272,6 +277,5 @@ public class BlingPoolDistributor
 
     protected final MoneyRepository _repo;
     protected final MsoyGameRepository _mgameRepo;
-    protected final GameRepository _gameRepo;
     protected final Scheduler _scheduler;
 }
