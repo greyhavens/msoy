@@ -659,6 +659,7 @@
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
+      <arg value="-use-network"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/embedstub-base.swf"/>
