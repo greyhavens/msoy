@@ -384,7 +384,7 @@ public class MoneyLogic
         if (cashOut == null) {
             return; // No effect if this member has no pending cashout
         }
-        String payment = formatUSD((int)(amount * cashOut.blingWorth));
+        String payment = formatUSD(amount * cashOut.blingWorth / 100);
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
             memberId, Currency.BLING, amount,
             TransactionType.CASHED_OUT, MessageBundle.tcompose("m.cashed_out", payment), null);

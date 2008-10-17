@@ -17,7 +17,7 @@ public class BlingInfo
     public int bling;
 
     /** The worth in US pennies. */
-    public float worthPerBling;
+    public int worthPerBling;
     
     /** The minimum amount of centibling required to cash out. */
     public int minCashOutBling;
@@ -26,7 +26,7 @@ public class BlingInfo
      * active. */
     public CashOutInfo cashOut;
     
-    public BlingInfo (int bling, float worthPerBling, int minCashOutBling, CashOutInfo cashOut)
+    public BlingInfo (int bling, int worthPerBling, int minCashOutBling, CashOutInfo cashOut)
     {
         this.bling = bling;
         this.worthPerBling = worthPerBling;

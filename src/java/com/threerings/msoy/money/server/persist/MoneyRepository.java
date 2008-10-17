@@ -122,6 +122,8 @@ public class MoneyRepository extends DepotRepository
         });
         ctx.registerMigration(ExchangeRecord.class,
             new SchemaMigration.Retype(2, ExchangeRecord.RATE));
+        ctx.registerMigration(BlingCashOutRecord.class,
+            new SchemaMigration.Retype(2, BlingCashOutRecord.BLING_WORTH));
     }
 
     /**

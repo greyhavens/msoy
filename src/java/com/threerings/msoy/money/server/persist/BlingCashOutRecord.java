@@ -208,8 +208,8 @@ public class BlingCashOutRecord extends PersistentRecord
     /** Amount of bling (centibling) requested for cash out. */
     public int blingAmount;
     
-    /** Worth of the bling at the time it was cashed out. */
-    public float blingWorth;
+    /** Worth per bling in USD cents at the time it was cashed out. */
+    public int blingWorth;
     
     /** If completed unsuccessfully, indicates the reason this cash out was canceled. */
     @Column(nullable=true)
@@ -219,7 +219,7 @@ public class BlingCashOutRecord extends PersistentRecord
     @Column(nullable=true)
     public Integer actualCashedOut;
     
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     public BlingCashOutRecord () { }
     
@@ -232,7 +232,7 @@ public class BlingCashOutRecord extends PersistentRecord
      * @param info The user's billing information, indicating how their request should be
      * fulfilled.
      */
-    public BlingCashOutRecord (int memberId, int blingAmount, float blingWorth, 
+    public BlingCashOutRecord (int memberId, int blingAmount, int blingWorth, 
         CashOutBillingInfo info)
     {
         this.memberId = memberId;
@@ -255,7 +255,7 @@ public class BlingCashOutRecord extends PersistentRecord
      */
     public CashOutInfo toInfo ()
     {
-        return new CashOutInfo(blingAmount, (int)(blingWorth * blingAmount), 
+        return new CashOutInfo(blingAmount, blingWorth * blingAmount / 100, 
             new CashOutBillingInfo(firstName, lastName, paypalEmailAddress, phoneNumber, 
             streetAddress, city, state, postalCode, country), timeRequested, timeFinished, 
             successful, actualCashedOut, cancelReason);

@@ -115,8 +115,8 @@ public class ServerConfigObject extends ConfigObject
     /** The amount of bling (NOT centibling) to grant daily to game creators. */
     public int blingPoolSize = 403;
     
-    /** The amount in USD each bling (NOT centibling) is worth. */
-    public float blingWorth = 0.08f;
+    /** The amount of USD cents each bling (NOT centibling) is worth. */
+    public int blingWorth = 8;
     
     /** The minimum amount of bling (NOT centibling) that can be cashed out at a time. */
     public int minimumBlingCashOut = 500;
@@ -377,11 +377,11 @@ public class ServerConfigObject extends ConfigObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setBlingWorth (float value)
+    public void setBlingWorth (int value)
     {
-        float ovalue = this.blingWorth;
+        int ovalue = this.blingWorth;
         requestAttributeChange(
-            BLING_WORTH, Float.valueOf(value), Float.valueOf(ovalue));
+            BLING_WORTH, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.blingWorth = value;
     }
 

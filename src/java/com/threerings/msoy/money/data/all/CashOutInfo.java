@@ -13,7 +13,7 @@ public class CashOutInfo
     /** The amount of bling the user has requested to cash out. */
     public int blingAmount;
     
-    /** The worth of the bling the user has requested to cash out. */
+    /** The worth of the bling in USD cents the user has requested to cash out. */
     public int blingWorth;
     
     public CashOutBillingInfo billingInfo;

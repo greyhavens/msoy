@@ -107,7 +107,9 @@ public class BlingPanel extends FlowPanel
     protected void update (final BlingInfo result)
     {
         _blingBalance.setText(Currency.BLING.format(result.bling));
-        _blingWorth.setText(formatUSD((int)(result.worthPerBling * result.bling)));
+        _blingWorth.setText(_msgs.blingWorthValue(
+            formatUSD(result.bling * result.worthPerBling / 100),
+            formatUSD(result.worthPerBling)));
         if (result.cashOut != null) {
             HorizontalPanel row = new HorizontalPanel();
             row.add(MsoyUI.createLabel(_msgs.cashedOutBling(
@@ -165,7 +167,7 @@ public class BlingPanel extends FlowPanel
 
     protected class CashOutForm extends SmartTable
     {
-        public CashOutForm (final float worthPerBling)
+        public CashOutForm (final int worthPerBling)
         {
             setCellSpacing(10);
 
@@ -176,8 +178,8 @@ public class BlingPanel extends FlowPanel
             _cashOutBox = new NumberTextBox(true);
             _cashOutBox.addKeyboardListener(new KeyboardListenerAdapter() {
                 public void onKeyUp (Widget sender, char keyCode, int modifiers) {
-                    worthLabel.setText(_msgs.cashOutAmountWorth(formatUSD(
-                        (int)(_cashOutBox.getValue().floatValue() * 100.0f * worthPerBling))));
+                    worthLabel.setText(_msgs.cashOutAmountWorth(
+                        formatUSD((int)(_cashOutBox.getValue().floatValue() * worthPerBling))));
                 }
             });
             setWidget(row++, 1, MsoyUI.createButtonPair(_cashOutBox, worthLabel), 2, null);
