@@ -114,7 +114,8 @@ public class SnapshotController extends Controller
     protected function handleSuccess (event :Event) :void
     {
         var fn :Function = _doneFn;
-        trace("Data: " + _loader.data);
+        // TODO: do the download, if applicable
+//        trace("Data: " + _loader.data);
         clearLoader();
         fn();
     }

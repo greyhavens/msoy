@@ -146,15 +146,12 @@ public class Snapshot
         // call whatever we're supposed to call with the jpeg data now that we have it
         _args.unshift(event.value);
         _uploadOperation.apply(null, _args);
-        //_uploadOperation(event.value as ByteArray, _createItem, _uploadDone);
     }
 
     protected var _encoder :BackgroundJPGEncoder;
 
     protected var _uploadOperation :Function;
     protected var _args :Array;
-    protected var _uploadDone :Function;
-    protected var _createItem :Boolean;
     
     protected var _view :RoomView;
     protected var _frame :Rectangle;
