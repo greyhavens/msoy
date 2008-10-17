@@ -466,9 +466,9 @@
 
 /* Spans the entire width of the page */
 .daContestPanel {
-  background-color: #000000;
+  background: #000000 url(/images/landing/dacontest_bg.png) repeat-y top center;
   width: 100%;
-  height: 1840;
+  min-height: 100%;
   position: absolute;
   top: 0;
   left: 0;
@@ -478,7 +478,71 @@
 
 /* Spans the entire width of the page */
 .daContestPanel .Content {
-  width: 1024px;
-  height: 1840px;
+  background: #000000 url(/images/landing/dacontest_content_bg.png) repeat-x top center;
+  width: 879px;
   margin: auto;
+  min-height: 100%;
+}
+
+.daContestPanel .HowToEnter {
+  background: url(/images/landing/dacontest_howtoenter_bg.png) no-repeat;
+  height: 432px;
+  width: 650px;
+}
+
+.daContestPanel .HowToEnter .longThickOrangeButton,
+.daContestPanel .Rules .longThickOrangeButton {
+  font-size: 20px;
+  padding-top: 10px;
+  height: 34px;
+}
+
+.daContestPanel .Rooms {
+  width: 203px;
+  float: right;
+}
+
+.daContestPanel .Rooms .RoomsList {
+  background: url(/images/landing/dacontest_rooms_middle.png) repeat-y;
+  min-height: 700px;
+  text-align: center;
+}
+
+.daContestPanel .Rooms .RoomName {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+.daContestPanel .Rooms .RoomImage {
+  margin: auto;
+  padding: 10px 0;
+}
+
+.daContestPanel .Step1,
+.daContestPanel .Step2,
+.daContestPanel .Step3 {
+  width: 664px;
+  margin-bottom: 10px;
+}
+
+.daContestPanel .Step1 {
+  background: url(/images/landing/dacontest_step_1.png) no-repeat;
+  height: 334px;
+}
+
+.daContestPanel .Step2 {
+  background: url(/images/landing/dacontest_step_2.png) no-repeat;
+  height: 307px;
+}
+
+.daContestPanel .Step3 {
+  background: url(/images/landing/dacontest_step_3.png) no-repeat;
+  height: 246px;
+}
+
+.daContestPanel .Rules {
+  background: url(/images/landing/dacontest_rules.png) no-repeat;
+  width: 859px;
+  height: 339px;
+  margin: 10px 0 20px 10px;
 }

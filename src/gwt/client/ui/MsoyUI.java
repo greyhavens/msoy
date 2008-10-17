@@ -10,6 +10,7 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -170,6 +171,18 @@ public class MsoyUI
     public static FlowPanel createFlowPanel (String styleName)
     {
         FlowPanel panel = new FlowPanel();
+        if (styleName != null) {
+            panel.addStyleName(styleName);
+        }
+        return panel;
+    }
+
+    /**
+     * Creates a AbsolutePanel with the supplied style
+     */
+    public static AbsolutePanel createAbsolutePanel (String styleName)
+    {
+        AbsolutePanel panel = new AbsolutePanel();
         if (styleName != null) {
             panel.addStyleName(styleName);
         }
