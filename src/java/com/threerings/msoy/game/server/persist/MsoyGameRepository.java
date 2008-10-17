@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -20,14 +21,15 @@ import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
-import com.samskivert.jdbc.depot.operator.Logic;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.Logic.Or;
+import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.threerings.msoy.server.persist.CountRecord;
 
@@ -94,6 +96,22 @@ public class MsoyGameRepository extends DepotRepository
         }
         return _gameRepo.loadItem(GameRecord.isDeveloperVersion(gameId) ?
                                   gdr.sourceItemId : gdr.listedItemId);
+    }
+
+    /**
+     * Loads up the listed {@link GameRecord} records for all games in the specified set that have
+     * listed game records. Games which have no listed record are ommitted from the results. The
+     * game records will be returned in arbitrary order.
+     */
+    public List<GameRecord> loadListedGameRecords (Collection<Integer> gameIds)
+    {
+        Set<Integer> itemIds = Sets.newHashSet();
+        for (GameDetailRecord gdr : loadAll(GameDetailRecord.class, gameIds)) {
+            if (gdr.listedItemId != 0) {
+                itemIds.add(gdr.listedItemId);
+            }
+        }
+        return _gameRepo.loadItems(itemIds);
     }
 
     /**
