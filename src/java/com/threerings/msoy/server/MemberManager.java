@@ -190,7 +190,7 @@ public class MemberManager
         }
     }
 
-    // from interface MemberLocator.MemberObserver
+    // from interface MemberLocator.Observer
     public void memberLoggedOn (final MemberObject member)
     {
         if (member.isGuest()) {
@@ -214,7 +214,7 @@ public class MemberManager
         _badgeMan.updateBadges(member);
     }
 
-    // from interface MemberLocator.MemberObserver
+    // from interface MemberLocator.Observer
     public void memberLoggedOff (final MemberObject member)
     {
         // nada
