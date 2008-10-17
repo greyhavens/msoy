@@ -11,7 +11,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import client.shell.Pages;
+import com.threerings.msoy.web.client.Pages;
+
 import client.ui.MsoyUI;
 import client.util.Link;
 
