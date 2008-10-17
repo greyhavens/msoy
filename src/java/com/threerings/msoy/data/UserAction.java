@@ -43,9 +43,7 @@ public class UserAction extends SimpleStreamableObject
 
         // (purely) money related actions
         BOUGHT_BARS(50), RECEIVED_PAYOUT(51), TRANSFER_FROM_GUEST(52), SUPPORT_ADJUST(53),
-
-        // currency exchange actions
-        EXCHANGED_CURRENCY(60), CASHED_OUT_BLING(61),
+        EXCHANGED_CURRENCY(54), CASHED_OUT_BLING(55),
 
         UNUSED(255);
 
