@@ -42,7 +42,7 @@
       <es>false</es>
       <!-- compiler.external-library-path: list of SWC files or directories to compile against but to omit from linking-->
       <external-library-path>
-         <path-element>../lib/flex_sdk/frameworks/libs/player/9/playerglobal.swc</path-element>
+         <path-element>../lib/flex_sdk/frameworks/libs/player/{targetPlayerMajorVersion}/playerglobal.swc</path-element>
       </external-library-path>
       <fonts>
          <!-- compiler.fonts.advanced-anti-aliasing: enables advanced anti-aliasing for embedded fonts, which provides greater clarity for small fonts.-->
@@ -114,7 +114,8 @@
          <path-element>../dist/lib/flexlib.swc</path-element>
          <path-element>../dist/lib/tweener.swc</path-element>
          <path-element>../lib/flex_sdk/frameworks/libs</path-element>
-         <path-element>../lib/flex_sdk/frameworks/libs/player/9</path-element>
+         <path-element>../lib/flex_sdk/frameworks/libs/player</path-element>
+         <path-element>../lib/flex_sdk/frameworks/libs/player/{targetPlayerMajorVersion}</path-element>
          <path-element>../lib/flex_sdk/frameworks/locale/{locale}</path-element>
       </library-path>
       <!-- compiler.locale: specifies the locale for internationalization-->
@@ -364,9 +365,7 @@
    <!-- static-link-runtime-shared-libraries: statically link the libraries specified by the -runtime-shared-libraries-path option.-->
    <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
    <!-- target-player: specifies the version of the player the application is targeting. Features requiring a later version will not be compiled into the application. The minimum value supported is "9.0.0".-->
-   <!-- target-player usage:
-   <target-player>version</target-player>
-   -->
+   <target-player>9.0.115</target-player>
    <!-- use-network: toggle whether the SWF is flagged for access to network resources-->
    <use-network>false</use-network>
    <!-- verify-digests: verifies the libraries loaded at runtime are the correct ones.-->
