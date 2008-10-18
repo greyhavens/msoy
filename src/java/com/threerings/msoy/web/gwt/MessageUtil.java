@@ -29,20 +29,14 @@ public class MessageUtil
         List<Box> group = null;
         for (int ii = 0; ii < segs.size(); ii++) {
             Segment seg = segs.get(ii);
-            if (!(seg instanceof Box)) {
+            if (!(seg instanceof Box)) { // we don't group non-box segments
                 group = null; // end our accumulating group
-                continue; // we don't group text segments
+                continue;
             }
             Box box = (Box)seg;
-
-            if (group != null) {
-                if (box.size == group.get(0).size) {
-                    group.add(box);
-                    segs.remove(ii--);
-                } else {
-                    group = null; // end our accumulating group
-                }
-
+            if (group != null && group.get(0).size == box.size) {
+                group.add(box);
+                segs.remove(ii--);
             } else {
                 group = new ArrayList<Box>();
                 group.add(box);
@@ -78,7 +72,8 @@ public class MessageUtil
 
     public static String makeBox (String token, MediaDesc desc, int size, String name)
     {
-        return BOX_ID + token + "\t" + MediaDesc.mdToString(desc) + "\t" + size + "\t" + name;
+        return BOX_START + token + "\t" + MediaDesc.mdToString(desc) + "\t" + size + "\t" + name +
+            BOX_END;
     }
 
     protected static List<Segment> parseSegments (String html)
@@ -103,18 +98,25 @@ public class MessageUtil
         Text text = (Text)segs.get(index);
         String html = text.text;
 
-        int bidx = html.indexOf(BOX_ID);
-        if (bidx == -1) {
+        int sidx = html.indexOf(BOX_START);
+        if (sidx == -1) {
             return;
         }
-        int nidx = html.indexOf("\n", bidx);
-        if (nidx == -1) {
+        int eidx = html.indexOf(BOX_END, sidx);
+        if (eidx == -1) {
             return;
         }
 
-        segs.set(index, new Text(html.substring(0, bidx)));
-        segs.add(index+1, new Box(html.substring(bidx + BOX_ID.length(), nidx)));
-        segs.add(index+2, new Text(html.substring(nidx)));
+        segs.remove(index);
+        String pre = html.substring(0, sidx).trim();
+        if (pre.length() > 0) {
+            segs.add(index++, new Text(pre));
+        }
+        segs.add(index++, new Box(html.substring(sidx + BOX_START.length(), eidx)));
+        String post = html.substring(eidx + BOX_END.length()).trim();
+        if (post.length() > 0) {
+            segs.add(index++, new Text(post));
+        }
     }
 
     protected static String expandURL (String html)
@@ -178,7 +180,7 @@ public class MessageUtil
                 buf.append("<img src='").append(desc.getMediaPath()).append("'>");
             }
             buf.append("<div class='Name'>").append(escapeHTML(name)).append("</div>");
-            buf.append("</a></div>");
+            buf.append("</a></div>\n");
         }
 
         public void preEdit (StringBuffer buf) {
@@ -208,7 +210,7 @@ public class MessageUtil
                 if (col == 0) {
                     buf.append("<tr>");
                 }
-                buf.append("<td align='center'>");
+                buf.append("<td align='center'>\n");
                 box.format(buf);
                 buf.append("</td>");
                 if (col == cols-1) {
@@ -219,7 +221,7 @@ public class MessageUtil
             if (col != 0) {
                 buf.append("</tr>");
             }
-            buf.append("</table>");
+            buf.append("</table>\n");
         }
 
         public void preEdit (StringBuffer buf) {
@@ -227,5 +229,6 @@ public class MessageUtil
         }
     }
 
-    protected static final String BOX_ID = "_BOX_";
+    protected static final String BOX_START = "<box>";
+    protected static final String BOX_END = "</box>";
 }
