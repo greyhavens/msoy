@@ -370,7 +370,7 @@ public class RichTextToolbar extends Composite
         ss = elem.contentWindow.document.createElement("link");
         ss.type = "text/css";
         ss.rel = "stylesheet";
-        ss.href = "http://" + hostport + "/gwt/frame/editor.css";
+        ss.href = "http://" + hostport + "/css/editor.css";
         elem.contentWindow.document.getElementsByTagName("head")[0].appendChild(ss);
     }-*/;
 
