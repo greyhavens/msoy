@@ -438,6 +438,9 @@ public class MediaDesc implements Streamable, IsSerializable
     public static MediaDesc stringToMD (String str)
     {
         String[] data = str.split(":");
+        if (data.length != 3) {
+            return null;
+        }
         byte[] hash = stringToHash(data[0]);
         if (hash == null) {
             return null;
