@@ -99,7 +99,7 @@ public class MsoyGameManager extends WhirledGameManager
             return super.where();
         }
         MsoyGameConfig cfg = (MsoyGameConfig)_config;
-        return "[" + cfg.name + ":" + cfg.getGameId() + ":" + _gameobj.getOid() +
+        return "[" + cfg.game.name + ":" + cfg.getGameId() + ":" + _gameobj.getOid() +
             "(" + StringUtil.toString(_gameobj.players) + ")";
     }
 

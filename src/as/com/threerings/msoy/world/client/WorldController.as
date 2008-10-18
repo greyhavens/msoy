@@ -981,7 +981,11 @@ public class WorldController extends MsoyController
     {
         // TODO: handle games?
         const view :Object = _topPanel.getPlaceView();
-        return (view is RoomView) && RoomView(view).getRoomController().canManageRoom();
+        if (view is RoomView) {
+            return RoomView(view).getRoomController().canManageRoom();
+        }
+        trace("But the game config is " + _wctx.getGameDirector().getGameConfig());
+        return false;
     }
 
     // from MsoyController
@@ -1230,8 +1234,8 @@ public class WorldController extends MsoyController
         // if we're in a game, display the game name and activate the back button
         var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
         if (cfg != null) {
-            _wctx.getMsoyClient().setWindowTitle(cfg.name);
-            headerBar.setLocationName(cfg.name);
+            _wctx.getMsoyClient().setWindowTitle(cfg.game.name);
+            headerBar.setLocationName(cfg.game.name);
             headerBar.setOwnerLink("");
         }
     }

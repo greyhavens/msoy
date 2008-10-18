@@ -137,7 +137,7 @@ public class TableCreationPanel extends VBox
         tconfigger.init(_ctx, gconf);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
-        config.init(_game, _gameDef);
+        config.init(_game, _gameDef, _game.groupId); // groupId might be 0 instead of the fallback
         gconf.setGameConfig(config);
 
         _configBox = gconf.getContainer();

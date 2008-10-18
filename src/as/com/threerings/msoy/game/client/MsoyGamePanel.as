@@ -93,13 +93,13 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from MsoyPlaceView
     public function getPlaceName () :String
     {
-        return (_ctrl.getPlaceConfig() as MsoyGameConfig).name;
+        return (_ctrl.getPlaceConfig() as MsoyGameConfig).game.name;
     }
 
     // from MsoyPlaceView
     public function getPlaceLogo () :MediaDesc
     {
-        return (_ctrl.getPlaceConfig() as MsoyGameConfig).thumbnail;
+        return (_ctrl.getPlaceConfig() as MsoyGameConfig).game.getThumbnailMedia();
     }
 
     /**

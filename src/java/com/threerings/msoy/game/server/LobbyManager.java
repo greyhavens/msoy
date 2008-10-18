@@ -140,8 +140,7 @@ public class LobbyManager
      */
     public void initConfig (MsoyGameConfig config)
     {
-        config.init(_lobj.game, _lobj.gameDef);
-        config.groupId = ServerConfig.getGameGroupId(_lobj.game.groupId);
+        config.init(_lobj.game, _lobj.gameDef, ServerConfig.getGameGroupId(_lobj.game.groupId));
     }
 
     /**

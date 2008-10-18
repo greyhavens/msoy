@@ -11,8 +11,6 @@ import com.threerings.crowd.client.PlaceController;
 import com.whirled.game.data.GameDefinition;
 import com.whirled.game.data.WhirledGameConfig;
 
-import com.threerings.msoy.data.all.MediaDesc;
-
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.client.MsoyGameController;
 
@@ -21,11 +19,8 @@ import com.threerings.msoy.game.client.MsoyGameController;
  */
 public class MsoyGameConfig extends WhirledGameConfig
 {
-    /** The creator provided name of this game. */
-    public var name :String;
-
-    /** The game's thumbnail media. */
-    public var thumbnail :MediaDesc;
+    /** The game item. */
+    public var game :Game;
 
     /** The game's groupId, or 0 for none. */
     public var groupId :int;
@@ -38,11 +33,10 @@ public class MsoyGameConfig extends WhirledGameConfig
     /**
      * Configures this config with information from the supplied {@link Game} item.
      */
-    public function init (game :Game, gameDef :GameDefinition) :void
+    public function init (game :Game, gameDef :GameDefinition, groupId :int) :void
     {
-        this.name = game.name;
-        this.thumbnail = game.getThumbnailMedia();
-        this.groupId = game.groupId;
+        this.game = game;
+        this.groupId = groupId;
         _gameId = game.gameId;
         _gameDef = gameDef;
     }
@@ -51,8 +45,7 @@ public class MsoyGameConfig extends WhirledGameConfig
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        name = (ins.readField(String) as String);
-        thumbnail = MediaDesc(ins.readObject())
+        game = Game(ins.readObject());
         groupId = ins.readInt();
     }
 
@@ -60,8 +53,7 @@ public class MsoyGameConfig extends WhirledGameConfig
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeField(name);
-        out.writeObject(thumbnail);
+        out.writeObject(game);
         out.writeInt(groupId);
     }
 

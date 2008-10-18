@@ -234,7 +234,7 @@ public class LobbyGameLiaison extends GameLiaison
     {
         var config :MsoyGameConfig = gameConfig as MsoyGameConfig;
         if (config != null) {
-            return config.name;
+            return config.game.name;
         }
         return super.gameName;
     }

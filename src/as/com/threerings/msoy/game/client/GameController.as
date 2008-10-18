@@ -98,8 +98,8 @@ public class GameController extends MsoyController
         var cfg :MsoyGameConfig =
             (_gctx.getLocationDirector().getPlaceController().getPlaceConfig() as MsoyGameConfig);
         if (cfg != null) {
-            _mctx.getMsoyClient().setWindowTitle(cfg.name);
-            headerBar.setLocationName(cfg.name);
+            _mctx.getMsoyClient().setWindowTitle(cfg.game.name);
+            headerBar.setLocationName(cfg.game.name);
             headerBar.setOwnerLink("");
         }
     }
