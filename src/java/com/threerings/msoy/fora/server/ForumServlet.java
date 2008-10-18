@@ -357,22 +357,15 @@ public class ForumServlet extends MsoyServiceServlet
         // log event for metrics purposes
         _eventLog.forumMessagePosted(mrec.memberId, mrec.visitorId, fmr.threadId, ftr.posts);
 
-        // load up the member card for the poster
-        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
-        for (MemberCardRecord mcrec : _memberRepo.loadMemberCards(
-                 Collections.singleton(mrec.memberId))) {
-            cards.put(mcrec.memberId, mcrec.toMemberCard());
-        }
-
         // mark this thread as read by the poster
         _forumRepo.noteLastReadPostId(mrec.memberId, ftr.threadId, fmr.messageId, ftr.posts+1);
 
         // and create and return the runtime record for the post
-        return fmr.toForumMessage(cards);
+        return fmr.toForumMessage(getCardsMap(mrec.memberId));
     }
 
     // from interface ForumService
-    public void editMessage (int messageId, String message)
+    public ForumMessage editMessage (int messageId, String message)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -390,7 +383,11 @@ public class ForumServlet extends MsoyServiceServlet
         message = processMessage(message);
 
         // if all is well then do the deed
-        _forumRepo.updateMessage(messageId, message);
+        fmr.lastEdited = _forumRepo.updateMessage(messageId, message);
+
+        // update the message record and create and return the runtime record for the post
+        fmr.message = message;
+        return fmr.toForumMessage(getCardsMap(mrec.memberId));
     }
 
     // from interface ForumService
@@ -505,6 +502,18 @@ public class ForumServlet extends MsoyServiceServlet
             }
         }
         return rank;
+    }
+
+    /**
+     * Helper function for getting a map of member cards for posting and editing a message.
+     */
+    protected IntMap<MemberCard> getCardsMap (int memberId)
+    {
+        IntMap<MemberCard> cards = IntMaps.newHashIntMap();
+        for (MemberCardRecord mrec : _memberRepo.loadMemberCards(Collections.singleton(memberId))) {
+            cards.put(mrec.memberId, mrec.toMemberCard());
+        }
+        return cards;
     }
 
     /**

@@ -212,7 +212,7 @@ public class ThreadPanel extends TitledListPanel
     {
         public PostEditorPanel (ForumMessage message, AsyncCallback<ForumMessage> callback)
         {
-            _message = message;
+            _messageId = message.messageId;
             _callback = callback;
 
             _content.setWidget(0, 0, _editor = new MessageEditor());
@@ -225,20 +225,18 @@ public class ThreadPanel extends TitledListPanel
             }));
 
             Button submit = new Button(_cmsgs.change());
-            new ForumCallback<Void>(submit) {
+            new ForumCallback<ForumMessage>(submit) {
                 public boolean callService () {
                     _text = _editor.getHTML();
                     if (!checkMessageText(_text)) {
                         return false;
                     }
-                    _forumsvc.editMessage(_message.messageId, _text, this);
+                    _forumsvc.editMessage(_messageId, _text, this);
                     return true;
                 }
-                public boolean gotResult (Void result) {
+                public boolean gotResult (ForumMessage result) {
                     MsoyUI.info(_mmsgs.msgPostUpdated());
-                    _message.message = _text;
-                    _message.lastEdited = new Date();
-                    _callback.onSuccess(_message);
+                    _callback.onSuccess(result);
                     showMessages();
                     return false;
                 }
@@ -254,7 +252,7 @@ public class ThreadPanel extends TitledListPanel
             _editor.setFocus(true);
         }
 
-        protected ForumMessage _message;
+        protected int _messageId;
         protected AsyncCallback<ForumMessage> _callback;
         protected MessageEditor _editor;
     }

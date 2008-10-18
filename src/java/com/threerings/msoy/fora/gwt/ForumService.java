@@ -113,7 +113,7 @@ public interface ForumService extends RemoteService
     /**
      * Edits a previously posted message.
      */
-    void editMessage (int messageId, String message)
+    ForumMessage editMessage (int messageId, String message)
         throws ServiceException;
 
     /**

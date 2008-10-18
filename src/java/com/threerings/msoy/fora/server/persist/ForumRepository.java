@@ -261,12 +261,16 @@ public class ForumRepository extends DepotRepository
 
     /**
      * Updates the text of the supplied message.
+     *
+     * @return the newly assigned last edited timestamp.
      */
-    public void updateMessage (int messageId, String message)
+    public Timestamp updateMessage (int messageId, String message)
     {
+        Timestamp lastEdited = new Timestamp(System.currentTimeMillis());
         updatePartial(ForumMessageRecord.class, messageId,
-                      ForumMessageRecord.LAST_EDITED, new Timestamp(System.currentTimeMillis()),
+                      ForumMessageRecord.LAST_EDITED, lastEdited,
                       ForumMessageRecord.MESSAGE, message);
+        return lastEdited;
     }
 
     /**

@@ -66,7 +66,7 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#editMessage}.
      */
-    void editMessage (int messageId, String message, AsyncCallback<Void> callback);
+    void editMessage (int messageId, String message, AsyncCallback<ForumMessage> callback);
 
     /**
      * The asynchronous version of {@link ForumService#deleteMessage}.
