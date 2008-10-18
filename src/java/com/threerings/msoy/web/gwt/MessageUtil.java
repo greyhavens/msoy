@@ -126,9 +126,10 @@ public class MessageUtil
 
     protected static String escapeHTML (String text)
     {
-        HTML escaper = new HTML();
-        escaper.setText(text);
-        return escaper.getHTML();
+        return text.replaceAll("&", "&amp;")
+                   .replaceAll("<", "&lt;")
+                   .replaceAll(">", "&gt;")
+                   .replaceAll("\"", "&quot;");
     }
 
     protected static abstract class Segment {

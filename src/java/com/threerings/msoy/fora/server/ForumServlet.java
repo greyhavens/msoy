@@ -291,7 +291,7 @@ public class ForumServlet extends MsoyServiceServlet
             // spam our players with this message if requested
             if (spam) {
                 log.info("Spamming players with forum post", "for", mrec.who(), "subject", subject);
-                _mailLogic.spamPlayers(subject, message);
+                _mailLogic.spamPlayers(subject, MessageUtil.expandMessage(message));
             }
 
         // otherwise, if the thread is an announcement thread, post a feed message about it
@@ -436,6 +436,11 @@ public class ForumServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireSupportUser();
+        // first do our URL expansions
+        message = processMessage(message);
+        // and then actually format those expansions
+        message = MessageUtil.expandMessage(message);
+        // and jam the whole thing into an email
         _mailLogic.previewSpam(mrec.accountName, subject, message);
     }
 
