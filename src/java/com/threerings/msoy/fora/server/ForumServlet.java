@@ -31,6 +31,7 @@ import com.threerings.msoy.server.util.HTMLSanitizer;
 
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.MessageUtil;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -523,14 +524,14 @@ public class ForumServlet extends MsoyServiceServlet
         // run the HTML through our sanitizer
         message = HTMLSanitizer.sanitize(message);
 
-//         // now look for URL expansions
-//         StringBuffer expbuf = new StringBuffer();
-//         Matcher m = _urlPattern.matcher(message);
-//         while (m.find()) {
-//             m.appendReplacement(expbuf, convertToken(m.group(2), m.group()));
-//         }
-//         m.appendTail(expbuf);
-//         message = expbuf.toString();
+        // now look for URL expansions
+        StringBuffer expbuf = new StringBuffer();
+        Matcher m = _urlPattern.matcher(message);
+        while (m.find()) {
+            m.appendReplacement(expbuf, convertToken(m.group(2), m.group()));
+        }
+        m.appendTail(expbuf);
+        message = expbuf.toString();
 
         if (message.length() > ForumMessage.MAX_MESSAGE_LENGTH) {
             throw new MessageTooLongException(message.length());
@@ -559,25 +560,25 @@ public class ForumServlet extends MsoyServiceServlet
             case SHOP:
                 // handle shop listings
                 if (args.get(0, "").equals("l")) {
-                    boxArgs = makeBoxedItem((byte)args.get(1, 0), args.get(2, 0));
+                    return makeBoxedItem(token, (byte)args.get(1, 0), args.get(2, 0));
                 }
                 break;
             case GAMES:
                 // handle game detail page links
                 if (args.get(0, "").equals("d")) {
-                    boxArgs = makeBoxedGame(args.get(1, 0));
+                    return makeBoxedGame(token, args.get(1, 0));
                 }
                 break;
             case WHIRLEDS:
                 // handle whirled detail page links
                 if (args.get(0, "").equals("d")) {
-                    boxArgs = makeBoxedWhirled(args.get(1, 0));
+                    return makeBoxedWhirled(token, args.get(1, 0));
                 }
                 break;
             case WORLD:
                 // handle scene links
                 if (args.isPrefixedId(0, "s")) {
-                    boxArgs = makeBoxedScene(args.getPrefixedId(0, "s", 0));
+                    return makeBoxedScene(token, args.getPrefixedId(0, "s", 0));
                 }
                 break;
             }
@@ -585,48 +586,40 @@ public class ForumServlet extends MsoyServiceServlet
             log.warning("Failed to box page", "token", token, e);
         }
 
-        if (boxArgs != null) {
-            return "_BOX_" + token + ":" + boxArgs;
-        }
-
         return original; // hrm, bogosity
         // return "_URL_" + token;
     }
 
-    protected String makeBoxedItem (byte type, int catalogId)
+    protected String makeBoxedItem (String token, byte type, int catalogId)
         throws ServiceException
     {
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         CatalogRecord crec = repo.loadListing(catalogId, true);
         Item item = (crec == null) ? null : crec.item.toItem();
-        return (item == null) ? null :
-            makeBoxArgs(item.getPreviewMedia(), MediaDesc.THUMBNAIL_SIZE, item.name);
+        return (item == null) ? null : MessageUtil.makeBox(token, item.getThumbnailMedia(),
+                                                           MediaDesc.THUMBNAIL_SIZE, item.name);
     }
 
-    protected String makeBoxedGame (int gameId)
+    protected String makeBoxedGame (String token, int gameId)
     {
         GameRecord grec = _gameRepo.loadGameRecord(gameId);
         return (grec == null) ? null :
-            makeBoxArgs(((Game)grec.toItem()).getShotMedia(), MediaDesc.GAME_SHOT_SIZE, grec.name);
+            MessageUtil.makeBox(token, ((Game)grec.toItem()).getShotMedia(),
+                                MediaDesc.GAME_SHOT_SIZE, grec.name);
     }
 
-    protected String makeBoxedWhirled (int groupId)
+    protected String makeBoxedWhirled (String token, int groupId)
     {
         GroupRecord grec = _groupRepo.loadGroup(groupId);
         return (grec == null) ? null :
-            makeBoxArgs(grec.toLogo(), MediaDesc.THUMBNAIL_SIZE, grec.name);
+            MessageUtil.makeBox(token, grec.toLogo(), MediaDesc.THUMBNAIL_SIZE, grec.name);
     }
 
-    protected String makeBoxedScene (int sceneId)
+    protected String makeBoxedScene (String token, int sceneId)
     {
         SceneRecord srec = _sceneRepo.loadScene(sceneId);
         return (srec == null) ? null :
-            makeBoxArgs(srec.getSnapshot(), MediaDesc.SNAPSHOT_FULL_SIZE, srec.name);
-    }
-
-    protected static String makeBoxArgs (MediaDesc desc, int size, String name)
-    {
-        return MediaDesc.mdToString(desc) + ":" + size + ":" + name;
+            MessageUtil.makeBox(token, srec.getSnapshot(), MediaDesc.SNAPSHOT_FULL_SIZE, srec.name);
     }
 
     protected Pattern _urlPattern = Pattern.compile(

@@ -6,6 +6,8 @@ package client.msgs;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RichTextArea;
 
+import com.threerings.msoy.web.gwt.MessageUtil;
+
 import client.item.RichTextToolbar;
 
 /**
@@ -34,7 +36,7 @@ public class MessageEditor extends FlowPanel
 
     public void setHTML (String html)
     {
-        _text.setHTML(html);
+        _text.setHTML(MessageUtil.preEditMessage(html));
     }
 
     public void setFocus (boolean focus)

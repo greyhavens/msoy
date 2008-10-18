@@ -17,6 +17,7 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.MessageUtil;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.ShellMessages;
@@ -75,6 +76,7 @@ public class MessagePanel extends FlexTable
             text = text.replaceAll(WHIRLED_REGEX, WHIRLED_REPLACE);
             text = text.replaceAll(
                 "href=\"\\s*[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]:.*\"", "href=\"#\"");
+            text = MessageUtil.expandMessage(text);
             scroller.add(MsoyUI.createHTML(text, null));
         } else {
             scroller.add(MsoyUI.createRestrictedHTML(text));

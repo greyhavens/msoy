@@ -640,7 +640,7 @@ img, embed, applet, object {
   margin-right: 5px;
 }
 
-.actionLabel {
+.actionLabel, .thingBox .Name {
   cursor: pointer; /* for modern browsers */
   cursor: hand; /* for IE5 */
   text-decoration: underline;
@@ -910,6 +910,17 @@ img, embed, applet, object {
 
 .messagePanel .BottomPad {
   padding-bottom: 5px;
+}
+
+.thingBox {
+  display: table;
+  text-align: center;
+}
+
+.thingBox img {
+  border: 0px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /** ComplainPopup styles */
