@@ -520,6 +520,36 @@ public class AVRGameManager extends PlaceManager
         }
     }
 
+    protected void playerLeftScene (int memberId)
+    {
+        log.debug("Player left scene", "memberId", memberId);
+
+        // Update our internal records
+        Scene oldScene = _playerScenes.get(memberId);
+        if (oldScene == null) {
+            log.warning("Player left scene but never entered one", "memberId", memberId);
+            return;
+        }
+
+        if (oldScene.sceneId == 0) {
+            log.info("Player left scene twice", "memberId", memberId);
+            return;
+        }
+        
+        Scene noScene = _scenes.get(0);
+        if (noScene == null) {
+            _scenes.put(0, noScene = new Scene(0));
+        }
+        _playerScenes.put(memberId, noScene);
+        noScene.addPlayer(memberId);
+        if (oldScene != null) {
+            oldScene.removePlayer(memberId);
+        }
+
+        // Expose the transfer to dobj (or else wait until agent calls roomSubscriptionComplete)
+        postPlayerMove(memberId, 0);
+    }
+
     protected void flushPlayerGameState (PlayerObject player)
     {
         final int memberId = player.getMemberId();
@@ -577,7 +607,7 @@ public class AVRGameManager extends PlaceManager
         Iterator<IntEntry<Scene>> iter = _scenes.intEntrySet().iterator();
         while (iter.hasNext()) {
             Scene scene = iter.next().getValue();
-            if (scene.shouldFlush(now)) {
+            if (scene.shouldFlush(now) && scene.sceneId != 0) {
                 if (_gameAgentObj.scenes.containsKey(scene.sceneId)) {
                     _gameAgentObj.removeFromScenes(scene.sceneId);
 
@@ -664,8 +694,7 @@ public class AVRGameManager extends PlaceManager
             playerEnteredScene(memberId, sceneId, hostname, port);
         }
         public void memberLoggedOff (int memberId) {
-            // This would work except when a user switches servers, he also logs off 
-            //leaveGame(memberId);
+            playerLeftScene(memberId);
         }
     };
 

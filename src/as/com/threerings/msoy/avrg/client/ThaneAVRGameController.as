@@ -327,13 +327,13 @@ public class ThaneAVRGameController
                     "playerLocations entry updated prior to addition", "pl", pl, "oldPl", oldPl);
                 return;
             }
-            if (!binding.suppressRoomTransitions) {
+            if (!binding.suppressRoomTransitions && oldPl.sceneId != 0) {
                 _backend.playerLeftRoom(oldPl.playerId, oldPl.sceneId);
                 if (binding.deactivated) {
                     binding.suppressRoomTransitions = true;
                 }
             }
-            if (!binding.suppressRoomTransitions) {
+            if (!binding.suppressRoomTransitions && pl.sceneId != 0) {
                 _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
             }
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
@@ -352,7 +352,8 @@ public class ThaneAVRGameController
                 return;
             }
 
-            if (!PlayerBinding(_players.get(pl.playerId)).suppressRoomTransitions) {
+            if (!PlayerBinding(_players.get(pl.playerId)).suppressRoomTransitions && 
+                pl.sceneId != 0) {
                 _backend.playerLeftRoom(pl.playerId, pl.sceneId);
             }
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
@@ -384,7 +385,7 @@ public class ThaneAVRGameController
                 // If the player is still in our locations, remove from room
                 pl = _gameObj.playerLocs.get(playerObj.getMemberId()) as PlayerLocation;
                 if (pl != null) {
-                    if (doRoomTransition) {
+                    if (doRoomTransition && pl.sceneId != 0) {
                         _backend.playerLeftRoom(pl.playerId, pl.sceneId);
                     }
                     _backend.playerLeftGame(pl.playerId);
@@ -696,7 +697,9 @@ public class ThaneAVRGameController
     protected function playerDidJoinGame (pl :PlayerLocation) :void
     {
         _backend.playerJoinedGame(pl.playerId);
-        _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
+        if (pl.sceneId != 0) {
+            _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
+        }
     }
 
     protected var _ctx :MsoyBureauContext;
