@@ -979,12 +979,15 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function canManagePlace () :Boolean
     {
-        // TODO: handle games?
         const view :Object = _topPanel.getPlaceView();
         if (view is RoomView) {
             return RoomView(view).getRoomController().canManageRoom();
         }
-        trace("But the game config is " + _wctx.getGameDirector().getGameConfig());
+        const gameCfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
+        if (gameCfg != null) {
+            // in games, we can "manage" if we're the owner
+            return gameCfg.game.creatorId == _wctx.getMyName().getMemberId();
+        }
         return false;
     }
 
