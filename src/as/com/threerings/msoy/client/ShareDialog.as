@@ -71,10 +71,8 @@ public class ShareDialog extends FloatingPanel
         cord.addChild(createLinkBox());
         cord.addChild(createEmbedBox());
 
-        // TODO: allow creating game stubs too
-        if ((DeploymentConfig.devDeployment || _ctx.getTokens().isAdmin()) &&
-                !_inGame && _ctx.getMsoyController().canManagePlace()) {
-            cord.addChild(createStubBox("room=" + _placeId));
+        if (_ctx.getMsoyController().canManagePlace()) {
+            cord.addChild(createStubBox());
             cord.height += 35;
         }
 
@@ -138,8 +136,10 @@ public class ShareDialog extends FloatingPanel
         return box;
     }
 
-    protected function createStubBox (stubArgs :String) :VBox
+    protected function createStubBox () :VBox
     {
+        const roomOrGame :String = (_inGame ? "game" : "room");
+        var stubArgs :String = roomOrGame + "=" + _placeId;
         const memName :MemberName = _ctx.getMyName();
         if (!memName.isGuest()) {
             stubArgs += "&aff=" + memName.getMemberId();
@@ -154,7 +154,7 @@ public class ShareDialog extends FloatingPanel
         txt.text = Msgs.GENERAL.get("m.stub_share");
         box.addChild(txt);
         _downloadBtn = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
-            startDownload, [ url, "Whirled-room-" + _placeId + "-stub.swf" ]);
+            startDownload, [ url, "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
         box.addChild(_downloadBtn);
         box.addChild(_downloadError = FlexUtil.createLabel(""));
         return box;
