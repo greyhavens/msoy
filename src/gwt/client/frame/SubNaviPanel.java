@@ -3,6 +3,7 @@
 
 package client.frame;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -14,6 +15,7 @@ import com.threerings.msoy.web.gwt.Tabs;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.NaviUtil;
 
 /**
  * Displays our sub-navigation.
@@ -76,6 +78,10 @@ public class SubNaviPanel extends FlowPanel
         case SHOP:
             addLink(null, "Shop", Pages.SHOP, "");
             addLink(null, "My Favorites", Pages.SHOP, "f");
+            if (!CShell.isGuest()) {
+                addLink(null, "Transactions", Pages.ME, "transactions");
+                addExternalLink("Buy Bars", NaviUtil.onBuyBars(), true);
+            }
             break;
 
         case HELP:
@@ -91,6 +97,12 @@ public class SubNaviPanel extends FlowPanel
             // nada
             break;
         }
+    }
+
+    public void addExternalLink (String label, ClickListener listener, boolean sep)
+    {
+        addSeparator(sep);
+        add(MsoyUI.createActionLabel(label, "external", listener));
     }
 
     public void addLink (String iconPath, String label, Pages page, String args)

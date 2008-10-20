@@ -25,7 +25,8 @@ a:visited {
   color: black;
 }
 
-a.external {
+a.external,
+div.external {
   background: url(/images/ui/external.png) center right no-repeat;
   padding-right: 16px;
 }
