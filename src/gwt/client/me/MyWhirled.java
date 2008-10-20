@@ -29,13 +29,9 @@ public class MyWhirled extends VerticalPanel
     {
         setStyleName("myWhirled");
 
-        // add some additional links only on this page; these will hopefully some day move into the
+        // add an additional links only on this page; this will hopefully some day move into the
         // main interface on this page
-        CShell.frame.addNavLink("Passport", Pages.ME, "passport", 5);
-        CShell.frame.addNavLink("Profile", Pages.PEOPLE, "" + CShell.getMemberId(), 7);
-        if (CShell.isSupport()) {
-            CShell.frame.addNavLink("Admin", Pages.ADMINZ, "", 13);
-        }
+        CShell.frame.addNavLink("My Profile", Pages.PEOPLE, "" + CShell.getMemberId(), 1);
 
         _mesvc.getMyWhirled(new MsoyCallback<MyWhirledData>() {
             public void onSuccess (MyWhirledData data) {

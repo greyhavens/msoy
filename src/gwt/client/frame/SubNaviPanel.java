@@ -46,6 +46,9 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "Friends", Pages.PEOPLE, "");
                 addLink(null, "Mail", Pages.MAIL, "");
                 addLink(null, "Account", Pages.ME, "account");
+                if (CShell.isSupport()) {
+                    addLink(null, "Admin", Pages.ADMINZ, "");
+                }
             }
             break;
 
