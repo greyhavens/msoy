@@ -192,42 +192,6 @@
   background-image: url(/images/item/detail_preview_bg.png);
 }
 
-.doListItem {
-  margin: 10px;
-}
-
-.doListItem .Header {
-  font-size: 13px;
-  font-weight: bold;
-  padding-top: 15px;
-}
-
-.doListItem .Blurb {
-  vertical-align: top;
-  font-size: 13px;
-}
-
-.doListItem .RarityRow {
-  margin-left: 40px;
-  margin-top: 5px;
-}
-
-.doListItem .PriceRow {
-  margin-left: 40px;
-  margin-top: 10px;
-}
-
-.PriceRow .Price {
-  display: inline;
-  font-family: Helvetica, sans-serif;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.doListItem .Status {
-  padding-top: 5px;
-}
-
 .favoritesPanel .Contents {
   margin: 10px;
   width: 650px;

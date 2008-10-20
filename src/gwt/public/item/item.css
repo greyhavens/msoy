@@ -141,6 +141,26 @@
   display: inline;
 }
 
+/** Item listing popup styles */
+.doListItem {
+  margin: 10px;
+}
+
+.doListItem .Header {
+  font-size: 13px;
+  font-weight: bold;
+  padding-top: 15px;
+}
+
+.doListItem .Blurb {
+  vertical-align: top;
+  font-size: 13px;
+}
+
+.doListItem .Status {
+  padding-top: 5px;
+}
+
 /** ListingBox styles */
 .itemBox .Creator {
   font-size: 12px;
