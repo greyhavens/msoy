@@ -37,14 +37,6 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Grants the given number of invitations to the indicated user set.
-     *
-     * @param activeSince If null, all users will receive invitations
-     */
-    void grantInvitations (int numberInvitations, Date activeSince)
-        throws ServiceException;
-
-    /**
      * Grants the given number of invitations to the given user.
      */
     void grantInvitations (int numberInvitations, int memberId)

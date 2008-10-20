@@ -34,11 +34,6 @@ public interface AdminServiceAsync
     /**
      * The asynchronous version of {@link AdminService#grantInvitations}.
      */
-    void grantInvitations (int numberInvitations, Date activeSince, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#grantInvitations}.
-     */
     void grantInvitations (int numberInvitations, int memberId, AsyncCallback<Void> callback);
 
     /**

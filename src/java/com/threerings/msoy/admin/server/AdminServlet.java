@@ -59,17 +59,6 @@ public class AdminServlet extends MsoyServiceServlet
     implements AdminService
 {
     // from interface AdminService
-    public void grantInvitations (final int numberInvitations, final Date activeSince)
-        throws ServiceException
-    {
-        final MemberRecord memrec = requireAdminUser();
-        Timestamp since = activeSince != null ? new Timestamp(activeSince.getTime()) : null;
-        for (final int memberId : _memberRepo.grantInvites(numberInvitations, since)) {
-            sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
-        }
-    }
-
-    // from interface AdminService
     public void grantInvitations (final int numberInvitations, final int memberId)
         throws ServiceException
     {
@@ -125,7 +114,7 @@ public class AdminServlet extends MsoyServiceServlet
     public MemberInviteResult getPlayerList (final int inviterId)
         throws ServiceException
     {
-        requireAdminUser();
+        requireSupportUser();
 
         final MemberInviteResult res = new MemberInviteResult();
         final MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);

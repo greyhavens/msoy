@@ -906,15 +906,20 @@ public class MemberRepository extends DepotRepository
         return names;
     }
 
+    /**
+     * Returns info on all members invited by the specified member. This method will only return
+     * 500 results, which avoids mayhem when asking for all members invited by memberId 0.
+     */
     public List<MemberInviteStatusRecord> getMembersInvitedBy (final int memberId)
     {
         // TODO: this needs fixing: your affiliate is not necessarily your inviter
         // (I mean, if you have an inviter, they will be your affiliate, and you can't have
         // both, but we can't just look at an affiliate id and know that that's your inviter)
         return findAll(MemberInviteStatusRecord.class,
-                       new Join(MemberRecord.MEMBER_ID_C, InviterRecord.MEMBER_ID_C).
-                            setType(Join.Type.LEFT_OUTER),
-                       new Where(MemberRecord.AFFILIATE_MEMBER_ID_C, memberId));
+                       new Join(MemberRecord.MEMBER_ID_C,
+                                InviterRecord.MEMBER_ID_C).setType(Join.Type.LEFT_OUTER),
+                       new Where(MemberRecord.AFFILIATE_MEMBER_ID_C, memberId),
+                       new Limit(0, 500));
     }
 
     /**
