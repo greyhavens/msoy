@@ -12,6 +12,7 @@ import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 /**
  * The asynchronous (client-side) version of {@link AdminService}.
@@ -51,15 +52,9 @@ public interface AdminServiceAsync
     void getPlayerList (int inviterId, AsyncCallback<MemberInviteResult> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#spamPlayers}.
+     * The asynchronous version of {@link AdminService#setRole}.
      */
-    void spamPlayers (String subject, String body, int startId, int endId,
-                      AsyncCallback<int[]> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#setIsSupport}.
-     */
-    void setIsSupport (int memberId, boolean isSupport, AsyncCallback<Void> callback);
+    void setRole (int memberId, WebCreds.Role role, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link AdminService#getABTests}.

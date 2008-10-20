@@ -41,6 +41,9 @@ public class MemberRecord extends PersistentRecord
         /** A flag denoting this user as having admin privileges. */
         ADMIN(1 << 1),
 
+        /** A flag denoting this user as having maintainer privileges. */
+        MAINTAINER(1 << 5),
+
         /** A flag denoting this user has having elected to see mature content. */
         SHOW_MATURE(1 << 2),
 
@@ -48,7 +51,10 @@ public class MemberRecord extends PersistentRecord
         NO_WHIRLED_MAIL_TO_EMAIL(1 << 3),
 
         /** A flag denoting this user does not want to receive announcement mail. */
-        NO_ANNOUNCE_EMAIL(1 << 4);
+        NO_ANNOUNCE_EMAIL(1 << 4),
+
+        /** The next unused flag. Copy this and update the bit mask when making a new flag. */
+        UNUSED(1 << 6);
 
         public int getBit () {
             return _bit;
@@ -294,8 +300,15 @@ public class MemberRecord extends PersistentRecord
         creds.accountName = accountName;
         creds.name = getName();
         creds.permaName = permaName;
-        creds.isSupport = isSupport();
-        creds.isAdmin = isAdmin();
+        if (isMaintainer()) {
+            creds.role = WebCreds.Role.MAINTAINER;
+        } else if (isAdmin()) {
+            creds.role = WebCreds.Role.ADMIN;
+        } else if (isSupport()) {
+            creds.role = WebCreds.Role.SUPPORT;
+        } else {
+            creds.role = WebCreds.Role.USER;
+        }
         return creds;
     }
 
@@ -304,12 +317,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isSupport ()
     {
-        return isSupportOnly() || isAdmin();
-    }
-
-    public boolean isSupportOnly ()
-    {
-        return isSet(Flag.SUPPORT);
+        return isSet(Flag.SUPPORT) || isAdmin() || isMaintainer() || isRoot();
     }
 
     /**
@@ -317,7 +325,25 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isAdmin ()
     {
-        return isSet(Flag.ADMIN);
+        return isSet(Flag.ADMIN) || isMaintainer() || isRoot();
+    }
+
+    /**
+     * Returns true if this member has maintainer privileges.
+     */
+    public boolean isMaintainer ()
+    {
+        return isSet(Flag.MAINTAINER) || isRoot();
+    }
+
+    /**
+     * Returns true if this member has "root" privileges. The first member in the database has
+     * these privileges and this status is used to allow all other privileges to be assigned
+     * without resorting to database hackery.
+     */
+    public boolean isRoot ()
+    {
+        return memberId == 1;
     }
 
     /**

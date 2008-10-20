@@ -50,15 +50,12 @@ public class DashboardPanel extends FlexTable
                     displayDashboard();
                 }
             }));
-            controls.add(new Button(_msgs.browserPlayers(),
-                                    Link.createListener(Pages.ADMINZ, "browser")));
-            controls.add(new Button(_msgs.spamPlayers(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    new SpamPlayersDialog().show();
-                }
-            }));
-
-            controls.add(new Button("Exchange", Link.createListener(Pages.ADMINZ, "exchange")));
+            controls.add(new Button(_msgs.viewExchange(),
+                                    Link.createListener(Pages.ADMINZ, "exchange")));
+            controls.add(new Button(_msgs.cashOutButton(),
+                                    Link.createListener(Pages.ADMINZ, "cashout")));
+            controls.add(new Button(_msgs.viewABTests(),
+                                    Link.createListener(Pages.ADMINZ, "testlist")));
         }
 
         // support controls
@@ -68,30 +65,8 @@ public class DashboardPanel extends FlexTable
         controls.add(new Label(_msgs.supportControls()));
         controls.add(new Button(_msgs.reviewButton(), Link.createListener(Pages.ADMINZ, "review")));
         controls.add(new Button(_msgs.affMapButton(), Link.createListener(Pages.ADMINZ, "affmap")));
-        controls.add(new Button(_msgs.cashOutButton(), Link.createListener(Pages.ADMINZ, "cashout")));
-        
-        // invitation controls
-        controls = new HorizontalPanel();
-        controls.setSpacing(10);
-        setWidget(row++, 0, controls);
-        controls.add(new Label(_msgs.inviteControls()));
-        if (CShell.isAdmin()) {
-            controls.add(new Button(_msgs.issueInvites(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    new IssueInvitesDialog().show();
-                }
-            }));
-        }
-
-        // a/b testing controls
-        controls = new HorizontalPanel();
-        controls.setSpacing(10);
-        setWidget(row++, 0, controls);
-        controls.add(new Label(_msgs.testingControls()));
-        if (CShell.isAdmin()) {
-            controls.add(new Button(_msgs.viewABTests(),
-                                    Link.createListener(Pages.ADMINZ, "testlist")));
-        }
+        controls.add(new Button(_msgs.browserPlayers(),
+                                Link.createListener(Pages.ADMINZ, "browser")));
     }
 
     protected void displayDashboard ()

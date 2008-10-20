@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 /**
  * Provides information about a member to admins.
@@ -25,11 +26,8 @@ public class MemberAdminInfo
     /** This member's perma name. */
     public String permaName;
 
-    /** Whether this member has support privileges. */
-    public boolean isSupport;
-
-    /** Whether this member has admin privileges. */
-    public boolean isAdmin;
+    /** This member's role. */
+    public WebCreds.Role role;
 
     /** This member's flow balance. */
     public int flow;

@@ -57,19 +57,27 @@ public class CShell
     }
 
     /**
-     * Returns true if we're logged in and have support privileges.
+     * Returns true if we're logged in and have support+ privileges.
      */
     public static boolean isSupport ()
     {
-        return (creds != null) && creds.isSupport;
+        return (creds != null) && creds.isSupport();
     }
 
     /**
-     * Returns true if we're logged in and have admin privileges.
+     * Returns true if we're logged in and have admin+ privileges.
      */
     public static boolean isAdmin ()
     {
-        return (creds != null) && creds.isAdmin;
+        return (creds != null) && creds.isAdmin();
+    }
+
+    /**
+     * Returns true if we're logged in and have maintainer privileges.
+     */
+    public static boolean isMaintainer ()
+    {
+        return (creds != null) && creds.isMaintainer();
     }
 
     /**

@@ -26,12 +26,6 @@ public interface MeService extends RemoteService
         throws ServiceException;
 
     /**
-     * Updates the Whirled news HTML. Caller must be an admin.
-     */
-    void updateWhirledNews (String newsHtml)
-        throws ServiceException;
-
-    /**
      * Loads all items in a player's inventory of the specified type and optionally restricted to
      * the specified suite.
      */

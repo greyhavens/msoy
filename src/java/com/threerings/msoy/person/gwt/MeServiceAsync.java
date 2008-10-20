@@ -20,11 +20,6 @@ public interface MeServiceAsync
     void getMyWhirled (AsyncCallback<MyWhirledData> callback);
 
     /**
-     * The asynchronous version of {@link MeService#updateWhirledNews}.
-     */
-    void updateWhirledNews (String newsHtml, AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link MeService#loadFeed}.
      */
     void loadFeed (int cutoffDays, AsyncCallback<List<FeedMessage>> callback);

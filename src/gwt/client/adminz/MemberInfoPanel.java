@@ -3,9 +3,11 @@
 
 package client.adminz;
 
+import java.util.EnumSet;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -16,12 +18,14 @@ import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
+
 import client.util.ServiceUtil;
 
 /**
@@ -57,39 +61,36 @@ public class MemberInfoPanel extends SmartTable
         row = addText("Perma name:", 1, "Label");
         setText(row, 1, info.permaName == null ? "" : info.permaName);
 
-        if (CShell.isAdmin()) {
-            row = addText("Admin:", 1, "Label");
-            setText(row, 1, ""+info.isAdmin);
-
-            final CheckBox support = new CheckBox();
-            support.setChecked(info.isSupport);
-            new ClickCallback<Void>(support) {
-                public boolean callService () {
-                    _isSupport = support.isChecked();
-                    if (_isSupport == info.isSupport) {
-                        return false; // we're reverting due to failure, so do nothing
-                    }
-                    _adminsvc.setIsSupport(info.name.getMemberId(), _isSupport, this);
-                    return true;
-                }
-                public boolean gotResult (Void result) {
-                    info.isSupport = _isSupport;
-                    MsoyUI.info(_isSupport ? _msgs.mipMadeSupport() : _msgs.mipMadeNotSupport());
-                    return true;
-                }
-                public void onFailure (Throwable cause) {
-                    super.onFailure(cause);
-                    support.setChecked(!_isSupport);
-                }
-                protected boolean _isSupport;
-            };
-            row = addText("Support:", 1, "Label");
-            setWidget(row, 1, support);
-
-        } else {
-            row = addText("Support:", 1, "Label");
-            setText(row, 1, ""+info.isSupport);
+        final ListBox role = new ListBox();
+        for (WebCreds.Role rtype : EnumSet.allOf(WebCreds.Role.class)) {
+            role.addItem(rtype.toString());
         }
+        role.setSelectedIndex(info.role.ordinal());
+        role.setEnabled(CShell.creds.role.ordinal() > info.role.ordinal());
+
+        new ClickCallback<Void>(role) {
+            public boolean callService () {
+                _role = Enum.valueOf(WebCreds.Role.class, role.getItemText(role.getSelectedIndex()));
+                if (_role == info.role) {
+                    return false; // we're reverting due to failure, so do nothing
+                }
+                _adminsvc.setRole(info.name.getMemberId(), _role, this);
+                return true;
+            }
+            public boolean gotResult (Void result) {
+                info.role = _role;
+                MsoyUI.info(_msgs.mipChangedRole(_role.toString()));
+                return true;
+            }
+            public void onFailure (Throwable cause) {
+                super.onFailure(cause);
+                role.setSelectedIndex(info.role.ordinal());
+            }
+            protected WebCreds.Role _role;
+        };
+
+        row = addText("Role:", 1, "Label");
+        setWidget(row, 1, role);
 
         row = addText("Flow:", 1, "Label");
         setText(row, 1, ""+info.flow);

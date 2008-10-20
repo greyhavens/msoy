@@ -81,19 +81,6 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // from interface MeService
-    public void updateWhirledNews (final String newsHtml)
-        throws ServiceException
-    {
-        requireSupportUser();
-
-        postDObjectAction(new Runnable() {
-            public void run () {
-                RuntimeConfig.server.setWhirledwideNewsHtml(newsHtml);
-            }
-        });
-    }
-
-    // from interface MeService
     public List<FeedMessage> loadFeed (int cutoffDays)
         throws ServiceException
     {

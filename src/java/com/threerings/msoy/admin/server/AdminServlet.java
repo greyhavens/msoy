@@ -25,6 +25,7 @@ import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -93,8 +94,15 @@ public class AdminServlet extends MsoyServiceServlet
         info.name = tgtrec.getName();
         info.accountName = tgtrec.accountName;
         info.permaName = tgtrec.permaName;
-        info.isSupport = tgtrec.isSupportOnly();
-        info.isAdmin = tgtrec.isAdmin();
+        if (tgtrec.isSet(MemberRecord.Flag.MAINTAINER)) {
+            info.role = WebCreds.Role.MAINTAINER;
+        } else if (tgtrec.isSet(MemberRecord.Flag.ADMIN)) {
+            info.role = WebCreds.Role.ADMIN;
+        } else if (tgtrec.isSet(MemberRecord.Flag.SUPPORT)) {
+            info.role = WebCreds.Role.SUPPORT;
+        } else {
+            info.role = WebCreds.Role.USER;
+        }
         info.flow = money.coins;
         info.accFlow = (int)money.accCoins;
         info.gold = money.bars;
@@ -138,28 +146,26 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public int[] spamPlayers (final String subject, final String body, int startId, int endId)
-        throws ServiceException
-    {
-        final MemberRecord memrec = requireAdminUser();
-        log.info("Spamming the players [spammer=" + memrec.who() + ", subject=" + subject + "].");
-        _mailLogic.spamPlayers(subject, body);
-        return new int[] { 0, 0, 0 }; // TODO: this is all going away
-    }
-
-    // from interface AdminService
-    public void setIsSupport (final int memberId, final boolean isSupport)
+    public void setRole (int memberId, WebCreds.Role role)
         throws ServiceException
     {
         final MemberRecord memrec = requireAdminUser();
         final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
-        if (tgtrec != null) {
-            // log this as a warning so that it shows up in the nightly filtered logs
-            log.warning("Configured support flag [setter=" + memrec.who() +
-                        ", target=" + tgtrec.who() + ", isSupport=" + isSupport + "].");
-            tgtrec.setFlag(MemberRecord.Flag.SUPPORT, isSupport);
-            _memberRepo.storeFlags(tgtrec);
+        if (tgtrec == null) {
+            return;
         }
+
+        // log this as a warning so that it shows up in the nightly filtered logs
+        log.warning("Configuring role", "setter", memrec.who(), "target", tgtrec.who(),
+                    "role", role);
+        tgtrec.setFlag(MemberRecord.Flag.SUPPORT, role == WebCreds.Role.SUPPORT);
+        if (memrec.isMaintainer()) {
+            tgtrec.setFlag(MemberRecord.Flag.ADMIN, role == WebCreds.Role.ADMIN);
+        }
+        if (memrec.isRoot()) {
+            tgtrec.setFlag(MemberRecord.Flag.MAINTAINER, role == WebCreds.Role.MAINTAINER);
+        }
+        _memberRepo.storeFlags(tgtrec);
     }
 
     // from interface AdminService

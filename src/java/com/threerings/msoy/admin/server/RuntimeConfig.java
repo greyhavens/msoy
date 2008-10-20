@@ -6,6 +6,7 @@ package com.threerings.msoy.admin.server;
 import java.lang.reflect.Field;
 
 import com.threerings.presents.dobj.AccessController;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -64,8 +65,7 @@ public class RuntimeConfig
         }
     }
 
-    /** An access controller that provides stricter-than-normal access to these configuration
-     * objects. */
+    /** An access controller that provides stricter-than-normal access for config objects. */
     protected static class AdminAccessController implements AccessController {
         public AdminAccessController (RootDObjectManager omgr) {
             _omgr = omgr;
@@ -88,13 +88,19 @@ public class RuntimeConfig
                 return true; // server: ok
             }
 
-            // make sure the originator is an admin
             DObject obj = _omgr.getObject(sourceOid);
             if (!(obj instanceof MemberObject)) {
                 return false;
             }
+
+            // make sure the originator is an admin
             MemberObject user = (MemberObject)obj;
             if (!user.tokens.isAdmin()) {
+                return false;
+            }
+
+            // non-maintainers can only update reboot related fields
+            if (!isRebootUpdate(event) && !user.tokens.isMaintainer()) {
                 return false;
             }
 
@@ -102,6 +108,15 @@ public class RuntimeConfig
             log.info("Admin configuration change [who=" + user.username +
                      ", object=" + object.getClass().getName() + ", change=" + event + "].");
             return true;
+        }
+
+        protected boolean isRebootUpdate (DEvent event) {
+            if (!(event instanceof AttributeChangedEvent)) {
+                return false;
+            }
+            AttributeChangedEvent ace = (AttributeChangedEvent)event;
+            return (ace.getName().equals(ServerConfigObject.CUSTOM_REBOOT_MSG) ||
+                    ace.getName().equals(ServerConfigObject.NEXT_REBOOT));
         }
 
         protected RootDObjectManager _omgr;

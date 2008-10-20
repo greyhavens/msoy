@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.WebCreds;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -62,21 +63,9 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Sends an email to all registered players who have not opted out of email communications.
-     *
-     * @param startId the first user id to mail or zero to email all users.
-     * @param endId the last user id to mail or zero to email all users.
-     *
-     * @return a three element array containing the count of successfully sent emails, the count of
-     * failures and the count of opt-out accounts.
+     * Configures this member's role.
      */
-    int[] spamPlayers (String subject, String body, int startId, int endId)
-        throws ServiceException;
-
-    /**
-     * Configures a member as support personnel or not. Only callable by admins.
-     */
-    void setIsSupport (int memberId, boolean isSupport)
+    void setRole (int memberId, WebCreds.Role role)
         throws ServiceException;
 
     /**

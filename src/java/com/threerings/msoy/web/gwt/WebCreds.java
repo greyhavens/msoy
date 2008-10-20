@@ -17,6 +17,9 @@ import com.threerings.msoy.data.all.MemberName;
  */
 public class WebCreds implements IsSerializable
 {
+    /** This user's role. Each successive role has more privileges than the last. */
+    public static enum Role { USER, SUPPORT, ADMIN, MAINTAINER };
+
     /** Our session token. */
     public String token;
 
@@ -29,11 +32,8 @@ public class WebCreds implements IsSerializable
     /** The permaname assigned to this account. */
     public String permaName;
 
-    /** Indicates that the authenticated user has support (or admin) privileges. */
-    public boolean isSupport;
-
-    /** Indicates that the authenticated user has admin privileges. */
-    public boolean isAdmin;
+    /** This member's role. */
+    public Role role;
 
     /** Returns the name of the creds cookie for use by this deployment. */
     public static String credsCookie ()
@@ -55,8 +55,7 @@ public class WebCreds implements IsSerializable
         creds.accountName = data.next();
         creds.name = new MemberName(data.next(), Integer.valueOf(data.next()));
         creds.permaName = data.next();
-        creds.isSupport = Boolean.valueOf(data.next());
-        creds.isAdmin = Boolean.valueOf(data.next());
+        creds.role = Enum.valueOf(Role.class, data.next());
         return creds;
     }
 
@@ -71,8 +70,7 @@ public class WebCreds implements IsSerializable
         data.add(name.toString());
         data.add(String.valueOf(name.getMemberId()));
         data.add(permaName);
-        data.add(String.valueOf(isSupport));
-        data.add(String.valueOf(isAdmin));
+        data.add(role.toString());
         return data;
     }
 
@@ -85,11 +83,35 @@ public class WebCreds implements IsSerializable
     }
 
     /**
+     * Returns true if this member has the support role (or higher).
+     */
+    public boolean isSupport ()
+    {
+        return role == Role.SUPPORT || role == Role.ADMIN || role == Role.MAINTAINER;
+    }
+
+    /**
+     * Returns true if this member has the admin role (or higher).
+     */
+    public boolean isAdmin ()
+    {
+        return role == Role.ADMIN || role == Role.MAINTAINER;
+    }
+
+    /**
+     * Returns true if this member has the maintainer role.
+     */
+    public boolean isMaintainer ()
+    {
+        return role == Role.MAINTAINER;
+    }
+
+    /**
      * Generates a string representaton of this instance.
      */
     public String toString ()
     {
         return "[auth=" + accountName + ", name=" + name + ", pname=" + permaName +
-            ", token=" + token + ", privs=" + isSupport + ":" + isAdmin + "]";
+            ", token=" + token + ", role=" + role + "]";
     }
 }
