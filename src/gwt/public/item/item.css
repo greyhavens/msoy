@@ -176,47 +176,42 @@
    NAVIGATION BARS
 -------------------------------------*/
 
-.stuffNaviBar {
-  margin-left: 7px;
-}
-
-.sideBar {
-  margin: 15px 5px 10px 0px
-}
-
-.sideBar .Title {
-  background: #5CA5DA;
-  color: #FFFFFF;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 0px 0px 2px 4px;
-}
-
-.sideBar .Middle {
-  background: #5CA5DA;
-}
-
 .sideBar .NaviPanel {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 16px;
-  font-weight: bold;
-  width: 90px;
-  margin-bottom: 10px;
-  padding-top: 3px;
+  margin-bottom: 20px;
 }
 
 .sideBar .NaviPanel .Cell {
-  background: #C6E2F8 url(/images/shop/navi_bg_cell.png) repeat top;
-  padding: 3px 0px 0px 5px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
   white-space: nowrap;
-  font-size: 15px;
+  display: inline;
+  vertical-align: top;
 }
 
 .sideBar .NaviPanel .Selected {
   color: #E78917;
 }
 
-.sideBar .NaviPanel a {
-  color: #27628E;
+.sideBar .NaviPanel .Cell a {
+  color: #FFFFFF;
   text-decoration: none;
+}
+
+.sideBar .NaviPanel .Cell a:hover {
+  color: #0C3A5C;
+}
+
+.sideBar .NaviPanel img {
+  display: inline;
+  margin: 2px 5px 0px 4px;
+}
+
+.sideBar .NaviPanel .Separator, .sideBar .NaviPanel .BlankSep {
+  width: 90px;
+  height: 1px;
+}
+
+.sideBar .NaviPanel .Separator {
+  background: #245774;
 }

@@ -3,7 +3,11 @@
 
 package client.item;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -12,13 +16,14 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import client.images.item.ItemImages;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 
 /**
  * Shown next to our catalog listings and our catalog landing page.
  */
-public class SideBar extends SmartTable
+public class SideBar extends FlowPanel
 {
     public interface Linker {
         public boolean isSelected (byte itemType);
@@ -27,7 +32,7 @@ public class SideBar extends SmartTable
 
     public SideBar (Linker linker, boolean showAll, Widget extras)
     {
-        super("sideBar", 0, 0);
+        setStyleName("sideBar");
 
         if (showAll) {
             init(linker, ALL_TYPES, extras);
@@ -38,32 +43,36 @@ public class SideBar extends SmartTable
 
     public SideBar (Linker linker, byte[] itemTypes, Widget extras)
     {
-        super("sideBar", 0, 0);
+        setStyleName("sideBar");
         init(linker, itemTypes, extras);
     }
 
     protected void init (Linker linker, byte[] itemTypes, Widget extras)
     {
-        addWidget(new Image("/images/shop/sidebar_top.png"), 1, null);
-        addText(_msgs.sideBarCats(), 1, "Title");
+//         addText(_msgs.sideBarCats(), 1, "Title");
 
         FlowPanel navi = new FlowPanel();
         navi.setStyleName("NaviPanel");
-        navi.add(new Image("/images/shop/navi_bg_top.png"));
+
         for (int ii = 0; ii < itemTypes.length; ii++) {
             byte type = itemTypes[ii];
+            AbstractImagePrototype proto = IMAGES.get(type);
+            // blank separator between game and level pack, etc.
             if (ii > 0) {
-                navi.add(new Image("/images/shop/navi_bg_sep.png"));
+                navi.add(MsoyUI.createLabel("", (proto == null) ? "BlankSep" : "Separator"));
+            }
+            if (proto != null) {
+                navi.add(proto.createImage());
+            } else {
+                navi.add(_itemImages.blank().createImage());
             }
             navi.add(makeItem(linker, _dmsgs.xlate("pItemType" + type), type));
         }
-        navi.add(new Image("/images/shop/navi_bg_bottom.png"));
-        addWidget(navi, 1, "Middle");
+        add(navi);
 
         if (extras != null) {
-            addWidget(extras, 1, "Middle");
+            add(extras);
         }
-        addWidget(new Image("/images/shop/sidebar_bottom.png"), 1, null);
     }
 
     protected Widget makeItem (Linker linker, String name, byte itemType)
@@ -72,9 +81,7 @@ public class SideBar extends SmartTable
         if (linker.isSelected(itemType)) {
             itemWidget = MsoyUI.createLabel(name, "Selected");
         } else {
-            Widget link = linker.createLink(name, itemType);
-            link.removeStyleName("inline");
-            itemWidget = link;
+            itemWidget = linker.createLink(name, itemType);
         }
         itemWidget.addStyleName("Cell");
         return itemWidget;
@@ -86,4 +93,19 @@ public class SideBar extends SmartTable
 
     protected static final ItemMessages _msgs = GWT.create(ItemMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
+    protected static final ItemImages _itemImages = GWT.create(ItemImages.class);
+
+    protected static final Map<Byte, AbstractImagePrototype> IMAGES =
+        new HashMap<Byte, AbstractImagePrototype>();
+    static {
+        IMAGES.put(Item.AUDIO, _itemImages.audio());
+        IMAGES.put(Item.AVATAR, _itemImages.avatar());
+        IMAGES.put(Item.DECOR, _itemImages.backdrop());
+        IMAGES.put(Item.FURNITURE, _itemImages.furniture());
+        IMAGES.put(Item.GAME, _itemImages.game());
+        IMAGES.put(Item.PET, _itemImages.pet());
+        IMAGES.put(Item.PHOTO, _itemImages.photo());
+        IMAGES.put(Item.TOY, _itemImages.toy());
+        IMAGES.put(Item.VIDEO, _itemImages.video());
+    }
 }

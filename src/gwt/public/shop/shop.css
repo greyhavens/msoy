@@ -16,8 +16,8 @@
   margin-top: 5px;
 }
 
-.catalogPanel .sideBar .tagCloud {
-  margin-left: 5px;
+.shopPanel .TopContents {
+  width: 565px;
 }
 
 .shopPanel .Bag {
@@ -80,14 +80,16 @@
   overflow: hidden;
 }
 
-.catalogPanel .ListingsCell {
-  background: #FFFFFF;
-  width: 100%;
+.shopPanel .sideBar, .catalogPanel .sideBar, .favoritesPanel .sideBar {
+  margin: 15px 15px 0px 0px;
+}
+
+.catalogPanel .sideBar .tagCloud {
+  margin-left: 5px;
 }
 
 .catalogPanel .Listings {
-  background: #1D5884;
-  width: 100%;
+  width: 560px;
 }
 
 .catalogPanel .Listings .Blurb {
@@ -108,6 +110,10 @@
 .buyRemixPanel {
   width: 300px;
   padding: 15px;
+}
+
+.catalogPanel .pagedGrid, .favoritesPanel .pagedGrid { 
+  min-height: 307px;
 }
 
 .catalogPanel .pagedGrid .Header .SortBy {

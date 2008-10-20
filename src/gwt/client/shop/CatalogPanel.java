@@ -51,10 +51,8 @@ public class CatalogPanel extends SmartTable
         _listings.getFlexCellFormatter().setRowSpan(0, 0, 2);
 
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-        setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-        setWidget(0, 2, _listings, 1, "ListingsCell");
+        setWidget(0, 2, _listings);
         getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
-        setWidget(0, 3, WidgetUtil.makeShim(10, 10));
 
         _searchBox = new TextBox();
         _searchBox.setVisibleLength(20);

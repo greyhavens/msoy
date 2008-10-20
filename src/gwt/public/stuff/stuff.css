@@ -60,12 +60,13 @@
 }
 
 .itemPanel .pagedGrid {
-  margin: 0px 0px 10px 10px;
-  width: 565px;
+  margin: 0px 0px 10px 0px;
+  width: 560px;
+  min-height: 280px;
 }
 
 .itemPanel .sideBar {
-  margin-top: 0px;
+  margin-right: 15px;
 }
 
 .itemPanel .pagedGrid .Header .TopLeft, 

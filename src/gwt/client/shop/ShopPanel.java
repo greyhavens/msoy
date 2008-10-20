@@ -51,9 +51,8 @@ public class ShopPanel extends HorizontalPanel
         setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
         add(new SideBar(new CatalogQueryLinker(new CatalogQuery()), false, null));
-        add(WidgetUtil.makeShim(10, 10));
         add(_contents = new FlowPanel());
-        add(WidgetUtil.makeShim(10, 10));
+        _contents.setStyleName("TopContents");
 
         SmartTable header = new SmartTable(0, 0);
         header.setWidget(0, 0, new Image("/images/shop/shop_bag.png"), 1, "Bag");
