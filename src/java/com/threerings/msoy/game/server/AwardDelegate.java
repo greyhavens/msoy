@@ -223,7 +223,7 @@ public class AwardDelegate extends RatingDelegate
         super.didStartup(plobj);
 
         // compute our flow per minute
-        final float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
+        final float minuteRate = RuntimeConfig.money.hourlyGameFlowRate / 60f;
         _flowPerMinute = Math.round(minuteRate * _content.detail.getPayoutFactor());
     }
 

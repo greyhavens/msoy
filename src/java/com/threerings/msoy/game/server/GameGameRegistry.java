@@ -397,10 +397,10 @@ public class GameGameRegistry
         detail.gamesPlayed += gamesPlayed;
 
         // determine whether or not it's time to recalculate this game's payout factor
-        final int hourlyRate = RuntimeConfig.server.hourlyGameFlowRate;
+        final int hourlyRate = RuntimeConfig.money.hourlyGameFlowRate;
         final int newFlowToNextRecalc;
         if (detail.flowToNextRecalc <= 0) {
-            newFlowToNextRecalc = RuntimeConfig.server.payoutFactorReassessment * hourlyRate +
+            newFlowToNextRecalc = RuntimeConfig.money.payoutFactorReassessment * hourlyRate +
                 detail.flowToNextRecalc;
             detail.flowToNextRecalc = newFlowToNextRecalc;
         } else {

@@ -488,7 +488,7 @@ public class MoneyRepository extends DepotRepository
         CashOutBillingInfo info)
     {
         BlingCashOutRecord cashOut = new BlingCashOutRecord(memberId, blingAmount, 
-            RuntimeConfig.server.blingWorth, info);
+            RuntimeConfig.money.blingWorth, info);
         insert(cashOut);
         return cashOut;
     }

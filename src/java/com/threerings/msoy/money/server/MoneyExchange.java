@@ -131,11 +131,11 @@ public class MoneyExchange
 
         } else if (pool >= BAR_POOL_TARGET) {
             float x = 1 - ((pool - BAR_POOL_TARGET) / ((float) BAR_POOL_TARGET));
-            _rate = (RuntimeConfig.server.targetExchangeRate / (1 / x));
+            _rate = (RuntimeConfig.money.targetExchangeRate / (1 / x));
 
         } else {
             float x = pool / ((float) BAR_POOL_TARGET);
-            _rate = (RuntimeConfig.server.targetExchangeRate * (1 / x));
+            _rate = (RuntimeConfig.money.targetExchangeRate * (1 / x));
         }
     }
 

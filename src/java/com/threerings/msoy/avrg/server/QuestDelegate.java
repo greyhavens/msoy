@@ -137,7 +137,7 @@ public class QuestDelegate extends PlaceManagerDelegate
 
         // payout factor depends on accumulated play time -- if we've yet to accumulate enough data
         // for a calculation, guesstimate 5 mins
-        int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
+        int flowPerHour = RuntimeConfig.money.hourlyGameFlowRate;
         int payoutFactor = (_content.detail.payoutFactor == 0) ?
             ((5 * flowPerHour) / 60) : _content.detail.payoutFactor;
 

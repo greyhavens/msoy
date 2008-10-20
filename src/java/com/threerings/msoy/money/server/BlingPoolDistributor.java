@@ -135,7 +135,7 @@ public class BlingPoolDistributor
         Calendar now = Calendar.getInstance();
         try {
             // figure out how much we'll be distributing
-            int blingPool = RuntimeConfig.server.blingPoolSize * 100;
+            int blingPool = RuntimeConfig.money.blingPoolSize * 100;
 
             Calendar lastRun = Calendar.getInstance();
             lastRun.setTime(confRecord.lastDistributedBling); // make it lastRun
@@ -172,7 +172,7 @@ public class BlingPoolDistributor
     {
         log.info("Distributing bling.",
             "day", DateFormat.getDateInstance().format(midnight1.getTime()),
-            "bling", RuntimeConfig.server.blingPoolSize); // don't log centibling..
+            "bling", RuntimeConfig.money.blingPoolSize); // don't log centibling..
         if (blingPool <= 0) {
             return; // but we did the logging...
         }

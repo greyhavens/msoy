@@ -429,9 +429,9 @@ public class MoneyLogic
 
         // If the user does not have the minimum amount required to cash out bling, don't allow
         // them to proceed
-        if (amount < RuntimeConfig.server.minimumBlingCashOut) {
+        if (amount < RuntimeConfig.money.minimumBlingCashOut) {
             throw new BelowMinimumBlingException(memberId, amount,
-                RuntimeConfig.server.minimumBlingCashOut);
+                RuntimeConfig.money.minimumBlingCashOut);
         }
 
         // Ensure the account has the requested amount of bling and that it is currently not
@@ -446,7 +446,7 @@ public class MoneyLogic
 
         // Add a cash out record for this member.
         BlingCashOutRecord cashOut = _repo.createCashOut(memberId, blingAmount,
-            RuntimeConfig.server.blingWorth, info);
+            RuntimeConfig.money.blingWorth, info);
 
         return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, BlingCashOutRecord>(
                 account, cashOut));
@@ -566,7 +566,7 @@ public class MoneyLogic
         int[] barPoolData = _repo.getBarPool();
 
         return new ExchangeStatusData(total, page,
-            _exchange.getRate(), RuntimeConfig.server.targetExchangeRate,
+            _exchange.getRate(), RuntimeConfig.money.targetExchangeRate,
             barPoolData[0], MoneyExchange.BAR_POOL_TARGET, barPoolData[1]);
     }
 
@@ -625,8 +625,8 @@ public class MoneyLogic
     {
         Currency currency;
         int amount;
-        float percentage = affiliate ? RuntimeConfig.server.affiliatePercentage
-                                     : RuntimeConfig.server.creatorPercentage;
+        float percentage = affiliate ? RuntimeConfig.money.affiliatePercentage
+                                     : RuntimeConfig.money.creatorPercentage;
         switch (quote.getListedCurrency()) {
         case COINS:
             currency = Currency.COINS;
@@ -702,8 +702,8 @@ public class MoneyLogic
         TO_BLING_INFO =
         new Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>() {
             public BlingInfo apply (Tuple<MemberAccountRecord, BlingCashOutRecord> records) {
-                return new BlingInfo(records.left.bling, RuntimeConfig.server.blingWorth,
-                    RuntimeConfig.server.minimumBlingCashOut * 100,
+                return new BlingInfo(records.left.bling, RuntimeConfig.money.blingWorth,
+                    RuntimeConfig.money.minimumBlingCashOut * 100,
                     records.right == null ? null : records.right.toInfo());
             }
         };

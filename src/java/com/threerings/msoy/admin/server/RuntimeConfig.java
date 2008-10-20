@@ -13,6 +13,7 @@ import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.admin.server.ConfigRegistry;
 
+import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyClient;
@@ -26,6 +27,9 @@ public class RuntimeConfig
 {
     /** Contains general server configuration data. */
     public static ServerConfigObject server = new ServerConfigObject();
+
+    /** Contains money configuration data. */
+    public static MoneyConfigObject money = new MoneyConfigObject();
 
     /**
      * Creates and registers the runtime configuration objects.
