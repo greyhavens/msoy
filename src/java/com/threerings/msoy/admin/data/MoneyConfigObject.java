@@ -32,6 +32,9 @@ public class MoneyConfigObject extends ConfigObject
     /** The field name of the <code>minimumBlingCashOut</code> field. */
     public static final String MINIMUM_BLING_CASH_OUT = "minimumBlingCashOut";
 
+    /** The field name of the <code>barPoolSize</code> field. */
+    public static final String BAR_POOL_SIZE = "barPoolSize";
+
     /** The field name of the <code>targetExchangeRate</code> field. */
     public static final String TARGET_EXCHANGE_RATE = "targetExchangeRate";
     // AUTO-GENERATED: FIELDS END
@@ -58,6 +61,9 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The minimum amount of bling (NOT centibling) that can be cashed out at a time. */
     public int minimumBlingCashOut = 500;
+
+    /** The size of the bar pool, used to manage the exchange. */
+    public int barPoolSize = 100000;
 
     /** The target bar/coin exchange rate. */
     public float targetExchangeRate = 3000;
@@ -173,6 +179,22 @@ public class MoneyConfigObject extends ConfigObject
         requestAttributeChange(
             MINIMUM_BLING_CASH_OUT, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.minimumBlingCashOut = value;
+    }
+
+    /**
+     * Requests that the <code>barPoolSize</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBarPoolSize (int value)
+    {
+        int ovalue = this.barPoolSize;
+        requestAttributeChange(
+            BAR_POOL_SIZE, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.barPoolSize = value;
     }
 
     /**

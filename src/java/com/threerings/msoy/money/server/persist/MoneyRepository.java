@@ -370,6 +370,14 @@ public class MoneyRepository extends DepotRepository
         return findAll(ExchangeRecord.class, OrderBy.descending(ExchangeRecord.TIMESTAMP_C),
             new Limit(start, count));
     }
+
+    public void adjustExchangeBarPoolTarget (int delta)
+    {
+        Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
+            .put(BarPoolRecord.BAR_POOL, new Arithmetic.Add(BarPoolRecord.BAR_POOL_C, delta))
+            .build();
+        updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, fieldValues);
+    }
     
     public int getExchangeDataCount ()
     {
@@ -524,7 +532,7 @@ public class MoneyRepository extends DepotRepository
     {
         BarPoolRecord bpRec = new BarPoolRecord();
         bpRec.id = BarPoolRecord.RECORD_ID;
-        bpRec.barPool = MoneyExchange.BAR_POOL_TARGET;
+        bpRec.barPool = RuntimeConfig.money.barPoolSize;
         try {
             insert(bpRec);
             // log a warning, hopefully we ever only do this once.

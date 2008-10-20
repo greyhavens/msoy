@@ -8,8 +8,11 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.Interval;
 
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.server.ShutdownManager;
 
+import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -24,9 +27,6 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
 public class MoneyExchange
     implements ShutdownManager.Shutdowner
 {
-    /** The target numbers of bars in the pool. */
-    public static final int BAR_POOL_TARGET = 100000;
-
     @Inject public MoneyExchange (ShutdownManager shutmgr)
     {
         shutmgr.registerShutdowner(this);
@@ -39,6 +39,7 @@ public class MoneyExchange
     public void init ()
     {
         recalculateRate();
+        RuntimeConfig.money.addListener(_moneyListener);
     }
 
     /**
@@ -123,21 +124,89 @@ public class MoneyExchange
      */
     protected void calculateRate (int pool)
     {
+        final int barPoolTarget = RuntimeConfig.money.barPoolSize;
         if (pool <= 0) {
             _rate = Float.POSITIVE_INFINITY;
 
-        } else if (pool >= (BAR_POOL_TARGET * 2)) {
+        } else if (pool >= (barPoolTarget * 2)) {
             _rate = 0;
 
-        } else if (pool >= BAR_POOL_TARGET) {
-            float x = 1 - ((pool - BAR_POOL_TARGET) / ((float) BAR_POOL_TARGET));
+        } else if (pool >= barPoolTarget) {
+            float x = 1 - ((pool - barPoolTarget) / ((float) barPoolTarget));
             _rate = (RuntimeConfig.money.targetExchangeRate / (1 / x));
 
         } else {
-            float x = pool / ((float) BAR_POOL_TARGET);
+            float x = pool / ((float) barPoolTarget);
             _rate = (RuntimeConfig.money.targetExchangeRate * (1 / x));
         }
     }
+
+    /**
+     * Adjust the desired bar pool size. This is called in direct reaction to adjusting
+     * the runtime config.
+     */
+    protected void adjustDesiredBarPool (int delta)
+    {
+        _moneyRepo.adjustExchangeBarPoolTarget(delta);
+        recalculateRate();
+    }
+
+//    protected void runTests ()
+//    {
+//        final int barPoolTarget = RuntimeConfig.money.barPoolSize;
+////        System.err.println("Rate 0: " + calcRate((int) (0.0 * barPoolTarget)));
+////        System.err.println("Rate .125: " + calcRate((int) (0.125 * barPoolTarget)));
+////        System.err.println("Rate .25: " + calcRate((int) (.25 * barPoolTarget)));
+////        System.err.println("Rate .50: " + calcRate((int) (.5 * barPoolTarget)));
+////        System.err.println("Rate .75: " + calcRate((int) (.75 * barPoolTarget)));
+////        System.err.println("Rate 1.0: " + calcRate((int) (1.0 * barPoolTarget)));
+////        System.err.println("Rate 1.25: " + calcRate((int) (1.25 * barPoolTarget)));
+////        System.err.println("Rate 1.5: " + calcRate((int) (1.5 * barPoolTarget)));
+////        System.err.println("Rate 1.75: " + calcRate((int) (1.75 * barPoolTarget)));
+////        System.err.println("Rate 2.0: " + calcRate((int) (2.0 * barPoolTarget)));
+////
+////        System.err.println("maxinf casted: " + ((int) (Float.POSITIVE_INFINITY * 2)));
+//
+//        System.err.println("Draining bar pool...");
+//        calculateRate(0);
+//        testPrices();
+//
+//        System.err.println("Overfilling bar pool...");
+//        calculateRate(2 * barPoolTarget);
+//        testPrices();
+//
+//        System.err.println("Half-overfilling bar pool...");
+//        calculateRate((int) (1.5 * barPoolTarget));
+//        testPrices();
+//
+//        System.err.println("Half-filling bar pool...");
+//        calculateRate((int) (.5 * barPoolTarget));
+//        testPrices();
+//    }
+//
+//    protected void testPrices ()
+//    {
+//        PriceQuote p;
+//        p = secureQuote(Currency.COINS, 0);
+//        System.err.println("coins:0, bars: " + p.getBars());
+//        p = secureQuote(Currency.COINS, 1);
+//        System.err.println("coins:1, bars: " + p.getBars());
+//        p = secureQuote(Currency.COINS, 1000000);
+//        System.err.println("coins:1000000, bars: " + p.getBars());
+//
+//        p = secureQuote(Currency.BARS, 0);
+//        System.err.println("bars:0, coins: " + p.getCoins());
+//        p = secureQuote(Currency.BARS, 1);
+//        System.err.println("bars:1, coins: " + p.getCoins());
+//        p = secureQuote(Currency.BARS, 1000000);
+//        System.err.println("bars:1000000, coins: " + p.getCoins());
+//    }
+
+    /** The current exchange rate. Can vary from 0 to Float.POSITIVE_INFINITY. */
+    protected float _rate;
+
+    /** Our money repository. */
+    @Inject protected MoneyRepository _moneyRepo;
 
     /** The interval to recalculate the exchange rate every minute,
      * or null if we're shutting down. */
@@ -147,61 +216,27 @@ public class MoneyExchange
         }
     };
 
-    protected void runTests ()
-    {
-//        System.err.println("Rate 0: " + calcRate((int) (0.0 * BAR_POOL_TARGET)));
-//        System.err.println("Rate .125: " + calcRate((int) (0.125 * BAR_POOL_TARGET)));
-//        System.err.println("Rate .25: " + calcRate((int) (.25 * BAR_POOL_TARGET)));
-//        System.err.println("Rate .50: " + calcRate((int) (.5 * BAR_POOL_TARGET)));
-//        System.err.println("Rate .75: " + calcRate((int) (.75 * BAR_POOL_TARGET)));
-//        System.err.println("Rate 1.0: " + calcRate((int) (1.0 * BAR_POOL_TARGET)));
-//        System.err.println("Rate 1.25: " + calcRate((int) (1.25 * BAR_POOL_TARGET)));
-//        System.err.println("Rate 1.5: " + calcRate((int) (1.5 * BAR_POOL_TARGET)));
-//        System.err.println("Rate 1.75: " + calcRate((int) (1.75 * BAR_POOL_TARGET)));
-//        System.err.println("Rate 2.0: " + calcRate((int) (2.0 * BAR_POOL_TARGET)));
-//
-//        System.err.println("maxinf casted: " + ((int) (Float.POSITIVE_INFINITY * 2)));
+    /** Listens for changes to the desired bar pool size and makes adjustments as necessary. */
+    protected AttributeChangeListener _moneyListener = new AttributeChangeListener() {
+        public void attributeChanged (AttributeChangedEvent event)
+        {
+            if (MoneyConfigObject.BAR_POOL_SIZE.equals(event.getName())) {
+                int newValue = event.getIntValue();
+                int oldValue = (Integer) event.getOldValue();
+                if (1 > newValue) {
+                    // well, bing bang bar, we need the pool value to be positive
+                    RuntimeConfig.money.setBarPoolSize(Math.max(1, oldValue)); // rollback
 
-        System.err.println("Draining bar pool...");
-        calculateRate(0);
-        testPrices();
+                } else if (1 > oldValue) {
+                    // we are *reacting to a rollback*, from the above line. do nothing.
 
-        System.err.println("Overfilling bar pool...");
-        calculateRate(2 * BAR_POOL_TARGET);
-        testPrices();
-
-        System.err.println("Half-overfilling bar pool...");
-        calculateRate((int) (1.5 * BAR_POOL_TARGET));
-        testPrices();
-
-        System.err.println("Half-filling bar pool...");
-        calculateRate((int) (.5 * BAR_POOL_TARGET));
-        testPrices();
-    }
-
-    protected void testPrices ()
-    {
-        PriceQuote p;
-        p = secureQuote(Currency.COINS, 0);
-        System.err.println("coins:0, bars: " + p.getBars());
-        p = secureQuote(Currency.COINS, 1);
-        System.err.println("coins:1, bars: " + p.getBars());
-        p = secureQuote(Currency.COINS, 1000000);
-        System.err.println("coins:1000000, bars: " + p.getBars());
-
-        p = secureQuote(Currency.BARS, 0);
-        System.err.println("bars:0, coins: " + p.getCoins());
-        p = secureQuote(Currency.BARS, 1);
-        System.err.println("bars:1, coins: " + p.getCoins());
-        p = secureQuote(Currency.BARS, 1000000);
-        System.err.println("bars:1000000, coins: " + p.getCoins());
-    }
-
-    /** The current exchange rate. Can vary from 0 to Float.POSITIVE_INFINITY. */
-    protected float _rate;
-
-    /** Our money repository. */
-    @Inject protected MoneyRepository _moneyRepo;
+                } else {
+                    // it's a normal, valid adjustment
+                    adjustDesiredBarPool(newValue - oldValue);
+                }
+            }
+        }
+    };
 
     /** How often we re-check the exchange rate, even if no cross-currency purchases have been
      * made during this time. */

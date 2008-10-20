@@ -567,7 +567,7 @@ public class MoneyLogic
 
         return new ExchangeStatusData(total, page,
             _exchange.getRate(), RuntimeConfig.money.targetExchangeRate,
-            barPoolData[0], MoneyExchange.BAR_POOL_TARGET, barPoolData[1]);
+            barPoolData[0], RuntimeConfig.money.barPoolSize, barPoolData[1]);
     }
 
     /**
