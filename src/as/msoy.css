@@ -920,6 +920,11 @@ BasePanel {
   disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
 }
 
+.attentionLabel {
+  fontWeight: "bold";
+  color: red;
+}
+
 .sliderPopup {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_background.png",
           scaleGridTop="1", scaleGridBottom="23",

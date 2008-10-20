@@ -41,6 +41,8 @@ public class SnapshotPanel extends FloatingPanel
     public static const SCENE_THUMBNAIL_WIDTH :int = 350;
     public static const SCENE_THUMBNAIL_HEIGHT :int = 200;
 
+    protected var CAN_SNAP :Boolean = true; // TODO: TEMP
+
     /** This is the maximum bitmap dimension, a flash limitation. */
     public static const MAX_BITMAP_DIM :int = 2880;
 
@@ -143,7 +145,8 @@ public class SnapshotPanel extends FloatingPanel
      */
     protected function canSave () :Boolean
     {
-        return shouldSaveGalleryImage || shouldDownloadImage || shouldSaveSceneThumbnail;
+        return (shouldSaveGalleryImage || shouldDownloadImage || shouldSaveSceneThumbnail) &&
+            CAN_SNAP;
     }
 
     protected function addChildIndented (component :UIComponent) :void
@@ -203,7 +206,9 @@ public class SnapshotPanel extends FloatingPanel
     {
         if (int(String(Capabilities.version.split(" ")[1]).split(",")[0]) > 9) {
             addChild(FlexUtil.createLabel(
-                "Snapshots are currently broken in Flash Player 10, we'll fix them soon."));
+                "Snapshots are currently broken in Flash Player 10, we'll fix them soon.",
+                "attentionLabel"));
+            CAN_SNAP = false;
         }
 
         var hPan :HBox = new HBox();
