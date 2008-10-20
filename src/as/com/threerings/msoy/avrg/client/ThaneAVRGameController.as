@@ -193,6 +193,17 @@ public class ThaneAVRGameController
         return binding.window.getClient();
     }
 
+    /** Retrieves the player object by the given player id (member id). Returns null if the player
+     *  is not in the game or is not yet available. */
+    public function getPlayer (playerId :int) :PlayerObject
+    {
+        var playerBinding :PlayerBinding = _players.get(playerId) as PlayerBinding;
+        if (playerBinding != null) {
+            return _playerSubs.getObj(playerBinding.oid) as PlayerObject
+        }
+        return null;
+    }
+
     /** Retrieves the player object by the given player id (member id).
      *  @throws UserError if the player is not in the game or is not yet available. */
     public function getPlayerForUser (playerId :int) :PlayerObject
@@ -278,18 +289,6 @@ public class ThaneAVRGameController
         } else {
             log.warning("User error occurred after shutdown");
         }
-    }
-
-    /** Retrieves the player object by the given player id (member id). Returns null if the player
-     *  is not in the game or is not yet available. */
-    protected function getPlayer (playerId :int) :PlayerObject
-    {
-        var playerBinding :PlayerBinding = _players.get(playerId) as PlayerBinding;
-        var playerObj :PlayerObject;
-        if (playerBinding != null) {
-            playerObj = _playerSubs.getObj(playerBinding.oid) as PlayerObject
-        }
-        return playerObj;
     }
 
     protected function entryAdded (event :EntryAddedEvent) :void

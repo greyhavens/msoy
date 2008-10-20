@@ -598,7 +598,7 @@ public class ThaneAVRGameBackend
      */
     protected function filterPlayer (memberId :int) :Boolean
     {
-        return _controller.getPlayerForUser(memberId) != null;
+        return _controller.getPlayer(memberId) != null;
     }
 
     /**
