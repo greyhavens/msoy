@@ -45,6 +45,8 @@
 
 .tagCloud .Link {
   padding: 0px 8px 4px 8px;
+  max-width: 60px;
+  overflow: hidden;
 }
 
 .itemDetailPanel .headerBox .Title {
