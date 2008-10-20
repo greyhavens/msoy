@@ -41,6 +41,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.BrowserTest;
 import client.shell.CShell;
+import client.shell.EntryVectorCookie;
 import client.shell.HttpReferrerCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
@@ -215,7 +216,7 @@ public class FrameEntryPoint
         }
         // END LEGACY CODE
 
-        // if we got a new vector from the URL, record it in Panopticon
+        // if we got a new vector from the URL, record it in Panopticon and in a cookie
         if (vector != null) {
             final VisitorInfo constInfo = info;
             _membersvc.trackVectorAssociation(info, vector, new AsyncCallback<Void>() {
@@ -226,6 +227,7 @@ public class FrameEntryPoint
                     CShell.log("Failed to send vector creation to server.", caught);
                 }
             });
+            EntryVectorCookie.save(vector);
         }
 
         // if we have a new visitor info, use that as well

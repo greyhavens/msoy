@@ -43,6 +43,7 @@ import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
+import client.shell.EntryVectorCookie;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -229,7 +230,9 @@ public class CreateAccountPanel extends FlowPanel
                 // display a nice confirmation message, as an excuse to embed a tracking iframe.
                 // we'll show it for two seconds, and then rock on!
                 final int feedbackDelayMs = 2000;
-                setStatus(_msgs.creatingDone(), AdWordsUtil.createConversionTrackingPanel());
+                setStatus(_msgs.creatingDone(),
+                    ConversionTrackingUtil.createAdWordsTracker(),
+                    ConversionTrackingUtil.createBeacon(EntryVectorCookie.get()));
                 Timer t = new Timer() {
                     public void run () {
                         // let the top-level frame know that we logged on (will trigger a redirect)
@@ -250,12 +253,14 @@ public class CreateAccountPanel extends FlowPanel
         });
     }
 
-    protected void setStatus (String text, Widget tracker)
+    protected void setStatus (String text, Widget ... trackers)
     {
         FlowPanel p = new FlowPanel();
         p.add(MsoyUI.createLabel(text, ""));
-        if (tracker != null) {
-            p.add(tracker);
+        for (Widget tracker : trackers) {
+            if (tracker != null) {
+                p.add(tracker);
+            }
         }
 
         _status.setWidget(p);

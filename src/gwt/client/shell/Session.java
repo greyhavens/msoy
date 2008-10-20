@@ -118,6 +118,7 @@ public class Session
 
         // we're logged in! clear out any leftover cookie, and load up visitor info from the server
         VisitorCookie.clear();
+        EntryVectorCookie.clear();
         CShell.visitor = data.visitor;
 
         // tell it from the mountain
