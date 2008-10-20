@@ -139,6 +139,7 @@
 .abTestListPanel .Tests {
   border: solid black 1px;
   margin: 10px auto;
+  width: 100%;
 }
 
 .abTestListPanel .Tests .Header {
