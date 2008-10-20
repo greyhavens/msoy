@@ -303,9 +303,11 @@ public class MailLogic
     protected static final String RP_CAMPAIGN_HEADER = "X-campaignid";
     protected static final String RP_CAMPAIGN_PREFIX = "threeringsdesign_";
 
-    /** 982 email accounts that we include in our user spammage so that we can have Returnpath tell
-     * us whether or not our mails are getting through. */
+    /** 980 email accounts that we include in our user spammage so that we can have Return Path
+     * tell us whether or not our mails are getting through. */
     protected static final String[] RETURNPATH_ADDRS = new String[] {
+        "0000ref000.threeringsdesign@000.monitor1.returnpath.net",
+        "0000refzzz.threeringsdesign@zzz.monitor1.returnpath.net",
         "12garrabrandt_man@earthlink.net",
         "aaa01bluewin@bluewin.ch",
         "aaa01hana@hanafos.com",
@@ -371,7 +373,6 @@ public class MailLogic
         "auoptus1818@optusnet.com.au",
         "auoptus1919@optusnet.com.au",
         "axelnortby@hotmail.com",
-        "ba9sel@freesurf.ch",
         "baconracer33@aol.com",
         "barber4tiki@yahoo.es",
         "bartender85aybar@yahoo.com",
@@ -552,7 +553,6 @@ public class MailLogic
         "delta8droman@yahoo.es",
         "devlin_miltondean3@hotmail.com",
         "dmuller_10@msn.com",
-        "doloris@dejung.wanadoo.co.uk",
         "donal38nolan@cgocable.ca",
         "doobiehankin@aol.com",
         "dorsey_congressman77@hotmail.com",
@@ -832,7 +832,6 @@ public class MailLogic
         "llan798jensen@rogers.com",
         "lll12neuf@neuf.fr",
         "lll12orange@orangerp.es",
-        "lll12skynet@sky.cz",
         "lll12Telefonica@iDisc.e.telefonica.net",
         "lllvrzn@verizon.net",
         "lorraine99johnson@rogers.com",
@@ -1036,7 +1035,6 @@ public class MailLogic
         "sallycato@mac.com",
         "sandymmeredith@cs.com",
         "sara@sprimus6.wanadoo.co.uk",
-        "schaff1hausen@freesurf.ch",
         "science_fairstudent99@yahoo.com",
         "serina5miller@tiscali.co.uk",
         "seymour374skinner@nyc.rr.com",
@@ -1188,7 +1186,6 @@ public class MailLogic
         "willette.joanne@earthlink.net",
         "willie.jocko@gmail.com",
         "willyknox@sbcglobal.net",
-        "winter8thur@freesurf.ch",
         "www10likos@lycos.com",
         "www13bigp@bigpond.com",
         "www13ozemail@ozemail.com.au",
@@ -1245,7 +1242,6 @@ public class MailLogic
         "zoot98alors@videotron.ca",
         "zsigmond@bellsouth.net",
         "zsigmond_chew33@hotmail.com",
-        "zu7rich@freesurf.ch",
         "zzz14eir@eircom.net",
         "zzz15bigp@bigpond.com",
         "zzz15ozemail@ozemail.com.au",
@@ -1288,5 +1284,7 @@ public class MailLogic
         "zzz@zzzukorange.orangehome.co.uk",
         "zzztwentyfive.BELGACOM@belgacom.net",
         "zzzz24shaw@shaw.ca",
+        "zzzzref000.threeringsdesign@000.monitor1.returnpath.net",
+        "zzzzrefzzz.threeringsdesign@zzz.monitor1.returnpath.net",
     };
 }
