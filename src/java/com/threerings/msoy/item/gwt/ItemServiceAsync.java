@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.web.gwt.RatingResult;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -28,7 +29,7 @@ public interface ItemServiceAsync
      * The asynchronous version of {@link ItemService#rateItem}.
      */
     void rateItem (
-        ItemIdent item, byte rating, AsyncCallback<Float> callback);
+        ItemIdent item, byte rating, AsyncCallback<RatingResult> callback);
 
     /**
      * The asynchronous version of {@link ItemService#getTags}.

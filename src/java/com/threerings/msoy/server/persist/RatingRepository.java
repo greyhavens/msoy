@@ -82,10 +82,7 @@ public abstract class RatingRepository extends DepotRepository
         record.rating = rating;
         boolean newRater = store(record);
 
-        RatingAverageRecord average =
-            load(RatingAverageRecord.class,
-                 new FromOverride(getRatingClass()),
-                 new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId));
+        RatingAverageRecord average = createAverageRecord(targetId);
 
         float newRating = (average.count == 0) ? 0f : average.sum/(float)average.count;
         // and then smack the new value into the item using yummy depot code
@@ -129,6 +126,19 @@ public abstract class RatingRepository extends DepotRepository
         RatingRecord record = load(
             getRatingClass(), RatingRecord.TARGET_ID, targetId, RatingRecord.MEMBER_ID, memberId);
         return (record == null) ? (byte)0 : record.rating;
+    }
+
+    public int getCount (int targetId)
+    {
+        return createAverageRecord(targetId).count;
+    }
+
+    protected RatingAverageRecord createAverageRecord (int targetId)
+    {
+        RatingAverageRecord record = load(RatingAverageRecord.class,
+            new FromOverride(getRatingClass()),
+            new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId));
+        return record;
     }
 
     /** Exports the specific rating class used by this repository. */

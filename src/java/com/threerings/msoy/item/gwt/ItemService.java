@@ -13,6 +13,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.Photo;
 
+import com.threerings.msoy.web.gwt.RatingResult;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
 
@@ -42,10 +43,8 @@ public interface ItemService extends RemoteService
 
     /**
      * Awards an item a rating from 1 to 5.
-     *
-     * @return the new average rating for the item.
      */
-    float rateItem (ItemIdent item, byte rating)
+    RatingResult rateItem (ItemIdent item, byte rating)
         throws ServiceException;
 
     /**

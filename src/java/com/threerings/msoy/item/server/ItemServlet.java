@@ -34,6 +34,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 
+import com.threerings.msoy.web.gwt.RatingResult;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
@@ -110,7 +111,7 @@ public class ItemServlet extends MsoyServiceServlet
 //    }
 
     // from interface ItemService
-    public float rateItem (ItemIdent iident, byte rating)
+    public RatingResult rateItem (ItemIdent iident, byte rating)
         throws ServiceException
     {
         // Ensure the rating is within bounds
@@ -142,17 +143,20 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         // if this is the first time the player has rated this item, increment the stat.
-        if (item.creatorId != memrec.memberId && repo.getRating(originalId, memrec.memberId) == 0) {
+        if (item.creatorId != memrec.memberId &&
+            repo.getRatingRepository().getRating(originalId, memrec.memberId) == 0) {
             _statLogic.incrementStat(memrec.memberId, StatType.ITEMS_RATED, 1);
         }
 
         // record this player's rating and obtain the new summarized rating
-        Tuple<Float, Boolean> ratingResult = repo.rateItem(originalId, memrec.memberId, rating);
+        // TODO: Remove cross cutting badge logic from RatingRepository
+        Tuple<Float, Boolean> ratingResult =
+            repo.getRatingRepository().rate(originalId, memrec.memberId, rating);
         // if this qualifies as a new "solid 4+ rating", we have a stat to update
         if (ratingResult.right) {
             _statLogic.addToSetStat(item.creatorId, StatType.SOLID_4_STAR_RATINGS, originalId);
         }
-        return ratingResult.left;
+        return new RatingResult(ratingResult.left, repo.getRatingRepository().getCount(originalId));
     }
 
     // from interface ItemService

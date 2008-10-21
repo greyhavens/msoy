@@ -191,6 +191,14 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Returns the repository that manages ratings for this item.
+     */
+    public RatingRepository getRatingRepository ()
+    {
+        return _ratingRepo;
+    }
+
+    /**
      * Load an item, or a clone.
      */
     public T loadItem (int itemId)
@@ -887,49 +895,6 @@ public abstract class ItemRepository<T extends ItemRecord>
     public byte getRating (int itemId, int memberId)
     {
         return _ratingRepo.getRating(itemId, memberId);
-    }
-
-    /**
-     * Insert/update a rating row, calculate the new rating and finally update the item's rating.
-     *
-     * @return First the new rating as a float.  Also, the tuple will contain true if this newly
-     *         added rating qualifies this item as a new "solid" 4+ star rating.  That means that
-     *         it either just breached the rating threshold for "solid" and has 4+ stars or just
-     *         went from below 4 to above 4, and has more than the requisite "solid" ratings.
-     */
-    public Tuple<Float, Boolean> rateItem (int itemId, int memberId, byte rating)
-    {
-        return _ratingRepo.rate(itemId, memberId, rating);
-//        // first create a new rating record
-//        RatingRecord record;
-//        try {
-//            record = getRatingClass().newInstance();
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//        // populate and insert it
-//        record.itemId = itemId;
-//        record.memberId = memberId;
-//        record.rating = rating;
-//        boolean newRater = store(record);
-//
-//        RatingAverageRecord average =
-//            load(RatingAverageRecord.class,
-//                 new FromOverride(getRatingClass()),
-//                 new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId));
-//
-//        float newRating = (average.count == 0) ? 0f : average.sum/(float)average.count;
-//        // and then smack the new value into the item using yummy depot code
-//        updatePartial(getItemClass(), itemId, ItemRecord.RATING, newRating,
-//                      ItemRecord.RATING_COUNT, average.count);
-//
-//        float oldRating = (average.count < 2) ? 0f :
-//            (average.sum - rating)/(float)(average.count - 1);
-//        boolean newSolid =
-//            (average.count == MIN_SOLID_RATINGS && newRating >= 4) ||
-//            (average.count > MIN_SOLID_RATINGS && newRating >= 4 && (!newRater || oldRating < 4));
-//
-//        return new Tuple<Float, Boolean>(newRating, newSolid);
     }
 
     /**

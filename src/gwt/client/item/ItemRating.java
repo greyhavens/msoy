@@ -3,24 +3,27 @@
 
 package client.item;
 
-import client.shell.CShell;
-import client.shell.ShellMessages;
-import client.util.MsoyCallback;
-import client.util.ServiceUtil;
-import client.ui.Stars;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.MemberItemInfo;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.gwt.MemberItemInfo;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.web.gwt.RatingResult;
+
+import client.shell.CShell;
+import client.shell.ShellMessages;
+import client.util.MsoyCallback;
+import client.util.ServiceUtil;
+import client.ui.Stars;
 
 public class ItemRating extends FlexTable
     implements Stars.StarMouseListener
@@ -107,15 +110,12 @@ public class ItemRating extends FlexTable
     // from interface Stars.StarMouseListener
     public void starClicked (byte newRating)
     {
-        final boolean isFirstRating = _memberRating == 0;
         _playerStars.setRating(_memberRating = newRating);
         ItemIdent ident = _item.getIdent();
-        _itemsvc.rateItem(ident, newRating, new MsoyCallback<Float>() {
-            public void onSuccess (Float result) {
-                _averageStars.setRating(_item.rating = result);
-                if (isFirstRating) {
-                    _item.ratingCount += 1;
-                }
+        _itemsvc.rateItem(ident, newRating, new MsoyCallback<RatingResult>() {
+            public void onSuccess (RatingResult result) {
+                _averageStars.setRating(_item.rating = result.rating);
+                _item.ratingCount = result.ratingCount;
                 updateRatingCount();
             }
         });
