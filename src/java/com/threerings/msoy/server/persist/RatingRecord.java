@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.server.persist;
+package com.threerings.msoy.server.persist;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -27,7 +27,7 @@ public abstract class RatingRecord extends PersistentRecord
     public static final String RATING = "rating";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 1; // TODO: Increment?
 
     /** The id of the tagged item. */
     @Id

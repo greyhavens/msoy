@@ -27,6 +27,8 @@ import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.item.data.all.Game;
+
+import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 

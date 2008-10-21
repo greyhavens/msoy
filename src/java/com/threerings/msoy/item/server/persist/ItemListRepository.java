@@ -29,9 +29,12 @@ import com.samskivert.jdbc.depot.operator.Logic;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 
 import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
+
+import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.CountRecord;
 
 @Singleton

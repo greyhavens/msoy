@@ -33,7 +33,6 @@ import com.samskivert.util.QuickSort;
 import com.samskivert.util.Tuple;
 
 import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.SchemaMigration;
@@ -66,6 +65,8 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.persist.RatingRecord;
+import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
@@ -90,14 +91,6 @@ import static com.threerings.msoy.Log.log;
 public abstract class ItemRepository<T extends ItemRecord>
     extends DepotRepository
 {
-    @Entity @Computed
-    public static class RatingAverageRecord extends PersistentRecord {
-        @Computed(fieldDefinition="count(*)")
-        public int count;
-        @Computed(fieldDefinition="sum(" + RatingRecord.RATING + ")")
-        public int sum;
-    }
-
     @Entity @Computed
     public static class OwnerIdRecord extends PersistentRecord {
         public int itemId;
@@ -127,54 +120,22 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
         };
 
+        _ratingRepo = new RatingRepository(ctx, ItemRecord.RATING, ItemRecord.RATING_COUNT) {
+            @Override
+            protected Class<? extends PersistentRecord> getTargetClass () {
+                return ItemRepository.this.getItemClass();
+            }
+            @Override
+            protected Class<RatingRecord> getRatingClass () {
+                return ItemRepository.this.getRatingClass();
+            }
+        };
+
         _ctx.registerMigration(getCatalogClass(), new SchemaMigration.Drop(11, "goldCost"));
         _ctx.registerMigration(getCatalogClass(),
-            new SchemaMigration.Rename(11, "flowCost", CatalogRecord.COST));
+                new SchemaMigration.Rename(11, "flowCost", CatalogRecord.COST));
         _ctx.registerMigration(getCatalogClass(),
-            new SchemaMigration.Add(11, CatalogRecord.CURRENCY, "0"));
-
-        // TEMP added 2008.05.15
-        _ctx.registerMigration(getItemClass(), new SchemaMigration(17000) {
-            @Override
-            public boolean runBeforeDefault () {
-                return false; // let the damn thing create the column first
-            }
-
-            @Override
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                int migrated = 0;
-                try {
-                    OrderBy order = OrderBy.descending(getItemColumn(ItemRecord.LAST_TOUCHED));
-                    final int limit = 1000;
-                    int count = 0;
-                    while (true) {
-                        List<T> list = findAll(getItemClass(), order, new Limit(count, limit));
-                        for (T record : list) {
-                            RatingAverageRecord average = load(RatingAverageRecord.class,
-                                 new FromOverride(getRatingClass()),
-                                 new Where(getRatingColumn(RatingRecord.ITEM_ID), record.itemId));
-                            if (average.count > 0) {
-                                migrated++;
-                                updatePartial(getItemClass(), record.itemId,
-                                    ItemRecord.RATING_COUNT, average.count);
-                            }
-                        }
-                        if (list.size() < limit) {
-                            break;
-                        } else {
-                            count += limit;
-                        }
-                    }
-                } catch (Exception e) {
-                    log.warning("Couldn't migrate: " + e);
-                    throw new SQLException();
-                }
-
-                log.info("Migrated " + migrated + " records.");
-                return migrated;
-            }
-        });
-        // END: temp
+                new SchemaMigration.Add(11, CatalogRecord.CURRENCY, "0"));
 
         int cloneCurrencyMigrationVersion = 8000; // NOTE: this seems wrong, but it works.
         // mdb is on the case.
@@ -906,7 +867,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             delete(getItemClass(), itemId);
 
             // delete rating records for this item (and invalidate the cache properly)
-            deleteAll(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId));
+            _ratingRepo.deleteRatings(itemId);
 
             // delete tag records relating to this item
             _tagRepo.deleteTags(itemId);
@@ -922,9 +883,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public byte getRating (int itemId, int memberId)
     {
-        RatingRecord record = load(
-            getRatingClass(), RatingRecord.ITEM_ID, itemId, RatingRecord.MEMBER_ID, memberId);
-        return (record == null) ? (byte)0 : record.rating;
+        return _ratingRepo.getRating(itemId, memberId);
     }
 
     /**
@@ -937,36 +896,37 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public Tuple<Float, Boolean> rateItem (int itemId, int memberId, byte rating)
     {
-        // first create a new rating record
-        RatingRecord record;
-        try {
-            record = getRatingClass().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        // populate and insert it
-        record.itemId = itemId;
-        record.memberId = memberId;
-        record.rating = rating;
-        boolean newRater = store(record);
-
-        RatingAverageRecord average =
-            load(RatingAverageRecord.class,
-                 new FromOverride(getRatingClass()),
-                 new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId));
-
-        float newRating = (average.count == 0) ? 0f : average.sum/(float)average.count;
-        // and then smack the new value into the item using yummy depot code
-        updatePartial(getItemClass(), itemId, ItemRecord.RATING, newRating,
-                      ItemRecord.RATING_COUNT, average.count);
-
-        float oldRating = (average.count < 2) ? 0f :
-            (average.sum - rating)/(float)(average.count - 1);
-        boolean newSolid =
-            (average.count == MIN_SOLID_RATINGS && newRating >= 4) ||
-            (average.count > MIN_SOLID_RATINGS && newRating >= 4 && (!newRater || oldRating < 4));
-
-        return new Tuple<Float, Boolean>(newRating, newSolid);
+        return _ratingRepo.rate(itemId, memberId, rating);
+//        // first create a new rating record
+//        RatingRecord record;
+//        try {
+//            record = getRatingClass().newInstance();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        // populate and insert it
+//        record.itemId = itemId;
+//        record.memberId = memberId;
+//        record.rating = rating;
+//        boolean newRater = store(record);
+//
+//        RatingAverageRecord average =
+//            load(RatingAverageRecord.class,
+//                 new FromOverride(getRatingClass()),
+//                 new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId));
+//
+//        float newRating = (average.count == 0) ? 0f : average.sum/(float)average.count;
+//        // and then smack the new value into the item using yummy depot code
+//        updatePartial(getItemClass(), itemId, ItemRecord.RATING, newRating,
+//                      ItemRecord.RATING_COUNT, average.count);
+//
+//        float oldRating = (average.count < 2) ? 0f :
+//            (average.sum - rating)/(float)(average.count - 1);
+//        boolean newSolid =
+//            (average.count == MIN_SOLID_RATINGS && newRating >= 4) ||
+//            (average.count > MIN_SOLID_RATINGS && newRating >= 4 && (!newRater || oldRating < 4));
+//
+//        return new Tuple<Float, Boolean>(newRating, newSolid);
     }
 
     /**
@@ -978,16 +938,9 @@ public abstract class ItemRepository<T extends ItemRecord>
      * meaningless anyway since the item is no longer in the catalog. Ratings should really be on
      * listings not items, but that's a giant fiasco we don't want to deal with.
      */
-    public void reassignRatings (final int oldItemId, int newItemId)
+    public void reassignRatings (int oldItemId, int newItemId)
     {
-        // TODO: this cache eviction might be slow :)
-        updatePartial(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), oldItemId),
-                      new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
-                          @Override
-                        public boolean testForEviction (Serializable key, RatingRecord record) {
-                              return (record.itemId == oldItemId);
-                          }
-                      }, RatingRecord.ITEM_ID, newItemId);
+        _ratingRepo.reassignRatings(oldItemId, newItemId);
     }
 
     /**
@@ -1006,7 +959,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                               getItemColumn(ItemRecord.OWNER_ID), item.ownerId);
             key = new Key<T>(getItemClass(), ItemRecord.ITEM_ID, item.itemId);
         }
-        int modifiedRows =  updatePartial(
+        int modifiedRows = updatePartial(
             item.itemId < 0 ? getCloneClass() : getItemClass(), where, key,
             ItemRecord.OWNER_ID, newOwnerId,
             ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
@@ -1295,10 +1248,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         return new ColumnExp(getCloneClass(), cname);
     }
 
-    protected ColumnExp getRatingColumn (String cname)
-    {
-        return new ColumnExp(getRatingClass(), cname);
-    }
+//    protected ColumnExp getRatingColumn (String cname)
+//    {
+//        return new ColumnExp(getRatingClass(), cname);
+//    }
 
     protected ColumnExp getTagColumn (String cname)
     {
@@ -1398,6 +1351,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /** Used to manage our item tags. */
     protected TagRepository _tagRepo;
+
+    /** Used to manage item ratings. */
+    protected RatingRepository _ratingRepo;
 
     // our dependencies
     @Inject protected MemoryRepository _memoryRepo;

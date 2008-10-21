@@ -6,6 +6,8 @@ package com.threerings.msoy.item.server.persist;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.server.persist.RatingRecord;
+
 /** Rating records for Decor. */
 public class DecorRatingRecord extends RatingRecord
 {
