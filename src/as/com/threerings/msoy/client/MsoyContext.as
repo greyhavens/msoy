@@ -43,12 +43,9 @@ public /*abstract*/ class MsoyContext
         // and our convenience holder
         Msgs.init(_msgMgr);
 
-        _helper = new ContextHelper();
-
         _locDir = new LocationDirector(this);
         _occDir = new OccupantDirector(this);
         _chatDir = createChatDirector();
-        _chatDir.setChatterValidator(_helper);
         _chatDir.addChatFilter(new CurseFilter(this));
 
         // the top panel's constructor will add it to the app's UI hierarchy
@@ -253,7 +250,6 @@ public /*abstract*/ class MsoyContext
     }
 
     protected var _client :MsoyClient;
-    protected var _helper :ContextHelper;
     protected var _topPanel :TopPanel;
 
     protected var _msgMgr :MessageManager;
@@ -262,25 +258,4 @@ public /*abstract*/ class MsoyContext
     protected var _chatDir :MsoyChatDirector;
     protected var _notifyDir :NotificationDirector;
 }
-}
-
-import com.threerings.util.Name;
-
-import com.threerings.crowd.chat.client.ChatterValidator;
-
-import com.threerings.msoy.data.all.MemberName;
-
-/**
- * A helper class that implements common helper interfaces that we would not like to see exposed on
- * the MsoyContext class.  In Java, this would be handled by having a number of anonymous inner
- * classes.
- */
-class ContextHelper
-    implements ChatterValidator
-{
-    // from ChatterValidator
-    public function isChatterValid (username :Name) :Boolean
-    {
-        return (username is MemberName) && !MemberName(username).isGuest()
-    }
 }
