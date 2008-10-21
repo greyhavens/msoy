@@ -298,8 +298,14 @@
     </copy>
     <propertyregex property="server_url_host" input="${server_url}"
                    regexp="http://([^:/]*):?.*" replace="\1"/>
+    <propertyregex property="media_url_host" input="${media_url}"
+                   regexp="http://([^:/]*):?.*" replace="\1"/>
     <copy file="pages/crossdomain.xml.in" tofile="pages/crossdomain.xml" overwrite="true">
-      <filterset><filter token="SERVER_URL_HOST" value="${server_url_host}"/></filterset>
+      <filterset>
+        <filter token="SERVER_URL_HOST" value="${server_url_host}"/>
+        <filter token="MEDIA_URL_HOST" value="${media_url_host}"/>
+        <filter token="HTTP_PORT" value="${http_port}"/>
+      </filterset>
     </copy>
 
     <!-- copy our HTML sanitizer configuration -->
