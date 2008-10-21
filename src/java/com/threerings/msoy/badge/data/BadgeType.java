@@ -91,14 +91,14 @@ public enum BadgeType
         }
     },
 
-    EXPLORER(StampCategory.SOCIAL, StatType.ROOMS_TOURED, new Level[] {
-        new Level(25, 250),
-        new Level(50, 500),
-        new Level(100, 1000),
-        new Level(200, 2000),
-        new Level(500, 3000),
-        new Level(2000, 10000)
-    }),
+//    EXPLORER(StampCategory.SOCIAL, StatType.ROOMS_TOURED, new Level[] {
+//        new Level(25, 250),
+//        new Level(50, 500),
+//        new Level(100, 1000),
+//        new Level(200, 2000),
+//        new Level(500, 3000),
+//        new Level(2000, 10000)
+//    }),
 
     // game badges
     GAMER(StampCategory.GAME, StatType.GAME_SESSIONS, new Level[] {
