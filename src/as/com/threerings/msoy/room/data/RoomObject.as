@@ -5,6 +5,7 @@ package com.threerings.msoy.room.data {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.presents.dobj.DSet;
+import com.threerings.util.Iterator;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
@@ -66,6 +67,23 @@ public class RoomObject extends SpotSceneObject
     /** The property spaces associated with this room. */
     public var propertySpaces :DSet = new DSet();
     RoomPropertiesEntry; // reference to force linkage
+
+    /**
+     * Finds the info of an occupant who is also a member and has a given member id. Performs the
+     * same function as <code>getOccupantInfo(new MemberName("", memberId))</code>, but is more
+     * convenient to call and performs better.
+     */
+    public function getMemberInfo (memberId :int) :MemberInfo
+    {
+        var itr :Iterator = occupantInfo.iterator();
+        while (itr.hasNext()) {
+            var minfo :MemberInfo = (itr.next() as MemberInfo);
+            if (minfo != null && minfo.getMemberId() == memberId) {
+                return minfo;
+            }
+        }
+        return null;
+    }
     
     override public function readObject (ins :ObjectInputStream) :void
     {
