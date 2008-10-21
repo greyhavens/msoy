@@ -9,6 +9,8 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.depot.DatabaseException;
+import com.samskivert.jdbc.depot.DataMigration;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -21,9 +23,18 @@ import com.threerings.presents.annotation.BlockingThread;
 @Singleton @BlockingThread
 public class BadgeRepository extends DepotRepository
 {
-    @Inject public BadgeRepository (PersistenceContext perCtx)
+    @Inject public BadgeRepository (PersistenceContext ctx)
     {
-        super(perCtx);
+        super(ctx);
+
+        // TEMP: may be removed shortly after 2008-10-21
+        registerMigration(new DataMigration("2008_10_21_erase_early_explorer_badge") {
+            public void invoke () throws DatabaseException
+            {
+                deleteAll(InProgressBadgeRecord.class,
+                    new Where(InProgressBadgeRecord.BADGE_CODE_C, 567029922));
+            }
+        });
     }
         
     /**
