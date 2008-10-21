@@ -281,7 +281,6 @@ class ContextHelper
     // from ChatterValidator
     public function isChatterValid (username :Name) :Boolean
     {
-        return (username is MemberName) &&
-            MemberName.isGuest((username as MemberName).getMemberId());
+        return (username is MemberName) && !MemberName(username).isGuest()
     }
 }
