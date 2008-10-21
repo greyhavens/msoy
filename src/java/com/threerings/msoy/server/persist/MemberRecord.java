@@ -317,7 +317,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isSupport ()
     {
-        return isSet(Flag.SUPPORT) || isAdmin() || isMaintainer() || isRoot();
+        return isSet(Flag.SUPPORT) || isAdmin();
     }
 
     /**
@@ -325,7 +325,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isAdmin ()
     {
-        return isSet(Flag.ADMIN) || isMaintainer() || isRoot();
+        return isSet(Flag.ADMIN) || isMaintainer();
     }
 
     /**
