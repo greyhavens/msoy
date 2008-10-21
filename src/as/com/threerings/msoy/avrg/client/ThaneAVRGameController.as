@@ -91,18 +91,15 @@ public class ThaneAVRGameController
     public function shutdown () :void
     {
         // flush all scene bindings
-        var bindings :Array = _bindings.values();
-        _bindings.clear();
-        for each (var binding :SceneBinding in bindings) {
+        for each (var binding :SceneBinding in _bindings.values()) {
             removeBinding(binding.sceneId);
         }
 
         // release all player adapters
-        bindings = _players.values();
-        _players.clear();
-        for each (var player :PlayerBinding in bindings) {
+        for each (var player :PlayerBinding in _players.values()) {
             player.netAdapter.release();
         }
+        _players.clear();
 
         // shutdown the backend
         backend.shutdown();
