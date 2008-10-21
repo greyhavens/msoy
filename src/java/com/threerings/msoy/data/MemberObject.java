@@ -107,9 +107,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>lists</code> field. */
     public static final String LISTS = "lists";
 
-    /** The field name of the <code>viewOnly</code> field. */
-    public static final String VIEW_ONLY = "viewOnly";
-
     /** The field name of the <code>walkingId</code> field. */
     public static final String WALKING_ID = "walkingId";
 
@@ -206,10 +203,6 @@ public class MemberObject extends MsoyBodyObject
     /** The item lists owned by this user. */
     public DSet<ItemListInfo> lists = new DSet<ItemListInfo>();
 
-    /** A flag that's true if this member object is only viewing the current scene and should not
-     * be rendered in it. */
-    public boolean viewOnly;
-
     /** If this member is currently walking a pet, the id of the pet being walked, else 0. */
     public int walkingId;
 
@@ -281,6 +274,14 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
+     * Return true if this user is only viewing the scene and should not be rendered within it.
+     */
+    public boolean isViewer ()
+    {
+        return memberName.isViewer();
+    }
+
+    /**
      * Returns  our home scene id or 1 (Brave New Whirled) if we have none.
      */
     public int getHomeSceneId ()
@@ -347,7 +348,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public String getVisitorId ()
     {
-        if (MemberName.isViewer(getMemberId())) {
+        if (isViewer()) {
             return "";
         } else if (visitorInfo == null) {
             log.warning("Member missing visitorInfo", "who", who(), new Exception());
@@ -485,7 +486,7 @@ public class MemberObject extends MsoyBodyObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        if (viewOnly) {
+        if (isViewer()) {
             return new ObserverInfo(this);
         }
         boolean useStaticImage = 
@@ -1041,22 +1042,6 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(LISTS, value, this.lists);
         DSet<ItemListInfo> clone = (value == null) ? null : value.typedClone();
         this.lists = clone;
-    }
-
-    /**
-     * Requests that the <code>viewOnly</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setViewOnly (boolean value)
-    {
-        boolean ovalue = this.viewOnly;
-        requestAttributeChange(
-            VIEW_ONLY, Boolean.valueOf(value), Boolean.valueOf(ovalue));
-        this.viewOnly = value;
     }
 
     /**

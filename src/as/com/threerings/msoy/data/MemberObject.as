@@ -85,9 +85,6 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>game</code> field. */
     public static const GAME :String = "game";
 
-    /** The field name of the <code>viewOnly</code> field. */
-    public static const VIEW_ONLY :String = "viewOnly";
-
     /** The field name of the <code>walkingId</code> field. */
     public static const WALKING_ID :String = "walkingId";
 
@@ -180,10 +177,6 @@ public class MemberObject extends MsoyBodyObject
     /** The item lists owned by this user. */
     public var lists :DSet;
 
-    /** A flag that's true if this member object is only viewing the current scene and should not
-     * be rendered in it. */
-    public var viewOnly :Boolean;
-
     /** If this member is currently walking a pet, the id of the pet being walked, else 0. */
     public var walkingId :int;
 
@@ -206,7 +199,15 @@ public class MemberObject extends MsoyBodyObject
      */
     public function isGuest () :Boolean
     {
-        return MemberName.isGuest(getMemberId());
+        return memberName.isGuest();
+    }
+
+    /**
+     * Return true if this user is only viewing the scene and should not be rendered within it.
+     */
+    public function isViewer () :Boolean
+    {
+        return memberName.isViewer();
     }
 
     /**
@@ -336,7 +337,6 @@ public class MemberObject extends MsoyBodyObject
         newMailCount = ins.readInt();
         game = GameSummary(ins.readObject());
         lists = DSet(ins.readObject());
-        viewOnly = ins.readBoolean();
         walkingId = ins.readInt();
         headline = ins.readField(String) as String;
         visitorInfo = VisitorInfo(ins.readObject());

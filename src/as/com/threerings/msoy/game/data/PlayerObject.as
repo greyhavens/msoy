@@ -98,7 +98,7 @@ public class PlayerObject extends WhirledPlayerObject
      */
     public function isGuest () :Boolean
     {
-        return MemberName.isGuest(getMemberId());
+        return memberName.isGuest();
     }
 
     /**

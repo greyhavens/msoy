@@ -82,7 +82,7 @@ public class MsoyClient extends WhirledClient
         // if this is a guest account, they didn't get a VisitorInfo through the resolver.
         // so let's pull one from their flash credentials, or manufacture a brand new one.
         // (but only do this for real guests, not lurkers!)
-        final boolean guest = _memobj.memberName.isGuest() && !_memobj.memberName.isViewer();
+        final boolean guest = _memobj.isGuest() && !_memobj.isViewer();
         if (_memobj.visitorInfo == null && guest) {
             if (credentials.visitorId != null) {
                 _memobj.visitorInfo = new VisitorInfo(credentials.visitorId, false);
@@ -97,9 +97,6 @@ public class MsoyClient extends WhirledClient
         } else {
             _memobj.setTokens(new MsoyTokenRing());
         }
-
-        // flag viewing-only clients that way.
-        _memobj.viewOnly = credentials.featuredPlaceView;
 
         // start active/idle metrics on this server - the player starts out active
         _memobj.metrics.idle.init(true);

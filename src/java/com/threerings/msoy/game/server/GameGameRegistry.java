@@ -983,7 +983,7 @@ public class GameGameRegistry
                     return;
                 }
 
-                if (!MemberName.isGuest(player.getMemberId())) {
+                if (!player.isGuest()) {
                     Map<String, byte[]> initialState = new HashMap<String, byte[]>();
                     for (PlayerGameStateRecord record : _stateRecs) {
                         initialState.put(record.datumKey, record.datumValue);

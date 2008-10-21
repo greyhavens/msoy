@@ -36,6 +36,14 @@ public class MemberName extends Name
     public static const MAXIMUM_PERMANAME_LENGTH :int = 12;
 
     /**
+     * Returns true if the supplied member id represents an anonymous viewer.
+     */
+    public static function isViewer (memberId :int) :Boolean
+    {
+        return memberId == 0;
+    }
+
+    /**
      * Returns true if the supplied member id represents a guest.
      */
     public static function isGuest (memberId :int) :Boolean
@@ -66,6 +74,14 @@ public class MemberName extends Name
     public function isGuest () :Boolean
     {
         return MemberName.isGuest(_memberId);
+    }
+
+    /**
+     * Returns true if this name represents an anonymous viewer.
+     */
+    public function isViewer () :Boolean
+    {
+        return MemberName.isViewer(_memberId);
     }
 
     // from DSet_Entry

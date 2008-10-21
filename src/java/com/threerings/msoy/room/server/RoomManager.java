@@ -812,7 +812,7 @@ public class RoomManager extends SpotSceneManager
         DObject body = _omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
-            if (! member.memberName.isViewer()) {
+            if (! member.isViewer()) {
                 member.metrics.room.save(member);
 
                 // get the last known occupancy length - this might have been measured above,
