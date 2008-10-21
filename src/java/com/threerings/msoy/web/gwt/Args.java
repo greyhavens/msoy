@@ -181,25 +181,9 @@ public class Args
 
     /**
      * Called by the application when configuring our arguments.
-     *
-     * @return true if the token was valid, false if it was rejected for syntactic reasons. In the
-     * latter case a blank token will have been parsed in its stead.
      */
-    public boolean setToken (String token)
+    public void setToken (String token)
     {
-        boolean valid = true;
-
-        // enforce a lack of upper case letters in our URLs
-        if (DeploymentConfig.devDeployment) {
-            for (int ii = 0; ii < token.length(); ii++) {
-                if (Character.isUpperCase(token.charAt(ii))) {
-                    token = "";
-                    valid = false;
-                    break;
-                }
-            }
-        }
-
         do {
             int didx = token.indexOf(ARG_SEP);
             if (didx == -1) {
@@ -210,8 +194,6 @@ public class Args
                 token = token.substring(didx+1);
             }
         } while (token != null && token.length() > 0);
-
-        return valid;
     }
 
     /**

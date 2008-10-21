@@ -149,11 +149,7 @@ public class FrameEntryPoint
         Args args = new Args();
         int dashidx = token.indexOf("-");
         if (dashidx != -1) {
-            String atoken = token.substring(dashidx+1);
-            if (!args.setToken(atoken)) {
-                CShell.log("Rejected invalid token '" + atoken + "' " +
-                           "(perhaps it contains upper case letters).");
-            }
+            args.setToken(token.substring(dashidx+1))
         }
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
