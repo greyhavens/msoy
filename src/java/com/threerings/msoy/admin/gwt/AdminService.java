@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.admin.gwt;
 
-import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;

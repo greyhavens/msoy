@@ -14,8 +14,6 @@ import com.google.inject.Inject;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Tuple;
 
-import com.threerings.presents.data.InvocationCodes;
-
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.StatLogic;

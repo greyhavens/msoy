@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.admin.server;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.threerings.presents.dobj.AccessController;

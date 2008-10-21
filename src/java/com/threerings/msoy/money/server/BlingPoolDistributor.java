@@ -31,7 +31,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.server.ShutdownManager;
 
-import com.threerings.msoy.admin.data.ServerConfigObject;
+import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.game.server.persist.GamePlayRecord;
@@ -48,7 +48,7 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 /**
  * Responsible for distributing bling to creators of games that players have played on a daily
- * basis.  The amount to distribute is governed by the {@link ServerConfigObject#blingPoolSize}
+ * basis.  The amount to distribute is governed by the {@link MoneyConfigObject#blingPoolSize}
  * run-time configuration.  This is scheduled to run at 3:00a every day.  The amount of bling
  * each game creator receives is based on the amount of time players played their game, compared
  * to the total amount of time that players played games that day.

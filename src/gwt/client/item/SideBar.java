@@ -9,12 +9,9 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
-
-import com.threerings.gwt.ui.SmartTable;
 
 import client.images.item.ItemImages;
 import client.shell.DynamicLookup;

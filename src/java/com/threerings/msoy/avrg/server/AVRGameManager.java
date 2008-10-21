@@ -542,9 +542,7 @@ public class AVRGameManager extends PlaceManager
         }
         _playerScenes.put(memberId, noScene);
         noScene.addPlayer(memberId);
-        if (oldScene != null) {
-            oldScene.removePlayer(memberId);
-        }
+        oldScene.removePlayer(memberId);
 
         // Expose the transfer to dobj (or else wait until agent calls roomSubscriptionComplete)
         postPlayerMove(memberId, 0);

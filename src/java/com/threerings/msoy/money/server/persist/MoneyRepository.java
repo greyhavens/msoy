@@ -49,7 +49,6 @@ import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
 
-import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 
 import static com.threerings.msoy.Log.log;

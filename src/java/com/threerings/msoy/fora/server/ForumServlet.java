@@ -568,7 +568,6 @@ public class ForumServlet extends MsoyServiceServlet
         }
         Args args = Args.fromToken(token.substring(didx+1));
 
-        String boxArgs = null;
         try {
             switch (page) {
             case SHOP:

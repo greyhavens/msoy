@@ -6,8 +6,6 @@ package com.threerings.msoy.web.gwt;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-
 /**
  * Used to parse the arguments supplied to the page.
  */
