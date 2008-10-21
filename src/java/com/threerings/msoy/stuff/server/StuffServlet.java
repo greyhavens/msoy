@@ -239,9 +239,13 @@ public class StuffServlet extends MsoyServiceServlet
     public Item loadItem (ItemIdent item)
         throws ServiceException
     {
+        MemberRecord mrec = requireAuthedUser();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
         ItemRecord irec = repo.loadItem(item.itemId);
-        return (irec == null) ? null : irec.toItem();
+        // we only return the item metadata if they own it, it's a catalog master, or for agents
+        boolean accessValid = (irec != null) &&
+            ((irec.ownerId == mrec.memberId) || irec.isCatalogMaster() || mrec.isSupport());
+        return accessValid ? irec.toItem() : null;
     }
 
     // from interface StuffService
