@@ -205,7 +205,7 @@ public class MsoyAuthenticator extends Authenticator
         final InvitationRecord invite, final VisitorInfo visitor, String affiliate)
         throws ServiceException
     {
-        if (!RuntimeConfig.server.registrationEnabled && !ignoreRestrict) {
+        if (!_runtime.server.registrationEnabled && !ignoreRestrict) {
             throw new ServiceException(MsoyAuthCodes.NO_REGISTRATIONS);
         }
 
@@ -409,7 +409,7 @@ public class MsoyAuthenticator extends Authenticator
                                       final MsoyAuthResponseData rdata, final int memberId)
         throws ServiceException
     {
-        if (!RuntimeConfig.server.nonAdminsAllowed) {
+        if (!_runtime.server.nonAdminsAllowed) {
             throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
         }
 
@@ -489,7 +489,7 @@ public class MsoyAuthenticator extends Authenticator
         account.tokens = new MsoyTokenRing(tokens);
 
         // check whether we're restricting non-admin login
-        if (!RuntimeConfig.server.nonAdminsAllowed && !account.tokens.isSupport()) {
+        if (!_runtime.server.nonAdminsAllowed && !account.tokens.isSupport()) {
             throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
         }
 
@@ -624,6 +624,7 @@ public class MsoyAuthenticator extends Authenticator
     // our dependencies
     @Inject protected Domain _defaultDomain;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected RuntimeConfig _runtime;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected AffiliateMapRepository _affMapRepo;

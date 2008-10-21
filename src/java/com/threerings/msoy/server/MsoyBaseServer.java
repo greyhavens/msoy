@@ -42,6 +42,7 @@ import com.threerings.msoy.server.util.Retry;
 import com.threerings.msoy.server.util.RetryInterceptor;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+
 import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
@@ -100,9 +101,10 @@ public abstract class MsoyBaseServer extends WhirledServer
         // set up our default object access controller
         _omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
-        // create and set up our configuration registry and admin service
+        // create and set up our configuration registry, admin service and runtime config
         final ConfigRegistry confReg = createConfigRegistry();
         AdminProvider.init(_invmgr, confReg);
+        _runtime.init(_omgr, confReg);
 
         // initialize the bureau registry
         _bureauReg.init();
@@ -134,19 +136,13 @@ public abstract class MsoyBaseServer extends WhirledServer
         }
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
 
-        // now initialize our runtime configuration, postponing the remaining server initialization
-        // until our configuration objects are available
-        RuntimeConfig.init(_omgr, confReg);
-        _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable () {
-            public void run () {
-                try {
-                    finishInit(injector);
-                } catch (final Exception e) {
-                    log.warning("Server initialization failed.", e);
-                    System.exit(-1);
-                }
-            }
-        });
+        // set up the right client factories
+        configClientFactory();
+
+        // now that our primary client factories are configured, we can register our chained bureau
+        // factories which sit on top of whatever factory the server uses for normal clients
+        _clmgr.setClientFactory(new MsoyBureauClientFactory(_clmgr.getClientFactory()));
+        _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
     }
 
     // from BureauLauncherProvider
@@ -169,6 +165,11 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         arg1.requestProcessed(0);
     }
+
+    /**
+     * Derived classes need to override this and configure their main client factory.
+     */
+    protected abstract void configClientFactory ();
 
     /**
      * Called internally when a launcher connection is terminated. The specific launcher may no
@@ -202,18 +203,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // and shutdown our event logger now that everything else is done shutting down
         _eventLog.shutdown();
-    }
-
-    /**
-     * Called once our runtime configuration information is loaded and ready.
-     */
-    protected void finishInit (final Injector injector)
-        throws Exception
-    {
-        // We need to chain these client factories *after* the main init so that it can get first
-        // dibs and delegate to the subclass client factory
-        _clmgr.setClientFactory(new MsoyBureauClientFactory(_clmgr.getClientFactory()));
-        _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
     }
 
     /** Selects a registered launcher for the next bureau. */
@@ -283,6 +272,9 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Provides database access to all of our repositories. */
     @Inject protected PersistenceContext _perCtx;
+
+    /** Maintains runtime modifiable configuration information. */
+    @Inject protected RuntimeConfig _runtime;
 
     /** Sends event information to an external log database. */
     @Inject protected MsoyEventLogger _eventLog;

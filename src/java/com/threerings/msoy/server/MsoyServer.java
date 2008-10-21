@@ -166,21 +166,6 @@ public class MsoyServer extends MsoyBaseServer
         // we need to know when we're shutting down
         _shutmgr.registerShutdowner(this);
 
-        // set up the right client factory
-        _clmgr.setClientFactory(new ClientFactory() {
-            public Class<? extends PresentsClient> getClientClass (final AuthRequest areq) {
-                return MsoyClient.class;
-            }
-            public Class<? extends ClientResolver> getClientResolverClass (final Name username) {
-                return MsoyClientResolver.class;
-            }
-        });
-
-        // Add in the authenticator and client factory which will allow bureau windows (for avrgs)
-        // to be distinguished and connected
-        _conmgr.addChainedAuthenticator(new WindowAuthenticator(ServerConfig.windowSharedSecret));
-        _clmgr.setClientFactory(new WindowClientFactory(_clmgr.getClientFactory()));
-
         // initialize our HTTP server
         _httpServer.init(new File(ServerConfig.serverRoot, "log"));
 
@@ -189,6 +174,66 @@ public class MsoyServer extends MsoyBaseServer
         // to a PlaceObject on the WorldServer while in games, MsoyChatProvider's overridden
         // broadcast method becomes unneccessary
         ((MsoyChatProvider) _chatprov).init(_gameReg);
+
+        // start up our peer manager
+        log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
+        _peerMan.init(injector, ServerConfig.nodeName, ServerConfig.sharedSecret,
+                      ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
+
+        // intialize various services
+        _adminMan.init();
+        _memberMan.init();
+        _friendMan.init();
+        _jabberMan.init();
+        _itemMan.init();
+        _swiftlyMan.init(_invmgr);
+        _petMan.init(injector);
+        _gameReg.init();
+        _partyReg.init();
+        _moneyLogic.init();
+
+        // TEMP: give a peer manager refernce to MemberNodeActions
+        MemberNodeActions.init(_peerMan);
+
+        GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
+            public int getUserId (final BodyObject bodyObj) {
+                final int memberId = ((MemberObject) bodyObj).getMemberId();
+                return MemberName.isGuest(memberId) ? 0 : memberId;
+            }
+        });
+
+        // start up our HTTP server
+        _httpServer.start();
+
+        // if we're a dev deployment and our policy port is not privileged, run the policy server
+        // right in the msoy server to simplify life for developers
+        if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
+                ServerConfig.nodeName.equals("msoy1")) {
+            _policyServer = MsoyPolicyServer.init();
+        }
+
+        // start up an interval that checks to see if our code has changed and auto-restarts the
+        // server as soon as possible when it has
+        if (ServerConfig.autoRestart) {
+            _codeModified = codeModifiedTime();
+            new Interval() { // Note well: this interval does not run on the dobj thread
+                @Override
+                public void expired () {
+                    // ...we simply post a LongRunnable to do the job
+                    _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
+                        public void run () {
+                            checkAutoRestart();
+                        }
+                    });
+                }
+                @Override
+                public String toString () {
+                    return "checkAutoRestart interval";
+                }
+            }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
+        }
+
+        log.info("Msoy server initialized.");
     }
 
     /**
@@ -263,77 +308,29 @@ public class MsoyServer extends MsoyBaseServer
         return _peerConfReg;
     }
 
+    @Override // from MsoyBaseServer
+    protected void configClientFactory ()
+    {
+        // configure our primary client factory
+        _clmgr.setClientFactory(new ClientFactory() {
+            public Class<? extends PresentsClient> getClientClass (final AuthRequest areq) {
+                return MsoyClient.class;
+            }
+            public Class<? extends ClientResolver> getClientResolverClass (final Name username) {
+                return MsoyClientResolver.class;
+            }
+        });
+
+        // Add in the authenticator and client factory which will allow bureau windows (for avrgs)
+        // to be distinguished and connected
+        _conmgr.addChainedAuthenticator(new WindowAuthenticator(ServerConfig.windowSharedSecret));
+        _clmgr.setClientFactory(new WindowClientFactory(_clmgr.getClientFactory()));
+    }
+
     @Override // from PresentsServer
     protected int[] getListenPorts ()
     {
         return ServerConfig.serverPorts;
-    }
-
-    @Override // from MsoyBaseServer
-    protected void finishInit (final Injector injector)
-        throws Exception
-    {
-        super.finishInit(injector);
-
-        // start up our peer manager
-        log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
-        _peerMan.init(injector, ServerConfig.nodeName, ServerConfig.sharedSecret,
-                      ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
-
-        // intialize various services
-        _adminMan.init();
-        _memberMan.init();
-        _friendMan.init();
-        _jabberMan.init();
-        _itemMan.init();
-        _swiftlyMan.init(_invmgr);
-        _petMan.init(injector);
-        _gameReg.init();
-        _partyReg.init();
-        _moneyLogic.init();
-
-        // TEMP: give a peer manager refernce to MemberNodeActions
-        MemberNodeActions.init(_peerMan);
-
-        GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
-            public int getUserId (final BodyObject bodyObj) {
-                final int memberId = ((MemberObject) bodyObj).getMemberId();
-                return MemberName.isGuest(memberId) ? 0 : memberId;
-            }
-        });
-
-        // start up our HTTP server
-        _httpServer.start();
-
-        // if we're a dev deployment and our policy port is not privileged, run the policy server
-        // right in the msoy server to simplify life for developers
-        if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
-                ServerConfig.nodeName.equals("msoy1")) {
-            _policyServer = MsoyPolicyServer.init();
-        }
-
-        // start up an interval that checks to see if our code has changed and auto-restarts the
-        // server as soon as possible when it has
-        if (ServerConfig.autoRestart) {
-            _codeModified = codeModifiedTime();
-            new Interval() { // Note well: this interval does not run on the dobj thread
-                @Override
-                public void expired () {
-                    // ...we simply post a LongRunnable to do the job
-                    _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
-                        public void run () {
-                            checkAutoRestart();
-                        }
-                    });
-                }
-                @Override
-                public String toString () {
-                    return "checkAutoRestart interval";
-                }
-            }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
-        }
-
-        log.info("Msoy server initialized.");
     }
 
     /**

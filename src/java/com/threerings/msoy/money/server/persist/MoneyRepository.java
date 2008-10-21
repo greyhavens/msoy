@@ -45,7 +45,6 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
 
-import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
@@ -338,11 +337,11 @@ public class MoneyRepository extends DepotRepository
     /**
      * Get the number of bars and the coin balance in the bar pool.
      */
-    public int[] getBarPool ()
+    public int[] getBarPool (int defaultBarPoolSize)
     {
         BarPoolRecord bpRec = load(BarPoolRecord.class, BarPoolRecord.KEY);
         if (bpRec == null) {
-            bpRec = createBarPoolRecord();
+            bpRec = createBarPoolRecord(defaultBarPoolSize);
         }
         return new int[] { bpRec.barPool, bpRec.coinBalance };
     }
@@ -486,17 +485,17 @@ public class MoneyRepository extends DepotRepository
     /**
      * Creates a new CashOutRecord that indicates the specified member requested a cash out.
      * 
-     * @param memberId ID of the member cashing out.
-     * @param blingAmount Amount of centibling, to cash out.
-     * @param blingWorth Worth of each bling at the time the request was made.
-     * @param info Billing information indicating how the member should be paid.
-     * @return The newly created cash out record.
+     * @param memberId id of the member cashing out.
+     * @param blingAmount amount of centibling, to cash out.
+     * @param blingWorth worth of each bling at the time the request was made.
+     * @param info billing information indicating how the member should be paid.
+     *
+     * @return the newly created cash out record.
      */
-    public BlingCashOutRecord createCashOut (int memberId, int blingAmount, float blingWorth,
+    public BlingCashOutRecord createCashOut (int memberId, int blingAmount, int blingWorth,
         CashOutBillingInfo info)
     {
-        BlingCashOutRecord cashOut = new BlingCashOutRecord(memberId, blingAmount, 
-            RuntimeConfig.money.blingWorth, info);
+        BlingCashOutRecord cashOut = new BlingCashOutRecord(memberId, blingAmount, blingWorth, info);
         insert(cashOut);
         return cashOut;
     }
@@ -528,11 +527,11 @@ public class MoneyRepository extends DepotRepository
     /**
      * Create the singleton BarPoolRecord in the database.
      */
-    protected BarPoolRecord createBarPoolRecord ()
+    protected BarPoolRecord createBarPoolRecord (int defaultBarPoolSize)
     {
         BarPoolRecord bpRec = new BarPoolRecord();
         bpRec.id = BarPoolRecord.RECORD_ID;
-        bpRec.barPool = RuntimeConfig.money.barPoolSize;
+        bpRec.barPool = defaultBarPoolSize;
         try {
             insert(bpRec);
             // log a warning, hopefully we ever only do this once.

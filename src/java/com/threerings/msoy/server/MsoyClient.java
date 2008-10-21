@@ -182,7 +182,7 @@ public class MsoyClient extends WhirledClient
                     _statRepo.writeModified(memberId, stats.toArray(new Stat[stats.size()]));
                     // increment their session and minutes online counters
                     _memberRepo.noteSessionEnded(
-                        memberId, activeMins, RuntimeConfig.server.humanityReassessment);
+                        memberId, activeMins, _runtime.server.humanityReassessment);
                 }
             });
         }
@@ -248,6 +248,7 @@ public class MsoyClient extends WhirledClient
 
     // dependent services
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected RuntimeConfig _runtime;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MemberLocator _locator;
     @Inject protected StatRepository _statRepo;

@@ -3,7 +3,8 @@
 
 package com.threerings.msoy.admin.server;
 
-import java.lang.reflect.Field;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -24,45 +25,33 @@ import static com.threerings.msoy.Log.log;
 /**
  * Provides access to runtime reconfigurable configuration data.
  */
+@Singleton
 public class RuntimeConfig
 {
     /** Contains general server configuration data. */
-    public static ServerConfigObject server = new ServerConfigObject();
+    public final ServerConfigObject server = new ServerConfigObject();
 
     /** Contains money configuration data. */
-    public static MoneyConfigObject money = new MoneyConfigObject();
+    public final MoneyConfigObject money = new MoneyConfigObject();
 
     /**
      * Creates and registers the runtime configuration objects.
      */
-    public static void init (RootDObjectManager omgr, ConfigRegistry confReg)
+    public void init (RootDObjectManager omgr, ConfigRegistry confReg)
     {
-        Field[] fields = RuntimeConfig.class.getDeclaredFields();
-        for (int ii = 0; ii < fields.length; ii++) {
-            final Field field = fields[ii];
-            final Class<?> oclass = field.getType();
-            if (!DObject.class.isAssignableFrom(oclass)) {
-                continue;
-            }
+        registerObject(omgr, confReg, "server", server);
+        registerObject(omgr, confReg, "money", money);
+    }
 
-            String key = field.getName();
-            try {
-                // create and register the object
-                DObject object = omgr.registerObject((DObject)field.get(null));
-
-                // set the tight-ass access controller
-                object.setAccessController(new AdminAccessController(omgr));
-
-                // register the object with the config object registry
-                confReg.registerObject(key, key, object);
-
-                // and set our static field
-                field.set(null, object);
-
-            } catch (Exception e) {
-                log.warning("Failed to set " + key + ".", e);
-            }
-        }
+    protected void registerObject (RootDObjectManager omgr, ConfigRegistry confReg,
+                                   String key, DObject object)
+    {
+        // register the object with the distributed object system
+        omgr.registerObject(object);
+        // set the tight-ass access controller
+        object.setAccessController(new AdminAccessController(omgr));
+        // register the object with the config object registry
+        confReg.registerObject(key, key, object);
     }
 
     /** An access controller that provides stricter-than-normal access for config objects. */

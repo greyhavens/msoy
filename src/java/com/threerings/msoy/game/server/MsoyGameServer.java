@@ -101,16 +101,7 @@ public class MsoyGameServer extends MsoyBaseServer
         // give our game game registry Injection Power (tm)
         _gameReg.init(injector);
 
-        // set up the right client factory
-        _clmgr.setClientFactory(new ClientFactory() {
-            public Class<? extends PresentsClient> getClientClass (AuthRequest areq) {
-                return MsoyGameClient.class;
-            }
-            public Class<? extends ClientResolver> getClientResolverClass (Name username) {
-                return MsoyGameClientResolver.class;
-            }
-        });
-
+        // tell GameManager how to identify our users
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
                 int memberId = ((PlayerObject) bodyObj).getMemberId();
@@ -136,6 +127,20 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         // TODO: the game servers probably need to hear about changes to runtime config bits
         return _configReg;
+    }
+
+    @Override // from MsoyBaseServer
+    protected void configClientFactory ()
+    {
+        // set up the right client factory
+        _clmgr.setClientFactory(new ClientFactory() {
+            public Class<? extends PresentsClient> getClientClass (AuthRequest areq) {
+                return MsoyGameClient.class;
+            }
+            public Class<? extends ClientResolver> getClientResolverClass (Name username) {
+                return MsoyGameClientResolver.class;
+            }
+        });
     }
 
     @Override // from PresentsServer

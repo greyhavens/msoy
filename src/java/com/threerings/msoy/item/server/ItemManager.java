@@ -90,9 +90,9 @@ public class ItemManager
     {
         _itemLogic.init();
 
-        ItemRepository.setNewAndHotDropoffDays(RuntimeConfig.server.newAndHotDropoffDays);
+        ItemRepository.setNewAndHotDropoffDays(_runtime.server.newAndHotDropoffDays);
 
-        RuntimeConfig.server.addListener(new AttributeChangeListener() {
+        _runtime.server.addListener(new AttributeChangeListener() {
             public void attributeChanged (AttributeChangedEvent event) {
                 if (ServerConfigObject.NEW_AND_HOT_DROPOFF_DAYS.equals(event.getName())) {
                     final int days = event.getIntValue();
@@ -786,6 +786,7 @@ public class ItemManager
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected RuntimeConfig _runtime;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected SceneRegistry _sceneReg;

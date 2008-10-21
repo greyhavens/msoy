@@ -39,7 +39,7 @@ public class MoneyExchange
     public void init ()
     {
         recalculateRate();
-        RuntimeConfig.money.addListener(_moneyListener);
+        _runtime.money.addListener(_moneyListener);
     }
 
     /**
@@ -108,7 +108,7 @@ public class MoneyExchange
      */
     protected void recalculateRate ()
     {
-        int pool = _moneyRepo.getBarPool()[0];
+        int pool = _moneyRepo.getBarPool(_runtime.money.barPoolSize)[0];
         // the more bars in the pool: the lower the exchange rate
         calculateRate(pool);
 
@@ -124,7 +124,7 @@ public class MoneyExchange
      */
     protected void calculateRate (int pool)
     {
-        final int barPoolTarget = RuntimeConfig.money.barPoolSize;
+        final int barPoolTarget = _runtime.money.barPoolSize;
         if (pool <= 0) {
             _rate = Float.POSITIVE_INFINITY;
 
@@ -133,11 +133,11 @@ public class MoneyExchange
 
         } else if (pool >= barPoolTarget) {
             float x = 1 - ((pool - barPoolTarget) / ((float) barPoolTarget));
-            _rate = (RuntimeConfig.money.targetExchangeRate / (1 / x));
+            _rate = (_runtime.money.targetExchangeRate / (1 / x));
 
         } else {
             float x = pool / ((float) barPoolTarget);
-            _rate = (RuntimeConfig.money.targetExchangeRate * (1 / x));
+            _rate = (_runtime.money.targetExchangeRate * (1 / x));
         }
     }
 
@@ -153,7 +153,7 @@ public class MoneyExchange
 
 //    protected void runTests ()
 //    {
-//        final int barPoolTarget = RuntimeConfig.money.barPoolSize;
+//        final int barPoolTarget = _runtime.money.barPoolSize;
 ////        System.err.println("Rate 0: " + calcRate((int) (0.0 * barPoolTarget)));
 ////        System.err.println("Rate .125: " + calcRate((int) (0.125 * barPoolTarget)));
 ////        System.err.println("Rate .25: " + calcRate((int) (.25 * barPoolTarget)));
@@ -202,12 +202,6 @@ public class MoneyExchange
 //        System.err.println("bars:1000000, coins: " + p.getCoins());
 //    }
 
-    /** The current exchange rate. Can vary from 0 to Float.POSITIVE_INFINITY. */
-    protected float _rate;
-
-    /** Our money repository. */
-    @Inject protected MoneyRepository _moneyRepo;
-
     /** The interval to recalculate the exchange rate every minute,
      * or null if we're shutting down. */
     protected Interval _recalcInterval = new Interval() {
@@ -225,7 +219,7 @@ public class MoneyExchange
                 int oldValue = (Integer) event.getOldValue();
                 if (1 > newValue) {
                     // well, bing bang bar, we need the pool value to be positive
-                    RuntimeConfig.money.setBarPoolSize(Math.max(1, oldValue)); // rollback
+                    _runtime.money.setBarPoolSize(Math.max(1, oldValue)); // rollback
 
                 } else if (1 > oldValue) {
                     // we are *reacting to a rollback*, from the above line. do nothing.
@@ -237,6 +231,13 @@ public class MoneyExchange
             }
         }
     };
+
+    /** The current exchange rate. Can vary from 0 to Float.POSITIVE_INFINITY. */
+    protected float _rate;
+
+    // our dependencies
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected MoneyRepository _moneyRepo;
 
     /** How often we re-check the exchange rate, even if no cross-currency purchases have been
      * made during this time. */

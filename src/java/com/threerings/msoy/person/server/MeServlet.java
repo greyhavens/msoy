@@ -20,7 +20,6 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
-import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 

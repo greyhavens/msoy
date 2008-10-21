@@ -89,16 +89,16 @@ public class MsoyAdminManager
     {
         public MsoyRebootManager (ShutdownManager shutmgr, RootDObjectManager omgr) {
             super(shutmgr, omgr);
-            RuntimeConfig.server.addListener(this);
-            RuntimeConfig.server.setCustomRebootMsg("");
+            _runtime.server.addListener(this);
+            _runtime.server.setCustomRebootMsg("");
         }
 
         public void scheduleReboot (long rebootTime, String initiator) {
             super.scheduleReboot(rebootTime, initiator);
 
             String extra = "";
-            if (rebootTime != RuntimeConfig.server.nextReboot) {
-                RuntimeConfig.server.setNextReboot(rebootTime);
+            if (rebootTime != _runtime.server.nextReboot) {
+                _runtime.server.setNextReboot(rebootTime);
                 statObj.setServerRebootTime(rebootTime);
                 extra = " and propagating to peers";
             }
@@ -125,7 +125,7 @@ public class MsoyAdminManager
             }
 
             // schedule a reboot
-            scheduleReboot(RuntimeConfig.server.nextReboot, blame);
+            scheduleReboot(_runtime.server.nextReboot, blame);
         }
 
         protected void broadcast (String message) {
@@ -147,7 +147,7 @@ public class MsoyAdminManager
         protected String getCustomRebootMessage () {
             // for now we don't have auto-reboots, so let's not claim every hand scheduled reboot
             // is a "regularly scheduled reboot"
-            return MessageBundle.taint(RuntimeConfig.server.customRebootMsg);
+            return MessageBundle.taint(_runtime.server.customRebootMsg);
         }
     }
 
@@ -194,8 +194,10 @@ public class MsoyAdminManager
     /** Logs a snapshot of the running server every 10 minutes. */
     protected SnapshotLogger _snapshotLogger;
 
+    /** Handles our reboot coordinations. */
     protected MsoyRebootManager _rebmgr;
 
+    @Inject protected RuntimeConfig _runtime;
     @Inject protected ShutdownManager _shutmgr;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyEventLogger _eventLog;

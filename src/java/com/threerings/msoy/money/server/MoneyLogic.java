@@ -90,11 +90,12 @@ public class MoneyLogic
 
     @Inject
     public MoneyLogic (
-        MoneyRepository repo, PriceQuoteCache priceCache, UserActionRepository userActionRepo,
-        MsoyEventLogger eventLog, MessageConnection conn, MemberRepository memberRepo,
-        ShutdownManager sm, @MainInvoker Invoker invoker, MoneyNodeActions nodeActions,
-        BlingPoolDistributor blingDistributor, MoneyExchange exchange)
+        RuntimeConfig runtime, MoneyRepository repo, PriceQuoteCache priceCache,
+        UserActionRepository userActionRepo, MsoyEventLogger eventLog, MessageConnection conn,
+        MemberRepository memberRepo, ShutdownManager sm, @MainInvoker Invoker invoker,
+        MoneyNodeActions nodeActions, BlingPoolDistributor blingDistributor, MoneyExchange exchange)
     {
+        _runtime = runtime;
         _repo = repo;
         _priceCache = priceCache;
         _userActionRepo = userActionRepo;
@@ -429,9 +430,9 @@ public class MoneyLogic
 
         // If the user does not have the minimum amount required to cash out bling, don't allow
         // them to proceed
-        if (amount < RuntimeConfig.money.minimumBlingCashOut) {
-            throw new BelowMinimumBlingException(memberId, amount,
-                RuntimeConfig.money.minimumBlingCashOut);
+        if (amount < _runtime.money.minimumBlingCashOut) {
+            throw new BelowMinimumBlingException(
+                memberId, amount, _runtime.money.minimumBlingCashOut);
         }
 
         // Ensure the account has the requested amount of bling and that it is currently not
@@ -445,8 +446,8 @@ public class MoneyLogic
         }
 
         // Add a cash out record for this member.
-        BlingCashOutRecord cashOut = _repo.createCashOut(memberId, blingAmount,
-            RuntimeConfig.money.blingWorth, info);
+        BlingCashOutRecord cashOut = _repo.createCashOut(
+            memberId, blingAmount, _runtime.money.blingWorth, info);
 
         return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, BlingCashOutRecord>(
                 account, cashOut));
@@ -563,11 +564,11 @@ public class MoneyLogic
         List<ExchangeData> page = Lists.newArrayList(Iterables.transform(
             _repo.getExchangeData(start, count), ExchangeRecord.TO_EXCHANGE_DATA));
         int total = _repo.getExchangeDataCount();
-        int[] barPoolData = _repo.getBarPool();
+        int[] barPoolData = _repo.getBarPool(_runtime.money.barPoolSize);
 
         return new ExchangeStatusData(total, page,
-            _exchange.getRate(), RuntimeConfig.money.targetExchangeRate,
-            barPoolData[0], RuntimeConfig.money.barPoolSize, barPoolData[1]);
+            _exchange.getRate(), _runtime.money.targetExchangeRate,
+            barPoolData[0], _runtime.money.barPoolSize, barPoolData[1]);
     }
 
     /**
@@ -625,8 +626,8 @@ public class MoneyLogic
     {
         Currency currency;
         int amount;
-        float percentage = affiliate ? RuntimeConfig.money.affiliatePercentage
-                                     : RuntimeConfig.money.creatorPercentage;
+        float percentage = affiliate ? _runtime.money.affiliatePercentage
+                                     : _runtime.money.creatorPercentage;
         switch (quote.getListedCurrency()) {
         case COINS:
             currency = Currency.COINS;
@@ -698,24 +699,25 @@ public class MoneyLogic
     }
 
     /** A Function that transforms a MemberArroundRecord and CashOutRecord to BlingInfo. */
-    protected static Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>
+    protected final Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>
         TO_BLING_INFO =
         new Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>() {
             public BlingInfo apply (Tuple<MemberAccountRecord, BlingCashOutRecord> records) {
-                return new BlingInfo(records.left.bling, RuntimeConfig.money.blingWorth,
-                    RuntimeConfig.money.minimumBlingCashOut * 100,
+                return new BlingInfo(records.left.bling, _runtime.money.blingWorth,
+                    _runtime.money.minimumBlingCashOut * 100,
                     records.right == null ? null : records.right.toInfo());
             }
         };
 
     /** A Function that transforms a CashOutRecord into a CashOutInfo. */
-    protected static Function<BlingCashOutRecord, CashOutInfo> TO_CASH_OUT_INFO =
+    protected final Function<BlingCashOutRecord, CashOutInfo> TO_CASH_OUT_INFO =
         new Function<BlingCashOutRecord, CashOutInfo>() {
             public CashOutInfo apply (BlingCashOutRecord record) {
                 return record.toInfo();
             }
         };
 
+    protected final RuntimeConfig _runtime;
     protected final MoneyExchange _exchange;
     protected final MoneyTransactionExpirer _expirer;
     protected final MsoyEventLogger _eventLog;

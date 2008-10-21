@@ -63,9 +63,10 @@ public class BlingPoolDistributor
     implements ShutdownManager.Shutdowner
 {
     @Inject
-    public BlingPoolDistributor (MoneyRepository repo, MsoyGameRepository mgameRepo,
-                                 ShutdownManager sm)
+    public BlingPoolDistributor (RuntimeConfig runtime, MoneyRepository repo,
+                                 MsoyGameRepository mgameRepo, ShutdownManager sm)
     {
+        _runtime = runtime;
         _repo = repo;
         _mgameRepo = mgameRepo;
 
@@ -135,7 +136,7 @@ public class BlingPoolDistributor
         Calendar now = Calendar.getInstance();
         try {
             // figure out how much we'll be distributing
-            int blingPool = RuntimeConfig.money.blingPoolSize * 100;
+            int blingPool = _runtime.money.blingPoolSize * 100;
 
             Calendar lastRun = Calendar.getInstance();
             lastRun.setTime(confRecord.lastDistributedBling); // make it lastRun
@@ -172,7 +173,7 @@ public class BlingPoolDistributor
     {
         log.info("Distributing bling.",
             "day", DateFormat.getDateInstance().format(midnight1.getTime()),
-            "bling", RuntimeConfig.money.blingPoolSize); // don't log centibling..
+            "bling", _runtime.money.blingPoolSize); // don't log centibling..
         if (blingPool <= 0) {
             return; // but we did the logging...
         }
@@ -274,6 +275,7 @@ public class BlingPoolDistributor
 
     protected static final Logger log = Logger.getLogger(BlingPoolDistributor.class);
 
+    protected final RuntimeConfig _runtime;
     protected final MoneyRepository _repo;
     protected final MsoyGameRepository _mgameRepo;
     protected final Scheduler _scheduler;

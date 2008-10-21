@@ -397,10 +397,10 @@ public class GameGameRegistry
         detail.gamesPlayed += gamesPlayed;
 
         // determine whether or not it's time to recalculate this game's payout factor
-        final int hourlyRate = RuntimeConfig.money.hourlyGameFlowRate;
+        final int hourlyRate = _runtime.money.hourlyGameFlowRate;
         final int newFlowToNextRecalc;
         if (detail.flowToNextRecalc <= 0) {
-            newFlowToNextRecalc = RuntimeConfig.money.payoutFactorReassessment * hourlyRate +
+            newFlowToNextRecalc = _runtime.money.payoutFactorReassessment * hourlyRate +
                 detail.flowToNextRecalc;
             detail.flowToNextRecalc = newFlowToNextRecalc;
         } else {
@@ -1117,6 +1117,7 @@ public class GameGameRegistry
 
     // various and sundry dependent services
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected RuntimeConfig _runtime;
     @Inject protected InvocationManager _invmgr;
     @Inject protected GameWatcherManager _watchmgr;
     @Inject protected LocationManager _locmgr;
