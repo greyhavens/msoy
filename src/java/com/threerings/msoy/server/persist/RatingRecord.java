@@ -18,7 +18,7 @@ public abstract class RatingRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #itemId} field. */
-    public static final String ITEM_ID = "itemId";
+    public static final String TARGET_ID = "targetId";
 
     /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
@@ -27,11 +27,11 @@ public abstract class RatingRecord extends PersistentRecord
     public static final String RATING = "rating";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1; // TODO: Increment?
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the tagged item. */
     @Id
-    public int itemId;
+    public int targetId;
 
     /** The id of the rating member. */
     @Id

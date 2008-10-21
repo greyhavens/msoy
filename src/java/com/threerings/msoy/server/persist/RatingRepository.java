@@ -70,7 +70,7 @@ public abstract class RatingRepository extends DepotRepository
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        record.itemId = targetId; // TODO: itemId --> targetId
+        record.targetId = targetId;
         record.memberId = memberId;
         record.rating = rating;
         boolean newRater = store(record);
@@ -78,7 +78,7 @@ public abstract class RatingRepository extends DepotRepository
         RatingAverageRecord average =
             load(RatingAverageRecord.class,
                  new FromOverride(getRatingClass()),
-                 new Where(getRatingColumn(RatingRecord.ITEM_ID), targetId));
+                 new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId));
 
         float newRating = (average.count == 0) ? 0f : average.sum/(float)average.count;
         // and then smack the new value into the item using yummy depot code
@@ -97,20 +97,20 @@ public abstract class RatingRepository extends DepotRepository
     // TODO: Doc me
     public void deleteRatings (int targetId)
     {
-        deleteAll(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), targetId));
+        deleteAll(getRatingClass(), new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId));
     }
 
     // TODO: Doc me
-    public void reassignRatings (final int oldItemId, int newItemId)
+    public void reassignRatings (final int oldTargetId, int newTargetId)
     {
         // TODO: this cache eviction might be slow :)
-        updatePartial(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), oldItemId),
+        updatePartial(getRatingClass(), new Where(getRatingColumn(RatingRecord.TARGET_ID), oldTargetId),
                       new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
                           @Override
                           public boolean testForEviction (Serializable key, RatingRecord record) {
-                              return (record.itemId == oldItemId);
+                              return (record.targetId == oldTargetId);
                           }
-                      }, RatingRecord.ITEM_ID, newItemId);
+                      }, RatingRecord.TARGET_ID, newTargetId);
     }
 
     /**
@@ -120,7 +120,7 @@ public abstract class RatingRepository extends DepotRepository
     public byte getRating (int targetId, int memberId)
     {
         RatingRecord record = load(
-            getRatingClass(), RatingRecord.ITEM_ID, targetId, RatingRecord.MEMBER_ID, memberId);
+            getRatingClass(), RatingRecord.TARGET_ID, targetId, RatingRecord.MEMBER_ID, memberId);
         return (record == null) ? (byte)0 : record.rating;
     }
 
@@ -139,7 +139,6 @@ public abstract class RatingRepository extends DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(getRatingClass());
-        classes.add(getTargetClass()); // TODO: Maybe not?
     }
 
     protected String _rating, _ratingCount;

@@ -131,6 +131,9 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
         };
 
+        _ctx.registerMigration(getRatingClass(),
+                new SchemaMigration.Rename(2, "itemId", RatingRecord.TARGET_ID));
+
         _ctx.registerMigration(getCatalogClass(), new SchemaMigration.Drop(11, "goldCost"));
         _ctx.registerMigration(getCatalogClass(),
                 new SchemaMigration.Rename(11, "flowCost", CatalogRecord.COST));
