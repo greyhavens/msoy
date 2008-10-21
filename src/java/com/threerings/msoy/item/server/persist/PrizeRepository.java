@@ -55,7 +55,7 @@ public class PrizeRepository extends ItemRepository<PrizeRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(PrizeRatingRecord.class);
+        return _ratingRepo.coerceRating(PrizeRatingRecord.class);
     }
 
     @Override

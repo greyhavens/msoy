@@ -55,7 +55,7 @@ public class VideoRepository extends ItemRepository<VideoRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(VideoRatingRecord.class);
+        return _ratingRepo.coerceRating(VideoRatingRecord.class);
     }
 
     @Override

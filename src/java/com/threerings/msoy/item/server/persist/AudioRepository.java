@@ -55,7 +55,7 @@ public class AudioRepository extends ItemRepository<AudioRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(AudioRatingRecord.class);
+        return _ratingRepo.coerceRating(AudioRatingRecord.class);
     }
 
     @Override

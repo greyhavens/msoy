@@ -55,7 +55,7 @@ public class LevelPackRepository extends ItemRepository<LevelPackRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(LevelPackRatingRecord.class);
+        return _ratingRepo.coerceRating(LevelPackRatingRecord.class);
     }
 
     @Override

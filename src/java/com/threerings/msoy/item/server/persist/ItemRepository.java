@@ -1328,13 +1328,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         return cclazz;
     }
 
-    /** Used to coerce RatingRecord derivations when implementing {@link #getRatingClass}. */
-    protected static Class<RatingRecord> coerceRating (Class<? extends RatingRecord> clazz)
-    {
-        @SuppressWarnings("unchecked") Class<RatingRecord> cclazz = (Class<RatingRecord>)clazz;
-        return cclazz;
-    }
-
     /** A predicate that returns true for original item ids. */
     protected static final Predicate<Integer> IS_ORIGINAL_ID = new Predicate<Integer>() {
         public boolean apply (Integer itemId) {

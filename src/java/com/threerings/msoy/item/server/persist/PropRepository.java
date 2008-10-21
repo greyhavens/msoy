@@ -55,7 +55,7 @@ public class PropRepository extends ItemRepository<PropRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(PropRatingRecord.class);
+        return _ratingRepo.coerceRating(PropRatingRecord.class);
     }
 
     @Override

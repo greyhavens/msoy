@@ -159,7 +159,7 @@ public class GameRepository extends ItemRepository<GameRecord>
     @Override // from ItemRepository
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(GameRatingRecord.class);
+        return _ratingRepo.coerceRating(GameRatingRecord.class);
     }
 
     @Override // from ItemRepository

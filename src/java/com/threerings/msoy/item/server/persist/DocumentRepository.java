@@ -56,7 +56,7 @@ public class DocumentRepository extends ItemRepository<DocumentRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(DocumentRatingRecord.class);
+        return _ratingRepo.coerceRating(DocumentRatingRecord.class);
     }
 
     @Override

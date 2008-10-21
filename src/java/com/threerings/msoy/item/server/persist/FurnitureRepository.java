@@ -56,7 +56,7 @@ public class FurnitureRepository extends ItemRepository<FurnitureRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(FurnitureRatingRecord.class);
+        return _ratingRepo.coerceRating(FurnitureRatingRecord.class);
     }
 
     @Override

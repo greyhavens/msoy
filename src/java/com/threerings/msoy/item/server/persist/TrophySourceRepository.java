@@ -55,7 +55,7 @@ public class TrophySourceRepository extends ItemRepository<TrophySourceRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(TrophySourceRatingRecord.class);
+        return _ratingRepo.coerceRating(TrophySourceRatingRecord.class);
     }
 
     @Override

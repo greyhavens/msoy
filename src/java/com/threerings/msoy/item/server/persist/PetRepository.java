@@ -57,7 +57,7 @@ public class PetRepository extends ItemRepository<PetRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(PetRatingRecord.class);
+        return _ratingRepo.coerceRating(PetRatingRecord.class);
     }
 
     @Override

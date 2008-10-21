@@ -69,7 +69,7 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(AvatarRatingRecord.class);
+        return _ratingRepo.coerceRating(AvatarRatingRecord.class);
     }
 
     @Override

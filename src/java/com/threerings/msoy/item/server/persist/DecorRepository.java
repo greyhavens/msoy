@@ -63,7 +63,7 @@ public class DecorRepository extends ItemRepository<DecorRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(DecorRatingRecord.class);
+        return _ratingRepo.coerceRating(DecorRatingRecord.class);
     }
 
     @Override

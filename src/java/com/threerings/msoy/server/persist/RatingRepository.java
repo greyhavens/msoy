@@ -61,6 +61,13 @@ public abstract class RatingRepository extends DepotRepository
         _ratingCount = ratingCount;
     }
 
+    /** Used to coerce RatingRecord derivations of {@link #getRatingClass}. */
+    public static Class<RatingRecord> coerceRating (Class<? extends RatingRecord> clazz)
+    {
+        @SuppressWarnings("unchecked") Class<RatingRecord> cclazz = (Class<RatingRecord>)clazz;
+        return cclazz;
+    }
+
     // TODO: Doc me
     public Tuple<Float, Boolean> rate (int targetId, int memberId, byte rating)
     {

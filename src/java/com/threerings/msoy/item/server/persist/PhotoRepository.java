@@ -55,7 +55,7 @@ public class PhotoRepository extends ItemRepository<PhotoRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return coerceRating(PhotoRatingRecord.class);
+        return _ratingRepo.coerceRating(PhotoRatingRecord.class);
     }
 
     @Override
