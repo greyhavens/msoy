@@ -14,6 +14,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
@@ -37,11 +38,7 @@ public enum BadgeType
         new Level(50, 1500),
         new Level(150, 2000),
         new Level(500, 10000)
-        }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.FRIENDS_MADE);
-        }
-    },
+    }),
 
     // TODO: IRONMAN has been punted on for now, hopefully short-term
 //    IRONMAN(StampCategory.SOCIAL, StatType.CONSEC_DAILY_LOGINS, new Level[] {
@@ -52,10 +49,6 @@ public enum BadgeType
 //        new Level(90, 5000),
 //        new Level(180, 6000)
 //        }) {
-//        @Override protected int getAcquiredUnits (StatSet stats) {
-//            return stats.getIntStat(StatType.CONSEC_DAILY_LOGINS);
-//        }
-//
 //        @Override protected Collection<BadgeType> getUnlockRequirements () {
 //            return Collections.singleton(FRIENDLY);
 //        }
@@ -69,10 +62,6 @@ public enum BadgeType
         new Level(50, 5000),
         new Level(100, 10000)
         }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.INVITES_ACCEPTED);
-        }
-
         @Override protected Collection<BadgeType> getUnlockRequirements () {
             return Collections.singleton(FRIENDLY);
         }
@@ -97,14 +86,19 @@ public enum BadgeType
             return true;
         }
 
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.MINUTES_ACTIVE);
-        }
-
         @Override protected Collection<BadgeType> getUnlockRequirements () {
             return Collections.singleton(FRIENDLY);
         }
     },
+
+    EXPLORER(StampCategory.SOCIAL, StatType.ROOMS_TOURED, new Level[] {
+        new Level(25, 250),
+        new Level(50, 500),
+        new Level(100, 1000),
+        new Level(200, 2000),
+        new Level(500, 3000),
+        new Level(2000, 10000)
+    }),
 
     // game badges
     GAMER(StampCategory.GAME, StatType.GAME_SESSIONS, new Level[] {
@@ -114,11 +108,7 @@ public enum BadgeType
         new Level(100, 2000),
         new Level(500, 3000),
         new Level(2000, 10000)
-        }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.GAME_SESSIONS);
-        }
-    },
+    }),
 
     CONTENDER(StampCategory.GAME, StatType.MP_GAMES_WON, new Level[] {
         new Level(1, 250),
@@ -128,10 +118,6 @@ public enum BadgeType
         new Level(50, 3000),
         new Level(100, 10000)
         }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.MP_GAMES_WON);
-        }
-
         @Override protected Collection<BadgeType> getUnlockRequirements () {
             return Collections.singleton(GAMER);
         }
@@ -145,10 +131,6 @@ public enum BadgeType
         new Level(150, 3000),
         new Level(300, 10000)
         }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.TROPHIES_EARNED);
-        }
-
         @Override protected Collection<BadgeType> getUnlockRequirements () {
             return Collections.singleton(GAMER);
         }
@@ -165,10 +147,6 @@ public enum BadgeType
             return false;
         }
 
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.AVATARS_CREATED);
-        }
-
         @Override protected Collection<BadgeType> getUnlockRequirements () {
             return Collections.singleton(FURNITURE_BUILDER);
         }
@@ -183,10 +161,6 @@ public enum BadgeType
             // never show a progress meter
             return false;
         }
-
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.FURNITURE_CREATED);
-        }
     },
 
     LANDSCAPE_PAINTER(StampCategory.CREATION, StatType.BACKDROPS_CREATED, new Level[] {
@@ -197,10 +171,6 @@ public enum BadgeType
         @Override public boolean progressValid (int levelUnits) {
             // never show a progress meter
             return false;
-        }
-
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.BACKDROPS_CREATED);
         }
 
         @Override protected Collection<BadgeType> getUnlockRequirements () {
@@ -245,10 +215,6 @@ public enum BadgeType
         @Override public boolean progressValid (int levelUnits) {
             // always show a progress meter
             return true;
-        }
-
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.COINS_EARNED_SELLING);
         }
     },
 
@@ -296,10 +262,6 @@ public enum BadgeType
             // these get big, so lets abbreviate them.
             return (level.requiredUnits / 1000) + "k";
         }
-
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.COINS_SPENT);
-        }
     },
 
     JUDGE(StampCategory.SHOPPING, StatType.ITEMS_RATED, new Level[] {
@@ -310,10 +272,6 @@ public enum BadgeType
         new Level(500, 5000),
         new Level(2000, 10000)
         }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.ITEMS_RATED);
-        }
-
         @Override protected Collection<BadgeType> getUnlockRequirements () {
             return Collections.singleton(SHOPPER);
         }
@@ -327,10 +285,6 @@ public enum BadgeType
         new Level(500, 5000),
         new Level(2000, 10000)
         }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.ITEM_COMMENTS);
-        }
-
         @Override protected Collection<BadgeType> getUnlockRequirements () {
             return Collections.singleton(SHOPPER);
         }
@@ -339,23 +293,20 @@ public enum BadgeType
     // Every member will have an InProgressBadgeRecord created for the HIDDEN badge, but they will
     // never earn it (to allow Passport to determine whether a player's initial set of
     // InProgressBadges needs to be created).
-    HIDDEN(StampCategory.SOCIAL, 0) {
-        @Override public boolean isHidden () {
-            return true;
-        }
-    };
+    HIDDEN,
+    ; // end of BadgeTypes
 
-    /** Predicate that will return true for any badge whose type is !isHidden() */
+    /** Predicate that will return true for any badge but the hidden badge. */
     public static final Predicate<Badge> IS_VISIBLE_BADGE = new Predicate<Badge>() {
         public boolean apply (Badge badge) {
-            return !(getType(badge.badgeCode).isHidden());
+            return badge.badgeCode != HIDDEN.getCode();
         }
     };
 
     /** Predicate that will return true only if the given badge is of the HIDDEN type. */
     public static final Predicate<Badge> IS_HIDDEN_BADGETYPE = new Predicate<Badge>() {
         public boolean apply (Badge badge) {
-            return badge.badgeCode == HIDDEN.getCode();
+            return !IS_VISIBLE_BADGE.apply(badge);
         }
     };
 
@@ -389,6 +340,14 @@ public enum BadgeType
             System.out.println(Integer.toHexString(entry.getKey()) + " - " + entry.getKey() +
                 " - " + entry.getValue());
         }
+    }
+
+    /**
+     * Return only the visible badge types, excluding HIDDEN.
+     */
+    public static BadgeType[] visibleValues ()
+    {
+        return _visValues;
     }
 
     /**
@@ -428,6 +387,30 @@ public enum BadgeType
     {
         return Sets.newHashSet(Iterables.transform(badges, BADGE_TO_TYPE)).containsAll(
             getUnlockRequirements());
+    }
+
+    /** Constructs a new BadgeType. */
+    BadgeType (StampCategory category, StatType relevantStat, Level[] levels)
+    {
+        _category = category;
+        _relevantStat = relevantStat;
+        _levels = levels;
+
+        // compute the code hash
+        CRC32 crc = new CRC32();
+        crc.update(name().getBytes());
+        _code = (int) crc.getValue();
+
+        // ensure the badge has at least one level
+        if (_levels == null || _levels.length == 0) {
+            _levels = new Level[] { new Level(1, 0) };
+        }
+    }
+
+    /** Secret constructor used only for the HIDDEN type. */
+    private BadgeType ()
+    {
+        this(StampCategory.SOCIAL, null, null);
     }
 
     /**
@@ -530,7 +513,7 @@ public enum BadgeType
      */
     protected int getAcquiredUnits (StatSet stats)
     {
-        return 0;
+        return stats.getIntStat(_relevantStat);
     }
 
     /**
@@ -540,49 +523,6 @@ public enum BadgeType
     protected Collection<BadgeType> getUnlockRequirements ()
     {
         return Collections.emptyList();
-    }
-
-    /**
-     * Overridden only by the HIDDEN BadgeType to indicate that the badge shouldn't be shown
-     * to players.
-     */
-    public boolean isHidden ()
-    {
-        return false;
-    }
-
-    /** Constructs a new BadgeType. */
-    BadgeType (StampCategory category, StatType relevantStat, Level[] levels)
-    {
-        _category = category;
-        _relevantStat = relevantStat;
-        _levels = levels;
-
-        // ensure the badge has at least one level
-        if (_levels == null || _levels.length == 0) {
-            _levels = new Level[] { new Level(1, 0) };
-        }
-    }
-
-    /** Constructs a new BadgeType with no relevant stat and a single level. */
-    BadgeType (StampCategory category, int coinValue)
-    {
-        this(category, null, new Level[] { new Level(1, coinValue) });
-    }
-
-    /**
-     * Create the hash<->BadgeType mapping for each BadgeType.
-     * This is done in a static block because it's an error for an enum
-     * to access its static members in its constructor.
-     */
-    static
-    {
-        _crc = new CRC32();
-
-        for (BadgeType type : BadgeType.values()) {
-            type._code = mapCodeForType(type);
-            mapStatDependencies(type);
-        }
     }
 
     protected static void mapStatDependencies (BadgeType type)
@@ -602,39 +542,42 @@ public enum BadgeType
         }
     }
 
-    protected static int mapCodeForType (BadgeType type)
-    {
-        // compute the CRC32 hash
-        _crc.reset();
-        _crc.update(type.name().getBytes());
-        int code = (int) _crc.getValue();
-
-        // store the hash in a map
-        if (_codeToType == null) {
-            _codeToType = IntMaps.newHashIntMap();
-        }
-        if (_codeToType.containsKey(code)) {
-            Log.log.warning("Badge type collision! " + type + " and " + _codeToType.get(code) +
-                " both map to '" + code + "'.");
-        } else {
-            _codeToType.put(code, type);
-        }
-
-        return code;
-    }
-
     protected int _code;
     protected StampCategory _category;
     protected StatType _relevantStat;
     protected Level[] _levels;
 
+    /** All BadgeTypes but HIDDEN. */
+    protected static BadgeType[] _visValues;
+
     /** The table mapping stat codes to enumerated types. */
-    protected static IntMap<BadgeType> _codeToType;
+    protected static IntMap<BadgeType> _codeToType = IntMaps.newHashIntMap();
 
     /** The mapping of stats to the badges that depend on them. */
     protected static IntMap<Set<BadgeType>> _statDependencies;
 
-    protected static CRC32 _crc;
+    /**
+     * Create the hash<->BadgeType mapping for each BadgeType.
+     * This is done in a static block because it's an error for an enum
+     * to access its static members in its constructor.
+     */
+    static
+    {
+        BadgeType[] allValues = values();
+
+        _visValues = ArrayUtil.splice(allValues, ArrayUtil.indexOf(allValues, HIDDEN), 1);
+
+        for (BadgeType type : allValues) {
+            // map it, see if it collides
+            BadgeType collideType = _codeToType.put(type.getCode(), type);
+            if (null != collideType) {
+                Log.log.warning("Badge type collision!", "type1", type, "type2", collideType,
+                    "code", type.getCode());
+            }
+            // set up any dependencies
+            mapStatDependencies(type);
+        }
+    }
 
     /** Helper function. */
     protected static final Function<Badge, BadgeType> BADGE_TO_TYPE =

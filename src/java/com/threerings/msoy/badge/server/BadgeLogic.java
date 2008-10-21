@@ -85,8 +85,8 @@ public class BadgeLogic
      * a. calling into BadgeRepository to create and store the BadgeRecord
      * b. recording to the member's feed that they earned the stamp in question
      */
-    public void awardBadge (final int memberId, final EarnedBadge badge,
-        final boolean dobjNeedsUpdate)
+    public void awardBadge (
+        final int memberId, final EarnedBadge badge, final boolean dobjNeedsUpdate)
     {
         awardBadge(new EarnedBadgeRecord(memberId, badge), dobjNeedsUpdate);
     }
@@ -98,8 +98,8 @@ public class BadgeLogic
      * <b>NB:</b> this function makes a number of demands on the database and should be called
      * only when necessary.
      */
-    public List<InProgressBadge> createNewInProgressBadges (final int memberId,
-        final boolean dobjNeedsUpdate)
+    public List<InProgressBadge> createNewInProgressBadges (
+        final int memberId, final boolean dobjNeedsUpdate)
     {
         // read this member's in-progress and earned badge records
         final Set<EarnedBadge> earnedBadges = Sets.newHashSet(
@@ -123,8 +123,8 @@ public class BadgeLogic
     /**
      * Creates or updates an InProgressBadge for the specified member.
      */
-    public void updateInProgressBadge (final InProgressBadgeRecord brec,
-        final boolean dobjNeedsUpdate)
+    public void updateInProgressBadge (
+        final InProgressBadgeRecord brec, final boolean dobjNeedsUpdate)
     {
         _badgeRepo.storeInProgressBadge(brec);
 
@@ -136,8 +136,8 @@ public class BadgeLogic
     /**
      * Creates or updates an InProgressBadge for the specified member.
      */
-    public void updateInProgressBadge (final int memberId, final InProgressBadge badge,
-        final boolean dobjNeedsUpdate)
+    public void updateInProgressBadge (
+        final int memberId, final InProgressBadge badge, final boolean dobjNeedsUpdate)
     {
         updateInProgressBadge(new InProgressBadgeRecord(memberId, badge), dobjNeedsUpdate);
     }
