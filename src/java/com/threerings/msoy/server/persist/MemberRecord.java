@@ -302,9 +302,9 @@ public class MemberRecord extends PersistentRecord
         creds.permaName = permaName;
         if (isMaintainer()) {
             creds.role = WebCreds.Role.MAINTAINER;
-        } else if (isAdmin()) {
+        } else if (isSet(Flag.ADMIN)) {
             creds.role = WebCreds.Role.ADMIN;
-        } else if (isSupport()) {
+        } else if (isSet(Flag.SUPPORT)) {
             creds.role = WebCreds.Role.SUPPORT;
         } else {
             creds.role = WebCreds.Role.USER;
