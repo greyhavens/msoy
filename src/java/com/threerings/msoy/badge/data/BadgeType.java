@@ -293,7 +293,11 @@ public enum BadgeType
     // Every member will have an InProgressBadgeRecord created for the HIDDEN badge, but they will
     // never earn it (to allow Passport to determine whether a player's initial set of
     // InProgressBadges needs to be created).
-    HIDDEN,
+    HIDDEN(StampCategory.SOCIAL, null, null) {
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return 0;
+        }
+    },
     ; // end of BadgeTypes
 
     /** Predicate that will return true for any badge but the hidden badge. */
@@ -405,12 +409,6 @@ public enum BadgeType
         if (_levels == null || _levels.length == 0) {
             _levels = new Level[] { new Level(1, 0) };
         }
-    }
-
-    /** Secret constructor used only for the HIDDEN type. */
-    private BadgeType ()
-    {
-        this(StampCategory.SOCIAL, null, null);
     }
 
     /**
