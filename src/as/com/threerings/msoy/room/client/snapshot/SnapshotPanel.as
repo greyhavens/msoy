@@ -108,7 +108,7 @@ public class SnapshotPanel extends FloatingPanel
      */
     public function get shouldSaveGalleryImage () :Boolean
     {
-        return _takeGalleryImage.selected;
+        return (_takeGalleryImage != null) && _takeGalleryImage.selected;
     }
 
     /**
@@ -210,6 +210,7 @@ public class SnapshotPanel extends FloatingPanel
                 "attentionLabel"));
             CAN_SNAP = false;
         }
+        const isGuest :Boolean = _ctx.getMyName().isGuest();
 
         var hPan :HBox = new HBox();
         _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
@@ -230,13 +231,6 @@ public class SnapshotPanel extends FloatingPanel
         addChild(_preview);
 
         addChild(FlexUtil.createLabel(Msgs.WORLD.get("m.snap_save_opts")));
-        _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"), 
-            enforceUIInterlocks);
-        _takeGalleryImage.selected = true;
-        addChild(_takeGalleryImage);
-        _downloadImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_download"),
-            enforceUIInterlocks);
-        addChild(_downloadImage);
         // only add the button to take the canonical snapshot if it's enabled.
         if (_sceneThumbnailPermitted) {
             _useAsSceneThumbnail = new CommandCheckBox(Msgs.WORLD.get("b.snap_scene_thumbnail"), 
@@ -244,6 +238,16 @@ public class SnapshotPanel extends FloatingPanel
             _useAsSceneThumbnail.selected = false;
             addChild(_useAsSceneThumbnail);
         }
+        if (!isGuest) {
+            _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"), 
+                enforceUIInterlocks);
+            _takeGalleryImage.selected = true;
+            addChild(_takeGalleryImage);
+        }
+        _downloadImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_download"),
+            enforceUIInterlocks);
+        _downloadImage.selected = isGuest;
+        addChild(_downloadImage);
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
         enforceUIInterlocks();        
