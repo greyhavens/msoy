@@ -17,7 +17,7 @@ public abstract class RatingRecord extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #itemId} field. */
+    /** The column identifier for the {@link #targetId} field. */
     public static final String TARGET_ID = "targetId";
 
     /** The column identifier for the {@link #memberId} field. */

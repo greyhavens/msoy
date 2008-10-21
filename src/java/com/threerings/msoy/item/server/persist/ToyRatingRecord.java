@@ -12,9 +12,9 @@ import com.threerings.msoy.server.persist.RatingRecord;
 public class ToyRatingRecord extends RatingRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(ToyRatingRecord.class, ITEM_ID);
+    /** The qualified column identifier for the {@link #targetId} field. */
+    public static final ColumnExp TARGET_ID_C =
+        new ColumnExp(ToyRatingRecord.class, TARGET_ID);
 
     /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
@@ -30,12 +30,12 @@ public class ToyRatingRecord extends RatingRecord
      * Create and return a primary {@link Key} to identify a {@link ToyRatingRecord}
      * with the supplied key values.
      */
-    public static Key<ToyRatingRecord> getKey (int itemId, int memberId)
+    public static Key<ToyRatingRecord> getKey (int targetId, int memberId)
     {
         return new Key<ToyRatingRecord>(
                 ToyRatingRecord.class,
-                new String[] { ITEM_ID, MEMBER_ID },
-                new Comparable[] { itemId, memberId });
+                new String[] { TARGET_ID, MEMBER_ID },
+                new Comparable[] { targetId, memberId });
     }
     // AUTO-GENERATED: METHODS END
 }
