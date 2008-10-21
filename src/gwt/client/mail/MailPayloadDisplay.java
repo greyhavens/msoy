@@ -39,9 +39,6 @@ public class MailPayloadDisplay
         case MailPayload.TYPE_FRIEND_INVITE:
             display = new FriendInviteDisplay();
             break;
-        case MailPayload.TYPE_ITEM_GIFT:
-            display = new ItemGiftDisplay();
-            break;
         case MailPayload.TYPE_GAME_AWARD:
             display = new GameAwardDisplay();
             break;

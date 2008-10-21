@@ -20,7 +20,6 @@ import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.FriendInvitePayload;
 import com.threerings.msoy.mail.gwt.GameAwardPayload;
 import com.threerings.msoy.mail.gwt.GroupInvitePayload;
-import com.threerings.msoy.mail.gwt.ItemGiftPayload;
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
 
@@ -137,8 +136,6 @@ public class ConvMessageRecord extends PersistentRecord
             return GroupInvitePayload.class;
         case MailPayload.TYPE_FRIEND_INVITE:
             return FriendInvitePayload.class;
-        case MailPayload.TYPE_ITEM_GIFT:
-            return ItemGiftPayload.class;
         case MailPayload.TYPE_GAME_AWARD:
             return GameAwardPayload.class;
         case MailPayload.TYPE_PRESENT:

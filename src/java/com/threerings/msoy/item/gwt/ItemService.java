@@ -49,13 +49,6 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Wraps an item up as a gift, i.e. clears its ownership. If 'wrap' is false, we unwrap the
-     * item instead (settings its owner to the unwrapper).
-     */
-    void wrapItem (ItemIdent item, boolean wrap)
-        throws ServiceException;
-
-    /**
      * Fetches the tags associated with an item.
      */
     List<String> getTags (ItemIdent item)

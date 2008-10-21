@@ -259,48 +259,6 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void wrapItem (ItemIdent iident, boolean wrap)
-        throws ServiceException
-    {
-        MemberRecord memrec = requireAuthedUser();
-        byte type = iident.type;
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
-        final ItemRecord item = repo.loadItem(iident.itemId);
-        if (item == null) {
-            log.warning("Trying to " + (wrap ? "" : "un") + "wrap non-existent item " +
-                        "[for=" + who(memrec) + ", item=" + iident + "]");
-            throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
-        }
-
-        final ItemRecord oitem = (ItemRecord)item.clone();
-        if (wrap) {
-            if (item.ownerId != memrec.memberId) {
-                log.warning("Trying to wrap un-owned item [for=" + who(memrec) +
-                            ", item=" + iident + "]");
-                throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
-            }
-            repo.updateOwnerId(item, 0);
-
-        } else {
-            if (item.ownerId != 0) {
-                if (item.ownerId == memrec.memberId) {
-                    // if the owner is already correct, let it pass
-                    log.warning("Unwrapped item already belongs to me [for=" + who(memrec) +
-                                ", item=" + iident + "]");
-                    return;
-                }
-                log.warning("Trying to unwrap owned item [for=" + who(memrec) +
-                            ", item=" + iident + "]");
-                throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
-            }
-            repo.updateOwnerId(item, memrec.memberId);
-        }
-
-        // let the item system know that we've updated this item
-        _itemLogic.itemUpdated(oitem, item);
-    }
-
-    // from interface ItemService
     public void setMature (ItemIdent iident, boolean value)
         throws ServiceException
     {

@@ -31,11 +31,6 @@ public interface ItemServiceAsync
         ItemIdent item, byte rating, boolean isFirstRating, AsyncCallback<Float> callback);
 
     /**
-     * The asynchronous version of {@link ItemService#wrapItem}.
-     */
-    void wrapItem (ItemIdent item, boolean wrap, AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link ItemService#getTags}.
      */
     void getTags (ItemIdent item, AsyncCallback<List<String>> callback);

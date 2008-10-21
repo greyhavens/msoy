@@ -25,9 +25,9 @@ public abstract class MailPayload
     public static final int TYPE_FRIEND_INVITE = 2;
 
     /**
-     * The identifying integer of a ItemGiftPayload.
+     * A no longer used identifier.
      */
-    public static final int TYPE_ITEM_GIFT = 3;
+    public static final int UNUSED = 3;
 
     /**
      * The identifying integer of a GameAwardPayload.
