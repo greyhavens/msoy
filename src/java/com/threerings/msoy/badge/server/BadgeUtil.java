@@ -30,7 +30,7 @@ public class BadgeUtil
         Set<Badge> existingBadges = Sets.union(earnedBadges, inProgressBadges);
 
         List<InProgressBadge> newBadges = Lists.newArrayList();
-        for (BadgeType badgeType : BadgeType.values()) {
+        for (BadgeType badgeType : BadgeType.visibleValues()) {
             // create a dummy badge to check if this type is already in the set of existing badges
             // All badges check equality and hash purely based on their badge code.
             Badge dummyBadge = new Badge(badgeType.getCode(), 0, null, 0) {
