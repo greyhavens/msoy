@@ -198,7 +198,7 @@ public class BlingPoolDistributor
         // Load up all of the games for which we're going to award bling.
         Map<Integer, GameRecord> gameMap = new HashMap<Integer, GameRecord>();
         for (GameRecord game : _mgameRepo.loadListedGameRecords(minutesPerGame.keySet())) {
-            gameMap.put(game.itemId, game);
+            gameMap.put(game.gameId, game);
         }
 
         // Assuming we have a non-zero number of minutes games were played this day, grant a
