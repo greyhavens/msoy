@@ -110,7 +110,7 @@ public class ItemServlet extends MsoyServiceServlet
 //    }
 
     // from interface ItemService
-    public float rateItem (ItemIdent iident, byte rating, boolean isFirstRating)
+    public float rateItem (ItemIdent iident, byte rating)
         throws ServiceException
     {
         // Ensure the rating is within bounds
@@ -142,7 +142,7 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         // if this is the first time the player has rated this item, increment the stat.
-        if (isFirstRating && item.creatorId != memrec.memberId) {
+        if (item.creatorId != memrec.memberId && repo.getRating(originalId, memrec.memberId) == 0) {
             _statLogic.incrementStat(memrec.memberId, StatType.ITEMS_RATED, 1);
         }
 

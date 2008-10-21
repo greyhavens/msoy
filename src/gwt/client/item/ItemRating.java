@@ -110,7 +110,7 @@ public class ItemRating extends FlexTable
         final boolean isFirstRating = _memberRating == 0;
         _playerStars.setRating(_memberRating = newRating);
         ItemIdent ident = _item.getIdent();
-        _itemsvc.rateItem(ident, newRating, isFirstRating, new MsoyCallback<Float>() {
+        _itemsvc.rateItem(ident, newRating, new MsoyCallback<Float>() {
             public void onSuccess (Float result) {
                 _averageStars.setRating(_item.rating = result);
                 if (isFirstRating) {
