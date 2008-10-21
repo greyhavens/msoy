@@ -550,9 +550,12 @@ public class AVRGameManager extends PlaceManager
 
     protected void flushPlayerGameState (PlayerObject player)
     {
-        final int memberId = player.getMemberId();
+        if (player.isGuest()) {
+            return;
+        }
         final Map<String, byte[]> state = PropertySpaceHelper.encodeDirtyStateForStore(player);
-        if (state.size() != 0 && !MemberName.isGuest(memberId)) {
+        if (!state.isEmpty()) {
+            final int memberId = player.getMemberId();
             _invoker.postUnit(new WriteOnlyUnit("flushPlayerAVRGState") {
                 @Override public void invokePersist ()
                     throws Exception {
