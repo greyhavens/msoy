@@ -149,7 +149,7 @@ public class FrameEntryPoint
         Args args = new Args();
         int dashidx = token.indexOf("-");
         if (dashidx != -1) {
-            args.setToken(token.substring(dashidx+1))
+            args.setToken(token.substring(dashidx+1));
         }
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
