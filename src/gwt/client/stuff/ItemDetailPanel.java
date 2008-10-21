@@ -124,7 +124,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     @Override // BaseItemDetailPanel
     protected void onUpClicked ()
     {
-        if (_item instanceof SubItem) {
+        if (isOriginalSubItem(_item)) {
             SubItem sitem = (SubItem)_item;
             Link.go(Pages.STUFF, Args.compose("d", sitem.getSuiteMasterType(), sitem.suiteId));
         } else {
@@ -197,7 +197,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             if (listedOriginal) {
                 String args = Args.compose("l", _item.getType(), _item.catalogId);
                 _details.add(createTipLink(_msgs.detailUplistTip(), _msgs.detailViewListing(),
-                                           Link.createListener(Pages.SHOP, args)));
+                                           Pages.SHOP, args));
 
                 // add a button for listing or updating the item
                 buttons = new RowPanel();
@@ -259,6 +259,15 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(_giftBits = new FlowPanel());
         }
 
+        // if this item is an original subitem, provide a link to its original parent
+        if (isOriginalSubItem(_item)) {
+            _details.add(WidgetUtil.makeShim(10, 10));
+            SubItem sitem = (SubItem)_item;
+            String args = Args.compose("d", sitem.getSuiteMasterType(), sitem.suiteId);
+            _details.add(createTipLink(_msgs.detailCanViewSuiteMaster(),
+                                       _msgs.detailViewSuiteMaster(), Pages.STUFF, args));
+        }
+
         adjustForUsage();
     }
 
@@ -270,8 +279,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _giftBits.clear();
             if (unused) {
                 String args = Args.compose("w", "i", _item.getType(), _item.itemId);
-                ClickListener onClick = Link.createListener(Pages.MAIL, args);
-                _giftBits.add(createTipLink(_msgs.detailGiftTip(), _msgs.detailGift(), onClick));
+                _giftBits.add(createTipLink(_msgs.detailGiftTip(), _msgs.detailGift(),
+                                            Pages.MAIL, args));
             } else {
                 _giftBits.add(new Label(_msgs.detailGiftDisabled()));
             }
@@ -346,6 +355,22 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         row.add(new InlineLabel(tip, true, false, true));
         row.add(MsoyUI.createActionLabel(link, "inline", onClick));
         return row;
+    }
+
+    /**
+     * Creates a line of text followed inline by a link.
+     */
+    protected FlowPanel createTipLink (String tip, String link, Pages page, String args)
+    {
+        FlowPanel row = new FlowPanel();
+        row.add(new InlineLabel(tip, true, false, true));
+        row.add(Link.create(link, page, args));
+        return row;
+    }
+
+    protected static boolean isOriginalSubItem (Item item)
+    {
+        return item instanceof SubItem && !item.isCatalogMaster() && !item.isCatalogClone();
     }
 
     protected InventoryModels _models;
