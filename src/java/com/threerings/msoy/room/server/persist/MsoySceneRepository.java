@@ -36,6 +36,8 @@ import com.threerings.whirled.util.UpdateList;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.persist.RatingRecord;
+import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.server.persist.DecorRecord;
@@ -62,6 +64,17 @@ public class MsoySceneRepository extends DepotRepository
     @Inject public MsoySceneRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        _ratingRepo = new RatingRepository(ctx, SceneRecord.RATING, SceneRecord.RATING_COUNT) {
+            @Override
+            protected Class<? extends PersistentRecord> getTargetClass () {
+                return SceneRecord.class;
+            }
+            @Override
+            protected Class<RatingRecord> getRatingClass () {
+                return coerceRating(SceneRatingRecord.class);
+            }
+        };
     }
 
     /**
@@ -462,7 +475,10 @@ public class MsoySceneRepository extends DepotRepository
         classes.add(SceneRecord.class);
         classes.add(SceneFurniRecord.class);
         classes.add(RoomPropertyRecord.class);
+        classes.add(SceneRatingRecord.class);
     }
+
+    protected RatingRepository _ratingRepo;
 
     /** Utility class that compresses related scene updates. */
     @Inject protected UpdateAccumulator _accumulator;

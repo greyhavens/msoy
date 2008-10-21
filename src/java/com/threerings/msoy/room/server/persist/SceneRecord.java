@@ -191,11 +191,25 @@ public class SceneRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #entranceZ} field. */
     public static final ColumnExp ENTRANCE_Z_C =
         new ColumnExp(SceneRecord.class, ENTRANCE_Z);
+
+    /** The column identifier for the {@link #rating} field. */
+    public static final String RATING = "rating";
+
+    /** The qualified column identifier for the {@link #rating} field. */
+    public static final ColumnExp RATING_C =
+        new ColumnExp(SceneRecord.class, RATING);
+
+    /** The column identifier for the {@link #ratingCount} field. */
+    public static final String RATING_COUNT = "ratingCount";
+
+    /** The qualified column identifier for the {@link #ratingCount} field. */
+    public static final ColumnExp RATING_COUNT_C =
+        new ColumnExp(SceneRecord.class, RATING_COUNT);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /**
      * Converts this scene record in to a partially initialized room info record. The
@@ -271,6 +285,12 @@ public class SceneRecord extends PersistentRecord
 
     /** The default entry point for this scene. Z coordinate. */
     public float entranceZ;
+
+    /** The current rating of this room, from 1 to 5. */
+    public float rating;
+
+    /** The number of user ratings that went into the average rating. */
+    public int ratingCount;
 
     /** Used when loading from the database. */
     public SceneRecord ()
