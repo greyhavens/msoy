@@ -29,6 +29,7 @@ import com.whirled.bureau.client.GameAgentController;
 
 import com.threerings.msoy.game.data.PlayerObject;
 
+import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
@@ -197,9 +198,9 @@ public class ThaneAVRGameController
      *  is not in the game or is not yet available. */
     public function getPlayer (playerId :int) :PlayerObject
     {
-        var playerBinding :PlayerBinding = _players.get(playerId) as PlayerBinding;
-        if (playerBinding != null) {
-            return _playerSubs.getObj(playerBinding.oid) as PlayerObject
+        var pbind :PlayerBinding = _players.get(playerId) as PlayerBinding;
+        if (pbind != null) {
+            return pbind.pobj;
         }
         return null;
     }
@@ -294,12 +295,7 @@ public class ThaneAVRGameController
     protected function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            var pl :PlayerLocation = event.getEntry() as PlayerLocation;
-            if (getPlayer(pl.playerId) == null) {
-                // player object subscription is not yet complete, wait for that callback
-                return;
-            }
-            playerDidJoinGame(pl);
+            updatePlayer(PlayerLocation(event.getEntry()).playerId, "location added");
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             bindScene(event.getEntry() as SceneInfo);
@@ -313,28 +309,8 @@ public class ThaneAVRGameController
     protected function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            var pl :PlayerLocation = event.getEntry() as PlayerLocation;
-            if (getPlayer(pl.playerId) == null) {
-                // if subscription never completed, don't dispatch a 'left' event, and wait
-                // for the subscription callback for the 'enter' event.
-                return;
-            }
-            var oldPl :PlayerLocation = event.getOldEntry() as PlayerLocation;
-            var binding :PlayerBinding = PlayerBinding(_players.get(pl.playerId));
-            if (binding == null) {
-                log.warning(
-                    "playerLocations entry updated prior to addition", "pl", pl, "oldPl", oldPl);
-                return;
-            }
-            if (!binding.suppressRoomTransitions && oldPl.sceneId != 0) {
-                _backend.playerLeftRoom(oldPl.playerId, oldPl.sceneId);
-                if (binding.deactivated) {
-                    binding.suppressRoomTransitions = true;
-                }
-            }
-            if (!binding.suppressRoomTransitions && pl.sceneId != 0) {
-                _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
-            }
+            updatePlayer(PlayerLocation(event.getEntry()).playerId, "location updated");
+
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             bindScene(event.getEntry() as SceneInfo);
         }
@@ -344,56 +320,20 @@ public class ThaneAVRGameController
     {
         var pl :PlayerLocation;
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            pl = event.getOldEntry() as PlayerLocation;
-            if (getPlayer(pl.playerId) == null) {
-                // if subscription never completed, the game wasn't told the player half-way
-                // joined, so don't now confuse it by mentioning they're leaving
-                return;
-            }
+            playerDidLeaveGame(PlayerLocation(event.getOldEntry()).playerId, "location removed");
 
-            if (!PlayerBinding(_players.get(pl.playerId)).suppressRoomTransitions && 
-                pl.sceneId != 0) {
-                _backend.playerLeftRoom(pl.playerId, pl.sceneId);
-            }
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             removeBinding((event.getOldEntry() as SceneInfo).sceneId);
 
         } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            var occInfo :OccupantInfo = event.getOldEntry() as OccupantInfo;
-            var playerObj :PlayerObject = _playerSubs.getObj(occInfo.bodyOid) as PlayerObject;
+            var occInfo :OccupantInfo = OccupantInfo(event.getOldEntry());
+            var playerObj :PlayerObject = PlayerObject(_playerSubs.getObj(occInfo.bodyOid));
             if (playerObj == null) {
-                // TODO: downgrade to info if this is happening frequently
-                log.warning("Player left game before subscription completed", "occInfo", occInfo);
-
-            } else {
-                var doRoomTransition :Boolean = true;
-                var playerBinding :PlayerBinding;
-                playerBinding = _players.get(playerObj.getMemberId()) as PlayerBinding;
-                if (playerBinding == null) {
-                    // This is very weird since we create the binding when the PlayerObject is
-                    // available
-                    log.warning(
-                        "Player leaving game has a subscription but no binding", "playerObj",
-                        playerObj.which());
-
-                } else {
-                    doRoomTransition = !playerBinding.suppressRoomTransitions;
-                    playerBinding.netAdapter.release();
-                }
-
-                // If the player is still in our locations, remove from room
-                pl = _gameObj.playerLocs.get(playerObj.getMemberId()) as PlayerLocation;
-                if (pl != null) {
-                    if (doRoomTransition && pl.sceneId != 0) {
-                        _backend.playerLeftRoom(pl.playerId, pl.sceneId);
-                    }
-                    _backend.playerLeftGame(pl.playerId);
-                }
-
-                _players.remove(playerObj.getMemberId());
+                // easy come, easy go
+                log.info("Player left game before subscription completed", "occInfo", occInfo);
+                return;
             }
-
-            _playerSubs.unsubscribe(occInfo.bodyOid);
+            playerDidLeaveGame(playerObj.getMemberId(), "game occupant removed");
         }
     }
 
@@ -631,28 +571,28 @@ public class ThaneAVRGameController
     {
         var playerId :int = obj.getMemberId();
 
-        var playerBinding :PlayerBinding = new PlayerBinding();
-        playerBinding.oid = obj.getOid();
+        // If the player has already left the game, fuhgedabbadit
+        if (_gameObj.occupantInfo.get(obj.getOid()) == null) {
+            log.info("Subscription completed after player left game", "playerId", playerId);
+            return;
+        }
+
+        // Set up the player binding
+        var playerBinding :PlayerBinding = new PlayerBinding(obj);
         playerBinding.netAdapter = _backend.createPlayerNetAdapter(obj);
         _players.put(playerId, playerBinding);
 
-        var pl :PlayerLocation = _gameObj.playerLocs.get(playerId) as PlayerLocation;
-        if (pl == null) {
-            // player location not yet updated, wait for that callback
-            return;
-        }
-        playerDidJoinGame(pl);
+        // Dispatch the joining of the game and entering of the room if possible
+        updatePlayer(playerId, "player object available");
     }
 
-    protected function resolveMobInfo (name :String, entry :DSet_Entry ) :MobInfo
+    protected function resolveMobInfo (entry :DSet_Entry ) :MobInfo
     {
         var mobInfo :MobInfo = null;
-        if (name == PlaceObject.OCCUPANT_INFO) {
-            mobInfo = entry as MobInfo;
-            if (mobInfo != null) {
-                if (mobInfo.getGameId() != getGameId()) {
-                    mobInfo = null;
-                }
+        mobInfo = entry as MobInfo;
+        if (mobInfo != null) {
+            if (mobInfo.getGameId() != getGameId()) {
+                mobInfo = null;
             }
         }
 
@@ -661,44 +601,169 @@ public class ThaneAVRGameController
 
     protected function roomEntryAdded (binding :SceneBinding, evt :EntryAddedEvent) :void
     {
-        var mobInfo :MobInfo = resolveMobInfo(evt.getName(), evt.getEntry());
-        if (mobInfo != null) {
-            binding.mobs.put(mobInfo.getIdent(), mobInfo);
-            _backend.mobSpawned(binding.sceneId, mobInfo.getIdent());
+        if (evt.getName() == PlaceObject.OCCUPANT_INFO) {
+            var mobInfo :MobInfo = resolveMobInfo(evt.getEntry());
+            if (mobInfo != null) {
+                binding.mobs.put(mobInfo.getIdent(), mobInfo);
+                _backend.mobSpawned(binding.sceneId, mobInfo.getIdent());
+
+            } else if (evt.getEntry() is MemberInfo) {
+                updatePlayer(MemberInfo(evt.getEntry()).getMemberId(), "room occupant added");
+            }
         }
     }
 
     protected function roomEntryUpdated (binding :SceneBinding, evt :EntryUpdatedEvent) :void
     {
-        var mobInfo :MobInfo = resolveMobInfo(evt.getName(), evt.getEntry());
-        if (mobInfo != null) {
-            if (MobInfo(evt.getOldEntry()).getIdent() != mobInfo.getIdent()) {
-                log.warning("Mob changed idents", "old", evt.getOldEntry(), "new", mobInfo);
+        if (evt.getName() == PlaceObject.OCCUPANT_INFO) {
+            var mobInfo :MobInfo = resolveMobInfo(evt.getEntry());
+            if (mobInfo != null) {
+                if (MobInfo(evt.getOldEntry()).getIdent() != mobInfo.getIdent()) {
+                    log.warning("Mob changed idents", "old", evt.getOldEntry(), "new", mobInfo);
+                }
+                binding.mobs.put(mobInfo.getIdent(), mobInfo);
+                _backend.mobChanged(binding.sceneId, mobInfo.getIdent());
             }
-            binding.mobs.put(mobInfo.getIdent(), mobInfo);
-            _backend.mobChanged(binding.sceneId, mobInfo.getIdent());
         }
     }
 
     protected function roomEntryRemoved (binding :SceneBinding, evt :EntryRemovedEvent) :void
     {
-        var mobInfo :MobInfo = resolveMobInfo(evt.getName(), evt.getOldEntry());
-        if (mobInfo != null) {
-            if (!binding.mobs.remove(mobInfo.getIdent())) {
-                log.warning(
-                    "Removing mob not found in binding", "binding", binding, "mobId",
-                    mobInfo.getIdent());
+        if (evt.getName() == PlaceObject.OCCUPANT_INFO) {
+            var mobInfo :MobInfo = resolveMobInfo(evt.getOldEntry());
+            if (mobInfo != null) {
+                if (!binding.mobs.remove(mobInfo.getIdent())) {
+                    log.warning(
+                        "Removing mob not found in binding", "binding", binding, "mobId",
+                        mobInfo.getIdent());
+                }
+                _backend.mobRemoved(binding.sceneId, mobInfo.getIdent());
+
+            } else if (evt.getOldEntry() is MemberInfo) {
+                updatePlayer(MemberInfo(evt.getOldEntry()).getMemberId(), "room occupant removed");
             }
-            _backend.mobRemoved(binding.sceneId, mobInfo.getIdent());
         }
     }
 
-    protected function playerDidJoinGame (pl :PlayerLocation) :void
+    /**
+     * Takes care of telling the backend that a player has joined the game, left a room or entered
+     * a room or any combination of the above, guaranteeing the correct event ordering and
+     * preconditions.
+     *
+     * <p>In order to join the game, the player must:<ul>
+     * <li>Not have previously joined the game</li>
+     * <li>Have a player binding (which by definition has a player object)</li></ul>
+     * If all conditions are met, the backend is informed via <code>playerJoinedGame</code></p>
+     *
+     * <p>In order to enter a room, the player must:<ul>
+     * <li>Have previously joined the game in this update or a previous one</li>
+     * <li>Have most recently left a room in this update or a previous one</li>
+     * <li>Have a <code>PlayerLocation</code> with a non-zero <code>sceneId</code></li>
+     * <li>Not have a pending deactivation</li>
+     * <li>Be an occupant of the room (the server guarantees that the room is non-null)</li></ul>
+     * If all conditions are met, the backend is informed via <code>playerEnteredRoom</code></p>
+     *
+     * <p>In order to leave a room, the player must:<ul>
+     * <li>Have previously joined the game in this update or a previous one</li>
+     * <li>Have previously entered a room</li>
+     * <li>Have no <code>PlayerLocation</code> or have one with <code>sceneId</code> that is not
+     * equal to the player's most recently entered room</li></ul>
+     * If all conditions are met, the backend is informed via <code>playerLeftRoom</code></p>
+     */
+    protected function updatePlayer (playerId :int, why :String) :void
     {
-        _backend.playerJoinedGame(pl.playerId);
-        if (pl.sceneId != 0) {
-            _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
+        log.debug("Updating player", "why", why, "playerId", playerId);
+
+        // Check the binding exists
+        var pbind :PlayerBinding = PlayerBinding(_players.get(playerId));
+        if (pbind == null) {
+            log.debug("Skipping player update: no binding", "playerId", playerId);
+            return;
         }
+
+        // Join the game if not already. 
+        if (!pbind.joined) {
+            _backend.playerJoinedGame(playerId);
+            pbind.joined = true;
+        }
+
+        // Calculate the new scene id
+        var newSceneId :int = 0;
+        var ploc :PlayerLocation = PlayerLocation(_gameObj.playerLocs.get(playerId));
+        if (ploc != null) {
+            newSceneId = ploc.sceneId;
+        }
+
+        // Don't dispatch entry to the same room again
+        if (newSceneId == pbind.currentSceneId) {
+            log.debug(
+                "Skipping room transition: scenes equal", "playerId", playerId,
+                "sceneId", newSceneId);
+            return;
+        }
+
+        // Leave the last room entered
+        if (pbind.currentSceneId != 0) {
+            _backend.playerLeftRoom(playerId, pbind.currentSceneId);
+            pbind.currentSceneId = 0;
+        }
+
+        // No need to enter scene zero, wait for the next update if any
+        if (newSceneId == 0) {
+            log.debug(
+                "Skipping room entry: new scene is zero", "playerId", playerId);
+            return;
+        }
+
+        // If the player was deactivated by our agent, don't enter any new rooms
+        if (pbind.deactivated) {
+            log.debug(
+                "Skipping room entry: player deactivated", "playerId", playerId);
+            return;
+        }
+
+        // Check the player is an occupant (Dion's bug)
+        if (SceneBinding(_bindings.get(newSceneId)).room.getMemberInfo(playerId) == null) {
+            log.debug(
+                "Skipping room entry: player not in room", "playerId", playerId);
+            return;
+        }
+
+        // Enter the new room
+        _backend.playerEnteredRoom(playerId, newSceneId);
+        pbind.currentSceneId = newSceneId;
+    }
+
+    /**
+     * Finalizes the withdrawal of a player from the game, ensuring the backend is informed of
+     * any pending room exits as well as the player quitting. 
+     */
+    protected function playerDidLeaveGame (playerId :int, why :String) :void
+    {
+        log.debug("Player leaving", "why", why, "playerId", playerId);
+
+        var pbind :PlayerBinding = PlayerBinding(_players.get(playerId));
+
+        // Check the player hasn't already left
+        if (pbind == null) {
+            return;
+        }
+
+        // Make sure we dispatch any pending room exits
+        if (pbind.joined && pbind.currentSceneId != 0) {
+            _backend.playerLeftRoom(playerId, pbind.currentSceneId);
+            pbind.currentSceneId = 0;
+        }
+
+        // Now dispatch the game leaving event
+        if (pbind.joined) {
+            _backend.playerLeftGame(playerId);
+            pbind.joined = false;
+        }
+
+        // Tear down the binding
+        _players.remove(playerId);
+        _playerSubs.unsubscribe(pbind.pobj.getOid());
     }
 
     protected var _ctx :MsoyBureauContext;
@@ -721,6 +786,8 @@ import com.threerings.util.StringUtil;
 import com.threerings.presents.dobj.ChangeListener;
 
 import com.threerings.presents.util.SafeSubscriber;
+
+import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
@@ -754,8 +821,28 @@ class SceneBinding
  * lookup the object id of a member. */
 class PlayerBinding
 {
-    public var oid :int;
+    public function PlayerBinding (pobj :PlayerObject)
+    {
+        this.pobj = pobj;
+    }
+
+    /** The player object, never null. */
+    public var pobj :PlayerObject;
+    
+    /** For dispatching the property changes. */
     public var netAdapter :BackendNetAdapter;
+
+    /** True if we've called <code>playerJoinedGame</code>.
+     * @see com.threerings.msoy.avrg.client.ThaneAVRGameBackend#playerJoinedGame() */
+    public var joined :Boolean;
+
+    /** The last scene we passed to <code>playerEnteredRoom</code>, or zero if we've called
+     * <code>playerLeftRoom</code> instead.
+     * @see com.threerings.msoy.avrg.client.ThaneAVRGameBackend#playerEnteredRoom()
+     * @see com.threerings.msoy.avrg.client.ThaneAVRGameBackend#playerLeftRoom() */
+    public var currentSceneId :int;
+
+    /** True if our backend has called <code>deactivateGame()</code>.
+     * @see com.threerings.msoy.avrg.client.ThaneAVRGameController.deactivateGame() */
     public var deactivated :Boolean;
-    public var suppressRoomTransitions :Boolean;
 }
