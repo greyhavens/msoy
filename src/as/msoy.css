@@ -517,7 +517,7 @@ TabNavigator, TabBar {
 .controlBarButtonSnapshot, .controlBarFriendButton, .controlBarTalkButton,
 .controlBarIdleButton, .controlBarScaleButton, .controlBarAVRGButton, .tickButton,
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
-.controlBarButtonVolume3, .controlBarButtonVolume4 {
+.controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton {
   upSkin: ClassReference(null);
   downSkin: ClassReference(null);
   overSkin: ClassReference(null);
@@ -603,6 +603,10 @@ TabNavigator, TabBar {
 
 .controlBarAVRGButton {
   image: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
+}
+
+.controlBarHomePageGridButton {
+  image: Embed(source="../../rsrc/media/skins/controlbar/grid.png");
 }
 
 .tickButton {

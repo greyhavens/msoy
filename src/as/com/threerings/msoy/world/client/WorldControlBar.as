@@ -110,12 +110,20 @@ public class WorldControlBar extends ControlBar
         _friendsBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return new FriendsListPanel(_wctx);
         }, _friendsBtn));
+
+        _homePageGridBtn = createButton("controlBarHomePageGridButton", "i.homePageGrid");
+        _homePageGridBtn.setCommand(WorldController.SHOW_HOME_PAGE_GRID);
     }
 
     // from ControlBar
     override protected function addControls () :void
     {
         super.addControls(); 
+
+        if (DeploymentConfig.devDeployment) {
+            // TODO: can this work in UI_GAME too?
+            addButton(_homePageGridBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
+        }
 
         addButton(_hotZoneBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
         addButton(_zoomBtn, [ UI_ROOM, UI_VIEWER, UI_AVRGAME ], PLACE_PRIORITY);
@@ -238,6 +246,9 @@ public class WorldControlBar extends ControlBar
 
     /** A button for popping up the friends list. */
     protected var _friendsBtn :CommandButton;
+
+    /** Brings up the recent places grid. */
+    protected var _homePageGridBtn :CommandButton;
 
     /** An introduction to avatars shown to brand new players. */
     protected var _avatarIntro :DisplayObjectContainer;
