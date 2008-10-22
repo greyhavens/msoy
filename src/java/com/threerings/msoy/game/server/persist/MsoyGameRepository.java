@@ -175,9 +175,8 @@ public class MsoyGameRepository extends DepotRepository
      */
     public void gameDelisted (GameRecord item)
     {
-        // update the game detail record with the new listed item id
-        updatePartial(GameDetailRecord.class, item.gameId,
-                      GameDetailRecord.LISTED_ITEM_ID, 0);
+        // zero out the game detail record's listed game item id
+        updatePartial(GameDetailRecord.class, item.gameId, GameDetailRecord.LISTED_ITEM_ID, 0);
     }
 
     /**

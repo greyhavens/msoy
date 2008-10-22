@@ -92,47 +92,40 @@ public class GameServlet extends MsoyServiceServlet
         if (gdr == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-
         GameDetail detail = gdr.toGameDetail();
-        int creatorId = 0;
-        if (gdr.sourceItemId != 0) {
-            ItemRecord item = _gameRepo.loadItem(gdr.sourceItemId);
-            if (item != null) {
-                detail.sourceItem = (Game)item.toItem();
-                creatorId = item.creatorId;
+
+        GameRecord item = null;
+        boolean isDevVersion = Game.isDevelopmentVersion(gameId);
+        if (isDevVersion) {
+            if (gdr.sourceItemId != 0) {
+                item = _gameRepo.loadItem(gdr.sourceItemId);
             }
+        } else if (gdr.listedItemId != 0) {
+            item = _gameRepo.loadItem(gdr.listedItemId);
         }
-
-        if (detail.sourceItem == null) {
-            log.warning("Game has no source item", "gameId", gameId);
+        if (item == null) {
+            if (isDevVersion) {
+                log.warning("Game missing source item?", "gameId", gameId, "gdr", gdr);
+            }
+            return null;
         }
+        detail.item = (Game)item.toItem();
 
+        // fill in various other metadata
+        detail.creator = _memberRepo.loadMemberName(item.creatorId);
         detail.instructions = _mgameRepo.loadInstructions(gdr.gameId);
-
-        if (gdr.listedItemId != 0) {
-            ItemRecord item = _gameRepo.loadItem(gdr.listedItemId);
-            if (item != null) {
-                detail.listedItem = (Game)item.toItem();
-                creatorId = item.creatorId;
-                detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, detail.listedItem);
-            }
+        if (!isDevVersion) {
+            detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, detail.item);
         }
 
-        if (creatorId != 0) {
-            detail.creator = _memberRepo.loadMemberName(creatorId);
-        }
-
+        // fill in the current number of players if any
         PopularPlacesSnapshot.Place game = _memberMan.getPPSnapshot().getGame(gameId);
         if (game != null) {
             detail.playingNow = game.population;
         }
 
         // determine how many players can play this game
-        Game item = Game.isDevelopmentVersion(gameId) ? detail.sourceItem : detail.listedItem;
-        if (item == null) {
-            log.warning("Game has no item", "gameId", gameId, "detail", detail);
-        }
-        int[] players = GameUtil.getMinMaxPlayers(item);
+        int[] players = GameUtil.getMinMaxPlayers(detail.item);
         detail.minPlayers = players[0];
         detail.maxPlayers = players[1];
 

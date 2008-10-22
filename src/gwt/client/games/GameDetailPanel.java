@@ -61,8 +61,12 @@ public class GameDetailPanel extends SmartTable
         } else {
             _gamesvc.loadGameDetail(gameId, new MsoyCallback<GameDetail>() {
                 public void onSuccess (GameDetail detail) {
-                    setGameDetail(gameId, detail);
-                    selectTab(tab);
+                    if (detail == null) {
+                        MsoyUI.error(_msgs.gdpNoSuchGame());
+                    } else {
+                        setGameDetail(gameId, detail);
+                        selectTab(tab);
+                    }
                 }
             });
         }
@@ -70,12 +74,7 @@ public class GameDetailPanel extends SmartTable
 
     public void setGameDetail (int gameId, GameDetail detail)
     {
-        // if we are referencing the listed item but it does not exist, switch to the development
-        // (source) item which always exists, and which has a negative id.
-        if (!Game.isDevelopmentVersion(gameId) && detail.listedItem == null) {
-            gameId = Game.getDevelopmentId(gameId);
-        }
-        Game game = detail.getGame();
+        final Game game = detail.item;
 
         // Note: the gameId may be the negative original gameId, but GameDetail's id is never
         // negative to match
@@ -85,19 +84,18 @@ public class GameDetailPanel extends SmartTable
         VerticalPanel shot = new VerticalPanel();
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         shot.add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SHOT_SIZE, null));
-        if (detail.listedItem != null) {
+        if (detail.item.isCatalogMaster()) {
             shot.add(WidgetUtil.makeShim(5, 5));
-            final Item item = detail.listedItem;
             Rating rating = new Rating(
-                item.rating, item.ratingCount, detail.memberItemInfo.memberRating, false) {
+                game.rating, game.ratingCount, detail.memberItemInfo.memberRating, false) {
                 @Override protected void handleRate (
                     byte newRating , MsoyCallback<RatingResult> callback) {
-                    _itemsvc.rateItem(item.getIdent(), newRating, callback);
+                    _itemsvc.rateItem(game.getIdent(), newRating, callback);
                 }
             };
             shot.add(rating);
-            if ( ! CShell.isGuest()) {
-                shot.add(new FavoriteIndicator(item, detail.memberItemInfo));
+            if (!CShell.isGuest()) {
+                shot.add(new FavoriteIndicator(game, detail.memberItemInfo));
             }
         }
         setWidget(0, 0, shot);
@@ -109,7 +107,7 @@ public class GameDetailPanel extends SmartTable
 
         setWidget(1, 0, new GameBitsPanel(
             detail.minPlayers, detail.maxPlayers, detail.averageDuration, detail.gamesPlayed,
-            detail.sourceItem.itemId));
+            detail.sourceItemId));
 
         FlowPanel play = new FlowPanel();
         play.setStyleName("playPanel");
@@ -148,10 +146,10 @@ public class GameDetailPanel extends SmartTable
         // add the about/instructions tab
         addTab(GameDetails.INSTRUCTIONS, _msgs.tabInstructions(), new InstructionsPanel(detail));
 
-        // add comments tab
-        if (detail.listedItem != null) {
+        // add comments tab if this is the listed version
+        if (detail.item.isCatalogMaster()) {
             addTab(GameDetails.COMMENTS, _msgs.tabComments(),
-                   new CommentsPanel(detail.listedItem.getType(), detail.listedItem.catalogId));
+                   new CommentsPanel(detail.item.getType(), detail.item.catalogId));
         }
 
         // add trophies tab, passing in the potentially negative gameId
@@ -165,14 +163,9 @@ public class GameDetailPanel extends SmartTable
         addTab(GameDetails.TOPRANKINGS, _msgs.tabTopRankings(),
                new TopRankingPanel(detail.gameId, false));
 
-        // if we're the owner of the game or an admin, add the metrics tab
-        if (detail.listedItem != null && ((detail.sourceItem != null
-                && detail.sourceItem.ownerId == CShell.getMemberId()) || CShell.isAdmin())) {
+        // if we're the creator of the game or an admin, add the metrics and logs tabs
+        if (detail.isCreator(CShell.getMemberId()) || CShell.isAdmin()) {
             addTab(GameDetails.METRICS, _msgs.tabMetrics(), new GameMetricsPanel(detail));
-        }
-
-        // if we're the owner of the game or an admin, add logs tab 
-        if (detail.sourceItem.ownerId == CShell.getMemberId() || CShell.isAdmin()) {
             addTab(GameDetails.LOGS, _msgs.tabLogs(), new GameLogsPanel(gameId));
         }
     }

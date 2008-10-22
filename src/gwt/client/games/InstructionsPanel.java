@@ -57,7 +57,7 @@ public class InstructionsPanel extends VerticalPanel
         }
 
         // if this is the owner of the game, add an edit button below the instructions
-        if (_detail.sourceItem != null && _detail.sourceItem.ownerId == CShell.getMemberId()) {
+        if (_detail.isCreator(CShell.getMemberId()) || CShell.isAdmin()) {
             setHorizontalAlignment(ALIGN_RIGHT);
             add(new Button("Edit", new ClickListener() {
                 public void onClick (Widget source) {

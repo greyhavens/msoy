@@ -131,9 +131,10 @@ public class GameDetailRecord extends PersistentRecord
     public GameDetail toGameDetail ()
     {
         GameDetail detail = new GameDetail();
-        detail.gameId = this.gameId;
+        detail.gameId = gameId;
+        detail.sourceItemId = sourceItemId;
         detail.averageDuration = getAverageDuration();
-        detail.gamesPlayed = this.gamesPlayed;
+        detail.gamesPlayed = gamesPlayed;
         return detail;
     }
 

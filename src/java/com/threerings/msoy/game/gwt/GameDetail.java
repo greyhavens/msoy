@@ -24,11 +24,12 @@ public class GameDetail
     /** The name of the creator of this game. */
     public MemberName creator;
 
-    /** The item listed in the catalog for this game. */
-    public Game listedItem;
+    /** The item id of this game's source (development version) item. */
+    public int sourceItemId;
 
-    /** The source item maintained by the creator for this game. */
-    public Game sourceItem;
+    /** The item that defines this game's properties (this is the source item if the development
+     * version was requested or the listed item if the production version was requested. */
+    public Game item;
 
     /** The creator supplied instructions for this game. */
     public String instructions;
@@ -52,18 +53,18 @@ public class GameDetail
     public MemberItemInfo memberItemInfo = new MemberItemInfo();
 
     /**
-     * Returns the listed game if we have one, the source if not.
-     */
-    public Game getGame ()
-    {
-        return (listedItem == null) ? sourceItem : listedItem;
-    }
-
-    /**
      * Returns true if this is a party game, false otherwise.
      */
     public boolean isPartyGame ()
     {
         return maxPlayers == Integer.MAX_VALUE;
+    }
+
+    /**
+     * Returns true if the specified member is the creator of this game.
+     */
+    public boolean isCreator (int memberId)
+    {
+        return (creator != null) && creator.getMemberId() == memberId;
     }
 }
