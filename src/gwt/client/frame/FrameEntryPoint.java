@@ -140,16 +140,17 @@ public class FrameEntryPoint
 
         String pagename = "";
         Pages page;
+        Args args = new Args();
         try {
             pagename = token.split("-")[0];
             page = Enum.valueOf(Pages.class, pagename.toUpperCase());
+            int dashidx = token.indexOf("-");
+            if (dashidx != -1) {
+                args.setToken(token.substring(dashidx+1));
+            }
         } catch (Exception e) {
             page = getLandingPage();
-        }
-        Args args = new Args();
-        int dashidx = token.indexOf("-");
-        if (dashidx != -1) {
-            args.setToken(token.substring(dashidx+1));
+            args.setToken(getLandingArgs());
         }
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
@@ -267,7 +268,7 @@ public class FrameEntryPoint
         WorldClient.didLogon(data.creds);
 
         if (_page == Pages.LANDING) {
-            Link.go(Pages.ME, "");
+            Link.go(getLandingPage(), getLandingArgs());
         } else if (_page != null) {
             setPage(_page); // reloads the current page
         } else if (!data.justCreated) {
@@ -345,7 +346,11 @@ public class FrameEntryPoint
             // if we're on a "world" page, go to a landing page
             if (_currentToken != null && _currentToken.startsWith(Pages.WORLD.getPath())) {
                 // if we were in a game, go to the games page, otherwise go to the landing
-                Link.go(_currentToken.indexOf("game") == -1 ? getLandingPage() : Pages.GAMES, "");
+                if (_currentToken.indexOf("game") == -1) {
+                    Link.go(getLandingPage(), getLandingArgs());
+                } else {
+                    Link.go(Pages.GAMES, "");
+                }
             }
         }
     }
@@ -808,7 +813,12 @@ public class FrameEntryPoint
 
     protected Pages getLandingPage ()
     {
-        return CShell.isGuest() ? Pages.LANDING : Pages.ME;
+        return CShell.isGuest() ? Pages.LANDING : Pages.WORLD;
+    }
+
+    protected String getLandingArgs ()
+    {
+        return CShell.isGuest() ? "" : "m" + CShell.getMemberId();
     }
 
     /**
