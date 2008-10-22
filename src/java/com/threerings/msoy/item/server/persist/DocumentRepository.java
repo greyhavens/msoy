@@ -11,6 +11,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.item.data.all.Document;
 import com.threerings.msoy.server.persist.RatingRecord;
+import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 
@@ -56,7 +57,7 @@ public class DocumentRepository extends ItemRepository<DocumentRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return _ratingRepo.coerceRating(DocumentRatingRecord.class);
+        return RatingRepository.coerceRating(DocumentRatingRecord.class);
     }
 
     @Override

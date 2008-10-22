@@ -10,6 +10,7 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.RatingRecord;
+import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 
@@ -55,7 +56,7 @@ public class VideoRepository extends ItemRepository<VideoRecord>
     @Override
     protected Class<RatingRecord> getRatingClass ()
     {
-        return _ratingRepo.coerceRating(VideoRatingRecord.class);
+        return RatingRepository.coerceRating(VideoRatingRecord.class);
     }
 
     @Override

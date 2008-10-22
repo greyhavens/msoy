@@ -29,6 +29,7 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.server.persist.RatingRecord;
+import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 
@@ -159,7 +160,7 @@ public class GameRepository extends ItemRepository<GameRecord>
     @Override // from ItemRepository
     protected Class<RatingRecord> getRatingClass ()
     {
-        return _ratingRepo.coerceRating(GameRatingRecord.class);
+        return RatingRepository.coerceRating(GameRatingRecord.class);
     }
 
     @Override // from ItemRepository
