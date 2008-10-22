@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
@@ -30,9 +27,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
-import com.samskivert.util.Tuple;
 
-import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.SchemaMigration;

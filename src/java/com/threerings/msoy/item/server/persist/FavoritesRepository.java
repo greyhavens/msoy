@@ -21,8 +21,6 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.item.data.all.Item;
 
-import com.threerings.msoy.server.persist.RatingRecord;
-
 /**
  * Manages members' favorite item information.
  */
