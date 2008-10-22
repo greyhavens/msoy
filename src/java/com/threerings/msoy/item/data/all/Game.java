@@ -185,6 +185,7 @@ public class Game extends Item
     @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (gameMedia != null);
+        return super.isConsistent() && nonBlank(name, MAX_NAME_LENGTH) && (gameMedia != null) &&
+            !(isInWorld() && serverMedia == null);
     }
 }
