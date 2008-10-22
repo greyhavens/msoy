@@ -68,11 +68,11 @@ public class ReviewItem extends FlowPanel
 //             if (item.ownerId == 0) {
 //                 Button button = new Button("Delist");
 //                 new ClickCallback<Integer>(button) {
-//                     public boolean callService () {
+//                     @Override protected boolean callService () {
 //                         _catalogsvc.listItem(item.getIdent(), false, this);
 //                         return true;
 //                     }
-//                     public boolean gotResult (Integer result) {
+//                     @Override protected boolean gotResult (Integer result) {
 //                         if (result != null) {
 //                             MsoyUI.info(_msgs.reviewDelisted());
 //                             return false; // don't reenable delist
@@ -88,7 +88,7 @@ public class ReviewItem extends FlowPanel
         if (_item.isFlagSet(Item.FLAG_FLAGGED_MATURE)) {
             _mark = new Button(_msgs.reviewMark());
             new ClickCallback<Void>(_mark) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     if (_item == null) {
                         // should not happen, but let's be careful
                         return false;
@@ -96,7 +96,7 @@ public class ReviewItem extends FlowPanel
                     _itemsvc.setMature(_item.getIdent(), true, this);
                     return true;
                 }
-                public boolean gotResult (Void result) {
+                @Override protected boolean gotResult (Void result) {
                     MsoyUI.info(_msgs.reviewMarked());
                     return false; // don't reenable button
                 }
@@ -121,7 +121,7 @@ public class ReviewItem extends FlowPanel
         // a button to signal we're done
         _done = new Button(_msgs.reviewDone());
         new ClickCallback<Void>(_done) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 if (_item == null) {
                     _parent.refresh();
                     return false;
@@ -130,7 +130,7 @@ public class ReviewItem extends FlowPanel
                 _itemsvc.setFlags(_item.getIdent(), flags, (byte) 0, this);
                 return true;
             }
-            public boolean gotResult (Void result) {
+            @Override protected boolean gotResult (Void result) {
                 // the flags are set: refresh the UI
                 _parent.refresh();
                 // keep the button disabled until the UI refreshes

@@ -60,11 +60,11 @@ public class FriendInviteDisplay extends MailPayloadDisplay
 
                 Button ayeButton = new Button(_msgs.friendBtnAccept());
                 new ClickCallback<Void>(ayeButton) {
-                    public boolean callService () {
+                    @Override protected boolean callService () {
                         _membersvc.addFriend(_message.author.name.getMemberId(), this);
                         return true;
                     }
-                    public boolean gotResult (Void result) {
+                    @Override protected boolean gotResult (Void result) {
                         mailResponse();
                         refreshUI(true);
                         return false;

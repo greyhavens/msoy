@@ -209,11 +209,11 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                     PushButton button =
                         MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailUpprice(), null);
                     new ClickCallback<CatalogListing>(button) {
-                        public boolean callService () {
+                        @Override protected boolean callService () {
                             _catalogsvc.loadListing(_item.getType(), _item.catalogId, this);
                             return true;
                         }
-                        public boolean gotResult (CatalogListing listing) {
+                        @Override protected boolean gotResult (CatalogListing listing) {
                             DoListItemPopup.show(_item, listing, ItemDetailPanel.this);
                             return true;
                         }
@@ -309,11 +309,11 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     protected void createDeleteCallback (SourcesClickEvents trigger)
     {
         new ClickCallback<Void>(trigger, _msgs.detailConfirmDelete()) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 _stuffsvc.deleteItem(_item.getIdent(), this);
                 return true;
             }
-            public boolean gotResult (Void result) {
+            @Override protected boolean gotResult (Void result) {
                 // remove the item from our data model
                 _models.itemDeleted(_item);
 
@@ -330,11 +330,11 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     protected void createRevertCallback (SourcesClickEvents trigger)
     {
         new ClickCallback<Item>(trigger, _msgs.detailConfirmRevert()) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 _stuffsvc.revertRemixedClone(_item.getIdent(), this);
                 return true;
             }
-            public boolean gotResult (Item item) {
+            @Override protected boolean gotResult (Item item) {
                 _models.itemUpdated(item);
                 _item = item;
                 _detail.item = item;

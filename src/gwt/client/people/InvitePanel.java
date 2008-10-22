@@ -92,7 +92,7 @@ public class InvitePanel extends VerticalPanel
         input.setWidget(row, 2, _webPassword = new PasswordTextBox());
         Button webImport = new Button(_msgs.inviteWebImport());
         new ClickCallback<List<EmailContact>>(webImport) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 if ("".equals(_webAddress.getText())) {
                     MsoyUI.info(_msgs.inviteEnterWebAddress());
                     return false;
@@ -104,7 +104,7 @@ public class InvitePanel extends VerticalPanel
                 _invitesvc.getWebMailAddresses(_webAddress.getText(), _webPassword.getText(), this);
                 return true;
             }
-            public boolean gotResult (List<EmailContact> addresses) {
+            @Override protected boolean gotResult (List<EmailContact> addresses) {
                 for (EmailContact ec : addresses) {
                     if (ec.mname == null) {
                         _emailList.addItem(ec.name, ec.email);

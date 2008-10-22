@@ -363,8 +363,8 @@ public class SceneRecord extends PersistentRecord
 
     /**
      * Converts this scene record in to a partially initialized room detail record. The
-     * {@link RoomInfo#owner} and {@link RoomInfo#memberRating} are missing and must be
-     * filled in manual if needed. See {@link toRoomInfo} for caveats on the RoomInfo field.
+     * {@link RoomDetail#owner} and {@link RoomDetail#memberRating} are missing and must be
+     * filled in manual if needed. See {@link #toRoomDetail} for caveats on the RoomInfo fields.
      */
     public RoomDetail toRoomDetail ()
     {

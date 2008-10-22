@@ -166,14 +166,14 @@ public class DoListItemPopup extends VerticalPanel
         if (firstTime) {
             final String resultMsg = firstTime ? _imsgs.doListListed() : _imsgs.doListUpdated();
             new ClickCallback<Integer>(_doIt) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     int cost = getCost();
                     Currency currency = (cost == 0) ? Currency.COINS : getCurrency();
                     _catalogsvc.listItem(_item.getIdent(), _description.getText(), getPricing(),
                                          getSalesTarget(), currency, cost, this);
                     return true;
                 }
-                public boolean gotResult (Integer result) {
+                @Override protected boolean gotResult (Integer result) {
                     _item.catalogId = result;
                     MsoyUI.info(resultMsg);
                     CShell.frame.clearDialog();
@@ -184,7 +184,7 @@ public class DoListItemPopup extends VerticalPanel
 
         } else if (repricing) {
             new ClickCallback<Void>(_doIt) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     int pricing = getPricing(), salesTarget = getSalesTarget();
                     if (pricing == CatalogListing.PRICING_LIMITED_EDITION &&
                             listing != null && salesTarget <= listing.purchases) {
@@ -195,7 +195,7 @@ public class DoListItemPopup extends VerticalPanel
                                               salesTarget, getCurrency(), getCost(), this);
                     return true;
                 }
-                public boolean gotResult (Void result) {
+                @Override protected boolean gotResult (Void result) {
                     MsoyUI.info(_imsgs.doListUpdated());
                     CShell.frame.clearDialog();
                     _listener.itemListed(_item, true);
@@ -205,11 +205,11 @@ public class DoListItemPopup extends VerticalPanel
 
         } else {
             new ClickCallback<Void>(_doIt) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     _catalogsvc.updateListing(_item.getIdent(), _description.getText(), this);
                     return true;
                 }
-                public boolean gotResult (Void result) {
+                @Override protected boolean gotResult (Void result) {
                     MsoyUI.info(_imsgs.doListUpdated());
                     CShell.frame.clearDialog();
                     return false;

@@ -74,11 +74,11 @@ public class GroupInviteDisplay extends MailPayloadDisplay
             joinButton.addStyleName("JoinButton");
             joinButton.setEnabled(_enabled);
             new ClickCallback<Void>(joinButton) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     _groupsvc.joinGroup(_invitePayload.groupId, this);
                     return true;
                 }
-                public boolean gotResult (Void result) {
+                @Override protected boolean gotResult (Void result) {
                     _invitePayload.responded = true;
                     updateState(_invitePayload, new MsoyCallback.NOOP<Void>());
                     refreshUI();

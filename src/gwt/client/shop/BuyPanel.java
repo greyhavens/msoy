@@ -123,7 +123,7 @@ public class BuyPanel extends FlowPanel
             _currency = currency;
         }
 
-        public boolean callService ()
+        @Override protected boolean callService ()
         {
             if (CShell.isGuest()) {
                 MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
@@ -135,7 +135,7 @@ public class BuyPanel extends FlowPanel
             return true;
         }
 
-        public boolean gotResult (CatalogService.PurchaseResult result)
+        @Override protected boolean gotResult (CatalogService.PurchaseResult result)
         {
             MoneyUtil.updateBalances(result.balances);
             itemPurchased(result.item);

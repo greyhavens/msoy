@@ -180,11 +180,11 @@ public class GalleryViewPanel extends FlowPanel
             Label delete = MsoyUI.createActionLabel(_pmsgs.galleryDeleteButton(), null);
             delete.addStyleName("actionLabel");
             new ClickCallback<Void>(delete, _pmsgs.galleryConfirmDelete()) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     _gallerysvc.deleteGallery(_galleryData.gallery.galleryId, this);
                     return true;
                 }
-                public boolean gotResult (Void result) {
+                @Override protected boolean gotResult (Void result) {
                     MsoyUI.info(_pmsgs.galleryDeleted());
                     Link.go(Pages.PEOPLE, Args.compose(GalleryActions.GALLERIES,
                         CShell.getMemberId()));

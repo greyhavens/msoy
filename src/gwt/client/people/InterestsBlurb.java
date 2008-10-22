@@ -102,13 +102,13 @@ public class InterestsBlurb extends Blurb
         });
         Button update = new Button(_cmsgs.update());
         new ClickCallback<Void>(update) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 _newInterests = getNewInterests();
                 _profilesvc.updateInterests(_newInterests, this);
                 return true;
             }
 
-            public boolean gotResult (Void result) {
+            @Override protected boolean gotResult (Void result) {
                 // filter out our blank new interests
                 for (int ii = 0; ii < _newInterests.size(); ii++) {
                     Interest interest = _newInterests.get(ii);

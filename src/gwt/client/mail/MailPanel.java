@@ -131,11 +131,11 @@ public class MailPanel extends FlowPanel
             delete.addStyleName("actionLabel");
             String confirm = convo.hasUnread ? _msgs.deleteUnreadConfirm() : _msgs.deleteConfirm();
             new ClickCallback<Boolean>(delete, confirm) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     _mailsvc.deleteConversation(convo.conversationId, convo.hasUnread, this);
                     return true;
                 }
-                public boolean gotResult (Boolean deleted) {
+                @Override protected boolean gotResult (Boolean deleted) {
                     if (!deleted) {
                         MsoyUI.info(_msgs.deleteNotDeleted());
                     } else {

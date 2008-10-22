@@ -69,7 +69,7 @@ public class MemberInfoPanel extends SmartTable
         role.setEnabled(CShell.creds.role.ordinal() > info.role.ordinal());
 
         new ClickCallback<Void>(role) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 _role = Enum.valueOf(WebCreds.Role.class, role.getItemText(role.getSelectedIndex()));
                 if (_role == info.role) {
                     return false; // we're reverting due to failure, so do nothing
@@ -77,7 +77,7 @@ public class MemberInfoPanel extends SmartTable
                 _adminsvc.setRole(info.name.getMemberId(), _role, this);
                 return true;
             }
-            public boolean gotResult (Void result) {
+            @Override protected boolean gotResult (Void result) {
                 info.role = _role;
                 MsoyUI.info(_msgs.mipChangedRole(_role.toString()));
                 return true;

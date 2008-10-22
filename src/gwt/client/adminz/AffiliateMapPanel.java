@@ -62,7 +62,7 @@ public class AffiliateMapPanel extends PagedTable<AffiliateMapping>
         row.add(save);
 
         new ClickCallback<Void>(save) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 int memberId;
                 try {
                     memberId = Integer.valueOf(box.getText());
@@ -74,7 +74,7 @@ public class AffiliateMapPanel extends PagedTable<AffiliateMapping>
                 return true;
             }
 
-            public boolean gotResult (Void result) {
+            @Override protected boolean gotResult (Void result) {
                 return true;
             }
         };

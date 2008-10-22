@@ -130,11 +130,11 @@ public class GameMetricsPanel extends VerticalPanel
         Button reset = new Button(_msgs.gmpResetScores());
         row.add(reset);
         new ClickCallback<Void>(reset, _msgs.gmpResetConfirm()) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 _gamesvc.resetGameScores(_detail.gameId, single, this);
                 return true;
             }
-            public boolean gotResult (Void result) {
+            @Override protected boolean gotResult (Void result) {
                 MsoyUI.info(_msgs.gmpScoresReset());
                 return true;
             }

@@ -93,11 +93,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
             Label delist = new Label(_msgs.listingDelist());
             new ClickCallback<Void>(delist, _msgs.listingDelistConfirm()) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     _catalogsvc.removeListing(_item.getType(), _listing.catalogId, this);
                     return true;
                 }
-                public boolean gotResult (Void result) {
+                @Override protected boolean gotResult (Void result) {
                     MsoyUI.info(_msgs.msgListingDelisted());
                     _models.itemDelisted(_listing);
                     History.back();

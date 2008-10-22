@@ -71,11 +71,11 @@ public class BlingPanel extends FlowPanel
                 _confirmMessage = _msgs.exchangeConfirm(""+_blingAmount);
                 super.takeAction(confirmed);
             }
-            public boolean callService () {
+            @Override protected boolean callService () {
                 _moneysvc.exchangeBlingForBars(_model.memberId, _blingAmount, this);
                 return true;
             }
-            public boolean gotResult (BlingExchangeResult result) {
+            @Override protected boolean gotResult (BlingExchangeResult result) {
                 MsoyUI.info(_msgs.blingExchangeSuccessful());
                 _exchangeBox.setText("");
                 update(result.blingInfo);
@@ -193,7 +193,7 @@ public class BlingPanel extends FlowPanel
 
             setWidget(row++, 2, _cashOutBtn = new Button(_msgs.blingCashOutButton()));
             new ClickCallback<BlingInfo>(_cashOutBtn) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     // validate the data
                     int blingAmount = _cashOutBox.getValue().intValue();
                     if (blingAmount < 1) {
@@ -219,7 +219,7 @@ public class BlingPanel extends FlowPanel
                     _moneysvc.requestCashOutBling(_model.memberId, blingAmount, passwd, info, this);
                     return true;
                 }
-                public boolean gotResult (BlingInfo result) {
+                @Override protected boolean gotResult (BlingInfo result) {
                     MsoyUI.info(_msgs.cashOutRequestSuccessful());
                     _cashOutBox.setText("");
                     update(result);

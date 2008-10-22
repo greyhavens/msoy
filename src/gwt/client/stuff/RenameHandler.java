@@ -40,13 +40,13 @@ public class RenameHandler extends ClickCallback<String>
     }
 
     // from ClickCallback
-    public boolean callService () {
+    @Override protected boolean callService () {
         _stuffsvc.renameClone(_item.getIdent(), _name.getText(), this);
         return true;
     }
 
     // from ClickCallback
-    public boolean gotResult (String result) {
+    @Override protected boolean gotResult (String result) {
         _item.name = result;
         _models.itemUpdated(_item);
         // just force a reload of the detail page

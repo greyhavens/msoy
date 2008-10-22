@@ -215,11 +215,11 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
                 Image ignoreThread = MsoyUI.createImage("/images/msgs/ignore.png", "Ignore");
                 ignoreThread.setTitle(_mmsgs.ignoreThreadTip());
                 new ClickCallback<Void>(ignoreThread) {
-                    public boolean callService () {
+                    @Override protected boolean callService () {
                         _forumsvc.ignoreThread(thread.threadId, this);
                         return true;
                     }
-                    public boolean gotResult (Void result) {
+                    @Override protected boolean gotResult (Void result) {
                         MsoyUI.info(_mmsgs.threadIgnored());
                         setModel(_fmodels.getUnreadThreads(true), getPage());
                         return false;

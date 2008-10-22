@@ -89,11 +89,11 @@ public class ConvoPanel extends FlowPanel
 
         Button delete = new Button(_msgs.convoDelete());
         new ClickCallback<Boolean>(delete, _msgs.deleteConfirm()) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 _mailsvc.deleteConversation(_convoId, false, this);
                 return true;
             }
-            public boolean gotResult (Boolean deleted) {
+            @Override protected boolean gotResult (Boolean deleted) {
                 if (!deleted) {
                     refresh();
                     MsoyUI.info(_msgs.deleteNotDeleted());
@@ -187,7 +187,7 @@ public class ConvoPanel extends FlowPanel
 
             // wire up our message delivery handler
             new ClickCallback<ConvMessage>(send) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     // make sure they entered something to send
                     String text = _repmsg.getText().trim();
                     if (text.length() == 0) {
@@ -199,7 +199,7 @@ public class ConvoPanel extends FlowPanel
                     return true;
                 }
 
-                public boolean gotResult (ConvMessage sent) {
+                @Override protected boolean gotResult (ConvMessage sent) {
                     _model.noteMessageAdded(_convoId, sent);
                     _contents.remove(reply);
                     ConvoPanel.this.insert(new MessageWidget(null, sent, false, true),

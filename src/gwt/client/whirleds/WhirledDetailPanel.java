@@ -173,11 +173,11 @@ public class WhirledDetailPanel extends FlowPanel
             if (Group.canJoin(_group.policy) && !CShell.isGuest()) {
                 Label join = MsoyUI.createLabel(_msgs.detailJoin(), null);
                 new ClickCallback<Void>(join, _msgs.detailJoinPrompt()) {
-                    public boolean callService () {
+                    @Override protected boolean callService () {
                         _groupsvc.joinGroup(_group.groupId, this);
                         return true;
                     }
-                    public boolean gotResult (Void result) {
+                    @Override protected boolean gotResult (Void result) {
                         loadGroup(_group.groupId);
                         return true;
                     }

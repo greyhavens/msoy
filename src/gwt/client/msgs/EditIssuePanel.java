@@ -115,11 +115,11 @@ public class EditIssuePanel extends TableFooterPanel
         if (_messageId > 0) {
             Button assign = new Button(_mmsgs.assign());
             new ClickCallback<Void>(assign) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     _issuesvc.assignMessage(_issue.issueId, _messageId, this);
                     return true;
                 }
-                public boolean gotResult (Void result) {
+                @Override protected boolean gotResult (Void result) {
                     Link.go(Pages.WHIRLEDS, 
                         Args.compose("t", _message.threadId, _page, _messageId));
                     return false;
@@ -186,10 +186,10 @@ public class EditIssuePanel extends TableFooterPanel
             });
             right = new Button(_mmsgs.create());
             new ClickCallback<Issue>(right) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     return commitEdit(true, this);
                 }
-                public boolean gotResult (Issue result) {
+                @Override protected boolean gotResult (Issue result) {
                     _message.issueId = result.issueId;
                     _tpanel.showMessages(true);
                     return false;
@@ -204,10 +204,10 @@ public class EditIssuePanel extends TableFooterPanel
             });
             right = new Button(_newIssue ? _mmsgs.create() : _mmsgs.update());
             new ClickCallback<Issue>(right) {
-                public boolean callService () {
+                @Override protected boolean callService () {
                     return commitEdit(_newIssue, this);
                 }
-                public boolean gotResult (Issue result) {
+                @Override protected boolean gotResult (Issue result) {
                     _ipanel.redisplayIssues();
                     return false;
                 }

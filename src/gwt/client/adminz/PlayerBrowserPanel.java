@@ -206,12 +206,12 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 buttons.add(numInvites);
                 Button grantInvites = new Button(_msgs.browserGrantInv());
                 new ClickCallback<Void>(grantInvites) {
-                    public boolean callService () {
+                    @Override protected boolean callService () {
                         _adminsvc.grantInvitations(
                             numInvites.getValue().intValue(), _result.memberId, this);
                         return true;
                     }
-                    public boolean gotResult (Void result) {
+                    @Override protected boolean gotResult (Void result) {
                         MsoyUI.info(_msgs.browserAddInvites("" + numInvites.getValue(),
                                     _result.name));
                         PlayerBrowserPanel.this.addToAvailable(

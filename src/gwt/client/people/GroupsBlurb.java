@@ -95,11 +95,11 @@ public class GroupsBlurb extends Blurb
 //             if (!CShell.isGuest() && CShell.getMemberId() != _name.getMemberId()) {
 //                 Button inviteButton = new Button(_msgs.inviteToGroup());
 //                 new ClickCallback<List<GroupMembership>>(inviteButton) {
-//                     public boolean callService () {
+//                     @Override protected boolean callService () {
 //                         _groupsvc.getMembershipGroups(CShell.getMemberId(), true, this);
 //                         return true;
 //                     }
-//                     public boolean gotResult (List<GropuMembership> inviteGroups) {
+//                     @Override protected boolean gotResult (List<GropuMembership> inviteGroups) {
 //                         if (inviteGroups.size() == 0) {
 //                             MsoyUI.infoNear(_msgs.haveNoGroups(), _trigger);
 //                         } else {

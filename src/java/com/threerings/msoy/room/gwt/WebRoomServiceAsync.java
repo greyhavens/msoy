@@ -13,7 +13,7 @@ import com.threerings.msoy.web.gwt.RatingResult;
 public interface WebRoomServiceAsync
 {
     /**
-     * The asynchronous version of {@link WebRoomService#loadRoomInfo}.
+     * The asynchronous version of {@link WebRoomService#loadRoomDetail}.
      */
     void loadRoomDetail (int sceneId, AsyncCallback<RoomDetail> callback);
 

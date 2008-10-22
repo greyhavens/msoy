@@ -144,11 +144,11 @@ public class ProjectEdit extends FlexTable
         Button submit = new Button(_cmsgs.change());
         cell.add(submit);
         new ClickCallback<Void>(submit) {
-            public boolean callService () {
+            @Override protected boolean callService () {
                 CSwiftly.swiftlysvc.updateProject(_project, this);
                 return true;
             }
-            public boolean gotResult (Void result) {
+            @Override protected boolean gotResult (Void result) {
                 closeDialog();
                 return true;
             }
