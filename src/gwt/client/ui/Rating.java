@@ -17,7 +17,6 @@ import com.threerings.msoy.web.gwt.RatingResult;
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.util.MsoyCallback;
-import client.util.ServiceUtil;
 
 public abstract class Rating extends FlexTable
     implements Stars.StarMouseListener

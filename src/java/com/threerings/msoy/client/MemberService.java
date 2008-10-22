@@ -6,6 +6,8 @@ package com.threerings.msoy.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
+import com.threerings.msoy.data.HomePageItem;
+
 /**
  * Services for members.
  */
