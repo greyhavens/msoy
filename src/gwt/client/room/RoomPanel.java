@@ -23,6 +23,7 @@ import client.shell.CShell;
 import client.ui.Rating;
 import client.ui.StyledTabPanel;
 import client.util.Link;
+import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -59,6 +60,7 @@ public class RoomPanel extends SmartTable
             GroupName name = (GroupName)detail.owner;
             obits.add(Link.groupView(name.toString(), name.getGroupId()));
         }
+        obits.add(MediaUtil.createSceneThumbView(detail.info.thumbnail, null));
         obits.add(new Rating(detail.info.rating, detail.ratingCount, detail.memberRating, true) {
             @Override
             protected void handleRate (byte newRating , MsoyCallback<RatingResult> callback) {
