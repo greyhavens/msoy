@@ -41,6 +41,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemTypes;
 
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 
@@ -523,55 +524,61 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Set the sprite that the mouse is hovering over.
+     * Set the special singleton sprite that the mouse is hovering over.
      */
     protected function setHoverSprite (
         sprite :MsoySprite, stageX :Number = NaN, stageY :Number = NaN) :void
     {
-        // if the same sprite is glowing, we don't have to change as much..
-        if (_hoverSprite == sprite) {
-            updateHovered(stageX, stageY);
+        if (sprite is FurniSprite &&
+                WorldControlBar(_wdctx.getTopPanel().getControlBar()).hoverAll) {
+            return; // not right now, they're all hovered
+        }
+
+        // iff the sprite has changed..
+        if (_hoverSprite != sprite) {
+            // unglow the old sprite (and remove any tooltip)
             if (_hoverSprite != null) {
-                // but we do want to tell it about it, in case it wants
-                // to glow differently depending on the location...
-                _hoverSprite.setHovered(true, stageX, stageY);
+                setSpriteHovered(_hoverSprite, false, stageX, stageY);
             }
-            return;
+
+            // assign the new hoversprite, maybe assigning to null
+            _hoverSprite = sprite;
         }
 
-        // otherwise, unglow the old sprite (and remove any tooltip)
+        // glow the sprite (and give it a chance update the tip)
         if (_hoverSprite != null) {
-            _hoverSprite.setHovered(false);
-            removeHoverTips();
+            setSpriteHovered(_hoverSprite, true, stageX, stageY);
         }
-
-        // assign the new hoversprite
-        _hoverSprite = sprite;
-
-        // and glow the new hoversprite
-        updateHovered(stageX, stageY);
     }
 
     /**
-     * Update the hovered status of the current _hoverSprite.
+     * This sets the particular sprite to be hovered or no. This can be called even for
+     * sprites other than the _hoverSprite.
      */
-    protected function updateHovered (stageX :Number, stageY :Number) :void
+    public function setSpriteHovered (
+        sprite :MsoySprite, hovered: Boolean, stageX :Number = NaN, stageY :Number = NaN) :void
     {
-        if (_hoverSprite == null) {
-            return;
+        // update the glow on the sprite
+        var text :Object = sprite.setHovered(hovered, stageX, stageY);
+        if (hovered && text === true) {
+            return; // this is a special-case shortcut we use to save time.
         }
-
-        var text :Object = _hoverSprite.setHovered(true, stageX, stageY);
-        if (text === true) {
-            return;
-        }
-        var tip :IToolTip = (_hoverTips.length == 1) ? IToolTip(_hoverTips[0]) : null;
-        if (tip != null && tip.text != text) {
-            removeHoverTips();
+        var tip :IToolTip = IToolTip(_hoverTips[sprite]);
+        // maybe remove the tip
+        if ((tip != null) && (!hovered || text == null || tip.text != text)) {
+            delete _hoverTips[sprite];
+            ToolTipManager.destroyToolTip(tip);
             tip = null;
         }
-        if (tip == null && text != null) {
-            addHoverTip(_hoverSprite, String(text), stageX, stageY + MOUSE_TOOLTIP_Y_OFFSET);
+        // maybe add a new tip
+        if (hovered && (text != null)) {
+            if (isNaN(stageX) || isNaN(stageY)) {
+                var p :Point = sprite.localToGlobal(sprite.getLayoutHotSpot());
+                stageX = p.x;
+                stageY = p.y;
+            }
+            _hoverTips[sprite] = addHoverTip(
+                sprite, String(text), stageX, stageY + MOUSE_TOOLTIP_Y_OFFSET);
         }
     }
 
@@ -579,7 +586,7 @@ public class RoomController extends SceneController
      * Utility method to create and style the hover tip for a sprite.
      */
     protected function addHoverTip (
-        sprite :MsoySprite, tipText :String, stageX :Number, stageY :Number) :void
+        sprite :MsoySprite, tipText :String, stageX :Number, stageY :Number) :IToolTip
     {
         var tip :IToolTip = ToolTipManager.createToolTip(tipText, stageX, stageY);
         var tipComp :UIComponent = UIComponent(tip);
@@ -592,19 +599,7 @@ public class RoomController extends SceneController
         if (hoverColor == 0) {
             tipComp.setStyle("backgroundColor", 0xFFFFFF);
         }
-
-        _hoverTips.push(tip);
-    }
-
-    /**
-     * Remove all currently-shown hover tips. Does not unglow the sprites.
-     */
-    protected function removeHoverTips () :void
-    {
-        for each (var tip :IToolTip in _hoverTips) {
-            ToolTipManager.destroyToolTip(tip);
-        }
-        _hoverTips.length = 0; // truncate
+        return tip;
     }
 
     protected function mouseClicked (event :MouseEvent) :void
@@ -885,8 +880,8 @@ public class RoomController extends SceneController
     /** The currently hovered sprite, or null. */
     protected var _hoverSprite :MsoySprite;
 
-    /** All currently displayed sprite tips. */
-    protected var _hoverTips :Array = [];
+    /** All currently displayed sprite tips, indexed by MsoySprite. */
+    protected var _hoverTips :Dictionary = new Dictionary(true);
 
     /** True if the shift key is currently being held down, false if not. */
     protected var _shiftDown :Boolean;

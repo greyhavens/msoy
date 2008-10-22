@@ -31,8 +31,8 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.all.Item;
 
-import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomStudioView;
+import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
 import com.threerings.msoy.room.data.RoomObject;
 
@@ -55,6 +55,14 @@ public class WorldControlBar extends ControlBar
         return _roomeditBtn;
     }
 
+    /**
+     * This is needed by the room controller, so that it can properly know how to hover.
+     */
+    public function get hoverAll () :Boolean
+    {
+        return _hotZoneBtn.selected;
+    }
+
     public function enableZoomControl (enabled :Boolean ) :void
     {
         _zoomBtn.enabled = enabled;
@@ -66,6 +74,9 @@ public class WorldControlBar extends ControlBar
     override public function locationDidChange (place :PlaceObject) :void
     {
         super.locationDidChange(place);
+
+        _hotZoneBtn.selected = false;
+        updateHot(false);
 
         // if we just moved into a room...
         if (place is RoomObject && !_wctx.getGameDirector().isGaming()) {
@@ -87,15 +98,8 @@ public class WorldControlBar extends ControlBar
         _zoomBtn.setCallback(handleToggleZoom);
 
         _hotZoneBtn = createButton("controlBarHoverZone", "i.hover");
-        _hotZoneBtn.enabled = false;
-        _hotZoneBtn.focusEnabled = false;
-        var hotHandler :Function = function (event :MouseEvent) :void {
-            var roomView :RoomObjectView = _ctx.getTopPanel().getPlaceView() as RoomObjectView;
-            if (roomView != null) {
-                roomView.getRoomObjectController().hoverAllFurni(
-                    event.type == MouseEvent.ROLL_OVER);
-            }
-        };
+        _hotZoneBtn.toggle = true;
+        _hotZoneBtn.setCallback(updateHot);
         _hotZoneBtn.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
         _hotZoneBtn.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
 
@@ -229,6 +233,21 @@ public class WorldControlBar extends ControlBar
         }
     }
 
+    protected function updateHot (on :Boolean) :void
+    {
+        if (on != _hotOn) {
+            _hotOn = on;
+            var roomView :RoomView = _ctx.getTopPanel().getPlaceView() as RoomView;
+            if (roomView != null) {
+                roomView.hoverAllFurni(on);
+            }
+        }
+    }
+
+    protected function hotHandler (event :MouseEvent) :void {
+        if (!_hotZoneBtn.selected) updateHot(event.type == MouseEvent.ROLL_OVER);
+    }
+
     /** Our context, cast as a WorldContext. */
     protected var _wctx :WorldContext;
 
@@ -240,6 +259,8 @@ public class WorldControlBar extends ControlBar
 
     /** Hovering over this shows clickable components. */
     protected var _hotZoneBtn :CommandButton;
+
+    protected var _hotOn :Boolean;
 
     /** Button for room snapshots. */
     protected var _snapBtn :CommandButton;

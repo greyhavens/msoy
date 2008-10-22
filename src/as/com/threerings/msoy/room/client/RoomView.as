@@ -140,6 +140,16 @@ public class RoomView extends Sprite
         return _showing;
     }
 
+    /**
+     * Effect the global hover of furni.
+     */
+    public function hoverAllFurni (on :Boolean) :void
+    {
+        for each (var sprite :FurniSprite in _furni.values()) {
+            doGlobalHover(sprite, on);
+        }
+    }
+
     // from ContextMenuProvider
     public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
     {
@@ -797,6 +807,16 @@ public class RoomView extends Sprite
     }
 
     /**
+     * Effect the "global hover" on just one piece of furni.
+     */
+    protected function doGlobalHover (sprite :FurniSprite, on :Boolean) :void
+    {
+        if (!on || (sprite.isActive() && sprite.capturesMouse() && sprite.hasAction())) {
+            _ctrl.setSpriteHovered(sprite, on);
+        }
+    }
+
+    /**
      * Sets all sprites in the supplied map to active or non-active.
      */
     protected function setActive (map :HashMap, active :Boolean) :void
@@ -874,12 +894,18 @@ public class RoomView extends Sprite
         addChildAt(sprite, index);
         addToEntityMap(sprite);
     }
+//  This belongs with the above... somehow: but layout timing booches it
+//        if (sprite is FurniSprite &&
+//                (WorldControlBar(_ctx.getTopPanel().getControlBar()).hoverAll)) {
+//            doGlobalHover(FurniSprite(sprite), true);
+//        }
 
     /**
      * Remove the specified sprite from the view.
      */
     protected function removeSprite (sprite :MsoySprite) :void
     {
+        _ctrl.setSpriteHovered(sprite, false);
         removeFromEntityMap(sprite);
         removeChild(sprite);
         _ctx.getMediaDirector().returnSprite(sprite);

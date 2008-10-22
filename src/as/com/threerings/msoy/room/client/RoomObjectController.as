@@ -662,34 +662,6 @@ public class RoomObjectController extends RoomController
         }
     }
 
-    /**
-     * Set the hover for all furniture on or off.
-     */
-    public function hoverAllFurni (on :Boolean) :void
-    {
-        var sprite :FurniSprite;
-
-        if (on) {
-            for each (sprite in _roomObjectView.getFurniSprites().values()) {
-                if (!sprite.isActive() || !sprite.capturesMouse() || !sprite.hasAction()) {
-                    continue;
-                }
-                var tipText :Object = sprite.setHovered(true);
-                if (tipText is String) {
-                    var p :Point = sprite.getLayoutHotSpot();
-                    p = sprite.localToGlobal(p);
-                    addHoverTip(sprite, String(tipText), p.x, p.y);
-                }
-            }
-        } else {
-            for each (sprite in _roomObjectView.getFurniSprites().values()) {
-                sprite.setHovered(false);
-            }
-
-            removeHoverTips();
-        }
-    }
-
     public function setBackgroundMusic (data :AudioData) :void
     {
         if (!UberClient.isRegularClient()) {
@@ -786,7 +758,6 @@ public class RoomObjectController extends RoomController
 
         _roomView.removeChild(_walkTarget);
         _roomView.removeChild(_flyTarget);
-        hoverAllFurni(false);
         setHoverSprite(null);
 
         _roomObj.removeListener(_roomListener);
@@ -838,7 +809,6 @@ public class RoomObjectController extends RoomController
     {
         _walkTarget.visible = false;
         _flyTarget.visible = false;
-        setHoverSprite(null);
 
         // put the room edit button in the selected state
         _roomEditBtn.selected = true;
