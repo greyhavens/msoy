@@ -11,12 +11,9 @@ import flash.external.ExternalInterface;
 
 import mx.binding.utils.BindingUtils;
 
-import mx.controls.Button;
 import mx.controls.ComboBox;
-import mx.controls.TextInput;
 import mx.controls.VSlider;
 import mx.containers.Grid;
-import mx.containers.VBox;
 import mx.core.UIComponent;
 
 import mx.events.CloseEvent;
