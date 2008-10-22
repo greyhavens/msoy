@@ -94,11 +94,12 @@ public class CShell
                         "[memberId=" + getMemberId() + ", guestId=" + event.getGuestId() + "].");
                 } else {
                     log("Got guest id from Flash " + event.getGuestId() + ".");
-                    creds = new WebCreds();
-                    creds.name = new MemberName("Guest" + event.getGuestId(), event.getGuestId());
-                    // TODO: the code that knows how to do this is in MsoyCredentials which is not
-                    // accessible to GWT currently for unrelated technical reasons
-                    creds.token = "G" + event.getGuestId();
+                    creds = new WebCreds(
+                        // TODO: the code that knows how to do this is in MsoyCredentials which is
+                        // not accessible to GWT currently for unrelated technical reasons
+                        "G" + event.getGuestId(), null,
+                        new MemberName("Guest" + event.getGuestId(), event.getGuestId()), null,
+                        WebCreds.Role.USER);
                 }
             }
         });

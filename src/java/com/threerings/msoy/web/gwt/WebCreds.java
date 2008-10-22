@@ -49,29 +49,29 @@ public class WebCreds implements IsSerializable
         if (data == null) {
             return null;
         }
-
-        WebCreds creds = new WebCreds();
-        creds.token = data.next();
-        creds.accountName = data.next();
-        creds.name = new MemberName(data.next(), Integer.valueOf(data.next()));
-        creds.permaName = data.next();
-        creds.role = Enum.valueOf(Role.class, data.next());
-        return creds;
+        return new WebCreds(
+            data.next(), data.next(), new MemberName(data.next(), Integer.valueOf(data.next())),
+            data.next(), Enum.valueOf(Role.class, data.next()));
     }
 
     /**
-     * Flattens this instance into a string that can be passed between JavaScript apps.
+     * Creates a configured web creds instance.
      */
-    public List<String> flatten ()
+    public WebCreds (String token, String accountName, MemberName name, String permaName, Role role)
     {
-        List<String> data = new ArrayList<String>();
-        data.add(token);
-        data.add(accountName);
-        data.add(name.toString());
-        data.add(String.valueOf(name.getMemberId()));
-        data.add(permaName);
-        data.add(role.toString());
-        return data;
+        this.token = token;
+        this.accountName = accountName;
+        this.name = name;
+        this.permaName = permaName;
+        this.role = role;
+    }
+
+    /**
+     * For GWT, do not use!
+     */
+    public WebCreds ()
+    {
+        this(null, null, null, null, null);
     }
 
     /**
@@ -104,6 +104,21 @@ public class WebCreds implements IsSerializable
     public boolean isMaintainer ()
     {
         return role == Role.MAINTAINER;
+    }
+
+    /**
+     * Flattens this instance into a string that can be passed between JavaScript apps.
+     */
+    public List<String> flatten ()
+    {
+        List<String> data = new ArrayList<String>();
+        data.add(token);
+        data.add(accountName);
+        data.add(name.toString());
+        data.add(String.valueOf(name.getMemberId()));
+        data.add(permaName);
+        data.add(role.toString());
+        return data;
     }
 
     /**

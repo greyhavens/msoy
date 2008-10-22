@@ -295,21 +295,17 @@ public class MemberRecord extends PersistentRecord
      */
     public WebCreds toCreds (final String authtok)
     {
-        final WebCreds creds = new WebCreds();
-        creds.token = authtok;
-        creds.accountName = accountName;
-        creds.name = getName();
-        creds.permaName = permaName;
+        WebCreds.Role role;
         if (isMaintainer()) {
-            creds.role = WebCreds.Role.MAINTAINER;
+            role = WebCreds.Role.MAINTAINER;
         } else if (isSet(Flag.ADMIN)) {
-            creds.role = WebCreds.Role.ADMIN;
+            role = WebCreds.Role.ADMIN;
         } else if (isSet(Flag.SUPPORT)) {
-            creds.role = WebCreds.Role.SUPPORT;
+            role = WebCreds.Role.SUPPORT;
         } else {
-            creds.role = WebCreds.Role.USER;
+            role = WebCreds.Role.USER;
         }
-        return creds;
+        return new WebCreds(authtok, accountName, getName(), permaName, role);
     }
 
     /**
