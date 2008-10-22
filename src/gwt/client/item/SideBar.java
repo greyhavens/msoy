@@ -58,12 +58,14 @@ public class SideBar extends FlowPanel
             if (ii > 0) {
                 navi.add(MsoyUI.createLabel("", (proto == null) ? "BlankSep" : "Separator"));
             }
+            Widget item = makeItem(linker, _dmsgs.xlate("pItemType" + type), type);
             if (proto != null) {
                 navi.add(proto.createImage());
             } else {
                 navi.add(_itemImages.blank().createImage());
+                item.addStyleName("SubCell"); // items that lack an image are subordinate
             }
-            navi.add(makeItem(linker, _dmsgs.xlate("pItemType" + type), type));
+            navi.add(item);
         }
         add(navi);
 

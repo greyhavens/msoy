@@ -222,7 +222,11 @@
 }
 
 .sideBar .NaviPanel .Cell a:hover {
-  color: #0C3A5C;
+  color: #E78917;
+}
+
+.sideBar .NaviPanel .SubCell {
+  font-weight: normal;
 }
 
 .sideBar .NaviPanel img {
