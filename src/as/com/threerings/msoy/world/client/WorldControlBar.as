@@ -116,7 +116,9 @@ public class WorldControlBar extends ControlBar
         }, _friendsBtn));
 
         _homePageGridBtn = createButton("controlBarHomePageGridButton", "i.homePageGrid");
-        _homePageGridBtn.setCommand(WorldController.SHOW_HOME_PAGE_GRID);
+        _homePageGridBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+            return new HomePageDialog(_wctx);
+        }, _homePageGridBtn));
     }
 
     // from ControlBar

@@ -155,9 +155,6 @@ public class WorldController extends MsoyController
     /** Command to display the avrg menu. */
     public static const POP_AVRG_MENU :String = "PopAVRGMenu";
 
-    /** Command to display the home page grid. */
-    public static const SHOW_HOME_PAGE_GRID :String = "ShowHomePageGrid";
-
     public function WorldController (ctx :WorldContext, topPanel :TopPanel)
     {
         super(ctx, topPanel);
@@ -768,11 +765,6 @@ public class WorldController extends MsoyController
         menu.variableRowHeight = true;
         menu.setBounds(_wctx.getTopPanel().getMainAreaBounds());
         menu.popUpAt(r.left, r.top, true);
-    }
-
-    public function handleShowHomePageGrid (trigger :Button) :void
-    {
-        // TODO
     }
 
     /**
