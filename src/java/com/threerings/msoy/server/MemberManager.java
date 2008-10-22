@@ -775,8 +775,12 @@ public class MemberManager
         ClientObject caller, InvocationService.ResultListener listener)
         throws InvocationException
     {
-        // TODO
-        listener.requestProcessed(new HomePageItem[]{});
+        // TODO: put in real items
+        HomePageItem[] items = new HomePageItem[9];
+        for (int ii = 0; ii < items.length; ++ii) {
+            items[ii] = new HomePageItem(HomePageItem.ACTION_NONE, null, null);
+        }
+        listener.requestProcessed(items);
     }
 
     /**
