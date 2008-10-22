@@ -47,6 +47,7 @@ import client.shell.EntryVectorCookie;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
+import client.util.ClickCallback;
 import client.util.DateUtil;
 import client.util.Link;
 import client.util.ServiceUtil;
@@ -117,13 +118,87 @@ public class CreateAccountPanel extends FlowPanel
         controls.add(_status = MsoyUI.createSimplePanel(null, "Status"));
         controls.add(WidgetUtil.makeShim(10, 10));
         controls.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
-        ClickListener createGo = new ClickListener() {
-            public void onClick (Widget sender) {
-                createAccount();
+
+        PushButton create = MsoyUI.createButton(MsoyUI.LONG_THICK, _msgs.createGo(), null);
+        controls.add(create);
+        add(controls);
+
+        // create our click callback that handles the actual registation process
+        new ClickCallback<SessionData>(create) {
+            @Override protected boolean callService () {
+                if (!validateData()) {
+                    return false;
+                }
+
+                String[] today = new Date().toString().split(" ");
+                String thirteenYearsAgo = "";
+                for (int ii = 0; ii < today.length; ii++) {
+                    if (today[ii].matches("[0-9]{4}")) {
+                        int year = Integer.valueOf(today[ii]).intValue();
+                        today[ii] = "" + (year - 13);
+                    }
+                    thirteenYearsAgo += today[ii] + " ";
+                }
+
+                Date dob = DateUtil.toDate(_dateOfBirth.getDate());
+                if (DateUtil.newDate(thirteenYearsAgo).compareTo(dob) < 0) {
+                    setStatus(_msgs.createNotThirteen());
+                    return false;
+                }
+
+                RegisterInfo info = new RegisterInfo();
+                info.email = _email.getText().trim();
+                info.password = CShell.frame.md5hex(_password.getText().trim());
+                info.displayName = _name.getText().trim();
+                info.birthday = _dateOfBirth.getDate();
+                info.photo = null; // TODO: remove since we're not using this any more
+                info.info = new AccountInfo();
+                info.info.realName = _rname.getText().trim();
+                info.expireDays = 1; // TODO: unmagick?
+                Invitation invite = CShell.frame.getActiveInvitation();
+                info.inviteId = (invite == null) ? null : invite.inviteId;
+                info.guestId = CShell.isGuest() ? CShell.getMemberId() : 0;
+                info.visitor = CShell.visitor;
+                info.captchaChallenge =
+                    RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
+                info.captchaResponse =
+                    RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
+
+                setStatus(_msgs.creatingAccount());
+                _usersvc.register(DeploymentConfig.version, info, this);
+                return true;
+            }
+
+            @Override protected boolean gotResult (final SessionData result) {
+                result.justCreated = true;
+
+                // display a nice confirmation message, as an excuse to embed a tracking iframe.
+                // we'll show it for two seconds, and then rock on!
+                final int feedbackDelayMs = 2000;
+                setStatus(_msgs.creatingDone(),
+                          ConversionTrackingUtil.createAdWordsTracker(),
+                          ConversionTrackingUtil.createBeacon(EntryVectorCookie.get()));
+                Timer t = new Timer() {
+                    public void run () {
+                        // let the top-level frame know that we logged on (will trigger a redirect)
+                        CShell.frame.dispatchDidLogon(result);
+                    }
+                };
+                t.schedule(feedbackDelayMs); // this looks like it should get GCd, no?
+
+                return false; // don't reenable the create button
+            }
+
+            @Override protected void reportFailure (Throwable cause) {
+                if (RecaptchaUtil.isEnabled()) {
+                    RecaptchaUtil.reload();
+                    if (cause instanceof CaptchaException) {
+                        RecaptchaUtil.focus();
+                    }
+                }
+                setStatus(CShell.serverError(cause));
             }
         };
-        controls.add(MsoyUI.createButton(MsoyUI.LONG_THICK, _msgs.createGo(), createGo));
-        add(controls);
     }
 
     @Override // from Widget
@@ -186,71 +261,6 @@ public class CreateAccountPanel extends FlowPanel
 
     protected void createAccount ()
     {
-        if (!validateData()) {
-            return;
-        }
-
-        String[] today = new Date().toString().split(" ");
-        String thirteenYearsAgo = "";
-        for (int ii = 0; ii < today.length; ii++) {
-            if (today[ii].matches("[0-9]{4}")) {
-                int year = Integer.valueOf(today[ii]).intValue();
-                today[ii] = "" + (year - 13);
-            }
-            thirteenYearsAgo += today[ii] + " ";
-        }
-
-        Date dob = DateUtil.toDate(_dateOfBirth.getDate());
-        if (DateUtil.newDate(thirteenYearsAgo).compareTo(dob) < 0) {
-            setStatus(_msgs.createNotThirteen());
-            return;
-        }
-
-        RegisterInfo info = new RegisterInfo();
-        info.email = _email.getText().trim();
-        info.password = CShell.frame.md5hex(_password.getText().trim());
-        info.displayName = _name.getText().trim();
-        info.birthday = _dateOfBirth.getDate();
-        info.photo = null; // TODO: remove since we're not using this any more
-        info.info = new AccountInfo();
-        info.info.realName = _rname.getText().trim();
-        info.expireDays = 1; // TODO: unmagick?
-        Invitation invite = CShell.frame.getActiveInvitation();
-        info.inviteId = (invite == null) ? null : invite.inviteId;
-        info.guestId = CShell.isGuest() ? CShell.getMemberId() : 0;
-        info.visitor = CShell.visitor;
-        info.captchaChallenge = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
-        info.captchaResponse = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
-
-        setStatus(_msgs.creatingAccount());
-        _usersvc.register(DeploymentConfig.version, info, new AsyncCallback<SessionData>() {
-            public void onSuccess (final SessionData result) {
-                result.justCreated = true;
-
-                // display a nice confirmation message, as an excuse to embed a tracking iframe.
-                // we'll show it for two seconds, and then rock on!
-                final int feedbackDelayMs = 2000;
-                setStatus(_msgs.creatingDone(),
-                    ConversionTrackingUtil.createAdWordsTracker(),
-                    ConversionTrackingUtil.createBeacon(EntryVectorCookie.get()));
-                Timer t = new Timer() {
-                    public void run () {
-                        // let the top-level frame know that we logged on (will trigger a redirect)
-                        CShell.frame.dispatchDidLogon(result);
-                    }
-                };
-                t.schedule(feedbackDelayMs); // this looks like it should get GCd, no?
-            }
-            public void onFailure (Throwable caught) {
-                if (RecaptchaUtil.isEnabled()) {
-                    RecaptchaUtil.reload();
-                    if (caught instanceof CaptchaException) {
-                        RecaptchaUtil.focus();
-                    }
-                }
-                setStatus(CShell.serverError(caught));
-            }
-        });
     }
 
     protected void setStatus (String text, Widget ... trackers)
