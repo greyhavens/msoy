@@ -146,8 +146,8 @@ public class AVRGameLiaison extends GameLiaison
         super.messageReceived(event);
         if  (event.getName() == AVRGameObject.TASK_COMPLETED_MESSAGE) {
             var coins :int = int(event.getArgs()[1]);
-            const forReal :Boolean = true; //?
-            const hasCookie :Boolean = false; //?
+            const forReal :Boolean = Boolean(event.getArgs()[2]);
+            const hasCookie :Boolean = true; // we always assume AVRGs have saved state
             if (forReal && _gctx.getPlayerObject().isGuest()) {
                 // if a guest earns flow, we want to show them the "please register" dialog
                 displayGuestFlowEarnage(coins, hasCookie);

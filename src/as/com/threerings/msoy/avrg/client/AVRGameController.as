@@ -357,11 +357,11 @@ public class AVRGameController extends PlaceController
         return "[" + (_playerObj == null ? "null" : _playerObj.getMemberId()) + "]";
     }
 
-    protected function reportCoinsAwarded (amount :int) :void
+    protected function reportCoinsAwarded (amount :int, forReal :Boolean) :void
     {
-        _wctx.getChatDirector().displayInfo(
-            WhirledGameCodes.WHIRLEDGAME_MESSAGE_BUNDLE,
-            MessageBundle.tcompose("m.coins_awarded", amount));
+        var msg :String = forReal ?
+            MessageBundle.tcompose("m.coins_awarded", amount) : "m.no_coins_dev";
+        _wctx.getChatDirector().displayInfo(WhirledGameCodes.WHIRLEDGAME_MESSAGE_BUNDLE, msg);
     }
 
     protected var _wctx :WorldContext;
@@ -387,7 +387,8 @@ public class AVRGameController extends PlaceController
                 var task :String = String(args[0]);
                 var amount :int = int(args[1]);
                 if (!_backend.taskCompleted(task, amount)) {
-                    reportCoinsAwarded(amount);
+                    const forReal :Boolean = Boolean(args[2]);
+                    reportCoinsAwarded(amount, forReal);
                 }
             }
         });

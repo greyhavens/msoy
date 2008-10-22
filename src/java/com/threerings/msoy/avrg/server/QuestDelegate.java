@@ -150,28 +150,35 @@ public class QuestDelegate extends PlaceManagerDelegate
                         ", wanted=" + rawPayout + ", got=" + payout + "].");
         }
 
-        // note that they completed this task
-        player.taskCompleted(payout);
+        // we don't actually award coins if we're the development version of the game
+        final boolean actuallyAward = !_content.game.isDevelopmentVersion();
 
-        // accumulate the flow for this quest (to be persisted later)
-        if (payout > 0) {
-            _worldClient.reportCoinAward(plobj.getMemberId(), payout);
+        // note that they completed this task
+        if (actuallyAward) {
+            player.taskCompleted(payout);
+
+            // accumulate the flow for this quest (to be persisted later)
+            if (payout > 0) {
+                _worldClient.reportCoinAward(plobj.getMemberId(), payout);
+            }
         }
 
         // report task completion to the game
-        plobj.postMessage(AVRGameObject.TASK_COMPLETED_MESSAGE, questId, payout);
+        plobj.postMessage(AVRGameObject.TASK_COMPLETED_MESSAGE, questId, payout, actuallyAward);
 
         // tell the requester that we're groovy
         listener.requestProcessed();
 
         // finally, if we have pending coin awards that exceed our current coin budget, flush 'em
         // and trigger a recaculation of our payout rate
-        int pendingCoins = 0;
-        for (Player p : _players.values()) {
-            pendingCoins += p.coinsAccrued;
-        }
-        if (pendingCoins >= _content.detail.flowToNextRecalc) {
-            flushAllPlayers();
+        if (actuallyAward) {
+            int pendingCoins = 0;
+            for (Player p : _players.values()) {
+                pendingCoins += p.coinsAccrued;
+            }
+            if (pendingCoins >= _content.detail.flowToNextRecalc) {
+                flushAllPlayers();
+            }
         }
     }
 
