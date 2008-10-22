@@ -34,7 +34,8 @@ import com.threerings.msoy.money.data.all.Currency;
     @Index(name="listedItemIndex", fields={ CatalogRecord.LISTED_ITEM_ID } ),
     @Index(name="listDateIndex", fields={ CatalogRecord.LISTED_DATE } ),
     @Index(name="purchasesIndex", fields={ CatalogRecord.PURCHASES } ),
-    @Index(name="faveCountIndex", fields={ CatalogRecord.FAVORITE_COUNT } )
+    @Index(name="faveCountIndex", fields={ CatalogRecord.FAVORITE_COUNT } ),
+    @Index(name="pricingIndex", fields={ CatalogRecord.PRICING } )
 })
 public abstract class CatalogRecord extends PersistentRecord
     implements Streamable
@@ -74,7 +75,7 @@ public abstract class CatalogRecord extends PersistentRecord
     public static final String FAVORITE_COUNT = "favoriteCount";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 11;
+    public static final int SCHEMA_VERSION = 12;
 
     /** Converts this record to a runtime record. See {@link #toListingCard} for caveats.  */
     public static final Function<CatalogRecord,ListingCard> TO_CARD =
