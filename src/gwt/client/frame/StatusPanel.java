@@ -149,12 +149,8 @@ public class StatusPanel extends SmartTable
 
         public void setCount (int count)
         {
-            if (count > 0) {
-                setText(0, _mailIx, String.valueOf(count));
-                setVisible(true);
-            } else {
-                setVisible(false);
-            }
+            setText(0, _mailIx, String.valueOf(count));
+            setVisible(true);
         }
 
         protected int _mailIx;
