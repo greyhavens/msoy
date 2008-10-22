@@ -28,6 +28,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -518,6 +519,12 @@ public class GameGameRegistry
 
                 }
 
+                if (StringUtil.isBlank(def.getServerMediaPath(gameId))) {
+                    log.info("AVRG missing server agent code", "gameId", gameId);
+                    reportFailure(MsoyGameCodes.E_BAD_GAME_CONTENT);
+                    return;
+                }
+                
                 log.info("Setting up AVRG manager", "game", _content.game);
 
                 List<PlaceManagerDelegate> delegates = Lists.newArrayList();
