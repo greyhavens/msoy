@@ -156,10 +156,11 @@ public class ItemServlet extends MsoyServiceServlet
         float newAverage = result.left.average;
         int newCount = result.left.count;
         // The average without counting this rating
-        float oldAverage = (newCount*newAverage - rating)/(newCount - 1);
+        float oldAverage = (newCount > 1) ? (newCount*newAverage - rating)/(newCount - 1) : 0;
         boolean newSolid = (newCount == MIN_SOLID_RATINGS && newAverage >= 4) ||
             (newCount > MIN_SOLID_RATINGS && newAverage >= 4 && (!result.right || oldAverage < 4));
 
+        // If this is a potentially new "solid" rating, update the stat
         if (newSolid) {
             _statLogic.addToSetStat(item.creatorId, StatType.SOLID_4_STAR_RATINGS, originalId);
         }
