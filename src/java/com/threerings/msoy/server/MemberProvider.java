@@ -84,6 +84,12 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#getHomePageGridItems} request.
+     */
+    void getHomePageGridItems (ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#inviteToBeFriend} request.
      */
     void inviteToBeFriend (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)

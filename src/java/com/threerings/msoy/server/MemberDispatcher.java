@@ -107,6 +107,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.GET_HOME_PAGE_GRID_ITEMS:
+            ((MemberProvider)provider).getHomePageGridItems(
+                source, (InvocationService.ResultListener)args[0]
+            );
+            return;
+
         case MemberMarshaller.INVITE_TO_BE_FRIEND:
             ((MemberProvider)provider).inviteToBeFriend(
                 source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]

@@ -51,6 +51,7 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.stats.data.StatSet;
 
+import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
@@ -767,6 +768,15 @@ public class MemberManager
     public void dispatchDeferredNotifications (ClientObject caller)
     {
         _notifyMan.dispatchDeferredNotifications((MemberObject)caller);
+    }
+
+    // from interface MemberProvider
+    public void getHomePageGridItems (
+        ClientObject caller, InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        // TODO
+        listener.requestProcessed(new HomePageItem[]{});
     }
 
     /**
