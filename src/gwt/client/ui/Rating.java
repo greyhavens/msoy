@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.item;
+package client.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -12,43 +12,35 @@ import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.MemberItemInfo;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.web.gwt.RatingResult;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.ui.Stars;
 
-public class ItemRating extends FlexTable
+public abstract class Rating extends FlexTable
     implements Stars.StarMouseListener
 {
     /**
-     * Construct a new display for the given item with member's previous rating of the item and a
+     * Construct a new display for the given target with member's previous rating of the target and a
      * specified display mode.
      */
-    public ItemRating (Item item, MemberItemInfo memberItemInfo, boolean horiz)
+    public Rating (float averageRating, int ratingCount, byte myRating, boolean horiz)
     {
-        _item = item;
-        _horiz = horiz;
-        _averageStars = new Stars(_item.rating, true, false, null);
+        setStyleName("Rating");
 
-        // if we're not logged in, force read-only mode
-        boolean writable = (_item.isRatable() && ! CShell.isGuest());
+        _horiz = horiz;
+        _averageStars = new Stars(averageRating, true, false, null);
 
         _ratingCount = new Label();
         _ratingCount.setStyleName(STYLE_COUNT);
-        updateRatingCount();
+        setRatingCount(ratingCount);
 
-        FavoriteIndicator favoriteIndicator = null;
+        boolean writable = !CShell.isGuest();
 
         if (writable) {
-            _memberRating = memberItemInfo.memberRating;
+            _memberRating = myRating;
             _playerStars = new Stars(_memberRating, false, false, this);
 
             _ratingTip = new Label();
@@ -59,9 +51,6 @@ public class ItemRating extends FlexTable
 
             // Initialize the default context tips
             starMouseOff();
-
-            // indicate whether this a favorite item of the current member
-            favoriteIndicator = new FavoriteIndicator(_item, memberItemInfo);
         }
 
         Label ratingAverage = new Label(_cmsgs.averageRating());
@@ -83,10 +72,6 @@ public class ItemRating extends FlexTable
                 setWidget(0, 3, _ratingDesc);
                 setWidget(1, 2, _playerStars);
                 getFlexCellFormatter().setColSpan(1, 2, 2);
-                if (item.catalogId != 0) {
-                    setWidget(0, 4, favoriteIndicator);
-                    getFlexCellFormatter().setRowSpan(0, 4, 2);
-                }
             }
 
         } else {
@@ -99,10 +84,6 @@ public class ItemRating extends FlexTable
                 setWidget(2, 1, _playerStars);
                 setWidget(1, 1, _ratingDesc);
                 getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_CENTER);
-
-                if (item.catalogId != 0) {
-                    setWidget(3, 1, favoriteIndicator);
-                }
             }
         }
     }
@@ -111,15 +92,16 @@ public class ItemRating extends FlexTable
     public void starClicked (byte newRating)
     {
         _playerStars.setRating(_memberRating = newRating);
-        ItemIdent ident = _item.getIdent();
-        _itemsvc.rateItem(ident, newRating, new MsoyCallback<RatingResult>() {
+        handleRate(newRating, new MsoyCallback<RatingResult>() {
             public void onSuccess (RatingResult result) {
-                _averageStars.setRating(_item.rating = result.rating);
-                _item.ratingCount = result.ratingCount;
-                updateRatingCount();
+                _averageStars.setRating(result.rating);
+                setRatingCount(result.ratingCount);
             }
         });
     }
+
+    /** Used to notify when the target has been rated by the player. */
+    abstract protected void handleRate (byte newRating, MsoyCallback<RatingResult> callback);
 
     // from interface Stars.StarMouseListener
     public void starMouseOn (byte rating)
@@ -137,10 +119,10 @@ public class ItemRating extends FlexTable
         _ratingTip.setText(_memberRating > 0 ? _cmsgs.playerRating() : _cmsgs.playerUnrated());
     }
 
-    protected void updateRatingCount ()
+    protected void setRatingCount (int count)
     {
-        String s = String.valueOf(_item.ratingCount);
-        if (_item.ratingCount == 1) {
+        String s = String.valueOf(count);
+        if (count == 1) {
             _ratingCount.setText(_cmsgs.numberOfRatingsOne(s));
         } else {
             _ratingCount.setText(_cmsgs.numberOfRatings(s));
@@ -150,14 +132,11 @@ public class ItemRating extends FlexTable
     /** True if both Stars are to be laid out on the same row. */
     protected boolean _horiz;
 
-    protected Item _item;
     protected byte _memberRating;
     protected Stars _averageStars, _playerStars;
     protected Label _ratingCount, _ratingTip, _ratingDesc;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final ItemServiceAsync _itemsvc =
-        (ItemServiceAsync) ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 
     protected static final String [] RATING_DESCRIPTIONS = {
         _cmsgs.descRating1(),

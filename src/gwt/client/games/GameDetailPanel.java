@@ -22,14 +22,19 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
+import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.RatingResult;
 
 import client.comment.CommentsPanel;
-import client.item.ItemRating;
+import client.item.FavoriteIndicator;
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.ui.Rating;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -82,7 +87,18 @@ public class GameDetailPanel extends SmartTable
         shot.add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SHOT_SIZE, null));
         if (detail.listedItem != null) {
             shot.add(WidgetUtil.makeShim(5, 5));
-            shot.add(new ItemRating(detail.listedItem, detail.memberItemInfo, false));
+            final Item item = detail.listedItem;
+            Rating rating = new Rating(
+                item.rating, item.ratingCount, detail.memberItemInfo.memberRating, false) {
+                @Override protected void handleRate (
+                    byte newRating , MsoyCallback<RatingResult> callback) {
+                    _itemsvc.rateItem(item.getIdent(), newRating, callback);
+                }
+            };
+            shot.add(rating);
+            if ( ! CShell.isGuest()) {
+                shot.add(new FavoriteIndicator(item, detail.memberItemInfo));
+            }
         }
         setWidget(0, 0, shot);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
@@ -215,4 +231,7 @@ public class GameDetailPanel extends SmartTable
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

@@ -26,6 +26,7 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.RatingResult;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 import client.shell.CShell;
@@ -33,6 +34,7 @@ import client.ui.CreatorLabel;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
+import client.ui.Rating;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
 import client.util.FlashClients;
@@ -59,9 +61,21 @@ public abstract class BaseItemDetailPanel extends SmartTable
         preview.setWidget(ItemUtil.createViewer(_item, userOwnsItem()));
         bits.add(preview);
         if (_item.isRatable()) {
-            ItemRating rating = new ItemRating(_detail.item, _detail.memberItemInfo, true);
-            rating.addStyleName("Rating");
-            bits.add(rating);
+            HorizontalPanel row = new HorizontalPanel();
+            Rating rating = new Rating(
+                _item.rating, _item.ratingCount, _detail.memberItemInfo.memberRating, true) {
+                @Override protected void handleRate (
+                    byte newRating , MsoyCallback<RatingResult> callback) {
+                    _itemsvc.rateItem(_item.getIdent(), newRating, callback);
+                }
+            };
+            row.add(rating);
+
+            if ( ! CShell.isGuest()) {
+                row.add(new FavoriteIndicator(_item, _detail.memberItemInfo));
+            }
+
+            bits.add(row);
         }
         setWidget(0, 0, bits);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
