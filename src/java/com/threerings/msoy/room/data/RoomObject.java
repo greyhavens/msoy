@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.data;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -49,7 +48,7 @@ public class RoomObject extends SpotSceneObject
     public static final String MUSIC_ENDED = "musicEnded";
 
     /** After this level of occupancy is reached, actors are made static. */
-    public static final int ACTOR_RENDERING_LIMIT = DeploymentConfig.devDeployment ? 10 : 999;
+    public static final int ACTOR_RENDERING_LIMIT = 10;
     
     /** Our room service marshaller. */
     public RoomMarshaller roomService;
