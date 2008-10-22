@@ -55,6 +55,9 @@ public abstract class RatingRepository extends DepotRepository
     // TODO: Doc me
     public Tuple<RatingAverageRecord, Boolean> rate (int targetId, int memberId, byte rating)
     {
+        // Clamp the rating within bounds
+        rating = (byte)Math.max(1, Math.min(rating, 5));
+
         RatingRecord record;
         try {
             record = getRatingClass().newInstance();

@@ -115,12 +115,6 @@ public class ItemServlet extends MsoyServiceServlet
     public RatingResult rateItem (ItemIdent iident, byte rating)
         throws ServiceException
     {
-        // TODO: Move check to repo
-        // Ensure the rating is within bounds
-        if (rating < 1 || rating > 5) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
         MemberRecord memrec = requireAuthedUser();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
