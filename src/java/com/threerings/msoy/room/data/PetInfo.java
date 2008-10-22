@@ -3,8 +3,7 @@
 
 package com.threerings.msoy.room.data;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Pet;
 
 /**
@@ -15,19 +14,10 @@ public class PetInfo extends ActorInfo
     /**
      * Creates an occupant info for the specified pet.
      */
-    public PetInfo (PetObject petobj, boolean useStaticImage)
+    public PetInfo (PetObject petobj)
     {
-        super(petobj, null, null);
+        super(petobj, petobj.pet.getFurniMedia(), petobj.pet.getIdent());
         _ownerId = petobj.pet.ownerId;
-
-        // configure the media
-        if (useStaticImage) {
-            _media = Pet.getStaticImagePetMedia();
-            _ident = new ItemIdent(Item.OCCUPANT, petobj.getOid());
-        } else {
-            _media = petobj.pet.getFurniMedia();
-            _ident = petobj.pet.getIdent();
-        }
     }
 
     /** Constructor used for unserialization. */
@@ -41,6 +31,12 @@ public class PetInfo extends ActorInfo
     public int getOwnerId ()
     {
         return _ownerId;
+    }
+
+    @Override // from ActorInfo
+    protected MediaDesc getStaticMedia ()
+    {
+        return Pet.getStaticImagePetMedia();
     }
 
     protected int _ownerId;

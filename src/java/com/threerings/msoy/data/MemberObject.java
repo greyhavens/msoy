@@ -37,7 +37,6 @@ import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
-import com.threerings.msoy.room.data.RoomObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -497,12 +496,7 @@ public class MemberObject extends MsoyBodyObject
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        if (isViewer()) {
-            return new ObserverInfo(this);
-        }
-        boolean useStaticImage = 
-            (plobj instanceof RoomObject) && ((RoomObject)plobj).shouldMakeNewActorsStatic();
-        return new MemberInfo(this, useStaticImage);
+        return isViewer() ? new ObserverInfo(this) : new MemberInfo(this);
     }
 
     @Override // from BodyObject

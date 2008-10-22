@@ -49,12 +49,22 @@ public class ActorInfo extends OccupantInfo
         _state = state;
     }
 
+    /**
+     * Returns true if the server has assigned this actor a static image due to a high room
+     * population or low frame rate.
+     */
+    public function isStatic () :Boolean
+    {
+        return _static;
+    }
+
     override public function clone () :Object
     {
         var that :ActorInfo = super.clone() as ActorInfo;
         that._media = this._media;
         that._ident = this._ident;
         that._state = this._state;
+        that._static = this._static;
         return that;
     }
 
@@ -65,6 +75,7 @@ public class ActorInfo extends OccupantInfo
         _media = MediaDesc(ins.readObject());
         _ident = ItemIdent(ins.readObject());
         _state = (ins.readField(String) as String);
+        _static = ins.readBoolean();
     }
 
     /** @inheritDoc */
@@ -75,10 +86,12 @@ public class ActorInfo extends OccupantInfo
         buf.append(", media=", _media);
         buf.append(", ident=", _ident);
         buf.append(", state=", _state);
+        buf.append(", static=", _static);
     }
 
     protected var _media :MediaDesc;
     protected var _ident :ItemIdent;
     protected var _state :String;
+    protected var _static :Boolean;
 }
 }

@@ -409,7 +409,7 @@ public class RoomObjectView extends RoomView
 
         var localOccupant :MemberInfo;
         localOccupant = _roomObj.occupantInfo.get(_ctx.getClient().getClientOid()) as MemberInfo;
-        if (localOccupant != null && localOccupant.hasStaticAvatar()) {
+        if (localOccupant != null && localOccupant.isStatic()) {
             _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS, "m.static_avatar");
         }
     }

@@ -692,6 +692,21 @@ public class RoomManager extends SpotSceneManager
         ensureAVRGamePropertySpace(member);
     }
 
+    @Override
+    public void updateOccupantInfo (OccupantInfo occInfo)
+    {
+        // Prior to inserting and cloning, make sure we enforce render limits
+        if (occInfo instanceof ActorInfo) {
+            OccupantInfo prior = _occInfo.get(occInfo.getBodyOid());
+            // Set to static if it was static before and the room is still crowded
+            if (prior != null && prior instanceof ActorInfo && ((ActorInfo)prior).isStatic() &&
+                _numDynamicActors > ACTOR_RENDERING_LIMIT) {
+                ((ActorInfo)occInfo).useStaticMedia();
+            }
+        }
+        super.updateOccupantInfo(occInfo);
+    }
+
     /**
      * Checks to see if an item is being controlled by any client. If not, the calling client is
      * assigned as the item's controller and true is returned. If the item is already being
@@ -1267,6 +1282,16 @@ public class RoomManager extends SpotSceneManager
         });
     }
 
+    @Override
+    protected void insertOccupantInfo (OccupantInfo info, BodyObject body)
+    {
+        if (info instanceof ActorInfo && _numDynamicActors >= ACTOR_RENDERING_LIMIT) {
+            ((ActorInfo)info).useStaticMedia();
+        }
+
+        super.insertOccupantInfo(info, body);
+    }
+
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>
@@ -1277,9 +1302,7 @@ public class RoomManager extends SpotSceneManager
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
                 updateAvatarIdent(null, event.getEntry());
-                if (event.getEntry() instanceof ActorInfo) {
-                    _roomObj.numActors++;
-                }
+                checkDynamic(event.getEntry(), 1);
             }
         }
 
@@ -1289,6 +1312,8 @@ public class RoomManager extends SpotSceneManager
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
                 updateAvatarIdent(event.getOldEntry(), event.getEntry());
+                checkDynamic(event.getOldEntry(), -1);
+                checkDynamic(event.getEntry(), 1);
             }
         }
 
@@ -1298,9 +1323,7 @@ public class RoomManager extends SpotSceneManager
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
                 updateAvatarIdent(event.getOldEntry(), null);
-                if (event.getOldEntry() instanceof ActorInfo) {
-                    _roomObj.numActors--;
-                }
+                checkDynamic(event.getOldEntry(), -1);
             }
         }
 
@@ -1315,6 +1338,16 @@ public class RoomManager extends SpotSceneManager
             }
             if (newInfo instanceof MemberInfo) {
                 _avatarIdents.put(((MemberInfo)newInfo).getItemIdent(), newInfo.bodyOid);
+            }
+        }
+        
+        /**
+         * Increments the dynamic actor count if the occupant is dynamic.
+         */
+        protected void checkDynamic (OccupantInfo info, int increment)
+        {
+            if (info instanceof ActorInfo && !((ActorInfo)info).isStatic()) {
+                _numDynamicActors += increment;
             }
         }
     }
@@ -1369,7 +1402,13 @@ public class RoomManager extends SpotSceneManager
 
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();
+    
+    /** Number of non-statically rendered avatars and pets in the room. */
+    protected int _numDynamicActors;
 
+    /** After this level of occupancy is reached, actors are made static. */
+    protected static final int ACTOR_RENDERING_LIMIT = 10;
+    
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ItemManager _itemMan;
     @Inject protected PetManager _petMan;
