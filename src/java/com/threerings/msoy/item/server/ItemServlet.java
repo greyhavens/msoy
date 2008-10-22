@@ -18,6 +18,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
@@ -149,14 +150,21 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         // record this player's rating and obtain the new summarized rating
-        // TODO: Remove cross cutting badge logic from RatingRepository
-        Tuple<Float, Boolean> ratingResult =
+        Tuple<RatingRepository.RatingAverageRecord, Boolean> result =
             repo.getRatingRepository().rate(originalId, memrec.memberId, rating);
-        // if this qualifies as a new "solid 4+ rating", we have a stat to update
-        if (ratingResult.right) {
+
+        float newAverage = result.left.average;
+        int newCount = result.left.count;
+        // The average without counting this rating
+        float oldAverage = (newCount*newAverage - rating)/(newCount - 1);
+        boolean newSolid = (newCount == MIN_SOLID_RATINGS && newAverage >= 4) ||
+            (newCount > MIN_SOLID_RATINGS && newAverage >= 4 && (!result.right || oldAverage < 4));
+
+        if (newSolid) {
             _statLogic.addToSetStat(item.creatorId, StatType.SOLID_4_STAR_RATINGS, originalId);
         }
-        return new RatingResult(ratingResult.left, repo.getRatingRepository().getCount(originalId));
+
+        return new RatingResult(newAverage, newCount);
     }
 
     // from interface ItemService
@@ -341,4 +349,6 @@ public class ItemServlet extends MsoyServiceServlet
     @Inject protected ItemLogic _itemLogic;
     @Inject protected StatLogic _statLogic;
     @Inject protected PhotoRepository _photoRepo;
+
+    protected static final int MIN_SOLID_RATINGS = 20;
 }

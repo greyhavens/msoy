@@ -30,8 +30,8 @@ public abstract class RatingRepository extends DepotRepository
     public static class RatingAverageRecord extends PersistentRecord {
         @Computed(fieldDefinition="count(*)")
         public int count;
-        @Computed(fieldDefinition="sum(" + RatingRecord.RATING + ")")
-        public int sum;
+        @Computed(fieldDefinition="avg(" + RatingRecord.RATING + ")")
+        public float average;
     }
 
     /**
@@ -53,7 +53,7 @@ public abstract class RatingRepository extends DepotRepository
     }
 
     // TODO: Doc me
-    public Tuple<Float, Boolean> rate (int targetId, int memberId, byte rating)
+    public Tuple<RatingAverageRecord, Boolean> rate (int targetId, int memberId, byte rating)
     {
         RatingRecord record;
         try {
@@ -64,22 +64,15 @@ public abstract class RatingRepository extends DepotRepository
         record.targetId = targetId;
         record.memberId = memberId;
         record.rating = rating;
-        boolean newRater = store(record);
+        boolean firstTime = store(record);
 
-        RatingAverageRecord average = createAverageRecord(targetId);
+        RatingAverageRecord newRating = createAverageRecord(targetId);
 
-        float newRating = (average.count == 0) ? 0f : average.sum/(float)average.count;
         // and then smack the new value into the item using yummy depot code
-        updatePartial(getTargetClass(), targetId, _rating, newRating, _ratingCount, average.count);
+        updatePartial(
+            getTargetClass(), targetId, _rating, newRating.average, _ratingCount, newRating.count);
 
-        // TODO: Move this stuff into isStrongRating() or something
-        float oldRating = (average.count < 2) ? 0f :
-            (average.sum - rating)/(float)(average.count - 1);
-        boolean newSolid =
-            (average.count == MIN_SOLID_RATINGS && newRating >= 4) ||
-            (average.count > MIN_SOLID_RATINGS && newRating >= 4 && (!newRater || oldRating < 4));
-
-        return new Tuple<Float, Boolean>(newRating, newSolid);
+        return new Tuple<RatingAverageRecord, Boolean>(newRating, firstTime);
     }
 
     // TODO: Doc me
@@ -143,7 +136,4 @@ public abstract class RatingRepository extends DepotRepository
     }
 
     protected String _rating, _ratingCount;
-
-    // TODO: This probably doesn't belong here
-    protected static final int MIN_SOLID_RATINGS = 20;
 }
