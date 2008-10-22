@@ -54,8 +54,8 @@ public class SideBar extends FlowPanel
         for (int ii = 0; ii < itemTypes.length; ii++) {
             byte type = itemTypes[ii];
             AbstractImagePrototype proto = IMAGES.get(type);
-            // blank separator between game and level pack, etc.
             if (ii > 0) {
+                // use a blank separator between game and level pack, etc.
                 navi.add(MsoyUI.createLabel("", (proto == null) ? "BlankSep" : "Separator"));
             }
             Widget item = makeItem(linker, _dmsgs.xlate("pItemType" + type), type);
