@@ -11,15 +11,20 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.util.Tuple;
+
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.web.gwt.RatingResult;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -34,26 +39,43 @@ public class WebRoomServlet extends MsoyServiceServlet
     implements WebRoomService
 {
     // from interface WebRoomService
-    public RoomInfo loadRoomInfo (int sceneId)
+    public RoomDetail loadRoomDetail (int sceneId)
         throws ServiceException
     {
         SceneRecord screc = _sceneRepo.loadScene(sceneId);
         if (screc == null) {
-            return null;
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+        MemberRecord mrec = getAuthedUser();
 
-        RoomInfo info = new RoomInfo();
-        info.sceneId = screc.sceneId;
-        info.name = screc.name;
+        RoomDetail detail = screc.toRoomDetail();
         switch (screc.ownerType) {
         case MsoySceneModel.OWNER_TYPE_MEMBER:
-            info.owner = _memberRepo.loadMemberName(screc.ownerId);
+            detail.owner = _memberRepo.loadMemberName(screc.ownerId);
             break;
         case MsoySceneModel.OWNER_TYPE_GROUP:
-            info.owner = _groupRepo.loadGroupName(screc.ownerId);
+            detail.owner = _groupRepo.loadGroupName(screc.ownerId);
             break;
         }
-        return info;
+        if (mrec != null) {
+            detail.memberRating = _sceneRepo.getRatingRepository().getRating(sceneId, mrec.memberId);
+        }
+        return detail;
+    }
+
+    public RatingResult rateRoom (int sceneId, byte rating)
+        throws ServiceException
+    {
+        SceneRecord screc = _sceneRepo.loadScene(sceneId);
+        if (screc == null) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+        MemberRecord mrec = requireAuthedUser();
+
+        Tuple<RatingRepository.RatingAverageRecord, Boolean> result =
+            _sceneRepo.getRatingRepository().rate(sceneId, mrec.memberId, rating);
+
+        return new RatingResult(result.left.average, result.left.count);
     }
 
     // from interface WebRoomService

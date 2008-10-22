@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.gwt.RatingResult;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -47,7 +48,7 @@ public interface WebRoomService extends RemoteService
     /**
      * Loads information on a particular room.
      */
-    RoomInfo loadRoomInfo (int sceneId)
+    RoomDetail loadRoomDetail (int sceneId)
         throws ServiceException;
 
     /**
@@ -60,5 +61,11 @@ public interface WebRoomService extends RemoteService
      * Returns a list of all the rooms owned by a specific group.
      */
     RoomsResult loadGroupRooms (int groupId)
+        throws ServiceException;
+
+    /**
+     * Request to rate a room.
+     */
+    RatingResult rateRoom (int sceneId, byte rating)
         throws ServiceException;
 }

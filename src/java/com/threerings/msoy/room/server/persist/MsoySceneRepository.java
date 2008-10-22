@@ -114,6 +114,11 @@ public class MsoySceneRepository extends DepotRepository
         return getOwnedScenes(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
     }
 
+    public RatingRepository getRatingRepository ()
+    {
+        return _ratingRepo;
+    }
+
     /**
      * Return the scene name for the specified id, or null (no exception) if the scene
      * doesn't exist.

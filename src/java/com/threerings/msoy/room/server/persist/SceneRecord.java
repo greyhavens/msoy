@@ -23,6 +23,7 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.RoomInfo;
 
 /**
@@ -212,20 +213,13 @@ public class SceneRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 4;
 
     /**
-     * Converts this scene record in to a partially initialized room info record. The
-     * {@link RoomInfo#owner} and {@link RoomInfo#thumbnail} fields must be filled in manually if
-     * they are needed.
+     * Converts this scene record in to a partially initialized room info record. See
+     * {@link #toRoomInfo} for gotchas.
      */
     public static final Function<SceneRecord,RoomInfo> TO_ROOM_INFO =
         new Function<SceneRecord,RoomInfo>() {
         public RoomInfo apply (SceneRecord record) {
-            RoomInfo info = new RoomInfo();
-            info.sceneId = record.sceneId;
-            info.name = record.name;
-            if (record.thumbnailHash != null) {
-                info.thumbnail = new MediaDesc(record.thumbnailHash, record.thumbnailType);
-            }
-            return info;
+            return record.toRoomInfo();
         }
     };
 
@@ -349,6 +343,35 @@ public class SceneRecord extends PersistentRecord
         model.entrance = new MsoyLocation(entranceX, entranceY, entranceZ, 180);
 
         return model;
+    }
+
+    /**
+     * Converts this scene record in to a partially initialized room info record. The
+     * {@link RoomInfo#thumbnail} fields must be filled in manually if they are needed.
+     */
+    public RoomInfo toRoomInfo ()
+    {
+        RoomInfo info = new RoomInfo();
+        info.sceneId = sceneId;
+        info.name = name;
+        info.rating = rating;
+        if (thumbnailHash != null) {
+            info.thumbnail = new MediaDesc(thumbnailHash, thumbnailType);
+        }
+        return info;
+    }
+
+    /**
+     * Converts this scene record in to a partially initialized room detail record. The
+     * {@link RoomInfo#owner} and {@link RoomInfo#memberRating} are missing and must be
+     * filled in manual if needed. See {@link toRoomInfo} for caveats on the RoomInfo field.
+     */
+    public RoomDetail toRoomDetail ()
+    {
+        RoomDetail detail = new RoomDetail();
+        detail.info = toRoomInfo();
+        detail.ratingCount = ratingCount;
+        return detail;
     }
 
     /**

@@ -13,12 +13,14 @@ import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.room.gwt.RoomInfo;
+import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
+import com.threerings.msoy.web.gwt.RatingResult;
 
 import client.comment.CommentsPanel;
 import client.shell.CShell;
+import client.ui.Rating;
 import client.ui.StyledTabPanel;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -33,34 +35,40 @@ public class RoomPanel extends SmartTable
     {
         super("roomPanel", 0, 5);
 
-        _worldsvc.loadRoomInfo(sceneId, new MsoyCallback<RoomInfo>() {
-            public void onSuccess (RoomInfo info) {
-                init(info);
+        _worldsvc.loadRoomDetail(sceneId, new MsoyCallback<RoomDetail>() {
+            public void onSuccess (RoomDetail detail) {
+                init(detail);
             }
         });
     }
 
-    protected void init (RoomInfo info)
+    protected void init (final RoomDetail detail)
     {
-        if (info == null) {
+        if (detail == null) {
             setText(0, 0, "That room does not exist.");
             return;
         }
-        CShell.frame.setTitle(info.name);
+        CShell.frame.setTitle(detail.info.name);
 
         FlowPanel obits = new FlowPanel();
         obits.add(new InlineLabel(_msgs.owner(), false, false, true));
-        if (info.owner instanceof MemberName) {
-            MemberName name = (MemberName)info.owner;
+        if (detail.owner instanceof MemberName) {
+            MemberName name = (MemberName)detail.owner;
             obits.add(Link.memberView(name.toString(), name.getMemberId()));
-        } else if (info.owner instanceof GroupName) {
-            GroupName name = (GroupName)info.owner;
+        } else if (detail.owner instanceof GroupName) {
+            GroupName name = (GroupName)detail.owner;
             obits.add(Link.groupView(name.toString(), name.getGroupId()));
         }
+        obits.add(new Rating(detail.info.rating, detail.ratingCount, detail.memberRating, true) {
+            @Override
+            protected void handleRate (byte newRating , MsoyCallback<RatingResult> callback) {
+                _worldsvc.rateRoom(detail.info.sceneId, newRating, callback);
+            }
+        });
         addWidget(obits, 1, null);
 
         StyledTabPanel tabs = new StyledTabPanel();
-        tabs.add(new CommentsPanel(Comment.TYPE_ROOM, info.sceneId), _msgs.tabComments());
+        tabs.add(new CommentsPanel(Comment.TYPE_ROOM, detail.info.sceneId), _msgs.tabComments());
         addWidget(tabs, 1, null);
         tabs.selectTab(0);
     }

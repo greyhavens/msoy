@@ -19,6 +19,7 @@ import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.ui.Stars;
 import client.ui.TongueBox;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -68,6 +69,7 @@ public class RoomsPanel extends VerticalPanel
             setWidget(0, 0, MediaUtil.createSceneThumbView(room.thumbnail, onClick));
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
+            setWidget(2, 0, new Stars(room.rating, true, true, null), 1, "Rating");
         }
     }
 
