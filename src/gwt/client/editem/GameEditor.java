@@ -231,7 +231,7 @@ public class GameEditor extends ItemEditor
                 if (!isValidServerAgentMedia(desc)) {
                     return _emsgs.errMediaNotABC();
                 }
-                _game.serverMedia = desc; // TODO: validate media type
+                _game.serverMedia = desc;
                 return null;
             }
         };
@@ -386,6 +386,10 @@ public class GameEditor extends ItemEditor
         }
 
         _game.config = xml.toString();
+        
+        if (gameType == GameType.AVRG && _game.serverMedia == null) {
+            throw new Exception(_emsgs.errServerMediaRequired());
+        }
     }
 
     protected static void setOnlyChild (Node parent, Node child)
