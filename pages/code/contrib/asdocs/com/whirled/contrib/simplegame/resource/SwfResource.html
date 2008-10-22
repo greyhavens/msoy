@@ -163,7 +163,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#instantiateMovieClip()">instantiateMovieClip</a>(resourceName:String, className:String):MovieClip</div>
+<a class="signatureLink" href="#instantiateMovieClip()">instantiateMovieClip</a>(resourceName:String, className:String, disableMouseInteraction:Boolean = false):MovieClip</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
@@ -527,7 +527,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function instantiateMovieClip(resourceName:String, className:String):MovieClip</code><span class="label">Parameters</span>
+<code>public static function instantiateMovieClip(resourceName:String, className:String, disableMouseInteraction:Boolean = false):MovieClip</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">resourceName</span>:String</code></td>
@@ -537,6 +537,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">className</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">disableMouseInteraction</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
 </tr>
 </table>
 <p></p>

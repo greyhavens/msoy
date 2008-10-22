@@ -108,7 +108,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#EditView()">EditView</a>(pfac:<a href="../piece/PieceFactory.html">PieceFactory</a>, dynamics:XML, level:XML, board:<a href="../board/Board.html">Board</a> = null)</div>
+<a class="signatureLink" href="#EditView()">EditView</a>(dynamics:XML, level:XML)</div>
 <div class="summaryTableDescription">
      In addition to requiring valid XML, the PieceSpriteFactory should have been initialized
      before this view is created.</div>
@@ -317,18 +317,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function EditView(pfac:<a href="../piece/PieceFactory.html">PieceFactory</a>, dynamics:XML, level:XML, board:<a href="../board/Board.html">Board</a> = null)</code><p>
+<code>public function EditView(dynamics:XML, level:XML)</code><p>
      In addition to requiring valid XML, the PieceSpriteFactory should have been initialized
      before this view is created.
           Also, it is required that Metrics.init() be called before creating this view.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">pfac</span>:<a href="../piece/PieceFactory.html">PieceFactory</a></code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">dynamics</span>:XML</code></td>
 </tr>
@@ -337,12 +331,6 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">level</span>:XML</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">board</span>:<a href="../board/Board.html">Board</a></code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>

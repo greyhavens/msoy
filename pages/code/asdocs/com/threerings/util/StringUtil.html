@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="StringUtil,com.threerings.util.StringUtil,DECIMAL,HEX,URL_REGEXP,deNull,endsWith,fieldsToString,fromBytes,hashCode,hexdump,hexlate,isBlank,isLowerCase,isUpperCase,isWhitespace,pad,parseBoolean,parseInt0,parseInteger,parseNumber,parseURLs,parseUnsignedInteger,prepad,simpleToString,startsWith,substitute,toBytes,toHex,toString,trim,trimBeginning,trimEnd,truncate,unhexlate,validateDecimal" name="keywords">
+<meta content="StringUtil,com.threerings.util.StringUtil,DECIMAL,HEX,URL_REGEXP,deNull,endsWith,fieldsToString,formatNumber,fromBytes,hashCode,hexdump,hexlate,isBlank,isLowerCase,isUpperCase,isWhitespace,pad,parseBoolean,parseInt0,parseInteger,parseNumber,parseURLs,parseUnsignedInteger,prepad,simpleToString,startsWith,substitute,toBytes,toHex,toString,trim,trimBeginning,trimEnd,truncate,unhexlate,validateDecimal" name="keywords">
 <title>com.threerings.util.StringUtil</title>
 </head>
 <body>
@@ -73,6 +73,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">[static]
      Return a string containing all the public fields of the object
           </div>
+</td><td class="summaryTableOwnerCol">StringUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#formatNumber()">formatNumber</a>(n:Number):String</div>
+<div class="summaryTableDescription">[static]
+     Format the specified number, nicely, with commas.</div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
 </tr>
 <tr class="">
@@ -429,6 +437,31 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">fieldNames</span>:Array</code> (default = <code>null</code>)<code></code> &mdash; the names of fields to print, or null to print all.
      </td>
+</tr>
+</table>
+</div>
+<a name="formatNumber()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">formatNumber</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function formatNumber(n:Number):String</code><p>
+     Format the specified number, nicely, with commas.
+     TODO: format specifyer, locale handling, etc. We'll probably move this into a
+     NumberFormat-style class.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">n</span>:Number</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
 </tr>
 </table>
 </div>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="GameController,com.whirled.contrib.platformer.game.GameController,MAX_TICK,_actorMap,_board,_collider,_controller,_controllers,_defaultActorClass,_defaultDynamicClass,_defaultShotClass,_dynamicMap,_events,_pause,_rdelta,_shotMap,colliderTicks,forceX,forceY,ticked,addActorClass,addController,addDynamicClass,addShotClass,centerOn,ensureCentered,ensureVisible,genCollider,getBoard,getCollider,getController,getDx,getDy,handleActorAdded,handleDynamicAdded,handleDynamicRemoved,handlePieceLoaded,handleShotAdded,initDynamicClasses,isPaused,jumping,removeDynamic,removeDynamicController,run,setBound,setPause,shooting,tick" name="keywords">
+<meta content="GameController,com.whirled.contrib.platformer.game.GameController,MAX_TICK,_actorMap,_board,_collider,_controllers,_defaultActorClass,_defaultDynamicClass,_defaultShotClass,_dynamicMap,_events,_pause,_rdelta,_shotMap,colliderTicks,forceX,forceY,ticked,addActorClass,addController,addDynamicClass,addShotClass,genCollider,getBoard,getCollider,getController,handleActorAdded,handleDynamicAdded,handleDynamicRemoved,handlePieceLoaded,handleShotAdded,initDynamicClasses,isPaused,removeDynamic,removeDynamicController,run,setBound,setPause,tick,updateDisplay" name="keywords">
 <title>com.whirled.contrib.platformer.game.GameController</title>
 </head>
 <body>
@@ -90,11 +90,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">GameController</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_controller">_controller</a> : <a href="../../platformer/Controller.html">Controller</a>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">GameController</td>
-</tr>
-<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_controllers">_controllers</a> : Array<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">GameController</td>
 </tr>
@@ -142,7 +137,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#GameController()">GameController</a>(board:<a href="../board/Board.html">Board</a>, controller:<a href="../Controller.html">Controller</a>)</div>
+<a class="signatureLink" href="#GameController()">GameController</a>()</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">GameController</td>
 </tr>
@@ -150,27 +145,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#addController()">addController</a>(controller:Object):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">GameController</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#centerOn()">centerOn</a>(ac:<a href="ActorController.html">ActorController</a>):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">GameController</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#ensureCentered()">ensureCentered</a>(rd:<a href="../piece/RectDynamic.html">RectDynamic</a>):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">GameController</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#ensureVisible()">ensureVisible</a>(a:<a href="../piece/Actor.html">Actor</a>):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">GameController</td>
 </tr>
@@ -193,20 +167,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getDx()">getDx</a>():Number</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">GameController</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#getDy()">getDy</a>():Number</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">GameController</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="#initDynamicClasses()">initDynamicClasses</a>():void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">GameController</td>
@@ -215,13 +175,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#isPaused()">isPaused</a>():Boolean</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">GameController</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#jumping()">jumping</a>():Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">GameController</td>
 </tr>
@@ -258,13 +211,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#setPause()">setPause</a>(pause:Boolean):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">GameController</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#shooting()">shooting</a>():Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">GameController</td>
 </tr>
@@ -356,6 +302,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">GameController</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#updateDisplay()">updateDisplay</a>(delta:Number):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">GameController</td>
+</tr>
 </table>
 </div>
 <a name="constantSummary"></a><a name="protectedConstantSummary"></a>
@@ -413,15 +366,6 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public var colliderTicks:int</code>
-</div>
-<a name="_controller"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_controller</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _controller:<a href="../../platformer/Controller.html">Controller</a></code>
 </div>
 <a name="_controllers"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -540,18 +484,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function GameController(board:<a href="../board/Board.html">Board</a>, controller:<a href="../Controller.html">Controller</a>)</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">board</span>:<a href="../board/Board.html">Board</a></code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">controller</span>:<a href="../Controller.html">Controller</a></code></td>
-</tr>
-</table>
+<code>public function GameController()</code>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
@@ -647,48 +580,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="centerOn()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">centerOn</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function centerOn(ac:<a href="ActorController.html">ActorController</a>):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">ac</span>:<a href="ActorController.html">ActorController</a></code></td>
-</tr>
-</table>
-</div>
-<a name="ensureCentered()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">ensureCentered</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function ensureCentered(rd:<a href="../piece/RectDynamic.html">RectDynamic</a>):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">rd</span>:<a href="../piece/RectDynamic.html">RectDynamic</a></code></td>
-</tr>
-</table>
-</div>
-<a name="ensureVisible()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">ensureVisible</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function ensureVisible(a:<a href="../piece/Actor.html">Actor</a>):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">a</span>:<a href="../piece/Actor.html">Actor</a></code></td>
-</tr>
-</table>
-</div>
 <a name="genCollider()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -755,38 +646,6 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code><a href="../game/DynamicController.html">DynamicController</a></code></td>
-</tr>
-</table>
-</div>
-<a name="getDx()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getDx</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getDx():Number</code>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Number</code></td>
-</tr>
-</table>
-</div>
-<a name="getDy()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getDy</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getDy():Number</code>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Number</code></td>
 </tr>
 </table>
 </div>
@@ -915,22 +774,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="jumping()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">jumping</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function jumping():Boolean</code>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Boolean</code></td>
-</tr>
-</table>
-</div>
 <a name="removeDynamic()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1009,22 +852,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="shooting()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">shooting</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function shooting():Boolean</code>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Boolean</code></td>
-</tr>
-</table>
-</div>
 <a name="tick()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1036,6 +863,20 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">delta</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="updateDisplay()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateDisplay</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function updateDisplay(delta:Number):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">delta</span>:Number</code></td>
 </tr>
 </table>
 </div>
