@@ -514,7 +514,7 @@ TabNavigator, TabBar {
 /** All these buttons use the ImageButtonSkin and need the per-state skins cleared out. */
 .controlBarButtonChat, .controlBarButtonEdit, .controlBarButtonZoom, .controlBarButtonComment,
 .controlBarButtonInstructions, .controlBarButtonShare, .controlBarButtonScores,
-.controlBarButtonSnapshot, .controlBarFriendButton, .controlBarTalkButton,
+.controlBarHoverZone, .controlBarButtonSnapshot, .controlBarFriendButton, .controlBarTalkButton,
 .controlBarIdleButton, .controlBarScaleButton, .controlBarAVRGButton, .tickButton,
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
 .controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton {
@@ -578,7 +578,7 @@ TabNavigator, TabBar {
 }
 
 .controlBarHoverZone {
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/clickable.png");
+  image: Embed(source="../../rsrc/media/skins/controlbar/clickable.png");
 }
 
 .controlBarButtonSnapshot {
