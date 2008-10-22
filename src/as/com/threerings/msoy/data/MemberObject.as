@@ -94,6 +94,9 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>visitorInfo</code> field. */
     public static const VISITOR_INFO :String = "visitorInfo";
 
+    /** The field name of the <code>onTour</code> field. */
+    public static const ON_TOUR :String = "onTour";
+
     /** A message sent by the server to denote a notification to be displayed.
      * Format: [ Notification ]. */
     public static const NOTIFICATION :String = "notification";
@@ -185,6 +188,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** Player's tracking information. */
     public var visitorInfo :VisitorInfo;
+
+    /** Whether this player is on the "whirled tour". */
+    public var onTour :Boolean;
 
     /**
      * Return this member's unique id.
@@ -340,6 +346,7 @@ public class MemberObject extends MsoyBodyObject
         walkingId = ins.readInt();
         headline = ins.readField(String) as String;
         visitorInfo = VisitorInfo(ins.readObject());
+        onTour = ins.readBoolean();
     }
 }
 }

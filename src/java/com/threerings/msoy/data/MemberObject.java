@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
+import com.threerings.util.StreamableArrayIntSet;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
@@ -115,6 +116,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>visitorInfo</code> field. */
     public static final String VISITOR_INFO = "visitorInfo";
+
+    /** The field name of the <code>onTour</code> field. */
+    public static final String ON_TOUR = "onTour";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.
@@ -212,6 +216,10 @@ public class MemberObject extends MsoyBodyObject
     /** Player's tracking information. */
     public VisitorInfo visitorInfo;
 
+    /** Whether this player is on the "whirled tour". We could also check whether touredRooms
+     * is null, but that's not sent to the client. */
+    public boolean onTour;
+
     /** The number of non-idle seconds that have elapsed in this member's session. When the member
      * is forwarded between servers, this value is incremented by the time they spent on the server
      * from which they are departing. */
@@ -232,6 +240,9 @@ public class MemberObject extends MsoyBodyObject
     /** A list of notifications that will be dispatched when the client's NotificationDirector asks
      * for them. Will be null once the deferred notifications have been dispatched. */
     public transient List<Notification> deferredNotifications;
+
+    /** Rooms we've visited during our current Whirled Tour. */
+    public transient StreamableArrayIntSet touredRooms;
 
     /**
      * Adds an EarnedBadge to the member's BadgeSet (or updates the existing badge if the badge
@@ -1090,6 +1101,22 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             VISITOR_INFO, value, ovalue);
         this.visitorInfo = value;
+    }
+
+    /**
+     * Requests that the <code>onTour</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setOnTour (boolean value)
+    {
+        boolean ovalue = this.onTour;
+        requestAttributeChange(
+            ON_TOUR, Boolean.valueOf(value), Boolean.valueOf(ovalue));
+        this.onTour = value;
     }
     // AUTO-GENERATED: METHODS END
 

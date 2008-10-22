@@ -20,6 +20,8 @@ import com.threerings.msoy.client.persist.RuntimeSceneRepository;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyTokenRing;
 
+import com.threerings.msoy.world.tour.client.TourDirector;
+
 /**
  * Defines services for the World client.
  */
@@ -102,6 +104,14 @@ public class WorldContext extends MsoyContext
     }
 
     /**
+     * Get the tour director.
+     */
+    public function getTourDirector () :TourDirector
+    {
+        return _tourDir;
+    }
+
+    /**
      * Returns the top-level world controller.
      */
     public function getWorldController () :WorldController
@@ -143,6 +153,7 @@ public class WorldContext extends MsoyContext
         _gameDir = new GameDirector(this);
         _worldDir = new WorldDirector(this);
         _memberDir = new MemberDirector(this);
+        _tourDir = new TourDirector(this);
     }
 
     protected var _controller :WorldController;
@@ -153,5 +164,6 @@ public class WorldContext extends MsoyContext
     protected var _mediaDir :MediaDirector;
     protected var _worldDir :WorldDirector;
     protected var _memberDir :MemberDirector;
+    protected var _tourDir :TourDirector;
 }
 }

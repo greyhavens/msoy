@@ -78,6 +78,7 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.WorldWatcherManager;
+import com.threerings.msoy.world.tour.server.TourManager;
 
 /**
  * Brings together all of the services needed by the World server.
@@ -428,6 +429,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** The member movement observation manager. */
     @Inject protected WorldWatcherManager _watcherMan;
+
+    /** The Whirled Tour manager. */
+    @Inject protected TourManager _tourMan;
 
     /** Connection to the AMQP messaging server. */
     @Inject protected MessageConnection _messageConn;
