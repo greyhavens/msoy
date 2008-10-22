@@ -141,7 +141,7 @@ public class StatusPanel extends SmartTable
 
             int idx = 0;
             setWidget(0, idx++, MsoyUI.createActionImage(
-                          "/images/header/symbol_mail.png", _cmsgs.mailTip(),
+                          "/images/header/symbol_mail.png",
                           Link.createListener(Pages.MAIL, "")), 1, "Icon");
             _mailIx = idx; // the next cell will hold our count
             setCount(0);
@@ -151,6 +151,7 @@ public class StatusPanel extends SmartTable
         {
             setText(0, _mailIx, String.valueOf(count));
             setVisible(true);
+            getWidget(0, _mailIx-1).setTitle(count > 0 ? _cmsgs.newMailTip() : _cmsgs.mailTip());
         }
 
         protected int _mailIx;
