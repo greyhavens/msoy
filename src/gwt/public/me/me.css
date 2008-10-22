@@ -494,3 +494,81 @@
 .bling .Success {
     color: green;
 }
+
+/* ------------------------------------
+   DEVIANT ART CONTEST LANDING
+-------------------------------------*/
+
+/* Iframe version fits inside the 685px wide iframe */
+.daContestIframePanel {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  min-height: 100%;
+  background: #000000 url(/images/landing/dacontest_content_bg.png) repeat-x top center;
+  width: 685px;
+}
+
+.daContestIframePanel .HowToEnter {
+  background: url(/images/landing/dacontest_howtoenter.png) no-repeat;
+  height: 406px;
+  width: 646px;
+  margin: 20px auto 0 auto;
+}
+
+.daContestIframePanel .HowToEnter .longThickOrangeButton,
+.daContestIframePanel .Rules .longThickOrangeButton {
+  font-size: 20px;
+  padding-top: 10px;
+  height: 34px;
+}
+
+.daContestIframePanel .Step1,
+.daContestIframePanel .Step2,
+.daContestIframePanel .Step3 {
+  width: 649px;
+  margin: auto;
+}
+
+.daContestIframePanel .Step1 {
+  background: url(/images/landing/dacontest_step_1.png) no-repeat;
+  height: 340px;
+}
+
+.daContestIframePanel .Step2 {
+  background: url(/images/landing/dacontest_step_2.png) no-repeat;
+  height: 313px;
+}
+
+.daContestIframePanel .Step3 {
+  background: url(/images/landing/dacontest_step_3.png) no-repeat;
+  height: 515px;
+}
+
+.daContestIframePanel .Rules {
+  background: url(/images/landing/dacontest_rules_iframe_bg.png) no-repeat;
+  width: 669px;
+  height: 339px;
+  margin: 10px auto 20px auto;
+  color: #656565;
+}
+
+.daContestIframePanel .Rules a {
+  color: #27a1d9;
+  font-weight: bold;
+}
+
+.daContestIframePanel .Rules ul {
+  margin: 0;
+}
+
+.daContestIframePanel .Rules li {
+  list-style-image: url(/images/landing/dacontest_rules_star.png);
+  width: 280px;
+  margin: 0 0 15px 15px;
+  line-height: 18px;
+  padding-left: 10px;
+}
+
+.daContestIframePanel .Rules .Judging {
+  width: 300px;
+}

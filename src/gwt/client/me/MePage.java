@@ -16,6 +16,7 @@ import client.util.Link;
 public class MePage extends Page
 {
     public static final String TRANSACTIONS = "transactions";
+    public static final String DEVIANT_CONTEST_IFRAME = "dacontesti";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -38,6 +39,9 @@ public class MePage extends Page
             int report = args.get(1, 1);
             int memberId = args.get(2, CShell.getMemberId());
             setContent(_msgs.transactionsTitle(), new TransactionsPanel(report, memberId));
+
+        } else if (action.equals(DEVIANT_CONTEST_IFRAME)) {
+            setContent(_msgs.titleDAContest(), new DAContestIframePanel());
 
         } else if (!CShell.isGuest()) {
             setContent(new MyWhirled());
