@@ -4,7 +4,6 @@
 package com.threerings.msoy.world.tour.server;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.threerings.util.StreamableArrayIntSet;

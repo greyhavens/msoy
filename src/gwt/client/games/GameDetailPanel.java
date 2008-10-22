@@ -25,7 +25,6 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.RatingResult;
@@ -75,11 +74,11 @@ public class GameDetailPanel extends SmartTable
     public void setGameDetail (int gameId, GameDetail detail)
     {
         final Game game = detail.item;
-
-        // Note: the gameId may be the negative original gameId, but GameDetail's id is never
-        // negative to match
-        _gameId = gameId;
         CShell.frame.setTitle(game.name);
+
+        // keep our requested game id around because it may be negative to indicate that we're
+        // talking about the development version of the game, but GameDetail.id is always positive
+        _gameId = gameId;
 
         VerticalPanel shot = new VerticalPanel();
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
