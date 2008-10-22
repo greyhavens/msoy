@@ -139,6 +139,8 @@ public class FloatingPanel extends TitleWindow
             PopUpManager.centerPopUp(this);
         }
         CommandEvent.configureBridge(this, _parent);
+
+        didOpen();
     }
 
     /**
@@ -331,6 +333,11 @@ public class FloatingPanel extends TitleWindow
         } else {
             return 0;
         }
+    }
+
+    /** Handles any extra tasks after opening the panel. */
+    protected function didOpen () :void
+    {
     }
 
     /** Provides client services. */
