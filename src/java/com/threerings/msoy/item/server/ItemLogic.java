@@ -341,6 +341,18 @@ public class ItemLogic
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
 
+        // if this is a game, make sure it does not have listed sub-items (which will be lost if
+        // the game is delisted and thus must first be delisted themselves)
+        if (itemType == Item.GAME) {
+            Item proto = listing.item.toItem();
+            for (SubItem sproto : proto.getSubTypes()) {
+                ItemRepository<ItemRecord> srepo = getRepository(sproto.getType());
+                if (srepo.loadOriginalItemsBySuite(proto.getSuiteId()).size() > 0) {
+                    throw new ServiceException(ItemCodes.E_NO_DELIST_LISTED_SUBITEM_HAVER);
+                }
+            }
+        }
+
         // remove the listing record and possibly the catalog master item
         if (repo.removeListing(listing)) {
             itemDeleted(listing.item);

@@ -26,5 +26,8 @@ public interface ItemCodes extends InvocationCodes
     public static final String E_CANT_SELF_CROSSBUY = "e.cant_self_crossbuy";
 
     /** An error code for listing sub items whose super item is not listed. */
-    public static final String SUPER_ITEM_NOT_LISTED = "m.list_super_item";
+    public static final String E_SUPER_ITEM_NOT_LISTED = "e.list_super_item";
+
+    /** An error code for delisting super items that have listed sub items. */
+    public static final String E_NO_DELIST_LISTED_SUBITEM_HAVER = "e.no_delist_listed_subitem_haver";
 }

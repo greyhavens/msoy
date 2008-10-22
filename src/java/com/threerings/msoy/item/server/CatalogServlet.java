@@ -312,7 +312,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 throw new ServiceException(ItemCodes.INTERNAL_ERROR);
             }
             if (suiteMaster.catalogId == 0) {
-                throw new ServiceException(ItemCodes.SUPER_ITEM_NOT_LISTED);
+                throw new ServiceException(ItemCodes.E_SUPER_ITEM_NOT_LISTED);
             }
             ((SubItemRecord)master).suiteId = -suiteMaster.catalogId;
         }
