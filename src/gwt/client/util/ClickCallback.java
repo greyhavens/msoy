@@ -51,19 +51,6 @@ public abstract class ClickCallback<T>
         _confirmMessage = confirmMessage;
     }
 
-    /**
-     * This method is called when the trigger button is clicked. Pass <code>this</code> as the
-     * {@link AsyncCallback} to a service method. Return true from this method if a service request
-     * was initiated and the button that triggered it should be disabled.
-     */
-    public abstract boolean callService ();
-
-    /**
-     * This method will be called when the service returns successfully. Return true if the trigger
-     * should now be reenabled, false to leave it disabled.
-     */
-    public abstract boolean gotResult (T result);
-
     // from interface AsyncCallback
     public void onSuccess (T result)
     {
@@ -75,6 +62,29 @@ public abstract class ClickCallback<T>
     {
         CShell.log("Callback failure [for=" + _trigger + "]", cause);
         setEnabled(true);
+        reportFailure(cause);
+    }
+
+    /**
+     * This method is called when the trigger button is clicked. Pass <code>this</code> as the
+     * {@link AsyncCallback} to a service method. Return true from this method if a service request
+     * was initiated and the button that triggered it should be disabled.
+     */
+    protected abstract boolean callService ();
+
+    /**
+     * This method will be called when the service returns successfully. Return true if the trigger
+     * should now be reenabled, false to leave it disabled.
+     */
+    protected abstract boolean gotResult (T result);
+
+    /**
+     * Reports a failure to the user. Derived classes can override this and customize the way
+     * failure is reported if they so desire (it is safe not to call super.reportFailure() in that
+     * case).
+     */
+    protected void reportFailure (Throwable cause)
+    {
         Widget errorNear = getErrorNear();
         if (errorNear != null) {
             if (errorNear instanceof FocusWidget) {
