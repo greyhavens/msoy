@@ -8,6 +8,11 @@
   width: 100%;
 }
 
+.profile .Error {
+  padding: 15px;
+  font-size: 18px;
+}
+
 .profile .ProfileTongue .Content {
   border: none; /* override tongueBox */
 }

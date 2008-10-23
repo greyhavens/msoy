@@ -5,19 +5,19 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
 import client.shell.CShell;
+import client.ui.MsoyUI;
 import client.util.ServiceUtil;
 
 /**
  * Displays a member's profile.
  */
-public class ProfilePanel extends VerticalPanel
+public class ProfilePanel extends FlowPanel
 {
     public ProfilePanel (int memberId)
     {
@@ -30,13 +30,18 @@ public class ProfilePanel extends VerticalPanel
             }
             public void onFailure (Throwable cause) {
                 CShell.log("Failed to load profile data [for=" + _memberId + "].", cause);
-                add(new Label(CShell.serverError(cause)));
+                add(MsoyUI.createLabel(CShell.serverError(cause), "Error"));
             }
         });
     }
 
     protected void init (ProfileService.ProfileResult pdata)
     {
+        if (pdata == null) {
+            add(MsoyUI.createLabel(_msgs.profileNoSuchMember(), "Error"));
+            return;
+        }
+
         CShell.frame.setTitle((_memberId == CShell.getMemberId()) ?
                               _msgs.profileSelfTitle() :
                               _msgs.profileOtherTitle(pdata.name.toString()));
