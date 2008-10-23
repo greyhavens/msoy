@@ -228,7 +228,7 @@ public class BlingPoolDistributor
         // Update account with the awarded bling.
         try {
             _repo.accumulateAndStoreTransaction(
-                game.creatorId, Currency.BLING, amount, TransactionType.GAME_PLAYS,
+                game.creatorId, Currency.BLING, amount, TransactionType.BLING_POOL,
                 MessageBundle.tcompose("m.game_plays_bling_awarded", amount,
                     game.itemId, game.name),
                 new ItemIdent(Item.GAME, game.itemId));

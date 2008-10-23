@@ -15,7 +15,7 @@ public enum TransactionType
     CREATOR_PAYOUT(2),
     AFFILIATE_PAYOUT(3),
     AWARD(4),
-    GAME_PLAYS(5),
+    BLING_POOL(5),
     BARS_BOUGHT(6),
     SPENT_FOR_EXCHANGE(7),
     RECEIVED_FROM_EXCHANGE(8),
