@@ -124,6 +124,9 @@ public class HomePageDialog extends FloatingPanel
         cell.addChild(label);
         cell.width = CELL_WIDTH;
         cell.height = CELL_HEIGHT;
+        cell.useHandCursor = true;
+        cell.buttonMode = true;
+        cell.mouseChildren = false;
 
         cell.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
             log.info("Got mouse click", "name", label.text);
