@@ -4,7 +4,14 @@
  * CSS styles for the Room interfaces.
  */
 
-.liveViewOverlay {
+.sceneView {
+  position: relative;
+  width: 350px;
+  height: 200px;
+}
+
+.sceneView .LiveOverlay {
   position: absolute;
-  /* unfortunately instantiators have to add the correct top and left values */
+  top: 180px;
+  left: 112px;
 }

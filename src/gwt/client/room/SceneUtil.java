@@ -52,12 +52,14 @@ public class SceneUtil
 
         } else {
             FlowPanel panel = new FlowPanel();
+            panel.addStyleName("sceneView");
             panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE, onClick));
             Image overlay = MsoyUI.createActionImage("/images/landing/click_overlay.png", onClick);
-            overlay.addStyleName("liveViewOverlay");
+            overlay.addStyleName("LiveOverlay");
             panel.add(overlay);
             view = panel;
         }
+
         container.setWidget(view);
 
         return container;
