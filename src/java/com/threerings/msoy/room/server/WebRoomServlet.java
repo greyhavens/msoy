@@ -91,15 +91,12 @@ public class WebRoomServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
         MemberRecord reqrec = getAuthedUser();
-        List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(memberId);
         MemberRoomsResult data = new MemberRoomsResult();
         data.owner = mrec.getName();
-        Iterable<SceneRecord> riter;
+        Iterable<SceneRecord> riter = _sceneRepo.getOwnedScenes(memberId);
         // hide locked rooms from other members (even from friends)
         if (reqrec == null || reqrec.memberId != memberId) {
-            riter = Iterables.filter(rooms, IS_PUBLIC);
-        } else {
-            riter = rooms;
+            riter = Iterables.filter(riter, IS_PUBLIC);
         }
         data.rooms = Lists.newArrayList(Iterables.transform(riter, TO_ROOM_INFO));
         return data;
@@ -115,8 +112,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         // load up all scenes owned by this group
         List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(
             MsoySceneModel.OWNER_TYPE_GROUP, groupId);
-        result.groupRooms = Lists.newArrayList(
-            Iterables.transform(rooms, TO_ROOM_INFO));
+        result.groupRooms = Lists.newArrayList(Iterables.transform(rooms, TO_ROOM_INFO));
 
         // load up all scenes owned by this member, filtering out their home
         Predicate<RoomInfo> notHome = new Predicate<RoomInfo>() {
