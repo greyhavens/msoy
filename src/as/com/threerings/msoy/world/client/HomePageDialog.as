@@ -5,9 +5,12 @@ package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.events.MouseEvent;
+import flash.filters.ColorMatrixFilter;
 
 import mx.core.UIComponent;
 import mx.core.Container;
+import mx.containers.Tile;
 import mx.containers.Canvas;
 import mx.controls.Label;
 
@@ -26,6 +29,8 @@ import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 public class HomePageDialog extends FloatingPanel
 {
+    public static var log :Log = Log.getLog(HomePageDialog);
+
     public function HomePageDialog (ctx :WorldContext)
     {
         super(ctx);
@@ -33,61 +38,47 @@ public class HomePageDialog extends FloatingPanel
         title = Msgs.GENERAL.get("t.home_page");
         showCloseButton = true;
         styleName = "sexyWindow";
-        setStyle("paddingTop", 0);
-        setStyle("paddingBottom", 0);
-        setStyle("paddingLeft", 0);
-        setStyle("paddingRight", 0);
+        setStyle("paddingTop", EDGE_MARGIN);
+        setStyle("paddingBottom", EDGE_MARGIN);
+        setStyle("paddingLeft", EDGE_MARGIN);
+        setStyle("paddingRight", EDGE_MARGIN);
 
-        _grid = new Container();
-        _grid.width = WIDTH;
-        _grid.height = HEIGHT;
-
+        _grid = new Tile();
+        _grid.tileWidth = IMAGE_WIDTH;
+        _grid.tileHeight = IMAGE_HEIGHT + LABEL_HEIGHT;
+        _grid.setStyle("horizontalGap", CELL_SPACING);
+        _grid.setStyle("verticalGap", CELL_SPACING);
         addChild(_grid);
+        gotItems(TypedArray.create(HomePageItem));
 
         open();
     }
 
     public function refresh () :void
     {
-        Log.getLog(this).info("Requesting home page items");
+        log.info("Requesting home page items");
         var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
         svc.getHomePageGridItems(_ctx.getClient(), new ResultAdapter(failedToGetItems, gotItems));
     }
 
     protected function failedToGetItems (cause :String) :void
     {
-        Log.getLog(this).warning("Failed to get home page items", "cause", cause);
+        log.warning("Failed to get home page items", "cause", cause);
     }
 
     protected function gotItems (items :TypedArray) :void
     {
-        var ii :int = 0;
-        for each (var item :HomePageItem in items) {
-            setItemAt(ii / COLUMNS, ii % COLUMNS, item);
-            ii++;
-        }
-    }
-
-    protected function setItemAt (row :int, col :int, item :HomePageItem) :void
-    {
-        if (row >= ROWS || col >= COLUMNS) {
-            return;
-        }
-
-        var idx :int = row * COLUMNS + col;
-        if (_items[idx] != null) {
-            _grid.removeChild(_items[idx]);
-            _items[idx] = null;
-        }
-
-        if (item != null) {
-            var disp :UIComponent = createItem(item);
-            if (disp != null) {
-                _items[idx] = disp;
-                disp.x = EDGE_MARGIN + (CELL_WIDTH + CELL_SPACING) * col;
-                disp.y = EDGE_MARGIN + (CELL_HEIGHT + CELL_SPACING) * row;
-                _grid.addChild(disp);
+        _grid.removeAllChildren();
+        var numCells :int = ROWS * COLUMNS;
+        for (var ii :int = 0; ii < numCells; ii++) {
+            var disp :UIComponent = null;
+            if (ii < items.length) {
+                disp = createItem(HomePageItem(items[ii]));
             }
+            if (disp == null) {
+                disp = new UIComponent();
+            }
+            _grid.addChild(disp);
         }
     }
 
@@ -134,6 +125,20 @@ public class HomePageDialog extends FloatingPanel
         cell.width = CELL_WIDTH;
         cell.height = CELL_HEIGHT;
 
+        cell.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+            log.info("Got mouse click", "name", label.text);
+        });
+
+        cell.addEventListener(MouseEvent.ROLL_OVER, function (evt :MouseEvent) :void {
+            label.setStyle("textDecoration", "underline");
+            image.filters = [BRIGHTEN_FILTER];
+        });
+
+        cell.addEventListener(MouseEvent.ROLL_OUT, function (evt :MouseEvent) :void {
+            label.setStyle("textDecoration", "none");
+            image.filters = [];
+        });
+
         return cell;
     }
 
@@ -158,8 +163,7 @@ public class HomePageDialog extends FloatingPanel
         refresh();
     }
 
-    protected var _grid :UIComponent;
-    protected var _items :Array = [];
+    protected var _grid :Tile;
 
     protected static const ROWS :int = 3;
     protected static const COLUMNS :int = 3;
@@ -174,5 +178,11 @@ public class HomePageDialog extends FloatingPanel
         EDGE_MARGIN * 2 + IMAGE_WIDTH * COLUMNS + CELL_SPACING * (COLUMNS - 1);
     protected static const HEIGHT :int =
         EDGE_MARGIN * 2 + (IMAGE_HEIGHT + LABEL_HEIGHT) * ROWS + CELL_SPACING * (ROWS - 1);
+    protected static const BRIGHTEN_DELTA :Number = 40;
+    protected static const BRIGHTEN_FILTER :ColorMatrixFilter = new ColorMatrixFilter([
+        1, 0, 0, 0, BRIGHTEN_DELTA,
+        0, 1, 0, 0, BRIGHTEN_DELTA,
+        0, 0, 1, 0, BRIGHTEN_DELTA,
+        0, 0, 0, 1, 0]);
 }
 }
