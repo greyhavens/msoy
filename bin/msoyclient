@@ -10,14 +10,17 @@
 BINDIR=`dirname $0`
 HOST=`egrep ^server_host $BINDIR/../dist/msoy-server.properties | awk '{print $3}'`
 
-PLAYER="flashplayer-debug"
-if [ "$1" = "-9" ]; then
-    PLAYER="flashplayer-debug-9"
-    shift
-fi
-if [ "$1" = "-nodebug" ]; then
-    PLAYER="flashplayer"
-    shift
+if [ `uname` = "Darwin" ]; then
+    PLAYER='FlashPlayer.app/Contents/MacOS/FlashPlayer'
+else
+    PLAYER="flashplayer-debug"
+    if [ "$1" = "-9" ]; then
+        PLAYER="flashplayer-debug-9"
+        shift
+    elif [ "$1" = "-nodebug" ]; then
+        PLAYER="flashplayer"
+        shift
+    fi
 fi
 
 PARAMETERS=$1
