@@ -68,6 +68,23 @@ public class HomePageItem extends SimpleStreamableObject
     }
 
     /**
+     * Gets the name of this item. The name is sometimes given as null by the server because the
+     * client is supposed to fill it in.
+     */
+    public String getName ()
+    {
+        return _name;
+    }
+
+    /**
+     * Sets the name of this item.
+     */
+    public void setName (String name)
+    {
+        _name = name;
+    }
+
+    /**
      * Gets the data needed to engage in this action.
      */
     public Object getActionData ()
@@ -84,6 +101,7 @@ public class HomePageItem extends SimpleStreamableObject
     }
     
     protected byte _action;
+    protected String _name;
     protected Object _actionData;
     protected MediaDesc _image;    
 }

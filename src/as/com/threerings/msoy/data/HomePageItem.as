@@ -60,6 +60,15 @@ public class HomePageItem
     }
 
     /**
+     * Gets the name of this item. The name is sometimes given as null by the server because the
+     * client is supposed to fill it in.
+     */
+    public function getName () :String
+    {
+        return _name;
+    }
+
+    /**
      * Gets the data needed to engage in this action.
      */
     public function getActionData () :Object
@@ -79,6 +88,7 @@ public class HomePageItem
     public function readObject (ins :ObjectInputStream) :void
     {
         _action = ins.readByte();
+        _name = String(ins.readField(String));
         _actionData = ins.readObject();
         _image = MediaDesc(ins.readObject());
     }
@@ -89,7 +99,14 @@ public class HomePageItem
         throw new Error();
     }
 
+    public function toString () :String
+    {
+        return "HomePageItem (action=" + _action + ", name=" + _name + ", data=" + _actionData +
+            ", image=" + _image + ")";
+    }
+
     protected var _action :int;
+    protected var _name :String;
     protected var _actionData :Object;
     protected var _image :MediaDesc;
 }
