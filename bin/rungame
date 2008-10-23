@@ -31,6 +31,7 @@ fi
 
 CLASS=com.threerings.msoy.game.server.MsoyGameServer
 JAVA_ARGS="-server \
+    -Djava.awt.headless=true \
     -Dhostname=$HOSTNAME \
     -Dresource_dir=$MSOY_HOME/rsrc \
     -Drsrc_cache_dir=/tmp \
