@@ -94,16 +94,14 @@ public class WebRoomServlet extends MsoyServiceServlet
         List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(memberId);
         MemberRoomsResult data = new MemberRoomsResult();
         data.owner = mrec.getName();
+        Iterable<SceneRecord> riter;
+        // hide locked rooms from other members (even from friends)
         if (reqrec == null || reqrec.memberId != memberId) {
-            // hide locked rooms from other members (even from friends)
-            boolean owner = (reqrec != null && reqrec.memberId == memberId);
-            Predicate<SceneRecord> filter = owner ?
-                Predicates.<SceneRecord> alwaysTrue() : IS_PUBLIC;
-            data.rooms = Lists.newArrayList(
-                Iterables.transform(Iterables.filter(rooms, filter), TO_ROOM_INFO));
+            riter = Iterables.filter(rooms, IS_PUBLIC);
         } else {
-            data.rooms = Lists.newArrayList(Iterables.transform(rooms, TO_ROOM_INFO));
+            riter = rooms;
         }
+        data.rooms = Lists.newArrayList(Iterables.transform(riter, TO_ROOM_INFO));
         return data;
     }
 
