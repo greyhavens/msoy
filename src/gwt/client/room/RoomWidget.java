@@ -6,8 +6,10 @@ package client.room;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.Link;
@@ -21,12 +23,16 @@ public class RoomWidget extends FlowPanel
     {
         setStyleName("Room");
 
-        ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
-        add(MediaUtil.createSceneThumbView(room.thumbnail, onClick));
-        add(MsoyUI.createActionLabel(room.name, onClick));
+        Widget thumb = MediaUtil.createSceneThumbView(
+            room.thumbnail, Link.createListener(Pages.WORLD, "s"+room.sceneId));
+        thumb.setTitle(_msgs.rwThumbTip());
+        add(thumb);
+        Widget name = Link.create(room.name, Pages.ROOMS, Args.compose("room", room.sceneId));
+        name.setTitle(_msgs.rwNameTip());
+        add(name);
         add(new Stars(room.rating, true, true, null));
         if (room.population > 0) {
-            add(MsoyUI.createLabel(_msgs.roomPopulation(""+room.population), null));
+            add(MsoyUI.createLabel(_msgs.rwRoomPopulation(""+room.population), null));
         }
     }
 

@@ -348,3 +348,7 @@
 .importSupportList {
   padding: 8px;
 }
+
+.roomsPanel .Room .gwt-Image {
+  margin: 0px; /* undo centering */
+}
