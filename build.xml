@@ -212,7 +212,7 @@
   <property name="msgs1.list" value="shell.Shell,account.Account,adminz.Admin,shop.Shop"/>
   <property name="msgs2.list" value="games.Games,whirleds.Whirleds,stuff.Stuff,editem.Editem"/>
   <property name="msgs3.list" value="item.Item,mail.Mail,msgs.Msgs,people.People,swiftly.Swiftly"/>
-  <property name="msgs4.list" value="room.Room,rooms.Rooms,me.Me,remix.Remix,help.Help"/>
+  <property name="msgs4.list" value="rooms.Rooms,me.Me,remix.Remix,help.Help"/>
   <property name="msgs5.list" value="support.Support,landing.Landing,person.Person"/>
   <property name="msgs6.list" value="shell.Dynamic,shell.Server"/>
   <property name="msgsN.list" value="${msgs1.list},${msgs2.list},${msgs3.list},${msgs4.list}"/>
