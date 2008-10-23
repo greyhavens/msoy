@@ -789,7 +789,8 @@ public class MemberManager
                     memObj.getMemberId(), 3);
                 int curItem = 0;
                 for (InProgressBadge badge : badges) {
-                    items[curItem++] = new HomePageItem(HomePageItem.ACTION_BADGE, badge, null);
+                    items[curItem++] = new HomePageItem(
+                        HomePageItem.ACTION_BADGE, badge, badge.imageMedia());
                 }
                 
                 // The last 6 are determined by the user-specific home page items, depending on
