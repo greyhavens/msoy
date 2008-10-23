@@ -139,8 +139,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
     };
 
-    protected Function<SceneRecord,RoomInfo> TO_ROOM_INFO =
-        new Function<SceneRecord,RoomInfo>() {
+    protected Function<SceneRecord,RoomInfo> TO_ROOM_INFO = new Function<SceneRecord,RoomInfo>() {
         public RoomInfo apply (SceneRecord record) {
             RoomInfo info = record.toRoomInfo();
             PopularPlacesSnapshot.Place card = _memberMan.getPPSnapshot().getScene(record.sceneId);
