@@ -230,7 +230,7 @@ public class BlingPoolDistributor
             _repo.accumulateAndStoreTransaction(
                 game.creatorId, Currency.BLING, amount, TransactionType.GAME_PLAYS,
                 MessageBundle.tcompose("m.game_plays_bling_awarded", amount,
-                    game.itemId, game.description),
+                    game.itemId, game.name),
                 new ItemIdent(Item.GAME, game.itemId));
             // Note: we do not need to post the transaction as a node action, because
             // bling is not part of a user's runtime money.
