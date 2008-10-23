@@ -21,23 +21,18 @@ import client.util.ServiceUtil;
  */
 public class RoomsPage extends Page
 {
+    public static final String ROOM_DETAIL = "room";
+
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        try {
-            String action = args.get(0, "s1");
-            if (action.equals("room")) {
-                setContent(new RoomDetailPanel(args.get(1, 0)));
+        String action = args.get(0, "");
 
-            } else if (CShell.isGuest()) {
-                setContent(MsoyUI.createLabel(_msgs.logonForHome(), "infoLabel"));
+        if (ROOM_DETAIL.equals(action)) {
+            setContent(new RoomDetailPanel(args.get(1, 0)));
 
-            } else {
-                setContent(MsoyUI.createLabel(_msgs.unknownLocation(), "infoLabel"));
-            }
-
-        } catch (NumberFormatException e) {
-            MsoyUI.error(_msgs.unknownLocation());
+        } else {
+            setContent(new RoomsPanel());
         }
     }
 

@@ -1,6 +1,5 @@
 <module>
   <inherits name="com.google.gwt.xml.XML"/>
-  <inherits name="page"/>
   <inherits name="room"/>
 
   <source path="com/threerings/msoy/comment/gwt"/>

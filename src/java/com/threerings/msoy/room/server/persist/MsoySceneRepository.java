@@ -15,7 +15,11 @@ import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.Limit;
+import com.samskivert.jdbc.depot.clause.OrderBy;
+import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic;
 
@@ -233,6 +237,24 @@ public class MsoySceneRepository extends DepotRepository
     public List<SceneRecord> loadScenes (Set<Integer> sceneIds)
     {
         return loadAll(SceneRecord.class, sceneIds);
+    }
+
+    public List<SceneRecord> loadScenes (int offset, int rows)
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Limit(offset, rows));
+
+        List<SQLExpression> exprs = Lists.newArrayList();
+        List<OrderBy.Order> orders = Lists.newArrayList();
+
+        // TODO: Just sort by rating for now
+        exprs.add(SceneRecord.RATING_C);
+        orders.add(OrderBy.Order.DESC);
+
+        clauses.add(new OrderBy(exprs.toArray(new SQLExpression[exprs.size()]),
+                                orders.toArray(new OrderBy.Order[orders.size()])));
+
+        return findAll(SceneRecord.class, clauses);
     }
 
     /**

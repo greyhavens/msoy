@@ -127,6 +127,20 @@ public class WebRoomServlet extends MsoyServiceServlet
         return result;
     }
 
+    // from interface WebRoomService
+    public OverviewResult loadOverview ()
+        throws ServiceException
+    {
+        OverviewResult overview = new OverviewResult();
+
+        Iterable<SceneRecord> active = _sceneRepo.loadScenes(0, 20),
+                              cool = _sceneRepo.loadScenes(0, 20);
+        overview.activeRooms = Lists.newArrayList(Iterables.transform(active, TO_ROOM_INFO));
+        overview.coolRooms = Lists.newArrayList(Iterables.transform(cool, TO_ROOM_INFO));
+
+        return overview;
+    }
+
     protected static final Predicate<SceneRecord> IS_PUBLIC = new Predicate<SceneRecord>() {
         public boolean apply (SceneRecord room) {
             return room.accessControl == MsoySceneModel.ACCESS_EVERYONE;

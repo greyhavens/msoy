@@ -45,6 +45,16 @@ public interface WebRoomService extends RemoteService
         public MemberName owner;
     }
 
+    /** Delivers the respose to {@link #loadOverview}. */
+    public static class OverviewResult
+        implements IsSerializable
+    {
+        /** A sample of the most populated rooms. */
+        public List<RoomInfo> activeRooms;
+
+        /** A sample of the newest-hottest rooms. */
+        public List<RoomInfo> coolRooms;
+    }
     /**
      * Loads information on a particular room.
      */
@@ -67,5 +77,8 @@ public interface WebRoomService extends RemoteService
      * Request to rate a room.
      */
     RatingResult rateRoom (int sceneId, byte rating)
+        throws ServiceException;
+
+    OverviewResult loadOverview ()
         throws ServiceException;
 }

@@ -31,4 +31,9 @@ public interface WebRoomServiceAsync
      * The asynchronous version of {@link WebRoomService#rateRoom}
      */
     void rateRoom (int sceneId, byte rating, AsyncCallback<RatingResult> callback);
+
+    /**
+     * The asynchronous version of {@link WebRoomService#loadOverview}
+     */
+    void loadOverview (AsyncCallback<WebRoomService.OverviewResult> callback);
 }
