@@ -13,6 +13,9 @@ public class MsoyTokenRing extends TokenRing
     /** Indicates that the user has support privileges. */
     public static const SUPPORT :int = (1 << 1);
 
+    /** Indicates that the user has maintainer privileges. */
+    public static const MAINTAINER :int = (1 << 2);
+
     /**
      * Constructs a token ring with the supplied set of tokens.
      */
@@ -22,12 +25,25 @@ public class MsoyTokenRing extends TokenRing
     }
 
     /**
-     * Convenience function for checking whether this ring holds the {@link
-     * #SUPPORT} token OR a the ADMIN token.
+     * Convenience function for checking whether this ring has support privileges.
      */
     public function isSupport () :Boolean
     {
-        return holdsAnyToken(SUPPORT | ADMIN);
+        return holdsAnyToken(SUPPORT | ADMIN | MAINTAINER);
+    }
+
+    /**
+     * Convenience function for checking whether this ring confers maintainer privileges.
+     */
+    public function isMaintainer () :Boolean
+    {
+        return holdsToken(MAINTAINER);
+    }
+
+    // from TokenRing
+    override public function isAdmin () :Boolean
+    {
+        return holdsAnyToken(ADMIN | MAINTAINER);
     }
 }
 }

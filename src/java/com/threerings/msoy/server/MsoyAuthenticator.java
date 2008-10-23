@@ -477,13 +477,16 @@ public class MsoyAuthenticator extends Authenticator
         validateAccount(account, member.memberId);
         rdata.warning = account.warning;
 
-        // replace the tokens provided by the Domain with tokens derived from their member
-        // record (a newly created record will have its bits set from the Domain values)
+        // replace the tokens provided by the Domain with tokens derived from their member record
+        // (a newly created record will have its bits set from the Domain values)
         int tokens = 0;
+        if (member.isRoot() || member.isSet(MemberRecord.Flag.MAINTAINER)) {
+            tokens |= MsoyTokenRing.MAINTAINER;
+        }
         if (member.isSet(MemberRecord.Flag.ADMIN)) {
             tokens |= MsoyTokenRing.ADMIN;
-            tokens |= MsoyTokenRing.SUPPORT;
-        } else if (member.isSet(MemberRecord.Flag.SUPPORT)) {
+        }
+        if (member.isSet(MemberRecord.Flag.SUPPORT)) {
             tokens |= MsoyTokenRing.SUPPORT;
         }
         account.tokens = new MsoyTokenRing(tokens);
