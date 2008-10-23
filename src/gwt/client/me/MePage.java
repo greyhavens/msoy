@@ -41,7 +41,7 @@ public class MePage extends Page
             setContent(_msgs.transactionsTitle(), new TransactionsPanel(report, memberId));
 
         } else if (action.equals(DEVIANT_CONTEST_IFRAME)) {
-            setContent(_msgs.titleDAContest(), new DAContestIframePanel());
+            setContent(_msgs.titleDAContest(), new DAContestPanel());
 
         } else if (!CShell.isGuest()) {
             setContent(new MyWhirled());

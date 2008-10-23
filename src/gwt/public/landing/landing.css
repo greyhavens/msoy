@@ -465,10 +465,9 @@
 -------------------------------------*/
 
 /* Spans the entire width of the page */
-.daContestPanel {
+.daContestLandingPanel {
   background: #000000 url(/images/landing/dacontest_bg.png) repeat-y top center;
   width: 100%;
-  min-height: 100%;
   position: absolute;
   top: 0;
   left: 0;
@@ -476,94 +475,95 @@
   font-size: 13px;
 }
 
-.daContestPanel .Content {
+.daContestLandingPanel .Content {
   background: #000000 url(/images/landing/dacontest_content_bg.png) repeat-x top center;
   width: 879px;
   margin: auto;
   min-height: 100%;
 }
 
-.daContestPanel .HowToEnter {
+.daContestLandingPanel .Header {
+  margin-bottom: 10px;
+}
+
+.daContestLandingPanel .HowToEnter {
   background: url(/images/landing/dacontest_howtoenter.png) no-repeat;
   height: 406px;
   width: 646px;
-  margin-top: 10px;
+  margin-left: 7px;
 }
 
-.daContestPanel .HowToEnter .longThickOrangeButton,
-.daContestPanel .Rules .longThickOrangeButton {
+.daContestLandingPanel .HowToEnter .longThickOrangeButton,
+.daContestLandingPanel .Rules .longThickOrangeButton {
   font-size: 20px;
   padding-top: 10px;
   height: 34px;
 }
 
-.daContestPanel .Rooms {
+.daContestLandingPanel .Rooms {
   width: 203px;
   float: right;
 }
 
-.daContestPanel .Rooms .RoomsList {
+.daContestLandingPanel .Rooms .RoomsList {
   background: url(/images/landing/dacontest_rooms_middle.png) repeat-y;
   height: 1514px;
   text-align: center;
 }
 
-.daContestPanel .Rooms .RoomName {
+.daContestLandingPanel .Rooms .RoomName {
   color: #FFFFFF;
   text-decoration: none;
 }
 
-.daContestPanel .Rooms .RoomImage {
+.daContestLandingPanel .Rooms .RoomImage {
   margin: auto;
   padding: 20px 0 5px 0;
 }
 
-.daContestPanel .Step1,
-.daContestPanel .Step2,
-.daContestPanel .Step3 {
+.daContestLandingPanel .Step1,
+.daContestLandingPanel .Step2,
+.daContestLandingPanel .Step3 {
   width: 649px;
 }
 
-.daContestPanel .Step1 {
+.daContestLandingPanel .Step1 {
   background: url(/images/landing/dacontest_step_1.png) no-repeat;
   height: 340px;
 }
 
-.daContestPanel .Step2 {
+.daContestLandingPanel .Step2 {
   background: url(/images/landing/dacontest_step_2.png) no-repeat;
   height: 313px;
 }
 
-.daContestPanel .Step3 {
+.daContestLandingPanel .Step3 {
   background: url(/images/landing/dacontest_step_3.png) no-repeat;
   height: 515px;
 }
 
-.daContestPanel .Rules {
-  background: url(/images/landing/dacontest_rules_bg.png) no-repeat;
+.daContestLandingPanel .Rules {
+  background: url(/images/landing/dacontest_rules_bg_landing.png) no-repeat;
   width: 859px;
   height: 339px;
   margin: 10px 0 20px 10px;
   color: #656565;
 }
 
-.daContestPanel .Rules a {
+.daContestLandingPanel .Rules a {
   color: #27a1d9;
   font-weight: bold;
 }
 
-.daContestPanel .Rules ul {
-  margin: 0;
-}
-
-.daContestPanel .Rules li {
-  list-style-image: url(/images/landing/dacontest_rules_star.png);
+.daContestLandingPanel .Rules .List p {
+  background: url(/images/landing/dacontest_rules_star.png) center left no-repeat;
   width: 320px;
   margin: 0 0 15px 15px;
   line-height: 18px;
-  padding-left: 10px;
+  padding-left: 30px;
+  min-height: 17px
 }
 
-.daContestPanel .Rules .Judging {
+.daContestLandingPanel .Rules .Judging {
   width: 340px;
 }

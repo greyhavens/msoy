@@ -12,8 +12,10 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -23,16 +25,16 @@ import client.util.Link;
  * LandingMessages.properties. This contest will be live for three weeks starting 10/24/2008, then
  * permanently taken down.
  */
-public class DAContestPanel extends SimplePanel
+public class DAContestLandingPanel extends SimplePanel
 {
-    public DAContestPanel ()
+    public DAContestLandingPanel ()
     {
-        setStyleName("daContestPanel");
+        setStyleName("daContestLandingPanel");
         AbsolutePanel content = MsoyUI.createAbsolutePanel("Content");
         setWidget(content);
 
         // design your whirled header
-        content.add(new Image("/images/landing/dacontest_header.png"));
+        content.add(MsoyUI.createImage("/images/landing/dacontest_header_landing.png", "Header"));
 
         // rooms list floats over on the right
         FlowPanel rooms = MsoyUI.createFlowPanel("Rooms");
@@ -41,9 +43,9 @@ public class DAContestPanel extends SimplePanel
         FlowPanel roomsList = MsoyUI.createFlowPanel("RoomsList");
         rooms.add(roomsList);
         for (int ii = 0; ii < COOL_ROOM_IDS.length; ii++) {
-            int sceneId = COOL_ROOM_IDS[ii];
+            final int sceneId = COOL_ROOM_IDS[ii];
             String roomName = COOL_ROOM_NAMES[ii];
-            String roomImageURL = "/images/landing/dacontest_room_" + sceneId + ".png";
+            String roomImageURL = "/images/landing/dacontest_room_" + sceneId + ".jpg";
             ClickListener onClick = Link.createListener(Pages.WORLD, "s" + sceneId);
             Image roomImage = MsoyUI.createActionImage(roomImageURL, roomName, onClick);
             roomImage.addStyleName("RoomImage");
@@ -55,13 +57,20 @@ public class DAContestPanel extends SimplePanel
         // how to enter and step panels are large images that include text
         AbsolutePanel howToEnter = MsoyUI.createAbsolutePanel("HowToEnter");
         content.add(howToEnter);
-        howToEnter.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Join Whirled!",
-            Link.createListener(Pages.ACCOUNT, "create")), 455, 345);
+        if (CShell.isGuest()) {
+            howToEnter.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Join Whirled!",
+                Link.createListener(Pages.ACCOUNT, "create")), 455, 345);
+        } else {
+            howToEnter.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Visit Home!",
+                Link.createListener(Pages.WORLD, Args.compose("m", CShell.getMemberId()))), 455,
+                345);
+        }
 
         AbsolutePanel step1 = MsoyUI.createAbsolutePanel("Step1");
         content.add(step1);
         step1.add(createInvisiLink(Link.createListener(Pages.SHOP, "3"), 50, 20), 560, 145);
-        step1.add(createInvisiLink("http://wiki.whirled.com/", 90, 20), 490, 160);
+        step1.add(createInvisiLink("http://wiki.whirled.com/Portal:Creators", 90, 20), 490, 160);
+        step1.add(createInvisiLink("http://wiki.whirled.com/Edit_your_room", 90, 20), 130, 300);
 
         AbsolutePanel step2 = MsoyUI.createAbsolutePanel("Step2");
         content.add(step2);
@@ -75,10 +84,16 @@ public class DAContestPanel extends SimplePanel
         // Rules are in text
         AbsolutePanel rules = MsoyUI.createAbsolutePanel("Rules");
         content.add(rules);
-        rules.add(MsoyUI.createHTML(_msgs.dacontestRules(), null), 70, 70);
+        rules.add(MsoyUI.createHTML(_msgs.dacontestRules(), "List"), 20, 70);
         rules.add(MsoyUI.createHTML(_msgs.dacontestJudging(), "Judging"), 450, 80);
-        rules.add(MsoyUI.createActionImage("/images/landing/dacontest_rules_join.png",
-            Link.createListener(Pages.ACCOUNT, "create")), 540, 200);
+        if (CShell.isGuest()) {
+            rules.add(MsoyUI.createActionImage("/images/landing/dacontest_rules_join.png",
+                Link.createListener(Pages.ACCOUNT, "create")), 540, 200);
+        } else {
+            rules.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Visit Home!",
+                Link.createListener(
+                Pages.WORLD, Args.compose("m", CShell.getMemberId()))), 540, 220);
+        }
 
         // tools icon sits over everything
         content.add(new Image("/images/landing/dacontest_tools.png"), 130, 110);
@@ -110,10 +125,11 @@ public class DAContestPanel extends SimplePanel
     }
 
     /** Scenes to display under "check out these cool rooms!"; images are indexed by id */
-    protected static final int[] COOL_ROOM_IDS = { 1, 2, 3, 1, 2, 3, 1, 2, 3, 1 };
-    protected static final String[] COOL_ROOM_NAMES = { "OOO Tentacles", "Club Bella",
-        "Corpse Craft", "OOO Tentacles", "Club Bella", "Corpse Craft", "OOO Tentacles",
-        "Club Bella", "Corpse Craft", "OOO Tentacles" };
+    protected static final int[] COOL_ROOM_IDS = { 340, 28374, 81177, 57209, 3399, 249, 57254,
+        4044, 71043, 2147 };
+    protected static final String[] COOL_ROOM_NAMES = { "Club Bella", "Reichi's Hallway",
+        "Sadiekate's Haunted", "Tropicalia", "Pookah Fan Club", "Whirled Arcade", "Escape",
+        "La Forêt Carr", "Falling to Pieces", "Space Bar" };
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
 }

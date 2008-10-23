@@ -10,8 +10,10 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -20,25 +22,32 @@ import client.util.Link;
  * from within an iframe by a (probably) registered user. Images stored under /images/landing/ and
  * some are shared with client.landing.DAContestPanel.
  */
-public class DAContestIframePanel extends AbsolutePanel
+public class DAContestPanel extends AbsolutePanel
 {
-    public DAContestIframePanel ()
+    public DAContestPanel ()
     {
-        setStyleName("daContestIframePanel");
+        setStyleName("daContestPanel");
 
         // design your whirled header
-        add(new Image("/images/landing/dacontest_header_iframe.png"));
+        add(new Image("/images/landing/dacontest_header.jpg"));
 
         // how to enter and step panels are large images that include text
         AbsolutePanel howToEnter = MsoyUI.createAbsolutePanel("HowToEnter");
         add(howToEnter);
-        howToEnter.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Join Whirled!",
-            Link.createListener(Pages.ACCOUNT, "create")), 455, 345);
+        if (CShell.isGuest()) {
+            howToEnter.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Join Whirled!",
+                Link.createListener(Pages.ACCOUNT, "create")), 455, 345);
+        } else {
+            howToEnter.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Visit Home!",
+                Link.createListener(Pages.WORLD, Args.compose("m", CShell.getMemberId()))), 455,
+                345);
+        }
 
         AbsolutePanel step1 = MsoyUI.createAbsolutePanel("Step1");
         add(step1);
         step1.add(createInvisiLink(Link.createListener(Pages.SHOP, "3"), 50, 20), 560, 145);
-        step1.add(createInvisiLink("http://wiki.whirled.com/", 90, 20), 490, 160);
+        step1.add(createInvisiLink("http://wiki.whirled.com/Portal:Creators", 90, 20), 490, 160);
+        step1.add(createInvisiLink("http://wiki.whirled.com/Edit_your_room", 90, 20), 130, 300);
 
         AbsolutePanel step2 = MsoyUI.createAbsolutePanel("Step2");
         add(step2);
@@ -52,8 +61,16 @@ public class DAContestIframePanel extends AbsolutePanel
         // Rules are in text
         AbsolutePanel rules = MsoyUI.createAbsolutePanel("Rules");
         add(rules);
-        rules.add(MsoyUI.createHTML(_msgs.dacontestRules(), null), 35, 70);
+        rules.add(MsoyUI.createHTML(_msgs.dacontestRules(), "List"), 35, 70);
         rules.add(MsoyUI.createHTML(_msgs.dacontestJudging(), "Judging"), 355, 75);
+        if (CShell.isGuest()) {
+            rules.add(MsoyUI.createActionImage("/images/landing/dacontest_rules_join.png",
+                Link.createListener(Pages.ACCOUNT, "create")), 400, 200);
+        } else {
+            rules.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Visit Home!",
+                Link.createListener(
+                Pages.WORLD, Args.compose("m", CShell.getMemberId()))), 430, 220);
+        }
 
         // tools icon sits over everything
         add(new Image("/images/landing/dacontest_tools.png"), 150, 110);
