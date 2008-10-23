@@ -21,6 +21,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
@@ -72,6 +73,7 @@ public class LandingServlet extends MsoyServiceServlet
                 popWhirleds.add(group.toGroupCard());
             }
         }
+        _groupLogic.resolveSnapshots(popWhirleds);
         data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
 
         // determine the "featured" games
@@ -99,6 +101,7 @@ public class LandingServlet extends MsoyServiceServlet
     @Inject protected ItemManager _itemMan;
     @Inject protected GameLogic _gameLogic;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
 
