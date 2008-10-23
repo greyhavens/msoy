@@ -1,0 +1,15 @@
+<module>
+  <inherits name="com.google.gwt.xml.XML"/>
+  <inherits name="page"/>
+  <inherits name="room"/>
+
+  <source path="com/threerings/msoy/comment/gwt"/>
+
+  <source path="client/rooms"/>
+  <source path="client/comment"/>
+
+  <public path="public/rooms"/>
+  <stylesheet src="rooms.css"/>
+
+  <entry-point class="client.rooms.RoomsPage"/>
+</module>

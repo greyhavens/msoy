@@ -1,5 +1,5 @@
 //
-// $Id: MyRoomsPanel.java 10984 2008-08-19 19:03:33Z mdb $
+// $Id$
 
 package client.people;
 
@@ -12,11 +12,11 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.web.gwt.Pages;
 
-import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 
+import client.room.RoomWidget;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.Stars;
@@ -58,19 +58,6 @@ public class RoomsPanel extends VerticalPanel
         }
         add(new TongueBox(isOwner ? _msgs.roomsMineTitle()
             : _msgs.roomsTitle(result.owner.toString()), grid));
-    }
-
-    protected static class RoomWidget extends SmartTable
-    {
-        public RoomWidget (final RoomInfo room)
-        {
-            super("Room", 0, 2);
-            ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
-            setWidget(0, 0, MediaUtil.createSceneThumbView(room.thumbnail, onClick));
-            getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-            setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
-            setWidget(2, 0, new Stars(room.rating, true, true, null), 1, "Rating");
-        }
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);

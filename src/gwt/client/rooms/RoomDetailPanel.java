@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.room;
+package client.rooms;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -30,11 +30,11 @@ import client.util.ServiceUtil;
 /**
  * Displays information about a room, allows commenting.
  */
-public class RoomPanel extends SmartTable
+public class RoomDetailPanel extends SmartTable
 {
-    public RoomPanel (int sceneId)
+    public RoomDetailPanel (int sceneId)
     {
-        super("roomPanel", 0, 5);
+        super("roomDetailPanel", 0, 5);
 
         _worldsvc.loadRoomDetail(sceneId, new MsoyCallback<RoomDetail>() {
             public void onSuccess (RoomDetail detail) {
@@ -75,7 +75,7 @@ public class RoomPanel extends SmartTable
         tabs.selectTab(0);
     }
 
-    protected static final RoomMessages _msgs = GWT.create(RoomMessages.class);
+    protected static final RoomsMessages _msgs = GWT.create(RoomsMessages.class);
     protected static final WebRoomServiceAsync _worldsvc = (WebRoomServiceAsync)
         ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 }

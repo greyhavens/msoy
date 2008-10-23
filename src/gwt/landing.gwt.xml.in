@@ -1,5 +1,6 @@
 <module>
   <inherits name="item"/>
+  <inherits name="room"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 

@@ -4,4 +4,6 @@
  * CSS styles for the Room interfaces.
  */
 
-/* TODO */
+.roomDetailPanel {
+  width: 100%;
+}

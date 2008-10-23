@@ -212,14 +212,15 @@
   <property name="msgs1.list" value="shell.Shell,account.Account,adminz.Admin,shop.Shop"/>
   <property name="msgs2.list" value="games.Games,whirleds.Whirleds,stuff.Stuff,editem.Editem"/>
   <property name="msgs3.list" value="item.Item,mail.Mail,msgs.Msgs,people.People,swiftly.Swiftly"/>
-  <property name="msgs4.list" value="room.Room,me.Me,remix.Remix,help.Help,support.Support"/>
-  <property name="msgs5.list" value="landing.Landing,person.Person,shell.Dynamic,shell.Server"/>
+  <property name="msgs4.list" value="room.Room,rooms.Rooms,me.Me,remix.Remix,help.Help"/>
+  <property name="msgs5.list" value="support.Support,landing.Landing,person.Person"/>
+  <property name="msgs6.list" value="shell.Dynamic,shell.Server"/>
   <property name="msgsN.list" value="${msgs1.list},${msgs2.list},${msgs3.list},${msgs4.list}"/>
-  <property name="gmsgs.list" value="${msgsN.list},${msgs5.list}"/>
+  <property name="gmsgs.list" value="${msgsN.list},${msgs5.list},${msgs6.list}"/>
 
   <!-- enumerate our GWT pages -->
   <property name="pages1.list" value="account,adminz,games,help,landing,mail,me,people"/>
-  <property name="pages2.list" value="room,shop,stuff,support,swiftly,whirleds"/>
+  <property name="pages2.list" value="rooms,shop,stuff,support,swiftly,whirleds"/>
   <property name="gpages.list" value="frame,${pages1.list},${pages2.list}"/>
 
   <!-- declare our classpath -->

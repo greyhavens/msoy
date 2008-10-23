@@ -26,6 +26,7 @@ import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
+import client.room.RoomWidget;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.Link;
@@ -109,19 +110,6 @@ public class WhirledRoomsPanel extends VerticalPanel
             col++;
         }
         _roomsGrid.setWidget(row, col, new RoomWidget(room));
-    }
-
-    protected static class RoomWidget extends SmartTable
-    {
-        public RoomWidget (RoomInfo room)
-        {
-            super("Room", 0, 2);
-            ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
-            setWidget(0, 0, MediaUtil.createSceneThumbView(room.thumbnail, onClick));
-            getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-            setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
-            getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
-        }
     }
 
     protected GroupDetail _detail;

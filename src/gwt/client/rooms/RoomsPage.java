@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.room;
+package client.rooms;
 
 import com.google.gwt.core.client.GWT;
 
@@ -19,7 +19,7 @@ import client.util.ServiceUtil;
 /**
  * Handles the MetaSOY main page.
  */
-public class RoomPage extends Page
+public class RoomsPage extends Page
 {
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -27,7 +27,7 @@ public class RoomPage extends Page
         try {
             String action = args.get(0, "s1");
             if (action.equals("room")) {
-                setContent(new RoomPanel(args.get(1, 0)));
+                setContent(new RoomDetailPanel(args.get(1, 0)));
 
             } else if (CShell.isGuest()) {
                 setContent(MsoyUI.createLabel(_msgs.logonForHome(), "infoLabel"));
@@ -44,10 +44,10 @@ public class RoomPage extends Page
     @Override
     public Pages getPageId ()
     {
-        return Pages.ROOM;
+        return Pages.ROOMS;
     }
 
-    protected static final RoomMessages _msgs = GWT.create(RoomMessages.class);
+    protected static final RoomsMessages _msgs = GWT.create(RoomsMessages.class);
     protected static final WebRoomServiceAsync _worldsvc = (WebRoomServiceAsync)
         ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 }
