@@ -39,9 +39,6 @@ public class HomePageDialog extends FloatingPanel
         setStyle("paddingRight", 0);
 
         _grid = new Container();
-        _grid.graphics.beginFill(0x000000);
-        _grid.graphics.drawRect(0, 0, WIDTH, HEIGHT);
-        _grid.graphics.endFill();
         _grid.width = WIDTH;
         _grid.height = HEIGHT;
 
