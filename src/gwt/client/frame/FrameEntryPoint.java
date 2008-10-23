@@ -267,7 +267,7 @@ public class FrameEntryPoint
     {
         WorldClient.didLogon(data.creds);
 
-        if (_page == Pages.LANDING) {
+        if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
             Link.go(getLandingPage(), getLandingArgs());
         } else if (_page != null) {
             setPage(_page); // reloads the current page
