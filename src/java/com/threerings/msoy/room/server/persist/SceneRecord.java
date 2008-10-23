@@ -358,6 +358,9 @@ public class SceneRecord extends PersistentRecord
         RoomDetail detail = new RoomDetail();
         detail.info = toRoomInfo();
         detail.ratingCount = ratingCount;
+        if (canonicalImageHash != null) {
+            detail.snapshot = new MediaDesc(canonicalImageHash, canonicalImageType);
+        }
         return detail;
     }
 

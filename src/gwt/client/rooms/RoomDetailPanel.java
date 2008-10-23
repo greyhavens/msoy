@@ -19,6 +19,7 @@ import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import com.threerings.msoy.web.gwt.RatingResult;
 
 import client.comment.CommentsPanel;
+import client.room.SceneUtil;
 import client.shell.CShell;
 import client.ui.Rating;
 import client.ui.StyledTabPanel;
@@ -60,7 +61,7 @@ public class RoomDetailPanel extends SmartTable
             GroupName name = (GroupName)detail.owner;
             obits.add(Link.groupView(name.toString(), name.getGroupId()));
         }
-        obits.add(MediaUtil.createSceneThumbView(detail.info.thumbnail, null));
+        obits.add(SceneUtil.createSceneView(detail.info.sceneId, detail.snapshot));
         obits.add(new Rating(detail.info.rating, detail.ratingCount, detail.memberRating, true) {
             @Override
             protected void handleRate (byte newRating , MsoyCallback<RatingResult> callback) {

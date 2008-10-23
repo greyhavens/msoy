@@ -7,13 +7,19 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * Contains detailed information on a particular room.
  */
 public class RoomDetail
     implements IsSerializable
 {
+    /** More metadata for this room. */
     public RoomInfo info;
+
+    /** The room's full-size snapshot. */
+    public MediaDesc snapshot;
 
     /** The owner of this room (either a MemberName or a GroupName). */
     public Name owner;
