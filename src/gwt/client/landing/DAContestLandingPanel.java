@@ -125,10 +125,10 @@ public class DAContestLandingPanel extends SimplePanel
     }
 
     /** Scenes to display under "check out these cool rooms!"; images are indexed by id */
-    protected static final int[] COOL_ROOM_IDS = { 340, 28374, 81177, 57209, 3399, 249, 57254,
+    protected static final int[] COOL_ROOM_IDS = { 340, 249, 28374, 81177, 57209, 3399, 57254,
         4044, 71043, 2147 };
-    protected static final String[] COOL_ROOM_NAMES = { "Club Bella", "Reichi's Hallway",
-        "Sadiekate's Haunted", "Tropicalia", "Pookah Fan Club", "Whirled Arcade", "Escape",
+    protected static final String[] COOL_ROOM_NAMES = { "Club Bella", "Whirled Arcade",
+        "Reichi's Hallway", "Sadiekate's Haunted", "Tropicalia", "Pookah Fan Club", "Escape",
         "La Forêt Carr", "Falling to Pieces", "Space Bar" };
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);

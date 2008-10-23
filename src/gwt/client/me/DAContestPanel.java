@@ -73,7 +73,7 @@ public class DAContestPanel extends AbsolutePanel
         }
 
         // tools icon sits over everything
-        add(new Image("/images/landing/dacontest_tools.png"), 150, 110);
+        add(new Image("/images/landing/dacontest_tools.png"), 150, 90);
     }
 
     /**

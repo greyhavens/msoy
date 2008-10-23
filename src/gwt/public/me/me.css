@@ -496,7 +496,7 @@
 }
 
 /* ------------------------------------
-   DEVIANT ART CONTEST LANDING
+   DEVIANT ART CONTEST PAGE
 -------------------------------------*/
 
 /* Iframe version fits inside the 685px wide iframe */
@@ -512,7 +512,7 @@
   background: url(/images/landing/dacontest_howtoenter.png) no-repeat;
   height: 406px;
   width: 646px;
-  margin: 20px auto 0 auto;
+  margin: 0 auto;
 }
 
 .daContestPanel .HowToEnter .longThickOrangeButton,
@@ -568,4 +568,9 @@
 
 .daContestPanel .Rules .Judging {
   width: 300px;
+}
+
+/** Displayed on the Me tab page */
+.myWhirled .DAContestBanner {
+  margin: 10px auto;
 }

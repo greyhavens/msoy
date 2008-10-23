@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
@@ -20,6 +21,7 @@ import client.person.FeedPanel;
 import client.person.PersonMessages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -43,6 +45,13 @@ public class MyWhirled extends VerticalPanel
     protected void init (MyWhirledData data)
     {
         add(MsoyUI.createLabel(_msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
+
+        Image daContestBanner = MsoyUI.createActionImage(
+            "/images/landing/dacontest_me_banner.jpg",
+            Link.createListener(Pages.ME, MePage.DEVIANT_CONTEST_IFRAME));
+        daContestBanner.addStyleName("DAContestBanner");
+        add(daContestBanner);
+
         add(new WhatsNextPanel(data));
         String empty = data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
         FeedPanel feed = new FeedPanel(empty, true, new FeedPanel.FeedLoader() {
