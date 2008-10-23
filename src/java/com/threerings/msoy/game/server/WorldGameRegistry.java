@@ -37,6 +37,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.StatLogic;
@@ -408,9 +409,10 @@ public class WorldGameRegistry
     }
     
     // from interface GameServerProvider
-    public void addExperience (ClientObject caller, int memberId, byte action, String data)
+    public void notifyMemberStartedGame (ClientObject caller, final int memberId, final byte action, 
+        final int gameId)
     {
-        _memberLogic.addExperience(memberId, action, data);
+        MemberNodeActions.addExperience(memberId, action, gameId);
     }
 
     // from interface GameServerProvider

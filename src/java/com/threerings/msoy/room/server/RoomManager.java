@@ -5,6 +5,7 @@ package com.threerings.msoy.room.server;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -59,6 +60,7 @@ import com.threerings.whirled.spot.server.SpotSceneManager;
 
 //import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.data.HomePageItem;
+import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -66,7 +68,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocator;
-import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
@@ -810,12 +812,8 @@ public class RoomManager extends SpotSceneManager
             _eventLog.roomEntered(member.getMemberId(), isWhirled, member.getVisitorId());
             
             // Indicate the user visited the room.
-            _invoker.postUnit(new WriteOnlyUnit("Writing player visited room experience") {
-                @Override public void invokePersist () throws Exception {
-                    _memberLogic.addExperience(member.getMemberId(), HomePageItem.ACTION_ROOM, 
-                        Integer.toString(model.sceneId));
-                }
-            });
+            _memberMan.addExperience(member, new MemberExperience(new Date(), 
+                HomePageItem.ACTION_ROOM, model.sceneId));
         }
     }
 
@@ -1429,5 +1427,5 @@ public class RoomManager extends SpotSceneManager
     @Inject protected MemberLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected LocationManager _locmgr;
-    @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberManager _memberMan;
 }

@@ -23,6 +23,7 @@ import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.msoy.data.LurkerName;
+import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -187,6 +188,10 @@ public class MsoyClientResolver extends CrowdClientResolver
         // for players, resolve this here from the database.
         // guests will get resolution later on, in MsoyClient.sessionWillStart()
         memobj.visitorInfo = new VisitorInfo(member.visitorId, true);
+        
+        // Load up the member's experiences
+        memobj.experiences = new DSet<MemberExperience>(
+                _memberLogic.getExperiences(member.memberId));
     }
 
     @Override // from ClientResolver
@@ -226,5 +231,6 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected StatRepository _statRepo;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MemberLogic _memberLogic;
     @Inject protected BadgeManager _badgeMan;
 }

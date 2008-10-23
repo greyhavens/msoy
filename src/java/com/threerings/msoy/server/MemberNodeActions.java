@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Date;
+
 import com.google.inject.Inject;
 
 import com.threerings.presents.peer.data.NodeObject;
@@ -11,6 +13,7 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
+import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -154,6 +157,11 @@ public class MemberNodeActions
     public static <T extends Stat> void statUpdated (int memberId, StatModifier<T> modifier)
     {
         _peerMan.invokeNodeAction(new StatUpdated<T>(memberId, modifier));
+    }
+    
+    public static void addExperience (int memberId, byte action, Object data)
+    {
+        _peerMan.invokeNodeAction(new AddExperienceAction(memberId, action, data));
     }
 
     protected static class InfoChanged extends MemberNodeAction
@@ -430,6 +438,28 @@ public class MemberNodeActions
 
         /** Used to look up member objects. */
         @Inject protected transient MemberLocator _locator;
+    }
+    
+    protected static class AddExperienceAction extends MemberNodeAction
+    {
+        public AddExperienceAction (int memberId, byte action, Object data)
+        {
+            super(memberId);
+            _action = action;
+            _data = data;
+        }
+        
+        public AddExperienceAction () { }
+        
+        protected void execute (MemberObject memObj)
+        {
+            _memberMan.addExperience(memObj, new MemberExperience(new Date(), _action, _data));
+        }
+
+        @Inject protected transient MemberManager _memberMan;
+        
+        protected /* final */ byte _action;
+        protected /* final */ Object _data;
     }
 
     protected static MsoyPeerManager _peerMan;

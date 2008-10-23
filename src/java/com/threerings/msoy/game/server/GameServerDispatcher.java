@@ -40,12 +40,6 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
         throws InvocationException
     {
         switch (methodId) {
-        case GameServerMarshaller.ADD_EXPERIENCE:
-            ((GameServerProvider)provider).addExperience(
-                source, ((Integer)args[0]).intValue(), ((Byte)args[1]).byteValue(), (String)args[2]
-            );
-            return;
-
         case GameServerMarshaller.AWARD_COINS:
             ((GameServerProvider)provider).awardCoins(
                 source, ((Integer)args[0]).intValue(), (UserAction)args[1], ((Integer)args[2]).intValue()
@@ -67,6 +61,12 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
         case GameServerMarshaller.LEAVE_AVRGAME:
             ((GameServerProvider)provider).leaveAVRGame(
                 source, ((Integer)args[0]).intValue()
+            );
+            return;
+
+        case GameServerMarshaller.NOTIFY_MEMBER_STARTED_GAME:
+            ((GameServerProvider)provider).notifyMemberStartedGame(
+                source, ((Integer)args[0]).intValue(), ((Byte)args[1]).byteValue(), ((Integer)args[2]).intValue()
             );
             return;
 

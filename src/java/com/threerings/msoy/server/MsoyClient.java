@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.jdbc.WriteOnlyUnit;
@@ -26,6 +27,7 @@ import com.threerings.whirled.server.WhirledClient;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.data.LurkerName;
+import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -173,6 +175,7 @@ public class MsoyClient extends WhirledClient
             final StatSet stats = _memobj.stats;
             log.info("Session ended [id=" + memberId + ", amins=" + activeMins + "].");
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
+            final Iterable<MemberExperience> experiences = _memobj.experiences;
             _invoker.postUnit(new WriteOnlyUnit("sessionDidEnd:" + _memobj.memberName) {
                 @Override public void invokePersist () throws Exception {
                     // write out any modified stats
@@ -180,6 +183,8 @@ public class MsoyClient extends WhirledClient
                     // increment their session and minutes online counters
                     _memberRepo.noteSessionEnded(
                         memberId, activeMins, _runtime.server.humanityReassessment);
+                    // save their experiences
+                    _memberLogic.saveExperiences(memberId, Lists.newArrayList(experiences));
                 }
             });
         }
@@ -250,4 +255,5 @@ public class MsoyClient extends WhirledClient
     @Inject protected MemberLocator _locator;
     @Inject protected StatRepository _statRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MemberLogic _memberLogic;
 }

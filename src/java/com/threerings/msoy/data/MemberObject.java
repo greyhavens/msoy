@@ -118,6 +118,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>onTour</code> field. */
     public static final String ON_TOUR = "onTour";
+
+    /** The field name of the <code>experiences</code> field. */
+    public static final String EXPERIENCES = "experiences";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.
@@ -218,6 +221,9 @@ public class MemberObject extends MsoyBodyObject
     /** Whether this player is on the "whirled tour". We could also check whether touredRooms
      * is null, but that's not sent to the client. */
     public boolean onTour;
+    
+    /** List of experiences this member has had recently. */
+    public DSet<MemberExperience> experiences = new DSet<MemberExperience>();
 
     /** The number of non-idle seconds that have elapsed in this member's session. When the member
      * is forwarded between servers, this value is incremented by the time they spent on the server
@@ -1111,6 +1117,53 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             ON_TOUR, Boolean.valueOf(value), Boolean.valueOf(ovalue));
         this.onTour = value;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>experiences</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToExperiences (MemberExperience elem)
+    {
+        requestEntryAdd(EXPERIENCES, experiences, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>experiences</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromExperiences (Comparable<?> key)
+    {
+        requestEntryRemove(EXPERIENCES, experiences, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>experiences</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateExperiences (MemberExperience elem)
+    {
+        requestEntryUpdate(EXPERIENCES, experiences, elem);
+    }
+
+    /**
+     * Requests that the <code>experiences</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setExperiences (DSet<MemberExperience> value)
+    {
+        requestAttributeChange(EXPERIENCES, value, this.experiences);
+        DSet<MemberExperience> clone = (value == null) ? null : value.typedClone();
+        this.experiences = clone;
     }
     // AUTO-GENERATED: METHODS END
 

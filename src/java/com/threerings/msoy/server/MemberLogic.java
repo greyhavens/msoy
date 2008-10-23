@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -32,6 +28,7 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.HomePageItem;
+import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
@@ -53,8 +50,6 @@ import static com.threerings.msoy.Log.log;
 @BlockingThread @Singleton
 public class MemberLogic
 {
-    public static final int MAX_EXPERIENCES = 20;
-    
     /**
      * Looks up the home scene id of the specified entity (member or group).
      *
@@ -188,136 +183,55 @@ public class MemberLogic
     }
     
     /**
-     * Adds a member experience, removing old ones if necessary.
-     * 
-     * @param memberId ID of the member who had the experience.
-     * @param action Action number that occurred.  See {@link HomePageItem}.
-     * @param data Associated data for the action.
+     * Retrieves the last of recent experiences for this member.
      */
-    public void addExperience (int memberId, byte action, String data)
+    public List<MemberExperience> getExperiences (int memberId)
     {
-        // This will be a check-and-set operation subject to race conditions.  In the worst case
-        // scenario, the member will have extra experiences stored beyond the MAX_EXPERIENCES
-        // defined.  This is acceptable though, since it will not affect the calculation 
-        // significantly.
-        List<MemberExperienceRecord> experiences = _memberRepo.getExperiences(memberId);
-        if (experiences.size() >= MAX_EXPERIENCES) {
-            _memberRepo.deleteExperience(experiences.get(0));
-        }
-        
-        _memberRepo.addExperience(new MemberExperienceRecord(memberId, action, data));
-    }
-    
-    /**
-     * Retrieves a list of experiences to be displayed on the home page.  Each experience the
-     * member has had recently will be given a weighted score to determine the order of the
-     * experience.  Only the number of experiences requested will be returned as home page
-     * items.  If there are not enough experiences, or the experiences have a low score
-     * (too old, etc.), then a set of experiences designed to show the player around Whirled will
-     * be returned.
-     * 
-     * @param memberId ID of the member to retrieve home page items for.
-     * @param count Number of home page items to retrieve.
-     * @return List of the home page items.  This will always have precisely the number of items
-     * requested.
-     */
-    public List<HomePageItem> getHomePageItems (int memberId, int count)
-    {
-        List<ScoredExperience> scores = new ArrayList<ScoredExperience>();
-        for (MemberExperienceRecord experience : _memberRepo.getExperiences(memberId)) {
-            ScoredExperience newExp = new ScoredExperience(experience);
-            
-            // Has this member experienced this more than once?  If so, combine.
-            for (Iterator<ScoredExperience> itor = scores.iterator(); itor.hasNext(); ) {
-                ScoredExperience thisExp = itor.next();
-                if (thisExp.isSameExperience(newExp)) {
-                    newExp = new ScoredExperience(newExp, thisExp);
-                    itor.remove();
+        return Lists.transform(_memberRepo.getExperiences(memberId), 
+                new Function<MemberExperienceRecord, MemberExperience>() {
+            public MemberExperience apply (MemberExperienceRecord expRecord) {
+                // Depending on the action type, convert data to the correct object.
+                final Object actionData;
+                switch (expRecord.action) {
+                case HomePageItem.ACTION_ROOM:
+                case HomePageItem.ACTION_GAME:
+                    actionData = Integer.parseInt(expRecord.data);
                     break;
+                default:
+                    actionData = null;
                 }
-            }
-            
-            scores.add(newExp);
-        }
-        
-        // TODO: Add default experiences.
-        for (int i = scores.size(); i < count; i++) {
-            scores.add(new ScoredExperience());
-        }
-        
-        // Sort by scores (highest score first), limit it to count, and return the list.
-        Collections.sort(scores, new Comparator<ScoredExperience>() {
-            public int compare (ScoredExperience exp1, ScoredExperience exp2) {
-                return (exp1.score > exp2.score) ? -1 : ((exp1.score < exp2.score) ? 1 : 0);
-            }
-        });
-        while (scores.size() > count) {
-            scores.remove(scores.size() - 1);
-        }
-        return Lists.transform(scores, new Function<ScoredExperience, HomePageItem>() {
-            public HomePageItem apply (ScoredExperience experience) {
-                return experience.item;
+                return new MemberExperience(expRecord.dateOccurred, expRecord.action, actionData);
             }
         });
     }
     
     /**
-     * A member experience that has been scored.
+     * Saves the member's experiences, clearing out any old ones.
      * 
-     * @author Kyle Sampson <kyle@threerings.net>
+     * @param memberId ID of the member whose experiences are being saved.
+     * @param experiences The experiences to save.
      */
-    protected static class ScoredExperience
+    public void saveExperiences (final int memberId, List<MemberExperience> experiences)
     {
-        public final HomePageItem item;
-        public final float score;
-        
-        /**
-         * Creates a scored experience based on the information from the given 
-         * {@link MemberExperienceRecord}.
-         */
-        public ScoredExperience (MemberExperienceRecord experience)
-        {
-            item = experience.getHomePageItem();
-            
-            // The score for a standard record starts at 14 and decrements by 1 for every day
-            // since the experience occurred.  Cap at 0; thus, anything older than 2 weeks has
-            // the same score.
-            float newScore = 14f - 
-                (float)(System.currentTimeMillis() - experience.dateOccurred.getTime()) / 
-                (1000f * 60f * 60f * 24f);
-            score = (newScore < 0) ? 0f : newScore;
-        }
-        
-        /**
-         * Combines two identical (i.e., {@link #isSameExperience(ScoredExperience)} returns true})
-         * scored experiences into one, combining their scores.
-         */
-        public ScoredExperience (ScoredExperience exp1, ScoredExperience exp2)
-        {
-            item = exp1.item;   // exp2.item should be the same.
-            score = exp1.score + exp2.score;    // Both scores positive
-        }
-        
-        /**
-         * Null experience
-         */
-        public ScoredExperience ()
-        {
-            item = new HomePageItem(HomePageItem.ACTION_NONE, null, null);
-            score = 0f;
-        }
-
-        /**
-         * Returns true if the given scored experience represents the same experience as this one.
-         * They may have different scores, but this indicates the user did the same thing twice.
-         */
-        public boolean isSameExperience (ScoredExperience other)
-        {
-            return this.item.getAction() == other.item.getAction() &&
-                this.item.getActionData().equals(other.item.getActionData());
-        }
+        _memberRepo.deleteExperiences(memberId);
+        _memberRepo.saveExperiences(Lists.transform(experiences, 
+                new Function<MemberExperience, MemberExperienceRecord>() {
+            public MemberExperienceRecord apply (MemberExperience experience) {
+                final String actionData;
+                switch (experience.action) {
+                case HomePageItem.ACTION_ROOM:
+                case HomePageItem.ACTION_GAME:
+                    actionData = experience.data.toString();
+                    break;
+                default:
+                    actionData = null;
+                }
+                return new MemberExperienceRecord(memberId, experience.getDateOccurred(), 
+                    experience.action, actionData);
+            }
+        }));
     }
-
+    
     /**
      * Return true if the visitor's attributes match those required by the given a/b test
      */

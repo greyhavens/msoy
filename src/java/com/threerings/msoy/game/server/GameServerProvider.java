@@ -20,11 +20,6 @@ import com.threerings.stats.data.StatModifier;
 public interface GameServerProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link GameServerService#addExperience} request.
-     */
-    void addExperience (ClientObject caller, int arg1, byte arg2, String arg3);
-
-    /**
      * Handles a {@link GameServerService#awardCoins} request.
      */
     void awardCoins (ClientObject caller, int arg1, UserAction arg2, int arg3);
@@ -44,6 +39,11 @@ public interface GameServerProvider extends InvocationProvider
      * Handles a {@link GameServerService#leaveAVRGame} request.
      */
     void leaveAVRGame (ClientObject caller, int arg1);
+
+    /**
+     * Handles a {@link GameServerService#notifyMemberStartedGame} request.
+     */
+    void notifyMemberStartedGame (ClientObject caller, int arg1, byte arg2, int arg3);
 
     /**
      * Handles a {@link GameServerService#reportCoinAward} request.

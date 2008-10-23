@@ -4,8 +4,12 @@
 package com.threerings.msoy.server;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +24,7 @@ import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
@@ -52,6 +57,7 @@ import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.data.HomePageItem;
+import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
@@ -190,6 +196,29 @@ public class MemberManager
         final PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
         if (pmgr != null) {
             pmgr.updateOccupantInfo(user.createOccupantInfo(pmgr.getPlaceObject()));
+        }
+    }
+    
+    public void addExperience (final MemberObject memObj, final MemberExperience newExp)
+    {
+        memObj.startTransaction();
+        try {
+            // If we're at our limit of experiences, remove the oldest.
+            if (memObj.experiences.size() >= MAX_EXPERIENCES) {
+                MemberExperience oldest = null;
+                for (MemberExperience experience : memObj.experiences) {
+                    if (oldest == null || 
+                            experience.getDateOccurred().compareTo(oldest.getDateOccurred()) < 0) {
+                        oldest = experience;
+                    }
+                }
+                memObj.removeFromExperiences(oldest.getKey());
+            }
+            
+            // Add the new experience
+            memObj.addToExperiences(newExp);
+        } finally {
+            memObj.commitTransaction();
         }
     }
 
@@ -795,16 +824,14 @@ public class MemberManager
                 
                 // The last 6 are determined by the user-specific home page items, depending on
                 // where they were last in Whirled.
-                for(HomePageItem item : _memberLogic.getHomePageItems(memObj.getMemberId(), 6)) {
+                for(HomePageItem item : getHomePageItems(memObj, 6)) {
                     items[curItem++] = item;
                 }
                 
                 reportRequestProcessed(items);
             }
         });
-    }
-
-    /**
+    }/**
      * Check if the member's accumulated flow level matches up with their current level, and update
      * their current level if necessary
      */
@@ -874,6 +901,116 @@ public class MemberManager
             }
         }
         return false;
+    }
+    
+    /**
+     * A member experience that has been scored.
+     * 
+     * @author Kyle Sampson <kyle@threerings.net>
+     */
+    protected static class ScoredExperience
+    {
+        public final HomePageItem item;
+        public final float score;
+        
+        /**
+         * Creates a scored experience based on the information from the given 
+         * {@link MemberExperienceRecord}.
+         */
+        public ScoredExperience (MemberExperience experience)
+        {
+            item = experience.getHomePageItem();
+            
+            // The score for a standard record starts at 14 and decrements by 1 for every day
+            // since the experience occurred.  Cap at 0; thus, anything older than 2 weeks has
+            // the same score.
+            float newScore = 14f - 
+                (float)(System.currentTimeMillis() - experience.dateOccurred) / 
+                (1000f * 60f * 60f * 24f);
+            score = (newScore < 0) ? 0f : newScore;
+        }
+        
+        /**
+         * Combines two identical (i.e., {@link #isSameExperience(ScoredExperience)} returns true})
+         * scored experiences into one, combining their scores.
+         */
+        public ScoredExperience (ScoredExperience exp1, ScoredExperience exp2)
+        {
+            item = exp1.item;   // exp2.item should be the same.
+            score = exp1.score + exp2.score;    // Both scores positive
+        }
+        
+        /**
+         * Null experience
+         */
+        public ScoredExperience ()
+        {
+            item = new HomePageItem(HomePageItem.ACTION_NONE, null, null);
+            score = 0f;
+        }
+
+        /**
+         * Returns true if the given scored experience represents the same experience as this one.
+         * They may have different scores, but this indicates the user did the same thing twice.
+         */
+        public boolean isSameExperience (ScoredExperience other)
+        {
+            return this.item.getAction() == other.item.getAction() &&
+                this.item.getActionData().equals(other.item.getActionData());
+        }
+    }
+    
+    /**
+     * Retrieves a list of experiences to be displayed on the home page.  Each experience the
+     * member has had recently will be given a weighted score to determine the order of the
+     * experience.  Only the number of experiences requested will be returned as home page
+     * items.  If there are not enough experiences, or the experiences have a low score
+     * (too old, etc.), then a set of experiences designed to show the player around Whirled will
+     * be returned.
+     * 
+     * @param memObj Member object to get home page items for
+     * @param count Number of home page items to retrieve.
+     * @return List of the home page items.  This will always have precisely the number of items
+     * requested.
+     */
+    protected List<HomePageItem> getHomePageItems (MemberObject memObj, int count)
+    {
+        List<ScoredExperience> scores = new ArrayList<ScoredExperience>();
+        for (MemberExperience experience : memObj.experiences) {
+            ScoredExperience newExp = new ScoredExperience(experience);
+            
+            // Has this member experienced this more than once?  If so, combine.
+            for (Iterator<ScoredExperience> itor = scores.iterator(); itor.hasNext(); ) {
+                ScoredExperience thisExp = itor.next();
+                if (thisExp.isSameExperience(newExp)) {
+                    newExp = new ScoredExperience(newExp, thisExp);
+                    itor.remove();
+                    break;
+                }
+            }
+            
+            scores.add(newExp);
+        }
+        
+        // TODO: Add default experiences.
+        for (int i = scores.size(); i < count; i++) {
+            scores.add(new ScoredExperience());
+        }
+        
+        // Sort by scores (highest score first), limit it to count, and return the list.
+        Collections.sort(scores, new Comparator<ScoredExperience>() {
+            public int compare (ScoredExperience exp1, ScoredExperience exp2) {
+                return (exp1.score > exp2.score) ? -1 : ((exp1.score < exp2.score) ? 1 : 0);
+            }
+        });
+        while (scores.size() > count) {
+            scores.remove(scores.size() - 1);
+        }
+        return Lists.transform(scores, new Function<ScoredExperience, HomePageItem>() {
+            public HomePageItem apply (ScoredExperience experience) {
+                return experience.item;
+            }
+        });
     }
 
     /**
@@ -972,6 +1109,9 @@ public class MemberManager
             _levelForFlow[ii] = _levelForFlow[ii-1] + (int)((ii * 17.8 - 49) * (3000 / 60));
         }
     }
+    
+    /** Maximum number of experiences we will keep track of per user. */
+    protected static final int MAX_EXPERIENCES = 20;
 
     /** An interval that updates the popular places snapshot every so often. */
     protected Interval _ppInvalidator;

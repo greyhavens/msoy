@@ -190,12 +190,12 @@ public class WorldServerClient
         }
     }
     
-    public void addExperience (int memberId, byte action, String data) 
+    public void notifyMemberStartedGame (int memberId, byte action, int gameId) 
     {
         if (_gssvc == null) {
-            log.info("Dropping addExperience", "action", action, "data", data);
+            log.info("Dropping addExperience", "action", action, "gameId", gameId);
         } else {
-            _gssvc.addExperience(_client, memberId, action, data);
+            _gssvc.notifyMemberStartedGame(_client, memberId, action, gameId);
         }
     }
 

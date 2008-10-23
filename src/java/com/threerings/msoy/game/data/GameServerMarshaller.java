@@ -22,19 +22,8 @@ import com.threerings.stats.data.StatModifier;
 public class GameServerMarshaller extends InvocationMarshaller
     implements GameServerService
 {
-    /** The method id used to dispatch {@link #addExperience} requests. */
-    public static final int ADD_EXPERIENCE = 1;
-
-    // from interface GameServerService
-    public void addExperience (Client arg1, int arg2, byte arg3, String arg4)
-    {
-        sendRequest(arg1, ADD_EXPERIENCE, new Object[] {
-            Integer.valueOf(arg2), Byte.valueOf(arg3), arg4
-        });
-    }
-
     /** The method id used to dispatch {@link #awardCoins} requests. */
-    public static final int AWARD_COINS = 2;
+    public static final int AWARD_COINS = 1;
 
     // from interface GameServerService
     public void awardCoins (Client arg1, int arg2, UserAction arg3, int arg4)
@@ -45,7 +34,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #awardPrize} requests. */
-    public static final int AWARD_PRIZE = 3;
+    public static final int AWARD_PRIZE = 2;
 
     // from interface GameServerService
     public void awardPrize (Client arg1, int arg2, int arg3, String arg4, Prize arg5, InvocationService.ResultListener arg6)
@@ -58,7 +47,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #clearGameHost} requests. */
-    public static final int CLEAR_GAME_HOST = 4;
+    public static final int CLEAR_GAME_HOST = 3;
 
     // from interface GameServerService
     public void clearGameHost (Client arg1, int arg2, int arg3)
@@ -69,13 +58,24 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #leaveAVRGame} requests. */
-    public static final int LEAVE_AVRGAME = 5;
+    public static final int LEAVE_AVRGAME = 4;
 
     // from interface GameServerService
     public void leaveAVRGame (Client arg1, int arg2)
     {
         sendRequest(arg1, LEAVE_AVRGAME, new Object[] {
             Integer.valueOf(arg2)
+        });
+    }
+
+    /** The method id used to dispatch {@link #notifyMemberStartedGame} requests. */
+    public static final int NOTIFY_MEMBER_STARTED_GAME = 5;
+
+    // from interface GameServerService
+    public void notifyMemberStartedGame (Client arg1, int arg2, byte arg3, int arg4)
+    {
+        sendRequest(arg1, NOTIFY_MEMBER_STARTED_GAME, new Object[] {
+            Integer.valueOf(arg2), Byte.valueOf(arg3), Integer.valueOf(arg4)
         });
     }
 

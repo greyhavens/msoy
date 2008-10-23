@@ -4,6 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -13,7 +14,6 @@ import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.threerings.msoy.data.HomePageItem;
 
 /**
  * An experience a member has had in Whirled.  This is used to keep track of the last actions
@@ -96,20 +96,12 @@ public class MemberExperienceRecord extends PersistentRecord
     /**
      * Constructs a new member experience with the given data.
      */
-    public MemberExperienceRecord (int memberId, byte action, String data)
+    public MemberExperienceRecord (int memberId, Date dateOccurred, byte action, String data)
     {
         this.memberId = memberId;
-        this.dateOccurred = new Timestamp(System.currentTimeMillis());
+        this.dateOccurred = new Timestamp(dateOccurred.getTime());
         this.action = action;
         this.data = data;
-    }
-    
-    /**
-     * Returns a home page item representing this experience.
-     */
-    public HomePageItem getHomePageItem ()
-    {
-        return new HomePageItem(this.action, this.data, null);
     }
     
     // AUTO-GENERATED: METHODS START

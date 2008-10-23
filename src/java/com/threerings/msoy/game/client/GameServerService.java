@@ -66,7 +66,7 @@ public interface GameServerService extends InvocationService
     void updateStat (Client client, int memberId, StatModifier<?> modifier);
     
     /**
-     * Adds a member experience.
+     * Notifies the server the player started a game.
      */
-    void addExperience (Client client, int memberId, byte action, String data);
+    void notifyMemberStartedGame (Client client, int memberId, byte action, int gameId);
 }

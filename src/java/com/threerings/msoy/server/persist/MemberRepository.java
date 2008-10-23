@@ -1174,14 +1174,18 @@ public class MemberRepository extends DepotRepository
         return migrated;
     }
     
-    public void addExperience (MemberExperienceRecord experience)
+    public void deleteExperiences (int memberId)
     {
-        store(experience);
+        deleteAll(MemberExperienceRecord.class, 
+            new Where(MemberExperienceRecord.MEMBER_ID_C, memberId));
     }
     
-    public void deleteExperience (MemberExperienceRecord experience)
+    public void saveExperiences (List<MemberExperienceRecord> experiences)
     {
-        this.delete(experience);
+        // Might be nice to batch these.  Maybe depot does that automatically, not sure.
+        for (MemberExperienceRecord experience : experiences) {
+            store(experience);
+        }
     }
     
     public List<MemberExperienceRecord> getExperiences (int memberId)

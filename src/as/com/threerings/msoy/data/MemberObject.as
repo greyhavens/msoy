@@ -11,6 +11,8 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.util.Name;
 
+import com.threerings.msoy.data.MemberExperience;
+
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
@@ -192,6 +194,9 @@ public class MemberObject extends MsoyBodyObject
     /** Whether this player is on the "whirled tour". */
     public var onTour :Boolean;
 
+    /** Experiences this player has had. */
+    public var experiences :DSet; /* of */ MemberExperience;
+    
     /**
      * Return this member's unique id.
      */
@@ -347,6 +352,7 @@ public class MemberObject extends MsoyBodyObject
         headline = ins.readField(String) as String;
         visitorInfo = VisitorInfo(ins.readObject());
         onTour = ins.readBoolean();
+        experiences = DSet(ins.readObject());
     }
 }
 }
