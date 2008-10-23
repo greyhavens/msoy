@@ -114,7 +114,7 @@ public class LandingPanel extends SimplePanel
         content.add(_avatarPanel = new AvatarPanel(), 67, 618);
 
         // featured whirled panel is beaten into place using css
-        _featuredWhirled = new FeaturedWhirledPanel(true, true);
+        _featuredWhirled = new FeaturedWhirledPanel(true);
         content.add(_featuredWhirled, 290, 618);
 
         // copyright, about, terms & conditions, help

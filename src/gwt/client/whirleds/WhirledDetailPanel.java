@@ -29,6 +29,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ShopUtil;
+import client.room.SceneUtil;
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
@@ -250,16 +251,9 @@ public class WhirledDetailPanel extends FlowPanel
         mainDetails.add(screenshot);
 
         // display a screenshot of the whirled that can be clicked for a live view
-        screenshot.add(_whirledViewPanel = new SimplePanel());
-        _whirledViewPanel.setStyleName("Screenshot");
-
-        ClickListener liveViewClick = new ClickListener() {
-            public void onClick (Widget sender) {
-                // replace the image with a live view
-                FeaturedPlaceUtil.displayFeaturedPlace(_group.homeSceneId, _whirledViewPanel);
-            }
-        };
-        _whirledViewPanel.add(LiveViewUtil.makeLiveViewWidget(detail.homeSnapshot, liveViewClick));
+        Widget liveView = SceneUtil.createSceneView(_group.homeSceneId, detail.homeSnapshot);
+        liveView.addStyleName("Screenshot");
+        screenshot.add(liveView);
 
         if (_detail.population > 0) {
             screenshot.add(MsoyUI.createHTML(_msgs.featuredOnline("" + _detail.population),
@@ -434,7 +428,6 @@ public class WhirledDetailPanel extends FlowPanel
     protected Group _group;
     protected GroupDetail _detail;
     protected GroupExtras _extras;
-    protected SimplePanel _whirledViewPanel;
     protected ContentPanel _contentPanel;
 
     protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);

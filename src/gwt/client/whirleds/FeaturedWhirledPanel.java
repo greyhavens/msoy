@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupCard;
 
+import client.room.SceneUtil;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.FeaturedPlaceUtil;
@@ -27,12 +28,10 @@ public class FeaturedWhirledPanel extends FlowPanel
     /**
      * Create a new Featured Whirled Panel
      * @param showThumbnails Display a list of featured whirled thumbnails
-     * @param showPlaceholder Display an image instead of loading the live room
      */
-    public FeaturedWhirledPanel (boolean showThumbnails, boolean showPlaceholder)
+    public FeaturedWhirledPanel (boolean showThumbnails)
     {
         setStyleName("FeaturedWhirled");
-        _showPlaceholder = showPlaceholder;
         add(MsoyUI.createLabel(_msgs.featuredTitle(), "Title"));
         add(_flashPanel = MsoyUI.createSimplePanel(null, "Flash"));
         add(_infoPanel = new FlowPanel());
@@ -78,28 +77,10 @@ public class FeaturedWhirledPanel extends FlowPanel
     {
         final GroupCard group = _whirleds[_selidx = index];
 
-        if (!_showPlaceholder) {
-            if (!FeaturedPlaceUtil.displayFeaturedPlace(group.homeSceneId, _flashPanel)) {
-                return; // client not yet ready to switch scenes
-            }
+        // display the group's home page screenshot
+        SceneUtil.addSceneView(group.homeSceneId, group.homeSnapshot, _flashPanel);
 
-        } else {
-            // display screenshot with click to play button
-            if (_flashPanel.getWidget() != null) {
-                _flashPanel.remove(_flashPanel.getWidget());
-            }
-            ClickListener onClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    _flashPanel.remove(_flashPanel.getWidget());
-                    // after the placeholder is removed, do not readd it
-                    // _showPlaceholder = false;
-                    FeaturedPlaceUtil.displayFeaturedPlace(group.homeSceneId, _flashPanel);
-                }
-            };
-
-            _flashPanel.add(LiveViewUtil.makeLiveViewWidget(group.homeSnapshot, onClick));
-        }
-
+        // display the group's name and info
         _infoPanel.clear();
         Widget nameLink = Link.groupView(group.name.toString(), group.name.getGroupId());
         nameLink.setStyleName("FeaturedWhirledName");
@@ -138,7 +119,6 @@ public class FeaturedWhirledPanel extends FlowPanel
         }
     }
 
-    protected boolean _showPlaceholder;
     protected FlowPanel _iconsPanel;
     protected GroupCard[] _whirleds;
     protected int _selidx;

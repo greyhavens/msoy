@@ -118,8 +118,7 @@
   margin-left: 25px;
 }
 
-.whirledDetail .MainDetails .ScreenshotBox .LiveViewOverlay {
-  position: absolute;
+.whirledDetail .MainDetails .ScreenshotBox .liveViewOverlay {
   left: 150px;
   top: 192px;
 }
@@ -424,8 +423,7 @@
   font-weight: bold;
 }
 
-.galaxy .FeaturedWhirled .LiveViewOverlay {
-  position: absolute;
+.galaxy .FeaturedWhirled .liveViewOverlay {
   top: 210px;
   left: 380px;
 }

@@ -318,8 +318,7 @@
   margin: 0;
 }
 
-.LandingPanel .FeaturedWhirled .LiveViewOverlay {
-  position: absolute;
+.LandingPanel .FeaturedWhirled .liveViewOverlay {
   top: 180px;
   left: 110px;
 }

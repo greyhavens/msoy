@@ -13,7 +13,6 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.util.Link;
-import client.util.MediaUtil;
 import client.ui.MsoyUI;
 import client.ui.Stars;
 
@@ -23,7 +22,7 @@ public class RoomWidget extends FlowPanel
     {
         setStyleName("Room");
 
-        Widget thumb = MediaUtil.createSceneThumbView(
+        Widget thumb = SceneUtil.createSceneThumbView(
             room.thumbnail, Link.createListener(Pages.WORLD, "s"+room.sceneId));
         thumb.setTitle(_msgs.rwThumbTip());
         add(thumb);
@@ -38,4 +37,3 @@ public class RoomWidget extends FlowPanel
 
     protected static final RoomMessages _msgs = GWT.create(RoomMessages.class);
 }
-

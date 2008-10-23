@@ -7,7 +7,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 
@@ -96,31 +95,7 @@ public class MediaUtil
         return view;
     }
 
-    /**
-     * Creates a thumbnail image for a scene using the supplied scene snapshot descriptor. If the
-     * descriptor is null, a default image will be shown.
-     *
-     * @param onClick a click listener to be added to the thumbnail view, or null.
-     */
-    public static Widget createSceneThumbView (MediaDesc thumb, ClickListener onClick)
-    {
-        if (thumb != null) {
-            return createMediaView(thumb, MediaDesc.SNAPSHOT_FULL_SIZE, onClick);
-        } else {
-            Image image = new Image();
-            if (onClick != null) {
-                image.addClickListener(onClick);
-            }
-            image.setUrl(DEFAULT_HALFSIZE);
-            return image;
-        }
-    }
-
     // TODO: create a proper default image for media we don't know how to display
     protected static final MediaDesc UNKNOWN_DESC = new StaticMediaDesc(
         MediaDesc.IMAGE_PNG, "document", "thumb", MediaDesc.HALF_VERTICALLY_CONSTRAINED);
-
-    /** The default image for a scene thumbnail. */
-    protected static final String DEFAULT_HALFSIZE =
-        DeploymentConfig.staticMediaURL + "snapshot/default_t.jpg";
 }

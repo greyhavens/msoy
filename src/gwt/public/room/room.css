@@ -4,4 +4,7 @@
  * CSS styles for the Room interfaces.
  */
 
-/* TODO */
+.liveViewOverlay {
+  position: absolute;
+  /* unfortunately instantiators have to add the correct top and left values */
+}
