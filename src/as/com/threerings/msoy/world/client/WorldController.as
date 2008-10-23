@@ -955,7 +955,7 @@ public class WorldController extends MsoyController
         // ...extract the page and arguments and tell GWT to display them properly
         var didx :int = gwtUrl.indexOf("-");
         if (didx == -1) {
-            return super.showExternalURL(url, top);
+            return displayPage(gwtUrl, "");
         } else {
             return displayPage(gwtUrl.substring(0, didx), gwtUrl.substring(didx+1));
         }
