@@ -234,7 +234,7 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Load the SceneRecords for the given sceneIds.
      */
-    public List<SceneRecord> loadScenes (Set<Integer> sceneIds)
+    public List<SceneRecord> loadScenes (List<Integer> sceneIds)
     {
         return loadAll(SceneRecord.class, sceneIds);
     }

@@ -133,9 +133,13 @@ public class WebRoomServlet extends MsoyServiceServlet
     {
         OverviewResult overview = new OverviewResult();
 
-        Iterable<SceneRecord> active = _sceneRepo.loadScenes(0, 20),
-                              cool = _sceneRepo.loadScenes(0, 20);
-        overview.activeRooms = Lists.newArrayList(Iterables.transform(active, TO_ROOM_INFO));
+        Iterable<Integer> activeIds =
+            Iterables.transform(_memberMan.getPPSnapshot().getTopScenes(), TO_SCENE_ID);
+        activeIds = Iterables.limit(activeIds, 20);
+        List<SceneRecord> activeRooms = _sceneRepo.loadScenes(Lists.newArrayList(activeIds));
+        overview.activeRooms = Lists.newArrayList(Iterables.transform(activeRooms, TO_ROOM_INFO));
+
+        Iterable<SceneRecord> cool = _sceneRepo.loadScenes(0, 20);
         overview.coolRooms = Lists.newArrayList(Iterables.transform(cool, TO_ROOM_INFO));
 
         return overview;
@@ -147,7 +151,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
     };
 
-    protected Function<SceneRecord,RoomInfo> TO_ROOM_INFO = new Function<SceneRecord,RoomInfo>() {
+    protected Function<SceneRecord, RoomInfo> TO_ROOM_INFO = new Function<SceneRecord,RoomInfo>() {
         public RoomInfo apply (SceneRecord record) {
             RoomInfo info = record.toRoomInfo();
             PopularPlacesSnapshot.Place card = _memberMan.getPPSnapshot().getScene(record.sceneId);
@@ -157,6 +161,13 @@ public class WebRoomServlet extends MsoyServiceServlet
             return info;
         }
     };
+
+    protected Function<PopularPlacesSnapshot.Place,Integer> TO_SCENE_ID =
+        new Function<PopularPlacesSnapshot.Place,Integer>() {
+            public Integer apply (PopularPlacesSnapshot.Place place) {
+                return place.placeId;
+            }
+        };
 
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
