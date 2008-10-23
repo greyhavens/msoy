@@ -389,7 +389,10 @@ public class LobbyController extends Controller
         _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
 
         // create our table director
-        _tableDir = new TableDirector(_gctx, LobbyObject.TABLES, MsoyCodes.GAME_MSGS);
+        _tableDir = new TableDirector(_gctx, LobbyObject.TABLES);
+        _tableDir.setFailureHandler(function (cause :String) :void {
+            _mctx.getChatDirector().displayFeedback(MsoyCodes.GAME_MSGS, cause);
+        });
         _tableDir.setTableObject(obj);
         _tableDir.addSeatednessObserver(this);
 
