@@ -149,13 +149,11 @@ public class PopularPlacesSnapshot
                     _totalPopulation++;
                     if (memloc.sceneId > 0) {
                         HostedRoom room = mnobj.hostedScenes.get(memloc.sceneId);
-                        if (room == null || room.accessControl != MsoySceneModel.ACCESS_EVERYONE) {
-                            // missing or private room, skip it
-                        } else if (room.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                            // map whirled rooms by whirled id
-                            increment(_whirleds, _whlist, room.ownerId, room);
-                        } else {
-                            // map non-whirled rooms by scene id
+                        if (room != null && room.accessControl == MsoySceneModel.ACCESS_EVERYONE) {
+                            if (room.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                                // map whirled rooms by whirled id
+                                increment(_whirleds, _whlist, room.ownerId, room);
+                            }
                             increment(_scenes, _sclist, room.placeId, room);
                         }
                     }

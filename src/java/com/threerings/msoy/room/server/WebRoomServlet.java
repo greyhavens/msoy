@@ -5,6 +5,7 @@ package com.threerings.msoy.room.server;
 
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -14,6 +15,8 @@ import com.google.inject.Inject;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -97,9 +100,10 @@ public class WebRoomServlet extends MsoyServiceServlet
             Predicate<SceneRecord> filter = owner ?
                 Predicates.<SceneRecord> alwaysTrue() : IS_PUBLIC;
             data.rooms = Lists.newArrayList(
-                Iterables.transform(Iterables.filter(rooms, filter), SceneRecord.TO_ROOM_INFO));
+                Iterables.transform(Iterables.filter(rooms, filter), TO_ROOM_INFO));
+        } else {
+            data.rooms = Lists.newArrayList(Iterables.transform(rooms, TO_ROOM_INFO));
         }
-        data.rooms = Lists.newArrayList(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
         return data;
     }
 
@@ -114,7 +118,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(
             MsoySceneModel.OWNER_TYPE_GROUP, groupId);
         result.groupRooms = Lists.newArrayList(
-            Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
+            Iterables.transform(rooms, TO_ROOM_INFO));
 
         // load up all scenes owned by this member, filtering out their home
         Predicate<RoomInfo> notHome = new Predicate<RoomInfo>() {
@@ -124,7 +128,8 @@ public class WebRoomServlet extends MsoyServiceServlet
         };
         rooms = _sceneRepo.getOwnedScenes(mrec.memberId);
         result.callerRooms = Lists.newArrayList(
-            Iterables.filter(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO), notHome));
+            Iterables.filter(Iterables.transform(rooms, TO_ROOM_INFO), notHome));
+
         return result;
     }
 
@@ -134,8 +139,21 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
     };
 
+    protected Function<SceneRecord,RoomInfo> TO_ROOM_INFO =
+        new Function<SceneRecord,RoomInfo>() {
+        public RoomInfo apply (SceneRecord record) {
+            RoomInfo info = record.toRoomInfo();
+            PopularPlacesSnapshot.Place card = _memberMan.getPPSnapshot().getScene(record.sceneId);
+            if (card != null) {
+                info.population = card.population;
+            }
+            return info;
+        }
+    };
+
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MemberManager _memberMan;
 }

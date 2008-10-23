@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.server.persist;
 
-import com.google.common.base.Function;
-
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.depot.Key;
@@ -211,17 +209,6 @@ public class SceneRecord extends PersistentRecord
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 4;
-
-    /**
-     * Converts this scene record in to a partially initialized room info record. See
-     * {@link #toRoomInfo} for gotchas.
-     */
-    public static final Function<SceneRecord,RoomInfo> TO_ROOM_INFO =
-        new Function<SceneRecord,RoomInfo>() {
-        public RoomInfo apply (SceneRecord record) {
-            return record.toRoomInfo();
-        }
-    };
 
     /** The unique identifier for this scene. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=6)

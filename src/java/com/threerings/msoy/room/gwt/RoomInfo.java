@@ -24,4 +24,7 @@ public class RoomInfo
 
     /** The room's average rating. */
     public float rating;
+
+    /** The number of players in the room. */
+    public int population;
 }
