@@ -58,6 +58,7 @@ import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
 //import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -65,6 +66,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
@@ -792,10 +794,10 @@ public class RoomManager extends SpotSceneManager
 
         DObject body = _omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
-            MemberObject member = (MemberObject) body;
+            final MemberObject member = (MemberObject) body;
             ensureAVRGameControl(member);
             ensureAVRGamePropertySpace(member);
-            MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
+            final MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
             boolean isMemberScene = (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER);
             member.metrics.room.init(isMemberScene, model.ownerId);
 
@@ -806,6 +808,14 @@ public class RoomManager extends SpotSceneManager
             // log it!
             boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
             _eventLog.roomEntered(member.getMemberId(), isWhirled, member.getVisitorId());
+            
+            // Indicate the user visited the room.
+            _invoker.postUnit(new WriteOnlyUnit("Writing player visited room experience") {
+                @Override public void invokePersist () throws Exception {
+                    _memberLogic.addExperience(member.getMemberId(), HomePageItem.ACTION_ROOM, 
+                        Integer.toString(model.sceneId));
+                }
+            });
         }
     }
 
@@ -1419,4 +1429,5 @@ public class RoomManager extends SpotSceneManager
     @Inject protected MemberLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected LocationManager _locmgr;
+    @Inject protected MemberLogic _memberLogic;
 }

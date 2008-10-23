@@ -189,6 +189,15 @@ public class WorldServerClient
             _gssvc.updateStat(_client, memberId, new IntSetStatAdder(type, value));
         }
     }
+    
+    public void addExperience (int memberId, byte action, String data) 
+    {
+        if (_gssvc == null) {
+            log.info("Dropping addExperience", "action", action, "data", data);
+        } else {
+            _gssvc.addExperience(_client, memberId, action, data);
+        }
+    }
 
     // from interface MessageListener
     public void messageReceived (MessageEvent event)

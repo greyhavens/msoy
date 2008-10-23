@@ -68,6 +68,8 @@ import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -775,12 +777,30 @@ public class MemberManager
         ClientObject caller, InvocationService.ResultListener listener)
         throws InvocationException
     {
-        // TODO: put in real items
-        HomePageItem[] items = new HomePageItem[9];
-        for (int ii = 0; ii < items.length; ++ii) {
-            items[ii] = new HomePageItem(HomePageItem.ACTION_NONE, null, null);
-        }
-        listener.requestProcessed(items);
+        final MemberObject memObj = (MemberObject) caller;
+        
+        _invoker.postUnit(new PersistingUnit(listener) {
+            @Override
+            public void invokePersistent () throws Exception {
+                HomePageItem[] items = new HomePageItem[9];
+                
+                // The first 3 items on the home page are always badges.
+                List<InProgressBadge> badges = _badgeLogic.getNextSuggestedBadges(
+                    memObj.getMemberId(), 3);
+                int curItem = 0;
+                for (InProgressBadge badge : badges) {
+                    items[curItem++] = new HomePageItem(HomePageItem.ACTION_BADGE, badge, null);
+                }
+                
+                // The last 6 are determined by the user-specific home page items, depending on
+                // where they were last in Whirled.
+                for(HomePageItem item : _memberLogic.getHomePageItems(memObj.getMemberId(), 6)) {
+                    items[curItem++] = item;
+                }
+                
+                reportRequestProcessed(items);
+            }
+        });
     }
 
     /**
@@ -972,6 +992,7 @@ public class MemberManager
     @Inject protected SupportLogic _supportLogic;
     @Inject protected BodyManager _bodyMan;
     @Inject protected BadgeManager _badgeMan;
+    @Inject protected BadgeLogic _badgeLogic;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected ItemManager _itemMan;
     @Inject protected MsoyPeerManager _peerMan;

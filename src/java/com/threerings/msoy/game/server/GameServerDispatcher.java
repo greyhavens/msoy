@@ -40,6 +40,12 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
         throws InvocationException
     {
         switch (methodId) {
+        case GameServerMarshaller.ADD_EXPERIENCE:
+            ((GameServerProvider)provider).addExperience(
+                source, ((Integer)args[0]).intValue(), ((Byte)args[1]).byteValue(), (String)args[2]
+            );
+            return;
+
         case GameServerMarshaller.AWARD_COINS:
             ((GameServerProvider)provider).awardCoins(
                 source, ((Integer)args[0]).intValue(), (UserAction)args[1], ((Integer)args[2]).intValue()

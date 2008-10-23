@@ -64,4 +64,9 @@ public interface GameServerService extends InvocationService
      * Applies a stat update for the specified player.
      */
     void updateStat (Client client, int memberId, StatModifier<?> modifier);
+    
+    /**
+     * Adds a member experience.
+     */
+    void addExperience (Client client, int memberId, byte action, String data);
 }

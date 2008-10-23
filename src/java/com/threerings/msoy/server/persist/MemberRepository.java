@@ -1173,6 +1173,23 @@ public class MemberRepository extends DepotRepository
         }
         return migrated;
     }
+    
+    public void addExperience (MemberExperienceRecord experience)
+    {
+        store(experience);
+    }
+    
+    public void deleteExperience (MemberExperienceRecord experience)
+    {
+        this.delete(experience);
+    }
+    
+    public List<MemberExperienceRecord> getExperiences (int memberId)
+    {
+        return findAll(MemberExperienceRecord.class, 
+            new Where(MemberExperienceRecord.MEMBER_ID_C, memberId),
+            OrderBy.ascending(MemberExperienceRecord.DATE_OCCURRED_C));
+    }
 
     protected String randomInviteId ()
     {
@@ -1197,6 +1214,7 @@ public class MemberRepository extends DepotRepository
         classes.add(MemberWarningRecord.class);
         classes.add(AffiliateRecord.class);
         classes.add(ReferralRecord.class);
+        classes.add(MemberExperienceRecord.class);
     }
 
     @Inject protected UserActionRepository _actionRepo;

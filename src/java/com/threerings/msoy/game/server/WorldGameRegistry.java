@@ -35,6 +35,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
@@ -405,6 +406,12 @@ public class WorldGameRegistry
         // pass the buck to the item manager
         _itemMan.awardPrize(memberId, gameId, gameName, prize, new ResultAdapter<Item>(listener));
     }
+    
+    // from interface GameServerProvider
+    public void addExperience (ClientObject caller, int memberId, byte action, String data)
+    {
+        _memberLogic.addExperience(memberId, action, data);
+    }
 
     // from interface GameServerProvider
     @SuppressWarnings("unchecked")
@@ -653,7 +660,8 @@ public class WorldGameRegistry
     @Inject protected GameRepository _gameRepo;
     @Inject protected StatLogic _statLogic;
     @Inject protected MoneyLogic _moneyLogic;
-
+    @Inject protected MemberLogic _memberLogic;
+    
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;
 }

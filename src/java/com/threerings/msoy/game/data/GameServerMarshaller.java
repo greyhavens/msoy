@@ -22,8 +22,19 @@ import com.threerings.stats.data.StatModifier;
 public class GameServerMarshaller extends InvocationMarshaller
     implements GameServerService
 {
+    /** The method id used to dispatch {@link #addExperience} requests. */
+    public static final int ADD_EXPERIENCE = 1;
+
+    // from interface GameServerService
+    public void addExperience (Client arg1, int arg2, byte arg3, String arg4)
+    {
+        sendRequest(arg1, ADD_EXPERIENCE, new Object[] {
+            Integer.valueOf(arg2), Byte.valueOf(arg3), arg4
+        });
+    }
+
     /** The method id used to dispatch {@link #awardCoins} requests. */
-    public static final int AWARD_COINS = 1;
+    public static final int AWARD_COINS = 2;
 
     // from interface GameServerService
     public void awardCoins (Client arg1, int arg2, UserAction arg3, int arg4)
@@ -34,7 +45,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #awardPrize} requests. */
-    public static final int AWARD_PRIZE = 2;
+    public static final int AWARD_PRIZE = 3;
 
     // from interface GameServerService
     public void awardPrize (Client arg1, int arg2, int arg3, String arg4, Prize arg5, InvocationService.ResultListener arg6)
@@ -47,7 +58,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #clearGameHost} requests. */
-    public static final int CLEAR_GAME_HOST = 3;
+    public static final int CLEAR_GAME_HOST = 4;
 
     // from interface GameServerService
     public void clearGameHost (Client arg1, int arg2, int arg3)
@@ -58,7 +69,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #leaveAVRGame} requests. */
-    public static final int LEAVE_AVRGAME = 4;
+    public static final int LEAVE_AVRGAME = 5;
 
     // from interface GameServerService
     public void leaveAVRGame (Client arg1, int arg2)
@@ -69,7 +80,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #reportCoinAward} requests. */
-    public static final int REPORT_COIN_AWARD = 5;
+    public static final int REPORT_COIN_AWARD = 6;
 
     // from interface GameServerService
     public void reportCoinAward (Client arg1, int arg2, int arg3)
@@ -80,7 +91,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #reportTrophyAward} requests. */
-    public static final int REPORT_TROPHY_AWARD = 6;
+    public static final int REPORT_TROPHY_AWARD = 7;
 
     // from interface GameServerService
     public void reportTrophyAward (Client arg1, int arg2, String arg3, Trophy arg4)
@@ -91,7 +102,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sayHello} requests. */
-    public static final int SAY_HELLO = 7;
+    public static final int SAY_HELLO = 8;
 
     // from interface GameServerService
     public void sayHello (Client arg1, int arg2)
@@ -102,7 +113,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updatePlayer} requests. */
-    public static final int UPDATE_PLAYER = 8;
+    public static final int UPDATE_PLAYER = 9;
 
     // from interface GameServerService
     public void updatePlayer (Client arg1, int arg2, GameSummary arg3)
@@ -113,7 +124,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateStat} requests. */
-    public static final int UPDATE_STAT = 9;
+    public static final int UPDATE_STAT = 10;
 
     // from interface GameServerService
     public void updateStat (Client arg1, int arg2, StatModifier<?> arg3)
