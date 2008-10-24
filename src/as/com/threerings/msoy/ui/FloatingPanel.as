@@ -335,9 +335,12 @@ public class FloatingPanel extends TitleWindow
         }
     }
 
-    /** Handles any extra tasks after opening the panel. */
+    /**
+     * Handles any extra tasks after opening the panel.
+     */
     protected function didOpen () :void
     {
+        // nada, currently, in the base class
     }
 
     /** Provides client services. */

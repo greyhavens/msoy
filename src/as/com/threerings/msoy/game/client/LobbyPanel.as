@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.display.DisplayObject;
-
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.core.UIComponent;
@@ -105,13 +103,11 @@ public class LobbyPanel extends FloatingPanel
         setStyle("paddingBottom", padding);
     }
 
-    // overridden so we can redefine center's default to false, since we force layout..
-    override public function open (
-        modal :Boolean = false, parent :DisplayObject = null, center :Boolean = false) :void
+    override protected function didOpen () :void
     {
-        x = 20;
+        super.didOpen();
+        x = 20; // force layout
         y = 40;
-        super.open(modal, parent, center);
     }
 
     override protected function createChildren () :void

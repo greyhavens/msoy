@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.client.editor {
 
-import flash.display.DisplayObject;
 import flash.events.Event;
 
 import mx.containers.Box;
@@ -53,16 +52,6 @@ public class RoomEditorPanel extends FlyingPanel
 
         styleName = "roomEditPanel";
         showCloseButton = true;
-    }
-
-    // @Override from FloatingPanel
-    override public function open (
-        modal :Boolean = false, parent :DisplayObject = null, center :Boolean = false) :void
-    {
-        super.open(modal, parent, center);
-
-        this.x = stage.stageWidth - width - GAP;
-        this.y = HeaderBar.HEIGHT + TopPanel.DECORATIVE_MARGIN_HEIGHT + GAP;
     }
 
     // @Override from FloatingPanel
@@ -497,6 +486,15 @@ public class RoomEditorPanel extends FlyingPanel
             Msgs.EDITING.get("l.advanced_editing"), _controller.actionAdvancedEditing);
         ccb.styleName = "oldCheckBox";
         box.addChild(ccb);
+    }
+
+    // @Override from FloatingPanel
+    override protected function didOpen () :void
+    {
+        super.didOpen();
+
+        this.x = stage.stageWidth - width - GAP;
+        this.y = HeaderBar.HEIGHT + TopPanel.DECORATIVE_MARGIN_HEIGHT + GAP;
     }
 
     protected static const Y_DELTA :Number = 0.1;

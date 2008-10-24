@@ -64,20 +64,6 @@ public class EntityPopup extends FloatingPanel
         return _entitySprite;
     }
 
-    override public function open (
-        modal :Boolean = false, parent :DisplayObject = null, center :Boolean = true) :void
-    {
-        super.open(modal, parent, center);
-
-        // Only add the user panel after all the flex components have created their content panes.
-        // Otherwise, when the content pane is created a REMOVED_FROM_STAGE will be dispatched
-        // to the userpanel, which is like the only reliable way to tell from inside the
-        // entity when you've been removed. Fuck you flex! Why do wait to create the content pane
-        // and then move all the children over, instead of just fucking creating it and adding
-        // the children directly?
-        _canvas.rawChildren.addChild(_userPanel);
-    }
-
     override public function close () :void
     {
         super.close();
@@ -88,6 +74,19 @@ public class EntityPopup extends FloatingPanel
     {
         super.createChildren();
         addChild(_canvas);
+    }
+
+    override protected function didOpen () :void
+    {
+        super.didOpen();
+
+        // Only add the user panel after all the flex components have created their content panes.
+        // Otherwise, when the content pane is created a REMOVED_FROM_STAGE will be dispatched
+        // to the userpanel, which is like the only reliable way to tell from inside the
+        // entity when you've been removed. Fuck you flex! Why do wait to create the content pane
+        // and then move all the children over, instead of just fucking creating it and adding
+        // the children directly?
+        _canvas.rawChildren.addChild(_userPanel);
     }
 
     /** We use this to control the size allocated for the displayed content. */

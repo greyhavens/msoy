@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import flash.display.DisplayObject;
-
 import flash.events.Event;
 
 import flash.external.ExternalInterface;
@@ -54,10 +52,9 @@ public class DecorEditPanel extends FlyingPanel
         open();
     }
 
-    override public function open (
-        modal :Boolean = false, parent :DisplayObject = null, center :Boolean = false) :void
+    override protected function didOpen () :void
     {
-        super.open(modal, parent, center);
+        super.didOpen();
 
         // position ourselves
         this.x = stage.stageWidth - width - 10;

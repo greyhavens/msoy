@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.ui {
 
-import flash.display.DisplayObject;
-
 import flash.events.Event;
 
 import flash.geom.Rectangle;
@@ -31,21 +29,20 @@ public class FlyingPanel extends FloatingPanel
         ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, handleMiniWillChange);
     }
 
-    override public function open (
-        modal :Boolean = false, parent :DisplayObject = null, center :Boolean = true) :void
-    {
-        super.open(modal, parent, center);
-
-        systemManager.addEventListener(Event.RESIZE, checkPositioning);
-        addEventListener(ResizeEvent.RESIZE, checkPositioning);
-    }
-
     override public function close () :void
     {
         systemManager.removeEventListener(Event.RESIZE, checkPositioning);
         removeEventListener(ResizeEvent.RESIZE, checkPositioning);
 
         super.close();
+    }
+
+    override protected function didOpen () :void
+    {
+        super.didOpen();
+
+        systemManager.addEventListener(Event.RESIZE, checkPositioning);
+        addEventListener(ResizeEvent.RESIZE, checkPositioning);
     }
 
     protected function checkPositioning (... ignored) :void
