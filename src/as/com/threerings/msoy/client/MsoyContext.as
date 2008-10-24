@@ -18,6 +18,7 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.crowd.chat.client.ChatDirector;
+import com.threerings.crowd.chat.client.MuteDirector;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -176,6 +177,14 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
+     * Get the mute director.
+     */
+    public function getMuteDirector () :MuteDirector
+    {
+        return _muteDir;
+    }
+
+    /**
      * Get the notification director.
      */
     public function getNotificationDirector () :NotificationDirector
@@ -231,6 +240,8 @@ public /*abstract*/ class MsoyContext
     protected function createAdditionalDirectors () :void
     {
         _notifyDir = new NotificationDirector(this);
+        _muteDir = new MuteDirector(this);
+        _muteDir.setChatDirector(_chatDir);
     }
 
     /**
@@ -256,6 +267,7 @@ public /*abstract*/ class MsoyContext
     protected var _locDir :LocationDirector;
     protected var _occDir :OccupantDirector;
     protected var _chatDir :MsoyChatDirector;
+    protected var _muteDir :MuteDirector;
     protected var _notifyDir :NotificationDirector;
 }
 }

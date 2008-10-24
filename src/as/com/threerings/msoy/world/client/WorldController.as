@@ -1016,8 +1016,15 @@ public class WorldController extends MsoyController
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
 
         } else if (!isUs) {
-            menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
-                             command: OPEN_CHANNEL, arg: member });
+            if (_mctx.getMuteDirector().isMuted(member)) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.unmute"),
+                    callback: _mctx.getMuteDirector().setMuted, arg: [ member, false ] });
+            } else {
+                menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
+                                 command: OPEN_CHANNEL, arg: member });
+                menuItems.push({ label: Msgs.GENERAL.get("b.mute"),
+                        callback: _mctx.getMuteDirector().setMuted, arg: [ member, true ] });
+            }
             if (!isGuest) {
                 // TODO: do we need this embedded check?
                 if (!_wctx.getMsoyClient().isEmbedded()) {
