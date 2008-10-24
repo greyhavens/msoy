@@ -69,7 +69,6 @@ public class SnapshotPanel extends FloatingPanel
         sceneThumbnail = new Snapshot(ctx, _view, this, framer,
             SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
         sceneThumbnail.addEventListener(Event.COMPLETE, handleEncodingComplete);
-        //sceneThumbnail.updateSnapshot();
 
         // TODO: we want the room bounds, not the room *view* bounds....
         const scene:MsoyScene = _view.getScene();
@@ -91,7 +90,6 @@ public class SnapshotPanel extends FloatingPanel
         }
         galleryImage = new Snapshot(ctx, _view, this, galFramer, galWidth, galHeight);
         galleryImage.addEventListener(Event.COMPLETE, handleEncodingComplete);
-        //galleryImage.updateSnapshot();
         open();
     }
 
@@ -119,91 +117,11 @@ public class SnapshotPanel extends FloatingPanel
         return _downloadImage.selected;
     }
 
-    protected function takeNewSnapshot (... ignored) :void
-    {
-        var occs :Boolean = _showOccs.selected;
-        if (!occs) {
-            _showChat.selected = false;
-        }
-        _showChat.enabled = occs;
-        
-        sceneThumbnail.updateSnapshot(occs, _showChat.selected, shouldSaveSceneThumbnail);
-        galleryImage.updateSnapshot(occs, _showChat.selected,
-            shouldSaveGalleryImage || shouldDownloadImage);
-        enforceUIInterlocks();
-    }
-
-    /**
-     * Should be called if the user changes an option that means we should update other UI elements.
-     * Does not take a new snapshot.
-     */
-    protected function enforceUIInterlocks (... ignored) :void
-    {
-        if (shouldSaveSceneThumbnail) {
-            sceneThumbnail.startEncode();
-        }
-        if (shouldSaveGalleryImage || shouldDownloadImage) {
-            galleryImage.startEncode();
-        }
-        getButton(OK_BUTTON).enabled = canSave();
-    }
-
-    /**
-     * We can save an image if either one or both of the image saving options are selected.
-     */
-    protected function canSave () :Boolean
-    {
-        const needGallery :Boolean = shouldSaveGalleryImage || shouldDownloadImage;
-        const needThumb :Boolean = shouldSaveSceneThumbnail;
-        return (needGallery || needThumb) &&
-            (!needGallery || galleryImage.ready) && (!needThumb || sceneThumbnail.ready);
-    }
-
-    protected function addChildIndented (component :UIComponent) :void
-    {
-        var hbox :HBox = new HBox();
-        hbox.addChild(FlexUtil.createSpacer(10));
-        hbox.addChild(component);
-        addChild(hbox);        
-    } 
-
     override protected function createChildren () :void
     {
         super.createChildren();        
         createSnapshotControls();                
         showCloseButton = true;
-    }
-    
-    protected function showProgressControls () :void
-    {
-        removeAllChildren();
-
-        _progressBar = new ProgressBar();
-        _progressBar.percentWidth = 100;
-        _progressBar.indeterminate = true;
-        _progressBar.mode = "manual";
-        _progressBar.label = Msgs.WORLD.get("m.snap_progress");
-        addChild(_progressBar);
-        _progressLabel = new Label();
-        _progressLabel.text = Msgs.WORLD.get("m.snap_upload");
-        addChild(_progressLabel);   
-        _cancelUploadButton = new CommandButton(Msgs.WORLD.get("b.snap_cancel"), cancelUpload);     
-        addChild(_cancelUploadButton);        
-
-        showCloseButton = false;
-    }
-
-    /**
-     * Handling the user request that the upload be cancelled.
-     */
-    protected function cancelUpload () :void 
-    {
-        // cancel any encoding processes that may be running.
-        galleryImage.cancelAll();
-        sceneThumbnail.cancelAll();
-
-        // close the panel
-        close();
     }
 
     protected function createSnapshotControls () :void
@@ -262,10 +180,82 @@ public class SnapshotPanel extends FloatingPanel
         }
     }
 
+    /**
+     * Should be called if the user changes an option that means we should update other UI elements.
+     * Does not take a new snapshot.
+     */
+    protected function enforceUIInterlocks (... ignored) :void
+    {
+        if (shouldSaveSceneThumbnail) {
+            sceneThumbnail.startEncode();
+        }
+        if (shouldSaveGalleryImage || shouldDownloadImage) {
+            galleryImage.startEncode();
+        }
+        getButton(OK_BUTTON).enabled = canSave();
+    }
+
+    /**
+     * We can save an image if either one or both of the image saving options are selected.
+     */
+    protected function canSave () :Boolean
+    {
+        const needGallery :Boolean = shouldSaveGalleryImage || shouldDownloadImage;
+        const needThumb :Boolean = shouldSaveSceneThumbnail;
+        return (needGallery || needThumb) &&
+            (!needGallery || galleryImage.ready) && (!needThumb || sceneThumbnail.ready);
+    }
+
     protected function handleEncodingComplete (event :Event) :void
     {
         trace("encoding complete.");
         enforceUIInterlocks();
+    }
+
+    protected function takeNewSnapshot (... ignored) :void
+    {
+        var occs :Boolean = _showOccs.selected;
+        if (!occs) {
+            _showChat.selected = false;
+        }
+        _showChat.enabled = occs;
+        
+        sceneThumbnail.updateSnapshot(occs, _showChat.selected, shouldSaveSceneThumbnail);
+        galleryImage.updateSnapshot(occs, _showChat.selected,
+            shouldSaveGalleryImage || shouldDownloadImage);
+        enforceUIInterlocks();
+    }
+    
+    protected function showProgressControls () :void
+    {
+        removeAllChildren();
+
+        _progressBar = new ProgressBar();
+        _progressBar.percentWidth = 100;
+        _progressBar.indeterminate = true;
+        _progressBar.mode = "manual";
+        _progressBar.label = Msgs.WORLD.get("m.snap_progress");
+        addChild(_progressBar);
+        _progressLabel = new Label();
+        _progressLabel.text = Msgs.WORLD.get("m.snap_upload");
+        addChild(_progressLabel);   
+        _cancelUploadButton = new CommandButton(Msgs.WORLD.get("b.snap_cancel"), cancelUpload);     
+        addChild(_cancelUploadButton);        
+
+        showCloseButton = false;
+    }
+
+    /**
+     * Handling the user request that the upload be cancelled.
+     */
+    protected function cancelUpload () :void 
+    {
+        // cancel any encoding processes that may be running.
+        galleryImage.cancelAll();
+        sceneThumbnail.cancelAll();
+
+        // close the panel
+        close();
     }
 
     /**
@@ -288,6 +278,14 @@ public class SnapshotPanel extends FloatingPanel
         }
 
         if (_waiting == 0) {
+            close();
+        }
+    }
+
+    protected function handleUploadDone (... ignored) :void
+    {
+        if (--_waiting == 0) {
+            // done at this point so we can close the panel
             close();
         }
     }
@@ -343,14 +341,6 @@ public class SnapshotPanel extends FloatingPanel
             reportError(Msgs.WORLD.get("e.snap_download", ErrorEvent(event).text));
         } else {
             handleUploadDone();
-        }
-    }
-
-    protected function handleUploadDone (... ignored) :void
-    {
-        if (--_waiting == 0) {
-            // done at this point so we can close the panel
-            close();
         }
     }
 

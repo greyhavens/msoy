@@ -112,6 +112,48 @@ public class Snapshot extends EventDispatcher
 
         return allSuccess;
     }
+
+    public function cancelAll () :void
+    {
+        if (_loader != null) {
+            try {
+                _loader.close();
+            } catch (e :Error) {
+                //ignore
+            }
+            clearLoader();
+        }
+        cancelEncoding();
+    }
+
+    /**
+     * Cancel encoding if it's underway.  We don't cancel uploads.
+     */
+    public function cancelEncoding () :void
+    {
+        if (_encoder) {
+            _encoder.cancel();
+            _encoder = null;
+        }
+    }
+
+    public function upload (service :String, createItem :Boolean, doneFn :Function) :void
+    {
+        const mimeBody :ByteArray = makeMimeBody(_data, createItem);
+
+        const request :URLRequest = new URLRequest();
+        request.url = DeploymentConfig.serverURL + service;
+        request.method = URLRequestMethod.POST;
+        request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
+        request.data = mimeBody;
+
+        _doneFn = doneFn;
+        _loader = new URLLoader();
+        _loader.addEventListener(Event.COMPLETE, handleSuccess);
+        _loader.addEventListener(IOErrorEvent.IO_ERROR, handleError);
+        _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
+        _loader.load(request);
+    }
     
     /**
      * Render the overlays 
@@ -163,30 +205,6 @@ public class Snapshot extends EventDispatcher
         return allSuccess;
     }
 
-    public function cancelAll () :void
-    {
-        if (_loader != null) {
-            try {
-                _loader.close();
-            } catch (e :Error) {
-                //ignore
-            }
-            clearLoader();
-        }
-        cancelEncoding();
-    }
-
-    /**
-     * Cancel encoding if it's underway.  We don't cancel uploads.
-     */
-    public function cancelEncoding () :void
-    {
-        if (_encoder) {
-            _encoder.cancel();
-            _encoder = null;
-        }
-    }
-
     protected function handleJpegEncoded (event :ValueEvent) :void
     {
         log.debug("jpeg encoded");
@@ -198,23 +216,6 @@ public class Snapshot extends EventDispatcher
         // call whatever we're supposed to call with the jpeg data now that we have it
     }
 
-    public function upload (service :String, createItem :Boolean, doneFn :Function) :void
-    {
-        const mimeBody :ByteArray = makeMimeBody(_data, createItem);
-
-        const request :URLRequest = new URLRequest();
-        request.url = DeploymentConfig.serverURL + service;
-        request.method = URLRequestMethod.POST;
-        request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
-        request.data = mimeBody;
-
-        _doneFn = doneFn;
-        _loader = new URLLoader();
-        _loader.addEventListener(Event.COMPLETE, handleSuccess);
-        _loader.addEventListener(IOErrorEvent.IO_ERROR, handleError);
-        _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
-        _loader.load(request);
-    }
 
     /** Creates an HTTP POST upload request. */
     protected function makeMimeBody (data :ByteArray, createItem :Boolean) :ByteArray
@@ -256,7 +257,6 @@ public class Snapshot extends EventDispatcher
 
     protected function handleSuccess (event :Event) :void
     {
-        trace("Done: Loader is " + _loader);
         var fn :Function = _doneFn;
         var data :String = String(_loader.data);
         clearLoader();
