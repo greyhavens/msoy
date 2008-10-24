@@ -182,7 +182,7 @@ public class SnapshotPanel extends FloatingPanel
         _progressBar.percentWidth = 100;
         _progressBar.indeterminate = true;
         _progressBar.mode = "manual";
-        bar.label = Msgs.WORLD.get("m.snap_progress");
+        _progressBar.label = Msgs.WORLD.get("m.snap_progress");
         addChild(_progressBar);
         _progressLabel = new Label();
         _progressLabel.text = Msgs.WORLD.get("m.snap_upload");
