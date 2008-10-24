@@ -78,7 +78,7 @@ public class DAContestLandingPanel extends SimplePanel
         AbsolutePanel step3 = MsoyUI.createAbsolutePanel("Step3");
         content.add(step3);
         step3.add(createInvisiLink(
-            "http://www.deviantart.com/#catpath=projects/contests/2008/whirled", 290, 20), 30,
+            "http://www.deviantart.com/?catpath=projects/contests/2008/whirled", 290, 20), 30,
             480);
 
         // Rules are in text
