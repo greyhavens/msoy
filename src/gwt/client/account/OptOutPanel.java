@@ -4,6 +4,7 @@
 package client.account;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -17,6 +18,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -30,19 +32,25 @@ public class OptOutPanel extends SmartTable
 
         // if this is a member invitation optout we'll get (inviteId, 0)
         if (memberId == 0) {
-            _membersvc.getInvitation(arg1, false, new MsoyCallback<Invitation>() {
+            _membersvc.getInvitation(arg1, false, new AsyncCallback<Invitation>() {
                 public void onSuccess (Invitation invite) {
                     showInvite(invite);
+                }
+                public void onFailure (Throwable cause) {
+                    setText(0, 0, CShell.serverError(cause), 1, "Header");
                 }
             });
 
         } else {
             setText(0, 0, _msgs.optOutOpting(), 1, "Header");
             // otherwise it's an announcement mailing and we get (memberId, hash)
-            _membersvc.optOutAnnounce(memberId, arg1, new MsoyCallback<String>() {
+            _membersvc.optOutAnnounce(memberId, arg1, new AsyncCallback<String>() {
                 public void onSuccess (String result) {
                     setText(0, 0, _msgs.optOutOptedOut(result), 1, "Header");
                     setWidget(1, 0, MsoyUI.createHTML(_msgs.optOutReenable(), null));
+                }
+                public void onFailure (Throwable cause) {
+                    setText(0, 0, CShell.serverError(cause), 1, "Header");
                 }
             });
         }
