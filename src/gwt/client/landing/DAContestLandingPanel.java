@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -62,7 +61,7 @@ public class DAContestLandingPanel extends SimplePanel
                 Link.createListener(Pages.ACCOUNT, "create")), 455, 345);
         } else {
             howToEnter.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Visit Home!",
-                Link.createListener(Pages.WORLD, Args.compose("m", CShell.getMemberId()))), 455,
+                Link.createListener(Pages.WORLD, "m" + CShell.getMemberId())), 455,
                 345);
         }
 
@@ -92,7 +91,7 @@ public class DAContestLandingPanel extends SimplePanel
         } else {
             rules.add(MsoyUI.createButton(MsoyUI.LONG_THICK, "Visit Home!",
                 Link.createListener(
-                Pages.WORLD, Args.compose("m", CShell.getMemberId()))), 540, 220);
+                Pages.WORLD, "m" + CShell.getMemberId())), 540, 220);
         }
 
         // tools icon sits over everything
