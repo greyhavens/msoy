@@ -31,7 +31,7 @@ import com.threerings.msoy.room.gwt.RoomInfo;
  */
 @Entity(indices={
     @Index(name="ixOwnerId", fields={ SceneRecord.OWNER_ID }),
-    @Index(name="ixLastTouched", fields={ SceneRecord.OWNER_ID })
+    @Index(name="ixLastUpdated", fields={ SceneRecord.OWNER_ID })
 })
 public class SceneRecord extends PersistentRecord
 {
@@ -210,12 +210,12 @@ public class SceneRecord extends PersistentRecord
     public static final ColumnExp RATING_COUNT_C =
         new ColumnExp(SceneRecord.class, RATING_COUNT);
 
-    /** The column identifier for the {@link #lastTouched} field. */
-    public static final String LAST_TOUCHED = "lastTouched";
+    /** The column identifier for the {@link #lastUpdated} field. */
+    public static final String LAST_UPDATED = "lastUpdated";
 
-    /** The qualified column identifier for the {@link #lastTouched} field. */
-    public static final ColumnExp LAST_TOUCHED_C =
-        new ColumnExp(SceneRecord.class, LAST_TOUCHED);
+    /** The qualified column identifier for the {@link #lastUpdated} field. */
+    public static final ColumnExp LAST_UPDATED_C =
+        new ColumnExp(SceneRecord.class, LAST_UPDATED);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -286,7 +286,8 @@ public class SceneRecord extends PersistentRecord
     public int ratingCount;
 
     /** When the room was last updated. */
-    public Timestamp lastTouched;
+    @Column(nullable=true)
+    public Timestamp lastUpdated;
 
     /** Used when loading from the database. */
     public SceneRecord ()

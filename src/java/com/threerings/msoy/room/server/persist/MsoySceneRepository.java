@@ -250,7 +250,7 @@ public class MsoySceneRepository extends DepotRepository
         List<OrderBy.Order> orders = Lists.newArrayList();
 
         // TODO: Just sort by rating for now
-        exprs.add(SceneRecord.LAST_TOUCHED_C);
+        exprs.add(SceneRecord.LAST_UPDATED_C);
         orders.add(OrderBy.Order.DESC);
 
         clauses.add(new OrderBy(exprs.toArray(new SQLExpression[exprs.size()]),
@@ -298,7 +298,7 @@ public class MsoySceneRepository extends DepotRepository
             try {
                 updatePartial(SceneRecord.class, sceneId,
                     SceneRecord.VERSION, finalVersion,
-                    SceneRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
+                    SceneRecord.LAST_UPDATED, new Timestamp(System.currentTimeMillis()));
             } catch (Exception e) {
                 log.warning("Failed to update scene to final version [id=" + sceneId +
                         ", fvers=" + finalVersion + "].", e);
