@@ -133,10 +133,14 @@ public class WebRoomServlet extends MsoyServiceServlet
     {
         OverviewResult overview = new OverviewResult();
 
+        // The scene IDs of the current N most populated rooms
         Iterable<Integer> activeIds =
             Iterables.transform(_memberMan.getPPSnapshot().getTopScenes(), TO_SCENE_ID);
         activeIds = Iterables.limit(activeIds, 20);
+
+        // Load up the records for each scene ID
         List<SceneRecord> activeRooms = _sceneRepo.loadScenes(Lists.newArrayList(activeIds));
+
         overview.activeRooms = Lists.newArrayList(Iterables.transform(activeRooms, TO_ROOM_INFO));
 
         Iterable<SceneRecord> cool = _sceneRepo.loadScenes(0, 20);
@@ -151,7 +155,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
     };
 
-    protected Function<SceneRecord, RoomInfo> TO_ROOM_INFO = new Function<SceneRecord,RoomInfo>() {
+    protected Function<SceneRecord,RoomInfo> TO_ROOM_INFO = new Function<SceneRecord,RoomInfo>() {
         public RoomInfo apply (SceneRecord record) {
             RoomInfo info = record.toRoomInfo();
             PopularPlacesSnapshot.Place card = _memberMan.getPPSnapshot().getScene(record.sceneId);
