@@ -16,6 +16,8 @@ import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.server.StatLogic;
 
 /**
  * Manages folks who are touring around.
@@ -41,7 +43,13 @@ public class TourManager
             memObj.touredRooms = new StreamableArrayIntSet();
         }
 
-        listener.requestProcessed(pickNextRoom(memObj));
+        int nextRoom = pickNextRoom(memObj);
+        memObj.touredRooms.add(nextRoom);
+        listener.requestProcessed(nextRoom);
+        // go ahead and increment the user's TOURED stat
+        if (!memObj.isGuest()) {
+            _statLogic.incrementStat(memObj.getMemberId(), StatType.ROOMS_TOURED, 1);
+        }
     }
 
     // from TourProvider
@@ -71,10 +79,15 @@ public class TourManager
         return 1;
     }
 
+    /**
+     * Determines if the specified room is valid for the user.
+     */
     protected boolean isValidNextRoom (MemberObject memObj, int sceneId)
     {
         return (memObj.homeSceneId != sceneId) &&
             !memObj.touredRooms.contains(sceneId) &&
             (memObj.getSceneId() != sceneId);
     }
+
+    @Inject protected StatLogic _statLogic;
 }

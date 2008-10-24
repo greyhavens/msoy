@@ -5,6 +5,8 @@ package com.threerings.msoy.world.tour.client {
 
 import mx.containers.HBox;
 
+import mx.controls.Text;
+
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
@@ -16,6 +18,12 @@ public class TourControl extends HBox
 {
     public function TourControl (ctx :WorldContext, nextRoom :Function, endTour :Function)
     {
+        setStyle("backgroundColor", 0x777777);
+
+        const label :Text = new Text();
+        label.selectable = false;
+        label.text = "Whirled\nTour";
+
         const nextBtn :CommandButton = new CommandButton("next room", nextRoom);
 
         const commentBtn :CommandButton = new CommandButton(null, MsoyController.VIEW_COMMENT_PAGE);
@@ -25,6 +33,7 @@ public class TourControl extends HBox
         const closeBtn :CommandButton = new CommandButton(null, endTour);
         closeBtn.styleName = "closeButton";
 
+        addChild(label);
         addChild(nextBtn);
         addChild(commentBtn);
         addChild(closeBtn);

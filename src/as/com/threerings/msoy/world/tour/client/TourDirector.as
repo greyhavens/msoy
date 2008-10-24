@@ -46,7 +46,7 @@ public class TourDirector extends BasicDirector
                 _wctx.displayFeedback(null, cause);
             },
             function (sceneId :int) :void {
-                // TODO: move rooms..? Or have the server do it?
+                _wctx.getSceneDirector().moveTo(sceneId);
             }));
     }
 
