@@ -68,6 +68,7 @@ import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
@@ -1097,6 +1098,13 @@ public class MemberManager
                 case HomePageItem.ACTION_ROOM:
                     SceneRecord scene = _sceneRepo.loadScene((Integer)se.experience.data);
                     media = scene.getSnapshot();
+                    if (media == null) {
+                        // It's not obvious from the docs in StaticMediaDesc that you can do this,
+                        // but this is what Group.getDefaultGroupLogoMedia() does.
+                        media = new StaticMediaDesc(MediaDesc.IMAGE_JPEG, "snapshot", "default_t",
+                            // we know that we're 66x60
+                            MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+                    }
                     name = scene.name;
                     break;
                 case HomePageItem.ACTION_GROUP:
