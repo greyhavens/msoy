@@ -21,7 +21,10 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.EpochSeconds;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.expression.ValueExp;
+import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic;
 
@@ -249,8 +252,13 @@ public class MsoySceneRepository extends DepotRepository
         List<SQLExpression> exprs = Lists.newArrayList();
         List<OrderBy.Order> orders = Lists.newArrayList();
 
-        // TODO: Just sort by rating for now
-        exprs.add(SceneRecord.LAST_UPDATED_C);
+        // TODO: Add more sorting options
+        long nowSeconds = System.currentTimeMillis() / 1000;
+        exprs.add(new Arithmetic.Sub(SceneRecord.RATING_C,
+            new Arithmetic.Div(
+                new Arithmetic.Sub(new ValueExp(nowSeconds),
+                    new EpochSeconds(SceneRecord.LAST_UPDATED_C)),
+                _newAndCoolDropoffSeconds)));
         orders.add(OrderBy.Order.DESC);
 
         clauses.add(new OrderBy(exprs.toArray(new SQLExpression[exprs.size()]),
@@ -510,6 +518,13 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     protected RatingRepository _ratingRepo;
+
+    /**
+     * The default number of seconds that causes an equivalent drop-off of 1 star in
+     * new & cool sorting.
+     */
+    // TODO: Make it runtime configable
+    protected static int _newAndCoolDropoffSeconds = 14 * 24 * 60 * 60;
 
     /** Utility class that compresses related scene updates. */
     @Inject protected UpdateAccumulator _accumulator;
