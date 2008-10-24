@@ -213,6 +213,12 @@ public class NotificationDirector extends BasicDirector
 
     protected function addNotification (notification :Notification) :void
     {
+        const sender :MemberName = notification.getSender();
+        if (sender != null && _mctx.getMuteDirector().isMuted(sender)) {
+            // we have muted this sender: do not notify.
+            return;
+        }
+
         // we can't just store the notifications in the array, because some notifications may be
         // identical (bob invites you to play captions twice within 15 minutes);
         _currentNotifications.add(_lastId++);

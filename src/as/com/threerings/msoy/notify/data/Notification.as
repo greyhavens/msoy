@@ -7,6 +7,8 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 
+import com.threerings.msoy.data.all.MemberName;
+
 /**
  * Notification from the server to the client.  Notifications are sent as messages on the 
  * MemberObject.
@@ -38,6 +40,15 @@ public /* abstract */ class Notification extends SimpleStreamableObject
     public function getCategory () :int
     {
         throw new Error("Abstract");
+    }
+
+    /**
+     * Get the username of the person who sent/triggered this notification, or null
+     * if this notification is not associated with another user.
+     */
+    public function getSender () :MemberName
+    {
+        return null;
     }
 
     /**

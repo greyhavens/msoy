@@ -18,6 +18,8 @@ import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
 
+import com.threerings.msoy.data.all.MemberName;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -61,10 +63,10 @@ public class NotificationManager
      * member!
      */
     public void notifyInvitationAccepted (
-        int inviterId, String inviteeDisplayName, int inviteeId, String inviteeEmail)
+        int inviterId, MemberName invitee, String inviteeEmail)
     {
         MemberNodeActions.sendNotification(inviterId,
-            new InviteAcceptedNotification(inviteeEmail, inviteeDisplayName, inviteeId));
+            new InviteAcceptedNotification(invitee, inviteeEmail));
     }
 
     /**
@@ -80,21 +82,21 @@ public class NotificationManager
     /**
      * Notifies the target player that they've been invited to play a game.
      */
-    public void notifyGameInvite (MemberObject target, String inviter, int inviterId,
+    public void notifyGameInvite (MemberObject target, MemberName inviter,
                                   String game, int gameId)
     {
-        if (target.isAvailableTo(inviterId)) {
-            notify(target, new GameInviteNotification(inviter, inviterId, game, gameId));
+        if (target.isAvailableTo(inviter.getMemberId())) {
+            notify(target, new GameInviteNotification(inviter, game, gameId));
         }
     }
 
     /**
      * Notifies the target player that they've been invited to follow someone.
      */
-    public void notifyFollowInvite (MemberObject target, String inviter, int inviterId)
+    public void notifyFollowInvite (MemberObject target, MemberName inviter)
     {
-        if (target.isAvailableTo(inviterId)) {
-            notify(target, new FollowInviteNotification(inviter, inviterId));
+        if (target.isAvailableTo(inviter.getMemberId())) {
+            notify(target, new FollowInviteNotification(inviter));
         }
     }
 

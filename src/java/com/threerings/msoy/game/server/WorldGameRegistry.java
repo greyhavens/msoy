@@ -588,8 +588,7 @@ public class WorldGameRegistry
     {
         public InviteNodeAction (int memberId, MemberName inviter, int gameId, String game) {
             super(memberId);
-            _inviterId = inviter.getMemberId();
-            _inviter = inviter.toString();
+            _inviter = inviter;
             _gameId = gameId;
             _game = game;
         }
@@ -598,11 +597,12 @@ public class WorldGameRegistry
         }
 
         protected void execute (MemberObject tgtobj) {
-            _notifyMan.notifyGameInvite(tgtobj, _inviter, _inviterId, _game, _gameId);
+            _notifyMan.notifyGameInvite(tgtobj, _inviter, _game, _gameId);
         }
 
-        protected int _inviterId, _gameId;
-        protected String _inviter, _game;
+        protected MemberName _inviter;
+        protected int _gameId;
+        protected String _game;
         @Inject protected transient NotificationManager _notifyMan;
     }
 

@@ -6,6 +6,8 @@ package com.threerings.msoy.notify.data;
 import com.threerings.util.ActionScript;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.msoy.data.all.MemberName;
+
 /**
  * Notifies a user that they have been requested to play a game
  */
@@ -16,18 +18,22 @@ public class FollowInviteNotification extends Notification
     }
 
     @ActionScript(omit=true)
-    public FollowInviteNotification (String inviter, int inviterId)
+    public FollowInviteNotification (MemberName inviter)
     {
         _inviter = inviter;
-        _inviterId = inviterId;
     }
 
     // from Notification
     public String getAnnouncement ()
     {
-        return MessageBundle.tcompose("m.follow_invite", _inviter, _inviterId);
+        return MessageBundle.tcompose("m.follow_invite", _inviter, _inviter.getMemberId());
     }
 
-    protected String _inviter;
-    protected int _inviterId;
+    @Override
+    public MemberName getSender ()
+    {
+        return _inviter;
+    }
+
+    protected MemberName _inviter;
 }

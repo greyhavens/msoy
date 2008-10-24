@@ -7,6 +7,8 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.util.MessageBundle;
 
+import com.threerings.msoy.data.all.MemberName;
+
 /**
  * Notifies a user that an invitation was accepted
  */
@@ -16,7 +18,7 @@ public class InviteAcceptedNotification extends Notification
     override public function getAnnouncement () :String
     {
         return MessageBundle.tcompose(
-            "m.invite_accepted", _inviteeEmail, _inviteeDisplayName, _inviteeId);
+            "m.invite_accepted", _inviteeEmail, _invitee, _invitee.getMemberId());
     }
 
     // from Notification
@@ -25,16 +27,20 @@ public class InviteAcceptedNotification extends Notification
         return PERSONAL;
     }
 
+    // from Notification
+    override public function getSender () :MemberName
+    {
+        return _invitee;
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
+        _invitee = MemberName(ins.readObject());
         _inviteeEmail = ins.readField(String) as String;
-        _inviteeDisplayName = ins.readField(String) as String;
-        _inviteeId = ins.readInt();
     }
 
+    protected var _invitee :MemberName;
     protected var _inviteeEmail :String;
-    protected var _inviteeDisplayName :String;
-    protected var _inviteeId :int;
 }
 }

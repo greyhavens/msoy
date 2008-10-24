@@ -7,6 +7,8 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.util.MessageBundle;
 
+import com.threerings.msoy.data.all.MemberName;
+
 /**
  * Notifies a user they have been requested to follow someone
  */
@@ -15,7 +17,7 @@ public class FollowInviteNotification extends Notification
     // from Notification
     override public function getAnnouncement () :String
     {
-        return MessageBundle.tcompose("m.follow_invite", _inviter, _inviterId);
+        return MessageBundle.tcompose("m.follow_invite", _inviter, _inviter.getMemberId());
     }
 
     // from Notification
@@ -24,14 +26,18 @@ public class FollowInviteNotification extends Notification
         return INVITE;
     }
 
+    // from Notification
+    override public function getSender () :MemberName
+    {
+        return _inviter;
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        _inviter = ins.readField(String) as String;
-        _inviterId = ins.readInt();
+        _inviter = MemberName(ins.readObject());
     }
 
-    protected var _inviter :String;
-    protected var _inviterId :int;
+    protected var _inviter :MemberName;
 }
 }

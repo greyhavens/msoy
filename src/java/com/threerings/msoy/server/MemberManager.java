@@ -385,7 +385,7 @@ public class MemberManager
         }
 
         // issue the follow invitation to the target
-        _notifyMan.notifyFollowInvite(target, user.memberName.toString(), user.getMemberId());
+        _notifyMan.notifyFollowInvite(target, user.memberName);
 
         // add this player to our followers set, if they ratify the follow request before we leave
         // our current location, the wiring up will be complete; if we leave the room before they

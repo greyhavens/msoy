@@ -185,7 +185,6 @@ public class WebUserServlet extends MsoyServiceServlet
 
                 // dispatch a notification to the inviter that the invite was accepted
                 final InvitationRecord finvite = invite;
-                final String fdisplayName = displayName;
                 _omgr.postRunnable(new Runnable() {
                     public void run () {
                         // TODO: This is really spammy; in fact, when somebody accepts your invite
@@ -199,7 +198,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
                         // and possibly send a runtime notification as well
                         _notifyMan.notifyInvitationAccepted(
-                            finvite.inviterId, fdisplayName, mrec.memberId, finvite.inviteeEmail);
+                            finvite.inviterId, mrec.getName(), finvite.inviteeEmail);
                     }
                 });
 
