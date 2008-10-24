@@ -310,6 +310,10 @@ public class AVRGameController extends PlaceController
 
     protected function maybeDispatchLeftRoom (why :String) :void
     {
+        if (_backend == null) {
+            return;
+        }
+
         // Dispatch to user when first condition is met
         if (_lastDispatchedSceneId != 0) {
             log.debug(playerIdStr(), "Left room [sceneId=" + _lastDispatchedSceneId + 
@@ -321,6 +325,20 @@ public class AVRGameController extends PlaceController
 
     protected function maybeDispatchEnteredRoom (why :String) :void
     {
+        if (_wctx.getSceneDirector() == null || _wctx.getLocationDirector() == null || 
+            _gameObj == null || _playerObj == null || _wctx.getSceneDirector().getScene() == null ||
+            _backend == null) {
+            log.info(
+                "Bad null when entering room", "why", why,
+                "sceneDir", _wctx.getSceneDirector() != null,
+                "locDir", _wctx.getLocationDirector() != null,
+                "gameObj", _gameObj != null, "playerObj", _playerObj != null,
+                "scene", _wctx.getSceneDirector() != null && 
+                _wctx.getSceneDirector().getScene() != null, "backend", _backend != null);
+            maybeDispatchLeftRoom("entry error");
+            return;
+        }
+
         var sceneId :int = _wctx.getSceneDirector().getScene().getId();
         if (sceneId == _lastDispatchedSceneId) {
             log.debug(
