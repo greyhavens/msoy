@@ -81,8 +81,6 @@ public class MsoySceneRepository extends DepotRepository
                 return coerceRating(SceneRatingRecord.class);
             }
         };
-
-        //_ctx.registerMigration(SceneRecord.class, new SchemaMigration.Add(
     }
 
     /**
