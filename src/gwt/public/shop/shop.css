@@ -55,7 +55,7 @@
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 130px;
+  width: 130px;
 }
 
 .shopPanel .Creator {
