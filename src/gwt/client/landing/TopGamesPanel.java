@@ -33,7 +33,8 @@ import client.util.Link;
 import client.util.MediaUtil;
 
 /**
- * Displays a list of popular games for the landing page
+ * Displays a list of popular games for the landing page, and randomly selects one of them to
+ * default to.
  */
 public class TopGamesPanel extends AbsolutePanel
 {
@@ -81,7 +82,8 @@ public class TopGamesPanel extends AbsolutePanel
         topGamesHeader.setStyleName("TopGamesHeader");
         add(topGamesHeader, 445, 0);
 
-        showGame(0);
+        int randomGameIndex = (int)(Math.random() * games.length);
+        showGame(randomGameIndex);
     }
 
     /**
