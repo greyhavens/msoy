@@ -141,7 +141,7 @@ public class GameServlet extends MsoyServiceServlet
         GameMetrics metrics = new GameMetrics();
         metrics.gameId = gameId;
 
-        Percentiler stiler = _ratingRepo.loadPercentile(-gameId);
+        Percentiler stiler = _ratingRepo.loadPercentile(-gameId, 0);
         if (stiler != null) {
             metrics.singleTotalCount = stiler.getRecordedCount();
             metrics.singleCounts = stiler.getCounts();
@@ -149,7 +149,7 @@ public class GameServlet extends MsoyServiceServlet
             metrics.singleMaxScore = stiler.getMaxScore();
         }
 
-        Percentiler mtiler = _ratingRepo.loadPercentile(gameId);
+        Percentiler mtiler = _ratingRepo.loadPercentile(gameId, 0);
         if (stiler != null) {
             metrics.multiTotalCount = mtiler.getRecordedCount();
             metrics.multiCounts = mtiler.getCounts();
@@ -203,8 +203,7 @@ public class GameServlet extends MsoyServiceServlet
         requireIsGameOwner(gameId, mrec);
 
         // wipe the percentiler in the database
-        int uGameId = single ? -gameId : gameId;
-        _ratingRepo.updatePercentile(uGameId, new Percentiler());
+        _ratingRepo.deletePercentiles(single ? -gameId : gameId);
 
         // tell any resolved instance of this game to clear its in memory percentiler
         _peerMan.invokeNodeAction(new ResetScoresAction(gameId, single));

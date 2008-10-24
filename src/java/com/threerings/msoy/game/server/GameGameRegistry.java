@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -157,9 +158,13 @@ public class GameGameRegistry
      * be modified and when the lobby for the game in question is finally unloaded, the percentiler
      * will be written back out to the database.
      */
-    public Percentiler getScoreDistribution (int gameId, boolean multiplayer)
+    public Percentiler getScoreDistribution (int gameId, boolean multiplayer, int gameMode)
     {
-        return _distribs.get(multiplayer ? Math.abs(gameId) : -Math.abs(gameId));
+        if (gameMode < 0 || gameMode >= MAX_GAME_MODES) {
+            log.warning("Requested invalid score distribution", "gameId", gameId, "mode", gameMode);
+            gameMode = 0;
+        }
+        return _distribs.get(new TilerKey(gameId, multiplayer, gameMode));
     }
 
     /**
@@ -333,8 +338,13 @@ public class GameGameRegistry
      */
     public void resetScorePercentiler (int gameId, boolean single)
     {
-        log.info("Resetting in-memory percentiler [gameId=" + gameId + ", single=" + single + "].");
-        _distribs.put(single ? -Math.abs(gameId) : Math.abs(gameId), new Percentiler());
+        log.info("Resetting in-memory percentiler", "gameId", gameId, "single", single);
+        for (int mode = 0; mode < MAX_GAME_MODES; mode++) {
+            TilerKey key = new TilerKey(gameId, !single, mode);
+            if (_distribs.containsKey(key)) {
+                _distribs.put(key, new Percentiler());
+            }
+        }
     }
 
     /**
@@ -681,8 +691,8 @@ public class GameGameRegistry
             public void invokePersist () throws Exception {
                 _content = assembleGameContent(gameId);
                 // load up the score distribution information for this game as well
-                _single = _ratingRepo.loadPercentile(-Math.abs(gameId));
-                _multi = _ratingRepo.loadPercentile(Math.abs(gameId));
+                _singles = _ratingRepo.loadPercentiles(-Math.abs(gameId));
+                _multis = _ratingRepo.loadPercentiles(Math.abs(gameId));
             }
 
             @Override
@@ -703,8 +713,12 @@ public class GameGameRegistry
                 }
 
                 // map this game's score distributions
-                _distribs.put(-Math.abs(gameId), _single == null ? new Percentiler() : _single);
-                _distribs.put(Math.abs(gameId), _multi == null ? new Percentiler() : _multi);
+                for (Map.Entry<Integer, Percentiler> entry : _singles.entrySet()) {
+                    _distribs.put(new TilerKey(gameId, false, entry.getKey()), entry.getValue());
+                }
+                for (Map.Entry<Integer, Percentiler> entry : _multis.entrySet()) {
+                    _distribs.put(new TilerKey(gameId, true, entry.getKey()), entry.getValue());
+                }
             }
 
             @Override
@@ -725,7 +739,7 @@ public class GameGameRegistry
             }
 
             protected GameContent _content;
-            protected Percentiler _single, _multi;
+            protected Map<Integer, Percentiler> _singles, _multis;
         });
     }
 
@@ -873,8 +887,7 @@ public class GameGameRegistry
         _worldClient.stoppedHostingGame(gameId);
 
         // flush any modified percentile distributions
-        flushPercentiler(-Math.abs(gameId)); // single-player
-        flushPercentiler(Math.abs(gameId)); // multiplayer
+        flushPercentilers(gameId);
     }
 
     // from AVRGameManager.LifecycleObserver
@@ -1022,24 +1035,37 @@ public class GameGameRegistry
         });
     }
 
-    protected void flushPercentiler (final int gameId)
+    protected void flushPercentilers (int gameId)
     {
-        final Percentiler tiler = _distribs.remove(gameId);
-        if (tiler == null || !tiler.isModified()) {
-            return;
+        final Map<TilerKey, Percentiler> toFlush = Maps.newHashMap();
+        for (boolean multiplayer : new Boolean[] { true, false }) {
+            for (int mode = 0; mode < MAX_GAME_MODES; mode++) {
+                TilerKey key = new TilerKey(gameId, multiplayer, mode);
+                final Percentiler tiler = _distribs.remove(key);
+                if (tiler == null || !tiler.isModified()) {
+                    continue;
+                }
+                toFlush.put(key, tiler);
+            }
         }
 
-        _invoker.postUnit(new Invoker.Unit("flushPercentiler") {
-            @Override public boolean invoke () {
-                try {
-                    _ratingRepo.updatePercentile(gameId, tiler);
-                } catch (Exception e) {
-                    log.warning("Failed to update score distribution", "game", gameId,
-                                "tiler", tiler, e);
+        if (toFlush.size() > 0) {
+            _invoker.postUnit(new Invoker.Unit("flushPercentiler") {
+                @Override public boolean invoke () {
+                    for (Map.Entry<TilerKey, Percentiler> entry : toFlush.entrySet()) {
+                        TilerKey key = entry.getKey();
+                        int gameId = key.multiplayer ? key.gameId : -key.gameId;
+                        try {
+                            _ratingRepo.updatePercentile(gameId, key.gameMode, entry.getValue());
+                        } catch (Exception e) {
+                            log.warning("Failed to update score distribution", "gameId", gameId,
+                                        "gameMode", key.gameMode, "tiler", entry.getValue(), e);
+                        }
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -1103,11 +1129,34 @@ public class GameGameRegistry
         protected AVRService.AVRGameJoinListener _listener;
     }
 
+    protected static class TilerKey
+    {
+        public final int gameId;
+        public final boolean multiplayer;
+        public final int gameMode;
+
+        public TilerKey (int gameId, boolean multiplayer, int gameMode) {
+            this.gameId = Math.abs(gameId);
+            this.multiplayer = multiplayer;
+            this.gameMode = gameMode;
+        }
+
+        @Override public int hashCode () {
+            return gameId ^ (multiplayer ? 1 : 0) ^ gameMode;
+        }
+
+        @Override public boolean equals (Object other) {
+            TilerKey okey = (TilerKey)other;
+            return gameId == okey.gameId && multiplayer == okey.multiplayer &&
+                gameMode == okey.gameMode;
+        }
+    }
+
     /** Maps game id -> lobby. */
     protected IntMap<LobbyManager> _lobbies = new HashIntMap<LobbyManager>();
 
     /** Maps game id -> a mapping of various percentile distributions. */
-    protected IntMap<Percentiler> _distribs = new HashIntMap<Percentiler>();
+    protected Map<TilerKey, Percentiler> _distribs = Maps.newHashMap();
 
     /** Maps game id -> listeners waiting for a lobby to load. */
     protected IntMap<ResultListenerList> _loadingLobbies = new HashIntMap<ResultListenerList>();
@@ -1147,4 +1196,7 @@ public class GameGameRegistry
 
     /** Period of game log deletion. */
     protected static final long LOG_DELETION_INTERVAL = 6 * 60 * 60 * 1000;
+
+    /** The maximum number of different game modes we allow. */
+    protected static final int MAX_GAME_MODES = 100;
 }

@@ -27,6 +27,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.rating.server.RatingDelegate;
 import com.threerings.parlor.rating.util.Percentiler;
 
+import com.whirled.game.client.WhirledGameService;
 import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.server.WhirledGameManager;
 
@@ -77,9 +78,12 @@ public class AwardDelegate extends RatingDelegate
         }
     }
 
-    // from interface WhirledGameProvider
+    /**
+     * Handles {@link WhirledGameService#endGameWithScores}.
+     */
     public void endGameWithScores (ClientObject caller, int[] playerOids, int[] scores,
-                                   int payoutType, InvocationService.InvocationListener listener)
+                                   int payoutType, int gameMode,
+                                   InvocationService.InvocationListener listener)
         throws InvocationException
     {
         verifyIsPlayerOrAgent(caller);
@@ -117,7 +121,7 @@ public class AwardDelegate extends RatingDelegate
         updatePlayerStats(players.values(), highestScore);
 
         // record the scores of all players in the game
-        final Percentiler tiler = getScoreDistribution();
+        final Percentiler tiler = getScoreDistribution(gameMode);
         for (final Player player : players.values()) {
             // we want to avoid hackers or bugs totally freaking out the score distribution, so we
             // do some sanity checking of the score value before recording it
@@ -571,10 +575,11 @@ public class AwardDelegate extends RatingDelegate
         return ((MsoyGameManager) _gmgr).isMultiplayer();
     }
 
-    protected Percentiler getScoreDistribution ()
+    protected Percentiler getScoreDistribution (int gameMode)
     {
         // we want the "rating" game id so we use getGameId()
-        final Percentiler tiler = _gameReg.getScoreDistribution(getGameId(), isMultiplayer());
+        final Percentiler tiler = _gameReg.getScoreDistribution(
+            getGameId(), isMultiplayer(), gameMode);
         // if for whatever reason we don't have a score distribution, return a blank one which will
         // result in the default percentile being used
         return (tiler == null) ? new Percentiler() : tiler;
