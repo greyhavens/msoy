@@ -26,8 +26,6 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -44,7 +42,6 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -89,22 +86,6 @@ public class ItemManager
     public void init ()
     {
         _itemLogic.init();
-
-        ItemRepository.setNewAndHotDropoffDays(_runtime.server.newAndHotDropoffDays);
-
-        _runtime.server.addListener(new AttributeChangeListener() {
-            public void attributeChanged (AttributeChangedEvent event) {
-                if (ServerConfigObject.NEW_AND_HOT_DROPOFF_DAYS.equals(event.getName())) {
-                    final int days = event.getIntValue();
-                    _invoker.postUnit(new Invoker.Unit("updateNewAndHotDropoffDays") {
-                        public boolean invoke () {
-                            ItemRepository.setNewAndHotDropoffDays(days);
-                            return false;
-                        }
-                    });
-                }
-            }
-        });
     }
 
     /**
@@ -786,7 +767,6 @@ public class ItemManager
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ServerMessages _serverMsgs;
-    @Inject protected RuntimeConfig _runtime;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected SceneRegistry _sceneReg;

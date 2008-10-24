@@ -44,6 +44,7 @@ import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
@@ -258,7 +259,7 @@ public class MsoySceneRepository extends DepotRepository
             new Arithmetic.Div(
                 new Arithmetic.Sub(new ValueExp(nowSeconds),
                     new EpochSeconds(SceneRecord.LAST_UPDATED_C)),
-                _newAndCoolDropoffSeconds)));
+                _hconfig.getDropoffSeconds())));
         orders.add(OrderBy.Order.DESC);
 
         clauses.add(new OrderBy(exprs.toArray(new SQLExpression[exprs.size()]),
@@ -519,22 +520,10 @@ public class MsoySceneRepository extends DepotRepository
 
     protected RatingRepository _ratingRepo;
 
-    /**
-     * The default number of seconds that causes an equivalent drop-off of 1 star in
-     * new & cool sorting.
-     */
-    // TODO: Make it runtime configable
-    protected static int _newAndCoolDropoffSeconds = 14 * 24 * 60 * 60;
-
-    /** Utility class that compresses related scene updates. */
+    // dependencies
     @Inject protected UpdateAccumulator _accumulator;
-
-    /** Internal reference to the decor repository, used to load up decor for each scene. */
     @Inject protected DecorRepository _decorRepo;
-
-    /** Used to look up a group's name. */
     @Inject protected GroupRepository _groupRepo;
-
-    /** Used to look up a member's name. */
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected HotnessConfig _hconfig;
 }

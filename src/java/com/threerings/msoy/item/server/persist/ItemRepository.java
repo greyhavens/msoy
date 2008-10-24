@@ -59,6 +59,7 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
@@ -90,14 +91,6 @@ public abstract class ItemRepository<T extends ItemRecord>
     public static class OwnerIdRecord extends PersistentRecord {
         public int itemId;
         public int ownerId;
-    }
-
-    /**
-     *  Update the number of days in the new & hot dropoff adjustment.
-     */
-    public static void setNewAndHotDropoffDays (int days)
-    {
-        _newAndHotDropoffSeconds = Math.max(1, days * 24 * 60 * 60); // don't let us div by 0.
     }
 
     public ItemRepository (PersistenceContext ctx)
@@ -1170,7 +1163,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             new Arithmetic.Div(
                 new Arithmetic.Sub(new ValueExp(nowSeconds),
                     new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE))),
-                _newAndHotDropoffSeconds)));
+                _hconfig.getDropoffSeconds())));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1315,9 +1308,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyExchange _exchange;
-
-    /** The number of seconds that causes an equivalent drop-off of 1 star in new & hot sorting. */
-    protected static int _newAndHotDropoffSeconds = 7 * 60 * 60 * 24;
+    @Inject protected HotnessConfig _hconfig;
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;

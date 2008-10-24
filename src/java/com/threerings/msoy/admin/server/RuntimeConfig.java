@@ -3,9 +3,11 @@
 
 package com.threerings.msoy.admin.server;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.threerings.presents.dobj.AccessController;
+import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
@@ -18,6 +20,7 @@ import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyClient;
+import com.threerings.msoy.server.persist.HotnessConfig;
 
 import static com.threerings.msoy.Log.log;
 
@@ -40,6 +43,16 @@ public class RuntimeConfig
     {
         registerObject(omgr, confReg, "server", server);
         registerObject(omgr, confReg, "money", money);
+
+        // configure a listener to keep our new and hot dropoff days in sync
+        _hconfig.setDropoffDays(server.newAndHotDropoffDays);
+        server.addListener(new AttributeChangeListener() {
+            public void attributeChanged (AttributeChangedEvent event) {
+                if (ServerConfigObject.NEW_AND_HOT_DROPOFF_DAYS.equals(event.getName())) {
+                    _hconfig.setDropoffDays(event.getIntValue());
+                }
+            }
+        });
     }
 
     protected void registerObject (RootDObjectManager omgr, ConfigRegistry confReg,
@@ -109,4 +122,6 @@ public class RuntimeConfig
 
         protected RootDObjectManager _omgr;
     };
+
+    @Inject protected HotnessConfig _hconfig;
 }
