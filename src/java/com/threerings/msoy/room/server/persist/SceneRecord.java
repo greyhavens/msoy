@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.server.persist;
 
+import java.sql.Timestamp;
+
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.depot.Key;
@@ -27,7 +29,10 @@ import com.threerings.msoy.room.gwt.RoomInfo;
 /**
  * Contains metadata for a scene in the Whirled.
  */
-@Entity(indices={@Index(name="ixOwnerId", fields={"ownerId"})})
+@Entity(indices={
+    @Index(name="ixOwnerId", fields={ SceneRecord.OWNER_ID }),
+    @Index(name="ixLastTouched", fields={ SceneRecord.OWNER_ID })
+})
 public class SceneRecord extends PersistentRecord
 {
     /** Enumerates our various stock scenes. */
@@ -204,11 +209,18 @@ public class SceneRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #ratingCount} field. */
     public static final ColumnExp RATING_COUNT_C =
         new ColumnExp(SceneRecord.class, RATING_COUNT);
+
+    /** The column identifier for the {@link #lastTouched} field. */
+    public static final String LAST_TOUCHED = "lastTouched";
+
+    /** The qualified column identifier for the {@link #lastTouched} field. */
+    public static final ColumnExp LAST_TOUCHED_C =
+        new ColumnExp(SceneRecord.class, LAST_TOUCHED);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** The unique identifier for this scene. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=6)
@@ -272,6 +284,9 @@ public class SceneRecord extends PersistentRecord
 
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
+
+    /** When the room was last updated. */
+    public Timestamp lastTouched;
 
     /** Used when loading from the database. */
     public SceneRecord ()

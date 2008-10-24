@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.sql.Timestamp;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -80,6 +81,8 @@ public class MsoySceneRepository extends DepotRepository
                 return coerceRating(SceneRatingRecord.class);
             }
         };
+
+        //_ctx.registerMigration(SceneRecord.class, new SchemaMigration.Add(
     }
 
     /**
@@ -249,7 +252,7 @@ public class MsoySceneRepository extends DepotRepository
         List<OrderBy.Order> orders = Lists.newArrayList();
 
         // TODO: Just sort by rating for now
-        exprs.add(SceneRecord.RATING_C);
+        exprs.add(SceneRecord.LAST_TOUCHED_C);
         orders.add(OrderBy.Order.DESC);
 
         clauses.add(new OrderBy(exprs.toArray(new SQLExpression[exprs.size()]),
@@ -295,7 +298,9 @@ public class MsoySceneRepository extends DepotRepository
         }
         if (sceneId != 0) {
             try {
-                updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, finalVersion);
+                updatePartial(SceneRecord.class, sceneId,
+                    SceneRecord.VERSION, finalVersion,
+                    SceneRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
             } catch (Exception e) {
                 log.warning("Failed to update scene to final version [id=" + sceneId +
                         ", fvers=" + finalVersion + "].", e);
