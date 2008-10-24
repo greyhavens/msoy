@@ -76,6 +76,14 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Turns off announcement mailings for the specified member id (if the hash is valid).
+     *
+     * @return the email address that was opted out.
+     */
+    String optOutAnnounce (int memberId, String hash)
+        throws ServiceException;
+
+    /**
      * Fetch the highest ranked Whirled memebers for display on a leader board.
      * Returns a list of {@link MemberCard} records.
      */

@@ -220,3 +220,8 @@
 .welcome .Next .NextArrow { 
   padding-right: 10px;
 }
+
+.optout .Header {
+  font-weight: bold;
+  font-size: 18px;
+}

@@ -127,6 +127,13 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
+    public String optOutAnnounce (int memberId, String hash)
+        throws ServiceException
+    {
+        return "foo@bar.com"; // TODO
+    }
+
+    // from WebMemberService
     public List<MemberCard> getLeaderList ()
         throws ServiceException
     {

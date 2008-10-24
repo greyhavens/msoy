@@ -39,8 +39,12 @@ public class EditAccountPanel extends SmartTable
 {
     public EditAccountPanel ()
     {
-        setCellSpacing(10);
-        setStyleName("editAccount");
+        super("editAccount", 0, 10);
+
+        if (CShell.getMemberId() == 0) {
+            setText(0, 0, _msgs.editMustLogon(), 1, "Header");
+            return;
+        }
 
         _usersvc.getAccountInfo(new MsoyCallback<AccountInfo>() {
             public void onSuccess (AccountInfo info) {

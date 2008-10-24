@@ -52,6 +52,11 @@ public interface WebMemberServiceAsync
     void optOut (String inviteId, AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link WebMemberService#optOutAnnounce}.
+     */
+    void optOutAnnounce (int memberId, String hash, AsyncCallback<String> callback);
+
+    /**
      * The asynchronous version of {@link WebMemberService#getLeaderList}.
      */
     void getLeaderList (AsyncCallback<List<MemberCard>> callback);
