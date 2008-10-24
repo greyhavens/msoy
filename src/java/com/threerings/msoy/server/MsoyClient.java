@@ -110,11 +110,11 @@ public class MsoyClient extends WhirledClient
     @Override // from PresentsClient
     protected void resumeSession (AuthRequest req, Connection conn)
     {
-        super.resumeSession(req, conn);
-
         // note that we're in the middle of resuming a session so that we don't end our session
         // when the old connection is closed
         _resumingSession = true;
+
+        super.resumeSession(req, conn);
     }
 
     @Override // from PresentsClient
@@ -246,7 +246,7 @@ public class MsoyClient extends WhirledClient
     protected boolean _sessionForwarded;
 
     /** Used to avoid ending our session when we're in the middle of resuming it. */
-    protected boolean _resumingSession;
+    protected volatile boolean _resumingSession;
 
     // dependent services
     @Inject protected MsoyEventLogger _eventLog;
