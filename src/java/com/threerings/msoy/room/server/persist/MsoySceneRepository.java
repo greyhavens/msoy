@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.room.server.persist;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -234,7 +235,7 @@ public class MsoySceneRepository extends DepotRepository
     /**
      * Load the SceneRecords for the given sceneIds.
      */
-    public List<SceneRecord> loadScenes (List<Integer> sceneIds)
+    public List<SceneRecord> loadScenes (Collection<Integer> sceneIds)
     {
         return loadAll(SceneRecord.class, sceneIds);
     }
