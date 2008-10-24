@@ -964,7 +964,7 @@ img, embed, applet, object {
 }
 
 .orangeThick .W, .orangeThick .E, .blueThick .W, .blueThick .E {
-  min-width: 36px;
+  width: 36px;
   height: 44px;
 }
 
