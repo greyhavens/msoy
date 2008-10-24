@@ -39,27 +39,27 @@ public class LogonPanel extends SmartTable
     /**
      * Creates a logon panel with an internal submit button.
      */
-    public LogonPanel (boolean headerMode)
+    public LogonPanel ()
     {
-        this(headerMode, new Button(_cmsgs.logonLogon()));
+        this(new Button(_cmsgs.logonLogon()));
     }
+
     /**
      * Creates a logon panel with an external submit button and labels
      */
-    public LogonPanel (boolean headerMode, ButtonBase logon)
+    public LogonPanel (ButtonBase logon)
     {
-        this(headerMode, true, new Button(_cmsgs.logonLogon()));
+        this(true, logon);
     }
 
     /**
      * Creates a logon panel with an external submit button.
      *
-     * @param headerMode changes the location of the form elements.
      * @param logon the button to use for form submit.
      */
-    public LogonPanel (boolean headerMode, boolean displayLabels, ButtonBase logon)
+    public LogonPanel (boolean displayLabels, ButtonBase logon)
     {
-        super("logonPanel", 0, 2);
+        super("logonPanel", 0, 10);
 
         // create the widgets we'll use in our layout
         _email = new TextBox();
@@ -107,32 +107,16 @@ public class LogonPanel extends SmartTable
         });
 
         // now stick them in the right places
-        if (headerMode) {
-            if (displayLabels) {
-                setText(0, 0, _cmsgs.logonEmail(), 1, "rightLabel");
-            }
-            setWidget(0, 1, _email);
-            setWidget(0, 3, forgot);
-            if (displayLabels) {
-                setText(1, 0, _cmsgs.logonPassword(), 1, "rightLabel");
-            }
-            setWidget(1, 1, _password);
-            setWidget(1, 3, logon);
-
-        } else {
-            int row = 0;
-            if (displayLabels) {
-                setText(row++, 0, _cmsgs.logonEmail());
-            }
-            setWidget(row++, 0, _email);
-            if (displayLabels) {
-                setText(row++, 0, _cmsgs.logonPassword());
-            }
-            setWidget(row, 0, _password);
-            setWidget(row, 1, WidgetUtil.makeShim(3, 3));
-            setWidget(row++, 2, forgot);
-            // in non-header mode logon is handled externally
+        if (displayLabels) {
+            setText(0, 0, _cmsgs.logonEmail(), 1, "rightLabel");
         }
+        setWidget(0, 1, _email);
+        setWidget(0, 3, forgot);
+        if (displayLabels) {
+            setText(1, 0, _cmsgs.logonPassword(), 1, "rightLabel");
+        }
+        setWidget(1, 1, _password);
+        setWidget(1, 3, logon);
     }
 
     @Override // from Widget

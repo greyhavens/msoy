@@ -156,7 +156,9 @@ public class FrameHeader extends SmartTable
             setWidget(0, 1, WidgetUtil.makeShim(10, 10));
             PushButton logon = new PushButton(_cmsgs.headerLogon(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    setWidget(0, 2, new LogonPanel(true));
+                    LogonPanel logon = new LogonPanel();
+                    logon.setCellSpacing(2); // tighten up!
+                    setWidget(0, 2, logon);
                 }
             });
             logon.setStyleName("LogonButton");

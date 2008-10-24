@@ -564,7 +564,7 @@ public class MsoyUI
         popup.addStyleName("sessionExpired");
         FlowPanel content = new FlowPanel();
         content.add(MsoyUI.createLabel(message, "Message"));
-        content.add(new LogonPanel(true) {
+        content.add(new LogonPanel() {
             @Override public void onSuccess(SessionData result) {
                 popup.hide();
                 super.onSuccess(result);

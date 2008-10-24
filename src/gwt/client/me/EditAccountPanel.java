@@ -26,6 +26,7 @@ import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
+import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -43,6 +44,7 @@ public class EditAccountPanel extends SmartTable
 
         if (CShell.getMemberId() == 0) {
             setText(0, 0, _msgs.editMustLogon(), 1, "Header");
+            setWidget(1, 0, new LogonPanel());
             return;
         }
 
