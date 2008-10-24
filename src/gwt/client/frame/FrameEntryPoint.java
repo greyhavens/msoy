@@ -267,6 +267,12 @@ public class FrameEntryPoint
     {
         WorldClient.didLogon(data.creds);
 
+        // TODO: preserve their current world location and log them into their new account; this
+        // will require fixing a whole bunch of shit
+        if (FlashClients.clientExists() && data.justCreated) {
+            closeClient();
+        }
+
         if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
             Link.go(getLandingPage(), getLandingArgs());
         } else if (_page != null) {
