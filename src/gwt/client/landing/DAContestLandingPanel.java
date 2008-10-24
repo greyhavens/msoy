@@ -106,7 +106,9 @@ public class DAContestLandingPanel extends SimplePanel
     {
         return createInvisiLink(new ClickListener() {
             public void onClick (Widget sender) {
-                Window.open(offsiteLinkPath, "_blank", null);
+                Window.open(offsiteLinkPath, "_blank",
+                    "toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,"
+                        + "scrollbars=yes,copyhistory=yes,resizable=yes");
             }
         }, width, height);
     }
