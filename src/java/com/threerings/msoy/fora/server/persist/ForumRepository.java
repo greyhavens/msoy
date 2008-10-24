@@ -16,6 +16,7 @@ import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
@@ -43,6 +44,9 @@ public class ForumRepository extends DepotRepository
     @Inject public ForumRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        ctx.registerMigration(ForumMessageRecord.class,
+            new SchemaMigration.Retype(6, ForumMessageRecord.MESSAGE));
     }
 
     /**

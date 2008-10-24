@@ -16,7 +16,7 @@ public class ForumMessage
     implements IsSerializable
 {
     /** The maximum length in characters of a forum message. */
-    public static final int MAX_MESSAGE_LENGTH = 4096;
+    public static final int MAX_MESSAGE_LENGTH = 16384;
 
     /** This message's unique identifier. */
     public int messageId;
