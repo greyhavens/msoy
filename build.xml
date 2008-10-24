@@ -462,7 +462,7 @@
           <pathelement location="${src.dir}"/>
           <pathelement location="${gsrc.dir}"/>
         </classpath>
-        <!-- TODO: <jvmarg value="-Djava.awt.headless=true"/> -->
+        <jvmarg value="-Djava.awt.headless=true"/>
         <arg value="-style"/><arg value="${gwt_style}"/>
         <arg value="-out"/>
         <arg value="${pageout.dir}"/>

@@ -99,7 +99,7 @@ public class ShopPanel extends HorizontalPanel
 
     protected Widget createTop (String icon, String title, ListingCard[] listings)
     {
-        HeaderBox box = new HeaderBox(null, title);
+        HeaderBox box = new HeaderBox("/images/shop/icon_" + icon + ".png", title);
         for (int ii = 0; ii < listings.length; ii++) {
             box.add(new TopListingBox(ii+1, listings[ii]));
         }
