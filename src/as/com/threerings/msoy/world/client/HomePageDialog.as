@@ -14,6 +14,7 @@ import mx.containers.Tile;
 import mx.containers.Canvas;
 import mx.controls.Label;
 
+import com.threerings.flash.GraphicsUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.io.TypedArray;
@@ -37,21 +38,45 @@ public class HomePageDialog extends FloatingPanel
 
         title = Msgs.GENERAL.get("t.home_page");
         showCloseButton = true;
-        styleName = "sexyWindow";
+        styleName = "homePageGrid";
         setStyle("paddingTop", EDGE_MARGIN);
         setStyle("paddingBottom", EDGE_MARGIN);
         setStyle("paddingLeft", EDGE_MARGIN);
         setStyle("paddingRight", EDGE_MARGIN);
 
+        // Set up the tile container for the items
         _grid = new Tile();
         _grid.tileWidth = IMAGE_WIDTH;
         _grid.tileHeight = IMAGE_HEIGHT + LABEL_HEIGHT;
         _grid.setStyle("horizontalGap", CELL_SPACING);
         _grid.setStyle("verticalGap", CELL_SPACING);
         addChild(_grid);
+
+        // Fill it with empty components just to force the layout
         gotItems(TypedArray.create(HomePageItem));
 
         open();
+    }
+
+    override public function stylesInitialized () :void
+    {
+        super.stylesInitialized();
+
+        // Draw some dashed lines between the cells
+        var color :int = getStyle("borderColor") as int;
+        log.info("Border color is " + getStyle("borderColor"));
+        //color = 0x3db8eb; // hardwire for now, getStyle doesn't do what I want
+        _grid.graphics.lineStyle(0.5, color, 1.0);
+        for (var row :int = 1; row < ROWS; ++row) {
+            var y :Number = row * (CELL_HEIGHT + CELL_SPACING) - CELL_SPACING / 2;
+            var x1 :Number = CELL_WIDTH * COLUMNS + CELL_SPACING * (COLUMNS - 1);
+            GraphicsUtil.dashTo(_grid.graphics, 0, y, x1, y, 3, 3);
+        }
+        for (var col :int = 1; col < COLUMNS; ++col) {
+            var x :Number = col * (CELL_WIDTH + CELL_SPACING) - CELL_SPACING / 2;
+            var y1 :Number = CELL_HEIGHT * ROWS + CELL_SPACING * (ROWS - 1);
+            GraphicsUtil.dashTo(_grid.graphics, x, 0, x, y1, 3, 3);
+        }
     }
 
     public function refresh () :void
@@ -116,6 +141,9 @@ public class HomePageDialog extends FloatingPanel
         label.text = resolveItemName(item);
         label.truncateToFit = true;
         label.setStyle("textAlign", "center");
+        label.setStyle("verticalAlign", "middle");
+        label.setStyle("fontFamily", "Arial");
+        label.setStyle("fontSize", "11");
         label.y = IMAGE_HEIGHT;
 
         // create the cell box
@@ -170,13 +198,13 @@ public class HomePageDialog extends FloatingPanel
 
     protected static const ROWS :int = 3;
     protected static const COLUMNS :int = 3;
-    protected static const IMAGE_WIDTH :int = 80;
-    protected static const IMAGE_HEIGHT :int = 60;
-    protected static const LABEL_HEIGHT :int = 20;
+    protected static const IMAGE_WIDTH :int = 120;
+    protected static const IMAGE_HEIGHT :int = 90;
+    protected static const LABEL_HEIGHT :int = 30;
     protected static const CELL_WIDTH :int = IMAGE_WIDTH;
     protected static const CELL_HEIGHT :int = IMAGE_HEIGHT + LABEL_HEIGHT;
-    protected static const CELL_SPACING :int = 10;
-    protected static const EDGE_MARGIN :int = 10;
+    protected static const CELL_SPACING :int = 40;
+    protected static const EDGE_MARGIN :int = 20;
     protected static const WIDTH :int =
         EDGE_MARGIN * 2 + IMAGE_WIDTH * COLUMNS + CELL_SPACING * (COLUMNS - 1);
     protected static const HEIGHT :int =

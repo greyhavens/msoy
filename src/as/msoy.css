@@ -69,7 +69,7 @@ TitleWindow {
  * then I can do the blue border stuff with the "border" styles, and not even have a
  * background image, but do it purely with the color and alpha.
  */
-.sexyWindow {
+.sexyWindow, .homePageGrid {
   borderColor: #3db8eb;
   borderAlpha: 1;
   borderThicknessLeft: 3;
