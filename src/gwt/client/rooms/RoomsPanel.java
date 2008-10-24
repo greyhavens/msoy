@@ -7,28 +7,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
-
-import com.threerings.msoy.comment.gwt.Comment;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
-import com.threerings.msoy.web.gwt.RatingResult;
 
 import client.room.RoomWidget;
-import client.comment.CommentsPanel;
-import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.ui.Rating;
-import client.ui.StyledTabPanel;
-import client.util.Link;
-import client.util.MediaUtil;
+import client.ui.TongueBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -49,11 +37,11 @@ public class RoomsPanel extends FlowPanel
     {
         RoomsGrid active = new RoomsGrid();
         active.setModel(new SimpleDataModel<RoomInfo>(overview.activeRooms), 0);
-        add(active);
+        add(new TongueBox(_msgs.activeRooms(), active));
 
         RoomsGrid cool = new RoomsGrid();
         cool.setModel(new SimpleDataModel<RoomInfo>(overview.coolRooms), 0);
-        add(cool);
+        add(new TongueBox(_msgs.coolRooms(), cool));
     }
 
     protected static class RoomsGrid extends PagedGrid<RoomInfo>
@@ -72,7 +60,7 @@ public class RoomsPanel extends FlowPanel
         @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
-            return "TODO";
+            return _msgs.emptyGrid(); // This should almost never happen
         }
     }
 
