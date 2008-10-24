@@ -41,8 +41,6 @@ public class SnapshotPanel extends FloatingPanel
     public static const SCENE_THUMBNAIL_WIDTH :int = 350;
     public static const SCENE_THUMBNAIL_HEIGHT :int = 200;
 
-    protected var CAN_SNAP :Boolean = true; // TODO: TEMP
-
     /** This is the maximum bitmap dimension, a flash limitation. */
     public static const MAX_BITMAP_DIM :int = 2880;
 
@@ -57,7 +55,6 @@ public class SnapshotPanel extends FloatingPanel
         setStyle("horizontalAlign", "left");
 
         _view = ctx.getTopPanel().getPlaceView() as RoomView;
-        _ctrl = new SnapshotController(ctx, _view, this);
 
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
         _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();
@@ -69,8 +66,10 @@ public class SnapshotPanel extends FloatingPanel
             _view.getScrollOffset());
         
         // take this even if we aren't going to use it, it's used for the preview
-        sceneThumbnail = new Snapshot(_view, framer, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
-        sceneThumbnail.updateSnapshot();
+        sceneThumbnail = new Snapshot(ctx, _view, this, framer,
+            SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
+        sceneThumbnail.addEventListener(Event.COMPLETE, handleEncodingComplete);
+        //sceneThumbnail.updateSnapshot();
 
         // TODO: we want the room bounds, not the room *view* bounds....
         const scene:MsoyScene = _view.getScene();
@@ -90,8 +89,9 @@ public class SnapshotPanel extends FloatingPanel
         } else {
             galFramer = new NoopFramer();
         }
-        galleryImage = new Snapshot(_view, galFramer, galWidth, galHeight);
-        galleryImage.updateSnapshot();
+        galleryImage = new Snapshot(ctx, _view, this, galFramer, galWidth, galHeight);
+        galleryImage.addEventListener(Event.COMPLETE, handleEncodingComplete);
+        //galleryImage.updateSnapshot();
         open();
     }
 
@@ -127,8 +127,10 @@ public class SnapshotPanel extends FloatingPanel
         }
         _showChat.enabled = occs;
         
-        sceneThumbnail.updateSnapshot(occs, _showChat.selected);        
-        galleryImage.updateSnapshot(occs, _showChat.selected);        
+        sceneThumbnail.updateSnapshot(occs, _showChat.selected, shouldSaveSceneThumbnail);
+        galleryImage.updateSnapshot(occs, _showChat.selected,
+            shouldSaveGalleryImage || shouldDownloadImage);
+        enforceUIInterlocks();
     }
 
     /**
@@ -137,6 +139,12 @@ public class SnapshotPanel extends FloatingPanel
      */
     protected function enforceUIInterlocks (... ignored) :void
     {
+        if (shouldSaveSceneThumbnail) {
+            sceneThumbnail.startEncode();
+        }
+        if (shouldSaveGalleryImage || shouldDownloadImage) {
+            galleryImage.startEncode();
+        }
         getButton(OK_BUTTON).enabled = canSave();
     }
 
@@ -145,8 +153,10 @@ public class SnapshotPanel extends FloatingPanel
      */
     protected function canSave () :Boolean
     {
-        return (shouldSaveGalleryImage || shouldDownloadImage || shouldSaveSceneThumbnail) &&
-            CAN_SNAP;
+        const needGallery :Boolean = shouldSaveGalleryImage || shouldDownloadImage;
+        const needThumb :Boolean = shouldSaveSceneThumbnail;
+        return (needGallery || needThumb) &&
+            (!needGallery || galleryImage.ready) && (!needThumb || sceneThumbnail.ready);
     }
 
     protected function addChildIndented (component :UIComponent) :void
@@ -164,26 +174,23 @@ public class SnapshotPanel extends FloatingPanel
         showCloseButton = true;
     }
     
-    protected function showProgressBar () :void
+    protected function showProgressControls () :void
     {
         removeAllChildren();
-        super.createChildren();
-        createProgressControls();
-        showCloseButton = false;
-    }
-    
-    protected function createProgressControls () :void
-    {
-        var bar :ProgressBar = new ProgressBar();
-        bar.percentWidth = 100;
-        bar.indeterminate = true;
+
+        _progressBar = new ProgressBar();
+        _progressBar.percentWidth = 100;
+        _progressBar.indeterminate = true;
+        _progressBar.mode = "manual";
         bar.label = Msgs.WORLD.get("m.snap_progress");
-        addChild(bar);
+        addChild(_progressBar);
         _progressLabel = new Label();
-        _progressLabel.text = Msgs.WORLD.get("m.snap_upload_starting");
+        _progressLabel.text = Msgs.WORLD.get("m.snap_upload");
         addChild(_progressLabel);   
         _cancelUploadButton = new CommandButton(Msgs.WORLD.get("b.snap_cancel"), cancelUpload);     
         addChild(_cancelUploadButton);        
+
+        showCloseButton = false;
     }
 
     /**
@@ -192,24 +199,15 @@ public class SnapshotPanel extends FloatingPanel
     protected function cancelUpload () :void 
     {
         // cancel any encoding processes that may be running.
-        galleryImage.cancelEncoding();
-        sceneThumbnail.cancelEncoding();
+        galleryImage.cancelAll();
+        sceneThumbnail.cancelAll();
 
-        // cancel any in-progress upload
-        _ctrl.cancelUpload();
-        
         // close the panel
         close();
     }
 
     protected function createSnapshotControls () :void
     {
-        if (int(String(Capabilities.version.split(" ")[1]).split(",")[0]) > 9) {
-            addChild(FlexUtil.createLabel(
-                "Snapshots are currently broken in Flash Player 10, we'll fix them soon.",
-                "attentionLabel"));
-            CAN_SNAP = false;
-        }
         const isGuest :Boolean = _ctx.getMyName().isGuest();
 
         var hPan :HBox = new HBox();
@@ -250,7 +248,9 @@ public class SnapshotPanel extends FloatingPanel
         addChild(_downloadImage);
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
-        enforceUIInterlocks();        
+
+        // update the snaps
+        takeNewSnapshot();
     }
 
     override protected function buttonClicked (buttonId :int) :void
@@ -262,35 +262,33 @@ public class SnapshotPanel extends FloatingPanel
         }
     }
 
+    protected function handleEncodingComplete (event :Event) :void
+    {
+        trace("encoding complete.");
+        enforceUIInterlocks();
+    }
+
     /**
      * Begin the upload process, much of which happens asynchronously.
      */
     protected function upload () :void
     {
-        showProgressBar();
+        _waiting = 0;
+        showProgressControls();
 
         if (shouldSaveSceneThumbnail) {
-            _progressLabel.text = Msgs.WORLD.get("m.snap_upload_thumb");
-            sceneThumbnail.encodeAndUpload(_ctrl.upload,
-                [ SnapshotController.SCENE_THUMBNAIL_SERVICE, false, uploadGalleryImage ]);
+            _waiting++;
+            sceneThumbnail.upload(Snapshot.SCENE_THUMBNAIL_SERVICE, false, handleUploadDone);
 
-        } else {
-            uploadGalleryImage();
         }
-    }
-
-    /**
-     * Second stage of the upload process.
-     */
-    protected function uploadGalleryImage (... ignored) :void
-    {
         if (shouldSaveGalleryImage || shouldDownloadImage) {
-            _progressLabel.text = Msgs.WORLD.get("m.snap_upload_snap");
-            galleryImage.encodeAndUpload(_ctrl.upload,
-                [ SnapshotController.SCENE_SNAPSHOT_SERVICE, shouldSaveGalleryImage, doDownload ]);
+            _waiting++;
+            galleryImage.upload(Snapshot.SCENE_SNAPSHOT_SERVICE, shouldSaveGalleryImage,
+                    setupDownload);
+        }
 
-        } else {
-            doDownload(null);
+        if (_waiting == 0) {
+            close();
         }
     }
 
@@ -301,27 +299,42 @@ public class SnapshotPanel extends FloatingPanel
     {
         _progressLabel.text = message;
         _cancelUploadButton.label = Msgs.GENERAL.get("b.ok");
+        _cancelUploadButton.enabled = true;
     }
     
     /**
      * Called when uploading is complete.
      */
-    protected function doDownload (downloadURL :String) :void
+    protected function setupDownload (downloadURL :String) :void
     {
         if (shouldDownloadImage && (downloadURL != null)) {
+            _downloadURL = downloadURL;
+
+            _progressBar.indeterminate = false;
+            _progressBar.setProgress(1, 1);
             _progressLabel.text = Msgs.WORLD.get("m.snap_download");
-            _downloadRef = new FileReference();
-            _downloadRef.addEventListener(Event.CANCEL, handleDownloadStopEvent);
-            _downloadRef.addEventListener(Event.COMPLETE, handleDownloadStopEvent);
-            _downloadRef.addEventListener(SecurityErrorEvent.SECURITY_ERROR,
-                handleDownloadStopEvent);
-            _downloadRef.addEventListener(IOErrorEvent.IO_ERROR, handleDownloadStopEvent);
-            _downloadRef.download(new URLRequest(downloadURL), "snapshot.jpg");
+            _cancelUploadButton.label = Msgs.GENERAL.get("b.ok");
+            _cancelUploadButton.setCallback(doDownload);
 
         } else {
-            // done at this point so we can close the panel
-            close();        
+            handleUploadDone();
         }
+    }
+
+    protected function doDownload () :void
+    {
+        _cancelUploadButton.setCallback(cancelUpload);
+        _cancelUploadButton.enabled = false;
+        _progressLabel.text = Msgs.WORLD.get("m.snap_download_progress");
+        _progressBar.indeterminate = true;
+
+        _downloadRef = new FileReference();
+        _downloadRef.addEventListener(Event.CANCEL, handleDownloadStopEvent);
+        _downloadRef.addEventListener(Event.COMPLETE, handleDownloadStopEvent);
+        _downloadRef.addEventListener(SecurityErrorEvent.SECURITY_ERROR,
+            handleDownloadStopEvent);
+        _downloadRef.addEventListener(IOErrorEvent.IO_ERROR, handleDownloadStopEvent);
+        _downloadRef.download(new URLRequest(_downloadURL), "snapshot.jpg");
     }
 
     protected function handleDownloadStopEvent (event :Event) :void
@@ -329,6 +342,14 @@ public class SnapshotPanel extends FloatingPanel
         if (event is ErrorEvent) {
             reportError(Msgs.WORLD.get("e.snap_download", ErrorEvent(event).text));
         } else {
+            handleUploadDone();
+        }
+    }
+
+    protected function handleUploadDone (... ignored) :void
+    {
+        if (--_waiting == 0) {
+            // done at this point so we can close the panel
             close();
         }
     }
@@ -337,9 +358,10 @@ public class SnapshotPanel extends FloatingPanel
 
     protected var _preview :Image;
     protected var _view :RoomView;
-    protected var _ctrl :SnapshotController;
 
+    protected var _waiting :int;
     protected var _downloadRef :FileReference;
+    protected var _downloadURL :String;
 
     // UI Elements
     protected var _showOccs :CommandCheckBox;
@@ -350,5 +372,6 @@ public class SnapshotPanel extends FloatingPanel
 
     protected var _cancelUploadButton :CommandButton;
     protected var _progressLabel :Label;    
+    protected var _progressBar :ProgressBar;
 }
 }
