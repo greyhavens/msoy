@@ -14,7 +14,11 @@ public class MemberExperience
     public /* final */ Long dateOccurred;
     public /* final */ byte action;
     public /* final */ Object data;
-    
+
+    public MemberExperience ()
+    {
+    }
+
     public MemberExperience (Date dateOccurred, byte action, Object data)
     {
         this.dateOccurred = dateOccurred.getTime();
