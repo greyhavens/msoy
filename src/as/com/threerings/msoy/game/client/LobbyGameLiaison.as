@@ -110,20 +110,15 @@ public class LobbyGameLiaison extends GameLiaison
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultAdapter = new ResultAdapter(function (cause :String) :void {
-            _enterNextGameDirect = false;
             _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             shutdown();
         },
         function (lobbyOid :int) :void {
             if (lobbyOid != 0) {
                 // we failed to start a game (see below) so join the lobby instead
-                _enterNextGameDirect = false;
                 gotLobbyOid(lobbyOid);
             }
         });
-        // we want to avoid routing this game entry through the URL because our current URL is very
-        // nicely bookmarkable and we don't want to replace it with a non-bookmarkable URL
-        _enterNextGameDirect = true;
 
         // the playNow() call will resolve the lobby on the game server, then attempt to start a
         // game for us; if it succeeds, it sends back a zero result and we need take no further
@@ -219,12 +214,7 @@ public class LobbyGameLiaison extends GameLiaison
     // from interface GameReadyObserver
     public function receivedGameReady (gameOid :int) :Boolean
     {
-        if (_enterNextGameDirect) {
-            _enterNextGameDirect = false;
-            _wctx.getGameDirector().enterGame(gameOid);
-        } else {
-            _wctx.getWorldController().handleGoGame(_gameId, gameOid);
-        }
+        _wctx.getWorldController().handleGoGame(_gameId, gameOid);
         return true;
     }
 
@@ -341,8 +331,5 @@ public class LobbyGameLiaison extends GameLiaison
 
     /** True if we're shutting down. */
     protected var _shuttingDown :Boolean;
-
-    /** Used to avoid routing a gameReady through the URL when we're doing playNow(). */
-    protected var _enterNextGameDirect :Boolean;
 }
 }
