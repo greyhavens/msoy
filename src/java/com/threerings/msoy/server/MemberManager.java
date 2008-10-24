@@ -9,9 +9,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -66,6 +68,7 @@ import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -88,6 +91,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.person.server.MailLogic;
@@ -828,14 +832,96 @@ public class MemberManager
                 
                 // The last 6 are determined by the user-specific home page items, depending on
                 // where they were last in Whirled.
+                Set<Integer> haveGroups = new HashSet<Integer>();
+                Set<Integer> haveGames = new HashSet<Integer>();
                 for(HomePageItem item : getHomePageItems(memObj, 6)) {
                     items[curItem++] = item;
+                    if (item.getAction() == HomePageItem.ACTION_GROUP) {
+                        haveGroups.add((Integer)item.getActionData());
+                    } else if (item.getAction() == HomePageItem.ACTION_GAME) {
+                        haveGames.add((Integer)item.getActionData());
+                    }
+                }
+                
+                // If there are still not enough places, fill in with some currently popular
+                // places to go.  Half will be games, the other half groups.
+                if (curItem < 9) {
+                    // TODO: This is similar to some code in GalaxyServlet and GameServlet.
+                    // refactor?
+                    int startTopItems = curItem;
+                    int groupCount = (9 - curItem) / 2;
+                    PopularPlacesSnapshot pps = getPPSnapshot();
+                    for (Place place : pps.getTopWhirleds()) {
+                        if (!haveGroups.contains(place.placeId)) {
+                            GroupRecord group = _groupRepo.loadGroup(place.placeId);
+                            MediaDesc media = group.toLogo();
+                            if (media == null) {
+                                media = Group.getDefaultGroupLogoMedia();
+                            }
+                            items[curItem++] = new HomePageItem(
+                                HomePageItem.ACTION_GROUP, group.groupId, media, group.name);
+                            haveGroups.add(group.groupId);
+                        }
+                        if (curItem == startTopItems + groupCount) {
+                            break;
+                        }
+                    }
+                    
+                    // If we haven't reached the number of groups, load from the list of all groups
+                    if (curItem < startTopItems + groupCount) {
+                        for(GroupRecord group : _groupRepo.getGroupsList(0, 9)) {
+                            if (!haveGroups.contains(group.groupId)) {
+                                MediaDesc media = group.toLogo();
+                                if (media == null) {
+                                    media = Group.getDefaultGroupLogoMedia();
+                                }
+                                items[curItem++] = new HomePageItem(
+                                    HomePageItem.ACTION_GROUP, group.groupId, media, group.name);
+                            }
+                            if (curItem == startTopItems + groupCount) {
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Load top games
+                    for (Place place : pps.getTopGames()) {
+                        if (!haveGames.contains(place.placeId)) {
+                            GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
+                            items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME, game.gameId, 
+                                game.getThumbMediaDesc(), game.name);
+                            haveGames.add(game.gameId);
+                        }
+                        if (curItem == 9) {
+                            break;
+                        }
+                    }
+                    
+                    // If we don't have enough games, pull from the list of all games.
+                    if (curItem < 9) {
+                        for(GameRecord game : _gameRepo.loadGenre((byte)-1, 9)) {
+                            if (!haveGames.contains(game.gameId)) {
+                                items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME, game.gameId, 
+                                    game.getThumbMediaDesc(), game.name);
+                            }
+                            if (curItem == 9) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // If there still aren't enough places, fill in with null objects.
+                while (curItem < 9) {
+                    items[curItem++] = new HomePageItem(HomePageItem.ACTION_NONE, null, null, null);
                 }
                 
                 reportRequestProcessed(items);
             }
         });
-    }/**
+    }
+    
+    /**
      * Check if the member's accumulated flow level matches up with their current level, and update
      * their current level if necessary
      */
@@ -969,13 +1055,11 @@ public class MemberManager
      * member has had recently will be given a weighted score to determine the order of the
      * experience.  Only the number of experiences requested will be returned as home page
      * items.  If there are not enough experiences, or the experiences have a low score
-     * (too old, etc.), then a set of experiences designed to show the player around Whirled will
-     * be returned.
+     * (too old, etc.), they will not be included here.
      * 
      * @param memObj Member object to get home page items for
      * @param count Number of home page items to retrieve.
-     * @return List of the home page items.  This will always have precisely the number of items
-     * requested.
+     * @return List of the home page items.
      */
     protected List<HomePageItem> getHomePageItems (MemberObject memObj, int count)
     {
@@ -994,11 +1078,6 @@ public class MemberManager
             }
             
             scores.add(newExp);
-        }
-        
-        // TODO: Add default experiences.
-        for (int i = scores.size(); i < count; i++) {
-            scores.add(new ScoredExperience());
         }
         
         // Sort by scores (highest score first), limit it to count, and return the list.
@@ -1029,7 +1108,7 @@ public class MemberManager
                     name = group.name;
                     break;
                 case HomePageItem.ACTION_GAME:
-                    GameRecord game = _gameRepo.loadGameRecord((Integer)se.experience.data);
+                    GameRecord game = _msoyGameRepo.loadGameRecord((Integer)se.experience.data);
                     media = game.getThumbMediaDesc();
                     name = game.name;
                     break;
@@ -1169,7 +1248,8 @@ public class MemberManager
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;
-    @Inject protected MsoyGameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _msoyGameRepo;
+    @Inject protected GameRepository _gameRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
