@@ -195,6 +195,7 @@ public class MemberLogic
                 switch (expRecord.action) {
                 case HomePageItem.ACTION_ROOM:
                 case HomePageItem.ACTION_GAME:
+                case HomePageItem.ACTION_GROUP:
                     actionData = Integer.parseInt(expRecord.data);
                     break;
                 default:
@@ -221,6 +222,7 @@ public class MemberLogic
                 switch (experience.action) {
                 case HomePageItem.ACTION_ROOM:
                 case HomePageItem.ACTION_GAME:
+                case HomePageItem.ACTION_GROUP:
                     actionData = experience.data.toString();
                     break;
                 default:

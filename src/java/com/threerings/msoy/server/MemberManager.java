@@ -64,6 +64,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
@@ -78,12 +79,15 @@ import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.ServerStatSet;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.person.server.MailLogic;
@@ -819,7 +823,7 @@ public class MemberManager
                 int curItem = 0;
                 for (InProgressBadge badge : badges) {
                     items[curItem++] = new HomePageItem(
-                        HomePageItem.ACTION_BADGE, badge, badge.imageMedia());
+                        HomePageItem.ACTION_BADGE, badge, badge.imageMedia(), null);
                 }
                 
                 // The last 6 are determined by the user-specific home page items, depending on
@@ -910,7 +914,7 @@ public class MemberManager
      */
     protected static class ScoredExperience
     {
-        public final HomePageItem item;
+        public final MemberExperience experience;
         public final float score;
         
         /**
@@ -919,7 +923,7 @@ public class MemberManager
          */
         public ScoredExperience (MemberExperience experience)
         {
-            item = experience.getHomePageItem();
+            this.experience = experience;
             
             // The score for a standard record starts at 14 and decrements by 1 for every day
             // since the experience occurred.  Cap at 0; thus, anything older than 2 weeks has
@@ -936,7 +940,7 @@ public class MemberManager
          */
         public ScoredExperience (ScoredExperience exp1, ScoredExperience exp2)
         {
-            item = exp1.item;   // exp2.item should be the same.
+            experience = exp1.experience;   // exp2.item should be the same.
             score = exp1.score + exp2.score;    // Both scores positive
         }
         
@@ -945,7 +949,7 @@ public class MemberManager
          */
         public ScoredExperience ()
         {
-            item = new HomePageItem(HomePageItem.ACTION_NONE, null, null);
+            experience = new MemberExperience(new Date(), HomePageItem.ACTION_NONE, null);
             score = 0f;
         }
 
@@ -955,8 +959,8 @@ public class MemberManager
          */
         public boolean isSameExperience (ScoredExperience other)
         {
-            return this.item.getAction() == other.item.getAction() &&
-                this.item.getActionData().equals(other.item.getActionData());
+            return this.experience.action == other.experience.action &&
+                this.experience.data.equals(other.experience.data);
         }
     }
     
@@ -1007,8 +1011,33 @@ public class MemberManager
             scores.remove(scores.size() - 1);
         }
         return Lists.transform(scores, new Function<ScoredExperience, HomePageItem>() {
-            public HomePageItem apply (ScoredExperience experience) {
-                return experience.item;
+            public HomePageItem apply (ScoredExperience se) {
+                MediaDesc media;
+                final String name;
+                switch (se.experience.action) {
+                case HomePageItem.ACTION_ROOM:
+                    SceneRecord scene = _sceneRepo.loadScene((Integer)se.experience.data);
+                    media = scene.getSnapshot();
+                    name = scene.name;
+                    break;
+                case HomePageItem.ACTION_GROUP:
+                    GroupRecord group = _groupRepo.loadGroup((Integer)se.experience.data);
+                    media = group.toLogo();
+                    if (media == null) {
+                        media = Group.getDefaultGroupLogoMedia();
+                    }
+                    name = group.name;
+                    break;
+                case HomePageItem.ACTION_GAME:
+                    GameRecord game = _gameRepo.loadGameRecord((Integer)se.experience.data);
+                    media = game.getThumbMediaDesc();
+                    name = game.name;
+                    break;
+                default:
+                    media = null;
+                    name = null;
+                }
+                return se.experience.getHomePageItem(media, name);
             }
         });
     }
@@ -1140,6 +1169,7 @@ public class MemberManager
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected MsoyGameRepository _gameRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MsoySceneRepository _sceneRepo;

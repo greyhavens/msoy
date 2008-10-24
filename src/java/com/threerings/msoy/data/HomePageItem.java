@@ -52,11 +52,12 @@ public class HomePageItem extends SimpleStreamableObject
      * @param actionData the data associated with the action
      * @param image the icon to show for this action
      */
-    public HomePageItem (byte action, Object actionData, MediaDesc image)
+    public HomePageItem (byte action, Object actionData, MediaDesc image, String name)
     {
         _action = action;
         _actionData = actionData;
         _image = image;
+        _name = name;
     }
 
     /**

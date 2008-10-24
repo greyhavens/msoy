@@ -5,6 +5,7 @@ package com.threerings.msoy.data;
 
 import java.util.Date;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.presents.dobj.DSet;
 
 public class MemberExperience
@@ -26,9 +27,9 @@ public class MemberExperience
         return new Date(dateOccurred);
     }
     
-    public HomePageItem getHomePageItem ()
+    public HomePageItem getHomePageItem (MediaDesc media, String name)
     {
-        return new HomePageItem(action, data, null);
+        return new HomePageItem(action, data, media, name);
     }
 
     public int compareTo (MemberExperience o)

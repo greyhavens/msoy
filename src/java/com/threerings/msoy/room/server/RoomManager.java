@@ -813,8 +813,13 @@ public class RoomManager extends SpotSceneManager
             
             // Indicate the user visited the room (unless it's their home).
             if (member.homeSceneId != model.sceneId) {
-                _memberMan.addExperience(member, new MemberExperience(new Date(), 
-                    HomePageItem.ACTION_ROOM, model.sceneId));
+                if (isWhirled) {
+                    _memberMan.addExperience(member, new MemberExperience(new Date(),
+                        HomePageItem.ACTION_GROUP, model.ownerId));
+                } else {
+                    _memberMan.addExperience(member, new MemberExperience(new Date(), 
+                        HomePageItem.ACTION_ROOM, model.sceneId));
+                }
             }
         }
     }
