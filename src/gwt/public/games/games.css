@@ -755,7 +755,7 @@
 .gameHeaderPanel .FindGame {
   position: absolute;
   top: 5px;
-  left: 310px;
+  left: 305px;
 }
 
 .gameHeaderPanel .FindGame .Title,
@@ -774,7 +774,7 @@
 .gameHeaderPanel .Search {
   position: absolute;
   top: 5px;
-  left: 480px;
+  left: 470px;
 }
 
 .gameHeaderPanel .Search input {
