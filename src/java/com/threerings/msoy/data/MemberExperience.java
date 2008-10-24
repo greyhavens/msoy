@@ -5,6 +5,8 @@ package com.threerings.msoy.data;
 
 import java.util.Date;
 
+import com.samskivert.util.ObjectUtil;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.presents.dobj.DSet;
 
@@ -47,28 +49,17 @@ public class MemberExperience
     }
 
     @Override
-    public boolean equals (Object obj)
+    public boolean equals (Object other)
     {
-        if (this == obj)
+        if (this == other) {
             return true;
-        if (obj == null)
+        }
+        if (other == null || getClass() != other.getClass()) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final MemberExperience other = (MemberExperience)obj;
-        if (action != other.action)
-            return false;
-        if (data == null) {
-            if (other.data != null)
-                return false;
-        } else if (!data.equals(other.data))
-            return false;
-        if (dateOccurred == null) {
-            if (other.dateOccurred != null)
-                return false;
-        } else if (!dateOccurred.equals(other.dateOccurred))
-            return false;
-        return true;
+        }
+        MemberExperience that = (MemberExperience)other;
+        return (this.action == that.action) && ObjectUtil.equals(this.data, that.data) &&
+            ObjectUtil.equals(this.dateOccurred, that.dateOccurred);
     }
 
     public int compareTo (MemberExperience o)
