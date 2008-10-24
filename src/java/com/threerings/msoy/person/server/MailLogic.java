@@ -4,12 +4,16 @@
 package com.threerings.msoy.person.server;
 
 import java.io.StringWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 import com.samskivert.velocity.VelocityUtil;
 
 import org.apache.velocity.VelocityContext;
@@ -53,6 +57,21 @@ import static com.threerings.msoy.Log.log;
 @Singleton @BlockingThread
 public class MailLogic
 {
+    /**
+     * Generates an opt-out hash for the supplied member.
+     */
+    public String generateOptOutHash (int memberId, String email)
+    {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA");
+            String text = memberId + email + ServerConfig.sharedSecret;
+            digest.update(text.getBytes());
+            return StringUtil.hexlate(digest.digest());
+        } catch (NoSuchAlgorithmException nsa) {
+            throw new RuntimeException(nsa.getMessage());
+        }
+    }
+
     /**
      * Sends a friend invitation email from the supplied inviter to the specified member.
      */
@@ -175,9 +194,10 @@ public class MailLogic
         int count = 0;
 
         // load up the emails of everyone we want to spam
-        List<String> emails = _memberRepo.loadMemberEmailsForAnnouncement();
-        for (String recip : emails) {
-            _mailer.sendEmail(recip, from, headers, subject, body, true);
+        List<Tuple<Integer, String>> emails = _memberRepo.loadMemberEmailsForAnnouncement();
+        for (Tuple<Integer, String> recip : emails) {
+            _mailer.sendEmail(recip.right, from, headers, subject,
+                              customizeSpam(body, recip.left, recip.right), true);
             count++;
         }
 
@@ -195,7 +215,7 @@ public class MailLogic
     /**
      * Sends a spam preview mailing to the specified address.
      */
-    public void previewSpam (String recip, String subject, String body)
+    public void previewSpam (int recipId, String recip, String subject, String body)
     {
         // convert the body into proper-ish HTML
         body = formatSpam(body);
@@ -203,7 +223,7 @@ public class MailLogic
             return;
         }
         _mailer.sendEmail(recip, ServerConfig.getFromAddress(), makeSpamHeaders(subject),
-                          subject, body, true);
+                          subject, customizeSpam(body, recipId, recip), true);
     }
 
     /**
@@ -261,6 +281,11 @@ public class MailLogic
             log.warning("Unable to format spam message", e);
             return null;
         }
+    }
+
+    protected String customizeSpam (String body, int memberId, String email)
+    {
+        return body.replace("%OPTOUTBITS%", generateOptOutHash(memberId, email) + "_" + memberId);
     }
 
     /**

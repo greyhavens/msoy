@@ -37,7 +37,7 @@ public class OptOutPanel extends SmartTable
                     showInvite(invite);
                 }
                 public void onFailure (Throwable cause) {
-                    setText(0, 0, CShell.serverError(cause), 1, "Header");
+                    setText(0, 0, CShell.serverError(cause));
                 }
             });
 
@@ -50,7 +50,7 @@ public class OptOutPanel extends SmartTable
                     setWidget(1, 0, MsoyUI.createHTML(_msgs.optOutReenable(), null));
                 }
                 public void onFailure (Throwable cause) {
-                    setText(0, 0, CShell.serverError(cause), 1, "Header");
+                    setText(0, 0, CShell.serverError(cause), 1, "");
                 }
             });
         }

@@ -11,6 +11,7 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FriendManager;
@@ -19,10 +20,12 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebMemberService;
 
@@ -130,7 +133,22 @@ public class MemberServlet extends MsoyServiceServlet
     public String optOutAnnounce (int memberId, String hash)
         throws ServiceException
     {
-        return "foo@bar.com"; // TODO
+        MemberRecord mrec = _memberRepo.loadMember(memberId);
+        if (mrec == null) {
+            throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
+        }
+
+        // generate an opt-out hash for this member and see if it matches
+        String realHash = _mailLogic.generateOptOutHash(mrec.memberId, mrec.accountName);
+        if (!hash.equals(realHash)) {
+            throw new ServiceException(ServiceCodes.E_OPT_OUT_HASH_MISMATCH);
+        }
+
+        // looks good, do the deed
+        mrec.setFlag(MemberRecord.Flag.NO_ANNOUNCE_EMAIL, true);
+        _memberRepo.storeFlags(mrec);
+        log.info("Opted " + mrec.accountName + " out of announcement emails.");
+        return mrec.accountName;
     }
 
     // from WebMemberService
@@ -214,6 +232,7 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected MailLogic _mailLogic;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;

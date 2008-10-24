@@ -62,6 +62,7 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -92,6 +93,7 @@ public class MemberRepository extends DepotRepository
     @Entity @Computed(shadowOf=MemberRecord.class)
     public static class MemberEmailRecord extends PersistentRecord
     {
+        public int memberId;
         public String accountName;
     }
 
@@ -277,16 +279,17 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads the addresses of all members that have not opted out of announcement emails.
+     * Loads the member ids and addresses of all members that have not opted out of announcement
+     * emails.
      */
-    public List<String> loadMemberEmailsForAnnouncement ()
+    public List<Tuple<Integer, String>> loadMemberEmailsForAnnouncement ()
     {
         SQLExpression annFlag = new Arithmetic.BitAnd(
             MemberRecord.FLAGS_C, MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit());
-        List<String> emails = Lists.newArrayList();
-        for (MemberEmailRecord record :
-                 findAll(MemberEmailRecord.class, new Where(new Equals(annFlag, 0)))) {
-            emails.add(record.accountName);
+        List<Tuple<Integer, String>> emails = Lists.newArrayList();
+        Where where = new Where(new Equals(annFlag, 0));
+        for (MemberEmailRecord record : findAll(MemberEmailRecord.class, where)) {
+            emails.add(Tuple.create(record.memberId, record.accountName));
         }
         return emails;
     }
