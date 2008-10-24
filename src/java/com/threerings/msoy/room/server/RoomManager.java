@@ -1422,7 +1422,7 @@ public class RoomManager extends SpotSceneManager
     protected int _numDynamicActors;
 
     /** After this level of occupancy is reached, actors are made static. */
-    protected static final int ACTOR_RENDERING_LIMIT = 10;
+    protected static final int ACTOR_RENDERING_LIMIT = 20;
     
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ItemManager _itemMan;
