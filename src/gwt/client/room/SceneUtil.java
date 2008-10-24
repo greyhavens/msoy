@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.StaticMediaDesc;
 
 import client.ui.MsoyUI;
 import client.util.FeaturedPlaceUtil;
@@ -46,21 +47,17 @@ public class SceneUtil
             }
         };
 
-        Widget view;
         if (snapshot == null) {
-            view = MsoyUI.createActionImage("/images/landing/whirled_click_here.jpg", onClick);
-
-        } else {
-            FlowPanel panel = new FlowPanel();
-            panel.addStyleName("sceneView");
-            panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE, onClick));
-            Image overlay = MsoyUI.createActionImage("/images/landing/click_overlay.png", onClick);
-            overlay.addStyleName("LiveOverlay");
-            panel.add(overlay);
-            view = panel;
+            snapshot = new StaticMediaDesc(MediaDesc.IMAGE_JPEG, "snapshot", "default");
         }
 
-        container.setWidget(view);
+        FlowPanel panel = new FlowPanel();
+        panel.addStyleName("sceneView");
+        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE, onClick));
+        Image overlay = MsoyUI.createActionImage("/images/ui/click_overlay.png", onClick);
+        overlay.addStyleName("LiveOverlay");
+        panel.add(overlay);
+        container.setWidget(panel);
 
         return container;
     }
@@ -84,6 +81,10 @@ public class SceneUtil
             return image;
         }
     }
+
+    /** The default image for a scene snapshot. */
+    protected static final String DEFAULT_FULLSIZE =
+        DeploymentConfig.staticMediaURL + "snapshot/default.jpg";
 
     /** The default image for a scene thumbnail. */
     protected static final String DEFAULT_HALFSIZE =
