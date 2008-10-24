@@ -637,7 +637,8 @@ public class ThaneAVRGameController
                 _backend.mobRemoved(binding.sceneId, mobInfo.getIdent());
 
             } else if (evt.getOldEntry() is MemberInfo) {
-                updatePlayer(MemberInfo(evt.getOldEntry()).getMemberId(), "room occupant removed");
+                updatePlayer(
+                    MemberInfo(evt.getOldEntry()).getMemberId(), "room occupant removed", true);
             }
         }
     }
@@ -663,11 +664,10 @@ public class ThaneAVRGameController
      * <p>In order to leave a room, the player must:<ul>
      * <li>Have previously joined the game in this update or a previous one</li>
      * <li>Have previously entered a room</li>
-     * <li>Have no <code>PlayerLocation</code> or have one with <code>sceneId</code> that is not
-     * equal to the player's most recently entered room</li></ul>
-     * If all conditions are met, the backend is informed via <code>playerLeftRoom</code></p>
+     * <li>Have undergone some other transition that causes the leaving paramter to be true</li>
+     * </ul>If all conditions are met, the backend is informed via <code>playerLeftRoom</code></p>
      */
-    protected function updatePlayer (playerId :int, why :String) :void
+    protected function updatePlayer (playerId :int, why :String, leaving :Boolean = false) :void
     {
         log.debug("Updating player", "why", why, "playerId", playerId);
 
@@ -687,7 +687,7 @@ public class ThaneAVRGameController
         // Calculate the new scene id
         var newSceneId :int = 0;
         var ploc :PlayerLocation = PlayerLocation(_gameObj.playerLocs.get(playerId));
-        if (ploc != null) {
+        if (ploc != null && !leaving) {
             newSceneId = ploc.sceneId;
         }
 
