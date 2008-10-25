@@ -22,9 +22,11 @@ public class TourControl extends HBox
 
         const label :Text = new Text();
         label.selectable = false;
-        label.text = "Whirled\nTour";
+        label.setStyle("color", "white");
+        label.setStyle("fontSize", 9);
+        label.text = Msgs.WORLD.get("l.tour");
 
-        const nextBtn :CommandButton = new CommandButton("next room", nextRoom);
+        const nextBtn :CommandButton = new CommandButton(Msgs.WORLD.get("b.tour_next"), nextRoom);
 
         const commentBtn :CommandButton = new CommandButton(null, MsoyController.VIEW_COMMENT_PAGE);
         commentBtn.styleName = "controlBarButtonComment"

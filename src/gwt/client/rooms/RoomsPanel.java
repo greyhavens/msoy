@@ -19,6 +19,7 @@ import client.room.RoomWidget;
 import client.ui.MsoyUI;
 import client.ui.StretchButton;
 import client.ui.TongueBox;
+import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -37,12 +38,15 @@ public class RoomsPanel extends FlowPanel
 
     protected void init (WebRoomService.OverviewResult overview)
     {
-        // TODO: i18n or replace with image
-        add(new StretchButton(StretchButton.ORANGE_THICK, "Play the Tour!", new ClickListener () {
-            public void onClick (Widget sender) {
-                MsoyUI.info("Working? You wanted working?"); // TODO
-            }
-        }));
+        if (FlashClients.clientExists()) {
+            // TODO: i18n or replace with image
+            add(new StretchButton(StretchButton.ORANGE_THICK, "Start Whirled Tour",
+                new ClickListener () {
+                public void onClick (Widget sender) {
+                    FlashClients.startTour();
+                }
+            }));
+        }
 
         RoomsGrid active = new RoomsGrid();
         active.setModel(new SimpleDataModel<RoomInfo>(overview.activeRooms), 0);

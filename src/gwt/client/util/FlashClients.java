@@ -168,6 +168,14 @@ public class FlashClients
     }
 
     /**
+     * Called to start the whirled tour.
+     */
+    public static void startTour ()
+    {
+        startTourNative(findClient());
+    }
+
+    /**
      * Returns the element that represents the Flash client.
      */
     public static native Element findClient () /*-{
@@ -254,6 +262,16 @@ public class FlashClients
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
             try { client.useAvatar(avatarId, scale); } catch (e) {}
+        }
+    }-*/;
+
+    /**
+     * Does the actual <code>startTour()</code> call.
+     */
+    protected static native void startTourNative (Element client) /*-{
+        if (client) {
+            // exception from JavaScript break GWT; don't let that happen
+            try { client.startTour(); } catch (e) {}
         }
     }-*/;
 

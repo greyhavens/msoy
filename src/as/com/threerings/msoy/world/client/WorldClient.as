@@ -285,6 +285,11 @@ public class WorldClient extends MsoyClient
         _wctx.getMsoyChatDirector().openChannel(nameObj);
     }
 
+    protected function externalStartTour () :void
+    {
+        _wctx.getTourDirector().startTour();
+    }
+
     // from MsoyClient
     override protected function createContext () :MsoyContext
     {
@@ -306,6 +311,7 @@ public class WorldClient extends MsoyClient
         ExternalInterface.addCallback("useItem", externalUseItem);
         ExternalInterface.addCallback("clearItem", externalClearItem);
         ExternalInterface.addCallback("openChannel", externalOpenChannel);
+        ExternalInterface.addCallback("startTour", externalStartTour);
     }
 
     // from MsoyClient

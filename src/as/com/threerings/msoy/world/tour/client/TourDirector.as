@@ -36,7 +36,10 @@ public class TourDirector extends BasicDirector
 
     public function startTour () :void
     {
-        nextRoom();
+        // only send a request if we're not already on the tour
+        if (!_wctx.getMemberObject().onTour) {
+            nextRoom();
+        }
     }
 
     public function nextRoom () :void
@@ -86,9 +89,6 @@ public class TourDirector extends BasicDirector
 
         client.getClientObject().addListener(new AttributeChangeAdapter(cliObjAttrChanged));
         checkTouringStatus();
-
-        // TEMP!!
-        //startTour();
     }
 
     // from BasicDirector
