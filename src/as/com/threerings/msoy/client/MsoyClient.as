@@ -58,7 +58,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
  */
 public /*abstract*/ class MsoyClient extends CrowdClient
 {
-    public const log :Log = Log.getLog(this);
+    public static const log :Log = Log.getLog(MsoyClient);
 
     /**
      * An event dispatched when the client is minimized or unminimized.
@@ -167,7 +167,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 ExternalInterface.call("setWindowTitle", title);
             }
         } catch (err :Error) {
-            Log.getLog(this).warning("setWindowTitle failed: " + err);
+            log.warning("setWindowTitle failed", err);
         }
     }
 
@@ -191,7 +191,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 ExternalInterface.call("clearClient");
             }
         } catch (err :Error) {
-            log.warning("ExternalInterface.call('clearClient') failed: " + err);
+            log.warning("ExternalInterface.call('clearClient') failed", err);
         }
     }
 
@@ -221,8 +221,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 ExternalInterface.call("triggerFlashEvent", eventName, eventArgs);
             }
         } catch (err :Error) {
-            Log.getLog(this).warning("triggerFlashEvent failed [event=" + eventName +
-                                     ", args=" + eventArgs + ", error=" + err + "].");
+            log.warning("triggerFlashEvent failed", "event", eventName, "args", eventArgs, err);
         }
     }
 
@@ -271,7 +270,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected function clientWillLogon (event :ClientEvent) :void
     {
         var url :String = "xmlsocket://" + getHostname() + ":" + DeploymentConfig.socketPolicyPort;
-        log.info("Loading security policy: " + url);
+        log.info("Loading security policy", "url", url);
         Security.loadPolicyFile(url);
     }
 
@@ -411,7 +410,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                     return result as String;
                 }
             } catch (e :Error) {
-                log.info("ExternalInterface.call('getVisitorId') failed", "error", e);
+                log.info("ExternalInterface.call('getVisitorId') failed", e);
             }
         }
         return null;
