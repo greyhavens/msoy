@@ -61,7 +61,8 @@ public class WebRoomServlet extends MsoyServiceServlet
             break;
         }
         if (mrec != null) {
-            detail.memberRating = _sceneRepo.getRatingRepository().getRating(sceneId, mrec.memberId);
+            detail.memberRating =
+                _sceneRepo.getRatingRepository().getRating(sceneId, mrec.memberId);
         }
         return detail;
     }
@@ -115,14 +116,14 @@ public class WebRoomServlet extends MsoyServiceServlet
         result.groupRooms = Lists.newArrayList(Iterables.transform(rooms, TO_ROOM_INFO));
 
         // load up all scenes owned by this member, filtering out their home
-        Predicate<RoomInfo> notHome = new Predicate<RoomInfo>() {
-            public boolean apply (RoomInfo info) {
-                return info.sceneId != mrec.homeSceneId;
+        Predicate<SceneRecord> notHome = new Predicate<SceneRecord>() {
+            public boolean apply (SceneRecord rec) {
+                return rec.sceneId != mrec.homeSceneId;
             }
         };
         rooms = _sceneRepo.getOwnedScenes(mrec.memberId);
         result.callerRooms = Lists.newArrayList(
-            Iterables.filter(Iterables.transform(rooms, TO_ROOM_INFO), notHome));
+            Iterables.transform(Iterables.filter(rooms, notHome), TO_ROOM_INFO));
 
         return result;
     }
@@ -135,8 +136,8 @@ public class WebRoomServlet extends MsoyServiceServlet
 
         // The scene IDs of the current N most populated rooms
         Iterable<Integer> activeIds =
-            Iterables.transform(_memberMan.getPPSnapshot().getTopScenes(), TO_SCENE_ID);
-        activeIds = Iterables.limit(activeIds, 20);
+            Iterables.transform(Iterables.limit(_memberMan.getPPSnapshot().getTopScenes(), 20),
+                TO_SCENE_ID);
 
         // Load up the records for each scene ID
         List<SceneRecord> activeRooms = _sceneRepo.loadScenes(Lists.newArrayList(activeIds));
