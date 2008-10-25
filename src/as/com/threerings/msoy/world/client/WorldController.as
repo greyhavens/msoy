@@ -1178,7 +1178,9 @@ public class WorldController extends MsoyController
     override public function clientDidLogoff (event :ClientEvent) :void
     {
         super.clientDidLogoff(event);
-        setAVRGamePanel(null);
+        if (!_wctx.getClient().isSwitchingServers()) {
+            setAVRGamePanel(null);
+        }
     }
 
     /**
