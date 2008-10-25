@@ -215,14 +215,17 @@ public class MoneyExchange
         public void attributeChanged (AttributeChangedEvent event)
         {
             if (MoneyConfigObject.BAR_POOL_SIZE.equals(event.getName())) {
+                if (-1 == event.getSourceOid()) {
+                    // for server-originated changes, do no validation, just recompute our rate
+                    recalculateRate();
+                    return;
+                }
+
+                // otherwise, make sure the target bar pool is not below 1
                 int newValue = event.getIntValue();
                 int oldValue = (Integer) event.getOldValue();
-                if (1 > newValue) {
-                    // well, bing bang bar, we need the pool value to be positive
-                    _runtime.money.setBarPoolSize(Math.max(1, oldValue)); // rollback
-
-                } else if (1 > oldValue) {
-                    // we are *reacting to a rollback*, from the above line. do nothing.
+                if (newValue < 1) {
+                    _runtime.money.setBarPoolSize(Math.max(1, oldValue)); // rollback to old value
 
                 } else {
                     // it's a normal, valid adjustment
