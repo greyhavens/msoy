@@ -86,18 +86,19 @@ public class WindowDirector
 
     WindowClientObject; // make sure this gets linked in for serialization
 }
-
 }
 
-import com.threerings.msoy.bureau.client.Window;
-import com.threerings.msoy.bureau.data.WindowCredentials;
+import com.threerings.util.Assert;
+import com.threerings.util.Log;
+import com.threerings.util.ResultListener;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.dobj.DObjectManager;
-import com.threerings.util.Assert;
-import com.threerings.util.ResultListener;
-import com.threerings.bureau.Log;
+
+import com.threerings.msoy.bureau.client.Window;
+import com.threerings.msoy.bureau.data.WindowCredentials;
 
 /**
  * Local implementation of Window
@@ -221,7 +222,7 @@ class WindowImpl implements Window
 
     protected function logEvt (evt :ClientEvent) :void
     {
-        Log.info("Event on client " + _client + ": " + evt);
+        log.info("Event on client", "client", _client, "event", evt);
     }
 
     protected function clientDidLogon (evt :ClientEvent) :void
@@ -245,6 +246,9 @@ class WindowImpl implements Window
     {
         clientFailedToLogon(evt);
     }
+
+    /** Create a logger for the entire package.. */
+    protected const log :Log = Log.getLog("com.threerings.bureau");
 
     protected var _client :Client;
     protected var _listeners :Array = [];
