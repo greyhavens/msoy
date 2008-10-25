@@ -21,7 +21,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.ClientAdapter;
@@ -228,8 +227,6 @@ public class HeaderBar extends HBox
             break;
         }
     }
-
-    private static const log :Log = Log.getLog(HeaderBar);
 
     protected static const WHIRLED_LOGO_WIDTH :int = 124;
 

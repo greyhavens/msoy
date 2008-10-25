@@ -28,7 +28,7 @@ import com.threerings.util.Log;
  */
 public class LayeredContainer extends Container
 {
-    public static const log :Log = Log.getLog(LayeredContainer);
+    public const log :Log = Log.getLog(this);
 
     public function setBaseLayer (base :DisplayObject) :void
     {

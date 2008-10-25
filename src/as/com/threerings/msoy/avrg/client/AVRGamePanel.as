@@ -36,7 +36,7 @@ import com.threerings.msoy.avrg.data.AVRGameObject;
 public class AVRGamePanel extends UIComponent
     implements PlaceView, PlaceLayer
 {
-    public static const log :Log = Log.getLog(AVRGamePanel);
+    public const log :Log = Log.getLog(this);
 
     public function AVRGamePanel (ctx :GameContext, ctrl :AVRGameController)
     {

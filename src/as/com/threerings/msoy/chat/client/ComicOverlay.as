@@ -541,7 +541,7 @@ public class ComicOverlay extends ChatOverlay
         return super.getDisplayDurationIndex() - 1;
     }
 
-    private static const log :Log = Log.getLog(ComicOverlay);
+    private const log :Log = Log.getLog(this);
 
     /** The overlay we place on top of our target that contains all the chat glyphs that can 
      * scroll. */

@@ -72,7 +72,7 @@ public class GameClient extends MsoyClient
 
     protected var _gctx :GameContextImpl;
 
-    private static const log :Log = Log.getLog(GameClient);
+    private const log :Log = Log.getLog(this);
 }
 }
 

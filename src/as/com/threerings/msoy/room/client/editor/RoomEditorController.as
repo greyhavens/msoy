@@ -630,6 +630,6 @@ public class RoomEditorController
 
     protected var _entranceSprite :EntranceSprite;
 
-    private static const log :Log = Log.getLog(RoomEditorController);
+    private const log :Log = Log.getLog(this);
 }
 }

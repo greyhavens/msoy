@@ -33,7 +33,7 @@ import com.threerings.msoy.room.data.RoomPropertiesObject;
  */
 public class ThaneAVRGameBackend
 {
-    public static const log :Log = Log.getLog(ThaneAVRGameBackend);
+    public const log :Log = Log.getLog(this);
 
     /**
      * Constructs a new base avr game backend.

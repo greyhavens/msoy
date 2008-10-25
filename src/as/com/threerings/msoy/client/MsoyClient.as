@@ -58,7 +58,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
  */
 public /*abstract*/ class MsoyClient extends CrowdClient
 {
-    public static const log :Log = Log.getLog(MsoyClient);
+    public const log :Log = Log.getLog(this);
 
     /**
      * An event dispatched when the client is minimized or unminimized.

@@ -198,7 +198,7 @@ public class RoomPanel extends BasePanel
         _buttonbar.selectedIndex = model.accessControl;
     }
 
-    private static const log :Log = Log.getLog(RoomPanel);
+    private const log :Log = Log.getLog(this);
 
     protected var _name :TextInput;
     protected var _buttonbar :ToggleButtonBar;

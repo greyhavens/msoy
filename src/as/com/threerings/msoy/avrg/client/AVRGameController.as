@@ -49,7 +49,7 @@ import com.threerings.msoy.avrg.data.PlayerLocation;
  */
 public class AVRGameController extends PlaceController
 {
-    public static const log :Log = Log.getLog(AVRGameController);
+    public const log :Log = Log.getLog(this);
 
     // from PlaceController
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void

@@ -50,7 +50,7 @@ public class HistoryList
         return false;
     }
 
-    private static const log :Log = Log.getLog(HistoryList);
+    private const log :Log = Log.getLog(this);
 
     /** The maximum number of history entries we'll keep. */
     protected static const MAX_HISTORY :int = 1000;

@@ -33,7 +33,7 @@ import com.threerings.msoy.avrg.data.AVRMarshaller;
 public class AVRGameLiaison extends GameLiaison
     implements AVRService_AVRGameJoinListener
 {
-    public static const log :Log = Log.getLog(AVRGameLiaison);
+    public const log :Log = Log.getLog(this);
 
     // statically reference classes we require
     AVRGameMarshaller;
