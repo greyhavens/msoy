@@ -256,6 +256,9 @@ public class MsoySceneRepository extends DepotRepository
         List<SQLExpression> exprs = Lists.newArrayList();
         List<OrderBy.Order> orders = Lists.newArrayList();
 
+        // only load completely public rooms
+        clauses.add(new Where(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE));
+
         // TODO: Add more sorting options
         long nowSeconds = System.currentTimeMillis() / 1000;
         exprs.add(new Arithmetic.Sub(SceneRecord.RATING_C,

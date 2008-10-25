@@ -31,6 +31,7 @@ import com.threerings.msoy.room.gwt.RoomInfo;
  */
 @Entity(indices={
     @Index(name="ixOwnerId", fields={ SceneRecord.OWNER_ID }),
+    @Index(name="ixAccessControl", fields={ SceneRecord.ACCESS_CONTROL }),
     @Index(name="ixLastUpdated", fields={ SceneRecord.OWNER_ID })
 })
 public class SceneRecord extends PersistentRecord
