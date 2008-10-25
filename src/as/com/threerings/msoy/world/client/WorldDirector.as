@@ -26,17 +26,16 @@ import com.threerings.msoy.room.data.RoomConfig;
  */
 public class WorldDirector extends BasicDirector
 {
-    public const log :Log = Log.getLog(WorldDirector);
+    public const log :Log = Log.getLog(this);
+
+    // statically reference classes we require
+    PetMarshaller;
+    RoomConfig;
 
     public function WorldDirector (ctx :WorldContext)
     {
         super(ctx);
         _wctx = ctx;
-
-        // ensure that the compiler includes these necessary symbols
-        var c :Class;
-        c = PetMarshaller;
-        c = RoomConfig;
     }
 
     /**

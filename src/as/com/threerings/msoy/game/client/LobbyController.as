@@ -68,6 +68,11 @@ public class LobbyController extends Controller
     public static const MODE_CREATE :int = 2;
     public static const MODE_SEATED :int = 3;
 
+    // statically reference classes we require
+    MsoyGameDefinition;
+    LobbyMarshaller;
+
+
     public function LobbyController (
         gctx :GameContext, mode :int, onClear :Function, playNow :Function, lobbyLoaded :Function)
     {
@@ -77,10 +82,6 @@ public class LobbyController extends Controller
         _onClear = onClear;
         _playNow = playNow;
         _lobbyLoaded = lobbyLoaded;
-
-        // let the compiler know that these must be compiled into the client
-        var c :Class = MsoyGameDefinition;
-        c = LobbyMarshaller;
 
         // create our lobby panel
         _panel = new LobbyPanel(_gctx, this);

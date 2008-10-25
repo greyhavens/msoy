@@ -26,6 +26,11 @@ import com.threerings.msoy.game.data.MsoyGameCredentials;
  */
 public class GameClient extends MsoyClient
 {
+    // statically reference classes we require
+    Game;
+    ItemPack;
+    LevelPack;
+
     public function GameClient (stage :Stage)
     {
         super(stage);
@@ -39,12 +44,6 @@ public class GameClient extends MsoyClient
         }
 
         addServiceGroup(MsoyCodes.GAME_GROUP);
-
-        // ensure that the compiler includes these necessary symbols
-        var c :Class;
-        c = Game;
-        c = ItemPack;
-        c = LevelPack;
     }
 
     // from MsoyClient

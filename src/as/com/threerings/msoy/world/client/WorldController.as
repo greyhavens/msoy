@@ -155,14 +155,14 @@ public class WorldController extends MsoyController
     /** Command to display the avrg menu. */
     public static const POP_AVRG_MENU :String = "PopAVRGMenu";
 
+
+    // statically reference classes we require
+    ItemMarshaller;
+
     public function WorldController (ctx :WorldContext, topPanel :TopPanel)
     {
         super(ctx, topPanel);
         _wctx = ctx;
-
-        // ensure that the compiler includes these necessary symbols
-        var c :Class;
-        c = ItemMarshaller;
     }
 
     /**

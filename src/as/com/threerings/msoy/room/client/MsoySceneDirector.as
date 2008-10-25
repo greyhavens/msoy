@@ -34,16 +34,16 @@ import com.threerings.msoy.room.data.RoomCodes;
  */
 public class MsoySceneDirector extends SceneDirector
 {
-    private static const log :Log = Log.getLog(MsoySceneDirector);
+    private const log :Log = Log.getLog(this);
+
+    // statically reference classes we require
+    MsoySceneMarshaller;
 
     public function MsoySceneDirector (
         ctx :WorldContext, locDir :LocationDirector, repo :SceneRepository)
     {
         super(ctx, locDir, repo, new MsoySceneFactory());
         _worldctx = ctx;
-
-        // ensure that the compiler includes these necessary symbols
-        var c :Class = MsoySceneMarshaller;
     }
 
     /**

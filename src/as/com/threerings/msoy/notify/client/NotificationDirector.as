@@ -42,6 +42,17 @@ import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 public class NotificationDirector extends BasicDirector
     implements AttributeChangeListener, SetListener, MessageListener
 {
+
+    // statically reference classes we require
+    BadgeEarnedNotification;
+    EntityCommentedNotification;
+    LevelUpNotification;
+    ReleaseNotesNotification;
+    InviteAcceptedNotification;
+    GameInviteNotification;
+    FollowInviteNotification;
+    MoneyNotification;
+
     public function NotificationDirector (ctx :MsoyContext)
     {
         super(ctx);
@@ -52,17 +63,6 @@ public class NotificationDirector extends BasicDirector
 
         ctx.getTopPanel().getControlBar().setNotificationDisplay(
             _notificationDisplay = new NotificationDisplay(ctx));
-
-        // ensure that the compiler includes these necessary symbols
-        var c :Class;
-        c = BadgeEarnedNotification;
-        c = EntityCommentedNotification;
-        c = LevelUpNotification;
-        c = ReleaseNotesNotification;
-        c = InviteAcceptedNotification;
-        c = GameInviteNotification;
-        c = FollowInviteNotification;
-        c = MoneyNotification;
     }
 
     // from interface AttributeChangeListener

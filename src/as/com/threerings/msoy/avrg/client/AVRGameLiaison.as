@@ -35,14 +35,13 @@ public class AVRGameLiaison extends GameLiaison
 {
     public static const log :Log = Log.getLog(AVRGameLiaison);
 
+    // statically reference classes we require
+    AVRGameMarshaller;
+    AVRMarshaller;
+
     public function AVRGameLiaison (ctx :WorldContext, gameId :int)
     {
         super(ctx, gameId);
-
-        // ensure that the compiler includes these necessary symbols
-        var c :Class;
-        c = AVRGameMarshaller;
-        c = AVRMarshaller;
     }
     
     override public function clientWillLogon (event :ClientEvent) :void

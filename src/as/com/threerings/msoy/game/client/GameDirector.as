@@ -30,16 +30,16 @@ import com.threerings.msoy.game.data.WorldGameMarshaller;
  */
 public class GameDirector extends BasicDirector
 {
-    public static const log :Log = Log.getLog(GameDirector);
+    public const log :Log = Log.getLog(this);
+
+    // statically reference classes we require
+    MsoyGameDefinition;
+    WorldGameMarshaller;
 
     public function GameDirector (ctx :WorldContext)
     {
         super(ctx);
         _wctx = ctx;
-
-        // let the compiler know that these must be compiled into the client
-        var c :Class = MsoyGameDefinition;
-        c = WorldGameMarshaller;
     }
 
     /**

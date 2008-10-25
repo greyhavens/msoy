@@ -14,6 +14,9 @@ import com.threerings.msoy.badge.ui.BadgeNotificationDisplay;
  */
 public class BadgeEarnedNotification extends Notification
 {
+    // statically reference classes we require
+    BadgeNotificationDisplay;
+
     public function getBadge () :EarnedBadge
     {
         return _badge;
@@ -36,8 +39,6 @@ public class BadgeEarnedNotification extends Notification
     // from Notification 
     override public function getDisplayClass () :String
     {
-        // ensure the compiler includes this class
-        var c :Class = BadgeNotificationDisplay;
         return "com.threerings.msoy.badge.ui.BadgeNotificationDisplay";
     }
 

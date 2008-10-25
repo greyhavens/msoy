@@ -74,6 +74,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
 
+    // statically reference classes we require
+    MsoyBootstrapData;
+    MsoyAuthResponseData;
+    LurkerName;
+
     public function MsoyClient (stage :Stage)
     {
         _featuredPlaceView = UberClient.isFeaturedPlaceView();
@@ -122,12 +127,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         menu.hideBuiltInItems();
         UberClient.getApplication().contextMenu = menu;
         menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
-
-        // ensure that the compiler includes these necessary symbols
-        var c :Class;
-        c = MsoyBootstrapData;
-        c = MsoyAuthResponseData;
-        c = LurkerName;
     }
 
     // from Client

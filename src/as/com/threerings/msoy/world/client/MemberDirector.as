@@ -22,13 +22,13 @@ public class MemberDirector extends BasicDirector
 {
     public const log :Log = Log.getLog(MemberDirector);
 
+    // statically reference classes we require
+    MemberMarshaller;
+
     public function MemberDirector (ctx :WorldContext)
     {
         super(ctx);
         _wctx = ctx;
-
-        // ensure that the compiler includes these necessary symbols
-        var c :Class = MemberMarshaller;
     }
 
     /**

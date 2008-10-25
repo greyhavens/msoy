@@ -49,14 +49,14 @@ public class MsoyChatDirector extends ChatDirector
 {
     public static const log :Log = Log.getLog(MsoyChatDirector);
 
+    // statically reference classes we require
+    JabberMarshaller;
+    ChannelSpeakMarshaller;
+
     public function MsoyChatDirector (ctx :MsoyContext)
     {
         super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
         _mctx = ctx;
-
-        // let the compiler know that these must be compiled into the client
-        var c :Class = JabberMarshaller;
-        c = ChannelSpeakMarshaller;
 
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
         registerCommandHandler(msg, "away", new AwayHandler(true));
