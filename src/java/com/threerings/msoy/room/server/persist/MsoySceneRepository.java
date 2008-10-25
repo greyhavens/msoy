@@ -245,6 +245,9 @@ public class MsoySceneRepository extends DepotRepository
         return loadAll(SceneRecord.class, sceneIds);
     }
 
+    /**
+     * Loads "new and hot" rooms...
+     */
     public List<SceneRecord> loadScenes (int offset, int rows)
     {
         List<QueryClause> clauses = Lists.newArrayList();
@@ -309,8 +312,8 @@ public class MsoySceneRepository extends DepotRepository
                     SceneRecord.VERSION, finalVersion,
                     SceneRecord.LAST_UPDATED, new Timestamp(System.currentTimeMillis()));
             } catch (Exception e) {
-                log.warning("Failed to update scene to final version [id=" + sceneId +
-                        ", fvers=" + finalVersion + "].", e);
+                log.warning("Failed to update scene to final version", "id", sceneId,
+                        "fvers", finalVersion, e);
             }
         }
     }
@@ -346,8 +349,8 @@ public class MsoySceneRepository extends DepotRepository
                 SceneRecord.ENTRANCE_Z, scup.entrance.z);
 
         } else {
-            log.warning("Unable to apply unknown furni update [class=" + update.getClass() +
-                        ", update=" + update + "].");
+            log.warning("Unable to apply unknown furni update", "class", update.getClass(),
+                        "update", update);
         }
     }
 
@@ -384,7 +387,7 @@ public class MsoySceneRepository extends DepotRepository
 
         // if we fail to load a stock scene, just create a totally blank scene
         if (record == null) {
-            log.info("Unable to find stock scene to clone [type=" + ownerType + "].");
+            log.info("Unable to find stock scene to clone", "type", ownerType);
             MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
             model.ownerType = ownerType;
             model.ownerId = ownerId;
