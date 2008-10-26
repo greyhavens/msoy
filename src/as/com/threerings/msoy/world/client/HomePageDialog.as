@@ -26,7 +26,9 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.badge.data.all.BadgeCodes;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.item.data.all.Item;
 
 public class HomePageDialog extends FloatingPanel
 {
@@ -35,6 +37,7 @@ public class HomePageDialog extends FloatingPanel
     public function HomePageDialog (ctx :WorldContext)
     {
         super(ctx);
+        _wctx = ctx;
 
         title = Msgs.GENERAL.get("t.home_page");
         showCloseButton = true;
@@ -158,6 +161,7 @@ public class HomePageDialog extends FloatingPanel
 
         cell.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
             log.info("Got mouse click", "name", label.text);
+            itemClicked(item);
         });
 
         cell.addEventListener(MouseEvent.ROLL_OVER, function (evt :MouseEvent) :void {
@@ -194,7 +198,76 @@ public class HomePageDialog extends FloatingPanel
         refresh();
     }
 
+    protected function itemClicked (item :HomePageItem) :void
+    {
+        switch (item.getAction()) {
+
+        case HomePageItem.ACTION_GAME:
+            _wctx.getWorldController().handleJoinGameLobby(int(item.getActionData()));
+            break;
+
+        case HomePageItem.ACTION_BADGE:
+            badgeClicked(InProgressBadge(item.getActionData()).badgeCode);
+            break;
+
+        case HomePageItem.ACTION_GROUP:
+            _wctx.getWorldController().handleGoGroupHome(int(item.getActionData()));
+            break;
+
+        case HomePageItem.ACTION_ROOM:
+            _wctx.getWorldController().handleGoScene(int(item.getActionData()));
+            //sceneDid.teleportToScene();
+            break;
+
+        default:
+            log.info("No action for " + item);
+            break;
+        }
+    }
+
+    protected function badgeClicked (code :int) :void
+    {
+        var ctrl :WorldController = _wctx.getWorldController();
+        switch (uint(code)) {
+        case BadgeCodes.FRIENDLY:
+        case BadgeCodes.FIXTURE:
+            ctrl.displayPage("whirleds", "");
+            break;
+
+        case BadgeCodes.MAGNET:
+            ctrl.displayPage("people", "invites");
+            break;
+
+        case BadgeCodes.GAMER:
+        case BadgeCodes.CONTENDER:
+        case BadgeCodes.COLLECTOR:
+            ctrl.displayPage("games", "");
+            break;
+
+        case BadgeCodes.CHARACTER_DESIGNER:
+            ctrl.displayPage("stuff", "" + Item.AVATAR);
+            break;
+
+        case BadgeCodes.FURNITURE_BUILDER:
+            ctrl.displayPage("stuff", "" + Item.FURNITURE);
+            break;
+
+        case BadgeCodes.LANDSCAPE_PAINTER:
+            ctrl.displayPage("stuff", "" + Item.DECOR);
+            break;
+
+        case BadgeCodes.PROFESSIONAL:
+        case BadgeCodes.ARTISAN:
+        case BadgeCodes.SHOPPER:
+        case BadgeCodes.JUDGE:
+        case BadgeCodes.OUTSPOKEN:
+            ctrl.displayPage("shop", "");            
+            break;
+        }
+    }
+
     protected var _grid :Tile;
+    protected var _wctx :WorldContext;
 
     protected static const ROWS :int = 3;
     protected static const COLUMNS :int = 3;
