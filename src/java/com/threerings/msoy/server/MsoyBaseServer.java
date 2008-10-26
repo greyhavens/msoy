@@ -7,6 +7,7 @@ import java.security.Security;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.google.inject.matcher.Matchers;
 
 import net.sf.ehcache.CacheManager;
@@ -230,7 +231,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         throws Exception;
 
     /** Disables state of the server report logging. */
-    protected static class QuietReportManager extends ReportManager
+    @Singleton protected static class QuietReportManager extends ReportManager
     {
         @Override protected void logReport (final String report) {
             // TODO: nix this and publish this info via JMX
