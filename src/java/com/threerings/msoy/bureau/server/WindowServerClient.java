@@ -3,12 +3,40 @@
 
 package com.threerings.msoy.bureau.server;
 
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.PresentsClient;
 
 /**
  * Represents a bureau window connection.
- * NOTE: this is only needed to distinguish bureau windows from peers and normal users.
  */
 public class WindowServerClient extends PresentsClient
 {
+    @Override // from PresentsClient
+    protected void subscribedToObject (DObject object)
+    {
+        super.subscribedToObject(object);
+        if (object instanceof RoomObject) {
+            ++_activeRooms;
+            setThrottleFromRoomCount();
+        }
+    }
+
+    @Override // from PresentsClient
+    protected void unsubscribedFromObject (DObject object)
+    {
+        super.unsubscribedFromObject(object);
+        if (object instanceof RoomObject) {
+            --_activeRooms;
+            setThrottleFromRoomCount();
+        }
+    }
+    
+    protected void setThrottleFromRoomCount ()
+    {
+        setIncomingMessageThrottle(Client.DEFAULT_MSGS_PER_SECOND * _activeRooms);
+    }
+    
+    protected int _activeRooms;
 }
