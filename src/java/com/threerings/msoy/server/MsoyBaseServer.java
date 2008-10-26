@@ -7,7 +7,6 @@ import java.security.Security;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Singleton;
 import com.google.inject.matcher.Matchers;
 
 import net.sf.ehcache.CacheManager;
@@ -70,7 +69,12 @@ public abstract class MsoyBaseServer extends WhirledServer
             // one sneaks any database manipulations into the dependency resolution phase)
             bind(PersistenceContext.class).toInstance(new PersistenceContext());
             // presents dependencies
-            bind(ReportManager.class).to(QuietReportManager.class);
+            bind(ReportManager.class).toInstance(new ReportManager() {
+                // disables state of the server report logging
+                @Override protected void logReport (final String report) {
+                    // TODO: nix this and publish this info via JMX
+                }
+            });
             // msoy dependencies
             bind(CacheManager.class).toInstance(CacheManager.getInstance());
             bindInterceptor(Matchers.any(), Matchers.annotatedWith(Retry.class),
@@ -229,14 +233,6 @@ public abstract class MsoyBaseServer extends WhirledServer
      */
     protected abstract ConfigRegistry createConfigRegistry ()
         throws Exception;
-
-    /** Disables state of the server report logging. */
-    @Singleton protected static class QuietReportManager extends ReportManager
-    {
-        @Override protected void logReport (final String report) {
-            // TODO: nix this and publish this info via JMX
-        }
-    }
 
     protected class ThaneCommandGenerator
         implements BureauRegistry.CommandGenerator
