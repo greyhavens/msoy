@@ -22,6 +22,7 @@ import com.threerings.stats.Log;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.badge.data.all.Badge;
+import com.threerings.msoy.badge.data.all.BadgeCodes;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.gwt.StampCategory;
 
@@ -335,14 +336,57 @@ public enum BadgeType
 
     /**
      * A main method so that this class can be run on its own for Badge code discovery.
+     * A human readable summary is output unless one of the following arguments is given:
+     * <ul><li>-gen: outputs java code for the {@link BadgeCodes} class, declaring each badge
+     * code as a named constant for use in gwt without pulling in the whole of BadgeType.</li>
+     * <li>-genas: outputs the actionscript code for com.threerings.msoy.badge.data.all.BadgeCodes
+     * so that badges can be identified by name in the flash client</li><li>-genswitch: outputs
+     * a switch statement containing a case for each constant in BadgeCodes</li></ul>  
      */
     public static void main (String[] args)
     {
-        // dump all of the known badge types and their code
-        System.out.println("  Hex    -   Integer   - Badge\n--------------------");
-        for (Map.Entry<Integer, BadgeType> entry : _codeToType.entrySet()) {
-            System.out.println(Integer.toHexString(entry.getKey()) + " - " + entry.getKey() +
-                " - " + entry.getValue());
+        if (args.length > 0 && args[0].equals("-gen")) {
+            System.out.println("package com.threerings.msoy.badge.data.all;");
+            System.out.println("");
+            System.out.println("// AUTO GENERATED from " + BadgeType.class.getName());
+            System.out.println("public class BadgeCodes");
+            System.out.println("{");
+            for (BadgeType type : values()) {
+                String code = Integer.toHexString(type.getCode());
+                System.out.println(
+                    "    public static final int " + type.name() + " = 0x" + code + ";");
+            }
+            System.out.println("}");
+
+        } else if (args.length > 0 && args[0].equals("-genas")) {
+            System.out.println("package com.threerings.msoy.badge.data.all {");
+            System.out.println("");
+            System.out.println("// AUTO GENERATED from " + BadgeType.class.getName());
+            System.out.println("public class BadgeCodes");
+            System.out.println("{");
+            for (BadgeType type : values()) {
+                String code = Integer.toHexString(type.getCode());
+                System.out.println(
+                    "    public static const " + type.name() + " :uint = 0x" + code + ";");
+            }
+            System.out.println("}\n}");
+
+        } else if (args.length > 0 && args[0].equals("-genswitch")) {
+            System.out.print("switch (badgeCode) {");
+            for (BadgeType type : values()) {
+                System.out.println();
+                System.out.println("case BadgeCodes." + type.name() + ":");
+                System.out.println("    break;");
+            }
+            System.out.println("}");
+
+        } else {
+            // dump all of the known badge types and their code
+            System.out.println("  Hex    -   Integer   - Badge\n--------------------");
+            for (Map.Entry<Integer, BadgeType> entry : _codeToType.entrySet()) {
+                System.out.println(Integer.toHexString(entry.getKey()) + " - " + entry.getKey() +
+                    " - " + entry.getValue());
+            }
         }
     }
 
