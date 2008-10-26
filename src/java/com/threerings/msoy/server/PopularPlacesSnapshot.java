@@ -191,8 +191,9 @@ public class PopularPlacesSnapshot
     protected static void sortAndPrune (List<Place> list)
     {
         Collections.sort(list);
-        while (list.size() > MAX_TRACKED_PLACES) {
-            list.remove(list.size()-1);
+        int size = list.size();
+        if (size > MAX_TRACKED_PLACES) {
+            list.subList(MAX_TRACKED_PLACES, size).clear();
         }
     }
 
