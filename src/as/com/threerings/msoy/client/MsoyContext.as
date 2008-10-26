@@ -97,6 +97,14 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
+     * Return the control bar
+     */
+    public function getControlBar () :ControlBar
+    {
+        return _topPanel.getControlBar();
+    }
+
+    /**
      * Return's this client's member name.
      */
     public function getMyName () :MemberName
@@ -206,6 +214,14 @@ public /*abstract*/ class MsoyContext
     public function getMsoyController () :MsoyController
     {
         throw new Error("abstract");
+    }
+
+    /**
+     * Return the current PlaceView.
+     */
+    public function getPlaceView () :PlaceView
+    {
+        return _topPanel.getPlaceView();
     }
 
     // documentation inherited from superinterface CrowdContext

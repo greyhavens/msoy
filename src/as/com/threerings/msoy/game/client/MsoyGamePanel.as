@@ -124,7 +124,7 @@ public class MsoyGamePanel extends WhirledGamePanel
         super.willEnterPlace(plobj);
 
         const mctx :MsoyContext = _gctx.getMsoyContext();
-        const bar :ControlBar = mctx.getTopPanel().getControlBar();
+        const bar :ControlBar = mctx.getControlBar();
         const gameChatDir :ChatDirector = _gctx.getChatDirector();
 
         mctx.getMsoyController().addGoMenuProvider(populateGoMenu);
@@ -174,7 +174,7 @@ public class MsoyGamePanel extends WhirledGamePanel
         super.didLeavePlace(plobj);
 
         const mctx :MsoyContext = _gctx.getMsoyContext();
-        const bar :ControlBar = mctx.getTopPanel().getControlBar();
+        const bar :ControlBar = mctx.getControlBar();
 
         bar.setInGame(false);
         mctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
@@ -269,7 +269,7 @@ public class MsoyGamePanel extends WhirledGamePanel
                 return;
             }
             if (gameOver) {
-                const bar :ControlBar = _gctx.getMsoyContext().getTopPanel().getControlBar();
+                const bar :ControlBar = _gctx.getMsoyContext().getControlBar();
                 bar.addCustomComponent(_rematch);
                 bar.addCustomComponent(_goBtn);
 

@@ -519,7 +519,7 @@ public class AVRGameBackend extends ControlBackend
     // LocalSubControl
     protected function getPaintableArea_v1 (full :Boolean) :Rectangle
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        var view :RoomView = _wctx.getPlaceView() as RoomView;
         if (view != null) {
             if (full) {
                 var bounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds();
@@ -534,7 +534,7 @@ public class AVRGameBackend extends ControlBackend
     protected function getRoomBounds_v1 (targetId :int /* ignored */) :Rectangle
     {
         validateRoomTargetId(targetId);
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        var view :RoomView = _wctx.getPlaceView() as RoomView;
         if (view != null) {
             var metrics :RoomMetrics = view.layout.metrics;
             return new Rectangle(0, 0, metrics.sceneWidth, metrics.sceneHeight);
@@ -545,7 +545,7 @@ public class AVRGameBackend extends ControlBackend
     // LocalSubControl
     protected function stageToRoom_v1 (p :Point) :Point
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        var view :RoomView = _wctx.getPlaceView() as RoomView;
         if (view != null) {
             p = view.globalToLocal(p);
             p.x -= view.getScrollOffset();
@@ -557,7 +557,7 @@ public class AVRGameBackend extends ControlBackend
     // LocalSubControl
     protected function roomToStage_v1 (p :Point) :Point
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        var view :RoomView = _wctx.getPlaceView() as RoomView;
         if (view != null) {
             return view.localToGlobal(new Point(p.x + view.getScrollOffset(), p.y));
         }
@@ -567,7 +567,7 @@ public class AVRGameBackend extends ControlBackend
     // LocalSubControl
     protected function locationToRoom_v1 (x :Number, y :Number, z :Number)  :Point
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+        var view :RoomView = _wctx.getPlaceView() as RoomView;
         if (view != null) {
             return view.layout.locationToPoint(new MsoyLocation(x, y, z));
         }
@@ -641,7 +641,7 @@ public class AVRGameBackend extends ControlBackend
     protected function getMySprite () :MemberSprite
     {
         if (isPlaying()) {
-            var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
+            var view :RoomView = _wctx.getPlaceView() as RoomView;
             if (view != null) {
                 return view.getMyAvatar();
             }
@@ -652,7 +652,7 @@ public class AVRGameBackend extends ControlBackend
     // internal utility method
     protected function getMobSprite (mobId :String) :MobSprite
     {
-        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
+        var view :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
         return (view == null) ? null : view.getMob(_ctrl.getGameId(), mobId);
     }
 
@@ -663,7 +663,7 @@ public class AVRGameBackend extends ControlBackend
             log.debug("getAvatarSprite(" + playerId + ") while !isPlaying()");
             return null;
         }
-        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
+        var view :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
         if (view == null) {
             log.debug("getAvatarSprite(" + playerId + ") without RoomView");
             return null;

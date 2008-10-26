@@ -358,8 +358,8 @@ public class LobbyController extends Controller
         }
 
         // if we're showing the blank view, switch instead to the noview
-        if (_mctx.getTopPanel().getPlaceView() is BlankPlaceView) {
-            _mctx.getTopPanel().setPlaceView(new NoPlaceView());
+        if (_mctx.getPlaceView() is BlankPlaceView) {
+            _mctx.setPlaceView(new NoPlaceView());
         }
     }
 

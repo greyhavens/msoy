@@ -137,7 +137,7 @@ class LabelBox extends HBox
 
     protected function handleRoll (event :MouseEvent) :void
     {
-        var view :Object = _mctx.getTopPanel().getPlaceView();
+        var view :Object = _mctx.getPlaceView();
         if (view is RoomObjectView) {
             (view as RoomObjectView).getRoomObjectController().setHoverName(
                 _name, (event.type == MouseEvent.ROLL_OVER));

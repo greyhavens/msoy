@@ -160,18 +160,18 @@ public class ChatTab extends HBox
         if (_channel == null || _channel.type == MsoyChatChannel.ROOM_CHANNEL) {
             style += "RoomTab";
             if (state == SELECTED) {
-                _ctx.getTopPanel().getControlBar().setChatColor(COLOR_ROOM);
+                _ctx.getControlBar().setChatColor(COLOR_ROOM);
             }
         } else if (_channel.type == MsoyChatChannel.GROUP_CHANNEL) {
             style += "GroupTab";
             if (state == SELECTED) {
-                _ctx.getTopPanel().getControlBar().setChatColor(COLOR_GROUP);
+                _ctx.getControlBar().setChatColor(COLOR_GROUP);
             }
         } else if (_channel.type == MsoyChatChannel.MEMBER_CHANNEL ||
                    _channel.type == MsoyChatChannel.JABBER_CHANNEL) {
             style += "TellTab";
             if (state == SELECTED) {
-                _ctx.getTopPanel().getControlBar().setChatColor(COLOR_TELL);
+                _ctx.getControlBar().setChatColor(COLOR_TELL);
             }
         } else {
             log.warning("Unknown channel type for skinning [" + _channel.type + "]");

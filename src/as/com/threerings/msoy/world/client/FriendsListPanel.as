@@ -186,7 +186,7 @@ public class FriendsListPanel extends FlyingPanel
     {
         _statusEdit.setSelection(0, 0);
         // delay losing focus by a frame so the selection has time to get set correctly.
-        callLater(function () :void { _wctx.getTopPanel().getControlBar().giveChatFocus(); });
+        callLater(_wctx.getControlBar().giveChatFocus);
         var newStatus :String = _statusEdit.text;
         if (newStatus != _wctx.getMemberObject().headline) {
             var msvc :MemberService =
@@ -208,7 +208,7 @@ public class FriendsListPanel extends FlyingPanel
             setStatus(me.headline);
             _statusEdit.setSelection(0, 0);
             // delay losing focus by a frame so the selection has time to get set correctly.
-            callLater(_wctx.getTopPanel().getControlBar().giveChatFocus);
+            callLater(_wctx.getControlBar().giveChatFocus);
         }
     }
 

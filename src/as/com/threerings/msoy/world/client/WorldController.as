@@ -226,7 +226,7 @@ public class WorldController extends MsoyController
             callback: _wctx.getChatDirector().clearDisplays });
         menuData.push({ type: "separator" });
 
-        const place :PlaceView = _wctx.getTopPanel().getPlaceView();
+        const place :PlaceView = _wctx.getPlaceView();
         const allowHistoryToggle :Boolean = !(place is MsoyGamePanel) ||
             (place as MsoyGamePanel).shouldUseChatOverlay();
         var addedSomething :Boolean = false;
@@ -881,7 +881,7 @@ public class WorldController extends MsoyController
 
         } else if (null != params["noplace"]) {
             // go to no place- we just want to chat with our friends
-            _wctx.getTopPanel().setPlaceView(new NoPlaceView());
+            _wctx.setPlaceView(new NoPlaceView());
 
         } else if (null != params["gameLobby"]) {
             _wctx.getGameDirector().displayLobby(
@@ -1083,7 +1083,7 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function handleClosePlaceView () :void
     {
-        if (_wctx.getTopPanel().getPlaceView() is MsoyGamePanel) {
+        if (_wctx.getPlaceView() is MsoyGamePanel) {
             // if we're in a game, closing means closing the game and going back to our place
             handleMoveBack(true);
         } else {

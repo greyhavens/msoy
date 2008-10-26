@@ -37,7 +37,7 @@ public class AvatarActionHandler extends CommandHandler
             return "m.usage_" + cmd;
         }
 
-        var roomView :RoomView = (_wctx.getTopPanel().getPlaceView() as RoomView);
+        var roomView :RoomView = (_wctx.getPlaceView() as RoomView);
         if (roomView == null) {
             // can't do it, not in a room
             return "e.avatar_only_cmd";

@@ -147,7 +147,7 @@ public class AVRGamePanel extends UIComponent
     protected function getControlBar () :ControlBar
     {
         const mctx :MsoyContext = _gctx.getMsoyContext();
-        return mctx.getTopPanel().getControlBar();
+        return mctx.getControlBar();
     }
 
     protected function provideLoadingFeedback (info :LoaderInfo) :void

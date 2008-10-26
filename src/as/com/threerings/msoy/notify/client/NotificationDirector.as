@@ -61,7 +61,7 @@ public class NotificationDirector extends BasicDirector
         _currentNotifications = new ExpiringSet(NOTIFICATION_EXPIRE_TIME);
         _currentNotifications.addEventListener(ExpiringSet.ELEMENT_EXPIRED, notificationExpired);
 
-        ctx.getTopPanel().getControlBar().setNotificationDisplay(
+        ctx.getControlBar().setNotificationDisplay(
             _notificationDisplay = new NotificationDisplay(ctx));
     }
 

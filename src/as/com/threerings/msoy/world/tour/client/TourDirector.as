@@ -46,7 +46,7 @@ public class TourDirector extends BasicDirector
 
     public function nextRoom () :void
     {
-        const roomView :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
+        const roomView :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
         const loadingDone :Boolean = (roomView != null) && roomView.loadingDone();
         _tsvc.nextRoom(_ctx.getClient(), loadingDone, new ResultAdapter(
             function (cause :String) :void {
@@ -76,7 +76,7 @@ public class TourDirector extends BasicDirector
     {
         const onTour :Boolean = _wctx.getMemberObject().onTour;
         if (onTour && (_tourCtrl == null)) {
-            const bar :ControlBar = _wctx.getTopPanel().getControlBar();
+            const bar :ControlBar = _wctx.getControlBar();
             _tourCtrl = new TourControl(_wctx, nextRoom, endTour);
             bar.addCustomComponent(_tourCtrl);
 

@@ -706,7 +706,7 @@ public class RoomView extends Sprite
         const minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;
         if (!UberClient.isFeaturedPlaceView()) {
             const canScale :Boolean = maxScale > minScale;
-            WorldControlBar(_ctx.getTopPanel().getControlBar()).enableZoomControl(canScale);
+            WorldControlBar(_ctx.getControlBar()).enableZoomControl(canScale);
             if (canScale) {
                 return minScale + (maxScale - minScale) * getZoom();
             }
@@ -896,7 +896,7 @@ public class RoomView extends Sprite
     }
 //  This belongs with the above... somehow: but layout timing booches it
 //        if (sprite is FurniSprite &&
-//                (WorldControlBar(_ctx.getTopPanel().getControlBar()).hoverAll)) {
+//                (WorldControlBar(_ctx.getControlBar()).hoverAll)) {
 //            doGlobalHover(FurniSprite(sprite), true);
 //        }
 

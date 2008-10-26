@@ -221,14 +221,14 @@ public class WorldControlBar extends ControlBar
     {
         // in the "viewer", we don't save the zoom in preferences
         // and we use Math.round() to adapt older-style settings which could be .5634
-        var studioView :RoomStudioView = _ctx.getTopPanel().getPlaceView() as RoomStudioView;
+        var studioView :RoomStudioView = _ctx.getPlaceView() as RoomStudioView;
         return (studioView != null) ? studioView.getZoom() : Math.round(Prefs.getZoom());
     }
 
     protected function setZoom (newZoom :Number) :void
     {
         // in the "viewer", we don't save the zoom in preferences
-        var studioView :RoomStudioView = _ctx.getTopPanel().getPlaceView() as RoomStudioView;
+        var studioView :RoomStudioView = _ctx.getPlaceView() as RoomStudioView;
         if (studioView != null) {
             studioView.setZoom(newZoom);
         } else {
@@ -240,7 +240,7 @@ public class WorldControlBar extends ControlBar
     {
         if (on != _hotOn) {
             _hotOn = on;
-            var roomView :RoomView = _ctx.getTopPanel().getPlaceView() as RoomView;
+            var roomView :RoomView = _ctx.getPlaceView() as RoomView;
             if (roomView != null) {
                 roomView.hoverAllFurni(on);
             }

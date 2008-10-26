@@ -47,7 +47,7 @@ public class GameChatContainer extends LayeredContainer
 
         _ctx.getTopPanel().getHeaderBar().getChatTabs().width = TopPanel.RIGHT_SIDEBAR_WIDTH;
 
-        var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
+        var controlBar :ControlBar = _ctx.getControlBar();
         controlBar.setChatDirector(_chatDtr);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
@@ -70,7 +70,7 @@ public class GameChatContainer extends LayeredContainer
         clearOverlay();
 
         _ctx.getTopPanel().getHeaderBar().getChatTabs().width = NaN;
-        var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
+        var controlBar :ControlBar = _ctx.getControlBar();
         controlBar.setChatDirector(_ctx.getMsoyChatDirector());
     }
 

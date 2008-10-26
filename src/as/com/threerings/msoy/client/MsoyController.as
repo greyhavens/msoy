@@ -417,7 +417,7 @@ public class MsoyController extends Controller
      */
     public function updateLocationDisplay () :void
     {
-        updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getTopPanel().getControlBar());
+        updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getControlBar());
 
         if (_goMenu != null) {
             _goMenu.hide();

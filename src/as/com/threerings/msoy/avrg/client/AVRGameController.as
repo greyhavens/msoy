@@ -212,7 +212,7 @@ public class AVRGameController extends PlaceController
 
     protected function gameAvailable (gameId :int) :void
     {
-        var view :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
+        var view :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
         if (view != null) {
             view.avrGameAvailable(gameId);
         }

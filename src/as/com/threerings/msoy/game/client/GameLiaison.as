@@ -269,7 +269,7 @@ public class GameLiaison
     
     protected function getMsoyGamePanel () :MsoyGamePanel
     {
-        return (_wctx.getTopPanel().getPlaceView() as MsoyGamePanel);
+        return (_wctx.getPlaceView() as MsoyGamePanel);
     }
 
     /**

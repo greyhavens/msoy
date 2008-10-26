@@ -54,7 +54,7 @@ public class SnapshotPanel extends FloatingPanel
         styleName = "sexyWindow";
         setStyle("horizontalAlign", "left");
 
-        _view = ctx.getTopPanel().getPlaceView() as RoomView;
+        _view = ctx.getPlaceView() as RoomView;
 
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
         _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();

@@ -721,7 +721,7 @@ public class RoomObjectController extends RoomController
 
         _wdctx.getMsoyController().addGoMenuProvider(populateGoMenu);
 
-        _roomEditBtn = WorldControlBar(_wdctx.getTopPanel().getControlBar()).roomEditBtn;
+        _roomEditBtn = WorldControlBar(_wdctx.getControlBar()).roomEditBtn;
         _roomEditBtn.enabled = canManageRoom();
 
         _walkTarget.visible = false;

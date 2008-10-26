@@ -236,7 +236,7 @@ public class RoomStudioView extends RoomView
         var idle :CommandButton = new CommandButton(null, emulateIdle);
         idle.styleName = "controlBarIdleButton";
         idle.toolTip = Msgs.STUDIO.get("i.idle")
-        const bar :ControlBar = _ctx.getTopPanel().getControlBar();
+        const bar :ControlBar = _ctx.getControlBar();
         bar.addCustomButton(idle);
 
         _saveScaling = ("true" == String(params["scaling"]));
@@ -346,7 +346,7 @@ public class RoomStudioView extends RoomView
         talk.styleName = "controlBarTalkButton";
         talk.toolTip = Msgs.STUDIO.get("i.talk");
 
-        const bar :ControlBar = _ctx.getTopPanel().getControlBar();
+        const bar :ControlBar = _ctx.getControlBar();
         bar.addCustomButton(talk);
     }
 
@@ -357,7 +357,7 @@ public class RoomStudioView extends RoomView
         _scaleButton.toolTip = Msgs.STUDIO.get("i.sprite_scale");
         _scaleButton.enabled = false;
 
-        _ctx.getTopPanel().getControlBar().addCustomButton(_scaleButton);
+        _ctx.getControlBar().addCustomButton(_scaleButton);
     }
 
     protected function showSpriteScaler () :void

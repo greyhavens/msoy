@@ -18,7 +18,7 @@ public class StudioClient extends WorldClient
 
         _roomStudioController = new RoomStudioController();
         _roomStudioController.init(_wctx, new RoomConfig());
-        _wctx.getTopPanel().setPlaceView(_roomStudioController.getPlaceView());
+        _wctx.setPlaceView(_roomStudioController.getPlaceView());
     }
 
     public function getPlaceView () :RoomStudioView

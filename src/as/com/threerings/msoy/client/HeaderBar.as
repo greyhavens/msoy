@@ -73,7 +73,7 @@ public class HeaderBar extends HBox
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
 
         // TODO: hard-coded shite should not be here
-        if (!(_ctx.getTopPanel().getPlaceView() is RoomView)) {
+        if (!(_ctx.getPlaceView() is RoomView)) {
             _tabs.locationName = loc; // Msgs.CHAT.get("l.game_channel");
         }
     }
