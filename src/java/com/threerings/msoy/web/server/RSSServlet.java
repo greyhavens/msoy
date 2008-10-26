@@ -18,6 +18,7 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.web.gwt.MessageUtil;
 
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
@@ -135,7 +136,7 @@ public class RSSServlet extends HttpServlet
             rss.append("<title>").append(thread.subject).append("</title>");
             rss.append("<link>").append(url);
             rss.append("#whirleds-t_").append(thread.threadId).append("</link>");
-            rss.append("<description><![CDATA[ ").append(message.message);
+            rss.append("<description><![CDATA[ ").append(MessageUtil.expandMessage(message.message));
             rss.append("]]></description>");
             rss.append("<pubDate>").append(_sdf.format(message.created)).append("</pubDate>");
             rss.append("<guid>").append(url);
