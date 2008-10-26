@@ -15,7 +15,7 @@ public interface TourService extends InvocationService
      * If the caller is not yet touring, start them touring.
      * Then, proceed to the next room on the tour.
      */
-    void nextRoom (Client client, ResultListener listener);
+    void nextRoom (Client client, boolean finishedLoadingCurrentRoom, ResultListener listener);
 
     /**
      * End any tour the client is involved in. There is no listener because this cannot fail.

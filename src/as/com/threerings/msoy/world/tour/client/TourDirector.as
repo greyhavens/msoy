@@ -19,6 +19,8 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.room.client.RoomObjectView;
+
 import com.threerings.msoy.world.tour.data.TourMarshaller;
 
 public class TourDirector extends BasicDirector
@@ -44,7 +46,9 @@ public class TourDirector extends BasicDirector
 
     public function nextRoom () :void
     {
-        _tsvc.nextRoom(_ctx.getClient(), new ResultAdapter(
+        const roomView :RoomObjectView = _wctx.getTopPanel().getPlaceView() as RoomObjectView;
+        const loadingDone :Boolean = (roomView != null) && roomView.loadingDone();
+        _tsvc.nextRoom(_ctx.getClient(), loadingDone, new ResultAdapter(
             function (cause :String) :void {
                 _wctx.displayFeedback(null, cause);
             },

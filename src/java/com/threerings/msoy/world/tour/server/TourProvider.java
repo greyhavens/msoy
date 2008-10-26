@@ -22,6 +22,6 @@ public interface TourProvider extends InvocationProvider
     /**
      * Handles a {@link TourService#nextRoom} request.
      */
-    void nextRoom (ClientObject caller, InvocationService.ResultListener arg1)
+    void nextRoom (ClientObject caller, boolean arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 }

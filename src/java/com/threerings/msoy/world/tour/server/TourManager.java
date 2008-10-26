@@ -76,15 +76,10 @@ public class TourManager
         _roomSetRefresher = null;
     }
 
-    // Use _sceneRepo.loadScenes(0, 50); // to load the latest new and hot
-    // store those in some sort of sorted interface
-    // 
-    // maintain a record with a population count for each room (listening on node objects)
-    // when a user requests a room, skip past overpopulated rooms
-    // when you find a room for that user, move it up the list one spot
-
     // from TourProvider
-    public void nextRoom (ClientObject caller, InvocationService.ResultListener listener)
+    public void nextRoom (
+        ClientObject caller, boolean finishedLoadingCurrentRoom,
+        InvocationService.ResultListener listener)
         throws InvocationException
     {
         MemberObject memObj = (MemberObject) caller;
@@ -99,8 +94,8 @@ public class TourManager
         //dumpRooms();
         memObj.touredRooms.add(nextRoom);
         listener.requestProcessed(nextRoom);
-        // go ahead and increment the user's TOURED stat
-        if (!memObj.isGuest()) {
+        // maybe increment the user's TOURED stat
+        if (finishedLoadingCurrentRoom && !memObj.isGuest()) {
             _statLogic.incrementStat(memObj.getMemberId(), StatType.ROOMS_TOURED, 1);
         }
     }

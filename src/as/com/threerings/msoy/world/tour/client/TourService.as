@@ -16,6 +16,6 @@ public interface TourService extends InvocationService
     function endTour (arg1 :Client) :void;
 
     // from Java interface TourService
-    function nextRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
+    function nextRoom (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_ResultListener) :void;
 }
 }

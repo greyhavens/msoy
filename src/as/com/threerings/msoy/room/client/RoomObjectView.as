@@ -91,6 +91,15 @@ public class RoomObjectView extends RoomView
         return _octrl;
     }
 
+    /**
+     * Have we finished loading all the furni/decor in this room?
+     * Note that adding new furniture to the room may cause this to return false.
+     */
+    public function loadingDone () :Boolean
+    {
+        return (_loadingWatcher != null) && _loadingWatcher.isFinished();
+    }
+
     // from MsoyPlaceView, via RoomView
     override public function setPlaceSize (unscaledWidth :Number, unscaledHeight :Number) :void
     {
@@ -369,8 +378,8 @@ public class RoomObjectView extends RoomView
     {
         // set load-all to false, as we're going to just load the decor item first.
         _loadAllMedia = false;
-        FurniSprite.setLoadingWatcher(
-            new PlaceLoadingDisplay(_ctx.getTopPanel().getPlaceContainer()));
+        _loadingWatcher = new PlaceLoadingDisplay(_ctx.getTopPanel().getPlaceContainer());
+        FurniSprite.setLoadingWatcher(_loadingWatcher);
 
         // save our scene object
         _roomObj = (plobj as RoomObject);
@@ -438,6 +447,7 @@ public class RoomObjectView extends RoomView
 
         _roomObj = null;
 
+        _loadingWatcher = null;
         FurniSprite.setLoadingWatcher(null);
 
         // in case we were auto-scrolling, remove the event listener..
@@ -729,5 +739,8 @@ public class RoomObjectView extends RoomView
 
     /** The transitory properties of the current scene. */
     protected var _roomObj :RoomObject;
+
+    /** Monitors and displays loading progress for furni/decor. */
+    protected var _loadingWatcher :PlaceLoadingDisplay;
 }
 }

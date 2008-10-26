@@ -959,9 +959,6 @@ public class RoomView extends Sprite
     /** When we first enter the room, we only load the background (if any). */
     protected var _loadAllMedia :Boolean = false;
 
-    /** The spinner to show when we're loading room data. */
-    protected var _loadingSpinner :DisplayObject;
-
     /** A map of bodyOid -> OccupantSprite. */
     protected var _occupants :HashMap = new HashMap();
 

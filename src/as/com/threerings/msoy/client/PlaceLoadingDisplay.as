@@ -33,11 +33,12 @@ public class PlaceLoadingDisplay extends Sprite
         addChild(_spinner = new LoadingSpinner());
     }
 
-    protected function handleBoxResized (event :ResizeEvent) :void
+    /**
+     * Has everything finished loading?
+     */
+    public function isFinished () :Boolean
     {
-        if (_primary != null) {
-            center();
-        }
+        return (_primary == null) && (_secondaryCount == 0);
     }
 
     // from interface LoadingWatcher
@@ -103,8 +104,15 @@ public class PlaceLoadingDisplay extends Sprite
             _secondaryCount--;
         }
 
-        if (_primary == null && _secondaryCount == 0 && (parent != null)) {
+        if (isFinished() && (parent != null)) {
             _box.removeOverlay(this);
+        }
+    }
+
+    protected function handleBoxResized (event :ResizeEvent) :void
+    {
+        if (_primary != null) {
+            center();
         }
     }
 

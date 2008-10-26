@@ -8,6 +8,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the <code>TourService</code> interface
@@ -34,12 +35,12 @@ public class TourMarshaller extends InvocationMarshaller
     public static const NEXT_ROOM :int = 2;
 
     // from interface TourService
-    public function nextRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    public function nextRoom (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_ResultListener) :void
     {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener2.listener = arg2;
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, NEXT_ROOM, [
-            listener2
+            langBoolean.valueOf(arg2), listener3
         ]);
     }
 }

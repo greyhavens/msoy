@@ -43,7 +43,7 @@ public class TourDispatcher extends InvocationDispatcher<TourMarshaller>
 
         case TourMarshaller.NEXT_ROOM:
             ((TourProvider)provider).nextRoom(
-                source, (InvocationService.ResultListener)args[0]
+                source, ((Boolean)args[0]).booleanValue(), (InvocationService.ResultListener)args[1]
             );
             return;
 
