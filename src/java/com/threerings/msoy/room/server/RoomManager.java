@@ -94,10 +94,11 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.ObserverInfo;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.server.persist.MemoryRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
@@ -273,23 +274,63 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
-    @Override // from SpotSceneManager
-    public void willTraversePortal (BodyObject body, Portal portal)
+    /**
+     * Reclaims an item from this room.
+     */
+    public void reclaimItem (ItemIdent item, MemberObject user)
     {
-        MsoyLocation loc = (MsoyLocation) portal.getLocation();
-        // We need to set the body's orientation to match the approach to the portal.
-        // Look up their current location and move them from there. This could be a little
-        // "off" if their sprite has not yet walked to this location, but oh well.
-        SceneLocation sloc = _roomObj.occupantLocs.get(body.getOid());
-        if (sloc != null) {
-            MsoyLocation origin = (MsoyLocation) sloc.loc;
-            double radians = Math.atan2(loc.z - origin.z, loc.x - origin.x);
-            // turn the radians into a positive degree value in the whirled orientation space
-            loc.orient = (short) ((360 + 90 + (int) Math.round(Math.toDegrees(radians))) % 360);
+        for (FurniData furni : ((MsoyScene)_scene).getFurni()) {
+            if (item.equals(furni.getItemIdent())) {
+                FurniUpdate.Remove update = new FurniUpdate.Remove();
+                update.data = furni;
+                doRoomUpdate(update, user);
+                break;
+            }
         }
+    }
 
-        // note: we don't call super, we call updateLocation() ourselves
-        updateLocation(body, loc);
+    /**
+     * Reclaims this room's decor.
+     */
+    public void reclaimDecor (MemberObject user)
+    {
+        // replace the decor with defaults
+        MsoyScene scene = (MsoyScene)_scene;
+        SceneAttrsUpdate update = new SceneAttrsUpdate();
+        update.init(scene.getId(), scene.getVersion());
+        update.name = scene.getName();
+        update.decor = MsoySceneModel.defaultMsoySceneModelDecor();
+        update.audioData = scene.getAudioData();
+        update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
+        doRoomUpdate(update, user);
+    }
+
+    /**
+     * Reclaim this room's background audio.
+     */
+    public void reclaimAudio (MemberObject user)
+    {
+        MsoyScene scene = (MsoyScene)_scene;
+        AudioData ad = scene.getAudioData();
+        ad.itemId = 0;
+        SceneAttrsUpdate update = new SceneAttrsUpdate();
+        update.init(scene.getId(), scene.getVersion());
+        update.name = scene.getName();
+        update.decor = scene.getDecor();
+        update.audioData = ad;
+        update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
+        doRoomUpdate(update, user);
+    }
+
+    public void occupantLeftAVRGame (MemberObject member)
+    {
+        reassignControllers(member.getOid(), true);
+    }
+
+    public void occupantEnteredAVRGame (MemberObject member)
+    {
+        ensureAVRGameControl(member);
+        ensureAVRGamePropertySpace(member);
     }
 
     // documentation inherited from RoomProvider
@@ -444,54 +485,6 @@ public class RoomManager extends SpotSceneManager
             }
             protected int _newRoomId;
         });
-    }
-
-    /**
-     * Reclaims an item from this room.
-     */
-    public void reclaimItem (ItemIdent item, MemberObject user)
-    {
-        for (FurniData furni : ((MsoyScene)_scene).getFurni()) {
-            if (item.equals(furni.getItemIdent())) {
-                FurniUpdate.Remove update = new FurniUpdate.Remove();
-                update.data = furni;
-                doRoomUpdate(update, user);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Reclaims this room's decor.
-     */
-    public void reclaimDecor (MemberObject user)
-    {
-        // replace the decor with defaults
-        MsoyScene scene = (MsoyScene)_scene;
-        SceneAttrsUpdate update = new SceneAttrsUpdate();
-        update.init(scene.getId(), scene.getVersion());
-        update.name = scene.getName();
-        update.decor = MsoySceneModel.defaultMsoySceneModelDecor();
-        update.audioData = scene.getAudioData();
-        update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
-        doRoomUpdate(update, user);
-    }
-
-    /**
-     * Reclaim this room's background audio.
-     */
-    public void reclaimAudio (MemberObject user)
-    {
-        MsoyScene scene = (MsoyScene)_scene;
-        AudioData ad = scene.getAudioData();
-        ad.itemId = 0;
-        SceneAttrsUpdate update = new SceneAttrsUpdate();
-        update.init(scene.getId(), scene.getVersion());
-        update.name = scene.getName();
-        update.decor = scene.getDecor();
-        update.audioData = ad;
-        update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
-        doRoomUpdate(update, user);
     }
 
     // documentation inherited from RoomProvider
@@ -678,22 +671,30 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
+    @Override // from SpotSceneManager
+    public void willTraversePortal (BodyObject body, Portal portal)
+    {
+        MsoyLocation loc = (MsoyLocation) portal.getLocation();
+        // We need to set the body's orientation to match the approach to the portal.
+        // Look up their current location and move them from there. This could be a little
+        // "off" if their sprite has not yet walked to this location, but oh well.
+        SceneLocation sloc = _roomObj.occupantLocs.get(body.getOid());
+        if (sloc != null) {
+            MsoyLocation origin = (MsoyLocation) sloc.loc;
+            double radians = Math.atan2(loc.z - origin.z, loc.x - origin.x);
+            // turn the radians into a positive degree value in the whirled orientation space
+            loc.orient = (short) ((360 + 90 + (int) Math.round(Math.toDegrees(radians))) % 360);
+        }
+
+        // note: we don't call super, we call updateLocation() ourselves
+        updateLocation(body, loc);
+    }
+
     @Override // from PlaceManager
     public void messageReceived (MessageEvent event)
     {
         // we want to explicitly disable the standard method calling by name that we allow in more
         // trusted environments
-    }
-
-    public void occupantLeftAVRGame (MemberObject member)
-    {
-        reassignControllers(member.getOid(), true);
-    }
-
-    public void occupantEnteredAVRGame (MemberObject member)
-    {
-        ensureAVRGameControl(member);
-        ensureAVRGamePropertySpace(member);
     }
 
     @Override
@@ -757,6 +758,12 @@ public class RoomManager extends SpotSceneManager
     protected PlaceObject createPlaceObject ()
     {
         return new RoomObject();
+    }
+
+    @Override // from PlaceManager
+    protected long idleUnloadPeriod ()
+    {
+        return 30 * 1000L; // we're more aggressive about unloading rooms
     }
 
     @Override // from PlaceManager
@@ -862,6 +869,18 @@ public class RoomManager extends SpotSceneManager
 
         // reassign this occupant's controlled entities
         reassignControllers(bodyOid, false);
+    }
+
+    @Override // from PlaceManager
+    protected boolean shouldDeclareEmpty (OccupantInfo leaver)
+    {
+        int hoomans = 0;
+        for (OccupantInfo info : _plobj.occupantInfo) {
+            if (info instanceof MemberInfo || info instanceof ObserverInfo) {
+                hoomans++;
+            }
+        }
+        return (hoomans == 0);
     }
 
     @Override // from PlaceManager
