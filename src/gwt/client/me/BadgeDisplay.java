@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.badge.data.all.Badge;
+import com.threerings.msoy.badge.data.all.BadgeCodes;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 
@@ -90,37 +91,39 @@ class BadgeDisplay extends FlowPanel
         // It would be great if this were done more dynamically...
 
         switch (badge.badgeCode) {
-        // friendly
-        case -990018741: return Link.createListener(Pages.WHIRLEDS, "");
-        // magnet
-        case -94886133: return Link.createListener(Pages.PEOPLE, "invites");
-        // fixture
-        case 983613172: return Link.createListener(Pages.WHIRLEDS, "");
+        case BadgeCodes.FRIENDLY:
+            return Link.createListener(Pages.WHIRLEDS, "");
 
-        // gamer
-        case 2138102039: // same as below
-        // contender
-        case -425662117: // same as below
-        // collector
-        case -1978012765: return Link.createListener(Pages.GAMES, "");
+        case BadgeCodes.MAGNET:
+            return Link.createListener(Pages.PEOPLE, "invites");
 
-        // character designer
-        case 1852244093: return Link.createListener(Pages.STUFF, "" + Item.AVATAR);
-        // furniture builder
-        case -255838771: return Link.createListener(Pages.STUFF, "" + Item.FURNITURE);
-        // landscape painter
-        case 292647383: return Link.createListener(Pages.STUFF, "" + Item.DECOR);
-        // professional (merchant)
-        case 646396602: return Link.createListener(Pages.SHOP, "");
-        // artisan
-        case 52819145: return Link.createListener(Pages.SHOP, "");
+        case BadgeCodes.FIXTURE:
+            return Link.createListener(Pages.WHIRLEDS, "");
 
-        // judge
-        case -424738396: // same as below
-        // outspoken
-        case 1017487473: // same as below
-        // shopper
-        case 421773639: return Link.createListener(Pages.SHOP, "");
+        case BadgeCodes.GAMER: // same as below
+        case BadgeCodes.CONTENDER: // same as below
+        case BadgeCodes.COLLECTOR:
+            return Link.createListener(Pages.GAMES, "");
+
+        case BadgeCodes.CHARACTER_DESIGNER:
+            return Link.createListener(Pages.STUFF, "" + Item.AVATAR);
+
+        case BadgeCodes.FURNITURE_BUILDER:
+            return Link.createListener(Pages.STUFF, "" + Item.FURNITURE);
+
+        case BadgeCodes.LANDSCAPE_PAINTER:
+            return Link.createListener(Pages.STUFF, "" + Item.DECOR);
+
+        case BadgeCodes.PROFESSIONAL:
+            return Link.createListener(Pages.SHOP, "");
+
+        case BadgeCodes.ARTISAN:
+            return Link.createListener(Pages.SHOP, "");
+
+        case BadgeCodes.JUDGE: // same as below
+        case BadgeCodes.OUTSPOKEN: // same as below
+        case BadgeCodes.SHOPPER:
+            return Link.createListener(Pages.SHOP, "");
         }
 
         return null;
