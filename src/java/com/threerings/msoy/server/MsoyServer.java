@@ -192,6 +192,7 @@ public class MsoyServer extends MsoyBaseServer
         _gameReg.init();
         _partyReg.init();
         _moneyLogic.init();
+        _tourMan.init();
 
         // TEMP: give a peer manager refernce to MemberNodeActions
         MemberNodeActions.init(_peerMan);
