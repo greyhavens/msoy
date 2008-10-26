@@ -125,7 +125,8 @@ public class MailSender
      *
      * @param recip the address of the recipient.
      * @param sender the address of the sender.
-     * @param headers optional additional headers to add to the mail { key, value, key, value, ... }.
+     * @param headers optional additional headers to add to the mail { key, value, key, value,
+     * ... }.
      * @param subject the subject of the email.
      * @param body the body of the email.
      * @param isHTML whether or not the body is an HTML document or plain text.

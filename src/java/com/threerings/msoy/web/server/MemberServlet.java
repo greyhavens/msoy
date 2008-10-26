@@ -20,7 +20,7 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.person.server.MailLogic;
+import com.threerings.msoy.mail.server.SpamUtil;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.gwt.Invitation;
@@ -139,7 +139,7 @@ public class MemberServlet extends MsoyServiceServlet
         }
 
         // generate an opt-out hash for this member and see if it matches
-        String realHash = _mailLogic.generateOptOutHash(mrec.memberId, mrec.accountName);
+        String realHash = SpamUtil.generateOptOutHash(mrec.memberId, mrec.accountName);
         if (!hash.equals(realHash)) {
             throw new ServiceException(ServiceCodes.E_OPT_OUT_HASH_MISMATCH);
         }
@@ -232,7 +232,6 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
     @Inject protected MemberLogic _memberLogic;
-    @Inject protected MailLogic _mailLogic;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;

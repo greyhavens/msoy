@@ -26,7 +26,6 @@ import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.server.persist.ConvMessageRecord;
 import com.threerings.msoy.mail.server.persist.ConversationRecord;
 import com.threerings.msoy.mail.server.persist.MailRepository;
-import com.threerings.msoy.person.server.MailLogic;
 
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
