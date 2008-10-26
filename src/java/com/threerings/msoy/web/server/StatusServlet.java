@@ -6,6 +6,9 @@ package com.threerings.msoy.web.server;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,11 +17,15 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-import com.samskivert.io.StreamUtil;
 
+import com.samskivert.io.StreamUtil;
+import com.samskivert.util.Tuple;
+
+import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MemberName;
@@ -38,54 +45,87 @@ public class StatusServlet extends HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
-        final Map<String,ServerInfo> info = Maps.newHashMap();
-        final Function<NodeObject,Void> collector = new Function<NodeObject,Void>() {
-            public Void apply (NodeObject nodeobj) {
-                info.put(nodeobj.nodeName, collectInfo((MsoyNodeObject)nodeobj));
-                return null;
+        final Details details = parseDetails(req.getPathInfo());
+        Callable<Map<String, ServerInfo>> collector = new Callable<Map<String, ServerInfo>>() {
+            public Map<String, ServerInfo> call () throws Exception {
+                return collectInfo(details);
             }
         };
+        FutureTask<Map<String, ServerInfo>> task =
+            new FutureTask<Map<String, ServerInfo>>(collector);
+        _omgr.postRunnable(task);
 
         try {
-            final ServletWaiter<Void> waiter = new ServletWaiter<Void>("collectStats");
-            _omgr.postRunnable(new Runnable() {
-                public void run () {
-                    _peerMan.applyToNodes(collector);
-                    waiter.postSuccess(null);
+            Map<String, ServerInfo> info = task.get();
+            PrintStream out = null;
+            try {
+                out = new PrintStream(rsp.getOutputStream());
+                for (ServerInfo sinfo : info.values()) {
+                    out.println(sinfo);
+                    if (sinfo.details != null) {
+                        try {
+                            out.println(sinfo.details.call());
+                        } catch (Exception e) {
+                            out.println("Failed to get details: " + e.getMessage());
+                            e.printStackTrace(out);
+                        }
+                    }
                 }
-            });
-            waiter.waitForResult();
+            } finally {
+                StreamUtil.close(out);
+            }
 
-        } catch (ServiceException se) {
-            log.warning("Failed to gather stats.", se);
+        } catch (Throwable t) {
+            if (t instanceof ExecutionException) {
+                t = t.getCause();
+            }
+            log.warning("Failed to gather stats.", t);
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
-
-        boolean details = "/details".equals(req.getPathInfo());
-        PrintStream out = null;
-        try {
-            out = new PrintStream(rsp.getOutputStream());
-            for (ServerInfo sinfo : info.values()) {
-                out.println(sinfo);
-                if (details) {
-                    out.println(sinfo.details);
-                }
-            }
-        } finally {
-            StreamUtil.close(out);
-        }
     }
 
-    protected ServerInfo collectInfo (MsoyNodeObject mnobj)
+    protected static Details parseDetails (String pathinfo)
     {
-        ServerInfo info = new ServerInfo();
-        info.name = mnobj.nodeName;
-        info.rooms = mnobj.hostedScenes.size();
-        info.games = mnobj.hostedGames.size();
-        info.channels = mnobj.hostedChannels.size();
+        try {
+            if (pathinfo.startsWith("/")) {
+                return Enum.valueOf(Details.class, pathinfo.substring(1).toUpperCase());
+            }
+        } catch (Exception e) {
+            log.info("Ingoring invalid status details", "pinfo", pathinfo);
+        }
+        return Details.NONE;
+    }
 
-        for (ClientInfo cinfo : mnobj.clients) {
+    protected Map<String, ServerInfo> collectInfo (final Details details)
+    {
+        final Map<String,ServerInfo> info = Maps.newHashMap();
+
+        // collect info on this server
+        MsoyNodeObject nodeobj = (MsoyNodeObject)_peerMan.getNodeObject();
+        info.put(nodeobj.nodeName, collectInfo(details, null, nodeobj));
+
+        // collect info on our peers
+        _peerMan.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
+            public Void apply (Tuple<Client, NodeObject> args) {
+                info.put(args.right.nodeName,
+                         collectInfo(details, args.left, (MsoyNodeObject)args.right));
+                return null;
+            }
+        });
+
+        return info;
+    }
+
+    protected ServerInfo collectInfo (Details details, Client client, MsoyNodeObject nodeobj)
+    {
+        final ServerInfo info = new ServerInfo();
+        info.name = nodeobj.nodeName;
+        info.rooms = nodeobj.hostedScenes.size();
+        info.games = nodeobj.hostedGames.size();
+        info.channels = nodeobj.hostedChannels.size();
+
+        for (ClientInfo cinfo : nodeobj.clients) {
             if (MemberName.isGuest(((MsoyClientInfo)cinfo).getMemberId())) {
                 info.guests++;
             } else {
@@ -93,18 +133,52 @@ public class StatusServlet extends HttpServlet
             }
         }
 
-        for (MemberLocation mloc : mnobj.memberLocs) {
+        for (MemberLocation mloc : nodeobj.memberLocs) {
             if (mloc.sceneId != 0) {
                 info.inScene++;
             }
             if (mloc.gameId != 0) {
                 info.inGame++;
             }
-            info.details.append("- ").append(mloc).append("\n");
+            if (details == Details.MEMBERS) {
+                info.meminfo.append("- ").append(mloc).append("\n");
+            }
+        }
+
+        switch (details) {
+        case MEMBERS:
+            info.details = new Callable<String>() {
+                public String call () throws Exception {
+                    return info.meminfo.toString();
+                }
+            };
+            break;
+
+        case REPORT:
+            if (client == null) { // nextgen narya will make this less hacky
+                info.details = new Callable<String>() {
+                    public String call () throws Exception {
+                        FutureResult<String> report = new FutureResult<String>();
+                        _peerMan.generateReport(null, report);
+                        return report.get();
+                    }
+                };
+            } else {
+                final FutureResult<String> report = new FutureResult<String>();
+                nodeobj.peerService.generateReport(client, report);
+                info.details = new Callable<String>() {
+                    public String call () throws Exception {
+                        return report.get();
+                    }
+                };
+            }
+            break;
         }
 
         return info;
     }
+
+    protected static enum Details { NONE, MEMBERS, REPORT };
 
     protected static class ServerInfo
     {
@@ -120,7 +194,9 @@ public class StatusServlet extends HttpServlet
         public int inScene;
         public int inGame;
 
-        public StringBuilder details = new StringBuilder();
+        public Callable<String> details;
+
+        public StringBuilder meminfo = new StringBuilder();
 
         public String toString () {
             return name + " [members=" + members + ", guests=" + guests +
