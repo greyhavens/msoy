@@ -11,8 +11,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
@@ -26,16 +24,14 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.StatLogic;
-
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
@@ -122,22 +118,25 @@ public class TourManager
             return 1; // TODO?
         }
 
-        for (int ii = 0, nn = _rooms.size(); ii < nn; ii++) {
-            RoomRecord room = _rooms.get(ii);
-            if ((room.occupants < MAX_ROOM_POPULATION) && isValidNextRoom(memObj, room.sceneId)) {
+        PopularPlacesSnapshot snapshot = _memberMan.getPPSnapshot();
+        for (int ii = 0, nn = _rooms.length; ii < nn; ii++) {
+            int sceneId = _rooms[ii];
+            PopularPlacesSnapshot.Place place = snapshot.getScene(sceneId);
+            if ((place == null || place.population < MAX_ROOM_POPULATION) &&
+                    isValidNextRoom(memObj, sceneId)) {
                 if (ii > 0) {
                     // since we're actually placing someone in this room, move it forward one
                     // spot in the list.
                     // TODO: hmm, maybe we should move it to the front of the list?
                     // Or move overpopulated rooms to the end of the list?
-                    _rooms.set(ii, _rooms.set(ii - 1, room));
+                    _rooms[ii] = _rooms[ii - 1];
+                    _rooms[ii - 1] = sceneId;
                 }
-                return room.sceneId;
+                return sceneId;
             }
         }
 
-        // TODO: load up a random-ass room and add it to the list? We'd have to refigure population
-        // so that is harsh.
+        // TODO: load up a random-ass room and add it to the list?
         log.warning("Oh-serious-no! Ran out of rooms for touring!");
         return 1;
     }
@@ -148,8 +147,8 @@ public class TourManager
     protected boolean isValidNextRoom (MemberObject memObj, int sceneId)
     {
         return (memObj.homeSceneId != sceneId) &&
-            !memObj.touredRooms.contains(sceneId) &&
-            (memObj.getSceneId() != sceneId);
+            (memObj.getSceneId() != sceneId) &&
+            !memObj.touredRooms.contains(sceneId);
     }
 
     protected void loadNewRoomSet ()
@@ -158,66 +157,22 @@ public class TourManager
             public void invokePersist ()
                 throws Exception
             {
-                _scenes = _sceneRepo.loadScenes(0, ROOMS_PER_SET);
+                List<SceneRecord> scenes = _sceneRepo.loadScenes(0, ROOMS_PER_SET);
+                _newRooms = new int[scenes.size()];
+                for (int ii = 0, nn = scenes.size(); ii < nn; ii++) {
+                    _newRooms[ii] = scenes.get(ii).sceneId;
+                }
             }
 
             public void handleSuccess ()
             {
-                // create our list of rooms
-                List<RoomRecord> rooms = Lists.newArrayList();
-                final IntMap<RoomRecord> roomsById = IntMaps.newHashIntMap();
-                for (SceneRecord scene : _scenes) {
-                    RoomRecord room = new RoomRecord(scene.sceneId);
-                    rooms.add(room);
-                    roomsById.put(scene.sceneId, room);
-                }
-                // figure out the population in each
-                // TODO: this could be a bad idea, this is a lot of iteration...
-                _peerMan.applyToNodes(new Function<NodeObject,Void>() {
-                    public Void apply (NodeObject nobj) {
-                        for (MemberLocation mloc : ((MsoyNodeObject) nobj).memberLocs) {
-                            if (mloc.sceneId != 0) {
-                                RoomRecord room = roomsById.get(mloc.sceneId);
-                                if (room != null) {
-                                    room.occupants++;
-                                }
-                            }
-                        }
-                        return null;
-                    }
-                });
-                // now use these new lists
-                _rooms = rooms;
-                _roomsById = roomsById;
-                //dumpRooms();
+                // now use the new rooms
+                _rooms = _newRooms;
             }
 
-            protected List<SceneRecord> _scenes;
+            protected int[] _newRooms;
         });
     }
-
-    /** Tracks room populations. */
-    protected static class RoomRecord
-    {
-        public int sceneId;
-
-        public int occupants;
-
-        public RoomRecord (int sceneId)
-        {
-            this.sceneId = sceneId;
-        }
-    }
-
-//    // some debugging:
-//    protected void dumpRooms ()
-//    {
-//        System.err.println("==== Rooms: ");
-//        for (RoomRecord rec : _rooms) {
-//            System.err.print(" " + rec.sceneId);
-//        }
-//        System.err.println();
-//    }
 
     /** The number of new & hot rooms loaded for the tour. */
     protected static final int ROOMS_PER_SET = 50;
@@ -229,22 +184,14 @@ public class TourManager
     protected static final long ROOM_SET_REFRESH = 2 * 60 * 1000L; // 2 minutes
 
     /** The current list of tour rooms, in order of preference. */
-    protected List<RoomRecord> _rooms;
-
-    /** A mapping of sceneId -> RoomRecord, so we can update population counts. */
-    protected IntMap<RoomRecord> _roomsById;
+    protected int[] _rooms;
 
     /** Updates our set of rooms. */
     protected Interval _roomSetRefresher;
 
-//    protected MsoyPeerManager.MemberObserver _memberObserver =
-//        new MsoyPeerManager.MemberObserver() {
-//            public void memberLoggedOn (String node, MemberName member)
-//        };
-
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected StatLogic _statLogic;
-    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MemberManager _memberMan;
     @Inject protected MsoySceneRepository _sceneRepo;
 }
