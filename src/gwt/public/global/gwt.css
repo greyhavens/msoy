@@ -323,7 +323,7 @@ img, embed, applet, object {
 }
 
 .tongueBox .Content {
-  border: white solid 10px;
+  padding: 10px;
 }
 
 .tongueBox .Footer {
