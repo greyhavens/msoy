@@ -152,6 +152,7 @@ public class TourManager
             }
         }
 
+        log.warning("TourManager could not find a room for a touring user!");
         throw new InvocationException("e.toured_out");
     }
 
