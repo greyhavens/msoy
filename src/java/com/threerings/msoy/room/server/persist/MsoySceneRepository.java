@@ -150,6 +150,15 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
+     * Publishes a scene, marking it as a Whirled Tourist trap.
+     */
+    public void publishScene (int sceneId)
+    {
+        updatePartial(SceneRecord.class, sceneId,
+            SceneRecord.LAST_UPDATED, new Timestamp(System.currentTimeMillis()));
+    }
+
+    /**
      * Given a list of scene ids, return a map containing the current names, indexed by scene id.
      */
     public IntMap<String> identifyScenes (Set<Integer> sceneIds)
@@ -321,8 +330,7 @@ public class MsoySceneRepository extends DepotRepository
         if (sceneId != 0) {
             try {
                 updatePartial(SceneRecord.class, sceneId,
-                    SceneRecord.VERSION, finalVersion,
-                    SceneRecord.LAST_UPDATED, new Timestamp(System.currentTimeMillis()));
+                    SceneRecord.VERSION, finalVersion);
             } catch (Exception e) {
                 log.warning("Failed to update scene to final version", "id", sceneId,
                         "fvers", finalVersion, e);

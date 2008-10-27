@@ -499,6 +499,11 @@ public class RoomManager extends SpotSceneManager
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
 
+        _invoker.postUnit(new WriteOnlyUnit("publishRoom") {
+            public void invokePersist () {
+                _sceneRepo.publishScene(_scene.getId());
+            }
+        });
         ((MsoySceneRegistry)_screg).memberPublishedRoom(user, (MsoyScene)_scene);
     }
 
