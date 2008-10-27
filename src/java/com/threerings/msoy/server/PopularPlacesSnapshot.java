@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.RandomUtil;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
@@ -108,6 +109,14 @@ public class PopularPlacesSnapshot
     public Place getScene (int sceneId)
     {
         return _scenes.get(sceneId);
+    }
+
+    /**
+     * Pick a random resolved scene from the list.
+     */
+    public Place getRandomResolvedScene ()
+    {
+        return _scenes.isEmpty() ? null : RandomUtil.pickRandom(_scenes.values());
     }
 
     /**

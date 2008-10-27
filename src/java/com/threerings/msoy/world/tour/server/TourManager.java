@@ -87,7 +87,6 @@ public class TourManager
         }
 
         int nextRoom = pickNextRoom(memObj);
-        //dumpRooms();
         memObj.touredRooms.add(nextRoom);
         listener.requestProcessed(nextRoom);
         // maybe increment the user's TOURED stat
@@ -112,10 +111,10 @@ public class TourManager
      * Pick the next room for this user.
      */
     protected int pickNextRoom (MemberObject memObj)
+        throws InvocationException
     {
         if (_rooms == null) {
-            // whoa! Send'em to BNW
-            return 1; // TODO?
+            throw new InvocationException("e.toured_out");
         }
 
         PopularPlacesSnapshot snapshot = _memberMan.getPPSnapshot();
@@ -136,9 +135,24 @@ public class TourManager
             }
         }
 
-        // TODO: load up a random-ass room and add it to the list?
-        log.warning("Oh-serious-no! Ran out of rooms for touring!");
-        return 1;
+        // try 10 times to pick a random room that's already resolved
+        for (int ii = 0; ii < 10; ii++) {
+            PopularPlacesSnapshot.Place place = snapshot.getRandomResolvedScene();
+            if (place == null) {
+                break;
+            }
+            if (place.population < MAX_ROOM_POPULATION && isValidNextRoom(memObj, place.placeId)) {
+                // if this place is a valid for this user then we know that it wasn't already
+                // in our list of rooms, because all those were invalid. Add it to the end.
+                int[] newRooms = new int[_rooms.length + 1];
+                System.arraycopy(_rooms, 0, newRooms, 0, _rooms.length);
+                newRooms[_rooms.length] = place.placeId;
+                _rooms = newRooms;
+                return place.placeId;
+            }
+        }
+
+        throw new InvocationException("e.toured_out");
     }
 
     /**
@@ -168,6 +182,7 @@ public class TourManager
             {
                 // now use the new rooms
                 _rooms = _newRooms;
+                _rooms = new int[] { 1 };
             }
 
             protected int[] _newRooms;
@@ -178,7 +193,7 @@ public class TourManager
     protected static final int ROOMS_PER_SET = 50;
 
     /** The number of occupants a room must have before the tour skips over it. */
-    protected static final int MAX_ROOM_POPULATION = 15;
+    protected static final int MAX_ROOM_POPULATION = 18;
 
     /** The milliseconds between refreshes of our room set. */
     protected static final long ROOM_SET_REFRESH = 2 * 60 * 1000L; // 2 minutes
