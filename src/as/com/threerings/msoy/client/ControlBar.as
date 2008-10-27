@@ -212,7 +212,7 @@ public class ControlBar extends HBox
         _shareBtn.toggle = true;
         _shareBtn.setCallback(FloatingPanel.createPopper(function () :ShareDialog {
             return new ShareDialog(_ctx);
-        }));
+        }, _shareBtn));
 
         _instructBtn = createButton("controlBarButtonInstructions", "i.instructions");
         _instructBtn.setCommand(MsoyController.VIEW_GAME_INSTRUCTIONS);
