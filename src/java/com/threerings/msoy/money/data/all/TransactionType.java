@@ -3,10 +3,12 @@
 
 package com.threerings.msoy.money.data.all;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.samskivert.jdbc.depot.ByteEnum;
 
 public enum TransactionType
-    implements ByteEnum
+    implements IsSerializable, ByteEnum
 {
     // NOTE: transaction types may be added, removed, or reordered, but the "byteValue" must
     // never change!
