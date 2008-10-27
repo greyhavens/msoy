@@ -22,6 +22,8 @@ import com.threerings.presents.net.Credentials;
 
 import com.threerings.crowd.client.PlaceView;
 
+import com.threerings.crowd.data.PlaceObject;
+
 import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.chat.client.IMRegisterDialog;
@@ -1303,6 +1305,23 @@ public class WorldController extends MsoyController
             friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
         }
         menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
+    }
+
+    /** @inheritDoc */
+    // from MsoyController
+    override protected function locationDidChange (place :PlaceObject) :void
+    {
+        super.locationDidChange(place);
+
+        // Show the home page grid navigation dialog if the user is entering their home room
+        if (getCurrentSceneId() == _wctx.getMemberObject().homeSceneId) {
+            var ctrlBar :WorldControlBar = _wctx.getControlBar() as WorldControlBar;
+            if (ctrlBar != null) {
+                if (ctrlBar.homePageGridBtn.enabled && !ctrlBar.homePageGridBtn.selected) {
+                    ctrlBar.homePageGridBtn.activate();
+                }
+            }
+        }
     }
 
     /** Giver of life, context. */

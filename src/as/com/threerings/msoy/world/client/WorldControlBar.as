@@ -56,6 +56,15 @@ public class WorldControlBar extends ControlBar
     }
 
     /**
+     * This is needed by the world controller, so that it can make sure the grid is popped up
+     * when the user enters their home.
+     */
+    public function get homePageGridBtn () :CommandButton
+    {
+        return _homePageGridBtn;
+    }
+
+    /**
      * This is needed by the room controller, so that it can properly know how to hover.
      */
     public function get hoverAll () :Boolean
@@ -127,10 +136,8 @@ public class WorldControlBar extends ControlBar
     {
         super.addControls(); 
 
-        if (DeploymentConfig.devDeployment) {
-            // TODO: can this work in UI_GAME too?
-            addButton(_homePageGridBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
-        }
+        // TODO: can this work in UI_GAME too?
+        addButton(_homePageGridBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
 
         addButton(_hotZoneBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
         addButton(_zoomBtn, [ UI_ROOM, UI_VIEWER, UI_AVRGAME ], PLACE_PRIORITY);
