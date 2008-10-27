@@ -82,7 +82,7 @@ public class TopGamesPanel extends AbsolutePanel
         topGamesHeader.setStyleName("TopGamesHeader");
         add(topGamesHeader, 445, 0);
 
-        int randomGameIndex = (int)(Math.random() * games.length);
+        int randomGameIndex = (int)(Math.random() * _games.length);
         showGame(randomGameIndex);
     }
 
