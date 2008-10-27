@@ -42,6 +42,12 @@ public interface RoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link RoomService#publishRoom} request.
+     */
+    void publishRoom (ClientObject caller, InvocationService.InvocationListener arg1)
+        throws InvocationException;
+
+    /**
      * Handles a {@link RoomService#purchaseRoom} request.
      */
     void purchaseRoom (ClientObject caller, InvocationService.ResultListener arg1)

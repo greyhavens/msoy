@@ -490,6 +490,18 @@ public class RoomManager extends SpotSceneManager
         });
     }
 
+    // from interface RoomProvider
+    public void publishRoom (ClientObject caller, RoomService.InvocationListener listener)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+        if (!canManage(user)) {
+            throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
+        }
+
+        // TODO
+    }
+
     // documentation inherited from RoomProvider
     public void updateMemory (
         ClientObject caller, final EntityMemoryEntry entry, RoomService.ResultListener listener)

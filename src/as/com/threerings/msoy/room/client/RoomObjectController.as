@@ -328,6 +328,15 @@ public class RoomObjectController extends RoomController
     }
 
     /**
+     * Handle the PUBLISH_ROOM command.
+     */
+    public function handlePublishRoom () :void
+    {
+        _roomObj.roomService.publishRoom(_wdctx.getClient(), new ReportingListener(_wdctx));
+    }
+
+
+    /**
      * Handles FURNI_CLICKED.
      */
     override public function handleFurniClicked (furni :FurniData) :void
@@ -820,6 +829,8 @@ public class RoomObjectController extends RoomController
             }
             _roomEditBtn.selected = false;
             _editor = null;
+
+            var publish :PublishPanel = new PublishPanel(_wdctx);
         }
 
         if (_music != null && ! _musicIsBackground) {
