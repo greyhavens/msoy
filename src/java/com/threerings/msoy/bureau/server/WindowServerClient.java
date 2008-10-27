@@ -50,7 +50,21 @@ public class WindowServerClient extends PresentsClient
     protected void setThrottleFromRoomCount ()
     {
         if (!_clearing) {
-            setIncomingMessageThrottle(Client.DEFAULT_MSGS_PER_SECOND * Math.max(_activeRooms, 1));
+            if (_omgr.isDispatchThread()) {
+                setIncomingMessageThrottle(
+                    Client.DEFAULT_MSGS_PER_SECOND * Math.max(_activeRooms, 1));
+
+            } else {
+                final int roomCount = _activeRooms;
+                _omgr.postRunnable(new Runnable () {
+                    public void run () {
+                        if (roomCount == _activeRooms) {
+                            setIncomingMessageThrottle(
+                                Client.DEFAULT_MSGS_PER_SECOND * Math.max(_activeRooms, 1));
+                        }
+                    }
+                });
+            }
         }
     }
     
