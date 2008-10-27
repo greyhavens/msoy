@@ -328,13 +328,12 @@ public class RoomObjectController extends RoomController
     }
 
     /**
-     * Handle the PUBLISH_ROOM command.
+     * Publish the current room.
      */
     public function handlePublishRoom () :void
     {
         _roomObj.roomService.publishRoom(_wdctx.getClient(), new ReportingListener(_wdctx));
     }
-
 
     /**
      * Handles FURNI_CLICKED.
@@ -830,7 +829,7 @@ public class RoomObjectController extends RoomController
             _roomEditBtn.selected = false;
             _editor = null;
 
-            var publish :PublishPanel = new PublishPanel(_wdctx);
+            var publish :PublishPanel = new PublishPanel(_wdctx, handlePublishRoom);
         }
 
         if (_music != null && ! _musicIsBackground) {

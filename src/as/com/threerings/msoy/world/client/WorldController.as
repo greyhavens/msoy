@@ -155,10 +155,6 @@ public class WorldController extends MsoyController
     /** Command to display the avrg menu. */
     public static const POP_AVRG_MENU :String = "PopAVRGMenu";
 
-    /** Command to publish the room. */
-    public static const PUBLISH_ROOM :String = "PublishRoom";
-
-
     // statically reference classes we require
     ItemMarshaller;
 
@@ -695,14 +691,6 @@ public class WorldController extends MsoyController
     public function handleRoomEdit () :void
     {
         (_topPanel.getPlaceView() as RoomObjectView).getRoomObjectController().handleRoomEdit();
-    }
-
-    /**
-     * Handle the PUBLISH_ROOM command.
-     */
-    public function handlePublishRoom () :void
-    {
-        (_topPanel.getPlaceView() as RoomObjectView).getRoomObjectController().handlePublishRoom();
     }
 
     /**

@@ -18,11 +18,12 @@ import com.threerings.msoy.world.client.WorldController;
  */
 public class PublishPanel extends FloatingPanel
 {
-    public function PublishPanel (ctx :WorldContext)
+    public function PublishPanel (ctx :WorldContext, publishCallback :Function)
     {
         super(ctx, Msgs.WORLD.get("t.publish"));
         styleName = "sexyWindow";
         showCloseButton = true;
+        _publishCallback = publishCallback;
         open();
     }
 
@@ -39,8 +40,10 @@ public class PublishPanel extends FloatingPanel
         super.buttonClicked(buttonId);
 
         if (buttonId == OK_BUTTON) {
-            CommandEvent.dispatch(this, WorldController.PUBLISH_ROOM);
+            _publishCallback();
         }
     }
+
+    protected var _publishCallback :Function;
 }
 }
