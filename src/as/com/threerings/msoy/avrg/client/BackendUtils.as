@@ -121,7 +121,7 @@ public class BackendUtils
      * true to include the member, false to exclude).
      */
     public static function getPlayerIds (
-        gameObj :AVRGameObject, roomId :int, extraFilter :Function=null) :Array
+        gameObj :AVRGameObject, room :RoomObject, roomId :int, extraFilter :Function=null) :Array
     {
         // TODO: if searching a room, this could have a high miss rate, consider passing a roomObj
         var result :Array = new Array();
@@ -135,6 +135,9 @@ public class BackendUtils
             var plLoc :PlayerLocation = gameObj.playerLocs.get(memberId) as PlayerLocation;
             if (plLoc == null || (roomId != 0 && plLoc.sceneId != roomId) ||
                 (extraFilter != null && !extraFilter(memberId))) {
+                continue;
+            }
+            if (room != null && room.getMemberInfo(memberId) == null) {
                 continue;
             }
             result.push(memberId);

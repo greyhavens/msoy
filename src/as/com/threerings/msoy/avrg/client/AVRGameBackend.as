@@ -269,7 +269,7 @@ public class AVRGameBackend extends ControlBackend
             return null;
         }
         
-        return BackendUtils.getPlayerIds(_gameObj, 0);
+        return BackendUtils.getPlayerIds(_gameObj, null, 0);
     }
 
     // GameSubControl
@@ -313,7 +313,7 @@ public class AVRGameBackend extends ControlBackend
             return null;
         }
         
-        return BackendUtils.getPlayerIds(_gameObj, getRoomId());
+        return BackendUtils.getPlayerIds(_gameObj, _ctrl.getRoom(), getRoomId());
     }
 
     // RoomSubControl
