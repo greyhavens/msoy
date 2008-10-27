@@ -67,8 +67,6 @@ public class HomePageDialog extends FloatingPanel
 
         // Draw some dashed lines between the cells
         var color :int = getStyle("borderColor") as int;
-        log.info("Border color is " + getStyle("borderColor"));
-        //color = 0x3db8eb; // hardwire for now, getStyle doesn't do what I want
         _grid.graphics.lineStyle(0.5, color, 1.0);
         for (var row :int = 1; row < ROWS; ++row) {
             var y :Number = row * (CELL_HEIGHT + CELL_SPACING) - CELL_SPACING / 2;
@@ -160,7 +158,6 @@ public class HomePageDialog extends FloatingPanel
         cell.mouseChildren = false;
 
         cell.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
-            log.info("Got mouse click", "name", label.text);
             itemClicked(item);
         });
 
