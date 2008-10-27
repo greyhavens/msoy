@@ -32,7 +32,7 @@ import com.threerings.msoy.room.gwt.RoomInfo;
 @Entity(indices={
     @Index(name="ixOwnerId", fields={ SceneRecord.OWNER_ID }),
     @Index(name="ixAccessControl", fields={ SceneRecord.ACCESS_CONTROL }),
-    @Index(name="ixLastUpdated", fields={ SceneRecord.OWNER_ID })
+    @Index(name="ixLastPublished", fields={ SceneRecord.LAST_PUBLISHED })
 })
 public class SceneRecord extends PersistentRecord
 {
@@ -211,17 +211,17 @@ public class SceneRecord extends PersistentRecord
     public static final ColumnExp RATING_COUNT_C =
         new ColumnExp(SceneRecord.class, RATING_COUNT);
 
-    /** The column identifier for the {@link #lastUpdated} field. */
-    public static final String LAST_UPDATED = "lastUpdated";
+    /** The column identifier for the {@link #lastPublished} field. */
+    public static final String LAST_PUBLISHED = "lastPublished";
 
-    /** The qualified column identifier for the {@link #lastUpdated} field. */
-    public static final ColumnExp LAST_UPDATED_C =
-        new ColumnExp(SceneRecord.class, LAST_UPDATED);
+    /** The qualified column identifier for the {@link #lastPublished} field. */
+    public static final ColumnExp LAST_PUBLISHED_C =
+        new ColumnExp(SceneRecord.class, LAST_PUBLISHED);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /** The unique identifier for this scene. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=6)
@@ -286,9 +286,9 @@ public class SceneRecord extends PersistentRecord
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
 
-    /** When the room was last updated. */
+    /** When the room was last published, or null if it was never published. */
     @Column(nullable=true)
-    public Timestamp lastUpdated;
+    public Timestamp lastPublished;
 
     /** Used when loading from the database. */
     public SceneRecord ()

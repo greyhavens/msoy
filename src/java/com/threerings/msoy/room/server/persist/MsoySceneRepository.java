@@ -18,6 +18,7 @@ import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
@@ -94,6 +95,9 @@ public class MsoySceneRepository extends DepotRepository
                 deleteAll(SceneFurniRecord.class, new Where(SceneFurniRecord.ITEM_ID_C, 383));
             }
         });
+
+        _ctx.registerMigration(SceneRecord.class,
+            new SchemaMigration.Rename(6, "lastUpdated", SceneRecord.LAST_PUBLISHED));
     }
 
     /**
@@ -155,7 +159,7 @@ public class MsoySceneRepository extends DepotRepository
     public void publishScene (int sceneId)
     {
         updatePartial(SceneRecord.class, sceneId,
-            SceneRecord.LAST_UPDATED, new Timestamp(System.currentTimeMillis()));
+            SceneRecord.LAST_PUBLISHED, new Timestamp(System.currentTimeMillis()));
     }
 
     /**
@@ -282,7 +286,7 @@ public class MsoySceneRepository extends DepotRepository
         exprs.add(new Arithmetic.Sub(SceneRecord.RATING_C,
             new Arithmetic.Div(
                 new Arithmetic.Sub(new ValueExp(nowSeconds),
-                    new EpochSeconds(SceneRecord.LAST_UPDATED_C)),
+                    new EpochSeconds(SceneRecord.LAST_PUBLISHED_C)),
                 _hconfig.getDropoffSeconds())));
         orders.add(OrderBy.Order.DESC);
 
