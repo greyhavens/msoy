@@ -182,7 +182,6 @@ public class TourManager
             {
                 // now use the new rooms
                 _rooms = _newRooms;
-                _rooms = new int[] { 1 };
             }
 
             protected int[] _newRooms;
