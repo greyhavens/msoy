@@ -50,7 +50,7 @@ public class WindowServerClient extends PresentsClient
     protected void setThrottleFromRoomCount ()
     {
         if (!_clearing) {
-            setIncomingMessageThrottle(Client.DEFAULT_MSGS_PER_SECOND * (_activeRooms + 1));
+            setIncomingMessageThrottle(Client.DEFAULT_MSGS_PER_SECOND * Math.max(_activeRooms, 1));
         }
     }
     
