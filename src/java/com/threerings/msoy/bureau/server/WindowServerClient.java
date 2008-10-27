@@ -32,11 +32,28 @@ public class WindowServerClient extends PresentsClient
             setThrottleFromRoomCount();
         }
     }
-    
+
+    @Override
+    protected void clearSubscrips (boolean verbose)
+    {
+        boolean wasClearing = _clearing;
+        _clearing = true;
+        try {
+            super.clearSubscrips(verbose);
+        } finally {
+            _clearing = wasClearing;
+        }
+
+        setThrottleFromRoomCount();
+    }
+
     protected void setThrottleFromRoomCount ()
     {
-        setIncomingMessageThrottle(Client.DEFAULT_MSGS_PER_SECOND * (_activeRooms + 1));
+        if (!_clearing) {
+            setIncomingMessageThrottle(Client.DEFAULT_MSGS_PER_SECOND * (_activeRooms + 1));
+        }
     }
     
     protected int _activeRooms;
+    protected boolean _clearing;
 }
