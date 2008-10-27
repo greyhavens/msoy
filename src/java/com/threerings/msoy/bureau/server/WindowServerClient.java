@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.bureau.server;
 
+import com.samskivert.util.Throttle;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObject;
@@ -47,8 +48,16 @@ public class WindowServerClient extends PresentsClient
         setThrottleFromRoomCount();
     }
 
+    // HACK: override the throttle until client side issues can be resolved.
+    @Override protected Throttle createIncomingMessageThrottle ()
+    {
+        int averageRoomCount = 4;
+        return new Throttle(10*(Client.DEFAULT_MSGS_PER_SECOND+1)*averageRoomCount, 10*1000L);
+    }
+
     protected void setThrottleFromRoomCount ()
     {
+        if (false) { // bailing on dynamic throttle for the moment, client issues prevent this from working
         if (!_clearing) {
             if (_omgr.isDispatchThread()) {
                 setIncomingMessageThrottle(
@@ -65,7 +74,7 @@ public class WindowServerClient extends PresentsClient
                     }
                 });
             }
-        }
+        }}
     }
     
     protected int _activeRooms;
