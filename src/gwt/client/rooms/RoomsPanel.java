@@ -6,9 +6,11 @@ package client.rooms;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
@@ -16,6 +18,7 @@ import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
 import client.room.RoomWidget;
+import client.ui.Marquee;
 import client.ui.MsoyUI;
 import client.ui.StretchButton;
 import client.ui.TongueBox;
@@ -29,6 +32,24 @@ public class RoomsPanel extends FlowPanel
     {
         setStyleName("roomsPanel");
 
+        SmartTable header = new SmartTable("Header", 0, 0);
+        header.setWidget(0, 0, new Marquee(null, _msgs.roomsMarquee()), 1, null);
+        header.setText(1, 0, _msgs.roomsIntro(), 1, "Intro");
+
+        if (FlashClients.clientExists()) {
+            StretchButton button = new StretchButton(StretchButton.ORANGE_THICK, "Start Whirled Tour",
+                new ClickListener () {
+                public void onClick (Widget sender) {
+                    FlashClients.startTour();
+                }
+            });
+            header.setWidget(0, 1, button, 1, "Tour");
+            header.getFlexCellFormatter().setRowSpan(0, 1, 2);
+            header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
+        }
+
+        add(header);
+
         _worldsvc.loadOverview(new MsoyCallback<WebRoomService.OverviewResult>() {
             public void onSuccess (WebRoomService.OverviewResult overview) {
                 init(overview);
@@ -38,15 +59,6 @@ public class RoomsPanel extends FlowPanel
 
     protected void init (WebRoomService.OverviewResult overview)
     {
-        if (FlashClients.clientExists()) {
-            // TODO: i18n or replace with image
-            add(new StretchButton(StretchButton.ORANGE_THICK, "Start Whirled Tour",
-                new ClickListener () {
-                public void onClick (Widget sender) {
-                    FlashClients.startTour();
-                }
-            }));
-        }
 
         RoomsGrid active = new RoomsGrid();
         active.setModel(new SimpleDataModel<RoomInfo>(overview.activeRooms), 0);
