@@ -11,7 +11,6 @@ import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.util.ArrayUtil;
@@ -28,6 +27,8 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.world.client.WorldContext;
+
+import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.MsoySprite;
@@ -419,20 +420,9 @@ public class RoomEditorController
         var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
         var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
         svc.setHomeSceneId(_ctx.getClient(), model.ownerType, model.ownerId, model.sceneId, 
-            new ConfirmAdapter(
-                // failed function
-                function (cause :String) :void {
-                    _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
-                },
-                // processed function
-                function () :void {
-                    if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                        _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, "m.group_home_room_changed");
-                    } else {
-                        _ctx.displayFeedback(MsoyCodes.EDITING_MSGS, "m.home_room_changed");
-                    }
-                }
-            ));
+            new ReportingListener(_ctx, MsoyCodes.EDITING_MSGS, null,
+                (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) ? "m.group_home_room_changed"
+                                                                     : "m.home_room_changed"));
     }
 
     /**

@@ -36,7 +36,7 @@ public class ReportingListener
     // documentation inherited from ConfirmListener
     public function requestFailed (cause :String) :void
     {
-        Log.getLog(this).info("Reporting failure [bundle=" + _bundle + ", reason=" + cause + "].");
+        Log.getLog(this).info("Reporting failure", "bundle", _bundle, "cause", cause);
         if (_errWrap != null) {
             cause = MessageBundle.compose(_errWrap, cause);
         }

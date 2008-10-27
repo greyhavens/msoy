@@ -8,7 +8,6 @@ import com.threerings.util.Log;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
-import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.client.LocationAdapter;
@@ -16,6 +15,8 @@ import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetMarshaller;
@@ -80,11 +81,7 @@ public class WorldDirector extends BasicDirector
      */
     public function setAvatar (avatarId :int, newScale :Number = 0) :void
     {
-        _msvc.setAvatar(_wctx.getClient(), avatarId, newScale, new ConfirmAdapter(
-            function (cause :String) :void {
-                log.info("Reporting failure [reason=" + cause + "].");
-                _wctx.displayFeedback(null, cause);
-            }));
+        _msvc.setAvatar(_wctx.getClient(), avatarId, newScale, new ReportingListener(_wctx));
     }
 
     /**

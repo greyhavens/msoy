@@ -5,7 +5,6 @@ package com.threerings.msoy.world.client {
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.util.Log;
 
@@ -36,14 +35,8 @@ public class MemberDirector extends BasicDirector
      */
     public function inviteToBeFriend (friendId :int) :void
     {
-        _msvc.inviteToBeFriend(_wctx.getClient(), friendId, new ConfirmAdapter(
-            function (cause :String) :void {
-                log.info("Reporting failure [reason=" + cause + "].");
-                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-             },
-             function () :void {
-                 _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.friend_invited");
-             }));
+        _msvc.inviteToBeFriend(_wctx.getClient(), friendId,
+            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited"));
     }
 
     /**
