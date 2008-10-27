@@ -404,14 +404,13 @@ public class ActionPanel extends BasePanel
           supportOnly: true },
 
         // Help page is not currently available.
-//        { data: FurniData.ACTION_HELP_PAGE,
-//          label: Msgs.EDITING.get("l.action_help_page"),
-//          editable: true,
-//          supportOnly: true,
-//          panelCreateFn: createHelpTabPanel,
-//          panelUpdateFn: updateHelpTabPanel },
-
-        ];
+        { data: FurniData.ACTION_HELP_PAGE,
+          label: "Obsolete", // Msgs.EDITING.get("l.action_help_page"),
+          editable: true,
+          supportOnly: true,
+          panelCreateFn: createHelpTabPanel,
+          panelUpdateFn: updateHelpTabPanel },
+    ];
 
     /** Default location for doors, in case they get interrupted mid-editing. */
     protected static const DEFAULT_PORTAL_DEST :String = "1:";
