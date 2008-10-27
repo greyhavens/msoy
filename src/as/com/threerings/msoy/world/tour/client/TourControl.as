@@ -9,6 +9,7 @@ import mx.controls.Text;
 
 import com.threerings.flex.CommandButton;
 
+import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 
@@ -19,6 +20,7 @@ public class TourControl extends HBox
     public function TourControl (ctx :WorldContext, nextRoom :Function, endTour :Function)
     {
         setStyle("backgroundColor", 0x777777);
+        this.height = ControlBar.HEIGHT;
 
         const label :Text = new Text();
         label.selectable = false;
