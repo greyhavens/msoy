@@ -177,7 +177,7 @@ public class GameLogic
 
         // pad the featured games with ones nobody is playing
         if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
-            for (GameRecord game : _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
+            for (GameRecord game : _gameRepo.loadGenre((byte)-1, FEATURED_RAW_COUNT)) {
                 if (!have.contains(game.gameId) && game.rating >= 4) {
                     GameDetailRecord detail = _mgameRepo.loadGameDetail(game.gameId);
                     if (detail.gamesPlayed > 0) {
@@ -312,4 +312,7 @@ public class GameLogic
     @Inject MsoyGameRepository _mgameRepo;
     @Inject GameRepository _gameRepo;
     @Inject MemberRepository _memberRepo;
+
+    /** When finding featured games, search through this many highest rated games max */
+    protected static final int FEATURED_RAW_COUNT = 25;
 }
