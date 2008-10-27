@@ -499,7 +499,7 @@ public class RoomManager extends SpotSceneManager
             throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
 
-        // TODO
+        ((MsoySceneRegistry)_screg).memberPublishedRoom(user, (MsoyScene)_scene);
     }
 
     // documentation inherited from RoomProvider

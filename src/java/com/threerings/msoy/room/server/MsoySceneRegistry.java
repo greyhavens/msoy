@@ -56,12 +56,24 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     }
 
     /**
-     * Called by the RoomManager a member updates a room.
+     * Called by the RoomManager when a member updates a room.
      */
     public void memberUpdatedRoom (MemberObject user, final MsoyScene scene)
     {
-        // publish to this member's feed that they updated their room
+        int memId = user.getMemberId();
+
+        // record this edit to the grindy log
+        _eventLog.roomUpdated(memId, scene.getId(), user.getVisitorId());
+    }
+
+    /**
+     * Called by the RoomManager when a member publishes a room.
+     */
+    public void memberPublishedRoom (MemberObject user, final MsoyScene scene)
+    {
         final int memId = user.getMemberId();
+
+        // publish to this member's feed that they updated their room
         String uname = "publishRoomUpdate[id=" + memId + ", scid=" + scene.getId() + "]";
         _invoker.postUnit(new RepositoryUnit(uname) {
             public void invokePersist () throws Exception {
@@ -73,9 +85,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 // nada
             }
         });
-
-        // record this edit to the grindy log
-        _eventLog.roomUpdated(memId, scene.getId(), user.getVisitorId());
     }
 
     // from interface MsoySceneProvider
