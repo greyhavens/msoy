@@ -16,6 +16,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.depot.DataMigration;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.SchemaMigration;
@@ -51,7 +52,6 @@ import com.threerings.msoy.server.persist.HotnessConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
-
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
@@ -93,6 +93,22 @@ public class MsoySceneRepository extends DepotRepository
         registerMigration(new DataMigration("2008_10_27_remove_decorate_tutorial_furnis") {
             @Override public void invoke () throws DatabaseException {
                 deleteAll(SceneFurniRecord.class, new Where(SceneFurniRecord.ITEM_ID_C, 383));
+            }
+        });
+
+        // Remove broken tutorial action from "Drink Me" furnis from 1,000 old home rooms
+        registerMigration(new DataMigration("2008_10_27_clear_drinkme_furni_action") {
+            @Override public void invoke () throws DatabaseException {
+                // all actions with actionType 5 must go; will affect several "drink me" items
+                List<Key<SceneFurniRecord>> furniIds = findAllKeys(SceneFurniRecord.class, true,
+                    new Where(SceneFurniRecord.ACTION_TYPE_C, 5));
+
+                // update each one, clearing actionType and actionData
+                Object[] newValues = { "actionType", 0, "actionData", null };
+                for (Key<SceneFurniRecord> furniId : furniIds) {
+                    updatePartial(furniId, newValues);
+                }
+                log.info("2008_10_27_clear_drinkme_furni_action - cleared: " + furniIds.size());
             }
         });
 
