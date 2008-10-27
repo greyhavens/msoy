@@ -38,11 +38,8 @@ import com.threerings.msoy.room.data.MsoyScene;
 
 public class SnapshotPanel extends FloatingPanel
 {
-    public static const SCENE_THUMBNAIL_WIDTH :int = 350;
-    public static const SCENE_THUMBNAIL_HEIGHT :int = 200;
-
     /** This is the maximum bitmap dimension, a flash limitation. */
-    public static const MAX_BITMAP_DIM :int = 2880;
+    public static const MAX_BITMAP_DIM :int = 2880; // TODO: this is larger in FP10!
 
     public var galleryImage :Snapshot;
     public var sceneThumbnail :Snapshot;
@@ -61,14 +58,8 @@ public class SnapshotPanel extends FloatingPanel
 
         // for the canonical image, we create a new framer that centers the image within the frame, 
         // introducing black bars if necessary.
-        const frame :Rectangle = new Rectangle(0, 0, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
-        const framer :Framer = new CanonicalFramer(_view.getScrollBounds(), frame, 
-            _view.getScrollOffset());
-        
-        // take this even if we aren't going to use it, it's used for the preview
-        sceneThumbnail = new Snapshot(ctx, _view, this, framer,
-            SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
-        sceneThumbnail.addEventListener(Event.COMPLETE, handleEncodingComplete);
+        sceneThumbnail = Snapshot.createThumbnail(ctx, _view,
+            handleEncodingComplete, handleUploadError);
 
         // TODO: we want the room bounds, not the room *view* bounds....
         const scene:MsoyScene = _view.getScene();
@@ -88,8 +79,8 @@ public class SnapshotPanel extends FloatingPanel
         } else {
             galFramer = new NoopFramer();
         }
-        galleryImage = new Snapshot(ctx, _view, this, galFramer, galWidth, galHeight);
-        galleryImage.addEventListener(Event.COMPLETE, handleEncodingComplete);
+        galleryImage = new Snapshot(ctx, false, _view, galFramer, galWidth, galHeight,
+            handleEncodingComplete, handleUploadError);
         open();
     }
 
@@ -268,13 +259,12 @@ public class SnapshotPanel extends FloatingPanel
 
         if (shouldSaveSceneThumbnail) {
             _waiting++;
-            sceneThumbnail.upload(Snapshot.SCENE_THUMBNAIL_SERVICE, false, handleUploadDone);
+            sceneThumbnail.upload(false, handleUploadDone);
 
         }
         if (shouldSaveGalleryImage || shouldDownloadImage) {
             _waiting++;
-            galleryImage.upload(Snapshot.SCENE_SNAPSHOT_SERVICE, shouldSaveGalleryImage,
-                    setupDownload);
+            galleryImage.upload(shouldSaveGalleryImage, setupDownload);
         }
 
         if (_waiting == 0) {
@@ -290,10 +280,15 @@ public class SnapshotPanel extends FloatingPanel
         }
     }
 
+    protected function handleUploadError (event :ErrorEvent) :void
+    {
+        reportError(Msgs.WORLD.get("e.snap_upload", event.text));
+    }
+
     /**
      * Called if uploading or downloading failed.
      */
-    public function reportError (message :String) :void
+    protected function reportError (message :String) :void
     {
         _progressLabel.text = message;
         _cancelUploadButton.label = Msgs.GENERAL.get("b.ok");

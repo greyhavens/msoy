@@ -44,28 +44,48 @@ import com.threerings.msoy.room.client.RoomView;
  */ 
 public class Snapshot extends EventDispatcher
 {    
-    public static const SCENE_THUMBNAIL_SERVICE :String = "scenethumbsvc";
-    public static const SCENE_SNAPSHOT_SERVICE :String = "snapshotsvc";
-
+    public static const THUMBNAIL_WIDTH :int = 350;
+    public static const THUMBNAIL_HEIGHT :int = 200;
 
     public var bitmap :BitmapData;
 
     public const log :Log = Log.getLog(this);
 
     /**
+     * Convenience method to create the thumbnail Snapshot.
+     */
+    public static function createThumbnail (
+        ctx :WorldContext, view :RoomView, handleComplete :Function, handleError :Function)
+        :Snapshot
+    {
+        const frame :Rectangle = new Rectangle(0, 0, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
+        const framer :Framer = new CanonicalFramer(view.getScrollBounds(), frame,
+            view.getScrollOffset());
+        return new Snapshot(ctx, true, view, framer, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT,
+            handleComplete, handleError);
+    }
+
+    /**
      * Create a 'Snapshot' of the provided view.  With a frame of the provided size.
+     *
+     * @param handleCompleteFn informed when *encoding* is complete.
+     * @param handleErrorFn informed when *uploading* errors.
      */
     public function Snapshot (
-        ctx :WorldContext, view :RoomView, panel :SnapshotPanel,
-        framer :Framer, width :int, height :int)
+        ctx :WorldContext, thumbnail :Boolean, view :RoomView, framer :Framer,
+        width :int, height :int, handleCompleteFn :Function, handleErrorFn :Function)
     {
         _ctx = ctx;
         _view = view;
-        _panel = panel;
+        _thumbnail = thumbnail;
                 
         _frame = new Rectangle(0, 0, width, height);
         _framer = framer;
         bitmap = new BitmapData(width, height);
+
+        addEventListener(Event.COMPLETE, handleCompleteFn);
+        addEventListener(IOErrorEvent.IO_ERROR, handleErrorFn);
+        addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleErrorFn);
     }
 
     public function get ready () :Boolean
@@ -137,12 +157,13 @@ public class Snapshot extends EventDispatcher
         }
     }
 
-    public function upload (service :String, createItem :Boolean, doneFn :Function) :void
+    public function upload (createItem :Boolean = false, doneFn :Function = null) :void
     {
         const mimeBody :ByteArray = makeMimeBody(_data, createItem);
 
         const request :URLRequest = new URLRequest();
-        request.url = DeploymentConfig.serverURL + service;
+        request.url = DeploymentConfig.serverURL +
+            (_thumbnail ? THUMBNAIL_SERVICE : SNAPSHOT_SERVICE);
         request.method = URLRequestMethod.POST;
         request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
         request.data = mimeBody;
@@ -251,7 +272,8 @@ public class Snapshot extends EventDispatcher
 
     protected function handleError (event :ErrorEvent) :void
     {
-        _panel.reportError(Msgs.WORLD.get("e.snap_upload", event.text));
+        // re-dispatch it
+        dispatchEvent(event);
         clearLoader();
     }
 
@@ -260,7 +282,9 @@ public class Snapshot extends EventDispatcher
         var fn :Function = _doneFn;
         var data :String = String(_loader.data);
         clearLoader();
-        fn(data);
+        if (fn != null) {
+            fn(data);
+        }
     }
 
     protected function clearLoader () :void
@@ -270,10 +294,9 @@ public class Snapshot extends EventDispatcher
     }
 
     protected var _ctx :WorldContext;
+    protected var _thumbnail :Boolean;
 
     protected var _encoder :BackgroundJPGEncoder;
-
-    protected var _panel :SnapshotPanel;
 
     protected var _data :ByteArray;
 
@@ -287,6 +310,9 @@ public class Snapshot extends EventDispatcher
    /** The currently operating uploader. */
     protected var _loader :URLLoader;
     protected var _doneFn :Function;
+
+    protected static const THUMBNAIL_SERVICE :String = "scenethumbsvc";
+    protected static const SNAPSHOT_SERVICE :String = "snapshotsvc";
 
     protected static const BOUNDARY :String = "why are you reading the raw http stream?";
 }

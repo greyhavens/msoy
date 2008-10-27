@@ -95,6 +95,7 @@ public class RoomObjectController extends RoomController
 {
     /** Some commands */
     public static const EDIT_DOOR :String = "EditDoor";
+    public static const PUBLISH_ROOM :String = "PublishRoom";
 
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
@@ -328,7 +329,7 @@ public class RoomObjectController extends RoomController
     }
 
     /**
-     * Publish the current room.
+     * Handles PUBLISH_ROOM.
      */
     public function handlePublishRoom () :void
     {
@@ -785,7 +786,7 @@ public class RoomObjectController extends RoomController
     {
         if (!(event.value as Boolean)) {
             if (_openEditor && !isRoomEditing()) {
-                beginRoomEditing();
+                beginRoomEditing(true);
             }
             _openEditor = false;
         }
@@ -813,13 +814,15 @@ public class RoomObjectController extends RoomController
     /**
      * Begins editing the room.
      */
-    protected function beginRoomEditing () :void
+    protected function beginRoomEditing (forcePublishOption :Boolean = false) :void
     {
         _walkTarget.visible = false;
         _flyTarget.visible = false;
 
         // put the room edit button in the selected state
         _roomEditBtn.selected = true;
+
+        const startingVersion :int = _scene.getVersion();
 
         // this function will be called when the edit panel is closing
         var wrapupFn :Function = function () :void {
@@ -829,7 +832,9 @@ public class RoomObjectController extends RoomController
             _roomEditBtn.selected = false;
             _editor = null;
 
-            var publish :PublishPanel = new PublishPanel(_wdctx, handlePublishRoom);
+            if (forcePublishOption || _scene.getVersion() != startingVersion) {
+                new PublishPanel(_wdctx, _roomObjectView);
+            }
         }
 
         if (_music != null && ! _musicIsBackground) {
