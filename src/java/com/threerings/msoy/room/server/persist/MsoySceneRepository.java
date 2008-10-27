@@ -13,6 +13,8 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.depot.DataMigration;
+import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -85,6 +87,13 @@ public class MsoySceneRepository extends DepotRepository
                 return coerceRating(SceneRatingRecord.class);
             }
         };
+
+        // Remove broken "Decorate Tutorial" furnis from 20,000 old home rooms
+        registerMigration(new DataMigration("2008_10_27_remove_decorate_tutorial_furnis") {
+            @Override public void invoke () throws DatabaseException {
+                deleteAll(SceneFurniRecord.class, new Where(SceneFurniRecord.ITEM_ID_C, 383));
+            }
+        });
     }
 
     /**
