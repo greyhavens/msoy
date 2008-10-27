@@ -44,6 +44,7 @@ import com.threerings.msoy.game.server.TrophyDelegate;
 import com.threerings.msoy.game.server.WorldServerClient;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
 import com.threerings.msoy.game.server.PlayerLocator;
+import com.threerings.msoy.room.server.RoomManager;
 
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -740,14 +741,11 @@ public class AVRGameManager extends PlaceManager
     @Inject protected WorldServerClient _worldClient;
 
     /** idle time before shutting down the manager. */
-    protected static final long IDLE_UNLOAD_PERIOD =
-        DeploymentConfig.devDeployment ? 30*1000L : 5*60*1000L; // in ms
+    protected static final long IDLE_UNLOAD_PERIOD = 5*60*1000L; // in ms
 
     /** Minimum time a scene must remain idle before unloading. */
-    protected static final long SCENE_IDLE_UNLOAD_PERIOD =
-        DeploymentConfig.devDeployment ? 10*1000L : 60*1000L; // in ms
+    protected static final long SCENE_IDLE_UNLOAD_PERIOD = RoomManager.ROOM_IDLE_UNLOAD_PERIOD / 2;
 
     /** Time between checks to flush idle scenes. */
-    protected static final long SCENE_CHECK_PERIOD =
-        DeploymentConfig.devDeployment ? 5*1000L : 60*1000L; // in ms
+    protected static final long SCENE_CHECK_PERIOD = SCENE_IDLE_UNLOAD_PERIOD / 2;
 }

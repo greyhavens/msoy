@@ -123,6 +123,9 @@ import static com.threerings.msoy.Log.log;
 public class RoomManager extends SpotSceneManager
     implements RoomProvider, BootablePlaceManager
 {
+    /** Time a room is idle before being unloaded. This is more aggressive than the default. */
+    public static long  ROOM_IDLE_UNLOAD_PERIOD = 30 * 1000L;
+
     /**
      * Flush any modified memories contained within the specified Iterable.
      */
@@ -763,7 +766,7 @@ public class RoomManager extends SpotSceneManager
     @Override // from PlaceManager
     protected long idleUnloadPeriod ()
     {
-        return 30 * 1000L; // we're more aggressive about unloading rooms
+        return ROOM_IDLE_UNLOAD_PERIOD;
     }
 
     @Override // from PlaceManager
