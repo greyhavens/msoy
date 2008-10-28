@@ -15,7 +15,10 @@ import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.whirled.game.server.WhirledGameManager;
 
+import com.threerings.msoy.bureau.server.MsoyBureauClient;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages a MetaSOY game.
@@ -86,10 +89,37 @@ public class MsoyGameManager extends WhirledGameManager
     }
 
     @Override // from WhirledGameManager
+    public void agentReady (ClientObject caller)
+    {
+        super.agentReady(caller);
+        
+        MsoyBureauClient client = (MsoyBureauClient)_bureauReg.lookupClient(getBureauId());
+        if (client == null) {
+            log.warning("Agent ready but no bureau client?", "gameMgr", this);
+        } else {
+            client.agentAdded();
+            _agentAdded = true;
+        }
+    }
+
+    @Override // from WhirledGameManager
     public void agentTrace (ClientObject caller, String[] trace)
     {
         super.agentTrace(caller, trace);
         _traceDelegate.recordAgentTrace(trace);
+    }
+
+    @Override // from PlaceManager
+    protected void didShutdown ()
+    {
+        super.didShutdown();
+
+        if (_agentAdded) {
+            MsoyBureauClient client = (MsoyBureauClient)_bureauReg.lookupClient(getBureauId());
+            if (client != null) {
+                client.agentRemoved();
+            }
+        }
     }
 
     @Override // from PlaceManager
@@ -120,4 +150,7 @@ public class MsoyGameManager extends WhirledGameManager
 
     /** A delegate that handles agent traces.. */
     protected AgentTraceDelegate _traceDelegate;
+    
+    /** Tracks whether we added an agent to our parent session. */
+    protected boolean _agentAdded;
 }

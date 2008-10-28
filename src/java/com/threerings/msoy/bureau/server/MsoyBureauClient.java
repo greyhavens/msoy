@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.bureau.server;
 
+import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.InvocationResponseEvent;
@@ -19,19 +20,44 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyBureauClient extends PresentsClient
 {
-    // from PresentsClient
-    @Override protected ClientProxy createProxySubscriber ()
+    /**
+     * Notifies this client that an agent has been added. Increases message allowance.
+     */
+    public void agentAdded ()
+    {
+        _agentCount++;
+        setThrottle();
+    }
+    
+    /**
+     * Notifies this client that an agent has been removed. Decreases message allowance.
+     */
+    public void agentRemoved ()
+    {
+        _agentCount--;
+        setThrottle();
+    }
+
+    @Override // from PresentsClient
+    protected ClientProxy createProxySubscriber ()
     {
         return new SubProxy();
     }
-
+    
+    protected void setThrottle ()
+    {
+        setIncomingMessageThrottle(
+            Client.DEFAULT_MSGS_PER_SECOND * Math.max(_agentCount, 1));
+    }
+    
     /**
      * Extends the subscription proxy so that we can detect and block invocation responses.
      */
     protected class SubProxy extends ClientProxy
     {
-        // from ClientProxy
-        @Override public void eventReceived (DEvent event)
+        
+        @Override // from ClientProxy 
+        public void eventReceived (DEvent event)
         {
             if (_blockInvocationResponses && event instanceof InvocationResponseEvent) {
                 // TODO: remove log message once this is proven to work
@@ -43,8 +69,8 @@ public class MsoyBureauClient extends PresentsClient
             super.eventReceived(event);
         }
 
-        // from ClientProxy
-        @Override public void objectAvailable (DObject dobj)
+        @Override // from ClientProxy
+        public void objectAvailable (DObject dobj)
         {
             super.objectAvailable(dobj);
             
@@ -54,4 +80,6 @@ public class MsoyBureauClient extends PresentsClient
         
         protected boolean _blockInvocationResponses;
     }
+    
+    protected int _agentCount;
 }
