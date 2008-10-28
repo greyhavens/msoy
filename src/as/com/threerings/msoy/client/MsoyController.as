@@ -478,7 +478,7 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientConnectionFailed (event :ClientEvent) :void
     {
-        _logoffMessage = Msgs.GENERAL.get("m.lost_connection");
+        _logoffMessage = "m.lost_connection";
     }
 
     // from ClientObserver
