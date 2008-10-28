@@ -37,6 +37,18 @@ public class MsoyBureauClient extends PresentsClient
         _agentCount--;
         setThrottle();
     }
+    
+    public void addAVRGPlayer ()
+    {
+        _avrgPlayers++;
+        setThrottle();
+    }
+    
+    public void removeAVRGPlayer ()
+    {
+        _avrgPlayers--;
+        setThrottle();
+    }
 
     @Override // from PresentsClient
     protected ClientProxy createProxySubscriber ()
@@ -46,8 +58,13 @@ public class MsoyBureauClient extends PresentsClient
     
     protected void setThrottle ()
     {
-        setIncomingMessageThrottle(
-            Client.DEFAULT_MSGS_PER_SECOND * Math.max(_agentCount, 1));
+        float rate = 0;
+        if (_avrgPlayers > 0) {
+            rate = (float)(Math.log(_avrgPlayers) / LOG_BASE);
+        }
+        rate += Math.max(_agentCount, 1);
+        rate *= Client.DEFAULT_MSGS_PER_SECOND;
+        setIncomingMessageThrottle((int)rate);
     }
     
     /**
@@ -82,4 +99,7 @@ public class MsoyBureauClient extends PresentsClient
     }
     
     protected int _agentCount;
+    protected int _avrgPlayers;
+    
+    protected static final double LOG_BASE = Math.log(2);
 }

@@ -35,7 +35,6 @@ import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
@@ -54,6 +53,7 @@ import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
+import com.threerings.msoy.bureau.server.MsoyBureauClient;
 
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.server.PrizeDispatcher;
@@ -431,6 +431,13 @@ public class AVRGameManager extends PlaceManager
         };
 
         player.setPropertyService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(handler)));
+        
+        if (_gameAgentObj != null) {
+            MsoyBureauClient client = (MsoyBureauClient)_breg.lookupClient(_gameAgentObj.bureauId);
+            if (client != null) {
+                client.addAVRGPlayer();
+            }
+        }
     }
 
     @Override
@@ -464,6 +471,13 @@ public class AVRGameManager extends PlaceManager
         }
 
         flushPlayerGameState(player);
+
+        if (_gameAgentObj != null) {
+            MsoyBureauClient client = (MsoyBureauClient)_breg.lookupClient(_gameAgentObj.bureauId);
+            if (client != null) {
+                client.removeAVRGPlayer();
+            }
+        }
     }
 
     @Override
