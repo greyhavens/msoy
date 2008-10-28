@@ -233,6 +233,13 @@ HSlider {
 
 Button {
   paddingBottom: 3;
+/*
+  cornerRadius: 0;
+  paddingBottom: 0;
+  paddingTop: 0;
+  paddingLeft: 7;
+  paddingRight: 7;
+*/
   /*
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
@@ -384,13 +391,13 @@ TabNavigator, TabBar {
           scaleGridLeft="3", scaleGridRight="9");
 }
 
-.blueButton {
+.largeBlueButton {
   /* TODO: scale9? */
-  upSkin: Embed(source="../../rsrc/media/skins/button/blue_default.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/blue_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/blue_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/blue_disabled.png");
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/blue_disabled.png");
+  upSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_up.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_disabled.png");
+  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_disabled.png");
   color: #ffffff;
   textRollOverColor: #ffffff;
   textSelectedColor: #ffffff;

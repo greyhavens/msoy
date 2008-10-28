@@ -119,7 +119,7 @@ public class LobbyMatchPanel extends VBox
         hbox.addChild(createTip);
         var createBtn :CommandButton = new CommandButton(Msgs.GAME.get("b.create_multi"),
             _ctrl.panel.setMode, LobbyController.MODE_CREATE);
-        createBtn.styleName = "blueButton";
+        createBtn.styleName = "largeBlueButton";
         hbox.addChild(createBtn);
         padded.addChild(hbox);
 

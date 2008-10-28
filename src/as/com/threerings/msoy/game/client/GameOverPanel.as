@@ -84,10 +84,10 @@ public class GameOverPanel extends FloatingPanel
         const lobbyBtn :CommandButton = new CommandButton(
             Msgs.GAME.get("b.backToLobby"), _gctx.backToWhirled, true);
 
-        _rematch.styleName = "blueButton";
-        allGamesBtn.styleName = "blueButton";
-        lobbyBtn.styleName = "blueButton";
-        _goBtn.styleName = "blueButton";
+        _rematch.styleName = "largeBlueButton";
+        allGamesBtn.styleName = "largeBlueButton";
+        lobbyBtn.styleName = "largeBlueButton";
+        _goBtn.styleName = "largeBlueButton";
 
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, _rematch, allGamesBtn);
