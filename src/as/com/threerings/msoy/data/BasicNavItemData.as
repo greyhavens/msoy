@@ -35,7 +35,7 @@ public class BasicNavItemData
     public function readObject (ins :ObjectInputStream) :void
     {
         _id = ins.readInt();
-        _name = String(ins.readField(String));
+        _name = ins.readField(String) as String;
     }
 
     // from interface Streamable
