@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Element;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -120,6 +121,10 @@ public class StatusPanel extends SmartTable
                 Session.didLogoff(Session.LogoffCondition.LOGOFF_REQUESTED);
             }
         }));
+
+        // Link to the help section
+        setWidget(0, idx++, new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;"));
+        setWidget(0, idx++, Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
     }
 
     // from interface Session.Observer

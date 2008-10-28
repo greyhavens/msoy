@@ -56,8 +56,6 @@ public class FrameHeader extends SmartTable
                   _images.sworlds());
         addButton(col++, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
                   _images.sshop());
-        addButton(col++, Pages.HELP, _cmsgs.menuHelp(), _images.help(), _images.ohelp(),
-                  _images.shelp());
         _statusCol = col;
 
         // listen for session state changes
