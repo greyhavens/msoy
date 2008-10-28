@@ -15,6 +15,7 @@
 
 .profile .ProfileTongue .Content {
   border: none; /* override tongueBox */
+  padding: 0;
 }
 
 .profile .Profile {
