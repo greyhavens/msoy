@@ -100,6 +100,9 @@ class BadgeDisplay extends FlowPanel
         case BadgeCodes.FIXTURE:
             return Link.createListener(Pages.WHIRLEDS, "");
 
+        case BadgeCodes.EXPLORER:
+            return Link.createListener(Pages.ROOMS, "");
+
         case BadgeCodes.GAMER: // same as below
         case BadgeCodes.CONTENDER: // same as below
         case BadgeCodes.COLLECTOR:

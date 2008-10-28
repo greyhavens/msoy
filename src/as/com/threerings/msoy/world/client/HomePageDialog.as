@@ -259,6 +259,10 @@ public class HomePageDialog extends FloatingPanel
             ctrl.displayPage("whirleds", "");
             break;
 
+        case BadgeCodes.EXPLORER:
+            startTour();
+            break;
+
         case BadgeCodes.MAGNET:
             ctrl.displayPage("people", "invites");
             break;
