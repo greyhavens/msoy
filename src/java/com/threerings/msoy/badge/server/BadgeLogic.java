@@ -76,7 +76,7 @@ public class BadgeLogic
             // the MemberObject initiated the badge award and does not to be updated (and also
             // will have taken care of creating new in-progress badges).
             MemberNodeActions.badgeAwarded(brec);
-            createNewInProgressBadges(brec.memberId, true);
+            createNewInProgressBadges(brec.memberId, true, null);
         }
     }
 
@@ -95,22 +95,27 @@ public class BadgeLogic
      * Creates and stores any InProgressBadges that have been newly unlocked (as a result of a
      * member joining Whirled, or completing another badge).
      *
+     * @param inProgress the user's current inProgressBadges, or null to look them up.
+     *
      * <b>NB:</b> this function makes a number of demands on the database and should be called
      * only when necessary.
      */
     public List<InProgressBadge> createNewInProgressBadges (
-        final int memberId, final boolean dobjNeedsUpdate)
+        final int memberId, final boolean dobjNeedsUpdate, Iterable<InProgressBadge> inProgress)
     {
+        if (inProgress == null) {
+            inProgress = Iterables.transform(
+                _badgeRepo.loadInProgressBadges(memberId), InProgressBadgeRecord.TO_BADGE);
+        }
+
         // read this member's in-progress and earned badge records
-        final Set<EarnedBadge> earnedBadges = Sets.newHashSet(
+        final Set<EarnedBadge> earnedSet = Sets.newHashSet(
             Iterables.transform(_badgeRepo.loadEarnedBadges(memberId), EarnedBadgeRecord.TO_BADGE));
-        final Set<InProgressBadge> inProgressBadges = Sets.newHashSet(
-            Iterables.transform(_badgeRepo.loadInProgressBadges(memberId),
-                                InProgressBadgeRecord.TO_BADGE));
+        final Set<InProgressBadge> inProgressSet = Sets.newHashSet(inProgress);
 
         // discover any new in-progress badges
         final List<InProgressBadge> newInProgressBadges =
-            BadgeUtil.getNewInProgressBadges(earnedBadges, inProgressBadges);
+            BadgeUtil.getNewInProgressBadges(earnedSet, inProgressSet);
         for (final InProgressBadge badge : newInProgressBadges) {
             //log.info("Created new InProgressBadge", "memberId", memberId,
             //         "type", BadgeType.getType(badge.badgeCode));
@@ -164,7 +169,8 @@ public class BadgeLogic
         Iterable<InProgressBadge> badges = Iterables.transform(
             _badgeRepo.loadInProgressBadges(memberId), InProgressBadgeRecord.TO_BADGE);
         if (!Iterables.any(badges, BadgeType.IS_HIDDEN_BADGETYPE)) {
-            badges = Iterables.concat(badges, createNewInProgressBadges(memberId, dobjNeedsUpdate));
+            badges = Iterables.concat(badges,
+                createNewInProgressBadges(memberId, dobjNeedsUpdate, badges));
         }
 
         // Return the badges we just loaded or created, minus the "HIDDEN" marker badge.
@@ -187,7 +193,7 @@ public class BadgeLogic
     {
         // Read in our in-progress badges and choose a number of them randomly
         List<InProgressBadge> allBadges = getInProgressBadges(memberId, false);
-        List<InProgressBadge> randomSelection = Lists.newArrayList();
+        List<InProgressBadge> randomSelection = Lists.newArrayListWithExpectedSize(maxBadges);
         if (!allBadges.isEmpty()) {
             Collections.shuffle(allBadges);
 
