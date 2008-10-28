@@ -1314,13 +1314,14 @@ public class WorldController extends MsoyController
         super.locationDidChange(place);
 
         // Show the home page grid navigation dialog if the user is entering their home room
-        if (getCurrentSceneId() == _wctx.getMemberObject().homeSceneId) {
+        if (_autoShowHomePageGrid && getCurrentSceneId() == _wctx.getMemberObject().homeSceneId) {
             var ctrlBar :WorldControlBar = _wctx.getControlBar() as WorldControlBar;
             if (ctrlBar != null) {
                 if (ctrlBar.homePageGridBtn.enabled && !ctrlBar.homePageGridBtn.selected) {
                     ctrlBar.homePageGridBtn.activate();
                 }
             }
+            _autoShowHomePageGrid = false; // suppress showing again
         }
     }
 
@@ -1342,6 +1343,9 @@ public class WorldController extends MsoyController
 
     /** Recently visited scenes, ordered from most-recent to least-recent */
     protected var _recentScenes :Array = [];
+
+    /** True if the home page dialog should be automatically popped up in the users's home scene. */
+    protected var _autoShowHomePageGrid :Boolean = true;
 
     /** The maximum number of recent scenes we track. */
     protected static const MAX_RECENT_SCENES :int = 11; 

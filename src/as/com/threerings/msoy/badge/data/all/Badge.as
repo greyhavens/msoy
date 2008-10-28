@@ -36,6 +36,24 @@ public /* abstract */ class Badge extends SimpleStreamableObject
     }
 
     /**
+     * Returns the description of this badge, to be translated with no level, for example "Make a
+     * friend!". If this translation is not present, <code>descPropGeneric</code> should be used.
+     */
+    public function get descProp () :String
+    {
+        return "m.badge_desc_" + level + "_" + uint(badgeCode).toString(16);
+    }
+
+    /**
+     * Returns the description of this badge to be translated with a level, for example "Make {0}
+     * friends!".
+     */
+    public function get descPropGeneric () :String
+    {
+        return "m.badge_desc_N_" + uint(badgeCode).toString(16);
+    }
+
+    /**
      * Returns the name of the current level.
      */
     public function get levelName () :String

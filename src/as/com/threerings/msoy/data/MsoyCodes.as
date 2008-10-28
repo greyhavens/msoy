@@ -49,6 +49,9 @@ public class MsoyCodes extends InvocationCodes
     /** Identifies our studio message bundle. */
     public static const STUDIO_MSGS :String = "studio";
 
+    /** Identifies our home page grid message bundle. */
+    public static const HOME_PAGE_GRID_MSGS :String = "homepagegrid";
+
     /** The maximum length of any name we store in our database tables. */
     public static const MAX_NAME_LENGTH :int = 254; // the db indicates 255, but reality is 254
 }

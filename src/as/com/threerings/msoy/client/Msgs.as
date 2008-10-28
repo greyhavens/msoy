@@ -67,6 +67,18 @@ public class Msgs
         return _studio;
     }
 
+    /** The passport message bundle. */
+    public static function get PASSPORT () :MessageBundle
+    {
+        return _passport;
+    }
+
+    /** The home page grid message bundle. */
+    public static function get HOME_PAGE_GRID () :MessageBundle
+    {
+        return _homePageGrid;
+    }
+
     /**
      * Initialize the bundles.
      */
@@ -85,6 +97,8 @@ public class Msgs
         _notify = msgMgr.getBundle(MsoyCodes.NOTIFY_MSGS);
         _prefs = msgMgr.getBundle(MsoyCodes.PREFS_MSGS);
         _studio = msgMgr.getBundle(MsoyCodes.STUDIO_MSGS);
+        _passport = msgMgr.getBundle(MsoyCodes.PASSPORT_MSGS);
+        _homePageGrid = msgMgr.getBundle(MsoyCodes.HOME_PAGE_GRID_MSGS);
     }
 
     protected static var _general :MessageBundle;
@@ -96,5 +110,7 @@ public class Msgs
     protected static var _notify :MessageBundle;
     protected static var _prefs :MessageBundle;
     protected static var _studio :MessageBundle;
+    protected static var _passport :MessageBundle;
+    protected static var _homePageGrid :MessageBundle;
 }
 }

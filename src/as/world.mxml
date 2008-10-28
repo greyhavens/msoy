@@ -19,6 +19,7 @@
     [ResourceBundle("world")]
     [ResourceBundle("passport")]
     [ResourceBundle("studio")]
+    [ResourceBundle("homepagegrid")]
 </mx:Metadata>
 <mx:Script>
     <![CDATA[

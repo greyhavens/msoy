@@ -52,6 +52,9 @@ public class HomePageItem
     /** Go to a user profile. The data is an <code>Integer</code> profile.*/
     public static const ACTION_PROFILE :int = 9;
 
+    /** Kick off the whirled tour. The data is ignored.*/
+    public static const ACTION_EXPLORE :int = 10;
+
     /**
      * Gets the action for this item.
      */

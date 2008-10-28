@@ -823,11 +823,16 @@ public class MemberManager
             @Override
             public void invokePersistent () throws Exception {
                 HomePageItem[] items = new HomePageItem[9];
-                
-                // The first 3 items on the home page are always badges.
-                List<InProgressBadge> badges = _badgeLogic.getNextSuggestedBadges(
-                    memObj.getMemberId(), 3);
                 int curItem = 0;
+
+                // The first item on the home page is always a whirled tour unless already onTour
+                if (!memObj.onTour) {
+                    items[curItem++] = EXPLORE_ITEM;
+                }
+                
+                // The next 2 or 3 items are badges
+                List<InProgressBadge> badges = _badgeLogic.getNextSuggestedBadges(
+                    memObj.getMemberId(), 3 - curItem);
                 for (InProgressBadge badge : badges) {
                     items[curItem++] = new HomePageItem(
                         HomePageItem.ACTION_BADGE, badge, badge.imageMedia());
@@ -1274,4 +1279,9 @@ public class MemberManager
 
     /** The frequency with which we recalculate our popular places snapshot. */
     protected static final long POP_PLACES_REFRESH_PERIOD = 30*1000;
+
+    /** The whirled tour home page item. */
+    protected static final HomePageItem EXPLORE_ITEM = new HomePageItem(
+        HomePageItem.ACTION_EXPLORE, null, new StaticMediaDesc(
+            MediaDesc.IMAGE_PNG, "icon", "home_page_tour"));
 }

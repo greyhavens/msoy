@@ -50,6 +50,9 @@ public class HomePageItem extends SimpleStreamableObject
     /** Go to a user profile. The data is an instance of {@link BasicNavItemData}.*/
     public static final byte ACTION_PROFILE = 9;
 
+    /** Kick off the whirled tour. The data is ignored.*/
+    public static final byte ACTION_EXPLORE = 10;
+
     /**
      * Creates a new home page item.
      * @param action the action for this item
