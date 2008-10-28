@@ -8,6 +8,12 @@
   padding: 10px;
 }
 
+.mail .ComposeLink a {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #194C70;
+}
+
 .mail .MailHeader {
   background: url(/images/mail/header_bg.png) no-repeat top left;
   width: 678px;

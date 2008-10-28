@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
@@ -107,7 +108,8 @@ public class MailPanel extends FlowPanel
         {
             super.addCustomControls(controls);
 
-            controls.setWidget(0, 0, new Button(_msgs.mailCheck(), new ClickListener() {
+            FloatPanel customControls = new FloatPanel(null);
+            customControls.add(new Button(_msgs.mailCheck(), new ClickListener() {
                 public void onClick (Widget sender) {
                     if (_page == 0) {
                         ((ConvosModel)_model).reset();
@@ -117,6 +119,10 @@ public class MailPanel extends FlowPanel
                     }
                 }
             }));
+            Widget composeLink = Link.create(_msgs.mailCompose(), Pages.MAIL, "w");
+            composeLink.addStyleName("ComposeLink");
+            customControls.add(composeLink);
+            controls.setWidget(0, 0, customControls);
         }
     }
 
