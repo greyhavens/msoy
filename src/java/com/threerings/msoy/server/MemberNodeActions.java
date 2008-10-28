@@ -136,6 +136,14 @@ public class MemberNodeActions
     }
 
     /**
+     * Dispatches a notification that a member has updates their badgesVersion.
+     */
+    public static void updateBadgesVersion (int memberId, short badgesVersion)
+    {
+        _peerMan.invokeNodeAction(new BadgesVersionUpdated(memberId, badgesVersion));
+    }
+
+    /**
      * Dispatches a notification that a member has won a badge.
      */
     public static void badgeAwarded (final EarnedBadgeRecord record)
@@ -330,6 +338,24 @@ public class MemberNodeActions
         protected Notification _notification;
 
         @Inject protected transient NotificationManager _notifyMan;
+    }
+
+    protected static class BadgesVersionUpdated extends MemberNodeAction
+    {
+        public BadgesVersionUpdated (int memberId, short badgesVersion) {
+            super(memberId);
+            _badgesVersion = badgesVersion;
+        }
+
+        public BadgesVersionUpdated () {
+        }
+
+        @Override
+        protected void execute (final MemberObject memobj) {
+            memobj.badgesVersion = _badgesVersion;
+        }
+
+        protected short _badgesVersion;
     }
 
     protected static class BadgeAwarded extends MemberNodeAction

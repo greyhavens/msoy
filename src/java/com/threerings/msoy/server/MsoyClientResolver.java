@@ -146,6 +146,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         memobj.stats = new ServerStatSet(stats.iterator(), _badgeMan, memobj);
 
         // and their badges
+        memobj.badgesVersion = member.badgesVersion;
         memobj.badges = new EarnedBadgeSet(
             Iterables.transform(_badgeRepo.loadEarnedBadges(member.memberId),
                                 EarnedBadgeRecord.TO_BADGE));

@@ -236,6 +236,10 @@ public class MemberObject extends MsoyBodyObject
     /** Metrics tracked for this player. */
     public transient PlayerMetrics metrics = new PlayerMetrics();
 
+    /** The version of the "Badges set" that this user has seen. If this is behind
+     * BadgeType.VERSION, then the member's InProgressBadges will be recomputed. */
+    public transient short badgesVersion;
+
     /** The set of badges that this player owns. */
     public transient EarnedBadgeSet badges;
 

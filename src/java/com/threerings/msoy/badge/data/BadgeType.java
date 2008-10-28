@@ -31,6 +31,8 @@ import com.threerings.msoy.data.StatType;
 /** Defines the various badge types. */
 public enum BadgeType
 {
+    // Note: If you add a new BadgeType, VERSION should be incremented.
+
     // social badges
     FRIENDLY(StampCategory.SOCIAL, StatType.FRIENDS_MADE, new Level[] {
         new Level(1, 250),
@@ -92,14 +94,14 @@ public enum BadgeType
         }
     },
 
-//    EXPLORER(StampCategory.SOCIAL, StatType.ROOMS_TOURED, new Level[] {
-//        new Level(25, 250),
-//        new Level(50, 500),
-//        new Level(100, 1000),
-//        new Level(200, 2000),
-//        new Level(500, 3000),
-//        new Level(2000, 10000)
-//    }),
+    EXPLORER(StampCategory.SOCIAL, StatType.ROOMS_TOURED, new Level[] {
+        new Level(25, 250),
+        new Level(50, 500),
+        new Level(100, 1000),
+        new Level(200, 2000),
+        new Level(500, 3000),
+        new Level(2000, 10000)
+    }),
 
     // game badges
     GAMER(StampCategory.GAME, StatType.GAME_SESSIONS, new Level[] {
@@ -299,7 +301,11 @@ public enum BadgeType
             return 0;
         }
     },
-    ; // end of BadgeTypes
+    ; // end of BadgeTypes. If you add a new type, VERSION should be incremented.
+
+    /** The version number of the set of badges. If you add a new badge, this needs to be
+     * incremented. */
+    public static final short VERSION = 1;
 
     /** Predicate that will return true for any badge but the hidden badge. */
     public static final Predicate<Badge> IS_VISIBLE_BADGE = new Predicate<Badge>() {

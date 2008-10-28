@@ -207,6 +207,13 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp LEVEL_C =
         new ColumnExp(MemberRecord.class, LEVEL);
 
+    /** The column identifier for the {@link #badgesVersion} field. */
+    public static final String BADGES_VERSION = "badgesVersion";
+
+    /** The qualified column identifier for the {@link #badgesVersion} field. */
+    public static final ColumnExp BADGES_VERSION_C =
+        new ColumnExp(MemberRecord.class, BADGES_VERSION);
+
     /** The column identifier for the {@link #visitorId} field. */
     public static final String VISITOR_ID = "visitorId";
 
@@ -220,7 +227,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 26;
+    public static final int SCHEMA_VERSION = 27;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -274,6 +281,11 @@ public class MemberRecord extends PersistentRecord
     /** The currently reported level of this user. */
     @Column(defaultValue="1")
     public int level = 1;
+
+    /** The version of the "Badges set" that this user has seen. If this is behind
+     * BadgeType.VERSION, then the member's InProgressBadges will be recomputed. */
+    @Column(defaultValue="0")
+    public short badgesVersion;
 
     /** Visitor ID of this player, used to correlate their actions before they registered. */
     @Column(nullable=true, defaultValue="")

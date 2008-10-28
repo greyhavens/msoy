@@ -75,7 +75,7 @@ public class MeServlet extends MsoyServiceServlet
         }
         data.feed = loadFeed(mrec, groupMemberships, DEFAULT_FEED_DAYS);
 
-        data.badges = _badgeLogic.getNextSuggestedBadges(mrec.memberId, 4);
+        data.badges = _badgeLogic.getNextSuggestedBadges(mrec.memberId, mrec.badgesVersion, 4);
         return data;
     }
 
@@ -105,7 +105,8 @@ public class MeServlet extends MsoyServiceServlet
         if (mrec.memberId == memberId) {
             data.stampOwner = mrec.name;
             // for now, we just ship along every badge relevant to this player.
-            data.nextBadges = _badgeLogic.getInProgressBadges(mrec.memberId, true);
+            data.nextBadges = _badgeLogic.getInProgressBadges(
+                mrec.memberId, mrec.badgesVersion, true);
 
         } else {
             MemberName stampOwner = _memberRepo.loadMemberName(memberId);

@@ -502,17 +502,26 @@ public class MemberRepository extends DepotRepository
     /**
      * Writes the supplied member's experiences to the database.
      */
-    public void storeExperiences (final MemberRecord mrec)
+    public void storeExperiences (MemberRecord mrec)
     {
-        updatePartial(MemberRecord.class, mrec.memberId, MemberRecord.EXPERIENCES, mrec.experiences);
+        updatePartial(MemberRecord.class, mrec.memberId,
+            MemberRecord.EXPERIENCES, mrec.experiences);
     }
 
     /**
      * Configures a member's avatar.
      */
-    public void configureAvatarId (final int memberId, final int avatarId)
+    public void configureAvatarId (int memberId, int avatarId)
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.AVATAR_ID, avatarId);
+    }
+
+    /**
+     * Updates a member's badgesVersion.
+     */
+    public void updateBadgesVersion (int memberId, short badgesVersion)
+    {
+        updatePartial(MemberRecord.class, memberId, MemberRecord.BADGES_VERSION, badgesVersion);
     }
 
     /**

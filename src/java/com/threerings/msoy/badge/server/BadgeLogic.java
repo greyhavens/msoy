@@ -30,6 +30,7 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -163,14 +164,22 @@ public class BadgeLogic
      * method also checks that the member has had their initial set of InProgressBadgeRecords
      * created, and creates them if they haven't.
      */
-    public List<InProgressBadge> getInProgressBadges (int memberId, boolean dobjNeedsUpdate)
+    public List<InProgressBadge> getInProgressBadges (
+        int memberId, short badgesVersion, boolean dobjNeedsUpdate)
     {
-        // Load up our in progress badges, and check to see if the initial set has been created
+        // Load up our in progress badges
         Iterable<InProgressBadge> badges = Iterables.transform(
             _badgeRepo.loadInProgressBadges(memberId), InProgressBadgeRecord.TO_BADGE);
-        if (!Iterables.any(badges, BadgeType.IS_HIDDEN_BADGETYPE)) {
+
+        // see if we need to recalculate this set, if new badges have been added
+        if (BadgeType.VERSION != badgesVersion) {
             badges = Iterables.concat(badges,
                 createNewInProgressBadges(memberId, dobjNeedsUpdate, badges));
+            // and write the user's new badgeVersion
+            _memberRepo.updateBadgesVersion(memberId, BadgeType.VERSION);
+            if (dobjNeedsUpdate) {
+                MemberNodeActions.updateBadgesVersion(memberId, BadgeType.VERSION);
+            }
         }
 
         // Return the badges we just loaded or created, minus the "HIDDEN" marker badge.
@@ -189,10 +198,11 @@ public class BadgeLogic
      * @return a List of BadgeTypes. The list will have maxBadges entries, unless there aren't
      * enough badges left for the player to pursue.
      */
-    public List<InProgressBadge> getNextSuggestedBadges (final int memberId, final int maxBadges)
+    public List<InProgressBadge> getNextSuggestedBadges (
+        int memberId, short badgesVersion, int maxBadges)
     {
         // Read in our in-progress badges and choose a number of them randomly
-        List<InProgressBadge> allBadges = getInProgressBadges(memberId, false);
+        List<InProgressBadge> allBadges = getInProgressBadges(memberId, badgesVersion, false);
         Collections.shuffle(allBadges); // always randomize order
         return (allBadges.size() <= maxBadges) ? allBadges :
             Lists.newArrayList(allBadges.subList(0, maxBadges));
@@ -200,5 +210,6 @@ public class BadgeLogic
 
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected FeedRepository _feedRepo;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyLogic _moneyLogic;
 }

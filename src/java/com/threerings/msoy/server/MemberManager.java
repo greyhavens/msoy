@@ -149,6 +149,7 @@ public class MemberManager
                 // store our transient bits in the additional data map
                 data.put("MO.actorState", memobj.actorState);
                 data.put("MO.metrics", memobj.metrics);
+                data.put("MO.badgesVersion", memobj.badgesVersion);
                 data.put("MO.badges", memobj.badges);
                 data.put("MO.inProgressBadges", memobj.inProgressBadges);
                 data.put("MO.stats", memobj.stats);
@@ -159,6 +160,7 @@ public class MemberManager
                 // grab and reinstate our bits
                 memobj.actorState = (String)data.get("MO.actorState");
                 memobj.metrics = (PlayerMetrics)data.get("MO.metrics");
+                memobj.badgesVersion = (Short)data.get("MO.badgesVersion");
                 memobj.badges = (EarnedBadgeSet)data.get("MO.badges");
                 memobj.inProgressBadges = (InProgressBadgeSet)data.get("MO.inProgressBadges");
                 final StatSet stats = (StatSet)data.get("MO.stats");
@@ -832,7 +834,7 @@ public class MemberManager
                 
                 // The next 2 or 3 items are badges
                 List<InProgressBadge> badges = _badgeLogic.getNextSuggestedBadges(
-                    memObj.getMemberId(), 3 - curItem);
+                    memObj.getMemberId(), memObj.badgesVersion, 3 - curItem);
                 for (InProgressBadge badge : badges) {
                     items[curItem++] = new HomePageItem(
                         HomePageItem.ACTION_BADGE, badge, badge.imageMedia());
