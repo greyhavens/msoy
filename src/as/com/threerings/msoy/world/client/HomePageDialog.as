@@ -15,6 +15,7 @@ import mx.containers.Canvas;
 import mx.controls.Label;
 
 import com.threerings.flash.GraphicsUtil;
+import com.threerings.flex.CommandButton;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.io.TypedArray;
@@ -46,6 +47,10 @@ public class HomePageDialog extends FloatingPanel
         setStyle("paddingBottom", EDGE_MARGIN);
         setStyle("paddingLeft", EDGE_MARGIN);
         setStyle("paddingRight", EDGE_MARGIN);
+
+        if (!_wctx.getMemberObject().onTour) {
+            addChild(new CommandButton(Msgs.WORLD.get("b.start_tour"), startTour));
+        }
 
         // Set up the tile container for the items
         _grid = new Tile();
@@ -261,6 +266,12 @@ public class HomePageDialog extends FloatingPanel
             ctrl.displayPage("shop", "");            
             break;
         }
+    }
+
+    protected function startTour () :void
+    {
+        _wctx.getTourDirector().startTour();
+        close();
     }
 
     protected var _grid :Tile;
