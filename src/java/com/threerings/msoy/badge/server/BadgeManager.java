@@ -16,6 +16,7 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.server.MemberLocal;
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.Notification;
@@ -40,7 +41,7 @@ public class BadgeManager
      */
     public void awardBadge (MemberObject user, BadgeType badgeType, int level)
     {
-        if (!user.badges.containsBadge(badgeType)) {
+        if (!user.getLocal(MemberLocal.class).badges.containsBadge(badgeType)) {
             List<EarnedBadge> badgeList = Lists.newArrayList();
             long now = System.currentTimeMillis();
             String levelUnits = badgeType.getRequiredUnitsString(level);
@@ -60,6 +61,7 @@ public class BadgeManager
         if (user.isGuest()) {
             return;
         }
+        MemberLocal local = user.getLocal(MemberLocal.class);
 
         // iterate the list of badges to see if the player has won any new ones
         long whenEarned = System.currentTimeMillis();
@@ -67,9 +69,9 @@ public class BadgeManager
         List<InProgressBadge> inProgressBadges = Lists.newArrayList();
         List<InProgressBadge> deadBadges = Lists.newArrayList();
         for (BadgeType badgeType : BadgeType.values()) {
-            BadgeProgress progress = badgeType.getProgress(user.stats);
+            BadgeProgress progress = badgeType.getProgress(local.stats);
             if (progress.highestLevel >= 0) {
-                EarnedBadge earnedBadge = user.badges.getBadge(badgeType);
+                EarnedBadge earnedBadge = local.badges.getBadge(badgeType);
                 int currentLevel = earnedBadge == null ? -1 : earnedBadge.level;
                 for (int level = currentLevel + 1; level <= progress.highestLevel; level++) {
                     // award an EarnedBadge for each level that was earned in this update.
@@ -81,7 +83,7 @@ public class BadgeManager
                 if (progress.highestLevel >= badgeType.getNumLevels()-1) {
                     // If we've reached the highest badge level, delete the existing InProgressBadge
                     // for this badge type
-                    InProgressBadge inProgressBadge = user.inProgressBadges.getBadge(badgeType);
+                    InProgressBadge inProgressBadge = local.inProgressBadges.getBadge(badgeType);
                     if (inProgressBadge != null) {
                         deadBadges.add(inProgressBadge);
                     }
@@ -91,7 +93,7 @@ public class BadgeManager
             if (progress.highestLevel >= 0 && progress.highestLevel < badgeType.getNumLevels()-1) {
                 // If we haven't reached the highest badge level for this badge, we should have a
                 // corresponding InProgressBadge for it.
-                InProgressBadge inProgressBadge = user.inProgressBadges.getBadge(badgeType);
+                InProgressBadge inProgressBadge = local.inProgressBadges.getBadge(badgeType);
 
                 float quantizedProgress = InProgressBadgeRecord.quantizeProgress(
                     progress.getNextLevelProgress());
@@ -122,6 +124,8 @@ public class BadgeManager
 
     protected void awardBadges (final MemberObject user, final List<EarnedBadge> badges)
     {
+        final MemberLocal local = user.getLocal(MemberLocal.class);
+
         // award coins and add the badges to the user's badge set
         List<Notification> notes = Lists.newArrayList();
         for (EarnedBadge badge : badges) {
@@ -130,7 +134,7 @@ public class BadgeManager
             if (level == null) {
                 log.warning("Failed to award invalid badge level", "to", user.getMemberId(),
                             "type", type, "level", level);
-            } else if (user.badgeAwarded(badge)) {
+            } else if (local.badgeAwarded(badge)) {
                 notes.add(new BadgeEarnedNotification(badge));
             }
         }
@@ -140,9 +144,9 @@ public class BadgeManager
 
         // create any in-progress badges that have been newly unlocked
         final List<InProgressBadge> newInProgressBadges = BadgeUtil.getNewInProgressBadges(
-            user.badges.asSet(), user.inProgressBadges.asSet());
+            local.badges.asSet(), local.inProgressBadges.asSet());
         for (InProgressBadge inProgressBadge : newInProgressBadges) {
-            user.inProgressBadgeUpdated(inProgressBadge);
+            local.inProgressBadgeUpdated(inProgressBadge);
         }
 
         // stick the badges in the database
@@ -162,10 +166,10 @@ public class BadgeManager
             public void handleFailure (Exception error) {
                 // rollback the changes to the user's BadgeSet and flow
                 for (EarnedBadge badge : badges) {
-                    user.badges.removeBadge(badge.badgeCode);
+                    local.badges.removeBadge(badge.badgeCode);
                 }
                 for (InProgressBadge badge : newInProgressBadges) {
-                    user.inProgressBadges.removeBadge(badge.badgeCode);
+                    local.inProgressBadges.removeBadge(badge.badgeCode);
                 }
                 super.handleFailure(error);
             }
@@ -183,8 +187,9 @@ public class BadgeManager
         final List<InProgressBadge> badges)
     {
         // stick the badges in the user's BadgeSet
+        final MemberLocal local = user.getLocal(MemberLocal.class);
         for (InProgressBadge badge : badges) {
-            user.inProgressBadgeUpdated(badge);
+            local.inProgressBadgeUpdated(badge);
         }
 
         // and then in the database
@@ -201,7 +206,7 @@ public class BadgeManager
             public void handleFailure (Exception error) {
                 // rollback the changes to the user's BadgeSet
                 for (InProgressBadge badge : badges) {
-                    user.inProgressBadges.removeBadge(badge.badgeCode);
+                    local.inProgressBadges.removeBadge(badge.badgeCode);
                 }
                 super.handleFailure(error);
             }

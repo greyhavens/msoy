@@ -29,6 +29,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.StatLogic;
@@ -83,11 +84,11 @@ public class TourManager
         // put them "on tour" if they're not already
         if (!memObj.onTour) {
             memObj.setOnTour(true);
-            memObj.touredRooms = new StreamableArrayIntSet();
+            memObj.getLocal(MemberLocal.class).touredRooms = new StreamableArrayIntSet();
         }
 
         int nextRoom = pickNextRoom(memObj);
-        memObj.touredRooms.add(nextRoom);
+        memObj.getLocal(MemberLocal.class).touredRooms.add(nextRoom);
         listener.requestProcessed(nextRoom);
         // maybe increment the user's TOURED stat
         if (finishedLoadingCurrentRoom && !memObj.isGuest()) {
@@ -103,7 +104,7 @@ public class TourManager
         // stop their tour if they're on one
         if (memObj.onTour) {
             memObj.setOnTour(false);
-            memObj.touredRooms = null; // forget any toured rooms
+            memObj.getLocal(MemberLocal.class).touredRooms = null; // forget any toured rooms
         }
     }
 
@@ -163,7 +164,7 @@ public class TourManager
     {
         return (memObj.homeSceneId != sceneId) &&
             (memObj.getSceneId() != sceneId) &&
-            !memObj.touredRooms.contains(sceneId);
+            !memObj.getLocal(MemberLocal.class).touredRooms.contains(sceneId);
     }
 
     protected void loadNewRoomSet ()

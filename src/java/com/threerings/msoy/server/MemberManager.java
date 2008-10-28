@@ -71,6 +71,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.msoy.data.all.StaticMediaDesc;
+import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
@@ -136,39 +137,40 @@ public class MemberManager
         // register a member forward participant that handles our transient bits
         peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
             public void packMember (final MemberObject memobj, final Map<String,Object> data) {
+                MemberLocal local = memobj.getLocal(MemberLocal.class);
+
                 // flush the transient bits in our metrics as we will snapshot and send this data
                 // before we depart our current room (which is when the are normally saved)
-                memobj.metrics.save(memobj);
+                local.metrics.save(memobj);
 
                 // update the number of active seconds they've spent online
                 MsoyClient client = (MsoyClient)_clmgr.getClient(memobj.username);
                 if (client != null) {
-                    memobj.sessionSeconds += client.getSessionSeconds();
+                    local.sessionSeconds += client.getSessionSeconds();
                 }
 
                 // store our transient bits in the additional data map
-                data.put("MO.actorState", memobj.actorState);
-                data.put("MO.metrics", memobj.metrics);
-                data.put("MO.badgesVersion", memobj.badgesVersion);
-                data.put("MO.badges", memobj.badges);
-                data.put("MO.inProgressBadges", memobj.inProgressBadges);
-                data.put("MO.stats", memobj.stats);
-                data.put("MO.sessionSeconds", memobj.sessionSeconds);
+                data.put("MO.metrics", local.metrics);
+                data.put("MO.badges", local.badges);
+                data.put("MO.badgesVersion", local.badgesVersion);
+                data.put("MO.inProgressBadges", local.inProgressBadges);
+                data.put("MO.stats", local.stats);
+                data.put("MO.sessionSeconds", local.sessionSeconds);
             }
 
             public void unpackMember (final MemberObject memobj, final Map<String,Object> data) {
+                MemberLocal local = memobj.getLocal(MemberLocal.class);
                 // grab and reinstate our bits
-                memobj.actorState = (String)data.get("MO.actorState");
-                memobj.metrics = (PlayerMetrics)data.get("MO.metrics");
-                memobj.badgesVersion = (Short)data.get("MO.badgesVersion");
-                memobj.badges = (EarnedBadgeSet)data.get("MO.badges");
-                memobj.inProgressBadges = (InProgressBadgeSet)data.get("MO.inProgressBadges");
+                local.metrics = (PlayerMetrics)data.get("MO.metrics");
+                local.badges = (EarnedBadgeSet)data.get("MO.badges");
+                local.badgesVersion = (Short)data.get("MO.badgesVersion");
+                local.inProgressBadges = (InProgressBadgeSet)data.get("MO.inProgressBadges");
                 final StatSet stats = (StatSet)data.get("MO.stats");
                 if (stats instanceof ServerStatSet) {
                     ((ServerStatSet)stats).init(_badgeMan, memobj);
                 }
-                memobj.stats = stats;
-                memobj.sessionSeconds = (Integer)data.get("MO.sessionSeconds");
+                local.stats = stats;
+                local.sessionSeconds = (Integer)data.get("MO.sessionSeconds");
             }
         });
     }
@@ -834,7 +836,8 @@ public class MemberManager
                 
                 // The next 2 or 3 items are badges
                 List<InProgressBadge> badges = _badgeLogic.getNextSuggestedBadges(
-                    memObj.getMemberId(), memObj.badgesVersion, 3 - curItem);
+                    memObj.getMemberId(), memObj.getLocal(MemberLocal.class).badgesVersion,
+                    3 - curItem);
                 for (InProgressBadge badge : badges) {
                     items[curItem++] = new HomePageItem(
                         HomePageItem.ACTION_BADGE, badge, badge.imageMedia());

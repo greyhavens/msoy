@@ -352,7 +352,7 @@ public class MemberNodeActions
 
         @Override
         protected void execute (final MemberObject memobj) {
-            memobj.badgesVersion = _badgesVersion;
+            memobj.getLocal(MemberLocal.class).badgesVersion = _badgesVersion;
         }
 
         protected short _badgesVersion;
@@ -370,7 +370,7 @@ public class MemberNodeActions
 
         @Override
         protected void execute (final MemberObject memobj) {
-            if (memobj.badgeAwarded(_badge)) {
+            if (memobj.getLocal(MemberLocal.class).badgeAwarded(_badge)) {
                 _notifyMan.notify(memobj, new BadgeEarnedNotification(_badge));
             }
         }
@@ -391,7 +391,7 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            memobj.inProgressBadgeUpdated(_badge);
+            memobj.getLocal(MemberLocal.class).inProgressBadgeUpdated(_badge);
         }
 
         protected InProgressBadge _badge;
@@ -409,7 +409,7 @@ public class MemberNodeActions
 
         @Override
         protected void execute (final MemberObject memobj) {
-            memobj.stats.syncStat(_modifier);
+            memobj.getLocal(MemberLocal.class).stats.syncStat(_modifier);
         }
 
         protected StatModifier<T> _modifier;

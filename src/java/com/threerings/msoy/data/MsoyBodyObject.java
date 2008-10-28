@@ -16,7 +16,7 @@ public class MsoyBodyObject extends BodyObject
     public static final byte AWAY = 3;
 
     /** The current state of the body's actor, or null if unset/unknown/default. */
-    public transient String actorState;
+    public String actorState;
 
     /**
      * Returns the scene occupied by this body.

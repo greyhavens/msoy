@@ -10,6 +10,7 @@ import com.google.inject.Singleton;
 import com.threerings.presents.annotation.EventThread;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
@@ -35,8 +36,9 @@ public class NotificationManager
     {
         // if they have not yet reported in with a call to dispatchDeferredNotifications then we
         // need to queue this notification up rather than dispatch it directly
-        if (target.deferredNotifications != null) {
-            target.deferredNotifications.add(note);
+        final MemberLocal local = target.getLocal(MemberLocal.class);
+        if (local.deferredNotifications != null) {
+            local.deferredNotifications.add(note);
         } else {
             target.postMessage(MemberObject.NOTIFICATION, note);
         }
@@ -47,8 +49,9 @@ public class NotificationManager
      */
     public void notify (MemberObject target, List<Notification> notes)
     {
-        if (target.deferredNotifications != null) {
-            target.deferredNotifications.addAll(notes);
+        final MemberLocal local = target.getLocal(MemberLocal.class);
+        if (local.deferredNotifications != null) {
+            local.deferredNotifications.addAll(notes);
         } else {
             target.startTransaction();
             for (Notification note : notes) {
@@ -106,9 +109,10 @@ public class NotificationManager
      */
     public void dispatchDeferredNotifications (MemberObject memobj)
     {
-        if (memobj.deferredNotifications != null) {
-            List<Notification> notes = memobj.deferredNotifications;
-            memobj.deferredNotifications = null;
+        final MemberLocal local = memobj.getLocal(MemberLocal.class);
+        if (local.deferredNotifications != null) {
+            List<Notification> notes = local.deferredNotifications;
+            local.deferredNotifications = null;
             notify(memobj, notes);
         } else {
             log.warning("Client requested deferred notifications, but they've already been " +

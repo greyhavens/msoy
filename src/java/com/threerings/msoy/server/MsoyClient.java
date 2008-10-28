@@ -14,7 +14,6 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.BootstrapData;
-import com.threerings.presents.server.ClientLocal;
 import com.threerings.presents.server.net.Connection;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -71,12 +70,6 @@ public class MsoyClient extends WhirledClient
         return new MsoyBootstrapData();
     }
 
-    @Override
-    protected ClientLocal createLocalAttribute ()
-    {
-        return new MemberLocal();
-    }
-
     @Override // from PresentsClient
     protected void sessionWillStart ()
     {
@@ -85,8 +78,8 @@ public class MsoyClient extends WhirledClient
         _memobj = (MemberObject) _clobj;
         _memobj.addListener(_idleTracker);
 
-        MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account) _authdata;
-        MsoyCredentials credentials = (MsoyCredentials) getCredentials();
+        MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account)_authdata;
+        MsoyCredentials credentials = (MsoyCredentials)getCredentials();
 
         // if this is a guest account, they didn't get a VisitorInfo through the resolver.
         // so let's pull one from their flash credentials, or manufacture a brand new one.
@@ -108,7 +101,7 @@ public class MsoyClient extends WhirledClient
         }
 
         // start active/idle metrics on this server - the player starts out active
-        _memobj.metrics.idle.init(true);
+        _memobj.getLocal(MemberLocal.class).metrics.idle.init(true);
 
         // let our various server entities know that this member logged on
         _locator.memberLoggedOn(_memobj);
@@ -166,23 +159,24 @@ public class MsoyClient extends WhirledClient
             _memobj = null;
             return;
         }
+        MemberLocal local = _memobj.getLocal(MemberLocal.class);
 
         // if this this was a player or guest (but not a lurker), log their stats
         if (!(_memobj.username instanceof LurkerName)) {
             String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
-            _memobj.metrics.save(_memobj);
+            local.metrics.save(_memobj);
             _eventLog.logPlayerMetrics(_memobj, sessTok);
         }
 
         // if this was a member, record some end of session related info to the database
         if (!_memobj.isGuest()) {
-            final int activeMins = Math.round((_memobj.sessionSeconds + _connectTime -
-                                               _idleTracker.getIdleTime()) / 60f);
+            final int activeMins = Math.round(
+                (local.sessionSeconds + _connectTime - _idleTracker.getIdleTime()) / 60f);
             final int memberId = _memobj.getMemberId();
-            final StatSet stats = _memobj.stats;
+            final StatSet stats = local.stats;
+            final Iterable<MemberExperience> experiences = _memobj.experiences;
             log.info("Session ended [id=" + memberId + ", amins=" + activeMins + "].");
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
-            final Iterable<MemberExperience> experiences = _memobj.experiences;
             _invoker.postUnit(new WriteOnlyUnit("sessionDidEnd:" + _memobj.memberName) {
                 @Override public void invokePersist () throws Exception {
                     // write out any modified stats
@@ -216,17 +210,17 @@ public class MsoyClient extends WhirledClient
 
         public void attributeChanged (AttributeChangedEvent event) {
             if (event.getName().equals(MemberObject.STATUS)) {
+                MemberLocal local = _memobj.getLocal(MemberLocal.class);
+                local.metrics.idle.save(_memobj);
+
                 boolean idle = isIdle((Byte)event.getValue());
-
-                _memobj.metrics.idle.save(_memobj);
-                _memobj.metrics.idle.init(!idle);
-
+                local.metrics.idle.init(!idle);
                 if (idle) {
                     // log.info(_memobj.who() + " is idle.");
-                    _idleStamp = _memobj.getLocal(MemberLocal.class).statusTime;
+                    _idleStamp = local.statusTime;
+
                 } else if (_idleStamp > 0) {
-                    int idleSecs = (int)((_memobj.getLocal(MemberLocal.class).statusTime -
-                                          _idleStamp) / 1000L);
+                    int idleSecs = (int)((local.statusTime - _idleStamp) / 1000L);
                     // log.info(_memobj.who() + " was idle for " + idleSecs + " seconds.");
                     _idleTime += idleSecs;
                     _idleCount++;

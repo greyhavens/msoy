@@ -15,6 +15,7 @@ import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.server.ClientLocal;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
@@ -67,6 +68,12 @@ public class MsoyClientResolver extends CrowdClientResolver
         return (memobj != null) ? memobj : new MemberObject();
     }
 
+    @Override
+    public ClientLocal createLocalAttribute ()
+    {
+        return new MemberLocal();
+    }
+
     @Override // from ClientResolver
     protected void resolveClientData (final ClientObject clobj)
         throws Exception
@@ -75,13 +82,14 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         final MemberObject memobj = (MemberObject) clobj;
         memobj.setAccessController(MsoyObjectAccess.USER);
+        MemberLocal local = memobj.getLocal(MemberLocal.class);
 
         // create a deferred notifications array so that we can track any notifications dispatched
         // to this client until they're ready to read them; we'd have NotificationManager do this
         // in a MemberLocator.Observer but we need to be sure this is filled in before any other
         // MemberLocator.Observers are notified because that's precisely when early notifications
         // are likely to be generated
-        memobj.deferredNotifications = Lists.newArrayList();
+        local.deferredNotifications = Lists.newArrayList();
 
         // if our member object was forwarded from another server, it will already be fully ready
         // to go so we can avoid the expensive resolution process
@@ -95,16 +103,16 @@ public class MsoyClientResolver extends CrowdClientResolver
             final MemberName aname = (MemberName)_username;
             memobj.memberName = new VizMemberName(
                 aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
-            memobj.stats = new StatSet();
-            memobj.badges = new EarnedBadgeSet();
-            memobj.inProgressBadges = new InProgressBadgeSet();
+            local.stats = new StatSet();
+            local.badges = new EarnedBadgeSet();
+            local.inProgressBadges = new InProgressBadgeSet();
 
         } else if (_username instanceof LurkerName) {
             // we are lurker, we have no visible name to speak of
             memobj.memberName = new VizMemberName("", 0, MemberCard.DEFAULT_PHOTO);
-            memobj.stats = new StatSet();
-            memobj.badges = new EarnedBadgeSet();
-            memobj.inProgressBadges = new InProgressBadgeSet();
+            local.stats = new StatSet();
+            local.badges = new EarnedBadgeSet();
+            local.inProgressBadges = new InProgressBadgeSet();
 
         } else {
             resolveMember(memobj);
@@ -142,15 +150,16 @@ public class MsoyClientResolver extends CrowdClientResolver
         memobj.level = member.level;
 
         // load up this member's persistent stats
+        MemberLocal local = memobj.getLocal(MemberLocal.class);
         final List<Stat> stats = _statRepo.loadStats(member.memberId);
-        memobj.stats = new ServerStatSet(stats.iterator(), _badgeMan, memobj);
+        local.stats = new ServerStatSet(stats.iterator(), _badgeMan, memobj);
 
         // and their badges
-        memobj.badgesVersion = member.badgesVersion;
-        memobj.badges = new EarnedBadgeSet(
+        local.badgesVersion = member.badgesVersion;
+        local.badges = new EarnedBadgeSet(
             Iterables.transform(_badgeRepo.loadEarnedBadges(member.memberId),
                                 EarnedBadgeRecord.TO_BADGE));
-        memobj.inProgressBadges = new InProgressBadgeSet(
+        local.inProgressBadges = new InProgressBadgeSet(
             Iterables.transform(_badgeRepo.loadInProgressBadges(member.memberId),
                                 InProgressBadgeRecord.TO_BADGE));
 

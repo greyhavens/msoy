@@ -10,18 +10,20 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.PlayerMetrics;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
-import com.threerings.msoy.server.MsoyEvents.Experience.Type;
 import com.threerings.panopticon.client.net.EventLogger;
 import com.threerings.panopticon.client.net.EventLoggerConfig;
 import com.threerings.panopticon.client.net.EventLoggerFactory;
 
 import com.threerings.msoy.money.data.all.Currency;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.PlayerMetrics;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.server.MemberLocal;
+import com.threerings.msoy.server.MsoyEvents.Experience.Type;
+import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -143,8 +145,9 @@ public class MsoyEventLogger
 
     public void logPlayerMetrics (MemberObject member, String sessionToken)
     {
-        PlayerMetrics.RoomVisit room = member.metrics.room;
-        PlayerMetrics.Idle idle = member.metrics.idle;
+        MemberLocal local = member.getLocal(MemberLocal.class);
+        PlayerMetrics.RoomVisit room = local.metrics.room;
+        PlayerMetrics.Idle idle = local.metrics.idle;
         post(new MsoyEvents.SessionMetrics(member.getMemberId(), room.timeInMyRoom,
             room.timeInFriendRooms, room.timeInStrangerRooms, room.timeInWhirleds,
             idle.timeActive, idle.timeIdle, sessionToken));
