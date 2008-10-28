@@ -440,7 +440,7 @@
 }
 
 .transactions .Blurb .Billing {
-  width: 0;
+  width: 200px;
 }
 
 .transactions .Blurb .BillingTip {
