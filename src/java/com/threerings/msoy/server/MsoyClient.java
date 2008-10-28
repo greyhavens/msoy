@@ -14,6 +14,7 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.BootstrapData;
+import com.threerings.presents.server.ClientLocal;
 import com.threerings.presents.server.net.Connection;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -68,6 +69,12 @@ public class MsoyClient extends WhirledClient
     protected BootstrapData createBootstrapData ()
     {
         return new MsoyBootstrapData();
+    }
+
+    @Override
+    protected ClientLocal createLocalAttribute ()
+    {
+        return new MemberLocal();
     }
 
     @Override // from PresentsClient
@@ -198,7 +205,8 @@ public class MsoyClient extends WhirledClient
         public int getIdleTime () {
             int idleTime = _idleTime, idleCount = _idleCount;
             if (isIdle(_memobj.status)) {
-                idleTime += (int)((System.currentTimeMillis() - _memobj.statusTime) / 1000L);
+                idleTime += (int)((System.currentTimeMillis() -
+                                   _memobj.getLocal(MemberLocal.class).statusTime) / 1000L);
                 idleCount++;
             }
             // TODO: add (idleCount * IDLE_TIMEOUT) to account for the time that a player was
@@ -215,9 +223,10 @@ public class MsoyClient extends WhirledClient
 
                 if (idle) {
                     // log.info(_memobj.who() + " is idle.");
-                    _idleStamp = _memobj.statusTime;
+                    _idleStamp = _memobj.getLocal(MemberLocal.class).statusTime;
                 } else if (_idleStamp > 0) {
-                    int idleSecs = (int)((_memobj.statusTime - _idleStamp) / 1000L);
+                    int idleSecs = (int)((_memobj.getLocal(MemberLocal.class).statusTime -
+                                          _idleStamp) / 1000L);
                     // log.info(_memobj.who() + " was idle for " + idleSecs + " seconds.");
                     _idleTime += idleSecs;
                     _idleCount++;
