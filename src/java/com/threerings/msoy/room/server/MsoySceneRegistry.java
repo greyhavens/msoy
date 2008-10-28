@@ -146,15 +146,16 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
         // if it's hosted on this server, then send the client directly to the scene
         if (nodeInfo != null && _peerMan.getNodeObject().nodeName.equals(nodeInfo.left)) {
-            log.info("Going directly to resolved local scene " + sceneId + ".");
+            log.debug("Going directly to resolved local scene", "who" + mover.who(),
+                      "sceneId", sceneId);
             resolveScene(sceneId, handler);
             return;
         }
 
         // if the mover is not a member, we don't allow server switches, so just fail
         if (memobj == null) {
-            log.warning("Non-member requested move that requires server switch? " +
-                        "[who=" + mover.who() + ", info=" + nodeInfo + "].");
+            log.warning("Non-member requested move that requires server switch?",
+                        "who", mover.who(), "info", nodeInfo);
             throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
         }
 
@@ -163,7 +164,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             // first check access control on the remote scene
             HostedRoom hr = nodeInfo.right;
             if (memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl)) {
-                log.info("Going to remote node " + sceneId + "@" + nodeInfo.left + ".");
+                log.debug("Going to remote node", "who", mover.who(),
+                          "where", sceneId + "@" + nodeInfo.left);
                 sendClientToNode(nodeInfo.left, memobj, listener);
             } else {
                 listener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
@@ -176,11 +178,11 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         _peerMan.acquireLock(MsoyPeerManager.getSceneLock(sceneId), new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
                 if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
-                    log.info("Got lock, resolving " + sceneId + ".");
+                    log.debug("Got lock, resolving " + sceneId + ".");
                     resolveScene(sceneId, handler);
                 } else if (nodeName != null) {
                     // some other peer got the lock before we could; send them there
-                    log.info("Didn't get lock, going remote " + sceneId + "@" + nodeName + ".");
+                    log.debug("Didn't get lock, going remote " + sceneId + "@" + nodeName + ".");
                     sendClientToNode(nodeName, memobj, listener);
                 } else {
                     log.warning("Scene lock acquired by null? [for=" + memobj.who() +
@@ -189,8 +191,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                 }
             }
             public void requestFailed (Exception cause) {
-                log.warning("Failed to acquire scene resolution lock " +
-                        "[for=" + memobj.who() + ", id=" + sceneId + "].", cause);
+                log.warning("Failed to acquire scene resolution lock", "for", memobj.who(),
+                            "id", sceneId, cause);
                 listener.requestFailed(RoomCodes.INTERNAL_ERROR);
             }
         });
