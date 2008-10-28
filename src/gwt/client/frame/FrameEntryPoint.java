@@ -150,7 +150,6 @@ public class FrameEntryPoint
             }
         } catch (Exception e) {
             page = getLandingPage();
-            args.setToken(getLandingArgs());
         }
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
@@ -274,7 +273,7 @@ public class FrameEntryPoint
         }
 
         if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
-            Link.go(getLandingPage(), getLandingArgs());
+            Link.go(getLandingPage(), "");
         } else if (_page != null) {
             setPage(_page); // reloads the current page
         } else if (!data.justCreated) {
@@ -501,7 +500,7 @@ public class FrameEntryPoint
         case WORLD: {
             Args args = new Args();
             args.setToken(_pageToken);
-            String action = args.get(0, "s1");
+            String action = args.get(0, "");
             if (action.startsWith("s")) {
                 String sceneId = action.substring(1);
                 if (args.getArgCount() <= 1) {
@@ -535,6 +534,10 @@ public class FrameEntryPoint
             } else if (action.startsWith("h")) {
                 // go to our home
                 displayWorldClient("memberHome=" + CShell.getMemberId(), null);
+
+            } else {
+                // just logon and show the myplaces dialog, don't go anywhere
+                displayWorldClient("myplaces=true", null);
             }
             break;
         }
@@ -819,11 +822,6 @@ public class FrameEntryPoint
     protected Pages getLandingPage ()
     {
         return CShell.isGuest() ? Pages.LANDING : Pages.WORLD;
-    }
-
-    protected String getLandingArgs ()
-    {
-        return CShell.isGuest() ? "" : "m" + CShell.getMemberId();
     }
 
     /**

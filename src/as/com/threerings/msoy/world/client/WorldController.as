@@ -933,6 +933,13 @@ public class WorldController extends MsoyController
                 // nothing we can do here...
             }
 
+        } else if (null != params["myplaces"]) {
+            // display the My Whirled Places grid
+            var ctrlBar :WorldControlBar = (_wctx.getControlBar() as WorldControlBar);
+            if (ctrlBar != null && ctrlBar.homePageGridBtn.enabled) {
+                ctrlBar.homePageGridBtn.activate();
+            }
+
         } else if (!_wctx.getMemberObject().isGuest()) {
             _wctx.getWorldDirector().goToMemberHome(_wctx.getMemberObject().getMemberId());
 
@@ -1308,23 +1315,6 @@ public class WorldController extends MsoyController
             friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
         }
         menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
-    }
-
-    /** @inheritDoc */
-    // from MsoyController
-    override protected function locationDidChange (place :PlaceObject) :void
-    {
-        super.locationDidChange(place);
-
-        // Show the home page grid navigation dialog if the user is entering their home room
-        if (getCurrentSceneId() == _wctx.getMemberObject().homeSceneId) {
-            var ctrlBar :WorldControlBar = _wctx.getControlBar() as WorldControlBar;
-            if (ctrlBar != null && !ctrlBar.homePageGridShown) {
-                if (ctrlBar.homePageGridBtn.enabled && !ctrlBar.homePageGridBtn.selected) {
-                    ctrlBar.homePageGridBtn.activate();
-                }
-            }
-        }
     }
 
     /** Giver of life, context. */

@@ -12,9 +12,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.StaticMediaDesc;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
 import client.util.FeaturedPlaceUtil;
+import client.util.Link;
 import client.util.MediaUtil;
 
 /**
@@ -40,21 +42,20 @@ public class SceneUtil
     public static Widget addSceneView (
         final int sceneId, MediaDesc snapshot, final SimplePanel container)
     {
-        ClickListener onClick = new ClickListener() {
-            public void onClick (Widget widget) {
-                container.clear();
-                FeaturedPlaceUtil.displayFeaturedPlace(sceneId, container);
-            }
-        };
-
         if (snapshot == null) {
             snapshot = new StaticMediaDesc(MediaDesc.IMAGE_JPEG, "snapshot", "default");
         }
 
         FlowPanel panel = new FlowPanel();
         panel.addStyleName("sceneView");
-        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE, onClick));
-        Image overlay = MsoyUI.createActionImage("/images/ui/click_overlay.png", onClick);
+        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE,
+                                            Link.createListener(Pages.WORLD, "m" + sceneId)));
+        Image overlay = MsoyUI.createActionImage(LIVE_VIEW_IMAGE, new ClickListener() {
+            public void onClick (Widget widget) {
+                container.clear();
+                FeaturedPlaceUtil.displayFeaturedPlace(sceneId, container);
+            }
+        });
         overlay.addStyleName("LiveOverlay");
         panel.add(overlay);
         container.setWidget(panel);
@@ -89,4 +90,6 @@ public class SceneUtil
     /** The default image for a scene thumbnail. */
     protected static final String DEFAULT_HALFSIZE =
         DeploymentConfig.staticMediaURL + "snapshot/default_t.jpg";
+
+    protected static final String LIVE_VIEW_IMAGE = "/images/ui/click_overlay.png";
 }
