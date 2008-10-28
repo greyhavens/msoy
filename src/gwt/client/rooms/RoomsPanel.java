@@ -22,7 +22,6 @@ import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import client.room.RoomWidget;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
-import client.ui.StretchButton;
 import client.ui.TongueBox;
 import client.util.FlashClients;
 import client.util.Link;
@@ -39,16 +38,15 @@ public class RoomsPanel extends FlowPanel
         header.setWidget(0, 0, new Marquee(null, _msgs.roomsMarquee()), 1, null);
         header.setText(1, 0, _msgs.roomsIntro(), 1, "Intro");
 
-        StretchButton button = new StretchButton(StretchButton.ORANGE_THICK, "Start Whirled Tour",
-            new ClickListener () {
-                public void onClick (Widget sender) {
-                    if (FlashClients.clientExists()) {
-                        FlashClients.startTour();
-                    } else {
-                        Link.go(Pages.WORLD, "tour");
-                    }
+        Widget button = MsoyUI.createImageButton("TourButton", new ClickListener () {
+            public void onClick (Widget sender) {
+                if (FlashClients.clientExists()) {
+                    FlashClients.startTour();
+                } else {
+                    Link.go(Pages.WORLD, "tour");
                 }
-            });
+            }
+        });
         header.setWidget(0, 1, button, 1, "Tour");
         header.getFlexCellFormatter().setRowSpan(0, 1, 2);
         header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);

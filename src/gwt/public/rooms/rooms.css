@@ -27,6 +27,20 @@
   width: 260px;
 }
 
+.roomsPanel .TourButton {
+  background-image: url(/images/rooms/tour.png);
+  width: 120px;
+  height: 97px;
+}
+
+.roomsPanel .TourButton-up-hovering {
+  background-image: url(/images/rooms/tour_over.png);
+}
+
+.roomsPanel .TourButton-down-hovering {
+  background-image: url(/images/rooms/tour_down.png);
+}
+
 /* ROOM DETAIL PANEL */
 
 .roomDetailPanel {
