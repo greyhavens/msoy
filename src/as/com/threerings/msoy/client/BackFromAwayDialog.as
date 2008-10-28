@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import mx.controls.Button;
 import mx.controls.Label;
 
 import com.threerings.msoy.ui.FloatingPanel;
@@ -39,11 +38,9 @@ public class BackFromAwayDialog extends FloatingPanel
         addButtons(OK_BUTTON);
     }
 
-    override protected function createButton (buttonId :int) :Button
+    override protected function getButtonLabel (buttonId :int) :String
     {
-        var b :Button = super.createButton(buttonId);
-        b.label = Msgs.GENERAL.get("b.Imback");
-        return b;
+        return Msgs.GENERAL.get("b.Imback"); // we only have one button
     }
 
     protected var _msg :String;
