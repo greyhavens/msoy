@@ -434,7 +434,7 @@ public enum BadgeType
     public boolean isUnlocked (Collection<EarnedBadge> badges)
     {
         Collection<BadgeType> reqs = getUnlockRequirements();
-        return reqs.isEmpty() ? true :
+        return reqs.isEmpty() || // either there are no requirements, or we satisfy them all
             Sets.newHashSet(Iterables.transform(badges, BADGE_TO_TYPE)).containsAll(reqs);
     }
 
