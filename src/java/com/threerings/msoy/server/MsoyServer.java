@@ -188,7 +188,6 @@ public class MsoyServer extends MsoyBaseServer
         _jabberMan.init();
         _itemMan.init();
         _swiftlyMan.init(_invmgr);
-        _petMan.init(injector);
         _gameReg.init();
         _partyReg.init();
         _moneyLogic.init();

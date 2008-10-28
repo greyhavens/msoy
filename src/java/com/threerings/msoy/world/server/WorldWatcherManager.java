@@ -45,7 +45,7 @@ public class WorldWatcherManager
         ShutdownManager shutmgr, InvocationManager invmgr, MsoyPeerManager peermgr)
     {
         shutmgr.registerShutdowner(this);
-        peermgr.addMemberObserver(this);
+        peermgr.memberObs.add(this);
         invmgr.registerDispatcher(new WatcherDispatcher(this), WorldGameRegistry.GAME_SERVER_GROUP);
     }
 

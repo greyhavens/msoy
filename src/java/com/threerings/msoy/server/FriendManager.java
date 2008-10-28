@@ -40,7 +40,7 @@ public class FriendManager
     public void init ()
     {
         // register to hear when members log on and off of remote peers
-        _peerMan.addMemberObserver(this);
+        _peerMan.memberObs.add(this);
     }
 
     // from interface MemberLocator.Observer

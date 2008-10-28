@@ -126,6 +126,25 @@ public class MemberManager
         // register to hear when members logon and off
         locator.addObserver(this);
 
+        // register to hear when members are forwarded between nodes
+        peerMan.memberFwdObs.add(new MsoyPeerManager.MemberForwardObserver() {
+            public void memberWillBeSent (String node, MemberObject memobj) {
+                // flush the transient bits in our metrics as we will snapshot and send this data
+                // before we depart our current room (which is when the are normally saved)
+                MemberLocal mlocal = memobj.getLocal(MemberLocal.class);
+                mlocal.metrics.save(memobj);
+
+                // update the number of active seconds they've spent online
+                MsoyClient mclient = (MsoyClient)_clmgr.getClient(memobj.username);
+                if (mclient != null) {
+                    mlocal.sessionSeconds += mclient.getSessionSeconds();
+                    // let our client handler know that the session is not over but rather is being
+                    // forwarded to another server
+                    mclient.setSessionForwarded(true);
+                }
+            }
+        });
+
         // intialize our internal array of memoized flow values per level.  Start with 256
         // calculated levels
         _levelForFlow = new int[256];

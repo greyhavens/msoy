@@ -31,6 +31,7 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.server.MemberLocator;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -57,45 +58,41 @@ import static com.threerings.msoy.Log.log;
 public class PetManager
     implements PetProvider
 {
-    @Inject public PetManager (InvocationManager invmgr)
+    @Inject public PetManager (InvocationManager invmgr, MemberLocator locator,
+                               MsoyPeerManager peerMan)
     {
         // register our pet invocation services
         invmgr.registerDispatcher(new PetDispatcher(this), MsoyCodes.WORLD_GROUP);
-    }
 
-    /**
-     * Initializes the pet manager and prepares it for operation.
-     */
-    public void init (Injector injector)
-    {
-        _injector = injector;
+        // register a member forward participant that handles walked pets
+        peerMan.memberFwdObs.add(new MsoyPeerManager.MemberForwardObserver() {
+            public void memberWillBeSent (String nodeName, MemberObject memobj) {
+                PetObject petobj = getPetObject(memobj.walkingId);
+                if (petobj != null) {
+                    // extract our memories from the room we're in
+                    _sceneReg.leaveOccupiedScene(petobj);
+                    // stuff our pet's data into a member object local attribute
+                    PetLocal local = new PetLocal();
+                    local.pet = petobj.pet;
+                    local.memories = petobj.memories;
+                    memobj.setLocal(PetLocal.class, local);
+                    // the pet will shutdown later when the walking member is destroyed
+                }
+            }
+        });
 
-// TODO:
-
-//         // register a member forward participant that handles walked pets
-//         _peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
-//             public void packMember (MemberObject memobj, Map<String,Object> data) {
-//                 PetObject petobj = getPetObject(memobj.walkingId);
-//                 if (petobj != null) {
-//                     // extract our memories from the room we're in
-//                     _sceneReg.leaveOccupiedScene(petobj);
-//                     data.put("PO.pet", petobj.pet);
-//                     data.put("PO.memories", petobj.memories);
-//                     // the pet will shutdown later when the walking member is destroyed
-//                 }
-//             }
-
-//             public void unpackMember (MemberObject memobj, Map<String,Object> data) {
-//                 // create a handler for any forwarded pet we might have
-//                 Pet pet = (Pet)data.get("PO.pet");
-//                 @SuppressWarnings("unchecked") List<EntityMemoryEntry> memories =
-//                     (List<EntityMemoryEntry>)data.get("PO.memories");
-//                 if (pet != null) {
-//                     createHandler(memobj, pet, memories, false);
-//                 }
-//                 // TODO: reap forwarded pets whose owners never end up showing up
-//             }
-//         });
+        // we want to hear when members logon so that we can unpickle forwarded pets
+        locator.addObserver(new MemberLocator.Observer() {
+            public void memberLoggedOn (MemberObject memobj) {
+                PetLocal local = memobj.getLocal(PetLocal.class);
+                if (local != null) {
+                    createHandler(memobj, local.pet, local.memories, false);
+                }
+            }
+            public void memberLoggedOff (MemberObject memobj) {
+                // nada
+            }
+        });
     }
 
     /**
@@ -349,10 +346,7 @@ public class PetManager
     /** Maintains a mapping of all pet handlers by item id. */
     protected IntMap<PetHandler> _handlers = IntMaps.newHashIntMap();
 
-    /** Used to resolve dependencies for PetHandler. */
-    protected Injector _injector;
-
-    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected Injector _injector;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected SceneRegistry _sceneReg;
     @Inject protected PetRepository _petRepo;

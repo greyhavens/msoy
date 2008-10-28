@@ -103,6 +103,11 @@ public class MsoyClientResolver extends CrowdClientResolver
         // are likely to be generated
         local.deferredNotifications = Lists.newArrayList();
 
+        // do some stats-related hackery
+        if (local.stats instanceof ServerStatSet) {
+            ((ServerStatSet)local.stats).init(_badgeMan, memobj);
+        }
+
         // if our member object was forwarded from another server, it will already be fully ready
         // to go so we can avoid the expensive resolution process
         if (memobj.memberName != null) {

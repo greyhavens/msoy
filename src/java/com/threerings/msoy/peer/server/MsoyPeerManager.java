@@ -90,6 +90,24 @@ public class MsoyPeerManager extends CrowdPeerManager
         void memberEnteredScene (String peerName, MemberLocation loc);
     }
 
+    /**
+     * Used to hear about members being forwarded between servers.
+     */
+    public static interface MemberForwardObserver
+    {
+        /**
+         * Called when the supplied member object is about to be sent to the specified node.
+         */
+        void memberWillBeSent (String node, MemberObject member);
+    }
+
+    /** Our {@link MemberObserver}s. */
+    public static final ObserverList<MemberObserver> memberObs = ObserverList.newFastUnsafe();
+
+    /** Our {@link MemberForwardObserver}s. */
+    public static final ObserverList<MemberForwardObserver> memberFwdObs =
+        ObserverList.newFastUnsafe();
+
     /** Returns a lock used to claim resolution of the specified scene. */
     public static NodeObject.Lock getSceneLock (int sceneId)
     {
@@ -202,22 +220,6 @@ public class MsoyPeerManager extends CrowdPeerManager
                 return (info == null) ? null : info.createConnectConfig();
             }
         });
-    }
-
-    /**
-     * Registers an observer to be notified when remote player log on and off.
-     */
-    public void addMemberObserver (MemberObserver obs)
-    {
-        _memobs.add(obs);
-    }
-
-    /**
-     * Clears out a remote member observer registration.
-     */
-    public void removeMemberObserver (MemberObserver obs)
-    {
-        _memobs.remove(obs);
     }
 
     /**
@@ -340,7 +342,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Requests that we forward the supplied member object to the specified peer.
      */
-    public void forwardMemberObject (String nodeName, MemberObject memobj)
+    public void forwardMemberObject (final String nodeName, final MemberObject memobj)
     {
         // we don't forward "featured place" clients' member objects because they contain no
         // meaningful information; guests and normal members do require forwarding
@@ -356,16 +358,13 @@ public class MsoyPeerManager extends CrowdPeerManager
             return;
         }
 
-        // flush the transient bits in our metrics as we will snapshot and send this data before we
-        // depart our current room (which is when the are normally saved)
-        MemberLocal mlocal = memobj.getLocal(MemberLocal.class);
-        mlocal.metrics.save(memobj);
-
-        // update the number of active seconds they've spent online
-        MsoyClient mclient = (MsoyClient)_clmgr.getClient(memobj.username);
-        if (mclient != null) {
-            mlocal.sessionSeconds += mclient.getSessionSeconds();
-        }
+        // let our member observers know what's up
+        memberFwdObs.apply(new ObserverList.ObserverOp<MemberForwardObserver>() {
+            public boolean apply (MemberForwardObserver observer) {
+                observer.memberWillBeSent(nodeName, memobj);
+                return true;
+            }
+        });
 
         // forward any streamable local attributes
         List<Streamable> locals = Lists.newArrayList();
@@ -378,12 +377,6 @@ public class MsoyPeerManager extends CrowdPeerManager
         // do the forwarding deed
         ((MsoyNodeObject)node.nodeobj).msoyPeerService.forwardMemberObject(
             node.getClient(), memobj, locals.toArray(new Streamable[locals.size()]));
-
-        // let our client handler know that the session is not over but rather is being forwarded
-        // to another server
-        if (mclient != null) {
-            mclient.setSessionForwarded(true);
-        }
     }
 
     // from interface MsoyPeerProvider
@@ -391,8 +384,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         // clear out various bits in the received object
         memobj.clearForwardedObject();
-
-        // do some stats-related hackery
 
         // place this member object in a temporary cache; if the member in question logs on in the
         // next 30 seconds, we'll use this object instead of re-resolving all of their data
@@ -404,7 +395,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     protected void memberLoggedOn (final String node, final MsoyClientInfo info)
     {
-        _memobs.apply(new ObserverList.ObserverOp<MemberObserver>() {
+        memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
             public boolean apply (MemberObserver observer) {
                 observer.memberLoggedOn(node, (MemberName)info.visibleName);
                 return true;
@@ -417,7 +408,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     protected void memberLoggedOff (final String node, final MsoyClientInfo info)
     {
-        _memobs.apply(new ObserverList.ObserverOp<MemberObserver>() {
+        memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
             public boolean apply (MemberObserver observer) {
                 observer.memberLoggedOff(node, (MemberName)info.visibleName);
                 return true;
@@ -430,7 +421,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     protected void memberEnteredScene (final String node, final MemberLocation loc)
     {
-        _memobs.apply(new ObserverList.ObserverOp<MemberObserver>() {
+        memberObs.apply(new ObserverList.ObserverOp<MemberObserver>() {
             public boolean apply (MemberObserver observer) {
                 observer.memberEnteredScene(node, loc);
                 return true;
@@ -584,9 +575,6 @@ public class MsoyPeerManager extends CrowdPeerManager
 
     /** A casted reference to our node object. */
     protected MsoyNodeObject _mnobj;
-
-    /** Our remote member observers. */
-    protected ObserverList<MemberObserver> _memobs = ObserverList.newFastUnsafe();
 
     /** A cache of forwarded member objects. */
     protected Map<Name,MemObjCacheEntry> _mobjCache = Maps.newHashMap();
