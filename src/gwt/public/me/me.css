@@ -5,200 +5,126 @@
  */
 
 /* ------------------------------------
-   NAVIGATION BAR
-   TODO: delete when nav bar is removed from #me
+   ME / MY WHIRLED PAGE
 -------------------------------------*/
 
-.stuffNaviBar {
-  margin-left: 7px;
-  margin-top: 10px;
+.myWhirled {
+  width: 100%;
+  color: #216CA3;
 }
 
-.stuffNaviBar img {
-  float: left;
-}
-
-/* ------------------------------------
-   POPUP PAGE
--------------------------------------*/
-
-.myWhirled .Pop {
+.myWhirled .PeopleOnline {
   text-align: right;
   font-size: 10px;
   padding: 5px 20px 0px 0px;
   color: #63AAE2;
 }
 
-/* ------------------------------------
-   WHATS NEXT PAGE
--------------------------------------*/
+.myWhirled .NewsAndFriends {
+  width: 665px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
 
-.whatsNext {
-  width: 649px;
-  height: 341px;
-  margin: 0px auto 10px;
+.myWhirled .NewsTitle {
+  color: #216CA3;
+  background: url(/images/me/me_news_title_bg.png) repeat-x bottom left;
+  margin: 5px;
+  padding: 5px;
+  font-size: 20px;
+}
+
+/* FeedBox also appears on profile; base styles in person.css */
+.myWhirled .FeedBox {
+  background-color: #d8d8d8;
+  width: 470px;
+  color: #777777;
+}
+
+.FeedBox a {
   color: #216CA3;
 }
 
-.whatsNext .NoFriends, .whatsNext .Friends {
-  background: url(/images/me/next_bg.png) no-repeat top left;
-  width: 217px;
-  padding: 5px 10px 10px 10px;
+.myWhirled .FeedBox .FeedWidget {
+    width: 460px;
+}
+
+.myWhirled .FeedBox .FeedDate {
+  background-color: #d8d8d8;
+  border-bottom: none;
+}
+
+.myWhirled .FeedBox .FeedShowMore {
+  margin-right: 10px;
+}
+
+/* ------------------------------------
+   ME / MY WHIRLED PAGE - FRIENDS PANEL
+-------------------------------------*/
+
+.meFriendsPanel {
+  background: #7DB5DB url(/images/me/me_friends_header.png) no-repeat;
+  width: 182px;
   color: #FFFFFF;
   text-align: center;
+  margin-left: 10px;
+  font-size: 13px;
 }
 
-.whatsNext .Friends .FriendsScroller {
-  height: 326px;
-  width: 217px;
+.meFriendsPanel .Title {
+  font-size: 15px;
+  padding: 6px 0 1px 0;
 }
 
-.whatsNext .NoFriends .Title, .whatsNext .Friends .Title {
+.meFriendsPanel .TitleSub {
+  color: #326383;
+  font-size: 11px;
+  margin-bottom: 15px;
+}
+
+.meFriendsPanel .Invite img {
+  margin: 10px auto;
+}
+
+.meFriendsPanel .SearchTitle {
+  font-size: 15px;
+  margin: 10px 0 5px 0;
+}
+
+.meFriendsPanel .Search input {
+  margin: 0 5px 5px 10px;
+}
+
+.meFriendsPanel .FriendsScroller {
+  max-height: 700px;
+  width: 166px;
+  padding: 3px;
+  margin: auto;
+  text-align: left;
+  background-color: #FFFFFF;
+}
+
+.meFriendsPanel .PlaceName {
+  color: #7d7d7d;
   font-weight: bold;
-}
-
-.whatsNext .NoFriends img {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.whatsNext .NoFriends .NoFriendsMsg {
-  height: 60px;
-  vertical-align: bottom;
-  padding-bottom: 5px;
-}
-
-.whatsNext .NoFriends .Or {
-  height: 60px;
-  vertical-align: middle;
-}
-
-.whatsNext .NoFriends .FindTip {
-  height: 60px;
-  vertical-align: top;
-  font-size: 12px;
-  padding-top: 5px;
-}
-
-.whatsNext .Friends {
-  vertical-align: top;
-}
-
-.whatsNext .Friends .ClickTip {
-  font-size: 12px;
-  color: #FFFFFF;
-  opacity: 0.6;
-}
-
-.whatsNext .Friends .PlaceName {
-  color: #3B556E;
-  font-size: 14px;
-  padding-top: 3px;
+  padding: 10px 0 3px 0;
   overflow: hidden;
   white-space: nowrap;
 }
 
-.whatsNext .Friends .Member {
-  background: #DEECF7;
-  text-align: left;
-  font-size: 14px;
+.meFriendsPanel .Member {
+  font-size: 12px;
+  padding-left: 5px;
   width: 100%;
 }
 
-.whatsNext .Friends .Member .Photo {
-  padding: 2px;
-  width: 20px;
+.meFriendsPanel .Member .Photo {
+  width: 40px;
 }
 
-.whatsNext .Friends .Member .Name {
-  font-weight: bold;
-  text-align: left;
-  padding-left: 10px;
-}
-
-.whatsNext .Friends .MemberRoom .Name {
+.meFriendsPanel .Name {
   color: #6DA8D2;
-}
-
-.whatsNext .Friends .MemberGame .Name {
-  color: #E88436;
-}
-
-.whatsNext .LeftPanel {
-  width: 96px;
-  background: url(/images/me/me_pattern.png) no-repeat top left;
-  vertical-align: top;
-}
-
-.whatsNext .LeftPanel .PassportIcon {
-  position: relative;
-  top: -10px;
-  width: 75px;
-  height: 75px;
-}
-
-.whatsNext .LeftPanel .PassportTip {
-  color: white;
-  text-align: left;
-  padding-left: 10px;
-  padding-right: 10px;
-  font-size: 14px;
-  font-weight: bold;
-  line-height: 17px;
-}
-
-.whatsNext .NextBadges {
-  width: 100%;
-  height: 341px;
-}
-
-.whatsNext .NextBadges .NextTitle {
-  background: url(/images/me/next_tile.png);
-  height: 27px;
-  text-align: center;
-  font-weight: bold;
-  color: white;
-  font-size: 16px;
-  border-right: solid 1px #8d5e30;
-}
-
-.whatsNext .NextBadges .SeeAllLink {
-  background-color: #dbe9f4;
-  height: 28px;
-  text-align: right;
-  font-style: italic;
-  font-size: 16px;
-  padding-right: 10px;
-}
-
-.whatsNext .NextBadges .SeeAllLink a, .whatsNext .NextBadges .SeeAllLink a.visited {
-  color: #2a6c9e;
-}
-
-.whatsNext .NextBadges .SeeAllLink, .whatsNext .NextBadges .badgeDisplay,
-.whatsNext .NextBadges .Spacer, .whatsNext .NextBadges .Divider {
-  border-bottom: solid 1px #569ccd;
-}
-.whatsNext .NextBadges .badgeDisplay, .whatsNext .NextBadges .Spacer,
-.whatsNext .NextBadges .Divider {
-  background: url(/images/me/passport_box_tile.png);
-}
-
-.whatsNext .NextBadges .Spacer {
-  height: 141px;
-  width: 156px;
-}
-
-.whatsNext .NextBadges .Divider {
-  width: 4px;
-  height: 141px;
-  position: relative;
-}
-
-.whatsNext .NextBadges .Divider img {
-  position: absolute;
-  top: 4px;
-  left: 2px;
+  padding-left: 4px;
 }
 
 /* ------------------------------------

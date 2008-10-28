@@ -16,6 +16,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -36,32 +37,29 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import client.ui.TongueBox;
 import client.util.DateUtil;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.NaviUtil;
 
-public class FeedPanel extends TongueBox
+public class FeedPanel extends FlowPanel
 {
     public static interface FeedLoader
     {
         void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback);
     }
 
-    public FeedPanel (String emptyMessage, boolean setHeader, FeedLoader feedLoader)
+    public FeedPanel (String emptyMessage, FeedLoader feedLoader)
     {
-        if (setHeader) {
-            setHeader(_pmsgs.headerFeed());
-        }
-        setContent(_feeds = new FeedList());
+        add(_feeds = new FeedList());
         _emptyMessage = emptyMessage;
-        _moreLabel = setFooterLabel("", new ClickListener() {
+
+        add(_moreLabel = MsoyUI.createActionLabel("", "FeedShowMore", new ClickListener() {
             public void onClick (Widget sender) {
                 loadFeed(!_fullPage);
             }
-        });
+        }));
         _feedLoader = feedLoader;
     }
 
@@ -755,10 +753,10 @@ public class FeedPanel extends TongueBox
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
 
     /** The default number of days of feed information to show. */
-    protected static final int SHORT_CUTOFF = 2;
+    public static final int SHORT_CUTOFF = 2;
 
     /** The default number of days of feed information to show. */
-    protected static final int FULL_CUTOFF = 14;
+    public static final int FULL_CUTOFF = 14;
 
     /** The length of one day in milliseconds. */
     protected static final long ONE_DAY = 24 * 60 * 60 * 1000L;

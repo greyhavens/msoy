@@ -1,5 +1,5 @@
 //
-// $Id$
+// $Id: WhatsNextPanel.java 12616 2008-10-17 21:40:55Z mdb $
 
 package client.me;
 
@@ -8,21 +8,18 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
-
 import com.threerings.msoy.person.gwt.MyWhirledData;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -30,83 +27,50 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.images.next.NextImages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
-import client.ui.TongueBox;
 import client.util.Link;
 
 /**
- * Displays blurbs about things to do and a player's online friends.
+ * Displays a list of friends online and/or a way to find friends online, for display on the Me
+ * page.
  */
-public class WhatsNextPanel extends TongueBox
+public class MeFriendsPanel extends FlowPanel
 {
-    public WhatsNextPanel (MyWhirledData data)
+    public MeFriendsPanel (MyWhirledData data)
     {
-        SmartTable content = new SmartTable("whatsNext", 0, 0);
-        setContent(content);
-
-        content.setWidget(0, 0, createLeftPanel(), 1, "LeftPanel");
-        content.setWidget(0, 1, createNextBadges(data), 1, null);
+        setStyleName("meFriendsPanel");
+        add(MsoyUI.createLabel(_msgs.nextFriends(), "Title"));
         if (data.friends == null || data.friends.size() == 0) {
-            content.setWidget(0, 2, createNoFriends(data), 1, "NoFriends");
+            addNoFriends(data);
         } else {
-            content.setWidget(0, 2, createFriends(data), 1, "Friends");
+            addFriends(data);
         }
+        add(new Image("/images/me/me_friends_footer.png"));
     }
 
-    protected Widget createLeftPanel ()
+    /**
+     * Add widgets displayed when player has no friends.
+     */
+    protected void addNoFriends (MyWhirledData data)
     {
-        FlowPanel panel = new FlowPanel();
-        panel.add(MsoyUI.createImage("/images/me/passport_icon_large.png", "PassportIcon"));
-        panel.add(MsoyUI.createLabel(_msgs.nextPassportTip(), "PassportTip"));
-        return panel;
-    }
+        add(MsoyUI.createLabel(_msgs.nextNoFriends(), "TitleSub"));
 
-    protected Widget createNextBadges (MyWhirledData data)
-    {
-        SmartTable badges = new SmartTable("NextBadges", 0, 0);
-        badges.setText(0, 0, _msgs.nextBadgesTitle(), 3, "NextTitle");
-
-        for (int row = 0; row < 2; row++) {
-            if (data.badges.size() > row * 2) {
-                badges.setWidget(row + 1, 0, new BadgeDisplay(data.badges.get(row * 2)));
-            } else {
-                badges.setWidget(row + 1, 0, MsoyUI.createFlowPanel("Spacer"));
-            }
-            badges.setWidget(row + 1, 1, MsoyUI.createSimplePanel(MsoyUI.createImage("/images/me/passport_box_divider.png", null),
-                "Divider"));
-            if (data.badges.size() > row * 2 + 1) {
-                badges.setWidget(row + 1, 2, new BadgeDisplay(data.badges.get(row * 2 + 1)));
-            } else {
-                badges.setWidget(row + 1, 2, MsoyUI.createFlowPanel("Spacer"));
-            }
-        }
-
-        badges.setWidget(
-            3, 0, Link.create(_msgs.nextBadgesSeeAll(), Pages.ME, "passport"), 3,  "SeeAllLink");
-        return badges;
-    }
-
-    protected Widget createNoFriends (MyWhirledData data)
-    {
-        SmartTable friends = new SmartTable(0, 0);
-        friends.setHeight("100%");
-        friends.setText(0, 0, _msgs.nextFriends(), 1, "Title");
-        friends.setText(1, 0, _msgs.nextNoFriends(), 1, "NoFriendsMsg");
         Widget imageLink = Link.createImage(
-            "/images/me/invite_friends.png", _msgs.nextInviteTip(), Pages.PEOPLE, "invites");
+            "/images/me/me_invite_friends.png", _msgs.nextInviteTip(), Pages.PEOPLE, "invites");
+        imageLink.addStyleName("Invite");
         ((SourcesClickEvents)imageLink).addClickListener(
             MsoyUI.createTrackingListener("meInviteFriends", null));
-        friends.setWidget(2, 0, imageLink);
-        friends.setText(3, 0, _msgs.nextOr(), 1, "Or");
-        friends.setText(4, 0, _msgs.nextFind(), 1, "Title");
+        add(imageLink);
 
-        HorizontalPanel sctrls = new HorizontalPanel();
-        sctrls.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+        add(MsoyUI.createLabel(_msgs.nextOr(), null));
+        add(MsoyUI.createLabel(_msgs.nextFind(), "SearchTitle"));
+
+        FloatPanel searchControls = new FloatPanel("Search");
         final TextBox search = MsoyUI.createTextBox("", -1, -1);
-        search.setWidth("150px");
-        sctrls.add(search);
+        search.setWidth("120px");
+        searchControls.add(search);
+        add(searchControls);
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget sender) {
                 String query = search.getText().trim();
@@ -116,23 +80,22 @@ public class WhatsNextPanel extends TongueBox
             }
         };
         search.addKeyboardListener(new EnterClickAdapter(onClick));
-        sctrls.add(WidgetUtil.makeShim(5, 5));
-        sctrls.add(new Button("Search", onClick));
+        searchControls.add(new Button("Go", onClick));
 
-        friends.setWidget(5, 0, sctrls);
-        friends.setText(6, 0, _msgs.nextFindTip(), 1, "FindTip");
-        return friends;
+        add(searchControls);
+        add(MsoyUI.createLabel(_msgs.nextFindTip(), null));
     }
 
-    protected Widget createFriends (MyWhirledData data)
+    /**
+     * Add widgets displayed when player has friends, who may or may not be online.
+     */
+    protected void addFriends (MyWhirledData data)
     {
-        FlowPanel friends = new FlowPanel();
-        friends.add(MsoyUI.createLabel(_msgs.nextFriends(), "Title"));
-        friends.add(MsoyUI.createLabel(_msgs.nextFriendClick(), "ClickTip"));
+        add(MsoyUI.createLabel(_msgs.nextFriendClick(), "TitleSub"));
 
-        // if we have few friends, show larger photo images
-        int size = (data.friends.size() > 5) ?
-            MediaDesc.QUARTER_THUMBNAIL_SIZE : MediaDesc.HALF_THUMBNAIL_SIZE;
+        // contents will scroll after a long time
+        FlowPanel scrollContents = new FlowPanel();
+        int size = MediaDesc.HALF_THUMBNAIL_SIZE;
 
         // group our friends by location (in rooms or games)
         Map<Integer, FlowPanel> games = new HashMap<Integer, FlowPanel>();
@@ -170,15 +133,15 @@ public class WhatsNextPanel extends TongueBox
 
         // now add the rooms and games to our scrolling contents (rooms first)
         for (FlowPanel panel : rooms.values()) {
-            friends.add(panel);
+            scrollContents.add(panel);
         }
         for (FlowPanel panel : games.values()) {
-            friends.add(panel);
+            scrollContents.add(panel);
         }
 
-        ScrollPanel scroller = new ScrollPanel(friends);
+        ScrollPanel scroller = new ScrollPanel(scrollContents);
         scroller.addStyleName("FriendsScroller");
-        return scroller;
+        add(scroller);
     }
 
     protected FlowPanel getPlacePanel (
@@ -201,16 +164,5 @@ public class WhatsNextPanel extends TongueBox
         return member;
     }
 
-    protected static final NextImages _images = GWT.create(NextImages.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
-
-    protected static final AbstractImagePrototype[] GAME_SHOTS = {
-        _images.astro_shot(), _images.brawler_shot(), _images.dict_shot(),
-        _images.drift_shot(), _images.lol_shot()
-    };
-
-    protected static final AbstractImagePrototype[] WHIRLED_SHOTS = {
-        _images.brave_shot(), _images.kawaii_shot(), _images.nap_shot(),
-        _images.pirate_shot(), _images.rave_shot()
-    };
 }

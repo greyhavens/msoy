@@ -33,7 +33,7 @@ public class FeedBlurb extends Blurb
 
         setHeader(_msgs.feedTitle());
         String empty = _msgs.emptySelfFeed(pdata.name.toString());
-        FeedPanel feed = new FeedPanel(empty, false, new FeedPanel.FeedLoader() {
+        FeedPanel feed = new FeedPanel(empty, new FeedPanel.FeedLoader() {
             public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {
                 _profilesvc.loadSelfFeed(pdata.name.getMemberId(), feedDays, callback);
             }
