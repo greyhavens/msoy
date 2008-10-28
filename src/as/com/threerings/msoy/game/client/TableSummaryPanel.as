@@ -73,7 +73,9 @@ public class TableSummaryPanel extends HBox
         // set up the game info
         var info :String;
         if (table.gameOid != -1) {
-            _info.text = Msgs.GAME.get("m.tsp_in_progress");
+            var pcount :int = table.getPlayers().length;
+            _info.text = Msgs.GAME.get("m.tsp_in_progress",
+                (pcount == 0) ? table.watchers.length : pcount);
         } else if (table.players != null) {
             var open :int = table.players.filter(function (pname :Name, ii :int, a :Array) :Boolean {
                 return (pname == null);
