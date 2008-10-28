@@ -20,7 +20,7 @@ public enum Pages
     MAIL(Tabs.ME),
     ME(Tabs.ME),
     PEOPLE(Tabs.ME),
-    ROOMS(Tabs.WHIRLEDS),
+    ROOMS(Tabs.ROOMS),
     SHOP(Tabs.SHOP),
     STUFF(Tabs.STUFF),
     SUPPORT(Tabs.HELP),

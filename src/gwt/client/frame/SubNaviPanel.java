@@ -66,6 +66,14 @@ public class SubNaviPanel extends FlowPanel
             addLink(null, "All Games", Pages.GAMES, "g");
             break;
 
+        case ROOMS:
+            addLink(null, "Rooms", Pages.ROOMS, "");
+            if (!CShell.isGuest()) {
+                addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
+                addLink(null, "My Rooms", Pages.PEOPLE, Args.compose("rooms", memberId), false);
+            }
+            break;
+
         case WHIRLEDS:
             addLink(null, "Whirleds", Pages.WHIRLEDS, "");
             if (!CShell.isGuest()) {
