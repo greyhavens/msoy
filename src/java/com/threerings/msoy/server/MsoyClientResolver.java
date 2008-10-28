@@ -12,6 +12,8 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.Tuple;
+import com.threerings.io.Streamable;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
@@ -64,8 +66,8 @@ public class MsoyClientResolver extends CrowdClientResolver
     public ClientObject createClientObject ()
     {
         // see if we have a member object forwarded from our peer
-        final MemberObject memobj = _peerMan.getForwardedMemberObject(_username);
-        return (memobj != null) ? memobj : new MemberObject();
+        _fwddata = _peerMan.getForwardedMemberObject(_username);
+        return (_fwddata == null) ? new MemberObject() : _fwddata.left;
     }
 
     @Override
@@ -79,6 +81,16 @@ public class MsoyClientResolver extends CrowdClientResolver
         throws Exception
     {
         super.resolveClientData(clobj);
+
+        // copy our forwarded local attributes
+        if (_fwddata != null) {
+            for (Streamable local : _fwddata.right) {
+                @SuppressWarnings("unchecked") Class<Streamable> lclass =
+                    (Class<Streamable>)local.getClass();
+                clobj.setLocal(lclass, null); // delete any stock local
+                clobj.setLocal(lclass, local); // configure our forwarded data
+            }
+        }
 
         final MemberObject memobj = (MemberObject) clobj;
         memobj.setAccessController(MsoyObjectAccess.USER);
@@ -230,6 +242,9 @@ public class MsoyClientResolver extends CrowdClientResolver
             });
         }
     }
+
+    /** Info on our member object forwarded from another server. */
+    protected Tuple<MemberObject,Streamable[]> _fwddata;
 
     // dependencies
     @Inject protected MsoyPeerManager _peerMan;

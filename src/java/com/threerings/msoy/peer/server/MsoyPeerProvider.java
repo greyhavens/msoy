@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.peer.server;
 
+import com.threerings.io.Streamable;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.peer.client.MsoyPeerService;
 import com.threerings.presents.data.ClientObject;
@@ -16,5 +17,5 @@ public interface MsoyPeerProvider extends InvocationProvider
     /**
      * Handles a {@link MsoyPeerService#forwardMemberObject} request.
      */
-    void forwardMemberObject (ClientObject caller, MemberObject arg1, String[] arg2, Object[] arg3);
+    void forwardMemberObject (ClientObject caller, MemberObject arg1, Streamable[] arg2);
 }

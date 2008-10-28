@@ -133,46 +133,6 @@ public class MemberManager
             _levelForFlow[ii] = BEGINNING_FLOW_LEVELS[ii];
         }
         calculateLevelsForFlow(BEGINNING_FLOW_LEVELS.length);
-
-        // register a member forward participant that handles our transient bits
-        peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
-            public void packMember (final MemberObject memobj, final Map<String,Object> data) {
-                MemberLocal local = memobj.getLocal(MemberLocal.class);
-
-                // flush the transient bits in our metrics as we will snapshot and send this data
-                // before we depart our current room (which is when the are normally saved)
-                local.metrics.save(memobj);
-
-                // update the number of active seconds they've spent online
-                MsoyClient client = (MsoyClient)_clmgr.getClient(memobj.username);
-                if (client != null) {
-                    local.sessionSeconds += client.getSessionSeconds();
-                }
-
-                // store our transient bits in the additional data map
-                data.put("MO.metrics", local.metrics);
-                data.put("MO.badges", local.badges);
-                data.put("MO.badgesVersion", local.badgesVersion);
-                data.put("MO.inProgressBadges", local.inProgressBadges);
-                data.put("MO.stats", local.stats);
-                data.put("MO.sessionSeconds", local.sessionSeconds);
-            }
-
-            public void unpackMember (final MemberObject memobj, final Map<String,Object> data) {
-                MemberLocal local = memobj.getLocal(MemberLocal.class);
-                // grab and reinstate our bits
-                local.metrics = (PlayerMetrics)data.get("MO.metrics");
-                local.badges = (EarnedBadgeSet)data.get("MO.badges");
-                local.badgesVersion = (Short)data.get("MO.badgesVersion");
-                local.inProgressBadges = (InProgressBadgeSet)data.get("MO.inProgressBadges");
-                final StatSet stats = (StatSet)data.get("MO.stats");
-                if (stats instanceof ServerStatSet) {
-                    ((ServerStatSet)stats).init(_badgeMan, memobj);
-                }
-                local.stats = stats;
-                local.sessionSeconds = (Integer)data.get("MO.sessionSeconds");
-            }
-        });
     }
 
     /**

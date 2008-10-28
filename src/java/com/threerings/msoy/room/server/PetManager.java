@@ -70,30 +70,32 @@ public class PetManager
     {
         _injector = injector;
 
-        // register a member forward participant that handles walked pets
-        _peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
-            public void packMember (MemberObject memobj, Map<String,Object> data) {
-                PetObject petobj = getPetObject(memobj.walkingId);
-                if (petobj != null) {
-                    // extract our memories from the room we're in
-                    _sceneReg.leaveOccupiedScene(petobj);
-                    data.put("PO.pet", petobj.pet);
-                    data.put("PO.memories", petobj.memories);
-                    // the pet will shutdown later when the walking member is destroyed
-                }
-            }
+// TODO:
 
-            public void unpackMember (MemberObject memobj, Map<String,Object> data) {
-                // create a handler for any forwarded pet we might have
-                Pet pet = (Pet)data.get("PO.pet");
-                @SuppressWarnings("unchecked") List<EntityMemoryEntry> memories =
-                    (List<EntityMemoryEntry>)data.get("PO.memories");
-                if (pet != null) {
-                    createHandler(memobj, pet, memories, false);
-                }
-                // TODO: reap forwarded pets whose owners never end up showing up
-            }
-        });
+//         // register a member forward participant that handles walked pets
+//         _peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
+//             public void packMember (MemberObject memobj, Map<String,Object> data) {
+//                 PetObject petobj = getPetObject(memobj.walkingId);
+//                 if (petobj != null) {
+//                     // extract our memories from the room we're in
+//                     _sceneReg.leaveOccupiedScene(petobj);
+//                     data.put("PO.pet", petobj.pet);
+//                     data.put("PO.memories", petobj.memories);
+//                     // the pet will shutdown later when the walking member is destroyed
+//                 }
+//             }
+
+//             public void unpackMember (MemberObject memobj, Map<String,Object> data) {
+//                 // create a handler for any forwarded pet we might have
+//                 Pet pet = (Pet)data.get("PO.pet");
+//                 @SuppressWarnings("unchecked") List<EntityMemoryEntry> memories =
+//                     (List<EntityMemoryEntry>)data.get("PO.memories");
+//                 if (pet != null) {
+//                     createHandler(memobj, pet, memories, false);
+//                 }
+//                 // TODO: reap forwarded pets whose owners never end up showing up
+//             }
+//         });
     }
 
     /**

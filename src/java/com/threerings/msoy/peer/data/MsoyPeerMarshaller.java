@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.peer.data;
 
+import com.threerings.io.Streamable;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.peer.client.MsoyPeerService;
 import com.threerings.presents.client.Client;
@@ -22,10 +23,10 @@ public class MsoyPeerMarshaller extends InvocationMarshaller
     public static final int FORWARD_MEMBER_OBJECT = 1;
 
     // from interface MsoyPeerService
-    public void forwardMemberObject (Client arg1, MemberObject arg2, String[] arg3, Object[] arg4)
+    public void forwardMemberObject (Client arg1, MemberObject arg2, Streamable[] arg3)
     {
         sendRequest(arg1, FORWARD_MEMBER_OBJECT, new Object[] {
-            arg2, arg3, arg4
+            arg2, arg3
         });
     }
 }

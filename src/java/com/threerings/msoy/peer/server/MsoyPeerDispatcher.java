@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.peer.server;
 
+import com.threerings.io.Streamable;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.peer.data.MsoyPeerMarshaller;
 import com.threerings.presents.data.ClientObject;
@@ -37,7 +38,7 @@ public class MsoyPeerDispatcher extends InvocationDispatcher<MsoyPeerMarshaller>
         switch (methodId) {
         case MsoyPeerMarshaller.FORWARD_MEMBER_OBJECT:
             ((MsoyPeerProvider)provider).forwardMemberObject(
-                source, (MemberObject)args[0], (String[])args[1], (Object[])args[2]
+                source, (MemberObject)args[0], (Streamable[])args[1]
             );
             return;
 

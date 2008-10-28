@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.io.Streamable;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -45,6 +46,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MsoyClient;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -88,22 +90,6 @@ public class MsoyPeerManager extends CrowdPeerManager
         void memberEnteredScene (String peerName, MemberLocation loc);
     }
 
-    /** Used to participate in the member object forwarding process. */
-    public static interface MemberForwarder
-    {
-        /**
-         * Packs up additional data to be forwarded along with the member object. Anything added to
-         * the supplied map will be sent to the other server. Note: all values in the map must be
-         * streamable types.
-         */
-        void packMember (MemberObject memobj, Map<String,Object> data);
-
-        /**
-         * Unpacks additional data delivered with a forwarded member object.
-         */
-        void unpackMember (MemberObject memobj, Map<String,Object> data);
-    }
-
     /** Returns a lock used to claim resolution of the specified scene. */
     public static NodeObject.Lock getSceneLock (int sceneId)
     {
@@ -128,17 +114,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     @Inject public MsoyPeerManager (ShutdownManager shutmgr)
     {
         super(shutmgr);
-    }
-
-    /**
-     * Registers a participant in the member forwarding process. This should be done during server
-     * initialization, before we are likely to have to forward member objects. Note: there is no
-     * way to remove a registration, the assumption is that all participants are registered at
-     * server startup time and exist for the lifetime of the server.
-     */
-    public void registerMemberForwarder (MemberForwarder part)
-    {
-        _mforwarders.add(part);
     }
 
     /**
@@ -339,25 +314,24 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Returns a {@link MemberObject} forwarded from one of our peers if we have one. False if not.
+     * Returns member info forwarded from one of our peers if we have any, null otherwise.
      */
-    public MemberObject getForwardedMemberObject (Name username)
+    public Tuple<MemberObject,Streamable[]> getForwardedMemberObject (Name username)
     {
         long now = System.currentTimeMillis();
         try {
             // locate our forwarded member object if any
             MemObjCacheEntry entry = _mobjCache.remove(username);
-            return (entry != null && now < entry.expireTime) ? entry.memobj : null;
+            return (entry != null && now < entry.expireTime) ?
+                Tuple.create(entry.memobj, entry.locals) : null;
 
         } finally {
             // clear other expired records from the cache
-            if (_mobjCache.size() > 0) {
-                for (Iterator<Map.Entry<Name,MemObjCacheEntry>> iter =
-                         _mobjCache.entrySet().iterator(); iter.hasNext(); ) {
-                    Map.Entry<Name,MemObjCacheEntry> entry = iter.next();
-                    if (now < entry.getValue().expireTime) {
-                        iter.remove();
-                    }
+            for (Iterator<Map.Entry<Name,MemObjCacheEntry>> iter =
+                     _mobjCache.entrySet().iterator(); iter.hasNext(); ) {
+                Map.Entry<Name,MemObjCacheEntry> entry = iter.next();
+                if (now < entry.getValue().expireTime) {
+                    iter.remove();
                 }
             }
         }
@@ -382,47 +356,47 @@ public class MsoyPeerManager extends CrowdPeerManager
             return;
         }
 
-        // allow the member forward participants to participate
-        Map<String,Object> data = Maps.newHashMap();
-        for (MemberForwarder part : _mforwarders) {
-            part.packMember(memobj, data);
+        // flush the transient bits in our metrics as we will snapshot and send this data before we
+        // depart our current room (which is when the are normally saved)
+        MemberLocal mlocal = memobj.getLocal(MemberLocal.class);
+        mlocal.metrics.save(memobj);
+
+        // update the number of active seconds they've spent online
+        MsoyClient mclient = (MsoyClient)_clmgr.getClient(memobj.username);
+        if (mclient != null) {
+            mlocal.sessionSeconds += mclient.getSessionSeconds();
         }
 
-        // flatten the additional participant data into an array
-        String[] keys = data.keySet().toArray(new String[data.size()]);
-        Object[] values = data.values().toArray(new Object[data.size()]);
+        // forward any streamable local attributes
+        List<Streamable> locals = Lists.newArrayList();
+        for (Object local : memobj.getLocals()) {
+            if (local instanceof Streamable) {
+                locals.add((Streamable)local);
+            }
+        }
 
         // do the forwarding deed
         ((MsoyNodeObject)node.nodeobj).msoyPeerService.forwardMemberObject(
-            node.getClient(), memobj, keys, values);
+            node.getClient(), memobj, locals.toArray(new Streamable[locals.size()]));
 
         // let our client handler know that the session is not over but rather is being forwarded
         // to another server
-        MsoyClient mclient = (MsoyClient)_clmgr.getClient(memobj.username);
         if (mclient != null) {
             mclient.setSessionForwarded(true);
         }
     }
 
     // from interface MsoyPeerProvider
-    public void forwardMemberObject (ClientObject caller, MemberObject memobj,
-                                     String[] keys, Object[] values)
+    public void forwardMemberObject (ClientObject caller, MemberObject memobj, Streamable[] locals)
     {
         // clear out various bits in the received object
         memobj.clearForwardedObject();
 
-        // let our forward participants in on the action
-        Map<String,Object> data = Maps.newHashMap();
-        for (int ii = 0; ii < keys.length; ii++) {
-            data.put(keys[ii], values[ii]);
-        }
-        for (MemberForwarder part : _mforwarders) {
-            part.unpackMember(memobj, data);
-        }
+        // do some stats-related hackery
 
         // place this member object in a temporary cache; if the member in question logs on in the
         // next 30 seconds, we'll use this object instead of re-resolving all of their data
-        _mobjCache.put(memobj.username, new MemObjCacheEntry(memobj));
+        _mobjCache.put(memobj.username, new MemObjCacheEntry(memobj, locals));
     }
 
     /**
@@ -597,12 +571,14 @@ public class MsoyPeerManager extends CrowdPeerManager
     /** Used to cache forwarded member objects. */
     protected static class MemObjCacheEntry
     {
-        public long expireTime;
-        public MemberObject memobj;
+        public final long expireTime;
+        public final MemberObject memobj;
+        public final Streamable[] locals;
 
-        public MemObjCacheEntry (MemberObject memobj) {
-            expireTime = System.currentTimeMillis() + 60*1000L;
+        public MemObjCacheEntry (MemberObject memobj, Streamable[] locals) {
+            this.expireTime = System.currentTimeMillis() + 60*1000L;
             this.memobj = memobj;
+            this.locals = locals;
         }
     }
 
@@ -614,9 +590,6 @@ public class MsoyPeerManager extends CrowdPeerManager
 
     /** A cache of forwarded member objects. */
     protected Map<Name,MemObjCacheEntry> _mobjCache = Maps.newHashMap();
-
-    /** A list of participants in the member forwarding process. */
-    protected List<MemberForwarder> _mforwarders = Lists.newArrayList();
 
     // dependencies
     @Inject protected InvocationManager _invmgr;
