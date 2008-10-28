@@ -4,10 +4,12 @@
 package com.threerings.msoy.world.tour.client {
 
 import mx.containers.HBox;
+import mx.containers.VBox;
 
 import mx.controls.Text;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
@@ -19,7 +21,10 @@ public class TourControl extends HBox
 {
     public function TourControl (ctx :WorldContext, nextRoom :Function, endTour :Function)
     {
-        setStyle("backgroundColor", 0x777777);
+        setStyle("backgroundColor", 0x3399cc);
+        setStyle("backgroundAlpha", .25);
+        setStyle("paddingLeft", 5);
+        setStyle("paddingRight", 5);
         this.height = ControlBar.HEIGHT;
 
         const label :Text = new Text();
@@ -37,10 +42,17 @@ public class TourControl extends HBox
         const closeBtn :CommandButton = new CommandButton(null, endTour);
         closeBtn.styleName = "closeButton";
 
+        const vpan :VBox = new VBox();
+        vpan.setStyle("verticalGap", 0);
+        vpan.addChild(FlexUtil.createSpacer(1, 3));
+        const hpan :HBox = new HBox();
+        hpan.addChild(nextBtn);
+        hpan.addChild(commentBtn);
+        hpan.addChild(closeBtn);
+        vpan.addChild(hpan);
+
         addChild(label);
-        addChild(nextBtn);
-        addChild(commentBtn);
-        addChild(closeBtn);
+        addChild(vpan);
     }
 }
 }
