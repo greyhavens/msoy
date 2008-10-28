@@ -173,9 +173,6 @@ public class GameLogic
                 featured.add(toFeaturedGameInfo(game, detail, card.population));
                 have.add(game.gameId);
             }
-            if (have.size() == ArcadeData.FEATURED_GAME_COUNT) {
-                break;
-            }
         }
 
         // pad the featured games with ones nobody is playing
