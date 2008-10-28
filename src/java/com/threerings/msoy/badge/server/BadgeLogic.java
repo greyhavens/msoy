@@ -193,20 +193,9 @@ public class BadgeLogic
     {
         // Read in our in-progress badges and choose a number of them randomly
         List<InProgressBadge> allBadges = getInProgressBadges(memberId, false);
-        List<InProgressBadge> randomSelection = Lists.newArrayListWithExpectedSize(maxBadges);
-        if (!allBadges.isEmpty()) {
-            Collections.shuffle(allBadges);
-
-            // Java.util.List.subList() returns a list that cannot be sent to GWT.
-            for (InProgressBadge badge : allBadges) {
-                randomSelection.add(badge);
-                if (randomSelection.size() >= maxBadges) {
-                    break;
-                }
-            }
-        }
-
-        return randomSelection;
+        Collections.shuffle(allBadges); // always randomize order
+        return (allBadges.size() <= maxBadges) ? allBadges :
+            Lists.newArrayList(allBadges.subList(0, maxBadges));
     }
 
     @Inject protected BadgeRepository _badgeRepo;
