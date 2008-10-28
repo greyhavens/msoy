@@ -863,9 +863,10 @@ public class MemberManager
                     for (Place place : pps.getTopWhirleds()) {
                         if (!haveGroups.contains(place.placeId)) {
                             GroupRecord group = _groupRepo.loadGroup(place.placeId);
-                            MediaDesc media = group.toLogo();
+                            SceneRecord scene = _sceneRepo.loadScene(group.homeSceneId);
+                            MediaDesc media = scene.getSnapshot();
                             if (media == null) {
-                                media = Group.getDefaultGroupLogoMedia();
+                                media = DEFAULT_ROOM_SNAPSHOT;
                             }
                             items[curItem++] = new HomePageItem(HomePageItem.ACTION_GROUP, 
                                 new BasicNavItemData(group.groupId, group.name), media);
@@ -880,9 +881,10 @@ public class MemberManager
                     if (curItem < startTopItems + groupCount) {
                         for(GroupRecord group : _groupRepo.getGroupsList(0, 9)) {
                             if (!haveGroups.contains(group.groupId)) {
-                                MediaDesc media = group.toLogo();
+                                SceneRecord scene = _sceneRepo.loadScene(group.homeSceneId);
+                                MediaDesc media = scene.getSnapshot();
                                 if (media == null) {
-                                    media = Group.getDefaultGroupLogoMedia();
+                                    media = DEFAULT_ROOM_SNAPSHOT;
                                 }
                                 items[curItem++] = new HomePageItem(HomePageItem.ACTION_GROUP, 
                                     new BasicNavItemData(group.groupId, group.name), media);
@@ -1105,26 +1107,25 @@ public class MemberManager
                 MediaDesc media;
                 final NavItemData data;
                 switch (se.experience.action) {
-                case HomePageItem.ACTION_ROOM:
+                case HomePageItem.ACTION_ROOM: {
                     SceneRecord scene = _sceneRepo.loadScene(se.experience.data);
                     media = scene.getSnapshot();
                     if (media == null) {
-                        // It's not obvious from the docs in StaticMediaDesc that you can do this,
-                        // but this is what Group.getDefaultGroupLogoMedia() does.
-                        media = new StaticMediaDesc(MediaDesc.IMAGE_JPEG, "snapshot", "default_t",
-                            // we know that we're 66x60
-                            MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+                        media = DEFAULT_ROOM_SNAPSHOT;
                     }
                     data = new BasicNavItemData(se.experience.data, scene.name);
                     break;
-                case HomePageItem.ACTION_GROUP:
+                }
+                case HomePageItem.ACTION_GROUP: {
                     GroupRecord group = _groupRepo.loadGroup(se.experience.data);
-                    media = group.toLogo();
+                    SceneRecord scene = _sceneRepo.loadScene(group.homeSceneId);
+                    media = scene.getSnapshot();
                     if (media == null) {
-                        media = Group.getDefaultGroupLogoMedia();
+                        media = DEFAULT_ROOM_SNAPSHOT;
                     }
                     data = new BasicNavItemData(se.experience.data, group.name);
                     break;
+                }
                 case HomePageItem.ACTION_GAME:
                     GameRecord game = _msoyGameRepo.loadGameRecord(se.experience.data);
                     media = game.getThumbMediaDesc();
@@ -1284,4 +1285,12 @@ public class MemberManager
     protected static final HomePageItem EXPLORE_ITEM = new HomePageItem(
         HomePageItem.ACTION_EXPLORE, null, new StaticMediaDesc(
             MediaDesc.IMAGE_PNG, "icon", "home_page_tour"));
+    
+    /** Static media descriptor for the default room snapshot. */
+    protected static final MediaDesc DEFAULT_ROOM_SNAPSHOT = new StaticMediaDesc(
+        // It's not obvious from the docs in StaticMediaDesc that you can do this,
+        // but this is what Group.getDefaultGroupLogoMedia() does.
+        MediaDesc.IMAGE_JPEG, "snapshot", "default_t",
+        // we know that we're 66x60
+        MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 }
