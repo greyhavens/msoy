@@ -301,6 +301,7 @@ img, embed, applet, object {
 .tongueBox .Header .Base {
   background: url(/images/ui/tongue_base.png) #49A1E7 no-repeat left;
   padding-left: 10px;
+  padding-bottom: 0;
   height: 28px;
 }
 
