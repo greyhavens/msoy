@@ -41,6 +41,8 @@ public class TourDirector extends BasicDirector
         // only send a request if we're not already on the tour
         if (!_wctx.getMemberObject().onTour) {
             nextRoom();
+        } else {
+            _wctx.displayFeedback(MsoyCodes.WORLD_MSGS, "e.already_touring");
         }
     }
 
