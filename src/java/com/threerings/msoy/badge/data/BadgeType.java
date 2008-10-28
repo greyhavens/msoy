@@ -433,8 +433,12 @@ public enum BadgeType
      */
     public boolean isUnlocked (Collection<EarnedBadge> badges)
     {
-        return Sets.newHashSet(Iterables.transform(badges, BADGE_TO_TYPE)).containsAll(
-            getUnlockRequirements());
+        Collection<BadgeType> reqs = getUnlockRequirements();
+        switch (reqs.size()) {
+        case 0: return true;
+        default:
+            return Sets.newHashSet(Iterables.transform(badges, BADGE_TO_TYPE)).containsAll(reqs);
+        }
     }
 
     /** Constructs a new BadgeType. */
