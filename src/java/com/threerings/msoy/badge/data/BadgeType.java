@@ -436,6 +436,13 @@ public enum BadgeType
         Collection<BadgeType> reqs = getUnlockRequirements();
         switch (reqs.size()) {
         case 0: return true;
+        case 1:
+            final int code = reqs.iterator().next().getCode();
+            return Iterables.any(badges, new Predicate<EarnedBadge>() {
+                public boolean apply (EarnedBadge badge) {
+                    return (badge.badgeCode == code);
+                }
+            });
         default:
             return Sets.newHashSet(Iterables.transform(badges, BADGE_TO_TYPE)).containsAll(reqs);
         }
