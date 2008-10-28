@@ -182,8 +182,8 @@ public class BadgeLogic
             }
         }
 
-        // Return the badges we just loaded or created, minus the "HIDDEN" marker badge.
-        return Lists.newArrayList(Iterables.filter(badges, BadgeType.IS_VISIBLE_BADGE));
+        // Return the badges we just loaded or created
+        return Lists.newArrayList(badges);
     }
 
     /**

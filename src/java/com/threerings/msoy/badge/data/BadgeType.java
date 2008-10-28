@@ -292,34 +292,11 @@ public enum BadgeType
             return Collections.singleton(SHOPPER);
         }
     },
-
-    // Every member will have an InProgressBadgeRecord created for the HIDDEN badge, but they will
-    // never earn it (to allow Passport to determine whether a player's initial set of
-    // InProgressBadges needs to be created).
-    HIDDEN(StampCategory.SOCIAL, null, null) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return 0;
-        }
-    },
     ; // end of BadgeTypes. If you add a new type, VERSION should be incremented.
 
     /** The version number of the set of badges. If you add a new badge, this needs to be
      * incremented. */
     public static final short VERSION = 1;
-
-    /** Predicate that will return true for any badge but the hidden badge. */
-    public static final Predicate<Badge> IS_VISIBLE_BADGE = new Predicate<Badge>() {
-        public boolean apply (Badge badge) {
-            return badge.badgeCode != HIDDEN.getCode();
-        }
-    };
-
-    /** Predicate that will return true only if the given badge is of the HIDDEN type. */
-    public static final Predicate<Badge> IS_HIDDEN_BADGETYPE = new Predicate<Badge>() {
-        public boolean apply (Badge badge) {
-            return !IS_VISIBLE_BADGE.apply(badge);
-        }
-    };
 
     /** Function to get the badgeCode out of a Badge */
     public static final Function<Badge, Integer> BADGE_TO_CODE = new Function<Badge, Integer>() {
@@ -394,14 +371,6 @@ public enum BadgeType
                     " - " + entry.getValue());
             }
         }
-    }
-
-    /**
-     * Return only the visible badge types, excluding HIDDEN.
-     */
-    public static BadgeType[] visibleValues ()
-    {
-        return _visValues;
     }
 
     /**
@@ -596,9 +565,6 @@ public enum BadgeType
     protected StatType _relevantStat;
     protected Level[] _levels;
 
-    /** All BadgeTypes but HIDDEN. */
-    protected static BadgeType[] _visValues;
-
     /** The table mapping stat codes to enumerated types. */
     protected static IntMap<BadgeType> _codeToType = IntMaps.newHashIntMap();
 
@@ -612,11 +578,7 @@ public enum BadgeType
      */
     static
     {
-        BadgeType[] allValues = values();
-
-        _visValues = ArrayUtil.splice(allValues, ArrayUtil.indexOf(allValues, HIDDEN), 1);
-
-        for (BadgeType type : allValues) {
+        for (BadgeType type : values()) {
             // map it, see if it collides
             BadgeType collideType = _codeToType.put(type.getCode(), type);
             if (null != collideType) {

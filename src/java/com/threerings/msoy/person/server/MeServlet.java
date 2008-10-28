@@ -142,7 +142,7 @@ public class MeServlet extends MsoyServiceServlet
         long now = System.currentTimeMillis();
         List<Badge> badges = Lists.newArrayList();
         int progress = 0;
-        for (BadgeType type : BadgeType.visibleValues()) {
+        for (BadgeType type : BadgeType.values()) {
             int code = type.getCode();
             for (int ii = 0; ii < type.getNumLevels(); ii++) {
                 String levelUnits = type.getRequiredUnitsString(ii);

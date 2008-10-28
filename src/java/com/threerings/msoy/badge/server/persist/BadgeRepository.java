@@ -27,12 +27,12 @@ public class BadgeRepository extends DepotRepository
     {
         super(ctx);
 
-        // TEMP: may be removed shortly after 2008-10-21
-        registerMigration(new DataMigration("2008_10_21_erase_early_explorer_badge") {
+        // TEMP: may be removed sometime after all servers have been updated past 2008-10-28
+        registerMigration(new DataMigration("2008_10_28_erase_hidden_badge") {
             public void invoke () throws DatabaseException
             {
                 deleteAll(InProgressBadgeRecord.class,
-                    new Where(InProgressBadgeRecord.BADGE_CODE_C, 567029922));
+                    new Where(InProgressBadgeRecord.BADGE_CODE_C, 0x78a52e3b));
             }
         });
     }

@@ -66,7 +66,7 @@ public class BadgeManager
         List<EarnedBadge> newBadges = Lists.newArrayList();
         List<InProgressBadge> inProgressBadges = Lists.newArrayList();
         List<InProgressBadge> deadBadges = Lists.newArrayList();
-        for (BadgeType badgeType : BadgeType.visibleValues()) {
+        for (BadgeType badgeType : BadgeType.values()) {
             BadgeProgress progress = badgeType.getProgress(user.stats);
             if (progress.highestLevel >= 0) {
                 EarnedBadge earnedBadge = user.badges.getBadge(badgeType);
