@@ -159,7 +159,7 @@ public class MemberNodeActions
         _peerMan.invokeNodeAction(new StatUpdated<T>(memberId, modifier));
     }
     
-    public static void addExperience (int memberId, byte action, Object data)
+    public static void addExperience (int memberId, byte action, int data)
     {
         _peerMan.invokeNodeAction(new AddExperienceAction(memberId, action, data));
     }
@@ -442,7 +442,7 @@ public class MemberNodeActions
     
     protected static class AddExperienceAction extends MemberNodeAction
     {
-        public AddExperienceAction (int memberId, byte action, Object data)
+        public AddExperienceAction (int memberId, byte action, int data)
         {
             super(memberId);
             _action = action;
@@ -459,7 +459,7 @@ public class MemberNodeActions
         @Inject protected transient MemberManager _memberMan;
         
         protected /* final */ byte _action;
-        protected /* final */ Object _data;
+        protected /* final */ int _data;
     }
 
     protected static MsoyPeerManager _peerMan;

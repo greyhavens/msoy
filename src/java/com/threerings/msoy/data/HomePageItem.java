@@ -6,6 +6,7 @@ package com.threerings.msoy.data;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.NavItemData;
 
 /**
  * A home page item is shown to the user within a flash popup in their home room. It is currently a
@@ -19,10 +20,11 @@ public class HomePageItem extends SimpleStreamableObject
     /** Non action. */
     public static final byte ACTION_NONE = 0;
 
-    /** Go and work on a specific badge. The data is an insance of {@link InProgressBadge}. */
+    /** Go and work on a specific badge. The data is an instance of {@link InProgressBadge}. */
     public static final byte ACTION_BADGE = 1;
 
-    /** Play a game. The data is an <code>Integer</code> game id. */
+    /** Play a game. The data is an instance of {@link BasicNavItemData} where the id is the game
+     * id, and the name is the game's name. */
     public static final byte ACTION_GAME = 2;
 
     /** View online friends. The data is ignored. */
@@ -31,19 +33,21 @@ public class HomePageItem extends SimpleStreamableObject
     /** View news feed. The data is ignored. */
     public static final byte ACTION_FEED = 4;
 
-    /** Go to a room. The data is an <code>Integer</code> scene id. */
+    /** Go to a room. The data is an instance of {@link BasicNavItemData} where the id is the scene
+     * id, and the name is the room's name. */
     public static final byte ACTION_ROOM = 5;
 
-    /** View a GWT page. The data is a string url. */
+    /** View a GWT page. The data is an instance of {@link BasicNavItemData}. */
     public static final byte ACTION_GWT_PAGE = 6;
 
     /** Go to your inbox. The data is ignored. */
     public static final byte ACTION_INBOX = 7;
 
-    /** Go to a group. The data is an <code>Integer</code> group id. */
+    /** Go to a group. The data is an instance of {@link BasicNavItemData} where the id is the group
+     * id, and the name is the group's name. */
     public static final byte ACTION_GROUP = 8;
 
-    /** Go to a user profile. The data is an <code>Integer</code> profile.*/
+    /** Go to a user profile. The data is an instance of {@link BasicNavItemData}.*/
     public static final byte ACTION_PROFILE = 9;
 
     /**
@@ -51,13 +55,13 @@ public class HomePageItem extends SimpleStreamableObject
      * @param action the action for this item
      * @param actionData the data associated with the action
      * @param image the icon to show for this action
+     * @param name Name of this item.
      */
-    public HomePageItem (byte action, Object actionData, MediaDesc image, String name)
+    public HomePageItem (byte action, NavItemData navItemData, MediaDesc image)
     {
         _action = action;
-        _actionData = actionData;
+        _navItemData = navItemData;
         _image = image;
-        _name = name;
     }
 
     /**
@@ -67,30 +71,13 @@ public class HomePageItem extends SimpleStreamableObject
     {
         return _action;
     }
-
+    
     /**
-     * Gets the name of this item. The name is sometimes given as null by the server because the
-     * client is supposed to fill it in.
+     * Gets the item data associated with this home page item.
      */
-    public String getName ()
+    public NavItemData getNavItemData ()
     {
-        return _name;
-    }
-
-    /**
-     * Sets the name of this item.
-     */
-    public void setName (String name)
-    {
-        _name = name;
-    }
-
-    /**
-     * Gets the data needed to engage in this action.
-     */
-    public Object getActionData ()
-    {
-        return _actionData;
+        return _navItemData;
     }
 
     /**
@@ -101,8 +88,7 @@ public class HomePageItem extends SimpleStreamableObject
         return _image;
     }
     
-    protected byte _action;
-    protected String _name;
-    protected Object _actionData;
-    protected MediaDesc _image;    
+    protected /* final */ byte _action;
+    protected /* final */ NavItemData _navItemData;
+    protected /* final */ MediaDesc _image;    
 }

@@ -27,6 +27,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.BasicNavItemData;
 import com.threerings.msoy.badge.data.all.BadgeCodes;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.item.data.all.Item;
@@ -182,15 +183,16 @@ public class HomePageDialog extends FloatingPanel
     protected function resolveItemName (item :HomePageItem) :String
     {
         if (item.getAction() == HomePageItem.ACTION_BADGE) {
-            var badge :InProgressBadge = InProgressBadge(item.getActionData());
+            var badge :InProgressBadge = InProgressBadge(item.getNavItemData());
             var level :String = badge.levelName;
             return _ctx.xlate(MsoyCodes.PASSPORT_MSGS, badge.nameProp, level);
-
-        } else if (item.getName() == null || item.getName() == "null") {
-            return "...";
-
+            
         } else {
-            return item.getName();
+            var data :BasicNavItemData = BasicNavItemData(item.getNavItemData());
+            if (data == null || data.getName() == null || data.getName() == "null") {
+                return "...";
+            }
+            return data.getName();
         }
     }
 
@@ -205,19 +207,22 @@ public class HomePageDialog extends FloatingPanel
         switch (item.getAction()) {
 
         case HomePageItem.ACTION_GAME:
-            _wctx.getWorldController().handleJoinGameLobby(int(item.getActionData()));
+            _wctx.getWorldController().handleJoinGameLobby(
+                BasicNavItemData(item.getNavItemData()).getId());
             break;
 
         case HomePageItem.ACTION_BADGE:
-            badgeClicked(InProgressBadge(item.getActionData()).badgeCode);
+            badgeClicked(InProgressBadge(item.getNavItemData()).badgeCode);
             break;
 
         case HomePageItem.ACTION_GROUP:
-            _wctx.getWorldController().handleGoGroupHome(int(item.getActionData()));
+            _wctx.getWorldController().handleGoGroupHome(
+                BasicNavItemData(item.getNavItemData()).getId());
             break;
 
         case HomePageItem.ACTION_ROOM:
-            _wctx.getWorldController().handleGoScene(int(item.getActionData()));
+            _wctx.getWorldController().handleGoScene(
+                BasicNavItemData(item.getNavItemData()).getId());
             //sceneDid.teleportToScene();
             break;
 

@@ -191,7 +191,7 @@ public class MemberLogic
                 new Function<MemberExperienceRecord, MemberExperience>() {
             public MemberExperience apply (MemberExperienceRecord expRecord) {
                 // Depending on the action type, convert data to the correct object.
-                final Object actionData;
+                final int actionData;
                 switch (expRecord.action) {
                 case HomePageItem.ACTION_ROOM:
                 case HomePageItem.ACTION_GAME:
@@ -199,7 +199,7 @@ public class MemberLogic
                     actionData = Integer.parseInt(expRecord.data);
                     break;
                 default:
-                    actionData = null;
+                    actionData = 0;
                 }
                 return new MemberExperience(expRecord.dateOccurred, expRecord.action, actionData);
             }
@@ -223,7 +223,7 @@ public class MemberLogic
                 case HomePageItem.ACTION_ROOM:
                 case HomePageItem.ACTION_GAME:
                 case HomePageItem.ACTION_GROUP:
-                    actionData = experience.data.toString();
+                    actionData = Integer.toString(experience.data);
                     break;
                 default:
                     actionData = null;

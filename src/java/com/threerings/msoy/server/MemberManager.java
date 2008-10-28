@@ -58,6 +58,7 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.stats.data.StatSet;
 
+import com.threerings.msoy.data.BasicNavItemData;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberLocation;
@@ -68,6 +69,7 @@ import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -828,7 +830,7 @@ public class MemberManager
                 int curItem = 0;
                 for (InProgressBadge badge : badges) {
                     items[curItem++] = new HomePageItem(
-                        HomePageItem.ACTION_BADGE, badge, badge.imageMedia(), null);
+                        HomePageItem.ACTION_BADGE, badge, badge.imageMedia());
                 }
                 
                 // The last 6 are determined by the user-specific home page items, depending on
@@ -837,10 +839,11 @@ public class MemberManager
                 Set<Integer> haveGames = new HashSet<Integer>();
                 for(HomePageItem item : getHomePageItems(memObj, 6)) {
                     items[curItem++] = item;
+                    int id = ((BasicNavItemData)item.getNavItemData()).getId();
                     if (item.getAction() == HomePageItem.ACTION_GROUP) {
-                        haveGroups.add((Integer)item.getActionData());
+                        haveGroups.add(id);
                     } else if (item.getAction() == HomePageItem.ACTION_GAME) {
-                        haveGames.add((Integer)item.getActionData());
+                        haveGames.add(id);
                     }
                 }
                 
@@ -859,8 +862,8 @@ public class MemberManager
                             if (media == null) {
                                 media = Group.getDefaultGroupLogoMedia();
                             }
-                            items[curItem++] = new HomePageItem(
-                                HomePageItem.ACTION_GROUP, group.groupId, media, group.name);
+                            items[curItem++] = new HomePageItem(HomePageItem.ACTION_GROUP, 
+                                new BasicNavItemData(group.groupId, group.name), media);
                             haveGroups.add(group.groupId);
                         }
                         if (curItem == startTopItems + groupCount) {
@@ -876,8 +879,8 @@ public class MemberManager
                                 if (media == null) {
                                     media = Group.getDefaultGroupLogoMedia();
                                 }
-                                items[curItem++] = new HomePageItem(
-                                    HomePageItem.ACTION_GROUP, group.groupId, media, group.name);
+                                items[curItem++] = new HomePageItem(HomePageItem.ACTION_GROUP, 
+                                    new BasicNavItemData(group.groupId, group.name), media);
                             }
                             if (curItem == startTopItems + groupCount) {
                                 break;
@@ -889,8 +892,9 @@ public class MemberManager
                     for (Place place : pps.getTopGames()) {
                         if (!haveGames.contains(place.placeId)) {
                             GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
-                            items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME, game.gameId, 
-                                game.getThumbMediaDesc(), game.name);
+                            items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME, 
+                                new BasicNavItemData(game.gameId, game.name), 
+                                game.getThumbMediaDesc());
                             haveGames.add(game.gameId);
                         }
                         if (curItem == 9) {
@@ -902,8 +906,9 @@ public class MemberManager
                     if (curItem < 9) {
                         for(GameRecord game : _gameRepo.loadGenre((byte)-1, 9)) {
                             if (!haveGames.contains(game.gameId)) {
-                                items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME, game.gameId, 
-                                    game.getThumbMediaDesc(), game.name);
+                                items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME, 
+                                    new BasicNavItemData(game.gameId, game.name), 
+                                    game.getThumbMediaDesc());
                             }
                             if (curItem == 9) {
                                 break;
@@ -914,7 +919,7 @@ public class MemberManager
                 
                 // If there still aren't enough places, fill in with null objects.
                 while (curItem < 9) {
-                    items[curItem++] = new HomePageItem(HomePageItem.ACTION_NONE, null, null, null);
+                    items[curItem++] = new HomePageItem(HomePageItem.ACTION_NONE, null, null);
                 }
                 
                 reportRequestProcessed(items);
@@ -1036,7 +1041,7 @@ public class MemberManager
          */
         public ScoredExperience ()
         {
-            experience = new MemberExperience(new Date(), HomePageItem.ACTION_NONE, null);
+            experience = new MemberExperience(new Date(), HomePageItem.ACTION_NONE, 0);
             score = 0f;
         }
 
@@ -1047,7 +1052,7 @@ public class MemberManager
         public boolean isSameExperience (ScoredExperience other)
         {
             return this.experience.action == other.experience.action &&
-                this.experience.data.equals(other.experience.data);
+                this.experience.data == other.experience.data;
         }
     }
     
@@ -1093,10 +1098,10 @@ public class MemberManager
         return Lists.transform(scores, new Function<ScoredExperience, HomePageItem>() {
             public HomePageItem apply (ScoredExperience se) {
                 MediaDesc media;
-                final String name;
+                final NavItemData data;
                 switch (se.experience.action) {
                 case HomePageItem.ACTION_ROOM:
-                    SceneRecord scene = _sceneRepo.loadScene((Integer)se.experience.data);
+                    SceneRecord scene = _sceneRepo.loadScene(se.experience.data);
                     media = scene.getSnapshot();
                     if (media == null) {
                         // It's not obvious from the docs in StaticMediaDesc that you can do this,
@@ -1105,26 +1110,26 @@ public class MemberManager
                             // we know that we're 66x60
                             MediaDesc.HALF_VERTICALLY_CONSTRAINED);
                     }
-                    name = scene.name;
+                    data = new BasicNavItemData(se.experience.data, scene.name);
                     break;
                 case HomePageItem.ACTION_GROUP:
-                    GroupRecord group = _groupRepo.loadGroup((Integer)se.experience.data);
+                    GroupRecord group = _groupRepo.loadGroup(se.experience.data);
                     media = group.toLogo();
                     if (media == null) {
                         media = Group.getDefaultGroupLogoMedia();
                     }
-                    name = group.name;
+                    data = new BasicNavItemData(se.experience.data, group.name);
                     break;
                 case HomePageItem.ACTION_GAME:
-                    GameRecord game = _msoyGameRepo.loadGameRecord((Integer)se.experience.data);
+                    GameRecord game = _msoyGameRepo.loadGameRecord(se.experience.data);
                     media = game.getThumbMediaDesc();
-                    name = game.name;
+                    data = new BasicNavItemData(se.experience.data, game.name);
                     break;
                 default:
                     media = null;
-                    name = null;
+                    data = null;
                 }
-                return se.experience.getHomePageItem(media, name);
+                return se.experience.getHomePageItem(media, data);
             }
         });
     }

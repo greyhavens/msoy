@@ -8,34 +8,55 @@ import java.util.Date;
 import com.samskivert.util.ObjectUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.presents.dobj.DSet;
 
+/**
+ * Represents an experience the user had in Whirled, such as visiting a game, group, or room.
+ * 
+ * This class is immutable except during serialization.
+ * 
+ * @author Kyle Sampson <kyle@threerings.net>
+ */
 public class MemberExperience
     implements DSet.Entry, Comparable<MemberExperience>
 {
+    /** Date/time this experience occurred. */
     public /* final */ Long dateOccurred;
+    
+    /** Action that the user has taken, one of the {@link HomePageItem} ACTION constants. */
     public /* final */ byte action;
-    public /* final */ Object data;
+    
+    /** Data associated with the action, usually an ID of the place visited.  
+     * See {@link HomePageItem}. */
+    public /* final */ int data;
 
     public MemberExperience ()
     {
+        // For serialization.
     }
 
-    public MemberExperience (Date dateOccurred, byte action, Object data)
+    public MemberExperience (Date dateOccurred, byte action, int data)
     {
         this.dateOccurred = dateOccurred.getTime();
         this.action = action;
         this.data = data;
     }
     
+    /**
+     * Creates a new home page item from this experience.
+     * 
+     * @param image Image to show for this action.
+     * @param name Name of this item.
+     */
+    public HomePageItem getHomePageItem (MediaDesc image, NavItemData data)
+    {
+        return new HomePageItem(action, data, image);
+    }
+    
     public Date getDateOccurred ()
     {
         return new Date(dateOccurred);
-    }
-    
-    public HomePageItem getHomePageItem (MediaDesc media, String name)
-    {
-        return new HomePageItem(action, data, media, name);
     }
 
     @Override
@@ -43,7 +64,7 @@ public class MemberExperience
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((data == null) ? 0 : data.hashCode());
+        result = prime * result + data;
         result = prime * result + ((dateOccurred == null) ? 0 : dateOccurred.hashCode());
         return result;
     }
@@ -58,7 +79,7 @@ public class MemberExperience
             return false;
         }
         MemberExperience that = (MemberExperience)other;
-        return (this.action == that.action) && ObjectUtil.equals(this.data, that.data) &&
+        return (this.action == that.action) && (this.data == that.data) &&
             ObjectUtil.equals(this.dateOccurred, that.dateOccurred);
     }
 
@@ -66,10 +87,7 @@ public class MemberExperience
     {
         if (action == o.action) {
             if (getDateOccurred().equals(o.getDateOccurred())) {
-                String str1 = (data == null ? null : data.toString());
-                String str2 = (o.data == null ? null : o.data.toString());
-                return (str1 == null && str2 == null) ? 0 :
-                    (str1 == null ? -1 : str1.compareTo(str2));
+                return data == o.data ? 0 : (data < o.data ? -1 : 1);
             }
             return getDateOccurred().compareTo(o.getDateOccurred());
         }

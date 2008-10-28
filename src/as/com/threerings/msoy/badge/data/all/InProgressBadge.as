@@ -3,11 +3,13 @@ package com.threerings.msoy.badge.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.data.all.NavItemData;
 
 /**
  * Contains information on a badge that a player is working towards.
  */
 public class InProgressBadge extends Badge
+    implements NavItemData
 {
     /** The progress that has been made on this badge. */
     public var progress :Number;

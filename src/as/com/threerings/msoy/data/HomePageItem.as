@@ -10,6 +10,7 @@ import com.threerings.io.Streamable;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.data.all.NavItemData;
 
 /**
  * A home page item is shown to the user within a flash popup in their home room. It is currently a
@@ -60,20 +61,11 @@ public class HomePageItem
     }
 
     /**
-     * Gets the name of this item. The name is sometimes given as null by the server because the
-     * client is supposed to fill it in.
-     */
-    public function getName () :String
-    {
-        return _name;
-    }
-
-    /**
      * Gets the data needed to engage in this action.
      */
-    public function getActionData () :Object
+    public function getNavItemData () :NavItemData
     {
-        return _actionData;
+        return _navItemData;
     }
 
     /**
@@ -88,8 +80,7 @@ public class HomePageItem
     public function readObject (ins :ObjectInputStream) :void
     {
         _action = ins.readByte();
-        _name = String(ins.readField(String));
-        _actionData = ins.readObject();
+        _navItemData = NavItemData(ins.readObject());
         _image = MediaDesc(ins.readObject());
     }
 
@@ -101,13 +92,12 @@ public class HomePageItem
 
     public function toString () :String
     {
-        return "HomePageItem (action=" + _action + ", name=" + _name + ", data=" + _actionData +
+        return "HomePageItem (action=" + _action + ", data=" + _navItemData +
             ", image=" + _image + ")";
     }
 
     protected var _action :int;
-    protected var _name :String;
-    protected var _actionData :Object;
+    protected var _navItemData :NavItemData;
     protected var _image :MediaDesc;
 }
 }

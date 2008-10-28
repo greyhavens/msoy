@@ -5,9 +5,11 @@ package com.threerings.msoy.badge.data.all;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 
 public class InProgressBadge extends Badge
+    implements NavItemData
 {
     /** The progress that has been made on the badge, in [0, 1).  A progress of -1 indicates that
      * progress is not appropriate for this level of this badge, and should not be displayed */

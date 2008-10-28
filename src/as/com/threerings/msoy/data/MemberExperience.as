@@ -22,7 +22,7 @@ public class MemberExperience
 {
     public var dateOccurred :Long;
     public var action :int;
-    public var data :Object;
+    public var data :int;
 
     public function MemberExperience ()
     {
@@ -52,7 +52,7 @@ public class MemberExperience
             return false;
         }
         const that :MemberExperience = MemberExperience(other);
-        return (this.action == that.action) && Util.equals(this.data, that.data) &&
+        return (this.action == that.action) && (this.data == that.data) &&
             Util.equals(this.dateOccurred, that.dateOccurred);
     }
 
@@ -61,7 +61,7 @@ public class MemberExperience
     {
         dateOccurred = (ins.readField(Long) as Long);
         action = ins.readByte();
-        data = ins.readObject();
+        data = ins.readInt();
     }
 
     // from interface Streamable
@@ -69,7 +69,7 @@ public class MemberExperience
     {
         out.writeField(dateOccurred);
         out.writeByte(action);
-        out.writeObject(data);
+        out.writeInt(data);
     }
 }
 }
