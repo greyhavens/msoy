@@ -11,11 +11,10 @@ import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
 
-import mx.controls.Text;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 import com.threerings.flex.PopUpUtil;
 
@@ -41,11 +40,8 @@ public class PopupEditor extends TitleWindow
         var grid :Grid = new Grid();
         addChild(grid);
         GridUtil.addRow(grid, ctx.REMIX.get("l.name"), entry.name as String);
-        var desc :Text = new Text();
-        desc.selectable = false;
-        desc.maxWidth = 300;
-        desc.text = (entry.info as String) || ctx.REMIX.get("m.none");
-        GridUtil.addRow(grid, ctx.REMIX.get("l.desc"), desc);
+        GridUtil.addRow(grid, ctx.REMIX.get("l.desc"),
+            FlexUtil.createText((entry.info as String) || ctx.REMIX.get("m.none"), 300));
         GridUtil.addRow(grid, ctx.REMIX.get("l.type"), entry.type as String);
 
         // add class-specific UI

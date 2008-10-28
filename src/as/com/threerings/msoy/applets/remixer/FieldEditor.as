@@ -16,6 +16,7 @@ import mx.core.UIComponent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.FlexUtil;
 
 public class FieldEditor extends VBox
 {
@@ -74,13 +75,8 @@ public class FieldEditor extends VBox
         botBox.percentWidth = 100;
 
         // add the description label
-        var desc :Text = new Text();
-        desc.selectable = false;
-        desc.width = 210;
+        var desc :Text = FlexUtil.createText(entry.info, 210);
         desc.setStyle("color", 0xA1A2A2);
-        if (entry.info != null) {
-            desc.text = entry.info;
-        }
         botBox.addChild(desc);
 
         var botConfigger :UIComponent = UIComponent(configgers[1]);

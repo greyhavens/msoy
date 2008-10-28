@@ -114,11 +114,9 @@ public class LogonPanel extends FloatingPanel
         box.setStyle("horizontalAlign", "center");
         box.setStyle("verticalAlign", "middle");
 
-        const prompt :Text = new Text();
+        const prompt :Text = FlexUtil.createText(Msgs.GENERAL.get("p.sign_up"), 200);
         prompt.setStyle("fontSize", 18);
         prompt.setStyle("textAlign", "center");
-        prompt.text = Msgs.GENERAL.get("p.sign_up");
-        prompt.width = 200;
         box.addChild(prompt);
 
         const joinBtn :CommandButton = new CommandButton(null, MsoyController.SHOW_SIGN_UP);

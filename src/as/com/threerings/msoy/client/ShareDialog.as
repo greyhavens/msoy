@@ -148,11 +148,7 @@ public class ShareDialog extends FloatingPanel
             encodeURIComponent(stubArgs);
 
         var box :VBox = createContainer("t.stub_share");
-        var txt :Text = new Text();
-        txt.width = 300;
-        txt.selectable = false;
-        txt.text = Msgs.GENERAL.get("m.stub_share");
-        box.addChild(txt);
+        box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 300));
         _downloadBtn = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
             startDownload, [ url, "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
         box.addChild(_downloadBtn);

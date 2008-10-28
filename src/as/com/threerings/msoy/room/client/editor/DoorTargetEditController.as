@@ -5,7 +5,6 @@ package com.threerings.msoy.room.client.editor {
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-import mx.controls.Text;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
 
@@ -14,6 +13,7 @@ import com.threerings.util.Log;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.data.Scene;
@@ -144,10 +144,7 @@ public class DoorTargetEditController
         var panel :FloatingPanel = new FloatingPanel(_ctx, Msgs.EDITING.get("t.edit_door"));
         panel.showCloseButton = true;
 
-        var label :Text = new Text();
-        label.text = Msgs.EDITING.get("l.edit_door_label");
-        label.width = 400; // force the damned text to wrap
-        panel.addChild(label);
+        panel.addChild(FlexUtil.createText(Msgs.EDITING.get("l.edit_door_label"), 400));
 
         var elts :HBox = new HBox();
         elts.setStyle("right", 2);

@@ -7,6 +7,8 @@ import flash.system.Capabilities;
 
 import mx.controls.Text;
 
+import com.threerings.flex.FlexUtil;
+
 import com.threerings.msoy.ui.FloatingPanel;
 
 /**
@@ -26,9 +28,7 @@ public class AboutDialog extends FloatingPanel
     {
         super.createChildren();
 
-        var textArea :Text = new Text();
-        textArea.width = 300;
-        textArea.selectable = false;
+        var textArea :Text = FlexUtil.createText(null, 300);
         textArea.htmlText = Msgs.GENERAL.get("m.about", DeploymentConfig.buildTime,
             Capabilities.version + (Capabilities.isDebugger ? " (debug)" : ""));
         addChild(textArea);

@@ -34,7 +34,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.KeyboardManager;
-import com.threerings.flex.FlexUtil;
 
 /**
  * Dispatched when the size of the image is known.
@@ -269,12 +268,9 @@ public class ImageManipulator extends HBox
 
     protected function createTip (trans :String) :Text
     {
-        var tip :Text = new Text();
-        tip.selectable = false;
-        tip.width = 95;
+        var tip :Text = FlexUtil.createText(_ctx.IMAGE.get(trans), 95);
         tip.setStyle("fontFamily", "_sans");
         tip.setStyle("fontSize", (Capabilities.os.indexOf("Linux") == -1) ? 9 : 8);
-        tip.text = _ctx.IMAGE.get(trans);
         return tip;
     }
 

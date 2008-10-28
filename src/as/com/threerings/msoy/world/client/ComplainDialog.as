@@ -4,11 +4,12 @@
 package com.threerings.msoy.world.client {
 
 import mx.controls.Label;
-import mx.controls.Text;
 import mx.controls.TextInput;
 import mx.containers.VBox;
 
 import com.threerings.util.MessageBundle;
+
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
@@ -28,10 +29,7 @@ public class ComplainDialog extends FloatingPanel
     {
         super.createChildren();
         var tainer :VBox = new VBox();
-        var cText :Text = new Text();
-        cText.text = Msgs.GENERAL.get("m.complain_descrip");
-        cText.width = 350;
-        tainer.addChild(cText);
+        tainer.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.complain_descrip"), 350));
 
         _complaint = new TextInput();
         _complaint.width = 350;
