@@ -13,6 +13,8 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.web.gwt.Pages;
+
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
@@ -23,6 +25,7 @@ import client.ui.MsoyUI;
 import client.ui.StretchButton;
 import client.ui.TongueBox;
 import client.util.FlashClients;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -36,17 +39,19 @@ public class RoomsPanel extends FlowPanel
         header.setWidget(0, 0, new Marquee(null, _msgs.roomsMarquee()), 1, null);
         header.setText(1, 0, _msgs.roomsIntro(), 1, "Intro");
 
-        if (FlashClients.clientExists()) {
-            StretchButton button = new StretchButton(StretchButton.ORANGE_THICK, "Start Whirled Tour",
-                new ClickListener () {
+        StretchButton button = new StretchButton(StretchButton.ORANGE_THICK, "Start Whirled Tour",
+            new ClickListener () {
                 public void onClick (Widget sender) {
-                    FlashClients.startTour();
+                    if (FlashClients.clientExists()) {
+                        FlashClients.startTour();
+                    } else {
+                        Link.go(Pages.WORLD, "tour");
+                    }
                 }
             });
-            header.setWidget(0, 1, button, 1, "Tour");
-            header.getFlexCellFormatter().setRowSpan(0, 1, 2);
-            header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
-        }
+        header.setWidget(0, 1, button, 1, "Tour");
+        header.getFlexCellFormatter().setRowSpan(0, 1, 2);
+        header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
 
         add(header);
 

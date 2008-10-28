@@ -895,6 +895,9 @@ public class WorldController extends MsoyController
         } else if (null != params["worldGame"]) {
             handleJoinAVRGame(int(params["worldGame"]));
 
+        } else if ("true" == params["tour"]) {
+            _wctx.getTourDirector().startTour();
+
         } else if (null != params["groupChat"]) {
             var groupId :int = int(params["groupChat"]);
             var gm :GroupMembership =

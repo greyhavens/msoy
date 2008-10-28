@@ -517,6 +517,9 @@ public class FrameEntryPoint
                 // display a game lobby or enter a game (action_gameId_otherId)
                 displayGame(args.get(1, ""), args.get(2, 0), args.get(3, -1));
 
+            } else if (action.equals("tour")) {
+                displayWorldClient("tour=true", null);
+
             } else if (action.startsWith("g")) {
                 // go to a specific group's scene group
                 displayWorldClient("groupHome=" + action.substring(1), null);
