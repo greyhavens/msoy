@@ -202,7 +202,10 @@ public class ImageManipulator extends HBox
         _zoomSlider = addSlider(bar, "l.zoom", .25, 4, 1, _editor.setZoom,
             [ .25, .5, 1, 2, 4, 8 ]);
 
-        bar.addChild(new CommandCheckBox(_ctx.IMAGE.get("b.dark_bg"), _editor.setDarkBackground));
+        const dark :CommandCheckBox = new CommandCheckBox(_ctx.IMAGE.get("b.dark_bg"),
+            _editor.setDarkBackground);
+        dark.styleName = "oldCheckBox";
+        bar.addChild(dark);
 
         _editor.addEventListener(EditCanvas.SELECTION_CHANGE, handleSelectionChange);
         _selectionWidth.addEventListener(Event.CHANGE, handleSelectionTyped);

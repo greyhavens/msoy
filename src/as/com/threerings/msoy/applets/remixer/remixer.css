@@ -6,3 +6,7 @@
 .mixButton {
   fontWeight: "normal";
 }
+
+CommandLinkButton {
+  color: #ffffff;
+}

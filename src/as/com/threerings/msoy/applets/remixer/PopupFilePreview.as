@@ -137,7 +137,7 @@ public class PopupFilePreview extends TitleWindow
         var hrule :HRule = new HRule();
         hrule.percentWidth = 100;
         hrule.setStyle("strokeWidth", 1);
-        hrule.setStyle("strokeColor", 0x000000);
+        hrule.setStyle("strokeColor", 0xFFFFFF);
         box.addChild(hrule);
 
         var buttonBar :ButtonBar = new ButtonBar();
@@ -306,7 +306,7 @@ public class PopupFilePreview extends TitleWindow
     {
         var box :HBox = new HBox();
         box.percentWidth = 100;
-        box.setStyle("backgroundColor", 0x000000);
+        box.setStyle("backgroundColor", 0xf97527);
 
         var lbl :Label = new Label();
         lbl.text = title;
@@ -343,7 +343,8 @@ public class PopupFilePreview extends TitleWindow
             return null; // no filter: show all files
 
         case "DisplayObject":
-            return [ new FileFilter(_ctx.REMIX.get("m.DisplayObject"), "*.jpg;*.jpeg;*.gif;*.png;*.swf") ];
+            return [ new FileFilter(_ctx.REMIX.get("m.DisplayObject"),
+                "*.jpg;*.jpeg;*.gif;*.png;*.swf") ];
 
         case "Image":
             return [ new FileFilter(_ctx.REMIX.get("m.Image"), "*.jpg;*.jpeg;*.gif;*.png") ];
