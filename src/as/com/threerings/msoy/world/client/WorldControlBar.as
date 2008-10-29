@@ -70,14 +70,6 @@ public class WorldControlBar extends ControlBar
     }
 
     /**
-     * Returns true if the home page grid panel has been shown.
-     */
-    public function get homePageGridShown () :Boolean
-    {
-        return _homePageGridShown;
-    }
-
-    /**
      * This is needed by the room controller, so that it can properly know how to hover.
      */
     public function get hoverAll () :Boolean
@@ -140,7 +132,6 @@ public class WorldControlBar extends ControlBar
         _homePageGridBtn = createButton("controlBarHomePageGridButton", "i.homePageGrid");
         _homePageGridBtn.toggle = true;
         _homePageGridBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
-            _homePageGridShown = true;
             return new HomePageDialog(_wctx);
         }, _homePageGridBtn));
     }
@@ -290,9 +281,6 @@ public class WorldControlBar extends ControlBar
 
     /** Brings up the recent places grid. */
     protected var _homePageGridBtn :CommandButton;
-
-    /** True after home page grid has been shown. */
-    protected var _homePageGridShown :Boolean;
 
     /** An introduction to avatars shown to brand new players. */
     protected var _avatarIntro :DisplayObjectContainer;
