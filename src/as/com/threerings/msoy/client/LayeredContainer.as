@@ -56,7 +56,11 @@ public class LayeredContainer extends Container
             if (disp != _base) {
                 var m :Matrix = disp.transform.matrix; // clone the matrix
                 framer.applyTo(m); // apply the framing transformation to the matrix
-                bitmapData.draw(disp, m, null, null, null, true);
+                try {
+                    bitmapData.draw(disp, m, null, null, null, true);
+                } catch (e :SecurityError) {
+                    log.warning("Unable to snapshot an overlay", e);
+                }
             }
         }
     }
