@@ -161,6 +161,7 @@ public class HomePageDialog extends FloatingPanel
 
         cell.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
             itemClicked(item);
+            close();
         });
 
         cell.addEventListener(MouseEvent.ROLL_OVER, function (evt :MouseEvent) :void {
@@ -326,7 +327,6 @@ public class HomePageDialog extends FloatingPanel
     protected function startTour () :void
     {
         _wctx.getTourDirector().startTour();
-        close();
     }
 
     protected var _grid :Tile;
