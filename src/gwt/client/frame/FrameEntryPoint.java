@@ -150,6 +150,7 @@ public class FrameEntryPoint
             }
         } catch (Exception e) {
             page = getLandingPage();
+            args.setToken(getLandingArgs());
         }
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
@@ -272,8 +273,10 @@ public class FrameEntryPoint
             closeClient();
         }
 
-        if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
-            Link.go(getLandingPage(), "");
+        if (data.justCreated) {
+            Link.go(Pages.WORLD, "h"); // brand new users go home
+        } else if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
+            Link.go(getLandingPage(), getLandingArgs());
         } else if (_page != null) {
             setPage(_page); // reloads the current page
         } else if (!data.justCreated) {
@@ -356,7 +359,7 @@ public class FrameEntryPoint
                     Link.go(Pages.GAMES, "");
                 } else if (CShell.isGuest()) {
                     // if we're a guest, go back to the landing page
-                    Link.go(getLandingPage(), "");
+                    Link.go(getLandingPage(), getLandingArgs());
                 } else {
                     // otherwise go to the ME page
                     Link.go(Pages.ME, "");
@@ -544,7 +547,7 @@ public class FrameEntryPoint
                 // go to our home
                 displayWorldClient("memberHome=" + CShell.getMemberId(), null);
 
-            } else {
+            } else { // action == "places" or anything else
                 // just logon and show the myplaces dialog, don't go anywhere
                 displayWorldClient("myplaces=true", null);
             }
@@ -831,6 +834,11 @@ public class FrameEntryPoint
     protected Pages getLandingPage ()
     {
         return CShell.isGuest() ? Pages.LANDING : Pages.WORLD;
+    }
+
+    protected String getLandingArgs ()
+    {
+        return CShell.isGuest() ? "" : "places";
     }
 
     /**
