@@ -427,7 +427,6 @@ public class ThaneAVRGameController
         // if this scene has been removed, unsubscribe right away
         if (wasRemoved(binding)) {
             log.warning("Room no longer needed", "binding", binding, "roomOid", roomObj.getOid());
-            binding.subscriber.unsubscribe(binding.window.getDObjectManager());
             return;
         }
 
@@ -512,7 +511,6 @@ public class ThaneAVRGameController
         if (wasRemoved(binding)) {
             log.warning(
                 "Room props no longer needed", "binding", binding, "propsOid", propsObj.getOid());
-            binding.propsSubscriber.unsubscribe(binding.window.getDObjectManager());
             return;
         }
 
@@ -542,19 +540,25 @@ public class ThaneAVRGameController
         _backend.roomUnloaded(sceneId);
 
         // Release all resources
+        if (binding.subscriber != null) {
+            binding.subscriber.unsubscribe(binding.window.getDObjectManager());
+            binding.subscriber = null;
+        }
+
         if (binding.room != null) {
             binding.room.removeListener(binding.roomListener);
             binding.roomListener = null;
             binding.avatarAdapter.release();
             binding.avatarAdapter = null;
-            binding.subscriber.unsubscribe(binding.window.getDObjectManager());
-            binding.subscriber = null;
             binding.room = null;
         }
 
-        if (binding.roomProps != null) {
+        if (binding.propsSubscriber != null) {
             binding.propsSubscriber.unsubscribe(binding.window.getDObjectManager());
             binding.propsSubscriber = null;
+        }
+
+        if (binding.roomProps != null) {
             binding.roomProps = null;
         }
 
