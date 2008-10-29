@@ -232,47 +232,26 @@ HSlider {
 }
 
 Button {
-  paddingBottom: 3;
-/*
   cornerRadius: 0;
   paddingBottom: 0;
   paddingTop: 0;
   paddingLeft: 7;
   paddingRight: 7;
-*/
-  /*
-  fillAlphas: 1, 1, 1, 1;
-  fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
-  */
   color: white;
   textRollOverColor: white;
   textSelectedColor: white;
-  upSkin: Embed(source="../../rsrc/media/skins/button/up.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  overSkin: Embed(source="../../rsrc/media/skins/button/over.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  downSkin: Embed(source="../../rsrc/media/skins/button/down.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/disabled.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-          /*
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/up.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/over.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/down.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/disabled.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-          */
+  upSkin: Embed(source="../../rsrc/media/skins/button/blue_up.png",
+          scaleGridTop="9", scaleGridBottom="10",
+          scaleGridLeft="9", scaleGridRight="10");
+  overSkin: Embed(source="../../rsrc/media/skins/button/blue_over.png",
+          scaleGridTop="9", scaleGridBottom="10",
+          scaleGridLeft="9", scaleGridRight="10");
+  downSkin: Embed(source="../../rsrc/media/skins/button/blue_down.png",
+          scaleGridTop="9", scaleGridBottom="10",
+          scaleGridLeft="9", scaleGridRight="10");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/blue_disabled.png",
+          scaleGridTop="9", scaleGridBottom="10",
+          scaleGridLeft="9", scaleGridRight="10");
 }
 
 ColorPicker {
@@ -510,12 +489,6 @@ TabNavigator, TabBar {
   verticalAlign: "bottom";
   paddingLeft: 8;
   paddingBottom: 1;
-}
-
-.controlBarButtonSend {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/send_default.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/send_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/send_down.png");
 }
 
 /** All these buttons use the ImageButtonSkin and need the per-state skins cleared out. */
