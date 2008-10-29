@@ -14,8 +14,8 @@ import flash.net.URLRequest;
 
 import mx.events.FlexEvent;
 
-import mx.containers.Accordion;
 import mx.containers.HBox;
+import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
 import mx.controls.Label;
@@ -53,29 +53,26 @@ public class ShareDialog extends FloatingPanel
 
         title = Msgs.GENERAL.get(_inGame ? "t.share_game" : "t.share_room");
         showCloseButton = true;
-        setStyle("paddingTop", 0);
-        setStyle("paddingBottom", 0);
-        setStyle("paddingLeft", 0);
-        setStyle("paddingRight", 0);
 
-        var cord :Accordion = new Accordion();
+        var tabs :TabNavigator = new TabNavigator();
+        tabs.styleName = "sexyTabber";
+        tabs.setStyle("tabWidth", NaN);
+        tabs.resizeToContent = true;
+        tabs.width = 380;
+        tabs.height = 200;
 
-        cord.resizeToContent = true;
-        cord.width = 323;
-        cord.height = 260;
         // TODO: guests can't abuse the email thingy?
 //        if (!_memObj.isGuest()) {
-            cord.addChild(createEmailBox());
+            tabs.addChild(createEmailBox());
 //        }
-        cord.addChild(createLinkBox());
-        cord.addChild(createEmbedBox());
+        tabs.addChild(createLinkBox());
+        tabs.addChild(createEmbedBox());
 
         if (_ctx.getMsoyController().canManagePlace()) {
-            cord.addChild(createStubBox());
-            cord.height += 35;
+            tabs.addChild(createStubBox());
         }
 
-        addChild(cord);
+        addChild(tabs);
 
         //addButtons(_copyBtn, OK_BUTTON);
         //setButtonWidth(0); // free-size
@@ -147,7 +144,8 @@ public class ShareDialog extends FloatingPanel
             encodeURIComponent(stubArgs);
 
         var box :VBox = createContainer("t.stub_share");
-        box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 300));
+        box.setStyle("horizontalAlign", "center");
+        box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 350));
         _downloadBtn = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
             startDownload, [ url, "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
         _downloadBtn.styleName = "orangeButton";

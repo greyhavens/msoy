@@ -70,6 +70,32 @@ TitleWindow {
   color: white;
 }
 
+.sexyTabber {
+  backgroundAlpha: 0;
+  backgroundColor: #f97527;
+  borderStyle: solid;
+  borderColor: #FFFFFF;
+  borderThickness: 1;
+  horizontalGap: 2;
+  horizontalAlign: "center";
+  color: #ffffff;
+  tabStyleName: "sexyTab";
+}
+
+.sexyTab {
+  borderThickness: 1;
+  borderColor: #FFFFFF;
+  cornerRadius: 4;
+  color: #FFFFFF;
+  textRollOverColor: #FFFFFF;
+  backgroundAlpha: 1;
+  highlightAlphas: 0, 0;
+  fillAlphas: 1, 1;
+  fillColors: #3fa3cc, #3fa3cc;
+  fontFamily: "Arial";
+  fontSize: 12;
+}
+
 .msoyTitleStyle {
   color: #FFFFFF;
   fontWeight: bold;
@@ -86,6 +112,7 @@ TitleWindow {
   backgroundImage: null;
 }
 
+/*
 .accordianHeader {
   fontFamily: Arial;
   fontSize: 12px;
@@ -99,6 +126,7 @@ Accordion {
   backgroundAlpha: 0;
   headerStyleName: "accordianHeader";
 }
+*/
 
 /*Accordion {
   headerHeight: 20;
