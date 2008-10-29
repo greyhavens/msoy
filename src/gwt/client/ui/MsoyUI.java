@@ -481,7 +481,8 @@ public class MsoyUI
         return new ClickListener() {
             public void onClick (Widget sender) {
                 _membersvc.trackClientAction(
-                    CShell.visitor, action, details != null ? details : "", null);
+                    CShell.visitor, action, details != null ? details : "",
+                    new NoopAsyncCallback<Void>());
             }
         };
     }
@@ -497,7 +498,8 @@ public class MsoyUI
     {
         return new ClickListener() {
             public void onClick (Widget sender) {
-                _membersvc.trackTestAction(CShell.visitor, action, testName, null);
+                _membersvc.trackTestAction(
+                    CShell.visitor, action, testName, new NoopAsyncCallback<Void>());
             }
         };
     }
