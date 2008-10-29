@@ -215,9 +215,32 @@ public class HomePageDialog extends FloatingPanel
     {
         super.didOpen();
 
-        // auto-position ourselves (not the same as mx centering)
+        // Vertical center in place view
         var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds();
         y = placeBounds.y + (placeBounds.height - height) / 2;
+
+        // Find the friends panel
+        var friends :FriendsListPanel = null;
+        for (var ii :int = 0; ii < parent.numChildren; ++ii) {
+            if (parent.getChildAt(ii) is FriendsListPanel) {
+                friends = FriendsListPanel(parent.getChildAt(ii));
+                break;
+            }
+        }
+
+        // Check if it is in the default position
+        if (friends != null && !friends.isAtRightEdge()) {
+            friends = null;
+        }
+
+        var padding :int = 10;
+        if (friends != null) {
+            // We want to be just to the left of the friends
+            x = friends.x - width - padding;
+        } else {
+            // Otherwise, at right edge of place view
+            x = placeBounds.x + placeBounds.width - width - padding;
+        }
 
         refresh();
     }

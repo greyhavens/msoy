@@ -75,6 +75,16 @@ public class FriendsListPanel extends FlyingPanel
         }
     }
 
+    /**
+     * Tests if this panel is within a few pixels of its default position.
+     */
+    public function isAtRightEdge() :Boolean
+    {
+        var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds(); 
+        var distance :Number = x - (placeBounds.x + placeBounds.width - width - PADDING);
+        return Math.abs(distance) < 20;
+    }
+
     // part of ClientObserver, adapted by _cliObs
     protected function clientDidLogon (... ignored) :void
     {
