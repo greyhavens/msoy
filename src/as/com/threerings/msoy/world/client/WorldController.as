@@ -1327,7 +1327,8 @@ public class WorldController extends MsoyController
         super.locationDidChange(place);
 
         // Show the home page grid navigation dialog if the user is entering their home room
-        if (getCurrentSceneId() == _wctx.getMemberObject().homeSceneId) {
+        var sceneId :int = getCurrentSceneId();
+        if (sceneId != 0 && sceneId == _wctx.getMemberObject().homeSceneId) {
             var ctrlBar :WorldControlBar = _wctx.getControlBar() as WorldControlBar;
             if (ctrlBar != null && !ctrlBar.homePageGridShown) {
                 if (ctrlBar.homePageGridBtn.enabled && !ctrlBar.homePageGridBtn.selected) {
