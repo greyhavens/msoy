@@ -1326,13 +1326,6 @@ GameOverPanel {
 }
 
 .friendsListPanel {
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/friends_popup_header.png",
-          scaleGridTop="8", scaleGridBottom="28",
-          scaleGridLeft="8", scaleGridRight="211");
-  headerHeight: 36;
-  backgroundColor: black;
-  backgroundAlpha: 0.85;
-  backgroundImage: null;
   paddingTop: 0;
   paddingBottom: 0;
   paddingLeft: 0;
@@ -1340,7 +1333,8 @@ GameOverPanel {
   verticalGap: 0;
 }
 
-.partyPopup { /** TODO: probably: remove */
+/*
+.partyPopup {
   titleBackgroundSkin: Embed(source="../../rsrc/media/skins/friends_popup_header.png",
           scaleGridTop="8", scaleGridBottom="28",
           scaleGridLeft="8", scaleGridRight="315");
@@ -1354,19 +1348,10 @@ GameOverPanel {
   paddingRight: 0;
   verticalGap: 0;
 }
-
-/*
-ShareDialog {
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/share_popup_header.png");
-  headerHeight: 36;
-}
 */
 
 .friendList {
-  borderColor: #408fd9;
-  borderSides: "left right";
-  borderStyle: "solid";
-  borderThickness: 2;
+  borderThickness: 0;
   backgroundAlpha: 0;
 }
 
@@ -1383,10 +1368,7 @@ ShareDialog {
 .friendsListEditorBox {
   backgroundColor: #185B81;
   backgroundAlpha: 0.5;
-  borderStyle: "solid";
-  borderColor: #408FD9;
-  borderSides: "left bottom right";
-  borderThickness: 2;
+  borderThickness: 0;
   verticalGap: 0;
   paddingLeft: 5;
   paddingRight: 5;

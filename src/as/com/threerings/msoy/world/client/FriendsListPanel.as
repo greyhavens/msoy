@@ -42,9 +42,11 @@ public class FriendsListPanel extends FlyingPanel
 
     public function FriendsListPanel (ctx :WorldContext) :void
     {
-        super(ctx);
+        super(ctx, "Friends Online");
         _wctx = ctx;
         showCloseButton = true;
+        styleName = "friendsListPanel";
+        width = POPUP_WIDTH;
         open();
 
         _cliObs = new ClientAdapter(null, clientDidLogon);
@@ -79,17 +81,20 @@ public class FriendsListPanel extends FlyingPanel
         close();
     }
 
-    override protected function createChildren () :void
+    override protected function didOpen () :void
     {
-        super.createChildren();
+        super.didOpen();
 
-        // styles and positioning
-        styleName = "friendsListPanel";
-        width = POPUP_WIDTH;
+        // auto-position ourselves
         var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds(); 
         height = placeBounds.height - PADDING * 2;
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
 
         _friendsList = new PeerList(_wctx, MemberObject.FRIENDS, FriendRenderer);
         _friendsList.dataProvider.filterFunction = function (friend :FriendEntry) :Boolean {
