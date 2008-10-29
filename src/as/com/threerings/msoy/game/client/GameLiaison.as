@@ -66,6 +66,9 @@ public class GameLiaison
         // create our custom context which we'll use to connect to lobby/game servers
         _gctx = new LiaisonGameContext(wctx);
         _gctx.getClient().addClientObserver(this);
+
+        // make sure we're not touring
+        _wctx.getTourDirector().endTour();
     }
 
     public function getGameContext () :GameContext
