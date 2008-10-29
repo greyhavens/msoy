@@ -35,7 +35,6 @@ public class PublishPanel extends FloatingPanel
     {
         super(ctx, Msgs.EDITING.get("t.publish"));
         _view = view;
-        styleName = "sexyWindow";
         showCloseButton = true;
         setButtonWidth(0);
 

@@ -48,7 +48,6 @@ public class SnapshotPanel extends FloatingPanel
     {
         super(ctx, Msgs.WORLD.get("t.snap"));
 
-        styleName = "sexyWindow";
         setStyle("horizontalAlign", "left");
 
         _view = ctx.getPlaceView() as RoomView;

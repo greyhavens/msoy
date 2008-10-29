@@ -482,10 +482,8 @@ public class RoomEditorPanel extends FlyingPanel
         spacer.height = 10;
         box.addChild(spacer);
 
-        var ccb :CommandCheckBox = new CommandCheckBox(
-            Msgs.EDITING.get("l.advanced_editing"), _controller.actionAdvancedEditing);
-        ccb.styleName = "oldCheckBox";
-        box.addChild(ccb);
+        box.addChild(new CommandCheckBox(
+            Msgs.EDITING.get("l.advanced_editing"), _controller.actionAdvancedEditing));
     }
 
     // @Override from FloatingPanel

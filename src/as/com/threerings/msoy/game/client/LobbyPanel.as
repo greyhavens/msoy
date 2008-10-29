@@ -59,7 +59,6 @@ public class LobbyPanel extends FloatingPanel
         _gctx = gctx;
         _ctrl = ctrl;
 
-        styleName = "sexyWindow";
         setStyle("horizontalAlign", "left"); // override the sexy default
         width = WIDTH;
         height = HEIGHT;

@@ -45,7 +45,6 @@ public class DecorEditPanel extends FlyingPanel
     public function DecorEditPanel (ctx :MsoyContext, studioView :RoomStudioView)
     {
         super(ctx, Msgs.STUDIO.get("t.backdrop_props"));
-        styleName = "sexyWindow";
         _studioView = studioView;
         _decor = studioView.getScene().getDecor();
         showCloseButton = true;

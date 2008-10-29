@@ -10,7 +10,7 @@
   fontSize: 12;
 }
 
-/** Hack: Copied from oldCheckBox instead of setting styleNames everywhere */
+/** We must override these buttons to work on non-sexyblack backgrounds. */
 CheckBox, RadioButton {
     borderColor: #403424;
     highlightAlphas: 0, 0;

@@ -43,7 +43,6 @@ public class HomePageDialog extends FloatingPanel
 
         title = Msgs.GENERAL.get("t.home_page");
         showCloseButton = true;
-        styleName = "homePageGrid";
         setStyle("paddingTop", EDGE_MARGIN);
         setStyle("paddingBottom", EDGE_MARGIN);
         setStyle("paddingLeft", EDGE_MARGIN);

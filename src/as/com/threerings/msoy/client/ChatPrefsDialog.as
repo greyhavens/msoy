@@ -32,7 +32,6 @@ public class ChatPrefsDialog extends FloatingPanel
     public function ChatPrefsDialog (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.chat_prefs"));
-        styleName = "sexyWindow";
         showCloseButton = true;
         open(true);
 

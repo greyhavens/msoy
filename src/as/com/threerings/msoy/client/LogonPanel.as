@@ -42,7 +42,6 @@ public class LogonPanel extends FloatingPanel
     override protected function createChildren () :void
     {
         super.createChildren();
-        styleName = "sexyWindow";
         setStyle("horizontalAlign", "left");
         setStyle("verticalAlign", "middle");
         showCloseButton = true;

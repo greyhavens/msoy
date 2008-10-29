@@ -20,7 +20,6 @@ public class AboutDialog extends FloatingPanel
     {
         super(ctx, Msgs.GENERAL.get("t.about"));
         showCloseButton = true;
-        styleName = "sexyWindow";
         open(false);
     }
 

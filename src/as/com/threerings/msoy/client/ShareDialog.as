@@ -53,7 +53,6 @@ public class ShareDialog extends FloatingPanel
 
         title = Msgs.GENERAL.get(_inGame ? "t.share_game" : "t.share_room");
         showCloseButton = true;
-        styleName = "sexyWindow";
         setStyle("paddingTop", 0);
         setStyle("paddingBottom", 0);
         setStyle("paddingLeft", 0);

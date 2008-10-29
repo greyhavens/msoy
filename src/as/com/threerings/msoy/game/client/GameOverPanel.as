@@ -33,9 +33,6 @@ public class GameOverPanel extends FloatingPanel
         _rematch = rematch;
         _goBtn = goBtn;
 
-        // TODO
-        styleName = "sexyWindow";
-
         _topArea.setStyle("horizontalAlign", "center");
     }
 

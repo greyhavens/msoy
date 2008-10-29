@@ -36,40 +36,14 @@ Panel {
 }
 
 TitleWindow {
-  borderAlpha: 0;
-  cornerRadius: 4;
-  roundedBottomCorners: true;
+  roundedBottomCorners: true; /* false ? */
   headerHeight: 23;
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/window/title_bg.png",
-          scaleGridTop="8", scaleGridBottom="14",
-          scaleGridLeft="8", scaleGridRight="28");
   titleStyleName: "msoyTitleStyle";
-  backgroundImage: Embed(source="../../rsrc/media/skins/window/window_bg.png",
-          scaleGridTop="10", scaleGridBottom="20",
-          scaleGridLeft="10", scaleGridRight="20");
-  backgroundSize: "100%";
   closeButtonOverSkin: Embed(source="../../pages/images/ui/close_over.png");
   closeButtonDisabledSkin: Embed(source="../../pages/images/ui/close.png");
   closeButtonDownSkin: Embed(source="../../pages/images/ui/close_down.png");
   closeButtonUpSkin: Embed(source="../../pages/images/ui/close.png");
-}
 
-/**
- * The new style for our windows.
- * IN PROGRESS
- *
- * The following styles work, and work pretty well. The notes below this line were what
- * learned on the way here..
- * 
- * Unfortunately, if we have a background image, then the background color is also used.
- * if we have alpha in the image, then the color shows through.
- * There is no way to turn off the backgroundColor.
- *
- * What I'm proposing to the artists is that we don't have a fucking transparent header, because
- * then I can do the blue border stuff with the "border" styles, and not even have a
- * background image, but do it purely with the color and alpha.
- */
-.sexyWindow, .homePageGrid {
   borderColor: #3db8eb;
   borderAlpha: 1;
   borderThicknessLeft: 3;
@@ -78,9 +52,6 @@ TitleWindow {
   borderThicknessTop: 0;
   borderThickness: 0;
   borderSides: "left right bottom";
-  /*
-  roundedBottomCorners: false;
-  */
   cornerRadius: 4;
   backgroundColor: #000000;
   backgroundAlpha: 0.85;
@@ -99,6 +70,11 @@ TitleWindow {
   color: white;
 }
 
+.msoyTitleStyle {
+  color: #FFFFFF;
+  fontWeight: bold;
+}
+
 .topPanel {
   backgroundColor: #000000;
 }
@@ -108,11 +84,6 @@ TitleWindow {
           scaleGridTop="8", scaleGridBottom="14",
           scaleGridLeft="8", scaleGridRight="28");
   backgroundImage: null;
-}
-
-.msoyTitleStyle {
-  color: #FFFFFF;
-  fontWeight: bold;
 }
 
 .accordianHeader {
@@ -189,24 +160,6 @@ ComboBox {
   disabledSkin: Embed(source="../../rsrc/media/skins/combobox/disabled.png",
           scaleGridTop="5", scaleGridBottom="13",
           scaleGridLeft="5", scaleGridRight="40");
-}
-
-/** This is still used in a couple places, let's phase this out eventually. */
-.oldCheckBox {
-  borderColor: #403424;
-  highlightAlphas: 0, 0;
-  fillAlphas: 0, 0, 0.75, 0.65;
-  fillColors: #403424, #403424, #ffffff, #eeeeee;
-
-  upIcon: ClassReference(null);
-  downIcon: ClassReference(null);
-  overIcon: ClassReference(null);
-  selectedUpIcon: ClassReference(null);
-  selectedOverIcon: ClassReference(null);
-  selectedDownIcon: ClassReference(null);
-  color: black;
-  textRollOverColor: black;
-  textSelectedColor: black;
 }
 
 /** TODO: Get actual radio button art (Circles instead of squares) */
@@ -828,7 +781,6 @@ BasePanel {
 }
 
 .roomEditButtonLabel {
-  color: #444444;
   fontFamily: "Arial";
   fontSize: 9;
   fontAntiAliasType: "advanced";
