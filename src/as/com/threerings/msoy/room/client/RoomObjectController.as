@@ -397,6 +397,11 @@ public class RoomObjectController extends RoomController
         var avItems :Array = [];
         var avatars :Array = (us.avatarCache != null) ? us.avatarCache.toArray() : [];
         ArrayUtil.sort(avatars);
+
+        avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
+            command: WorldController.VIEW_STUFF, arg: Item.AVATAR });
+        avItems.push({ type: "separator" });
+
         for (var ii :int = 0; ii < avatars.length; ii++) {
             var av :Avatar = avatars[ii] as Avatar;
             avItems.push({ label: av.name, enabled: !av.equals(us.avatar),
@@ -409,11 +414,6 @@ public class RoomObjectController extends RoomController
             iconObject: MediaWrapper.createView(
                 Item.getDefaultThumbnailMediaFor(Item.AVATAR), MediaDesc.QUARTER_THUMBNAIL_SIZE),
             callback: _wdctx.getWorldDirector().setAvatar, arg: 0 });
-
-        avItems.push({ type: "separator" });
-        avItems.push({ label: Msgs.GENERAL.get("b.avatars_full"),
-            command: WorldController.VIEW_STUFF, arg: Item.AVATAR,
-            enabled: !_wdctx.getWorldClient().isEmbedded() });
 
         // return a menu item for changing their avatar
         return { label: Msgs.GENERAL.get("b.change_avatar"), children: avItems,
