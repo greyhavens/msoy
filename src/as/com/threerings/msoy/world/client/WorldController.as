@@ -1320,6 +1320,23 @@ public class WorldController extends MsoyController
         menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
     }
 
+    /** @inheritDoc */
+    // from MsoyController
+    override protected function locationDidChange (place :PlaceObject) :void
+    {
+        super.locationDidChange(place);
+
+        // Show the home page grid navigation dialog if the user is entering their home room
+        if (getCurrentSceneId() == _wctx.getMemberObject().homeSceneId) {
+            var ctrlBar :WorldControlBar = _wctx.getControlBar() as WorldControlBar;
+            if (ctrlBar != null && !ctrlBar.homePageGridShown) {
+                if (ctrlBar.homePageGridBtn.enabled && !ctrlBar.homePageGridBtn.selected) {
+                    ctrlBar.homePageGridBtn.activate();
+                }
+            }
+        }
+    }
+
     /** Giver of life, context. */
     protected var _wctx :WorldContext;
 
