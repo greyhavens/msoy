@@ -276,6 +276,7 @@ public class RoomEditorPanel extends FlyingPanel
 
             if (makeLabel) {
                 var l :Text = new Text();
+                l.selectable = false;
                 l.styleName = "roomEditButtonLabel";
                 l.text = Msgs.EDITING.get("l." + translationBase);
                 c.addChild(l);
