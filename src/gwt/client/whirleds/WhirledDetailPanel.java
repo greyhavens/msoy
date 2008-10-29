@@ -37,7 +37,6 @@ import client.ui.PrettyTextPanel;
 import client.ui.PromptPopup;
 import client.ui.ThumbBox;
 import client.util.ClickCallback;
-import client.util.FeaturedPlaceUtil;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;

@@ -11,9 +11,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
-import client.shell.CShell;
 import client.shell.Page;
-import client.ui.MsoyUI;
 import client.util.ServiceUtil;
 
 /**

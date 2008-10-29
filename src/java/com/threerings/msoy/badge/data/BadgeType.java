@@ -14,7 +14,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
-import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 

@@ -42,8 +42,6 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.admin.data.ServerConfigObject;
-
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.web.gwt.ServiceException;
 

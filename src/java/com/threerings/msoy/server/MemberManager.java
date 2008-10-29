@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.inject.Inject;
@@ -56,8 +55,6 @@ import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
-import com.threerings.stats.data.StatSet;
-
 import com.threerings.msoy.data.BasicNavItemData;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberExperience;
@@ -65,7 +62,6 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -73,21 +69,18 @@ import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.PopularPlacesSnapshot.Place;
+import com.threerings.msoy.server.persist.MemberExperienceRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.badge.data.BadgeType;
-import com.threerings.msoy.badge.data.EarnedBadgeSet;
-import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.badge.server.BadgeManager;
-import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -1012,7 +1005,7 @@ public class MemberManager
             // since the experience occurred.  Cap at 0; thus, anything older than 2 weeks has
             // the same score.
             float newScore = 14f - 
-                (float)(System.currentTimeMillis() - experience.dateOccurred) / 
+                (System.currentTimeMillis() - experience.dateOccurred) / 
                 (1000f * 60f * 60f * 24f);
             score = (newScore < 0) ? 0f : newScore;
         }

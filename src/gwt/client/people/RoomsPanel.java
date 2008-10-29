@@ -4,13 +4,10 @@
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 
 import com.threerings.gwt.ui.SmartTable;
-
-import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
@@ -18,11 +15,7 @@ import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 
 import client.room.RoomWidget;
 import client.shell.CShell;
-import client.ui.MsoyUI;
-import client.ui.Stars;
 import client.ui.TongueBox;
-import client.util.Link;
-import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 

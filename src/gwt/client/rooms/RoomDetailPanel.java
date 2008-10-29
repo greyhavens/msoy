@@ -28,7 +28,6 @@ import client.ui.MsoyUI;
 import client.ui.Rating;
 import client.ui.StyledTabPanel;
 import client.util.Link;
-import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 

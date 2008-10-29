@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
 import javax.activation.URLDataSource;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;

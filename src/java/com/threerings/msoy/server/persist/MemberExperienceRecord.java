@@ -17,7 +17,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /**
  * An experience a member has had in Whirled.  This is used to keep track of the last actions
- * taken by a member.  Only a small number defined by {@link MemberLogic#MAX_EXPERIENCES} will be 
+ * taken by a member.  Only a small number defined by MemberLogic.MAX_EXPERIENCES will be 
  * maintained for each member.
  * 
  * @author Kyle Sampson <kyle@threerings.net>

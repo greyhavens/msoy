@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -20,17 +19,13 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
 import client.room.RoomWidget;
-import client.ui.MsoyUI;
 import client.ui.TongueBox;
-import client.util.Link;
-import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 

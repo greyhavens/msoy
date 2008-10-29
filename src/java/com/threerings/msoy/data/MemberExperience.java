@@ -46,8 +46,8 @@ public class MemberExperience
     /**
      * Creates a new home page item from this experience.
      * 
-     * @param image Image to show for this action.
-     * @param name Name of this item.
+     * @param image the image to show for this action.
+     * @param data the data for this item.
      */
     public HomePageItem getHomePageItem (MediaDesc image, NavItemData data)
     {

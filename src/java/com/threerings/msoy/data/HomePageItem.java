@@ -56,9 +56,8 @@ public class HomePageItem extends SimpleStreamableObject
     /**
      * Creates a new home page item.
      * @param action the action for this item
-     * @param actionData the data associated with the action
+     * @param navItemData the data associated with the action
      * @param image the icon to show for this action
-     * @param name Name of this item.
      */
     public HomePageItem (byte action, NavItemData navItemData, MediaDesc image)
     {

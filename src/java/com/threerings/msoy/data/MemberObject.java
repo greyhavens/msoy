@@ -3,27 +3,17 @@
 
 package com.threerings.msoy.data;
 
-import java.util.List;
-
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
-import com.threerings.util.StreamableArrayIntSet;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
-
-import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.badge.data.BadgeType;
-import com.threerings.msoy.badge.data.EarnedBadgeSet;
-import com.threerings.msoy.badge.data.InProgressBadgeSet;
-import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -31,8 +21,6 @@ import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
-
-import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;

@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;

@@ -32,7 +32,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 

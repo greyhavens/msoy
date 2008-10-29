@@ -16,7 +16,6 @@ import com.threerings.msoy.group.gwt.GroupCard;
 import client.room.SceneUtil;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
-import client.util.FeaturedPlaceUtil;
 import client.util.Link;
 import client.util.MediaUtil;
 

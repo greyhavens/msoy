@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.server;
 
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;

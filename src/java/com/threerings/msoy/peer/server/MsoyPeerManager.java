@@ -46,8 +46,6 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MemberLocal;
-import com.threerings.msoy.server.MsoyClient;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;

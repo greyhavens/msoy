@@ -5,8 +5,6 @@ package com.threerings.msoy.world.tour.server;
 
 import java.util.List;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -25,7 +23,6 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
