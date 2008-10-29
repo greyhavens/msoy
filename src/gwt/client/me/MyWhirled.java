@@ -36,7 +36,7 @@ public class MyWhirled extends FlowPanel
         // add an additional links only on this page; this will hopefully some day move into the
         // main interface on this page
         CShell.frame.addNavLink("My Profile", Pages.PEOPLE, "" + CShell.getMemberId(), 1);
-        CShell.frame.addNavLink("Passport", Pages.PEOPLE, "passport", 7);
+        CShell.frame.addNavLink("Passport", Pages.ME, "passport", 7);
 
         _mesvc.getMyWhirled(new MsoyCallback<MyWhirledData>() {
             public void onSuccess (MyWhirledData data) {
