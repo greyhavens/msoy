@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.filters.ColorMatrixFilter;
+import flash.geom.Rectangle;
 
 import mx.core.UIComponent;
 import mx.core.Container;
@@ -213,6 +214,11 @@ public class HomePageDialog extends FloatingPanel
     override protected function didOpen () :void
     {
         super.didOpen();
+
+        // auto-position ourselves (not the same as mx centering)
+        var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds();
+        y = placeBounds.y + (placeBounds.height - height) / 2;
+
         refresh();
     }
 
