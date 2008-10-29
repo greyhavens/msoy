@@ -113,13 +113,11 @@ public class Snapshot extends EventDispatcher
         // first let's fill the bitmap with black or something
         bitmap.fillRect(_frame, 0x000000);
 
-        // draw the room, scaling down to the appropriate size
         var allSuccess :Boolean = true;
 
         if (!renderChildren(includeOccupants)) {
             allSuccess = false;
         }
-
         if (includeOverlays) {
             renderOverlays();
         }
@@ -179,7 +177,8 @@ public class Snapshot extends EventDispatcher
     /**
      * Render the overlays 
      */ 
-    protected function renderOverlays () :void {        
+    protected function renderOverlays () :void
+    {
         var d :DisplayObject = _view;
         
         // search up through the containment hierarchy until you find the LayeredContainer
