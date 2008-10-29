@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.mail.server;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -166,27 +167,21 @@ public class MailLogic
             return;
         }
 
-        String[] headers = SpamUtil.makeSpamHeaders(subject);
-        String from = ServerConfig.getFromAddress();
-        int count = 0;
-
         // load up the emails of everyone we want to spam
         List<Tuple<Integer, String>> emails = _memberRepo.loadMemberEmailsForAnnouncement();
-        for (Tuple<Integer, String> recip : emails) {
-            _mailer.sendEmail(recip.right, from, headers, subject,
-                              SpamUtil.customizeSpam(body, recip.left, recip.right), true);
-            count++;
-        }
 
-        // lastly send out mails to our friends at Returnpath (as long as we're not on dev)
+        // add the Return Path probe addresses (as long as we're not on dev)
         if (!DeploymentConfig.devDeployment) {
             for (String rpaddr : SpamUtil.getReturnPathAddrs()) {
-                _mailer.sendEmail(rpaddr, from, headers, subject, body, true);
-                count++;
+                emails.add(Tuple.create(0, rpaddr));
             }
         }
 
-        log.info("Queued up announcement email", "subject", subject, "count", count);
+        // ship our giant list off to the mail sender
+        _mailer.sendSpam(emails, ServerConfig.getFromAddress(),
+                         SpamUtil.makeSpamHeaders(subject), subject, body);
+
+        log.info("Queued up announcement email", "subject", subject, "count", emails.size());
     }
 
     /**
@@ -199,8 +194,10 @@ public class MailLogic
         if (body == null) {
             return;
         }
-        _mailer.sendEmail(recip, ServerConfig.getFromAddress(), SpamUtil.makeSpamHeaders(subject),
-                          subject, SpamUtil.customizeSpam(body, recipId, recip), true);
+
+        _mailer.sendSpam(Collections.singletonList(Tuple.create(recipId, recip)),
+                         ServerConfig.getFromAddress(), SpamUtil.makeSpamHeaders(subject),
+                         subject, body);
     }
 
     /**

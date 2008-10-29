@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
 import javax.activation.URLDataSource;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -27,12 +29,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.net.MailUtil;
+import com.samskivert.util.Tuple;
 import com.samskivert.velocity.VelocityUtil;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.threerings.msoy.mail.server.SpamUtil;
 import com.threerings.presents.server.ShutdownManager;
 
 import static com.threerings.msoy.Log.log;
@@ -116,35 +120,31 @@ public class MailSender
     {
         // skip emails to placeholder addresses
         if (!isPlaceholderAddress(recip)) {
-            _executor.execute(new MailTask(recip, sender, template, params));
+            _executor.execute(new TemplateMailTask(recip, sender, template, params));
         }
     }
 
     /**
-     * Delivers a preformatted email with the supplied subject and body.
+     * Delivers a mass mailing email with the supplied subject and body to the supplied list of
+     * recipients.
      *
-     * @param recip the address of the recipient.
+     * @param recips {memberId, email} for each of the recipients.
      * @param sender the address of the sender.
      * @param headers optional additional headers to add to the mail { key, value, key, value,
      * ... }.
      * @param subject the subject of the email.
      * @param body the body of the email.
-     * @param isHTML whether or not the body is an HTML document or plain text.
      */
-    public void sendEmail (String recip, String sender, String[] headers, String subject,
-                           String body, boolean isHTML)
+    public void sendSpam (List<Tuple<Integer, String>> recips, String sender, String[] headers,
+                          String subject, String body)
     {
-        // skip emails to placeholder addresses
-        if (!isPlaceholderAddress(recip)) {
-            _executor.execute(new PreformattedMailTask(
-                                  recip, sender, headers, subject, body, isHTML));
-        }
+        _executor.execute(new SpamTask(recips, sender, headers, subject, body));
     }
 
     /** Handles the formatting and delivery of a mail message. */
-    protected static class MailTask implements Runnable
+    protected static class TemplateMailTask implements Runnable
     {
-        public MailTask (String recip, String sender, String template, Parameters params) {
+        public TemplateMailTask (String recip, String sender, String template, Parameters params) {
             _recip = recip;
             _sender = sender;
             _template = template;
@@ -234,42 +234,41 @@ public class MailSender
         protected Parameters _params;
     }
 
-    /** Handles the delivery of an email message which is preformatted. */
-    protected static class PreformattedMailTask implements Runnable
+    /** Handles the delivery of a mass email message. */
+    protected static class SpamTask implements Runnable
     {
-        public PreformattedMailTask (String recip, String sender, String[] headers, String subject,
-                                     String body, boolean isHTML) {
-            _recip = recip;
+        public SpamTask (List<Tuple<Integer, String>> recips, String sender, String[] headers,
+                         String subject, String body) {
+            _recips = recips;
             _sender = sender;
             _headers = headers;
             _subject = subject;
             _body = body;
-            _isHTML = isHTML;
         }
 
         public void run () {
-            try {
-                if (_isHTML) {
+            // grind through and send email to each of our recipients
+            for (Tuple<Integer, String> recip : _recips) {
+                String body = SpamUtil.customizeSpam(_body, recip.left, recip.right);
+                try {
                     MimeMessage message = MailUtil.createEmptyMessage();
-                    int hcount = (_headers != null) ? _headers.length : 0;
+                    int hcount = (_headers == null) ? 0 : _headers.length;
                     for (int ii = 0; ii < hcount; ii += 2) {
                         message.addHeader(_headers[ii], _headers[ii+1]);
                     }
-                    message.setContent(_body, "text/html");
-                    MailUtil.deliverMail(new String[] { _recip }, _sender, _subject, message);
-                } else {
-                    MailUtil.deliverMail(_recip, _sender, _subject, _body);
-                }
+                    message.setContent(body, "text/html");
+                    MailUtil.deliverMail(new String[] { recip.right }, _sender, _subject, body);
 
-            } catch (Exception e) {
-                log.warning("Failed to send spam email", "recip", _recip, "sender", _sender,
-                            "subject", _subject, e);
+                } catch (Exception e) {
+                    log.warning("Failed to send spam email", "recip", recip, "sender", _sender,
+                                "subject", _subject, e);
+                }
             }
         }
 
-        protected String _recip, _sender, _subject, _body;
+        protected List<Tuple<Integer, String>> _recips;
+        protected String _sender, _subject, _body;
         protected String[] _headers;
-        protected boolean _isHTML;
     }
 
     /** The executor on which we will dispatch mail sending tasks. */

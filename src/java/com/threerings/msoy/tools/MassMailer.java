@@ -93,25 +93,23 @@ public class MassMailer
             System.exit(255); // formatSpam will have warned
         }
 
-        String[] headers = SpamUtil.makeSpamHeaders(ftr.subject);
-        String from = ServerConfig.getFromAddress();
-        int count = 0;
-
         // load up the emails of everyone we want to spam
         List<Tuple<Integer, String>> emails = memberRepo.loadMemberEmailsForAnnouncement();
-        for (Tuple<Integer, String> recip : emails) {
-            if (skipAddrs.contains(recip.right)) {
-                continue;
+
+        // prune out all non-applicable addresses
+        for (Iterator<Tuple<Integer, String>> iter = emails.iterator(); iter.hasNext(); ) {
+            Tuple<Integer, String> recip = iter.next();
+            if (skipAddrs.contains(recip.right) ||
+                (testAddrs.size() > 0 && !testAddrs.contains(recip.right))) {
+                iter.remove();
             }
-            if (testAddrs.size() > 0 && !testAddrs.contains(recip.right)) {
-                continue;
-            }
-            mailer.sendEmail(recip.right, from, headers, ftr.subject,
-                             SpamUtil.customizeSpam(body, recip.left, recip.right), true);
-            count++;
         }
 
-        log.info("Queued up announcement email", "subject", ftr.subject, "count", count);
+        // pass all this data on to the mail sender
+        mailer.sendSpam(emails, ServerConfig.getFromAddress(),
+                        SpamUtil.makeSpamHeaders(ftr.subject), ftr.subject, body);
+
+        log.info("Queued up announcement email", "subject", ftr.subject, "count", emails.size());
 
         // finally shutdown which will finish sending all of our mails and terminate
         shutMgr.shutdown();
