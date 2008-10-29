@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.data.all.BalanceInfo;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
  * Provides digital items related services.
@@ -42,6 +43,9 @@ public interface CatalogService extends RemoteService
 
         /** Any updated balances. */
         public BalanceInfo balances;
+
+        /** Another price quote if they wish to buy again. */
+        public PriceQuote quote;
     }
 
     /** Provides results for {@link #loadFavorites}. */

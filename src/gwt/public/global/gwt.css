@@ -964,9 +964,22 @@ img, embed, applet, object {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 }
 
+.stretchButton-small .buyButton .X {
+  width: 80px;
+}
+
+.stretchButton-small .orangeThick,
+.stretchButton-small .blueThick {
+  font-size: 15px;
+}
+
+.stretchButton-small .orangeThick .X,
+.stretchButton-small .blueThick  .X {
+  height: 25px;
+}
+
 .orangeThick .W, .orangeThick .E, .blueThick .W, .blueThick .E {
   width: 36px;
-  height: 44px;
 }
 
 /** ORANGE BUTTON */

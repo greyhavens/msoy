@@ -62,7 +62,6 @@ public class RoomsPanel extends FlowPanel
 
     protected void init (WebRoomService.OverviewResult overview)
     {
-
         RoomsGrid active = new RoomsGrid();
         active.setModel(new SimpleDataModel<RoomInfo>(overview.activeRooms), 0);
         add(new TongueBox(_msgs.activeRooms(), active));

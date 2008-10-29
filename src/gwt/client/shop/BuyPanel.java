@@ -65,7 +65,7 @@ public class BuyPanel extends FlowPanel
         updatePrice(_listing.quote);
     }
 
-    protected void itemPurchased (Item item)
+    protected void itemPurchased (Item item, Currency currency)
     {
         byte itype = item.getType();
 
@@ -85,6 +85,14 @@ public class BuyPanel extends FlowPanel
             String ptype = _dmsgs.xlate("pItemType" + itype);
             add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
         }
+
+        FlowPanel again = new FlowPanel();
+        again.setStyleName("Buy");
+        BuyButton buyAgain = (currency == Currency.BARS) ? _buyBars : _buyCoins;
+        buyAgain.addStyleDependentName("small");
+        again.add(buyAgain);
+        again.add(MsoyUI.createLabel(_msgs.timesBought(""+_timesBought), null));
+        add(again);
 
         if (_callback != null) {
             _callback.onSuccess(item);
@@ -137,9 +145,11 @@ public class BuyPanel extends FlowPanel
 
         @Override protected boolean gotResult (CatalogService.PurchaseResult result)
         {
+            _timesBought += 1;
             MoneyUtil.updateBalances(result.balances);
-            itemPurchased(result.item);
-            return false; // don't reenable buy button
+            updatePrice(result.quote);
+            itemPurchased(result.item, _currency);
+            return true;
         }
 
         public void onFailure (Throwable cause)
@@ -173,6 +183,7 @@ public class BuyPanel extends FlowPanel
         {
             HorizontalPanel horiz = new HorizontalPanel();
             horiz.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+
             horiz.add(MsoyUI.createLabel((amount > 0) ? _msgs.shopBuy() : _msgs.shopFree(), null));
             horiz.add(WidgetUtil.makeShim(10, 1));
             horiz.add(MsoyUI.createImage(_currency.getLargeIcon(), null));
@@ -191,6 +202,8 @@ public class BuyPanel extends FlowPanel
 
     protected BuyButton _buyBars, _buyCoins;
     protected FlowPanel _barPanel;
+
+    protected int _timesBought;
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

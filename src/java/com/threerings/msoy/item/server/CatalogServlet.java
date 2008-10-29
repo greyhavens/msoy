@@ -256,9 +256,14 @@ public class CatalogServlet extends MsoyServiceServlet
             log.warning("Error logging stats during item purchase", e);
         }
 
+        // Secure another quote for if they want to buy again
+        PriceQuote quote = _moneyLogic.securePrice(mrec.memberId,
+            new CatalogIdent(itemType, catalogId), listing.currency, listing.cost);
+
         PurchaseResult purchResult = new PurchaseResult();
         purchResult.item = buyOp.getItem();
         purchResult.balances = result.getBuyerBalances();
+        purchResult.quote = quote;
         return purchResult;
     }
 
