@@ -102,10 +102,10 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /** Our {@link MemberObserver}s. */
-    public static final ObserverList<MemberObserver> memberObs = ObserverList.newFastUnsafe();
+    public final ObserverList<MemberObserver> memberObs = ObserverList.newFastUnsafe();
 
     /** Our {@link MemberForwardObserver}s. */
-    public static final ObserverList<MemberForwardObserver> memberFwdObs =
+    public final ObserverList<MemberForwardObserver> memberFwdObs =
         ObserverList.newFastUnsafe();
 
     /** Returns a lock used to claim resolution of the specified scene. */
