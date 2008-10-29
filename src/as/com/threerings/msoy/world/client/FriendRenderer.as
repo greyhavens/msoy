@@ -9,16 +9,22 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.controls.Label;
+import mx.controls.Text;
 
 import mx.controls.scrollClasses.ScrollBar;
 
 import mx.core.ScrollPolicy;
 
+import com.threerings.util.CommandEvent;
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.MediaWrapper;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -27,6 +33,9 @@ public class FriendRenderer extends HBox
 {
     // Initialized by the ClassFactory
     public var mctx :MsoyContext;
+
+    /** A marker data entry to indicate that we should display the guest prompt. */
+    public static const GUEST_PROMPT :FriendEntry = new FriendEntry(null, true);
 
     public function FriendRenderer () 
     {
@@ -77,29 +86,42 @@ public class FriendRenderer extends HBox
         // probably be doing (or the whole list should just be a new kind of PlayerList).
 
         removeAllChildren();
+        _name = null;
 
         if (this.data == null) {
             return;
         }
-
         var friend :FriendEntry = this.data as FriendEntry;
-        _name = friend.name;
+        if (friend != null) {
+            _name = friend.name;
+        }
 
         var labelBox :VBox = new VBox();
         labelBox.verticalScrollPolicy = ScrollPolicy.OFF;
         labelBox.horizontalScrollPolicy = ScrollPolicy.OFF;
         labelBox.setStyle("verticalGap", 0);
-        labelBox.width = 
-            FriendsListPanel.POPUP_WIDTH - MediaDesc.THUMBNAIL_WIDTH / 2 - ScrollBar.THICKNESS -
-            4 /* list border * 2 */ - 6 /* padding */;
         addChild(labelBox);
 
-        var friendLabel :Label = new Label();
-        friendLabel.styleName = "friendLabel";
-        friendLabel.text = _name.toString();
-        friendLabel.percentWidth = 100;
-        friendLabel.width = labelBox.width;
-        labelBox.addChild(friendLabel);
+        if (this.data == GUEST_PROMPT) {
+            labelBox.width = FriendsListPanel.POPUP_WIDTH - ScrollBar.THICKNESS - 4 - 6;
+            var text :Text = FlexUtil.createText(Msgs.GENERAL.get("m.guest_friends"),
+                labelBox.width);
+            text.styleName = "friendLabel";
+            labelBox.addChild(text);
+            var joinBtn :CommandButton = new CommandButton(null, MsoyController.SHOW_SIGN_UP);
+            joinBtn.styleName = "joinNowButton";
+            labelBox.addChild(joinBtn);
+            return;
+
+        } else {
+            labelBox.width = 
+                FriendsListPanel.POPUP_WIDTH - MediaDesc.THUMBNAIL_WIDTH / 2 - ScrollBar.THICKNESS -
+                4 /* list border * 2 */ - 6 /* padding */;
+            var friendLabel :Label = FlexUtil.createLabel(_name.toString(), "friendLabel");
+            //friendLabel.percentWidth = 100;
+            friendLabel.width = labelBox.width;
+            labelBox.addChild(friendLabel);
+        }
 
         var statusContainer :HBox = new HBox();
         statusContainer.setStyle("paddingLeft", 3);
@@ -116,9 +138,14 @@ public class FriendRenderer extends HBox
 
     protected function handleClick (event :MouseEvent) :void
     {
-        var menuItems :Array = [];
-        mctx.getMsoyController().addFriendMenuItems(_name, menuItems);
-        CommandMenu.createMenu(menuItems, mctx.getTopPanel()).popUpAtMouse();
+        if (this.data == GUEST_PROMPT) {
+            CommandEvent.dispatch(this, MsoyController.SHOW_SIGN_UP);
+
+        } else if (_name != null) {
+            var menuItems :Array = [];
+            mctx.getMsoyController().addFriendMenuItems(_name, menuItems);
+            CommandMenu.createMenu(menuItems, mctx.getTopPanel()).popUpAtMouse();
+        }
     }
 
     protected var _name :MemberName;

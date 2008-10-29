@@ -136,6 +136,8 @@ public class WorldControlBar extends ControlBar
     {
         super.addControls(); 
 
+        addButton(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
+
         // TODO: can this work in UI_GAME too?
         addButton(_homePageGridBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
 
@@ -145,11 +147,6 @@ public class WorldControlBar extends ControlBar
         addButton(_snapBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
         addButton(_roomeditBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
 
-        // TODO: enable friends for guests, even if it just goads them into signup
-        // TODO: friends are global, yes? They should be in ControlBar
-        if (_friendsBtn != null && _isMember) {
-            addButton(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
-        }
     }
 
     // from ControlBar

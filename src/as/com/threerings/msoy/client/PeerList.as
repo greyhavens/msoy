@@ -84,7 +84,9 @@ public class PeerList extends List
 
     protected function addPeer (peer :PeerEntry) :void
     {
+        trace("Adding " + peer);
         if ( ! dataProvider.contains(peer)) {
+            trace("Actually Adding " + peer);
             dataProvider.addItem(peer);
         }
     }
@@ -100,6 +102,7 @@ public class PeerList extends List
     // TODO: Necessary since PeerEntry implements Comparable?
     protected function sortFunction (o1 :Object, o2 :Object, fields :Array = null) :int
     {
+        trace("Asked to sort " + o1 + "  " + o2);
         var lhs :PeerEntry = o1 as PeerEntry;
         var rhs :PeerEntry = o2 as PeerEntry;
         return MemberName.BY_DISPLAY_NAME(lhs.getName(), rhs.getName());
