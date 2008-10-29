@@ -243,6 +243,19 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
+     * Tests if this member has any friends online.
+     */
+    public function hasOnlineFriends () :Boolean
+    {
+        for each (var fe :FriendEntry in friends.toArray()) {
+            if (fe.online) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Get a sorted list of gateways.
      */
     public function getSortedGateways () :Array

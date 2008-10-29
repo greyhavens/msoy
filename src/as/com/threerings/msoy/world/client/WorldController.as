@@ -937,7 +937,7 @@ public class WorldController extends MsoyController
             // display the My Whirled Places grid
             var ctrlBar :WorldControlBar = (_wctx.getControlBar() as WorldControlBar);
             if (ctrlBar != null && ctrlBar.homePageGridBtn.enabled) {
-                if (!_wctx.getMemberObject().isGuest()) {
+                if (_wctx.getMemberObject().hasOnlineFriends()) { // also excludes guests
                     ctrlBar.friendsBtn.activate();
                 }
                 ctrlBar.homePageGridBtn.activate();
