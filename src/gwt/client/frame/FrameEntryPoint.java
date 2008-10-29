@@ -349,9 +349,18 @@ public class FrameEntryPoint
             }
 
             // if we're on a "world" page, go to a landing page
-            if (_currentToken != null && _currentToken.startsWith(Pages.WORLD.getPath())) {
-                // if we were in a game, go to the games page, otherwise go to the ME page
-                Link.go(_currentToken.indexOf("game") == -1 ? Pages.ME : Pages.GAMES, "");
+            if (_currentToken != null &&
+                (_currentToken.startsWith(Pages.WORLD.getPath()) || _currentToken.equals(""))) {
+                if (_currentToken.indexOf("game") != -1) {
+                    // if we were in a game, go to the games page
+                    Link.go(Pages.GAMES, "");
+                } else if (CShell.isGuest()) {
+                    // if we're a guest, go back to the landing page
+                    Link.go(getLandingPage(), "");
+                } else {
+                    // otherwise go to the ME page
+                    Link.go(Pages.ME, "");
+                }
             }
         }
     }
