@@ -143,8 +143,7 @@ public class WorldControlBar extends ControlBar
 
         addButton(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
 
-        // TODO: can this work in UI_GAME too?
-        addButton(_homePageGridBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
+        addButton(_homePageGridBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], PLACE_PRIORITY);
 
         addButton(_hotZoneBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
         addButton(_zoomBtn, [ UI_ROOM, UI_VIEWER, UI_AVRGAME ], PLACE_PRIORITY);
