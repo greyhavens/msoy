@@ -76,16 +76,7 @@ public class FriendsListPanel extends FlyingPanel
     // part of ClientObserver, adapted by _cliObs
     protected function clientDidLogon (... ignored) :void
     {
-        // always close?
         close();
-/*
-        var memObj :MemberObject = _wctx.getMemberObject();
-        if (memObj.isGuest()) {
-            close();
-        } else {
-            init(memObj); // member object changed!
-        }
-*/
     }
 
     override protected function createChildren () :void
@@ -109,7 +100,6 @@ public class FriendsListPanel extends FlyingPanel
         addChild(_friendsList);
 
         if (_wctx.getMemberObject().isGuest()) {
-            trace("=========== initializing with GUEST_PROMPT");
             _friendsList.init([ FriendRenderer.GUEST_PROMPT ]);
             return;
         }

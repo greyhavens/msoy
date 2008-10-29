@@ -118,7 +118,6 @@ public class FriendRenderer extends HBox
                 FriendsListPanel.POPUP_WIDTH - MediaDesc.THUMBNAIL_WIDTH / 2 - ScrollBar.THICKNESS -
                 4 /* list border * 2 */ - 6 /* padding */;
             var friendLabel :Label = FlexUtil.createLabel(_name.toString(), "friendLabel");
-            //friendLabel.percentWidth = 100;
             friendLabel.width = labelBox.width;
             labelBox.addChild(friendLabel);
         }
