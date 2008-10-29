@@ -64,6 +64,11 @@ public class WorldControlBar extends ControlBar
         return _homePageGridBtn;
     }
 
+    public function get friendsBtn () :CommandButton
+    {
+        return _friendsBtn;
+    }
+
     /**
      * This is needed by the room controller, so that it can properly know how to hover.
      */
