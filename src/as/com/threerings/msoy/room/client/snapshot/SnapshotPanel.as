@@ -83,6 +83,16 @@ public class SnapshotPanel extends FloatingPanel
         open();
     }
 
+    override public function close () :void 
+    {
+        // cancel any encoding processes that may be running.
+        galleryImage.cancelAll();
+        sceneThumbnail.cancelAll();
+
+        // close the panel
+        super.close();
+    }
+
     /**
      * Return true if the controller should save a scene thumbnail when the panel is closed.
      */
@@ -229,23 +239,10 @@ public class SnapshotPanel extends FloatingPanel
         _progressLabel = new Label();
         _progressLabel.text = Msgs.WORLD.get("m.snap_upload");
         addChild(_progressLabel);   
-        _cancelUploadButton = new CommandButton(Msgs.WORLD.get("b.snap_cancel"), cancelUpload);     
+        _cancelUploadButton = new CommandButton(Msgs.WORLD.get("b.snap_cancel"), close);
         addChild(_cancelUploadButton);        
 
         showCloseButton = false;
-    }
-
-    /**
-     * Handling the user request that the upload be cancelled.
-     */
-    protected function cancelUpload () :void 
-    {
-        // cancel any encoding processes that may be running.
-        galleryImage.cancelAll();
-        sceneThumbnail.cancelAll();
-
-        // close the panel
-        close();
     }
 
     /**
@@ -315,7 +312,7 @@ public class SnapshotPanel extends FloatingPanel
 
     protected function doDownload () :void
     {
-        _cancelUploadButton.setCallback(cancelUpload);
+        _cancelUploadButton.setCallback(close);
         _cancelUploadButton.enabled = false;
         _progressLabel.text = Msgs.WORLD.get("m.snap_download_progress");
         _progressBar.indeterminate = true;
