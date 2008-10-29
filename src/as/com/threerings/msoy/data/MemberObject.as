@@ -247,12 +247,9 @@ public class MemberObject extends MsoyBodyObject
      */
     public function hasOnlineFriends () :Boolean
     {
-        for each (var fe :FriendEntry in friends.toArray()) {
-            if (fe.online) {
-                return true;
-            }
-        }
-        return false;
+        return friends.toArray().some(function (fe :FriendEntry, ... rest) :Boolean {
+            return fe.online;
+        });
     }
 
     /**
