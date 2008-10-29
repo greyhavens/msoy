@@ -16,7 +16,6 @@ import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.RoomObjectView;
@@ -36,13 +35,18 @@ public class TourDirector extends BasicDirector
         _wctx = ctx;
     }
 
+    public function isOnTour () :Boolean
+    {
+        return _wctx.getMemberObject().onTour;
+    }
+
     public function startTour () :void
     {
-        // only send a request if we're not already on the tour
-        if (!_wctx.getMemberObject().onTour) {
-            nextRoom();
-        } else {
+        if (isOnTour()) {
             _wctx.displayFeedback(MsoyCodes.WORLD_MSGS, "e.already_touring");
+
+        } else {
+            nextRoom();
         }
     }
 
@@ -61,7 +65,9 @@ public class TourDirector extends BasicDirector
 
     public function endTour () :void
     {
-        _tsvc.endTour(_ctx.getClient());
+        if (isOnTour()) {
+            _tsvc.endTour(_ctx.getClient());
+        }
     }
 
     /**
@@ -76,11 +82,10 @@ public class TourDirector extends BasicDirector
 
     protected function checkTouringStatus () :void
     {
-        const onTour :Boolean = _wctx.getMemberObject().onTour;
+        const onTour :Boolean = isOnTour();
         if (onTour && (_tourCtrl == null)) {
-            const bar :ControlBar = _wctx.getControlBar();
             _tourCtrl = new TourControl(_wctx, nextRoom, endTour);
-            bar.addCustomComponent(_tourCtrl);
+            _wctx.getControlBar().addCustomComponent(_tourCtrl);
 
         } else if (!onTour && (_tourCtrl != null)) {
             _tourCtrl.parent.removeChild(_tourCtrl);
