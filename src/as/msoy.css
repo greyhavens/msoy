@@ -184,6 +184,7 @@ HSlider {
   fillColors: #d5dcdf, #9eabb2, #9eabb2, #d5dcdf;
 }
 
+/** TODO: make this .blueButton and make the base button all nekkid, or something. */
 Button {
   cornerRadius: 0;
   paddingBottom: 0;
@@ -203,6 +204,21 @@ Button {
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
   disabledSkin: Embed(source="../../rsrc/media/skins/button/blue_disabled.png",
+          scaleGridTop="9", scaleGridBottom="10",
+          scaleGridLeft="9", scaleGridRight="10");
+}
+
+.orangeButton {
+  upSkin: Embed(source="../../rsrc/media/skins/button/orange_up.png",
+          scaleGridTop="9", scaleGridBottom="10",
+          scaleGridLeft="9", scaleGridRight="10");
+  overSkin: Embed(source="../../rsrc/media/skins/button/orange_over.png",
+          scaleGridTop="9", scaleGridBottom="10",
+          scaleGridLeft="9", scaleGridRight="10");
+  downSkin: Embed(source="../../rsrc/media/skins/button/orange_down.png",
+          scaleGridTop="9", scaleGridBottom="10",
+          scaleGridLeft="9", scaleGridRight="10");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/orange_disabled.png",
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
 }
@@ -1345,18 +1361,6 @@ ShareDialog {
   headerHeight: 36;
 }
 */
-
-.copyButton {
-  upSkin: Embed(source="../../rsrc/media/skins/button/copy.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/copy_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/copy_down.png");
-}
-
-.sendButton {
-  upSkin: Embed(source="../../rsrc/media/skins/button/send.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/send_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/send_down.png");
-}
 
 .friendList {
   borderColor: #408fd9;

@@ -266,7 +266,7 @@ public class ControlBar extends HBox
     {
         // add our standard control bar features
         addControl(_chatOptsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
-        _chatControl = new ChatControl(_ctx, Msgs.GENERAL.get("b.send"));
+        _chatControl = new ChatControl(_ctx, Msgs.GENERAL.get("b.chat_send"));
         _chatControl.chatInput.height = HEIGHT - 8;
         addControl(_chatControl, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
         addControl(_buttons, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], BUTTON_SECTION);

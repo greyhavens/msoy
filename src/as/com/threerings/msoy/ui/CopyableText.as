@@ -11,6 +11,8 @@ import mx.controls.TextInput;
 
 import com.threerings.flex.CommandButton;
 
+import com.threerings.msoy.client.Msgs;
+
 /**
  * A handy group of widgets for stuffing something into your clipboard.
  */
@@ -44,12 +46,13 @@ public class CopyableText extends HBox
 
         addChild(field);
 
-        var button :CommandButton = new CommandButton(null, function () :void {
-            // we want to copy the text to the clipboard even if it's updated after
-            // we set up this binding, so we need this function
-            System.setClipboard(field.text);
-        });
-        button.styleName = "copyButton";
+        var button :CommandButton = new CommandButton(Msgs.GENERAL.get("b.copy"),
+            function () :void {
+                // we want to copy the text to the clipboard even if it's updated after
+                // we set up this binding, so we need this function
+                System.setClipboard(field.text);
+            });
+        button.styleName = "orangeButton";
 
         addChild(button);
         defaultButton = button;

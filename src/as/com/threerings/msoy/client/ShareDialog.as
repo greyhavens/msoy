@@ -123,10 +123,10 @@ public class ShareDialog extends FloatingPanel
         row.addChild(_status = new Text());
         _status.percentWidth = 100;
 
-        var send :CommandButton = new CommandButton(null, function () :void {
+        var send :CommandButton = new CommandButton(Msgs.GENERAL.get("b.send"), function () :void {
             sendShareEmail(emails.text, message.text);
         });
-        send.styleName = "sendButton";
+        send.styleName = "orangeButton";
         row.addChild(send);
 
         box.addChild(row);
@@ -150,6 +150,7 @@ public class ShareDialog extends FloatingPanel
         box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 300));
         _downloadBtn = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
             startDownload, [ url, "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
+        _downloadBtn.styleName = "orangeButton";
         box.addChild(_downloadBtn);
         box.addChild(_downloadError = FlexUtil.createLabel(""));
         return box;
