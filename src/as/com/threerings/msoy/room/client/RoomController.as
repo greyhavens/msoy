@@ -592,7 +592,7 @@ public class RoomController extends SceneController
         tipComp.styleName = "roomToolTip";
         tipComp.x -= tipComp.width/2;
         tipComp.y -= tipComp.height/2;
-        PopUpUtil.fit(tipComp);
+        PopUpUtil.fitInRect(tipComp, _wdctx.getTopPanel().getPlaceViewBounds());
         var hoverColor :uint = sprite.getHoverColor();
         tipComp.setStyle("color", hoverColor);
         if (hoverColor == 0) {
