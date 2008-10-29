@@ -3,7 +3,13 @@
 
 package com.threerings.msoy.avrg.client {
 
+import flash.errors.IOError;
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.net.URLLoader;
+import flash.net.URLRequest;
 import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 
 import com.threerings.io.TypedArray;
 
@@ -173,6 +179,55 @@ public class BackendUtils
         }
         return packs;
     }
+
+    public static function loadPackData (
+        loadedPacks :Dictionary, gameObj :AVRGameObject, ident :String, type :int,
+        onLoaded :Function, onFailure :Function) :void
+    {
+        var data :GameData = getGameData(gameObj, ident, type);
+        if (data == null) {
+            if (onFailure != null) {
+                onFailure(new Error("Unknown data pack: " + ident));
+            }
+            return;
+        }
+
+        if (loadedPacks[data.mediaURL]) {
+            // TODO: too draconian? should we cache these on the server?
+            if (onFailure != null) {
+                onFailure(new Error("Data pack has already been loaded this session: " + ident));
+            }
+            return;
+        }
+
+        // we'll call it loaded even when it's just loading
+        loadedPacks[data.mediaURL] = true;
+
+        var loader :URLLoader = new URLLoader();
+        loader.addEventListener(IOErrorEvent.IO_ERROR, function (evt :IOErrorEvent) :void {
+            if (onFailure != null) {
+                onFailure(new IOError("I/O Error: " + evt.text));
+            }
+            // give the game a chance to try again
+            delete loadedPacks[data.mediaURL];
+        });
+        loader.addEventListener(Event.COMPLETE, function (evt :Event) :void {
+            onLoaded(ByteArray(loader.data));
+        });
+        loader.load(new URLRequest(data.mediaURL));
+    }
+
+    protected static function getGameData (
+        gameObj :AVRGameObject, ident :String, type :int) :GameData
+    {
+        for each (var data :GameData in gameObj.gameData) {
+            if (data.getType() != GameData.ITEM_DATA || data.ident == ident) {
+                return data;
+            }
+        }
+        return null;
+    }
+
 
     public static function sendMessage (
         svc :WhirledGameMessageService, client :Client, msgName :String, msgValue :Object, 

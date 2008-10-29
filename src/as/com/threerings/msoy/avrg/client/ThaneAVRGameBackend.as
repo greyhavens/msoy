@@ -28,6 +28,8 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 
+import flash.utils.Dictionary;
+
 /**
  * Manages the connection to the server agent thane user code for an AVRG.
  */
@@ -201,6 +203,8 @@ public class ThaneAVRGameBackend
         o["isRoomLoaded_v1"] = isRoomLoaded_v1
         o["getLevelPacks_v2"] = getLevelPacks_v2;
         o["getItemPacks_v1"] = getItemPacks_v1;
+        o["loadLevelPackData_v1"] = loadLevelPackData_v1;
+        o["loadItemPackData_v1"] = loadItemPackData_v1;
 
         // .game.props
         o["game_getGameData_v1"] = game_getGameData_v1;
@@ -276,6 +280,20 @@ public class ThaneAVRGameBackend
     protected function getItemPacks_v1 (filter :Function = null) :Array
     {
         return BackendUtils.getItemPacks(_gameObj.gameData, filter);
+    }
+
+    protected function loadLevelPackData_v1 (
+        ident :String, onLoaded :Function, onFailure :Function) :void
+    {
+        BackendUtils.loadPackData(_loadedPacks, _gameObj, ident, GameData.LEVEL_DATA,
+                                  onLoaded, onFailure);
+    }
+
+    protected function loadItemPackData_v1 (
+        ident :String, onLoaded :Function, onFailure :Function) :void
+    {
+        BackendUtils.loadPackData(_loadedPacks, _gameObj, ident, GameData.ITEM_DATA,
+                                  onLoaded, onFailure);
     }
 
     // -------------------- .game.props --------------------
@@ -628,6 +646,10 @@ public class ThaneAVRGameBackend
     protected var _ctx :MsoyBureauContext; // this is for the game server
     protected var _controller :ThaneAVRGameController;
     protected var _gameObj :AVRGameObject;
+
+    /** URL -> boolean for data packs that have been loaded */
+    protected var _loadedPacks :Dictionary = new Dictionary();
+
     protected var _privateMessageAdapter :BackendNetAdapter;
 }
 }
