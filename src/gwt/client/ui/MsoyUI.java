@@ -37,6 +37,7 @@ import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.util.DateUtil;
+import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -482,7 +483,7 @@ public class MsoyUI
             public void onClick (Widget sender) {
                 _membersvc.trackClientAction(
                     CShell.visitor, action, details != null ? details : "",
-                    new NoopAsyncCallback<Void>());
+                    new NoopAsyncCallback());
             }
         };
     }
@@ -499,7 +500,7 @@ public class MsoyUI
         return new ClickListener() {
             public void onClick (Widget sender) {
                 _membersvc.trackTestAction(
-                    CShell.visitor, action, testName, new NoopAsyncCallback<Void>());
+                    CShell.visitor, action, testName, new NoopAsyncCallback());
             }
         };
     }
