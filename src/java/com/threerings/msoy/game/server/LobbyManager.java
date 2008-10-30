@@ -26,7 +26,6 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.data.Parameter;
 import com.threerings.parlor.data.Table;
-import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorSender;
@@ -43,6 +42,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.MsoyTableConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
@@ -165,7 +165,8 @@ public class LobbyManager
                 config.params.put(param.ident, param.getDefaultValue());
             }
         }
-        TableConfig tconfig = new TableConfig();
+        MsoyTableConfig tconfig = new MsoyTableConfig();
+        tconfig.title = player.memberName.toString();
         tconfig.desiredPlayerCount = tconfig.minimumPlayerCount = 1;
         tconfig.privateTable = true; // they asked to play by themselves
         Table table = null;
