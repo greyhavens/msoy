@@ -502,9 +502,9 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     @Override // from PeerManager
-    protected void peerDidLogon (PeerNode peer)
+    protected void connectedToPeer (PeerNode peer)
     {
-        super.peerDidLogon(peer);
+        super.connectedToPeer(peer);
 
         // scan this peer for guests authenticated by a previous incarnation of this server and
         // adjust our next guest id to account for those assigned ids
@@ -543,9 +543,9 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     @Override // from PeerManager
-    protected void peerDidLogoff (PeerNode peer)
+    protected void connectedToPeer (PeerNode peer)
     {
-        super.peerDidLogoff(peer);
+        super.connectedToPeer(peer);
 
         // if we're on the dev server, remove this server from our in-VM policy server
         if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
