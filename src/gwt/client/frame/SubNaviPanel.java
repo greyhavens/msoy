@@ -44,7 +44,6 @@ public class SubNaviPanel extends FlowPanel
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
                 addLink(null, "Rooms", Pages.PEOPLE, Args.compose("rooms", memberId), false);
                 addLink(null, "Friends", Pages.PEOPLE, "");
-                addLink(null, "Mail", Pages.MAIL, "");
                 addLink(null, "Account", Pages.ME, "account");
                 if (CShell.isSupport()) {
                     addLink(null, "Admin", Pages.ADMINZ, "");
