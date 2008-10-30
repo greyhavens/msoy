@@ -17,7 +17,6 @@ import com.samskivert.servlet.user.Username;
 import com.threerings.user.OOOUser;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.web.gwt.ServiceException;
 

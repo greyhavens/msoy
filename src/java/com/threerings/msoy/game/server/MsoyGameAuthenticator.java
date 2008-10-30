@@ -19,7 +19,6 @@ import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyAuthenticator;
