@@ -543,9 +543,9 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     @Override // from PeerManager
-    protected void connectedToPeer (PeerNode peer)
+    protected void disconnectedFromPeer (PeerNode peer)
     {
-        super.connectedToPeer(peer);
+        super.disconnectedFromPeer(peer);
 
         // if we're on the dev server, remove this server from our in-VM policy server
         if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
