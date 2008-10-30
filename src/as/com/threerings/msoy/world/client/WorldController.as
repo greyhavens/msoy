@@ -933,22 +933,20 @@ public class WorldController extends MsoyController
                 // nothing we can do here...
             }
 
-        } else if (null != params["myplaces"]) {
-            // display the My Whirled Places grid
-            var ctrlBar :WorldControlBar = (_wctx.getControlBar() as WorldControlBar);
-            if (ctrlBar != null && ctrlBar.homePageGridBtn.enabled) {
-                if (_wctx.getMemberObject().hasOnlineFriends()) { // also excludes guests
-                    ctrlBar.friendsBtn.activate();
+        } else {
+            // display the My Whirled Places grid (and also fall through and go home)
+            if (null != params["myplaces"]) {
+                var ctrlBar :WorldControlBar = (_wctx.getControlBar() as WorldControlBar);
+                if (ctrlBar != null && ctrlBar.homePageGridBtn.enabled) {
+                    if (_wctx.getMemberObject().hasOnlineFriends()) { // also excludes guests
+                        ctrlBar.friendsBtn.activate();
+                    }
+                    ctrlBar.homePageGridBtn.activate();
                 }
-                ctrlBar.homePageGridBtn.activate();
             }
 
-        } else if (!_wctx.getMemberObject().isGuest()) {
-            _wctx.getWorldDirector().goToMemberHome(_wctx.getMemberObject().getMemberId());
-
-        } else {
-            // this only happens in the standalone client when we have no credentials
-            _wctx.getSceneDirector().moveTo(1);
+            // go to our home scene (this doe the right thing for guests as well)
+            _wctx.getSceneDirector().moveTo(_wctx.getMemberObject().getHomeSceneId());
         }
     }
 
