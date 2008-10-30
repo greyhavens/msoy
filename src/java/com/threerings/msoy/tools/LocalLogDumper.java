@@ -22,7 +22,6 @@ import com.threerings.msoy.server.LocalEventLogger;
 import com.threerings.panopticon.common.event.EventData;
 import com.threerings.panopticon.common.net.otp.message.event.EventDataSerializer;
 import com.threerings.panopticon.common.serialize.EncodingException;
-import com.threerings.panopticon.common.serialize.walken.EventDeserializer;
 
 /**
  * Dumps the events from a {@link LocalEventLogger}, either to screen,
@@ -114,21 +113,7 @@ public class LocalLogDumper
                 ObjectInputStream payload = new ObjectInputStream(new ByteArrayInputStream(data));
                 Object o = payload.readObject();
 
-                // if it's the old-format walken-serialized event, the stream will only have a byte array,
-                // which we'll need to convert to a regular EventData object, and convert to new format.
-                // if it's the new optic-serialized event, it'll have a magic cookie, and we can just
-                // pass it along.
-
-                if (o instanceof byte[]) {
-
-                    // walken version
-                    EventDeserializer deserializer = new EventDeserializer((byte[]) o);
-                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
-                    EventDataSerializer.serialize(deserializer.toEventData(), bout);
-                    output(out, bout.toByteArray(), 0);
-
-                } else if (o instanceof Integer) {
-
+                if (o instanceof Integer) {
                     // optic version
                     if (! ((Integer)o).equals(LocalEventLogger.VERSION_ID)) {
                         throw new IllegalStateException("Unknown item version: " + o);
