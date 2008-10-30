@@ -99,12 +99,27 @@ public class MsoyPeerManager extends CrowdPeerManager
         void memberWillBeSent (String node, MemberObject member);
     }
 
+    /**
+     * Used to hear when peers connect or disconnect from this node.
+     */
+    public static interface PeerObserver
+    {
+        /** Called when a peer logs onto this node. */
+        void connectedToPeer (MsoyNodeObject nodeobj);
+
+        /** Called when a peer logs off of this node. */
+        void disconnectedFromPeer (String node);
+    }
+
     /** Our {@link MemberObserver}s. */
     public final ObserverList<MemberObserver> memberObs = ObserverList.newFastUnsafe();
 
     /** Our {@link MemberForwardObserver}s. */
     public final ObserverList<MemberForwardObserver> memberFwdObs =
         ObserverList.newFastUnsafe();
+
+    /** Our {@link PeerObserver}s. */
+    public final ObserverList<PeerObserver> peerObs = ObserverList.newFastUnsafe();
 
     /** Returns a lock used to claim resolution of the specified scene. */
     public static NodeObject.Lock getSceneLock (int sceneId)
@@ -514,12 +529,17 @@ public class MsoyPeerManager extends CrowdPeerManager
         // if we're on the dev server, maybe update our in-VM policy server
         if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
                 ServerConfig.nodeId == 1) {
-            _msoyServer.addPortsToPolicy(
-                ServerConfig.getServerPorts(peer.nodeobj.nodeName));
+            _msoyServer.addPortsToPolicy(ServerConfig.getServerPorts(peer.nodeobj.nodeName));
         }
 
-        // if the peer that just connected to us claims to be hosting any games that we also claim
-        // to be hosting, drop them
+        // notify our peer observers
+        final MsoyNodeObject nodeobj = (MsoyNodeObject)peer.nodeobj;
+        peerObs.apply(new ObserverList.ObserverOp<PeerObserver>() {
+            public boolean apply (PeerObserver observer) {
+                observer.connectedToPeer(nodeobj);
+                return true;
+            }
+        });
     }
 
     @Override // from PeerManager
@@ -527,11 +547,20 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         super.peerDidLogoff(peer);
 
+        // if we're on the dev server, remove this server from our in-VM policy server
         if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
                 ServerConfig.nodeId == 1) {
-            _msoyServer.removePortsFromPolicy(
-                ServerConfig.getServerPorts(peer.nodeobj.nodeName));
+            _msoyServer.removePortsFromPolicy(ServerConfig.getServerPorts(peer.nodeobj.nodeName));
         }
+
+        // notify our peer observers
+        final String nodeName = peer.nodeobj.nodeName;
+        peerObs.apply(new ObserverList.ObserverOp<PeerObserver>() {
+            public boolean apply (PeerObserver observer) {
+                observer.disconnectedFromPeer(nodeName);
+                return true;
+            }
+        });
     }
 
     /** Used to keep {@link MsoyNodeObject#memberLocs} up to date. */

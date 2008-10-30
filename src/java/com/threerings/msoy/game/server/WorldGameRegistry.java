@@ -52,6 +52,9 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.bureau.data.ServerRegistryObject;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.notify.server.NotificationManager;
+
+import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -71,7 +74,8 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class WorldGameRegistry
-    implements WorldGameProvider, GameServerProvider, ShutdownManager.Shutdowner
+    implements WorldGameProvider, GameServerProvider, ShutdownManager.Shutdowner,
+               MsoyPeerManager.PeerObserver
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
@@ -108,6 +112,8 @@ public class WorldGameRegistry
             }
         });
 
+        // listen for peer connections so that we can manage multiply claimed games
+        _peerMan.peerObs.add(this);
     }
 
     /**
@@ -427,7 +433,7 @@ public class WorldGameRegistry
         _statLogic.updateStat(memberId, modifier);
     }
 
-    // from interface _Shutdowner
+    // from interface Shutdowner
     public void shutdown ()
     {
         // shutdown our game server handlers
@@ -436,6 +442,30 @@ public class WorldGameRegistry
                 handler.shutdown();
             }
         }
+    }
+
+    // from interface MsoyPeerManager.PeerObserver
+    public void peerLoggedOn (MsoyNodeObject peerobj)
+    {
+        // if the peer that just connected to us claims to be hosting any games that we also claim
+        // to be hosting, drop them
+        MsoyNodeObject ourobj = (MsoyNodeObject)_peerMan.getNodeObject();
+        ArrayIntSet gamesToDrop = new ArrayIntSet();
+        for (HostedGame game : peerobj.hostedGames) {
+            if (ourobj.hostedGames.contains(game)) {
+                log.warning("Zoiks! Peer is hosting the same game as us. Dropping!", "game", game);
+                gamesToDrop.add(game.placeId);
+            }
+        }
+        for (int gameId : gamesToDrop) {
+            clearGameHost(null, 0, gameId);
+        }
+    }
+
+    // from interface MsoyPeerManager.PeerObserver
+    public void peerLoggedOff (String node)
+    {
+        // nada
     }
 
     protected boolean checkAndSendToNode (int gameId, WorldGameService.LocationListener listener)
@@ -509,8 +539,7 @@ public class WorldGameRegistry
     {
         // peers will not have member objects and server local calls will be a null caller
         if (caller instanceof MemberObject) {
-            log.warning("Rejecting non-peer caller of " + method +
-                        " [who=" + ((MemberObject)caller).who() + "].");
+            log.warning("Rejecting non-peer caller of " + method, "who", caller.who());
             return false;
         }
         return true;
