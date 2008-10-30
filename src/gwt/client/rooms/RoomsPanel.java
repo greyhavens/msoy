@@ -77,6 +77,7 @@ public class RoomsPanel extends FlowPanel
         public RoomsGrid ()
         {
             super(2, 3, NAV_ON_BOTTOM);
+            _cellVertAlign = HasAlignment.ALIGN_TOP;
         }
 
         @Override // from PagedGrid

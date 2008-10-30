@@ -22,6 +22,10 @@
   padding: 0 8px 24px;
 }
 
+.roomsPanel .Room {
+  padding-bottom: 10px;
+}
+
 .roomsPanel .marquee {
   width: 260px;
 }
