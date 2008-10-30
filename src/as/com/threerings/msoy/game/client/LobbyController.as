@@ -192,6 +192,11 @@ public class LobbyController extends Controller
      */
     public function isActionableTable (table :Table) :Boolean
     {
+        // if we're a maintainer, show all tables; it's useful for debugging
+        if (_gctx.getPlayerObject().tokens.isMaintainer()) {
+            return true;
+        }
+
         // if it's a running unwatchable seated game, no action is possible
         var inPlayUnwatchable :Boolean = (table.config.getMatchType() != GameConfig.PARTY) &&
             table.inPlay() && (_lobj.gameDef.match as MsoyMatchConfig).unwatchable;
