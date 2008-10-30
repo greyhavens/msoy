@@ -445,7 +445,7 @@ public class WorldGameRegistry
     }
 
     // from interface MsoyPeerManager.PeerObserver
-    public void peerLoggedOn (MsoyNodeObject peerobj)
+    public void connectedToPeer (MsoyNodeObject peerobj)
     {
         // if the peer that just connected to us claims to be hosting any games that we also claim
         // to be hosting, drop them
@@ -463,7 +463,7 @@ public class WorldGameRegistry
     }
 
     // from interface MsoyPeerManager.PeerObserver
-    public void peerLoggedOff (String node)
+    public void disconnectedFromPeer (String node)
     {
         // nada
     }
