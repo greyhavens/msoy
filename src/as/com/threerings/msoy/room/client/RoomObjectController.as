@@ -147,7 +147,7 @@ public class RoomObjectController extends RoomController
             // if we have followers, add a menu item for clearing them
             if (us.followers.size() > 0) {
                 menuItems.push({ label: Msgs.GENERAL.get("l.clear_followers"),
-                                 callback: inviteFollow, arg: null });
+                                 callback: ditchFollower});
             }
 
             // if we're following someone, add a menu item for stopping
@@ -171,8 +171,17 @@ public class RoomObjectController extends RoomController
             const memId :int = occInfo.getMemberId();
             if (!MemberName.isGuest(memId)) {
                 // TODO: move up when we can forward MemberObjects between servers for guests
-                menuItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
-                                 callback: inviteFollow, arg: occInfo.username });
+                menuItems.push({ label: Msgs.GENERAL.get("b.follow_other"),
+                                 callback: followOther, arg: occInfo.username });
+
+                // If they are following us
+                if (us.followers.containsKey(memId)) {
+                    menuItems.push({ label: Msgs.GENERAL.get("b.ditch_follower"),
+                                     callback: ditchFollower, arg: occInfo.username });
+                } else {
+                    menuItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
+                                     callback: inviteFollow, arg: occInfo.username });
+                }
 
                 if (avatar != null) {
                     var kind :String = Msgs.GENERAL.get(avatar.getDesc());
@@ -252,21 +261,19 @@ public class RoomObjectController extends RoomController
         return true;
     }
 
+    public function followOther (member :MemberName) :void
+    {
+        postAction(WorldController.RESPOND_FOLLOW, member.getMemberId());
+    }
+
     /**
-     * Sends an invitation to the specified member to follow us. If member is null, all our
-     * existing follows will be cleared.
+     * Sends an invitation to the specified member to follow us.
      */
     public function inviteFollow (member :MemberName) :void
     {
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        if (member == null) {
-            msvc.inviteToFollow(_ctx.getClient(), 0, new ReportingListener(
-                                    _wdctx, MsoyCodes.GENERAL_MSGS, null, "m.follows_cleared"));
-        } else {
-            msvc.inviteToFollow(_ctx.getClient(), member.getMemberId(), new ReportingListener(
-                                    _wdctx, MsoyCodes.GENERAL_MSGS, null,
-                                    MessageBundle.tcompose("m.invited_to_follow", member)));
-        }
+        msvc.inviteToFollow(_ctx.getClient(), member.getMemberId(),
+            new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS));
     }
 
     /**
@@ -275,8 +282,19 @@ public class RoomObjectController extends RoomController
     public function clearFollow () :void
     {
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        msvc.followMember(_ctx.getClient(), 0, new ReportingListener(
-                              _wdctx, MsoyCodes.GENERAL_MSGS, null, "m.not_following"));
+        msvc.followMember(_ctx.getClient(), 0,
+            new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS));
+    }
+
+    /**
+     * Tells the server we no longer want someone following us. If target member is null, all
+     * our followers are ditched.
+     */
+    public function ditchFollower (member :MemberName = null) :void
+    {
+        var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
+        msvc.ditchFollower(_ctx.getClient(), (member != null) ? member.getMemberId() : 0,
+            new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS));
     }
 
     /**

@@ -37,6 +37,8 @@ public class WorldDirector extends BasicDirector
     {
         super(ctx);
         _wctx = ctx;
+
+        _followingNotifier = new FollowingNotifier(_wctx);
     }
 
     /**
@@ -145,6 +147,13 @@ public class WorldDirector extends BasicDirector
     }
 
     // from BasicDirector
+    override protected function clientObjectUpdated (client :Client) :void
+    {
+        super.clientObjectUpdated(client);
+        client.getClientObject().addListener(_followingNotifier);
+    }
+
+    // from BasicDirector
     override protected function registerServices (client :Client) :void
     {
         client.addServiceGroup(MsoyCodes.WORLD_GROUP);
@@ -161,5 +170,78 @@ public class WorldDirector extends BasicDirector
 
     protected var _wctx :WorldContext;
     protected var _msvc :MemberService;
+
+    protected var _followingNotifier :FollowingNotifier;
 }
+}
+
+import com.threerings.util.MessageBundle;
+
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.world.client.WorldContext;
+
+class FollowingNotifier
+    implements AttributeChangeListener, SetListener
+{
+    public function FollowingNotifier (wctx :WorldContext)
+    {
+        _wctx = wctx;
+    }
+
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        switch (event.getName()) {
+        case MemberObject.FOLLOWING:
+            var leader :MemberName = event.getValue() as MemberName;
+            if (leader != null) {
+                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS,
+                    MessageBundle.tcompose("m.following", leader));
+            } else if (event.getOldValue() != null) {
+                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS,
+                    MessageBundle.tcompose("m.not_following", event.getOldValue()));
+            }
+            break;
+
+        case MemberObject.FOLLOWERS:
+            var followers :DSet = event.getValue() as DSet;
+            if (followers.size() == 0) {
+                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.follows_cleared");
+            }
+            break;
+        }
+    }
+
+    public function entryAdded (event :EntryAddedEvent) :void
+    {
+        if (MemberObject.FOLLOWERS == event.getName()) {
+            _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS,
+                MessageBundle.tcompose("m.new_follower", event.getEntry() as MemberName));
+        }
+    }
+
+    public function entryUpdated (event :EntryUpdatedEvent) :void
+    {
+        // everybody noops
+    }
+
+    public function entryRemoved (event :EntryRemovedEvent) :void
+    {
+        if (MemberObject.FOLLOWERS == event.getName()) {
+            _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS,
+                MessageBundle.tcompose("m.follower_ditched", event.getOldEntry() as MemberName));
+        }
+    }
+
+    protected var _wctx :WorldContext;
 }

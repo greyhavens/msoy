@@ -36,6 +36,12 @@ public interface MemberProvider extends InvocationProvider
     void dispatchDeferredNotifications (ClientObject caller);
 
     /**
+     * Handles a {@link MemberService#ditchFollower} request.
+     */
+    void ditchFollower (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#emailShare} request.
      */
     void emailShare (ClientObject caller, boolean arg1, String arg2, int arg3, String[] arg4, String arg5, InvocationService.ConfirmListener arg6)
@@ -44,7 +50,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#followMember} request.
      */
-    void followMember (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+    void followMember (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
 
     /**
@@ -98,7 +104,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#inviteToFollow} request.
      */
-    void inviteToFollow (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+    void inviteToFollow (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
 
     /**

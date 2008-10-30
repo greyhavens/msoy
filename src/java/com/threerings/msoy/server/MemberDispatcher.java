@@ -59,6 +59,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.DITCH_FOLLOWER:
+            ((MemberProvider)provider).ditchFollower(
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         case MemberMarshaller.EMAIL_SHARE:
             ((MemberProvider)provider).emailShare(
                 source, ((Boolean)args[0]).booleanValue(), (String)args[1], ((Integer)args[2]).intValue(), (String[])args[3], (String)args[4], (InvocationService.ConfirmListener)args[5]
@@ -67,7 +73,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.FOLLOW_MEMBER:
             ((MemberProvider)provider).followMember(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
             );
             return;
 
@@ -121,7 +127,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.INVITE_TO_FOLLOW:
             ((MemberProvider)provider).inviteToFollow(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
             );
             return;
 

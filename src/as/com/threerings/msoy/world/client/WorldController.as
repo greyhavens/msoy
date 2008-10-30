@@ -683,8 +683,7 @@ public class WorldController extends MsoyController
     {
         var msvc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
         msvc.followMember(_wctx.getClient(), memberId,
-                          new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null,
-                                                "m.following"));
+            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS));
     }
 
     /**

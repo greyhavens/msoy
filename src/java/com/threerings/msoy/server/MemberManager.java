@@ -333,51 +333,29 @@ public class MemberManager
 
     // from interface MemberProvider
     public void inviteToFollow (final ClientObject caller, final int memberId,
-                                final InvocationService.ConfirmListener listener)
+                                final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
 
-        // if they want to clear their followers, do that
-        if (memberId == 0) {
-            for (final MemberName follower : user.followers) {
-                final MemberObject fmo = _locator.lookupMember(follower.getMemberId());
-                if (fmo != null) {
-                    fmo.setFollowing(null);
-                }
-            }
-            user.setFollowers(new DSet<MemberName>());
-            listener.requestProcessed();
-            return;
-        }
-
         // make sure the target member is online and in the same room as the requester
         final MemberObject target = _locator.lookupMember(memberId);
         if (target == null || !ObjectUtil.equals(user.location, target.location)) {
-            throw new InvocationException("m.follow_not_in_room");
+            throw new InvocationException("e.follow_not_in_room");
         }
 
         // make sure the target is accepting invitations from the requester
         if (!target.isAvailableTo(user.getMemberId())) {
-            throw new InvocationException("m.follow_not_available");
+            throw new InvocationException("e.follow_not_available");
         }
 
         // issue the follow invitation to the target
         _notifyMan.notifyFollowInvite(target, user.memberName);
-
-        // add this player to our followers set, if they ratify the follow request before we leave
-        // our current location, the wiring up will be complete; if we leave the room before they
-        // ratify the request (or if they never do), we'll remove them from our set
-        if (!user.followers.containsKey(target.getMemberId())) {
-            log.info("Adding follower " + target.memberName + " to " + user.memberName + ".");
-            user.addToFollowers(target.memberName);
-        } // else: what to do about repeat requests? ignore them? send again?
-        listener.requestProcessed();
     }
 
     // from interface MemberProvider
     public void followMember (final ClientObject caller, final int memberId,
-                              final InvocationService.ConfirmListener listener)
+                              final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -391,19 +369,49 @@ public class MemberManager
                 }
                 user.setFollowing(null);
             }
-            listener.requestProcessed();
             return;
         }
 
-        // otherwise they're accepting a follow request, make sure it's still valid
+        // Make sure the target isn't bogus
         final MemberObject target = _locator.lookupMember(memberId);
-        if (target == null || !target.followers.containsKey(user.getMemberId())) {
-            throw new InvocationException("m.follow_invite_expired");
+        if (target == null) {
+            throw new InvocationException("e.follow_invite_expired");
         }
 
-        // finish the loop by setting them as our followee
+        // Wire up both the leader and follower
+        if (!target.followers.containsKey(target.getMemberId())) {
+            log.info("Adding follower " + user.memberName + " to " + target.memberName + ".");
+            target.addToFollowers(user.memberName);
+        }
         user.setFollowing(target.memberName);
-        listener.requestProcessed();
+    }
+
+    // from interface MemberProvider
+    public void ditchFollower (ClientObject caller, int memberId,
+                               InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+
+        if (memberId == 0) {
+            // Clear all followers
+            for (MemberName follower : user.followers) {
+                MemberObject fmo = _locator.lookupMember(follower.getMemberId());
+                if (fmo != null) {
+                    fmo.setFollowing(null);
+                }
+            }
+            user.setFollowers(new DSet<MemberName>());
+
+        } else {
+            // Ditch a single follower
+            // TODO: Gripe if this person wasn't a follower
+            MemberObject follower = _locator.lookupMember(memberId);
+            if (follower != null) {
+                follower.setFollowing(null);
+            }
+            user.removeFromFollowers(memberId);
+        }
     }
 
     // from interface MemberProvider
