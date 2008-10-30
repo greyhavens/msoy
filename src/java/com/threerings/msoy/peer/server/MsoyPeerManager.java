@@ -450,7 +450,7 @@ public class MsoyPeerManager extends CrowdPeerManager
 
         // register our custom invocation service
         _mnobj.setMsoyPeerService(_invmgr.registerDispatcher(new MsoyPeerDispatcher(this)));
-        
+
         // notify observers
         memberLoggedOn(_nodeName, (MsoyClientInfo)info);
     }
@@ -466,7 +466,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             log.info("Clearing member " + _mnobj.memberLocs.get(memberId) + ".");
             _mnobj.removeFromMemberLocs(memberId);
         }
-        
+
         // notify observers
         memberLoggedOff(_nodeName, (MsoyClientInfo)info);
     }
@@ -510,20 +510,24 @@ public class MsoyPeerManager extends CrowdPeerManager
                 _guestIdCounter = Math.max(_guestIdCounter, maxGuestId);
             }
         }
-        
-        if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 && 
+
+        // if we're on the dev server, maybe update our in-VM policy server
+        if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
                 ServerConfig.nodeId == 1) {
             _msoyServer.addPortsToPolicy(
                 ServerConfig.getServerPorts(peer.nodeobj.nodeName));
         }
+
+        // if the peer that just connected to us claims to be hosting any games that we also claim
+        // to be hosting, drop them
     }
-    
+
     @Override // from PeerManager
     protected void peerDidLogoff (PeerNode peer)
     {
         super.peerDidLogoff(peer);
-        
-        if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 && 
+
+        if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
                 ServerConfig.nodeId == 1) {
             _msoyServer.removePortsFromPolicy(
                 ServerConfig.getServerPorts(peer.nodeobj.nodeName));
@@ -541,14 +545,14 @@ public class MsoyPeerManager extends CrowdPeerManager
                     return;
                 }
 
-                // Ignore subsequent notifications if the member location has changed multiple 
+                // Ignore subsequent notifications if the member location has changed multiple
                 // times. This is alright because we do not actually use the event value anyway.
                 if (event.getValue() != memobj.location) {
                     return;
-                }                    
+                }
 
                 // Skip null location updates unless we have a game attached to this MemberObject.
-                // In that case, the null location could mean heading to the game, and we do need 
+                // In that case, the null location could mean heading to the game, and we do need
                 // to zero out the sceneId on this player's MemberLocation.
                 if (event.getValue() instanceof ScenePlace || memobj.game != null) {
                     updateMemberLocation(memobj);
