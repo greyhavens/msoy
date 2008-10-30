@@ -37,7 +37,8 @@ public class TourDirector extends BasicDirector
 
     public function isOnTour () :Boolean
     {
-        return _wctx.getMemberObject().onTour;
+        const mobj :MemberObject = _wctx.getMemberObject();
+        return (mobj != null && mobj.onTour);
     }
 
     public function startTour () :void
