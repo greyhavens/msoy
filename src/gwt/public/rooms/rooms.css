@@ -8,14 +8,13 @@
 
 .roomsPanel {
   width: 100%;
-  min-height: 100%;
-  background: #1D5884 url(/images/shop/background.png) repeat-x;
 }
 
 .roomsPanel .Intro {
-  color: #9FB2C0;
+  color: #216CA3;
   font-size: 14px;
   padding-top: 5px;
+  width: 500px;
 }
 
 .roomsPanel .Info {

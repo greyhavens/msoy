@@ -36,6 +36,7 @@ public class RoomsPanel extends FlowPanel
 
         SmartTable header = new SmartTable("Info", 0, 0);
         header.setWidget(0, 0, new Marquee(null, _msgs.roomsMarquee()), 1, null);
+        header.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         header.setText(1, 0, _msgs.roomsIntro(), 1, "Intro");
 
         Widget button = MsoyUI.createImageButton("TourButton", new ClickListener () {
@@ -49,7 +50,7 @@ public class RoomsPanel extends FlowPanel
         });
         header.setWidget(0, 1, button, 1, "Tour");
         header.getFlexCellFormatter().setRowSpan(0, 1, 2);
-        header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
+        header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
 
         add(header);
 
