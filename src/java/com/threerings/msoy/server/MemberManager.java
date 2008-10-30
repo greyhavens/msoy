@@ -391,26 +391,25 @@ public class MemberManager
                                InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        MemberObject leader = (MemberObject) caller;
 
         if (memberId == 0) {
             // Clear all followers
-            for (MemberName follower : user.followers) {
+            for (MemberName follower : leader.followers) {
                 MemberObject fmo = _locator.lookupMember(follower.getMemberId());
                 if (fmo != null) {
                     fmo.setFollowing(null);
                 }
             }
-            user.setFollowers(new DSet<MemberName>());
+            leader.setFollowers(new DSet<MemberName>());
 
         } else {
             // Ditch a single follower
-            // TODO: Gripe if this person wasn't a follower
             MemberObject follower = _locator.lookupMember(memberId);
-            if (follower != null) {
+            if (follower != null && leader.followers.containsKey(follower.getMemberId())) {
                 follower.setFollowing(null);
+                leader.removeFromFollowers(memberId);
             }
-            user.removeFromFollowers(memberId);
         }
     }
 
