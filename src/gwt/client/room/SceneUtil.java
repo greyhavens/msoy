@@ -49,7 +49,7 @@ public class SceneUtil
         FlowPanel panel = new FlowPanel();
         panel.addStyleName("sceneView");
         panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE,
-                                            Link.createListener(Pages.WORLD, "m" + sceneId)));
+                                            Link.createListener(Pages.WORLD, "s" + sceneId)));
         Image overlay = MsoyUI.createActionImage(LIVE_VIEW_IMAGE, new ClickListener() {
             public void onClick (Widget widget) {
                 container.clear();
