@@ -82,13 +82,18 @@ public class TourDirector extends BasicDirector
 
     protected function checkTouringStatus () :void
     {
-        const onTour :Boolean = isOnTour();
-        if (onTour && (_tourCtrl == null)) {
-            _tourCtrl = new TourControl(_wctx, nextRoom, endTour);
-            _wctx.getControlBar().addCustomComponent(_tourCtrl);
+        if (isOnTour()) {
+            if (_tourCtrl == null) {
+                _tourCtrl = new TourControl(_wctx, nextRoom, endTour);
+            }
+            if (_tourCtrl.parent == null) {
+                _wctx.getControlBar().addCustomComponent(_tourCtrl);
+            }
 
-        } else if (!onTour && (_tourCtrl != null)) {
-            _tourCtrl.parent.removeChild(_tourCtrl);
+        } else if (_tourCtrl != null) {
+            if (_tourCtrl.parent != null) {
+                _tourCtrl.parent.removeChild(_tourCtrl);
+            }
             _tourCtrl = null;
         }
     }
