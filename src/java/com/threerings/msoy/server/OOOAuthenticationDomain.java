@@ -59,7 +59,6 @@ public class OOOAuthenticationDomain
         // create and return an account metadata record
         OOOAccount account = new OOOAccount();
         account.accountName = user.email;
-        account.tokens = new MsoyTokenRing();
         account.user = user;
         return account;
     }
@@ -130,19 +129,9 @@ public class OOOAuthenticationDomain
             throw new ServiceException(MsoyAuthCodes.INVALID_PASSWORD);
         }
 
-        // configure their access tokens
-        int tokens = 0;
-        if (user.holdsToken(OOOUser.ADMIN) || user.holdsToken(OOOUser.MAINTAINER)) {
-            tokens |= MsoyTokenRing.ADMIN;
-        }
-        if (user.holdsToken(OOOUser.SUPPORT)) {
-            tokens |= MsoyTokenRing.SUPPORT;
-        }
-
         // create and return an account record
         OOOAccount account = new OOOAccount();
         account.accountName = user.email;
-        account.tokens = new MsoyTokenRing(tokens);
         account.user = user;
         return account;
     }

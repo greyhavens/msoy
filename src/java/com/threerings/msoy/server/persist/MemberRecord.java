@@ -15,6 +15,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -318,6 +319,22 @@ public class MemberRecord extends PersistentRecord
             role = WebCreds.Role.USER;
         }
         return new WebCreds(authtok, accountName, getName(), permaName, role);
+    }
+
+    /**
+     * Creates a token ring for this member record.
+     */
+    public MsoyTokenRing toTokenRing ()
+    {
+        int tokens = 0;
+        if (isMaintainer()) {
+            tokens |= MsoyTokenRing.MAINTAINER;
+        } else if (isSet(Flag.ADMIN)) {
+            tokens |= MsoyTokenRing.ADMIN;
+        } else if (isSet(Flag.SUPPORT)) {
+            tokens |= MsoyTokenRing.SUPPORT;
+        }
+        return new MsoyTokenRing(tokens);
     }
 
     /**

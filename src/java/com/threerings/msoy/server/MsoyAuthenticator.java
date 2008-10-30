@@ -478,19 +478,8 @@ public class MsoyAuthenticator extends Authenticator
         validateAccount(account, member.memberId);
         rdata.warning = account.warning;
 
-        // replace the tokens provided by the Domain with tokens derived from their member record
-        // (a newly created record will have its bits set from the Domain values)
-        int tokens = 0;
-        if (member.isRoot() || member.isSet(MemberRecord.Flag.MAINTAINER)) {
-            tokens |= MsoyTokenRing.MAINTAINER;
-        }
-        if (member.isSet(MemberRecord.Flag.ADMIN)) {
-            tokens |= MsoyTokenRing.ADMIN;
-        }
-        if (member.isSet(MemberRecord.Flag.SUPPORT)) {
-            tokens |= MsoyTokenRing.SUPPORT;
-        }
-        account.tokens = new MsoyTokenRing(tokens);
+        // fill in our access control tokens
+        account.tokens = member.toTokenRing();
 
         // check whether we're restricting non-admin login
         if (!_runtime.server.nonAdminsAllowed && !account.tokens.isSupport()) {
@@ -556,10 +545,6 @@ public class MsoyAuthenticator extends Authenticator
 
         // store their member record in the repository making them a real Whirled citizen
         _memberRepo.insertMember(mrec);
-
-        // use the tokens filled in by the domain to assign privileges
-        mrec.setFlag(MemberRecord.Flag.SUPPORT, account.tokens.isSupport());
-        mrec.setFlag(MemberRecord.Flag.ADMIN, account.tokens.isAdmin());
 
         // create a blank room for them, store it
         final String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
