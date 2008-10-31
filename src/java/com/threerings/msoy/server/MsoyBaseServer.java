@@ -15,6 +15,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.EHCacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 
 import com.whirled.bureau.data.BureauTypes;
@@ -71,8 +72,8 @@ public abstract class MsoyBaseServer extends WhirledServer
             // presents dependencies
             bind(ReportManager.class).toInstance(new ReportManager() {
                 // disables state of the server report logging
-                @Override protected void logReport (final String report) {
-                    // TODO: nix this and publish this info via JMX
+                @Override public void init (RunQueue rqueue) {
+                    // nada; don't schedule our interval
                 }
             });
             // msoy dependencies
