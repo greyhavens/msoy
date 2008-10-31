@@ -846,7 +846,7 @@ public class RoomManager extends SpotSceneManager
                                              new Date(), HomePageItem.ACTION_ROOM, model.sceneId));
             }
 
-            extractMemories(member);
+            addMemoriesToRoom(member);
         }
     }
 
@@ -881,7 +881,7 @@ public class RoomManager extends SpotSceneManager
                                    secondsInRoom, _roomObj.occupants.size(), member.getVisitorId());
             }
 
-            insertMemories(member);
+            takeMemoriesFromRoom(member);
         }
 
         super.bodyLeft(bodyOid);
@@ -930,7 +930,7 @@ public class RoomManager extends SpotSceneManager
     /**
      * Slurp memories from incoming avatars and put them into the room.
      */
-    protected void extractMemories (MemberObject member)
+    protected void addMemoriesToRoom (MemberObject member)
     {
         MemberLocal local = member.getLocal(MemberLocal.class);
 
@@ -950,7 +950,7 @@ public class RoomManager extends SpotSceneManager
     /**
      * Take memories from the room and stuff them into outgoing avatars.
      */
-    protected void insertMemories (MemberObject member)
+    protected void takeMemoriesFromRoom (MemberObject member)
     {
         if (member.avatar == null) {
             return;
