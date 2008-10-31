@@ -6,12 +6,12 @@ package client.adminz;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -28,13 +28,11 @@ import client.util.ServiceUtil;
 /**
  * Displays the various services available to support and admin personnel.
  */
-public class DashboardPanel extends FlexTable
+public class DashboardPanel extends SmartTable
 {
     public DashboardPanel ()
     {
-        setStyleName("dashboardPanel");
-        setCellSpacing(0);
-        setCellPadding(0);
+        super("dashboardPanel", 0, 0);
 
         int row = 0;
         HorizontalPanel controls;
@@ -43,7 +41,8 @@ public class DashboardPanel extends FlexTable
         if (CShell.isAdmin()) {
             //controls.setSpacing(10);
             VerticalPanel rhs = new VerticalPanel();
-            setWidget(row, 0, new Label(_msgs.adminControls()));
+            setText(row, 0, _msgs.adminControls());
+            getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
             setWidget(row++, 1, rhs);
             rhs.add(controls = new HorizontalPanel());
             controls.setSpacing(10);
@@ -66,7 +65,8 @@ public class DashboardPanel extends FlexTable
         }
 
         // support controls
-        setWidget(row, 0, new Label(_msgs.supportControls()));
+        setText(row, 0, _msgs.supportControls());
+        getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
         setWidget(row++, 1, controls = new HorizontalPanel());
         controls.setSpacing(10);
         controls.add(new Button(_msgs.reviewButton(), Link.createListener(Pages.ADMINZ, "review")));
