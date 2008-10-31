@@ -6,7 +6,6 @@ package com.threerings.msoy.tools;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.ObjectOutputStream;
 import java.io.EOFException;

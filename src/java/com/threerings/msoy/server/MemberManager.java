@@ -969,6 +969,8 @@ public class MemberManager
     protected int[] _levelForFlow;
 
     // dependencies
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ClientManager _clmgr;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected PlaceRegistry _placeReg;
@@ -987,8 +989,6 @@ public class MemberManager
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected @MainInvoker Invoker _invoker;
 
     /** The required flow for the first few levels is hard-coded */
     protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };
