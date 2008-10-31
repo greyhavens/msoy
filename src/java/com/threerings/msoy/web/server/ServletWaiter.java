@@ -3,7 +3,8 @@
 
 package com.threerings.msoy.web.server;
 
-import com.google.common.base.Supplier;
+import java.util.concurrent.Callable;
+
 import com.samskivert.servlet.util.ServiceWaiter;
 import com.samskivert.util.RunQueue;
 
@@ -63,14 +64,14 @@ public class ServletWaiter<T> extends ServiceWaiter<T>
      * result.
      */
     public static <T> T queueAndWait (
-        RunQueue runq, final String name, final Supplier<T> action)
+        RunQueue runq, final String name, final Callable<T> action)
         throws ServiceException
     {
         final ServletWaiter<T> waiter = new ServletWaiter<T>(name);
         runq.postRunnable(new Runnable() {
             public void run () {
                 try {
-                    waiter.postSuccess(action.get());
+                    waiter.postSuccess(action.call());
                 } catch (final Exception e) {
                     waiter.postFailure(e);
                 }

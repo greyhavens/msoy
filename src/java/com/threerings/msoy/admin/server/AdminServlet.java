@@ -7,8 +7,8 @@ import static com.threerings.msoy.Log.log;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -305,8 +305,8 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // Post the request to the event thread and wait for result
-        ServletWaiter.queueAndWait(_omgr, "refreshBureauLauncherInfo", new Supplier<Void>() {
-            public Void get () {
+        ServletWaiter.queueAndWait(_omgr, "refreshBureauLauncherInfo", new Callable<Void>() {
+            public Void call () {
                 _bureauMgr.refreshBureauLauncherInfo();
                 return null;
             }
@@ -319,8 +319,8 @@ public class AdminServlet extends MsoyServiceServlet
     {
         // Post the request to the event thread and wait for result
         return ServletWaiter.queueAndWait(
-            _omgr, "getBureauLauncherInfo", new Supplier<BureauLauncherInfo[]>() {
-                public BureauLauncherInfo[] get () {
+            _omgr, "getBureauLauncherInfo", new Callable<BureauLauncherInfo[]>() {
+                public BureauLauncherInfo[] call () {
                     return _bureauMgr.getBureauLauncherInfo();
                 }
             });
