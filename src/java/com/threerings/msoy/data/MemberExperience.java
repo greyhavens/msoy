@@ -13,9 +13,9 @@ import com.threerings.presents.dobj.DSet;
 
 /**
  * Represents an experience the user had in Whirled, such as visiting a game, group, or room.
- * 
+ *
  * This class is immutable except during serialization.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MemberExperience
@@ -23,11 +23,11 @@ public class MemberExperience
 {
     /** Date/time this experience occurred. */
     public /* final */ Long dateOccurred;
-    
+
     /** Action that the user has taken, one of the {@link HomePageItem} ACTION constants. */
     public /* final */ byte action;
-    
-    /** Data associated with the action, usually an ID of the place visited.  
+
+    /** Data associated with the action, usually an ID of the place visited.
      * See {@link HomePageItem}. */
     public /* final */ int data;
 
@@ -42,10 +42,10 @@ public class MemberExperience
         this.action = action;
         this.data = data;
     }
-    
+
     /**
      * Creates a new home page item from this experience.
-     * 
+     *
      * @param image the image to show for this action.
      * @param data the data for this item.
      */
@@ -53,7 +53,7 @@ public class MemberExperience
     {
         return new HomePageItem(action, data, image);
     }
-    
+
     public Date getDateOccurred ()
     {
         return new Date(dateOccurred);
@@ -94,7 +94,7 @@ public class MemberExperience
         return action < o.action ? -1 : 1;
 
     }
-    
+
     public Comparable<?> getKey ()
     {
         return this;
