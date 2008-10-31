@@ -85,6 +85,7 @@ public class PetManager
             public void memberLoggedOn (MemberObject memobj) {
                 PetLocal local = memobj.getLocal(PetLocal.class);
                 if (local != null) {
+                    memobj.setLocal(PetLocal.class, null);
                     createHandler(memobj, local.pet, local.memories, false);
                 }
             }
