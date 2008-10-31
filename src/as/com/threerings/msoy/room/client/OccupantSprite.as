@@ -275,7 +275,7 @@ public class OccupantSprite extends MsoySprite
                 try {
                     bitmapData.draw(d, m, null, null, null, true);
                 } catch (serr :SecurityError) {
-                    log.info("Unable to snapshot occupant decoration: " + serr);
+                    log.info("Unable to snapshot occupant decoration", "reason", serr.message);
                 }
             }
         }

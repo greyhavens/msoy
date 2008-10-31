@@ -124,7 +124,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
 
         } catch (serr :SecurityError) {
             // not a critical error
-            log.info("Unable to snapshot media", serr);
+            log.info("Unable to snapshot media", "reason", serr.message);
             success = false;
 
         } catch (rerr :ReferenceError) {

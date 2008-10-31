@@ -41,7 +41,7 @@ public class SnapshotUtil
                 }
 
             } catch (err :SecurityError) {
-                Log.getLog(SnapshotUtil).warning("Unable to snapshot child", err);
+                Log.getLog(SnapshotUtil).info("Unable to snapshot child", "reason", err.message);
                 allSuccess = false;
             }
         }
