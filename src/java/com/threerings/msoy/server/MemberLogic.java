@@ -228,22 +228,21 @@ public class MemberLogic
     public void saveExperiences (final int memberId, List<MemberExperience> experiences)
     {
         _memberRepo.deleteExperiences(memberId);
-        _memberRepo.saveExperiences(Lists.transform(experiences,
-                new Function<MemberExperience, MemberExperienceRecord>() {
-            public MemberExperienceRecord apply (MemberExperience experience) {
-                final String actionData;
-                switch (experience.action) {
-                case HomePageItem.ACTION_ROOM:
-                case HomePageItem.ACTION_GAME:
-                    actionData = Integer.toString(experience.data);
-                    break;
-                default:
-                    actionData = null;
-                }
-                return new MemberExperienceRecord(memberId, experience.getDateOccurred(),
-                    experience.action, actionData);
+        List<MemberExperienceRecord> records = Lists.newArrayList();
+        for (MemberExperience mexp : experiences) {
+            final String actionData;
+            switch (mexp.action) {
+            case HomePageItem.ACTION_ROOM:
+            case HomePageItem.ACTION_GAME:
+                actionData = Integer.toString(mexp.data);
+                break;
+            default:
+                continue; // we don't yet handle this type of experience
             }
-        }));
+            records.add(new MemberExperienceRecord(memberId, mexp.getDateOccurred(),
+                                                   mexp.action, actionData));
+        }
+        _memberRepo.saveExperiences(records);
     }
 
     /**
