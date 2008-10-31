@@ -256,7 +256,7 @@ public class MailSender
                         message.addHeader(_headers[ii], _headers[ii+1]);
                     }
                     message.setContent(body, "text/html");
-                    MailUtil.deliverMail(new String[] { recip.right }, _sender, _subject, body);
+                    MailUtil.deliverMail(new String[] { recip.right }, _sender, _subject, message);
 
                 } catch (Exception e) {
                     log.warning("Failed to send spam email", "recip", recip, "sender", _sender,
