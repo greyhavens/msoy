@@ -8,6 +8,8 @@ import flash.display.DisplayObject;
 
 import flash.geom.Matrix;
 
+import flash.utils.Dictionary;
+
 import mx.core.Container;
 import mx.core.UIComponent;
 
@@ -27,6 +29,7 @@ import com.threerings.util.Log;
  * prioritized layers.
  */
 public class LayeredContainer extends Container
+    implements Snapshottable
 {
     public const log :Log = Log.getLog(this);
 
@@ -46,23 +49,15 @@ public class LayeredContainer extends Container
         }
     }
 
-    /**
-     * Snapshot all the overlays.
-     */
-    public function snapshotOverlays (bitmapData :BitmapData, framer :Framer) :void
+    // from interface Snapshottable
+    public function snapshot (
+        bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean
     {
-        for (var ii :int = 0; ii < numChildren; ii++) {
-            var disp :DisplayObject = getChildAt(ii);
-            if (disp != _base) {
-                var m :Matrix = disp.transform.matrix; // clone the matrix
-                framer.applyTo(m); // apply the framing transformation to the matrix
-                try {
-                    bitmapData.draw(disp, m, null, null, null, true);
-                } catch (e :SecurityError) {
-                    log.warning("Unable to snapshot an overlay", e);
-                }
-            }
-        }
+        return SnapshotUtil.snapshot(this, bitmapData, matrix,
+            // enhance the predicate to avoid snapping the base
+            function (disp :DisplayObject) :Boolean {
+                return (disp != _base) && (childPredicate == null || childPredicate(disp));
+            });
     }
 
     /**
@@ -73,20 +68,11 @@ public class LayeredContainer extends Container
      */
     public function addOverlay (overlay :DisplayObject, layer :int) :void
     {
-        if (overlay.name == null || overlay.name == "") {
-            log.warning("Refusing to add overlay with no name. Name that sucker!");
-            return;
-        } else if (_layers[overlay.name] != null) {
-            log.warning("Refusing to add duplicate overlay [overlay=" + overlay.name + "].");
-            return;
-        }
-        _layers[overlay.name] = layer;
+        _layers[overlay] = layer;
 
         // step through the children until we find one whose layer is larger than ours
-        for (var ii :int = 0; ii < numChildren; ii ++) {
-            var child :DisplayObject = unwrap(getChildAt(ii));
-            var childLayer :int = int(_layers[child.name]);
-            if (childLayer > layer) {
+        for (var ii :int = 0; ii < numChildren; ii++) {
+            if (getLayer(getChildAt(ii)) > layer) {
                 addChildAt(wrap(overlay), ii);
                 return;
             }
@@ -101,12 +87,7 @@ public class LayeredContainer extends Container
      */
     public function removeOverlay (overlay :DisplayObject) :void
     {
-        if (_layers[overlay.name]) {
-            _layers[overlay.name] = null;
-        } else {
-            log.warning("Removing unknown overlay [overlay=" + overlay.name + "]");
-            // but I guess we'll remove it anyway
-        }
+        delete _layers[overlay];
 
         // remove this child from the display the hard way
         for (var ii :int = 0; ii < numChildren; ii++) {
@@ -123,7 +104,15 @@ public class LayeredContainer extends Container
 
     public function containsOverlay (overlay :DisplayObject) :Boolean
     {
-        return _layers[overlay.name] != null;
+        return (unwrap(overlay) in _layers);
+    }
+
+    /**
+     * Return the layer of the specified overlay, or 0 if it's not present.
+     */
+    public function getLayer (overlay :DisplayObject) :int
+    {
+        return int(_layers[unwrap(overlay)]);
     }
 
     protected function wrap (object :DisplayObject) :DisplayObject
@@ -137,7 +126,7 @@ public class LayeredContainer extends Container
     }
 
     /** A mapping of overlays to the numerical layer priority at which they were added. */
-    protected var _layers :Object = new Object();
+    protected var _layers :Dictionary = new Dictionary(true);
 
     protected var _base :DisplayObject;
 }

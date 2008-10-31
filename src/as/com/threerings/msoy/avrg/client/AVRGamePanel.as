@@ -6,9 +6,12 @@ package com.threerings.msoy.avrg.client {
 import flash.events.Event;
 import flash.events.ProgressEvent;
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
+
+import flash.geom.Matrix;
 
 import flash.utils.setInterval;
 import flash.utils.clearInterval;
@@ -18,23 +21,25 @@ import mx.core.UIComponent;
 import mx.events.ResizeEvent;
 
 import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.flash.MediaContainer;
-
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
+import com.threerings.msoy.client.Snapshottable;
 import com.threerings.msoy.ui.ScalingMediaContainer;
+
+import com.threerings.msoy.room.client.DataPackMediaContainer;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 
 public class AVRGamePanel extends UIComponent
-    implements PlaceView, PlaceLayer
+    implements PlaceView, PlaceLayer, Snapshottable
 {
     public const log :Log = Log.getLog(this);
 
@@ -76,18 +81,14 @@ public class AVRGamePanel extends UIComponent
         var cfg :AVRGameConfig = (_ctrl.getPlaceConfig() as AVRGameConfig);
 
         // create the container for the user media
-        _mediaHolder = new MediaContainer(
-            cfg.getGameDefinition().getMediaPath(cfg.getGameId()));
-        var loader :Loader = Loader(_mediaHolder.getMedia());
-
-        // hook the backend up with the media: no context needed here
-        _ctrl.backend.init(null, loader);
-
+        _mediaHolder = new AVRGMediaContainer();
         // set ourselves up properly once the media is loaded
-        loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
+        _mediaHolder.addEventListener(Event.COMPLETE, mediaComplete);
+        _mediaHolder.addEventListener(DataPackMediaContainer.LOADING_MEDIA, handleGameMediaLoading);
+        _mediaHolder.setMedia(cfg.getGameDefinition().getMediaPath(cfg.getGameId()));
 
         // do loading feedback on the avrg button
-        provideLoadingFeedback(loader.contentLoaderInfo);
+        provideLoadingFeedback();
 
         addEventListener(ResizeEvent.RESIZE, handleResize);
 
@@ -102,6 +103,19 @@ public class AVRGamePanel extends UIComponent
     {
         // we want to be the full size of the display
         setActualSize(unscaledWidth, unscaledHeight);
+    }
+
+    // from Snapshottable
+    public function snapshot (
+        bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean
+    {
+        if (_mediaHolder.parent != null) {
+            var m :Matrix = _mediaHolder.transform.matrix;
+            m.concat(matrix);
+            return _mediaHolder.snapshot(bitmapData, m);
+        }
+
+        return true; // snap nothing, but report no error
     }
 
     // We want to give the AVRG control over what pixels it considers 'hits' and which
@@ -122,10 +136,15 @@ public class AVRGamePanel extends UIComponent
         return hit;
     }
 
+    protected function handleGameMediaLoading (event :ValueEvent) :void
+    {
+        // hook the backend up with the media: no context needed here
+        _ctrl.backend.init(null, LoaderInfo(event.value));
+    }
+
     protected function mediaComplete (event :Event) :void
     {
-        var info :LoaderInfo = (event.target as LoaderInfo);
-        info.removeEventListener(Event.COMPLETE, mediaComplete);
+        _mediaHolder.removeEventListener(Event.COMPLETE, mediaComplete);
 
         if (_gameObj == null) {
             // we've already been shut down
@@ -150,7 +169,7 @@ public class AVRGamePanel extends UIComponent
         return mctx.getControlBar();
     }
 
-    protected function provideLoadingFeedback (info :LoaderInfo) :void
+    protected function provideLoadingFeedback () :void
     {
         const avrgBtn :UIComponent = getControlBar().avrgBtn;
         const PERIOD :Number = 1.5 * 1000;
@@ -168,25 +187,33 @@ public class AVRGamePanel extends UIComponent
             }
         }
 
-        function progress (evt :ProgressEvent) :void {
-            // TODO: update text field in menu
-        }
-
         function complete (evt :Event) :void {
             avrgBtn.alpha = 1.0;
             clearInterval(intervalId);
-            info.removeEventListener(ProgressEvent.PROGRESS, progress);
-            info.removeEventListener(Event.COMPLETE, complete);
+            _mediaHolder.removeEventListener(Event.COMPLETE, complete);
         }
 
         intervalId = setInterval(updateAlpha, 1);
-        info.addEventListener(ProgressEvent.PROGRESS, progress);
-        info.addEventListener(Event.COMPLETE, complete);
+        _mediaHolder.addEventListener(Event.COMPLETE, complete);
+        // TODO: fix runaway interval if loading never completes
     }
 
     protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
-    protected var _mediaHolder :MediaContainer;
+    protected var _mediaHolder :AVRGMediaContainer;
     protected var _gameObj :AVRGameObject;
 }
+}
+
+import com.threerings.msoy.room.client.DataPackMediaContainer;
+
+/**
+ * Ye olde hacke.
+ */
+class AVRGMediaContainer extends DataPackMediaContainer
+{
+    override protected function allowSetMedia () :Boolean
+    {
+        return true;
+    }
 }

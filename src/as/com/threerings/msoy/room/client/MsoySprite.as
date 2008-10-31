@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -13,7 +12,6 @@ import flash.events.MouseEvent;
 
 import flash.filters.GlowFilter;
 
-import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -69,60 +67,6 @@ public class MsoySprite extends DataPackMediaContainer
     public function roomScaleUpdated () :void
     {
         // nada
-    }
-
-    // from RoomElement
-    public function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean
-    {
-        if (_media is Loader) {
-            try {
-                var m :Matrix = _media.transform.matrix;
-                m.concat(matrix);
-
-                // Since we draw just the media, bypassing the mask,
-                // we need to clip to the mask coordinates
-                var r :Rectangle = getMaskRectangle();
-                if (r != null) {
-                    r.topLeft = m.transformPoint(r.topLeft);
-                    r.bottomRight = m.transformPoint(r.bottomRight);
-                }
-
-                // TODO: note that we are not drawing any decorations
-                // associated with this sprite. If we want those, we'll
-                // have to do some ballache to get them.
-                // (Actually, there's a good case for making all decorations
-                // on a different sub-object that undoes parent scale to
-                // keep scale consistent.
-                if (shouldUseStub(_url)) {
-                    Object(Loader(_media).content).snapshot(bitmapData, m, r);
-                } else {
-                    bitmapData.draw(Loader(_media).content, m, null, null, r, true);
-                }
-                //trace("== Snapshot: inside stub");
-                return true;
-
-            } catch (serr :SecurityError) {
-                // not a critical error
-                log.info("Unable to snapshot MsoySprite: " + serr);
-                return false;
-
-            } catch (rerr :ReferenceError) {
-                // fall through; log nothing
-            }
-        }
-
-        // do the snapshot outselves
-        try {
-            bitmapData.draw(this, matrix, null, null, null, true);
-            //trace("== Snapshot: MsoySprite");
-            return true;
-
-        } catch (serr :SecurityError) {
-            // not a critical error
-            log.info("Unable to snapshot MsoySprite: " + serr);
-        }
-
-        return false;
     }
 
     // from RoomElement
@@ -506,7 +450,7 @@ public class MsoySprite extends DataPackMediaContainer
 
         _backend = createBackend();
         if (_backend != null) {
-            _backend.init(_ctx, loader);
+            _backend.init(_ctx, loader.contentLoaderInfo);
             _backend.setSprite(this);
         }
 

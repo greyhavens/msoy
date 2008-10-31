@@ -132,7 +132,7 @@ public class SnapshotPanel extends FloatingPanel
         _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
         _showOccs.selected = true;
         hPan.addChild(_showOccs);
-        _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
+        _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_chat"), takeNewSnapshot);
         _showChat.selected = true;
         hPan.addChild(_showChat);
         addChild(hPan);

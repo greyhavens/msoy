@@ -32,10 +32,12 @@ public class CanonicalFramer implements Framer
     /**
      * @inheritDoc
      */
-    public function applyTo (matrix :Matrix) :void 
+    public function getMatrix () :Matrix
     {
-        matrix.scale(_scale, _scale);
-        matrix.translate(_x, 0);
+        var m :Matrix = new Matrix();
+        m.scale(_scale, _scale);
+        m.translate(_x, 0);
+        return m;
     }
     
     /**

@@ -5,7 +5,7 @@ package com.threerings.msoy.client {
 
 import flash.events.EventDispatcher;
 
-import flash.display.Loader;
+import flash.display.LoaderInfo;
 
 import com.threerings.util.Log;
 
@@ -18,10 +18,10 @@ public class ControlBackend
     /**
      * Initialize a backend to safely communicate with usercode.
      */
-    public function init (ctx :MsoyContext, loader :Loader) :void
+    public function init (ctx :MsoyContext, contentLoaderInfo :LoaderInfo) :void
     {
         _ctx = ctx;
-        _sharedEvents = loader.contentLoaderInfo.sharedEvents;
+        _sharedEvents = contentLoaderInfo.sharedEvents;
         _sharedEvents.addEventListener("controlConnect", handleUserCodeConnect, false, 0, true);
     }
 

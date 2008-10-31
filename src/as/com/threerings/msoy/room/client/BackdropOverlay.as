@@ -43,7 +43,8 @@ public class BackdropOverlay extends Shape
     }
 
     // documentation inherited from interface RoomElement
-    public function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean
+    public function snapshot (
+        bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean
     {
         return true; // we do nothing, innocuously
     }

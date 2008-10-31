@@ -3,11 +3,13 @@
 
 package com.threerings.msoy.room.client {
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
 
+import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -35,6 +37,8 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.client.Snapshottable;
+import com.threerings.msoy.client.SnapshotUtil;
 import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -55,7 +59,7 @@ import com.threerings.msoy.room.data.RoomObject;
  * The base room view. Should not contain any RoomObject or other network-specific crap.
  */
 public class RoomView extends Sprite
-    implements MsoyPlaceView, ContextMenuProvider
+    implements MsoyPlaceView, ContextMenuProvider, Snapshottable
 {
     /** Logging facilities. */
     protected static const log :Log = Log.getLog(RoomView);
@@ -130,6 +134,13 @@ public class RoomView extends Sprite
         // just dispatch an event once we know our name/thumbnail, and have TopPanel
         // capture that and pass it on to the EmbedHeader. That would make things
         // work in case everything's not fully set-up when the placeview is first shown.
+    }
+
+    // from Snapshottable
+    public function snapshot (
+        bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean
+    {
+        return SnapshotUtil.snapshot(this, bitmapData, matrix, childPredicate);
     }
 
     /**

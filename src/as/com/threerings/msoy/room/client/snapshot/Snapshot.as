@@ -32,11 +32,12 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.PlaceBox;
+import com.threerings.msoy.client.Snapshottable;
 
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.OccupantSprite;
-import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomView;
 
 /**
@@ -106,24 +107,62 @@ public class Snapshot extends EventDispatcher
      * Update the snapshot.
      */
     public function updateSnapshot (
-        includeOccupants :Boolean, includeOverlays :Boolean, doEncode :Boolean) :Boolean
+        includeOccupants :Boolean, includeChat :Boolean, doEncode :Boolean) :Boolean
     {
         cancelEncoding();
 
         // first let's fill the bitmap with black or something
         bitmap.fillRect(_frame, 0x000000);
 
-        var allSuccess :Boolean = true;
-
-        if (!renderChildren(includeOccupants)) {
-            allSuccess = false;
-        }
-        if (includeOverlays) {
-            renderOverlays();
+        var occPredicate :Function = null;
+        if (!includeOccupants) {
+            occPredicate = function (child :DisplayObject) :Boolean {
+                return !(child is OccupantSprite);
+            };
         }
 
-        _data = null;
+        var matrix :Matrix = _framer.getMatrix();
 
+        // first snapshot the room
+        var allSuccess :Boolean = _view.snapshot(bitmap, matrix, occPredicate);
+
+        // then, add the overlays
+        // find the layered container...
+        var d :DisplayObject = _view;
+        while (!(d is LayeredContainer) && d.parent != null) {
+            d = d.parent;
+        }
+        if (d is LayeredContainer) {
+            var lc :LayeredContainer = LayeredContainer(d);
+            var layerPredicate :Function = function (child :DisplayObject) :Boolean {
+                // if it's not even a layer, we must be further down: include
+                if (!lc.containsOverlay(child)) {
+                    return true;
+                }
+                // blacklist certain layers
+                switch (lc.getLayer(child)) {
+                default:
+                    return true;
+
+                case PlaceBox.LAYER_ROOM_SPINNER:
+                case PlaceBox.LAYER_CHAT_LIST:
+                case PlaceBox.LAYER_TRANSIENT:
+                case PlaceBox.LAYER_FEATURED_PLACE:
+                    return false;
+
+                case PlaceBox.LAYER_CHAT_SCROLL:
+                case PlaceBox.LAYER_CHAT_STATIC:
+                case PlaceBox.LAYER_CHAT_HISTORY:
+                    return includeChat;
+                }
+            };
+
+            if (!lc.snapshot(bitmap, matrix, layerPredicate)) {
+                allSuccess = false;
+            }
+        }
+
+        _data = null; // clear old encoded data
         if (doEncode) {
             startEncode();
         }
@@ -174,57 +213,6 @@ public class Snapshot extends EventDispatcher
         _loader.load(request);
     }
     
-    /**
-     * Render the overlays 
-     */ 
-    protected function renderOverlays () :void
-    {
-        var d :DisplayObject = _view;
-        
-        // search up through the containment hierarchy until you find the LayeredContainer
-        // or the end of the hierarchy
-        while (!(d is LayeredContainer) && d.parent != null) {
-            d = d.parent;
-        }
-        if (d is LayeredContainer) {
-            (d as LayeredContainer).snapshotOverlays(bitmap, _framer);
-        }
-    }
-
-    /**
-     * Render the children
-     */
-    protected function renderChildren (includeOccupants :Boolean) :Boolean 
-    {
-        var allSuccess:Boolean = true;
-        
-        for (var ii :int = 0; ii < _view.numChildren; ii++) {
-            var child :DisplayObject = _view.getChildAt(ii);
-            if (!includeOccupants && (child is OccupantSprite)) {
-                continue; // skip it!
-            }
-            
-            var matrix :Matrix = child.transform.matrix; // makes a clone...
-            _framer.applyTo(matrix); // apply the framing transformation to the matrix
-
-            if (child is RoomElement) {
-                var success :Boolean = RoomElement(child).snapshot(bitmap, matrix);
-                allSuccess &&= success;
-
-            } else {
-                try {
-                    bitmap.draw(child, matrix, null, null, null, true);
-
-                } catch (err :SecurityError) {
-                    // not a critical error
-                    log.info("Unable to snapshot Room element", err);
-                    allSuccess = false;
-                }
-            }            
-        }
-        return allSuccess;
-    }
-
     protected function handleJpegEncoded (event :ValueEvent) :void
     {
         log.debug("jpeg encoded");

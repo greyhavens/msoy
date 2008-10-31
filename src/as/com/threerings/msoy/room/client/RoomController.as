@@ -939,7 +939,8 @@ class WalkTarget extends Sprite
     }
 
     // from RoomElement
-    public function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean
+    public function snapshot (
+        bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean
     {
         return true; // we do nothing, innocuously
     }

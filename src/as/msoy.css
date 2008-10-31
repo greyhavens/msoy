@@ -4,6 +4,25 @@
  * Our Flash client style sheet. Abandon hope all ye who enter here.
  */
 
+/*
+@font-face {
+  fontFamily: "Trebuchet";
+  advancedAntiAliasing: true;
+  src: url("../../rsrc/fonts/trebuc.ttf");
+}
+
+@font-face {
+  fontFamily: "Trebuchet";
+  advancedAntiAliasing: true;
+  fontWeight: "bold";
+  src: url("../../rsrc/fonts/trebucbd.ttf");
+}
+
+global {
+  fontFamily: "Trebuchet";
+}
+*/
+
 Application {
   backgroundColor: #b98c3b;
   backgroundGradientColors: #d7c39d, #403323;

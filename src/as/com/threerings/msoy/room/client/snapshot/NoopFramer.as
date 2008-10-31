@@ -1,7 +1,6 @@
 package com.threerings.msoy.room.client.snapshot {
 
 import flash.geom.Matrix;
-import flash.geom.Rectangle
 
 /**
  * The framer calculates the transformation necessary to place an image in a frame by providing
@@ -9,9 +8,9 @@ import flash.geom.Rectangle
  */ 
 public class NoopFramer implements Framer
 {
-    public function applyTo (matrix :Matrix) :void
+    public function getMatrix () :Matrix
     {
-        // do nothing the original matrix is fine.
+        return new Matrix();
     }
 }
 }

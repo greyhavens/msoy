@@ -7,13 +7,15 @@ import flash.display.BitmapData;
 
 import flash.geom.Matrix;
 
+import com.threerings.msoy.client.Snapshottable;
+
 import com.threerings.msoy.room.data.MsoyLocation;
 
 /**
  * Interface for all objects that exist in a scene, and have both scene location in room
  * coordinate space, and screen location that needs to be updated appropriately.
  */ 
-public interface RoomElement
+public interface RoomElement extends Snapshottable
 {
     /**
      * Return the type of layout to do for this element.
@@ -45,13 +47,6 @@ public interface RoomElement
      * that have the exact same layer and z position?
      */
     function isImportant () :Boolean;
-
-    /**
-     * Snapshot this sprite into the specified BitmapData.
-     *
-     * @return true on success.
-     */
-    function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean;
 
     /**
      * Set the screen location of the object, based on its location in the scene.

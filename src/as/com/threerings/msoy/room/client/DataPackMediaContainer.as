@@ -8,8 +8,12 @@ import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
 
+import flash.display.BitmapData;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
+
+import flash.geom.Matrix;
+import flash.geom.Rectangle;
 
 import flash.net.URLLoader;
 import flash.net.URLLoaderDataFormat;
@@ -23,12 +27,22 @@ import flash.utils.ByteArray;
 
 import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.Snapshottable;
 
 import com.threerings.msoy.room.data.MsoyDataPack;
+
+/**
+ * Dispatched when we actually are about to start loading the media, as opposed to a zip
+ * or a stub, or any other non-usermedia bits.
+ *
+ * @eventType com.threerings.msoy.room.client.DataPackMediaContainer.LOADING_MEDIA
+ */
+[Event(name="loadingMedia", type="com.threerings.util.ValueEvent")]
 
 /**
  * Extends MsoyMediaContainer to be able to deal with all-in-one media, that is, media
@@ -43,7 +57,18 @@ import com.threerings.msoy.room.data.MsoyDataPack;
 // and only provide the bytes needed by the _CONTENT (and not _CONTENT itself).
 //
 public class DataPackMediaContainer extends MsoyMediaContainer
+    implements Snapshottable
 {
+    /** A ValueEvent when we start loading the actual user media.
+     * Value: LoaderInfo
+     *
+     * @eventType loadingMedia
+     */
+    public static const LOADING_MEDIA :String = "loadingMedia";
+
+    /**
+     * Constructor.
+     */
     public function DataPackMediaContainer ()
     {
         super(null);
@@ -61,6 +86,52 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         var ba :ByteArray = _packLoader.data as ByteArray;
         _packLoader = null;
         return ba;
+    }
+
+    // from interface Snapshottable
+    public function snapshot (
+        bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean
+    {
+        var success :Boolean = true;
+        try {
+            var m :Matrix = _media.transform.matrix;
+            m.concat(matrix);
+            // Since we draw just the media, bypassing the mask,
+            // we need to clip to the mask coordinates
+            var r :Rectangle = getMaskRectangle();
+            if (r != null) {
+                r.topLeft = m.transformPoint(r.topLeft);
+                r.bottomRight = m.transformPoint(r.bottomRight);
+            }
+
+            if (_media is Loader) {
+                // TODO: note that we are not drawing any decorations
+                // associated with this sprite. If we want those, we'll
+                // have to do some ballache to get them.
+                // (Actually, there's a good case for making all decorations
+                // on a different sub-object that undoes parent scale to
+                // keep scale consistent.
+                if (shouldUseStub(_url)) {
+                    Object(Loader(_media).content).snapshot(bitmapData, m, r);
+                } else {
+                    bitmapData.draw(Loader(_media).content, m, null, null, r, true);
+                }
+
+            } else {
+                // TODO: this might not be right. Also: Combine with draw() above?
+                bitmapData.draw(this, m, null, null, r, true);
+            }
+
+        } catch (serr :SecurityError) {
+            // not a critical error
+            log.info("Unable to snapshot media", serr);
+            success = false;
+
+        } catch (rerr :ReferenceError) {
+            // fall through; log nothing
+        }
+
+        return success;
     }
 
     /**
@@ -129,6 +200,9 @@ public class DataPackMediaContainer extends MsoyMediaContainer
             info.addEventListener(Event.COMPLETE, handleStubComplete);
             info.addEventListener(IOErrorEvent.IO_ERROR, handleStubError);
             info.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleStubError);
+
+        } else {
+            dispatchEvent(new ValueEvent(LOADING_MEDIA, loader.contentLoaderInfo));
         }
 
         return loader;
@@ -167,6 +241,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
             // have the stub load the REAL url
             info = Object(info.loader.content).load(_url) as LoaderInfo;
             if (info != null) {
+                dispatchEvent(new ValueEvent(LOADING_MEDIA, info));
                 addListeners(info);
                 return; // EXIT
             }
@@ -260,6 +335,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
                 // have the stub load these bytes
                 var info :LoaderInfo = Object(_media).content.loadBytes(ba) as LoaderInfo;
                 if (info != null) {
+                    dispatchEvent(new ValueEvent(LOADING_MEDIA, info));
                     addListeners(info);
                     return; // EXIT
                 }

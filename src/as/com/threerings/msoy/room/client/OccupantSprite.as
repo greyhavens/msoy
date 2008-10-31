@@ -258,7 +258,8 @@ public class OccupantSprite extends MsoySprite
         }
     }
 
-    override public function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean
+    override public function snapshot (
+        bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean
     {
         var success :Boolean = true;
 
@@ -266,7 +267,7 @@ public class OccupantSprite extends MsoySprite
         for (var ii :int = 0; ii < numChildren; ii++) {
             var d :DisplayObject = getChildAt(ii);
             if (d == _media && _media is Loader) {
-                success = super.snapshot(bitmapData, matrix);
+                success = super.snapshot(bitmapData, matrix, childPredicate);
 
             } else {
                 var m :Matrix = d.transform.matrix;
