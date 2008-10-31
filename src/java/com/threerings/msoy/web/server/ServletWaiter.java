@@ -63,11 +63,11 @@ public class ServletWaiter<T> extends ServiceWaiter<T>
      * result.
      */
     public static <T> T queueAndWait (
-        RunQueue omgr, final String name, final Supplier<T> action)
+        RunQueue runq, final String name, final Supplier<T> action)
         throws ServiceException
     {
         final ServletWaiter<T> waiter = new ServletWaiter<T>(name);
-        omgr.postRunnable(new Runnable() {
+        runq.postRunnable(new Runnable() {
             public void run () {
                 try {
                     waiter.postSuccess(action.get());
