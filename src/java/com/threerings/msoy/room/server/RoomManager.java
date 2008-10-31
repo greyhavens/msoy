@@ -845,6 +845,8 @@ public class RoomManager extends SpotSceneManager
                 _memberMan.addExperience(member, new MemberExperience(
                                              new Date(), HomePageItem.ACTION_ROOM, model.sceneId));
             }
+
+            extractMemories(member);
         }
     }
 
@@ -878,6 +880,8 @@ public class RoomManager extends SpotSceneManager
                 _eventLog.roomLeft(member.getMemberId(), model.sceneId, isWhirled,
                                    secondsInRoom, _roomObj.occupants.size(), member.getVisitorId());
             }
+
+            insertMemories(member);
         }
 
         super.bodyLeft(bodyOid);
@@ -920,6 +924,59 @@ public class RoomManager extends SpotSceneManager
             RoomPropertiesObject properties = (RoomPropertiesObject)_omgr.getObject(entry.propsOid);
             flushAVRGamePropertySpace(entry.ownerId, properties);
             _omgr.destroyObject(entry.propsOid);
+        }
+    }
+
+    /**
+     * Slurp memories from incoming avatars and put them into the room.
+     */
+    protected void extractMemories (MemberObject member)
+    {
+        MemberLocal local = member.getLocal(MemberLocal.class);
+
+        if (local.memories != null) {
+            _roomObj.startTransaction();
+            try {
+                for (EntityMemoryEntry entry : local.memories) {
+                    _roomObj.addToMemories(entry);
+                }
+            } finally {
+                _roomObj.commitTransaction();
+            }
+            local.memories = null;
+        }
+    }
+
+    /**
+     * Take memories from the room and stuff them into outgoing avatars.
+     */
+    protected void insertMemories (MemberObject member)
+    {
+        if (member.avatar == null) {
+            return;
+        }
+
+        // TODO: only do it when the user is guaranteed moving rooms -- Ray
+        if (true) {
+            List<EntityMemoryEntry> mems = Lists.newArrayList();
+            ItemIdent avatar = member.avatar.getIdent();
+            for (EntityMemoryEntry entry : _roomObj.memories) {
+                if (avatar.equals(entry.item)) {
+                    mems.add(entry);
+                }
+            }
+            if (mems.size() > 0) {
+                _roomObj.startTransaction();
+                try {
+                    for (EntityMemoryEntry entry : mems) {
+                        _roomObj.removeFromMemories(entry.getKey());
+                    }
+                } finally {
+                    _roomObj.commitTransaction();
+                }
+
+                member.getLocal(MemberLocal.class).memories = mems;
+            }
         }
     }
 
@@ -1144,26 +1201,8 @@ public class RoomManager extends SpotSceneManager
                     log, "Unable to clear furni item usage"));
 
             // clear out any memories that were loaded for this item
-            List<EntityMemoryEntry> toRemove = Lists.newArrayList();
             if (data.itemType != Item.NOT_A_TYPE) {
-                ItemIdent ident = data.getItemIdent();
-                for (EntityMemoryEntry entry : _roomObj.memories) {
-                    if (ident.equals(entry.item)) {
-                        toRemove.add(entry);
-                    }
-                }
-            }
-            if (!toRemove.isEmpty()) {
-                _roomObj.startTransaction();
-                try {
-                    for (EntityMemoryEntry entry : toRemove) {
-                        _roomObj.removeFromMemories(entry.getRemoveKey());
-                    }
-                } finally {
-                    _roomObj.commitTransaction();
-                }
-                // persist any of the old memories that were modified
-                flushMemories(_invoker, _memoryRepo, toRemove);
+                removeAndFlushMemories(data.getItemIdent());
             }
 
         } else if (update instanceof FurniUpdate.Add) {
@@ -1341,6 +1380,29 @@ public class RoomManager extends SpotSceneManager
         super.insertOccupantInfo(info, body);
     }
 
+    protected void removeAndFlushMemories (ItemIdent item)
+    {
+        // clear out any memories that were loaded for this item
+        List<EntityMemoryEntry> toRemove = Lists.newArrayList();
+        for (EntityMemoryEntry entry : _roomObj.memories) {
+            if (item.equals(entry.item)) {
+                toRemove.add(entry);
+            }
+        }
+        if (!toRemove.isEmpty()) {
+            _roomObj.startTransaction();
+            try {
+                for (EntityMemoryEntry entry : toRemove) {
+                    _roomObj.removeFromMemories(entry.getRemoveKey());
+                }
+            } finally {
+                _roomObj.commitTransaction();
+            }
+            // persist any of the old memories that were modified
+            flushMemories(_invoker, _memoryRepo, toRemove);
+        }
+    }
+
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>
@@ -1363,6 +1425,14 @@ public class RoomManager extends SpotSceneManager
                 updateAvatarIdent(event.getOldEntry(), event.getEntry());
                 checkDynamic(event.getOldEntry(), -1);
                 checkDynamic(event.getEntry(), 1);
+
+                if (event.getOldEntry() instanceof MemberInfo) {
+                    removeAndFlushMemories(((MemberInfo)event.getOldEntry()).getItemIdent());
+                }
+                if (event.getEntry() instanceof MemberInfo) {
+                    resolveMemories(Collections.singleton(
+                        ((MemberInfo)event.getEntry()).getItemIdent()));
+                }
             }
         }
 

@@ -17,6 +17,7 @@ import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.notify.data.Notification;
 
 /**
@@ -51,6 +52,9 @@ public class MemberLocal extends BodyLocal
 
     /** Rooms we've visited during our current Whirled Tour. */
     public StreamableArrayIntSet touredRooms;
+
+    /** The memories of the member's avatar. */
+    public List<EntityMemoryEntry> memories;
 
     /**
      * Adds an EarnedBadge to the member's BadgeSet (or updates the existing badge if the badge
