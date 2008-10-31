@@ -224,15 +224,15 @@ public class ProfileBlurb extends Blurb
         econtent.setText(row, 0, "Photo");
         RowPanel panel = new RowPanel();
         panel.add(_ephoto = new SimplePanel());
-        _ephoto.setWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
+        _ephoto.setWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
 
         panel.add(new Button("Select New...", new ClickListener() {
             public void onClick (Widget source) {
                 ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
                         _profile.photo = photo;
-                        _ephoto.setWidget(MediaUtil.createMediaView(
-                                              _profile.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
+                        _ephoto.setWidget(
+                            MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
                     }
                 });
             }
