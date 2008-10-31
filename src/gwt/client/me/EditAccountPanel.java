@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
@@ -30,21 +31,24 @@ import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
+import client.ui.TongueBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 /**
  * Displays account information, allows twiddling.
  */
-public class EditAccountPanel extends SmartTable
+public class EditAccountPanel extends FlowPanel
 {
     public EditAccountPanel ()
     {
-        super("editAccount", 0, 10);
+        setStyleName("editAccount");
 
         if (CShell.getMemberId() == 0) {
-            setText(0, 0, _msgs.editMustLogon(), 1, "Header");
-            setWidget(1, 0, new LogonPanel());
+            SmartTable table = new SmartTable(0, 10);
+            table.setText(0, 0, _msgs.editMustLogon(), 1, "Header");
+            table.setWidget(1, 0, new LogonPanel());
+            add(new TongueBox(null, table));
             return;
         }
 
@@ -59,60 +63,62 @@ public class EditAccountPanel extends SmartTable
     {
         _accountInfo = accountInfo;
 
-        int row = 0;
-
         // configure or display permaname interface
+        SmartTable table = new SmartTable(0, 10);
         if (CShell.creds.permaName == null) {
-            setText(row++, 0, _msgs.editPickPermaNameHeader(), 3, "Header");
-
-            setText(row, 0, _msgs.editPermaName(), 1, "rightLabel");
-            setWidget(row, 1, _pname = new TextBox());
-            _pname.addKeyboardListener(_valpname);
+            table.setText(0, 0, _msgs.editPermaName(), 1, "rightLabel");
+            _pname = MsoyUI.createTextBox("", MemberName.MAXIMUM_PERMANAME_LENGTH, -1);
+            table.setWidget(0, 1, _pname);
+            _pname.addKeyboardListener(new DeferredKeyAdapter() {
+                public void execute () {
+                    validatePermaName();
+                }
+            });
             _uppname = new Button(_cmsgs.set(), new ClickListener() {
                 public void onClick (Widget widget) {
                     configurePermaName();
                 }
             });
             _uppname.setEnabled(false);
-            setWidget(_permaRow = row++, 2, _uppname);
-
-            setHTML(row++, 0, _msgs.editPermaNameTip(), 3, "Tip");
+            table.setWidget(0, 2, _uppname);
+            table.setHTML(1, 0, _msgs.editPermaNameTip(), 3, "Tip");
 
         } else {
-            setText(row, 0, _msgs.editPermaName(), 1, "rightLabel");
-            setText(row++, 1, CShell.creds.permaName, 1, "PermaName");
+            table.setText(0, 0, _msgs.editPermaName(), 1, "rightLabel");
+            table.setText(0, 1, CShell.creds.permaName, 1, "PermaName");
         }
+        add(new TongueBox(null, _perma = table));
 
         // configure email address interface
-        setText(row++, 0, _msgs.editEmailHeader(), 3, "Header");
-
-        setText(row, 0, _msgs.editEmail(), 1, "rightLabel");
-        setWidget(row, 1, _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1));
+        table = new SmartTable(0, 10);
+        table.setText(0, 0, _msgs.editEmail(), 1, "rightLabel");
+        table.setWidget(0, 1, _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1));
         _email.setText(CShell.creds.accountName);
-        _email.addKeyboardListener(_valemail);
+        _email.addKeyboardListener(new DeferredKeyAdapter() {
+            public void execute () {
+                validateEmail();
+            }
+        });
         _upemail = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateEmail();
             }
         });
         _upemail.setEnabled(false);
-        setWidget(row++, 2, _upemail);
+        table.setWidget(0, 2, _upemail);
+        add(new TongueBox(_msgs.editEmailHeader(), table));
 
         // configure email preferences interface
-        setText(row++, 0, _msgs.editEPrefsHeader(), 3, "Header");
-
-        setText(row, 0, _msgs.editWhirledMailEmail(), 1, "rightLabel");
-        RowPanel bits = new RowPanel();
-        bits.add(_whirledEmail = new CheckBox());
-        bits.add(MsoyUI.createLabel(_msgs.editWhirledMailEmailTip(), "tipLabel"));
-        setWidget(row++, 1, bits, 2, null);
+        table = new SmartTable(0, 10);
+        table.setText(0, 0, _msgs.editWhirledMailEmail(), 1, "rightLabel");
+        _whirledEmail = new CheckBox(_msgs.editWhirledMailEmailTip());
+        table.setWidget(0, 1, _whirledEmail, 2, null);
+        _whirledEmail.addStyleName("tipLabel");
         _whirledEmail.setChecked(_accountInfo.emailWhirledMail);
 
-        setText(row, 0, _msgs.editAnnounceEmail(), 1, "rightLabel");
-        bits = new RowPanel();
-        bits.add(_announceEmail = new CheckBox());
-        bits.add(MsoyUI.createLabel(_msgs.editAnnounceEmailTip(), "tipLabel"));
-        setWidget(row++, 1, bits, 2, null);
+        table.setText(1, 0, _msgs.editAnnounceEmail(), 1, "rightLabel");
+        table.setWidget(1, 1, _announceEmail = new CheckBox(_msgs.editAnnounceEmailTip()), 2, null);
+        _announceEmail.addStyleName("tipLabel");
         _announceEmail.setChecked(_accountInfo.emailAnnouncements);
 
         _upeprefs = new Button(_cmsgs.update(), new ClickListener() {
@@ -120,49 +126,54 @@ public class EditAccountPanel extends SmartTable
                 updateEmailPrefs();
             }
         });
-        setWidget(row++, 2, _upeprefs);
+        table.setWidget(1, 2, _upeprefs);
+        add(new TongueBox(_msgs.editEPrefsHeader(), table));
 
         // configure real name interface
-        setText(row++, 0, _msgs.editRealNameHeader(), 3, "Header");
-
-        setText(row, 0, _msgs.editRealName(), 1, "rightLabel");
-        setWidget(row, 1, _rname = new TextBox());
+        table = new SmartTable(0, 10);
+        table.setText(0, 0, _msgs.editRealName(), 1, "rightLabel");
+        table.setWidget(0, 1, _rname = MsoyUI.createTextBox("", MemberName.MAX_REALNAME_LENGTH, -1));
         _rname.setText(_accountInfo.realName);
-        _rname.addKeyboardListener(_valrname);
+        _rname.addKeyboardListener(new DeferredKeyAdapter() {
+            public void execute () {
+                validateRealName();
+            }
+        });
         _uprname = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateRealName();
             }
         });
         _uprname.setEnabled(false);
-        setWidget(row++, 2, _uprname);
-
-        setHTML(row++, 0, _msgs.editRealNameTip(), 3, "Tip");
+        table.setWidget(0, 2, _uprname);
+        table.setHTML(1, 0, _msgs.editRealNameTip(), 3, "Tip");
+        add(new TongueBox(_msgs.editRealNameHeader(), table));
 
         // configure password interface
-        setText(row++, 0, _msgs.editPasswordHeader(), 3, "Header");
-
-        setText(row, 0, _msgs.editPassword(), 1, "rightLabel");
-        setWidget(row++, 1, _password = new PasswordTextBox());
+        table = new SmartTable(0, 10);
+        table.setText(0, 0, _msgs.editPassword(), 1, "rightLabel");
+        table.setWidget(0, 1, _password = new PasswordTextBox());
+        _password.addKeyboardListener(new DeferredKeyAdapter() {
+            public void execute () {
+                validatePassword();
+            }
+        });
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _confirm.setFocus(true);
             }
         }));
-        _password.addKeyboardListener(_valpass);
 
-        setText(row, 0, _msgs.editConfirm(), 1, "rightLabel");
-        setWidget(row, 1, _confirm = new PasswordTextBox());
-        _confirm.addKeyboardListener(_valpass);
+        table.setText(1, 0, _msgs.editConfirm(), 1, "rightLabel");
+        table.setWidget(1, 1, _confirm = new PasswordTextBox());
         _uppass = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updatePassword();
             }
         });
-        setWidget(row++, 2, _uppass);
         _uppass.setEnabled(false);
-
-        setWidget(row++, 0, _status = new Label(_msgs.editTip()), 3, "Status");
+        table.setWidget(1, 2, _uppass);
+        add(new TongueBox(_msgs.editPasswordHeader(), table));
     }
 
     protected void updateRealName ()
@@ -175,13 +186,13 @@ public class EditAccountPanel extends SmartTable
             public void onSuccess (Void result) {
                 _rname.setEnabled(true);
                 _uprname.setEnabled(false);
-                setStatus(_msgs.realNameUpdated());
+                MsoyUI.infoNear(_msgs.realNameUpdated(), _uprname);
             }
             public void onFailure (Throwable cause) {
                 _rname.setText(_accountInfo.realName = oldRealName);
                 _rname.setEnabled(true);
                 _uprname.setEnabled(true);
-                setError(CShell.serverError(cause));
+                MsoyUI.errorNear(CShell.serverError(cause), _uprname);
             }
         });
     }
@@ -193,11 +204,11 @@ public class EditAccountPanel extends SmartTable
         _usersvc.updateEmail(email, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 CShell.creds.accountName = email;
-                setStatus(_msgs.emailUpdated());
+                MsoyUI.infoNear(_msgs.emailUpdated(), _upemail);
             }
             public void onFailure (Throwable cause) {
                 _upemail.setEnabled(true);
-                setError(CShell.serverError(cause));
+                MsoyUI.errorNear(CShell.serverError(cause), _upemail);
             }
         });
     }
@@ -209,34 +220,42 @@ public class EditAccountPanel extends SmartTable
             _whirledEmail.isChecked(), _announceEmail.isChecked(), new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _upeprefs.setEnabled(true);
-                setStatus(_msgs.eprefsUpdated());
+                MsoyUI.infoNear(_msgs.eprefsUpdated(), _upeprefs);
             }
             public void onFailure (Throwable cause) {
                 _upeprefs.setEnabled(true);
-                setError(CShell.serverError(cause));
+                MsoyUI.errorNear(CShell.serverError(cause), _upeprefs);
             }
         });
     }
 
     protected void updatePassword ()
     {
-        final String password = CShell.frame.md5hex(_password.getText().trim());
+        String password = _password.getText().trim(), confirm = _confirm.getText().trim();
+        if (confirm.length() == 0) {
+            MsoyUI.errorNear(_msgs.editMissingConfirm(), _uppass);
+            return;
+        } else if (!password.equals(confirm)) {
+            MsoyUI.errorNear(_msgs.editPasswordMismatch(), _uppass);
+            return;
+        }
+
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);
-        _usersvc.updatePassword(password, new AsyncCallback<Void>() {
+        _usersvc.updatePassword(CShell.frame.md5hex(password), new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _password.setText("");
                 _password.setEnabled(true);
                 _confirm.setText("");
                 _confirm.setEnabled(true);
-                setStatus(_msgs.passwordUpdated());
+                MsoyUI.infoNear(_msgs.passwordUpdated(), _uppass);
             }
             public void onFailure (Throwable cause) {
                 _password.setEnabled(true);
                 _confirm.setEnabled(true);
                 _uppass.setEnabled(true);
-                setError(CShell.serverError(cause));
+                MsoyUI.errorNear(CShell.serverError(cause), _uppass);
             }
         });
     }
@@ -244,21 +263,37 @@ public class EditAccountPanel extends SmartTable
     protected void configurePermaName ()
     {
         final String pname = _pname.getText().trim();
+
+        // now check it for legality
+        for (int ii = 0; ii < pname.length(); ii++) {
+            char c = pname.charAt(ii);
+            if ((ii == 0 && !Character.isLetter(c)) ||
+                (!Character.isLetter(c) && !Character.isDigit(c) && c != '_')) {
+                MsoyUI.errorNear(_msgs.editPermaInvalid(), _uppname);
+                return;
+            }
+        }
+        if (pname.length() < MemberName.MINIMUM_PERMANAME_LENGTH) {
+            MsoyUI.errorNear(_msgs.editPermaShort(), _uppname);
+        } else if (pname.length() > MemberName.MAXIMUM_PERMANAME_LENGTH) {
+            MsoyUI.errorNear(_msgs.editPermaLong(), _uppname);
+        }
+
         _uppname.setEnabled(false);
         _pname.setEnabled(false);
         _usersvc.configurePermaName(pname, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 CShell.creds.permaName = pname;
-                getFlexCellFormatter().setStyleName(_permaRow, 1, "PermaName");
-                setText(_permaRow, 1, pname);
-                setText(_permaRow, 2, "");
-                setText(_permaRow+1, 0, "");
-                setStatus(_msgs.permaNameConfigured());
+                _perma.getFlexCellFormatter().setStyleName(0, 1, "PermaName");
+                _perma.setText(0, 1, pname);
+                _perma.setText(0, 2, "");
+                _perma.setText(0+1, 0, "");
+                MsoyUI.infoNear(_msgs.permaNameConfigured(), _uppname);
             }
             public void onFailure (Throwable cause) {
                 _pname.setEnabled(true);
                 _uppname.setEnabled(true);
-                setError(CShell.serverError(cause));
+                MsoyUI.errorNear(CShell.serverError(cause), _uppname);
             }
         });
     }
@@ -266,49 +301,26 @@ public class EditAccountPanel extends SmartTable
     protected void validateRealName ()
     {
         String realName = _rname.getText().trim();
-        boolean valid = false;
-        if (!_accountInfo.realName.equals(realName)) {
-            setStatus(_msgs.editNameReady());
-            valid = true;
-        } else {
-            setStatus("");
-        }
-        _uprname.setEnabled(valid);
+        _uprname.setEnabled(!_accountInfo.realName.equals(realName));
     }
 
     protected void validateEmail ()
     {
         String email = _email.getText().trim();
-        boolean valid = false;
-        if (email.length() < 4 || email.indexOf("@") == -1 ||
-            email.equals(CShell.creds.accountName)) {
-            setStatus("");
-        } else {
-            setStatus(_msgs.editEmailReady());
-            valid = true;
-        }
-        _upemail.setEnabled(valid);
+        _upemail.setEnabled(!(email.length() < 4 || email.indexOf("@") == -1 ||
+                              email.equals(CShell.creds.accountName)));
     }
 
-    protected void validatePasswords ()
+    protected void validatePassword ()
     {
-        boolean valid = false;
-        String password = _password.getText().trim(), confirm = _confirm.getText().trim();
-        if (confirm.length() == 0) {
-            setError(_msgs.editMissingConfirm());
-        } else if (!password.equals(confirm)) {
-            setError(_msgs.editPasswordMismatch());
-        } else {
-            setStatus(_msgs.editPasswordReady());
-            valid = true;
-        }
-        _uppass.setEnabled(valid);
+        String password = _password.getText().trim();
+        _uppass.setEnabled(password.length() > 0);
     }
 
     protected void validatePermaName ()
     {
-        // extract the permaname, but also show the user exactly what we're using, since
-        // we lowercase and trim it.
+        // extract the permaname, but also show the user exactly what we're using, since we
+        // lowercase and trim it
         int cursor = _pname.getCursorPos();
         String raw = _pname.getText();
         String pname = raw.trim();
@@ -316,97 +328,24 @@ public class EditAccountPanel extends SmartTable
         pname = pname.toLowerCase();
         _pname.setText(pname);
         _pname.setCursorPos(cursor);
-
-        // now check it for legality
-        for (int ii = 0; ii < pname.length(); ii++) {
-            char c = pname.charAt(ii);
-            if ((ii == 0 && !Character.isLetter(c)) ||
-                (!Character.isLetter(c) && !Character.isDigit(c) && c != '_')) {
-                setError(_msgs.editPermaInvalid());
-                _uppname.setEnabled(false);
-                return;
-            }
-        }
-
-        boolean valid = false;
-        if (pname.length() == 0) {
-            setStatus("");
-        } else if (pname.length() < MemberName.MINIMUM_PERMANAME_LENGTH) {
-            setError(_msgs.editPermaShort());
-        } else if (pname.length() > MemberName.MAXIMUM_PERMANAME_LENGTH) {
-            setError(_msgs.editPermaLong());
-        } else {
-            setStatus(_msgs.editPermaReady());
-            valid = true;
-        }
-        _uppname.setEnabled(valid);
+        _uppname.setEnabled(pname.length() > 0);
     }
 
-    protected void setError (String text)
-    {
-        _status.addStyleName("Error");
-        _status.setText(text);
-    }
-
-    protected void setStatus (String text)
-    {
-        _status.removeStyleName("Error");
-        _status.setText(text);
-    }
-
-    protected KeyboardListener _valrname = new KeyboardListenerAdapter() {
+    protected static abstract class DeferredKeyAdapter
+        extends KeyboardListenerAdapter implements Command {
         public void onKeyPress (Widget sender, char keyCode, int modifiers) {
             // let the keypress go through, then validate our data
-            DeferredCommand.addCommand(new Command() {
-                public void execute () {
-                    validateRealName();
-                }
-            });
-        }
-    };
-
-    protected KeyboardListener _valemail = new KeyboardListenerAdapter() {
-        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
-            // let the keypress go through, then validate our data
-            DeferredCommand.addCommand(new Command() {
-                public void execute () {
-                    validateEmail();
-                }
-            });
-        }
-    };
-
-    protected KeyboardListener _valpass = new KeyboardListenerAdapter() {
-        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
-            // let the keypress go through, then validate our data
-            DeferredCommand.addCommand(new Command() {
-                public void execute () {
-                    validatePasswords();
-                }
-            });
-        }
-    };
-
-    protected KeyboardListener _valpname = new KeyboardListenerAdapter() {
-        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
-            // let the keypress go through, then validate our data
-            DeferredCommand.addCommand(new Command() {
-                public void execute () {
-                    validatePermaName();
-                }
-            });
+            DeferredCommand.addCommand(this);
         }
     };
 
     protected AccountInfo _accountInfo;
-    protected int _permaRow;
+    protected SmartTable _perma;
 
     protected TextBox _email, _pname, _rname;
     protected CheckBox _whirledEmail, _announceEmail;
     protected PasswordTextBox _password, _confirm;
     protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname;
-
-    protected Label _status;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);

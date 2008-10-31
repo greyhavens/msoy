@@ -30,6 +30,9 @@ public class MemberName extends Name
     /** The maximum length for an account name (email address). */
     public static final int MAX_EMAIL_LENGTH = 128;
 
+    /** The maximum length for a user's real name. */
+    public static final int MAX_REALNAME_LENGTH = 128;
+
     /** Used to reprepsent a member that has been deleted but is still referenced as an item
      * creator or mail message sender, etc. */
     public static final MemberName DELETED_MEMBER = new MemberName("", -1);
