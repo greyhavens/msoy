@@ -34,6 +34,9 @@ public class BureauLauncherInfo
         /** NUmber of bytes left in log allowance. */
         public int logSpaceRemaining;
         
+        /** Generic message. */
+        public String message;
+        
         public String toString ()
         {
             return "BureauInfo(bureauId=" + bureauId + ", launchTime=" + launchTime +

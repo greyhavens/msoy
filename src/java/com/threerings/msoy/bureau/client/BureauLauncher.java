@@ -5,7 +5,6 @@ package com.threerings.msoy.bureau.client;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -215,38 +214,18 @@ public class BureauLauncher
     // from BureauLauncherReceiver
     public void launchThane (String bureauId, String token, String server, int port)
     {
-        // create the system command to execute
-        String windowToken = StringUtil.md5hex(BureauLauncherConfig.windowSharedSecret);
-        String [] command = {
-            BureauLauncherConfig.serverRoot + "/bin/runthaneclient", "burl", bureauId, token, 
-            server, String.valueOf(port), windowToken};
-        ProcessBuilder builder = new ProcessBuilder(command);
-        builder.redirectErrorStream(true);
-
-        // attempt to launch the process
-        Process process = null;
-        try {
-            process = builder.start();
-        } catch (java.io.IOException ioe) {
-            log.warning("Could not launch thane", "bureauId", bureauId, ioe);
+        Bureau bureau = _bureaus.get(bureauId);
+        if (bureau != null && bureau.isRunning()) {
+            log.warning(
+                "Did not expect to launch two bureaus with the same id", "bureauId", bureauId);
             return;
         }
 
-        // truncate any running log and calculate the new limit
-        int limit = BureauLauncherConfig.maximumLogSize;
-        BureauLogRedirector redirector = _logs.get(bureauId);
-        if (redirector != null) {
-            limit  = redirector.getLimit() - redirector.getWritten();
-            if (redirector.isRunning()) {
-                log.warning(
-                    "Did not expect to launch two bureaus with the same id", "bureauId", bureauId);
-                redirector.reset(0);
-            }
+        if (bureau == null) {
+            _bureaus.put(bureauId, bureau = new Bureau(bureauId));
         }
 
-        // log the output of the process and prefix with bureau id
-        log.info("Launched thane", "command", command, "logLimit", limit);
-        _logs.put(bureauId, new BureauLogRedirector(bureauId, process.getInputStream(), limit));
+        bureau.launch(server, port, token);
         ++_totalLaunched;
     }
 
@@ -262,17 +241,11 @@ public class BureauLauncher
     {
         BureauLauncherInfo info = new BureauLauncherInfo();
         info.hostname = BureauLauncherConfig.serverHost;
-        info.bureaus = new BureauLauncherInfo.BureauInfo[_logs.size()];
+        info.bureaus = new BureauLauncherInfo.BureauInfo[_bureaus.size()];
         info.connections = new String[0]; // TODO
         int idx = 0;
-        for (Map.Entry<String, BureauLogRedirector> entry : _logs.entrySet()) {
-            BureauLauncherInfo.BureauInfo binfo = new BureauLauncherInfo.BureauInfo();
-            binfo.bureauId = entry.getKey();
-            binfo.launchTime = 0; // TODO
-            binfo.shutdownTime = 0; // TODO
-            binfo.logSpaceRemaining = entry.getValue().getLimit() - entry.getValue().getWritten();
-            binfo.logSpaceUsed = entry.getValue().getWritten();
-            info.bureaus[idx++] = binfo;
+        for (Bureau bureau : _bureaus.values()) {
+            info.bureaus[idx++] = bureau.getInfo();
         }
         Connections.Entry entry = _connections._clients.get(hostname + ":" + port);
         if (entry != null) {
@@ -369,8 +342,8 @@ public class BureauLauncher
     protected void printSummary ()
     {
         int activeCount = 0;
-        for (BureauLogRedirector log : _logs.values()) {
-            if (log.isRunning()) {
+        for (Bureau bureau : _bureaus.values()) {
+            if (bureau.isRunning()) {
                 ++activeCount;
             }
         }
@@ -389,16 +362,101 @@ public class BureauLauncher
     protected void logRolled ()
     {
         log.info("Resetting bureau log limits");
-        for (Iterator<BureauLogRedirector> iter = _logs.values().iterator(); iter.hasNext(); ) {
-            BureauLogRedirector log = iter.next();
-            if (log.isRunning()) {
-                log.reset(BureauLauncherConfig.maximumLogSize);
+        for (Iterator<Bureau> iter = _bureaus.values().iterator(); iter.hasNext(); ) {
+            Bureau bureau = iter.next();
+            if (bureau.isRunning()) {
+                bureau.resetLogLimit();
             } else {
                 iter.remove();
             }
         }
     }
 
+    protected static class Bureau
+    {
+        public Bureau (String bureauId)
+        {
+            _bureauId = bureauId;
+        }
+        
+        public void launch (String server, int port, String connectionToken)
+        {
+            // create the system command to execute
+            String windowToken = StringUtil.md5hex(BureauLauncherConfig.windowSharedSecret);
+            String [] command = {
+                BureauLauncherConfig.serverRoot + "/bin/runthaneclient", "burl", _bureauId,
+                connectionToken, server, String.valueOf(port), windowToken};
+            ProcessBuilder builder = new ProcessBuilder(command);
+            builder.redirectErrorStream(true);
+
+            // attempt to launch the process
+            try {
+                _process = builder.start();
+            } catch (java.io.IOException ioe) {
+                log.warning("Could not launch thane", "bureauId", _bureauId, ioe);
+                _message = "Unable to launch: " + ioe.getMessage();
+                return;
+            }
+            
+            _launchTime = System.currentTimeMillis();
+
+            // truncate any running log and calculate the new limit
+            int limit = BureauLauncherConfig.maximumLogSize;
+            if (_redirector != null) {
+                limit  = _redirector.getLimit() - _redirector.getWritten();
+            }
+
+            _redirector = new BureauLogRedirector(_bureauId, _process.getInputStream(), limit) {
+                public void copyLoop () {
+                    try {
+                        super.copyLoop();
+                    } finally {
+                        _shutdownTime = System.currentTimeMillis();
+                    }
+                }
+            };
+
+            log.info("Launched thane", "command", command, "logLimit", limit);
+            _message = "Successfully launched";
+        }
+        
+        public boolean isRunning ()
+        {
+            return _redirector != null && _redirector.isRunning();
+        }
+        
+        public void resetLogLimit ()
+        {
+            if (_redirector != null) {
+                _redirector.reset(BureauLauncherConfig.maximumLogSize);
+            }
+        }
+        
+        public BureauLauncherInfo.BureauInfo getInfo ()
+        {
+            BureauLauncherInfo.BureauInfo info = new BureauLauncherInfo.BureauInfo();
+            info.bureauId = _bureauId;
+            info.launchTime = _launchTime;
+            info.shutdownTime = _shutdownTime;
+            info.message = _message;
+            if (_redirector != null) {
+                info.logSpaceRemaining = _redirector.getLimit() - _redirector.getWritten();
+                if (info.logSpaceRemaining < 0) {
+                    info.logSpaceRemaining = 0;
+                }
+                info.logSpaceUsed = _redirector.getWritten();
+            }
+            return info;
+        }
+        
+        protected Process _process;
+        protected String _bureauId;
+        protected BureauLogRedirector _redirector;
+        protected String _message;
+        protected long _launchTime;
+        protected long _shutdownTime;
+    }
+    
     /** Presents run queue. */
     @Inject protected Runner _runner;
 
@@ -421,8 +479,8 @@ public class BureauLauncher
     /** The total number of bureaus launched. */
     protected int _totalLaunched;
 
-    /** The current set of log redirectors. Pruned periodically when printing a summary. */
-    protected HashMap<String, BureauLogRedirector> _logs = Maps.newHashMap();
+    /** The current set of bureaus on this launcher. Pruned periodically when printing a summary. */
+    protected HashMap<String, Bureau> _bureaus = Maps.newHashMap();
     
     /** The nodes repository. */
     @Inject protected NodeRepository _nodeRepo;
