@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.web.server;
 
+import com.google.common.base.Supplier;
 import com.samskivert.servlet.util.ServiceWaiter;
+import com.samskivert.util.RunQueue;
 
 import com.threerings.presents.server.InvocationException;
 
@@ -54,6 +56,27 @@ public class ServletWaiter<T> extends ServiceWaiter<T>
             log.warning(_ident + " failed.", e);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    /**
+     * Posts a result getter to be executed on the run queue thread and blocks waiting for the
+     * result.
+     */
+    public static <T> T queueAndWait (
+        RunQueue omgr, final String name, final Supplier<T> action)
+        throws ServiceException
+    {
+        final ServletWaiter<T> waiter = new ServletWaiter<T>(name);
+        omgr.postRunnable(new Runnable() {
+            public void run () {
+                try {
+                    waiter.postSuccess(action.get());
+                } catch (final Exception e) {
+                    waiter.postFailure(e);
+                }
+            }
+        });
+        return waiter.waitForResult();
     }
 
     protected String _ident;

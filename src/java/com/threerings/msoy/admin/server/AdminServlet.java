@@ -8,6 +8,7 @@ import static com.threerings.msoy.Log.log;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -27,6 +28,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -302,33 +304,26 @@ public class AdminServlet extends MsoyServiceServlet
     public void refreshBureauLauncherInfo ()
         throws ServiceException
     {
-        // This is called on the servlet thread, so we need to post the method call on the event
-        // thread and wait for it to finish
-        // TODO: why does this pattern not seem to appear anywhere else?
-        final Waiter<Boolean> waiter = new Waiter<Boolean>();
-        _omgr.postRunnable(new Runnable() {
-            public void run() {
+        // Post the request to the event thread and wait for result
+        ServletWaiter.queueAndWait(_omgr, "refreshBureauLauncherInfo", new Supplier<Void>() {
+            public Void get () {
                 _bureauMgr.refreshBureauLauncherInfo();
-                waiter.result = true;
+                return null;
             }
         });
-        waiter.waitUntilDone();
     }
     
     // from interface AdminService
     public BureauLauncherInfo[] getBureauLauncherInfo ()
         throws ServiceException
     {
-        // This is called on the servlet thread, so we need to post the method call on the event
-        // thread and wait for it to finish
-        // TODO: why does this pattern not seem to appear anywhere else?
-        final Waiter<BureauLauncherInfo[]> waiter = new Waiter<BureauLauncherInfo[]>();
-        _omgr.postRunnable(new Runnable() {
-            public void run() {
-                waiter.result = _bureauMgr.getBureauLauncherInfo();
-            }
-        });
-        return waiter.waitUntilDone();
+        // Post the request to the event thread and wait for result
+        return ServletWaiter.queueAndWait(
+            _omgr, "getBureauLauncherInfo", new Supplier<BureauLauncherInfo[]>() {
+                public BureauLauncherInfo[] get () {
+                    return _bureauMgr.getBureauLauncherInfo();
+                }
+            });
     }
     
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
@@ -336,35 +331,6 @@ public class AdminServlet extends MsoyServiceServlet
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
         final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
         _mailRepo.startConversation(recipientId, senderId, subject, body, null);
-    }
-
-    /**
-     * Waits on a object manager task to finish so that the result can be returned to the servlet
-     * thread.
-     */
-    protected static class Waiter<T>
-    {
-        T result;
-
-        /**
-         * Returns the result if it is set within 20 seconds.
-         * @throws ServiceException if the result is not set within 20 seconds.
-         */
-        T waitUntilDone ()
-            throws ServiceException
-        {
-            for (int wait = 0 ; wait < 40; ++wait) {
-                if (result != null) {
-                    return result;
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ie) {
-                    break;
-                }
-             }
-            throw new ServiceException();
-        }
     }
     
     // our dependencies

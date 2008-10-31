@@ -122,25 +122,6 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         _omgr.postRunnable(runnable);
     }
 
-    /**
-     * Posts a runnable to be executed on the dobjmgr thread and blocks waiting for the result.
-     */
-    protected <T> T runDObjectAction (final String name, final DOAction<T> action)
-        throws ServiceException
-    {
-        final ServletWaiter<T> waiter = new ServletWaiter<T>(name);
-        _omgr.postRunnable(new Runnable() {
-            public void run () {
-                try {
-                    waiter.postSuccess(action.run());
-                } catch (final Exception e) {
-                    waiter.postFailure(e);
-                }
-            }
-        });
-        return waiter.waitForResult();
-    }
-
     @Override // from RemoteServiceServlet
     protected void doUnexpectedFailure (Throwable e)
     {
@@ -174,12 +155,6 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     protected static String who (final MemberRecord mrec)
     {
         return (mrec == null) ? null : mrec.who();
-    }
-
-    /** Used by {@link #runDObjectAction}. */
-    protected static interface DOAction<T> {
-        /** Invoked on the dobjmgr thread. */
-        public T run () throws Exception;
     }
 
     // our dependencies

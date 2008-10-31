@@ -3,17 +3,15 @@
 
 package client.adminz;
 
+import client.util.ClickCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
@@ -30,50 +28,36 @@ public class BureauInfoPanel extends VerticalPanel
     {
         setStyleName("bureauInfoPanel");
         
-        ClickListener requestRefresh = new ClickListener() {
-            public void onClick (Widget widget) {
-                requestRefresh().setEnabled(false);
-                _adminSvc.refreshBureauLauncherInfo(new AsyncCallback<Void>() {
-                    public void onFailure (Throwable caught) {
-                        requestRefresh().setEnabled(true);
-                    }
-
-                    public void onSuccess (Void unused) {
-                        requestRefresh().setEnabled(true);
-                    }
-                });
-            }
-        };
-        
-        ClickListener refreshPage = new ClickListener() {
-            public void onClick (Widget widget) {
-                refreshPage().setEnabled(false);
-                _adminSvc.getBureauLauncherInfo(new AsyncCallback<BureauLauncherInfo[]>() {
-                    public void onFailure (Throwable caught) {
-                        refreshPage().setEnabled(true);
-                        infoPanel().clear();
-                        infoPanel().add(new Label(_msgs.bureauServiceFailed()));
-                    }
-
-                    public void onSuccess (BureauLauncherInfo[] result) {
-                        refreshPage().setEnabled(true);
-                        setInfo(result);
-                    }
-                });
-            }
-        };
-
-        // The order of the adds is important
         HorizontalPanel hpanel;
         add(hpanel = new HorizontalPanel());
         hpanel.setSpacing(10);
-        hpanel.add(new Button(_msgs.bureauRequestRefresh(), requestRefresh));
-        hpanel.add(new Button(_msgs.bureauRefreshPage(), refreshPage));
-        add(new VerticalPanel());
-        infoPanel().setSpacing(10);
+        hpanel.add(_requestRefresh = new Button(_msgs.bureauRequestRefresh()));
+        hpanel.add(_refreshPage = new Button(_msgs.bureauRefreshPage()));
+        add(_infoPanel = new VerticalPanel());
+        _infoPanel.setSpacing(10);
 
-        // Initial refresh to see what the server has already
-        refreshPage.onClick(null);
+        new ClickCallback<Void>(_requestRefresh) {
+            @Override protected boolean callService () {
+                _adminSvc.refreshBureauLauncherInfo(this);
+                return true;
+            }
+
+            @Override protected boolean gotResult (Void result) {
+                return true;
+            }
+        };
+        
+        new ClickCallback<BureauLauncherInfo[]>(_refreshPage) {
+            @Override protected boolean callService () {
+                _adminSvc.getBureauLauncherInfo(this);
+                return true;
+            }
+
+            @Override protected boolean gotResult (BureauLauncherInfo[] infos) {
+                setInfo(infos);
+                return true;
+            }
+        };
     }
     
     protected void setInfo (BureauLauncherInfo[] infos)
@@ -82,14 +66,14 @@ public class BureauInfoPanel extends VerticalPanel
         // TODO: show the running time or time since shutdown
         // TODO: show a table of contents and link to specific bureau info
         // TODO: show a kill button for each bureau
-        infoPanel().clear();
+        _infoPanel.clear();
         FlexTable table;
         for (int ii = 0; ii < infos.length; ++ii) {
             BureauLauncherInfo info = infos[ii];
             for (int jj = 0; jj < info.bureaus.length; ++jj) {
                 BureauLauncherInfo.BureauInfo binfo = info.bureaus[jj];
                 int row = 0;
-                infoPanel().add(table = new FlexTable());
+                _infoPanel.add(table = new FlexTable());
                 table.setText(row, 0, _msgs.bureauHostname());
                 table.setText(row++, 1, info.hostname);
                 table.setText(row, 0, _msgs.bureauVersion());
@@ -103,30 +87,14 @@ public class BureauInfoPanel extends VerticalPanel
             }
         }
         
-        if (infoPanel().getWidgetCount() == 0) {
-            infoPanel().add(new Label(_msgs.bureauNoneActive()));
+        if (_infoPanel.getWidgetCount() == 0) {
+            _infoPanel.add(new Label(_msgs.bureauNoneActive()));
         }
     }
     
-    protected HorizontalPanel buttonBar ()
-    {
-        return (HorizontalPanel)getWidget(0);
-    }
-    
-    protected Button requestRefresh ()
-    {
-        return (Button)buttonBar().getWidget(0);
-    }
-
-    protected Button refreshPage ()
-    {
-        return (Button)buttonBar().getWidget(1);
-    }
-
-    protected VerticalPanel infoPanel ()
-    {
-        return (VerticalPanel)getWidget(1);
-    }
+    protected Button _requestRefresh;
+    protected Button _refreshPage;
+    protected VerticalPanel _infoPanel;
 
     protected AdminMessages _msgs = GWT.create(AdminMessages.class);
 
