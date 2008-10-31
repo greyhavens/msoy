@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.server.persist;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -53,6 +55,14 @@ public class MemoryRecord extends PersistentRecord
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 2;
+
+    /** Transforms a persistent record to a runtime record. */
+    public static Function<MemoryRecord, EntityMemoryEntry> TO_ENTRY =
+        new Function<MemoryRecord, EntityMemoryEntry>() {
+        public EntityMemoryEntry apply (MemoryRecord record) {
+            return record.toEntry();
+        }
+    };
 
     /** The type of the item for which we're storing a memory datum. */
     @Id public byte itemType;

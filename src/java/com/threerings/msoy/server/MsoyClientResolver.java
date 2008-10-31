@@ -56,6 +56,8 @@ import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.room.server.persist.MemoryRecord;
+import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 /**
  * Used to configure msoy-specific client object data.
@@ -209,6 +211,9 @@ public class MsoyClientResolver extends CrowdClientResolver
             final AvatarRecord avatar = _itemMan.getAvatarRepository().loadItem(member.avatarId);
             if (avatar != null) {
                 memobj.avatar = (Avatar)avatar.toItem();
+                local.memories = Lists.newArrayList(Iterables.transform(
+                    _memoryRepo.loadMemory(avatar.getType(), avatar.itemId),
+                        MemoryRecord.TO_ENTRY));
             }
         }
 
@@ -263,4 +268,5 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected BadgeManager _badgeMan;
+    @Inject protected MemoryRepository _memoryRepo;
 }
