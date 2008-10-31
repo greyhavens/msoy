@@ -186,10 +186,14 @@ public class GameGameRegistry
                 Iterable<LevelPackRecord> lrecords;
                 Iterable<ItemPackRecord> irecords;
                 if (game.isDevelopmentVersion()) {
-                    // this will only work for the game developer, but we can dig it
+                    // only the game creator will appear to "own" premium level packs (or any item
+                    // packs since all item packs are premium); however a crafty creator could
+                    // create extra item or premium level packs and give them to a tester and the
+                    // tester will then also appear to own said premium content
                     lrecords = _lpackRepo.loadOriginalItems(memberId, suiteId);
                     irecords = _ipackRepo.loadOriginalItems(memberId, suiteId);
-                    // filter out non-premium level packs since those normally wouldn't be owned
+                    // filter out non-premium level packs (which will generally show up in the
+                    // creator's inventory) since those normally wouldn't be owned
                     lrecords = Iterables.filter(lrecords, new Predicate<LevelPackRecord>() {
                         public boolean apply (LevelPackRecord record) {
                             return record.premium;
