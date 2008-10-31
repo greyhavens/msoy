@@ -3,6 +3,9 @@
 
 package client.adminz;
 
+import java.util.Date;
+
+import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.ServiceUtil;
 
@@ -80,10 +83,24 @@ public class BureauInfoPanel extends VerticalPanel
                 table.setText(row++, 1, String.valueOf(info.version));
                 table.setText(row, 0, _msgs.bureauId());
                 table.setText(row++, 1, binfo.bureauId);
+                table.setText(row, 0, _msgs.bureauLaunchTime());
+                String launchTime = "";
+                if (binfo.launchTime != 0) {
+                    launchTime = MsoyUI.formatDateTime(new Date(binfo.launchTime));
+                }
+                table.setText(row++, 1, launchTime);
+                String shutdownTime = _msgs.bureauFirstRun();
+                if (binfo.shutdownTime != 0) {
+                    shutdownTime = MsoyUI.formatDateTime(new Date(binfo.shutdownTime));
+                }
+                table.setText(row, 0, _msgs.bureauShutdownTime());
+                table.setText(row++, 1, shutdownTime);
                 table.setText(row, 0, _msgs.bureauLogSpaceUsed());
                 table.setText(row++, 1, String.valueOf(binfo.logSpaceUsed / 1024) + "kB");
                 table.setText(row, 0, _msgs.bureauLogSpaceRemaining());
                 table.setText(row++, 1, String.valueOf(binfo.logSpaceRemaining / 1024) + "kB");
+                table.setText(row, 0, _msgs.bureauMessage());
+                table.setText(row++, 1, binfo.message);
             }
         }
         
