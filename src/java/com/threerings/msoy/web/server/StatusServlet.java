@@ -21,6 +21,8 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.Tuple;
 
+import com.threerings.crowd.chat.data.ChatChannel;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.ClientInfo;
@@ -29,6 +31,8 @@ import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.peer.data.HostedGame;
+import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -120,9 +124,27 @@ public class StatusServlet extends HttpServlet
     {
         final ServerInfo info = new ServerInfo();
         info.name = nodeobj.nodeName;
+
         info.rooms = nodeobj.hostedScenes.size();
+        if (details == Details.ROOMS) {
+            for (HostedRoom room : nodeobj.hostedScenes) {
+                info.modeinfo.append("- ").append(room);
+            }
+        }
+
         info.games = nodeobj.hostedGames.size();
+        if (details == Details.GAMES) {
+            for (HostedGame game : nodeobj.hostedGames) {
+                info.modeinfo.append("- ").append(game);
+            }
+        }
+
         info.channels = nodeobj.hostedChannels.size();
+        if (details == Details.CHANNELS) {
+            for (ChatChannel channel : nodeobj.hostedChannels) {
+                info.modeinfo.append("- ").append(channel);
+            }
+        }
 
         for (ClientInfo cinfo : nodeobj.clients) {
             if (MemberName.isGuest(((MsoyClientInfo)cinfo).getMemberId())) {
@@ -140,19 +162,11 @@ public class StatusServlet extends HttpServlet
                 info.inGame++;
             }
             if (details == Details.MEMBERS) {
-                info.meminfo.append("- ").append(mloc).append("\n");
+                info.modeinfo.append("- ").append(mloc).append("\n");
             }
         }
 
         switch (details) {
-        case MEMBERS:
-            info.details = new Callable<String>() {
-                public String call () throws Exception {
-                    return info.meminfo.toString();
-                }
-            };
-            break;
-
         case REPORT:
             if (client == null) { // nextgen narya will make this less hacky
                 info.details = new Callable<String>() {
@@ -172,12 +186,24 @@ public class StatusServlet extends HttpServlet
                 };
             }
             break;
+
+        case NONE:
+            // leave details as null in this case
+            break;
+
+        default:
+            info.details = new Callable<String>() {
+                public String call () throws Exception {
+                    return info.modeinfo.toString();
+                }
+            };
+            break;
         }
 
         return info;
     }
 
-    protected static enum Details { NONE, MEMBERS, REPORT };
+    protected static enum Details { NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT };
 
     protected static class ServerInfo
     {
@@ -195,7 +221,7 @@ public class StatusServlet extends HttpServlet
 
         public Callable<String> details;
 
-        public StringBuilder meminfo = new StringBuilder();
+        public StringBuilder modeinfo = new StringBuilder();
 
         public String toString () {
             return name + " [members=" + members + ", guests=" + guests +
