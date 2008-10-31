@@ -6,6 +6,7 @@ package com.threerings.msoy.bureau.client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.Client;
 
+import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.data.ServerRegistryObject;
 
 /**
@@ -24,4 +25,9 @@ public interface BureauLauncherService extends InvocationService
      * @see ServerRegistryObject
      */
     void getGameServerRegistryOid (Client caller, ResultListener listener);
+    
+    /**
+     * Updates the msoy server with information about a launcher.
+     */
+    void setBureauLauncherInfo (Client caller, BureauLauncherInfo info);
 }

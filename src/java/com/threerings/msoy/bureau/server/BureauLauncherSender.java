@@ -28,6 +28,18 @@ public class BureauLauncherSender extends InvocationSender
 
     /**
      * Issues a notification that will result in a call to {@link
+     * BureauLauncherReceiver#requestInfo} on a client.
+     */
+    public static void requestInfo (
+        ClientObject target, String arg1, int arg2)
+    {
+        sendNotification(
+            target, BureauLauncherDecoder.RECEIVER_CODE, BureauLauncherDecoder.REQUEST_INFO,
+            new Object[] { arg1, Integer.valueOf(arg2) });
+    }
+
+    /**
+     * Issues a notification that will result in a call to {@link
      * BureauLauncherReceiver#shutdownLauncher} on a client.
      */
     public static void shutdownLauncher (

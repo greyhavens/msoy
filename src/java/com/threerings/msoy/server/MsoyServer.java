@@ -27,14 +27,12 @@ import com.threerings.messaging.MessageConnection;
 import com.threerings.messaging.amqp.AMQPMessageConfig;
 import com.threerings.messaging.amqp.AMQPMessageConnection;
 
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.PresentsServer;
@@ -192,6 +190,9 @@ public class MsoyServer extends MsoyBaseServer
         _partyReg.init();
         _moneyLogic.init();
         _tourMan.init();
+        
+        // Let the bureaus connect to our game server(s)
+        _bureauMgr.setGameServerRegistryOid(_gameReg.getServerRegistryObject().getOid());
 
         // TEMP: give a peer manager refernce to MemberNodeActions
         MemberNodeActions.init(_peerMan);
@@ -285,15 +286,6 @@ public class MsoyServer extends MsoyBaseServer
         } catch (final IOException ioe) {
             log.warning("Failed to restart MsoyPolicyServer with ports removed", ioe);
         }
-    }
-
-    @Override // from BureauLauncherProvider
-    public void getGameServerRegistryOid (
-        final ClientObject caller, final InvocationService.ResultListener arg1)
-        throws InvocationException
-    {
-        final int oid = _gameReg.getServerRegistryObject().getOid();
-        arg1.requestProcessed(oid);
     }
 
     @Override // from MsoyBaseServer

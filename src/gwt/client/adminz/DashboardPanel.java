@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
@@ -40,10 +41,12 @@ public class DashboardPanel extends FlexTable
 
         // admin-only controls
         if (CShell.isAdmin()) {
-            controls = new HorizontalPanel();
+            //controls.setSpacing(10);
+            VerticalPanel rhs = new VerticalPanel();
+            setWidget(row, 0, new Label(_msgs.adminControls()));
+            setWidget(row++, 1, rhs);
+            rhs.add(controls = new HorizontalPanel());
             controls.setSpacing(10);
-            setWidget(row++, 0, controls);
-            controls.add(new Label(_msgs.adminControls()));
             controls.add(new Button(_msgs.displayDashboard(), new ClickListener() {
                 public void onClick (Widget sender) {
                     ((Button)sender).setEnabled(false);
@@ -54,15 +57,18 @@ public class DashboardPanel extends FlexTable
                                     Link.createListener(Pages.ADMINZ, "exchange")));
             controls.add(new Button(_msgs.cashOutButton(),
                                     Link.createListener(Pages.ADMINZ, "cashout")));
+            rhs.add(controls = new HorizontalPanel());
+            controls.setSpacing(10);
             controls.add(new Button(_msgs.viewABTests(),
                                     Link.createListener(Pages.ADMINZ, "testlist")));
+            controls.add(new Button(_msgs.viewBureaus(),
+                                    Link.createListener(Pages.ADMINZ, "bureaus")));
         }
 
         // support controls
-        controls = new HorizontalPanel();
+        setWidget(row, 0, new Label(_msgs.supportControls()));
+        setWidget(row++, 1, controls = new HorizontalPanel());
         controls.setSpacing(10);
-        setWidget(row++, 0, controls);
-        controls.add(new Label(_msgs.supportControls()));
         controls.add(new Button(_msgs.reviewButton(), Link.createListener(Pages.ADMINZ, "review")));
         controls.add(new Button(_msgs.affMapButton(), Link.createListener(Pages.ADMINZ, "affmap")));
         controls.add(new Button(_msgs.browserPlayers(),

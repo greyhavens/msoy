@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.bureau.data;
 
+import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.client.BureauLauncherService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -38,5 +39,16 @@ public class BureauLauncherMarshaller extends InvocationMarshaller
     public void launcherInitialized (Client arg1)
     {
         sendRequest(arg1, LAUNCHER_INITIALIZED, new Object[] {});
+    }
+
+    /** The method id used to dispatch {@link #setBureauLauncherInfo} requests. */
+    public static final int SET_BUREAU_LAUNCHER_INFO = 3;
+
+    // from interface BureauLauncherService
+    public void setBureauLauncherInfo (Client arg1, BureauLauncherInfo arg2)
+    {
+        sendRequest(arg1, SET_BUREAU_LAUNCHER_INFO, new Object[] {
+            arg2
+        });
     }
 }

@@ -58,6 +58,11 @@ public class BureauLauncherClient extends Client
             {
                 _launcher.shutdownLauncher();
             }
+
+            public void requestInfo (String hostname, int port)
+            {
+                _launcher.requestInfo(hostname, port);
+            }
         };
         getInvocationDirector().registerReceiver(new BureauLauncherDecoder(receiver));
     }

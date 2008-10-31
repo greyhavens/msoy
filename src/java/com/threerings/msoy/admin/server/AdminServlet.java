@@ -17,6 +17,7 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.AffiliateMapRecord;
 import com.threerings.msoy.server.persist.AffiliateMapRepository;
@@ -45,11 +46,13 @@ import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AffiliateMapping;
+import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.MemberInviteResult;
 import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
+import com.threerings.presents.dobj.RootDObjectManager;
 
 /**
  * Provides the server implementation of {@link AdminService}.
@@ -295,6 +298,39 @@ public class AdminServlet extends MsoyServiceServlet
         return Integer.valueOf(deletionCount);
     }
 
+    // from interface AdminService
+    public void refreshBureauLauncherInfo ()
+        throws ServiceException
+    {
+        // This is called on the servlet thread, so we need to post the method call on the event
+        // thread and wait for it to finish
+        // TODO: why does this pattern not seem to appear anywhere else?
+        final Waiter<Boolean> waiter = new Waiter<Boolean>();
+        _omgr.postRunnable(new Runnable() {
+            public void run() {
+                _bureauMgr.refreshBureauLauncherInfo();
+                waiter.result = true;
+            }
+        });
+        waiter.waitUntilDone();
+    }
+    
+    // from interface AdminService
+    public BureauLauncherInfo[] getBureauLauncherInfo ()
+        throws ServiceException
+    {
+        // This is called on the servlet thread, so we need to post the method call on the event
+        // thread and wait for it to finish
+        // TODO: why does this pattern not seem to appear anywhere else?
+        final Waiter<BureauLauncherInfo[]> waiter = new Waiter<BureauLauncherInfo[]>();
+        _omgr.postRunnable(new Runnable() {
+            public void run() {
+                waiter.result = _bureauMgr.getBureauLauncherInfo();
+            }
+        });
+        return waiter.waitUntilDone();
+    }
+    
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
     {
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
@@ -302,6 +338,35 @@ public class AdminServlet extends MsoyServiceServlet
         _mailRepo.startConversation(recipientId, senderId, subject, body, null);
     }
 
+    /**
+     * Waits on a object manager task to finish so that the result can be returned to the servlet
+     * thread.
+     */
+    protected static class Waiter<T>
+    {
+        T result;
+
+        /**
+         * Returns the result if it is set within 20 seconds.
+         * @throws ServiceException if the result is not set within 20 seconds.
+         */
+        T waitUntilDone ()
+            throws ServiceException
+        {
+            for (int wait = 0 ; wait < 40; ++wait) {
+                if (result != null) {
+                    return result;
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ie) {
+                    break;
+                }
+             }
+            throw new ServiceException();
+        }
+    }
+    
     // our dependencies
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected MailRepository _mailRepo;
@@ -310,5 +375,6 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected MailLogic _mailLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected AffiliateMapRepository _affMapRepo;
-    
+    @Inject protected BureauManager _bureauMgr;
+    @Inject protected RootDObjectManager _omgr;
 }

@@ -17,9 +17,13 @@ public class BureauLauncherDecoder extends InvocationDecoder
      * notifications. */
     public static final int LAUNCH_THANE = 1;
 
+    /** The method id used to dispatch {@link BureauLauncherReceiver#requestInfo}
+     * notifications. */
+    public static final int REQUEST_INFO = 2;
+
     /** The method id used to dispatch {@link BureauLauncherReceiver#shutdownLauncher}
      * notifications. */
-    public static final int SHUTDOWN_LAUNCHER = 2;
+    public static final int SHUTDOWN_LAUNCHER = 3;
 
     /**
      * Creates a decoder that may be registered to dispatch invocation
@@ -43,6 +47,12 @@ public class BureauLauncherDecoder extends InvocationDecoder
         case LAUNCH_THANE:
             ((BureauLauncherReceiver)receiver).launchThane(
                 (String)args[0], (String)args[1]
+            );
+            return;
+
+        case REQUEST_INFO:
+            ((BureauLauncherReceiver)receiver).requestInfo(
+                (String)args[0], ((Integer)args[1]).intValue()
             );
             return;
 

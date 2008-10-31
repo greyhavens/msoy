@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.bureau.server;
 
+import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.data.BureauLauncherMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -44,6 +45,12 @@ public class BureauLauncherDispatcher extends InvocationDispatcher<BureauLaunche
         case BureauLauncherMarshaller.LAUNCHER_INITIALIZED:
             ((BureauLauncherProvider)provider).launcherInitialized(
                 source
+            );
+            return;
+
+        case BureauLauncherMarshaller.SET_BUREAU_LAUNCHER_INFO:
+            ((BureauLauncherProvider)provider).setBureauLauncherInfo(
+                source, (BureauLauncherInfo)args[0]
             );
             return;
 

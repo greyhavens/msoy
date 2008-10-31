@@ -75,4 +75,14 @@ public interface AdminServiceAsync
      */
     void deleteItemAdmin (ItemIdent item, String subject, String body,
                           AsyncCallback<Integer> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#refreshBureauLauncherInfo}.
+     */
+    void refreshBureauLauncherInfo (AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#getBureauLauncherInfo}.
+     */
+    void getBureauLauncherInfo (AsyncCallback<BureauLauncherInfo[]> callback);
 }

@@ -5,6 +5,7 @@ package com.threerings.msoy.bureau.client;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -28,6 +29,7 @@ import com.threerings.presents.peer.server.persist.NodeRepository;
 
 import com.threerings.bureau.util.BureauLogRedirector;
 
+import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.server.BureauLauncherConfig;
 
 import static com.threerings.msoy.Log.log;
@@ -251,9 +253,35 @@ public class BureauLauncher
     // from BureauLauncherReceiver
     public void shutdownLauncher ()
     {
+        log.info("Received shutdown message");
         shutdown();
     }
 
+    // from BureauLauncherReceiver
+    public void requestInfo (String hostname, int port)
+    {
+        BureauLauncherInfo info = new BureauLauncherInfo();
+        info.hostname = BureauLauncherConfig.serverHost;
+        info.bureaus = new BureauLauncherInfo.BureauInfo[_logs.size()];
+        info.connections = new String[0]; // TODO
+        int idx = 0;
+        for (Map.Entry<String, BureauLogRedirector> entry : _logs.entrySet()) {
+            BureauLauncherInfo.BureauInfo binfo = new BureauLauncherInfo.BureauInfo();
+            binfo.bureauId = entry.getKey();
+            binfo.launchTime = 0; // TODO
+            binfo.shutdownTime = 0; // TODO
+            binfo.logSpaceRemaining = entry.getValue().getLimit() - entry.getValue().getWritten();
+            binfo.logSpaceUsed = entry.getValue().getWritten();
+            info.bureaus[idx++] = binfo;
+        }
+        Connections.Entry entry = _connections._clients.get(hostname + ":" + port);
+        if (entry != null) {
+            entry._client._service.setBureauLauncherInfo(entry._client, info);
+        } else {
+            log.info("Client not found", "hostname", hostname);
+        }
+    }
+    
     // from ShutdownManager.Shutdowner
     public void shutdown ()
     {

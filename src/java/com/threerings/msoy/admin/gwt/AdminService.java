@@ -89,4 +89,16 @@ public interface AdminService extends RemoteService
      */
     Integer deleteItemAdmin (ItemIdent item, String subject, String body)
         throws ServiceException;
+    
+    /**
+     * Triggers a refresh of bureau launcher information.
+     */
+    void refreshBureauLauncherInfo ()
+        throws ServiceException;
+
+    /**
+     * Gets the current info for all connected bureau launchers.
+     */
+    BureauLauncherInfo[] getBureauLauncherInfo ()
+        throws ServiceException;
 }
