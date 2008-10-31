@@ -393,9 +393,6 @@ public class MemberLogic
                 return (exp1.score > exp2.score) ? -1 : ((exp1.score < exp2.score) ? 1 : 0);
             }
         });
-        while (scores.size() > count) {
-            scores.remove(scores.size() - 1);
-        }
 
         // Convert our scored experiences to home page items.
         List<HomePageItem> items = Lists.newArrayList();
@@ -405,6 +402,9 @@ public class MemberLogic
             switch (se.experience.action) {
             case HomePageItem.ACTION_ROOM: {
                 SceneRecord scene = _sceneRepo.loadScene(se.experience.data);
+                if (scene == null) {
+                    continue;
+                }
                 media = scene.getSnapshot();
                 if (media == null) {
                     media = DEFAULT_ROOM_SNAPSHOT;
@@ -414,6 +414,9 @@ public class MemberLogic
             }
             case HomePageItem.ACTION_GAME:
                 GameRecord game = _msoyGameRepo.loadGameRecord(se.experience.data);
+                if (game == null) {
+                    continue;
+                }
                 media = game.getThumbMediaDesc();
                 data = new BasicNavItemData(se.experience.data, game.name);
                 break;
@@ -422,6 +425,9 @@ public class MemberLogic
                 continue;
             }
             items.add(se.experience.getHomePageItem(media, data));
+            if (items.size() == count) {
+                break; // stop when we reach our desired count
+            }
         }
         return items;
     }
