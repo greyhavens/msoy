@@ -43,10 +43,6 @@ public class HomePageItem extends SimpleStreamableObject
     /** Go to your inbox. The data is ignored. */
     public static final byte ACTION_INBOX = 7;
 
-    /** Go to a group. The data is an instance of {@link BasicNavItemData} where the id is the group
-     * id, and the name is the group's name. */
-    public static final byte ACTION_GROUP = 8;
-
     /** Go to a user profile. The data is an instance of {@link BasicNavItemData}.*/
     public static final byte ACTION_PROFILE = 9;
 

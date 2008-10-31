@@ -185,7 +185,7 @@ public class MemberManager
             pmgr.updateOccupantInfo(user.createOccupantInfo(pmgr.getPlaceObject()));
         }
     }
-    
+
     public void addExperience (final MemberObject memObj, final MemberExperience newExp)
     {
         memObj.startTransaction();
@@ -194,14 +194,14 @@ public class MemberManager
             if (memObj.experiences.size() >= MAX_EXPERIENCES) {
                 MemberExperience oldest = null;
                 for (MemberExperience experience : memObj.experiences) {
-                    if (oldest == null || 
+                    if (oldest == null ||
                             experience.getDateOccurred().compareTo(oldest.getDateOccurred()) < 0) {
                         oldest = experience;
                     }
                 }
                 memObj.removeFromExperiences(oldest.getKey());
             }
-            
+
             // Add the new experience
             memObj.addToExperiences(newExp);
         } finally {
@@ -801,18 +801,17 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject memObj = (MemberObject) caller;
-        
+
         _invoker.postUnit(new PersistingUnit(listener) {
-            @Override
-            public void invokePersistent () throws Exception {
-                HomePageItem[] items = new HomePageItem[9];
+            @Override public void invokePersistent () throws Exception {
+                HomePageItem[] items = new HomePageItem[MWP_COUNT];
                 int curItem = 0;
 
                 // The first item on the home page is always a whirled tour unless already onTour
                 if (!memObj.onTour) {
                     items[curItem++] = EXPLORE_ITEM;
                 }
-                
+
                 // The next 2 or 3 items are badges
                 List<InProgressBadge> badges = _badgeLogic.getNextSuggestedBadges(
                     memObj.getMemberId(), memObj.getLocal(MemberLocal.class).badgesVersion,
@@ -821,103 +820,84 @@ public class MemberManager
                     items[curItem++] = new HomePageItem(
                         HomePageItem.ACTION_BADGE, badge, badge.imageMedia());
                 }
-                
+
                 // The last 6 are determined by the user-specific home page items, depending on
                 // where they were last in Whirled.
-                Set<Integer> haveGroups = new HashSet<Integer>();
+                Set<Integer> haveRooms = new HashSet<Integer>();
                 Set<Integer> haveGames = new HashSet<Integer>();
                 for(HomePageItem item : getHomePageItems(memObj, 6)) {
                     items[curItem++] = item;
                     int id = ((BasicNavItemData)item.getNavItemData()).getId();
-                    if (item.getAction() == HomePageItem.ACTION_GROUP) {
-                        haveGroups.add(id);
+                    if (item.getAction() == HomePageItem.ACTION_ROOM) {
+                        haveRooms.add(id);
                     } else if (item.getAction() == HomePageItem.ACTION_GAME) {
                         haveGames.add(id);
                     }
                 }
-                
-                // If there are still not enough places, fill in with some currently popular
-                // places to go.  Half will be games, the other half groups.
-                if (curItem < 9) {
+
+                // If there are still not enough places, fill in with some currently popular places
+                // to go.  Half will be games, the other half rooms.
+                if (curItem < items.length) {
                     // TODO: This is similar to some code in GalaxyServlet and GameServlet.
                     // refactor?
                     int startTopItems = curItem;
-                    int groupCount = (9 - curItem) / 2;
+                    int roomCount = (items.length - curItem) / 2;
                     PopularPlacesSnapshot pps = getPPSnapshot();
-                    for (Place place : pps.getTopWhirleds()) {
-                        if (!haveGroups.contains(place.placeId)) {
-                            GroupRecord group = _groupRepo.loadGroup(place.placeId);
-                            SceneRecord scene = _sceneRepo.loadScene(group.homeSceneId);
+                    for (Place place : pps.getTopScenes()) {
+                        if (!haveRooms.contains(place.placeId)) {
+                            SceneRecord scene = _sceneRepo.loadScene(place.placeId);
                             MediaDesc media = scene.getSnapshot();
                             if (media == null) {
                                 media = DEFAULT_ROOM_SNAPSHOT;
                             }
-                            items[curItem++] = new HomePageItem(HomePageItem.ACTION_GROUP, 
-                                new BasicNavItemData(group.groupId, group.name), media);
-                            haveGroups.add(group.groupId);
+                            items[curItem++] = new HomePageItem(HomePageItem.ACTION_ROOM,
+                                new BasicNavItemData(place.placeId, place.name), media);
+                            haveRooms.add(place.placeId);
                         }
-                        if (curItem == startTopItems + groupCount) {
+                        if (curItem == startTopItems + roomCount) {
                             break;
                         }
                     }
-                    
-                    // If we haven't reached the number of groups, load from the list of all groups
-                    if (curItem < startTopItems + groupCount) {
-                        for(GroupRecord group : _groupRepo.getGroupsList(0, 9)) {
-                            if (!haveGroups.contains(group.groupId)) {
-                                SceneRecord scene = _sceneRepo.loadScene(group.homeSceneId);
-                                MediaDesc media = scene.getSnapshot();
-                                if (media == null) {
-                                    media = DEFAULT_ROOM_SNAPSHOT;
-                                }
-                                items[curItem++] = new HomePageItem(HomePageItem.ACTION_GROUP, 
-                                    new BasicNavItemData(group.groupId, group.name), media);
-                            }
-                            if (curItem == startTopItems + groupCount) {
-                                break;
-                            }
-                        }
-                    }
-                    
+
                     // Load top games
                     for (Place place : pps.getTopGames()) {
                         if (!haveGames.contains(place.placeId)) {
                             GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
-                            items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME, 
-                                new BasicNavItemData(game.gameId, game.name), 
+                            items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME,
+                                new BasicNavItemData(game.gameId, game.name),
                                 game.getThumbMediaDesc());
                             haveGames.add(game.gameId);
                         }
-                        if (curItem == 9) {
+                        if (curItem == items.length) {
                             break;
                         }
                     }
-                    
+
                     // If we don't have enough games, pull from the list of all games.
-                    if (curItem < 9) {
-                        for(GameRecord game : _gameRepo.loadGenre((byte)-1, 9)) {
+                    if (curItem < items.length) {
+                        for(GameRecord game : _gameRepo.loadGenre((byte)-1, items.length)) {
                             if (!haveGames.contains(game.gameId)) {
-                                items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME, 
-                                    new BasicNavItemData(game.gameId, game.name), 
+                                items[curItem++] = new HomePageItem(HomePageItem.ACTION_GAME,
+                                    new BasicNavItemData(game.gameId, game.name),
                                     game.getThumbMediaDesc());
                             }
-                            if (curItem == 9) {
+                            if (curItem == items.length) {
                                 break;
                             }
                         }
                     }
                 }
-                
+
                 // If there still aren't enough places, fill in with null objects.
-                while (curItem < 9) {
+                while (curItem < items.length) {
                     items[curItem++] = new HomePageItem(HomePageItem.ACTION_NONE, null, null);
                 }
-                
+
                 reportRequestProcessed(items);
             }
         });
     }
-    
+
     /**
      * Check if the member's accumulated flow level matches up with their current level, and update
      * their current level if necessary
@@ -989,34 +969,34 @@ public class MemberManager
         }
         return false;
     }
-    
+
     /**
      * A member experience that has been scored.
-     * 
+     *
      * @author Kyle Sampson <kyle@threerings.net>
      */
     protected static class ScoredExperience
     {
         public final MemberExperience experience;
         public final float score;
-        
+
         /**
-         * Creates a scored experience based on the information from the given 
+         * Creates a scored experience based on the information from the given
          * {@link MemberExperienceRecord}.
          */
         public ScoredExperience (MemberExperience experience)
         {
             this.experience = experience;
-            
+
             // The score for a standard record starts at 14 and decrements by 1 for every day
             // since the experience occurred.  Cap at 0; thus, anything older than 2 weeks has
             // the same score.
-            float newScore = 14f - 
-                (System.currentTimeMillis() - experience.dateOccurred) / 
+            float newScore = 14f -
+                (System.currentTimeMillis() - experience.dateOccurred) /
                 (1000f * 60f * 60f * 24f);
             score = (newScore < 0) ? 0f : newScore;
         }
-        
+
         /**
          * Combines two identical (i.e., {@link #isSameExperience(ScoredExperience)} returns true})
          * scored experiences into one, combining their scores.
@@ -1026,7 +1006,7 @@ public class MemberManager
             experience = exp1.experience;   // exp2.item should be the same.
             score = exp1.score + exp2.score;    // Both scores positive
         }
-        
+
         /**
          * Null experience
          */
@@ -1046,14 +1026,14 @@ public class MemberManager
                 this.experience.data == other.experience.data;
         }
     }
-    
+
     /**
      * Retrieves a list of experiences to be displayed on the home page.  Each experience the
      * member has had recently will be given a weighted score to determine the order of the
      * experience.  Only the number of experiences requested will be returned as home page
      * items.  If there are not enough experiences, or the experiences have a low score
      * (too old, etc.), they will not be included here.
-     * 
+     *
      * @param memObj Member object to get home page items for
      * @param count Number of home page items to retrieve.
      * @return List of the home page items.
@@ -1063,7 +1043,7 @@ public class MemberManager
         List<ScoredExperience> scores = new ArrayList<ScoredExperience>();
         for (MemberExperience experience : memObj.experiences) {
             ScoredExperience newExp = new ScoredExperience(experience);
-            
+
             // Has this member experienced this more than once?  If so, combine.
             for (Iterator<ScoredExperience> itor = scores.iterator(); itor.hasNext(); ) {
                 ScoredExperience thisExp = itor.next();
@@ -1073,10 +1053,10 @@ public class MemberManager
                     break;
                 }
             }
-            
+
             scores.add(newExp);
         }
-        
+
         // Sort by scores (highest score first), limit it to count, and return the list.
         Collections.sort(scores, new Comparator<ScoredExperience>() {
             public int compare (ScoredExperience exp1, ScoredExperience exp2) {
@@ -1098,16 +1078,6 @@ public class MemberManager
                         media = DEFAULT_ROOM_SNAPSHOT;
                     }
                     data = new BasicNavItemData(se.experience.data, scene.name);
-                    break;
-                }
-                case HomePageItem.ACTION_GROUP: {
-                    GroupRecord group = _groupRepo.loadGroup(se.experience.data);
-                    SceneRecord scene = _sceneRepo.loadScene(group.homeSceneId);
-                    media = scene.getSnapshot();
-                    if (media == null) {
-                        media = DEFAULT_ROOM_SNAPSHOT;
-                    }
-                    data = new BasicNavItemData(se.experience.data, group.name);
                     break;
                 }
                 case HomePageItem.ACTION_GAME:
@@ -1220,9 +1190,6 @@ public class MemberManager
             _levelForFlow[ii] = _levelForFlow[ii-1] + (int)((ii * 17.8 - 49) * (3000 / 60));
         }
     }
-    
-    /** Maximum number of experiences we will keep track of per user. */
-    protected static final int MAX_EXPERIENCES = 20;
 
     /** An interval that updates the popular places snapshot every so often. */
     protected Interval _ppInvalidator;
@@ -1269,7 +1236,7 @@ public class MemberManager
     protected static final HomePageItem EXPLORE_ITEM = new HomePageItem(
         HomePageItem.ACTION_EXPLORE, null, new StaticMediaDesc(
             MediaDesc.IMAGE_PNG, "icon", "home_page_tour"));
-    
+
     /** Static media descriptor for the default room snapshot. */
     protected static final MediaDesc DEFAULT_ROOM_SNAPSHOT = new StaticMediaDesc(
         // It's not obvious from the docs in StaticMediaDesc that you can do this,
@@ -1277,4 +1244,10 @@ public class MemberManager
         MediaDesc.IMAGE_JPEG, "snapshot", "default_t",
         // we know that we're 66x60
         MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+
+    /** Maximum number of experiences we will keep track of per user. */
+    protected static final int MAX_EXPERIENCES = 20;
+
+    /** The number of slots we have in My Whired Places. */
+    protected static final int MWP_COUNT = 9;
 }

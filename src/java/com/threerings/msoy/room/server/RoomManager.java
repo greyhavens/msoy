@@ -839,16 +839,11 @@ public class RoomManager extends SpotSceneManager
             // log it!
             boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
             _eventLog.roomEntered(member.getMemberId(), isWhirled, member.getVisitorId());
-            
+
             // Indicate the user visited the room (unless it's their home).
             if (member.homeSceneId != model.sceneId) {
-                if (isWhirled) {
-                    _memberMan.addExperience(member, new MemberExperience(new Date(),
-                        HomePageItem.ACTION_GROUP, model.ownerId));
-                } else {
-                    _memberMan.addExperience(member, new MemberExperience(new Date(), 
-                        HomePageItem.ACTION_ROOM, model.sceneId));
-                }
+                _memberMan.addExperience(member, new MemberExperience(
+                                             new Date(), HomePageItem.ACTION_ROOM, model.sceneId));
             }
         }
     }
@@ -1394,7 +1389,7 @@ public class RoomManager extends SpotSceneManager
                 _avatarIdents.put(((MemberInfo)newInfo).getItemIdent(), newInfo.bodyOid);
             }
         }
-        
+
         /**
          * Increments the dynamic actor count if the occupant is dynamic.
          */
@@ -1456,13 +1451,13 @@ public class RoomManager extends SpotSceneManager
 
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();
-    
+
     /** Number of non-statically rendered avatars and pets in the room. */
     protected int _numDynamicActors;
 
     /** After this level of occupancy is reached, actors are made static. */
     protected static final int ACTOR_RENDERING_LIMIT = 20;
-    
+
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ItemManager _itemMan;
     @Inject protected PetManager _petMan;
