@@ -192,7 +192,7 @@ public class GameGameRegistry
                     // filter out non-premium level packs since those normally wouldn't be owned
                     lrecords = Iterables.filter(lrecords, new Predicate<LevelPackRecord>() {
                         public boolean apply (LevelPackRecord record) {
-                            return !record.premium;
+                            return record.premium;
                         }
                     });
                 } else {
