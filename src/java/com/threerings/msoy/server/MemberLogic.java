@@ -284,10 +284,8 @@ public class MemberLogic
         // If there are still not enough places, fill in with some currently popular places
         // to go.  Half will be games, the other half rooms.
         if (curItem < items.length) {
-            // TODO: This is similar to some code in GalaxyServlet and GameServlet.
-            // refactor?
-            int startTopItems = curItem;
-            int roomCount = (items.length - curItem) / 2;
+            // TODO: This is similar to some code in GalaxyServlet and GameServlet. refactor?
+            int roomLimit = curItem + (items.length - curItem) / 2;
             PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
             for (PopularPlacesSnapshot.Place place : pps.getTopScenes()) {
                 if (!haveRooms.contains(place.placeId)) {
@@ -301,7 +299,7 @@ public class MemberLogic
                         new BasicNavItemData(place.placeId, place.name), media);
                     haveRooms.add(place.placeId);
                 }
-                if (curItem == startTopItems + roomCount) {
+                if (curItem >= roomLimit) {
                     break;
                 }
             }
