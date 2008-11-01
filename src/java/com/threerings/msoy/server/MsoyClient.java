@@ -36,6 +36,8 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.room.server.RoomManager;
+import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -159,7 +161,7 @@ public class MsoyClient extends WhirledClient
             _memobj = null;
             return;
         }
-        MemberLocal local = _memobj.getLocal(MemberLocal.class);
+        final MemberLocal local = _memobj.getLocal(MemberLocal.class);
 
         // if this this was a player or guest (but not a lurker), log their stats
         if (!(_memobj.username instanceof LurkerName)) {
@@ -175,6 +177,7 @@ public class MsoyClient extends WhirledClient
             final int memberId = _memobj.getMemberId();
             final StatSet stats = local.stats;
             final Iterable<MemberExperience> experiences = _memobj.experiences;
+
             log.info("Session ended [id=" + memberId + ", amins=" + activeMins + "].");
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
             _invoker.postUnit(new WriteOnlyUnit("sessionDidEnd:" + _memobj.memberName) {
@@ -186,6 +189,11 @@ public class MsoyClient extends WhirledClient
                         memberId, activeMins, _runtime.server.humanityReassessment);
                     // save their experiences
                     _memberLogic.saveExperiences(memberId, Lists.newArrayList(experiences));
+
+                    if (local.memories != null) {
+                        RoomManager.flushMemories(
+                            _invoker, _memoryRepo, local.memories);
+                    }
                 }
             });
         }
@@ -259,4 +267,5 @@ public class MsoyClient extends WhirledClient
     @Inject protected StatRepository _statRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemoryRepository _memoryRepo;
 }

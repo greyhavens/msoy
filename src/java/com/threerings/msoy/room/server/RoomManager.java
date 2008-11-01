@@ -953,6 +953,7 @@ public class RoomManager extends SpotSceneManager
     protected void takeMemoriesFromRoom (MemberObject member)
     {
         if (member.avatar == null) {
+            member.getLocal(MemberLocal.class).memories = null;
             return;
         }
 
@@ -1380,7 +1381,7 @@ public class RoomManager extends SpotSceneManager
         super.insertOccupantInfo(info, body);
     }
 
-    protected void removeAndFlushMemories (ItemIdent item)
+    public void removeAndFlushMemories (ItemIdent item)
     {
         // clear out any memories that were loaded for this item
         List<EntityMemoryEntry> toRemove = Lists.newArrayList();
