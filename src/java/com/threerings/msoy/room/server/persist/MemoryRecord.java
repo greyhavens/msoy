@@ -3,7 +3,10 @@
 
 package com.threerings.msoy.room.server.persist;
 
+import java.util.List;
+
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -76,6 +79,21 @@ public class MemoryRecord extends PersistentRecord
     /** A serialized representation of this datum's value. */
     @Column(length=4096)
     public byte[] datumValue;
+
+    /**
+     * Extracts the modified memory entries from the supplied list and returns a list of
+     * MemoryRecord instances that can be saved to the database.
+     */
+    public static List<MemoryRecord> extractModified (Iterable<EntityMemoryEntry> memories)
+    {
+        List<MemoryRecord> memrecs = Lists.newArrayList();
+        for (EntityMemoryEntry entry : memories) {
+            if (entry.modified) {
+                memrecs.add(new MemoryRecord(entry));
+            }
+        }
+        return memrecs;
+    }
 
     /** Used when loading instances from the repository. */
     public MemoryRecord ()

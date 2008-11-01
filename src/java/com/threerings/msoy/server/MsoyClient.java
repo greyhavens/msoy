@@ -25,6 +25,8 @@ import com.threerings.stats.server.persist.StatRepository;
 import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.room.server.persist.MemoryRecord;
+import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberExperience;
@@ -36,8 +38,6 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.room.server.RoomManager;
-import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -189,10 +189,9 @@ public class MsoyClient extends WhirledClient
                         memberId, activeMins, _runtime.server.humanityReassessment);
                     // save their experiences
                     _memberLogic.saveExperiences(memberId, Lists.newArrayList(experiences));
-
+                    // save any modified avatar memories
                     if (local.memories != null) {
-                        RoomManager.flushMemories(
-                            _invoker, _memoryRepo, local.memories);
+                        _memoryRepo.storeMemories(MemoryRecord.extractModified(local.memories));
                     }
                 }
             });

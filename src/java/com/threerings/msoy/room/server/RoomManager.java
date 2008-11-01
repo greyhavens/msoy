@@ -133,12 +133,7 @@ public class RoomManager extends SpotSceneManager
     public static void flushMemories (Invoker invoker, final MemoryRepository memoryRepo,
                                       Iterable<EntityMemoryEntry> entries)
     {
-        final List<MemoryRecord> memrecs = Lists.newArrayList();
-        for (EntityMemoryEntry entry : entries) {
-            if (entry.modified) {
-                memrecs.add(new MemoryRecord(entry));
-            }
-        }
+        final List<MemoryRecord> memrecs = MemoryRecord.extractModified(entries);
         if (memrecs.size() > 0) {
             invoker.postUnit(new Invoker.Unit() {
                 public boolean invoke () {
