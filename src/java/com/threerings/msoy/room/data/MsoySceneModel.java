@@ -43,6 +43,9 @@ public class MsoySceneModel extends SceneModel
      *  in case of a group scene) can enter this scene. */
     public static final byte ACCESS_OWNER_ONLY = 2;
 
+    /** The maximum length of a room name. */
+    public static final int MAX_NAME_LENGTH = 80;
+
     /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
     public byte accessControl;
 

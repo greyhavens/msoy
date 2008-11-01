@@ -10,7 +10,6 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.MainInvoker;
@@ -80,7 +79,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             public void invokePersist () throws Exception {
                 _feedRepo.publishMemberMessage(
                     memId, FeedMessageType.FRIEND_UPDATED_ROOM,
-                    StringUtil.truncate(scene.getId() + "\t" + scene.getName(), 254));
+                    String.valueOf(scene.getId()) + "\t" + scene.getName());
             }
             public void handleSuccess () {
                 // nada

@@ -1165,6 +1165,9 @@ public class RoomManager extends SpotSceneManager
             SceneAttrsUpdate up = (SceneAttrsUpdate) update;
             MsoyScene msoyScene = (MsoyScene) _scene;
 
+            // massage the room name to make sure it's kosher
+            up.name = StringUtil.truncate(up.name, MsoySceneModel.MAX_NAME_LENGTH);
+
             // if decor was modified, we should mark new decor as used, and clear the old one
             Decor decor = msoyScene.getDecor();
             if (decor != null && decor.itemId != up.decor.itemId) { // modified?
@@ -1187,8 +1190,8 @@ public class RoomManager extends SpotSceneManager
             boolean nameChange = !msoyScene.getName().equals(up.name);
             if (nameChange || msoyScene.getAccessControl() != up.accessControl) {
                 _peerMan.roomUpdated(msoyScene.getId(), up.name,
-                                               msoyScene.getOwnerId(), msoyScene.getOwnerType(),
-                                               up.accessControl);
+                    msoyScene.getOwnerId(), msoyScene.getOwnerType(),
+                    up.accessControl);
             }
         }
 

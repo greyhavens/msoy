@@ -76,7 +76,7 @@ public class RoomPanel extends BasePanel
         _name = new TextInput();
         _name.percentWidth = 100;
         _name.maxWidth = 200;
-        _name.maxChars = MsoyCodes.MAX_NAME_LENGTH;
+        _name.maxChars = MsoySceneModel.MAX_NAME_LENGTH;
         box.addChild(_name);
 
         // container for other buttons

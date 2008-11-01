@@ -42,6 +42,9 @@ public class MsoySceneModel extends SceneModel
      *  in case of a group scene) can enter this scene. */
     public static const ACCESS_OWNER_ONLY :int = 2;
 
+    /** The maximum length of a room name. */
+    public static const MAX_NAME_LENGTH :int = 80;
+
     /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
     public var accessControl :int;
     
