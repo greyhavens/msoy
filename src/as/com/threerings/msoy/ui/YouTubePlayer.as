@@ -56,23 +56,20 @@ public class YouTubePlayer extends Sprite
             chars.push(char + (cap ? 65 : 97));
         }
         _stubId = String.fromCharCode.apply(null, chars);
-
-        var url :String = DeploymentConfig.staticMediaURL + YOUTUBE_STUB_URL +
-            "?name=" + _stubId +
-            "&url=" + encodeURIComponent("http://gdata.youtube.com/apiplayer?key=" + API_KEY);
-//encodeURIComponent("http://www.youtube.com/apiplayer");
-//"http://www.youtube.com/v/" + id +
-//                "&enablejsapi=1&playerapiid=ytplayer");
-        _loader = new Loader();
-        _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
-        addChild(_loader);
-        _loader.load(new URLRequest(url), new LoaderContext(false, new ApplicationDomain(null)));
+        trace("Youtube player starting with secret id: " + _stubId);
 
         _lc = new LocalConnection();
         _lc.client = {
             stateChanged: handleStateChanged
         };
         _lc.connect("_" + _stubId + "-s");
+
+        var url :String = DeploymentConfig.staticMediaURL + YOUTUBE_STUB_URL +
+            "?name=" + _stubId;
+        _loader = new Loader();
+        _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
+        addChild(_loader);
+        _loader.load(new URLRequest(url), new LoaderContext(false, new ApplicationDomain(null)));
     }
 
     public function unload () :void
@@ -101,6 +98,7 @@ public class YouTubePlayer extends Sprite
             log.warning("No lc!");
             return;
         }
+        trace("Sending to as2: " + method);
         args.unshift("_" + _stubId, method);
         _lc.send.apply(null, args);
     }
@@ -111,7 +109,7 @@ public class YouTubePlayer extends Sprite
     protected function handleStateChanged (state :int) :void
     {
         _playerState = state;
-        trace("=== playerState: " + state);
+        trace("=== got new state from as2: playerState: " + state);
 
         switch (_playerState) {
         case -1: // unstarted
@@ -122,7 +120,7 @@ public class YouTubePlayer extends Sprite
 
     protected function handleClick (event :MouseEvent) :void
     {
-        trace("==- playerState: " + _playerState);
+        trace("Click! playerState: " + _playerState);
         switch (_playerState) {
         case 5: // cue'd
         case 2: // paused
@@ -149,9 +147,5 @@ public class YouTubePlayer extends Sprite
     protected static const log :Log = Log.getLog(YouTubePlayer);
 
     protected static const YOUTUBE_STUB_URL :String = "youtubestub.swf";
-
-    protected static const API_KEY :String =
-        "AI39si7biXRBHFJQi4eHyd8nia_GmMjsbZ-3QdN8i2BlaxGx1KegEoAm8R-eT_X" +
-        "uspn6fa5zdyByUj58m4ZecgUpG5ROCns0hA";
 }
 }
