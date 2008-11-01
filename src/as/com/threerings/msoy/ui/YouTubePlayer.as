@@ -9,9 +9,12 @@ import flash.display.Sprite;
 
 import flash.events.ErrorEvent;
 import flash.events.Event;
+import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
 import flash.events.StatusEvent;
+
+import flash.geom.Point;
 
 import flash.net.LocalConnection;
 import flash.net.URLRequest;
@@ -22,23 +25,25 @@ import flash.system.LoaderContext;
 import com.threerings.util.Log;
 import com.threerings.util.MethodQueue;
 import com.threerings.util.Util;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.LoaderUtil;
 
+import com.threerings.flash.video.VideoPlayer;
+import com.threerings.flash.video.VideoPlayerCodes;
+
 import com.threerings.msoy.client.DeploymentConfig;
 
-[SWF(width="320", height="240")]
-public class YouTubePlayer extends Sprite
+public class YouTubePlayer extends EventDispatcher
+    implements VideoPlayer
 {
     /** TODO: this will be passed-in. */
     public static const VIDEO_ID :String = "ONM7148cTyc"; // obama ad
     
     public function YouTubePlayer ()
     {
+        _loader = new Loader();
         load(VIDEO_ID);
-
-        // TEMP
-        addEventListener(MouseEvent.CLICK, handleClick);
     }
 
     public function load (id :String) :void
@@ -66,24 +71,87 @@ public class YouTubePlayer extends Sprite
 
         var url :String = DeploymentConfig.staticMediaURL + YOUTUBE_STUB_URL +
             "?name=" + _stubId;
-        _loader = new Loader();
         _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
-        addChild(_loader);
         _loader.load(new URLRequest(url), new LoaderContext(false, new ApplicationDomain(null)));
     }
 
+    // from VideoPlayer
+    public function getDisplay () :DisplayObject
+    {
+        return _loader;
+    }
+
+    // from VideoPlayer
+    public function getState () :int
+    {
+        switch (_ytState) {
+        default: return VideoPlayerCodes.STATE_UNREADY;
+        case 5: return VideoPlayerCodes.STATE_READY;
+        case 1: return VideoPlayerCodes.STATE_PLAYING;
+        case 2: return VideoPlayerCodes.STATE_PAUSED;
+        }
+    }
+
+    // from VideoPlayer
+    public function getSize () :Point
+    {
+        return null; // TODO
+    }
+
+    // from VideoPlayer
+    public function play () :void
+    {
+        send("doPlay");
+    }
+
+    // from VideoPlayer
+    public function pause () :void
+    {
+        send("doPause");
+    }
+
+    // from VideoPlayer
+    public function getDuration () :Number
+    {
+        return NaN; // TODO
+    }
+
+    // from VideoPlayer
+    public function getPosition () :Number
+    {
+        return NaN; // TODO
+    }
+
+    // from VideoPlayer
+    public function seek (position :Number) :void
+    {
+        // TODO
+    }
+
+    // from VideoPlayer
+    public function getVolume () :Number
+    {
+        return 1; // TODO
+    }
+
+    // from VideoPlayer
+    public function setVolume (volume :Number) :void
+    {
+        // TODO
+    }
+
+    // from VideoPlayer
     public function unload () :void
     {
-        if (_loader != null) {
-            removeChild(_loader);
+        if (_lc != null) {
             send("doUnload");
             MethodQueue.callLater(MethodQueue.callLater, [ LoaderUtil.unload, [ _loader ] ]);
             _lc = null;
             _stubId = null;
-            _loader = null;
+            _loader = new Loader();
         }
 
-        _playerState = int.MIN_VALUE;
+        _ytState = int.MIN_VALUE;
         _videoId = null;
     }
 
@@ -108,29 +176,16 @@ public class YouTubePlayer extends Sprite
      */
     protected function handleStateChanged (state :int) :void
     {
-        _playerState = state;
+        _ytState = state;
         trace("=== got new state from as2: playerState: " + state);
 
-        switch (_playerState) {
+        switch (_ytState) {
         case -1: // unstarted
             send("cueVideo", _videoId);
             break;
         }
-    }
 
-    protected function handleClick (event :MouseEvent) :void
-    {
-        trace("Click! playerState: " + _playerState);
-        switch (_playerState) {
-        case 5: // cue'd
-        case 2: // paused
-            send("doPlay");
-            break;
-
-        case 1: // playing
-            send("doPause");
-            break;
-        }
+        dispatchEvent(new ValueEvent(VideoPlayerCodes.STATE, getState()));
     }
 
     protected var _loader :Loader;
@@ -142,7 +197,7 @@ public class YouTubePlayer extends Sprite
     protected var _lc :LocalConnection;
 
     /** The current state of the youtube chromeless player. */
-    protected var _playerState :int;
+    protected var _ytState :int;
 
     protected static const log :Log = Log.getLog(YouTubePlayer);
 
