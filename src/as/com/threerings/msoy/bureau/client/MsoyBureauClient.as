@@ -50,16 +50,12 @@ public class MsoyBureauClient extends WhirledBureauClient
 
     /** Access this client's window director. */
     public function getWindowDirector () :WindowDirector
-    {
-        var enableWindowDirector :Boolean = true;
-        var thaneWorldServiceProvided :Boolean = true;
+    { 
+        ThaneWorldMarshaller; // make sure we link in the marshaller
 
-        if (enableWindowDirector && _windowDirector == null) {
-            _windowDirector = new WindowDirector(_bureauId, _windowToken);
-            if (thaneWorldServiceProvided) {
-                ThaneWorldMarshaller; // make sure we link in the marshaller
-                _windowDirector.addServiceGroup(ThaneCodes.THANE_GROUP);
-            }
+        if (_windowDirector == null) {
+            _windowDirector = new WindowDirector(_bureauId, _windowToken, getBureauDirector());
+            _windowDirector.addServiceGroup(ThaneCodes.THANE_GROUP);
         }
 
         return _windowDirector;

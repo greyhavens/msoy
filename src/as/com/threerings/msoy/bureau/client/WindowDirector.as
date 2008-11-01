@@ -1,5 +1,6 @@
 package com.threerings.msoy.bureau.client {
 
+import com.threerings.bureau.client.BureauDirector;
 import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
@@ -14,8 +15,9 @@ public class WindowDirector
     /**
      * Creates a new window director.
      */
-    public function WindowDirector (bureauId :String, token :String)
+    public function WindowDirector (bureauId :String, token :String, bureauDir :BureauDirector)
     {
+        _bureauDir = bureauDir;
         _bureauId = bureauId;
         _token = token;
     }
@@ -43,7 +45,7 @@ public class WindowDirector
 
         if (window == null) {
             Assert.isTrue(_windows.get(key)==undefined);
-            window = new WindowImpl(host, port, _bureauId, _token, _serviceGroups);
+            window = new WindowImpl(_bureauDir, host, port, _bureauId, _token, _serviceGroups);
             _windows.put(key, window);
         }
 
@@ -80,6 +82,7 @@ public class WindowDirector
     }
 
     protected var _windows :HashMap = new HashMap();
+    protected var _bureauDir :BureauDirector;
     protected var _serviceGroups :Array = [];
     protected var _bureauId :String;
     protected var _token :String;
@@ -97,6 +100,8 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.dobj.DObjectManager;
 
+import com.threerings.bureau.client.BureauDirector;
+
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.bureau.data.WindowCredentials;
 
@@ -110,14 +115,18 @@ class WindowImpl implements Window
      * requests the given service groups.
      */
     public function WindowImpl (
-        host :String, port :int, bureauId :String, token :String, serviceGroups :Array)
+        director :BureauDirector, host :String, port :int, bureauId :String, token :String,
+        serviceGroups :Array)
     {
+        _director = director;
+
         var creds :WindowCredentials = new WindowCredentials(bureauId, token);
         _client = new Client(creds);
         _client.setServer(host, [port]);
         _client.addEventListener(ClientEvent.CLIENT_DID_LOGON, clientDidLogon);
         _client.addEventListener(ClientEvent.CLIENT_FAILED_TO_LOGON, clientFailedToLogon);
         _client.addEventListener(ClientEvent.CLIENT_CONNECTION_FAILED, clientConnectionFailed);
+        _client.addEventListener(ClientEvent.CLIENT_DID_LOGOFF, clientLoggedOff);
 
         var debug :Boolean = false;
         if (debug) {
@@ -247,10 +256,19 @@ class WindowImpl implements Window
         clientFailedToLogon(evt);
     }
 
+    protected function clientLoggedOff (evt :ClientEvent) :void
+    {
+        if (_refCount != 0) {
+            log.warning("Window closed unexpectedly", "client", _client);
+            _director.fatalError("Window closed unexpectedly");
+        }
+    }
+
     /** Create a logger for the entire package.. */
-    protected const log :Log = Log.getLog("com.threerings.bureau");
+    protected const log :Log = Log.getLog(this);
 
     protected var _client :Client;
     protected var _listeners :Array = [];
     protected var _refCount :int;
+    protected var _director :BureauDirector;
 }
