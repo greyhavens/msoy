@@ -181,10 +181,10 @@ public class MsoyPeerManager extends CrowdPeerManager
         }
 
         if (_mnobj.memberLocs.contains(newloc)) {
-            log.info("Updating member " + newloc + ".");
+            // log.info("Updating member " + newloc + ".");
             _mnobj.updateMemberLocs(newloc);
         } else {
-            log.info("Hosting member " + newloc + ".");
+            // log.info("Hosting member " + newloc + ".");
             _mnobj.addToMemberLocs(newloc);
         }
 
@@ -271,7 +271,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void gameDidStartup (int gameId, String name, int port)
     {
-        log.info("Hosting game [id=" + gameId + ", name=" + name + "].");
+        log.info("Hosting game", "id", gameId, "name", name);
         _mnobj.addToHostedGames(new HostedGame(gameId, name, port));
         // releases our lock on this game now that it is resolved and we are hosting it
         releaseLock(getGameLock(gameId), new ResultListener.NOOP<String>());
@@ -282,7 +282,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void gameDidShutdown (int gameId)
     {
-        log.info("No longer hosting game [id=" + gameId + "].");
+        log.info("No longer hosting game", "id", gameId);
         _mnobj.removeFromHostedGames(gameId);
     }
 
@@ -291,8 +291,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void projectDidStartup (SwiftlyProject project, ConnectConfig config)
     {
-        log.info(
-            "Hosting project [id=" + project.projectId + ", name=" + project.projectName + "].");
+        log.info("Hosting project", "id", project.projectId, "name", project.projectName);
         _mnobj.addToHostedProjects(new HostedProject(project, config));
     }
 
@@ -301,7 +300,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void projectDidShutdown (int projectId)
     {
-        log.info("No longer hosting project [id=" + projectId + "].");
+        log.info("No longer hosting project", "id", projectId);
         _mnobj.removeFromHostedProjects(projectId);
     }
 
@@ -478,7 +477,7 @@ public class MsoyPeerManager extends CrowdPeerManager
         // clear out their location in our node object (if they were in one)
         Integer memberId = ((MsoyClientInfo)info).getMemberId();
         if (_mnobj.memberLocs.containsKey(memberId)) {
-            log.info("Clearing member " + _mnobj.memberLocs.get(memberId) + ".");
+            // log.info("Clearing member " + _mnobj.memberLocs.get(memberId) + ".");
             _mnobj.removeFromMemberLocs(memberId);
         }
 
