@@ -10,9 +10,9 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.panopticon.client.net.EventLogger;
-import com.threerings.panopticon.client.net.EventLoggerConfig;
-import com.threerings.panopticon.client.net.EventLoggerFactory;
+import com.threerings.panopticon.client.EventLogger;
+import com.threerings.panopticon.client.EventLoggerConfig;
+import com.threerings.panopticon.client.EventLoggerFactory;
 
 import com.threerings.msoy.money.data.all.Currency;
 
