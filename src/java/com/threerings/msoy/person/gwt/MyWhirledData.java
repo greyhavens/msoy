@@ -22,6 +22,9 @@ public class MyWhirledData
         /** How many feed messages to list by default in each category */
         public static final int DEFAULT_COUNT = 3;
 
+        /** How many feed messages to list in a category when "show more" is clicked */
+        public static final int FULL_COUNT = 50;
+
         /** The type of feed item - see {@link FeedMessageType}. */
         public int type;
 

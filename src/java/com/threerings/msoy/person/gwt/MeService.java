@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.badge.data.all.Badge;
 
+import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -23,6 +24,13 @@ public interface MeService extends RemoteService
      * Loads the data for the MyWhirled view for the calling user.
      */
     MyWhirledData getMyWhirled ()
+        throws ServiceException;
+
+    /**
+     * Loads the data for one category of the feed for the me page. If fullsize is true include up
+     * to 50 items from the last week, otherwise 3.
+     */
+    FeedCategory loadFeedCategory (int feedType, boolean fullSize)
         throws ServiceException;
 
     /**

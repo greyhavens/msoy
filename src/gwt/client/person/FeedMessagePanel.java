@@ -12,7 +12,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -283,14 +282,12 @@ public class FeedMessagePanel extends FlowPanel
         }
     }
 
-    protected static class BasicWidget extends HorizontalPanel
+    protected static class BasicWidget extends FlowPanel
     {
         public BasicWidget (String html)
         {
             setStyleName("FeedWidget");
             addStyleName("FeedBasic");
-            setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            setHorizontalAlignment(HorizontalPanel.ALIGN_LEFT);
             add(MsoyUI.createHTML(html, null));
         }
     }

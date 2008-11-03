@@ -75,8 +75,17 @@ public class MeServlet extends MsoyServiceServlet
             data.friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
         }
 
-        data.feed = loadFeedCategories(FeedCategory.DEFAULT_COUNT);
+        data.feed = loadFeedCategories(FeedCategory.DEFAULT_COUNT, -1);
         return data;
+    }
+
+    // from interface MeService
+    public FeedCategory loadFeedCategory (int feedType, boolean fullSize)
+        throws ServiceException
+    {
+        int itemsPerCategory = fullSize ? FeedCategory.FULL_COUNT : FeedCategory.DEFAULT_COUNT;
+        List<FeedCategory> categories = loadFeedCategories(itemsPerCategory, feedType);
+        return (categories.size() > 0) ? categories.get(0) : null;
     }
 
     // from interface MeService
@@ -162,10 +171,11 @@ public class MeServlet extends MsoyServiceServlet
 
     /**
      * Pull up a list of news feed events for the current member, grouped by category. Only
-     * itemsPerCategory items will be returned, or in the case of aggregation only items
-     * from the first itemsPerCategory actors.
+     * itemsPerCategory items will be returned, or in the case of aggregation only items from the
+     * first itemsPerCategory actors.
+     * @param forType If -1, load all categories, otherwise only load the one with this type.
      */
-    protected List<FeedCategory> loadFeedCategories (int itemsPerCategory)
+    protected List<FeedCategory> loadFeedCategories (int itemsPerCategory, int forType)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -200,7 +210,11 @@ public class MeServlet extends MsoyServiceServlet
                 type = FeedMessageType.GROUP_ANNOUNCEMENT.getCode();
             }
 
-            //List<FeedMessageRecord> typeRecords = recordsByType.get(type);
+            // skip all categories except the one we care about
+            if (forType != -1 && type != forType) {
+                continue;
+            }
+
             IntSet typeMemberIds = memberIdsByType.get(type);
             Integer numRecords = numRecordsByType.get(type);
             if (typeMemberIds == null) {

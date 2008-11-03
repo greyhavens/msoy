@@ -49,6 +49,11 @@
     width: 460px;
 }
 
+.myWhirled .FeedBox .FeedBasic {
+    padding: 5px;
+    width: 450px;
+}
+
 .myWhirled .FeedBox .FeedCategoryHeader {
   font-size: 13px;
   padding: 10px 0 5px 0;
@@ -58,6 +63,7 @@
 
 .myWhirled .FeedBox .FeedShowMore {
   margin-right: 10px;
+  float: right;
 }
 
 /* ------------------------------------

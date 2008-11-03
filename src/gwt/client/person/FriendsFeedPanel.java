@@ -4,16 +4,20 @@
 package client.person;
 
 import java.util.List;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.MeService;
+import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
+import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Display a News Feed of the activities your friends have been up to, for the Me page.
@@ -22,35 +26,59 @@ public class FriendsFeedPanel extends FlowPanel
 {
     public FriendsFeedPanel (String emptyMessage, List<FeedCategory> feed)
     {
+        addStyleName("FeedList");
         if (feed.size() == 0) {
-            HorizontalPanel basicWidget = new HorizontalPanel();
-            basicWidget.setStyleName("FeedWidget");
-            basicWidget.addStyleName("FeedBasic");
-            basicWidget.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            basicWidget.setHorizontalAlignment(HorizontalPanel.ALIGN_LEFT);
-            basicWidget.add(MsoyUI.createHTML(emptyMessage, null));
-            add(basicWidget);
+            FlowPanel noMessagesPanel = MsoyUI.createFlowPanel("FeedWidget");
+            noMessagesPanel.addStyleName("FeedBasic");
+            noMessagesPanel.add(MsoyUI.createHTML(emptyMessage, null));
+            add(noMessagesPanel);
             return;
         }
 
-        add(_feeds = MsoyUI.createFlowPanel("FeedList"));
         for (FeedCategory category : feed) {
-            _feeds.add(MsoyUI.createLabel(_dmsgs.xlate("feedCategory" + category.type),
-                "FeedCategoryHeader"));
-
-            // combine feed items performed by the same person
-            List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages);
-
-            for (FeedMessage message : messages) {
-                _feeds.add(new FeedMessagePanel(message));
-            }
+            FlowPanel categoryPanel = new FlowPanel();
+            fillCategory(categoryPanel, category, false);
+            add(categoryPanel);
         }
     }
 
-    protected FlowPanel _feeds;
-    protected String _emptyMessage;
+    /**
+     * Create and return a widget containing the category header, messages and "show more" button.
+     */
+    protected void fillCategory (final FlowPanel categoryPanel, final FeedCategory category,
+        final boolean fullSize)
+    {
+        categoryPanel.clear();
+        if (category == null) {
+            return;
+        }
 
-    protected static final DateTimeFormat _dateFormater = DateTimeFormat.getFormat("MMMM d:");
+        String showMoreText = fullSize ? _pmsgs.shortFeed() : _pmsgs.fullFeed();
+        categoryPanel.add(MsoyUI.createActionLabel(showMoreText, "FeedShowMore",
+            new ClickListener() {
+                public void onClick (Widget sender) {
+                    _mesvc.loadFeedCategory(category.type, !fullSize,
+                        new MsoyCallback<FeedCategory>() {
+                            public void onSuccess (FeedCategory data) {
+                                fillCategory(categoryPanel, data, !fullSize);
+                            }
+                        });
+                }
+            }));
+
+        categoryPanel.add(MsoyUI.createLabel(_dmsgs.xlate("feedCategory" + category.type),
+            "FeedCategoryHeader"));
+
+        // combine feed items performed by the same person
+        List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages);
+
+        for (FeedMessage message : messages) {
+            categoryPanel.add(new FeedMessagePanel(message));
+        }
+    }
+
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
+    protected static final MeServiceAsync _mesvc = (MeServiceAsync)
+        ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
 }
