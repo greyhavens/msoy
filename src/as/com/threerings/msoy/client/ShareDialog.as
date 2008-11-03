@@ -54,6 +54,8 @@ public class ShareDialog extends FloatingPanel
         title = Msgs.GENERAL.get(_inGame ? "t.share_game" : "t.share_room");
         showCloseButton = true;
 
+        addChild(FlexUtil.createText(Msgs.GENERAL.get("m.sharing"), 350));
+
         var tabs :TabNavigator = new TabNavigator();
         tabs.styleName = "sexyTabber";
         tabs.setStyle("tabWidth", NaN);
