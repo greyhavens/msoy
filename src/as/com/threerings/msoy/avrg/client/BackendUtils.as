@@ -386,13 +386,11 @@ public class BackendUtils
     public static function resolvePlayerWorldInfo (
         gameObj :AVRGameObject, roomObj :RoomObject, playerId :int) :OccupantInfo
     {
-        var occInfo :OccupantInfo = gameObj.getOccupantInfo(new MemberName("", playerId));
-        if (occInfo == null) {
-            throw new UserError("Player not in game [playerId=" + playerId + "]");
-        }
-        occInfo = roomObj.getOccupantInfo(occInfo.username);
-        if (occInfo == null) {
-            throw new UserError("Player not in room [playerId=" + playerId + "]");
+        const nameKey :MemberName = new MemberName("", playerId);
+        const occInfo :OccupantInfo = roomObj.getOccupantInfo(nameKey);
+        // make sure they're in the room and that they're actually players in the game
+        if (null == occInfo || null == gameObj.getOccupantInfo(nameKey)) {
+            throw new UserError("Player not in room or game [playerId=" + playerId + "]");
         }
         return occInfo;
     }
