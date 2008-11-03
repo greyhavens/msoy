@@ -84,13 +84,19 @@ public class BureauManager
                 }
             }), BureauLauncherCodes.BUREAU_LAUNCHER_GROUP);
 
+            // register the kill message sender to do its work on shutdown
             ShutdownManager.Shutdowner killLaunchers = new ShutdownManager.Shutdowner() {
                 public void shutdown () {
                     shutdownLaunchers();
                 }
             };
             _shutmgr.registerShutdowner(killLaunchers);
+
+            // make sure we are shut down before the client manager so our shutdown message can be
+            // sent prior to our client getting shutdown
+            _shutmgr.addConstraint(killLaunchers, ShutdownManager.Constraint.RUNS_BEFORE, _clmgr);
         }
+
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
     }
 
