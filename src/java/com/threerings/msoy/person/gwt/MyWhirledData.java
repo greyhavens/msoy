@@ -7,8 +7,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.badge.data.all.InProgressBadge;
-
 import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
@@ -17,6 +15,20 @@ import com.threerings.msoy.web.gwt.MemberCard;
 public class MyWhirledData
     implements IsSerializable
 {
+    /** Contains summary information on a particular game genre. */
+    public static class FeedCategory
+        implements IsSerializable
+    {
+        /** How many feed messages to list by default in each category */
+        public static final int DEFAULT_COUNT = 3;
+
+        /** The type of feed item - see {@link FeedMessageType}. */
+        public int type;
+
+        /** The highlighted games in this genre. */
+        public FeedMessage[] messages;
+    }
+
     /** The total number of people online. */
     public int whirledPopulation;
 
@@ -29,12 +41,7 @@ public class MyWhirledData
     public List<MemberCard> friends;
 
     /**
-     * This member's recent feed messages.
+     * This member's recent feed messages broken up by category.
      */
-    public List<FeedMessage> feed;
-
-    /**
-     * A list of up to four InProgressBadges for display on the MyWhirled page
-     */
-    public List<InProgressBadge> badges;
+    public List<FeedCategory> feed;
 }

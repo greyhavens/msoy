@@ -3,23 +3,19 @@
 
 package client.me;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 
 import com.threerings.gwt.ui.FloatPanel;
 
-import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.person.FeedPanel;
+import client.person.FriendsFeedPanel;
 import client.person.PersonMessages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
@@ -57,12 +53,7 @@ public class MyWhirled extends FlowPanel
         add(daContestBanner);
 
         String empty = data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
-        FeedPanel feed = new FeedPanel(empty, new FeedPanel.FeedLoader() {
-            public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {
-                _mesvc.loadFeed(feedDays, callback);
-            }
-        });
-        feed.setFeed(data.feed, false);
+        FriendsFeedPanel feed = new FriendsFeedPanel(empty, data.feed);
         FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
         feedBox.add(new Image("/images/me/me_feed_topcorners.png"));
         feedBox.add(MsoyUI.createLabel(_msgs.newsTitle(), "NewsTitle"));

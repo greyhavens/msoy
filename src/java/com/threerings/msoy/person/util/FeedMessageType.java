@@ -16,16 +16,16 @@ public enum FeedMessageType
     // global messages
     GLOBAL_ANNOUNCEMENT(1),
 
-    // friend messages
-    FRIEND_ADDED_FRIEND(100),
-    FRIEND_UPDATED_ROOM(101, 1, oneDay()),
-    FRIEND_WON_TROPHY(102, 3, oneDay()),
-    FRIEND_LISTED_ITEM(103, 3, oneDay()),
-    FRIEND_GAINED_LEVEL(104, 1, oneDay()),
-    FRIEND_WON_BADGE(105, 3, oneDay()),
-
     // group messages
     GROUP_ANNOUNCEMENT(200, 2, oneDay()),
+
+    // friend messages
+    FRIEND_ADDED_FRIEND(100),
+    FRIEND_LISTED_ITEM(103, 3, oneDay()),
+    FRIEND_WON_TROPHY(102, 3, oneDay()),
+    FRIEND_UPDATED_ROOM(101, 1, oneDay()),
+    FRIEND_WON_BADGE(105, 3, oneDay()),
+    FRIEND_GAINED_LEVEL(104, 1, oneDay()),
 
     // self messages
     SELF_ROOM_COMMENT(300),

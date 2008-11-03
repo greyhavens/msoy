@@ -43,14 +43,17 @@ import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.NaviUtil;
 
-public class FeedPanel extends FlowPanel
+/**
+ * Display a News Feed of activities a specific player has been up to, for their profile.
+ */
+public class PlayerFeedPanel extends FlowPanel
 {
     public static interface FeedLoader
     {
         void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback);
     }
 
-    public FeedPanel (String emptyMessage, FeedLoader feedLoader)
+    public PlayerFeedPanel (String emptyMessage, FeedLoader feedLoader)
     {
         add(_feeds = new FeedList());
         _emptyMessage = emptyMessage;

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.person.server;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +40,11 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.PassportData;
+import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
+import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
+import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -69,13 +75,7 @@ public class MeServlet extends MsoyServiceServlet
             data.friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
         }
 
-        IntSet groupMemberships = new ArrayIntSet();
-        for (GroupMembershipRecord gmr : _groupRepo.getMemberships(mrec.memberId)) {
-            groupMemberships.add(gmr.groupId);
-        }
-        data.feed = loadFeed(mrec, groupMemberships, DEFAULT_FEED_DAYS);
-
-        data.badges = _badgeLogic.getNextSuggestedBadges(mrec.memberId, mrec.badgesVersion, 4);
+        data.feed = loadFeedCategories(FeedCategory.DEFAULT_COUNT);
         return data;
     }
 
@@ -89,7 +89,11 @@ public class MeServlet extends MsoyServiceServlet
         for (GroupMembershipRecord record : groups) {
             groupIds.add(record.groupId);
         }
-        return loadFeed(mrec, groupIds, cutoffDays);
+
+        Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
+        IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
+        return _servletLogic.resolveFeedMessages(
+            _feedRepo.loadPersonalFeed(mrec.memberId, friendIds, groupIds, since));
     }
 
     // from interface MeService
@@ -157,14 +161,107 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     /**
-     * Helper function for {@link #loadFeed} and {@link #getMyWhirled}.
+     * Pull up a list of news feed events for the current member, grouped by category. Only
+     * itemsPerCategory items will be returned, or in the case of aggregation only items
+     * from the first itemsPerCategory actors.
      */
-    protected List<FeedMessage> loadFeed (MemberRecord mrec, IntSet groupIds, int cutoffDays)
+    protected List<FeedCategory> loadFeedCategories (int itemsPerCategory)
+        throws ServiceException
     {
-        Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
+        MemberRecord mrec = requireAuthedUser();
+
+        // fetch all messages for the member's friends & groups from the past FEED_CUTOFF_DAYS
+        IntSet groupMemberships = new ArrayIntSet();
+        for (GroupMembershipRecord gmr : _groupRepo.getMemberships(mrec.memberId)) {
+            groupMemberships.add(gmr.groupId);
+        }
+        Timestamp since = new Timestamp(
+            System.currentTimeMillis() - FEED_CUTOFF_DAYS * 24*60*60*1000L);
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
-        return _servletLogic.resolveFeedMessages(
-            _feedRepo.loadPersonalFeed(mrec.memberId, friendIds, groupIds, since));
+        List<FeedMessageRecord> allRecords = _feedRepo.loadPersonalFeed(
+            mrec.memberId, friendIds, groupMemberships, since);
+
+        // sort all the records by date
+        Collections.sort(allRecords, new Comparator<FeedMessageRecord>() {
+            public int compare (FeedMessageRecord f1, FeedMessageRecord f2) {
+                return f2.posted.compareTo(f1.posted);
+            }
+        });
+
+        List<FeedMessageRecord> allChosenRecords = Lists.newArrayList();
+        Map<Integer, IntSet> memberIdsByType = Maps.newHashMap();
+        Map<Integer, Integer> numRecordsByType = Maps.newHashMap();
+
+        // limit the feed messages to itemsPerCategory per category
+        for (FeedMessageRecord record : allRecords) {
+            int type = record.type;
+            // combine global announcements with the group announcements
+            if (type == FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()) {
+                type = FeedMessageType.GROUP_ANNOUNCEMENT.getCode();
+            }
+
+            //List<FeedMessageRecord> typeRecords = recordsByType.get(type);
+            IntSet typeMemberIds = memberIdsByType.get(type);
+            Integer numRecords = numRecordsByType.get(type);
+            if (typeMemberIds == null) {
+                typeMemberIds = new ArrayIntSet();
+                memberIdsByType.put(type, typeMemberIds);
+                numRecords = 0;
+                numRecordsByType.put(type, 0);
+            }
+
+            // all levelling records are returned, they get aggregated into a single item
+            if (type == FeedMessageType.FRIEND_GAINED_LEVEL.getCode()) {
+                allChosenRecords.add(record);
+
+            // include friend activities from the first itemsPerCategory friends
+            } else if (record instanceof FriendFeedMessageRecord) {
+                FriendFeedMessageRecord friendRecord = (FriendFeedMessageRecord)record;
+                if (typeMemberIds.contains(friendRecord.actorId)) {
+                    allChosenRecords.add(record);
+                } else if (typeMemberIds.size() < itemsPerCategory) {
+                    allChosenRecords.add(record);
+                    typeMemberIds.add(friendRecord.actorId);
+                }
+
+            // include the first itemsPerCategory non-friend messages in each category
+            } else {
+                if (numRecords < itemsPerCategory) {
+                    numRecordsByType.put(type, numRecords + 1);
+                    allChosenRecords.add(record);
+                }
+            }
+        }
+
+        // resolve all the chosen messages at the same time
+        List<FeedMessage> allChosenMessages = _servletLogic.resolveFeedMessages(allChosenRecords);
+
+        // group up the resolved messages by category
+        List<FeedCategory> feed = Lists.newArrayList();
+        for (FeedMessageType type : FeedMessageType.values()) {
+
+            // pull out messages of the right category (combine global & group announcements)
+            List<FeedMessage> typeMessages = Lists.newArrayList();
+            for (FeedMessage message : allChosenMessages) {
+                if ((message.type != FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()
+                        && message.type == type.getCode())
+                    || (message.type == FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()
+                            && type == FeedMessageType.GROUP_ANNOUNCEMENT)) {
+                    typeMessages.add(message);
+                }
+            }
+            allChosenMessages.removeAll(typeMessages);
+
+            if (typeMessages.size() == 0) {
+                continue;
+            }
+
+            FeedCategory category = new FeedCategory();
+            category.type = type.getCode();
+            category.messages = typeMessages.toArray(new FeedMessage[typeMessages.size()]);
+            feed.add(category);
+        }
+        return feed;
     }
 
     /** Helper for loadBadges */
@@ -209,5 +306,5 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected BadgeLogic _badgeLogic;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
-    protected static final int DEFAULT_FEED_DAYS = 2;
+    protected static final int FEED_CUTOFF_DAYS = 7;
 }

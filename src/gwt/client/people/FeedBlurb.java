@@ -12,7 +12,7 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
-import client.person.FeedPanel;
+import client.person.PlayerFeedPanel;
 import client.util.ServiceUtil;
 
 /**
@@ -33,7 +33,7 @@ public class FeedBlurb extends Blurb
 
         setHeader(_msgs.feedTitle());
         String empty = _msgs.emptySelfFeed(pdata.name.toString());
-        FeedPanel feed = new FeedPanel(empty, new FeedPanel.FeedLoader() {
+        PlayerFeedPanel feed = new PlayerFeedPanel(empty, new PlayerFeedPanel.FeedLoader() {
             public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {
                 _profilesvc.loadSelfFeed(pdata.name.getMemberId(), feedDays, callback);
             }
