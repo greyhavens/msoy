@@ -196,7 +196,10 @@ public class MemberObject extends MsoyBodyObject
 
     /** Experiences this player has had. */
     public var experiences :DSet; /* of */ MemberExperience;
-    
+
+    /** Set if the user has opted to help newcomers to whirled. */
+    public var greeter :Boolean;
+
     /**
      * Return this member's unique id.
      */
@@ -363,6 +366,7 @@ public class MemberObject extends MsoyBodyObject
         visitorInfo = VisitorInfo(ins.readObject());
         onTour = ins.readBoolean();
         experiences = DSet(ins.readObject());
+        greeter = ins.readBoolean();
     }
 }
 }

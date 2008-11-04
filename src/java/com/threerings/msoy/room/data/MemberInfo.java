@@ -39,6 +39,9 @@ public class MemberInfo extends ActorInfo
 
         // note our current game
         _game = memobj.game;
+
+        // note our greeterness
+        _greeter = memobj.greeter;
     }
 
     /** Used for unserialization. */
@@ -93,4 +96,5 @@ public class MemberInfo extends ActorInfo
 
     protected float _scale;
     protected GameSummary _game;
+    protected boolean _greeter;
 }

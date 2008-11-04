@@ -167,6 +167,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         memobj.accCoins = (int) money.accCoins; // TODO: long? int?
         memobj.bars = money.bars;
         memobj.level = member.level;
+        memobj.greeter = member.isGreeter();
 
         // load up this member's persistent stats
         MemberLocal local = memobj.getLocal(MemberLocal.class);

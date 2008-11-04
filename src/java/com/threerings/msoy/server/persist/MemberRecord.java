@@ -54,8 +54,11 @@ public class MemberRecord extends PersistentRecord
         /** A flag denoting this user does not want to receive announcement mail. */
         NO_ANNOUNCE_EMAIL(1 << 4),
 
+        /** A flag denoting that this user has opted to be a whirled greeter. */
+        GREETER(1 << 6),
+
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
-        UNUSED(1 << 6);
+        UNUSED(1 << 7);
 
         public int getBit () {
             return _bit;
@@ -361,6 +364,14 @@ public class MemberRecord extends PersistentRecord
         return isSet(Flag.MAINTAINER) || isRoot();
     }
 
+    /**
+     * Returns true if this member has opted to be a whirled greeter.
+     */
+    public boolean isGreeter ()
+    {
+        return isSet(Flag.GREETER);
+    }
+    
     /**
      * Returns true if this member has "root" privileges. The first member in the database has
      * these privileges and this status is used to allow all other privileges to be assigned

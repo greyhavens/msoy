@@ -109,6 +109,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>experiences</code> field. */
     public static final String EXPERIENCES = "experiences";
+
+    /** The field name of the <code>greeter</code> field. */
+    public static final String GREETER = "greeter";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.
@@ -212,6 +215,9 @@ public class MemberObject extends MsoyBodyObject
     
     /** List of experiences this member has had recently. */
     public DSet<MemberExperience> experiences = new DSet<MemberExperience>();
+
+    /** Set if the user has opted to help newcomers to whirled. */
+    public boolean greeter;
 
     /**
      * Return true if this user is a guest.
@@ -1096,6 +1102,22 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(EXPERIENCES, value, this.experiences);
         DSet<MemberExperience> clone = (value == null) ? null : value.typedClone();
         this.experiences = clone;
+    }
+
+    /**
+     * Requests that the <code>greeter</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGreeter (boolean value)
+    {
+        boolean ovalue = this.greeter;
+        requestAttributeChange(
+            GREETER, Boolean.valueOf(value), Boolean.valueOf(ovalue));
+        this.greeter = value;
     }
     // AUTO-GENERATED: METHODS END
 
