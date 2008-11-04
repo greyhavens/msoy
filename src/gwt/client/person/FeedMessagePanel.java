@@ -13,7 +13,10 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.InlinePanel;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
@@ -251,7 +254,7 @@ public class FeedMessagePanel extends FlowPanel
         }
     }
 
-    protected static class ThumbnailWidget extends FlexTable
+    protected static class ThumbnailWidget extends SimplePanel
     {
         public ThumbnailWidget (Widget icon, String html)
         {
@@ -261,24 +264,15 @@ public class FeedMessagePanel extends FlowPanel
         public ThumbnailWidget (Widget[] icons, String html)
         {
             setStyleName("FeedWidget");
-            setCellSpacing(0);
-            setCellPadding(0);
-            int col = 0;
-
+            InlinePanel contents = new InlinePanel("ThumbnailWidget");
+            add(contents);
             if (icons != null && icons.length > 0) {
-                FlexTable iconContainer = new FlexTable();
-                iconContainer.setCellSpacing(2);
-                iconContainer.setCellPadding(0);
-                for (int ii = 0; ii < icons.length; ii++) {
-                    iconContainer.setWidget(0, ii, icons[ii]);
-                    iconContainer.getFlexCellFormatter().setStyleName(0, ii, "ThumbnailContainer");
+                for (Widget icon : icons) {
+                    icon.addStyleName("ThumbnailContainer");
+                    contents.add(icon);
                 }
-                setWidget(0, col, iconContainer);
-                getFlexCellFormatter().setStyleName(0, col++, "ThumbnailContainer");
             }
-
-            setWidget(0, col, MsoyUI.createHTML(html, null));
-            getFlexCellFormatter().addStyleName(0, col, "TextContainer");
+            contents.add(MsoyUI.createHTML(html, "TextContainer"));
         }
     }
 

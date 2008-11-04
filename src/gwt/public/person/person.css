@@ -47,6 +47,10 @@
   overflow: hidden;
 }
 
+.FeedWidget .ThumbnailWidget {
+  padding: 5px;
+}
+
 .FeedWidget .ThumbnailContainer {
   height: 32px;
   vertical-align: middle;
