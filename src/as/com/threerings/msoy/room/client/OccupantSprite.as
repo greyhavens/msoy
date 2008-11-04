@@ -299,14 +299,11 @@ public class OccupantSprite extends MsoySprite
      */
     protected function configureDecorations (oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
     {
-        // see if we need to update the name label or the status
-        var newName :String = newInfo.username.toString();
         // note that we need to compare the String versions of the names, as that's the difference
         // we care about here; MemberName compares as the same if the memberId is the same...
-        if (oldInfo == null || (oldInfo.status != newInfo.status) ||
-            (oldInfo.username.toString() !== newName)) {
-            _label.setStatus(newInfo.status);
-            _label.text = newName;
+        if (isNameChangeRequired(oldInfo, newInfo)) {
+            setNameStatus(newInfo);
+            _label.text = newInfo.username.toString();
             _label.width = _label.textWidth + TextFieldUtil.WIDTH_PAD;
             _label.height = _label.textHeight + TextFieldUtil.HEIGHT_PAD;
             recheckLabel();
@@ -314,6 +311,28 @@ public class OccupantSprite extends MsoySprite
             return true;
         }
         return false;
+    }
+
+    /**
+     * Detects if an occupant info change would change the sprite's name. By default the status and
+     * username are checked. Subclasses may wish to trigger a name update more frequently according
+     * to their needs.
+     */
+    protected function isNameChangeRequired (oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
+    {
+        // see if we need to update the name label or the status
+        var newName :String = newInfo.username.toString();
+        return oldInfo == null || (oldInfo.status != newInfo.status) ||
+            (oldInfo.username.toString() !== newName);
+    }
+
+    /**
+     * Sets the name field status according to the occupant info fields. By default, only the status
+     * field is used. Subclasses may override to take into account other information.
+     */
+    protected function setNameStatus (occInfo :OccupantInfo) :void
+    {
+        _label.setStatus(occInfo.status, false);
     }
 
     /**

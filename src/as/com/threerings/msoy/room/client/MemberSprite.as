@@ -163,6 +163,25 @@ public class MemberSprite extends ActorSprite
         return reconfig;
     }
 
+    // from OccupantSprite
+    override protected function isNameChangeRequired (
+        oldInfo :OccupantInfo, newInfo :OccupantInfo) :Boolean
+    {
+        if (super.isNameChangeRequired(oldInfo, newInfo)) {
+            return true;
+        }
+        if (oldInfo != null && MemberInfo(oldInfo).isGreeter() != MemberInfo(newInfo).isGreeter()) {
+            return true;
+        }
+        return false;
+    }
+
+    // from OccupantSprite
+    override protected function setNameStatus (occInfo :OccupantInfo) :void
+    {
+        _label.setStatus(occInfo.status, MemberInfo(occInfo).isGreeter());
+    }
+
     // from ActorSprite
     override protected function postClickAction () :void
     {
