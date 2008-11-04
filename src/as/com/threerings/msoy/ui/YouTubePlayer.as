@@ -38,12 +38,27 @@ public class YouTubePlayer extends EventDispatcher
     implements VideoPlayer
 {
     /** TODO: this will be passed-in. */
-    public static const VIDEO_ID :String = "ONM7148cTyc"; // obama ad
+    public static const VIDEO_IDS :Array = [
+        "ONM7148cTyc", // obama ad
+        "kCeZzW54a2o", // santogold video
+        "Bm94D1TqYwQ", // TIME person of the year
+        "LoY37T_nv5U", // Yelle video
+        "F9bV_v9b8go", // kicked in the nuts
+        "GuMMfgWhm3g", // some comedy thing.
+        "7sei-eEjy4g", // MIA: paper planes
+        "knQuxZj9rTA", // MIA: sunshowers
+        "YVX0sVMGCAo"  // MIA: bucky done gun
+    ];
+
+    public static var counter :int = 0;
     
     public function YouTubePlayer ()
     {
         _loader = new Loader();
-        load(VIDEO_ID);
+
+        log.debug("==== starting youtube player [counter=" + counter + "].");
+
+        load(String(VIDEO_IDS[(counter++) % VIDEO_IDS.length]));
     }
 
     public function load (id :String) :void
@@ -61,11 +76,13 @@ public class YouTubePlayer extends EventDispatcher
             chars.push(char + (cap ? 65 : 97));
         }
         _stubId = String.fromCharCode.apply(null, chars);
-        trace("Youtube player starting with secret id: " + _stubId);
+        log.debug("Youtube player starting with secret id: " + _stubId);
 
         _lc = new LocalConnection();
         _lc.client = {
-            stateChanged: handleStateChanged
+            stateChanged: handleStateChanged,
+            duration: handleGotDuration,
+            position: handleGotPosition
         };
         _lc.connect("_" + _stubId + "-s");
 
@@ -113,19 +130,19 @@ public class YouTubePlayer extends EventDispatcher
     // from VideoPlayer
     public function getDuration () :Number
     {
-        return NaN; // TODO
+        return _duration;
     }
 
     // from VideoPlayer
     public function getPosition () :Number
     {
-        return NaN; // TODO
+        return _position;
     }
 
     // from VideoPlayer
     public function seek (position :Number) :void
     {
-        // TODO
+        send("doSeek", position);
     }
 
     // from VideoPlayer
@@ -157,7 +174,7 @@ public class YouTubePlayer extends EventDispatcher
 
     protected function handleError (evt :ErrorEvent) :void
     {
-        trace("Error loading: " + evt.text);
+        log.warning("Error loading: " + evt.text);
     }
 
     protected function send (method :String, ... args) :void
@@ -166,7 +183,7 @@ public class YouTubePlayer extends EventDispatcher
             log.warning("No lc!");
             return;
         }
-        trace("Sending to as2: " + method);
+        log.debug("Sending to as2", "method", method);
         args.unshift("_" + _stubId, method);
         _lc.send.apply(null, args);
     }
@@ -177,7 +194,7 @@ public class YouTubePlayer extends EventDispatcher
     protected function handleStateChanged (state :int) :void
     {
         _ytState = state;
-        trace("=== got new state from as2: playerState: " + state);
+        log.debug("=== got new state from as2: playerState: " + state);
 
         switch (_ytState) {
         case -1: // unstarted
@@ -186,6 +203,19 @@ public class YouTubePlayer extends EventDispatcher
         }
 
         dispatchEvent(new ValueEvent(VideoPlayerCodes.STATE, getState()));
+    }
+
+    protected function handleGotDuration (duration :Number) :void
+    {
+        _duration = duration;
+        dispatchEvent(new ValueEvent(VideoPlayerCodes.DURATION, duration));
+        log.debug("Got duration from as2: " + duration);
+    }
+
+    protected function handleGotPosition (position :Number) :void
+    {
+        _position = position
+        dispatchEvent(new ValueEvent(VideoPlayerCodes.POSITION, position));
     }
 
     protected var _loader :Loader;
@@ -198,6 +228,10 @@ public class YouTubePlayer extends EventDispatcher
 
     /** The current state of the youtube chromeless player. */
     protected var _ytState :int;
+
+    protected var _duration :Number = NaN;
+
+    protected var _position :Number = NaN;
 
     protected static const log :Log = Log.getLog(YouTubePlayer);
 
