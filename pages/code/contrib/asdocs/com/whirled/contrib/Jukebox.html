@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Jukebox,com.whirled.contrib.Jukebox,DEFAULT_VOLUME,FADE_TIME,MAX_VOLUME,_currentChannel,_currentSong,_frameDispatcher,_loopCallback,_sounds,_volume,fadeIn,fadeOut,init,loop,modifyVolume,setVolume,soundComplete,start,startSong,stop" name="keywords">
+<meta content="Jukebox,com.whirled.contrib.Jukebox,DEFAULT_VOLUME,FADE_TIME,MAX_VOLUME,_currentChannel,_currentSong,_eventMgr,_frameDispatcher,_loopCallback,_sounds,_volume,fadeIn,fadeOut,init,loop,modifyVolume,setVolume,soundComplete,start,startSong,stop" name="keywords">
 <title>com.whirled.contrib.Jukebox</title>
 </head>
 <body>
@@ -65,6 +65,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Jukebox</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_eventMgr">_eventMgr</a> : <a href="../contrib/EventHandlerManager.html">EventHandlerManager</a>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Jukebox</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_frameDispatcher">_frameDispatcher</a> : IEventDispatcher<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Jukebox</td>
 </tr>
@@ -108,7 +113,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#init()">init</a>(frameDispatcher:IEventDispatcher):void</div>
+<a class="signatureLink" href="#init()">init</a>(frameDispatcher:IEventDispatcher, eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null):void</div>
 <div class="summaryTableDescription">[static]
      init must be called before the Jukebox can handle crossfading and loading music correctly.</div>
 </td><td class="summaryTableOwnerCol">Jukebox</td>
@@ -232,6 +237,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected static var _currentSong:Sound</code>
 </div>
+<a name="_eventMgr"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_eventMgr</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static var _eventMgr:<a href="../contrib/EventHandlerManager.html">EventHandlerManager</a></code>
+</div>
 <a name="_frameDispatcher"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -298,14 +312,22 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function init(frameDispatcher:IEventDispatcher):void</code><p>
+<code>public static function init(frameDispatcher:IEventDispatcher, eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null):void</code><p>
      init must be called before the Jukebox can handle crossfading and loading music correctly.
      The frameDispatcher must be a display object that will remain on the display list, as this
      class depends on constant ENTER_FRAME events to function properly.
+          If an EventHandlerManager is provided, all event listeners will be registered using it.  
+     Otherwise, EventHandlers is used statically.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">frameDispatcher</span>:IEventDispatcher</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">eventMgr</span>:<a href="EventHandlerManager.html">EventHandlerManager</a></code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>

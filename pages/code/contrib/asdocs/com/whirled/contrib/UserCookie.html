@@ -155,7 +155,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#UserCookie()">UserCookie</a>()</div>
+<a class="signatureLink" href="#UserCookie()">UserCookie</a>(eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null)</div>
 <div class="summaryTableDescription">
      This function should not be called directly.</div>
 </td><td class="summaryTableOwnerCol">UserCookie</td>
@@ -179,7 +179,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getCookie()">getCookie</a>(wgc:GameControl, validCallback:Function, cookieDef:Array, enableDebugLogging:Boolean = false, occId:int = -1):void</div>
+<a class="signatureLink" href="#getCookie()">getCookie</a>(wgc:GameControl, validCallback:Function, cookieDef:Array, eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null, enableDebugLogging:Boolean = false, occId:int = -1):void</div>
 <div class="summaryTableDescription">[static]
      Get a player's user cookie via GameControl.getUserCookie, wrapped in a UserCookie
      object.</div>
@@ -369,9 +369,15 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function UserCookie()</code><p>
+<code>public function UserCookie(eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null)</code><p>
      This function should not be called directly.  Instead, call UserCookie.getCookie().
-     </p></div>
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">eventMgr</span>:<a href="EventHandlerManager.html">EventHandlerManager</a></code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
 <a name="arrayChildrenAsString()"></a>
@@ -494,7 +500,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getCookie(wgc:GameControl, validCallback:Function, cookieDef:Array, enableDebugLogging:Boolean = false, occId:int = -1):void</code><p>
+<code>public static function getCookie(wgc:GameControl, validCallback:Function, cookieDef:Array, eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null, enableDebugLogging:Boolean = false, occId:int = -1):void</code><p>
      Get a player's user cookie via GameControl.getUserCookie, wrapped in a UserCookie
      object.
      
@@ -518,6 +524,14 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">cookieDef</span>:Array</code> &mdash; An array of cookie parameters that define the format of the user cookie.  
                       See the various getarameter() functions for more detail.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">eventMgr</span>:<a href="EventHandlerManager.html">EventHandlerManager</a></code> (default = <code>null</code>)<code></code> &mdash; If an EventHandlerManager is provided, it will be used to register all event
+                       listeners.  If not provided, EventHandlers will be used instead.
      </td>
 </tr>
 <tr>

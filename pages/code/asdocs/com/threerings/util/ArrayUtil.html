@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="ArrayUtil,com.threerings.util.ArrayUtil,contains,copyOf,create,equals,findIf,indexIf,indexOf,removeAll,removeFirst,removeLast,shuffle,sort,stableSort" name="keywords">
+<meta content="ArrayUtil,com.threerings.util.ArrayUtil,contains,copy,copyOf,create,equals,findIf,indexIf,indexOf,removeAll,removeFirst,removeLast,shuffle,sort,stableSort" name="keywords">
 <title>com.threerings.util.ArrayUtil</title>
 </head>
 <body>
@@ -61,6 +61,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#contains()">contains</a>(arr:Array, element:Object):Boolean</div>
 <div class="summaryTableDescription">[static]
      </div>
+</td><td class="summaryTableOwnerCol">ArrayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#copy()">copy</a>(src:Array, srcoffset:uint, dst:Array, dstoffset:uint, count:uint):void</div>
+<div class="summaryTableDescription">[static]
+     Copy a segment of one array to another.</div>
 </td><td class="summaryTableOwnerCol">ArrayUtil</td>
 </tr>
 <tr class="">
@@ -198,6 +206,51 @@ showHideInherited();
 <tr>
 <td width="20"></td><td><code>Boolean</code> &mdash; true if the specified element, or one that is Equalable.equals() to it, is
      contained in the array.
+     </td>
+</tr>
+</table>
+</div>
+<a name="copy()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">copy</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function copy(src:Array, srcoffset:uint, dst:Array, dstoffset:uint, count:uint):void</code><p>
+     Copy a segment of one array to another.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">src</span>:Array</code> &mdash; the array to copy from
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">srcoffset</span>:uint</code> &mdash; the position in the source array to begin copying from
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">dst</span>:Array</code> &mdash; the array to copy into
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">dstoffset</span>:uint</code> &mdash; the position in the destition array to begin copying into
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">count</span>:uint</code> &mdash; the number of elements to copy
      </td>
 </tr>
 </table>

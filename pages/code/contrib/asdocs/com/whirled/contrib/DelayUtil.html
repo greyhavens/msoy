@@ -75,7 +75,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#init()">init</a>(dispatcher:IEventDispatcher):void</div>
+<a class="signatureLink" href="#init()">init</a>(dispatcher:IEventDispatcher, eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null):void</div>
 <div class="summaryTableDescription">[static] 
      init must be called before DelayUtil can function.</div>
 </td><td class="summaryTableOwnerCol">DelayUtil</td>
@@ -185,14 +185,22 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function init(dispatcher:IEventDispatcher):void</code><p> 
+<code>public static function init(dispatcher:IEventDispatcher, eventMgr:<a href="EventHandlerManager.html">EventHandlerManager</a> = null):void</code><p> 
      init must be called before DelayUtil can function.  The dispatcher that is passed in must
      be a display object on that will remain on the display list, as the DisplayUtil needs
-     constant ENTER_FRAME events in order to function.
+     constant ENTER_FRAME events in order to function.  
+          If an EventHandlerManager is provided, it will be used to register the event.  Otherwise
+     EventHandlers is used statically.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">dispatcher</span>:IEventDispatcher</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">eventMgr</span>:<a href="EventHandlerManager.html">EventHandlerManager</a></code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>

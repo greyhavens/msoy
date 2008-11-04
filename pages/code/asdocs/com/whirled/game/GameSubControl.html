@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,PROPORTIONAL,SERVER_AGENT_ID,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,amServerAgent,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getRound,getTurnHolderId,isInPlay,isMyTurn,playerReady,restartGameIn,startNextTurn,systemMessage" name="keywords">
+<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,PROPORTIONAL,SERVER_AGENT_ID,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,amServerAgent,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getRound,getTurnHolderId,isInPlay,isMyTurn,loadItemPackData,loadLevelPackData,playerReady,restartGameIn,startNextTurn,systemMessage" name="keywords">
 <title>com.whirled.game.GameSubControl</title>
 </head>
 <body>
@@ -115,7 +115,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#endGameWithScore()">endGameWithScore</a>(score:int):void</div>
+<a class="signatureLink" href="#endGameWithScore()">endGameWithScore</a>(score:int, gameMode:int = 0):void</div>
 <div class="summaryTableDescription">
      A convenience function for ending a single player game with the supplied score.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
@@ -123,7 +123,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#endGameWithScores()">endGameWithScores</a>(playerIds:Array, scores:Array, payoutType:int):void</div>
+<a class="signatureLink" href="#endGameWithScores()">endGameWithScores</a>(playerIds:Array, scores:Array, payoutType:int, gameMode:int = 0):void</div>
 <div class="summaryTableDescription">
      Ends the game, reporting the scores earned by each player in the game, awarding coins
      according to the specified strategy and updating player ratings.</div>
@@ -259,6 +259,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#isMyTurn()">isMyTurn</a>():Boolean</div>
 <div class="summaryTableDescription">
      A convenience method to just check if it's our turn.</div>
+</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#loadItemPackData()">loadItemPackData</a>(ident:String, onLoaded:Function, onFailure:Function):void</div>
+<div class="summaryTableDescription">
+     Loads the binary data for the item pack with the specified ident.</div>
+</td><td class="summaryTableOwnerCol">GameSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#loadLevelPackData()">loadLevelPackData</a>(ident:String, onLoaded:Function, onFailure:Function):void</div>
+<div class="summaryTableDescription">
+     Loads the binary data for the level pack with the specified ident.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
@@ -505,7 +521,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function endGameWithScore(score:int):void</code><p>
+<code>public function endGameWithScore(score:int, gameMode:int = 0):void</code><p>
      A convenience function for ending a single player game with the supplied score. This is
      equivalent to: <code>endGameWithScores([ getMyId() ], [ score ], TO_EACH_THEIR_OWN)</code>.
           </p><p> Note that if a single player game is ended with a score of zero, it will be assumed
@@ -516,6 +532,12 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">score</span>:int</code></td>
 </tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">gameMode</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
 </table>
 </div>
 <a name="endGameWithScores()"></a>
@@ -525,7 +547,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function endGameWithScores(playerIds:Array, scores:Array, payoutType:int):void</code><p>
+<code>public function endGameWithScores(playerIds:Array, scores:Array, payoutType:int, gameMode:int = 0):void</code><p>
      Ends the game, reporting the scores earned by each player in the game, awarding coins
      according to the specified strategy and updating player ratings.
           </p><p> Coins are awarded based on the supplied payout type, either CASCADING_PAYOUT,
@@ -548,6 +570,11 @@ showHideInherited();
           <p> Note that if a game is ended with all players scores equal of zero, it will be assumed
      that the players in question abandoned the game and no coins will be paid out, nor will
      their ratings be updated. </p>
+          <p> The <code>gameMode</code> parameter allows you to maintain separate score distributions
+     for different game modes. If your game contains different modes which use scores that are
+     not comparable to one another, or you have various game levels for which you would like to
+     track individual score distributions, you can assign each an integer value between 0 and 99.
+     Only 100 game modes are allowed. </p>
      <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -564,6 +591,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">payoutType</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">gameMode</span>:int</code> (default = <code>0</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -859,6 +892,72 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="loadItemPackData()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">loadItemPackData</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function loadItemPackData(ident:String, onLoaded:Function, onFailure:Function):void</code><p>
+     Loads the binary data for the item pack with the specified ident.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code> &mdash; the identifier of the item pack to be loaded.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">onLoaded</span>:Function</code> &mdash; a function with the signature: function (data :ByteArray) :void
+     that will be called with the item pack data if it loads successfully.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">onFailure</span>:Function</code> &mdash; a function with the signature: function (error :Error) :void
+     that will be called if the pack loading fails.
+     </td>
+</tr>
+</table>
+</div>
+<a name="loadLevelPackData()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">loadLevelPackData</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function loadLevelPackData(ident:String, onLoaded:Function, onFailure:Function):void</code><p>
+     Loads the binary data for the level pack with the specified ident.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ident</span>:String</code> &mdash; the identifier of the level pack to be loaded.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">onLoaded</span>:Function</code> &mdash; a function with the signature: function (data :ByteArray) :void
+     that will be called with the level pack data if it loads successfully.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">onFailure</span>:Function</code> &mdash; a function with the signature: function (error :Error) :void
+     that will be called if the pack loading fails.
+     </td>
 </tr>
 </table>
 </div>

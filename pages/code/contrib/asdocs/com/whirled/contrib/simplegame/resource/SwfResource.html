@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="SwfResource,com.whirled.contrib.simplegame.resource.SwfResource,_completeCallback,_errorCallback,_loadParams,_loaded,_loader,_resourceName,displayRoot,resourceName,getBitmapData,getClass,getFunction,getSwfDisplayRoot,getSymbol,hasSymbol,instantiateButton,instantiateMovieClip,load,onError,onInit,unload,get" name="keywords">
+<meta content="SwfResource,com.whirled.contrib.simplegame.resource.SwfResource,_completeCallback,_errorCallback,_loadParams,_loaded,_loader,_mcCache,_resourceName,displayRoot,resourceName,getBitmapData,getCache,getClass,getFunction,getSwfDisplayRoot,getSymbol,hasSymbol,instantiateButton,instantiateMovieClip,load,onError,onInit,releaseMovieClip,unload,get" name="keywords">
 <title>com.whirled.contrib.simplegame.resource.SwfResource</title>
 </head>
 <body>
@@ -91,6 +91,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mcCache">_mcCache</a> : Dictionary<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">SwfResource</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_resourceName">_resourceName</a> : String<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
@@ -163,7 +167,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#instantiateMovieClip()">instantiateMovieClip</a>(resourceName:String, className:String, disableMouseInteraction:Boolean = false):MovieClip</div>
+<a class="signatureLink" href="#instantiateMovieClip()">instantiateMovieClip</a>(resourceName:String, className:String, disableMouseInteraction:Boolean = false, fromCache:Boolean = false):MovieClip</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
@@ -172,6 +176,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#load()">load</a>(completeCallback:Function, errorCallback:Function):void</div>
 <div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">SwfResource</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#releaseMovieClip()">releaseMovieClip</a>(mc:MovieClip):void</div>
+<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
 <tr class="">
@@ -189,6 +200,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getCache()">getCache</a>(c:Class):Array</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -276,6 +294,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _loadParams:Object</code>
+</div>
+<a name="_mcCache"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_mcCache</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static var _mcCache:Dictionary</code>
 </div>
 <a name="_resourceName"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -379,6 +406,27 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>BitmapData</code></td>
+</tr>
+</table>
+</div>
+<a name="getCache()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getCache</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function getCache(c:Class):Array</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">c</span>:Class</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
 </tr>
 </table>
 </div>
@@ -527,7 +575,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function instantiateMovieClip(resourceName:String, className:String, disableMouseInteraction:Boolean = false):MovieClip</code><span class="label">Parameters</span>
+<code>public static function instantiateMovieClip(resourceName:String, className:String, disableMouseInteraction:Boolean = false, fromCache:Boolean = false):MovieClip</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">resourceName</span>:String</code></td>
@@ -543,6 +591,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">disableMouseInteraction</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">fromCache</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
 </tr>
 </table>
 <p></p>
@@ -598,6 +652,20 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+</div>
+<a name="releaseMovieClip()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">releaseMovieClip</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function releaseMovieClip(mc:MovieClip):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">mc</span>:MovieClip</code></td>
 </tr>
 </table>
 </div>
