@@ -24,7 +24,8 @@ public interface ProfileServiceAsync
     /**
      * The asynchronous version of {@link ProfileService#updateProfile}.
      */
-    void updateProfile (String displayName, Profile profile, AsyncCallback<Void> callback);
+    void updateProfile (
+        String displayName, boolean greeter, Profile profile, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ProfileService#updateInterests}.

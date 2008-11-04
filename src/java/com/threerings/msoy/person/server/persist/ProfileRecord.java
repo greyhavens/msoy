@@ -125,7 +125,7 @@ public class ProfileRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 8;
 
-    /** The unique id of the memory with whom this profile is associated. */
+    /** The unique id of the member with whom this profile is associated. */
     @Id public int memberId;
 
     /** The number of times the user has modified their profile. We need this for first time

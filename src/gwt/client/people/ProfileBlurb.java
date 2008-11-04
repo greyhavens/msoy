@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
@@ -62,6 +63,7 @@ public class ProfileBlurb extends Blurb
         } else {
             _pdata = pdata;
             _profile = pdata.profile;
+            _greeter = _pdata.greeter;
             displayProfile();
         }
     }
@@ -106,6 +108,9 @@ public class ProfileBlurb extends Blurb
         }
         if (!isBlank(_profile.location)) {
             info.addText(_profile.location, 1, null);
+        }
+        if (_greeter) {
+            info.addText(_msgs.profileGreeterLabel(), 1, null);
         }
 
         // create the detail section with level, last online, etc.
@@ -275,6 +280,13 @@ public class ProfileBlurb extends Blurb
         _elocation.setVisibleLength(30);
         _elocation.setText(unBlank(_profile.location));
 
+        if (DeploymentConfig.devDeployment) {
+            // TODO: disable if the level or friend count is too low
+            econtent.setText(row, 0, _msgs.egreeterLabel());
+            econtent.setWidget(row++, 1, _egreeter = new CheckBox(_msgs.egreeterTip()));
+            _egreeter.setChecked(_greeter);
+        }
+
         Button cancel = new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget source) {
                 displayProfile();
@@ -326,8 +338,11 @@ public class ProfileBlurb extends Blurb
         } else {
             _profile.age = 0;
         }
+        if (DeploymentConfig.devDeployment) {
+            _greeter = _egreeter.isChecked();
+        }
 
-        _profilesvc.updateProfile(name, _profile, new MsoyCallback<Void>() {
+        _profilesvc.updateProfile(name, _greeter, _profile, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 displayProfile();
                 if (!name.equals(CShell.creds.name.toString())) {
@@ -349,10 +364,11 @@ public class ProfileBlurb extends Blurb
 
     protected ProfileService.ProfileResult _pdata;
     protected Profile _profile;
+    protected boolean _greeter;
 
     protected SimplePanel _ephoto;
     protected TextBox _ename, _estatus, _ehomepage, _elocation;
-    protected CheckBox _eshowAge;
+    protected CheckBox _eshowAge, _egreeter;
     protected ListBox _esex;
     protected DateFields _ebirthday;
 

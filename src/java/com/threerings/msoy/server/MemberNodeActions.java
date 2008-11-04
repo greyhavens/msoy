@@ -52,9 +52,10 @@ public class MemberNodeActions
      * logged into.
      */
     public static void infoChanged (
-        final int memberId, final String displayName, final MediaDesc photo, final String status)
+        final int memberId, final String displayName, final MediaDesc photo, final String status,
+        final boolean greeter)
     {
-        _peerMan.invokeNodeAction(new InfoChanged(memberId, displayName, photo, status));
+        _peerMan.invokeNodeAction(new InfoChanged(memberId, displayName, photo, status, greeter));
     }
 
     /**
@@ -174,11 +175,13 @@ public class MemberNodeActions
 
     protected static class InfoChanged extends MemberNodeAction
     {
-        public InfoChanged (int memberId, String displayName, MediaDesc photo, String status) {
+        public InfoChanged (
+            int memberId, String displayName, MediaDesc photo, String status, boolean greeter) {
             super(memberId);
             _displayName = displayName;
             _photo = photo;
             _status = status;
+            _greeter = greeter;
         }
 
         public InfoChanged () {
@@ -188,6 +191,7 @@ public class MemberNodeActions
         protected void execute (final MemberObject memobj) {
             memobj.updateDisplayName(_displayName, _photo);
             memobj.setHeadline(_status);
+            memobj.setGreeter(_greeter);
             _memberMan.updateOccupantInfo(memobj);
 
             // Update FriendEntrys on friend's member objects.  Rather than preparing a
@@ -201,6 +205,7 @@ public class MemberNodeActions
         protected String _displayName;
         protected MediaDesc _photo;
         protected String _status;
+        protected boolean _greeter;
 
         @Inject protected transient MemberManager _memberMan;
     }

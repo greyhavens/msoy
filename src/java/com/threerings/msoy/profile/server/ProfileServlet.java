@@ -97,6 +97,9 @@ public class ProfileServlet extends MsoyServiceServlet
         result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
         result.totalFriendCount = friendIds.size();
 
+        // load greeter info
+        result.greeter = memrec.isGreeter();
+
         // load stamp info
         result.stamps = Lists.newArrayList(
             Lists.transform(
@@ -124,7 +127,7 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public void updateProfile (String displayName, final Profile profile)
+    public void updateProfile (String displayName, boolean greeter, final Profile profile)
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser();
@@ -141,13 +144,13 @@ public class ProfileServlet extends MsoyServiceServlet
         // TODO: whatever filtering and profanity checking that we want
 
         // load their old profile record for "first time configuration" purposes
-        final ProfileRecord oprof = _profileRepo.loadProfile(memrec.memberId);
+        final ProfileRecord orec = _profileRepo.loadProfile(memrec.memberId);
 
         // stuff their updated profile data into the database
         final ProfileRecord nrec = new ProfileRecord(memrec.memberId, profile);
-        if (oprof != null) {
-            nrec.modifications = oprof.modifications+1;
-            nrec.realName = oprof.realName;
+        if (orec != null) {
+            nrec.modifications = orec.modifications+1;
+            nrec.realName = orec.realName;
         } else {
             log.warning("Account missing old profile [id=" + memrec.memberId + "].");
         }
@@ -164,17 +167,23 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // handle a display name change if necessary
         final boolean nameChanged = memrec.name == null || !memrec.name.equals(displayName);
-        final boolean photoChanged = !oprof.getPhoto().equals(nrec.getPhoto());
-        final boolean statusChanged = oprof.headline != nrec.headline;
+        final boolean photoChanged = !orec.getPhoto().equals(nrec.getPhoto());
+        final boolean statusChanged = orec.headline != nrec.headline;
+        final boolean greeterChanged = memrec.isGreeter() != greeter;
 
         if (nameChanged) {
             _memberRepo.configureDisplayName(memrec.memberId, displayName);
         }
 
-        if (statusChanged || nameChanged || photoChanged) {
+        if (greeterChanged) {
+            memrec.setFlag(MemberRecord.Flag.GREETER, greeter);
+            _memberRepo.storeFlags(memrec);
+        }
+        
+        if (statusChanged || nameChanged || photoChanged || greeterChanged) {
             // let the world servers know about the info change
             MemberNodeActions.infoChanged(
-                memrec.memberId, displayName, nrec.getPhoto(), nrec.headline);
+                memrec.memberId, displayName, nrec.getPhoto(), nrec.headline, greeter);
         }
     }
 

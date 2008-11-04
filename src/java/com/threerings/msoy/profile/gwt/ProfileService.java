@@ -42,6 +42,9 @@ public interface ProfileService extends RemoteService
         /** Whether or not the requesting member is a friend of this member. */
         public boolean isOurFriend;
 
+        /** Whether or not the requesting member is a whirled greeter. */
+        public boolean greeter;
+
         /** This user's basic profile information. */
         public Profile profile;
 
@@ -103,7 +106,7 @@ public interface ProfileService extends RemoteService
     /**
      * Requests that this user's profile be updated.
      */
-    void updateProfile (String displayName, Profile profile)
+    void updateProfile (String displayName, boolean greeter, Profile profile)
         throws ServiceException;
 
     /**
