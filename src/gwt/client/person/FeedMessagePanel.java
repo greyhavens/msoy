@@ -282,7 +282,7 @@ public class FeedMessagePanel extends FlowPanel
         }
     }
 
-    protected static class BasicWidget extends FlowPanel
+    public static class BasicWidget extends FlowPanel
     {
         public BasicWidget (String html)
         {

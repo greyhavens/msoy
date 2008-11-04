@@ -5,16 +5,17 @@ package client.person;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
 
 import client.shell.CShell;
+import client.util.DateUtil;
 
 /**
  * Functions to aggregate a list of news feed messages by the actor (left aggregate) or the action
@@ -26,11 +27,11 @@ public class FeedMessageAggregator extends FlowPanel
      * Aggregate any messages with the same actor (left aggregate) or the same action (right
      * aggregate) and return a new message list containing aggregates and/or single messages to
      * display.
+     * @param byDate If true, break up the aggregate messages by discrete days
      */
-    public static List<FeedMessage> aggregate (FeedMessage[] oldMessages)
+    public static List<FeedMessage> aggregate (FeedMessage[] oldMessages, boolean byDate)
     {
         if (oldMessages.length == 0) {
-            Window.alert("No messagss.");
             return new ArrayList<FeedMessage>();
         }
         List<FeedMessage> newMessages = new ArrayList<FeedMessage>();
@@ -41,18 +42,28 @@ public class FeedMessageAggregator extends FlowPanel
         // javascript
         messages.addAll(Arrays.asList(oldMessages));
 
-        HashMap<MessageKey, MessageAggregate> messageMapLeft = new HashMap<MessageKey, MessageAggregate>();
-        HashMap<MessageKey, MessageAggregate> messageMapRight = new HashMap<MessageKey, MessageAggregate>();
+        HashMap<MessageKey, MessageAggregate> messageMapLeft =
+            new HashMap<MessageKey, MessageAggregate>();
+        HashMap<MessageKey, MessageAggregate> messageMapRight =
+            new HashMap<MessageKey, MessageAggregate>();
 
+        // if grouping by date, start with today then work backwards
+        long header = byDate ? startOfDay(System.currentTimeMillis()) : 0;
         MessageAggregate dummyValue = new MessageAggregate();
-        while (!messages.isEmpty()) {
-            buildMessageMap(messages, messageMapLeft, true);
-            buildMessageMap(messages, messageMapRight, false);
 
+        while (!messages.isEmpty()) {
+            buildMessageMap(messages, header, messageMapLeft, true);
+            buildMessageMap(messages, header, messageMapRight, false);
             FeedMessage message = null;
+
             for (Iterator<FeedMessage> msgIter = messages.iterator(); msgIter.hasNext();) {
                 message = msgIter.next();
+                if (header > message.posted) {
+                    header = FeedMessageAggregator.startOfDay(message.posted);
+                    break;
+                }
                 msgIter.remove();
+
                 // Find the larger of the left or right aggregate message and display it
                 MessageKey lkey = getLeftKey(message);
                 MessageAggregate lvalue = lkey == null ? null : messageMapLeft.get(lkey);
@@ -102,31 +113,20 @@ public class FeedMessageAggregator extends FlowPanel
     }
 
     /**
-     * Builds a left side or right side aggregated HashMap for the supplied messages.
+     * Calculate the miliseconds for the start of a given day.
      */
-    protected static void buildMessageMap (List<FeedMessage> messages,
-        HashMap<MessageKey, MessageAggregate> map, boolean left)
+    public static long startOfDay (long timestamp)
     {
-        for (FeedMessage message : messages) {
-            MessageKey key = (left ? getLeftKey(message) : getRightKey(message));
-            if (key == null) {
-                continue;
-            }
-            MessageAggregate value = map.get(key);
-            if (value == null) {
-                value = new MessageAggregate();
-                map.put(key, value);
-            }
-
-            value.add(message);
-        }
+        Date date = new Date(timestamp);
+        DateUtil.zeroTime(date);
+        return date.getTime();
     }
 
     /**
      * Get the key for left side aggregation. Multiple actions by the same person (eg listing new
      * things in the shop).
      */
-    protected static MessageKey getLeftKey (FeedMessage message)
+    public static MessageKey getLeftKey (FeedMessage message)
     {
         switch (message.type) {
         case 100: // FRIEND_ADDED_FRIEND
@@ -147,7 +147,7 @@ public class FeedMessageAggregator extends FlowPanel
      * Get the key for right side aggregation. Multiple people performing the same action (eg
      * winning the same trophy).
      */
-    protected static MessageKey getRightKey (FeedMessage message)
+    public static MessageKey getRightKey (FeedMessage message)
     {
         switch (message.type) {
         case 100: // FRIEND_ADDED_FRIEND
@@ -161,6 +161,70 @@ public class FeedMessageAggregator extends FlowPanel
             return new MessageKey(message.type, message.data[0].concat(message.data[1]).hashCode());
         }
         return null;
+    }
+
+    /**
+     * Builds a left side or right side aggregated HashMap for the supplied messages.
+     */
+    public static void buildMessageMap (List<FeedMessage> messages, long header,
+        HashMap<MessageKey, MessageAggregate> map, boolean left)
+    {
+        for (FeedMessage message : messages) {
+            if (header > message.posted) {
+                break;
+            }
+            MessageKey key = (left ? getLeftKey(message) : getRightKey(message));
+            if (key == null) {
+                continue;
+            }
+            MessageAggregate value = map.get(key);
+            if (value == null) {
+                value = new MessageAggregate();
+                map.put(key, value);
+            }
+
+            value.add(message);
+        }
+    }
+
+    /**
+     * A hashable key used for storing FeedMessages that will be aggregated.
+     */
+    protected static class MessageKey
+    {
+        public Integer type;
+        public Integer key;
+
+        public MessageKey (int type, String key)
+        {
+            this.type = new Integer(type);
+            try {
+                this.key = new Integer(key);
+            } catch (Exception e) {
+                this.key = new Integer(0);
+            }
+        }
+
+        public MessageKey (int type, int key)
+        {
+            this.type = new Integer(type);
+            this.key = new Integer(key);
+        }
+
+        public int hashCode ()
+        {
+            int code = type.hashCode();
+            if (key != null) {
+                code ^= key.hashCode();
+            }
+            return code;
+        }
+
+        public boolean equals (Object o)
+        {
+            MessageKey other = (MessageKey)o;
+            return type.equals(other.type) && key.equals(other.key);
+        }
     }
 
     /**
@@ -212,46 +276,6 @@ public class FeedMessageAggregator extends FlowPanel
                 break;
             }
             return false;
-        }
-    }
-
-    /**
-     * A hashable key used for storing FeedMessages that will be aggregated.
-     */
-    protected static class MessageKey
-    {
-        public Integer type;
-        public Integer key;
-
-        public MessageKey (int type, String key)
-        {
-            this.type = new Integer(type);
-            try {
-                this.key = new Integer(key);
-            } catch (Exception e) {
-                this.key = new Integer(0);
-            }
-        }
-
-        public MessageKey (int type, int key)
-        {
-            this.type = new Integer(type);
-            this.key = new Integer(key);
-        }
-
-        public int hashCode ()
-        {
-            int code = type.hashCode();
-            if (key != null) {
-                code ^= key.hashCode();
-            }
-            return code;
-        }
-
-        public boolean equals (Object o)
-        {
-            MessageKey other = (MessageKey)o;
-            return type.equals(other.type) && key.equals(other.key);
         }
     }
 

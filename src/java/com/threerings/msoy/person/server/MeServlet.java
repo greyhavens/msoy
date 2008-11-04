@@ -89,23 +89,6 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // from interface MeService
-    public List<FeedMessage> loadFeed (int cutoffDays)
-        throws ServiceException
-    {
-        MemberRecord mrec = requireAuthedUser();
-        List<GroupMembershipRecord> groups = _groupRepo.getMemberships(mrec.memberId);
-        ArrayIntSet groupIds = new ArrayIntSet(groups.size());
-        for (GroupMembershipRecord record : groups) {
-            groupIds.add(record.groupId);
-        }
-
-        Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
-        IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
-        return _servletLogic.resolveFeedMessages(
-            _feedRepo.loadPersonalFeed(mrec.memberId, friendIds, groupIds, since));
-    }
-
-    // from interface MeService
     public PassportData loadBadges (int memberId)
         throws ServiceException
     {

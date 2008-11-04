@@ -34,13 +34,6 @@ public interface MeService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads all items in a player's inventory of the specified type and optionally restricted to
-     * the specified suite.
-     */
-    List<FeedMessage> loadFeed (int cutoffDays)
-        throws ServiceException;
-
-    /**
      * Loads the badges relevant to this player.  If the memberId is the same as the caller,
      * the nextBadges field will be filled, null otherwise.
      */

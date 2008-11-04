@@ -14,6 +14,7 @@ import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 
+import client.person.FeedMessagePanel.BasicWidget;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
@@ -28,10 +29,7 @@ public class FriendsFeedPanel extends FlowPanel
     {
         addStyleName("FeedList");
         if (feed.size() == 0) {
-            FlowPanel noMessagesPanel = MsoyUI.createFlowPanel("FeedWidget");
-            noMessagesPanel.addStyleName("FeedBasic");
-            noMessagesPanel.add(MsoyUI.createHTML(emptyMessage, null));
-            add(noMessagesPanel);
+            add(new BasicWidget(emptyMessage));
             return;
         }
 
@@ -70,7 +68,7 @@ public class FriendsFeedPanel extends FlowPanel
             "FeedCategoryHeader"));
 
         // combine feed items performed by the same person
-        List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages);
+        List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages, false);
 
         for (FeedMessage message : messages) {
             categoryPanel.add(new FeedMessagePanel(message));

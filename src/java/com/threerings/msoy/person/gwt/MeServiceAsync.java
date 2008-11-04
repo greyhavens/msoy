@@ -21,11 +21,6 @@ public interface MeServiceAsync
     void getMyWhirled (AsyncCallback<MyWhirledData> callback);
 
     /**
-     * The asynchronous version of {@link MeService#loadFeed}.
-     */
-    void loadFeed (int cutoffDays, AsyncCallback<List<FeedMessage>> callback);
-
-    /**
      * The asynchronous version of {@link MeService#loadFeedCategory}.
      */
     void loadFeedCategory (int feedType, boolean fullSize, AsyncCallback<FeedCategory> callback);
