@@ -20,6 +20,8 @@ import flash.net.URLRequestMethod;
 
 import flash.utils.ByteArray;
 
+import mx.controls.scrollClasses.ScrollBar;
+
 import com.threerings.flash.BackgroundJPGEncoder;
 
 import com.threerings.util.Log;
@@ -137,6 +139,9 @@ public class Snapshot extends EventDispatcher
             var layerPredicate :Function = function (child :DisplayObject) :Boolean {
                 // if it's not even a layer, we must be further down: include
                 if (!lc.containsOverlay(child)) {
+                    if (child is ScrollBar) {
+                        return false; // never snapshot the chat scrollbar...
+                    }
                     return true;
                 }
                 // blacklist certain layers
