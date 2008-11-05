@@ -44,6 +44,7 @@ import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
+import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -182,30 +183,23 @@ public class MeServlet extends MsoyServiceServlet
         });
 
         List<FeedMessageRecord> allChosenRecords = Lists.newArrayList();
-        Map<Integer, IntSet> memberIdsByType = Maps.newHashMap();
+        Map<Integer, List<String>> keysByType = Maps.newHashMap();
         Map<Integer, Integer> numRecordsByType = Maps.newHashMap();
 
         // limit the feed messages to itemsPerCategory per category
         for (FeedMessageRecord record : allRecords) {
-
             int categoryCode = FeedMessageType.getCategoryCode(record.type);
-// // combine announcements and comments together
-// if (type == FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()) {
-// type = FeedMessageType.GROUP_ANNOUNCEMENT.getCode();
-// } else if (type == FeedMessageType.SELF_ITEM_COMMENT.getCode()) {
-// type = FeedMessageType.SELF_ROOM_COMMENT.getCode();
-// }
 
             // skip all categories except the one we care about
             if (forType != -1 && categoryCode != forType) {
                 continue;
             }
 
-            IntSet typeMemberIds = memberIdsByType.get(categoryCode);
+            List<String> typeKeys = keysByType.get(categoryCode);
             Integer numRecords = numRecordsByType.get(categoryCode);
-            if (typeMemberIds == null) {
-                typeMemberIds = new ArrayIntSet();
-                memberIdsByType.put(categoryCode, typeMemberIds);
+            if (typeKeys == null) {
+                typeKeys = Lists.newArrayList();
+                keysByType.put(categoryCode, typeKeys);
                 numRecords = 0;
                 numRecordsByType.put(categoryCode, 0);
             }
@@ -217,11 +211,24 @@ public class MeServlet extends MsoyServiceServlet
             // include friend activities from the first itemsPerCategory friends
             } else if (record instanceof FriendFeedMessageRecord) {
                 FriendFeedMessageRecord friendRecord = (FriendFeedMessageRecord)record;
-                if (typeMemberIds.contains(friendRecord.actorId)) {
+                if (typeKeys.contains(friendRecord.actorId)) {
                     allChosenRecords.add(record);
-                } else if (typeMemberIds.size() < itemsPerCategory) {
+                } else if (typeKeys.size() < itemsPerCategory) {
                     allChosenRecords.add(record);
-                    typeMemberIds.add(friendRecord.actorId);
+                    typeKeys.add(friendRecord.actorId + "");
+                }
+
+            // group comments by the item/room commented on
+            } else if (categoryCode == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
+                SelfFeedMessageRecord selfMessage = (SelfFeedMessageRecord)record;
+                // fetch the room id or item id from the data
+                String key = (selfMessage.type == FeedMessageType.SELF_ROOM_COMMENT.getCode())
+                    ? "room_" + record.data.split("\t")[0] : "item_" + record.data.split("\t")[1];
+                if (typeKeys.contains(key)) {
+                    allChosenRecords.add(record);
+                } else if (typeKeys.size() < itemsPerCategory) {
+                    allChosenRecords.add(record);
+                    typeKeys.add(key);
                 }
 
             // include the first itemsPerCategory non-friend messages in each category
@@ -247,13 +254,6 @@ public class MeServlet extends MsoyServiceServlet
                 if (FeedMessageType.getCategoryCode(message.type) == categoryCode) {
                     typeMessages.add(message);
                 }
-
-// if ((message.type != FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()
-// && message.type == type.getCode())
-// || (message.type == FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()
-// && type == FeedMessageType.GROUP_ANNOUNCEMENT)) {
-// typeMessages.add(message);
-// }
             }
             allChosenMessages.removeAll(typeMessages);
 

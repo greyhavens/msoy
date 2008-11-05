@@ -86,7 +86,7 @@ public class FeedMessageAggregator extends FlowPanel
                 }
 
                 if (lsize >= rsize && lsize > 1) {
-                    newMessages.add(new AggregateFriendMessage(true, message.type,
+                    newMessages.add(new AggregateMessage(true, message.type,
                         message.posted, lvalue.getList()));
                     if (rsize > 1) {
                         rvalue.remove(message);
@@ -94,7 +94,7 @@ public class FeedMessageAggregator extends FlowPanel
                     lvalue.setDisplayed(true);
                     continue;
                 } else if (rsize > 1) {
-                    newMessages.add(new AggregateFriendMessage(false, message.type,
+                    newMessages.add(new AggregateMessage(false, message.type,
                         message.posted, rvalue.getList()));
                     if (lsize > 1) {
                         lvalue.remove(message);
@@ -159,6 +159,12 @@ public class FeedMessageAggregator extends FlowPanel
         case 105: // FRIEND_WON_BADGE
             // one or more friends earned the same badge; badge id and level is the key
             return new MessageKey(message.type, message.data[0].concat(message.data[1]).hashCode());
+        case 300: // SELF_ROOM_COMMENT
+            // one or more people commented on your room; scene id is the key
+            return new MessageKey(message.type, message.data[0]);
+        case 301: // SELF_ITEM_COMMENT
+            // one or more people commented on your shop item; catalog id is the key
+            return new MessageKey(message.type, message.data[1]);
         }
         return null;
     }
@@ -233,22 +239,21 @@ public class FeedMessageAggregator extends FlowPanel
      * An aggregate message conatining multiple actions by the same actor (left=true), or actors
      * performing the same action (left=false). Duplicate items will be removed at this point.
      */
-    public static class AggregateFriendMessage extends FeedMessage
+    public static class AggregateMessage extends FeedMessage
     {
-        public AggregateFriendMessage (boolean left, int type, long posted,
-                List<FriendFeedMessage> messages)
+        public AggregateMessage (boolean left, int type, long posted, List<FeedMessage> messages)
         {
             this.left = left;
             this.type = type;
             this.posted = posted;
-            this.messages = new ArrayList<FriendFeedMessage>();
-            for (FriendFeedMessage message : messages) {
+            this.messages = new ArrayList<FeedMessage>();
+            for (FeedMessage message : messages) {
                 if (!contains(message)) {
                     this.messages.add(message);
                 }
             }
         }
-        public List<FriendFeedMessage> messages;
+        public List<FeedMessage> messages;
         public boolean left;
 
         /**
@@ -256,13 +261,13 @@ public class FeedMessageAggregator extends FlowPanel
          * on the type of message: don't show the same player updating the same room twice, or the
          * same player gaining more than one level.
          */
-        protected boolean contains (FriendFeedMessage message)
+        protected boolean contains (FeedMessage message)
         {
             switch(message.type) {
             case 101: // FRIEND_UPDATED_ROOM
                 // don't show the same friend updating the same room id twice
-                for (FriendFeedMessage msg : this.messages) {
-                    if (msg.friend.equals(message.friend)
+                for (FeedMessage msg : this.messages) {
+                    if (((FriendFeedMessage)msg).friend.equals(((FriendFeedMessage)message).friend)
                         && msg.data[0].equals(message.data[0])) {
                         return true;
                     }
@@ -270,8 +275,8 @@ public class FeedMessageAggregator extends FlowPanel
                 break;
             case 104: // FRIEND_GAINED_LEVEL
                 // don't show the same friend's level gain more than once
-                for (FriendFeedMessage msg : this.messages) {
-                    if (msg.friend.equals(message.friend)) {
+                for (FeedMessage msg : this.messages) {
+                    if (((FriendFeedMessage)msg).friend.equals(((FriendFeedMessage)message).friend)) {
                         return true;
                     }
                 }
@@ -294,19 +299,12 @@ public class FeedMessageAggregator extends FlowPanel
                 CShell.log("Ignoring addition of messages to a MessageAggregate that has been displayed");
                 return;
             }
-
-            if (!(message instanceof FriendFeedMessage)) {
-                // don't need to log it - this value is being stored with a throwaway key.
-                return;
-            }
-            list.add((FriendFeedMessage)message);
+            list.add(message);
         }
 
         public void remove (FeedMessage message)
         {
-            if (message instanceof FriendFeedMessage) {
-                list.remove(message);
-            }
+            list.remove(message);
         }
 
         public int size ()
@@ -330,12 +328,12 @@ public class FeedMessageAggregator extends FlowPanel
             return displayed;
         }
 
-        public List<FriendFeedMessage> getList ()
+        public List<FeedMessage> getList ()
         {
             return list;
         }
 
-        protected List<FriendFeedMessage> list = new ArrayList<FriendFeedMessage>();
+        protected List<FeedMessage> list = new ArrayList<FeedMessage>();
     }
 
     /** Break aggregate messages up into maximum this many items each */

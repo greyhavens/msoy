@@ -29,7 +29,7 @@ import com.threerings.msoy.person.gwt.SelfFeedMessage;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.person.FeedMessageAggregator.AggregateFriendMessage;
+import client.person.FeedMessageAggregator.AggregateMessage;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -49,11 +49,11 @@ public class FeedMessagePanel extends FlowPanel
             addGroupMessage((GroupFeedMessage)message);
         } else if (message instanceof SelfFeedMessage) {
             addSelfMessage((SelfFeedMessage)message);
-        } else if (message instanceof AggregateFriendMessage) {
-            if (((AggregateFriendMessage)message).left) {
-                this.addLeftAggregateFriendMessage(((AggregateFriendMessage)message).messages);
+        } else if (message instanceof AggregateMessage) {
+            if (((AggregateMessage)message).left) {
+                this.addLeftAggregateMessage(((AggregateMessage)message).messages);
             } else {
-                this.addRightAggregateFriendMessage(((AggregateFriendMessage)message).messages);
+                this.addRightAggregateMessage(((AggregateMessage)message).messages);
             }
         } else {
             addMessage(message);
@@ -114,18 +114,12 @@ public class FeedMessagePanel extends FlowPanel
             if (message.actor == null) {
                 return; // TEMP: skip old pre-actor messages
             }
-            String roomPageLink = Link.createHtml(_pmsgs.selfRoomCommented(),
-                Pages.WORLD, Args.compose("room", message.data[0]));
-            String roomLink = Link.createHtml(
-                message.data[1], Pages.WORLD, "s" + message.data[0]);
-            String roomText = _pmsgs.selfRoomComment(profileLink(message.actor), roomPageLink,
-                roomLink);
+            String roomText = _pmsgs.selfRoomComment(profileLink(message.actor),
+                buildString(message));
             add(new ThumbnailWidget(buildMedia(message), roomText));
             break;
         case 301: // SELF_ITEM_COMMENT
-            String shopPageLink = Link.createHtml(message.data[2], Pages.SHOP, Args.compose("l",
-                message.data[0], message.data[1]));
-            String itemText = _pmsgs.selfItemComment(profileLink(message.actor), shopPageLink);
+            String itemText = _pmsgs.selfItemComment(profileLink(message), buildString(message));
             add(new ThumbnailWidget(buildMedia(message), itemText));
             break;
         }
@@ -142,8 +136,23 @@ public class FeedMessagePanel extends FlowPanel
         }
     }
 
+    protected String profileLink (FeedMessage message)
+    {
+        if (message instanceof FriendFeedMessage) {
+            return profileLink(((FriendFeedMessage)message).friend);
+        } else if (message instanceof SelfFeedMessage) {
+            return profileLink(((SelfFeedMessage)message).actor);
+        } else {
+            return null;
+        }
+    }
+
     protected String profileLink (MemberName friend)
     {
+        if (friend == null) {
+            // very old data may not include actor/friend
+            return _pmsgs.feedProfileMemberUnknown();
+        }
         return profileLink(friend.toString(), String.valueOf(friend.getMemberId()));
     }
 
@@ -187,6 +196,14 @@ public class FeedMessagePanel extends FlowPanel
 
             int memberId = ((FriendFeedMessage)message).friend.getMemberId();
             return Link.createHtml(badgeName, Pages.ME, Args.compose("passport", memberId));
+
+        case 300: // SELF_ROOM_COMMENT
+            return Link.createHtml(message.data[1], Pages.WORLD, Args.compose("room",
+                message.data[0]));
+
+        case 301: // SELF_ITEM_COMMENT
+            return Link.createHtml(message.data[2], Pages.SHOP, Args.compose("l",
+                message.data[0], message.data[1]));
         }
 
         return null;
@@ -282,8 +299,7 @@ public class FeedMessagePanel extends FlowPanel
             }
 
             clicker = new ClickListener() {
-                public void onClick (Widget sender)
-                {
+                public void onClick (Widget sender) {
                     Link.go(Pages.WORLD, Args.compose("s", message.data[0]));
                 }
             };
@@ -300,8 +316,7 @@ public class FeedMessagePanel extends FlowPanel
                 return null;
             }
             clicker = new ClickListener() {
-                public void onClick (Widget sender)
-                {
+                public void onClick (Widget sender) {
                     Link.go(Pages.SHOP, Args.compose("l", message.data[0], message.data[1]));
                 }
             };
@@ -363,11 +378,10 @@ public class FeedMessagePanel extends FlowPanel
     /**
      * Display multiple actions by the same person (eg listing new things in the shop).
      */
-    protected void addLeftAggregateFriendMessage (List<FriendFeedMessage> list)
+    protected void addLeftAggregateMessage (List<FeedMessage> list)
     {
-        // friend feed messages are the only ones that get aggregated
-        FriendFeedMessage message = list.get(0);
-        String friendLink = profileLink(message.friend);
+        FeedMessage message = list.get(0);
+        String friendLink = profileLink(message);
         switch (message.type) {
         case 100: // FRIEND_ADDED_FRIEND
             add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendAddedFriends(friendLink,
@@ -409,9 +423,9 @@ public class FeedMessagePanel extends FlowPanel
     /**
      * Display multiple people performing the same action (eg winning the same trophy).
      */
-    protected void addRightAggregateFriendMessage (List<FriendFeedMessage> list)
+    protected void addRightAggregateMessage (List<FeedMessage> list)
     {
-        FriendFeedMessage message = list.get(0);
+        FeedMessage message = list.get(0);
         String friendLinks = profileCombine(list);
         switch (message.type) {
         case 100: // FRIEND_ADDED_FRIEND
@@ -429,36 +443,46 @@ public class FeedMessagePanel extends FlowPanel
                 buildString(message))));
             break;
 
+        case 300: // SELF_ROOM_COMMENT
+            add(new ThumbnailWidget(buildMedia(message), _pmsgs.selfRoomComment(friendLinks,
+                buildString(message))));
+            break;
+
+        case 301: // SELF_ITEM_COMMENT
+            add(new ThumbnailWidget(buildMedia(message), _pmsgs.selfItemComment(friendLinks,
+                buildString(message))));
+            break;
+
         default:
             add(new BasicWidget("Unknown right aggregate type: " + message.type));
             break;
         }
     }
 
-    protected String standardCombine (List<FriendFeedMessage> list)
+    protected String standardCombine (List<FeedMessage> list)
     {
         return standardCombine(list, new StringBuilder() {
-            public String build (FriendFeedMessage message) {
+            public String build (FeedMessage message) {
                 return buildString(message);
             }
         });
     }
 
-    protected String friendLinkCombine (List<FriendFeedMessage> list)
+    protected String friendLinkCombine (List<FeedMessage> list)
     {
         return standardCombine(list, new StringBuilder() {
-            public String build (FriendFeedMessage message) {
+            public String build (FeedMessage message) {
                 return _pmsgs.colonCombine(
-                    profileLink(message.friend), buildString(message));
+                    profileLink(message), buildString(message));
             }
         });
     }
 
-    protected String profileCombine (List<FriendFeedMessage> list)
+    protected String profileCombine (List<FeedMessage> list)
     {
         return standardCombine(list, new StringBuilder() {
-            public String build (FriendFeedMessage message) {
-                return profileLink(message.friend);
+            public String build (FeedMessage message) {
+                return profileLink(message);
             }
         });
     }
@@ -467,11 +491,11 @@ public class FeedMessagePanel extends FlowPanel
      * Helper function which combines the core feed message data into a translated, comma
      * separated and ending in 'and' list.
      */
-    protected String standardCombine (List<FriendFeedMessage> list, StringBuilder builder)
+    protected String standardCombine (List<FeedMessage> list, StringBuilder builder)
     {
         String combine = builder.build(list.get(0));
         for (int ii = 1, ll = list.size(); ii < ll; ii++) {
-            FriendFeedMessage message = list.get(ii);
+            FeedMessage message = list.get(ii);
             if (ii + 1 == ll) {
                 combine = _pmsgs.andCombine(combine, builder.build(message));
             } else {
@@ -484,10 +508,10 @@ public class FeedMessagePanel extends FlowPanel
     /**
      * Helper function which creates an array of media widgets from feed messages.
      */
-    protected Widget[] buildMediaArray (List<FriendFeedMessage> list)
+    protected Widget[] buildMediaArray (List<FeedMessage> list)
     {
         List<Widget> media = new ArrayList<Widget>();
-        for (FriendFeedMessage message : list) {
+        for (FeedMessage message : list) {
             Widget w = buildMedia(message);
             if (w != null) {
                 media.add(w);
@@ -502,7 +526,7 @@ public class FeedMessagePanel extends FlowPanel
 
     protected interface StringBuilder
     {
-        String build (FriendFeedMessage message);
+        String build (FeedMessage message);
     }
 
     protected static final DateTimeFormat _dateFormater = DateTimeFormat.getFormat("MMMM d:");
