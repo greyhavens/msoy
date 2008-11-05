@@ -98,7 +98,7 @@ public class ProfileServlet extends MsoyServiceServlet
         result.totalFriendCount = friendIds.size();
 
         // load greeter info
-        result.greeter = memrec.isGreeter();
+        result.greeter = memrec != null && memrec.isGreeter();
 
         // load stamp info
         result.stamps = Lists.newArrayList(
