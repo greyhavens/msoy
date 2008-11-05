@@ -44,7 +44,6 @@ import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.SelfFeedMessageRecord;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -184,7 +183,6 @@ public class MeServlet extends MsoyServiceServlet
 
         List<FeedMessageRecord> allChosenRecords = Lists.newArrayList();
         Map<Integer, List<String>> keysByType = Maps.newHashMap();
-        Map<Integer, Integer> numRecordsByType = Maps.newHashMap();
 
         // limit the feed messages to itemsPerCategory per category
         for (FeedMessageRecord record : allRecords) {
@@ -196,47 +194,32 @@ public class MeServlet extends MsoyServiceServlet
             }
 
             List<String> typeKeys = keysByType.get(categoryCode);
-            Integer numRecords = numRecordsByType.get(categoryCode);
             if (typeKeys == null) {
                 typeKeys = Lists.newArrayList();
                 keysByType.put(categoryCode, typeKeys);
-                numRecords = 0;
-                numRecordsByType.put(categoryCode, 0);
             }
 
-            // all levelling records are returned, they get aggregated into a single item
+            String key;
             if (categoryCode == FeedMessageType.FRIEND_GAINED_LEVEL.getCode()) {
-                allChosenRecords.add(record);
-
-            // include friend activities from the first itemsPerCategory friends
+                // all levelling records are returned, they get aggregated into a single item
+                key = "";
             } else if (record instanceof FriendFeedMessageRecord) {
-                FriendFeedMessageRecord friendRecord = (FriendFeedMessageRecord)record;
-                if (typeKeys.contains(friendRecord.actorId + "")) {
-                    allChosenRecords.add(record);
-                } else if (typeKeys.size() < itemsPerCategory) {
-                    allChosenRecords.add(record);
-                    typeKeys.add(friendRecord.actorId + "");
-                }
-
-            // include comments on the first itemsPerCategory rooms and/or items
+                // include friend activities from the first itemsPerCategory friends
+                key = ((FriendFeedMessageRecord)record).actorId + "";
             } else if (categoryCode == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
-                SelfFeedMessageRecord selfMessage = (SelfFeedMessageRecord)record;
-                // fetch the room id or item id from the data
-                String key = (selfMessage.type == FeedMessageType.SELF_ROOM_COMMENT.getCode())
+                // include comments on the first itemsPerCategory rooms and/or items
+                key = (record.type == FeedMessageType.SELF_ROOM_COMMENT.getCode())
                     ? "room_" + record.data.split("\t")[0] : "item_" + record.data.split("\t")[1];
-                if (typeKeys.contains(key)) {
-                    allChosenRecords.add(record);
-                } else if (typeKeys.size() < itemsPerCategory) {
-                    allChosenRecords.add(record);
-                    typeKeys.add(key);
-                }
-
-            // include the first itemsPerCategory non-friend messages in each category
             } else {
-                if (numRecords < itemsPerCategory) {
-                    numRecordsByType.put(categoryCode, numRecords + 1);
-                    allChosenRecords.add(record);
-                }
+                // include the first itemsPerCategory non-friend messages in each category
+                key = typeKeys.size() + "";
+            }
+
+            if (typeKeys.contains(key)) {
+                allChosenRecords.add(record);
+            } else if (typeKeys.size() < itemsPerCategory) {
+                allChosenRecords.add(record);
+                typeKeys.add(key);
             }
         }
 

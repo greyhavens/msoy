@@ -298,7 +298,8 @@ public class ForumServlet extends MsoyServiceServlet
         } else if (thread.isAnnouncement()) {
             _feedRepo.publishGroupMessage(
                 groupId, FeedMessageType.GROUP_ANNOUNCEMENT,
-                group.name + "\t" + subject + "\t" + thread.threadId);
+                group.name + "\t" + subject + "\t" + thread.threadId + "\t" 
+                    + MediaDesc.mdToString(group.getLogo()));
         }
 
         return thread;

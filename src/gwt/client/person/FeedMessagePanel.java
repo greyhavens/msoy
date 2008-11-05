@@ -102,7 +102,8 @@ public class FeedMessagePanel extends FlowPanel
         case 200: // GROUP_ANNOUNCEMENT
             String threadLink = Link.createHtml(
                 message.data[1], Pages.WHIRLEDS, Args.compose("t", message.data[2]));
-            add(new BasicWidget(_pmsgs.groupAnnouncement(message.data[0], threadLink)));
+            add(new ThumbnailWidget(buildMedia(message), 
+                _pmsgs.groupAnnouncement(message.data[0], threadLink)));
             break;
         }
     }
@@ -288,7 +289,22 @@ public class FeedMessagePanel extends FlowPanel
             image.setHeight(MediaDesc.getHeight(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
             image.addClickListener(Link.createListener(Pages.ME, "passport"));
             return image;
-
+            
+        case 200: // GROUP_ANNOUNCEMENT
+            if (message.data.length < 4) {
+                return null;
+            }
+            media = MediaDesc.stringToMD(message.data[3]);
+            if (media == null) {
+                return null;
+            }
+            clicker = new ClickListener() {
+                public void onClick (Widget sender) {
+                    Link.go(Pages.WHIRLEDS, Args.compose("t", message.data[2]));
+                }
+            };
+            return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
+            
         case 300: // SELF_ROOM_COMMENT
             if (message.data.length < 3) {
                 return null;
@@ -297,7 +313,6 @@ public class FeedMessagePanel extends FlowPanel
             if (media == null) {
                 return null;
             }
-
             clicker = new ClickListener() {
                 public void onClick (Widget sender) {
                     Link.go(Pages.WORLD, Args.compose("s", message.data[0]));
