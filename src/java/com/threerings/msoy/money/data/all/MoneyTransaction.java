@@ -6,6 +6,7 @@ package com.threerings.msoy.money.data.all;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Contains the history of a single transaction involving coins, bars, or bling.
@@ -23,8 +24,7 @@ public class MoneyTransaction
 //    public Object subject; // maybe someday we'll want to return this..
 
     public int referenceTxId;
-    public int referenceMemberId;
-
+    public MemberName referenceMemberName;
 
     // Required by for serializing
     public MoneyTransaction () { }

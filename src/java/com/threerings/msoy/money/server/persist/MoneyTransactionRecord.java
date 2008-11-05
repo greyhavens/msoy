@@ -17,6 +17,7 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -252,7 +253,7 @@ public class MoneyTransactionRecord extends PersistentRecord
         MoneyTransaction mtx = toMoneyTransaction();
         if (forSupport) {
             mtx.referenceTxId = referenceTxId;
-            mtx.referenceMemberId = referenceMemberId;
+            mtx.referenceMemberName = MemberName.makeKey(referenceMemberId);
         }
         return mtx;
     }

@@ -3,8 +3,10 @@
 
 package com.threerings.msoy.money.server;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import com.google.common.base.Function;
@@ -13,7 +15,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
+import com.samskivert.util.IntMap;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.money.data.MoneyCodes;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
@@ -49,8 +53,22 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
+        // Get transactions and, if support, load reference member names.
         List<MoneyTransaction> page = _moneyLogic.getTransactions(
             memberId, report.transactions, report.currency, from, count, true, mrec.isSupport());
+        if (mrec.isSupport()) {
+            Set<Integer> memberIds = new HashSet<Integer>();
+            for (MoneyTransaction tx : page) {
+                if (memberId > 0) {
+                    memberIds.add(tx.referenceMemberName.getMemberId());
+                }
+            }
+            IntMap<MemberName> names = _memberRepo.loadMemberNames(memberIds);
+            for (MoneyTransaction tx : page) {
+                tx.referenceMemberName = names.get(tx.referenceMemberName.getMemberId());
+            }
+        }
+        
         int total = _moneyLogic.getTransactionCount(memberId,
             report.transactions, report.currency);
         return new TransactionPageResult(total, page, getBlingInfo(memberId));
