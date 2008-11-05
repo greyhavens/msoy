@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
@@ -33,13 +32,10 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
-
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.PetObject;
 import com.threerings.msoy.room.data.RoomCodes;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -71,20 +67,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
      */
     public void memberPublishedRoom (MemberObject user, final MsoyScene scene)
     {
-        final int memId = user.getMemberId();
-
-        // publish to this member's feed that they updated their room
-        String uname = "publishRoomUpdate[id=" + memId + ", scid=" + scene.getId() + "]";
-        _invoker.postUnit(new RepositoryUnit(uname) {
-            public void invokePersist () throws Exception {
-                _feedRepo.publishMemberMessage(
-                    memId, FeedMessageType.FRIEND_UPDATED_ROOM,
-                    String.valueOf(scene.getId()) + "\t" + scene.getName());
-            }
-            public void handleSuccess () {
-                // nada
-            }
-        });
     }
 
     // from interface MsoySceneProvider

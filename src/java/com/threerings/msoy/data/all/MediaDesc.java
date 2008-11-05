@@ -84,6 +84,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The full size for game screenshots. */
     public static final int GAME_SHOT_SIZE = 6;
 
+    /** The smallest size of room snapshots. */
+    public static final int SNAPSHOT_TINY_SIZE = 7;
+
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;
 
@@ -691,5 +694,6 @@ public class MediaDesc implements Streamable, IsSerializable
         175, 100, // scene snapshot thumb size
         350, 200, // full scene snapshot image size
         175, 125, // game screenshots
+        40, 23, // tiny snapshots, same width as half thumbnail
     };
 }

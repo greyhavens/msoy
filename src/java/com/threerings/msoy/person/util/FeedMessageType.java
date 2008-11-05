@@ -7,7 +7,8 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 
 /**
- * Enumerates the available types of feed messages.
+ * Enumerates the available types of feed messages. Codes are also used for the grouping and order
+ * of categories when displaying feed on the Me page.
  *
  * TODO: when GWT supports enums, move this into person.data.
  */
@@ -19,6 +20,10 @@ public enum FeedMessageType
     // group messages
     GROUP_ANNOUNCEMENT(200, 2, oneDay()),
 
+    // self messages
+    SELF_ROOM_COMMENT(300),
+    SELF_ITEM_COMMENT(301),
+
     // friend messages
     FRIEND_ADDED_FRIEND(100),
     FRIEND_LISTED_ITEM(103, 3, oneDay()),
@@ -26,9 +31,6 @@ public enum FeedMessageType
     FRIEND_UPDATED_ROOM(101, 1, oneDay()),
     FRIEND_WON_BADGE(105, 3, oneDay()),
     FRIEND_GAINED_LEVEL(104, 1, oneDay()),
-
-    // self messages
-    SELF_ROOM_COMMENT(300),
 
     UNUSED(999);
 
@@ -38,6 +40,21 @@ public enum FeedMessageType
     public static FeedMessageType getActionByCode (int code)
     {
         return _reverse.get(code);
+    }
+
+    /**
+     * Some types will be grouped together to a single category for display. Return the code for
+     * the category a given type belongs in.
+     */
+    public static int getCategoryCode (int code)
+    {
+        if (code == SELF_ITEM_COMMENT._code) {
+            return SELF_ROOM_COMMENT._code;
+        } else if (code == GROUP_ANNOUNCEMENT._code) {
+            return GLOBAL_ANNOUNCEMENT._code;
+        } else {
+            return code;
+        }
     }
 
     /**

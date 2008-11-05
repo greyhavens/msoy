@@ -105,8 +105,10 @@ public class MemberLogic
             _statLogic.incrementStat(friendId, StatType.FRIENDS_MADE, 1);
 
             // publish a message to the inviting member's feed
-            _feedRepo.publishMemberMessage(caller.memberId, FeedMessageType.FRIEND_ADDED_FRIEND,
-                                           friend.name.toString() + "\t" + friendId);
+            String data = friend.name.toString() + "\t" + friendId + "\t"
+                + MediaDesc.mdToString(friend.photo);
+            _feedRepo.publishMemberMessage(
+                caller.memberId, FeedMessageType.FRIEND_ADDED_FRIEND, data);
 
             // add them to the friends list of both parties if/wherever they are online
             MemberCard ccard = _memberRepo.loadMemberCard(caller.memberId);

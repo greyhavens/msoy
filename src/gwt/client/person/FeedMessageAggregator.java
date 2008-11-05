@@ -183,7 +183,9 @@ public class FeedMessageAggregator extends FlowPanel
                 map.put(key, value);
             }
 
-            value.add(message);
+            if (value.size() < MAX_AGGREGATED_ITEMS) {
+                value.add(message);
+            }
         }
     }
 
@@ -335,4 +337,7 @@ public class FeedMessageAggregator extends FlowPanel
 
         protected List<FriendFeedMessage> list = new ArrayList<FriendFeedMessage>();
     }
+
+    /** Break aggregate messages up into maximum this many items each */
+    protected static final int MAX_AGGREGATED_ITEMS = 5;
 }

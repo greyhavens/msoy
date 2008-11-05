@@ -4,12 +4,15 @@
 package com.threerings.msoy.web.server;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
 
 import org.apache.commons.fileupload.FileUploadException;
-
 import com.google.inject.Inject;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -84,9 +87,19 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
 
         // publish the file, and we're done
         CanonicalSnapshotInfo info = UploadUtil.publishSnapshot((SnapshotUploadFile) uploadFile);
-        
+
         _sceneRepo.setCanonicalImage(sceneId, info.canonical.hash, info.canonical.type,
             info.thumbnail.hash, info.thumbnail.type);
+
+        // if scene was just published, record it to the feed now that we have the snapshot
+        SceneRecord sceneRecord = _sceneRepo.loadScene(sceneId);
+        Timestamp oneMinuteAgo = new Timestamp((new Date()).getTime() - 60 * 1000L);
+        if (sceneRecord.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER
+            && sceneRecord.lastPublished != null && sceneRecord.lastPublished.after(oneMinuteAgo)) {
+            _feedRepo.publishMemberMessage(sceneRecord.ownerId,
+                FeedMessageType.FRIEND_UPDATED_ROOM, String.valueOf(sceneId) + "\t"
+                    + sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
+        }
     }
 
     /**
@@ -117,4 +130,5 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected FeedRepository _feedRepo;
 }

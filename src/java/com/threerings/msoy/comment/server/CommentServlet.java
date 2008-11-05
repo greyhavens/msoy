@@ -29,6 +29,7 @@ import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.persist.CommentRecord;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
@@ -117,7 +118,8 @@ public class CommentServlet extends MsoyServiceServlet
         if (etype == Comment.TYPE_ROOM) {
             SceneRecord scene = _sceneRepo.loadScene(eid);
             if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                String data = scene.sceneId + "\t" + scene.name;
+                String data = scene.sceneId + "\t" + scene.name + "\t"
+                    + MediaDesc.mdToString(scene.getSnapshot());
                 _feedRepo.publishSelfMessage(
                     scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT, data);
                 ownerId = scene.ownerId;
@@ -127,6 +129,7 @@ public class CommentServlet extends MsoyServiceServlet
         } else if (etype == Comment.TYPE_PROFILE_WALL) {
             ownerId = eid;
 
+        // comment on an item
         } else {
             try {
                 ItemRepository<?> repo = _itemLogic.getRepository((byte)etype);
@@ -136,6 +139,12 @@ public class CommentServlet extends MsoyServiceServlet
                     if (item != null) {
                         ownerId = item.creatorId;
                         entityName = item.name;
+
+                        // when commenting on a listed item, post a self feed message
+                        String data = item.getType() + "\t" + listing.catalogId + "\t"
+                            + item.name + "\t" + MediaDesc.mdToString(item.getThumbMediaDesc());
+                        _feedRepo.publishSelfMessage(ownerId, mrec.memberId,
+                            FeedMessageType.SELF_ITEM_COMMENT, data);
                     }
                 }
 

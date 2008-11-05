@@ -187,28 +187,31 @@ public class MeServlet extends MsoyServiceServlet
 
         // limit the feed messages to itemsPerCategory per category
         for (FeedMessageRecord record : allRecords) {
-            int type = record.type;
-            // combine global announcements with the group announcements
-            if (type == FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()) {
-                type = FeedMessageType.GROUP_ANNOUNCEMENT.getCode();
-            }
+
+            int categoryCode = FeedMessageType.getCategoryCode(record.type);
+// // combine announcements and comments together
+// if (type == FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()) {
+// type = FeedMessageType.GROUP_ANNOUNCEMENT.getCode();
+// } else if (type == FeedMessageType.SELF_ITEM_COMMENT.getCode()) {
+// type = FeedMessageType.SELF_ROOM_COMMENT.getCode();
+// }
 
             // skip all categories except the one we care about
-            if (forType != -1 && type != forType) {
+            if (forType != -1 && categoryCode != forType) {
                 continue;
             }
 
-            IntSet typeMemberIds = memberIdsByType.get(type);
-            Integer numRecords = numRecordsByType.get(type);
+            IntSet typeMemberIds = memberIdsByType.get(categoryCode);
+            Integer numRecords = numRecordsByType.get(categoryCode);
             if (typeMemberIds == null) {
                 typeMemberIds = new ArrayIntSet();
-                memberIdsByType.put(type, typeMemberIds);
+                memberIdsByType.put(categoryCode, typeMemberIds);
                 numRecords = 0;
-                numRecordsByType.put(type, 0);
+                numRecordsByType.put(categoryCode, 0);
             }
 
             // all levelling records are returned, they get aggregated into a single item
-            if (type == FeedMessageType.FRIEND_GAINED_LEVEL.getCode()) {
+            if (categoryCode == FeedMessageType.FRIEND_GAINED_LEVEL.getCode()) {
                 allChosenRecords.add(record);
 
             // include friend activities from the first itemsPerCategory friends
@@ -224,7 +227,7 @@ public class MeServlet extends MsoyServiceServlet
             // include the first itemsPerCategory non-friend messages in each category
             } else {
                 if (numRecords < itemsPerCategory) {
-                    numRecordsByType.put(type, numRecords + 1);
+                    numRecordsByType.put(categoryCode, numRecords + 1);
                     allChosenRecords.add(record);
                 }
             }
@@ -236,16 +239,21 @@ public class MeServlet extends MsoyServiceServlet
         // group up the resolved messages by category
         List<FeedCategory> feed = Lists.newArrayList();
         for (FeedMessageType type : FeedMessageType.values()) {
+            int categoryCode = FeedMessageType.getCategoryCode(type.getCode());
 
             // pull out messages of the right category (combine global & group announcements)
             List<FeedMessage> typeMessages = Lists.newArrayList();
             for (FeedMessage message : allChosenMessages) {
-                if ((message.type != FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()
-                        && message.type == type.getCode())
-                    || (message.type == FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()
-                            && type == FeedMessageType.GROUP_ANNOUNCEMENT)) {
+                if (FeedMessageType.getCategoryCode(message.type) == categoryCode) {
                     typeMessages.add(message);
                 }
+
+// if ((message.type != FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()
+// && message.type == type.getCode())
+// || (message.type == FeedMessageType.GLOBAL_ANNOUNCEMENT.getCode()
+// && type == FeedMessageType.GROUP_ANNOUNCEMENT)) {
+// typeMessages.add(message);
+// }
             }
             allChosenMessages.removeAll(typeMessages);
 
