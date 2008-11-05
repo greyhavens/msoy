@@ -305,16 +305,18 @@ public class MemberLogic
             }
 
             // Load top games
-            for (PopularPlacesSnapshot.Place place : pps.getTopGames()) {
-                if (!haveGames.contains(place.placeId)) {
-                    GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
-                    items[curItem++] = new HomePageItem(
-                        HomePageItem.ACTION_GAME, new BasicNavItemData(game.gameId, game.name),
-                        game.getThumbMediaDesc());
-                    haveGames.add(game.gameId);
-                }
-                if (curItem == items.length) {
-                    break;
+            if (curItem < items.length) {
+                for (PopularPlacesSnapshot.Place place : pps.getTopGames()) {
+                    if (!haveGames.contains(place.placeId)) {
+                        GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
+                        items[curItem++] = new HomePageItem(
+                            HomePageItem.ACTION_GAME, new BasicNavItemData(game.gameId, game.name),
+                            game.getThumbMediaDesc());
+                        haveGames.add(game.gameId);
+                    }
+                    if (curItem == items.length) {
+                        break;
+                    }
                 }
             }
 
