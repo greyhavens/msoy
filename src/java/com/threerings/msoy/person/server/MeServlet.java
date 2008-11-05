@@ -211,14 +211,14 @@ public class MeServlet extends MsoyServiceServlet
             // include friend activities from the first itemsPerCategory friends
             } else if (record instanceof FriendFeedMessageRecord) {
                 FriendFeedMessageRecord friendRecord = (FriendFeedMessageRecord)record;
-                if (typeKeys.contains(friendRecord.actorId)) {
+                if (typeKeys.contains(friendRecord.actorId + "")) {
                     allChosenRecords.add(record);
                 } else if (typeKeys.size() < itemsPerCategory) {
                     allChosenRecords.add(record);
                     typeKeys.add(friendRecord.actorId + "");
                 }
 
-            // group comments by the item/room commented on
+            // include comments on the first itemsPerCategory rooms and/or items
             } else if (categoryCode == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
                 SelfFeedMessageRecord selfMessage = (SelfFeedMessageRecord)record;
                 // fetch the room id or item id from the data
