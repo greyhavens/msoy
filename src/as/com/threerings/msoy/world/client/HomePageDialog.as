@@ -14,6 +14,7 @@ import mx.core.Container;
 import mx.containers.Tile;
 import mx.containers.Canvas;
 import mx.controls.Text;
+import mx.events.CloseEvent;
 
 import com.threerings.flash.GraphicsUtil;
 import com.threerings.flex.CommandButton;
@@ -33,6 +34,10 @@ import com.threerings.msoy.badge.data.all.BadgeCodes;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.item.data.all.Item;
 
+/**
+ * The "My Whirled Places" 3x3 grid of recent games and rooms you have visited, plus stamps and
+ * special actions like the Whirled Tour.  Displayed when landing in your home room.
+ */
 public class HomePageDialog extends FloatingPanel
 {
     public static var log :Log = Log.getLog(HomePageDialog);
@@ -41,6 +46,11 @@ public class HomePageDialog extends FloatingPanel
     {
         super(ctx);
         _wctx = ctx;
+        
+        // when the close button is pressed, log a tracking event
+        addEventListener(CloseEvent.CLOSE, function () :void {
+            _wctx.getMsoyClient().trackClientAction("whirledPlacesCloseClicked", null);
+        });
 
         title = Msgs.GENERAL.get("t.home_page");
         showCloseButton = true;
@@ -248,35 +258,44 @@ public class HomePageDialog extends FloatingPanel
 
     protected function itemClicked (item :HomePageItem) :void
     {
+        var trackingDetails :String;
         switch (item.getAction()) {
 
         case HomePageItem.ACTION_GAME:
+            trackingDetails = "game_" + BasicNavItemData(item.getNavItemData()).getId();
             _wctx.getWorldController().handleJoinGameLobby(
                 BasicNavItemData(item.getNavItemData()).getId());
             break;
 
         case HomePageItem.ACTION_BADGE:
+            trackingDetails = "badge_" + InProgressBadge(item.getNavItemData()).badgeCode;
             badgeClicked(InProgressBadge(item.getNavItemData()).badgeCode);
             break;
 
         case HomePageItem.ACTION_GROUP:
+            trackingDetails = "group_" + BasicNavItemData(item.getNavItemData()).getId();
             _wctx.getWorldController().handleGoGroupHome(
                 BasicNavItemData(item.getNavItemData()).getId());
             break;
 
         case HomePageItem.ACTION_ROOM:
+            trackingDetails = "room_" + BasicNavItemData(item.getNavItemData()).getId();
             _wctx.getWorldController().handleGoScene(
                 BasicNavItemData(item.getNavItemData()).getId());
             break;
 
         case HomePageItem.ACTION_EXPLORE:
+            trackingDetails = "tour"
             startTour();
             break;
 
         default:
+            trackingDetails = "UNKNOWN"
             log.info("No action for " + item);
             break;
         }
+        
+        _wctx.getMsoyClient().trackClientAction("whirledPlacesItemClicked", trackingDetails);
     }
 
     protected function badgeClicked (code :int) :void
