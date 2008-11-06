@@ -17,11 +17,11 @@ import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
-import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
+import com.threerings.msoy.bureau.server.BureauLauncherSessionFactory;
 import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
 import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
-import com.threerings.msoy.bureau.server.MsoyBureauClientFactory;
+import com.threerings.msoy.bureau.server.MsoyBureauSessionFactory;
 
 import com.threerings.presents.client.InvocationService.ResultListener;
 
@@ -108,8 +108,8 @@ public class BureauManager
     {
         // now that our primary client factories are configured, we can register our chained bureau
         // factories which sit on top of whatever factory the server uses for normal clients
-        _clmgr.setClientFactory(new MsoyBureauClientFactory(_clmgr.getClientFactory()));
-        _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
+        _clmgr.setSessionFactory(new MsoyBureauSessionFactory(_clmgr.getSessionFactory()));
+        _clmgr.setSessionFactory(new BureauLauncherSessionFactory(_clmgr.getSessionFactory()));
     }
 
     /**

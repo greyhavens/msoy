@@ -12,7 +12,7 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.ClientFactory;
+import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.PresentsServer;
@@ -136,11 +136,11 @@ public class MsoyGameServer extends MsoyBaseServer
     }
 
     @Override // from MsoyBaseServer
-    protected void configClientFactory ()
+    protected void configSessionFactory ()
     {
         // set up the right client factory
-        _clmgr.setClientFactory(new ClientFactory() {
-            public Class<? extends PresentsSession> getClientClass (AuthRequest areq) {
+        _clmgr.setSessionFactory(new SessionFactory() {
+            public Class<? extends PresentsSession> getSessionClass (AuthRequest areq) {
                 return MsoyGameSession.class;
             }
             public Class<? extends ClientResolver> getClientResolverClass (Name username) {

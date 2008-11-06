@@ -31,7 +31,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.ClientFactory;
+import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.PresentsDObjectMgr;
@@ -60,7 +60,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;
-import com.threerings.msoy.bureau.server.WindowClientFactory;
+import com.threerings.msoy.bureau.server.WindowSessionFactory;
 import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.chat.server.MsoyChatChannelManager;
 import com.threerings.msoy.chat.server.MsoyChatProvider;
@@ -302,11 +302,11 @@ public class MsoyServer extends MsoyBaseServer
     }
 
     @Override // from MsoyBaseServer
-    protected void configClientFactory ()
+    protected void configSessionFactory ()
     {
         // configure our primary client factory
-        _clmgr.setClientFactory(new ClientFactory() {
-            public Class<? extends PresentsSession> getClientClass (final AuthRequest areq) {
+        _clmgr.setSessionFactory(new SessionFactory() {
+            public Class<? extends PresentsSession> getSessionClass (final AuthRequest areq) {
                 return MsoySession.class;
             }
             public Class<? extends ClientResolver> getClientResolverClass (final Name username) {
@@ -317,7 +317,7 @@ public class MsoyServer extends MsoyBaseServer
         // Add in the authenticator and client factory which will allow bureau windows (for avrgs)
         // to be distinguished and connected
         _conmgr.addChainedAuthenticator(new WindowAuthenticator(ServerConfig.windowSharedSecret));
-        _clmgr.setClientFactory(new WindowClientFactory(_clmgr.getClientFactory()));
+        _clmgr.setSessionFactory(new WindowSessionFactory(_clmgr.getSessionFactory()));
     }
 
     @Override // from PresentsServer

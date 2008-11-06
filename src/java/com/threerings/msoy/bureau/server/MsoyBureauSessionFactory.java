@@ -5,7 +5,7 @@ package com.threerings.msoy.bureau.server;
 
 import com.threerings.bureau.data.BureauCredentials;
 import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.server.ClientFactory;
+import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.util.Name;
@@ -13,29 +13,29 @@ import com.threerings.util.Name;
 /**
  * Overrides the usual client stuff with classes specific to msoy bureaus.
  */
-public class MsoyBureauClientFactory
-    implements ClientFactory
+public class MsoyBureauSessionFactory
+    implements SessionFactory
 {
     /**
      * Creats a new bureau client factory.
      */
-    public MsoyBureauClientFactory (ClientFactory delegate)
+    public MsoyBureauSessionFactory (SessionFactory delegate)
     {
         _delegate = delegate;
     }
 
-    // from ClientFactory
-    public Class<? extends PresentsSession> getClientClass (AuthRequest areq)
+    // from SessionFactory
+    public Class<? extends PresentsSession> getSessionClass (AuthRequest areq)
     {
         // Just give bureau launchers a vanilla PresentsSession client.
         if (areq.getCredentials() instanceof BureauCredentials) {
             return MsoyBureauClient.class;
         } else {
-            return _delegate.getClientClass(areq);
+            return _delegate.getSessionClass(areq);
         }
     }
 
-    // from ClientFactory
+    // from SessionFactory
     public Class<? extends ClientResolver> getClientResolverClass (Name username)
     {
         if (BureauCredentials.isBureau(username)) {
@@ -45,5 +45,5 @@ public class MsoyBureauClientFactory
         }
     }
 
-    ClientFactory _delegate;
+    SessionFactory _delegate;
 }

@@ -94,7 +94,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         _bureauMgr.init(getListenPorts()[0]);
         
         // set up the right client factories
-        configClientFactory();
+        configSessionFactory();
 
         _bureauMgr.configClientFactories();
     }
@@ -102,7 +102,7 @@ public abstract class MsoyBaseServer extends WhirledServer
     /**
      * Derived classes need to override this and configure their main client factory.
      */
-    protected abstract void configClientFactory ();
+    protected abstract void configSessionFactory ();
 
     @Override // from PresentsServer
     protected void invokerDidShutdown ()

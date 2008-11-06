@@ -7,7 +7,7 @@ import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.bureau.data.WindowCredentials;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.server.ClientFactory;
+import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.util.Name;
@@ -15,29 +15,29 @@ import com.threerings.util.Name;
 /**
  * Creates very basic clients for bureau window connections, otherwise delegates.
  */
-public class WindowClientFactory implements ClientFactory
+public class WindowSessionFactory implements SessionFactory
 {
     /**
      * Creates a new factory.
      * @param delegate factory to use when a non-window launcher connection is encountered
      */
-    public WindowClientFactory (ClientFactory delegate)
+    public WindowSessionFactory (SessionFactory delegate)
     {
         _delegate = delegate;
     }
 
-    // from interface ClientFactory
-    public Class<? extends PresentsSession> getClientClass (AuthRequest areq)
+    // from interface SessionFactory
+    public Class<? extends PresentsSession> getSessionClass (AuthRequest areq)
     {
         if (areq.getCredentials() instanceof WindowCredentials) {
             return WindowSession.class;
 
         } else {
-            return _delegate.getClientClass(areq);
+            return _delegate.getSessionClass(areq);
         }
     }
 
-    // from interface ClientFactory
+    // from interface SessionFactory
     public Class<? extends ClientResolver> getClientResolverClass (Name username)
     {
         // Just give bureau windows a vanilla ClientResolver.
@@ -67,5 +67,5 @@ public class WindowClientFactory implements ClientFactory
         }
     }
     
-    protected ClientFactory _delegate;
+    protected SessionFactory _delegate;
 }
