@@ -166,6 +166,7 @@ public class RoomEditorController
                     (update as FurniUpdate_Remove).data.getItemIdent())) {
                 setTarget(null, null);
             }
+            updateNameDisplay();
         }
     }
 
