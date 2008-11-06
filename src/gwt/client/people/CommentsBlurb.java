@@ -48,7 +48,7 @@ public class CommentsBlurb extends Blurb
     protected class WallPanel extends CommentsPanel
     {
         public WallPanel (int memberId) {
-            super(Comment.TYPE_PROFILE_WALL, memberId, Integer.MAX_VALUE);
+            super(Comment.TYPE_PROFILE_WALL, memberId, COMMENTS_PER_PAGE);
             addStyleName("Wall");
             removeStyleName("dottedGrid");
             setVisible(true); // trigger immediate loading of our model
@@ -60,7 +60,7 @@ public class CommentsBlurb extends Blurb
 
         @Override // from PagedGrid
         protected boolean displayNavi (int items) {
-            return false; // don't need it
+            return (items > COMMENTS_PER_PAGE);
         }
 
         @Override // from CommentsPanel
@@ -79,4 +79,6 @@ public class CommentsBlurb extends Blurb
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+
+    protected static final int COMMENTS_PER_PAGE = 20;
 }
