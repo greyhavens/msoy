@@ -35,7 +35,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.util.PersistingUnit;
 
@@ -109,7 +109,7 @@ public class MemberManager
                 mlocal.metrics.save(memobj);
 
                 // update the number of active seconds they've spent online
-                MsoyClient mclient = (MsoyClient)_clmgr.getClient(memobj.username);
+                MsoySession mclient = (MsoySession)_clmgr.getClient(memobj.username);
                 if (mclient != null) {
                     mlocal.sessionSeconds += mclient.getSessionSeconds();
                     // let our client handler know that the session is not over but rather is being
@@ -852,7 +852,7 @@ public class MemberManager
     {
         final MemberObject mobj = _locator.lookupMember(memberId);
         if (mobj != null) {
-            final PresentsClient pclient = _clmgr.getClient(mobj.username);
+            final PresentsSession pclient = _clmgr.getClient(mobj.username);
             if (pclient != null) {
                 pclient.endSession();
                 return true;

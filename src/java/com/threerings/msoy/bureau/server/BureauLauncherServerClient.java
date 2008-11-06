@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.bureau.server;
 
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 
 import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 
 /**
  * Represents a bureau launcher connection.
  */
-public class BureauLauncherServerClient extends PresentsClient
+public class BureauLauncherServerClient extends PresentsSession
 {
     @Override
     protected void sessionWillStart ()

@@ -19,7 +19,7 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.server.MsoyClient;
+import com.threerings.msoy.server.MsoySession;
 import com.threerings.msoy.server.persist.HotnessConfig;
 
 import static com.threerings.msoy.Log.log;
@@ -74,9 +74,9 @@ public class RuntimeConfig
 
         public boolean allowSubscribe (DObject object, Subscriber<?> subscriber) {
             // if the subscriber is a client; make sure they're an admin
-            if (MsoyClient.class.isInstance(subscriber)) {
+            if (MsoySession.class.isInstance(subscriber)) {
                 MemberObject user = (MemberObject)
-                    MsoyClient.class.cast(subscriber).getClientObject();
+                    MsoySession.class.cast(subscriber).getClientObject();
                 return user.tokens.isAdmin();
             }
             return true;

@@ -9,7 +9,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.util.Name;
 
 /**
@@ -27,9 +27,9 @@ public class BureauLauncherClientFactory implements ClientFactory
     }
 
     // from interface ClientFactory
-    public Class<? extends PresentsClient> getClientClass (AuthRequest areq)
+    public Class<? extends PresentsSession> getClientClass (AuthRequest areq)
     {
-        // Just give bureau launchers a vanilla PresentsClient client.
+        // Just give bureau launchers a vanilla PresentsSession client.
         if (areq.getCredentials() instanceof BureauLauncherCredentials) {
             return BureauLauncherServerClient.class;
         } else {

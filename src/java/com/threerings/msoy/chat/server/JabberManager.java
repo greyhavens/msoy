@@ -48,7 +48,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.crowd.chat.data.UserMessage;
@@ -162,7 +162,7 @@ public class JabberManager
     }
 
     // from interface ClientManager.ClientObserver
-    public void clientSessionDidStart (PresentsClient client)
+    public void clientSessionDidStart (PresentsSession client)
     {
         if (!_conn.isConnected() || !(client.getClientObject() instanceof MemberObject)) {
             return;
@@ -179,7 +179,7 @@ public class JabberManager
     }
 
     // from interface ClientManager.ClientObserver
-    public void clientSessionDidEnd (PresentsClient client)
+    public void clientSessionDidEnd (PresentsSession client)
     {
         if (!_conn.isConnected() || !(client.getClientObject() instanceof MemberObject)) {
             return;

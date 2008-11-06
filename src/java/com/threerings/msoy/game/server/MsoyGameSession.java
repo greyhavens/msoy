@@ -5,7 +5,7 @@ package com.threerings.msoy.game.server;
 
 import com.google.inject.Inject;
 
-import com.threerings.crowd.server.CrowdClient;
+import com.threerings.crowd.server.CrowdSession;
 
 import com.threerings.msoy.Log;
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -18,9 +18,9 @@ import com.threerings.msoy.server.MsoyEventLogger;
 /**
  * Manages the server side of a client connection for the MSOY Game server.
  */
-public class MsoyGameClient extends CrowdClient
+public class MsoyGameSession extends CrowdSession
 {
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void sessionWillStart ()
     {
         super.sessionWillStart();
@@ -50,7 +50,7 @@ public class MsoyGameClient extends CrowdClient
         _locator.playerLoggedOn(_plobj);
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void sessionConnectionClosed ()
     {
         super.sessionConnectionClosed();
@@ -61,7 +61,7 @@ public class MsoyGameClient extends CrowdClient
         }
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void sessionDidEnd ()
     {
         super.sessionDidEnd();

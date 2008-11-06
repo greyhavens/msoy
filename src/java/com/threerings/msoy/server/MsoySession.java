@@ -22,7 +22,7 @@ import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
-import com.threerings.whirled.server.WhirledClient;
+import com.threerings.whirled.server.WhirledSession;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.room.server.persist.MemoryRecord;
@@ -44,7 +44,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Represents an attached Msoy client on the server-side.
  */
-public class MsoyClient extends WhirledClient
+public class MsoySession extends WhirledSession
 {
     /**
      * Called by the peer manager to let us know that our session was forwarded to another server.
@@ -66,13 +66,13 @@ public class MsoyClient extends WhirledClient
         return connectTime - _idleTracker.getIdleTime();
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected BootstrapData createBootstrapData ()
     {
         return new MsoyBootstrapData();
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void sessionWillStart ()
     {
         super.sessionWillStart();
@@ -109,7 +109,7 @@ public class MsoyClient extends WhirledClient
         _locator.memberLoggedOn(_memobj);
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void resumeSession (AuthRequest req, Connection conn)
     {
         // note that we're in the middle of resuming a session so that we don't end our session
@@ -119,7 +119,7 @@ public class MsoyClient extends WhirledClient
         super.resumeSession(req, conn);
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void sessionConnectionClosed ()
     {
         super.sessionConnectionClosed();
@@ -132,7 +132,7 @@ public class MsoyClient extends WhirledClient
         }
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void sessionWillResume ()
     {
         super.sessionWillResume();
@@ -141,7 +141,7 @@ public class MsoyClient extends WhirledClient
         _resumingSession = false;
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void sessionDidEnd ()
     {
         super.sessionDidEnd();

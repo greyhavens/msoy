@@ -33,7 +33,7 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.ShutdownManager;
@@ -306,8 +306,8 @@ public class MsoyServer extends MsoyBaseServer
     {
         // configure our primary client factory
         _clmgr.setClientFactory(new ClientFactory() {
-            public Class<? extends PresentsClient> getClientClass (final AuthRequest areq) {
-                return MsoyClient.class;
+            public Class<? extends PresentsSession> getClientClass (final AuthRequest areq) {
+                return MsoySession.class;
             }
             public Class<? extends ClientResolver> getClientResolverClass (final Name username) {
                 return MsoyClientResolver.class;

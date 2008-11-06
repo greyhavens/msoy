@@ -36,7 +36,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         return new PlayerObject();
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void resolveClientData (ClientObject clobj)
         throws Exception
     {
@@ -80,7 +80,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
             _memberRepo.loadFriends(member.memberId, -1));
 
         // for players, resolve this here from the database.
-        // guests will get resolution later on, in MsoyGameClient.sessionWillStart()
+        // guests will get resolution later on, in MsoyGameSession.sessionWillStart()
         playerObj.visitorInfo = new VisitorInfo(member.visitorId, true);
     }
 

@@ -6,14 +6,14 @@ package com.threerings.msoy.bureau.server;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 
 /**
  * Represents a bureau window connection.
  */
-public class WindowServerClient extends PresentsClient
+public class WindowServerClient extends PresentsSession
 {
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void subscribedToObject (DObject object)
     {
         super.subscribedToObject(object);
@@ -23,7 +23,7 @@ public class WindowServerClient extends PresentsClient
         }
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected void unsubscribedFromObject (DObject object)
     {
         super.unsubscribedFromObject(object);

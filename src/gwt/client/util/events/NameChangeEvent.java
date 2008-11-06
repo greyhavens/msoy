@@ -9,7 +9,7 @@ import client.util.JavaScriptUtil;
 
 public class NameChangeEvent extends FlashEvent
 {
-    /** The name of this event type: defined in MsoyClient.as. */
+    /** The name of this event type: defined in MsoySession.as. */
     public static final String NAME = "nameChange";
 
     public NameChangeEvent ()

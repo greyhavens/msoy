@@ -14,13 +14,13 @@ import client.util.JavaScriptUtil;
  */
 public class FriendEvent extends FlashEvent
 {
-    /** The action dispatched when a friend is added: defined in MsoyClient.as. */
+    /** The action dispatched when a friend is added: defined in MsoySession.as. */
     public static final int FRIEND_ADDED = 1;
 
-    /** The action dispatched when a friend is removed: defined in MsoyClient.as. */
+    /** The action dispatched when a friend is removed: defined in MsoySession.as. */
     public static final int FRIEND_REMOVED = 2;
 
-    /** The name of this event type: defined in MsoyClient.as. */
+    /** The name of this event type: defined in MsoySession.as. */
     public static final String NAME = "friend";
 
     @Override // FlashEvent

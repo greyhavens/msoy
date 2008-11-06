@@ -14,7 +14,7 @@ import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.ShutdownManager;
 
@@ -112,6 +112,12 @@ public class MsoyGameServer extends MsoyBaseServer
         // connect back to our parent world server
         _worldClient.init(_listenPort, _connectPort);
 
+        new com.samskivert.util.Interval(_omgr) {
+            public void expired () {
+                log.info("ZOMG! Bang!");
+                _shutmgr.shutdown();
+            }
+        }.schedule(10000L);
         log.info("Game server initialized.");
     }
 
@@ -134,8 +140,8 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         // set up the right client factory
         _clmgr.setClientFactory(new ClientFactory() {
-            public Class<? extends PresentsClient> getClientClass (AuthRequest areq) {
-                return MsoyGameClient.class;
+            public Class<? extends PresentsSession> getClientClass (AuthRequest areq) {
+                return MsoyGameSession.class;
             }
             public Class<? extends ClientResolver> getClientResolverClass (Name username) {
                 return MsoyGameClientResolver.class;

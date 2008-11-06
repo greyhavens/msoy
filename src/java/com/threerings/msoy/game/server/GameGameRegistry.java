@@ -38,7 +38,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultListenerList;
@@ -1101,7 +1101,7 @@ public class GameGameRegistry
     protected void killBureauSession (int gameId)
     {
         String bureauId = BureauTypes.GAME_BUREAU_ID_PREFIX + gameId;
-        PresentsClient bureau = _bureauReg.lookupClient(bureauId);
+        PresentsSession bureau = _bureauReg.lookupClient(bureauId);
         if (bureau != null) {
             bureau.endSession();
         }

@@ -26,7 +26,7 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.presents.peer.data.ClientInfo;
@@ -454,7 +454,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     @Override // from CrowdPeerManager
-    protected void initClientInfo (PresentsClient client, ClientInfo info)
+    protected void initClientInfo (PresentsSession client, ClientInfo info)
     {
         super.initClientInfo(client, info);
 
@@ -470,7 +470,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     @Override // from PeerManager
-    protected void clearClientInfo (PresentsClient client, ClientInfo info)
+    protected void clearClientInfo (PresentsSession client, ClientInfo info)
     {
         super.clearClientInfo(client, info);
 
@@ -492,7 +492,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     @Override // from PeerManager
-    protected boolean ignoreClient (PresentsClient client)
+    protected boolean ignoreClient (PresentsSession client)
     {
         // don't publish information about anonymous lurkers to our peers
         return super.ignoreClient(client) || (client.getUsername() instanceof LurkerName) ||

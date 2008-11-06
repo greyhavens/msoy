@@ -12,13 +12,13 @@ import client.util.JavaScriptUtil;
  */
 public class SceneBookmarkEvent extends FlashEvent
 {
-    /** The action dispatched when a scene is added: defined in MsoyClient.as. */
+    /** The action dispatched when a scene is added: defined in MsoySession.as. */
     public static final int SCENEBOOKMARK_ADDED = 1;
 
-    /** The action dispatched when a scene is removed: defined in MsoyClient.as. */
+    /** The action dispatched when a scene is removed: defined in MsoySession.as. */
     public static final int SCENEBOOKMARK_REMOVED = 2;
 
-    /** The name of this event type: defined in MsoyClient.as. */
+    /** The name of this event type: defined in MsoySession.as. */
     public static final String NAME = "sceneBookmark";
 
     public SceneBookmarkEvent ()

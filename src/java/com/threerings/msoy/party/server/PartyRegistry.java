@@ -15,7 +15,7 @@ import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.Subscriber;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
@@ -105,8 +105,8 @@ public class PartyRegistry
         public boolean allowSubscribe (DObject object, Subscriber<?> sub)
         {
             // if the subscriber is a client, ensure that they are this same user
-            if (PresentsClient.class.isInstance(sub)) {
-//                 MemberObject mobj = (MemberObject)PresentsClient.class.cast(sub).getClientObject();
+            if (PresentsSession.class.isInstance(sub)) {
+//                 MemberObject mobj = (MemberObject)PresentsSession.class.cast(sub).getClientObject();
 //                 PartyObject pobj = (PartyObject)object;
 //                 return mobj.partyId == pobj.partyId;
                 return true;

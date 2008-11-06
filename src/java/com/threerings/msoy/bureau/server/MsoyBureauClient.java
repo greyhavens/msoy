@@ -7,7 +7,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.InvocationResponseEvent;
-import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.msoy.game.data.PlayerObject;
 
 import static com.threerings.msoy.Log.log;
@@ -18,7 +18,7 @@ import static com.threerings.msoy.Log.log;
  * contain plain data, the transient fields and methods incur a very large import footprint
  * including many ui and mx classes. These do not compile under thane.
  */
-public class MsoyBureauClient extends PresentsClient
+public class MsoyBureauClient extends PresentsSession
 {
     /**
      * Notifies this client that an agent has been added. Increases message allowance.
@@ -50,7 +50,7 @@ public class MsoyBureauClient extends PresentsClient
         setThrottle();
     }
 
-    @Override // from PresentsClient
+    @Override // from PresentsSession
     protected ClientProxy createProxySubscriber ()
     {
         return new SubProxy();
