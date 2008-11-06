@@ -96,16 +96,6 @@ public class Prefs
         return (id in _bleepedMedia);
     }
 
-//    public static function getMediaPosition (id :String) :Number
-//    {
-//        return (config.getValue(mediaKey(id), 0) as Number);
-//    }
-//
-//    public static function setMediaPosition (id :String, position :Number) :void
-//    {
-//        config.setValue(mediaKey(id), position);
-//    }
-
     public static function getSoundVolume () :Number
     {
         return (config.getValue(VOLUME, 1) as Number);
@@ -129,11 +119,11 @@ public class Prefs
 
     /**
      * Get the preferred chat font size.
-     * Default value: 10.
+     * Default value: 14.
      */
     public static function getChatFontSize () :int
     {
-        return (config.getValue(CHAT_FONT_SIZE, 10) as int);
+        return (config.getValue(CHAT_FONT_SIZE, 14) as int);
     }
 
     /**
@@ -220,24 +210,6 @@ public class Prefs
     {
         config.setValue(OCCUPANT_LIST, showing);
     }
-
-    public static function getLogToChat () :Boolean
-    {
-        return (config.getValue(LOG_TO_CHAT, false) as Boolean);
-    }
-
-    public static function setLogToChat (logToChat :Boolean) :void
-    {
-        config.setValue(LOG_TO_CHAT, logToChat);
-    }
-
-//    /**
-//     * Internal function to create a media position key.
-//     */
-//    private static function mediaKey (id :String) :String
-//    {
-//        return "mediaPos_" + id;
-//    }
 
     protected static function checkLoadBlockedMedia () :void
     {
