@@ -15,7 +15,7 @@ import client.util.JavaScriptUtil;
  */
 public class GotGuestIdEvent extends FlashEvent
 {
-    /** The name of this event type: defined in MsoySession.as. */
+    /** The name of this event type: defined in MsoyClient.as. */
     public static final String NAME = "gotGuestId";
 
     public GotGuestIdEvent ()
