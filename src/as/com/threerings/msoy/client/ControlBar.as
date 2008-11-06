@@ -202,8 +202,8 @@ public class ControlBar extends HBox
         _volBtn = createButton(getVolumeStyle(Prefs.getSoundVolume()), "i.volume");
         _volBtn.setCallback(handlePopVolume);
 
-        _fullBtn = createButton("controlBarButtonFull", "i.full");
-        _fullBtn.setCallback(handleFullScreen);
+//        _fullBtn = createButton("controlBarButtonFull", "i.full");
+//        _fullBtn.setCallback(handleFullScreen);
 
         _commentBtn = createButton("controlBarButtonComment", "i.comment");
         _commentBtn.setCommand(MsoyController.VIEW_COMMENT_PAGE);
@@ -273,10 +273,10 @@ public class ControlBar extends HBox
 
         // add buttons
         addButton(_volBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], VOLUME_PRIORITY);
-        if (false && DeploymentConfig.devDeployment) {
-            addButton(_fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ],
-                GLOBAL_PRIORITY);
-        }
+//        if (DeploymentConfig.devDeployment) {
+//            addButton(_fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ],
+//                GLOBAL_PRIORITY);
+//        }
 
         addButton(_instructBtn, [ UI_GAME ]);
         addButton(_shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
@@ -381,16 +381,16 @@ public class ControlBar extends HBox
         _volBtn.styleName = getVolumeStyle(level);
     }
 
-    protected function handleFullScreen () :void
-    {
-        try {
-            stage.displayState = (stage.displayState != StageDisplayState.FULL_SCREEN)
-                ? StageDisplayState.FULL_SCREEN
-                : StageDisplayState.NORMAL;
-        } catch (se :SecurityError) {
-            _fullBtn.enabled = false;
-        }
-    }
+//    protected function handleFullScreen () :void
+//    {
+//        try {
+//            stage.displayState = (stage.displayState != StageDisplayState.FULL_SCREEN)
+//                ? StageDisplayState.FULL_SCREEN
+//                : StageDisplayState.NORMAL;
+//        } catch (se :SecurityError) {
+//            _fullBtn.enabled = false;
+//        }
+//    }
 
     protected static const CHAT_SECTION :int = -2;
     protected static const BUTTON_SECTION :int = -1;
@@ -431,7 +431,7 @@ public class ControlBar extends HBox
     protected var _volBtn :CommandButton;
 
     /** Handles full screening. */
-    protected var _fullBtn :CommandButton;
+//    protected var _fullBtn :CommandButton;
 
     /** Handles viewing game instructions. */
     protected var _instructBtn :CommandButton;
