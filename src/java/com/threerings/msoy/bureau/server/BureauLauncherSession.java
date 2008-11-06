@@ -10,7 +10,7 @@ import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 /**
  * Represents a bureau launcher connection.
  */
-public class BureauLauncherServerClient extends PresentsSession
+public class BureauLauncherSession extends PresentsSession
 {
     @Override
     protected void sessionWillStart ()

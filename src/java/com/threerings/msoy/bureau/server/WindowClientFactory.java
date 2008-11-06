@@ -30,7 +30,7 @@ public class WindowClientFactory implements ClientFactory
     public Class<? extends PresentsSession> getClientClass (AuthRequest areq)
     {
         if (areq.getCredentials() instanceof WindowCredentials) {
-            return WindowServerClient.class;
+            return WindowSession.class;
 
         } else {
             return _delegate.getClientClass(areq);

@@ -31,7 +31,7 @@ public class BureauLauncherClientFactory implements ClientFactory
     {
         // Just give bureau launchers a vanilla PresentsSession client.
         if (areq.getCredentials() instanceof BureauLauncherCredentials) {
-            return BureauLauncherServerClient.class;
+            return BureauLauncherSession.class;
         } else {
             return _delegate.getClientClass(areq);
         }

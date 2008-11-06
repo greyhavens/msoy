@@ -39,8 +39,8 @@ import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
 
-import com.threerings.msoy.bureau.server.BureauLauncherServerClient;
-import com.threerings.msoy.bureau.server.WindowServerClient;
+import com.threerings.msoy.bureau.server.BureauLauncherSession;
+import com.threerings.msoy.bureau.server.WindowSession;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -496,8 +496,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         // don't publish information about anonymous lurkers to our peers
         return super.ignoreClient(client) || (client.getUsername() instanceof LurkerName) ||
-            (client instanceof BureauLauncherServerClient) ||
-            (client instanceof WindowServerClient);
+            (client instanceof BureauLauncherSession) ||
+            (client instanceof WindowSession);
     }
 
     @Override // from PeerManager

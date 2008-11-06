@@ -11,7 +11,7 @@ import com.threerings.presents.server.PresentsSession;
 /**
  * Represents a bureau window connection.
  */
-public class WindowServerClient extends PresentsSession
+public class WindowSession extends PresentsSession
 {
     @Override // from PresentsSession
     protected void subscribedToObject (DObject object)
