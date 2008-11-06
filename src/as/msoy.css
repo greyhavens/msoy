@@ -1063,17 +1063,6 @@ BasePanel {
 .lobbyMatchPanel {
 }
 
-.tablesTitle {
-  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/subtitle_bg.png",
-                         scaleGridTop="8", scaleGridBottom="14", 
-                         scaleGridLeft="10", scaleGridRight="41");
-  backgroundSize: "100%";
-  color: #FFFFFF;
-  fontSize: 10;
-  fontWeight: bold;
-  horizontalAlign: center;
-}
-
 .tableHeader {
   paddingTop: 5px;
 }
@@ -1147,41 +1136,11 @@ BasePanel {
   horizontalGap: 3px;
 }
 
-.embedButton {
-  height: 13px;
-  width: 13px;
-  overSkin: Embed(source="../../rsrc/media/skins/button/embed_over.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/embed_down.png");
-  upSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/embed_over.png");
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/embed_down.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
-}
-
 .friendCheckBox {
   horizontalAlign: center;
   verticalGap: 0;
   borderStyle: none;
   borderThickness: 0;
-}
-
-.backToLobbyBtnBox {
-  paddingTop: 7px;
-  paddingRight: 5px;
-  verticalAlign: top;
-}
-
-.backToLobbyBtn {
-  overSkin: Embed(source="../../rsrc/media/skins/button/backtolobby_over.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/backtolobby_down.png");
-  upSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/backtolobby_over.png");
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/backtolobby_down.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
 }
 
 .chatContainer {
