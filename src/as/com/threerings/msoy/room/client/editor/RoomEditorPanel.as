@@ -428,12 +428,12 @@ public class RoomEditorPanel extends FlyingPanel
         right.addChild(makeActionButton(_controller.actionUndo, "roomEditUndo",
                                         "undo", _undoButtons, true));
         
-        var undoall :UIComponent = makeActionButton(
-            _controller.actionUndo, "roomEditUndoAll", "undo_all", null, true);
-        undoall.enabled = false;
         // commented out for beta - rz, 3/19/08
         //   the "undo all" functionality requires some way to consolidate all undo updates
         //   into one, so that we don't flood the server with a ton of messages
+        // var undoall :UIComponent = makeActionButton(
+        //    _controller.actionUndo, "roomEditUndoAll", "undo_all", null, true);
+        // undoall.enabled = false;
         // right.addChild(undoall);
 
         // Instead, we're putting a custom config button in its place
