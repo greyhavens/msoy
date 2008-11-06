@@ -69,6 +69,11 @@ public class FeedRepository extends DepotRepository
             groups = new Conditionals.In(GroupFeedMessageRecord.GROUP_ID_C, groupIds);
             loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, since);
         }
+
+        // include actions the member has performed
+        SQLOperator actor = new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, memberId);
+        loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, since);
+
         return messages;
     }
 

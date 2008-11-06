@@ -111,7 +111,7 @@ public class PlayerFeedPanel extends FlowPanel
                     }
                 }
 
-                add(new FeedMessagePanel(message));
+                add(new FeedMessagePanel(message, false));
             }
         }
     }

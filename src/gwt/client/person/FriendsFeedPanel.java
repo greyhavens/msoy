@@ -71,7 +71,7 @@ public class FriendsFeedPanel extends FlowPanel
         List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages, false);
 
         for (FeedMessage message : messages) {
-            categoryPanel.add(new FeedMessagePanel(message));
+            categoryPanel.add(new FeedMessagePanel(message, true));
         }
     }
 

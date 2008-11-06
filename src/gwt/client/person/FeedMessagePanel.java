@@ -30,6 +30,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.person.FeedMessageAggregator.AggregateMessage;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -41,8 +42,13 @@ import client.util.NaviUtil;
  */
 public class FeedMessagePanel extends FlowPanel
 {
-    public FeedMessagePanel (FeedMessage message)
+    /**
+     * @param usePronouns If true, say "You updated the trophy" if current member is the actor.
+     */
+    public FeedMessagePanel (FeedMessage message, boolean usePronouns)
     {
+        this._usePronouns = usePronouns;
+
         if (message instanceof FriendFeedMessage) {
             addFriendMessage((FriendFeedMessage)message);
         } else if (message instanceof GroupFeedMessage) {
@@ -62,7 +68,7 @@ public class FeedMessagePanel extends FlowPanel
 
     protected void addFriendMessage (FriendFeedMessage message)
     {
-        String friendLink = profileLink(message.friend);
+        String friendLink = profileLink(message);
         switch (message.type) {
         case 100: // FRIEND_ADDED_FRIEND
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendAddedFriend(friendLink,
@@ -121,7 +127,7 @@ public class FeedMessagePanel extends FlowPanel
             if (message.actor == null) {
                 return; // TEMP: skip old pre-actor messages
             }
-            String roomText = _pmsgs.selfRoomComment(profileLink(message.actor),
+            String roomText = _pmsgs.selfRoomComment(profileLink(message),
                 buildString(message));
             add(new ThumbnailWidget(buildMedia(message), roomText));
             break;
@@ -145,26 +151,26 @@ public class FeedMessagePanel extends FlowPanel
 
     protected String profileLink (FeedMessage message)
     {
+        MemberName member;
         if (message instanceof FriendFeedMessage) {
-            return profileLink(((FriendFeedMessage)message).friend);
+            member = ((FriendFeedMessage)message).friend;
         } else if (message instanceof SelfFeedMessage) {
-            return profileLink(((SelfFeedMessage)message).actor);
+            member = ((SelfFeedMessage)message).actor;
         } else {
-            return null;
+            member = null;
         }
-    }
-
-    protected String profileLink (MemberName friend)
-    {
-        if (friend == null) {
+        if (member == null) {
             // very old data may not include actor/friend
             return _pmsgs.feedProfileMemberUnknown();
         }
-        return profileLink(friend.toString(), String.valueOf(friend.getMemberId()));
+        return profileLink(member.toString(), String.valueOf(member.getMemberId()));
     }
 
     protected String profileLink (String name, String id)
     {
+        if (_usePronouns && id.trim().equals(CShell.getMemberId() + "")) {
+            return _pmsgs.feedProfileMemberYou();
+        }
         return Link.createHtml(name, Pages.PEOPLE, id);
     }
 
@@ -411,7 +417,7 @@ public class FeedMessagePanel extends FlowPanel
         String friendLink = profileLink(message);
         switch (message.type) {
         case 100: // FRIEND_ADDED_FRIEND
-            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendAddedFriends(friendLink,
+            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendAddedFriend(friendLink,
                 standardCombine(list))));
             break;
 
@@ -456,7 +462,7 @@ public class FeedMessagePanel extends FlowPanel
         String friendLinks = profileCombine(list);
         switch (message.type) {
         case 100: // FRIEND_ADDED_FRIEND
-            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendAddedFriendsRight(
+            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendAddedFriend(
                 friendLinks, buildString(message))));
             break;
 
@@ -559,4 +565,7 @@ public class FeedMessagePanel extends FlowPanel
     protected static final DateTimeFormat _dateFormater = DateTimeFormat.getFormat("MMMM d:");
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
+
+    /** Whether to say "You earned the trophy" or "Bob earned the trophy" */
+    protected boolean _usePronouns;
 }

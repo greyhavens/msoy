@@ -13,6 +13,7 @@ import java.util.List;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.FriendFeedMessage;
+import com.threerings.msoy.person.gwt.SelfFeedMessage;
 
 import client.shell.CShell;
 import client.util.DateUtil;
@@ -277,6 +278,15 @@ public class FeedMessageAggregator extends FlowPanel
                 // don't show the same friend's level gain more than once
                 for (FeedMessage msg : this.messages) {
                     if (((FriendFeedMessage)msg).friend.equals(((FriendFeedMessage)message).friend)) {
+                        return true;
+                    }
+                }
+                break;
+            case 300: // SELF_ROOM_COMMENT
+            case 301: // SELF_ITEM_COMMENT
+                // don't show the same friend's comment more than once
+                for (FeedMessage msg : this.messages) {
+                    if (((SelfFeedMessage)msg).actor.equals(((SelfFeedMessage)message).actor)) {
                         return true;
                     }
                 }
