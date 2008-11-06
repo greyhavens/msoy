@@ -871,7 +871,7 @@ BasePanel {
 }
 
 .sliderPopup {
-  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_background.png",
+  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/slider_background.png",
           scaleGridTop="1", scaleGridBottom="23",
           scaleGridLeft="1", scaleGridRight="31");
   backgroundSize: "100%";
