@@ -11,6 +11,7 @@ import com.threerings.flash.GraphicsUtil;
 import com.threerings.flash.MediaContainer;
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.MsoySprite;
+import com.threerings.msoy.room.client.RoomElementSprite;
 
 /**
  * Component responsible for tracking and highlighting targets of mouse hovers and editing actions.
@@ -24,7 +25,7 @@ public class FurniHighlight
 
     public function start () :void
     {
-        _border = new Sprite();
+        _border = new RoomElementSprite();
         _controller.roomView.addChild(_border);
         target = null;
     }
@@ -99,7 +100,6 @@ public class FurniHighlight
     protected var _target :FurniSprite;
 
     /** Sprite that contains a UI to display over the target. */
-    protected var _border :Sprite;
-
+    protected var _border :RoomElementSprite;
 }
 }

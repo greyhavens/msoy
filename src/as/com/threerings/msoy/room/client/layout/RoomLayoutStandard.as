@@ -362,11 +362,10 @@ public class RoomLayoutStandard implements RoomLayout
     {
         var re :RoomElement = _parentView.getChildAt(index) as RoomElement;
         if (re == null) {
-            Log.getLog(this).warning("Non room element in room " +
-                "[index=" + index + ", numChildren=" + _parentView.numChildren +
-                ", displayObject=" + _parentView.getChildAt(index).name + "].");
-            Log.dumpStack();
-            return 0;
+            Log.getLog(this).warning("Non room element in room",
+                "index", index, "numChildren", _parentView.numChildren,
+                "displayObject", _parentView.getChildAt(index), new Error());
+            return -1; // whatever it is, put it in front of everything
         }
 
         var layer :int = re.getRoomLayer();
