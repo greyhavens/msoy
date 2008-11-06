@@ -112,12 +112,6 @@ public class MsoyGameServer extends MsoyBaseServer
         // connect back to our parent world server
         _worldClient.init(_listenPort, _connectPort);
 
-        new com.samskivert.util.Interval(_omgr) {
-            public void expired () {
-                log.info("ZOMG! Bang!");
-                _shutmgr.shutdown();
-            }
-        }.schedule(10000L);
         log.info("Game server initialized.");
     }
 
