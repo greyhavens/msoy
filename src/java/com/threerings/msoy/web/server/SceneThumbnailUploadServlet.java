@@ -94,11 +94,16 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
         // if scene was just published, record it to the feed now that we have the snapshot
         SceneRecord sceneRecord = _sceneRepo.loadScene(sceneId);
         Timestamp oneMinuteAgo = new Timestamp((new Date()).getTime() - 60 * 1000L);
-        if (sceneRecord.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER
-            && sceneRecord.lastPublished != null && sceneRecord.lastPublished.after(oneMinuteAgo)) {
-            _feedRepo.publishMemberMessage(sceneRecord.ownerId,
-                FeedMessageType.FRIEND_UPDATED_ROOM, String.valueOf(sceneId) + "\t"
-                    + sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
+        if (sceneRecord.lastPublished != null && sceneRecord.lastPublished.after(oneMinuteAgo)) {
+            if (sceneRecord.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                _feedRepo.publishMemberMessage(sceneRecord.ownerId,
+                    FeedMessageType.FRIEND_UPDATED_ROOM, String.valueOf(sceneId) + "\t"
+                        + sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
+            } else {
+                _feedRepo.publishGroupMessage(sceneRecord.ownerId,
+                    FeedMessageType.GROUP_UPDATED_ROOM, String.valueOf(sceneId) + "\t"
+                        + sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
+            }
         }
     }
 

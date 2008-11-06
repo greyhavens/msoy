@@ -55,7 +55,7 @@ public class FriendsFeedPanel extends FlowPanel
         categoryPanel.add(MsoyUI.createActionLabel(showMoreText, "FeedShowMore",
             new ClickListener() {
                 public void onClick (Widget sender) {
-                    _mesvc.loadFeedCategory(category.type, !fullSize,
+                    _mesvc.loadFeedCategory(category.category, !fullSize,
                         new MsoyCallback<FeedCategory>() {
                             public void onSuccess (FeedCategory data) {
                                 fillCategory(categoryPanel, data, !fullSize);
@@ -64,7 +64,7 @@ public class FriendsFeedPanel extends FlowPanel
                 }
             }));
 
-        categoryPanel.add(MsoyUI.createLabel(_dmsgs.xlate("feedCategory" + category.type),
+        categoryPanel.add(MsoyUI.createLabel(_dmsgs.xlate("feedCategory" + category.category),
             "FeedCategoryHeader"));
 
         // combine feed items performed by the same person

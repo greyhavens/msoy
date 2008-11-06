@@ -102,8 +102,14 @@ public class FeedMessagePanel extends FlowPanel
         case 200: // GROUP_ANNOUNCEMENT
             String threadLink = Link.createHtml(
                 message.data[1], Pages.WHIRLEDS, Args.compose("t", message.data[2]));
-            add(new ThumbnailWidget(buildMedia(message), 
+            add(new ThumbnailWidget(buildMedia(message),
                 _pmsgs.groupAnnouncement(message.data[0], threadLink)));
+            break;
+        case 201: // GROUP_UPDATED_ROOM
+            String groupLink = Link.createHtml(message.group.toString(), Pages.WHIRLEDS,
+                Args.compose("f", message.group.getGroupId()));
+            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendUpdatedRoom(
+                groupLink, buildString(message))));
             break;
         }
     }
@@ -172,6 +178,7 @@ public class FeedMessagePanel extends FlowPanel
             return profileLink(message.data[0], message.data[1]);
 
         case 101: // FRIEND_UPDATED_ROOM
+        case 201: // GROUP_UPDATED_ROOM
             return Link.createHtml(message.data[1], Pages.WORLD, "s" + message.data[0]);
 
         case 102: // FRIEND_WON_TROPHY
@@ -197,6 +204,8 @@ public class FeedMessagePanel extends FlowPanel
 
             int memberId = ((FriendFeedMessage)message).friend.getMemberId();
             return Link.createHtml(badgeName, Pages.ME, Args.compose("passport", memberId));
+
+        // case 201: // GROUP_UPDATED_ROOM is above
 
         case 300: // SELF_ROOM_COMMENT
             return Link.createHtml(message.data[1], Pages.WORLD, Args.compose("room",
@@ -235,6 +244,7 @@ public class FeedMessagePanel extends FlowPanel
             return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
 
         case 101: // FRIEND_UPDATED_ROOM
+        case 201: // GROUP_UPDATED_ROOM
             if (message.data.length < 3) {
                 return null;
             }
@@ -289,7 +299,7 @@ public class FeedMessagePanel extends FlowPanel
             image.setHeight(MediaDesc.getHeight(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
             image.addClickListener(Link.createListener(Pages.ME, "passport"));
             return image;
-            
+
         case 200: // GROUP_ANNOUNCEMENT
             if (message.data.length < 4) {
                 return null;
@@ -304,7 +314,9 @@ public class FeedMessagePanel extends FlowPanel
                 }
             };
             return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
-            
+
+        // case 201: // GROUP_UPDATED_ROOM is above
+
         case 300: // SELF_ROOM_COMMENT
             if (message.data.length < 3) {
                 return null;

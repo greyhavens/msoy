@@ -17,22 +17,25 @@ public enum FeedMessageType
     // global messages
     GLOBAL_ANNOUNCEMENT(1),
 
+    // friend messages
+    FRIEND_ADDED_FRIEND(100), FRIEND_UPDATED_ROOM(101, 1, oneDay()), FRIEND_WON_TROPHY(102, 3,
+            oneDay()), FRIEND_LISTED_ITEM(103, 3, oneDay()),
+    FRIEND_GAINED_LEVEL(104, 1, oneDay()), FRIEND_WON_BADGE(105, 3, oneDay()),
+
     // group messages
     GROUP_ANNOUNCEMENT(200, 2, oneDay()),
+    GROUP_UPDATED_ROOM(201, 1, oneDay()),
 
     // self messages
     SELF_ROOM_COMMENT(300),
     SELF_ITEM_COMMENT(301),
 
-    // friend messages
-    FRIEND_ADDED_FRIEND(100),
-    FRIEND_LISTED_ITEM(103, 3, oneDay()),
-    FRIEND_WON_TROPHY(102, 3, oneDay()),
-    FRIEND_UPDATED_ROOM(101, 1, oneDay()),
-    FRIEND_WON_BADGE(105, 3, oneDay()),
-    FRIEND_GAINED_LEVEL(104, 1, oneDay()),
-
     UNUSED(999);
+
+    /** Types are grouped together into categories */
+    public static enum Category {
+        ANNOUNCEMENTS, COMMENTS, FRIENDINGS, LISTED_ITEMS, TROPHIES, ROOMS, BADGES, LEVELS;
+    }
 
     /**
      * Looks up a {@link FeedMessageType} by its numerical representation and return it.
@@ -46,14 +49,30 @@ public enum FeedMessageType
      * Some types will be grouped together to a single category for display. Return the code for
      * the category a given type belongs in.
      */
-    public static int getCategoryCode (int code)
+    public static Category getCategory (int code)
     {
-        if (code == SELF_ITEM_COMMENT._code) {
-            return SELF_ROOM_COMMENT._code;
-        } else if (code == GROUP_ANNOUNCEMENT._code) {
-            return GLOBAL_ANNOUNCEMENT._code;
-        } else {
-            return code;
+        switch(code) {
+        case 1: // GLOBAL_ANNOUNCEMENT
+        case 200: // GROUP_ANNOUNCEMENT
+            return Category.ANNOUNCEMENTS;
+        case 100: // FRIEND_ADDED_FRIEND
+            return Category.FRIENDINGS;
+        case 101: // FRIEND_UPDATED_ROOM
+        case 201: // GROUP_UPDATED_ROOM
+            return Category.ROOMS;
+        case 102: // FRIEND_WON_TROPHY
+            return Category.TROPHIES;
+        case 103: // FRIEND_LISTED_ITEM
+            return Category.LISTED_ITEMS;
+        case 104: // FRIEND_GAINED_LEVEL
+            return Category.LEVELS;
+        case 105: // FRIEND_WON_BADGE
+            return Category.BADGES;
+        case 300: // SELF_ROOM_COMMENT
+        case 301: // SELF_ITEM_COMMENT
+            return Category.COMMENTS;
+        default:
+            return null;
         }
     }
 

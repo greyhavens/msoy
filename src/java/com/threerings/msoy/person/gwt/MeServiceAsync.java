@@ -23,7 +23,7 @@ public interface MeServiceAsync
     /**
      * The asynchronous version of {@link MeService#loadFeedCategory}.
      */
-    void loadFeedCategory (int feedType, boolean fullSize, AsyncCallback<FeedCategory> callback);
+    void loadFeedCategory (int category, boolean fullSize, AsyncCallback<FeedCategory> callback);
 
     /**
      * The asynchronous version of {@link MeService#loadBadges}.

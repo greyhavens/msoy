@@ -30,7 +30,7 @@ public interface MeService extends RemoteService
      * Loads the data for one category of the feed for the me page. If fullsize is true include up
      * to 50 items from the last week, otherwise 3.
      */
-    FeedCategory loadFeedCategory (int feedType, boolean fullSize)
+    FeedCategory loadFeedCategory (int category, boolean fullSize)
         throws ServiceException;
 
     /**
