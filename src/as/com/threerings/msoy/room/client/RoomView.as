@@ -887,6 +887,7 @@ public class RoomView extends Sprite
             spriteWillUpdate(sprite);
             sprite.update(furni);
             spriteDidUpdate(sprite);
+            locationUpdated(sprite);
 
             dispatchEntityEntered(sprite.getItemIdent());
         } else {

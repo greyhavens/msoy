@@ -105,7 +105,11 @@ public class MsoySprite extends DataPackMediaContainer
     {
         this.x = x;
         this.y = y;
-        if (useLocationScale() && scale != _locScale) {
+
+        if (!useLocationScale()) {
+            scale = 1;
+        }
+        if (scale != _locScale) {
             _locScale = scale;
             scaleUpdated();
         }
