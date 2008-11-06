@@ -513,7 +513,8 @@ TabNavigator, TabBar {
 .controlBarHoverZone, .controlBarButtonSnapshot, .controlBarFriendButton, .controlBarTalkButton,
 .controlBarIdleButton, .controlBarScaleButton, .controlBarAVRGButton, .tickButton,
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
-.controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton {
+.controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton,
+.roomEditResetLocation, .roomEditResetScale, .roomEditResetRotation {
   upSkin: ClassReference(null);
   downSkin: ClassReference(null);
   overSkin: ClassReference(null);
@@ -899,24 +900,15 @@ BasePanel {
 }
 
 .roomEditResetLocation {
-  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
+  image: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
 }
 
 .roomEditResetScale {
-  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
+  image: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
 }
 
 .roomEditResetRotation {
-  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
+  image: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
 }
 
 .attentionLabel {
