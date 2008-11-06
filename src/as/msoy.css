@@ -340,8 +340,7 @@ LinkButton {
   color: #AAB5B9;
   textRollOverColor: #AAB5B9;
   textSelectedColor: #AAB5B9;
-  overSkin: Embed(source="../../rsrc/media/skins/blank.png");
-  downSkin: Embed(source="../../rsrc/media/skins/blank.png");
+  skin: ClassReference(null);
   paddingLeft: 0;
   paddingTop: 0;
   paddingBottom: 0;
