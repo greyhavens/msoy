@@ -41,7 +41,7 @@ public class MemberInfo extends ActorInfo
         _game = memobj.game;
 
         // note our greeterness
-        _greeter = memobj.greeter;
+        _greeter = memobj.tokens.isGreeter();
     }
 
     /** Used for unserialization. */

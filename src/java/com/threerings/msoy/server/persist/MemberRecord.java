@@ -337,6 +337,12 @@ public class MemberRecord extends PersistentRecord
         } else if (isSet(Flag.SUPPORT)) {
             tokens |= MsoyTokenRing.SUPPORT;
         }
+
+        // This can be set independently of the other flags
+        if (isSet(Flag.GREETER)) {
+            tokens |= MsoyTokenRing.GREETER;
+        }
+
         return new MsoyTokenRing(tokens);
     }
 

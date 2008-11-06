@@ -180,10 +180,16 @@ public class ProfileServlet extends MsoyServiceServlet
             _memberRepo.storeFlags(memrec);
         }
         
-        if (statusChanged || nameChanged || photoChanged || greeterChanged) {
+        if (statusChanged || nameChanged || photoChanged) {
             // let the world servers know about the info change
             MemberNodeActions.infoChanged(
-                memrec.memberId, displayName, nrec.getPhoto(), nrec.headline, greeter);
+                memrec.memberId, displayName, nrec.getPhoto(), nrec.headline);
+        }
+
+        if (greeterChanged) {
+            // let the world servers know about the info change
+            MemberNodeActions.tokensChanged(
+                memrec.memberId, memrec.toTokenRing());
         }
     }
 

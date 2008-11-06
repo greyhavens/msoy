@@ -15,6 +15,7 @@ import com.threerings.stats.data.StatModifier;
 
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -52,10 +53,19 @@ public class MemberNodeActions
      * logged into.
      */
     public static void infoChanged (
-        final int memberId, final String displayName, final MediaDesc photo, final String status,
-        final boolean greeter)
+        final int memberId, final String displayName, final MediaDesc photo, final String status)
     {
-        _peerMan.invokeNodeAction(new InfoChanged(memberId, displayName, photo, status, greeter));
+        _peerMan.invokeNodeAction(new InfoChanged(memberId, displayName, photo, status));
+    }
+
+    /**
+     * Dispatches a notification that a member's privileges have changed to whichever server they
+     * are logged into.
+     */
+    public static void tokensChanged (
+        final int memberId, MsoyTokenRing tokens)
+    {
+        _peerMan.invokeNodeAction(new TokensChanged(memberId, tokens));
     }
 
     /**
@@ -176,12 +186,11 @@ public class MemberNodeActions
     protected static class InfoChanged extends MemberNodeAction
     {
         public InfoChanged (
-            int memberId, String displayName, MediaDesc photo, String status, boolean greeter) {
+            int memberId, String displayName, MediaDesc photo, String status) {
             super(memberId);
             _displayName = displayName;
             _photo = photo;
             _status = status;
-            _greeter = greeter;
         }
 
         public InfoChanged () {
@@ -191,7 +200,6 @@ public class MemberNodeActions
         protected void execute (final MemberObject memobj) {
             memobj.updateDisplayName(_displayName, _photo);
             memobj.setHeadline(_status);
-            memobj.setGreeter(_greeter);
             _memberMan.updateOccupantInfo(memobj);
 
             // Update FriendEntrys on friend's member objects.  Rather than preparing a
@@ -205,7 +213,28 @@ public class MemberNodeActions
         protected String _displayName;
         protected MediaDesc _photo;
         protected String _status;
-        protected boolean _greeter;
+
+        @Inject protected transient MemberManager _memberMan;
+    }
+
+    protected static class TokensChanged extends MemberNodeAction
+    {
+        public TokensChanged (
+            int memberId, MsoyTokenRing tokens) {
+            super(memberId);
+            _tokens = tokens;
+        }
+
+        public TokensChanged () {
+        }
+
+        @Override
+        protected void execute (final MemberObject memobj) {
+            memobj.setTokens(_tokens);
+            _memberMan.updateOccupantInfo(memobj);
+        }
+
+        protected MsoyTokenRing _tokens;
 
         @Inject protected transient MemberManager _memberMan;
     }

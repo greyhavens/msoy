@@ -16,6 +16,9 @@ public class MsoyTokenRing extends TokenRing
     /** Indicates that the user has maintainer privileges. */
     public static final int MAINTAINER = (1 << 2);
 
+    /** Indicates that the user has greeter privileges. */
+    public static final int GREETER = (1 << 3);
+
     /**
      * A default constructor, used when unserializing token rings.
      */
@@ -51,5 +54,13 @@ public class MsoyTokenRing extends TokenRing
     public boolean isAdmin ()
     {
         return holdsAnyToken(ADMIN | MAINTAINER);
+    }
+    
+    /**
+     * Convenience function for checking whether this ring confers greeter privileges.
+     */
+    public boolean isGreeter ()
+    {
+        return holdsToken(GREETER);
     }
 }
