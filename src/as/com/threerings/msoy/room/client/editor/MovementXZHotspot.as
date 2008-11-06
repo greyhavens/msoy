@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.room.client.editor {
 
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.events.MouseEvent;
+import flash.geom.ColorTransform;
 import flash.geom.Point;
 
 import com.threerings.flash.MathUtil;
@@ -64,8 +67,13 @@ public class MovementXZHotspot extends Hotspot
     {
         // do not call super - we're providing different bitmaps
         _displayStandard = new HOTSPOTXZ() as DisplayObject;
-        _displayMouseOver = new HOTSPOTXZ_OVER() as DisplayObject;
-        _displayYMouseOver = new HOTSPOTY_OVER() as DisplayObject;
+        const bd :BitmapData = (_displayStandard as Bitmap).bitmapData;
+
+        _displayMouseOver = new Bitmap(bd);
+        _displayMouseOver.transform.colorTransform = new ColorTransform(1.25, 1.25, 1.25);
+
+        _displayYMouseOver = new Bitmap(bd);
+        _displayYMouseOver.transform.colorTransform = new ColorTransform(.5, .5, .5);
     }
 
     /** Moves the furni over to the new location. */
@@ -116,12 +124,7 @@ public class MovementXZHotspot extends Hotspot
     /** Bitmap used for hotspot with mouseover when shift pressed. */
     protected var _displayYMouseOver :DisplayObject;
 
-    // Bitmaps galore!
     [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_move_xz.png")]
     public static const HOTSPOTXZ :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_move_xz_over.png")]
-    public static const HOTSPOTXZ_OVER :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_move_y_over.png")]
-    public static const HOTSPOTY_OVER :Class;
 }
 }

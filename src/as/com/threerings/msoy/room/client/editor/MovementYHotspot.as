@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.room.client.editor {
 
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.events.MouseEvent;
+import flash.geom.ColorTransform;
 
 import com.threerings.flash.MathUtil;
 import com.threerings.msoy.room.client.ClickLocation;
@@ -42,7 +45,9 @@ public class MovementYHotspot extends Hotspot
     {
         // do not call super - we're providing different bitmaps
         _displayStandard = new HOTSPOT() as DisplayObject;
-        _displayMouseOver = new HOTSPOT_OVER() as DisplayObject;
+
+        _displayMouseOver = new Bitmap((_displayStandard as Bitmap).bitmapData);
+        _displayMouseOver.transform.colorTransform = new ColorTransform(1.25, 1.25, 1.25);
     }
 
     /** Moves the furni over to the new location. */
@@ -64,7 +69,5 @@ public class MovementYHotspot extends Hotspot
     // Bitmaps galore!
     [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_move_y.png")]
     public static const HOTSPOT :Class;
-    [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_move_y_over.png")]
-    public static const HOTSPOT_OVER :Class;
 }
 }
