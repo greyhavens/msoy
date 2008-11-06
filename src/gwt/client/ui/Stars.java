@@ -22,11 +22,14 @@ public class Stars extends FlowPanel
 
     public Stars (float rating, boolean isAverage, boolean halfSize, StarMouseListener handler)
     {
-        setStyleName("stars");
-
         _starType = (isAverage ? "average" : "user");
         _halfSize = halfSize;
         _handler = handler;
+
+        setStyleName("stars");
+        if (halfSize) {
+            addStyleName("starsSmall");
+        }
 
         // add the 10 images whose src url's we mercilessly mutate throughout this widget
         for (int ii = 0; ii < 10; ii ++) {

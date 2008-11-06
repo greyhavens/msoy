@@ -740,6 +740,14 @@ img, embed, applet, object {
   padding: 0px;
 }
 
+.stars {
+  width: 80px;
+}
+
+.starsSmall {
+  width: 50px;
+}
+
 .stars img {
   display: inline;
 }
