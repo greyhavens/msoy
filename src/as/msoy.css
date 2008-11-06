@@ -125,10 +125,11 @@ TitleWindow {
 }
 
 .entityPopup {
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/furni_popup_bg.png",
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/window/entity_title.png",
           scaleGridTop="8", scaleGridBottom="14",
           scaleGridLeft="8", scaleGridRight="28");
   backgroundImage: null;
+  borderColor: #729b46;
 }
 
 /*
