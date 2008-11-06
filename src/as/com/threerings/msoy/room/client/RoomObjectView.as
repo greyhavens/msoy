@@ -160,22 +160,9 @@ public class RoomObjectView extends RoomView
             _bg.setEditing(_editing);
         }
 
-        if (_editing) {
-
-            // see if we need to recreate the overlay
-            if (_backdropOverlay == null) {
-                _backdropOverlay = new BackdropOverlay();
-                addChild(_backdropOverlay);
-                updateEditingOverlay();
-            }
-
-        } else {
-            // destroy the overlay if it's still around
-            if (_backdropOverlay != null) {
-                removeChild(_backdropOverlay);
-                _backdropOverlay = null;
-            }
-
+        showBackdropOverlay(_editing);
+        updateEditingOverlay();
+        if (!_editing) {
             // definitely update the furni
             updateAllFurni();
         }

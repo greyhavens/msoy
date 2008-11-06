@@ -779,6 +779,23 @@ public class RoomView extends Sprite
     }
 
     /**
+     * Show or hide the backdrop overlay.
+     */
+    protected function showBackdropOverlay (show :Boolean) :void
+    {
+        if (show == (_backdropOverlay == null)) {
+            if (show) {
+                _backdropOverlay = new BackdropOverlay();
+                addChild(_backdropOverlay);
+
+            } else {
+                removeChild(_backdropOverlay);
+                _backdropOverlay = null;
+            }
+        }
+    }
+
+    /**
      * Called when we detect a body being added or removed.
      */
     protected function portalTraversed (loc :Location, entering :Boolean) :void
@@ -1030,4 +1047,19 @@ public class RoomView extends Sprite
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
 }
+}
+
+import com.threerings.msoy.room.client.RoomElementSprite
+
+class BackdropOverlay extends RoomElementSprite
+{  
+    public function BackdropOverlay ()
+    {
+        mouseEnabled = false;
+    }
+
+    override public function setScreenLocation (x :Number, y :Number, scale :Number) :void
+    {
+        // no op - this object cannot be moved, it's always displayed directly on top of the room
+    }
 }

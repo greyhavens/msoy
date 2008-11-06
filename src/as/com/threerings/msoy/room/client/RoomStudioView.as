@@ -271,8 +271,7 @@ public class RoomStudioView extends RoomView
         initViewDecor(params);
         addDefaultFurni();
 
-        _backdropOverlay = new BackdropOverlay();
-        addChild(_backdropOverlay);
+        showBackdropOverlay(true);
         _layout.updateScreenLocation(_backdropOverlay);
 
         // open the panel
