@@ -56,13 +56,13 @@ public interface NaviImages extends ImageBundle
     @Resource("stuff_selected.png")
     AbstractImagePrototype sstuff ();
 
-    @Resource("worlds.png")
+    @Resource("groups.png")
     AbstractImagePrototype worlds ();
 
-    @Resource("worlds_over.png")
+    @Resource("groups_over.png")
     AbstractImagePrototype oworlds ();
 
-    @Resource("worlds_selected.png")
+    @Resource("groups_selected.png")
     AbstractImagePrototype sworlds ();
 
     @Resource("rooms.png")

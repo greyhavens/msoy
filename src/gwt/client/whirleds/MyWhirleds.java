@@ -118,10 +118,10 @@ public class MyWhirleds extends AbsolutePanel
             headers.setStyleName("Headers");
             controls.setWidget(1, 0, headers);
             controls.getFlexCellFormatter().setColSpan(1, 0, 7);
-            headers.add(MsoyUI.createLabel("Whirled Name", "WhirledNameHeader"));
-            headers.add(MsoyUI.createLabel("Latest Post", "LatestPostHeader"));
-            headers.add(MsoyUI.createLabel("Threads", "ThreadsHeader"));
-            headers.add(MsoyUI.createLabel("Posts", "PostsHeader"));
+            headers.add(MsoyUI.createLabel(_msgs.myHeaderName(), "WhirledNameHeader"));
+            headers.add(MsoyUI.createLabel(_msgs.myHeaderLatest(), "LatestPostHeader"));
+            headers.add(MsoyUI.createLabel(_msgs.myHeaderThreadCount(), "ThreadsHeader"));
+            headers.add(MsoyUI.createLabel(_msgs.myHeaderPostCount(), "PostsHeader"));
         }
 
         /**

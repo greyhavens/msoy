@@ -74,9 +74,9 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case WHIRLEDS:
-            addLink(null, "Whirleds", Pages.WHIRLEDS, "");
+            addLink(null, "Groups", Pages.WHIRLEDS, "");
             if (!CShell.isGuest()) {
-                addLink(null, "My Whirleds", Pages.WHIRLEDS, "mywhirleds");
+                addLink(null, "My Groups", Pages.WHIRLEDS, "mywhirleds");
                 addLink(null, "My Discussions", Pages.WHIRLEDS, "unread");
                 if (CShell.isSupport()) {
                     addLink(null, "Issues", Pages.WHIRLEDS, "b");
