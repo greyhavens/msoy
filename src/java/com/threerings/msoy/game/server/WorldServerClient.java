@@ -45,7 +45,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class WorldServerClient
-    implements MessageListener
+    implements MessageListener, ShutdownManager.Shutdowner
 {
     /** A message sent by our world server to let us know to shut down. */
     public static final String SHUTDOWN_MESSAGE = "shutdown";
@@ -72,6 +72,7 @@ public class WorldServerClient
     public void init (int listenPort, int connectPort)
     {
         _port = listenPort;
+        _shutmgr.registerShutdowner(this);
 
         // create our client and connect to the server
         _client = new Client(null, _omgr) {
@@ -233,6 +234,15 @@ public class WorldServerClient
             byte itemType = (Byte) args[2];
             String ident = (String) args[3];
             _gameReg.gameContentPurchased(playerId, gameId, itemType, ident);
+        }
+    }
+
+    // from interface ShutdownManager.Shutdowner
+    public void shutdown ()
+    {
+        // logoff if we're shutting down
+        if (_client.isLoggedOn()) {
+            _client.logoff(false);
         }
     }
 
