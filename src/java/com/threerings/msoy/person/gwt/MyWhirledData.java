@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
@@ -26,7 +25,7 @@ public class MyWhirledData
         /** How many feed messages to list in a category when "show more" is clicked */
         public static final int FULL_COUNT = 50;
 
-        /** The category of feed item - see {@link FeedMessageType.Category}. */
+        /** The category of feed item - see FeedMessageType.Category. */
         public int category;
 
         /** The highlighted games in this genre. */
