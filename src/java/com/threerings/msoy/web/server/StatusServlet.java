@@ -91,11 +91,11 @@ public class StatusServlet extends HttpServlet
     protected static Details parseDetails (String pathinfo)
     {
         try {
-            if (pathinfo.startsWith("/")) {
+            if (pathinfo != null && pathinfo.startsWith("/")) {
                 return Enum.valueOf(Details.class, pathinfo.substring(1).toUpperCase());
             }
         } catch (Exception e) {
-            log.info("Ingoring invalid status details", "pinfo", pathinfo);
+            log.info("Ignoring invalid status details", "pinfo", pathinfo);
         }
         return Details.NONE;
     }
