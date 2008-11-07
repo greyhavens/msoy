@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="FlvVideoPlayer,com.threerings.flash.video.FlvVideoPlayer,_duration,_netCon,_netStream,_positionChecker,_size,_sizeChecker,_state,_vid,_volume,log,getDisplay,getDuration,getPosition,getSize,getState,getVolume,handleAsyncError,handleIOError,handleMetaData,handleNetStatus,handlePositionCheck,handleSecurityError,handleSizeCheck,handleStreamNetStatus,load,pause,play,redispatchError,seek,setVolume,unload,updateState" name="keywords">
+<meta content="FlvVideoPlayer,com.threerings.flash.video.FlvVideoPlayer,_autoPlay,_duration,_netCon,_netStream,_positionChecker,_size,_sizeChecker,_state,_vid,_volume,log,getDisplay,getDuration,getPosition,getSize,getState,getVolume,handleAsyncError,handleIOError,handleMetaData,handleNetStatus,handlePositionCheck,handleSecurityError,handleSizeCheck,handleStreamNetStatus,load,pause,play,redispatchError,seek,setVolume,unload,updateState" name="keywords">
 <title>com.threerings.flash.video.FlvVideoPlayer</title>
 </head>
 <body>
@@ -57,6 +57,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_autoPlay">_autoPlay</a> : Boolean<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">FlvVideoPlayer</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_duration">_duration</a> : Number = NaN<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">FlvVideoPlayer</td>
 </tr>
@@ -104,7 +108,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#FlvVideoPlayer()">FlvVideoPlayer</a>()</div>
+<a class="signatureLink" href="#FlvVideoPlayer()">FlvVideoPlayer</a>(autoPlay:Boolean = true)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">FlvVideoPlayer</td>
 </tr>
@@ -299,10 +303,19 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="_autoPlay"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_autoPlay</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _autoPlay:Boolean</code>
+</div>
 <a name="_duration"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_duration</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_duration</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -390,7 +403,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function FlvVideoPlayer()</code>
+<code>public function FlvVideoPlayer(autoPlay:Boolean = true)</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">autoPlay</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
+</tr>
+</table>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>

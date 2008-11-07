@@ -129,7 +129,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#reinit()">reinit</a>(operations:int, period:int):void</div>
 <div class="summaryTableDescription">
      Updates the number of operations for this throttle to a new maximum, retaining the current
-     history of operations if the limit is being increased and truncating the oldest operations
+     history of operations if the limit is being increased and truncating the newest operations
      if the limit is decreased.</div>
 </td><td class="summaryTableOwnerCol">Throttle</td>
 </tr>
@@ -295,7 +295,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function reinit(operations:int, period:int):void</code><p>
      Updates the number of operations for this throttle to a new maximum, retaining the current
-     history of operations if the limit is being increased and truncating the oldest operations
+     history of operations if the limit is being increased and truncating the newest operations
      if the limit is decreased.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
