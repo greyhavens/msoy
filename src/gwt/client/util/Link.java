@@ -32,7 +32,7 @@ public class Link
      */
     public static Widget groupView (String label, int groupId)
     {
-        return create(label, Pages.WHIRLEDS, Args.compose("d", groupId));
+        return create(label, Pages.GROUPS, Args.compose("d", groupId));
     }
 
     /**

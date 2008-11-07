@@ -220,7 +220,7 @@
 
   <!-- enumerate our GWT pages -->
   <property name="pages1.list" value="account,adminz,games,help,landing,mail,me,people"/>
-  <property name="pages2.list" value="rooms,shop,stuff,support,swiftly,whirleds"/>
+  <property name="pages2.list" value="rooms,shop,stuff,support,swiftly,groups"/>
   <property name="gpages.list" value="frame,${pages1.list},${pages2.list}"/>
 
   <!-- declare our classpath -->

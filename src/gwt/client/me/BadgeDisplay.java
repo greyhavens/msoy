@@ -92,13 +92,13 @@ class BadgeDisplay extends FlowPanel
 
         switch (badge.badgeCode) {
         case BadgeCodes.FRIENDLY:
-            return Link.createListener(Pages.WHIRLEDS, "");
+            return Link.createListener(Pages.GROUPS, "");
 
         case BadgeCodes.MAGNET:
             return Link.createListener(Pages.PEOPLE, "invites");
 
         case BadgeCodes.FIXTURE:
-            return Link.createListener(Pages.WHIRLEDS, "");
+            return Link.createListener(Pages.GROUPS, "");
 
         case BadgeCodes.EXPLORER:
             return Link.createListener(Pages.ROOMS, "");

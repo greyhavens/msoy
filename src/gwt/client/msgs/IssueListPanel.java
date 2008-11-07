@@ -117,7 +117,7 @@ public class IssueListPanel extends PagedGrid<Issue>
 
             int col = 0;
             Widget toIssue = Link.create(
-                issue.description, Pages.WHIRLEDS, _linkPrefix + issue.issueId + _linkPostfix);
+                issue.description, Pages.GROUPS, _linkPrefix + issue.issueId + _linkPostfix);
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
 

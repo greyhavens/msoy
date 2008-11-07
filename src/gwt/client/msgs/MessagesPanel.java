@@ -291,7 +291,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
             if (_message.issueId > 0) {
                 ClickListener viewClick = Link.createListener(
-                    Pages.WHIRLEDS, Args.compose("i", _message.issueId));
+                    Pages.GROUPS, Args.compose("i", _message.issueId));
                 toolBar.add(makeInfoImage(_images.view_issue(),
                                                 _mmsgs.inlineIssue(), viewClick));
 
@@ -305,7 +305,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                                                 _mmsgs.inlineNewIssue(), newClick));
                 toolBar.add(makeInfoImage(_images.assign_issue(), _mmsgs.inlineAssignIssue(),
                                        Link.createListener(
-                                           Pages.WHIRLEDS, Args.compose(
+                                           Pages.GROUPS, Args.compose(
                                                "assign", ""+_message.messageId, ""+_page))));
             }
         }

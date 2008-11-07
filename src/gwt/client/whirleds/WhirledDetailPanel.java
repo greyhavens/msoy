@@ -152,7 +152,7 @@ public class WhirledDetailPanel extends FlowPanel
         enterButton.addStyleName("EnterButton");
         mainDetails.add(enterButton);
         PushButton discussionsButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
-            _msgs.detailForums(), Link.createListener(Pages.WHIRLEDS, Args.compose("f",
+            _msgs.detailForums(), Link.createListener(Pages.GROUPS, Args.compose("f",
                 _group.groupId)));
         discussionsButton.addStyleName("DiscussionsButton");
         mainDetails.add(discussionsButton);
@@ -227,7 +227,7 @@ public class WhirledDetailPanel extends FlowPanel
 
             String args = Args.compose("edit", _group.groupId);
             Label editWhirled = MsoyUI.createActionLabel(_msgs.detailEdit(), Link.createListener(
-                Pages.WHIRLEDS, args));
+                Pages.GROUPS, args));
             editWhirled.addStyleName("inline");
             managerActions.add(editWhirled);
 

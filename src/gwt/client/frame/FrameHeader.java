@@ -52,7 +52,7 @@ public class FrameHeader extends SmartTable
                   _images.sgames());
         addButton(col++, Pages.ROOMS, _cmsgs.menuRooms(), _images.rooms(), _images.orooms(),
                   _images.srooms());
-        addButton(col++, Pages.WHIRLEDS, _cmsgs.menuWorlds(), _images.worlds(), _images.oworlds(),
+        addButton(col++, Pages.GROUPS, _cmsgs.menuWorlds(), _images.worlds(), _images.oworlds(),
                   _images.sworlds());
         addButton(col++, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
                   _images.sshop());

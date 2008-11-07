@@ -120,7 +120,7 @@ public class EditIssuePanel extends TableFooterPanel
                     return true;
                 }
                 @Override protected boolean gotResult (Void result) {
-                    Link.go(Pages.WHIRLEDS, 
+                    Link.go(Pages.GROUPS, 
                         Args.compose("t", _message.threadId, _page, _messageId));
                     return false;
                 }

@@ -63,7 +63,7 @@ public class IssuePanel extends TitledListPanel
 
     public void redisplayIssues ()
     {
-        Link.go(Pages.WHIRLEDS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
+        Link.go(Pages.GROUPS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
     }
 
     public void displayIssue (int issueId, int owned)

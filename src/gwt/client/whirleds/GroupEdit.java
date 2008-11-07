@@ -129,7 +129,7 @@ public class GroupEdit extends FlexTable
         footer.add(WidgetUtil.makeShim(5, 5));
         footer.add(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                Link.go(Pages.WHIRLEDS, _group.groupId == 0 ? "" :
+                Link.go(Pages.GROUPS, _group.groupId == 0 ? "" :
                         Args.compose("d", _group.groupId));
             }
         }));
@@ -161,7 +161,7 @@ public class GroupEdit extends FlexTable
                 public void addMenuItems (final String tag, PopupMenu menu) {
                     menu.addMenuItem(_msgs.detailTagLink(), new Command() {
                         public void execute () {
-                            Link.go(Pages.WHIRLEDS, Args.compose("tag", "0", tag));
+                            Link.go(Pages.GROUPS, Args.compose("tag", "0", tag));
                         }
                     });
                 }
@@ -206,12 +206,12 @@ public class GroupEdit extends FlexTable
 
         final MsoyCallback<Void> updateCallback = new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
-                Link.go(Pages.WHIRLEDS, Args.compose("d", String.valueOf(_group.groupId), "r"));
+                Link.go(Pages.GROUPS, Args.compose("d", String.valueOf(_group.groupId), "r"));
             }
         };
         final MsoyCallback<Group> createCallback = new MsoyCallback<Group>() {
             public void onSuccess (Group group) {
-                Link.go(Pages.WHIRLEDS, Args.compose("d", String.valueOf(group.groupId), "r"));
+                Link.go(Pages.GROUPS, Args.compose("d", String.valueOf(group.groupId), "r"));
             }
         };
         // check if we're trying to set the policy to exclusive on a group that has tags

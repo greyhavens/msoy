@@ -47,13 +47,13 @@ public class CreatorsLinksPanel extends SimplePanel
 
         Image whirledsImage =
             MsoyUI.createActionImage("/images/landing/creators_info_whirleds.jpg",
-            Link.createListener(Pages.WHIRLEDS, ""));
+            Link.createListener(Pages.GROUPS, ""));
         whirledsImage.addClickListener(
             MsoyUI.createTrackingListener("creatorsLinksWhirledsClicked", null));
         content.add(whirledsImage, 7, 751);
 
         Image friendsImage = MsoyUI.createActionImage("/images/landing/creators_info_friends.jpg",
-            Link.createListener(Pages.WHIRLEDS, ""));
+            Link.createListener(Pages.GROUPS, ""));
         friendsImage.addClickListener(
             MsoyUI.createTrackingListener("creatorsLinksFriendsClicked", null));
         content.add(friendsImage, 311, 751);

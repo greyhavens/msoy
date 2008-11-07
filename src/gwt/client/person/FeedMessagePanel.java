@@ -107,12 +107,12 @@ public class FeedMessagePanel extends FlowPanel
         switch (message.type) {
         case 200: // GROUP_ANNOUNCEMENT
             String threadLink = Link.createHtml(
-                message.data[1], Pages.WHIRLEDS, Args.compose("t", message.data[2]));
+                message.data[1], Pages.GROUPS, Args.compose("t", message.data[2]));
             add(new ThumbnailWidget(buildMedia(message),
                 _pmsgs.groupAnnouncement(message.data[0], threadLink)));
             break;
         case 201: // GROUP_UPDATED_ROOM
-            String groupLink = Link.createHtml(message.group.toString(), Pages.WHIRLEDS,
+            String groupLink = Link.createHtml(message.group.toString(), Pages.GROUPS,
                 Args.compose("f", message.group.getGroupId()));
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendUpdatedRoom(
                 groupLink, buildString(message))));
@@ -143,7 +143,7 @@ public class FeedMessagePanel extends FlowPanel
         switch (message.type) {
         case 1: // GLOBAL_ANNOUNCEMENT
             String threadLink = Link.createHtml(
-                message.data[0], Pages.WHIRLEDS, Args.compose("t", message.data[1]));
+                message.data[0], Pages.GROUPS, Args.compose("t", message.data[1]));
             add(new BasicWidget(_pmsgs.globalAnnouncement(threadLink)));
             break;
         }
@@ -316,7 +316,7 @@ public class FeedMessagePanel extends FlowPanel
             }
             clicker = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Pages.WHIRLEDS, Args.compose("t", message.data[2]));
+                    Link.go(Pages.GROUPS, Args.compose("t", message.data[2]));
                 }
             };
             return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);

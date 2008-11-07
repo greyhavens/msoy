@@ -123,7 +123,7 @@ public class GameDetailPanel extends SmartTable
         Widget buttons = null;
         if (game.groupId > 0) {
             ClickListener onClick = Link.createListener(
-                Pages.WHIRLEDS, Args.compose("f", game.groupId));
+                Pages.GROUPS, Args.compose("f", game.groupId));
             buttons = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gdpDiscuss(), onClick);
         }
         ClickListener onClick = Link.createListener(Pages.SHOP, Args.compose("g", game.gameId));

@@ -83,7 +83,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             add(date);
 
             Widget subject = Link.create(
-                thread.subject, Pages.WHIRLEDS, Args.compose("t", thread.threadId));
+                thread.subject, Pages.GROUPS, Args.compose("t", thread.threadId));
             subject.setStyleName("Subject");
             add(subject);
 
@@ -117,7 +117,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
                 repliesText = _msgs.discussionReplies("" + (thread.posts-1));
             }
             Widget replies = Link.create(
-                repliesText, Pages.WHIRLEDS, Args.compose("t", thread.threadId));
+                repliesText, Pages.GROUPS, Args.compose("t", thread.threadId));
             replies.setStyleName("Replies");
             add(replies);
         }

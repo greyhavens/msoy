@@ -55,7 +55,7 @@ public class MyWhirleds extends AbsolutePanel
         _sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 byte newSortMethod = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
-                Link.go(Pages.WHIRLEDS, Args.compose("mywhirleds", newSortMethod));
+                Link.go(Pages.GROUPS, Args.compose("mywhirleds", newSortMethod));
             }
         });
 
@@ -135,7 +135,7 @@ public class MyWhirleds extends AbsolutePanel
 
                 // logo links to whirled
                 ClickListener whirledClick = Link.createListener(
-                    Pages.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
+                    Pages.GROUPS, Args.compose("d", card.name.getGroupId()));
                 ThumbBox logo = new ThumbBox(card.logo, whirledClick);
                 SimplePanel logoBox = new SimplePanel();
                 logoBox.setStyleName("LogoBox");
@@ -146,7 +146,7 @@ public class MyWhirleds extends AbsolutePanel
                 FlowPanel name = new FlowPanel();
                 name.setStyleName("Name");
                 Widget nameText = Link.create(
-                    card.name.toString(), Pages.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
+                    card.name.toString(), Pages.GROUPS, Args.compose("d", card.name.getGroupId()));
                 nameText.addStyleName("inline");
                 name.add(nameText);
                 // display a star beside name if player is a manager of this group
@@ -170,7 +170,7 @@ public class MyWhirleds extends AbsolutePanel
                 if (card.latestThread != null) {
 
                     Widget latestThreadSubject = Link.create(
-                        card.latestThread.subject, Pages.WHIRLEDS,
+                        card.latestThread.subject, Pages.GROUPS,
                         Args.compose("t", card.latestThread.threadId));
                     latestThreadSubject.setStyleName("LatestThreadSubject");
                     add(latestThreadSubject);
@@ -206,11 +206,11 @@ public class MyWhirleds extends AbsolutePanel
 
                 // #threads and #posts link to discussions
                 Widget numThreads = Link.create(
-                    card.numThreads+"", Pages.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
+                    card.numThreads+"", Pages.GROUPS, Args.compose("f", card.name.getGroupId()));
                 numThreads.addStyleName("NumThreads");
                 add(numThreads);
                 Widget numPosts = Link.create(
-                    card.numPosts+"", Pages.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
+                    card.numPosts+"", Pages.GROUPS, Args.compose("f", card.name.getGroupId()));
                 numPosts.addStyleName("NumPosts");
                 add(numPosts);
             }

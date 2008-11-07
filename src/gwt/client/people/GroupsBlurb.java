@@ -74,7 +74,7 @@ public class GroupsBlurb extends Blurb
                 return super.createEmptyContents();
             }
             return createEmptyTable(_msgs.notInGroupsSelf(),
-                                    _msgs.notInGroupsJoin(), Pages.WHIRLEDS, "");
+                                    _msgs.notInGroupsJoin(), Pages.GROUPS, "");
         }
 
         @Override // from PagedGrid
@@ -122,7 +122,7 @@ public class GroupsBlurb extends Blurb
 
             ClickListener groupClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Pages.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
+                    Link.go(Pages.GROUPS, Args.compose("d", card.name.getGroupId()));
                 }
             };
             add(new ThumbBox(card.logo, groupClick));

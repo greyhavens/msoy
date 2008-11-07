@@ -83,7 +83,7 @@ public class ThreadPanel extends TitledListPanel
     {
         _thread = thread;
         _theader.setText(0, 2, _thread.subject);
-        _theader.setWidget(0, 1, Link.create(_mmsgs.threadTitle(""+_thread.group), Pages.WHIRLEDS,
+        _theader.setWidget(0, 1, Link.create(_mmsgs.threadTitle(""+_thread.group), Pages.GROUPS,
                                              Args.compose("f", _thread.group.getGroupId())));
     }
 

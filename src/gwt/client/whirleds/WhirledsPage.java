@@ -110,7 +110,7 @@ public class WhirledsPage extends Page
     @Override
     public Pages getPageId ()
     {
-        return Pages.WHIRLEDS;
+        return Pages.GROUPS;
     }
 
     protected ForumModels _fmodels = new ForumModels();

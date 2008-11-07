@@ -74,13 +74,13 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case WHIRLEDS:
-            addLink(null, "Groups", Pages.WHIRLEDS, "");
+            addLink(null, "Groups", Pages.GROUPS, "");
             if (!CShell.isGuest()) {
-                addLink(null, "My Groups", Pages.WHIRLEDS, "mywhirleds");
-                addLink(null, "My Discussions", Pages.WHIRLEDS, "unread");
+                addLink(null, "My Groups", Pages.GROUPS, "mywhirleds");
+                addLink(null, "My Discussions", Pages.GROUPS, "unread");
                 if (CShell.isSupport()) {
-                    addLink(null, "Issues", Pages.WHIRLEDS, "b");
-                    addLink(null, "My Issues", Pages.WHIRLEDS, "owned");
+                    addLink(null, "Issues", Pages.GROUPS, "b");
+                    addLink(null, "My Issues", Pages.GROUPS, "owned");
                 }
             }
             break;
@@ -97,7 +97,7 @@ public class SubNaviPanel extends FlowPanel
         case HELP:
             addLink(null, "Help", Pages.HELP, "");
             addLink(null, "Contact Us", Pages.SUPPORT, "");
-            addLink(null, "Report Bug", Pages.WHIRLEDS, Args.compose("f", 72));
+            addLink(null, "Report Bug", Pages.GROUPS, Args.compose("f", 72));
             if (CShell.isSupport()) {
                 addLink(null, "Admin", Pages.SUPPORT, "admin");
             }
