@@ -19,6 +19,8 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.ObjectDeathListener;
+import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
@@ -105,8 +107,7 @@ public class WorldGameRegistry
                     try {
                         _handlers[ii] = new GameServerHandler(port);
                     } catch (Exception e) {
-                        log.warning("Failed to start up game server " +
-                                "[port=" + port + "].", e);
+                        log.warning("Failed to start up game server", "port", port, e);
                     }
                 }
             }
@@ -182,7 +183,7 @@ public class WorldGameRegistry
     {
         GameServerHandler handler = _handmap.get(gameId);
         if (handler == null) {
-            log.info("Eek, handler vanished [gameId=" + gameId + "]");
+            log.info("Eek, handler vanished", "gameId", gameId);
             return;
         }
         handler.postMessage(WorldServerClient.GAME_CONTENT_UPDATED, gameId);
@@ -198,7 +199,7 @@ public class WorldGameRegistry
     {
         GameServerHandler handler = _handmap.get(gameId);
         if (handler == null) {
-            log.info("Egad, the game handler vanished [gameId=" + gameId + "]");
+            log.info("Egad, the game handler vanished", "gameId", gameId);
             return;
         }
         handler.postMessage(WorldServerClient.GAME_CONTENT_PURCHASED,
@@ -213,7 +214,7 @@ public class WorldGameRegistry
     {
         GameServerHandler handler = _handmap.get(gameId);
         if (handler == null) {
-            log.info("Eek, handler vanished [gameId=" + gameId + "]");
+            log.info("Eek, handler vanished", "gameId", gameId);
             return;
         }
         handler.postMessage(WorldServerClient.RESET_SCORE_PERCENTILER, gameId, single);
@@ -266,7 +267,7 @@ public class WorldGameRegistry
             }
             public void handleSuccess () {
                 if (_game == null) {
-                    log.warning("Requested to locate unknown game [id=" + gameId + "].");
+                    log.warning("Requested to locate unknown game", "id", gameId);
                     _listener.requestFailed(GameCodes.INTERNAL_ERROR);
                 } else {
                     lockGame(_game, (WorldGameService.LocationListener)_listener);
@@ -283,8 +284,8 @@ public class WorldGameRegistry
 
         // sanity check; if this breaks some day in real usage, I will be amused
         if (friendIds.length > 255) {
-            log.warning("Received crazy invite friends request [from=" + memobj.who() +
-                        ", gameId=" + gameId + ", friendCount=" + friendIds.length + "].");
+            log.warning("Received crazy invite friends request", "from", memobj.who(),
+                        "gameId", gameId, "friendCount", friendIds.length);
             return;
         }
 
@@ -327,7 +328,7 @@ public class WorldGameRegistry
             }
         }
 
-        log.warning("Got hello from unknown game server [port=" + port + "].");
+        log.warning("Got hello from unknown game server", "port", port);
     }
 
     // from interface GameServerProvider
@@ -377,7 +378,7 @@ public class WorldGameRegistry
         if (handler != null) {
             handler.clearGame(gameId);
         } else {
-            log.warning("Game cleared by unknown handler? [port=" + port + ", id=" + gameId + "].");
+            log.warning("Game cleared by unknown handler?", "port", port, "id", gameId);
         }
     }
 
@@ -495,20 +496,19 @@ public class WorldGameRegistry
                     // some other peer got the lock before we could; send them there
                     log.info("Didn't get lock, going remote " + game.gameId + "@" + nodeName + ".");
                     if (!checkAndSendToNode(game.gameId, listener)) {
-                        log.warning("Failed to acquire lock but no registered host for game!? " +
-                                    "[id=" + game.gameId + "].");
+                        log.warning("Failed to acquire lock but no registered host for game!?",
+                                    "id", game.gameId);
                         listener.requestFailed(GameCodes.INTERNAL_ERROR);
                     }
 
                 } else {
-                    log.warning("Game lock acquired by null? [id=" + game.gameId + "].");
+                    log.warning("Game lock acquired by null?", "id", game.gameId);
                     listener.requestFailed(GameCodes.INTERNAL_ERROR);
                 }
             }
 
             public void requestFailed (Exception cause) {
-                log.warning("Failed to acquire game resolution lock " +
-                        "[id=" + game.gameId + "].", cause);
+                log.warning("Failed to acquire game resolution lock", "id", game.gameId, cause);
                 listener.requestFailed(GameCodes.INTERNAL_ERROR);
             }
         });
@@ -519,7 +519,7 @@ public class WorldGameRegistry
         // TODO: load balance across our handlers if we ever have more than one
         GameServerHandler handler = _handlers[0];
         if (handler == null) {
-            log.warning("Have no game servers, cannot handle game [id=" + game.gameId + "].");
+            log.warning("Have no game servers, cannot handle game", "id", game.gameId);
             listener.requestFailed(GameCodes.INTERNAL_ERROR);
 
             // releases our lock on this game as we didn't end up hosting it
@@ -547,6 +547,7 @@ public class WorldGameRegistry
 
     /** Handles communications with a delegate game server. */
     protected class GameServerHandler
+        implements ObjectDeathListener
     {
         public int port;
 
@@ -554,32 +555,19 @@ public class WorldGameRegistry
             // make a note of our port
             this.port = port;
 
-            String exec[] = {
-                ServerConfig.serverRoot + "/bin/rungame",
-                String.valueOf(port),
-                // have the game server connect to us on our first port
-                String.valueOf(ServerConfig.serverPorts[0]),
-            };
-
-            // fire up the game server process
-            Process proc = Runtime.getRuntime().exec(exec);
-
-            log.info("Launched process " + StringUtil.toString(exec));
-
-            // copy stdout and stderr to our logs
-            ProcessLogger.copyOutput(log, "rungame", proc);
+            // start up our game server
+            startGameServer();
         }
 
         public void setClientObject (ClientObject clobj) {
             _clobj = clobj;
-            // TODO: if our client object is destroyed and we aren't shutting down, restart the
-            // game server?
+            _clobj.addListener(this);
         }
 
         public void hostGame (Game game) {
             if (!_games.add(game.gameId)) {
-                log.warning("Requested to host game that we're already hosting? [port=" + port +
-                            ", game=" + game.gameId + "].");
+                log.warning("Requested to host game that we're already hosting?",
+                            "port", port, "game", game.gameId);
             } else {
                 _peerMan.gameDidStartup(game.gameId, game.name, port);
             }
@@ -587,8 +575,8 @@ public class WorldGameRegistry
 
         public void clearGame (int gameId) {
             if (!_games.remove(gameId)) {
-                log.warning("Requested to clear game that we're not hosting? [port=" + port +
-                            ", game=" + gameId + "].");
+                log.warning("Requested to clear game that we're not hosting?",
+                            "port", port, "game", gameId);
             } else {
                 _peerMan.gameDidShutdown(gameId);
             }
@@ -603,9 +591,46 @@ public class WorldGameRegistry
             }
         }
 
-        public void postMessage (String name, Object... args)
-        {
+        public void postMessage (String name, Object... args) {
             _clobj.postMessage(name, args);
+        }
+
+        // from interface ObjectDeathListener
+        public void objectDestroyed (ObjectDestroyedEvent event) {
+            // note that we no longer hosting this server
+            _serverRegObj.removeFromServers(
+                new ServerRegistryObject.ServerInfo(ServerConfig.serverHost, this.port).getKey());
+
+            // if we're not also shutting down, then restart this game server
+            if (!_shutMan.isShuttingDown()) {
+                _invoker.postUnit(new Invoker.Unit() {
+                    public boolean invoke () {
+                        try {
+                            startGameServer();
+                        } catch (Exception e) {
+                            log.warning("Failed to restart failed game server", "port", port, e);
+                        }
+                        return false;
+                    }
+                });
+            }
+        }
+
+        protected void startGameServer () throws Exception {
+            String exec[] = {
+                ServerConfig.serverRoot + "/bin/rungame",
+                String.valueOf(this.port),
+                // have the game server connect to us on our first port
+                String.valueOf(ServerConfig.serverPorts[0]),
+            };
+
+            // fire up the game server process
+            Process proc = Runtime.getRuntime().exec(exec);
+
+            log.info("Launched process " + StringUtil.toString(exec));
+
+            // copy stdout and stderr to our logs
+            ProcessLogger.copyOutput(log, "rungame", proc);
         }
 
         protected ClientObject _clobj;
@@ -682,8 +707,9 @@ public class WorldGameRegistry
     // dependencies
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected PlaceRegistry _placeReg;
     @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected ShutdownManager _shutMan;
+    @Inject protected PlaceRegistry _placeReg;
     @Inject protected MemberManager _memberMan;
     @Inject protected ItemManager _itemMan;
     @Inject protected MsoyPeerManager _peerMan;
