@@ -10,6 +10,7 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.net.ConnectionManager;
 
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
@@ -29,9 +30,10 @@ public class MsoyPeerNode extends PeerNode
     implements SetListener<DSet.Entry>
 {
     @Override // from PeerNode
-    public void init (PeerManager peermgr, PresentsDObjectMgr omgr, NodeRecord record)
+    public void init (PeerManager peermgr, PresentsDObjectMgr omgr, ConnectionManager conmgr,
+                      NodeRecord record)
     {
-        super.init(peermgr, omgr, record);
+        super.init(peermgr, omgr, conmgr, record);
         _httpPort = ServerConfig.getHttpPort(record.nodeName);
     }
 
