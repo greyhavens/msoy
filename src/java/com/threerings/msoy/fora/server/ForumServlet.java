@@ -583,7 +583,7 @@ public class ForumServlet extends MsoyServiceServlet
                     return makeBoxedGame(token, args.get(1, 0));
                 }
                 break;
-            case WHIRLEDS:
+            case GROUPS:
                 // handle whirled detail page links
                 if (args.get(0, "").equals("d")) {
                     return makeBoxedWhirled(token, args.get(1, 0));
