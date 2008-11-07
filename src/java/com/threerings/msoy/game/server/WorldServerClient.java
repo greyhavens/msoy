@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.Communicator;
@@ -16,6 +15,8 @@ import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.net.PeerCreds;
 import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.server.net.ConnectionManager;
+import com.threerings.presents.server.net.ServerCommunicator;
 
 import com.threerings.stats.data.IntSetStatAdder;
 import com.threerings.stats.data.IntStatIncrementer;
@@ -36,7 +37,6 @@ import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.data.all.Trophy;
-
 
 import static com.threerings.msoy.Log.log;
 
@@ -76,9 +76,7 @@ public class WorldServerClient
         // create our client and connect to the server
         _client = new Client(null, _omgr) {
             protected Communicator createCommunicator () {
-                // TODO: make a custom communicator that uses the ClientManager NIO system to do
-                // its I/O instead of using two threads and blocking socket I/O
-                return new BlockingCommunicator(this);
+                return new ServerCommunicator(this, _conmgr, WorldServerClient.this._omgr);
             }
         };
         _client.setCredentials(new PeerCreds("game:" + _port, ServerConfig.sharedSecret));
@@ -275,8 +273,9 @@ public class WorldServerClient
     protected WatcherService _wsvc;
 
     @Inject protected ShutdownManager _shutmgr;
+    @Inject protected ConnectionManager _conmgr;
+    @Inject protected RootDObjectManager _omgr;
     @Inject protected GameGameRegistry _gameReg;
     @Inject protected GameWatcherManager _watchmgr;
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected ChatProvider _chatProv;
 }
