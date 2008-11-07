@@ -270,7 +270,7 @@ public class MemberManager
                            final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        _invoker.postUnit(new PersistingUnit(listener) {
+        _invoker.postUnit(new PersistingUnit("getHomeId", listener) {
             @Override public void invokePersistent () throws Exception {
                 _homeId = _memberLogic.getHomeId(ownerType, ownerId);
             }
@@ -448,8 +448,8 @@ public class MemberManager
 
         // TODO: verify entered string
 
-        final String uname = "setDisplayName(" + user.who() + ", " + name + ")";
-        _invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit("setDisplayName", listener,
+                                             "user", user.who(), "name", name) {
             @Override public void invokePersistent ()
                 throws Exception
             {
@@ -468,8 +468,7 @@ public class MemberManager
                                 final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final String uname = "getDisplayName(" + memberId + ")";
-        _invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit("getDisplayName", listener, "mid", memberId) {
             @Override public void invokePersistent ()
                 throws Exception
             {
@@ -487,7 +486,7 @@ public class MemberManager
     public void getGroupName (final ClientObject caller, final int groupId,
                               final InvocationService.ResultListener listener)
     {
-        _invoker.postUnit(new PersistingUnit("getGroupName(" + groupId + ")", listener) {
+        _invoker.postUnit(new PersistingUnit("getGroupName", listener, "gid", groupId) {
             @Override public void invokePersistent ()
                 throws Exception
             {
@@ -523,8 +522,7 @@ public class MemberManager
         final MemberObject member = (MemberObject) caller;
         ensureNotGuest(member);
 
-        final String uname = "setHomeSceneId(" + member.getMemberId() + ")";
-        _invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit("setHomeSceneId", listener, "who", member.who()) {
             @Override
             public void invokePersistent () throws Exception {
                 final int memberId = member.getMemberId();
@@ -562,8 +560,7 @@ public class MemberManager
                                      final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final String uname = "getHomeSceneId(" + groupId + ")";
-        _invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit("getHomeSceneId", listener, "gid", groupId) {
             @Override public void invokePersistent ()
                 throws Exception
             {
@@ -643,8 +640,7 @@ public class MemberManager
         ensureNotGuest(member);
 
         final String commitStatus = StringUtil.truncate(status, Profile.MAX_STATUS_LENGTH);
-        final String uname = "updateStatus(" + member.getMemberId() + ")";
-        _invoker.postUnit(new PersistingUnit(uname, listener) {
+        _invoker.postUnit(new PersistingUnit("updateStatus", listener, "who", member.who()) {
             @Override public void invokePersistent () throws Exception {
                 _profileRepo.updateHeadline(member.getMemberId(), commitStatus);
             }
@@ -698,7 +694,7 @@ public class MemberManager
         final boolean logEvent, final InvocationService.ResultListener listener)
     {
         final MemberObject memObj = (MemberObject) caller;
-        _invoker.postUnit(new PersistingUnit(listener) {
+        _invoker.postUnit(new PersistingUnit("getABTestGroup", listener) {
             @Override public void invokePersistent () throws Exception {
                 _testGroup = new Integer(_memberLogic.getABTestGroup(testName,
                     memObj.visitorInfo, logEvent));
@@ -782,7 +778,7 @@ public class MemberManager
         throws InvocationException
     {
         final MemberObject memObj = (MemberObject) caller;
-        _invoker.postUnit(new PersistingUnit("getHPGridItems(" + memObj.who() + ")", listener) {
+        _invoker.postUnit(new PersistingUnit("getHPGridItems", listener, "who", memObj.who()) {
             @Override public void invokePersistent () throws Exception {
                 reportRequestProcessed(_memberLogic.getHomePageGridItems(memObj));
             }
