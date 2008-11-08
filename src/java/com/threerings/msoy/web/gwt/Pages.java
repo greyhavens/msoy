@@ -25,7 +25,7 @@ public enum Pages
     STUFF(Tabs.STUFF),
     SUPPORT(Tabs.HELP),
     SWIFTLY(null), // TODO: Tabs.CREATE
-    GROUPS(Tabs.WHIRLEDS),
+    GROUPS(Tabs.GROUPS),
     WORLD(null);
 
     public String getPath () {

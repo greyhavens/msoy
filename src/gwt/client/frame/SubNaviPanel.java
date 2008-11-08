@@ -73,7 +73,7 @@ public class SubNaviPanel extends FlowPanel
             }
             break;
 
-        case WHIRLEDS:
+        case GROUPS:
             addLink(null, "Groups", Pages.GROUPS, "");
             if (!CShell.isGuest()) {
                 addLink(null, "My Groups", Pages.GROUPS, "mywhirleds");
