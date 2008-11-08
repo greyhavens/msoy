@@ -128,14 +128,14 @@ public class StatusServlet extends HttpServlet
         info.rooms = nodeobj.hostedScenes.size();
         if (details == Details.ROOMS) {
             for (HostedRoom room : nodeobj.hostedScenes) {
-                info.modeinfo.append("- ").append(room);
+                info.modeinfo.append("- ").append(room).append("\n");
             }
         }
 
         info.games = nodeobj.hostedGames.size();
         if (details == Details.GAMES) {
             for (HostedGame game : nodeobj.hostedGames) {
-                info.modeinfo.append("- ").append(game);
+                info.modeinfo.append("- ").append(game).append("\n");
             }
         }
 
