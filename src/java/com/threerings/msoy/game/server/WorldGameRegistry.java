@@ -477,7 +477,7 @@ public class WorldGameRegistry
         }
 
         String hostname = _peerMan.getPeerPublicHostName(rhost.left);
-        log.info("Sending game player to " + rhost.left + ":" + rhost.right + ".");
+        // log.info("Sending game player to " + rhost.left + ":" + rhost.right + ".");
         listener.gameLocated(hostname, rhost.right);
         return true;
     }
