@@ -5,6 +5,7 @@ package client.shop;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -72,14 +73,24 @@ public class BuyPanel extends FlowPanel
         // clear out the buy button
         clear();
         setStyleName("Bought");
-        
+
         // change the buy button into a "you bought it" display
         String type = _dmsgs.xlate("itemType" + itype);
         add(MsoyUI.createLabel(_msgs.boughtTitle(type), "Title"));
-        
-        if (FlashClients.clientExists() && !(item instanceof SubItem)) {
-            add(new ItemActivator(item, true));
-            add(new Label(getUsageMessage(itype)));
+
+        if (FlashClients.clientExists()) {
+            if (item instanceof SubItem) {
+                add(WidgetUtil.makeShim(10, 10));
+                add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.boughtBackTo(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        CShell.frame.closeContent();
+                    }
+                }));
+            } else {
+                add(new ItemActivator(item, true));
+                add(new Label(getUsageMessage(itype)));
+            }
+
         } else {
             add(new Label(_msgs.boughtViewStuff(type)));
             String ptype = _dmsgs.xlate("pItemType" + itype);
