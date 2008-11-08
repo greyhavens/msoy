@@ -135,14 +135,9 @@ public class RoomManager extends SpotSceneManager
     {
         final List<MemoryRecord> memrecs = MemoryRecord.extractModified(entries);
         if (memrecs.size() > 0) {
-            invoker.postUnit(new Invoker.Unit() {
-                public boolean invoke () {
-                    try {
-                        memoryRepo.storeMemories(memrecs);
-                    } catch (Exception e) {
-                        log.warning("Failed to update memories " + memrecs + ".", e);
-                    }
-                    return false;
+            invoker.postUnit(new WriteOnlyUnit("storeMemories") {
+                public void invokePersist () throws Exception {
+                    memoryRepo.storeMemories(memrecs);
                 }
             });
         }
@@ -1047,7 +1042,7 @@ public class RoomManager extends SpotSceneManager
             }};
 
         _pendingGameIds.add(gameId);
-        _invoker.postUnit(new Invoker.Unit("load props") {
+        _invoker.postUnit(new Invoker.Unit("loadProps") {
             public boolean invoke () {
                 try {
                     _propRecs = _sceneRepo.loadProperties(gameId, _scene.getId());
@@ -1107,7 +1102,7 @@ public class RoomManager extends SpotSceneManager
         final Map<String, byte[]> encodedMap =
             PropertySpaceHelper.encodeDirtyStateForStore(properties);
         final int sceneId = _scene.getId();
-        _invoker.postUnit(new WriteOnlyUnit("save room props") {
+        _invoker.postUnit(new WriteOnlyUnit("saveRoomProps") {
             public void invokePersist() throws Exception {
                 for (Map.Entry<String, byte[]> entry : encodedMap.entrySet()) {
                     _sceneRepo.storeProperty(new RoomPropertyRecord(
@@ -1342,19 +1337,11 @@ public class RoomManager extends SpotSceneManager
      */
     protected void resolveMemories (final Collection<ItemIdent> idents)
     {
-        _invoker.postUnit(new Invoker.Unit() {
-            public boolean invoke () {
-                try {
-                    _mems = _memoryRepo.loadMemories(idents);
-                    return !_mems.isEmpty();
-                } catch (Exception pe) {
-                    log.warning("Failed to load memories [where=" + where() +
-                                ", ids=" + idents + "].", pe);
-                    return false;
-                }
-            };
-
-            public void handleResult () {
+        _invoker.postUnit(new RepositoryUnit("resolveMemories") {
+            public void invokePersist () throws Exception {
+                _mems = _memoryRepo.loadMemories(idents);
+            }
+            public void handleSuccess () {
                 _roomObj.startTransaction();
                 try {
                     for (MemoryRecord mrec : _mems) {
@@ -1364,7 +1351,6 @@ public class RoomManager extends SpotSceneManager
                     _roomObj.commitTransaction();
                 }
             }
-
             protected Collection<MemoryRecord> _mems;
         });
     }
