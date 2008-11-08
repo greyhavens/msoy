@@ -490,8 +490,7 @@ public class UploadUtil
                 throw new Exception("Unknown format.");
             }
         } catch (Exception e) {
-            String errmsg = "Invalid image data. Unable to complete upload.";
-            throw (IOException)new IOException(errmsg).initCause(e);
+            throw (IOException)new IOException(e.getMessage()).initCause(e);
         }
 
         // if we're uploading a thumbnail image...
