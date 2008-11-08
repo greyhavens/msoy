@@ -147,7 +147,7 @@ public class BureauManager
     protected void launcherInitialized (final ClientObject launcher)
     {
         // this launcher is now available to take sender requests
-        log.info("Launcher initialized", "client", launcher);
+        log.info("Launcher initialized", "client", launcher.who());
         _launcherClients.put(launcher.getOid(), (BureauLauncherClientObject)launcher);
         launcher.addListener(new ObjectDeathListener () {
             public void objectDestroyed (final ObjectDestroyedEvent event) {
@@ -193,7 +193,7 @@ public class BureauManager
     protected void shutdownLaunchers ()
     {
         for (final ClientObject launcher : _launcherClients.values()) {
-            log.info("Shutting down launcher", "launcher", launcher);
+            log.info("Shutting down launcher", "launcher", launcher.who());
             BureauLauncherSender.shutdownLauncher(launcher);
         }
     }
@@ -216,9 +216,8 @@ public class BureauManager
     {
         public void launchBureau (final String bureauId, final String token) {
             final BureauLauncherClientObject launcher = selectLauncher();
-            log.info(
-                "Launching bureau", "bureauId", bureauId, "who", launcher.who(), "hostname",
-                launcher.hostname);
+            log.info("Launching bureau", "bureauId", bureauId, "who", launcher.who(),
+                     "hostname", launcher.hostname);
             BureauLauncherSender.launchThane(launcher, bureauId, token);
         }
     }
