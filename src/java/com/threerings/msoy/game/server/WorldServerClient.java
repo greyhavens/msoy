@@ -6,6 +6,7 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.Communicator;
@@ -77,7 +78,8 @@ public class WorldServerClient
         // create our client and connect to the server
         _client = new Client(null, _omgr) {
             protected Communicator createCommunicator () {
-                return new ServerCommunicator(this, _conmgr, WorldServerClient.this._omgr);
+                // return new ServerCommunicator(this, _conmgr, WorldServerClient.this._omgr);
+                return new BlockingCommunicator(this);
             }
         };
         _client.setCredentials(new PeerCreds("game:" + _port, ServerConfig.sharedSecret));
