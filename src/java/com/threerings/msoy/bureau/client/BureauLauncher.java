@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.bureau.client;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -116,10 +119,14 @@ public class BureauLauncher
             return Thread.currentThread() == _dispatcher;
         }
 
+        // from RunQueue
+        public boolean isRunning ()
+        {
+            return !_stopped;
+        }
+
         protected Thread _dispatcher = Thread.currentThread();
-        protected java.util.List<Runnable> _queue =
-            java.util.Collections.synchronizedList(
-                new java.util.LinkedList<Runnable>());
+        protected List<Runnable> _queue = Collections.synchronizedList(new LinkedList<Runnable>());
         protected boolean _stopped;
     }
 

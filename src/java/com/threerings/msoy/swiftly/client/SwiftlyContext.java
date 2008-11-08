@@ -3,28 +3,29 @@
 
 package com.threerings.msoy.swiftly.client;
 
-import java.awt.EventQueue;
-
 import com.samskivert.util.Config;
 import com.samskivert.util.RunQueue;
+
+import com.threerings.util.MessageManager;
+
+import com.threerings.presents.client.Client;
+import com.threerings.presents.dobj.DObjectManager;
+
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.util.CrowdContext;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.dobj.DObjectManager;
-import com.threerings.util.MessageManager;
 
 /**
  * Provides necessary services, and juicy goodness.
  */
 public class SwiftlyContext
-    implements CrowdContext, RunQueue
+    implements CrowdContext
 {
     public SwiftlyContext (SwiftlyApplication app)
     {
-        _client = new Client(null, this);
+        _client = new Client(null, RunQueue.AWT);
         _locdtr = new LocationDirector(this);
         _occdtr = new OccupantDirector(this);
         _msgmgr = new MessageManager(MESSAGE_MANAGER_PREFIX);
@@ -79,18 +80,6 @@ public class SwiftlyContext
     public void clearPlaceView (PlaceView view)
     {
         // nada
-    }
-
-    // from interface RunQueue
-    public void postRunnable (Runnable r)
-    {
-        EventQueue.invokeLater(r);
-    }
-
-    // from interface RunQueue
-    public boolean isDispatchThread ()
-    {
-        return EventQueue.isDispatchThread();
     }
 
     /**

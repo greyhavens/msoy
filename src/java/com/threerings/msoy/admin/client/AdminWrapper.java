@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.admin.client;
 
-import java.awt.EventQueue;
 import javax.swing.JApplet;
 
 import com.samskivert.util.Config;
@@ -26,28 +25,14 @@ import static com.threerings.msoy.Log.log;
  * Some byzantine shit to work around bullshit AppletClassLoader problems.
  */
 public class AdminWrapper
-    implements RunQueue
 {
-    // documentation inherited from interface RunQueue
-    public void postRunnable (Runnable run)
-    {
-        // queue it on up on the awt thread
-        EventQueue.invokeLater(run);
-    }
-
-    // documentation inherited from interface RunQueue
-    public boolean isDispatchThread ()
-    {
-        return EventQueue.isDispatchThread();
-    }
-
     public void init (JApplet applet, String server, int port)
     {
         // create our various context bits
         _msgmgr = new MessageManager("rsrc.i18n");
 
         // create our presents client instance
-        _client = new Client(null, this);
+        _client = new Client(null, RunQueue.AWT);
 
         log.info("Using [server=" + server + ", port=" + port + "].");
         _client.setServer(server, new int[] { port });

@@ -5,7 +5,6 @@ package com.threerings.msoy.game.client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.net.URL;
 
 import javax.swing.JApplet;
@@ -54,7 +53,6 @@ import static com.threerings.msoy.Log.log;
  * Provides the necessary framework and classloading for Java games.
  */
 public class GameClient
-    implements RunQueue
 {
     /**
      * Initializes a new client and provides it with a frame in which to display everything.
@@ -159,19 +157,6 @@ public class GameClient
         _root.repaint();
     }
 
-    // documentation inherited from interface RunQueue
-    public void postRunnable (Runnable run)
-    {
-        // queue it on up on the awt thread
-        EventQueue.invokeLater(run);
-    }
-
-    // documentation inherited from interface RunQueue
-    public boolean isDispatchThread ()
-    {
-        return EventQueue.isDispatchThread();
-    }
-
     /**
      * Creates the {@link WhirledContext} implementation that will be passed around to all of the
      * client code. Derived classes may wish to override this and create some extended context
@@ -191,7 +176,7 @@ public class GameClient
         throws Exception
     {
         // create the handles on our various services
-        _client = new Client(null, this);
+        _client = new Client(null, RunQueue.AWT);
 
         // create our managers
         _rsrcmgr = new ResourceManager("rsrc");
