@@ -1006,23 +1006,29 @@ public class GameGameRegistry
                     return;
                 }
 
-                if (!player.isGuest()) {
-                    Map<String, byte[]> initialState = new HashMap<String, byte[]>();
-                    for (PlayerGameStateRecord record : _stateRecs) {
-                        initialState.put(record.datumKey, record.datumValue);
-                    }
-                    PropertySpaceHelper.initWithStateFromStore(player, initialState);
-                }
-
                 int gameOid = mgr.getGameObject().getOid();
-                // when we're ready, move the player into the AVRG 'place'
-                try {
-                    _locmgr.moveTo(player, gameOid);
 
-                } catch (InvocationException pe) {
-                    log.warning("Move to AVRGameObject failed", "gameId", mgr.getGameId(), pe);
-                    listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
-                    return;
+                if (player.location == null || !player.location.equals(mgr.getLocation())) {
+
+                    // if we're not already playing this avrg, initialize our property
+                    // space from the database records
+                    if (!player.isGuest()) {
+                        Map<String, byte[]> initialState = new HashMap<String, byte[]>();
+                        for (PlayerGameStateRecord record : _stateRecs) {
+                            initialState.put(record.datumKey, record.datumValue);
+                        }
+                        PropertySpaceHelper.initWithStateFromStore(player, initialState);
+                    }
+
+                    // when we're ready, move the player into the AVRG 'place'
+                    try {
+                        _locmgr.moveTo(player, gameOid);
+
+                    } catch (InvocationException pe) {
+                        log.warning("Move to AVRGameObject failed", "gameId", mgr.getGameId(), pe);
+                        listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+                        return;
+                    }
                 }
 
                 // if all went well, return the AVRGameConfig to the client
