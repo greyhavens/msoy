@@ -6,8 +6,10 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 
 import com.threerings.crowd.server.CrowdSession;
+import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.msoy.Log;
+import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -55,9 +57,15 @@ public class MsoyGameSession extends CrowdSession
     {
         super.sessionConnectionClosed();
 
-        // if we're a guest, end our session now, there's no way to reconnect
-        if (_plobj != null && _plobj.isGuest()) {
-            safeEndSession();
+        if (_plobj != null) {
+            int placeOid = _plobj.getPlaceOid();
+
+            // if we're a guest, end our session now, there's no way to reconnect; if we're
+            // in an avrg, the client has to resume the game through avrg specific channels
+            if (_plobj.isGuest() ||
+                (placeOid > 0 && _omgr.getObject(placeOid) instanceof AVRGameObject)) {
+                safeEndSession();
+            }
         }
     }
 
@@ -103,6 +111,7 @@ public class MsoyGameSession extends CrowdSession
     /** A casted reference to the userobject. */
     protected PlayerObject _plobj;
 
+    @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected PlayerLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
 }

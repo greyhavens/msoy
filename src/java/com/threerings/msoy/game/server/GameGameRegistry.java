@@ -1009,7 +1009,6 @@ public class GameGameRegistry
                 int gameOid = mgr.getGameObject().getOid();
 
                 if (player.location == null || !player.location.equals(mgr.getLocation())) {
-
                     // if we're not already playing this avrg, initialize our property
                     // space from the database records
                     if (!player.isGuest()) {
@@ -1029,6 +1028,10 @@ public class GameGameRegistry
                         listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
                         return;
                     }
+
+                } else {
+                    log.warning("Unexpectedly rejoining AVRG", "playerId", playerId,
+                                "gameId", mgr.getGameId);
                 }
 
                 // if all went well, return the AVRGameConfig to the client
