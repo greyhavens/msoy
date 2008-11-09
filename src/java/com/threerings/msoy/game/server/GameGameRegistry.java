@@ -1031,7 +1031,7 @@ public class GameGameRegistry
 
                 } else {
                     log.warning("Unexpectedly rejoining AVRG", "playerId", playerId,
-                                "gameId", mgr.getGameId);
+                                "gameId", mgr.getGameId());
                 }
 
                 // if all went well, return the AVRGameConfig to the client
