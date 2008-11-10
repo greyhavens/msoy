@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.Communicator;
@@ -17,6 +16,7 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.net.PeerCreds;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.net.ConnectionManager;
+import com.threerings.presents.server.net.ServerCommunicator;
 
 import com.threerings.stats.data.IntSetStatAdder;
 import com.threerings.stats.data.IntStatIncrementer;
@@ -74,8 +74,7 @@ public class WorldServerClient
         // create our client and connect to the server
         _client = new Client(null, _omgr) {
             protected Communicator createCommunicator () {
-                // return new ServerCommunicator(this, _conmgr, WorldServerClient.this._omgr);
-                return new BlockingCommunicator(this);
+                return new ServerCommunicator(this, _conmgr, WorldServerClient.this._omgr);
             }
         };
         _client.setCredentials(new PeerCreds("game:" + _port, ServerConfig.sharedSecret));
