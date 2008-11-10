@@ -8,7 +8,6 @@ import com.google.inject.Inject;
 import com.threerings.crowd.server.CrowdSession;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
-import com.threerings.msoy.Log;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -16,6 +15,8 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.server.MsoyEventLogger;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the server side of a client connection for the MSOY Game server.
@@ -45,8 +46,8 @@ public class MsoyGameSession extends CrowdSession
             }
         }
 
-        Log.log.info("Player session starting", "memberId", _plobj.memberName.getMemberId(),
-            "memberName", _plobj.memberName, "playerId", _plobj.getOid());
+        log.info("Player session starting", "memberId", _plobj.memberName.getMemberId(),
+                 "memberName", _plobj.memberName, "oid", _plobj.getOid());
 
         // let our various server entities know that this member logged on
         _locator.playerLoggedOn(_plobj);
