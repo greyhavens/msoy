@@ -58,7 +58,7 @@ public class GameWatcherManager
             log.warning("Displaced existing watcher", "memberId", "observer", old);
         }
         if (_wsvc == null) {
-            log.warning("Dropping watch request [id=" + memberId + "]");
+            log.warning("Dropping add watch request", "memberId", memberId);
         } else {
             _wsvc.addWatch(_client, memberId);
         }
@@ -73,7 +73,7 @@ public class GameWatcherManager
         if (old == null) {
             log.warning("Attempt to clear non-existent watch", "memberId", memberId);
         } else if (_wsvc == null) {
-            log.warning("Dropping watch clear request [id=" + memberId + "]");
+            log.warning("Dropping clear watch request", "memberId", memberId);
         } else {
             _wsvc.clearWatch(_client, memberId);
         }
@@ -104,9 +104,8 @@ public class GameWatcherManager
     public void memberMoved (int memberId, int sceneId, String hostname, int port)
     {
         Observer observer = _observers.get(memberId);
-        log.info(
-            "Member moved", "memberId", memberId, "sceneId", sceneId, "hostname", hostname,
-            "port", port, "observer", observer);
+        log.info("Member moved", "memberId", memberId, "sceneId", sceneId, "hostname", hostname,
+                 "port", port, "observer", observer);
         if (observer != null) {
             observer.memberMoved(memberId, sceneId, hostname, port);
         }
