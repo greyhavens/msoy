@@ -55,7 +55,7 @@ public class ShareDialog extends FloatingPanel
         showCloseButton = true;
 
         if (!ctx.getMyName().isGuest()) {
-            addChild(FlexUtil.createText(Msgs.GENERAL.get("m.sharing"), 350));
+            addChild(FlexUtil.createText(Msgs.GENERAL.get("m.sharing"), 350, null, true));
         }
 
         var tabs :TabNavigator = new TabNavigator();
