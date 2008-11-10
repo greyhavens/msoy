@@ -17,7 +17,6 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.net.PeerCreds;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.net.ConnectionManager;
-import com.threerings.presents.server.net.ServerCommunicator;
 
 import com.threerings.stats.data.IntSetStatAdder;
 import com.threerings.stats.data.IntStatIncrementer;
