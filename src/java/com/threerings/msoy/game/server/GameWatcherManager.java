@@ -10,7 +10,12 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientAdapter;
 
+import com.threerings.msoy.world.client.WatcherDecoder;
+import com.threerings.msoy.world.client.WatcherReceiver;
+import com.threerings.msoy.world.client.WatcherService;
 import com.threerings.msoy.world.server.WorldWatcherManager;
 
 import static com.threerings.msoy.Log.log;
@@ -25,6 +30,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @EventThread
 public class GameWatcherManager
+    implements WatcherReceiver
 {
     /**
      * Interface for notifying the AVRGameManager of the whereabouts of a member.
@@ -51,7 +57,11 @@ public class GameWatcherManager
         if (old != null) {
             log.warning("Displaced existing watcher", "memberId", "observer", old);
         }
-        _worldClient.addWatch(memberId);
+        if (_wsvc == null) {
+            log.warning("Dropping watch request [id=" + memberId + "]");
+        } else {
+            _wsvc.addWatch(_client, memberId);
+        }
     }
 
     /**
@@ -62,13 +72,35 @@ public class GameWatcherManager
         Observer old = _observers.remove(memberId);
         if (old == null) {
             log.warning("Attempt to clear non-existent watch", "memberId", memberId);
+        } else if (_wsvc == null) {
+            log.warning("Dropping watch clear request [id=" + memberId + "]");
+        } else {
+            _wsvc.clearWatch(_client, memberId);
         }
-        _worldClient.clearWatch(memberId);
     }
 
     /**
-     * Notification of member movement, from {@link WorldServerClient}.
+     * Called by the {@link WorldServerClient} to allow us to wire ourselves up.
      */
+    public void init (Client client)
+    {
+        _client = client;
+
+        // grab our watcher service when we logon
+        _client.addClientObserver(new ClientAdapter() {
+            public void clientDidLogon (Client client) {
+                _wsvc = client.requireService(WatcherService.class);
+            }
+            public void clientDidLogoff (Client client) {
+                _wsvc = null;
+            }
+        });
+
+        // register to receive watcher notifications
+        _client.getInvocationDirector().registerReceiver(new WatcherDecoder(this));
+    }
+
+    // from interface WatcherReceiver
     public void memberMoved (int memberId, int sceneId, String hostname, int port)
     {
         Observer observer = _observers.get(memberId);
@@ -80,9 +112,7 @@ public class GameWatcherManager
         }
     }
 
-    /**
-     * Notification of member logging off, from {@link WorldServerClient}.
-     */
+    // from interface WatcherReceiver
     public void memberLoggedOff (int memberId)
     {
         Observer observer = _observers.get(memberId);
@@ -94,6 +124,12 @@ public class GameWatcherManager
 
     /** A map of members to {@link Observer} objects to notify of each member's movements. */
     protected IntMap<Observer> _observers = new HashIntMap<Observer>();
+
+    /** Used to call watch services. */
+    protected Client _client;
+
+    /** Used to add and remove watches. */
+    protected WatcherService _wsvc;
 
     // our dependencies
     @Inject protected WorldServerClient _worldClient;
