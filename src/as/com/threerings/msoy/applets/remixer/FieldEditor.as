@@ -52,6 +52,7 @@ public class FieldEditor extends VBox
         topBox.addChild(configArea);
 
         _used = new CommandCheckBox(null, handleUsedToggled);
+        _used.styleName = "oldCheckBox";
         _used.selected = (entry.value != null);
         _used.enabled = entry.optional;
         if (_ctx.hasOptionalFields()) {
