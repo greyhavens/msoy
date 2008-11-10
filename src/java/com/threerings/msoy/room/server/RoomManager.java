@@ -739,7 +739,7 @@ public class RoomManager extends SpotSceneManager
                 MemberObject target = (MemberObject)_omgr.getObject(memberOid);
                 if (target.game == null || !target.game.avrGame ||
                     !WindowClientObject.isForGame(who, target.game.gameId)) {
-                    log.warning("Agent attempting control of non-player avatar", "who",
+                    log.info("Agent attempting control of non-player avatar", "who",
                         who.who(), "avatar", item);
                     return false;
                 }
