@@ -1,23 +1,53 @@
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd">
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd">
 
     <!--
+    CacheManager Configuration
+    ==========================
+    An ehcache.xml corresponds to a single CacheManager.
+    
+    See instructions below or the ehcache schema (ehcache.xsd) on how to configure.
+
+    System property tokens can be specified in this file which are replaced when the configuration
+    is loaded.
+
+    For example multicastGroupPort=${multicastGroupPort} can be replaced with the System property
+    either from an environment variable or a system property specified with a command line switch
+    such as
+     -DmulticastGroupPort=4446.
+
     DiskStore configuration
+    =======================
 
-    Sets the path to the directory where cache files are created.
+    The diskStore element is optional. To turn off disk store path creation, comment out the
+    diskStore element below.
 
-    If the path is a Java System Property it is replaced by its value in the
-    running VM.
+    Configure it if you have overflowToDisk or diskPersistent enabled for any cache.
+
+    If it is not configured, and a cache is created which requires a disk store, a warning will be
+    issued and java.io.tmpdir will automatically be used.
+
+    diskStore has only one attribute - "path". It is the path to the directory where .data and
+    .index files will be created.
+
+    If the path is one of the following Java System Property it is replaced by its value in the
+    running VM. For backward compatibility these are not specified without being enclosed in the
+    ${token} replacement syntax.
 
     The following properties are translated:
     * user.home - User's home directory
     * user.dir - User's current working directory
     * java.io.tmpdir - Default temp file path
+    * ehcache.disk.store.dir - A system property you would normally specify on the command line
+      e.g. java -Dehcache.disk.store.dir=/u01/myapp/diskdir ...
 
     Subdirectories can be specified below the property e.g. java.io.tmpdir/one
     -->
     <diskStore path="java.io.tmpdir"/>
 
     <!--
+    CacheManagerEventListener
+    =========================
     Specifies a CacheManagerEventListenerFactory, be used to create a CacheManagerPeerProvider,
     which is notified when Caches are added or removed from the CacheManager.
 
@@ -36,12 +66,13 @@
     depending on what their listener is doing.
 
     If no class is specified, no listener is created. There is no default.
-
-    <cacheManagerEventListenerFactory class="" properties=""/>
     -->
+    <cacheManagerEventListenerFactory class="" properties=""/>
 
 
     <!--
+    CacheManagerPeerProvider
+    ========================
     (Enable for distributed operation)
 
     Specifies a CacheManagerPeerProviderFactory which will be used to create a
@@ -70,7 +101,9 @@
     * multicastGroupAddress (mandatory) - specify a valid multicast group address
     * multicastGroupPort (mandatory) - specify a dedicated port for the multicast heartbeat
       traffic
-    * timeToLive - specify a value between 0 and 255 which determines how far the packets will propagate.
+    * timeToLive - specify a value between 0 and 255 which determines how far the packets will
+      propagate.
+
       By convention, the restrictions are:
       0   - the same host
       1   - the same subnet
@@ -81,11 +114,12 @@
 
     Configuring Manual Discovery:
     Manual discovery is configured as per the following example:
-    <cacheManagerPeerProviderFactory class=
-                          "net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-                          properties="peerDiscovery=manual,
-                          rmiUrls=//server1:40000/sampleCache1|//server2:40000/sampleCache1
-                          | //server1:40000/sampleCache2|//server2:40000/sampleCache2"/>
+    <cacheManagerPeerProviderFactory
+       class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+       properties="peerDiscovery=manual,
+                   rmiUrls=//server1:40000/sampleCache1|//server2:40000/sampleCache1
+                   | //server1:40000/sampleCache2|//server2:40000/sampleCache2"
+       propertySeparator="," />
 
     Valid properties are:
     * peerDiscovery (mandatory) - specify "manual"
@@ -94,42 +128,41 @@
 
     The hostname is the hostname of the remote CacheManager peer. The port is the listening
     port of the RMICacheManagerPeerListener of the remote CacheManager peer.
+    
+    Configuring JGroups replication:
+    <cacheManagerPeerProviderFactory
+         class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
+         properties="connect=UDP(mcast_addr=231.12.21.132;mcast_port=45566;ip_ttl=32;
+                                 mcast_send_buf_size=150000;mcast_recv_buf_size=80000):
+                     PING(timeout=2000;num_initial_members=6):
+                     MERGE2(min_interval=5000;max_interval=10000):
+                     FD_SOCK:VERIFY_SUSPECT(timeout=1500):
+                     pbcast.NAKACK(gc_lag=10;retransmit_timeout=3000):
+                     UNICAST(timeout=5000):
+                     pbcast.STABLE(desired_avg_gossip=20000):
+                     FRAG:
+                     pbcast.GMS(join_timeout=5000;join_retry_timeout=2000;shun=false;
+                                print_local_addr=false)"
+         propertySeparator="::"
+     />
+     The only property necessay is the connect String used by jgroups to
+     configure itself. Refer to the Jgroups documentation for explanation of
+     all the protocols. The example above uses UDP multicast. If the connect
+     property is not specified the default JGroups connection will be used.
 
-    An alternate CacheManagerPeerProviderFactory can be used for JNDI discovery of other
-    CacheManagers in the cluster. Only manual discovery is supported.
-
-    For cacheManagerPeerProviderFactory specify class
-    net.sf.ehcache.distribution.JNDIManualRMICacheManagerPeerProviderFactoryerFactory.
-
-    Correspondingly for cacheManagerPeerListenerFactory specify class
-    net.sf.ehcache.distribution.JNDIRMICacheManagerPeerListenerFactoryory.
-
-    Configuring JNDI Manual Discovery:
-    Manual JNDI discovery is configured as per the following example:
-    <cacheManagerPeerProviderFactory class=
-        "net.sf.ehcache.distribution.JNDIManualRMICacheManagerPeerProviderFactoryerFactory"
-        properties="peerDiscovery=manual, stashContexts=true, stashRemoteCachePeers=true,
-              jndiUrls=t3//server1:40000/sampleCache1|t3//server2:40000/sampleCache1
-              |t3//server1:40000/sampleCache2|t3//server2:40000/sampleCache2"/>
-
-    Valid properties are:
-    * peerDiscovery (mandatory) - specify "manual"
-    * stashContexts (optional) - specify "true" or "false".  Defaults to true.
-      java.naming.Context objects are stashed for performance.
-    * stashRemoteCachePeers (optional) - specify "true" or "false".  Defaults to true.
-      CachePeer objects are stashed for performance.
-    * jndiUrls (mandatory) - specify a pipe separated list of jndiUrls,
-      in the form protocol//hostname:port
     -->
-
     <cacheManagerPeerProviderFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
             properties="peerDiscovery=automatic,
                         multicastGroupAddress=239.192.0.1,
-                        multicastGroupPort=4446, timeToLive=1"/>
+                        multicastGroupPort=4446, timeToLive=1"
+            propertySeparator=","
+            />
 
 
     <!--
+    CacheManagerPeerListener
+    ========================
     (Enable for distributed operation)
 
     Specifies a CacheManagerPeerListenerFactory which will be used to create a
@@ -148,33 +181,30 @@
         class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
         properties="hostName=fully_qualified_hostname_or_ip,
                     port=40001,
-                    socketTimeoutMillis=120000"/>
+                    socketTimeoutMillis=120000"
+                    propertySeparator="," />
 
     All properties are optional. They are:
     * hostName - the hostName of the host the listener is running on. Specify
       where the host is multihomed and you want to control the interface over which cluster
       messages are received. Defaults to the host name of the default interface if not
       specified.
-    * port - the port the listener listens on. This defaults to a free port if not specified.
+    * port - the port the RMI Registry listener listens on. This defaults to a
+      free port if not specified.
+    * remoteObjectPort - the port number on which the remote objects bound in
+      the registry receive calls.  This defaults to a free port if not
+      specified.
     * socketTimeoutMillis - the number of ms client sockets will stay open when sending
       messages to the listener. This should be long enough for the slowest message.
       If not specified it defaults 120000ms.
-
-
-    An alternate CacheManagerPeerListenerFactory can be also be used for JNDI binding of
-    listeners for messages from cache replicators participating in the cluster. For
-    cacheManagerPeerListenerFactory specify
-    class net.sf.ehcache.distribution.JNDIRMICacheManagerPeerListenerFactory.
-    Correspondingly for cacheManagerPeerProviderFactory specify class
-    net.sf.ehcache.distribution.JNDIManualRMICacheManagerPeerProviderFactoryerFactory.
-    Properties for JNDIRMICacheManagerPeerListenerFactory are the same as
-    RMICacheManagerPeerListenerFactory.
     -->
-
     <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"/>
 
-    <!-- Cache configuration.
+
+    <!--
+    Cache configuration
+    ===================
 
     The following attributes are required.
 
@@ -196,7 +226,7 @@
     Sets whether elements can overflow to disk when the memory store
     has reached the maxInMemory limit.
 
-    The following attributes are optional.
+    The following attributes and elements are optional.
 
     timeToIdleSeconds:
     Sets the time to idle for an element before it expires.
@@ -220,6 +250,13 @@
     The number of seconds between runs of the disk expiry thread. The default value
     is 120 seconds.
 
+    diskSpoolBufferSizeMB:
+    This is the size to allocate the DiskStore for a spool buffer. Writes are made
+    to this area and then asynchronously written to disk. The default size is 30MB.
+    Each spool buffer is used only by its cache. If you get OutOfMemory errors consider
+    lowering this value. To improve DiskStore performance consider increasing it. Trace level
+    logging in the DiskStore will show if put back ups are occurring. 
+
     memoryStoreEvictionPolicy:
     Policy would be enforced upon reaching the maxElementsInMemory limit. Default
     policy is Least Recently Used (specified as LRU). Other policies available -
@@ -235,6 +272,17 @@
     * bootstrapCacheLoaderFactory - Specifies a BootstrapCacheLoader, which is called by a
       cache on initialisation to prepopulate itself.
 
+    * cacheExtensionFactory - Specifies a CacheExtension, a generic mechansim to tie a class
+      which holds a reference to a cache to the cache lifecycle.
+
+    * cacheExceptionHandlerFactory - Specifies a CacheExceptionHandler, which is called when
+      cache exceptions occur.
+
+    * cacheLoaderFactory - Specifies a CacheLoader, which can be used both asynchronously and
+      synchronously to load objects into a cache.
+
+    RMI Cache Replication
+
     Each cache that will be distributed needs to set a cache event listener which replicates
     messages to the other CacheManager peers. For the built-in RMI implementation this is done
     by adding a cacheEventListenerFactory element of type RMICacheReplicatorFactory to each
@@ -245,7 +293,9 @@
          replicatePuts=true,
          replicateUpdates=true,
          replicateUpdatesViaCopy=true,
-         replicateRemovals=true "/>
+         replicateRemovals=true
+         asynchronousReplicationIntervalMillis=<number of milliseconds"
+         propertySeparator="," />
 
     The RMICacheReplicatorFactory recognises the following properties:
 
@@ -267,12 +317,24 @@
       replicator runs at a set interval of milliseconds. The default is 1000. The minimum
       is 10. This property is only applicable if replicateAsynchronously=true
 
+
+	For the Jgroups replication this is done with:
+	<cacheEventListenerFactory
+           class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+           properties="replicateAsynchronously=true, replicatePuts=true,
+           replicateUpdates=true, replicateUpdatesViaCopy=false,
+           replicateRemovals=true,asynchronousReplicationIntervalMillis=1000"/>
+    This listener supports the same property than the RMICacheReplicationFactory. 
+
+    Cluster Bootstrapping
+
     The RMIBootstrapCacheLoader bootstraps caches in clusters where RMICacheReplicators are
     used. It is configured as per the following example:
 
     <bootstrapCacheLoaderFactory
         class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
-        properties="bootstrapAsynchronously=true, maximumChunkSizeBytes=5000000"/>
+        properties="bootstrapAsynchronously=true, maximumChunkSizeBytes=5000000"
+        propertySeparator="," />
 
     The RMIBootstrapCacheLoaderFactory recognises the following optional properties:
 
@@ -284,11 +346,57 @@
       memory limits of the VM. This property allows the bootstraper to fetched elements in
       chunks. The default chunk size is 5000000 (5MB).
 
+
+    Cache Exception Handling
+
+    By default, most cache operations will propagate a runtime CacheException on failure. An
+    interceptor, using a dynamic proxy, may be configured so that a CacheExceptionHandler can
+    be configured to intercept Exceptions. Errors are not intercepted.
+
+    It is configured as per the following example:
+
+      <cacheExceptionHandlerFactory class="com.example.ExampleExceptionHandlerFactory"
+                                      properties="logLevel=FINE"/>
+
+    Caches with ExceptionHandling configured are not of type Cache, but are of type Ehcache only,
+    and are not available using CacheManager.getCache(), but using CacheManager.getEhcache().
+
+
+    Cache Loader
+
+    A default CacheLoader may be set which loads objects into the cache through asynchronous and
+    synchronous methods on Cache. This is different to the bootstrap cache loader, which is used
+    only in distributed caching.
+
+    It is configured as per the following example:
+
+        <cacheLoaderFactory class="com.example.ExampleCacheLoaderFactory"
+                                      properties="type=int,startCounter=10"/>
+
+    Cache Extension
+
+    CacheExtensions are a general purpose mechanism to allow generic extensions to a Cache.
+    CacheExtensions are tied into the Cache lifecycle.
+
+    CacheExtensions are created using the CacheExtensionFactory which has a
+    <code>createCacheCacheExtension()</code> method which takes as a parameter a
+    Cache and properties. It can thus call back into any public method on Cache, including, of
+    course, the load methods.
+
+    Extensions are added as per the following example:
+
+         <cacheExtensionFactory class="com.example.FileWatchingCacheRefresherExtensionFactory"
+                             properties="refreshIntervalMillis=18000, loaderTimeout=3000,
+                                         flushPeriod=whatever, someOtherProperty=someValue ..."/>
+
     -->
+
 
     <!--
     Mandatory Default Cache configuration. These settings will be applied to caches
-    created programmtically using CacheManager.add(String cacheName)
+    created programmtically using CacheManager.add(String cacheName).
+
+    The defaultCache has an implicit name "default" which is a reserved cache name.
     -->
     <defaultCache
             maxElementsInMemory="10000"
@@ -296,10 +404,12 @@
             timeToIdleSeconds="120"
             timeToLiveSeconds="120"
             overflowToDisk="true"
+            diskSpoolBufferSizeMB="30"
             maxElementsOnDisk="10000000"
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
-            memoryStoreEvictionPolicy="LRU"/>
+            memoryStoreEvictionPolicy="LRU"
+            />
 
     <!--
     Sample caches. Following are some example caches. Remove these before use.
@@ -320,6 +430,7 @@
            maxElementsOnDisk="1000"
            eternal="false"
            overflowToDisk="true"
+           diskSpoolBufferSizeMB="20"
            timeToIdleSeconds="300"
            timeToLiveSeconds="600"
            memoryStoreEvictionPolicy="LFU"
