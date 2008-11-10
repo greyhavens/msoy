@@ -166,11 +166,6 @@ public class CatalogServlet extends MsoyServiceServlet
         if (listing.pricing == CatalogListing.PRICING_HIDDEN) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-        // make sure they can't cross-buy their own item
-        if ((mrec.memberId == listing.item.creatorId) && (listing.currency != currency) &&
-                (authedCost != 0)) {
-            throw new ServiceException(ItemCodes.E_CANT_SELF_CROSSBUY);
-        }
 
         // Create the operation that will actually take care of creating the item.
         final int fCatalogId = catalogId;

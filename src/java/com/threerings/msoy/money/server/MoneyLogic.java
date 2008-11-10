@@ -261,22 +261,25 @@ public class MoneyLogic
             }
         }
 
-        // if the listed price is 0, always buy in the listed currency
-        if (quote.getListedAmount() == 0) {
+        // If this buyer should always get the item for free
+        boolean buyerFree = buyerRec.memberId == creatorId;
+
+        // if the item is free, always buy in the listed currency
+        if (quote.getListedAmount() == 0 || buyerFree) {
             buyCurrency = quote.getListedCurrency();
         }
 
         // Note that from here on, we're going to use the buyCost, which *could* be lower
         // than what the user authorized. Good for them.
-        int buyCost = quote.getAmount(buyCurrency);
+        int buyCost = buyerFree ? 0 : quote.getAmount(buyCurrency);
 
         // deduct from the buyer (but don't yet save the transaction)
         // (This will throw a NotEnoughMoneyException if applicable)
         MoneyTransactionRecord buyerTx = _repo.deduct(
             buyerId, buyCurrency, buyCost, buyerRec.isSupport());
         try {
-            // Are we giving a support+ user a free item?
-            boolean magicFree = (buyerTx.amount == 0) && (buyCost != 0);
+            // Are we giving away a free item?
+            boolean magicFree = buyerFree || (buyerTx.amount == 0 && buyCost != 0);
 
             // actually create the item!
             boolean creationSuccess = buyOp.create(magicFree, buyerTx.currency, -buyerTx.amount);
