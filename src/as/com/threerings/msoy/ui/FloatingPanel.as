@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.TextEvent;
 
 import mx.containers.TitleWindow;
 
@@ -138,7 +139,9 @@ public class FloatingPanel extends TitleWindow
         if (center) {
             PopUpManager.centerPopUp(this);
         }
+        // bridge CommandEvents and LINK events out to the parent
         CommandEvent.configureBridge(this, _parent);
+        addEventListener(TextEvent.LINK, _parent.dispatchEvent);
 
         didOpen();
     }
