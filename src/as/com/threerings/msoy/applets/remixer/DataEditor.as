@@ -44,6 +44,7 @@ public class DataEditor extends FieldEditor
     protected function setupBoolean (entry :Object) :Array
     {
         var tog :CheckBox = new CheckBox();
+        tog.styleName = "oldCheckBox";
         tog.selected = Boolean(entry.value);
         tog.addEventListener(Event.CHANGE, function (... ignored) :void {
             updateValue(tog.selected);
