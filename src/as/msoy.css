@@ -380,6 +380,11 @@ TabNavigator, TabBar {
   selectedTabTextStyleName: "selectedMsoyTabButton";
 }
 
+.shareLink {
+  color: white;
+  textDecoration: underline;
+}
+
 .msoyTabButton {
   color: #b4cbd7;
   fontFamily: Arial;

@@ -85,6 +85,9 @@ public class MsoyController extends Controller
     /** Command to display sign-up info for guests. */
     public static const SHOW_SIGN_UP :String = "ShowSignUp";
 
+    /** Command to show an (external) URL. */
+    public static const VIEW_URL :String = "ViewUrl";
+
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
 
@@ -176,9 +179,11 @@ public class MsoyController extends Controller
      * Convenience method for opening an external window and showing the specified url. This is
      * done when we want to show the user something without unloading the msoy world.
      *
+     * Also, handles VIEW_URL.
+     *
      * @return true on success
      */
-    public function showExternalURL (url :String, top :Boolean = false) :Boolean
+    public function handleViewUrl (url :String, top :Boolean = false) :Boolean
     {
         if (NetUtil.navigateToURL(url, top ? "_top" : null)) {
             return true;
@@ -548,7 +553,7 @@ public class MsoyController extends Controller
 
         } else {
             // A regular URL
-            showExternalURL(url);
+            handleViewUrl(url);
         }
     }
 

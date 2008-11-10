@@ -28,6 +28,7 @@ import mx.controls.TextInput;
 import mx.core.UIComponent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 import com.threerings.io.TypedArray;
 import com.threerings.util.MailUtil;
@@ -55,7 +56,12 @@ public class ShareDialog extends FloatingPanel
         showCloseButton = true;
 
         if (!ctx.getMyName().isGuest()) {
-            addChild(FlexUtil.createText(Msgs.GENERAL.get("m.sharing"), 350, null, true));
+            addChild(FlexUtil.createText(Msgs.GENERAL.get("m.sharing"), 350));
+            const affLink :CommandLinkButton = new CommandLinkButton(
+                Msgs.GENERAL.get("b.sharing"), MsoyController.VIEW_URL,
+                Msgs.GENERAL.get("u.affiliates"));
+            affLink.styleName = "shareLink";
+            addChild(affLink);
         }
 
         var tabs :TabNavigator = new TabNavigator();

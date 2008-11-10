@@ -361,7 +361,7 @@ public class RoomObjectController extends RoomController
     {
         switch (furni.actionType) {
         case FurniData.ACTION_URL:
-            _wdctx.getMsoyController().showExternalURL(furni.splitActionData()[0] as String);
+            _wdctx.getMsoyController().handleViewUrl(furni.splitActionData()[0] as String);
             return;
 
         case FurniData.ACTION_WORLD_GAME:
