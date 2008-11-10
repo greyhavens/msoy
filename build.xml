@@ -64,7 +64,7 @@
     <file name="${extlibs.dir}/commons-io.jar"/>
     <file name="${extlibs.dir}/commons-lang.jar"/>
     <file name="${extlibs.dir}/commons-logging.jar"/>
-    <file name="${extlibs.dir}/ehcache-1.2.jar"/>
+    <file name="${extlibs.dir}/ehcache.jar"/>
     <file name="${extlibs.dir}/ganymed.jar"/>
     <file name="${extlibs.dir}/getdown.jar"/>
     <file name="${extlibs.dir}/google-collect.jar"/>
