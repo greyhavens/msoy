@@ -188,7 +188,7 @@ public class MsoyServer extends MsoyBaseServer
         _swiftlyMan.init(_invmgr);
         _gameReg.init();
         _partyReg.init();
-        _moneyLogic.init();
+        _moneyLogic.init(_cacheMgr);
         _tourMan.init();
         
         // Let the bureaus connect to our game server(s)

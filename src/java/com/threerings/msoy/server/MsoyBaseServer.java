@@ -54,7 +54,6 @@ public abstract class MsoyBaseServer extends WhirledServer
                 }
             });
             // msoy dependencies
-            bind(CacheManager.class).toInstance(CacheManager.getInstance());
             bindInterceptor(Matchers.any(), Matchers.annotatedWith(Retry.class),
                             new RetryInterceptor());
         }
@@ -130,7 +129,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         throws Exception;
 
     /** Used for caching things. */
-    @Inject protected CacheManager _cacheMgr;
+    protected CacheManager _cacheMgr = CacheManager.getInstance();
 
     /** Provides database access to all of our repositories. */
     @Inject protected PersistenceContext _perCtx;

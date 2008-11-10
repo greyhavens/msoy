@@ -11,9 +11,6 @@ import net.sf.ehcache.Element;
 
 import com.google.common.base.Preconditions;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
 import com.threerings.msoy.item.data.all.CatalogIdent;
 
 import com.threerings.msoy.money.data.all.PriceQuote;
@@ -23,21 +20,20 @@ import com.threerings.msoy.money.data.all.PriceQuote;
  * 
  * @author Ray Greenwell <ray@threerings.net>
  */
-@Singleton
 public class PriceQuoteCache
 {
     /**
      * Creates a cache with the given maximum number of escrows, whose entries will expire after
      * some amount of time.
      */
-    @Inject public PriceQuoteCache (CacheManager cachemgr)
+    public void init (CacheManager cachemgr)
     {
         Cache cache = cachemgr.getCache(CACHE_NAME);
         if (cache == null) {
             int expireSeconds = SECURED_PRICE_DURATION * 60;
             cache = new Cache(CACHE_NAME, MAX_SECURED_PRICES, false, false,
                 expireSeconds, expireSeconds);
-            CacheManager.getInstance().addCache(cache);
+            cachemgr.addCache(cache);
 
         } else {
             cache.removeAll();
@@ -80,7 +76,7 @@ public class PriceQuoteCache
         _cache.remove(new PriceKey(memberId, item));
     }
 
-    protected final Cache _cache;
+    protected Cache _cache;
 
     protected static final int SECURED_PRICE_DURATION = 10;
     protected static final int MAX_SECURED_PRICES = 10000;

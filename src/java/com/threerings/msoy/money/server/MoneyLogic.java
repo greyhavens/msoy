@@ -20,6 +20,8 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Tuple;
 
+import net.sf.ehcache.CacheManager;
+
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ShutdownManager;
@@ -90,14 +92,13 @@ public class MoneyLogic
 
     @Inject
     public MoneyLogic (
-        RuntimeConfig runtime, MoneyRepository repo, PriceQuoteCache priceCache,
-        UserActionRepository userActionRepo, MsoyEventLogger eventLog, MessageConnection conn,
-        MemberRepository memberRepo, ShutdownManager sm, @MainInvoker Invoker invoker,
-        MoneyNodeActions nodeActions, BlingPoolDistributor blingDistributor, MoneyExchange exchange)
+        RuntimeConfig runtime, MoneyRepository repo, UserActionRepository userActionRepo,
+        MsoyEventLogger eventLog, MessageConnection conn, MemberRepository memberRepo,
+        ShutdownManager sm, @MainInvoker Invoker invoker, MoneyNodeActions nodeActions,
+        BlingPoolDistributor blingDistributor, MoneyExchange exchange)
     {
         _runtime = runtime;
         _repo = repo;
-        _priceCache = priceCache;
         _userActionRepo = userActionRepo;
         _eventLog = eventLog;
         _expirer = new MoneyTransactionExpirer(repo, invoker, sm);
@@ -603,11 +604,11 @@ public class MoneyLogic
      * Initializes the money service by starting up required services, such as an expiration
      * monitor and queue listeners. This method is idempotent.
      */
-    public void init ()
+    public void init (CacheManager cacheMgr)
     {
+        _priceCache.init(cacheMgr);
         _exchange.init();
         _msgReceiver.start();
-
         _blingDistributor.start();
     }
 
@@ -723,7 +724,7 @@ public class MoneyLogic
     protected final MsoyEventLogger _eventLog;
     protected final UserActionRepository _userActionRepo;
     protected final MoneyRepository _repo;
-    protected final PriceQuoteCache _priceCache;
+    protected final PriceQuoteCache _priceCache = new PriceQuoteCache();
     protected final MoneyMessageListener _msgReceiver;
     protected final MoneyNodeActions _nodeActions;
     protected final BlingPoolDistributor _blingDistributor;
