@@ -20,7 +20,7 @@ public class StretchButton extends FocusPanel
 
     public StretchButton (String styleName, String textContent, ClickListener listener)
     {
-        // create a content label with the appropraite styling
+        // create a content label with the appropriate styling
         this(styleName, new Label(textContent));
 
         if (listener != null) {

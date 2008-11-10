@@ -4,7 +4,6 @@
 package client.util;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Label;
@@ -148,17 +147,23 @@ public abstract class ClickCallback<T>
 
     protected void setEnabled (boolean enabled)
     {
-        if (_trigger instanceof ButtonBase) {
-            ((ButtonBase)_trigger).setEnabled(enabled);
+        if (_trigger instanceof FocusWidget) {
+            ((FocusWidget)_trigger).setEnabled(enabled);
 
         } else if (_trigger instanceof Label) {
             Label tlabel = (Label)_trigger;
-            // always remove first so that if we do end up adding, we don't doubly add
-            tlabel.removeClickListener(_onClick);
             tlabel.removeStyleName("actionLabel");
             if (enabled) {
-                tlabel.addClickListener(_onClick);
                 tlabel.addStyleName("actionLabel");
+            }
+        }
+
+        if (_trigger instanceof SourcesClickEvents) {
+            SourcesClickEvents sce = (SourcesClickEvents) _trigger;
+            // always remove first so that if we do end up adding, we don't doubly add
+            sce.removeClickListener(_onClick);
+            if (enabled) {
+                sce.addClickListener(_onClick);
             }
         }
     }
