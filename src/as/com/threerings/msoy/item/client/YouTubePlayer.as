@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.ui {
+package com.threerings.msoy.item.client {
 
 import flash.display.DisplayObject;
 import flash.display.Loader;
@@ -33,8 +33,6 @@ import com.threerings.flash.video.VideoPlayer;
 import com.threerings.flash.video.VideoPlayerCodes;
 
 import com.threerings.msoy.client.DeploymentConfig;
-
-import com.threerings.msoy.item.client.ExternalMediaDisplayer;
 
 public class YouTubePlayer extends EventDispatcher
     implements VideoPlayer, ExternalMediaDisplayer

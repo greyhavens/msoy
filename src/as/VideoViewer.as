@@ -18,7 +18,7 @@ import com.threerings.flash.video.VideoPlayer;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.client.ExternalMediaDisplayer;
 import com.threerings.msoy.item.client.ExternalMediaUtil;
-import com.threerings.msoy.ui.YouTubePlayer;
+import com.threerings.msoy.item.client.YouTubePlayer;
 
 [SWF(width="320", height="240", backgroundColor="#ffffff")]
 public class VideoViewer extends Sprite

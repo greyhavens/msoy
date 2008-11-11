@@ -19,7 +19,8 @@ import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.StaticMediaDesc;
-import com.threerings.msoy.item.client.ExternalMediaUtil
+import com.threerings.msoy.item.client.ExternalMediaUtil;
+import com.threerings.msoy.item.client.YouTubePlayer;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
