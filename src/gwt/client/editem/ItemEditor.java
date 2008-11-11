@@ -474,10 +474,19 @@ public abstract class ItemEditor extends FlowPanel
     protected ItemMediaUploader createUploader (
         String mediaIds, String type, int mode, MediaUpdater updater)
     {
-        ItemMediaUploader uploader = new ItemMediaUploader(mediaIds, type, mode, updater);
+        ItemMediaUploader uploader = createUploaderWidget(mediaIds, type, mode, updater);
         // record the uploader under the MAIN mediaId.
         _uploaders.put(mediaIds.split(";")[0], uploader);
         return uploader;
+    }
+
+    /**
+     * Just creates the uploader.
+     */
+    protected ItemMediaUploader createUploaderWidget (
+        String mediaIds, String type, int mode, MediaUpdater updater)
+    {
+        return new ItemMediaUploader(mediaIds, type, mode, updater);
     }
 
     /**

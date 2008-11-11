@@ -12,6 +12,7 @@ import com.threerings.msoy.item.data.all.Video;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.ui.MsoyUI;
+import client.util.FlashClients;
 import client.util.MsoyCallback;
 
 /**
@@ -69,6 +70,26 @@ public class VideoEditor extends BulkMediaEditor
                 return null;
             }
         }), _emsgs.videoTip());
+    }
+
+    @Override protected ItemMediaUploader createUploaderWidget (
+        String mediaIds, String type, int mode, MediaUpdater updater)
+    {
+        if (type.equals(TYPE_VIDEO)) {
+            return new ItemMediaUploader(mediaIds, type, mode, updater) {
+                @Override public void setMedia (MediaDesc desc) {
+                    if (desc != null) {
+                        super.setMedia(desc);
+                    } else {
+                        setWidget(0, 0, FlashClients.createVideoViewer(
+                            MediaDesc.THUMBNAIL_WIDTH * 2, MediaDesc.THUMBNAIL_HEIGHT * 2, null));
+                    }
+                }
+            };
+
+        } else {
+            return super.createUploaderWidget(mediaIds, type, mode, updater);
+        }
     }
 
     protected Video _video;

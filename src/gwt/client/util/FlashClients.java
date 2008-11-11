@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
@@ -21,6 +22,19 @@ import client.shell.Frame;
  */
 public class FlashClients
 {
+    /**
+     * Create a video viewer.
+     *
+     * @param path may be null to create an empty player that can be provided with
+     *        video information later.
+     */
+    public static HTML createVideoViewer (int width, int height, String path)
+    {
+        String flashVars = (path == null) ? null : "video=" + URL.encodeComponent(path);
+        return WidgetUtil.createFlashContainer("videoViewer",
+            "/clients/" + DeploymentConfig.version + "/videoviewer.swf", width, height, flashVars);
+    }
+
     /**
      * Creates a world client, and embeds it in a container object, with which it can communicate
      * via the Flash/Javascript interface.

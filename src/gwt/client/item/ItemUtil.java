@@ -30,6 +30,7 @@ import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.FlashClients;
 
 /**
  * Contains utility methods for item related user interface business.
@@ -116,17 +117,15 @@ public class ItemUtil
         }
 
         MediaDesc preview = item.getPreviewMedia();
-        String encodedPath = URL.encodeComponent(preview.getMediaPath());
 
         // A special case for video, for now...
         if (preview.isVideo()) {
-            return WidgetUtil.createFlashContainer(
-                "videoViewer", "/clients/" + DeploymentConfig.version + "/videoviewer.swf",
-                320, 240, "video=" + encodedPath);
+            return FlashClients.createVideoViewer(320, 240, preview.getMediaPath());
         }
 
         // set up the flashvars
-        String flashVars = "mode=" + mode + "&media=" + encodedPath +
+        String flashVars = "mode=" + mode +
+            "&media=" + URL.encodeComponent(preview.getMediaPath()) +
             "&name=" + URL.encodeComponent(item.name);
         switch (mode) {
         case UberClientModes.AVATAR_VIEWER:

@@ -3,7 +3,6 @@
 
 package client.util;
 
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,55 +43,45 @@ public class MediaUtil
      * must be in the same ratio as the ratio between {@link MediaDesc#THUMBNAIL_WIDTH} and {@link
      * MediaDesc#THUMBNAIL_HEIGHT}.
      */
-    public static Widget createMediaView (MediaDesc desc, int width, int height, ClickListener click)
+    public static Widget createMediaView (
+        MediaDesc desc, int width, int height, ClickListener click)
     {
         String path = desc.getMediaPath();
         Widget view;
 
-        if (desc.isVideo()) {
-            view = WidgetUtil.createFlashContainer("videoViewer",
-                "/clients/" + DeploymentConfig.version + "/videoviewer.swf", width, height,
-                "video=" + URL.encodeComponent(path));
+        if (desc.isSWF()) {
+            view = WidgetUtil.createFlashContainer("", path, width, height, null);
 
-        } else {
-            switch (desc.mimeType) {
-            case MediaDesc.VIDEO_YOUTUBE_DEPRECATED:
-            case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
-                view = WidgetUtil.createFlashContainer("", path, width, height, null);
-                break;
+        } else if (desc.isVideo()) {
+            view = FlashClients.createVideoViewer(width, height, path);
 
-            case MediaDesc.IMAGE_PNG:
-            case MediaDesc.IMAGE_JPEG:
-            case MediaDesc.IMAGE_GIF:
-                view = new Image(path);
-                switch (desc.constraint) {
-                case MediaDesc.HALF_HORIZONTALLY_CONSTRAINED:
-                    if (width < MediaDesc.THUMBNAIL_WIDTH) {
-                        view.setHeight("auto");
-                        view.setWidth(width + "px");
-                    }
-                    break;
-                case MediaDesc.HALF_VERTICALLY_CONSTRAINED:
-                    if (height < MediaDesc.THUMBNAIL_HEIGHT) {
-                        view.setHeight(height + "px");
-                        view.setWidth("auto");
-                    }
-                    break;
-                case MediaDesc.HORIZONTALLY_CONSTRAINED:
+        } else if (desc.isImage()) {
+            view = new Image(path);
+            switch (desc.constraint) {
+            case MediaDesc.HALF_HORIZONTALLY_CONSTRAINED:
+                if (width < MediaDesc.THUMBNAIL_WIDTH) {
                     view.setHeight("auto");
                     view.setWidth(width + "px");
-                    break;
-                case MediaDesc.VERTICALLY_CONSTRAINED:
-                    view.setHeight(height + "px");
-                    view.setWidth("auto");
-                    break;
                 }
                 break;
-
-            default:
-                view = new Image(UNKNOWN_DESC.getMediaPath());
+            case MediaDesc.HALF_VERTICALLY_CONSTRAINED:
+                if (height < MediaDesc.THUMBNAIL_HEIGHT) {
+                    view.setHeight(height + "px");
+                    view.setWidth("auto");
+                }
+                break;
+            case MediaDesc.HORIZONTALLY_CONSTRAINED:
+                view.setHeight("auto");
+                view.setWidth(width + "px");
+                break;
+            case MediaDesc.VERTICALLY_CONSTRAINED:
+                view.setHeight(height + "px");
+                view.setWidth("auto");
                 break;
             }
+
+        } else {
+            view = new Image(UNKNOWN_DESC.getMediaPath());
         }
 
         // add the click listener if one was provided
