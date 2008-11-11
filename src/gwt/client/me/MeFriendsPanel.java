@@ -59,8 +59,7 @@ public class MeFriendsPanel extends FlowPanel
         Widget imageLink = Link.createImage(
             "/images/me/me_invite_friends.png", _msgs.nextInviteTip(), Pages.PEOPLE, "invites");
         imageLink.addStyleName("Invite");
-        ((SourcesClickEvents)imageLink).addClickListener(
-            MsoyUI.createTrackingListener("meInviteFriends", null));
+        MsoyUI.addTrackingListener(((SourcesClickEvents)imageLink), "meInviteFriends", null);
         add(imageLink);
 
         add(MsoyUI.createLabel(_msgs.nextOr(), null));

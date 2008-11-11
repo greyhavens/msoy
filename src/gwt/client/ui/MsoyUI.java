@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -472,37 +473,41 @@ public class MsoyUI
     }
 
     /**
-     * Create a ClickListener that will track an arbitrary click on any widget against our
+     * Adds a ClickListener that will track an arbitrary click on any widget against our
      * server-side tracking system.  No callback.
+     *
+     * @param target the clickable thing on which to add a listener
      * @param action String identifier for the action to be logged eg "landingPlayButtonClicked"
      * @param details Optional additional info about the action performed eg game or whirled id
      */
-    public static ClickListener createTrackingListener (final String action, final String details)
+    public static void addTrackingListener (
+        final SourcesClickEvents target, final String action, final String details)
     {
-        return new ClickListener() {
+        target.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 _membersvc.trackClientAction(
-                    CShell.visitor, action, details != null ? details : "",
-                    new NoopAsyncCallback());
+                    CShell.visitor, action, details != null ? details : "", new NoopAsyncCallback());
             }
-        };
+        });
     }
 
     /**
      * Create a ClickListener that will track an arbitrary click on any widget during an a/b test.
      * No callback is performed on success or failure.
+     *
+     * @param target the clickable thing on which to add a listener
      * @param action String identifier for the action to be logged
      * @param testName Optional string identifier for the a/b test if associated with one
      */
-    public static ClickListener createTestTrackingListener (
-        final String action, final String testName)
+    public static void addTestTrackingListener (
+        final SourcesClickEvents target, final String action, final String testName)
     {
-        return new ClickListener() {
+        target.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 _membersvc.trackTestAction(
                     CShell.visitor, action, testName, new NoopAsyncCallback());
             }
-        };
+        });
     }
 
     /**

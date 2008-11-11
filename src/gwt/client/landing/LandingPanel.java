@@ -55,8 +55,7 @@ public class LandingPanel extends SimplePanel
         final Button joinButton =
             new Button("", Link.createListener(Pages.ACCOUNT, "create"));
         joinButton.setStyleName("JoinButton");
-        joinButton.addClickListener(
-            MsoyUI.createTrackingListener("landingJoinButtonClicked", null));
+        MsoyUI.addTrackingListener(joinButton, "landingJoinButtonClicked", null);
         content.add(joinButton, 475, 0);
 
         // logon box
@@ -82,8 +81,7 @@ public class LandingPanel extends SimplePanel
         };
         final Image clickToPlayImage = MsoyUI.createActionImage(
                 "/images/landing/play_screen.png", _msgs.landingClickToStart(), onClick);
-        clickToPlayImage.addClickListener(
-            MsoyUI.createTrackingListener("landingVideoPlayed", null));
+        MsoyUI.addTrackingListener(clickToPlayImage, "landingVideoPlayed", null);
         video.add(clickToPlayImage, 0, 0);
         content.add(video, 465, 90);
 

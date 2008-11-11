@@ -65,8 +65,7 @@ public class CreateAccountPanel extends FlowPanel
         PushButton logonButton = MsoyUI.createButton(
             MsoyUI.SHORT_THIN, _msgs.createLogonLink(),
             Link.createListener(Pages.ACCOUNT, "logon"));
-        logonButton.addClickListener(
-            MsoyUI.createTrackingListener("signupLogonButtonClicked", null));
+        MsoyUI.addTrackingListener(logonButton, "signupLogonButtonClicked", null);
         logonLink.add(logonButton);
 
         add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));

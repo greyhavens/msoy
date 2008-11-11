@@ -66,11 +66,9 @@ public class FriendsFeedPanel extends FlowPanel
                 }
             });
         if (!fullSize) {
-            showMore.addClickListener(MsoyUI.createTrackingListener("meClickedShowMore",
-                categoryTitle));
+            MsoyUI.addTrackingListener(showMore, "meClickedShowMore", categoryTitle);
         } else {
-            showMore.addClickListener(MsoyUI.createTrackingListener("meClickedShowLess",
-                categoryTitle));
+            MsoyUI.addTrackingListener(showMore, "meClickedShowLess", categoryTitle);
         }
         categoryPanel.add(showMore);
 
@@ -82,8 +80,7 @@ public class FriendsFeedPanel extends FlowPanel
 
         for (FeedMessage message : messages) {
             FeedMessagePanel messagePanel = new FeedMessagePanel(message, true);
-            messagePanel.addClickListener(MsoyUI.createTrackingListener("meClickedNewsItem",
-                categoryTitle));
+            MsoyUI.addTrackingListener(messagePanel, "meClickedNewsItem", categoryTitle);
             categoryPanel.add(messagePanel);
         }
     }

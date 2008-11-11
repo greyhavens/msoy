@@ -29,33 +29,28 @@ public class CreatorsLinksPanel extends SimplePanel
         PushButton getStartedButton = new PushButton();
         getStartedButton.setStyleName("GetStartedButton");
         getStartedButton.addClickListener(Link.createListener(Pages.ACCOUNT, "create"));
-        getStartedButton.addClickListener(
-            MsoyUI.createTrackingListener("creatorsLinksGetStartedClicked", null));
+        MsoyUI.addTrackingListener(getStartedButton, "creatorsLinksGetStartedClicked", null);
         content.add(getStartedButton, 342, 381);
 
         Image furniImage = MsoyUI.createActionImage("/images/landing/creators_info_furni.jpg",
             Link.createListener(Pages.SHOP, "3"));
-        furniImage.addClickListener(
-            MsoyUI.createTrackingListener("creatorsLinksFurniClicked", null));
+        MsoyUI.addTrackingListener(furniImage, "creatorsLinksFurniClicked", null);
         content.add(furniImage, 7, 502);
 
         Image avatarsImage = MsoyUI.createActionImage("/images/landing/creators_info_avatars.jpg",
             Link.createListener(Pages.SHOP, "5"));
-        avatarsImage.addClickListener(
-            MsoyUI.createTrackingListener("creatorsLinksAvatarsClicked", null));
+        MsoyUI.addTrackingListener(avatarsImage, "creatorsLinksAvatarsClicked", null);
         content.add(avatarsImage, 311, 502);
 
         Image whirledsImage =
             MsoyUI.createActionImage("/images/landing/creators_info_whirleds.jpg",
             Link.createListener(Pages.GROUPS, ""));
-        whirledsImage.addClickListener(
-            MsoyUI.createTrackingListener("creatorsLinksWhirledsClicked", null));
+        MsoyUI.addTrackingListener(whirledsImage, "creatorsLinksWhirledsClicked", null);
         content.add(whirledsImage, 7, 751);
 
         Image friendsImage = MsoyUI.createActionImage("/images/landing/creators_info_friends.jpg",
             Link.createListener(Pages.GROUPS, ""));
-        friendsImage.addClickListener(
-            MsoyUI.createTrackingListener("creatorsLinksFriendsClicked", null));
+        MsoyUI.addTrackingListener(friendsImage, "creatorsLinksFriendsClicked", null);
         content.add(friendsImage, 311, 751);
 
         content.add(new LandingCopyright(), 0, 1085);

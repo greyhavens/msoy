@@ -29,13 +29,12 @@ public class CreatorsPanel extends SimplePanel
         PushButton getStartedButton = new PushButton();
         getStartedButton.setStyleName("GetStartedButton");
         getStartedButton.addClickListener(Link.createListener(Pages.ACCOUNT, "create"));
-        getStartedButton.addClickListener(
-            MsoyUI.createTrackingListener("creatorsGetStartedClicked", null));
+        MsoyUI.addTrackingListener(getStartedButton, "creatorsGetStartedClicked", null);
         content.add(getStartedButton, 342, 381);
 
         Image infoImage = MsoyUI.createActionImage("/images/landing/creators_info.jpg",
             Link.createListener(Pages.ACCOUNT, "create"));
-        infoImage.addClickListener(MsoyUI.createTrackingListener("creatorsInfoImageClicked", null));
+        MsoyUI.addTrackingListener(infoImage, "creatorsInfoImageClicked", null);
         content.add(infoImage, 15, 504);
 
         content.add(new LandingCopyright(), 0, 1085);

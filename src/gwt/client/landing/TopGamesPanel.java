@@ -192,15 +192,15 @@ public class TopGamesPanel extends AbsolutePanel
         // play button
         Widget play = PlayButton.create(game, "", PlayButton.Size.MEDIUM);
         if (play instanceof SourcesClickEvents) {
-            ((SourcesClickEvents)play).addClickListener(
-                MsoyUI.createTrackingListener("landingGamePlayClicked", ""+game.gameId));
+            MsoyUI.addTrackingListener(
+                (SourcesClickEvents)play, "landingGamePlayClicked", ""+game.gameId);
         }
         right.add(play);
 
         // more games button
         PushButton moreGames = MsoyUI.createImageButton("MoreGames",
             Link.createListener(Pages.GAMES, ""));
-        moreGames.addClickListener(MsoyUI.createTrackingListener("landingMoreGamesClicked", null));
+        MsoyUI.addTrackingListener(moreGames, "landingMoreGamesClicked", null);
         right.add(moreGames);
 
         gameInfoTable.setWidget(0, 2, right);
