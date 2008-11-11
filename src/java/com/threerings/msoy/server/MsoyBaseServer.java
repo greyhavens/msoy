@@ -29,8 +29,6 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.server.util.Retry;
-import com.threerings.msoy.server.util.RetryInterceptor;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
@@ -55,9 +53,6 @@ public abstract class MsoyBaseServer extends WhirledServer
                     // nada; don't schedule our interval
                 }
             });
-            // msoy dependencies
-            bindInterceptor(Matchers.any(), Matchers.annotatedWith(Retry.class),
-                            new RetryInterceptor());
         }
     }
 
