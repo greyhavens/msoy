@@ -4,18 +4,22 @@
 package com.threerings.msoy.server;
 
 import java.security.Security;
+import java.util.Formatter;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.matcher.Matchers;
 
+import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Statistics;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.EHCacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.util.RunQueue;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.server.ReportManager;
 
@@ -90,6 +94,30 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // set up the right client factories
         configSessionFactory();
+
+        // add a reporter that conveys the statistics of our cache manager
+        _reportMan.registerReporter(new ReportManager.Reporter() {
+            public void appendReport (StringBuilder buf, long now, long sinceLast, boolean reset) {
+                buf.append("* ehcache.CacheManager:\n");
+                Formatter fmt = new Formatter(buf);
+                fmt.format(HFMT, "cache", "size", "(kb)", "hit%", "hits", "inmem", "disk", "miss",
+                           "evict", "avgget");
+                for (String cname : _cacheMgr.getCacheNames()) {
+                    Cache cache = _cacheMgr.getCache(cname);
+                    Statistics stats = cache.getStatistics();
+                    String sname = cname.substring(cname.lastIndexOf(".")+1);
+                    long accesses = stats.getCacheHits() + stats.getCacheMisses();
+                    long hpct = (accesses == 0) ? 0 : (100 * stats.getCacheHits()) / accesses;
+                    fmt.format(DFMT, StringUtil.truncate(sname, 20), cache.getSize(),
+                               cache.calculateInMemorySize()/1024, hpct,
+                               stats.getCacheHits(), stats.getInMemoryHits(), stats.getOnDiskHits(),
+                               stats.getCacheMisses(), stats.getEvictionCount(),
+                               (int)stats.getAverageGetTime());
+                }
+            }
+            protected static final String HFMT = "- %20s %5s %4s %4s %7s %6s %6s %8s %7s %6s\n";
+            protected static final String DFMT = "- %20s %5d %4d %3d%% %7d %6d %6d %8d %7d %3d ms\n";
+        });
 
         _bureauMgr.configClientFactories();
     }
