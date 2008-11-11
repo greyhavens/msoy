@@ -207,6 +207,8 @@ public class MsoyController extends Controller
     public function createPageLink (page :String, forUs :Boolean) :String
     {
         const memName :MemberName = _mctx.getMyName();
+        // TEMP logging
+        log.info("createPageLink", "memName", memName, "params", MsoyParameters.get());
         const isGuest :Boolean = memName.isGuest();
         var affiliate :String = null;
         if (forUs && isGuest) {
