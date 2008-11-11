@@ -222,9 +222,8 @@ public class ProfileBlurb extends Blurb
 
         int row = 0;
         econtent.setText(row, 0, _msgs.displayName());
-        econtent.setWidget(row++, 1, _ename = new TextBox());
-        _ename.setMaxLength(MemberName.MAX_DISPLAY_NAME_LENGTH);
-        _ename.setText(_name.toString());
+        _ename = MsoyUI.createTextBox(_name.toString(), MemberName.MAX_DISPLAY_NAME_LENGTH, 30);
+        econtent.setWidget(row++, 1, _ename);
 
         econtent.setText(row, 0, "Photo");
         RowPanel panel = new RowPanel();
@@ -276,9 +275,7 @@ public class ProfileBlurb extends Blurb
         _eshowAge.setChecked(_profile.age > 0);
 
         econtent.setText(row, 0, _msgs.elocation());
-        econtent.setWidget(row++, 1, _elocation = new TextBox());
-        _elocation.setVisibleLength(30);
-        _elocation.setText(unBlank(_profile.location));
+        econtent.setWidget(row++, 1, _elocation = MsoyUI.createTextBox(_profile.location, 255, 30));
 
         if (DeploymentConfig.devDeployment) {
             // TODO: disable if the level or friend count is too low
