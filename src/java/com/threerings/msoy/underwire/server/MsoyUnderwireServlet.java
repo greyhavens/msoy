@@ -23,12 +23,15 @@ import com.threerings.underwire.server.GameInfoProvider;
 import com.threerings.underwire.server.persist.SupportRepository;
 import com.threerings.underwire.server.persist.UnderwireRepository;
 import com.threerings.underwire.web.client.UnderwireException;
+import com.threerings.underwire.web.data.Account;
 import com.threerings.underwire.web.server.UnderwireServlet;
 
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
+import com.threerings.msoy.underwire.gwt.MsoyAccount;
+import com.threerings.msoy.underwire.gwt.SupportService;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -41,7 +44,37 @@ import static com.threerings.msoy.Log.log;
  * An underwire servlet which uses a the msoy connection provider and user manager.
  */
 public class MsoyUnderwireServlet extends UnderwireServlet
+    implements SupportService
 {
+    // from SupportService
+    public void setGreeter (String authtok, String accountName, boolean greeter)
+        throws UnderwireException
+    {
+        Caller caller = requireAuthedSupport(authtok);
+        int memberId = Integer.valueOf(accountName);
+        MemberRecord memberRec = _memberRepo.loadMember(memberId);
+        if (greeter != memberRec.isGreeter()) {
+            memberRec.setFlag(MemberRecord.Flag.GREETER, greeter);
+            _memberRepo.storeFlags(memberRec);
+            recordEvent(caller.username, accountName, "Changed greeter flag to " + greeter);
+        }
+    }
+
+    // from SupportService
+    public void setTroublemaker (String authtok, String accountName, boolean troublemaker)
+        throws UnderwireException
+    {
+        Caller caller = requireAuthedSupport(authtok);
+        int memberId = Integer.valueOf(accountName);
+        MemberRecord memberRec = _memberRepo.loadMember(memberId);
+        if (troublemaker != memberRec.isTroublemaker()) {
+            memberRec.setFlag(MemberRecord.Flag.TROUBLEMAKER, troublemaker);
+            _memberRepo.storeFlags(memberRec);
+            recordEvent(caller.username, accountName, 
+                        "Changed troublemaker flag to " + troublemaker);
+        }
+    }
+
     @Override // from UnderwireServlet
     protected SiteIdentifier createSiteIdentifier ()
     {
@@ -157,6 +190,11 @@ public class MsoyUnderwireServlet extends UnderwireServlet
             log.warning("Failed to load caller [tok=" + authtok + "].", e);
             throw new UnderwireException("m.internal_error");
         }
+    }
+
+    @Override protected Account createAccount ()
+    {
+        return new MsoyAccount();
     }
 
     @Singleton

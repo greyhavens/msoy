@@ -19,6 +19,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
+import com.threerings.msoy.underwire.gwt.MsoyAccount;
 
 import com.threerings.underwire.server.GameInfoProvider;
 import com.threerings.underwire.web.data.Account;
@@ -65,6 +66,8 @@ public class MsoyGameInfoProvider extends GameInfoProvider
             account.firstSession = new Date(member.created.getTime());
             account.lastSession = new Date(member.lastSession.getTime());
             account.altName = member.permaName;
+            ((MsoyAccount)account).greeter = member.isGreeter();
+            ((MsoyAccount)account).troublemaker = member.isTroublemaker();
             MemberWarningRecord warning = _memberRepo.loadMemberWarningRecord(member.memberId);
             if (warning != null) {
                 account.tempBan = warning.banExpires == null ?
