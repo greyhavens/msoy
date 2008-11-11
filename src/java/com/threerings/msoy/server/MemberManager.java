@@ -368,14 +368,13 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void ditchFollower (ClientObject caller, int memberId,
+    public void ditchFollower (ClientObject caller, int followerId,
                                InvocationService.InvocationListener listener)
         throws InvocationException
     {
         MemberObject leader = (MemberObject) caller;
 
-        if (memberId == 0) {
-            // Clear all followers
+        if (followerId == 0) { // Clear all followers
             for (MemberName follower : leader.followers) {
                 MemberObject fmo = _locator.lookupMember(follower.getMemberId());
                 if (fmo != null) {
@@ -384,12 +383,14 @@ public class MemberManager
             }
             leader.setFollowers(new DSet<MemberName>());
 
-        } else {
-            // Ditch a single follower
-            MemberObject follower = _locator.lookupMember(memberId);
-            if (follower != null && leader.followers.containsKey(follower.getMemberId())) {
+        } else { // Ditch a single follower
+            if (leader.followers.containsKey(followerId)) {
+                leader.removeFromFollowers(followerId);
+            }
+            MemberObject follower = _locator.lookupMember(followerId);
+            if (follower != null && follower.following != null &&
+                follower.following.getMemberId() == leader.getMemberId()) {
                 follower.setFollowing(null);
-                leader.removeFromFollowers(memberId);
             }
         }
     }
