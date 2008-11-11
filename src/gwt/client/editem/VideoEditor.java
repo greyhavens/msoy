@@ -65,6 +65,7 @@ public class VideoEditor extends BulkMediaEditor
                 if (!desc.isVideo()) {
                     return _emsgs.errVideoNotVideo();
                 }
+                _youtubeIdBox.setText("");
                 _video.videoMedia = desc;
                 return null;
             }
