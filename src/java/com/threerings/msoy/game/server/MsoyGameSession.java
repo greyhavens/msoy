@@ -112,7 +112,6 @@ public class MsoyGameSession extends CrowdSession
     /** A casted reference to the userobject. */
     protected PlayerObject _plobj;
 
-    @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected PlayerLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
 }
