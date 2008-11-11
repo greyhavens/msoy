@@ -568,7 +568,9 @@ public class MemberNodeActions
         }
 
         @Override protected void execute (MemberObject memobj) {
-            memobj.removeFromFollowers(_followerId);
+            if (memobj.followers.containsKey(_followerId)) {
+                memobj.removeFromFollowers(_followerId);
+            }
         }
         
         protected int _followerId;
