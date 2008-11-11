@@ -220,7 +220,7 @@ public class MyWhirleds extends AbsolutePanel
     /** Dropdown of sort methods */
     protected ListBox _sortBox;
 
-    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
+    protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 

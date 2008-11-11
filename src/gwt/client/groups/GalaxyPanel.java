@@ -268,7 +268,7 @@ public class GalaxyPanel extends VerticalPanel
     protected TextBox _searchInput;
     protected PagedGrid<GroupCard> _groupGrid;
 
-    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
+    protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 

@@ -112,7 +112,7 @@ public class WhirledRoomsPanel extends VerticalPanel
     protected ListBox _roomsListBox;
     protected SmartTable _roomsGrid;
 
-    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
+    protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
     protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)

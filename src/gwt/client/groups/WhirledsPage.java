@@ -118,5 +118,5 @@ public class WhirledsPage extends Page
     protected WhirledDetailPanel _detail = new WhirledDetailPanel();
     protected GalaxyPanel _galaxy;
 
-    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
+    protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
 }

@@ -126,5 +126,5 @@ public class WhirledDiscussionsPanel extends FlowPanel
     /** Infoes about the group we're in for constructing links etc */
     protected GroupDetail _detail;
 
-    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
+    protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
 }

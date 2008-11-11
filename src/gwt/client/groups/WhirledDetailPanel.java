@@ -429,7 +429,7 @@ public class WhirledDetailPanel extends FlowPanel
     protected GroupExtras _extras;
     protected ContentPanel _contentPanel;
 
-    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
+    protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)ServiceUtil.bind(
         GWT.create(GroupService.class), GroupService.ENTRY_POINT);

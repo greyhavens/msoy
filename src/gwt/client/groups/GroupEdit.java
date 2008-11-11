@@ -245,7 +245,7 @@ public class GroupEdit extends FlexTable
     protected LimitedTextArea _charter;
     protected Button _submit;
 
-    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
+    protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)

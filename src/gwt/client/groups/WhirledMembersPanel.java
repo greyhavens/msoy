@@ -164,7 +164,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
     protected GroupDetail _detail;
     protected Button _invite;
 
-    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
+    protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }
