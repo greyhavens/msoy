@@ -16,7 +16,7 @@ public class GameDetail
     implements IsSerializable
 {
     /** The maximum allowed length for game instructions. */
-    public static final int MAX_INSTRUCTIONS_LENGTH = 4096;
+    public static final int MAX_INSTRUCTIONS_LENGTH = 16384;
 
     /** The id of the game in question. */
     public int gameId;
