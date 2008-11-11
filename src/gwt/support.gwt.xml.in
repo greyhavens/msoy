@@ -4,6 +4,7 @@
   <inherits name="com.threerings.underwire.User"/>
 
   <source path="client/support"/>
+  <source path="com/threerings/msoy/underwire/gwt"/>
 
   <public path="public/support"/>
   <stylesheet src="support.css"/>

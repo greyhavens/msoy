@@ -6,15 +6,20 @@ package client.support;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
+import com.threerings.msoy.underwire.gwt.SupportService;
+import com.threerings.msoy.underwire.gwt.SupportServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import com.threerings.underwire.gwt.client.AccountPopup;
 import com.threerings.underwire.gwt.client.AdminPanel;
 import com.threerings.underwire.gwt.client.ClientMessages;
+import com.threerings.underwire.gwt.client.PanelCreator;
 import com.threerings.underwire.gwt.client.ServerMessages;
 import com.threerings.underwire.gwt.client.WebContext;
 import com.threerings.underwire.web.client.UnderwireService;
 import com.threerings.underwire.web.client.UnderwireServiceAsync;
+import com.threerings.underwire.web.data.Account;
 import com.threerings.underwire.web.data.AccountName;
 
 import client.shell.Page;
@@ -70,17 +75,26 @@ public class SupportPage extends Page
         super.initContext();
 
         // create our Underwire context
-        _webctx = new WebContext();
+        _webctx = new MsoyWebContext();
         _webctx.undersvc = (UnderwireServiceAsync)GWT.create(UnderwireService.class);
         ((ServiceDefTarget)_webctx.undersvc).setServiceEntryPoint("/undersvc");
         _webctx.cmsgs = (ClientMessages)GWT.create(ClientMessages.class);
         _webctx.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
+        _webctx.supportService = (SupportServiceAsync)GWT.create(SupportService.class);
+        ((ServiceDefTarget)_webctx.supportService).setServiceEntryPoint("/undersvc");
+
+        _webctx.panelCreator = new PanelCreator() {
+            @Override public AccountPopup createAccountPanel (
+                WebContext ctx, Account account, boolean autoShowRelated) {
+                return new MsoyAccountPopup(ctx, account, autoShowRelated);
+            }
+        };
 
         // initialize our MSOY context
         CSupport.msgs = (SupportMessages)GWT.create(SupportMessages.class);
     }
 
-    protected WebContext _webctx;
+    protected MsoyWebContext _webctx;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }
