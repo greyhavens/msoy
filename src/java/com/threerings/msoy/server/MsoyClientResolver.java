@@ -69,7 +69,13 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         // see if we have a member object forwarded from our peer
         _fwddata = _peerMan.getForwardedMemberObject(_username);
-        return (_fwddata == null) ? new MemberObject() : _fwddata.left;
+        if (_fwddata == null) {
+            log.info("Started unforwarded session", "who", _username);
+            return new MemberObject();
+        } else {
+            log.info("Started forwarded session", "who", _username);
+            return _fwddata.left;
+        }
     }
 
     @Override
