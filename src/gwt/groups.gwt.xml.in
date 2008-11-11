@@ -5,10 +5,10 @@
   <source path="com/threerings/msoy/group/data/all"/>
   <source path="com/threerings/msoy/group/gwt"/>
 
-  <source path="client/whirleds"/>
+  <source path="client/groups"/>
 
-  <public path="public/whirleds"/>
-  <stylesheet src="whirleds.css"/>
+  <public path="public/groups"/>
+  <stylesheet src="groups.css"/>
 
-  <entry-point class="client.whirleds.WhirledsPage"/>
+  <entry-point class="client.groups.WhirledsPage"/>
 </module>

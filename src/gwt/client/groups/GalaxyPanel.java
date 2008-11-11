@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.whirleds;
+package client.groups;
 
 import java.util.List;
 

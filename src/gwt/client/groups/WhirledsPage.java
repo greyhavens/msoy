@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.whirleds;
+package client.groups;
 
 import com.google.gwt.core.client.GWT;
 

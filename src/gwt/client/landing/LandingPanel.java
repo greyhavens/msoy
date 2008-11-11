@@ -21,13 +21,13 @@ import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.gwt.LandingServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.groups.FeaturedWhirledPanel;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.whirleds.FeaturedWhirledPanel;
 
 /**
  * Displays a summary of what Whirled is, featuring games, avatars and whirleds.

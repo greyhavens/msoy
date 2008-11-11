@@ -1,7 +1,7 @@
 /**
  * 
  */
-package client.whirleds;
+package client.groups;
 
 import client.ui.MsoyUI;
 import client.util.MediaUtil;
