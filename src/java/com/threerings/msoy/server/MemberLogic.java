@@ -283,12 +283,12 @@ public class MemberLogic
             }
         }
 
-        // If there are still not enough places, fill in with some currently popular places
-        // to go.  Half will be games, the other half rooms.
+        // If there are still not enough places, fill in with some currently popular places.
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         if (curItem < items.length) {
-            // TODO: This is similar to some code in GalaxyServlet and GameServlet. refactor?
+            // Half will be games, the other half rooms.
             int roomLimit = curItem + (items.length - curItem) / 2;
-            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+            // TODO: This is similar to some code in GalaxyServlet and GameServlet. refactor?
             for (PopularPlacesSnapshot.Place place : pps.getTopScenes()) {
                 if (!haveRooms.contains(place.placeId)) {
                     SceneRecord scene = _sceneRepo.loadScene(place.placeId);
@@ -305,35 +305,34 @@ public class MemberLogic
                     break;
                 }
             }
+        }
 
-            // Load top games
-            if (curItem < items.length) {
-                for (PopularPlacesSnapshot.Place place : pps.getTopGames()) {
-                    if (!haveGames.contains(place.placeId)) {
-                        GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
-                        items[curItem++] = new HomePageItem(
-                            HomePageItem.ACTION_GAME, new BasicNavItemData(game.gameId, game.name),
-                            game.getThumbMediaDesc());
-                        haveGames.add(game.gameId);
-                    }
-                    if (curItem == items.length) {
-                        break;
-                    }
+        // Add the top active games.
+        if (curItem < items.length) {
+            for (PopularPlacesSnapshot.Place place : pps.getTopGames()) {
+                if (!haveGames.contains(place.placeId)) {
+                    GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
+                    items[curItem++] = new HomePageItem(
+                        HomePageItem.ACTION_GAME, new BasicNavItemData(game.gameId, game.name),
+                        game.getThumbMediaDesc());
+                    haveGames.add(game.gameId);
+                }
+                if (curItem == items.length) {
+                    break;
                 }
             }
+        }
 
-            // If we don't have enough games, pull from the list of all games.
-            if (curItem < items.length) {
-                for (GameRecord game : _gameRepo.loadGenre((byte)-1, items.length)) {
-                    if (!haveGames.contains(game.gameId)) {
-                        items[curItem++] = new HomePageItem(
-                            HomePageItem.ACTION_GAME,
-                            new BasicNavItemData(game.gameId, game.name),
-                            game.getThumbMediaDesc());
-                    }
-                    if (curItem == items.length) {
-                        break;
-                    }
+        // If we don't have enough games, pull from the list of all games.
+        if (curItem < items.length) {
+            for (GameRecord game : _gameRepo.loadGenre((byte)-1, items.length)) {
+                if (!haveGames.contains(game.gameId)) {
+                    items[curItem++] = new HomePageItem(
+                        HomePageItem.ACTION_GAME, new BasicNavItemData(game.gameId, game.name),
+                        game.getThumbMediaDesc());
+                }
+                if (curItem == items.length) {
+                    break;
                 }
             }
         }
