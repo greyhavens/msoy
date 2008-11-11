@@ -1087,7 +1087,7 @@ public class RoomManager extends SpotSceneManager
                 _pendingGameIds.remove(gameId);
 
                 log.info("Added property space", "roomOid", _roomObj.getOid(), "gameId", gameId,
-                    "propsOid", props.getOid());
+                    "sceneId", _scene.getId(), "propsOid", props.getOid());
             }
 
             Collection<RoomPropertyRecord> _propRecs;
