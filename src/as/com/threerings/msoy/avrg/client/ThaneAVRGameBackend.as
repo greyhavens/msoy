@@ -3,7 +3,10 @@
 
 package com.threerings.msoy.avrg.client {
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.Log;
+import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.Client;
@@ -219,6 +222,7 @@ public class ThaneAVRGameBackend
         o["getSpawnedMobs_v1"] = getSpawnedMobs_v1;
         o["moveMob_v1"] = moveMob_v1;
         o["room_sendMessage_v1"] = room_sendMessage_v1;
+        o["room_sendSignal_v1"] = room_sendSignal_v1;
 
         // .getRoom().props
         o["room_getGameData_v1"] = room_getGameData_v1;
@@ -412,6 +416,12 @@ public class ThaneAVRGameBackend
             roomProps.messageService, ensureRoomClient(roomId), name, value, "room");
     }
 
+    protected function room_sendSignal_v1 (roomId :int, name :String, value :Object) :void
+    {
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        roomObj.roomService.sendSpriteSignal(
+            ensureRoomClient(roomId), name, ObjectMarshaller.encode(value) as ByteArray);
+    }
     
     // -------------------- .getRoom().props --------------------
     protected function room_getGameData_v1 (roomId :int) :Object

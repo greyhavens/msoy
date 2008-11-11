@@ -363,12 +363,15 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void sendSpriteSignal (ClientObject caller, String name, byte[] arg)
     {
-        // make sure the caller is in the room
-        MemberObject who = (MemberObject)caller;
-        if (!_roomObj.occupants.contains(who.getOid())) {
-            log.warning("Rejecting sprite signal request by non-occupant [who=" + who.who() +
-                        ", name=" + name + "].");
-            return;
+        // Caller could be a WindowClientObject if coming from a thane client
+        if (caller instanceof MemberObject) {
+            // make sure the caller is in the room
+            MemberObject who = (MemberObject)caller;
+            if (!_roomObj.occupants.contains(who.getOid())) {
+                log.warning("Rejecting sprite signal request by non-occupant [who=" + who.who() +
+                            ", name=" + name + "].");
+                return;
+            }
         }
 
         // dispatch this as a simple MessageEvent
