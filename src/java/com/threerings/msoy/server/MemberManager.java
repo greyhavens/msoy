@@ -344,10 +344,7 @@ public class MemberManager
         // if the caller is requesting to clear their follow, do so
         if (memberId == 0) {
             if (user.following != null) {
-                final MemberObject followee = _locator.lookupMember(user.following.getMemberId());
-                if (followee != null) {
-                    followee.removeFromFollowers(user.getMemberId());
-                }
+                MemberNodeActions.removeFollower(user.following.getMemberId(), user.getMemberId());
                 user.setFollowing(null);
             }
             return;

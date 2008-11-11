@@ -33,6 +33,7 @@ import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.room.data.RoomCodes;
 
 /**
  * Contains various member node actions.
@@ -62,8 +63,7 @@ public class MemberNodeActions
      * Dispatches a notification that a member's privileges have changed to whichever server they
      * are logged into.
      */
-    public static void tokensChanged (
-        final int memberId, MsoyTokenRing tokens)
+    public static void tokensChanged (final int memberId, MsoyTokenRing tokens)
     {
         _peerMan.invokeNodeAction(new TokensChanged(memberId, tokens));
     }
@@ -177,10 +177,36 @@ public class MemberNodeActions
     {
         _peerMan.invokeNodeAction(new StatUpdated<T>(memberId, modifier));
     }
-    
+
+    /**
+     * Adds an experience to the specified member's experiences set.
+     */
     public static void addExperience (int memberId, byte action, int data)
     {
         _peerMan.invokeNodeAction(new AddExperienceAction(memberId, action, data));
+    }
+
+    /**
+     * Notifies a follower that the leader is on the move (and potentially decouples this follower
+     * from the leader if that turns out to be the right thing to do).
+     */
+    public static void followTheLeader (final int followerId, final int leaderId, int sceneId)
+    {
+        _peerMan.invokeNodeAction(new FollowTheLeaderAction(followerId, leaderId, sceneId),
+                                  new Runnable() {
+            public void run () {
+                // didn't find the follower anywhere, remove them from the leader's follower set
+                removeFollower(leaderId, followerId);
+            }
+        });
+    }
+
+    /**
+     * Removes the specified follower from the specified leader's follower set.
+     */
+    public static void removeFollower (int leaderId, int followerId)
+    {
+        _peerMan.invokeNodeAction(new RemoveFollowerAction(leaderId, followerId));
     }
 
     protected static class InfoChanged extends MemberNodeAction
@@ -196,8 +222,7 @@ public class MemberNodeActions
         public InfoChanged () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             memobj.updateDisplayName(_displayName, _photo);
             memobj.setHeadline(_status);
             _memberMan.updateOccupantInfo(memobj);
@@ -228,8 +253,7 @@ public class MemberNodeActions
         public TokensChanged () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             memobj.setTokens(_tokens);
             _memberMan.updateOccupantInfo(memobj);
         }
@@ -249,8 +273,7 @@ public class MemberNodeActions
         public ReportUnreadMail () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             if (_newMailCount < 0) {
                 memobj.setNewMailCount(memobj.newMailCount + _newMailCount);
             } else if (memobj.newMailCount != _newMailCount) {
@@ -271,8 +294,7 @@ public class MemberNodeActions
         public JoinedGroup () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             memobj.addToGroups(_gm);
         }
 
@@ -289,8 +311,7 @@ public class MemberNodeActions
         public LeftGroup () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             memobj.removeFromGroups(_groupId);
         }
 
@@ -306,8 +327,7 @@ public class MemberNodeActions
         public BootMember () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             _memberMan.bootMember(_memberId);
         }
 
@@ -324,8 +344,7 @@ public class MemberNodeActions
         public AvatarDeleted () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             _itemMan.avatarDeletedOnPeer(memobj, _avatarId);
         }
 
@@ -344,8 +363,7 @@ public class MemberNodeActions
         public AvatarUpdated () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             _itemMan.avatarUpdatedOnPeer(memobj, _avatarId);
         }
 
@@ -364,8 +382,7 @@ public class MemberNodeActions
         public SendNotification () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             _notifyMan.notify(memobj, _notification);
         }
 
@@ -384,8 +401,7 @@ public class MemberNodeActions
         public BadgesVersionUpdated () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             memobj.getLocal(MemberLocal.class).badgesVersion = _badgesVersion;
         }
 
@@ -402,8 +418,7 @@ public class MemberNodeActions
         public BadgeAwarded () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             if (memobj.getLocal(MemberLocal.class).badgeAwarded(_badge)) {
                 _notifyMan.notify(memobj, new BadgeEarnedNotification(_badge));
             }
@@ -424,7 +439,7 @@ public class MemberNodeActions
         public InProgressBadgeUpdated () {
         }
 
-        protected void execute (MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             memobj.getLocal(MemberLocal.class).inProgressBadgeUpdated(_badge);
         }
 
@@ -441,8 +456,7 @@ public class MemberNodeActions
         public StatUpdated () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             memobj.getLocal(MemberLocal.class).stats.syncStat(_modifier);
         }
 
@@ -463,8 +477,7 @@ public class MemberNodeActions
         public FriendEntryUpdate () {
         }
 
-        @Override // from PeerManager.NodeAction
-        public boolean isApplicable (final NodeObject nodeobj)
+        @Override public boolean isApplicable (final NodeObject nodeobj)
         {
             final MsoyNodeObject msoyNode = (MsoyNodeObject)nodeobj;
             for (final int friendId : _friends) {
@@ -472,13 +485,11 @@ public class MemberNodeActions
                     return true;
                 }
             }
-
             // no friends found here, move along
             return false;
         }
 
-        @Override // from PeerManager.NodeAction
-        protected void execute ()
+        @Override protected void execute ()
         {
             final FriendEntry entry = new FriendEntry(
                 new MemberName(_displayName, _memberId), true, _photo, _status);
@@ -499,27 +510,68 @@ public class MemberNodeActions
         /** Used to look up member objects. */
         @Inject protected transient MemberLocator _locator;
     }
-    
+
     protected static class AddExperienceAction extends MemberNodeAction
     {
-        public AddExperienceAction (int memberId, byte action, int data)
-        {
+        public AddExperienceAction (int memberId, byte action, int data) {
             super(memberId);
             _action = action;
             _data = data;
         }
-        
-        public AddExperienceAction () { }
-        
-        protected void execute (MemberObject memObj)
-        {
+
+        public AddExperienceAction () {
+        }
+
+        @Override protected void execute (MemberObject memObj) {
             _memberMan.addExperience(memObj, new MemberExperience(new Date(), _action, _data));
         }
 
-        @Inject protected transient MemberManager _memberMan;
-        
         protected /* final */ byte _action;
         protected /* final */ int _data;
+
+        @Inject protected transient MemberManager _memberMan;
+    }
+
+    protected static class FollowTheLeaderAction extends MemberNodeAction
+    {
+        public FollowTheLeaderAction (int memberId, int leaderId, int sceneId) {
+            super(memberId);
+            _sceneId = sceneId;
+        }
+
+        public FollowTheLeaderAction () {
+        }
+
+        @Override protected void execute (MemberObject memobj) {
+            if (memobj.following == null || memobj.following.getMemberId() != _leaderId) {
+                // oops, no longer following this leader
+                _peerMan.invokeNodeAction(new RemoveFollowerAction(_leaderId, memobj.getMemberId()));
+            } else {
+                memobj.postMessage(RoomCodes.FOLLOWEE_MOVED, _sceneId);
+            }
+        }
+
+        protected int _leaderId;
+        protected int _sceneId;
+
+        @Inject protected transient MsoyPeerManager _peerMan;
+    }
+
+    protected static class RemoveFollowerAction extends MemberNodeAction
+    {
+        public RemoveFollowerAction (int leaderId, int followerId) {
+            super(leaderId);
+            _followerId = followerId;
+        }
+
+        public RemoveFollowerAction () {
+        }
+
+        @Override protected void execute (MemberObject memobj) {
+            memobj.removeFromFollowers(_followerId);
+        }
+        
+        protected int _followerId;
     }
 
     protected static MsoyPeerManager _peerMan;

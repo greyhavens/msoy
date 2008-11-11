@@ -27,6 +27,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.peer.data.HostedRoom;
@@ -94,16 +95,13 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         // if this is a member with followers, tell them all to make the same scene move
         final MemberObject memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
         if (memobj != null) {
-            for (MemberName follower : Lists.newArrayList(memobj.followers)) {
-                MemberObject folobj = _locator.lookupMember(follower.getMemberId());
-                // if they've logged off or are no longer following us, remove them from our set
-                if (folobj == null || folobj.following == null ||
-                    !folobj.following.equals(memobj.memberName)) {
-                    log.info("Clearing departed follower " + follower + ".");
-                    memobj.removeFromFollowers(follower.getMemberId());
-                    continue;
-                }
-                folobj.postMessage(RoomCodes.FOLLOWEE_MOVED, sceneId);
+            for (final MemberName follower : Lists.newArrayList(memobj.followers)) {
+                // this will notify the follower to change scenes and if the follower cannot be
+                // found or if the follower is found and is found no longer to be following this
+                // leader, dispatch a second action requesting that the follower be removed from
+                // the leader's follower set; welcome to the twisty world of distributed systems
+                MemberNodeActions.followTheLeader(
+                    follower.getMemberId(), memobj.getMemberId(), sceneId);
             }
         }
 
