@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.client.editor {
 
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -62,7 +63,12 @@ public class RotatingHotspot extends Hotspot
     // @Override from Hotspot
     override protected function initializeDisplay () :void
     {
-        _displayStandard = new Sprite();
+        var s :Sprite = new Sprite();
+        var g :Graphics = s.graphics;
+        g.beginFill(0xFFFFFF, 0);
+        g.drawRect(0, 0, 21, 21);
+        g.endFill();
+        _displayStandard = s;
 
         var name :String = "HOTSPOT_OVER_" +
             (_corner.y == 0 ? "TOP" : "BOTTOM") + (_corner.x == 0 ? "LEFT" : "RIGHT");
