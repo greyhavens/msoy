@@ -33,6 +33,7 @@ import com.threerings.parlor.server.ParlorManager;
 import com.threerings.messaging.DelayedMessageConnection;
 import com.threerings.messaging.MessageConnection;
 
+import com.whirled.game.server.DictionaryManager;
 import com.whirled.game.server.GameCookieManager;
 import com.whirled.game.server.RepoCookieManager;
 
@@ -100,6 +101,9 @@ public class MsoyGameServer extends MsoyBaseServer
 
         // give our game game registry Injection Power (tm)
         _gameReg.init(injector);
+
+        // tell our dictionary manager where to find its dictionaries
+        _dictMan.init("data/dictionary");
 
         // tell GameManager how to identify our users
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
@@ -177,6 +181,9 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /** Handles our runtime configuration stuffs. */
     @Inject protected DatabaseConfigRegistry _configReg;
+
+    /** Handles dictionary services for games. */
+    @Inject protected DictionaryManager _dictMan;
 
     // these need to be injected here to ensure that they're created at server startup time rather
     // than lazily the first time they're referenced

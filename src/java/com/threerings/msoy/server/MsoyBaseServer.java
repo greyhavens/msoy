@@ -17,8 +17,6 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.util.RunQueue;
 
-import com.whirled.game.server.DictionaryManager;
-
 import com.threerings.presents.server.ReportManager;
 
 import com.threerings.admin.server.AdminProvider;
@@ -87,11 +85,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         AdminProvider.init(_invmgr, confReg);
         _runtime.init(_omgr, confReg);
 
-        // initialize our dictionary services
-        _dictMan.init("data/dictionary");
-
+        // initialize our bureau manager
         _bureauMgr.init(getListenPorts()[0]);
-        
+
         // set up the right client factories
         configSessionFactory();
 
@@ -140,9 +136,10 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Sends event information to an external log database. */
     @Inject protected MsoyEventLogger _eventLog;
 
-    /** Handles dictionary services for games. */
-    @Inject protected DictionaryManager _dictMan;
-    
+    /** Handles state of the server reporting (used by the /status servlet). */
+    @Inject protected ReportManager _reportMan;
+
+    /** Manages our bureau launchers. */
     @Inject protected BureauManager _bureauMgr;
 
     /** This is needed to ensure that the StatType enum's static initializer runs before anything
