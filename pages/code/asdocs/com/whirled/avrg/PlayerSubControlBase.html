@@ -93,7 +93,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#completeTask()">completeTask</a>(taskId:String, payout:Number):void</div>
 <div class="summaryTableDescription">
-     Marks this player as having achieved a task.</div>
+     This method calculates and awards a coin payout for the player.</div>
 </td><td class="summaryTableOwnerCol">PlayerSubControlBase</td>
 </tr>
 <tr class="">
@@ -298,10 +298,20 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function completeTask(taskId:String, payout:Number):void</code><p>
-     Marks this player as having achieved a task. The server will process this information and
-     generate a coin payout based on a number of factors, including how long it takes players
-     on average to complete the task. Games should call this after a milestone is reached such as
-     completion of a level. The task id is arbitrary and is only used for record keeping.
+     This method calculates and awards a coin payout for the player. The actual amount is not
+     under the direct control of the developer, but is calculated by Whirled from factors such
+     as the number of people playing the game and the frequency and size of payouts the game
+     makes.
+          The payout factor is a number that should lie between 0 and 1, and the coin payout is a
+     multiple of this amount. This means if the game calls this method with a factor of 0.3 for
+     one player and 0.6 for another, the second player is guaranteed to get twice as many coins
+     as the first. Use this guarantee to develop a fair payout structure for your game.
+          The taskId is not used by the server at all. Its only purpose is to be echoed back in the
+     AVRGamePlayerEvent.TASK_COMPLETED event that is dispatched as a result of this call. This
+     event contains the taskId that was sent in along with the precise number of coins that were
+     actually awarded to the player. The typical use of this event would be to display a nice
+     popup window or graphical effect to salute the player's achivement, optionally including
+     the coin amount.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -314,12 +324,6 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">payout</span>:Number</code></td>
 </tr>
 </table>
-<p>
-<span class="label">See also</span>
-</p>
-<div class="seeAlso">
-<a href="../avrg/PlayerSubControlBase.html#event:taskCompleted" target="">taskCompleted</a>
-</div>
 </div>
 <a name="deactivateGame()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

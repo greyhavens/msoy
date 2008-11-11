@@ -704,7 +704,8 @@ showHideInherited();
 <div class="detailBody">
 <code>public function setMoveSpeed(pixelsPerSecond:Number):void</code><p>
      Set this actor's movement speed, in pixels per second. The default value if unset is 500
-     pixels per second. The minimum possible speed currently is 50 pixels per second.
+     pixels per second. The minimum possible speed currently is 50 pixels per second. This only
+     sets the local move speed for this instance, and is not propogated out to other clients.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
