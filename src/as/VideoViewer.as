@@ -43,7 +43,6 @@ public class VideoViewer extends Sprite
     protected function setYoutubeId (id :String) :void
     {
         if (id == "") {
-            handleUnload();
             setupBlank();
             return;
         }
@@ -113,6 +112,8 @@ public class VideoViewer extends Sprite
 
     protected function setupBlank () :void
     {
+        handleUnload();
+
         var s :Sprite = new Sprite();
         s.graphics.beginFill(0xFFFFFF);
         s.graphics.drawRect(0, 0, 320, 240);
