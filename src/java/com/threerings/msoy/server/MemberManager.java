@@ -357,8 +357,8 @@ public class MemberManager
         }
 
         // Wire up both the leader and follower
-        if (!target.followers.containsKey(target.getMemberId())) {
-            log.info("Adding follower " + user.memberName + " to " + target.memberName + ".");
+        if (!target.followers.containsKey(user.getMemberId())) {
+            log.info("Adding follower " + user.who() + " to " + target.who() + ".");
             target.addToFollowers(user.memberName);
         }
         user.setFollowing(target.memberName);
