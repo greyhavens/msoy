@@ -940,10 +940,10 @@ public class MemberRepository extends DepotRepository
     public boolean getFriendStatus (final int firstId, final int secondId)
     {
         List<Where> clauses = Collections.singletonList(
-            new Where(new And(new Or(new And(new Equals(FriendRecord.INVITER_ID_C, firstId),
-                                             new Equals(FriendRecord.INVITEE_ID_C, secondId)),
-                                     new And(new Equals(FriendRecord.INVITER_ID_C, secondId),
-                                             new Equals(FriendRecord.INVITEE_ID_C, firstId))))));
+            new Where(new Or(new And(new Equals(FriendRecord.INVITER_ID_C, firstId),
+                                     new Equals(FriendRecord.INVITEE_ID_C, secondId)),
+                             new And(new Equals(FriendRecord.INVITER_ID_C, secondId),
+                                     new Equals(FriendRecord.INVITEE_ID_C, firstId)))));
         return findAll(FriendRecord.class, true, clauses).size() > 0;
     }
 
