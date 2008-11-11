@@ -44,15 +44,4 @@ public class Video extends Item
     {
         videoMedia = desc;
     }
-
-    @Override // from Item
-    protected MediaDesc getDefaultFurniMedia ()
-    {
-        if (videoMedia != null && videoMedia.isExternalVideo()) {
-            return videoMedia;
-        }
-
-        // else: TODO
-        return super.getDefaultFurniMedia();
-    }
 }

@@ -5,6 +5,8 @@ package com.threerings.msoy.stuff.server;
 
 import static com.threerings.msoy.Log.log;
 
+import java.io.IOException;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +43,7 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.msoy.web.server.UploadUtil;
 
 import com.threerings.msoy.stuff.gwt.StuffService;
 
@@ -50,6 +53,20 @@ import com.threerings.msoy.stuff.gwt.StuffService;
 public class StuffServlet extends MsoyServiceServlet
     implements StuffService
 {
+    // from interface ItemService
+    public MediaDesc publishExternalMedia (String data, byte mimeType)
+        throws ServiceException
+    {
+        ExternalUploadFile file = new ExternalUploadFile(data, mimeType);
+        try {
+            UploadUtil.publishUploadFile(file);
+            return new MediaDesc(file.getHash(), file.getMimeType(), MediaDesc.NOT_CONSTRAINED);
+        } catch (IOException ioe) {
+            log.warning("Unable to publish external media file", ioe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     // from interface StuffService
     public Item createItem (Item item, ItemIdent parent)
         throws ServiceException

@@ -61,7 +61,10 @@ public class MediaDesc implements Streamable, IsSerializable
     public static final byte APPLICATION_ZIP = 42;
 
     /** The MIME type for Action Script ABC files. */
-    public static final byte COMPILED_ACTION_SCRIPT_LIBRARY = 43;
+    public static final byte COMPILED_ACTIONSCRIPT_LIBRARY = 43;
+
+    /** The MIME type for youtube video. */
+    public static final byte EXTERNAL_YOUTUBE = 100;
 
     /** Identifies that a "quarter thumbnail" sized image is desired. */
     public static final int QUARTER_THUMBNAIL_SIZE = 0;
@@ -160,7 +163,8 @@ public class MediaDesc implements Streamable, IsSerializable
     /**
      * Convert the specified byte array directly into a String.
      */
-    public static String bytesToString (byte[] bytes)
+    // TODO remove one YOUTUBE_DEPRECATED is removed
+    private static String bytesToString (byte[] bytes)
     {
         if (bytes == null) {
             return "";
@@ -176,7 +180,8 @@ public class MediaDesc implements Streamable, IsSerializable
     /**
      * Convert the (assumed-ascii) String into a byte array.
      */
-    public static byte[] stringToBytes (String s)
+    // TODO: remove once YOUTUBE_DEPRECATED is removed
+    private static byte[] stringToBytes (String s)
     {
         if (s == null) {
             return null;
@@ -257,12 +262,12 @@ public class MediaDesc implements Streamable, IsSerializable
 //            return AUDIO_WAV;
         } else if (mimeType.equals("video/flash")) {
             return VIDEO_FLASH;
-        } else if (mimeType.equals("video/mpeg")) {
-            return VIDEO_MPEG;
-        } else if (mimeType.equals("video/quicktime")) {
-            return VIDEO_QUICKTIME;
-        } else if (mimeType.equals("video/msvideo")) {
-            return VIDEO_MSVIDEO;
+//        } else if (mimeType.equals("video/mpeg")) {
+//            return VIDEO_MPEG;
+//        } else if (mimeType.equals("video/quicktime")) {
+//            return VIDEO_QUICKTIME;
+//        } else if (mimeType.equals("video/msvideo")) {
+//            return VIDEO_MSVIDEO;
         } else if (mimeType.equals("application/x-shockwave-flash")) {
             return APPLICATION_SHOCKWAVE_FLASH;
         } else if (mimeType.equals("application/java-archive")) {
@@ -270,7 +275,9 @@ public class MediaDesc implements Streamable, IsSerializable
         } else if (mimeType.equals("application/zip")) {
             return APPLICATION_ZIP;
         } else if (mimeType.equals("application/x-actionscript-bytecode")) {
-            return COMPILED_ACTION_SCRIPT_LIBRARY;
+            return COMPILED_ACTIONSCRIPT_LIBRARY;
+        } else if (mimeType.equals("external/youtube")) {
+            return EXTERNAL_YOUTUBE;
         } else {
             return INVALID_MIME_TYPE;
         }
@@ -282,37 +289,40 @@ public class MediaDesc implements Streamable, IsSerializable
      */
     public static byte suffixToMimeType (String filename)
     {
-        filename = filename.toLowerCase();
-        if (filename.endsWith(".txt")) {
+        // note: this works if a full filename/url is passed, or just the extension
+        String ext = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+        if ("txt".equals(ext)) {
             return TEXT_PLAIN;
-        } else if (filename.endsWith(".as")) {
+        } else if ("as".equals(ext)) {
             return TEXT_ACTIONSCRIPT;
-        } else if (filename.endsWith(".png")) {
+        } else if ("png".equals(ext)) {
             return IMAGE_PNG;
-        } else if (filename.endsWith(".jpg")) {
+        } else if ("jpg".equals(ext)) {
             return IMAGE_JPEG;
-        } else if (filename.endsWith(".gif")) {
+        } else if ("gif".equals(ext)) {
             return IMAGE_GIF;
-        } else if (filename.endsWith(".mp3")) {
+        } else if ("mp3".equals(ext)) {
             return AUDIO_MPEG;
-//        } else if (filename.endsWith(".wav")) {
+//        } else if ("wav".equals(ext)) {
 //            return AUDIO_WAV;
-        } else if (filename.endsWith(".flv")) {
+        } else if ("flv".equals(ext)) {
             return VIDEO_FLASH;
-        } else if (filename.endsWith(".mpg")) {
-            return VIDEO_MPEG;
-        } else if (filename.endsWith(".mov")) {
-            return VIDEO_QUICKTIME;
-        } else if (filename.endsWith(".avi")) {
-            return VIDEO_MSVIDEO;
-        } else if (filename.endsWith(".swf")) {
+//        } else if ("mpg".equals(ext)) {
+//            return VIDEO_MPEG;
+//        } else if ("mov".equals(ext)) {
+//            return VIDEO_QUICKTIME;
+//        } else if ("avi".equals(ext)) {
+//            return VIDEO_MSVIDEO;
+        } else if ("swf".equals(ext)) {
             return APPLICATION_SHOCKWAVE_FLASH;
-        } else if (filename.endsWith(".jar")) {
+        } else if ("jar".equals(ext)) {
             return APPLICATION_JAVA_ARCHIVE;
-        } else if (filename.endsWith(".zip")) {
+        } else if ("zip".equals(ext)) {
             return APPLICATION_ZIP;
-        } else if (filename.endsWith(".abc")) {
-            return COMPILED_ACTION_SCRIPT_LIBRARY;
+        } else if ("abc".equals(ext)) {
+            return COMPILED_ACTIONSCRIPT_LIBRARY;
+        } else if ("e00".equals(ext)) {
+            return EXTERNAL_YOUTUBE;
         } else {
             return INVALID_MIME_TYPE;
         }
@@ -333,13 +343,14 @@ public class MediaDesc implements Streamable, IsSerializable
         case AUDIO_MPEG: return ".mp3";
 //        case AUDIO_WAV: return ".wav";
         case VIDEO_FLASH: return ".flv";
-        case VIDEO_MPEG: return ".mpg";
-        case VIDEO_QUICKTIME: return ".mov";
-        case VIDEO_MSVIDEO: return ".avi";
+//        case VIDEO_MPEG: return ".mpg";
+//        case VIDEO_QUICKTIME: return ".mov";
+//        case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         case APPLICATION_JAVA_ARCHIVE: return ".jar";
         case APPLICATION_ZIP: return ".zip";
-        case COMPILED_ACTION_SCRIPT_LIBRARY: return ".abc";
+        case COMPILED_ACTIONSCRIPT_LIBRARY: return ".abc";
+        case EXTERNAL_YOUTUBE: return ".e00";
         default: return ".dat";
         }
     }
@@ -359,13 +370,14 @@ public class MediaDesc implements Streamable, IsSerializable
         case AUDIO_MPEG: return "audio/mpeg";
 //        case AUDIO_WAV: return "audo/wav";
         case VIDEO_FLASH: return "video/flash";
-        case VIDEO_MPEG: return "video/mpeg";
-        case VIDEO_QUICKTIME: return "video/quicktime";
-        case VIDEO_MSVIDEO: return "video/msvideo";
+//        case VIDEO_MPEG: return "video/mpeg";
+//        case VIDEO_QUICKTIME: return "video/quicktime";
+//        case VIDEO_MSVIDEO: return "video/msvideo";
         case APPLICATION_SHOCKWAVE_FLASH: return "application/x-shockwave-flash";
         case APPLICATION_JAVA_ARCHIVE: return "application/java-archive";
         case APPLICATION_ZIP: return "application/zip";
-        case COMPILED_ACTION_SCRIPT_LIBRARY: return "application/x-actionscript-bytecode";
+        case COMPILED_ACTIONSCRIPT_LIBRARY: return "application/x-actionscript-bytecode";
+        case EXTERNAL_YOUTUBE: return "external/youtube";
         default: return "application/octet-stream";
         }
     }
@@ -546,6 +558,7 @@ public class MediaDesc implements Streamable, IsSerializable
         case IMAGE_JPEG:
         case IMAGE_GIF:
         case VIDEO_FLASH:
+        case EXTERNAL_YOUTUBE:
         case VIDEO_YOUTUBE_DEPRECATED:
         case APPLICATION_SHOCKWAVE_FLASH:
             return true;
@@ -595,43 +608,32 @@ public class MediaDesc implements Streamable, IsSerializable
     }
 
     /**
-     * Is this video that we host?
-     */
-    public boolean isWhirledVideo ()
-    {
-        switch (mimeType) {
-        case VIDEO_FLASH:
-        case VIDEO_MPEG:
-        case VIDEO_QUICKTIME:
-        case VIDEO_MSVIDEO:
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
-    /**
-     * Is this video hosted externally?
-     */
-    // TODO: remove this
-    public boolean isExternalVideo ()
-    {
-        switch (mimeType) {
-        case VIDEO_YOUTUBE_DEPRECATED:
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
-    /**
      * Is this media video?
      */
     public boolean isVideo ()
     {
-        return isWhirledVideo() || isExternalVideo();
+        switch (mimeType) {
+        case VIDEO_FLASH:
+        case EXTERNAL_YOUTUBE:
+//        case VIDEO_MPEG:
+//        case VIDEO_QUICKTIME:
+//        case VIDEO_MSVIDEO:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    public boolean isExternal ()
+    {
+        switch (mimeType) {
+        case EXTERNAL_YOUTUBE:
+            return true;
+
+        default:
+            return false;
+        }
     }
 
     @Override // from Object

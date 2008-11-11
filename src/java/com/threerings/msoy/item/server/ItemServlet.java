@@ -330,7 +330,8 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public ItemListResult loadItemList (ItemListQuery query) throws ServiceException
+    public ItemListResult loadItemList (ItemListQuery query)
+        throws ServiceException
     {
         ItemListResult result = new ItemListResult();
         result.items = _itemLogic.loadItemList(query);

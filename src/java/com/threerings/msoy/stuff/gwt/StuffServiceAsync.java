@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -15,6 +17,11 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  */
 public interface StuffServiceAsync
 {
+    /**
+     * Publish the specified xml string as 'external media'.
+     */
+    void publishExternalMedia (String data, byte mimeType, AsyncCallback<MediaDesc> callback);
+
     /**
      * The asynchronous version of {@link StuffService#createItem}.
      */

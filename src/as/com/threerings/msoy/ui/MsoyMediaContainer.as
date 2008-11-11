@@ -10,6 +10,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MediaContainer;
 import com.threerings.flash.MenuUtil;
+import com.threerings.flash.video.SimpleVideoDisplay;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
@@ -18,6 +19,7 @@ import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.StaticMediaDesc;
+import com.threerings.msoy.item.client.ExternalMediaUtil
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
@@ -98,6 +100,39 @@ public class MsoyMediaContainer extends MediaContainer
             menuItems.push(MenuUtil.createControllerMenuItem(
                 Msgs.GENERAL.get(isBlocked ? "b.unbleep_media" : "b.bleep_media"),
                 toggleBlocked, ctx));
+        }
+    }
+
+    override protected function showNewMedia (url :String) :void
+    {
+        // TODO: some stuff could be combined with VideoViewer, for sure
+        switch (MediaDesc.suffixToMimeType(url)) {
+        case MediaDesc.VIDEO_FLASH:
+        case MediaDesc.EXTERNAL_YOUTUBE:
+            setupVideo(url);
+            break;
+
+        default:
+            super.showNewMedia(url);
+            break;
+        }
+    }
+
+    override protected function setupVideo (url :String) :void
+    {
+        switch (MediaDesc.suffixToMimeType(url)) {
+        case MediaDesc.EXTERNAL_YOUTUBE:
+            var player :YouTubePlayer = new YouTubePlayer();
+            var vid :SimpleVideoDisplay = new SimpleVideoDisplay(player);
+            _media = vid;
+            addChildAt(vid, 0);
+            updateContentDimensions(320, 240); // TODO?
+            ExternalMediaUtil.fetch(url, player);
+            break;
+
+        default:
+            super.setupVideo(url);
+            break;
         }
     }
 

@@ -410,7 +410,7 @@ public class GameEditor extends ItemEditor
     /** Checks mime type for use as a server agent. */
     protected boolean isValidServerAgentMedia (MediaDesc desc)
     {
-        return desc.mimeType == MediaDesc.COMPILED_ACTION_SCRIPT_LIBRARY;
+        return desc.mimeType == MediaDesc.COMPILED_ACTIONSCRIPT_LIBRARY;
     }
 
     // this is for populating the game type list box. AVRG is not analogous to a "match" type but

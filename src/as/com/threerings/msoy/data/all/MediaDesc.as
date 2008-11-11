@@ -69,6 +69,12 @@ public class MediaDesc
     /** The MIME type for ZIP files. */
     public static const APPLICATION_ZIP :int = 42;
 
+    /** The MIME type for ActionScript ABC files. */
+    public static const COMPILED_ACTIONSCRIPT_LIBRARY :int = 43; 
+
+    /** The MIME type for youtube video. */
+    public static const EXTERNAL_YOUTUBE :int = 100;
+
     /** Identifies that a "quarter thumbnail" sized image is desired. */
     public static const QUARTER_THUMBNAIL_SIZE :int = 0;
 
@@ -166,18 +172,20 @@ public class MediaDesc
 //            return AUDIO_WAV;
         } else if (mimeType == "video/flash") {
             return VIDEO_FLASH;
-        } else if (mimeType == "video/mpeg") {
-            return VIDEO_MPEG;
-        } else if (mimeType == "video/quicktime") {
-            return VIDEO_QUICKTIME;
-        } else if (mimeType == "video/msvideo") {
-            return VIDEO_MSVIDEO;
+//        } else if (mimeType == "video/mpeg") {
+//            return VIDEO_MPEG;
+//        } else if (mimeType == "video/quicktime") {
+//            return VIDEO_QUICKTIME;
+//        } else if (mimeType == "video/msvideo") {
+//            return VIDEO_MSVIDEO;
         } else if (mimeType == "application/x-shockwave-flash") {
             return APPLICATION_SHOCKWAVE_FLASH;
         } else if (mimeType == "application/java-archive") {
             return APPLICATION_JAVA_ARCHIVE;
         } else if (mimeType == "application/zip") {
             return APPLICATION_ZIP;
+        } else if (mimeType == "external/youtube") {
+            return EXTERNAL_YOUTUBE;
         } else {
             return INVALID_MIME_TYPE;
         }
@@ -189,37 +197,25 @@ public class MediaDesc
      */
     public static function suffixToMimeType (filename :String) :int
     {
-        filename = filename.toLowerCase();
-        if (StringUtil.endsWith(filename, ".txt")) {
-            return TEXT_PLAIN;
-        } else if (StringUtil.endsWith(filename, ".as")) {
-            return TEXT_ACTIONSCRIPT;
-        } else if (StringUtil.endsWith(filename, ".png")) {
-            return IMAGE_PNG;
-        } else if (StringUtil.endsWith(filename, ".jpg")) {
-            return IMAGE_JPEG;
-        } else if (StringUtil.endsWith(filename, ".gif")) {
-            return IMAGE_GIF;
-        } else if (StringUtil.endsWith(filename, ".mp3")) {
-            return AUDIO_MPEG;
-//        } else if (StringUtil.endsWith(filename, ".wav")) {
-//            return AUDIO_WAV;
-        } else if (StringUtil.endsWith(filename, ".flv")) {
-            return VIDEO_FLASH;
-        } else if (StringUtil.endsWith(filename, ".mpg")) {
-            return VIDEO_MPEG;
-        } else if (StringUtil.endsWith(filename, ".mov")) {
-            return VIDEO_QUICKTIME;
-        } else if (StringUtil.endsWith(filename, ".avi")) {
-            return VIDEO_MSVIDEO;
-        } else if (StringUtil.endsWith(filename, ".swf")) {
-            return APPLICATION_SHOCKWAVE_FLASH;
-        } else if (StringUtil.endsWith(filename, ".jar")) {
-            return APPLICATION_JAVA_ARCHIVE;
-        } else if (StringUtil.endsWith(filename, ".zip")) {
-            return APPLICATION_ZIP;
-        } else {
-            return INVALID_MIME_TYPE;
+        // note: this works if a full filename/url is passed, or just the extension
+        var ext :String = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        switch (ext) {
+        case "txt": return TEXT_PLAIN;
+        case "as": return TEXT_ACTIONSCRIPT;
+        case "png": return IMAGE_PNG;
+        case "jpg": return IMAGE_JPEG;
+        case "gif": return IMAGE_GIF;
+        case "mp3": return AUDIO_MPEG;
+//        case "wav": return AUDIO_WAV;
+        case "flv": return VIDEO_FLASH;
+//        case "mpg": return VIDEO_MPEG;
+//        case "mov": return VIDEO_QUICKTIME;
+//        case "avi": return VIDEO_MSVIDEO;
+        case "swf": return APPLICATION_SHOCKWAVE_FLASH;
+        case "jar": return APPLICATION_JAVA_ARCHIVE;
+        case "zip": return APPLICATION_ZIP;
+        case "e00": return EXTERNAL_YOUTUBE;
+        default: return INVALID_MIME_TYPE;
         }
     }
 
@@ -238,12 +234,13 @@ public class MediaDesc
         case AUDIO_MPEG: return ".mp3";
 //        case AUDIO_WAV: return ".wav";
         case VIDEO_FLASH: return ".flv";
-        case VIDEO_MPEG: return ".mpg";
-        case VIDEO_QUICKTIME: return ".mov";
-        case VIDEO_MSVIDEO: return ".avi";
+//        case VIDEO_MPEG: return ".mpg";
+//        case VIDEO_QUICKTIME: return ".mov";
+//        case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         case APPLICATION_JAVA_ARCHIVE: return ".jar";
         case APPLICATION_ZIP: return ".zip";
+        case EXTERNAL_YOUTUBE: return ".e00";
         default: return ".dat";
         }
     }
@@ -263,12 +260,13 @@ public class MediaDesc
         case AUDIO_MPEG: return "audio/mpeg";
 //        case AUDIO_WAV: return "audo/wav";
         case VIDEO_FLASH: return "video/flash";
-        case VIDEO_MPEG: return "video/mpeg";
-        case VIDEO_QUICKTIME: return "video/quicktime";
-        case VIDEO_MSVIDEO: return "video/msvideo";
+//        case VIDEO_MPEG: return "video/mpeg";
+//        case VIDEO_QUICKTIME: return "video/quicktime";
+//        case VIDEO_MSVIDEO: return "video/msvideo";
         case APPLICATION_SHOCKWAVE_FLASH: return "application/x-shockwave-flash";
         case APPLICATION_JAVA_ARCHIVE: return "application/java-archive";
         case APPLICATION_ZIP: return "application/zip";
+        case EXTERNAL_YOUTUBE: return "external/youtube";
         default: return "application/octet-stream";
         }
     }
@@ -390,38 +388,7 @@ public class MediaDesc
         case VIDEO_FLASH:
         case VIDEO_YOUTUBE_DEPRECATED:
         case APPLICATION_SHOCKWAVE_FLASH:
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
-    /**
-     * Is this video that we host?
-     */
-     public function isWhirledVideo () :Boolean
-     {
-        switch (mimeType) {
-        case VIDEO_FLASH:
-        case VIDEO_MPEG:
-        case VIDEO_QUICKTIME:
-        case VIDEO_MSVIDEO:
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
-    /**
-     * Is this video hosted externally?
-     */
-     // TODO: remove this
-     public function isExternalVideo () :Boolean
-     {
-        switch (mimeType) {
-        case VIDEO_YOUTUBE_DEPRECATED:
+        case EXTERNAL_YOUTUBE:
             return true;
 
         default:
@@ -434,7 +401,28 @@ public class MediaDesc
      */
     public function isVideo () :Boolean
     {
-        return isWhirledVideo() || isExternalVideo();
+        switch (mimeType) {
+        case VIDEO_FLASH:
+        case EXTERNAL_YOUTUBE:
+//        case VIDEO_MPEG:
+//        case VIDEO_QUICKTIME:
+//        case VIDEO_MSVIDEO:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    public function isExternal () :Boolean
+    {
+        switch (mimeType) {
+        case EXTERNAL_YOUTUBE:
+            return true;
+
+        default:
+            return false;
+        }
     }
 
     // documentation inherited from Hashable

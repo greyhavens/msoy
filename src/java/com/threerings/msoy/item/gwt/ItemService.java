@@ -92,7 +92,8 @@ public interface ItemService extends RemoteService
     /**
      * Loads items from a list that match the given criteria.
      */
-    ItemListResult loadItemList (ItemListQuery query) throws ServiceException;
+    ItemListResult loadItemList (ItemListQuery query)
+        throws ServiceException;
 
     /**
      * Loads up all of this member's photo inventory. This exists separate from

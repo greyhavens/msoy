@@ -119,7 +119,7 @@ public class ItemUtil
         String encodedPath = URL.encodeComponent(preview.getMediaPath());
 
         // A special case for video, for now...
-        if (preview.isWhirledVideo()) {
+        if (preview.isVideo()) {
             return WidgetUtil.createFlashContainer(
                 "videoViewer", "/clients/" + DeploymentConfig.version + "/videoviewer.swf",
                 320, 240, "video=" + encodedPath);

@@ -10,6 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -39,6 +41,12 @@ public interface StuffService extends RemoteService
 
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/stuffsvc";
+
+    /**
+     * Publish the specified xml string as 'external media'.
+     */
+    MediaDesc publishExternalMedia (String data, byte mimeType)
+        throws ServiceException;
 
     /**
      * Requests that the supplied item be created and inserted into the creating user's inventory.

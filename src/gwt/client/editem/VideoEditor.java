@@ -4,10 +4,15 @@
 package client.editem;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.ui.TextBox;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Video;
 import com.threerings.msoy.item.data.all.Item;
+
+import client.ui.MsoyUI;
+import client.util.MsoyCallback;
 
 /**
  * A class for creating and editing {@link Video} digital items.
@@ -31,6 +36,29 @@ public class VideoEditor extends BulkMediaEditor
     @Override // from BulkMediaEditor
     protected void addMainUploader ()
     {
+        _youtubeId = MsoyUI.createTextBox("", YOUTUBE_ID_LENGTH, YOUTUBE_ID_LENGTH);
+        addRow(_emsgs.youtubeLabel(), bind(_youtubeId, new Binder() {
+            @Override public void textUpdated (String text) {
+                String trimmed = text.trim();
+                if (!trimmed.equals(text)) {
+                    _youtubeId.setText(trimmed);
+                    return;
+                }
+                if (text.length() < YOUTUBE_ID_LENGTH) {
+                    return;
+                }
+                // once the full length has been reached, upload the file.
+                String data = "id=" + URL.encodeComponent(text);
+                _stuffsvc.publishExternalMedia(data, MediaDesc.EXTERNAL_YOUTUBE,
+                    new MsoyCallback<MediaDesc>() {
+                    public void onSuccess (MediaDesc desc) {
+                        _video.videoMedia = desc;
+                        setUploaderMedia(Item.MAIN_MEDIA, desc);
+                    }
+                });
+            }
+        }));
+//        addRow("- or -"); // TODO
         addRow(_emsgs.videoLabel(), createMainUploader(TYPE_VIDEO, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: remove this hack?
@@ -45,5 +73,9 @@ public class VideoEditor extends BulkMediaEditor
 
     protected Video _video;
 
+    protected TextBox _youtubeId;
+
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
+
+    protected static final int YOUTUBE_ID_LENGTH = 11;
 }

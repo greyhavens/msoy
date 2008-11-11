@@ -34,31 +34,22 @@ import com.threerings.flash.video.VideoPlayerCodes;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
-public class YouTubePlayer extends EventDispatcher
-    implements VideoPlayer
-{
-    /** TODO: this will be passed-in. */
-    public static const VIDEO_IDS :Array = [
-        "ONM7148cTyc", // obama ad
-        "kCeZzW54a2o", // santogold video
-        "Bm94D1TqYwQ", // TIME person of the year
-        "LoY37T_nv5U", // Yelle video
-        "F9bV_v9b8go", // kicked in the nuts
-        "GuMMfgWhm3g", // some comedy thing.
-        "7sei-eEjy4g", // MIA: paper planes
-        "knQuxZj9rTA", // MIA: sunshowers
-        "YVX0sVMGCAo"  // MIA: bucky done gun
-    ];
+import com.threerings.msoy.item.client.ExternalMediaDisplayer;
 
-    public static var counter :int = 0;
-    
+public class YouTubePlayer extends EventDispatcher
+    implements VideoPlayer, ExternalMediaDisplayer
+{
     public function YouTubePlayer ()
     {
         _loader = new Loader();
+        _loader.mouseEnabled = false;
+        _loader.mouseChildren = false;
+    }
 
-        log.debug("==== starting youtube player [counter=" + counter + "].");
-
-        load(String(VIDEO_IDS[(counter++) % VIDEO_IDS.length]));
+    // from interface ExternalMediaDisplayer
+    public function displayExternal (data :Object) :void
+    {
+        load(String(data.id));
     }
 
     public function load (id :String) :void
