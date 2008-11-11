@@ -165,11 +165,19 @@ public class ThaneAVRGameBackend
     }
 
     /**
-     * Informs the use code that a mob change has now taken effect.
+     * Informs the user code that a mob change has now taken effect.
      */
     public function mobChanged (roomId :int, mobId :String) :void
     {
         callUserCode("mobAppearanceChanged_v1", roomId, mobId);
+    }
+
+    /**
+     * Informs the user code that a room signal has been received.
+     */
+    public function signalReceived (roomId :int, name :String, value :ByteArray) :void
+    {
+        callUserCode("signalReceived_v1", roomId, name, ObjectMarshaller.decode(value));
     }
 
     protected function handleUserCodeConnect (evt :Object) :void
