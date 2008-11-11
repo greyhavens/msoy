@@ -332,7 +332,7 @@ public class OccupantSprite extends MsoySprite
      */
     protected function setNameStatus (occInfo :OccupantInfo) :void
     {
-        _label.setStatus(occInfo.status, false);
+        _label.setStatus(occInfo.status);
     }
 
     /**

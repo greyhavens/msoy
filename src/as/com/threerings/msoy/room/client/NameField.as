@@ -42,7 +42,7 @@ public class NameField extends TextField
     /**
      * Sets the color we should use when drawing our name label.
      */
-    public function setStatus (status :int, greeter :Boolean, italicize :Boolean = false) :void 
+    public function setStatus (status :int, italicize :Boolean = false) :void 
     {
         if (_ignoreStatus) {
             return;
@@ -59,11 +59,7 @@ public class NameField extends TextField
             textColor = 0xFFFF77;
             break;
         default:
-            if (greeter) {
-                textColor = 0xFF00FF;
-            } else {
-                textColor = 0x99BFFF;
-            }
+            textColor = 0x99BFFF;
         }
 
         // turn on or off italicizing.

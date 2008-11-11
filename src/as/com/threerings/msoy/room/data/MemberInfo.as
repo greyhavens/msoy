@@ -56,21 +56,12 @@ public class MemberInfo extends ActorInfo
         _scale = scale;
     }
 
-    /**
-     * Return true if we are a whirled greeter.
-     */
-    public function isGreeter () :Boolean
-    {
-        return _greeter;
-    }
-
     // from ActorInfo
     override public function clone () :Object
     {
         var that :MemberInfo = super.clone() as MemberInfo;
         that._scale = this._scale;
         that._game = this._game;
-        that._greeter = this._greeter;
         return that;
     }
 
@@ -80,7 +71,6 @@ public class MemberInfo extends ActorInfo
         super.readObject(ins);
         _scale = ins.readFloat();
         _game = GameSummary(ins.readObject());
-        _greeter = ins.readBoolean();
     }
 
     /** @inheritDoc */
@@ -90,11 +80,9 @@ public class MemberInfo extends ActorInfo
         super.toStringBuilder(buf);
         buf.append(", scale=", _scale);
         buf.append(", game=", _game);
-        buf.append(", greeter=", _greeter);
     }
 
     protected var _scale :Number;
     protected var _game :GameSummary;
-    protected var _greeter :Boolean;
 }
 }
