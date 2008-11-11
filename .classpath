@@ -48,6 +48,7 @@
 	<classpathentry kind="lib" path="extlibs/java/commons-lang.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/commons-logging.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/antisamy/dom4j.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/ehcache.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/flexTasks.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/ganymed.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/getdown.jar"/>
@@ -114,6 +115,5 @@
 	<classpathentry kind="lib" path="extlibs/java/rabbitmq-client.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/quartz.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/gwt-dnd.jar"/>
-	<classpathentry kind="lib" path="/export/msoy/extlibs/java/ehcache.jar"/>
 	<classpathentry kind="output" path="dist/classes"/>
 </classpath>
