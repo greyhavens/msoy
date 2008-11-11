@@ -28,6 +28,7 @@ import com.threerings.underwire.web.client.UnderwireException;
 import com.threerings.underwire.web.data.Account;
 import com.threerings.underwire.web.server.UnderwireServlet;
 
+import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -59,12 +60,18 @@ public class MsoyUnderwireServlet extends UnderwireServlet
         MemberRecord memberRec = _memberRepo.loadMember(memberId);
         boolean greeter = status == SocialStatus.GREETER;
         boolean troublemaker = status == SocialStatus.TROUBLEMAKER;
-        if (greeter != memberRec.isGreeter() || troublemaker != memberRec.isTroublemaker()) {
+        boolean greeterChanged = greeter != memberRec.isGreeter();
+        if (greeterChanged || troublemaker != memberRec.isTroublemaker()) {
             memberRec.setFlag(MemberRecord.Flag.GREETER, greeter);
             memberRec.setFlag(MemberRecord.Flag.TROUBLEMAKER, troublemaker);
             _memberRepo.storeFlags(memberRec);
             recordEvent(String.valueOf(caller.memberId), String.valueOf(memberId),
                         "Changed social status to " + status);
+
+            if (greeterChanged) {
+                // let the world servers know about the info change
+                MemberNodeActions.tokensChanged(memberRec.memberId, memberRec.toTokenRing());
+            }
         }
     }
 
