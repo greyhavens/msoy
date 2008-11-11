@@ -42,6 +42,12 @@ public class VideoViewer extends Sprite
      */
     protected function setYoutubeId (id :String) :void
     {
+        if (id == "") {
+            handleUnload();
+            setupBlank();
+            return;
+        }
+
         var youtubePlayer :YouTubePlayer = new YouTubePlayer();
         addPlayer(youtubePlayer);
         youtubePlayer.load(id);
@@ -54,11 +60,7 @@ public class VideoViewer extends Sprite
     {
         if (!("video" in params)) {
             // just fill with white and call it good, waiting to be contacted externally
-            var s :Sprite = new Sprite();
-            s.graphics.beginFill(0xFFFFFF);
-            s.graphics.drawRect(0, 0, 320, 240);
-            s.graphics.endFill();
-            addChild(s);
+            setupBlank();
             return;
         }
 
@@ -107,6 +109,15 @@ public class VideoViewer extends Sprite
 
         _vid = vid;
         addChild(new SimpleVideoDisplay(vid));
+    }
+
+    protected function setupBlank () :void
+    {
+        var s :Sprite = new Sprite();
+        s.graphics.beginFill(0xFFFFFF);
+        s.graphics.drawRect(0, 0, 320, 240);
+        s.graphics.endFill();
+        addChild(s);
     }
 
     protected function handleUnload (event :Event = null) :void

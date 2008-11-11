@@ -26,6 +26,8 @@ public class VideoEditor extends BulkMediaEditor
         super.setItem(item);
         _video = (Video)item;
         setUploaderMedia(Item.MAIN_MEDIA, _video.videoMedia);
+
+        _originalDesc = _video.videoMedia;
     }
 
     @Override // from ItemEditor
@@ -34,32 +36,29 @@ public class VideoEditor extends BulkMediaEditor
         return new Video();
     }
 
+    @Override
+    protected void onLoad ()
+    {
+        super.onLoad();
+        configureBridge();
+    }
+
     @Override // from BulkMediaEditor
     protected void addMainUploader ()
     {
-        _youtubeId = MsoyUI.createTextBox("", YOUTUBE_ID_LENGTH, YOUTUBE_ID_LENGTH);
-        addRow(_emsgs.youtubeLabel(), bind(_youtubeId, new Binder() {
+        _youtubeIdBox = MsoyUI.createTextBox("", YOUTUBE_ID_LENGTH, YOUTUBE_ID_LENGTH);
+        addRow(_emsgs.youtubeLabel(), bind(_youtubeIdBox, new Binder() {
             @Override public void textUpdated (String text) {
                 String trimmed = text.trim();
                 if (!trimmed.equals(text)) {
-                    _youtubeId.setText(trimmed);
+                    _youtubeIdBox.setText(trimmed);
                     return;
                 }
-                if (text.length() < YOUTUBE_ID_LENGTH) {
-                    return;
-                }
-                // once the full length has been reached, upload the file.
-                String data = "id=" + URL.encodeComponent(text);
-                _stuffsvc.publishExternalMedia(data, MediaDesc.EXTERNAL_YOUTUBE,
-                    new MsoyCallback<MediaDesc>() {
-                    public void onSuccess (MediaDesc desc) {
-                        _video.videoMedia = desc;
-                        setUploaderMedia(Item.MAIN_MEDIA, desc);
-                    }
-                });
+
+                _video.videoMedia = text.equals(_originalYoutubeId) ? _originalDesc : null;
+                relayYoutubeId((text.length() < YOUTUBE_ID_LENGTH) ? "" : text);
             }
         }));
-//        addRow("- or -"); // TODO
         addRow(_emsgs.videoLabel(), createMainUploader(TYPE_VIDEO, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 // TODO: remove this hack?
@@ -81,6 +80,8 @@ public class VideoEditor extends BulkMediaEditor
                     if (desc != null) {
                         super.setMedia(desc);
                     } else {
+                        // create a blank video viewer, ready to receive data when
+                        // the user enters it
                         setWidget(0, 0, FlashClients.createVideoViewer(
                             MediaDesc.THUMBNAIL_WIDTH * 2, MediaDesc.THUMBNAIL_HEIGHT * 2, null));
                     }
@@ -92,9 +93,84 @@ public class VideoEditor extends BulkMediaEditor
         }
     }
 
+    @Override
+    protected void commitEdit ()
+    {
+        // see if we need to update the external media.
+        if (_video.videoMedia == null) {
+            String id = _youtubeIdBox.getText();
+            if (id.length() == YOUTUBE_ID_LENGTH) {
+                uploadExternalMedia(id);
+                return;
+            }
+            // else, return a "not valid" error from superclass..
+        }
+
+        super.commitEdit();
+    }
+
+    protected void uploadExternalMedia (String youtubeId)
+    {
+        _youtubeIdBox.setEnabled(false);
+        // once the full length has been reached, upload the file.
+        String data = "id=" + URL.encodeComponent(youtubeId);
+        _stuffsvc.publishExternalMedia(data, MediaDesc.EXTERNAL_YOUTUBE,
+            new MsoyCallback<MediaDesc>() {
+            public void onSuccess (MediaDesc desc) {
+                _video.videoMedia = desc;
+                _youtubeIdBox.setEnabled(true);
+                commitEdit();
+            }
+        });
+    }
+
+    /**
+     * We've received the youtubeId from the video player.
+     */
+    protected void setYoutubeId (String id)
+    {
+        _originalYoutubeId = id;
+        _youtubeIdBox.setText(id);
+    }
+
+    /**
+     * Called by javascript native method to set the youtube id from the player.
+     */
+    protected static void gotYoutubeId (String id)
+    {
+        // "fix" the id from javascript
+        String fid = "" + id;
+        ((VideoEditor) _singleton).setYoutubeId(fid);
+    }
+
+    /**
+     * Wire up the communication between this editor and the videoViewer.
+     */
+    protected static native void configureBridge () /*-{
+        $wnd.gotYoutubeId = function (id) {
+            @client.editem.VideoEditor::gotYoutubeId(Ljava/lang/String;)(id);
+        };
+    }-*/;
+
+    /**
+     * Send the youtubeId to the video player.
+     */
+    protected static native void relayYoutubeId (String id) /*-{
+        var player = $doc.getElementById("videoViewer");
+        if (player != null) {
+            try { player.setYoutubeId(id) } catch (e) {}
+        }
+    }-*/;
+
     protected Video _video;
 
-    protected TextBox _youtubeId;
+    protected TextBox _youtubeIdBox;
+
+    /** The original youtube id of this item. */
+    protected String _originalYoutubeId;
+
+    /** The original MediaDesc, referenced when editing a youtube id. */
+    protected MediaDesc _originalDesc;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 
