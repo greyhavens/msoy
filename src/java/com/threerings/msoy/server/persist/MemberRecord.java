@@ -58,7 +58,10 @@ public class MemberRecord extends PersistentRecord
         GREETER(1 << 6),
 
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
-        UNUSED(1 << 7);
+        TROUBLEMAKER(1 << 7),
+
+        /** The next unused flag. Copy this and update the bit mask when making a new flag. */
+        UNUSED(1 << 8);
 
         public int getBit () {
             return _bit;
@@ -376,6 +379,14 @@ public class MemberRecord extends PersistentRecord
     public boolean isGreeter ()
     {
         return isSet(Flag.GREETER);
+    }
+    
+    /**
+     * Returns true if this member is known to make trouble.
+     */
+    public boolean isTroublemaker ()
+    {
+        return isSet(Flag.TROUBLEMAKER);
     }
     
     /**
