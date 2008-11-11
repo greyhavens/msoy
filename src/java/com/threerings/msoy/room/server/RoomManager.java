@@ -1000,7 +1000,13 @@ public class RoomManager extends SpotSceneManager
         }
 
         final int gameId = member.game.gameId;
-        if (_roomObj.propertySpaces.containsKey(gameId) || _pendingGameIds.contains(gameId)) {
+        if (_roomObj.propertySpaces.containsKey(gameId)) {
+            return;
+        }
+
+        if (_pendingGameIds.contains(gameId)) {
+            log.warning("Room property resolution already pending", "gameId", gameId,
+                        "sceneId", _scene.getId(), "memberId", member.getMemberId());
             return;
         }
 
