@@ -112,11 +112,6 @@
   margin: 12px 25px 15px 25px;
 }
 
-/* adjust the flash box */
-.whirledDetail .MainDetails .ScreenshotBox .Screenshot .gwt-HTML {
-  margin-left: 25px;
-}
-
 .whirledDetail .MainDetails .ScreenshotBox .Online {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 17px;

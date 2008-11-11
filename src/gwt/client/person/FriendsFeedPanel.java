@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
@@ -50,9 +51,10 @@ public class FriendsFeedPanel extends FlowPanel
         if (category == null) {
             return;
         }
+        String categoryTitle = _dmsgs.xlate("feedCategory" + category.category);
 
         String showMoreText = fullSize ? _pmsgs.shortFeed() : _pmsgs.fullFeed();
-        categoryPanel.add(MsoyUI.createActionLabel(showMoreText, "FeedShowMore",
+        Label showMore = MsoyUI.createActionLabel(showMoreText, "FeedShowMore",
             new ClickListener() {
                 public void onClick (Widget sender) {
                     _mesvc.loadFeedCategory(category.category, !fullSize,
@@ -62,7 +64,15 @@ public class FriendsFeedPanel extends FlowPanel
                             }
                         });
                 }
-            }));
+            });
+        if (!fullSize) {
+            showMore.addClickListener(MsoyUI.createTrackingListener("meClickedShowMore",
+                categoryTitle));
+        } else {
+            showMore.addClickListener(MsoyUI.createTrackingListener("meClickedShowLess",
+                categoryTitle));
+        }
+        categoryPanel.add(showMore);
 
         categoryPanel.add(MsoyUI.createLabel(_dmsgs.xlate("feedCategory" + category.category),
             "FeedCategoryHeader"));
@@ -71,7 +81,10 @@ public class FriendsFeedPanel extends FlowPanel
         List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages, false);
 
         for (FeedMessage message : messages) {
-            categoryPanel.add(new FeedMessagePanel(message, true));
+            FeedMessagePanel messagePanel = new FeedMessagePanel(message, true);
+            messagePanel.addClickListener(MsoyUI.createTrackingListener("meClickedNewsItem",
+                categoryTitle));
+            categoryPanel.add(messagePanel);
         }
     }
 

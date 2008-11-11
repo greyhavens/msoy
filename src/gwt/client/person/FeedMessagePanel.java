@@ -12,6 +12,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,7 +41,7 @@ import client.util.NaviUtil;
 /**
  * Display a single news feed item, formatted based on type.
  */
-public class FeedMessagePanel extends FlowPanel
+public class FeedMessagePanel extends FocusPanel
 {
     /**
      * @param usePronouns If true, say "You updated the trophy" if current member is the actor.
