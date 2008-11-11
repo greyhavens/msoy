@@ -4,6 +4,7 @@
 package com.threerings.msoy.underwire.gwt;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.threerings.msoy.underwire.gwt.MsoyAccount.SocialStatus;
 import com.threerings.underwire.web.client.UnderwireException;
 
 /**
@@ -12,14 +13,8 @@ import com.threerings.underwire.web.client.UnderwireException;
 public interface SupportService extends RemoteService
 {
     /**
-     * Sets the greeter flag for a member. Admin only.
+     * Sets the social status for a member. Admin only.
      */
-    void setGreeter(String authtok, String accountName, boolean greeter)
-        throws UnderwireException;
-
-    /**
-     * Sets the troublemaker flag for a member. Admin only.
-     */
-    void setTroublemaker(String authtok, String accountName, boolean troublemaker)
+    void setSocialStatus (String authtok, int memberId, SocialStatus status)
         throws UnderwireException;
 }

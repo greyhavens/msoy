@@ -66,8 +66,15 @@ public class MsoyGameInfoProvider extends GameInfoProvider
             account.firstSession = new Date(member.created.getTime());
             account.lastSession = new Date(member.lastSession.getTime());
             account.altName = member.permaName;
-            ((MsoyAccount)account).greeter = member.isGreeter();
-            ((MsoyAccount)account).troublemaker = member.isTroublemaker();
+            MsoyAccount.SocialStatus status;
+            if (member.isTroublemaker()) {
+                status = MsoyAccount.SocialStatus.TROUBLEMAKER;
+            } else if (member.isGreeter()) {
+                status = MsoyAccount.SocialStatus.GREETER;
+            } else {
+                status = MsoyAccount.SocialStatus.NORMAL;
+            }
+            ((MsoyAccount)account).status = status;
             MemberWarningRecord warning = _memberRepo.loadMemberWarningRecord(member.memberId);
             if (warning != null) {
                 account.tempBan = warning.banExpires == null ?

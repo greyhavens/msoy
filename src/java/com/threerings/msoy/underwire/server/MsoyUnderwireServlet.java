@@ -32,6 +32,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 import com.threerings.msoy.underwire.gwt.MsoyAccount;
 import com.threerings.msoy.underwire.gwt.SupportService;
+import com.threerings.msoy.underwire.gwt.MsoyAccount.SocialStatus;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -46,32 +47,19 @@ import static com.threerings.msoy.Log.log;
 public class MsoyUnderwireServlet extends UnderwireServlet
     implements SupportService
 {
-    // from SupportService
-    public void setGreeter (String authtok, String accountName, boolean greeter)
+    public void setSocialStatus (String authtok, int memberId, SocialStatus status)
         throws UnderwireException
     {
         Caller caller = requireAuthedSupport(authtok);
-        int memberId = Integer.valueOf(accountName);
         MemberRecord memberRec = _memberRepo.loadMember(memberId);
-        if (greeter != memberRec.isGreeter()) {
+        boolean greeter = status == SocialStatus.GREETER;
+        boolean troublemaker = status == SocialStatus.TROUBLEMAKER;
+        if (greeter != memberRec.isGreeter() || troublemaker != memberRec.isTroublemaker()) {
             memberRec.setFlag(MemberRecord.Flag.GREETER, greeter);
-            _memberRepo.storeFlags(memberRec);
-            recordEvent(caller.username, accountName, "Changed greeter flag to " + greeter);
-        }
-    }
-
-    // from SupportService
-    public void setTroublemaker (String authtok, String accountName, boolean troublemaker)
-        throws UnderwireException
-    {
-        Caller caller = requireAuthedSupport(authtok);
-        int memberId = Integer.valueOf(accountName);
-        MemberRecord memberRec = _memberRepo.loadMember(memberId);
-        if (troublemaker != memberRec.isTroublemaker()) {
             memberRec.setFlag(MemberRecord.Flag.TROUBLEMAKER, troublemaker);
             _memberRepo.storeFlags(memberRec);
-            recordEvent(caller.username, accountName, 
-                        "Changed troublemaker flag to " + troublemaker);
+            recordEvent(caller.username, String.valueOf(memberId),
+                        "Changed social status to " + status);
         }
     }
 

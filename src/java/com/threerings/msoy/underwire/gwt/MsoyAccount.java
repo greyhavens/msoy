@@ -7,9 +7,11 @@ import com.threerings.underwire.web.data.Account;
 
 public class MsoyAccount extends Account
 {
-    /** Whether this user is a greeter (user option or may be set by support). */
-    public boolean greeter;
+    public enum SocialStatus
+    {
+        NORMAL, GREETER, TROUBLEMAKER;
+    }
     
-    /** whether this user is a troublemaker (flagged by support). */
-    public boolean troublemaker;
+    /** The social standing of this user. */
+    public SocialStatus status;
 }
