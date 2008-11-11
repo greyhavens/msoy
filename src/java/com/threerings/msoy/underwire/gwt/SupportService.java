@@ -12,9 +12,11 @@ import com.threerings.underwire.web.client.UnderwireException;
  */
 public interface SupportService extends RemoteService
 {
+    public static final String ENTRY_POINT = "/undersvc";
+    
     /**
      * Sets the social status for a member. Admin only.
      */
-    void setSocialStatus (String authtok, int memberId, SocialStatus status)
+    void setSocialStatus (int memberId, SocialStatus status)
         throws UnderwireException;
 }

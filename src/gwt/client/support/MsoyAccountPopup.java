@@ -5,9 +5,13 @@ package client.support;
 
 
 import client.util.ClickCallback;
+import client.util.ServiceUtil;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ListBox;
 import com.threerings.msoy.underwire.gwt.MsoyAccount;
+import com.threerings.msoy.underwire.gwt.SupportService;
+import com.threerings.msoy.underwire.gwt.SupportServiceAsync;
 import com.threerings.msoy.underwire.gwt.MsoyAccount.SocialStatus;
 import com.threerings.underwire.gwt.client.AccountPopup;
 import com.threerings.underwire.gwt.client.WebContext;
@@ -44,10 +48,8 @@ public class MsoyAccountPopup extends AccountPopup
         new ClickCallback<Void> (_status) {
             SocialStatus value;
             @Override protected boolean callService () {
-                ((MsoyWebContext)_ctx).supportService.setSocialStatus(
-                    _ctx.ainfo.authtok, Integer.valueOf(_account.name.accountName),
-                    value = SocialStatus.values()[_status.getSelectedIndex()],
-                    this);
+                _supportService.setSocialStatus(Integer.valueOf(_account.name.accountName),
+                    value = SocialStatus.values()[_status.getSelectedIndex()], this);
                 return true;
             }
             @Override protected boolean gotResult (Void result) {
@@ -60,4 +62,8 @@ public class MsoyAccountPopup extends AccountPopup
     }
     
     protected ListBox _status;
+
+    protected static final SupportServiceAsync _supportService = 
+        (SupportServiceAsync)ServiceUtil.bind(GWT.create(SupportService.class),
+        SupportService.ENTRY_POINT);
 }

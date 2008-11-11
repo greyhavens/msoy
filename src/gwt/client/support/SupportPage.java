@@ -4,10 +4,8 @@
 package client.support;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.threerings.msoy.underwire.gwt.SupportService;
-import com.threerings.msoy.underwire.gwt.SupportServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -25,6 +23,7 @@ import com.threerings.underwire.web.data.AccountName;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
+import client.util.ServiceUtil;
 
 public class SupportPage extends Page
 {
@@ -75,13 +74,11 @@ public class SupportPage extends Page
         super.initContext();
 
         // create our Underwire context
-        _webctx = new MsoyWebContext();
-        _webctx.undersvc = (UnderwireServiceAsync)GWT.create(UnderwireService.class);
-        ((ServiceDefTarget)_webctx.undersvc).setServiceEntryPoint("/undersvc");
+        _webctx = new WebContext();
+        _webctx.undersvc = (UnderwireServiceAsync)ServiceUtil.bind(
+            GWT.create(UnderwireService.class), SupportService.ENTRY_POINT);
         _webctx.cmsgs = (ClientMessages)GWT.create(ClientMessages.class);
         _webctx.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
-        _webctx.supportService = (SupportServiceAsync)GWT.create(SupportService.class);
-        ((ServiceDefTarget)_webctx.supportService).setServiceEntryPoint("/undersvc");
 
         _webctx.panelCreator = new PanelCreator() {
             @Override public AccountPopup createAccountPanel (
@@ -94,7 +91,7 @@ public class SupportPage extends Page
         CSupport.msgs = (SupportMessages)GWT.create(SupportMessages.class);
     }
 
-    protected MsoyWebContext _webctx;
+    protected WebContext _webctx;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

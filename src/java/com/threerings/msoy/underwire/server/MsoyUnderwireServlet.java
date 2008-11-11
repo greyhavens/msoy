@@ -13,6 +13,7 @@ import com.samskivert.servlet.SiteIdentifier;
 import com.samskivert.servlet.user.AuthenticationFailedException;
 import com.samskivert.servlet.user.InvalidPasswordException;
 import com.samskivert.servlet.user.NoSuchUserException;
+import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.presents.data.InvocationCodes;
 
@@ -22,6 +23,7 @@ import com.threerings.underwire.server.GameActionHandler;
 import com.threerings.underwire.server.GameInfoProvider;
 import com.threerings.underwire.server.persist.SupportRepository;
 import com.threerings.underwire.server.persist.UnderwireRepository;
+import com.threerings.underwire.web.client.AuthenticationException;
 import com.threerings.underwire.web.client.UnderwireException;
 import com.threerings.underwire.web.data.Account;
 import com.threerings.underwire.web.server.UnderwireServlet;
@@ -38,6 +40,8 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.web.gwt.WebCreds;
+import com.threerings.msoy.web.server.MemberHelper;
 
 import static com.threerings.msoy.Log.log;
 
@@ -47,10 +51,11 @@ import static com.threerings.msoy.Log.log;
 public class MsoyUnderwireServlet extends UnderwireServlet
     implements SupportService
 {
-    public void setSocialStatus (String authtok, int memberId, SocialStatus status)
+    // from SupportService
+    public void setSocialStatus (int memberId, SocialStatus status)
         throws UnderwireException
     {
-        Caller caller = requireAuthedSupport(authtok);
+        MemberRecord caller = requireAuthedSupport();
         MemberRecord memberRec = _memberRepo.loadMember(memberId);
         boolean greeter = status == SocialStatus.GREETER;
         boolean troublemaker = status == SocialStatus.TROUBLEMAKER;
@@ -58,8 +63,24 @@ public class MsoyUnderwireServlet extends UnderwireServlet
             memberRec.setFlag(MemberRecord.Flag.GREETER, greeter);
             memberRec.setFlag(MemberRecord.Flag.TROUBLEMAKER, troublemaker);
             _memberRepo.storeFlags(memberRec);
-            recordEvent(caller.username, String.valueOf(memberId),
+            recordEvent(String.valueOf(caller.memberId), String.valueOf(memberId),
                         "Changed social status to " + status);
+        }
+    }
+
+    protected MemberRecord requireAuthedSupport ()
+        throws UnderwireException
+    {
+        try {
+            MemberRecord memberRecord = _memberHelper.requireAuthedUser(CookieUtil.getCookieValue(
+                getThreadLocalRequest(), WebCreds.credsCookie()));
+            if (memberRecord == null || !memberRecord.isSupport()) {
+                throw new AuthenticationException("m.access_denied");
+            }
+            return memberRecord;
+
+        } catch (ServiceException se) {
+            throw new AuthenticationException("m.access_denied");
         }
     }
 
@@ -201,4 +222,5 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Inject protected MsoyOOOUserRepository _authRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyUnderwireRepository _underRepo;
+    @Inject protected MemberHelper _memberHelper;
 }
