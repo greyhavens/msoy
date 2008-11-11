@@ -54,10 +54,16 @@ public class YouTubePlayer extends EventDispatcher
 
     public function load (id :String) :void
     {
+        if (_ytState == UNLOAD_STATE) {
+            log.warning("Ignoring request to load after unloading.");
+            return;
+        }
+
         // unload any previous..
-        unload();
+        shutdownPlayer();
 
         _videoId = id;
+        _ytState = -2;
 
         // create a new ID for communicating with the stub
         var chars :Array = [];
@@ -151,6 +157,13 @@ public class YouTubePlayer extends EventDispatcher
     // from VideoPlayer
     public function unload () :void
     {
+        shutdownPlayer();
+
+        _ytState = UNLOAD_STATE;
+    }
+
+    protected function shutdownPlayer () :void
+    {
         if (_lc != null) {
             send("doUnload");
             MethodQueue.callLater(MethodQueue.callLater, [ LoaderUtil.unload, [ _loader ] ]);
@@ -158,8 +171,6 @@ public class YouTubePlayer extends EventDispatcher
             _stubId = null;
             _loader = new Loader();
         }
-
-        _ytState = int.MIN_VALUE;
         _videoId = null;
     }
 
@@ -184,6 +195,9 @@ public class YouTubePlayer extends EventDispatcher
      */
     protected function handleStateChanged (state :int) :void
     {
+        if (_ytState == UNLOAD_STATE) {
+            return;
+        }
         _ytState = state;
         log.debug("=== got new state from as2: playerState: " + state);
 
@@ -223,6 +237,8 @@ public class YouTubePlayer extends EventDispatcher
     protected var _duration :Number = NaN;
 
     protected var _position :Number = NaN;
+
+    protected static const UNLOAD_STATE :int = int.MIN_VALUE;
 
     protected static const log :Log = Log.getLog(YouTubePlayer);
 
