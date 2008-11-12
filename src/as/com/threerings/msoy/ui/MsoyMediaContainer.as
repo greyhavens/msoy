@@ -10,7 +10,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MediaContainer;
 import com.threerings.flash.MenuUtil;
-import com.threerings.flash.video.SimpleVideoDisplay;
+import com.threerings.flash.video.FlvVideoPlayer;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
@@ -121,20 +121,29 @@ public class MsoyMediaContainer extends MediaContainer
 
     override protected function setupVideo (url :String) :void
     {
-        switch (MediaDesc.suffixToMimeType(url)) {
-        case MediaDesc.EXTERNAL_YOUTUBE:
-            var player :YouTubePlayer = new YouTubePlayer();
-            var vid :SimpleVideoDisplay = new SimpleVideoDisplay(player);
-            _media = vid;
-            addChildAt(vid, 0);
-            updateContentDimensions(320, 240); // TODO?
-            ExternalMediaUtil.fetch(url, player);
-            break;
+        var media :MsoyVideoDisplay;
 
+        switch (MediaDesc.suffixToMimeType(url)) {
         default:
             super.setupVideo(url);
+            return; // EXIT
+
+        case MediaDesc.EXTERNAL_YOUTUBE:
+            var ytPlayer :YouTubePlayer = new YouTubePlayer();
+            media = new MsoyVideoDisplay(ytPlayer);
+            ExternalMediaUtil.fetch(url, ytPlayer);
+            break;
+
+        case MediaDesc.VIDEO_FLASH:
+            var flvPlayer :FlvVideoPlayer = new FlvVideoPlayer();
+            media = new MsoyVideoDisplay(flvPlayer);
+            flvPlayer.load(url);
             break;
         }
+
+        _media = media;
+        addChildAt(media, 0);
+        updateContentDimensions(MsoyVideoDisplay.WIDTH, MsoyVideoDisplay.HEIGHT);
     }
 
     // TODO: doc
@@ -168,6 +177,16 @@ public class MsoyMediaContainer extends MediaContainer
     protected function allowSetMedia () :Boolean
     {
         return false;
+    }
+
+    override protected function shutdownMedia () :void
+    {
+        if (_media is MsoyVideoDisplay) {
+            MsoyVideoDisplay(_media).unload();
+
+        } else {
+            super.shutdownMedia();
+        }
     }
 
     /** Our Media descriptor. */

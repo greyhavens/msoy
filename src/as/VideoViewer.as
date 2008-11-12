@@ -12,8 +12,9 @@ import flash.external.ExternalInterface;
 import com.threerings.util.ParameterUtil;
 
 import com.threerings.flash.video.FlvVideoPlayer;
-import com.threerings.flash.video.SimpleVideoDisplay;
 import com.threerings.flash.video.VideoPlayer;
+
+import com.threerings.msoy.ui.MsoyVideoDisplay;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.client.ExternalMediaDisplayer;
@@ -107,7 +108,7 @@ public class VideoViewer extends Sprite
         handleUnload();
 
         _vid = vid;
-        addChild(new SimpleVideoDisplay(vid));
+        addChild(new MsoyVideoDisplay(vid));
     }
 
     protected function setupBlank () :void
