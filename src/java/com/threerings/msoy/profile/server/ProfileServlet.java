@@ -23,7 +23,6 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -74,10 +73,7 @@ public class ProfileServlet extends MsoyServiceServlet
      */
     public static GreeterStatus getGreeterStatus (MemberRecord memrec, int numFriends)
     {
-        if (!DeploymentConfig.devDeployment) {
-            return GreeterStatus.DISABLED;
-
-        } else if (memrec.isGreeter()) {
+        if (memrec.isGreeter()) {
             return GreeterStatus.GREETER;
 
         } else if (memrec.isTroublemaker() || memrec.level < MIN_GREETER_LEVEL || 
