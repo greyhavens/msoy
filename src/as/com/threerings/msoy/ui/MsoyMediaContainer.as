@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.ui {
 
+import flash.display.DisplayObject;
+
 import flash.errors.IllegalOperationError;
 
 import com.threerings.util.Util;
@@ -10,7 +12,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MediaContainer;
 import com.threerings.flash.MenuUtil;
-import com.threerings.flash.video.FlvVideoPlayer;
+import com.threerings.flash.video.VideoPlayer;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;
@@ -106,7 +108,6 @@ public class MsoyMediaContainer extends MediaContainer
 
     override protected function showNewMedia (url :String) :void
     {
-        // TODO: some stuff could be combined with VideoViewer, for sure
         switch (MediaDesc.suffixToMimeType(url)) {
         case MediaDesc.VIDEO_FLASH:
         case MediaDesc.EXTERNAL_YOUTUBE:
@@ -121,29 +122,21 @@ public class MsoyMediaContainer extends MediaContainer
 
     override protected function setupVideo (url :String) :void
     {
-        var media :MsoyVideoDisplay;
-
-        switch (MediaDesc.suffixToMimeType(url)) {
-        default:
-            super.setupVideo(url);
-            return; // EXIT
-
-        case MediaDesc.EXTERNAL_YOUTUBE:
+        if (MediaDesc.suffixToMimeType(url) == MediaDesc.EXTERNAL_YOUTUBE) {
             var ytPlayer :YouTubePlayer = new YouTubePlayer();
-            media = new MsoyVideoDisplay(ytPlayer);
+            _media = createVideoUI(ytPlayer);
+            addChildAt(_media, 0);
+            updateContentDimensions(_media.width, _media.height);
             ExternalMediaUtil.fetch(url, ytPlayer);
-            break;
 
-        case MediaDesc.VIDEO_FLASH:
-            var flvPlayer :FlvVideoPlayer = new FlvVideoPlayer();
-            media = new MsoyVideoDisplay(flvPlayer);
-            flvPlayer.load(url);
-            break;
+        } else {
+            super.setupVideo(url);
         }
-
-        _media = media;
-        addChildAt(media, 0);
-        updateContentDimensions(MsoyVideoDisplay.WIDTH, MsoyVideoDisplay.HEIGHT);
+    }
+            
+    override protected function createVideoUI (player :VideoPlayer) :DisplayObject
+    {
+        return new MsoyVideoDisplay(player);
     }
 
     // TODO: doc

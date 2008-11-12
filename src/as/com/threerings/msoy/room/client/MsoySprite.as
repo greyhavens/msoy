@@ -15,12 +15,17 @@ import flash.filters.GlowFilter;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.util.CommandEvent;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.FilterUtil;
+import com.threerings.flash.video.VideoPlayer;
 
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyController;
+
+import com.threerings.msoy.ui.MsoyVideoDisplay;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -860,6 +865,20 @@ public class MsoySprite extends DataPackMediaContainer
     protected function hasUserCode (name :String) :Boolean
     {
         return (_backend != null) && _backend.hasUserCode(name);
+    }
+
+    override protected function createVideoUI (player :VideoPlayer) :DisplayObject
+    {
+        // here, we assume that the ItemIdent is configured prior to the MediaDesc. Should be true.
+        return new MsoyVideoDisplay(player, (_ident == null) ? null : handleViewItem);
+    }
+
+    /**
+     * Handle the "comment" button on the video player.
+     */
+    protected function handleViewItem () :void
+    {
+        CommandEvent.dispatch(this, MsoyController.VIEW_ITEM, _ident);
     }
 
     /** The giver of life. */

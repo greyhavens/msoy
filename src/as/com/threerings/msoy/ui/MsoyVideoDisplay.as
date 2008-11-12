@@ -30,6 +30,9 @@ import com.threerings.flash.video.VideoPlayerCodes;
 /**
  * The msoy-skinned video display.
  */
+// NOTES:
+// - Keep HUD up when paused, only hide it when playing?
+// - Do we want to allow the youtube watermark to be clickable?
 public class MsoyVideoDisplay extends Sprite
 {
     public static const WIDTH :int = 320;
@@ -39,7 +42,7 @@ public class MsoyVideoDisplay extends Sprite
     /**
      * Create.
      */
-    public function MsoyVideoDisplay (player :VideoPlayer)
+    public function MsoyVideoDisplay (player :VideoPlayer, commentCallback :Function = null)
     {
         _player = player;
         _player.addEventListener(VideoPlayerCodes.STATE, handlePlayerState);
@@ -47,10 +50,21 @@ public class MsoyVideoDisplay extends Sprite
         _player.addEventListener(VideoPlayerCodes.DURATION, handlePlayerDuration);
         _player.addEventListener(VideoPlayerCodes.POSITION, handlePlayerPosition);
         _player.addEventListener(VideoPlayerCodes.ERROR, handlePlayerError);
+        _commentCallback = commentCallback;
 
         addChild(_player.getDisplay());
 
         configureUI();
+    }
+
+    override public function get width () :Number
+    {
+        return WIDTH;
+    }
+
+    override public function get height () :Number
+    {
+        return HEIGHT;
     }
 
     /**
@@ -74,37 +88,35 @@ public class MsoyVideoDisplay extends Sprite
         g.drawRect(0, 0, WIDTH, HEIGHT);
         g.endFill();
 
-        // TODO: is this shit needed?
-        g = this.graphics;
-        g.beginFill(0xFF000000);
-        g.drawRect(0, 0, WIDTH, HEIGHT);
-        g.endFill();
+//        // TODO: is this shit needed?
+//        g = this.graphics;
+//        g.beginFill(0xFF000000);
+//        g.drawRect(0, 0, WIDTH, HEIGHT);
+//        g.endFill();
 
         _hud = new Sprite();
         g = _hud.graphics;
         g.beginFill(0x000000, .25);
-        g.lineStyle(1, 0x000000);
+        g.lineStyle(1, 0xFFFFFF);
         g.drawRect(0, 0, WIDTH, BUTTON_DIM);
         g.endFill();
-        _hud.y = HEIGHT;
+        _hud.y = HEIGHT + 1; // position it offscreenz
         addChild(_hud);
 
-        trace("========================== oh god oh god!");
         MultiLoader.getContents(UI, configureUI2);
     }
 
     protected function configureUI2 (ui :DisplayObject) :void
     {
-        // TEMP
-        trace(DisplayUtil.dumpHierarchy(ui));
+//        // TEMP
+//        trace(DisplayUtil.dumpHierarchy(ui));
 
         _playBtn = DisplayUtil.findInHierarchy(ui, "playbutton");
         _pauseBtn = DisplayUtil.findInHierarchy(ui, "pausebutton");
         _track = new Sprite();
         // TEMP trackthing hacking
         var trackThing :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
-        //trace("TrackThing::: " + trackThing.width + ", " + trackThing.height);
-        trackThing.x = trackThing.width / 2;
+        trackThing.x = trackThing.width / 2 + IDIOT_OFFSET;
         trackThing.y = 0;
         _track.addChild(trackThing);
         _knob = new Sprite();
@@ -126,20 +138,26 @@ public class MsoyVideoDisplay extends Sprite
         _pauseBtn.x = (BUTTON_DIM - _pauseBtn.width) / 2;
         _pauseBtn.y = (BUTTON_DIM - _pauseBtn.height) / 2;
 
+        const buttonCount :int = (_commentCallback == null) ? 2 : 3;
+
         var baseX :int = BUTTON_DIM;
         _track.x = baseX + PAD;
         _track.y = BUTTON_DIM / 2;
-        trackThing.width = WIDTH - (BUTTON_DIM * 3) - (PAD * 2);
+        trackThing.width = WIDTH - (BUTTON_DIM * buttonCount) - (PAD * 2);
 
-        baseX += WIDTH - (BUTTON_DIM * 3);
+        baseX += WIDTH - (BUTTON_DIM * buttonCount);
 
-        _commentBtn.x = baseX + (BUTTON_DIM - _commentBtn.width) / 2;
-        _commentBtn.y = (BUTTON_DIM - _commentBtn.height) / 2;
+        if (_commentCallback != null) {
+            _commentBtn.x = baseX + (BUTTON_DIM - _commentBtn.width) / 2;
+            _commentBtn.y = (BUTTON_DIM - _commentBtn.height) / 2;
+            _hud.addChild(_commentBtn);
 
-        baseX += BUTTON_DIM;
+            baseX += BUTTON_DIM;
+        }
 
         _volumeBtn.x = baseX + (BUTTON_DIM - _volumeBtn.width) / 2;
         _volumeBtn.y = (BUTTON_DIM - _volumeBtn.height) / 2;
+        _hud.addChild(_volumeBtn);
 
         // TEMP
         _playBtn.x += IDIOT_OFFSET;
@@ -156,9 +174,6 @@ public class MsoyVideoDisplay extends Sprite
 
         _playBtn.addEventListener(MouseEvent.CLICK, handlePlay);
         _pauseBtn.addEventListener(MouseEvent.CLICK, handlePause);
-
-        _hud.addChild(_commentBtn);
-        _hud.addChild(_volumeBtn);
 
         _commentBtn.addEventListener(MouseEvent.CLICK, handleComment);
         _volumeBtn.addEventListener(MouseEvent.CLICK, handleVolume);
@@ -215,7 +230,7 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function handleComment (event :MouseEvent) :void
     {
-        trace("-=== comment clicked");
+        _commentCallback();
     }
 
     protected function handleVolume (event :MouseEvent) :void
@@ -325,7 +340,7 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function handlePlayerPosition (event :ValueEvent) :void
     {
-        trace("Got player position: " + event.value);
+//        trace("Got player position: " + event.value);
         if (_dragging) {
             return;
         }
@@ -364,20 +379,17 @@ public class MsoyVideoDisplay extends Sprite
     protected function handleShowHud (event :MouseEvent) :void
     {
         const show :Boolean = (event.type == MouseEvent.ROLL_OVER);
-        Tweener.addTween(_hud, { time: .25, y: show ? HEIGHT - BUTTON_DIM : HEIGHT,
-                                 transition: "easeinoutcubic" });
-//        if (show == (_hud.parent == null)) {
-//            if (show) {
-//                addChild(_hud);
-//            } else {
-//                removeChild(_hud);
-//            }
-//        }
+        Tweener.addTween(_hud, {
+            time: .25,
+            y: show ? HEIGHT - BUTTON_DIM : HEIGHT + 1,
+            transition: "easeinoutcubic" });
     }
 
     protected const log :Log = Log.getLog(this);
 
     protected var _player :VideoPlayer;
+
+    protected var _commentCallback :Function;
 
     protected var _hud :Sprite;
 

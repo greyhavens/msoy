@@ -39,8 +39,8 @@ public class FurniSprite extends MsoySprite
         _furni = furni;
 
         // configure our media and item
-        setMediaDesc(furni.media);
         setItemIdent(furni.getItemIdent());
+        setMediaDesc(furni.media);
 
         // set up our hotspot if one is configured in the furni data record
         if (_furni.hotSpotX > 0 || _furni.hotSpotY > 0) {
