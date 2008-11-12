@@ -26,16 +26,7 @@ import client.ui.MsoyUI;
  */
 public class InviteFriendPopup extends BorderedDialog
 {
-    public static ClickListener createListener (final MemberName target)
-    {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
-                new InviteFriendPopup(target).show();
-            }
-        };
-    }
-
-    protected InviteFriendPopup (final MemberName target)
+    public InviteFriendPopup (final MemberName target)
     {
         setHeaderTitle(_msgs.ifriendTitle(""+target));
 

@@ -108,7 +108,7 @@ public class MemberList extends PagedGrid<MemberCard>
 
             // potentially show the add friend button
             if (isNotMe && !card.isFriend && !CShell.isGuest()) {
-                onClick = InviteFriendPopup.createListener(card.name);
+                onClick = new FriendInviter(card.name);
                 extras.setWidget(row, 0, MsoyUI.createActionImage(
                                      "/images/profile/addfriend.png", onClick));
                 extras.setWidget(row++, 1, MsoyUI.createActionLabel(

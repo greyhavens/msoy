@@ -285,7 +285,7 @@ public class InvitePanel extends VerticalPanel
                     members = true;
                 }
                 contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
-                ClickListener onClick = InviteFriendPopup.createListener(invRes.names[ii]);
+                ClickListener onClick = new FriendInviter(invRes.names[ii]);
                 contents.setWidget(row, 1, MsoyUI.createActionImage(
                             "/images/profile/addfriend.png", onClick));
                 contents.setWidget(row++, 2, MsoyUI.createActionLabel(
@@ -327,7 +327,7 @@ public class InvitePanel extends VerticalPanel
             if (ec.mname != null) {
                 showResults = true;
                 contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
-                ClickListener onClick = InviteFriendPopup.createListener(ec.mname);
+                ClickListener onClick = new FriendInviter(ec.mname);
                 contents.setWidget(row, 1, MsoyUI.createActionImage(
                             "/images/profile/addfriend.png", onClick));
                 contents.setWidget(row++, 2, MsoyUI.createActionLabel(

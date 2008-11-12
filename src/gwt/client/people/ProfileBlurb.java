@@ -152,7 +152,7 @@ public class ProfileBlurb extends Blurb
         buttons.setStyleName("Buttons");
         if (!CShell.isGuest() && !_pdata.isOurFriend && !isMe) {
             addButton(buttons, "/images/profile/addfriend.png", _msgs.inviteFriend(),
-                      InviteFriendPopup.createListener(_name));
+                      new FriendInviter(_name));
         }
         if (!CShell.isGuest() && !isMe) {
             addButton(buttons, "/images/profile/sendmail.png", _msgs.sendMail(),
