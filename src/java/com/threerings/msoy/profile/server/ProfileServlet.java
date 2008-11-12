@@ -23,6 +23,7 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -68,6 +69,26 @@ import static com.threerings.msoy.Log.log;
 public class ProfileServlet extends MsoyServiceServlet
     implements ProfileService
 {
+    /**
+     * Tests if the supplied member may become a greeter or already is a greeter.
+     */
+    public static GreeterStatus getGreeterStatus (MemberRecord memrec, int numFriends)
+    {
+        if (!DeploymentConfig.devDeployment) {
+            return GreeterStatus.DISABLED;
+
+        } else if (memrec.isGreeter()) {
+            return GreeterStatus.GREETER;
+
+        } else if (memrec.isTroublemaker() || memrec.level < MIN_GREETER_LEVEL || 
+            numFriends < MIN_GREETER_FRIENDS) {
+            return GreeterStatus.DISABLED;
+
+        } else {
+            return GreeterStatus.NORMAL;
+        }
+    }
+    
     // from interface ProfileService
     public ProfileResult loadProfile (final int memberId)
         throws ServiceException
@@ -98,7 +119,7 @@ public class ProfileServlet extends MsoyServiceServlet
         result.totalFriendCount = friendIds.size();
 
         // load greeter info
-        result.greeter = tgtrec.isGreeter();
+        result.greeterStatus = getGreeterStatus(tgtrec, result.totalFriendCount);
 
         // load stamp info
         result.stamps = Lists.newArrayList(
@@ -139,6 +160,14 @@ public class ProfileServlet extends MsoyServiceServlet
                 (!memrec.isSupport() && !MemberName.isValidNonSupportName(displayName))) {
             // you'll only see this with a hacked client
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        // don't let the user become a greeter if it is disabled
+        if (!memrec.isGreeter() && greeter) {
+            int friendCount = _memberRepo.loadFriendIds(memrec.memberId).size();
+            if (getGreeterStatus(memrec, friendCount) == GreeterStatus.DISABLED) {
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+            }
         }
 
         // TODO: whatever filtering and profanity checking that we want
@@ -371,6 +400,8 @@ public class ProfileServlet extends MsoyServiceServlet
     protected static final int MAX_PROFILE_GAMES = 10;
     protected static final int MAX_PROFILE_TROPHIES = 6;
     protected static final int MAX_PROFILE_FAVORITES = 4;
+    protected static final int MIN_GREETER_LEVEL = 10;
+    protected static final int MIN_GREETER_FRIENDS = 20;
 
     protected static final int DEFAULT_FEED_DAYS = 2;
 }

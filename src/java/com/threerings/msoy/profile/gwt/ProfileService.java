@@ -27,6 +27,9 @@ import com.threerings.msoy.person.gwt.Interest;
  */
 public interface ProfileService extends RemoteService
 {
+    /** The various greeter states. */
+    enum GreeterStatus {NORMAL, GREETER, DISABLED};
+    
     /** Provides results for {@link #loadProfile}. */
     public static class ProfileResult implements IsSerializable
     {
@@ -42,8 +45,8 @@ public interface ProfileService extends RemoteService
         /** Whether or not the requesting member is a friend of this member. */
         public boolean isOurFriend;
 
-        /** Whether or not the requesting member is a whirled greeter. */
-        public boolean greeter;
+        /** Whether or not the requesting member is a whirled greeter or may become one. */
+        public GreeterStatus greeterStatus;
 
         /** This user's basic profile information. */
         public Profile profile;

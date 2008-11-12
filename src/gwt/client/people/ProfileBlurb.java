@@ -21,12 +21,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.profile.gwt.ProfileService.GreeterStatus;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -63,7 +63,7 @@ public class ProfileBlurb extends Blurb
         } else {
             _pdata = pdata;
             _profile = pdata.profile;
-            _greeter = _pdata.greeter;
+            _greeter = _pdata.greeterStatus;
             displayProfile();
         }
     }
@@ -109,7 +109,7 @@ public class ProfileBlurb extends Blurb
         if (!isBlank(_profile.location)) {
             info.addText(_profile.location, 1, null);
         }
-        if (_greeter) {
+        if (_greeter == GreeterStatus.GREETER) {
             info.addText(_msgs.profileGreeterLabel(), 1, null);
         }
 
@@ -277,11 +277,10 @@ public class ProfileBlurb extends Blurb
         econtent.setText(row, 0, _msgs.elocation());
         econtent.setWidget(row++, 1, _elocation = MsoyUI.createTextBox(_profile.location, 255, 30));
 
-        if (DeploymentConfig.devDeployment) {
-            // TODO: disable if the level or friend count is too low
+        if (_greeter != GreeterStatus.DISABLED) {
             econtent.setText(row, 0, _msgs.egreeterLabel());
             econtent.setWidget(row++, 1, _egreeter = new CheckBox(_msgs.egreeterTip()));
-            _egreeter.setChecked(_greeter);
+            _egreeter.setChecked(_greeter == GreeterStatus.GREETER);
         }
 
         Button cancel = new Button(_cmsgs.cancel(), new ClickListener() {
@@ -335,18 +334,20 @@ public class ProfileBlurb extends Blurb
         } else {
             _profile.age = 0;
         }
-        if (DeploymentConfig.devDeployment) {
-            _greeter = _egreeter.isChecked();
+
+        if (_egreeter != null) {
+            _greeter = _egreeter.isChecked() ? GreeterStatus.GREETER : GreeterStatus.NORMAL;
         }
 
-        _profilesvc.updateProfile(name, _greeter, _profile, new MsoyCallback<Void>() {
-            public void onSuccess (Void result) {
-                displayProfile();
-                if (!name.equals(CShell.creds.name.toString())) {
-                    CShell.frame.dispatchEvent(new NameChangeEvent(name));
+        _profilesvc.updateProfile(name, _greeter == GreeterStatus.GREETER, _profile, 
+            new MsoyCallback<Void>() {
+                public void onSuccess (Void result) {
+                    displayProfile();
+                    if (!name.equals(CShell.creds.name.toString())) {
+                        CShell.frame.dispatchEvent(new NameChangeEvent(name));
+                    }
                 }
-            }
-        });
+            });
     }
 
     protected boolean isBlank (String text)
@@ -361,7 +362,7 @@ public class ProfileBlurb extends Blurb
 
     protected ProfileService.ProfileResult _pdata;
     protected Profile _profile;
-    protected boolean _greeter;
+    protected ProfileService.GreeterStatus _greeter;
 
     protected SimplePanel _ephoto;
     protected TextBox _ename, _estatus, _ehomepage, _elocation;
