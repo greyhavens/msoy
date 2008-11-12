@@ -4,6 +4,7 @@
 package client.me;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
@@ -44,7 +45,11 @@ public class MeFriendsPanel extends FlowPanel
         if (data.friends == null || data.friends.size() == 0) {
             addNoFriends(data);
         } else {
-            addFriends(data);
+            addPeople(data.friends, _msgs.nextFriendClick());
+        }
+        if (data.greeters != null && data.greeters.size() > 0) {
+            add(MsoyUI.createLabel(_msgs.nextOr(), null));
+            addPeople(data.greeters, _msgs.nextGreeterClick());
         }
         add(new Image("/images/me/me_friends_footer.png"));
     }
@@ -88,9 +93,9 @@ public class MeFriendsPanel extends FlowPanel
     /**
      * Add widgets displayed when player has friends, who may or may not be online.
      */
-    protected void addFriends (MyWhirledData data)
+    protected void addPeople (List<MemberCard> people, String label)
     {
-        add(MsoyUI.createLabel(_msgs.nextFriendClick(), "TitleSub"));
+        add(MsoyUI.createLabel(label, "TitleSub"));
 
         // contents will scroll after a long time
         FlowPanel scrollContents = new FlowPanel();
@@ -99,7 +104,7 @@ public class MeFriendsPanel extends FlowPanel
         // group our friends by location (in rooms or games)
         Map<Integer, FlowPanel> games = new HashMap<Integer, FlowPanel>();
         Map<Integer, FlowPanel> rooms = new HashMap<Integer, FlowPanel>();
-        for (MemberCard card : data.friends) {
+        for (MemberCard card : people) {
             if (card.status instanceof MemberCard.InScene) {
                 int sceneId = ((MemberCard.InScene)card.status).sceneId;
                 FlowPanel room = getPlacePanel(
