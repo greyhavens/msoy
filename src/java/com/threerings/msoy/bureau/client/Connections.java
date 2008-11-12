@@ -67,6 +67,10 @@ class Connections
 
     public void shutdown ()
     {
+        if (_shutdown) {
+            return;
+        }
+        
         _shutdown = true;
         _purge.cancel();
         java.util.List<Entry> entries = new java.util.ArrayList<Entry>();
@@ -74,7 +78,9 @@ class Connections
         for (Entry entry : entries) {
             if (entry.getState() == State.CONNECTED ||
                 entry.getState() == State.PENDING) {
-                entry.logoff();
+                if (entry._client.isActive()) {
+                    entry.logoff();
+                }
             }
         }
     }
