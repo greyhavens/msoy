@@ -35,13 +35,14 @@ import com.threerings.flash.video.VideoPlayerCodes;
  * The msoy-skinned video display.
  */
 // NOTES:
-// - Keep HUD up when paused, only hide it when playing?
-// - Do we want to allow the youtube watermark to be clickable?
+// - Do we want to allow the youtube watermark to be clickable? - NO
 public class MsoyVideoDisplay extends Sprite
 {
     public static const WIDTH :int = 320;
 
     public static const HEIGHT :int = 240;
+
+    public static const DEBUG :Boolean = false;
 
     /**
      * Create.
@@ -57,6 +58,8 @@ public class MsoyVideoDisplay extends Sprite
         _commentCallback = commentCallback;
 
         addChild(_player.getDisplay());
+
+        addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
 
         configureUI();
     }
@@ -92,16 +95,10 @@ public class MsoyVideoDisplay extends Sprite
         g.drawRect(0, 0, WIDTH, HEIGHT);
         g.endFill();
 
-//        // TODO: is this shit needed?
-//        g = this.graphics;
-//        g.beginFill(0xFF000000);
-//        g.drawRect(0, 0, WIDTH, HEIGHT);
-//        g.endFill();
-
         _hud = new Sprite();
         g = _hud.graphics;
-        g.beginFill(0x000000, .25);
-        g.lineStyle(1, 0xFFFFFF);
+        g.beginFill(0x000000, .85);
+        g.lineStyle(1, 0x3db8eb);
         g.drawRect(0, 0, WIDTH, BUTTON_DIM);
         g.endFill();
         _hud.y = HEIGHT + 1; // position it offscreenz
@@ -145,15 +142,26 @@ public class MsoyVideoDisplay extends Sprite
         _pauseBtn.x = (BUTTON_DIM - _pauseBtn.width) / 2;
         _pauseBtn.y = (BUTTON_DIM - _pauseBtn.height) / 2;
 
+        var hudG :Graphics = _hud.graphics;
+        hudG.lineStyle(1, 0xFF0000);
+
         var baseX :int = WIDTH;
 
         baseX -= BUTTON_DIM;
+        if (DEBUG) {
+            hudG.moveTo(baseX, 0);
+            hudG.lineTo(baseX, BUTTON_DIM);
+        }
         _volumeBtn.x = baseX + (BUTTON_DIM - _volumeBtn.width) / 2;
         _volumeBtn.y = (BUTTON_DIM - _volumeBtn.height) / 2;
         _hud.addChild(_volumeBtn);
 
         if (_commentCallback != null) {
             baseX -= BUTTON_DIM;
+            if (DEBUG) {
+                hudG.moveTo(baseX, 0);
+                hudG.lineTo(baseX, BUTTON_DIM);
+            }
             _commentBtn.x = baseX + (BUTTON_DIM - _commentBtn.width) / 2;
             _commentBtn.y = (BUTTON_DIM - _commentBtn.height) / 2;
             _hud.addChild(_commentBtn);
@@ -161,13 +169,17 @@ public class MsoyVideoDisplay extends Sprite
 
         _timeField = TextFieldUtil.createField("88:88 / 88:88",
             { autoSize: TextFieldAutoSize.CENTER, selectable: false },
-            { color: 0xFFFFFF, bold: true, font: "_sans", size: 9 });
+            { color: 0xFFFFFF, font: "_sans", size: 10 });
         _timeField.height = BUTTON_DIM;
-        updateTime(); // set the strings..
         baseX -= _timeField.width;
+        if (DEBUG) {
+            hudG.moveTo(baseX, 0);
+            hudG.lineTo(baseX, BUTTON_DIM);
+        }
         _timeField.x = baseX;
         _timeField.y = (BUTTON_DIM - _timeField.height) / 2
         _hud.addChild(_timeField);
+        updateTime(); // set the strings..
 
         _track.x = BUTTON_DIM + PAD;
         _track.y = BUTTON_DIM / 2;
@@ -183,8 +195,8 @@ public class MsoyVideoDisplay extends Sprite
         _volumeBtn.x += IDIOT_OFFSET;
         _volumeBtn.y += IDIOT_OFFSET;
 
-        addEventListener(MouseEvent.ROLL_OVER, handleShowHud);
-        addEventListener(MouseEvent.ROLL_OUT, handleShowHud);
+        addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
+        addEventListener(MouseEvent.ROLL_OUT, handleMouseRoll);
 
         _playBtn.addEventListener(MouseEvent.CLICK, handlePlay);
         _pauseBtn.addEventListener(MouseEvent.CLICK, handlePause);
@@ -199,6 +211,7 @@ public class MsoyVideoDisplay extends Sprite
         
         // finally, make sure things are as they should be
         displayPlayState(_player.getState());
+        handleAddedToStage(); // will be ok if we're not..
 
 //        _track = new Sprite();
 //        _track.x = PAD - _hud.x;
@@ -299,6 +312,9 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function displayPlayState (state :int) :void
     {
+        _playing = (state == VideoPlayerCodes.STATE_PLAYING);
+        updateHUD();
+
         if (_playBtn == null) {
             return; // not yet set up.
         }
@@ -394,9 +410,23 @@ public class MsoyVideoDisplay extends Sprite
         _player.seek(perc * dur);
     }
 
-    protected function handleShowHud (event :MouseEvent) :void
+    protected function handleAddedToStage (event :Event = null) :void
     {
-        const show :Boolean = (event.type == MouseEvent.ROLL_OVER);
+        var mx :Number = this.mouseX;
+        var my :Number = this.mouseY;
+        _mouseIn = (mx >= 0) && (mx < WIDTH) && (my >= 0) && (my < HEIGHT);
+        updateHUD();
+    }
+
+    protected function handleMouseRoll (event :MouseEvent) :void
+    {
+        _mouseIn = (event.type == MouseEvent.ROLL_OVER);
+        updateHUD();
+    }
+
+    protected function updateHUD () :void
+    {
+        const show :Boolean = _mouseIn || !_playing;
         Tweener.addTween(_hud, {
             time: .25,
             y: show ? HEIGHT - BUTTON_DIM : HEIGHT + 1,
@@ -442,6 +472,9 @@ public class MsoyVideoDisplay extends Sprite
     protected var _lastKnobX :int = int.MIN_VALUE;
 
     protected var _dragging :Boolean;
+
+    protected var _playing :Boolean;
+    protected var _mouseIn :Boolean;
     
     protected static const PAD :int = 10;
 
