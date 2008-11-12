@@ -16,6 +16,9 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+
 import caurina.transitions.Tweener;
 
 import com.threerings.util.Log;
@@ -23,6 +26,7 @@ import com.threerings.util.MultiLoader;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.flash.TextFieldUtil;
 import com.threerings.flash.video.FlvVideoPlayer;
 import com.threerings.flash.video.VideoPlayer;
 import com.threerings.flash.video.VideoPlayerCodes;
@@ -114,11 +118,14 @@ public class MsoyVideoDisplay extends Sprite
         _playBtn = DisplayUtil.findInHierarchy(ui, "playbutton");
         _pauseBtn = DisplayUtil.findInHierarchy(ui, "pausebutton");
         _track = new Sprite();
+        _track.graphics.beginFill(0xFFFFFF);
+        _track.graphics.drawRect(0, 0, 1, 5);
+        _track.graphics.endFill();
         // TEMP trackthing hacking
-        var trackThing :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
-        trackThing.x = trackThing.width / 2 + IDIOT_OFFSET;
-        trackThing.y = 0;
-        _track.addChild(trackThing);
+//        var trackThing :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
+//        trackThing.x = trackThing.width / 2 + IDIOT_OFFSET;
+//        trackThing.y = 0;
+//        _track.addChild(trackThing);
         _knob = new Sprite();
         _knob.addChild(DisplayUtil.findInHierarchy(ui, "sliderknob"));
         _commentBtn = DisplayUtil.findInHierarchy(ui, "commentbutton");
@@ -138,26 +145,33 @@ public class MsoyVideoDisplay extends Sprite
         _pauseBtn.x = (BUTTON_DIM - _pauseBtn.width) / 2;
         _pauseBtn.y = (BUTTON_DIM - _pauseBtn.height) / 2;
 
-        const buttonCount :int = (_commentCallback == null) ? 2 : 3;
+        var baseX :int = WIDTH;
 
-        var baseX :int = BUTTON_DIM;
-        _track.x = baseX + PAD;
-        _track.y = BUTTON_DIM / 2;
-        trackThing.width = WIDTH - (BUTTON_DIM * buttonCount) - (PAD * 2);
-
-        baseX += WIDTH - (BUTTON_DIM * buttonCount);
-
-        if (_commentCallback != null) {
-            _commentBtn.x = baseX + (BUTTON_DIM - _commentBtn.width) / 2;
-            _commentBtn.y = (BUTTON_DIM - _commentBtn.height) / 2;
-            _hud.addChild(_commentBtn);
-
-            baseX += BUTTON_DIM;
-        }
-
+        baseX -= BUTTON_DIM;
         _volumeBtn.x = baseX + (BUTTON_DIM - _volumeBtn.width) / 2;
         _volumeBtn.y = (BUTTON_DIM - _volumeBtn.height) / 2;
         _hud.addChild(_volumeBtn);
+
+        if (_commentCallback != null) {
+            baseX -= BUTTON_DIM;
+            _commentBtn.x = baseX + (BUTTON_DIM - _commentBtn.width) / 2;
+            _commentBtn.y = (BUTTON_DIM - _commentBtn.height) / 2;
+            _hud.addChild(_commentBtn);
+        }
+
+        _timeField = TextFieldUtil.createField("88:88 / 88:88",
+            { autoSize: TextFieldAutoSize.CENTER, selectable: false },
+            { color: 0xFFFFFF, bold: true, font: "_sans", size: 9 });
+        _timeField.height = BUTTON_DIM;
+        updateTime(); // set the strings..
+        baseX -= _timeField.width;
+        _timeField.x = baseX;
+        _timeField.y = (BUTTON_DIM - _timeField.height) / 2
+        _hud.addChild(_timeField);
+
+        _track.x = BUTTON_DIM + PAD;
+        _track.y = BUTTON_DIM / 2;
+        _track.width = baseX - PAD - _track.x;
 
         // TEMP
         _playBtn.x += IDIOT_OFFSET;
@@ -336,10 +350,14 @@ public class MsoyVideoDisplay extends Sprite
     protected function handlePlayerDuration (event :ValueEvent) :void
     {
         _hud.addChild(_track);
+        _durationString = formatTime(Number(event.value));
+        updateTime();
     }
 
     protected function handlePlayerPosition (event :ValueEvent) :void
     {
+        updateTime(Number(event.value));
+
 //        trace("Got player position: " + event.value);
         if (_dragging) {
             return;
@@ -385,6 +403,24 @@ public class MsoyVideoDisplay extends Sprite
             transition: "easeinoutcubic" });
     }
 
+    protected function updateTime (position :Number = NaN) :void
+    {
+        var posString :String = isNaN(position) ? UNKNOWN_TIME : formatTime(position);
+
+        _timeField.text = posString + " / " + _durationString;
+    }
+
+    protected function formatTime (time :Number) :String
+    {
+        const mins :int = int(time / 60);
+        time -= mins * 60;
+        var secString :String = String(Math.round(time));
+        if (secString.length == 1) {
+            secString = "0" + secString;
+        }
+        return String(mins) + ":" + secString;
+    }
+
     protected const log :Log = Log.getLog(this);
 
     protected var _player :VideoPlayer;
@@ -397,8 +433,11 @@ public class MsoyVideoDisplay extends Sprite
     protected var _pauseBtn :DisplayObject;
     protected var _track :Sprite;
     protected var _knob :Sprite;
+    protected var _timeField :TextField;
     protected var _commentBtn :DisplayObject;
     protected var _volumeBtn :MovieClip;
+
+    protected var _durationString :String = UNKNOWN_TIME;
 
     protected var _lastKnobX :int = int.MIN_VALUE;
 
@@ -410,6 +449,8 @@ public class MsoyVideoDisplay extends Sprite
 
     // TEMP
     protected static const IDIOT_OFFSET :int = 12;
+
+    protected static const UNKNOWN_TIME :String = "-:--";
 
     [Embed(
         source="../../../../../../rsrc/media/skins/videoplayer.swf",
