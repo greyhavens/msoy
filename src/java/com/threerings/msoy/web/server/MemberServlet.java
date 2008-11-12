@@ -100,6 +100,13 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
+    public boolean isAutomaticFriender (int friendId)
+        throws ServiceException
+    {
+        return _memberRepo.isGreeter(friendId);
+    }
+
+    // from WebMemberService
     public Invitation getInvitation (String inviteId, boolean viewing)
         throws ServiceException
     {

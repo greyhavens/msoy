@@ -42,6 +42,12 @@ public interface WebMemberServiceAsync
     void removeFriend (int friendId, AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link WebMemberService#isAutomaticFriender}.
+     */
+    void isAutomaticFriender (int friendId, AsyncCallback<Boolean> callback)
+        throws ServiceException;
+    
+    /**
      * The asynchronous version of {@link WebMemberService#getInvitation}.
      */
     void getInvitation (String inviteId, boolean viewing, AsyncCallback<Invitation> callback);

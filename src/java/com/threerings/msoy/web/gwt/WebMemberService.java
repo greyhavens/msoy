@@ -61,6 +61,12 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Tests if a given member has agreed to automatically accept new friends.
+     */
+    boolean isAutomaticFriender (int friendId)
+        throws ServiceException;
+    
+    /**
      * Loads up the details of an invitation.
      *
      * @param viewing If true, this will ensure that the viewed date in the database has been set.
