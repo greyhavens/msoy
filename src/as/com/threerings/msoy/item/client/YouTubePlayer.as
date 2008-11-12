@@ -40,6 +40,8 @@ public class YouTubePlayer extends EventDispatcher
     public function YouTubePlayer ()
     {
         _loader = new Loader();
+        // since we autoplay, we don't need to have the youtube play button be clickable,
+        // and we also suppress clicking on the youtube watermark.
         _loader.mouseEnabled = false;
         _loader.mouseChildren = false;
     }
@@ -107,7 +109,7 @@ public class YouTubePlayer extends EventDispatcher
     // from VideoPlayer
     public function getSize () :Point
     {
-        return null; // TODO
+        return new Point(320, 240); // This is constant, for now
     }
 
     // from VideoPlayer
@@ -143,13 +145,14 @@ public class YouTubePlayer extends EventDispatcher
     // from VideoPlayer
     public function getVolume () :Number
     {
-        return 1; // TODO
+        return _volume;
     }
 
     // from VideoPlayer
     public function setVolume (volume :Number) :void
     {
-        // TODO
+        _volume = Math.max(0, Math.min(1, volume));
+        send("doVolume", _volume);
     }
 
     // from VideoPlayer
@@ -216,7 +219,6 @@ public class YouTubePlayer extends EventDispatcher
     {
         _duration = duration;
         dispatchEvent(new ValueEvent(VideoPlayerCodes.DURATION, duration));
-        log.debug("Got duration from as2: " + duration);
     }
 
     protected function handleGotPosition (position :Number) :void
@@ -239,6 +241,8 @@ public class YouTubePlayer extends EventDispatcher
     protected var _duration :Number = NaN;
 
     protected var _position :Number = NaN;
+
+    protected var _volume :Number = 1;
 
     protected static const UNLOAD_STATE :int = int.MIN_VALUE;
 

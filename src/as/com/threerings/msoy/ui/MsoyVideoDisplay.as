@@ -98,9 +98,10 @@ public class MsoyVideoDisplay extends Sprite
         _hud = new Sprite();
         g = _hud.graphics;
         g.beginFill(0x000000, .85);
-        g.lineStyle(1, 0x3db8eb);
-        g.drawRect(0, 0, WIDTH, BUTTON_DIM);
+        g.drawRect(0, 0, WIDTH, UNIT);
         g.endFill();
+        g.lineStyle(1, 0x3db8eb);
+        g.drawRect(0, 0, WIDTH - 1, UNIT - 1);
         _hud.y = HEIGHT + 1; // position it offscreenz
         addChild(_hud);
 
@@ -109,8 +110,9 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function configureUI2 (ui :DisplayObject) :void
     {
-//        // TEMP
-//        trace(DisplayUtil.dumpHierarchy(ui));
+        if (DEBUG) {
+            trace(DisplayUtil.dumpHierarchy(ui));
+        }
 
         _playBtn = DisplayUtil.findInHierarchy(ui, "playbutton");
         _pauseBtn = DisplayUtil.findInHierarchy(ui, "pausebutton");
@@ -120,80 +122,65 @@ public class MsoyVideoDisplay extends Sprite
         _track.graphics.endFill();
         // TEMP trackthing hacking
 //        var trackThing :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
-//        trackThing.x = trackThing.width / 2 + IDIOT_OFFSET;
+//        trackThing.x = trackThing.width / 2;
 //        trackThing.y = 0;
 //        _track.addChild(trackThing);
         _knob = new Sprite();
         _knob.addChild(DisplayUtil.findInHierarchy(ui, "sliderknob"));
         _commentBtn = DisplayUtil.findInHierarchy(ui, "commentbutton");
-        _volumeBtn = DisplayUtil.findInHierarchy(ui, "volume") as MovieClip;
-
-//        trace("============= playBtn dimensions: " + _playBtn.width + ", " + _playBtn.height);
-//        trace("============= pauseBtn dimensions: " + _pauseBtn.width + ", " + _pauseBtn.height);
-//        trace("============= comment dimensions: " + _commentBtn.width + ", " + _commentBtn.height);
-//        trace("============= volume dimensions: " + _volumeBtn.width + ", " + _volumeBtn.height);
-//        trace("playBtnx/y: " + _playBtn.x + ", " + _playBtn.y);
-//        trace("=== total frames: " + _volumeBtn.totalFrames);
+        _volumeBtn = DisplayUtil.findInHierarchy(ui, "fullvolumebutton");
+        _muteBtn = DisplayUtil.findInHierarchy(ui, "mutebutton");
 
         // position the buttons on the _hud
-        _playBtn.x = (BUTTON_DIM - _playBtn.width) / 2;
-        _playBtn.y = (BUTTON_DIM - _playBtn.height) / 2;
-
-        _pauseBtn.x = (BUTTON_DIM - _pauseBtn.width) / 2;
-        _pauseBtn.y = (BUTTON_DIM - _pauseBtn.height) / 2;
+        _playBtn.x = (UNIT - _playBtn.width) / 2;
+        _playBtn.y = (UNIT - _playBtn.height) / 2;
+        _pauseBtn.x = (UNIT - _pauseBtn.width) / 2;
+        _pauseBtn.y = (UNIT - _pauseBtn.height) / 2;
 
         var hudG :Graphics = _hud.graphics;
         hudG.lineStyle(1, 0xFF0000);
 
         var baseX :int = WIDTH;
 
-        baseX -= BUTTON_DIM;
+        baseX -= UNIT;
         if (DEBUG) {
             hudG.moveTo(baseX, 0);
-            hudG.lineTo(baseX, BUTTON_DIM);
+            hudG.lineTo(baseX, UNIT);
         }
-        _volumeBtn.x = baseX + (BUTTON_DIM - _volumeBtn.width) / 2;
-        _volumeBtn.y = (BUTTON_DIM - _volumeBtn.height) / 2;
+        _volumeBtn.x = baseX + (UNIT - _volumeBtn.width) / 2;
+        _volumeBtn.y = (UNIT - _volumeBtn.height) / 2;
+        _muteBtn.x = baseX + (UNIT - _muteBtn.width) / 2;
+        _muteBtn.y = (UNIT - _volumeBtn.height) / 2;
         _hud.addChild(_volumeBtn);
 
         if (_commentCallback != null) {
-            baseX -= BUTTON_DIM;
+            baseX -= UNIT;
             if (DEBUG) {
                 hudG.moveTo(baseX, 0);
-                hudG.lineTo(baseX, BUTTON_DIM);
+                hudG.lineTo(baseX, UNIT);
             }
-            _commentBtn.x = baseX + (BUTTON_DIM - _commentBtn.width) / 2;
-            _commentBtn.y = (BUTTON_DIM - _commentBtn.height) / 2;
+            _commentBtn.x = baseX + (UNIT - _commentBtn.width) / 2;
+            _commentBtn.y = (UNIT - _commentBtn.height) / 2;
             _hud.addChild(_commentBtn);
         }
 
         _timeField = TextFieldUtil.createField("88:88 / 88:88",
             { autoSize: TextFieldAutoSize.CENTER, selectable: false },
             { color: 0xFFFFFF, font: "_sans", size: 10 });
-        _timeField.height = BUTTON_DIM;
+        _timeField.height = UNIT;
         baseX -= _timeField.width;
         if (DEBUG) {
             hudG.moveTo(baseX, 0);
-            hudG.lineTo(baseX, BUTTON_DIM);
+            hudG.lineTo(baseX, UNIT);
         }
         _timeField.x = baseX;
-        _timeField.y = (BUTTON_DIM - _timeField.height) / 2
+        _timeField.y = (UNIT - _timeField.height) / 2
         _hud.addChild(_timeField);
         updateTime(); // set the strings..
 
-        _track.x = BUTTON_DIM + PAD;
-        _track.y = BUTTON_DIM / 2;
+        _track.x = UNIT + PAD;
+        _track.y = UNIT / 2;
         _track.width = baseX - PAD - _track.x;
-
-        // TEMP
-        _playBtn.x += IDIOT_OFFSET;
-        _playBtn.y += IDIOT_OFFSET;
-        _pauseBtn.x += IDIOT_OFFSET;
-        _pauseBtn.y += IDIOT_OFFSET;
-        _commentBtn.x += IDIOT_OFFSET;
-        _commentBtn.y += IDIOT_OFFSET;
-        _volumeBtn.x += IDIOT_OFFSET;
-        _volumeBtn.y += IDIOT_OFFSET;
 
         addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
         addEventListener(MouseEvent.ROLL_OUT, handleMouseRoll);
@@ -203,6 +190,7 @@ public class MsoyVideoDisplay extends Sprite
 
         _commentBtn.addEventListener(MouseEvent.CLICK, handleComment);
         _volumeBtn.addEventListener(MouseEvent.CLICK, handleVolume);
+        _muteBtn.addEventListener(MouseEvent.CLICK, handleMute);
 
         _track.addEventListener(MouseEvent.CLICK, handleTrackClick);
         _knob.addEventListener(MouseEvent.MOUSE_DOWN, handleKnobDown);
@@ -262,11 +250,16 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function handleVolume (event :MouseEvent) :void
     {
-        // fucking goddamn fucking frames are 1-based, not 0-based
-        var frame :int = _volumeBtn.currentFrame - 1; // subtract 1
-        frame = (frame + 1) % _volumeBtn.totalFrames; // do the increment
-        _volumeBtn.gotoAndStop(frame + 1); // re-add 1
-        trace("===== volume clicked");
+        _hud.removeChild(_volumeBtn);
+        _hud.addChild(_muteBtn);
+        _player.setVolume(0);
+    }
+
+    protected function handleMute (event :MouseEvent) :void
+    {
+        _hud.removeChild(_muteBtn);
+        _hud.addChild(_volumeBtn);
+        _player.setVolume(1);
     }
 
     protected function handleTrackClick (event :MouseEvent) :void
@@ -344,8 +337,8 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function effectPlayerVolume (volume :Number) :void
     {
-        // TODO
-        _volumeBtn.gotoAndStop(0);
+//        // TODO
+//        _volumeBtn.gotoAndStop(0);
     }
 
     protected function handlePlayerSize (event :ValueEvent) :void
@@ -429,7 +422,7 @@ public class MsoyVideoDisplay extends Sprite
         const show :Boolean = _mouseIn || !_playing;
         Tweener.addTween(_hud, {
             time: .25,
-            y: show ? HEIGHT - BUTTON_DIM : HEIGHT + 1,
+            y: show ? HEIGHT - UNIT : HEIGHT + 1,
             transition: "easeinoutcubic" });
     }
 
@@ -465,7 +458,8 @@ public class MsoyVideoDisplay extends Sprite
     protected var _knob :Sprite;
     protected var _timeField :TextField;
     protected var _commentBtn :DisplayObject;
-    protected var _volumeBtn :MovieClip;
+    protected var _volumeBtn :DisplayObject;
+    protected var _muteBtn :DisplayObject;
 
     protected var _durationString :String = UNKNOWN_TIME;
 
@@ -478,10 +472,8 @@ public class MsoyVideoDisplay extends Sprite
     
     protected static const PAD :int = 10;
 
-    protected static const BUTTON_DIM :int = 28;
-
-    // TEMP
-    protected static const IDIOT_OFFSET :int = 12;
+    /** The unit of size. The width/height of each button & the height of the HUD. */
+    protected static const UNIT :int = 28;
 
     protected static const UNKNOWN_TIME :String = "-:--";
 
