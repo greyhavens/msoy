@@ -21,7 +21,6 @@ import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.gwt.LandingServiceAsync;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.groups.FeaturedWhirledPanel;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
@@ -113,9 +112,9 @@ public class LandingPanel extends SimplePanel
         // featured avatar
         content.add(_avatarPanel = new AvatarPanel(), 67, 618);
 
-        // featured whirled panel is beaten into place using css
-        _featuredWhirled = new FeaturedWhirledPanel(true);
-        content.add(_featuredWhirled, 290, 618);
+        // featured group panel is beaten into place using css
+        _featuredGroup = new FeaturedGroupPanel(true);
+        content.add(_featuredGroup, 290, 618);
 
         // copyright, about, terms & conditions, help
         content.add(new LandingCopyright(), 48, 1012);
@@ -124,13 +123,13 @@ public class LandingPanel extends SimplePanel
         _landingsvc.getLandingData(new MsoyCallback<LandingData>() {
             public void onSuccess (LandingData data) {
                 topGamesPanel.setGames(data.topGames);
-                _featuredWhirled.setWhirleds(data.featuredWhirleds);
+                _featuredGroup.setWhirleds(data.featuredWhirleds);
                 _avatarPanel.setAvatars(data.topAvatars);
             }
         });
     }
 
-    protected FeaturedWhirledPanel _featuredWhirled;
+    protected FeaturedGroupPanel _featuredGroup;
     protected AvatarPanel _avatarPanel;
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);

@@ -10,13 +10,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
@@ -24,15 +22,19 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
+import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.CShell;
 import client.ui.ClickBox;
 import client.ui.MsoyUI;
+import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceBackedDataModel;
@@ -42,27 +44,14 @@ import client.util.ServiceUtil;
  * Display the public groups in a sensical manner, including a sorted list of characters that
  * start the groups, allowing people to select a subset of the public groups to view.
  */
-public class GalaxyPanel extends VerticalPanel
+public class GalaxyPanel extends FlowPanel
 {
     public GalaxyPanel ()
     {
-        setStyleName("galaxy");
+        setStyleName("galaxyPanel");
 
-        // add our favorites and featured whirled
-        SmartTable features = new SmartTable("Features", 0, 0);
-        features.setText(0, 0, _msgs.galaxyIntro(), 1, "Intro"); // TODO: favorites
-        features.setWidget(0, 1, _featured = new FeaturedWhirledPanel(false));
-        features.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
-        features.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
-        add(features);
-        add(WidgetUtil.makeShim(10, 10));
-
-        // now add a UI for browsing and searching Whirleds
-        SmartTable browse = new SmartTable("Browse", 0, 0);
-        browse.setText(0, 0, _msgs.galaxyBrowseTitle(), 1, "Title");
-        browse.setWidget(0, 1, _currentTag = new FlowPanel(), 1, "Current");
-
-        HorizontalPanel search = new HorizontalPanel();
+        // search box floats on far right
+        FloatPanel search = new FloatPanel("Search");
         search.add(_searchInput = MsoyUI.createTextBox("", 255, 20));
         ClickListener doSearch = new ClickListener() {
             public void onClick (Widget sender) {
@@ -70,18 +59,26 @@ public class GalaxyPanel extends VerticalPanel
             }
         };
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
-        search.add(WidgetUtil.makeShim(5, 5));
         search.add(new Button(_msgs.galaxySearch(), doSearch));
-        browse.setWidget(0, 2, search, 1, "Search");
-        browse.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
-        add(browse);
-        add(WidgetUtil.makeShim(5, 5));
+        add(search);
 
-        SmartTable contents = new SmartTable("Contents", 0, 0);
-        contents.setWidget(0, 0, _popularTags = new FlowPanel(), 1, "tagCloud");
-        contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-        contents.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-        contents.setWidget(0, 2, _groupGrid = new PagedGrid<GroupCard>(GRID_ROWS, GRID_COLUMNS) {
+        // tag currently being searched floats in middle
+        add(_currentTag = MsoyUI.createFlowPanel("CurrentTag"));
+
+        FloatPanel content = new FloatPanel("Content");
+        add(content);
+
+        FlowPanel leftColumn = MsoyUI.createFlowPanel("LeftColumn");
+
+        _myGroups = MsoyUI.createFlowPanel("MyGroups");
+        if (!CShell.isGuest()) {
+            leftColumn.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsTitle(), "MyGroupsHeader"));
+            leftColumn.add(_myGroups = MsoyUI.createFlowPanel("MyGroups"));
+        }
+        leftColumn.add(_popularTags = MsoyUI.createFlowPanel("tagCloud"));
+        content.add(leftColumn);
+
+        _groupGrid = new PagedGrid<GroupCard>(GRID_ROWS, GRID_COLUMNS) {
             protected void displayPageFromClick (int page) {
                 Link.go(Pages.GROUPS, Args.compose(_action, ""+page, _arg));
             }
@@ -91,20 +88,20 @@ public class GalaxyPanel extends VerticalPanel
             protected String getEmptyMessage () {
                 return _msgs.galaxyNoGroups();
             }
-        });
-        _groupGrid.setWidth("100%");
-        contents.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
-        add(contents);
+        };
+        _groupGrid.addStyleName("GroupsList");
+        content.add(_groupGrid);
 
         // add info on creating a Whirled
-        add(WidgetUtil.makeShim(10, 10));
-        SmartTable create = new SmartTable("Create", 0, 0);
-        create.setText(0, 0, _msgs.galaxyCreateTitle(), 3, "Header");
-        create.setText(1, 0, _msgs.galaxyCreateBlurb(), 1, "Pitch");
-        create.setWidget(1, 1, WidgetUtil.makeShim(10, 10));
-        ClickListener onClick = Link.createListener(Pages.GROUPS, "edit");
-        create.setWidget(1, 2, new Button(_msgs.galaxyCreate(), onClick), 1, "Button");
-        add(create);
+        if (!CShell.isGuest()) {
+            SmartTable create = new SmartTable("Create", 0, 0);
+            create.setText(0, 0, _msgs.galaxyCreateTitle(), 3, "Header");
+            create.setText(1, 0, _msgs.galaxyCreateBlurb(), 1, "Pitch");
+            create.setWidget(1, 1, WidgetUtil.makeShim(10, 10));
+            ClickListener onClick = Link.createListener(Pages.GROUPS, "edit");
+            create.setWidget(1, 2, new Button(_msgs.galaxyCreate(), onClick), 1, "Button");
+            add(create);
+        }
 
         _groupsvc.getGalaxyData(new MsoyCallback<GalaxyData>() {
             public void onSuccess (GalaxyData galaxy) {
@@ -113,6 +110,10 @@ public class GalaxyPanel extends VerticalPanel
         });
     }
 
+    /**
+     * Called by parent page when the url changes; may be the first time the panel was loaded, or
+     * the result of a tag, text search, or page change query.
+     */
     public void setArgs (Args args)
     {
         String action = args.get(0, ""), arg = args.get(2, "");
@@ -140,10 +141,23 @@ public class GalaxyPanel extends VerticalPanel
         });
     }
 
+    /**
+     * Called when data is retrieved after this panel is created; populate the page with data.
+     */
     protected void init (GalaxyData data)
     {
-        // set up our featured whirled
-        _featured.setWhirleds(data.featuredWhirleds);
+        // set up my groups
+        if (!CShell.isGuest() && data.myGroups.size() == 0) {
+            _myGroups.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsNone(), "NoGroups"));
+        } else {
+            for (MyGroupCard group : data.myGroups) {
+                _myGroups.add(new MyGroupWidget(group));
+            }
+            Widget seeAllLink = Link.create(_msgs.galaxyMyGroupsSeeAll(), Pages.GROUPS,
+                "mywhirleds");
+            seeAllLink.addStyleName("SeeAll");
+            _myGroups.add(seeAllLink);
+        }
 
         // set up our popular tags
         if (data.popularTags.size() == 0) {
@@ -217,9 +231,31 @@ public class GalaxyPanel extends VerticalPanel
         void loadModel (MsoyCallback<DataModel<GroupCard>> callback);
     }
 
+    /**
+     * A single one of "my" groups on the left column.
+     */
+    protected class MyGroupWidget extends FloatPanel
+    {
+        public MyGroupWidget (MyGroupCard group)
+        {
+            super("MyGroup");
+            ClickListener groupListener = Link.createListener(Pages.GROUPS, Args.compose("d",
+                group.name.getGroupId()));
+            add(new ThumbBox(group.logo, MediaDesc.QUARTER_THUMBNAIL_SIZE, groupListener));
+            add(MsoyUI.createActionLabel(group.name.toString(), "GroupName", groupListener));
+            add(MsoyUI.createActionLabel(_msgs.galaxyMyGroupsDiscussions(),
+                "UnreadPosts", Link.createListener(
+                Pages.GROUPS, Args.compose("f", group.name.getGroupId()))));
+        }
+    }
+
+    /**
+     * A single group in the right column grid
+     */
     protected class GroupWidget extends ClickBox
     {
-        public GroupWidget (GroupCard group) {
+        public GroupWidget (GroupCard group)
+        {
             super(group.logo, group.name.toString(), Pages.GROUPS,
                   Args.compose("d", group.name.getGroupId()));
             int row = getRowCount();
@@ -262,17 +298,15 @@ public class GalaxyPanel extends VerticalPanel
     };
 
     protected String _action, _arg;
-
-    protected FeaturedWhirledPanel _featured;
     protected FlowPanel _popularTags, _currentTag;
     protected TextBox _searchInput;
     protected PagedGrid<GroupCard> _groupGrid;
+    protected FlowPanel _myGroups;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 
-    protected static final int POP_TAG_COUNT = 9;
-    protected static final int GRID_ROWS = 2;
+    protected static final int GRID_ROWS = 4;
     protected static final int GRID_COLUMNS = 4;
 }

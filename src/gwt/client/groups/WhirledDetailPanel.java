@@ -255,7 +255,7 @@ public class WhirledDetailPanel extends FlowPanel
         screenshot.add(liveView);
 
         if (_detail.population > 0) {
-            screenshot.add(MsoyUI.createHTML(_msgs.featuredOnline("" + _detail.population),
+            screenshot.add(MsoyUI.createHTML(_msgs.detailOnline("" + _detail.population),
                 "Online"));
         }
 

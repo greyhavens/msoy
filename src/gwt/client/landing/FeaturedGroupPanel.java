@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.groups;
+package client.landing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -22,16 +22,16 @@ import client.util.MediaUtil;
 /**
  * Displays info on a featured Whirled.
  */
-public class FeaturedWhirledPanel extends FlowPanel
+public class FeaturedGroupPanel extends FlowPanel
 {
     /**
      * Create a new Featured Whirled Panel
      * @param showThumbnails Display a list of featured whirled thumbnails
      */
-    public FeaturedWhirledPanel (boolean showThumbnails)
+    public FeaturedGroupPanel (boolean showThumbnails)
     {
-        setStyleName("FeaturedWhirled");
-        add(MsoyUI.createLabel(_msgs.featuredTitle(), "Title"));
+        setStyleName("featuredGroupPanel");
+        add(MsoyUI.createLabel(_msgs.featuredGroupTitle(), "Title"));
         add(_flashPanel = MsoyUI.createSimplePanel(null, "Flash"));
         add(_infoPanel = new FlowPanel());
 
@@ -82,10 +82,10 @@ public class FeaturedWhirledPanel extends FlowPanel
         // display the group's name and info
         _infoPanel.clear();
         Widget nameLink = Link.groupView(group.name.toString(), group.name.getGroupId());
-        nameLink.setStyleName("FeaturedWhirledName");
+        nameLink.setStyleName("FeaturedGroupName");
         _infoPanel.add(nameLink);
         if (group.population > 0) {
-            Label onlineCount = new Label(_msgs.featuredOnline(""+group.population));
+            Label onlineCount = new Label(_msgs.featuredGroupOnline("" + group.population));
             SimplePanel onlineBox = new SimplePanel();
             onlineBox.setStyleName("OnlineBox");
             onlineBox.add(onlineCount);
@@ -124,6 +124,6 @@ public class FeaturedWhirledPanel extends FlowPanel
     protected FlowPanel _infoPanel;
     protected SimplePanel _flashPanel;
 
-    protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
+    protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

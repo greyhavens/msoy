@@ -1,18 +1,18 @@
 /**
  * $Id$
  *
- * CSS styles for the Whirled interfaces.
+ * CSS styles for the group interfaces.
  */
 
 /* ------------------------------------
-   SINGLE WHIRLED DETAIL
+   SINGLE GROUP DETAIL
 -------------------------------------*/
 
 .whirledDetail {
-  width: 100%;
-  background: #509bd2 url(/images/group/detail_bg.png) top left repeat-x;
+  background: #61abd0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
+  width: 100%;
   min-height: 100%;
 }
 
@@ -164,7 +164,7 @@
 }
 
 /* ------------------------------------
-   SINGLE WHIRLED DETAIL - TOP MEMBERS
+   SINGLE GROUP DETAIL - TOP MEMBERS
 -------------------------------------*/
 
 .whirledDetail .TopMembersPanel {
@@ -211,7 +211,7 @@
 }
 
 /* ------------------------------------
-   SINGLE WHIRLED DETAIL - RECENT DISCUSSIONS
+   SINGLE GROUP DETAIL - RECENT DISCUSSIONS
 -------------------------------------*/
 
 .whirledDetail .WhirledDiscussionPanel {
@@ -321,64 +321,118 @@
    GALAXY GROUP LIST
 -------------------------------------*/
 
-.galaxy {
-  width: 685px;
-  overflow-x: hidden;
-}
-
-.galaxy .Title {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-}
-
-.galaxy .Features {
-  background: url(/images/group/featured_bg.png) no-repeat top left;
+.galaxyPanel {
+  background: #61abd0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
   width: 100%;
-  height: 326px;
+  min-height: 100%;
 }
 
-.galaxy .Features .Intro {
-  width: 142px;
-  font-size: 14px;
-  vertical-align: top;
-  color: #316C94;
-  padding: 45px 25px 0px 25px;
+.galaxyPanel .CurrentTag {
+  float: right;
+  margin: 10px;
+  color: #FFFFFF;
+}
+.galaxyPanel .CurrentTag a {
+  color: #FFFFFF;
 }
 
-.galaxy .Browse {
-  width: 100%;
-  padding-left: 5px;
+.galaxyPanel .Search {
+  background-color: #09304D;
+  float: right;
+  margin: 5px 10px 10px 0;
+  padding: 5px;
 }
 
-.galaxy .Browse .Title {
-  font-size: 18px;
-  color: #316C94;
+.galaxyPanel .Search .gwt-TextBox {
+  margin-right: 5px;
 }
 
-.galaxy .Browse .Search {
-  padding-right: 10px;
+.galaxyPanel .LeftColumn {
+  width: 130px;
+  margin: 10px;
 }
 
-.galaxy .Contents {
-  width: 660px;
-  margin: 0px 10px;
+.galaxyPanel .MyGroupsHeader {
+  background: url(/images/group/galaxy_mygroups_title_bg.png) no-repeat;
+  width: 130px;
+  height: 25px; /* plus padding */
+  color: #FFFFFF;
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  font-size: 17px;
+  text-align: center;
+  padding-top: 5px;
 }
 
-.galaxy .clickBox .Name {
+.galaxyPanel .MyGroups {
+  width: 120px; /* plus padding */
+  background-color: #FFFFFF;
+  padding: 5px;
+  margin-bottom: 15px;
+}
+
+.galaxyPanel .MyGroups .MyGroup {
+  margin: 5px 0;
+}
+
+.galaxyPanel .MyGroups .MyGroup .GroupName {
+  width: 90px;
+  margin-left: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.galaxyPanel .MyGroups .MyGroup .UnreadPosts {
+  margin-left: 5px;
+  text-decoration: none;
+  color: #487999;
+}
+
+.galaxyPanel .MyGroups .SeeAll {
+  display: block;
+  margin: 5px;
+  text-align: right;
+  color: #487999;
+}
+.galaxyPanel .MyGroups .SeeAll a {
+  color: #487999;
+}
+
+.galaxyPanel .tagCloud {
+  margin-left: 25px;
+}
+
+.galaxyPanel .GroupsList {
+  width: 528px;
+}
+
+.galaxyPanel .GroupsList .Header .TopLeft,
+.galaxyPanel .GroupsList .Header .TopRight {
+  background-color: #104C6F;
+}
+
+.galaxyPanel .GroupsList .Grid {
+  background-color: #FFFFFF;
+}
+
+.galaxyPanel .clickBox .Name {
   text-align: center;
 }
 
-.galaxy .clickBox .Population {
+.galaxyPanel .clickBox .Population {
   font-size: 12px;
 }
 
-.galaxy .Create {
+.galaxyPanel .Create {
   background: url(/images/item/upload_bg.png) no-repeat top left;
-  margin-left: 10px;
+  margin: 0 0 15px 15px;
   width: 655px;
   height: 89px;
 }
 
-.galaxy .Create .Header {
+.galaxyPanel .Create .Header {
   height: 28px;
   color: #FFFFFF;
   font-weight: bold;
@@ -387,69 +441,15 @@
   vertical-align: top;
 }
 
-.galaxy .Create .Pitch {
+.galaxyPanel .Create .Pitch {
   padding-left: 20px;
   font-size: 14px;
   color: #2E729F;
   background: none;
 }
 
-.galaxy .Create .Button {
+.galaxyPanel .Create .Button {
   padding-right: 20px;
-}
-
-/* ------------------------------------
-   GALAXY GROUP LIST - FEATURED WHIRLED
--------------------------------------*/
-
-.galaxy .FeaturedWhirled {
-  color: #FFFFFF;
-}
-
-.galaxy .FeaturedWhirled .Title {
-  height: 25px;
-  padding-top: 5px;
-  font-weight: bold;
-}
-
-.galaxy .FeaturedWhirled .FeaturedWhirledName {
-  width: 100%;
-  font-weight: bold;
-  font-size: 16px;
-  text-align: center;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  margin-top: 10px
-}
-
-.galaxy .FeaturedWhirled .FeaturedWhirledName a {
-  color: #FFFFFF;
-}
-
-.galaxy .FeaturedWhirled .OnlineBox {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 13px;
-  text-align: center;
-  margin-top: 5px;
-}
-
-.galaxy .FeaturedWhirled .Blurb {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
-  color: #5FA5D8;
-  text-align: center;
-  margin-top: 10px;
-}
-
-.galaxy .FeaturedWhirled .PrevButton {
-  position: absolute;
-  top: 250px;
-  left: 260px;
-}
-
-.galaxy .FeaturedWhirled .NextButton {
-  position: absolute;
-  top: 250px;
-  left: 570px;
 }
 
 /* ------------------------------------

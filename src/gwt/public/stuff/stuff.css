@@ -19,7 +19,7 @@
 
 .itemPanel {
   width: 100%;
-  background: #61a9cf url(/images/stuff/stuff_bg.png) repeat-x;
+  background: #61abd0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   min-height: 100%;
@@ -71,7 +71,7 @@
 
 .itemPanel .pagedGrid .Header .TopLeft, 
 .itemPanel .pagedGrid .Header .TopRight {
-  background-color: #29688d;
+  background-color: #104C6F;
 }
 
 .itemPanel .pagedGrid .Header .Show {

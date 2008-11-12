@@ -14,6 +14,9 @@ import com.threerings.msoy.item.gwt.ListingCard;
 public class LandingData
     implements IsSerializable
 {
+    /** The number of featured groups we show on the landing page. */
+    public static final int FEATURED_GROUP_COUNT = 5;
+
     /** Currently featured whirleds */
     public GroupCard[] featuredWhirleds;
 

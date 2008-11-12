@@ -8,22 +8,20 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Contains information displayed on the Galaxy page.
+ * Contains information displayed on the main groups 'Galaxy' page.
  */
 public class GalaxyData
     implements IsSerializable
 {
     /** The number of popular tags we show on the Galaxy page. */
-    public static final int POPULAR_TAG_COUNT = 9;
+    public static final int POPULAR_TAG_COUNT = 10;
 
-    /** The number of featured Whirleds we show on the Galaxy page. */
-    public static final int FEATURED_WHIRLED_COUNT = 5;
+    /** The number of my groups to show on the Galaxy page */
+    public static final int MY_GROUPS_COUNT = 6;
 
-    /** The featured Whirleds for display at the top of the page. */
-    public GroupCard[] featuredWhirleds;
+    /** The member's MY_GROUPS_COUNT groups */
+    public List<MyGroupCard> myGroups;
 
-    /**
-     * Popular Whirled tags.
-     */
+    /** Popular group tags. */
     public List<String> popularTags;
 }

@@ -76,31 +76,17 @@ public class GroupServlet extends MsoyServiceServlet
     {
         GalaxyData data = new GalaxyData();
 
-        // determine our featured whirled based on who's online now
-        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-        List<GroupCard> popWhirleds = Lists.newArrayList();
-        for (PopularPlacesSnapshot.Place card : pps.getTopWhirleds()) {
-            GroupRecord group = _groupRepo.loadGroup(card.placeId);
-            if (group != null) {
-                GroupCard gcard = group.toGroupCard();
-                gcard.population = card.population;
-                popWhirleds.add(gcard);
-                if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
+        // load up my groups
+        data.myGroups = Lists.newArrayList();
+        if (getAuthedUser() != null) {
+            List<MyGroupCard> myGroups = getMyGroups(MyGroupCard.SORT_BY_NEWEST_POST);
+            for (MyGroupCard group : myGroups) {
+                data.myGroups.add(group);
+                if (data.myGroups.size() == GalaxyData.MY_GROUPS_COUNT) {
                     break;
                 }
             }
         }
-        // if we don't have enough people online, supplement with other groups
-        if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
-            int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
-            for (GroupRecord group : _groupRepo.getGroupsList(0, count)) {
-                popWhirleds.add(group.toGroupCard());
-            }
-        }
-        // resolve the snapshots for these cards
-        _groupLogic.resolveSnapshots(popWhirleds);
-        // and fill them into the result
-        data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
 
         // load up our popular tags
         List<String> popularTags = Lists.newArrayList();

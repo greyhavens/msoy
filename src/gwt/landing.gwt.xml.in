@@ -19,7 +19,6 @@
   <source path="client/trophy"/>
   <source path="client/games"/>
   <source path="client/msgs"/>
-  <source path="client/groups"/>
   <source path="client/landing"/>
 
   <public path="public/landing"/>

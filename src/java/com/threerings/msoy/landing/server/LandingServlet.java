@@ -19,7 +19,6 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.game.server.GameLogic;
-import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.server.GroupLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -61,14 +60,14 @@ public class LandingServlet extends MsoyServiceServlet
                 GroupCard gcard = group.toGroupCard();
                 gcard.population = card.population;
                 popWhirleds.add(gcard);
-                if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
+                if (popWhirleds.size() == LandingData.FEATURED_GROUP_COUNT) {
                     break;
                 }
             }
         }
         // if we don't have enough people online, supplement with other groups
-        if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
-            int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
+        if (popWhirleds.size() < LandingData.FEATURED_GROUP_COUNT) {
+            int count = LandingData.FEATURED_GROUP_COUNT - popWhirleds.size();
             for (GroupRecord group : _groupRepo.getGroupsList(0, count)) {
                 popWhirleds.add(group.toGroupCard());
             }
