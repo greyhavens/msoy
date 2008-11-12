@@ -61,6 +61,7 @@ public class MsoyChatDirector extends ChatDirector
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
         registerCommandHandler(msg, "away", new AwayHandler(true));
         registerCommandHandler(msg, "back", new AwayHandler(false));
+        registerCommandHandler(msg, "bleepall", new BleepAllHandler());
         if (DeploymentConfig.devDeployment) {
             registerCommandHandler(msg, "badges", new BadgesHandler());
         }

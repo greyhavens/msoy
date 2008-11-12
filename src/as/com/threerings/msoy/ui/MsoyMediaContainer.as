@@ -157,9 +157,15 @@ public class MsoyMediaContainer extends MediaContainer
     protected function handleBleepChange (event :ValueEvent) :void
     {
         if (isBlockable()) {
-            var id :String = _desc.getMediaId();
-            if (id === event.value[0]) {
-                setIsBlocked(Boolean(event.value[1]));
+            const id :String = String(event.value[0]);
+            const ourId :String = _desc.getMediaId();
+            if (id == Prefs.GLOBAL_BLEEP || id == ourId) {
+                var blocked :Boolean = Boolean(event.value[1]);
+                if (id == Prefs.GLOBAL_BLEEP && !blocked) {
+                    // if unblocking globally, we might still be blocked.
+                    blocked = Prefs.isMediaBlocked(ourId);
+                }
+                setIsBlocked(blocked)
             }
         }
     }

@@ -18,6 +18,7 @@ import com.threerings.util.ValueEvent;
  * 
  * @eventType com.threerings.msoy.client.Prefs.BLEEPED_MEDIA;
  * arg: [ mediaId (String), bleeped (Boolean) ]
+ * mediaId may be the GLOBAL_BLEEP constant.
  */
 [Event(name="bleepedMedia", type="com.threerings.util.ValueEvent")]
 
@@ -43,6 +44,8 @@ public class Prefs
 
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
+
+    public static const GLOBAL_BLEEP :String = "_bleep_";
 
     public static function getUsername () :String
     {
@@ -77,7 +80,10 @@ public class Prefs
     public static function setMediaBlocked (id :String, blocked :Boolean) :void
     {
         checkLoadBlockedMedia();
-        if (blocked) {
+        if (id == GLOBAL_BLEEP) {
+            _globalBleep = blocked;
+
+        } else if (blocked) {
             _bleepedMedia[id] = true;
 
         } else {
@@ -93,7 +99,7 @@ public class Prefs
     public static function isMediaBlocked (id :String) :Boolean
     {
         checkLoadBlockedMedia();
-        return (id in _bleepedMedia);
+        return _globalBleep || (id in _bleepedMedia);
     }
 
     public static function getSoundVolume () :Number
@@ -232,6 +238,7 @@ public class Prefs
 
     /** A set of media ids that are bleeped (the keys of the dictionary). */
     protected static var _bleepedMedia :Dictionary;
+    protected static var _globalBleep :Boolean;
 
     /**
     * A static initializer.
