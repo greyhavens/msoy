@@ -718,10 +718,11 @@ public class RoomObjectController extends RoomController
             _music.close();
             _music = null;
         }
-        // TODO: temporary hack to disable even the downloading of room music if sound is off
-        const shouldEvenTry :Boolean = (Prefs.getSoundVolume() > 0);
+        // TODO: do we want to still retrieve the sound info if the volume is 0?
+        const shouldEvenTry :Boolean = isPathValid && (Prefs.getSoundVolume() > 0) &&
+            !Prefs.isMediaBlocked(data.media.getMediaId());
         // set up new music, if needed
-        if (shouldEvenTry && _music == null && isPathValid) {
+        if (shouldEvenTry && _music == null) {
             _music = new SoundPlayer(path);
             _music.addEventListener(Event.COMPLETE, musicFinishedPlaying);
             // TODO: we probably need to wait for COMPLETE
