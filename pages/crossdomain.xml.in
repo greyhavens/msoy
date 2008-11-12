@@ -5,9 +5,3 @@
    <allow-access-from domain="*.kongregate.com" to-ports="*"/>
    <allow-access-from domain="@MEDIA_URL_HOST@" to-ports="@HTTP_PORT@"/>
 </cross-domain-policy>
-<!--
-  Notice:
-  This file is needed so that we may examine our image media as data
-  inside metasoy. We need to examine the images as data so we may
-  perspectivize them and also correctly hitTest transparent pixels.
--->
