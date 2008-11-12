@@ -39,7 +39,8 @@ JAVA_ARGS="-server \
     -Djava.rmi.server.hostname=$HOSTNAME \
     -Dlog4j.configuration=log4j-game.properties \
     -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties \
-    -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger"
+    -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger \
+    -Dehcache.disk.store.dir=game"
 
 #JDWP_ARGS="transport=dt_socket,server=y,address=8001,suspend=n";
 #JAVA_ARGS="-agentlib:jdwp=$JDWP_ARGS $JAVA_ARGS"

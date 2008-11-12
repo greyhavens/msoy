@@ -14,7 +14,8 @@ JAVA_ARGS="-Djava.awt.headless=true \
            -Djava.security.manager \
            -Djava.security.policy=$MSOY_HOME/dist/security.policy \
            -Dlog4j.configuration=log4j.properties \
-           -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger"
+           -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger \
+           -Dehcache.disk.store.dir=world"
 
 # parse our arguments
 while [ ! -z "$1" ]; do
