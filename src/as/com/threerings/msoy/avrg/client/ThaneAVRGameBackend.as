@@ -615,7 +615,7 @@ public class ThaneAVRGameBackend
                 var func :Function = (_userFuncs[name] as Function);
                 if (func == null) {
                     // TODO: Can we detect if this is user's fault? If so, throw UserError
-                    log.warning("User code not found", "name", name);
+
                 } else {
                     return func.apply(null, args);
                 }
