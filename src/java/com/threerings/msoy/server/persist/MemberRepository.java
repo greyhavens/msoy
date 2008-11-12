@@ -46,7 +46,9 @@ import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
+import com.samskivert.jdbc.depot.operator.Arithmetic.BitAnd;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
+import com.samskivert.jdbc.depot.operator.Conditionals.NotEquals;
 import com.samskivert.jdbc.depot.operator.Conditionals.FullTextMatch;
 import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThan;
 import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThanEquals;
@@ -963,6 +965,19 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Loads the ids of all members who are flagged as "greeters".
+     */
+    public IntSet loadGreeterIds ()
+    {
+        ArrayIntSet greeters = new ArrayIntSet();
+        for (Key<MemberRecord> key : findAllKeys(MemberRecord.class, false,
+            Collections.singletonList(new Where(new NotEquals(GET_GREETER_BIT, 0))))) {
+            greeters.add((Integer)key.getValues().get(0));
+        }
+        return greeters;
+    }
+
+    /**
      * Loads the FriendEntry record for all friends of the specified member. The online status of
      * each friend will be false. The friends will be returned in order of most recently online to
      * least.
@@ -1207,6 +1222,16 @@ public class MemberRepository extends DepotRepository
             OrderBy.ascending(MemberExperienceRecord.DATE_OCCURRED_C));
     }
 
+    /**
+     * Tests if the supplied member id is flagged as a greeter.
+     */
+    public boolean isGreeter (int memberId)
+    {
+        return findAllKeys(MemberRecord.class, false, Collections.singletonList(new Where(new And(
+            new Equals(MemberRecord.MEMBER_ID_C, memberId),
+            new NotEquals(GET_GREETER_BIT, 0))))).size() > 0;
+    }
+
     protected String randomInviteId ()
     {
         String rand = "";
@@ -1237,4 +1262,6 @@ public class MemberRepository extends DepotRepository
 
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
+    protected static final BitAnd GET_GREETER_BIT = new BitAnd(
+        MemberRecord.FLAGS_C, MemberRecord.Flag.GREETER.getBit());
 }
