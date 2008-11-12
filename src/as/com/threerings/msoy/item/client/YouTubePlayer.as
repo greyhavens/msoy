@@ -203,6 +203,10 @@ public class YouTubePlayer extends EventDispatcher
         case -1: // unstarted
             send("cueVideo", _videoId);
             break;
+
+        case 5: // cued
+            play(); // let's do autoplay..
+            break;
         }
 
         dispatchEvent(new ValueEvent(VideoPlayerCodes.STATE, getState()));
