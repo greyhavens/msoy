@@ -971,7 +971,7 @@ public class MemberRepository extends DepotRepository
     {
         ArrayIntSet greeters = new ArrayIntSet();
         for (Key<MemberRecord> key : findAllKeys(MemberRecord.class, false,
-            Collections.singletonList(new Where(new NotEquals(GET_GREETER_BIT, 0))))) {
+            Collections.singletonList(new Where(GREETER_FLAG_IS_SET)))) {
             greeters.add((Integer)key.getValues().get(0));
         }
         return greeters;
@@ -1228,8 +1228,7 @@ public class MemberRepository extends DepotRepository
     public boolean isGreeter (int memberId)
     {
         return findAllKeys(MemberRecord.class, false, Collections.singletonList(new Where(new And(
-            new Equals(MemberRecord.MEMBER_ID_C, memberId),
-            new NotEquals(GET_GREETER_BIT, 0))))).size() > 0;
+            new Equals(MemberRecord.MEMBER_ID_C, memberId), GREETER_FLAG_IS_SET)))).size() > 0;
     }
 
     protected String randomInviteId ()
@@ -1262,6 +1261,6 @@ public class MemberRepository extends DepotRepository
 
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
-    protected static final BitAnd GET_GREETER_BIT = new BitAnd(
-        MemberRecord.FLAGS_C, MemberRecord.Flag.GREETER.getBit());
+    protected static final NotEquals GREETER_FLAG_IS_SET = new NotEquals(new BitAnd(
+        MemberRecord.FLAGS_C, MemberRecord.Flag.GREETER.getBit()), 0);
 }
