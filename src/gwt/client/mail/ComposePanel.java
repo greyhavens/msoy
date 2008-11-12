@@ -172,10 +172,10 @@ public class ComposePanel extends FlowPanel
 
         // TODO: replace this with a magical auto-completing search box
         if (_friendBox.isAttached()) {
-            _membersvc.loadFriends(CShell.getMemberId(),
+            _membersvc.loadFriends(CShell.getMemberId(), false,
                 new MsoyCallback<WebMemberService.FriendsResult>() {
                     public void onSuccess (WebMemberService.FriendsResult result) {
-                        _friends = result.friends;
+                        _friends = result.friendsAndGreeters;
                         _friendBox.addItem("Select...");
                         Collections.sort(_friends, new Comparator<MemberCard>() {
                             public int compare (MemberCard one, MemberCard two) {

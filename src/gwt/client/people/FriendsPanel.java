@@ -34,11 +34,12 @@ public class FriendsPanel extends FlowPanel
         }
 
         _memberId = memberId;
-        _membersvc.loadFriends(_memberId, new MsoyCallback<WebMemberService.FriendsResult>() {
-            public void onSuccess (WebMemberService.FriendsResult result) {
-                gotFriends(result);
-            }
-        });
+        _membersvc.loadFriends(_memberId, true,
+            new MsoyCallback<WebMemberService.FriendsResult>() {
+                public void onSuccess (WebMemberService.FriendsResult result) {
+                    gotFriends(result);
+                }
+            });
     }
 
     protected void gotFriends (WebMemberService.FriendsResult data)
@@ -53,9 +54,24 @@ public class FriendsPanel extends FlowPanel
             self ? _msgs.friendsSelfTitle() : _msgs.friendsOtherTitle(data.name.toString()));
         _friends = new MemberList(
             self ? _msgs.noFriendsSelf() : _msgs.noFriendsOther());
-        String title = _msgs.friendsWhoseFriends(data.name.toString());
+        
+        int numFriends = 0;
+        for (MemberCard card : data.friendsAndGreeters) {
+            if (card.isFriend) {
+                numFriends++;
+            }
+        }
+        
+        String title;
+        if (numFriends == data.friendsAndGreeters.size()) { // no greeters
+            title = _msgs.friendsWhoseFriends(data.name.toString());
+        } else if (numFriends == 0) { // no friends
+            title = _msgs.friendsWhoseGreeters();
+        } else { // mixed
+            title = _msgs.friendsWhoseFriendsAndGreeters(data.name.toString());
+        }
         add(new HeaderBox(title, _friends));
-        _friends.setModel(new SimpleDataModel<MemberCard>(data.friends), 0);
+        _friends.setModel(new SimpleDataModel<MemberCard>(data.friendsAndGreeters), 0);
     }
 
     protected int _memberId;

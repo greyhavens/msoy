@@ -57,7 +57,7 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface WebMemberService
-    public FriendsResult loadFriends (int memberId)
+    public FriendsResult loadFriends (int memberId, boolean padWithGreeters)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -79,7 +79,16 @@ public class MemberServlet extends MsoyServiceServlet
         }
         List<MemberCard> list = _mhelper.resolveMemberCards(friendIds, false, callerFriendIds);
         Collections.sort(list, MemberHelper.SORT_BY_LAST_ONLINE);
-        result.friends = list;
+        result.friendsAndGreeters = list;
+
+        // Add some online greeters if this user doesn't alreay have a lot of friends
+        if (padWithGreeters && list.size() < NEED_FRIENDS_FRIEND_COUNT) {
+            IntSet greeterIds = _memberRepo.loadGreeterIds();
+            greeterIds.removeAll(friendIds);
+            greeterIds.remove(mrec.memberId);
+            result.friendsAndGreeters.addAll(_mhelper.resolveMemberCards(greeterIds, true, null));
+        }
+
         return result;
     }
 
@@ -242,4 +251,7 @@ public class MemberServlet extends MsoyServiceServlet
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
+
+    /** Cutoff for adding in online greeters. */
+    protected static final int NEED_FRIENDS_FRIEND_COUNT = 10;
 }

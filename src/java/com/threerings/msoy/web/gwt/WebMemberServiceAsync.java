@@ -28,7 +28,7 @@ public interface WebMemberServiceAsync
     /**
      * The asynchronous version of {@link WebMemberService#loadFriends}.
      */
-    void loadFriends (int memberId,
+    void loadFriends (int memberId, boolean padWithGreeters,
                       AsyncCallback<WebMemberService.FriendsResult> callback);
 
     /**
