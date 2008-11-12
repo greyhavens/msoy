@@ -88,7 +88,7 @@ public class MsoyController extends Controller
     /** Command to show an (external) URL. */
     public static const VIEW_URL :String = "ViewUrl";
 
-    /** Command to view an item, arg is [ itemTypeId, itemId ] */
+    /** Command to view an item, arg is an ItemIdent. */
     public static const VIEW_ITEM :String = "ViewItem";
 
     /** Command to view all games */
