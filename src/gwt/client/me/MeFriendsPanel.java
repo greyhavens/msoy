@@ -48,7 +48,7 @@ public class MeFriendsPanel extends FlowPanel
             addPeople(data.friends, _msgs.nextFriendClick());
         }
         if (data.greeters != null && data.greeters.size() > 0) {
-            add(MsoyUI.createLabel(_msgs.nextOr(), null));
+            add(MsoyUI.createLabel(_msgs.nextOr(), "Or"));
             addPeople(data.greeters, _msgs.nextGreeterClick());
         }
         add(new Image("/images/me/me_friends_footer.png"));
@@ -67,7 +67,7 @@ public class MeFriendsPanel extends FlowPanel
         MsoyUI.addTrackingListener(((SourcesClickEvents)imageLink), "meInviteFriends", null);
         add(imageLink);
 
-        add(MsoyUI.createLabel(_msgs.nextOr(), null));
+        add(MsoyUI.createLabel(_msgs.nextOr(), "Or"));
         add(MsoyUI.createLabel(_msgs.nextFind(), "SearchTitle"));
 
         FloatPanel searchControls = new FloatPanel("Search");

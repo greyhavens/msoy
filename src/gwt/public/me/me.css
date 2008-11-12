@@ -94,9 +94,13 @@
   margin: 10px auto;
 }
 
+.meFriendsPanel .Or {
+  margin: 10px;
+}
+
 .meFriendsPanel .SearchTitle {
   font-size: 15px;
-  margin: 10px 0 5px 0;
+  margin-bottom: 5px;
 }
 
 .meFriendsPanel .Search input {
