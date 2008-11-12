@@ -78,6 +78,15 @@ public class MeServlet extends MsoyServiceServlet
         }
 
         data.feed = loadFeedCategories(FeedCategory.DEFAULT_COUNT, null);
+
+        // load the greeters
+        IntSet greeterIds = _memberRepo.loadGreeterIds();
+        greeterIds.remove(mrec.memberId);
+        for (int friendId : friendIds) {
+            greeterIds.remove(friendId);
+        }
+        data.greeters = _mhelper.resolveMemberCards(greeterIds, true, null);
+
         return data;
     }
 

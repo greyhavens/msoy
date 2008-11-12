@@ -44,6 +44,11 @@ public class MyWhirledData
     public List<MemberCard> friends;
 
     /**
+     * Online greeters.
+     */
+    public List<MemberCard> greeters;
+
+    /**
      * This member's recent feed messages broken up by category.
      */
     public List<FeedCategory> feed;
