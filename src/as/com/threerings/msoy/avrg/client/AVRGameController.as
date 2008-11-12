@@ -196,9 +196,6 @@ public class AVRGameController extends PlaceController
         var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
         panel.backendIsReady();
 
-        _roomPropsSubs = new SafeObjectManager(
-            _wctx.getClient().getDObjectManager(), log, roomPropsAvailable);
-
         // sign up for room objects
         _wctx.getLocationDirector().addLocationObserver(_roomObserver);
 
@@ -270,11 +267,14 @@ public class AVRGameController extends PlaceController
     {
         if (_roomPropsOid != 0) {
             _roomPropsSubs.unsubscribe(_roomPropsOid);
+            _roomPropsSubs = null;
         }
 
         _roomPropsOid = propsOid;
 
         if (_roomPropsOid != 0) {
+            _roomPropsSubs = new SafeObjectManager(
+                _wctx.getClient().getDObjectManager(), log, roomPropsAvailable, roomPropsFailure);
             _roomPropsSubs.subscribe(_roomPropsOid);
         }
     }
@@ -282,6 +282,11 @@ public class AVRGameController extends PlaceController
     protected function roomPropsAvailable (roomProps :RoomPropertiesObject) :void
     {
         maybeDispatchEnteredRoom("props arrived");
+    }
+
+    protected function roomPropsFailure (oid :int, cause :Error) :*
+    {
+        log.warning("Failed to subscribe to room properties", "oid", oid, cause);
     }
 
     // internal callback
