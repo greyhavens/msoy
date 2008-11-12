@@ -13,12 +13,15 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
@@ -32,6 +35,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -59,6 +63,7 @@ import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 
+import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -229,7 +234,11 @@ public class MemberManager
         ensureNotGuest(user);
         _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
             @Override public void invokePersistent () throws Exception {
-                _mailLogic.sendFriendInvite(user.getMemberId(), friendId);
+                if (_memberRepo.isGreeter(friendId)) {
+                    _memberLogic.establishFriendship(user.getMemberId(), friendId);
+                } else {
+                    _mailLogic.sendFriendInvite(user.getMemberId(), friendId);
+                }
             }
             @Override public void handleSuccess () {
                 ((InvocationService.ConfirmListener)_listener).requestProcessed();

@@ -88,35 +88,45 @@ public class MemberLogic
     }
 
     /**
-     * Establishes a friendship between the supplied two members. This handles updating the
-     * respective members' stats, publishing to the feed and notifying the dobj runtime system.
+     * @see #establishFriendship(int, int)
+     * TODO: will this be needed or was it just here for convenience?
      */
     public void establishFriendship (MemberRecord caller, int friendId)
         throws ServiceException
     {
+        establishFriendship(caller.memberId, friendId);
+    }
+
+    /**
+     * Establishes a friendship between the supplied two members. This handles updating the
+     * respective members' stats, publishing to the feed and notifying the dobj runtime system.
+     */
+    public void establishFriendship (int memberId, int friendId)
+        throws ServiceException
+    {
         try {
-            MemberCard friend = _memberRepo.noteFriendship(caller.memberId, friendId);
+            MemberCard friend = _memberRepo.noteFriendship(memberId, friendId);
             if (friend == null) {
                 throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
 
             // update the FRIENDS_MADE statistic for both players
-            _statLogic.incrementStat(caller.memberId, StatType.FRIENDS_MADE, 1);
+            _statLogic.incrementStat(memberId, StatType.FRIENDS_MADE, 1);
             _statLogic.incrementStat(friendId, StatType.FRIENDS_MADE, 1);
 
             // publish a message to the inviting member's feed
             String data = friend.name.toString() + "\t" + friendId + "\t"
                 + MediaDesc.mdToString(friend.photo);
             _feedRepo.publishMemberMessage(
-                caller.memberId, FeedMessageType.FRIEND_ADDED_FRIEND, data);
+                memberId, FeedMessageType.FRIEND_ADDED_FRIEND, data);
 
             // add them to the friends list of both parties if/wherever they are online
-            MemberCard ccard = _memberRepo.loadMemberCard(caller.memberId);
-            _peerMan.invokeNodeAction(new AddFriend(caller.memberId, friend));
+            MemberCard ccard = _memberRepo.loadMemberCard(memberId);
+            _peerMan.invokeNodeAction(new AddFriend(memberId, friend));
             _peerMan.invokeNodeAction(new AddFriend(friendId, ccard));
 
             // note the happy event in the log
-            _eventLog.friendAdded(caller.memberId, friendId);
+            _eventLog.friendAdded(memberId, friendId);
 
         } catch (DuplicateKeyException dke) {
             // no problem, just fall through and pretend like things succeeded (we'll have skipped
