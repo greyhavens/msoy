@@ -243,7 +243,7 @@ public class QuestDelegate extends PlaceManagerDelegate
             _worldClient.updatePlayer(memberId, null);
         }
 
-        // If they accrued any coins, pay them out
+        // if they accrued any coins, pay them out
         if (player.coinsAccrued > 0) {
             // do the actual coin awarding
             final UserAction action = UserAction.playedGame(
