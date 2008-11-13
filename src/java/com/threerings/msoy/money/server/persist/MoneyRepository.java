@@ -76,52 +76,9 @@ public class MoneyRepository extends DepotRepository
     }
 
     @Inject
-    public MoneyRepository (final PersistenceContext ctx,
-        /* TODO REMOVE */ final com.threerings.msoy.server.persist.MemberRepository mrepo)
+    public MoneyRepository (final PersistenceContext ctx)
     {
         super(ctx);
-
-        ctx.registerMigration(MemberAccountRecord.class,
-            new SchemaMigration.Retype(4, MemberAccountRecord.BLING));
-        ctx.registerMigration(MemberAccountRecord.class,
-            new SchemaMigration.Retype(4, MemberAccountRecord.ACC_BLING));
-        ctx.registerMigration(MoneyConfigRecord.class, 
-            new SchemaMigration.Retype(3, MoneyConfigRecord.LAST_DISTRIBUTED_BLING));
-        ctx.registerMigration(MemberAccountRecord.class, new SchemaMigration.Drop(5, "versionId"));
-        ctx.registerMigration(MemberAccountRecord.class,
-            new SchemaMigration.Drop(5, "dateLastUpdated"));
-        ctx.registerMigration(MemberAccountRecord.class, new SchemaMigration(6) {
-            @Override public int invoke (
-                java.sql.Connection conn, com.samskivert.jdbc.DatabaseLiaison liaison)
-                throws java.sql.SQLException
-            {
-                try {
-                return mrepo.runMemberMigration(
-                new com.threerings.msoy.server.persist.MemberRepository.MemberMigration() {
-                    public void apply (com.threerings.msoy.server.persist.MemberRecord mrec)
-                        throws Exception
-                    {
-                        if (null == load(mrec.memberId)) {
-                            create(mrec.memberId);
-                            log.info("Created MemberAccountRecord", "member", mrec.memberId);
-                        }
-                    }
-                });
-                } catch (Exception e) {
-                    java.sql.SQLException sqle = new java.sql.SQLException("Migration failed");
-                    sqle.initCause(e);
-                    throw sqle;
-                }
-            }
-            
-            @Override public boolean runBeforeDefault () {
-                return false;
-            }
-        });
-        ctx.registerMigration(ExchangeRecord.class,
-            new SchemaMigration.Retype(2, ExchangeRecord.RATE));
-        ctx.registerMigration(BlingCashOutRecord.class,
-            new SchemaMigration.Retype(2, BlingCashOutRecord.BLING_WORTH));
     }
 
     /**

@@ -92,41 +92,6 @@ public class GroupRepository extends DepotRepository
                 return new GroupTagHistoryRecord();
             }
         };
-
-        // TEMP
-        ctx.registerMigration(GroupRecord.class, new SchemaMigration(18) {
-            public boolean runBeforeDefault () {
-                return false;
-            }
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String tName = liaison.tableSQL("GroupRecord");
-                String pName = liaison.columnSQL(GroupRecord.POLICY);
-                String fName = liaison.columnSQL(GroupRecord.FORUM_PERMS);
-
-                int[] policies = {
-                    Group.POLICY_PUBLIC, Group.POLICY_INVITE_ONLY, Group.POLICY_EXCLUSIVE };
-                int[] forumPerms = {
-                    Group.makePerms(Group.PERM_MEMBER, Group.PERM_ALL),
-                    Group.makePerms(Group.PERM_MEMBER, Group.PERM_MEMBER),
-                    Group.makePerms(Group.PERM_MEMBER, Group.PERM_MEMBER) };
-
-                Statement stmt = conn.createStatement();
-                try {
-                    int totalRows = 0;
-                    for (int ii = 0; ii < policies.length; ii++) {
-                        int rows = stmt.executeUpdate(
-                            "UPDATE " + tName + " set " + fName + " = " + forumPerms[ii] +
-                            " where " + pName + " = " + policies[ii]);
-                        log.info("Updated " + rows + " groups with policy " + policies[ii] + ".");
-                        totalRows += rows;
-                    }
-                    return totalRows;
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-        });
-        // END TEMP
     }
 
     /**
