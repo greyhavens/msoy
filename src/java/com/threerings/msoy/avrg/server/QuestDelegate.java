@@ -243,13 +243,7 @@ public class QuestDelegate extends PlaceManagerDelegate
             _worldClient.updatePlayer(memberId, null);
         }
 
-        // if we're a guest, we don't actually award and coins, so we also don't record these
-        // minutes or coin awards to our coin payout recalc metrics
-        if (MemberName.isGuest(memberId)) {
-            return;
-        }
-
-        // if they accrued any coins, pay them out
+        // If they accrued any coins, pay them out
         if (player.coinsAccrued > 0) {
             // do the actual coin awarding
             final UserAction action = UserAction.playedGame(
