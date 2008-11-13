@@ -21,7 +21,14 @@ import com.threerings.msoy.item.client.ExternalMediaDisplayer;
 import com.threerings.msoy.item.client.ExternalMediaUtil;
 import com.threerings.msoy.item.client.YouTubePlayer;
 
-[SWF(width="320", height="240", backgroundColor="#ffffff")]
+// TODO: Currently the video player only lets you do full-volume and mute.
+// It would be nice to inherit a user's configured msoy volume, but we don't have
+// a way to actually manipulate that here, so if they had everything muted, we wouldn't
+// be able to fix it.
+// Perhaps.. the right thing to do is:
+// 1) Implement full volume control in the MsoyVideoDisplay UI.
+// 2) When this standalone player starts up, start with the global volume setting.
+[SWF(width="320", height="240")]
 public class VideoViewer extends Sprite
     implements ExternalMediaDisplayer
 {
