@@ -628,7 +628,11 @@ public class WorldGameRegistry
         }
 
         public void postMessage (String name, Object... args) {
-            _clobj.postMessage(name, args);
+            if (_clobj != null) {
+                _clobj.postMessage(name, args);
+            } else {
+                log.warning("Dropping message to game server", "name", name, "args", args);
+            }
         }
 
         // from interface ObjectDeathListener
