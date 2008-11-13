@@ -802,12 +802,22 @@ public class RoomManager extends SpotSceneManager
                 memoryIds.add(furni.getItemIdent());
             }
         }
-        if (memoryIds.size() > 0) {
-            resolveMemories(memoryIds);
-        }
 
-        // load up any pets that are "let out" in this room scene
-        _petMan.loadRoomPets(_roomObj, _scene.getId());
+        // set up
+        Runnable doLoadPets = new Runnable() {
+            public void run () {
+                // load up any pets that are "let out" in this room scene
+                _petMan.loadRoomPets(_roomObj, _scene.getId());
+            }
+        };
+
+        if (memoryIds.size() > 0) {
+            // if we have memories to resolve, do so before we load pets from the DB
+            resolveMemories(memoryIds, doLoadPets);
+        } else {
+            // else do it now
+            doLoadPets.run();
+        }
     }
 
     @Override // from PlaceManager
@@ -1155,10 +1165,23 @@ public class RoomManager extends SpotSceneManager
     /**
      * Performs the given updates.
      */
-    protected void doRoomUpdate (SceneUpdate update, MemberObject user)
+    protected void doRoomUpdate (final SceneUpdate update, final MemberObject user)
     {
         // TODO: complicated verification of changes, including verifying that the user owns any
         // item they're adding, etc.
+
+        Runnable doUpdateScene = new Runnable() {
+            public void run () {
+                // initialize and record this update to the scene management system (which will
+                // persist it, send it to the client for application to the scene, etc.)
+                update.init(_scene.getId(), _scene.getVersion());
+                recordUpdate(update);
+
+                // let the registry know that rooms be gettin' updated (TODO: don't do this on
+                // every fucking update, it's super expensive)
+                ((MsoySceneRegistry)_screg).memberUpdatedRoom(user, (MsoyScene)_scene);
+            }
+        };
 
         if (update instanceof SceneAttrsUpdate) {
             SceneAttrsUpdate up = (SceneAttrsUpdate) update;
@@ -1216,18 +1239,13 @@ public class RoomManager extends SpotSceneManager
                 0, data.itemId, new ComplainingListener<Object>(
                     log, "Unable to set furni item usage"));
 
-            // and resolve any memories it may have
-            resolveMemories(Collections.singleton(data.getItemIdent()));
+            // and resolve any memories it may have, calling the scene updater when it's done
+            resolveMemories(Collections.singleton(data.getItemIdent()), doUpdateScene);
+            // don't fall through here
+            return;
         }
 
-        // initialize and record this update to the scene management system (which will persist it,
-        // send it to the client for application to the scene, etc.)
-        update.init(_scene.getId(), _scene.getVersion());
-        recordUpdate(update);
-
-        // let the registry know that rooms be gettin' updated (TODO: don't do this on every
-        // fucking update, it's super expensive)
-        ((MsoySceneRegistry)_screg).memberUpdatedRoom(user, (MsoyScene)_scene);
+        doUpdateScene.run();
     }
 
     /**
@@ -1344,7 +1362,7 @@ public class RoomManager extends SpotSceneManager
     /**
      * Loads up all specified memories and places them into the room object.
      */
-    protected void resolveMemories (final Collection<ItemIdent> idents)
+    protected void resolveMemories (final Collection<ItemIdent> idents, final Runnable onSuccess)
     {
         _invoker.postUnit(new RepositoryUnit("resolveMemories") {
             public void invokePersist () throws Exception {
@@ -1358,6 +1376,9 @@ public class RoomManager extends SpotSceneManager
                     }
                 } finally {
                     _roomObj.commitTransaction();
+                }
+                if (onSuccess != null) {
+                    onSuccess.run();
                 }
             }
             protected Collection<MemoryRecord> _mems;
@@ -1425,7 +1446,8 @@ public class RoomManager extends SpotSceneManager
                 }
                 if (event.getEntry() instanceof MemberInfo) {
                     resolveMemories(Collections.singleton(
-                        ((MemberInfo)event.getEntry()).getItemIdent()));
+                        ((MemberInfo)event.getEntry()).getItemIdent()),
+                        null);
                 }
             }
         }
