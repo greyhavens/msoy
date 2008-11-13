@@ -13,6 +13,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
@@ -144,6 +145,21 @@ public class MemberManager
             }
         };
         _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
+
+        // loading all the greeter ids is a pretty expensive query, so only run it every 2 minutes.
+        // TODO: store the greeter flag in MemberName or MsoyClientInfo and move the greeter id
+        // cache into the popular places snapshot and make it cache only the online greeters. As it
+        // stands, the online determination is done later by MemberHelper.resolveMemberCards.
+        _greeterIdsSnapshot = _memberRepo.loadGreeterIds();
+        _greeterIdsInvalidator = new Interval(_invoker) {
+            @Override public void expired() {
+                IntSet greeterIds = _memberRepo.loadGreeterIds();
+                synchronized(MemberManager.this) {
+                    _greeterIdsSnapshot = greeterIds;
+                }
+            }
+        };
+        _greeterIdsInvalidator.schedule(GREETERS_REFRESH_PERIOD, true);
     }
 
     /**
@@ -156,6 +172,17 @@ public class MemberManager
         }
     }
 
+    /**
+     * Returns the most recently loaded set of greeter ids.
+     */
+    public IntSet getGreeterIdsSnapshot ()
+    {
+        // using the same monitor here should be ok as the block is only 2 atoms on a 64 bit OS
+        synchronized (this) {
+            return _greeterIdsSnapshot;
+        }
+    }
+    
     /**
      * Update the user's occupant info.
      */
@@ -966,6 +993,12 @@ public class MemberManager
 
     /** The most recent summary of popular places in the whirled. */
     protected PopularPlacesSnapshot _ppSnapshot;
+    
+    /** Interval to update the greeter ids snapshot. */
+    protected Interval _greeterIdsInvalidator;
+    
+    /** Snapshot of all currently configured greeters. Refreshed periodically. */
+    protected IntSet _greeterIdsSnapshot;
 
     /** The array of memoized flow values for each level.  The first few levels are hard coded, the
      * rest are calculated according to the equation in calculateLevelsForFlow() */
@@ -998,6 +1031,9 @@ public class MemberManager
 
     /** The frequency with which we recalculate our popular places snapshot. */
     protected static final long POP_PLACES_REFRESH_PERIOD = 30*1000;
+
+    /** The frequency with which we recalculate our greeter ids snapshot. */
+    protected static final long GREETERS_REFRESH_PERIOD = 120*1000;
 
     /** Maximum number of experiences we will keep track of per user. */
     protected static final int MAX_EXPERIENCES = 20;

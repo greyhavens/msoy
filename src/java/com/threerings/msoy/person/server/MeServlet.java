@@ -80,11 +80,10 @@ public class MeServlet extends MsoyServiceServlet
         data.feed = loadFeedCategories(FeedCategory.DEFAULT_COUNT, null);
 
         // load the greeters
-        IntSet greeterIds = _memberRepo.loadGreeterIds();
+        IntSet greeterIds = new ArrayIntSet();
+        greeterIds.addAll(_memberMan.getGreeterIdsSnapshot());
         greeterIds.remove(mrec.memberId);
-        for (int friendId : friendIds) {
-            greeterIds.remove(friendId);
-        }
+        greeterIds.removeAll(friendIds);
         data.greeters = _mhelper.resolveMemberCards(greeterIds, true, null);
 
         return data;

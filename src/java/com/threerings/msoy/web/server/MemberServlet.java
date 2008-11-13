@@ -16,6 +16,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -83,7 +84,8 @@ public class MemberServlet extends MsoyServiceServlet
 
         // Add some online greeters if this user doesn't alreay have a lot of friends
         if (padWithGreeters && list.size() < NEED_FRIENDS_FRIEND_COUNT) {
-            IntSet greeterIds = _memberRepo.loadGreeterIds();
+            IntSet greeterIds = new ArrayIntSet();
+            greeterIds.addAll(_memberMan.getGreeterIdsSnapshot());
             greeterIds.removeAll(friendIds);
             greeterIds.remove(mrec.memberId);
             result.friendsAndGreeters.addAll(_mhelper.resolveMemberCards(greeterIds, true, null));
@@ -248,6 +250,7 @@ public class MemberServlet extends MsoyServiceServlet
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected MemberManager _memberMan;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
