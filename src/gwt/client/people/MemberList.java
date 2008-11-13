@@ -37,7 +37,12 @@ public class MemberList extends PagedGrid<MemberCard>
 {
     public static final int PEOPLE_PER_PAGE = 20;
 
-    public MemberList (String emptyMessage)
+    /**
+     * Creates a new member list.
+     * @param emptyMessage text to show when no members are in the list
+     * @param id identifier to use for tracking friending events
+     */
+    public MemberList (String emptyMessage, String id)
     {
         super(PEOPLE_PER_PAGE, 1, MemberList.NAV_ON_BOTTOM);
         setWidth("100%");
@@ -108,7 +113,7 @@ public class MemberList extends PagedGrid<MemberCard>
 
             // potentially show the add friend button
             if (isNotMe && !card.isFriend && !CShell.isGuest()) {
-                onClick = new FriendInviter(card.name);
+                onClick = new FriendInviter(card.name, _id);
                 extras.setWidget(row, 0, MsoyUI.createActionImage(
                                      "/images/profile/addfriend.png", onClick));
                 extras.setWidget(row++, 1, MsoyUI.createActionLabel(
@@ -150,6 +155,7 @@ public class MemberList extends PagedGrid<MemberCard>
     }
 
     protected String _emptyMessage;
+    protected String _id; // for event tracking
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)

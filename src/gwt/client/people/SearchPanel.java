@@ -68,7 +68,7 @@ public class SearchPanel extends FlowPanel
     public void setResults (List<MemberCard> cards, int page, String search)
     {
         _searchString = search;
-        _members = new MemberList(_msgs.searchResultsNoMatch(search));
+        _members = new MemberList(_msgs.searchResultsNoMatch(search), "SearchPanel");
         add(new HeaderBox(_msgs.searchResultsTitle(search), _members));
         _members.setModel(new SimpleDataModel<MemberCard>(cards), page);
     }

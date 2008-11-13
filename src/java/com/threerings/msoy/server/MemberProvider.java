@@ -98,7 +98,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#inviteToBeFriend} request.
      */
-    void inviteToBeFriend (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+    void inviteToBeFriend (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 
     /**

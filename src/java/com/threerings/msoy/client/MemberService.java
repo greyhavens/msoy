@@ -14,9 +14,11 @@ import com.threerings.msoy.data.HomePageItem;
 public interface MemberService extends InvocationService
 {
     /**
-     * Request to invite the specified user to be our friend.
+     * Request to invite the specified user to be our friend. The result returned is a Boolean
+     * value indicating whether the friend invitation was automatically accepted. Otherwise, it was
+     * sent via email.
      */
-    void inviteToBeFriend (Client client, int friendId, ConfirmListener listener);
+    void inviteToBeFriend (Client client, int friendId, ResultListener listener);
 
     /**
      * Boot the specified user from the current place.

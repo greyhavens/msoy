@@ -222,21 +222,26 @@ public class MemberManager
 
     // from interface MemberProvider
     public void inviteToBeFriend (final ClientObject caller, final int friendId,
-                                  final InvocationService.ConfirmListener listener)
+                                  final InvocationService.ResultListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
         _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
+            boolean autoFriended;
             @Override public void invokePersistent () throws Exception {
                 if (_memberRepo.isGreeter(friendId)) {
                     _memberLogic.establishFriendship(user.getMemberId(), friendId);
+                    autoFriended = true;
                 } else {
                     _mailLogic.sendFriendInvite(user.getMemberId(), friendId);
                 }
             }
             @Override public void handleSuccess () {
-                ((InvocationService.ConfirmListener)_listener).requestProcessed();
+                ((InvocationService.ResultListener)_listener).requestProcessed(autoFriended);
+                if (autoFriended) {
+                    trackClientAction(caller, "autoFriendedFlashClient", null);
+                }
             }
         });
     }

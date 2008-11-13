@@ -58,7 +58,7 @@ public interface MemberService extends InvocationService
     function getHomePageGridItems (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+    function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
     function inviteToFollow (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;

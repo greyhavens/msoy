@@ -208,9 +208,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const INVITE_TO_BE_FRIEND :int = 15;
 
     // from interface MemberService
-    public function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, INVITE_TO_BE_FRIEND, [
             Integer.valueOf(arg2), listener3

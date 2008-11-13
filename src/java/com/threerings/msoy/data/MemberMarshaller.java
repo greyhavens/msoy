@@ -194,9 +194,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int INVITE_TO_BE_FRIEND = 15;
 
     // from interface MemberService
-    public void inviteToBeFriend (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void inviteToBeFriend (Client arg1, int arg2, InvocationService.ResultListener arg3)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, INVITE_TO_BE_FRIEND, new Object[] {
             Integer.valueOf(arg2), listener3

@@ -53,7 +53,7 @@ public class FriendsPanel extends FlowPanel
         CShell.frame.setTitle(
             self ? _msgs.friendsSelfTitle() : _msgs.friendsOtherTitle(data.name.toString()));
         _friends = new MemberList(
-            self ? _msgs.noFriendsSelf() : _msgs.noFriendsOther());
+            self ? _msgs.noFriendsSelf() : _msgs.noFriendsOther(), "FriendsPanel");
         
         int numFriends = 0;
         for (MemberCard card : data.friendsAndGreeters) {

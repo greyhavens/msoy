@@ -5,6 +5,7 @@ package client.people;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
@@ -32,15 +33,17 @@ public class FriendInviter
 {
     /**
      * Creates a new inviter that will add the supplied target as a friend or dispatch an email
-     * request to do so.
+     * request to do so. The caller id is used to track the event.
      */
-    public FriendInviter (MemberName target)
+    public FriendInviter (MemberName target, String callerId)
     {
-        this._target = target;
+        _target = target;
+        _callerId = callerId;
     }
 
     // from ClickListener
-    public void onClick (Widget sender) {
+    public void onClick (Widget sender)
+    {
         // guard against reentry
         if (_clicked) {
             return;
@@ -53,7 +56,9 @@ public class FriendInviter
         }
     }
         
-    protected void doClick () throws ServiceException {
+    protected void doClick ()
+        throws ServiceException
+    {
         _membersvc.isAutomaticFriender(_target.getMemberId(), new AsyncCallback<Boolean>() {
             public void onFailure (Throwable caught) {
                 _clicked = false;
@@ -79,12 +84,15 @@ public class FriendInviter
 
             public void onSuccess (Void result) {
                 MsoyUI.info(_msgs.ifriendAdded());
+                _membersvc.trackClientAction(
+                    CShell.visitor, "autoFriended" + _callerId, null, new NoopAsyncCallback());
             }
         });
     }
 
     protected boolean _clicked;
     protected MemberName _target;
+    protected String _callerId;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)

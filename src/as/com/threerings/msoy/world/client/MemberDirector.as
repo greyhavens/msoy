@@ -5,6 +5,7 @@ package com.threerings.msoy.world.client {
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.util.Log;
 
@@ -35,8 +36,17 @@ public class MemberDirector extends BasicDirector
      */
     public function inviteToBeFriend (friendId :int) :void
     {
-        _msvc.inviteToBeFriend(_wctx.getClient(), friendId,
-            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited"));
+        var reporter :ReportingListener = new ReportingListener(
+            _wctx, MsoyCodes.GENERAL_MSGS, null, "m.friend_invited");
+
+        _msvc.inviteToBeFriend(_wctx.getClient(), friendId, new ResultAdapter(
+            reporter.requestFailed, function (automatic :Boolean) : void {
+                if (!automatic) {
+                    reporter.requestProcessed();
+                } else {
+                    // A status updated should be reported here no need to output to chat
+                }
+            }));
     }
 
     /**
