@@ -57,9 +57,6 @@ public class MediaDesc
     /** The MIME type for AVI video data. */
     public static const VIDEO_MSVIDEO :int = 33;
 
-    /** The MIME type for a youtube video. */
-    public static const VIDEO_YOUTUBE_DEPRECATED :int = 34;
-
     /** The MIME type for Flash SWF files. */
     public static const APPLICATION_SHOCKWAVE_FLASH :int = 40;
 
@@ -333,14 +330,7 @@ public class MediaDesc
         if (hash == null) {
             return null;
         }
-
-        switch (mimeType) {
-        case VIDEO_YOUTUBE_DEPRECATED:
-            return "http://www.youtube.com/v/" + StringUtil.fromBytes(hash);
-
-        default:
-            return DeploymentConfig.mediaURL + hashToString(hash) + mimeTypeToSuffix(mimeType);
-        }
+        return DeploymentConfig.mediaURL + hashToString(hash) + mimeTypeToSuffix(mimeType);
     }
 
     /**
@@ -386,7 +376,6 @@ public class MediaDesc
         case IMAGE_JPEG:
         case IMAGE_GIF:
         case VIDEO_FLASH:
-        case VIDEO_YOUTUBE_DEPRECATED:
         case APPLICATION_SHOCKWAVE_FLASH:
         case EXTERNAL_YOUTUBE:
             return true;
@@ -474,13 +463,7 @@ public class MediaDesc
      */
     public function getMediaId () :String
     {
-        switch (mimeType) {
-        case VIDEO_YOUTUBE_DEPRECATED:
-            return "_" + mimeType + ":" + StringUtil.fromBytes(hash);
-
-        default:
-            return hashToString(hash);
-        }
+        return hashToString(hash);
     }
 
     /**
@@ -491,7 +474,6 @@ public class MediaDesc
         // TODO: this may need to be more complicated in the future
         switch (mimeType) {
         case APPLICATION_SHOCKWAVE_FLASH:
-        case VIDEO_YOUTUBE_DEPRECATED:
             return true;
 
         default:
