@@ -1433,21 +1433,26 @@ public class RoomManager extends SpotSceneManager
         }
 
         // from SetListener
-        public void entryUpdated (EntryUpdatedEvent<OccupantInfo> event)
+        public void entryUpdated (final EntryUpdatedEvent<OccupantInfo> event)
         {
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
-                updateAvatarIdent(event.getOldEntry(), event.getEntry());
-                checkDynamic(event.getOldEntry(), -1);
-                checkDynamic(event.getEntry(), 1);
+                Runnable onSuccess = new Runnable () {
+                    public void run () {
+                        updateAvatarIdent(event.getOldEntry(), event.getEntry());
+                        checkDynamic(event.getOldEntry(), -1);
+                        checkDynamic(event.getEntry(), 1);
+                    }
+                };
 
                 if (event.getOldEntry() instanceof MemberInfo) {
                     removeAndFlushMemories(((MemberInfo)event.getOldEntry()).getItemIdent());
+                    onSuccess.run();
                 }
                 if (event.getEntry() instanceof MemberInfo) {
                     resolveMemories(Collections.singleton(
                         ((MemberInfo)event.getEntry()).getItemIdent()),
-                        null);
+                        onSuccess);
                 }
             }
         }
