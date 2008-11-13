@@ -125,7 +125,7 @@ public class RoomManager extends SpotSceneManager
     implements RoomProvider, BootablePlaceManager
 {
     /** Time a room is idle before being unloaded. This is more aggressive than the default. */
-    public static long  ROOM_IDLE_UNLOAD_PERIOD = 30 * 1000L;
+    public static long ROOM_IDLE_UNLOAD_PERIOD = 30 * 1000L;
 
     /**
      * Flush any modified memories contained within the specified Iterable.
