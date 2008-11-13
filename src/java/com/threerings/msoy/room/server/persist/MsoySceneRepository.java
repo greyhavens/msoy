@@ -116,6 +116,17 @@ public class MsoySceneRepository extends DepotRepository
             new SchemaMigration.Rename(6, "lastUpdated", SceneRecord.LAST_PUBLISHED));
     }
 
+    // TODO: remove after 2008-11-12
+    public List<SceneFurniRecord> loadLegacyYouTube ()
+    {
+        return findAll(SceneFurniRecord.class, new Where(SceneFurniRecord.MEDIA_TYPE_C, 34));
+    }
+    public void updateLegacyYouTube (SceneFurniRecord rec)
+    {
+        update(rec);
+    }
+    // END: TODO
+
     /**
      * Returns the total number of scenes in the repository.
      */

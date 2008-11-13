@@ -78,6 +78,10 @@ import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.WorldWatcherManager;
 import com.threerings.msoy.world.tour.server.TourManager;
 
+// TEMP: TODO: remove after 2008-11-12
+import com.threerings.msoy.item.server.persist.VideoRepository;
+import com.threerings.msoy.server.persist.LegacyYouTubeMigration;
+
 /**
  * Brings together all of the services needed by the World server.
  */
@@ -160,6 +164,11 @@ public class MsoyServer extends MsoyBaseServer
     public void init (final Injector injector)
         throws Exception
     {
+        // TODO: remove after 2008-11-12
+        injector.getInstance(VideoRepository.class).addYouTubeMigration(
+            injector.getInstance(LegacyYouTubeMigration.class));
+        // END: TODO
+
         super.init(injector);
 
         // we need to know when we're shutting down
