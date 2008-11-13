@@ -101,7 +101,8 @@ public class DashboardPanel extends SmartTable
                       "com.threerings.msoy.admin.client.AdminApplet", 680, 400, false,
                       new String[] { "server", config.server,
                                      "port", "" + config.port,
-                                     "authtoken", CShell.getAuthToken() }));
+                                     "authtoken", CShell.getAuthToken() }),
+                  2, null);
     }
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
