@@ -823,8 +823,6 @@ public class RoomManager extends SpotSceneManager
     @Override // from PlaceManager
     protected void bodyEntered (final int bodyOid)
     {
-        super.bodyEntered(bodyOid);
-
         DObject body = _omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
             final MemberObject member = (MemberObject) body;
@@ -851,6 +849,8 @@ public class RoomManager extends SpotSceneManager
 
             addMemoriesToRoom(member);
         }
+
+        super.bodyEntered(bodyOid);
     }
 
     @Override // from PlaceManager
