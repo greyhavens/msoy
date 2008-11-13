@@ -98,10 +98,11 @@ public class MsoyVideoDisplay extends Sprite
         _hud = new Sprite();
         g = _hud.graphics;
         g.beginFill(0x000000, .85);
-        g.drawRect(0, 0, WIDTH, UNIT);
+        g.drawRect(0, 0, WIDTH, UNIT + 5); // +5 to give some more room for the bouncy tween
         g.endFill();
         g.lineStyle(1, 0x3db8eb);
-        g.drawRect(0, 0, WIDTH - 1, UNIT - 1);
+        g.moveTo(0, 0);
+        g.lineTo(WIDTH, 0);
         _hud.y = HEIGHT + 1; // position it offscreenz
         addChild(_hud);
 
@@ -378,9 +379,9 @@ public class MsoyVideoDisplay extends Sprite
     {
         const show :Boolean = _mouseIn || !_playing || _dragging;
         Tweener.addTween(_hud, {
-            time: .25,
+            time: .35,
             y: show ? HEIGHT - UNIT : HEIGHT + 1,
-            transition: "easeinoutcubic" });
+            transition: show ? "easeoutback" : "easeinback" });
     }
 
     protected function updateTime (position :Number = NaN) :void
