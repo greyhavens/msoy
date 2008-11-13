@@ -7,20 +7,25 @@ import static com.threerings.msoy.Log.log;
 
 import java.io.File;
 import java.util.List;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.sql.DataSource;
 
 import com.google.common.collect.Lists;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.DataSourceConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.presents.client.Client;
+import org.postgresql.jdbc2.optional.PoolingDataSource;
 
 import com.threerings.messaging.amqp.AMQPMessageConfig;
+
+import com.threerings.presents.client.Client;
 
 import com.threerings.msoy.item.data.all.Game;
 
@@ -127,7 +132,29 @@ public class ServerConfig
     public static ConnectionProvider createConnectionProvider ()
         throws Exception
     {
-        return new StaticConnectionProvider(config.getSubProperties("db"));
+        // if we are dealing with an old-school configuration, just use the no-connection-pool bits
+        String url = config.getValue("db.default.url", "");
+        if (!StringUtil.isBlank(url)) {
+            return new StaticConnectionProvider(config.getSubProperties("db"));
+        }
+
+        // otherwise do things using a postgres pooled data source
+        DataSource[] sources = new DataSource[2];
+        String[] prefixes = new String[] { "readonly", "readwrite" };
+        for (int ii = 0; ii < sources.length; ii++) {
+            Properties props = config.getSubProperties("db.default"); // start with the defaults
+            config.getSubProperties("db." + prefixes[ii], props); // apply overrides
+            PoolingDataSource source = new PoolingDataSource();
+            source.setDataSourceName(prefixes[ii]);
+            source.setServerName(props.getProperty("server"));
+            source.setDatabaseName(props.getProperty("database"));
+            source.setPortNumber(Integer.parseInt(props.getProperty("port")));
+            source.setUser(props.getProperty("username"));
+            source.setPassword(props.getProperty("password"));
+            source.setMaxConnections(Integer.parseInt(props.getProperty("maxconns", "1")));
+            sources[ii] = source;
+        }
+        return new DataSourceConnectionProvider("jdbc:postgresql", sources[0], sources[1]);
     }
 
     /**

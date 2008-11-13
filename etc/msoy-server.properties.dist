@@ -133,14 +133,16 @@ static_media_url = http://localhost:8080/media/static/
 toybox.resource_dir = /export/msoy/pages/media
 
 #
-# The default database mapping; all other definitions will inherit from
-# this and need only be specified in cases where they differ from the
-# defaults
+# Our Postgres database configuration
 
-db.default.driver = com.mysql.jdbc.Driver
-db.default.url = jdbc:mysql://DBHOST:3306/msoy?useServerPrepStmts=false
+db.default.server = localhost
+db.default.port = 5432
+db.default.database = msoy
 db.default.username = USERNAME
 db.default.password = PASSWORD
+
+db.readonly.maxconns = 1
+db.readwrite.maxconns = 1
 
 #
 # Bits for the OOO authenticator
