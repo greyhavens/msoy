@@ -73,7 +73,6 @@ public class YouTubePlayer extends EventDispatcher
             chars.push(char + (cap ? 65 : 97));
         }
         _stubId = String.fromCharCode.apply(null, chars);
-        log.debug("Youtube player starting with secret id: " + _stubId);
 
         _lc = new LocalConnection();
         _lc.client = {
@@ -186,7 +185,6 @@ public class YouTubePlayer extends EventDispatcher
             log.warning("No lc!");
             return;
         }
-        log.debug("Sending to as2", "method", method);
         args.unshift("_" + _stubId, method);
         _lc.send.apply(null, args);
     }
@@ -200,15 +198,10 @@ public class YouTubePlayer extends EventDispatcher
             return;
         }
         _ytState = state;
-        log.debug("=== got new state from as2: playerState: " + state);
 
         switch (_ytState) {
         case -1: // unstarted
-            send("cueVideo", _videoId);
-            break;
-
-        case 5: // cued
-            play(); // let's do autoplay..
+            send("loadVideo", _videoId);
             break;
         }
 
