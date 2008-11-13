@@ -104,17 +104,8 @@ public class GroupServlet extends MsoyServiceServlet
         throws ServiceException
     {
         GroupsResult result = new GroupsResult();
-        result.groups = Lists.newArrayList(
-            Iterables.transform(_groupRepo.getGroupsList(offset, count), GroupRecord.TO_CARD));
-
-        // fill in the current population of these groups
-        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-        for (GroupCard group : result.groups) {
-            PopularPlacesSnapshot.Place card = pps.getWhirled(group.name.getGroupId());
-            if (card != null) {
-                group.population = card.population;
-            }
-        }
+        result.groups = populateGroupCard(Lists.newArrayList(Iterables.transform(
+            _groupRepo.getGroupsList(offset, count), GroupRecord.TO_CARD)));
 
         // if they need the total group count, load that
         if (needCount) {
@@ -246,7 +237,7 @@ public class GroupServlet extends MsoyServiceServlet
     public List<GroupCard> searchGroups (String searchString)
         throws ServiceException
     {
-        return fillInPopulation(Lists.newArrayList(
+        return populateGroupCard(Lists.newArrayList(
             Iterables.transform(_groupRepo.searchGroups(searchString), GroupRecord.TO_CARD)));
     }
 
@@ -254,7 +245,7 @@ public class GroupServlet extends MsoyServiceServlet
     public List<GroupCard> searchForTag (String tag)
         throws ServiceException
     {
-        return fillInPopulation(Lists.newArrayList(
+        return populateGroupCard(Lists.newArrayList(
             Iterables.transform(_groupRepo.searchForTag(tag), GroupRecord.TO_CARD)));
     }
 
@@ -555,7 +546,11 @@ public class GroupServlet extends MsoyServiceServlet
             });
     }
 
-    protected List<GroupCard> fillInPopulation (List<GroupCard> groups)
+    /**
+     * Fill in the current number of people in rooms (population) and the number of total threads
+     * for a list of group cards.
+     */
+    protected List<GroupCard> populateGroupCard (List<GroupCard> groups)
     {
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         for (GroupCard card : groups) {
@@ -563,6 +558,7 @@ public class GroupServlet extends MsoyServiceServlet
             if (pcard != null) {
                 card.population = pcard.population;
             }
+            card.threadCount = _forumRepo.loadThreadCount(card.name.getGroupId());
         }
         return groups;
     }

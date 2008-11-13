@@ -17,7 +17,7 @@ public class GalaxyData
     public static final int POPULAR_TAG_COUNT = 10;
 
     /** The number of my groups to show on the Galaxy page */
-    public static final int MY_GROUPS_COUNT = 6;
+    public static final int MY_GROUPS_COUNT = 7;
 
     /** The member's MY_GROUPS_COUNT groups */
     public List<MyGroupCard> myGroups;

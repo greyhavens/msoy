@@ -32,4 +32,10 @@ public class GroupCard
 
     /** The number of people online in this group's scenes (from the popular places snapshot). */
     public int population;
+
+    /** The number of members in this group. */
+    public int memberCount;
+
+    /** The number of discussion threads in this group. */
+    public int threadCount;
 }

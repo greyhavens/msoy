@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -32,7 +33,6 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
-import client.ui.ClickBox;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -244,7 +244,7 @@ public class GalaxyPanel extends FlowPanel
             add(new ThumbBox(group.logo, MediaDesc.QUARTER_THUMBNAIL_SIZE, groupListener));
             add(MsoyUI.createActionLabel(group.name.toString(), "GroupName", groupListener));
             add(MsoyUI.createActionLabel(_msgs.galaxyMyGroupsDiscussions(),
-                "UnreadPosts", Link.createListener(
+                "Discussions", Link.createListener(
                 Pages.GROUPS, Args.compose("f", group.name.getGroupId()))));
         }
     }
@@ -252,19 +252,29 @@ public class GalaxyPanel extends FlowPanel
     /**
      * A single group in the right column grid
      */
-    protected class GroupWidget extends ClickBox
+    protected class GroupWidget extends AbsolutePanel
     {
         public GroupWidget (GroupCard group)
         {
-            super(group.logo, group.name.toString(), Pages.GROUPS,
-                  Args.compose("d", group.name.getGroupId()));
-            int row = getRowCount();
-            if (group.population == 0) {
-                setHTML(row, 0, "&nbsp;", 1, "Population");
-            } else {
-                String popstr = _msgs.galaxyMemberCount("" + group.population);
-                setText(row, 0, popstr, 1, "Population");
-            }
+            setStyleName("Group");
+            ClickListener groupListener = Link.createListener(Pages.GROUPS, Args.compose("d",
+                group.name.getGroupId()));
+            add(new ThumbBox(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE, groupListener), 5, 5);
+            add(MsoyUI.createActionLabel(group.name.toString(), "GroupName", groupListener), 50,
+                5);
+
+            add(MsoyUI.createLabel(_msgs.galaxyMemberCount(group.memberCount + " "),
+                "MemberCount"), 5, 40);
+
+            add(MsoyUI.createActionLabel(_msgs.galaxyPeopleInRooms(group.population + ""),
+                "InRooms", Link.createListener(Pages.WORLD, "s" + group.name.getGroupId())),
+                5, 60);
+
+            add(MsoyUI.createActionLabel(_msgs.galaxyThreadCount(group.threadCount + ""),
+                "ThreadCount", Link.createListener(
+                Pages.GROUPS, Args.compose("f",
+                    group.name.getGroupId()))), 5, 80);
+
         }
     }
 

@@ -343,6 +343,7 @@ public class GroupRecord extends PersistentRecord
         }
         card.blurb = blurb;
         card.homeSceneId = homeSceneId;
+        card.memberCount = memberCount;
         return card;
     }
 

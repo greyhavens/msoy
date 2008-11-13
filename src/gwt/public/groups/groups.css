@@ -384,7 +384,7 @@
   text-decoration: none;
 }
 
-.galaxyPanel .MyGroups .MyGroup .UnreadPosts {
+.galaxyPanel .MyGroups .MyGroup .Discussions {
   margin-left: 5px;
   text-decoration: none;
   color: #487999;
@@ -417,12 +417,29 @@
   background-color: #FFFFFF;
 }
 
-.galaxyPanel .clickBox .Name {
-  text-align: center;
+.galaxyPanel .GroupsList .Group {
+  border: 1px solid #CCCCCC;
+  margin: 10px 0;
+  width: 115px;
+  height: 100px;
+  font-size: 12px;
 }
 
-.galaxyPanel .clickBox .Population {
-  font-size: 12px;
+.galaxyPanel .GroupsList .Group .GroupName {
+  font-weight: bold;
+  text-align: left;
+  text-decoration: none;
+  height: 30px;
+  overflow: hidden;
+}
+.galaxyPanel .GroupsList .Group .GroupName:hover {
+  text-decoration: underline;
+}
+
+.galaxyPanel .GroupsList .Group .MemberCount,
+.galaxyPanel .GroupsList .Group .InRooms,
+.galaxyPanel .GroupsList .Group .ThreadCount {
+  color: #487999;
 }
 
 .galaxyPanel .Create {
