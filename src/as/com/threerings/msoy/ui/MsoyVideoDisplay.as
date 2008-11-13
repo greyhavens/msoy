@@ -110,26 +110,21 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function configureUI2 (ui :DisplayObject) :void
     {
-        if (DEBUG) {
-            trace(DisplayUtil.dumpHierarchy(ui));
-        }
-
         _playBtn = DisplayUtil.findInHierarchy(ui, "playbutton");
         _pauseBtn = DisplayUtil.findInHierarchy(ui, "pausebutton");
-        _track = new Sprite();
-        _track.graphics.beginFill(0xFFFFFF);
-        _track.graphics.drawRect(0, 0, 1, 5);
-        _track.graphics.endFill();
-        // TEMP trackthing hacking
-//        var trackThing :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
-//        trackThing.x = trackThing.width / 2;
-//        trackThing.y = 0;
-//        _track.addChild(trackThing);
-        _knob = new Sprite();
-        _knob.addChild(DisplayUtil.findInHierarchy(ui, "sliderknob"));
         _commentBtn = DisplayUtil.findInHierarchy(ui, "commentbutton");
         _volumeBtn = DisplayUtil.findInHierarchy(ui, "fullvolumebutton");
         _muteBtn = DisplayUtil.findInHierarchy(ui, "mutebutton");
+        _track = new Sprite();
+        var timeline :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
+        timeline.x = 0;
+        timeline.y = 0;
+        _track.addChild(timeline);
+        _knob = new Sprite();
+        var knobBtn :DisplayObject = DisplayUtil.findInHierarchy(ui, "sliderknob");
+        knobBtn.x = knobBtn.width / -2;
+        knobBtn.y = 2 + knobBtn.height / -2; // fiddle fiddle
+        _knob.addChild(knobBtn);
 
         // position the buttons on the _hud
         _playBtn.x = (UNIT - _playBtn.width) / 2;
@@ -137,16 +132,9 @@ public class MsoyVideoDisplay extends Sprite
         _pauseBtn.x = (UNIT - _pauseBtn.width) / 2;
         _pauseBtn.y = (UNIT - _pauseBtn.height) / 2;
 
-        var hudG :Graphics = _hud.graphics;
-        hudG.lineStyle(1, 0xFF0000);
-
         var baseX :int = WIDTH;
 
         baseX -= UNIT;
-        if (DEBUG) {
-            hudG.moveTo(baseX, 0);
-            hudG.lineTo(baseX, UNIT);
-        }
         _volumeBtn.x = baseX + (UNIT - _volumeBtn.width) / 2;
         _volumeBtn.y = (UNIT - _volumeBtn.height) / 2;
         _muteBtn.x = baseX + (UNIT - _muteBtn.width) / 2;
@@ -155,10 +143,6 @@ public class MsoyVideoDisplay extends Sprite
 
         if (_commentCallback != null) {
             baseX -= UNIT;
-            if (DEBUG) {
-                hudG.moveTo(baseX, 0);
-                hudG.lineTo(baseX, UNIT);
-            }
             _commentBtn.x = baseX + (UNIT - _commentBtn.width) / 2;
             _commentBtn.y = (UNIT - _commentBtn.height) / 2;
             _hud.addChild(_commentBtn);
@@ -169,18 +153,15 @@ public class MsoyVideoDisplay extends Sprite
             { color: 0xFFFFFF, font: "_sans", size: 10 });
         _timeField.height = UNIT;
         baseX -= _timeField.width;
-        if (DEBUG) {
-            hudG.moveTo(baseX, 0);
-            hudG.lineTo(baseX, UNIT);
-        }
         _timeField.x = baseX;
         _timeField.y = (UNIT - _timeField.height) / 2
         _hud.addChild(_timeField);
         updateTime(); // set the strings..
 
-        _track.x = UNIT + PAD;
-        _track.y = UNIT / 2;
-        _track.width = baseX - PAD - _track.x;
+        _track.x = UNIT;
+        _track.y = (UNIT - timeline.height) / 2;
+        _trackWidth = baseX - UNIT - PAD;
+        timeline.width = _trackWidth;
 
         addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
         addEventListener(MouseEvent.ROLL_OUT, handleMouseRoll);
@@ -200,35 +181,6 @@ public class MsoyVideoDisplay extends Sprite
         // finally, make sure things are as they should be
         displayPlayState(_player.getState());
         handleAddedToStage(); // will be ok if we're not..
-
-//        _track = new Sprite();
-//        _track.x = PAD - _hud.x;
-//        _track.y = NATIVE_HEIGHT - PAD - TRACK_HEIGHT - _hud.y;
-//        g = _track.graphics;
-//        g.beginFill(0x000000, .7);
-//        g.drawRect(0, 0, TRACK_WIDTH, TRACK_HEIGHT);
-//        g.endFill();
-//        g.lineStyle(2, 0xFFFFFF);
-//        g.drawRect(0, 0, TRACK_WIDTH, TRACK_HEIGHT);
-//        // _track is not added to _hud until we know the duration
-//
-//        const trackMask :Shape = new Shape();
-//        g = trackMask.graphics;
-//        g.beginFill(0xFFFFFF);
-//        g.drawRect(0, 0, TRACK_WIDTH, TRACK_HEIGHT);
-//        _track.addChild(trackMask);
-//        _track.mask = trackMask;
-//
-//        _knob = new Sprite();
-//        _knob.y = TRACK_HEIGHT / 2;
-//        g = _knob.graphics;
-//        g.lineStyle(1, 0xFFFFFF);
-//        g.beginFill(0x000099);
-//        g.drawCircle(0, 0, TRACK_HEIGHT/2 - 1);
-//        // _knob is not added to _track until we know the position
-//
-//        _track.addEventListener(MouseEvent.CLICK, handleTrackClick);
-//        _knob.addEventListener(MouseEvent.MOUSE_DOWN, handleKnobDown);
     }
 
     protected function handlePlay (event :MouseEvent) :void
@@ -266,6 +218,8 @@ public class MsoyVideoDisplay extends Sprite
     {
         event.stopImmediatePropagation();
 
+        // we add the listener on the track, but apparently the localX refers to the thing
+        // actually clicked. Mother of pearl.
         var p :Point = new Point(event.stageX, event.stageY);
         p = _track.globalToLocal(p);
 
@@ -277,7 +231,7 @@ public class MsoyVideoDisplay extends Sprite
         event.stopImmediatePropagation();
 
         _dragging = true;
-        _knob.startDrag(false, new Rectangle(0, 0, _track.width, 0));
+        _knob.startDrag(false, new Rectangle(0, 0, _trackWidth, 0));
         addEventListener(Event.ENTER_FRAME, handleKnobSeekCheck);
         addEventListener(MouseEvent.MOUSE_UP, handleKnobUp);
     }
@@ -373,7 +327,7 @@ public class MsoyVideoDisplay extends Sprite
         }
         _lastKnobX = int.MIN_VALUE;
         const pos :Number = Number(event.value);
-        _knob.x = (pos / _player.getDuration()) * _track.width;
+        _knob.x = (pos / _player.getDuration()) * _trackWidth;
         if (_knob.parent == null) {
             _track.addChild(_knob);
         }
@@ -397,7 +351,7 @@ public class MsoyVideoDisplay extends Sprite
             return;
         }
         _lastKnobX = trackX;
-        var perc :Number = trackX / _track.width;
+        var perc :Number = trackX / _trackWidth;
         perc = Math.max(0, Math.min(1, perc));
         log.debug("Seek", "x", trackX, "perc", perc, "pos", (perc * dur));
         _player.seek(perc * dur);
@@ -462,6 +416,8 @@ public class MsoyVideoDisplay extends Sprite
     protected var _muteBtn :DisplayObject;
 
     protected var _durationString :String = UNKNOWN_TIME;
+
+    protected var _trackWidth :Number;
 
     protected var _lastKnobX :int = int.MIN_VALUE;
 
