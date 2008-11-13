@@ -118,9 +118,10 @@ public class MsoyVideoDisplay extends Sprite
         _track = new Sprite();
         var timeline :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
         timeline.x = 0;
-        timeline.y = 0;
+        timeline.y = (UNIT - timeline.height) / 2;
         _track.addChild(timeline);
         _knob = new Sprite();
+        _knob.y = timeline.y;
         var knobBtn :DisplayObject = DisplayUtil.findInHierarchy(ui, "sliderknob");
         knobBtn.x = knobBtn.width / -2;
         knobBtn.y = 2 + knobBtn.height / -2; // fiddle fiddle
@@ -159,8 +160,10 @@ public class MsoyVideoDisplay extends Sprite
         updateTime(); // set the strings..
 
         _track.x = UNIT + PAD;
-        _track.y = (UNIT - timeline.height) / 2;
         _trackWidth = baseX - UNIT - (PAD * 2);
+        _track.graphics.beginFill(0xFFFFFF, 0);
+        _track.graphics.drawRect(0, 1, _trackWidth, UNIT - 1);
+        _track.graphics.endFill();
         timeline.width = _trackWidth;
 
         addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
@@ -231,7 +234,7 @@ public class MsoyVideoDisplay extends Sprite
         event.stopImmediatePropagation();
 
         _dragging = true;
-        _knob.startDrag(false, new Rectangle(0, 0, _trackWidth, 0));
+        _knob.startDrag(false, new Rectangle(0, _knob.y, _trackWidth, 0));
         addEventListener(Event.ENTER_FRAME, handleKnobSeekCheck);
         addEventListener(MouseEvent.MOUSE_UP, handleKnobUp);
     }
@@ -373,7 +376,7 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function updateHUD () :void
     {
-        const show :Boolean = _mouseIn || !_playing;
+        const show :Boolean = _mouseIn || !_playing || _dragging;
         Tweener.addTween(_hud, {
             time: .25,
             y: show ? HEIGHT - UNIT : HEIGHT + 1,
