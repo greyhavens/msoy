@@ -18,15 +18,18 @@ import com.samskivert.util.Tuple;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
+import com.threerings.presents.util.ResultListenerList;
 
 import com.threerings.parlor.game.data.GameCodes;
 import com.threerings.stats.data.StatModifier;
@@ -77,7 +80,7 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class WorldGameRegistry
     implements WorldGameProvider, GameServerProvider, ShutdownManager.Shutdowner,
-               MsoyPeerManager.PeerObserver
+               MsoyPeerManager.PeerObserver, ReportManager.Reporter
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
@@ -96,6 +99,10 @@ public class WorldGameRegistry
     {
         _serverRegObj = new ServerRegistryObject();
         _omgr.registerObject(_serverRegObj);
+
+        // register our reporter here so that we're sure to be after all of the reporters that are
+        // registered when all of our managers are created
+        _reportMan.registerReporter(this);
 
         // start up our servers after the rest of server initialization is completed (and we know
         // that we're listening for client connections)
@@ -332,6 +339,24 @@ public class WorldGameRegistry
     }
 
     // from interface GameServerProvider
+    public void reportReport (ClientObject caller, String report)
+    {
+        if (!checkCallerAccess(caller, "reportReport()")) {
+            return;
+        }
+
+        // stuff this report into the handler for this server
+        for (GameServerHandler handler : _handlers) {
+            if (handler._clobj == caller) {
+                handler.latestReport = report;
+                return;
+            }
+        }
+
+        log.warning("Got state-of-server report from unknown game server", "who", caller.who());
+    }
+
+    // from interface GameServerProvider
     public void leaveAVRGame (ClientObject caller, int playerId)
     {
         if (!checkCallerAccess(caller, "leaveAVRGame(" + playerId + ")")) {
@@ -414,9 +439,9 @@ public class WorldGameRegistry
         // pass the buck to the item manager
         _itemMan.awardPrize(memberId, gameId, gameName, prize, new ResultAdapter<Item>(listener));
     }
-    
+
     // from interface GameServerProvider
-    public void notifyMemberStartedGame (ClientObject caller, final int memberId, final byte action, 
+    public void notifyMemberStartedGame (ClientObject caller, final int memberId, final byte action,
         final int gameId)
     {
         MemberNodeActions.addExperience(memberId, action, gameId);
@@ -434,7 +459,7 @@ public class WorldGameRegistry
         _statLogic.updateStat(memberId, modifier);
     }
 
-    // from interface Shutdowner
+    // from interface ShutdownManager.Shutdowner
     public void shutdown ()
     {
         // shutdown our game server handlers
@@ -469,6 +494,17 @@ public class WorldGameRegistry
         // nada
     }
 
+    // from interface ReportManager.Reporter
+    public void appendReport (StringBuilder buffer, long now, long sinceLast, boolean reset)
+    {
+        for (GameServerHandler handler : _handlers) {
+            buffer.append(ServerConfig.nodeName).append(" game ").append(handler.port).append("\n");
+            if (handler.latestReport != null) {
+                buffer.append(handler.latestReport);
+            }
+        }
+    }
+
     protected boolean checkAndSendToNode (int gameId, WorldGameService.LocationListener listener)
     {
         Tuple<String, Integer> rhost = _peerMan.getGameHost(gameId);
@@ -485,8 +521,7 @@ public class WorldGameRegistry
     protected void lockGame (final Game game, final WorldGameService.LocationListener listener)
     {
         // otherwise obtain a lock and resolve the game ourselves
-        _peerMan.acquireLock(MsoyPeerManager.getGameLock(game.gameId),
-                             new ResultListener<String>() {
+        _peerMan.acquireLock(MsoyPeerManager.getGameLock(game.gameId), new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
                 if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
                     log.info("Got lock, resolving " + game.name + ".");
@@ -550,6 +585,7 @@ public class WorldGameRegistry
         implements ObjectDeathListener
     {
         public int port;
+        public String latestReport;
 
         public GameServerHandler (int port) throws Exception {
             // make a note of our port
@@ -708,6 +744,7 @@ public class WorldGameRegistry
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected ReportManager _reportMan;
     @Inject protected ShutdownManager _shutMan;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected MemberManager _memberMan;
@@ -718,7 +755,7 @@ public class WorldGameRegistry
     @Inject protected StatLogic _statLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberLogic _memberLogic;
-    
+
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;
 }

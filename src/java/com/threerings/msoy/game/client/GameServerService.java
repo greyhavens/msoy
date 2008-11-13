@@ -24,6 +24,11 @@ public interface GameServerService extends InvocationService
     void sayHello (Client client, int port);
 
     /**
+     * Delivers a state of the server report as previously requested by the world server.
+     */
+    void reportReport (Client client, String report);
+
+    /**
      * Notes that a player is either lobbying for, playing or no longer playing the specified game.
      */
     void updatePlayer (Client client, int playerId, GameSummary game);
@@ -64,7 +69,7 @@ public interface GameServerService extends InvocationService
      * Applies a stat update for the specified player.
      */
     void updateStat (Client client, int memberId, StatModifier<?> modifier);
-    
+
     /**
      * Notifies the server the player started a game.
      */

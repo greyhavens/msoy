@@ -51,6 +51,11 @@ public interface GameServerProvider extends InvocationProvider
     void reportCoinAward (ClientObject caller, int arg1, int arg2);
 
     /**
+     * Handles a {@link GameServerService#reportReport} request.
+     */
+    void reportReport (ClientObject caller, String arg1);
+
+    /**
      * Handles a {@link GameServerService#reportTrophyAward} request.
      */
     void reportTrophyAward (ClientObject caller, int arg1, String arg2, Trophy arg3);

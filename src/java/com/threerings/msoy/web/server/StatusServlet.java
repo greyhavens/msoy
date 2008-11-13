@@ -169,13 +169,19 @@ public class StatusServlet extends HttpServlet
         switch (details) {
         case REPORT:
             if (client == null) { // nextgen narya will make this less hacky
-                info.details = new Callable<String>() {
-                    public String call () throws Exception {
-                        FutureResult<String> report = new FutureResult<String>();
-                        _peerMan.generateReport(null, report);
-                        return report.get();
-                    }
-                };
+                final FutureResult<String> report = new FutureResult<String>();
+                try {
+                    _peerMan.generateReport(null, report);
+                    info.details = new Callable<String>() {
+                        public String call () throws Exception {
+                            return report.get();
+                        }
+                    };
+                } catch (Exception e) {
+                    // will not happen; if it does, details will just be null
+                    log.warning("Mission impossible!", e);
+                }
+
             } else {
                 final FutureResult<String> report = new FutureResult<String>();
                 nodeobj.peerService.generateReport(client, report);

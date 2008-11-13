@@ -90,8 +90,19 @@ public class GameServerMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #reportReport} requests. */
+    public static final int REPORT_REPORT = 7;
+
+    // from interface GameServerService
+    public void reportReport (Client arg1, String arg2)
+    {
+        sendRequest(arg1, REPORT_REPORT, new Object[] {
+            arg2
+        });
+    }
+
     /** The method id used to dispatch {@link #reportTrophyAward} requests. */
-    public static final int REPORT_TROPHY_AWARD = 7;
+    public static final int REPORT_TROPHY_AWARD = 8;
 
     // from interface GameServerService
     public void reportTrophyAward (Client arg1, int arg2, String arg3, Trophy arg4)
@@ -102,7 +113,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sayHello} requests. */
-    public static final int SAY_HELLO = 8;
+    public static final int SAY_HELLO = 9;
 
     // from interface GameServerService
     public void sayHello (Client arg1, int arg2)
@@ -113,7 +124,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updatePlayer} requests. */
-    public static final int UPDATE_PLAYER = 9;
+    public static final int UPDATE_PLAYER = 10;
 
     // from interface GameServerService
     public void updatePlayer (Client arg1, int arg2, GameSummary arg3)
@@ -124,7 +135,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateStat} requests. */
-    public static final int UPDATE_STAT = 10;
+    public static final int UPDATE_STAT = 11;
 
     // from interface GameServerService
     public void updateStat (Client arg1, int arg2, StatModifier<?> arg3)

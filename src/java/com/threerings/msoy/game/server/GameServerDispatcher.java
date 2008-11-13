@@ -76,6 +76,12 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
             );
             return;
 
+        case GameServerMarshaller.REPORT_REPORT:
+            ((GameServerProvider)provider).reportReport(
+                source, (String)args[0]
+            );
+            return;
+
         case GameServerMarshaller.REPORT_TROPHY_AWARD:
             ((GameServerProvider)provider).reportTrophyAward(
                 source, ((Integer)args[0]).intValue(), (String)args[1], (Trophy)args[2]

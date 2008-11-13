@@ -6,6 +6,8 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.Interval;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.Communicator;
@@ -14,6 +16,7 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.net.PeerCreds;
+import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.server.net.ServerCommunicator;
@@ -44,23 +47,22 @@ import static com.threerings.msoy.Log.log;
 public class WorldServerClient
     implements MessageListener, ShutdownManager.Shutdowner
 {
-    /** A message sent by our world server to let us know to shut down. */
+    /** A notification that it is time to shut down. */
     public static final String SHUTDOWN_MESSAGE = "shutdown";
 
-    /** A message sent by our world server to let us know a game's content has been updated. */
+    /** A notification that game's content has been updated. */
     public static final String GAME_CONTENT_UPDATED = "gameContentUpdated";
 
     /** A message sent by a our world server when the player has purchased game content */
     public static final String GAME_CONTENT_PURCHASED =  "gameContentPurchased";
 
-    /** A message sent by our world server to request that we reset our percentiler. */
+    /** A request that we reset our percentiler. */
     public static final String RESET_SCORE_PERCENTILER = "resetScorePercentiler";
 
-    /** A message sent by our world server to request that we broadcast a message with our
-     * chat provider */
+    /** A request that we broadcast a message with our chat provider */
     public static final String FORWARD_BROADCAST = "forwardBroadcast";
 
-    /** A message sent by our world server to request that we flush a player's coin earnings. */
+    /** A request that we flush a player's coin earnings. */
     public static final String FLUSH_COIN_EARNINGS = "flushCoinEarnings";
 
     /**
@@ -69,7 +71,7 @@ public class WorldServerClient
     public void init (int listenPort, int connectPort)
     {
         _port = listenPort;
-        _shutmgr.registerShutdowner(this);
+        _shutMan.registerShutdowner(this);
 
         // create our client and connect to the server
         _client = new Client(null, _omgr) {
@@ -81,8 +83,15 @@ public class WorldServerClient
         _client.setServer("localhost", new int[] { connectPort });
         _client.addServiceGroup(WorldGameRegistry.GAME_SERVER_GROUP);
         _client.addClientObserver(_clientObs);
-        _watchmgr.init(_client);
+        _watchMan.init(_client);
         _client.logon();
+
+        // send a state of the server report to our world server every 30 seconds
+        new Interval(_omgr) {
+            public void expired () {
+                _gssvc.reportReport(_client, _reportMan.generateReport());
+            }
+        }.schedule(30*1000L, true);
     }
 
     public void leaveAVRGame (int playerId)
@@ -184,7 +193,7 @@ public class WorldServerClient
             // TODO: we could just stop listening for client connections and shut ourselves down
             // once all the games on this server have finally ended; might be fiddly
             log.info("Got shutdown notification from world server.");
-            _shutmgr.shutdown();
+            _shutMan.shutdown();
 
         } else if (event.getName().equals(GAME_CONTENT_UPDATED)) {
             int gameId = (Integer)event.getArgs()[0];
@@ -240,7 +249,7 @@ public class WorldServerClient
         public void clientDidLogoff (Client client) {
             log.info("Logged off of world server.");
             _gssvc = null;
-            _shutmgr.shutdown(); // TODO: see SHUTDOWN_MESSAGE handler
+            _shutMan.shutdown(); // TODO: see SHUTDOWN_MESSAGE handler
         }
     };
 
@@ -248,10 +257,11 @@ public class WorldServerClient
     protected Client _client;
     protected GameServerService _gssvc;
 
-    @Inject protected ShutdownManager _shutmgr;
     @Inject protected ConnectionManager _conmgr;
     @Inject protected RootDObjectManager _omgr;
+    @Inject protected ShutdownManager _shutMan;
+    @Inject protected ReportManager _reportMan;
     @Inject protected GameGameRegistry _gameReg;
-    @Inject protected GameWatcherManager _watchmgr;
+    @Inject protected GameWatcherManager _watchMan;
     @Inject protected ChatProvider _chatProv;
 }

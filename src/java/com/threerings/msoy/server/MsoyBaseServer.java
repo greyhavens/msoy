@@ -63,6 +63,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         // initialize event logger
         _eventLog.init(getIdent());
 
+        // add a reporter that conveys the statistics of our cache manager
+        _reportMan.registerReporter(new CacheStatusReporter(_cacheMgr));
+
         super.init(injector);
 
         // initialize our persistence context
@@ -85,9 +88,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // set up the right client factories
         configSessionFactory();
-
-        // add a reporter that conveys the statistics of our cache manager
-        _reportMan.registerReporter(new CacheStatusReporter(_cacheMgr));
 
         _bureauMgr.configClientFactories();
     }
