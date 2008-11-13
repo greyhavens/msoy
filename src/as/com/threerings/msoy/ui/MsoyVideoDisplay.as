@@ -353,7 +353,7 @@ public class MsoyVideoDisplay extends Sprite
         _lastKnobX = trackX;
         var perc :Number = trackX / _trackWidth;
         perc = Math.max(0, Math.min(1, perc));
-        log.debug("Seek", "x", trackX, "perc", perc, "pos", (perc * dur));
+        //log.debug("Seek", "x", trackX, "perc", perc, "pos", (perc * dur));
         _player.seek(perc * dur);
     }
 
