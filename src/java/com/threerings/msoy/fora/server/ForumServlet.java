@@ -433,7 +433,7 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public void sendPreviewEmail (String subject, String message)
+    public void sendPreviewEmail (String subject, String message, boolean includeProbeList)
         throws ServiceException
     {
         MemberRecord mrec = requireSupportUser();
@@ -442,7 +442,7 @@ public class ForumServlet extends MsoyServiceServlet
         // and then actually format those expansions
         message = MessageUtil.expandMessage(message);
         // and jam the whole thing into an email
-        _mailLogic.previewSpam(mrec.memberId, mrec.accountName, subject, message);
+        _mailLogic.previewSpam(mrec.memberId, mrec.accountName, subject, message, includeProbeList);
     }
 
     protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> msgrecs)

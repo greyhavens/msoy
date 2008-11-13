@@ -81,5 +81,6 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#sendPreviewEmail}.
      */
-    void sendPreviewEmail (String subject, String message, AsyncCallback<Void> callback);
+    void sendPreviewEmail (String subject, String message, boolean includeProbeList,
+                           AsyncCallback<Void> callback);
 }

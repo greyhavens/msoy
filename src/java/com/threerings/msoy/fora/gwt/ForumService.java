@@ -132,7 +132,10 @@ public interface ForumService extends RemoteService
      * Formats the supplied subject and message into an email and delivers it to the caller. This
      * allows admins and support to preview their in-progress newsletter posts before they pull the
      * trigger and spam the entire userbase with them.
+     *
+     * @param includeProbeList if true, the Return Path probe emails will also have the mail
+     * delivered to them.
      */
-    void sendPreviewEmail (String subject, String message)
+    void sendPreviewEmail (String subject, String message, boolean includeProbeList)
         throws ServiceException;
 }

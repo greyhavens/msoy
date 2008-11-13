@@ -6,6 +6,7 @@ package com.threerings.msoy.mail.server;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -187,7 +188,8 @@ public class MailLogic
     /**
      * Sends a spam preview mailing to the specified address.
      */
-    public void previewSpam (int recipId, String recip, String subject, String body)
+    public void previewSpam (int recipId, String recip, String subject, String body,
+                             boolean includeProbeList)
     {
         // convert the body into proper-ish HTML
         body = SpamUtil.formatSpam(body);
@@ -195,9 +197,20 @@ public class MailLogic
             return;
         }
 
-        _mailer.sendSpam(Collections.singletonList(Tuple.create(recipId, recip)),
-                         ServerConfig.getFromAddress(), SpamUtil.makeSpamHeaders(subject),
-                         subject, body);
+        // add the caller to the recipient list
+        List<Tuple<Integer, String>> emails = Lists.newArrayList();
+        emails.add(Tuple.create(recipId, recip));
+
+        // add the Return Path probe addresses if they were requested
+        if (includeProbeList) {
+            for (String rpaddr : SpamUtil.getReturnPathAddrs()) {
+                emails.add(Tuple.create(0, rpaddr));
+            }
+        }
+
+        // ship all this off to the mail sender
+        _mailer.sendSpam(emails, ServerConfig.getFromAddress(),
+                         SpamUtil.makeSpamHeaders(subject), subject, body);
     }
 
     /**

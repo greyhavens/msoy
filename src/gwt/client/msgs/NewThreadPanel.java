@@ -36,6 +36,7 @@ public class NewThreadPanel extends TableFooterPanel
         _subject.setMaxLength(ForumThread.MAX_SUBJECT_LENGTH);
         _subject.setVisibleLength(40);
 
+        final Button[] spambuts = new Button[2];
         if (isManager) {
             RowPanel bits = new RowPanel();
             bits.add(_announce = new CheckBox());
@@ -52,21 +53,37 @@ public class NewThreadPanel extends TableFooterPanel
                 bits.add(MsoyUI.createLabel(_mmsgs.ntpSpamTip(), "FlagTip"));
                 addRow(_mmsgs.ntpSpam(), bits);
 
-                _sendPreview = new Button(_mmsgs.ntpSendPreview());
-                _sendPreview.setTitle(_mmsgs.ntpSendPreviewTip());
-                _sendPreview.setEnabled(false);
-                new ForumCallback<Void>(_sendPreview) {
+                spambuts[0] = new Button(_mmsgs.ntpSendPreview());
+                spambuts[0].setTitle(_mmsgs.ntpSendPreviewTip());
+                spambuts[0].setEnabled(false);
+                new ForumCallback<Void>(spambuts[0]) {
                     public boolean callService () {
-                        return sendPreviewEmail(this);
+                        return sendPreviewEmail(false, this);
                     }
                     public boolean gotResult (Void result) {
                         MsoyUI.info(_mmsgs.ntpPreviewSent());
                         return true;
                     }
                 };
+
+                spambuts[1] = new Button(_mmsgs.ntpSendProbe());
+                spambuts[1].setTitle(_mmsgs.ntpSendProbeTip());
+                spambuts[1].setEnabled(false);
+                new ForumCallback<Void>(spambuts[1]) {
+                    public boolean callService () {
+                        return sendPreviewEmail(true, this);
+                    }
+                    public boolean gotResult (Void result) {
+                        MsoyUI.info(_mmsgs.ntpProbeSent());
+                        return true;
+                    }
+                };
+
                 _spam.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
-                        _sendPreview.setEnabled(_spam.isChecked());
+                        for (Button b : spambuts) {
+                            b.setEnabled(_spam.isChecked());
+                        }
                     }
                 });
             }
@@ -86,9 +103,14 @@ public class NewThreadPanel extends TableFooterPanel
                 ((ForumPanel)getParent()).newThreadCanceled(_groupId);
             }
         }));
-        if (_sendPreview != null) {
-            addFooterButton(_sendPreview);
+
+        // add our spam-related buttons if we have them
+        for (Button b : spambuts) {
+            if (b != null) {
+                addFooterButton(b);
+            }
         }
+
         Button submit = new Button(_mmsgs.ntpSubmit());
         new ForumCallback<ForumThread>(submit) {
             public boolean callService () {
@@ -105,7 +127,7 @@ public class NewThreadPanel extends TableFooterPanel
         addFooterButton(submit);
     }
 
-    protected boolean sendPreviewEmail (ForumCallback<Void> callback)
+    protected boolean sendPreviewEmail (boolean includeProbes, ForumCallback<Void> callback)
     {
         String subject = _subject.getText().trim();
         if (subject.length() == 0) {
@@ -118,7 +140,7 @@ public class NewThreadPanel extends TableFooterPanel
             MsoyUI.error(_mmsgs.errNoMessage());
             return false;
         }
-        _forumsvc.sendPreviewEmail(subject, message, callback);
+        _forumsvc.sendPreviewEmail(subject, message, includeProbes, callback);
         return true;
     }
 
@@ -151,7 +173,6 @@ public class NewThreadPanel extends TableFooterPanel
     protected int _groupId;
     protected TextBox _subject;
     protected CheckBox _announce, _sticky, _spam;
-    protected Button _sendPreview;
     protected MessageEditor _message;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
