@@ -158,9 +158,9 @@ public class MsoyVideoDisplay extends Sprite
         _hud.addChild(_timeField);
         updateTime(); // set the strings..
 
-        _track.x = UNIT;
+        _track.x = UNIT + PAD;
         _track.y = (UNIT - timeline.height) / 2;
-        _trackWidth = baseX - UNIT - PAD;
+        _trackWidth = baseX - UNIT - (PAD * 2);
         timeline.width = _trackWidth;
 
         addEventListener(MouseEvent.ROLL_OVER, handleMouseRoll);
