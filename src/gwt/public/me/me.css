@@ -107,19 +107,20 @@
   margin: 0 5px 5px 10px;
 }
 
-.meFriendsPanel .FriendsScroller {
+.meFriendsPanel .FriendsList {
   width: 166px;
   padding: 3px;
-  margin: auto;
+  margin: hidden;
   text-align: left;
   background-color: #FFFFFF;
+  margin-left: 5px;
+  overflow: hidden;
 }
 
 .meFriendsPanel .PlaceName {
   color: #7d7d7d;
   font-weight: bold;
   padding: 10px 0 3px 0;
-  overflow: hidden;
   white-space: nowrap;
 }
 

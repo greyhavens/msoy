@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -98,7 +97,7 @@ public class MeFriendsPanel extends FlowPanel
         add(MsoyUI.createLabel(label, "TitleSub"));
 
         // contents will scroll after a long time
-        FlowPanel scrollContents = new FlowPanel();
+        FlowPanel friendsList = MsoyUI.createFlowPanel("FriendsList");
         int size = MediaDesc.HALF_THUMBNAIL_SIZE;
 
         // group our friends by location (in rooms or games)
@@ -134,15 +133,12 @@ public class MeFriendsPanel extends FlowPanel
 
         // now add the rooms and games to our scrolling contents (rooms first)
         for (FlowPanel panel : rooms.values()) {
-            scrollContents.add(panel);
+            friendsList.add(panel);
         }
         for (FlowPanel panel : games.values()) {
-            scrollContents.add(panel);
+            friendsList.add(panel);
         }
-
-        ScrollPanel scroller = new ScrollPanel(scrollContents);
-        scroller.addStyleName("FriendsScroller");
-        add(scroller);
+        add(friendsList);
     }
 
     protected FlowPanel getPlacePanel (
