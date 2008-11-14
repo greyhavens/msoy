@@ -20,6 +20,8 @@ import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.data.VizMemberName;
 
+import com.threerings.msoy.ui.ScalingMediaContainer;
+
 import com.threerings.msoy.item.data.all.ItemTypes;
 
 import com.threerings.msoy.game.data.GameContentOwnership;
