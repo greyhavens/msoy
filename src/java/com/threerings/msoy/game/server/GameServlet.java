@@ -270,9 +270,10 @@ public class GameServlet extends MsoyServiceServlet
         }
 
         // arrange those trophies onto a set of shelves
-        tcase.shelves = new TrophyCase.Shelf[tmap.size()];
+        Set<Integer> gameIds = tmap.keySet();
+        tcase.shelves = new TrophyCase.Shelf[gameIds.size()];
         int ii = 0;
-        for (int gameId : tmap.keySet()) {
+        for (int gameId : gameIds) {
             TrophyCase.Shelf shelf = new TrophyCase.Shelf();
             tcase.shelves[ii++] = shelf;
 
