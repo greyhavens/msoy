@@ -1037,13 +1037,9 @@
     <delete dir="${gwtout.dir}"/>
   </target>
 
-  <!-- fully cleans out all build results -->
-  <target name="distclean" depends="clean,asclean,gclean">
-    <delete dir="${deploy.dir}"/>
+  <!-- cleans out things we don't want lingering after an automated build -->
+  <target name="postclean">
     <delete dir="pages/clients"/>
-    <ant dir="projects/neighborhood" target="clean" inheritAll="false"/>
-    <ant dir="projects/games/tutorial" target="clean" inheritAll="false"/>
-    <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
     <delete file="pages/media/static/game/tutorial.swf"/>
     <delete file="pages/media/MediaStub.swf"/>
     <delete file="pages/index.html"/>
@@ -1054,6 +1050,14 @@
       <var name="file" unset="true"/>
     </sequential></for>
     <delete><fileset dir="data/swiftly/whirled_sdk/lib" includes="*.swc"/></delete>
+  </target>
+
+  <!-- fully cleans out all build results -->
+  <target name="distclean" depends="clean,asclean,gclean,postclean">
+    <delete dir="${deploy.dir}"/>
+    <ant dir="projects/neighborhood" target="clean" inheritAll="false"/>
+    <ant dir="projects/games/tutorial" target="clean" inheritAll="false"/>
+    <ant dir="projects/mchooser" target="distclean" inheritAll="false"/>
   </target>
 
   <!-- fully cleans out the application and all subprojects -->
