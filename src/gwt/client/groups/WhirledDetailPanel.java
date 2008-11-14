@@ -396,10 +396,8 @@ public class WhirledDetailPanel extends FlowPanel
             content.add(members);
             for (int ii = 0; ii < _detail.topMembers.size(); ii++) {
                 GroupMemberCard member = _detail.topMembers.get(ii);
-                ClickListener iconClick = Link.createListener(Pages.PEOPLE, ""
-                    + member.name.getMemberId());
                 ThumbBox icon = new ThumbBox(member.photo, MediaDesc.HALF_THUMBNAIL_SIZE,
-                    iconClick);
+                                             Pages.PEOPLE, ""+member.name.getMemberId());
                 members.setWidget(ii * 2, 0, icon, 1, "Icon");
                 members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
                 if (member.rank == GroupMembership.RANK_MANAGER) {

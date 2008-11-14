@@ -69,7 +69,7 @@ public class ReviewPanel extends FlowPanel
 
         for (ItemDetail detail : items) {
             int row = _contents.getRowCount();
-            _contents.setWidget(row, 0, new ThumbBox(detail.item.getThumbnailMedia(), null));
+            _contents.setWidget(row, 0, new ThumbBox(detail.item.getThumbnailMedia()));
             _contents.setWidget(row, 1, new ReviewItem(this, detail));
             _contents.getFlexCellFormatter().setStyleName(row, 1, "Item");
             _contents.getFlexCellFormatter().setVerticalAlignment(row, 1, HasAlignment.ALIGN_TOP);

@@ -163,7 +163,7 @@ public class MailPanel extends FlowPanel
                 name = Link.memberView(convo.other.name);
             }
 
-            setWidget(0, 1, new ThumbBox(photo, MediaDesc.HALF_THUMBNAIL_SIZE, null), 1, "Photo");
+            setWidget(0, 1, new ThumbBox(photo, MediaDesc.HALF_THUMBNAIL_SIZE), 1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 1, 2);
 
             setWidget(0, 2, name, 1, "Name");

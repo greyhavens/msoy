@@ -240,8 +240,7 @@ public class GalaxyPanel extends FlowPanel
         {
             super("MyGroup");
             String goArgs = Args.compose("d", group.name.getGroupId());
-            add(new ThumbBox(group.logo, MediaDesc.QUARTER_THUMBNAIL_SIZE,
-                             Link.createListener(Pages.GROUPS, goArgs)));
+            add(new ThumbBox(group.logo, MediaDesc.QUARTER_THUMBNAIL_SIZE, Pages.GROUPS, goArgs));
             add(Link.create(group.name.toString(), "GroupName", Pages.GROUPS, goArgs));
             add(Link.create(_msgs.galaxyMyGroupsDiscussions(), "Discussions", Pages.GROUPS,
                             Args.compose("f", group.name.getGroupId())));
@@ -257,8 +256,7 @@ public class GalaxyPanel extends FlowPanel
         {
             setStyleName("Group");
             String goArgs = Args.compose("d", group.name.getGroupId());
-            add(new ThumbBox(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE,
-                             Link.createListener(Pages.GROUPS, goArgs)), 5, 5);
+            add(new ThumbBox(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE, Pages.GROUPS, goArgs), 5, 5);
             add(Link.create(group.name.toString(), "GroupName", Pages.GROUPS, goArgs), 50, 5);
             add(MsoyUI.createLabel(_msgs.galaxyMemberCount(group.memberCount + " "),
                                    "MemberCount"), 5, 40);

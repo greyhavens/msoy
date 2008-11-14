@@ -147,12 +147,10 @@ public class TopGamesPanel extends AbsolutePanel
 
         SmartTable gameInfoTable = new SmartTable("FeaturedGame", 0, 0);
 
-        ClickListener onClick = Link.createListener(
-            Pages.GAMES, Args.compose("d", game.gameId));
-
         VerticalPanel left = new VerticalPanel();
         left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        left.add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SHOT_SIZE, onClick));
+        left.add(new ThumbBox(game.getShotMedia(), MediaDesc.GAME_SHOT_SIZE,
+                              Pages.GAMES, Args.compose("d", game.gameId)));
 
         if (game.playersOnline > 0) {
             left.add(WidgetUtil.makeShim(10, 10));

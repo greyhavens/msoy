@@ -44,14 +44,16 @@ public class PresentDisplay extends MailPayloadDisplay
 
             ClickListener onClick = null;
             if (recipient) {
-                onClick = Link.createListener(
-                    Pages.STUFF, Args.compose("d", ""+payload.ident.type, ""+payload.ident.itemId));
                 setWidget(0, 1, WidgetUtil.makeShim(10, 10));
                 setText(0, 2, _msgs.presentRecipTip());
-            }
+                String args = Args.compose("d", ""+payload.ident.type, ""+payload.ident.itemId);
+                setWidget(0, 0, new ThumbBox(payload.thumbMedia, Pages.STUFF, args));
+                setWidget(1, 0, Link.create(payload.name, Pages.STUFF, args));
 
-            setWidget(0, 0, new ThumbBox(payload.thumbMedia, onClick));
-            setWidget(1, 0, MsoyUI.createActionLabel(payload.name, onClick));
+            } else {
+                setWidget(0, 0, new ThumbBox(payload.thumbMedia));
+                setWidget(1, 0, MsoyUI.createLabel(payload.name, null));
+            }
             getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
         }
     }

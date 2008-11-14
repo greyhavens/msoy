@@ -90,24 +90,21 @@ public class ArcadePanel extends FlowPanel
             // display 1-3 games
             for (int i = 0; i < genre.games.length; i++) {
                 GameInfo game = genre.games[i];
-                ClickListener gameClick = Link.createListener(
-                    Pages.GAMES, Args.compose("d", game.gameId));
                 FlowPanel genreGame = MsoyUI.createFlowPanel("GenreGame");
                 add(genreGame);
+                String clickArgs = Args.compose("d", game.gameId);
                 // display the first larger than the rest
                 if (i == 0) {
                     genreGame.addStyleName("First");
-                    genreGame.add(
-                        new ThumbBox(game.thumbMedia, MediaDesc.THUMBNAIL_SIZE, gameClick));
-                    genreGame.add(MsoyUI.createSimplePanel(
-                                      MsoyUI.createActionLabel(game.name, gameClick), "Name"));
+                    genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.THUMBNAIL_SIZE,
+                                               Pages.GAMES, clickArgs));
+                    genreGame.add(Link.create(game.name, "Name", Pages.GAMES, clickArgs));
                     genreGame.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 50),
                                                      "Description"));
                 } else {
-                    genreGame.add(new ThumbBox(game.thumbMedia, 
-                                               MediaDesc.HALF_THUMBNAIL_SIZE, gameClick));
-                    genreGame.add(MsoyUI.createSimplePanel(
-                                      MsoyUI.createActionLabel(game.name, gameClick), "Name"));
+                    genreGame.add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
+                                               Pages.GAMES, clickArgs));
+                    genreGame.add(Link.create(game.name, "Name", Pages.GAMES, clickArgs));
                 }
             }
 
@@ -116,8 +113,8 @@ public class ArcadePanel extends FlowPanel
                 add(MsoyUI.createFlowPanel("GenreGame"));
             }
 
-            add(MsoyUI.createSimplePanel(Link.create(
-                _msgs.genreMore(""+genre.gameCount), Pages.GAMES, Args.compose("g", genre.genre)), "ViewAll"));
+            add(Link.create(_msgs.genreMore(""+genre.gameCount), "ViewAll",
+                            Pages.GAMES, Args.compose("g", genre.genre)));
         }
     }
 
@@ -129,9 +126,9 @@ public class ArcadePanel extends FlowPanel
         public TopGameWidget (int index, GameInfo game) {
             setStyleName("TopGameWidget");
             add(MsoyUI.createLabel(index+"", "Number"));
-            ClickListener onClick = Link.createListener(Pages.GAMES, Args.compose("d", game.gameId));
-            add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE, onClick));
-            add(MsoyUI.createSimplePanel(MsoyUI.createActionLabel(game.name, onClick), "Name"));
+            String args = Args.compose("d", game.gameId);
+            add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE, Pages.GAMES, args));
+            add(Link.create(game.name, "Name", Pages.GAMES, args));
         }
     }
 

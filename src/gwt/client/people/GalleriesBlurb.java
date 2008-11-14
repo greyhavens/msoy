@@ -77,14 +77,9 @@ public class GalleriesBlurb extends Blurb
     {
         public GalleryWidget (final Gallery gallery) {
             setStyleName("Gallery");
-
-            ClickListener clickListener = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.PEOPLE, Args.compose(GalleryActions.VIEW, gallery.galleryId));
-                }
-            };
-            add(new ThumbBox(gallery.thumbMedia, clickListener));
-            add(MsoyUI.createActionLabel(gallery.name, clickListener));
+            String args = Args.compose(GalleryActions.VIEW, gallery.galleryId);
+            add(new ThumbBox(gallery.thumbMedia, Pages.PEOPLE, args));
+            add(Link.create(gallery.name, Pages.PEOPLE, args));
         }
     }
 

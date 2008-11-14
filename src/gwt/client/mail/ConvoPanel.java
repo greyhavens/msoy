@@ -124,7 +124,7 @@ public class ConvoPanel extends FlowPanel
 
             _msg = msg;
 
-            setWidget(0, 0, new ThumbBox(msg.author.photo, null), 1, "Thumb");
+            setWidget(0, 0, new ThumbBox(msg.author.photo), 1, "Thumb");
             getFlexCellFormatter().setWidth(0, 0, (MediaDesc.THUMBNAIL_WIDTH+20) + "px");
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 

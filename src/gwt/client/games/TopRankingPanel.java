@@ -111,7 +111,7 @@ public class TopRankingPanel extends VerticalPanel
             _grid.setText(row, col, _msgs.gameRank("" + (ii+1)), 1, "Cell");
             _grid.getFlexCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_RIGHT);
 
-            ThumbBox box = new ThumbBox(rating.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE, null);
+            ThumbBox box = new ThumbBox(rating.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE);
             _grid.setWidget(row, col+1, box, 1, "Cell");
             _grid.getFlexCellFormatter().addStyleName(row, col+1, "Photo");
             _grid.getFlexCellFormatter().setHorizontalAlignment(

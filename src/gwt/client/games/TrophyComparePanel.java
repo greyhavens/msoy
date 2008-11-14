@@ -53,10 +53,9 @@ public class TrophyComparePanel extends SmartTable
             return;
         }
 
-        ClickListener onClick = Link.createListener(
-            Pages.GAMES, Args.compose("d", gameId));
-        setWidget(0, 0, new ThumbBox(result.gameThumb, onClick));
-        setWidget(1, 0, MsoyUI.createActionLabel(result.gameName, "Game", onClick));
+        String args = Args.compose("d", gameId);
+        setWidget(0, 0, new ThumbBox(result.gameThumb, Pages.GAMES, args));
+        setWidget(1, 0, Link.create(result.gameName, "Game", Pages.GAMES, args));
         centerCell(0, 0);
         centerCell(1, 0);
 
@@ -65,8 +64,7 @@ public class TrophyComparePanel extends SmartTable
             if (card == null) {
                 continue;
             }
-            setWidget(0, pp+1, new ThumbBox(card.photo, Link.createListener(
-                                                Pages.PEOPLE, "" + card.name.getMemberId())));
+            setWidget(0, pp+1, new ThumbBox(card.photo, Pages.PEOPLE, ""+card.name.getMemberId()));
             centerCell(0, pp+1);
             setWidget(1, pp+1, Link.memberView(card.name));
             centerCell(1, pp+1);

@@ -109,8 +109,7 @@ public class MeFriendsPanel extends FlowPanel
                 int sceneId = ((MemberCard.InScene)card.status).sceneId;
                 FlowPanel room = getPlacePanel(
                     rooms, sceneId, ((MemberCard.InScene)card.status).sceneName);
-                ClickListener onClick = Link.createListener(Pages.WORLD, "s"+sceneId);
-                Widget member = makeMemberWidget(card, size, onClick);
+                Widget member = makeMemberWidget(card, size, Pages.WORLD, "s"+sceneId);
                 member.addStyleName("MemberRoom");
                 room.add(member);
 
@@ -118,8 +117,7 @@ public class MeFriendsPanel extends FlowPanel
                 int sceneId = ((MemberCard.InAVRGame)card.status).sceneId;
                 FlowPanel room = getPlacePanel(
                     rooms, sceneId, ((MemberCard.InAVRGame)card.status).gameName);
-                ClickListener onClick = Link.createListener(Pages.WORLD, "s"+sceneId);
-                Widget member = makeMemberWidget(card, size, onClick);
+                Widget member = makeMemberWidget(card, size, Pages.WORLD, "s"+sceneId);
                 member.addStyleName("MemberGame");
                 room.add(member);
 
@@ -127,9 +125,8 @@ public class MeFriendsPanel extends FlowPanel
                 int gameId = ((MemberCard.InGame)card.status).gameId;
                 FlowPanel game = getPlacePanel(
                     games, gameId, ((MemberCard.InGame)card.status).gameName);
-                ClickListener onClick = Link.createListener(
-                    Pages.WORLD, Args.compose("game", "l", ""+gameId));
-                Widget member = makeMemberWidget(card, size, onClick);
+                Widget member =
+                    makeMemberWidget(card, size, Pages.WORLD, Args.compose("game", "l", ""+gameId));
                 member.addStyleName("MemberGame");
                 game.add(member);
             }
@@ -159,12 +156,11 @@ public class MeFriendsPanel extends FlowPanel
         return place;
     }
 
-    protected Widget makeMemberWidget (MemberCard card, int size, ClickListener onClick)
+    protected Widget makeMemberWidget (MemberCard card, int size, Pages page, String args)
     {
         SmartTable member = new SmartTable("Member", 0, 0);
-        member.setWidget(0, 0, new ThumbBox(card.photo, size, onClick), 1, "Photo");
-        member.setWidget(0, 1, MsoyUI.createActionLabel(card.name.toString(), null, onClick),
-                         1, "Name");
+        member.setWidget(0, 0, new ThumbBox(card.photo, size, page, args), 1, "Photo");
+        member.setWidget(0, 1, Link.create(card.name.toString(), page, args), 1, "Name");
         return member;
     }
 

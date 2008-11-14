@@ -119,14 +119,9 @@ public class GroupsBlurb extends Blurb
     {
         public GroupWidget (final GroupCard card) {
             setStyleName("Group");
-
-            ClickListener groupClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.GROUPS, Args.compose("d", card.name.getGroupId()));
-                }
-            };
-            add(new ThumbBox(card.logo, groupClick));
-            add(MsoyUI.createActionLabel(card.name.toString(), groupClick));
+            String args = Args.compose("d", card.name.getGroupId());
+            add(new ThumbBox(card.logo, Pages.GROUPS, args));
+            add(Link.create(card.name.toString(), Pages.GROUPS, args));
         }
     }
 

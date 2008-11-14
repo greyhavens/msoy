@@ -60,8 +60,8 @@ public class TrophyCasePanel extends VerticalPanel
             TongueBox box = new TongueBox(shelf.name, new TrophyGrid(shelf.trophies));
             int ownerId = tcase.owner.getMemberId();
             if (!CShell.isGuest() && CShell.getMemberId() != ownerId) {
-                box.setFooterLink(_msgs.caseCompare(),
-                                  Pages.GAMES, Args.compose("ct", ""+shelf.gameId, ""+ownerId));
+                String args = Args.compose("ct", ""+shelf.gameId, ""+ownerId);
+                box.setFooterLink(_msgs.caseCompare(), Pages.GAMES, args);
             }
             add(box);
         }

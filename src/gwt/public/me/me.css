@@ -133,7 +133,7 @@
   width: 40px;
 }
 
-.meFriendsPanel .Name {
+.meFriendsPanel .Name a {
   color: #6DA8D2;
   padding-left: 4px;
 }

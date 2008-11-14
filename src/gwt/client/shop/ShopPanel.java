@@ -114,11 +114,11 @@ public class ShopPanel extends HorizontalPanel
         left.add(WidgetUtil.makeShim(5, 5));
         left.add(MsoyUI.createLabel(card.descrip, "Descrip"));
 
-        ClickListener onClick = makeClick(card);
         FlowPanel right = new FlowPanel();
-        right.add(new ThumbBox(card.thumbMedia, onClick));
+        right.add(new ThumbBox(card.thumbMedia, Pages.SHOP, makeShopArgs(card)));
         right.add(WidgetUtil.makeShim(10, 10));
-        right.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.shopBuy(), onClick));
+        right.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.shopBuy(),
+                                      Link.createListener(Pages.SHOP, makeShopArgs(card))));
 
         SmartTable contents = new SmartTable("FeatListingBox", 0, 0);
         contents.setWidget(0, 0, left);
@@ -133,10 +133,9 @@ public class ShopPanel extends HorizontalPanel
         return new HeaderBox(ipath, title, contents).makeRoundBottom();
     }
 
-    protected static ClickListener makeClick (ListingCard card)
+    protected static String makeShopArgs (ListingCard card)
     {
-        return Link.createListener(
-            Pages.SHOP, Args.compose("l", "" + card.itemType, "" + card.catalogId));
+        return Args.compose("l", "" + card.itemType, "" + card.catalogId);
     }
 
     protected static class TopListingBox extends SmartTable
@@ -144,7 +143,7 @@ public class ShopPanel extends HorizontalPanel
         public TopListingBox (int rank, ListingCard card) {
             super("TopListingBox", 0, 0);
             setWidget(0, 1, new ThumbBox(card.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
-                                         makeClick(card)), 1, "Thumb");
+                                         Pages.SHOP, makeShopArgs(card)), 1, "Thumb");
             setText(1, 0, _msgs.shopRank(""+rank), 1, "Ranking");
             setWidget(1, 1, MsoyUI.createLabel(card.name, "Name")); // requires overflow: hidden
             setText(2, 1, _imsgs.itemBy(card.creator.toString()), 1, "Creator");

@@ -24,7 +24,7 @@ public class GameAwardDisplay extends MailPayloadDisplay
     {
         FlexTable table = new FlexTable();
 
-        table.setWidget(0, 0, new ThumbBox(_payload.getAwardMedia(), null));
+        table.setWidget(0, 0, new ThumbBox(_payload.getAwardMedia()));
         table.getFlexCellFormatter().setRowSpan(0, 0, 2);
 
         table.setText(0, 1, _msgs.awardTitle());

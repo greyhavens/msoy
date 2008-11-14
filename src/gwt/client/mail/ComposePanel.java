@@ -62,7 +62,7 @@ public class ComposePanel extends FlowPanel
         add(header);
 
         _contents = new SmartTable("Contents", 0, 5);
-        _contents.setWidget(0, 0, new ThumbBox(MemberCard.DEFAULT_PHOTO, null));
+        _contents.setWidget(0, 0, new ThumbBox(MemberCard.DEFAULT_PHOTO));
         _contents.getFlexCellFormatter().setRowSpan(0, 0, 5);
         _contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
@@ -149,7 +149,7 @@ public class ComposePanel extends FlowPanel
                 _contents.setText(3, 0, _msgs.composeAttachment(), 1, "Label");
                 _contents.getFlexCellFormatter().setVerticalAlignment(
                     3, 0, HasAlignment.ALIGN_TOP);
-                _contents.setWidget(3, 1, new ThumbBox(payload.thumbMedia, null));
+                _contents.setWidget(3, 1, new ThumbBox(payload.thumbMedia));
                 _payload = payload;
             }
         });
@@ -193,7 +193,7 @@ public class ComposePanel extends FlowPanel
     protected void setRecipient (MemberCard recipient, boolean clearBox)
     {
         _recipient = recipient;
-        _contents.setWidget(0, 0, new ThumbBox(recipient.photo, null));
+        _contents.setWidget(0, 0, new ThumbBox(recipient.photo));
         if (clearBox) {
             _contents.setText(0, 2, recipient.name.toString());
         }

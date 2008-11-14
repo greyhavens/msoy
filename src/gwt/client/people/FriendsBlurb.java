@@ -63,13 +63,8 @@ public class FriendsBlurb extends Blurb
         public FriendWidget (final MemberCard card)
         {
             setStyleName("Friend");
-            ClickListener profileClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.PEOPLE, "" + card.name.getMemberId());
-                }
-            };
-            add(new ThumbBox(card.photo, profileClick));
-            add(MsoyUI.createActionLabel(card.name.toString(), profileClick));
+            add(new ThumbBox(card.photo, Pages.PEOPLE, ""+card.name.getMemberId()));
+            add(Link.create(card.name.toString(), Pages.PEOPLE, ""+card.name.getMemberId()));
         }
     }
 

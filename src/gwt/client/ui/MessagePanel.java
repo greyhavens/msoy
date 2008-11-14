@@ -37,9 +37,8 @@ public class MessagePanel extends FlexTable
 
     public void setMessage (final MemberCard poster, Date whenPosted, String text)
     {
-        ClickListener onClick = Link.createListener(
-            Pages.PEOPLE, "" + poster.name.getMemberId());
-        setWidget(0, 0, new ThumbBox(poster.photo, getThumbnailSize(), onClick));
+        setWidget(0, 0, new ThumbBox(poster.photo, getThumbnailSize(),
+                                     Pages.PEOPLE, ""+poster.name.getMemberId()));
         getFlexCellFormatter().setRowSpan(0, 0, 2);
         getFlexCellFormatter().setStyleName(0, 0, "Photo");
         getFlexCellFormatter().addStyleName(0, 0, "BottomPad");
@@ -55,11 +54,8 @@ public class MessagePanel extends FlexTable
             info.add(icon);
         }
 
-        InlineLabel author = new InlineLabel(poster.name.toString());
-        author.addClickListener(onClick);
-        author.addStyleName("Author");
-        author.addStyleName("actionLabel");
-        info.add(author);
+        info.add(Link.create(poster.name.toString(), "Author",
+                             Pages.PEOPLE, ""+poster.name.getMemberId()));
 
         // TODO: switch to "XX days/minutes ago"
         String when = _cmsgs.postedOn(MsoyUI.formatDateTime(whenPosted));

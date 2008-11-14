@@ -134,12 +134,10 @@ public class MyWhirleds extends AbsolutePanel
                 setStyleName("WhirledWidget");
 
                 // logo links to whirled
-                ClickListener whirledClick = Link.createListener(
-                    Pages.GROUPS, Args.compose("d", card.name.getGroupId()));
-                ThumbBox logo = new ThumbBox(card.logo, whirledClick);
                 SimplePanel logoBox = new SimplePanel();
                 logoBox.setStyleName("LogoBox");
-                logoBox.setWidget(logo);
+                logoBox.setWidget(new ThumbBox(card.logo, Pages.GROUPS,
+                                               Args.compose("d", card.name.getGroupId())));
                 add(logoBox);
 
                 // name links to whirled

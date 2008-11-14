@@ -6,7 +6,6 @@ package client.groups;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -125,8 +124,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
             MemberName name = card.name;
 
             int mid = name.getMemberId();
-            ClickListener onClick = Link.createListener(Pages.PEOPLE, ""+mid);
-            setWidget(0, 0, new ThumbBox(card.photo, onClick), 1, "Photo");
+            setWidget(0, 0, new ThumbBox(card.photo, Pages.PEOPLE, ""+mid), 1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
             setWidget(0, 1, Link.memberView(""+name, mid), 1, "Name");
             String rankStr = card.rank == GroupMembership.RANK_MANAGER ? "Manager" : "";
