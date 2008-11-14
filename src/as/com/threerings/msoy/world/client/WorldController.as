@@ -371,7 +371,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewGroup (groupId :int) :void
     {
-        displayPage("whirleds", "d_" + groupId);
+        displayPage("groups", "d_" + groupId);
     }
 
     /**
