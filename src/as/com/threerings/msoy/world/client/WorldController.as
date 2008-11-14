@@ -990,6 +990,11 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function canManagePlace () :Boolean
     {
+        // support can manage any place...
+        if (_wctx.getTokens().isSupport()) {
+            return true;
+        }
+
         const view :Object = _topPanel.getPlaceView();
         if (view is RoomView) {
             return RoomView(view).getRoomController().canManageRoom();
