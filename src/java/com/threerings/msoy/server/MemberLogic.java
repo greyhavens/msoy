@@ -8,15 +8,15 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.depot.DuplicateKeyException;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntSet;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -280,24 +280,29 @@ public class MemberLogic
         }
 
         // The last 6 are determined by the user-specific home page items, depending on
-        // where they were last in Whirled.
-        Set<Integer> haveRooms = Sets.newHashSet();
-        Set<Integer> haveGames = Sets.newHashSet();
-        for (HomePageItem item : getHomePageItems(memObj, 6)) {
-            items[curItem++] = item;
-            int id = ((BasicNavItemData)item.getNavItemData()).getId();
-            if (item.getAction() == HomePageItem.ACTION_ROOM) {
-                haveRooms.add(id);
-            } else if (item.getAction() == HomePageItem.ACTION_GAME) {
-                haveGames.add(id);
-            }
+        // where they were last in Whirled. We want the middle 3 to be games and the bottom
+        // 3 to be rooms. Fill any slack with games
+        final int desiredRoomCount = 3;
+        final int desiredGameCount = 6 - curItem;
+        List<List<HomePageItem>> experiences = getAllExperienceItems(
+            memObj, desiredRoomCount, desiredGameCount);
+        List<HomePageItem> games = experiences.get(0);
+        List<HomePageItem> rooms = experiences.get(1);
+
+        IntSet haveRooms = new ArrayIntSet();
+        for (HomePageItem item : rooms) {
+            haveRooms.add(((BasicNavItemData)item.getNavItemData()).getId());
+        }
+
+        IntSet haveGames = new ArrayIntSet();
+        for (HomePageItem item : games) {
+            haveGames.add(((BasicNavItemData)item.getNavItemData()).getId());
         }
 
         // If there are still not enough places, fill in with some currently popular places.
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-        if (curItem < items.length) {
-            // Half will be games, the other half rooms.
-            int roomLimit = curItem + (items.length - curItem) / 2;
+
+        if (rooms.size() < desiredRoomCount) {
             // TODO: This is similar to some code in GalaxyServlet and GameServlet. refactor?
             for (PopularPlacesSnapshot.Place place : pps.getTopScenes()) {
                 if (!haveRooms.contains(place.placeId)) {
@@ -306,30 +311,37 @@ public class MemberLogic
                     if (media == null) {
                         media = DEFAULT_ROOM_SNAPSHOT;
                     }
-                    items[curItem++] = new HomePageItem(
+                    rooms.add(new HomePageItem(
                         HomePageItem.ACTION_ROOM,
-                        new BasicNavItemData(place.placeId, place.name), media);
+                        new BasicNavItemData(place.placeId, place.name), media));
                     haveRooms.add(place.placeId);
                 }
-                if (curItem >= roomLimit) {
+                if (rooms.size() >= desiredRoomCount) {
                     break;
                 }
             }
         }
 
         // Add the top active games.
-        if (curItem < items.length) {
+        if (games.size() < desiredGameCount) {
             for (PopularPlacesSnapshot.Place place : pps.getTopGames()) {
                 if (!haveGames.contains(place.placeId)) {
                     GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
-                    items[curItem++] = new HomePageItem(
+                    games.add(new HomePageItem(
                         HomePageItem.ACTION_GAME, new BasicNavItemData(game.gameId, game.name),
-                        game.getThumbMediaDesc());
+                        game.getThumbMediaDesc()));
                     haveGames.add(game.gameId);
                 }
-                if (curItem == items.length) {
+                if (games.size() >= desiredGameCount) {
                     break;
                 }
+            }
+        }
+        
+        // Add calculated items to the array
+        for (List<HomePageItem> list : experiences) {
+            for (HomePageItem item : list) {
+                items[curItem++] = item;
             }
         }
 
@@ -369,17 +381,20 @@ public class MemberLogic
     }
 
     /**
-     * Retrieves a list of experiences to be displayed on the home page.  Each experience the
-     * member has had recently will be given a weighted score to determine the order of the
-     * experience.  Only the number of experiences requested will be returned as home page items.
-     * If there are not enough experiences, or the experiences have a low score (too old, etc.),
-     * they will not be included here.
+     * Retrieves a list of lists of experiences to be displayed on the home page. Each list is
+     * a category of experiences. The first is games, the second is rooms. Within each list, each
+     * experience the member has had recently will be given a weighted score to determine the order
+     * of the experience.  Only the number of experiences requested will be returned as home page
+     * items. If there are not enough experiences, or the experiences have a low score (too old,
+     * etc.), they will not be included here.
      *
      * @param memObj Member object to get home page items for
-     * @param count Number of home page items to retrieve.
-     * @return List of the home page items.
+     * @param numRooms Maximum number of rooms to retrieve.
+     * @param numGames Maximum number of games to retrieve.
+     * @return List of lists of the home page items, first games then rooms
      */
-    protected List<HomePageItem> getHomePageItems (MemberObject memObj, int count)
+    protected List<List<HomePageItem>> getAllExperienceItems (
+        MemberObject memObj, int numRooms, int numGames)
     {
         List<ScoredExperience> scores = Lists.newArrayList();
         for (MemberExperience experience : memObj.experiences) {
@@ -405,9 +420,25 @@ public class MemberLogic
             }
         });
 
+        List<List<HomePageItem>> lists = Lists.newArrayList();
+        lists.add(getExperienceItems(scores, HomePageItem.ACTION_GAME, numGames));
+        lists.add(getExperienceItems(scores, HomePageItem.ACTION_ROOM, numRooms));
+        return lists;
+    }
+
+    /**
+     * Converts scored experiences to home page items, filtered by type, up to a maximum number.
+     */
+    protected List<HomePageItem> getExperienceItems (
+        List<ScoredExperience> scores, byte actionType, int count)
+    {
         // Convert our scored experiences to home page items.
         List<HomePageItem> items = Lists.newArrayList();
         for (ScoredExperience se : scores) {
+            if (se.experience.action != actionType) {
+                continue;
+            }
+            
             MediaDesc media;
             final NavItemData data;
             switch (se.experience.action) {
