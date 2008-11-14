@@ -29,10 +29,10 @@ import com.threerings.msoy.item.client.YouTubePlayer;
 // 1) Implement full volume control in the MsoyVideoDisplay UI.
 // 2) When this standalone player starts up, start with the global volume setting.
 [SWF(width="320", height="240")]
-public class VideoViewer extends Sprite
+public class VideoPlayer extends Sprite
     implements ExternalMediaDisplayer
 {
-    public function VideoViewer ()
+    public function VideoPlayer ()
     {
         this.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
         try {
@@ -76,7 +76,7 @@ public class VideoViewer extends Sprite
         // see if it's FLV or youtube
         switch (MediaDesc.suffixToMimeType(url)) {
         default:
-            trace("VideoViewer: unrecognized url: " + url);
+            trace("VideoPlayer: unrecognized url: " + url);
             return;
 
         case MediaDesc.VIDEO_FLASH:

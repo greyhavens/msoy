@@ -3,21 +3,18 @@
 
 package {
 
-import flash.display.Loader;
 import flash.display.Sprite;
 
 import flash.events.Event;
-
-import flash.net.URLRequest;
 
 import com.threerings.util.ParameterUtil;
 
 import com.threerings.msoy.room.client.SoundPlayer;
 
 [SWF(width="320", height="240")]
-public class MusicViewer extends Sprite
+public class AudioPlayer extends Sprite
 {
-    public function MusicViewer ()
+    public function AudioPlayer ()
     {
         this.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -26,14 +23,9 @@ public class MusicViewer extends Sprite
 
     protected function gotParams (params :Object) :void
     {
-        if ("music" in params) {
-            _snd = new SoundPlayer(String(params["music"]));
+        if ("audio" in params) {
+            _snd = new SoundPlayer(String(params["audio"]));
             _snd.play();
-        }
-        if ("icon" in params) {
-            var loader :Loader = new Loader();
-            addChild(loader);
-            loader.load(new URLRequest(String(params("icon"))));
         }
     }
 
