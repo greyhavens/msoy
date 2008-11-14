@@ -29,8 +29,8 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.LoaderUtil;
 
-import com.threerings.flash.video.VideoPlayer;
-import com.threerings.flash.video.VideoPlayerCodes;
+import com.threerings.flash.media.VideoPlayer;
+import com.threerings.flash.media.VideoPlayerCodes;
 
 import com.threerings.msoy.client.DeploymentConfig;
 

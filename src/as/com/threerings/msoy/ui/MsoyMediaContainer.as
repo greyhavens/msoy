@@ -12,7 +12,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MediaContainer;
 import com.threerings.flash.MenuUtil;
-import com.threerings.flash.video.VideoPlayer;
+import com.threerings.flash.media.VideoPlayer;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.ContextMenuProvider;

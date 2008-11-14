@@ -27,9 +27,9 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.TextFieldUtil;
-import com.threerings.flash.video.FlvVideoPlayer;
-import com.threerings.flash.video.VideoPlayer;
-import com.threerings.flash.video.VideoPlayerCodes;
+import com.threerings.flash.media.FlvVideoPlayer;
+import com.threerings.flash.media.VideoPlayer;
+import com.threerings.flash.media.VideoPlayerCodes;
 
 /**
  * The msoy-skinned video display.
