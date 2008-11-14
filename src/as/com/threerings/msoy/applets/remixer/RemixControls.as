@@ -35,6 +35,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.applets.net.MediaUploader;
+import com.threerings.msoy.applets.ui.ConfirmDialog;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyLogConfig;
@@ -157,7 +158,9 @@ public class RemixControls extends HBox
     {
         if (success) {
             setMustBuy(false);
-            commit(); // and then re-try the save,
+            // we now need to react to a click to save the purchase
+            new ConfirmDialog(_ctx, _ctx.REMIX.get("t.purchased"), _ctx.REMIX.get("m.purchased"),
+                commit);
 
         } else {
             // re-enable buttons...
