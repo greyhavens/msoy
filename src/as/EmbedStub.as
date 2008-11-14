@@ -61,6 +61,11 @@ public class EmbedStub extends Sprite
 
     public function EmbedStub ()
     {
+        init();
+    }
+
+    protected function init () :void
+    {
         if (stage != null) {
             stage.scaleMode = StageScaleMode.NO_SCALE;
             stage.align = StageAlign.TOP_LEFT;
