@@ -158,13 +158,10 @@ public abstract class ClickCallback<T>
             }
         }
 
-        if (_trigger instanceof SourcesClickEvents) {
-            SourcesClickEvents sce = (SourcesClickEvents) _trigger;
-            // always remove first so that if we do end up adding, we don't doubly add
-            sce.removeClickListener(_onClick);
-            if (enabled) {
-                sce.addClickListener(_onClick);
-            }
+        // always remove first so that if we do end up adding, we don't doubly add
+        _trigger.removeClickListener(_onClick);
+        if (enabled) {
+            _trigger.addClickListener(_onClick);
         }
     }
 

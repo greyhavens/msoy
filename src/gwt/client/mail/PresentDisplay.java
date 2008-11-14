@@ -4,7 +4,6 @@
 package client.mail;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,7 +41,6 @@ public class PresentDisplay extends MailPayloadDisplay
         {
             super(0, 0);
 
-            ClickListener onClick = null;
             if (recipient) {
                 setWidget(0, 1, WidgetUtil.makeShim(10, 10));
                 setText(0, 2, _msgs.presentRecipTip());

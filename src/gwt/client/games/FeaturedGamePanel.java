@@ -18,7 +18,6 @@ import client.ui.CreatorLabel;
 import client.ui.MsoyUI;
 import client.ui.Stars;
 import client.ui.ThumbBox;
-import client.util.Link;
 
 /**
  * Displays a list of featured games, defaulting to the first one

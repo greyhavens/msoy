@@ -4,7 +4,6 @@
 package client.landing;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -17,7 +16,6 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.item.ItemMessages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
-import client.util.Link;
 
 /**
  * Displays the current most popular avatars
