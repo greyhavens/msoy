@@ -687,7 +687,7 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
-    @Override // from RoomProvider
+    // from RoomProvider
     public void rateRoom (ClientObject caller, byte rating, RoomService.ResultListener listener)
         throws InvocationException
     {
