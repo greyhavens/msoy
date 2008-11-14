@@ -239,13 +239,12 @@ public class GalaxyPanel extends FlowPanel
         public MyGroupWidget (MyGroupCard group)
         {
             super("MyGroup");
-            ClickListener groupListener = Link.createListener(Pages.GROUPS, Args.compose("d",
-                group.name.getGroupId()));
-            add(new ThumbBox(group.logo, MediaDesc.QUARTER_THUMBNAIL_SIZE, groupListener));
-            add(MsoyUI.createActionLabel(group.name.toString(), "GroupName", groupListener));
-            add(MsoyUI.createActionLabel(_msgs.galaxyMyGroupsDiscussions(),
-                "Discussions", Link.createListener(
-                Pages.GROUPS, Args.compose("f", group.name.getGroupId()))));
+            String goArgs = Args.compose("d", group.name.getGroupId());
+            add(new ThumbBox(group.logo, MediaDesc.QUARTER_THUMBNAIL_SIZE,
+                             Link.createListener(Pages.GROUPS, goArgs)));
+            add(Link.create(group.name.toString(), "GroupName", Pages.GROUPS, goArgs));
+            add(Link.create(_msgs.galaxyMyGroupsDiscussions(), "Discussions", Pages.GROUPS,
+                            Args.compose("f", group.name.getGroupId())));
         }
     }
 
@@ -257,23 +256,16 @@ public class GalaxyPanel extends FlowPanel
         public GroupWidget (GroupCard group)
         {
             setStyleName("Group");
-            ClickListener groupListener = Link.createListener(Pages.GROUPS, Args.compose("d",
-                group.name.getGroupId()));
-            add(new ThumbBox(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE, groupListener), 5, 5);
-            add(MsoyUI.createActionLabel(group.name.toString(), "GroupName", groupListener), 50,
-                5);
-
+            String goArgs = Args.compose("d", group.name.getGroupId());
+            add(new ThumbBox(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE,
+                             Link.createListener(Pages.GROUPS, goArgs)), 5, 5);
+            add(Link.create(group.name.toString(), "GroupName", Pages.GROUPS, goArgs), 50, 5);
             add(MsoyUI.createLabel(_msgs.galaxyMemberCount(group.memberCount + " "),
-                "MemberCount"), 5, 40);
-
-            add(MsoyUI.createActionLabel(_msgs.galaxyPeopleInRooms(group.population + ""),
-                "InRooms", Link.createListener(Pages.WORLD, "s" + group.name.getGroupId())),
-                5, 60);
-
-            add(MsoyUI.createActionLabel(_msgs.galaxyThreadCount(group.threadCount + ""),
-                "ThreadCount", Link.createListener(
-                Pages.GROUPS, Args.compose("f",
-                    group.name.getGroupId()))), 5, 80);
+                                   "MemberCount"), 5, 40);
+            add(Link.create(_msgs.galaxyPeopleInRooms(group.population + ""), "InRooms",
+                            Pages.WORLD, "s" + group.name.getGroupId()), 5, 60);
+            add(Link.create(_msgs.galaxyThreadCount(group.threadCount + ""), "ThreadCount",
+                            Pages.GROUPS, Args.compose("f", group.name.getGroupId())), 5, 80);
 
         }
     }

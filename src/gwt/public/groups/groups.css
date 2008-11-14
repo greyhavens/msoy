@@ -381,13 +381,15 @@
   margin-left: 5px;
   white-space: nowrap;
   overflow: hidden;
-  text-decoration: none;
 }
 
-.galaxyPanel .MyGroups .MyGroup .Discussions {
+.galaxyPanel .MyGroups .MyGroup .Discussions a {
   margin-left: 5px;
-  text-decoration: none;
   color: #487999;
+}
+
+.galaxyPanel .MyGroups .MyGroup a {
+  text-decoration: none;
 }
 
 .galaxyPanel .MyGroups .SeeAll {
@@ -428,17 +430,19 @@
 .galaxyPanel .GroupsList .Group .GroupName {
   font-weight: bold;
   text-align: left;
-  text-decoration: none;
   height: 30px;
   overflow: hidden;
 }
-.galaxyPanel .GroupsList .Group .GroupName:hover {
+.galaxyPanel .GroupsList .Group .GroupName a {
+  text-decoration: none;
+}
+.galaxyPanel .GroupsList .Group .GroupName a:hover {
   text-decoration: underline;
 }
 
 .galaxyPanel .GroupsList .Group .MemberCount,
-.galaxyPanel .GroupsList .Group .InRooms,
-.galaxyPanel .GroupsList .Group .ThreadCount {
+.galaxyPanel .GroupsList .Group .InRooms a,
+.galaxyPanel .GroupsList .Group .ThreadCount a {
   color: #487999;
 }
 
