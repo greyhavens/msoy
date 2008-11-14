@@ -13,10 +13,18 @@
   color: #216CA3;
 }
 
-.myWhirled .PeopleOnline {
-  text-align: right;
+.myWhirled .ButtonBar {
+  padding: 10px;
+  margin-left: 10px;
+}
+
+.myWhirled .ButtonBar div {
+  margin-right: 10px;
+}
+
+.myWhirled .ButtonBar .PeopleOnline {
+  float: right;
   font-size: 10px;
-  padding: 5px 20px 0px 0px;
   color: #63AAE2;
 }
 

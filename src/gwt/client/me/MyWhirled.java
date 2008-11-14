@@ -29,11 +29,6 @@ public class MyWhirled extends FlowPanel
     {
         setStyleName("myWhirled");
 
-        // add an additional links only on this page; this will hopefully some day move into the
-        // main interface on this page
-        CShell.frame.addNavLink("My Profile", Pages.PEOPLE, "" + CShell.getMemberId(), 1);
-        CShell.frame.addNavLink("Passport", Pages.ME, "passport", 7);
-
         _mesvc.getMyWhirled(new MsoyCallback<MyWhirledData>() {
             public void onSuccess (MyWhirledData data) {
                 init(data);
@@ -43,14 +38,14 @@ public class MyWhirled extends FlowPanel
 
     protected void init (MyWhirledData data)
     {
-        add(MsoyUI.createLabel(_msgs.populationDisplay("" + data.whirledPopulation),
+        FloatPanel buttonBar = new FloatPanel("ButtonBar");
+        add(buttonBar);
+        buttonBar.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, "My Profile", Link.createListener(
+            Pages.PEOPLE, CShell.getMemberId() + "")));
+        buttonBar.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, "Passport", Link.createListener(
+            Pages.ME, "passport")));
+        buttonBar.add(MsoyUI.createLabel(_msgs.populationDisplay("" + data.whirledPopulation),
             "PeopleOnline"));
-
-        Image daContestBanner = MsoyUI.createActionImage(
-            "/images/landing/dacontest_me_banner.jpg",
-            Link.createListener(Pages.ME, MePage.DEVIANT_CONTEST_IFRAME));
-        daContestBanner.addStyleName("DAContestBanner");
-        add(daContestBanner);
 
         String empty = data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
         FriendsFeedPanel feed = new FriendsFeedPanel(empty, data.feed);
