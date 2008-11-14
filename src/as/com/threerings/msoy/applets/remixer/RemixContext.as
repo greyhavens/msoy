@@ -59,7 +59,7 @@ public class RemixContext extends ImageContext
             if (!_hasOptionalFields) {
                 for each (name in pack.getFileFields()) {
                     if (pack.getFileEntry(name)["optional"]) {
-                        _hasOptionalFields = false;
+                        _hasOptionalFields = true;
                         break;
                     }
                 }
