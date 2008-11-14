@@ -10,7 +10,6 @@
 
 .myWhirled {
   width: 100%;
-  color: #216CA3;
 }
 
 .myWhirled .ButtonBar {
@@ -18,20 +17,24 @@
   margin-left: 10px;
 }
 
-.myWhirled .ButtonBar .orangeButton {
-  margin-right: 10px;
-}
-
-.myWhirled .ButtonBar .PeopleOnline {
-  float: right;
-  font-size: 10px;
-  color: #63AAE2;
-}
-
 .myWhirled .NewsAndFriends {
   width: 665px;
   margin: 0 auto;
-  padding-bottom: 20px;
+  padding: 10px 0px;
+}
+
+.myWhirled .RightBits {
+  margin-left: 10px;
+}
+
+.myWhirled .RightBits .QuickNav {
+  font-size: 12px;
+  width: 182px;
+  color: #216CA3;
+}
+
+.myWhirled .RightBits .QuickNav a {
+  color: #216CA3;
 }
 
 .myWhirled .NewsTitle {
@@ -75,7 +78,7 @@
 }
 
 /* ------------------------------------
-   ME / MY WHIRLED PAGE - FRIENDS PANEL
+
 -------------------------------------*/
 
 .meFriendsPanel {
@@ -83,7 +86,6 @@
   width: 182px;
   color: #FFFFFF;
   text-align: center;
-  margin-left: 10px;
   font-size: 13px;
 }
 

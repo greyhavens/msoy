@@ -7,8 +7,10 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.FloatPanel;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
@@ -19,6 +21,7 @@ import client.person.FriendsFeedPanel;
 import client.person.PersonMessages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.ui.RoundBox;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -38,14 +41,11 @@ public class MyWhirled extends FlowPanel
 
     protected void init (MyWhirledData data)
     {
-        FloatPanel buttonBar = new FloatPanel("ButtonBar");
-        add(buttonBar);
-        buttonBar.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, "My Profile", Link.createListener(
-            Pages.PEOPLE, CShell.getMemberId() + "")));
-        buttonBar.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, "Passport", Link.createListener(
-            Pages.ME, "passport")));
-        buttonBar.add(MsoyUI.createLabel(_msgs.populationDisplay("" + data.whirledPopulation),
-            "PeopleOnline"));
+        RoundBox rbits = new RoundBox(RoundBox.MEDIUM_BLUE);
+        rbits.addStyleName("QuickNav");
+        rbits.add(MsoyUI.createLabel(_msgs.populationDisplay(""+data.whirledPopulation), null));
+        rbits.add(makeQuickLink("My Profile", Pages.PEOPLE, ""+CShell.getMemberId()));
+        rbits.add(makeQuickLink("My Passport", Pages.ME, "passport"));
 
         String empty = data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
         FriendsFeedPanel feed = new FriendsFeedPanel(empty, data.feed);
@@ -55,11 +55,23 @@ public class MyWhirled extends FlowPanel
         feedBox.add(feed);
         feedBox.add(new Image("/images/me/me_feed_bottomcorners.png"));
 
-        // news feed on the left, friends on the right
-        FloatPanel newsAndFriends = new FloatPanel("NewsAndFriends");
-        add(newsAndFriends);
-        newsAndFriends.add(feedBox);
-        newsAndFriends.add(new MeFriendsPanel(data));
+        // news feed on the left, bits and friends on the right
+        FloatPanel horiz = new FloatPanel("NewsAndFriends");
+        horiz.add(feedBox);
+        FlowPanel right = MsoyUI.createFlowPanel("RightBits");
+        right.add(rbits);
+        right.add(WidgetUtil.makeShim(10, 10));
+        right.add(new MeFriendsPanel(data));
+        horiz.add(right);
+        add(horiz);
+    }
+
+    protected Widget makeQuickLink (String label, Pages page, String args)
+    {
+        // TODO: add a little bullet to the left
+        Widget link = Link.create(label, page, args);
+        link.removeStyleName("inline");
+        return link;
     }
 
     protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);
