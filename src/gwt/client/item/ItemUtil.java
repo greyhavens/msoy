@@ -121,6 +121,9 @@ public class ItemUtil
         // A special case for video, for now...
         if (preview.isVideo()) {
             return FlashClients.createVideoViewer(320, 240, preview.getMediaPath());
+        } else if (preview.isAudio()) {
+            return FlashClients.createMusicViewer(320, 240, preview.getMediaPath(),
+                item.getThumbnailMedia().getMediaPath());
         }
 
         // set up the flashvars

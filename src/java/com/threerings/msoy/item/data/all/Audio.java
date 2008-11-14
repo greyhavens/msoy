@@ -29,7 +29,7 @@ public class Audio extends Item
     @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
-        return getThumbnailMedia(); // TODO: support album art?
+        return audioMedia;
     }
 
     @Override // from Item

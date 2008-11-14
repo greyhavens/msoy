@@ -54,6 +54,9 @@ public class MediaUtil
         } else if (desc.isVideo()) {
             view = FlashClients.createVideoViewer(width, height, path);
 
+        } else if (desc.isAudio()) {
+            view = FlashClients.createMusicViewer(width, height, path, null);
+
         } else if (desc.isImage()) {
             view = new Image(path);
             switch (desc.constraint) {

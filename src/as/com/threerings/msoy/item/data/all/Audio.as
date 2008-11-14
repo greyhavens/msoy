@@ -23,7 +23,7 @@ public class Audio extends Item
     // from Item
     override public function getPreviewMedia () :MediaDesc
     {
-        return getThumbnailMedia(); // TODO: support album art?
+        return audioMedia;
     }
 
     // from Item

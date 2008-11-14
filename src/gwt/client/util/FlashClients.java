@@ -36,6 +36,22 @@ public class FlashClients
     }
 
     /**
+     * Create a music viewer.
+     *
+     * @param thumbPath may be null.
+     */
+    public static HTML createMusicViewer (int width, int height, String musicPath, String thumbPath)
+    {
+        String flashVars = "music=" + URL.encodeComponent(musicPath);
+        if (thumbPath != null) {
+            flashVars += "&icon=" + URL.encodeComponent(thumbPath);
+        }
+        
+        return WidgetUtil.createFlashContainer("musicViewer",
+            "/clients/" + DeploymentConfig.version + "/musicviewer.swf", width, height, flashVars);
+    }
+
+    /**
      * Creates a world client, and embeds it in a container object, with which it can communicate
      * via the Flash/Javascript interface.
      */
