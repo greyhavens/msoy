@@ -5,7 +5,7 @@ package com.threerings.msoy.room.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.gwt.RatingResult;
+import com.threerings.msoy.data.all.RatingResult;
 
 /**
  * The asynchronous (client-side) version of {@link WebRoomService}.

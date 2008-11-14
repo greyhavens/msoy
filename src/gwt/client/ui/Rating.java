@@ -10,9 +10,9 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
-import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.msoy.data.all.RatingResult;
 
-import com.threerings.msoy.web.gwt.RatingResult;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;

@@ -16,6 +16,7 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
@@ -35,7 +36,6 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 
-import com.threerings.msoy.web.gwt.RatingResult;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;

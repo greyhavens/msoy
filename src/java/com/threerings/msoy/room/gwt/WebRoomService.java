@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.gwt.RatingResult;
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**

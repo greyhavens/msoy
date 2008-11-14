@@ -11,6 +11,7 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
+import com.threerings.util.Byte;
 import com.threerings.util.Integer;
 import com.threerings.util.langBoolean;
 import com.threerings.whirled.data.SceneUpdate;
@@ -103,8 +104,21 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch <code>rateRoom</code> requests. */
+    public static const RATE_ROOM :int = 7;
+
+    // from interface RoomService
+    public function rateRoom (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    {
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, RATE_ROOM, [
+            Byte.valueOf(arg2), listener3
+        ]);
+    }
+
     /** The method id used to dispatch <code>requestControl</code> requests. */
-    public static const REQUEST_CONTROL :int = 7;
+    public static const REQUEST_CONTROL :int = 8;
 
     // from interface RoomService
     public function requestControl (arg1 :Client, arg2 :ItemIdent) :void
@@ -115,7 +129,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>sendSpriteMessage</code> requests. */
-    public static const SEND_SPRITE_MESSAGE :int = 8;
+    public static const SEND_SPRITE_MESSAGE :int = 9;
 
     // from interface RoomService
     public function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void
@@ -126,7 +140,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>sendSpriteSignal</code> requests. */
-    public static const SEND_SPRITE_SIGNAL :int = 9;
+    public static const SEND_SPRITE_SIGNAL :int = 10;
 
     // from interface RoomService
     public function sendSpriteSignal (arg1 :Client, arg2 :String, arg3 :ByteArray) :void
@@ -137,7 +151,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setActorState</code> requests. */
-    public static const SET_ACTOR_STATE :int = 10;
+    public static const SET_ACTOR_STATE :int = 11;
 
     // from interface RoomService
     public function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void
@@ -148,7 +162,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>spawnMob</code> requests. */
-    public static const SPAWN_MOB :int = 11;
+    public static const SPAWN_MOB :int = 12;
 
     // from interface RoomService
     public function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :Location, arg6 :InvocationService_InvocationListener) :void
@@ -161,7 +175,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateMemory</code> requests. */
-    public static const UPDATE_MEMORY :int = 12;
+    public static const UPDATE_MEMORY :int = 13;
 
     // from interface RoomService
     public function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry, arg3 :InvocationService_ResultListener) :void
@@ -174,7 +188,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateRoom</code> requests. */
-    public static const UPDATE_ROOM :int = 13;
+    public static const UPDATE_ROOM :int = 14;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :SceneUpdate, arg3 :InvocationService_InvocationListener) :void

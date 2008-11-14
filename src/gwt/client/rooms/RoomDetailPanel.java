@@ -15,11 +15,11 @@ import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.RatingResult;
 
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
-import com.threerings.msoy.web.gwt.RatingResult;
 
 import client.comment.CommentsPanel;
 import client.room.SceneUtil;

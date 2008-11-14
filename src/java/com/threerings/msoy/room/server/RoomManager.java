@@ -65,12 +65,14 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
 
@@ -685,6 +687,23 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
+    @Override // from RoomProvider
+    public void rateRoom (ClientObject caller, byte rating, RoomService.ResultListener listener)
+        throws InvocationException
+    {
+        MemberObject member = (MemberObject) caller;
+
+        if (member.isGuest()) {
+            throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
+        }
+
+        Tuple<RatingRepository.RatingAverageRecord, Boolean> result =
+            _sceneRepo.getRatingRepository().rate(getScene().getSceneModel().sceneId,
+            member.getMemberId(), rating);
+
+        listener.requestProcessed(new RatingResult(result.left.average, result.left.count));
+    }
+
     @Override // from SpotSceneManager
     public void willTraversePortal (BodyObject body, Portal portal)
     {
@@ -850,7 +869,6 @@ public class RoomManager extends SpotSceneManager
             addMemoriesToRoom(member);
         }
 
-        // Don't add the user to the room until after we've added their avatar memories (above).
         super.bodyEntered(bodyOid);
     }
 

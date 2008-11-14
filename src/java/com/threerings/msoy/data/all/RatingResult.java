@@ -1,15 +1,17 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.gwt;
+package com.threerings.msoy.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.io.Streamable;
 
 /**
  * Represents a catalog listing of an item.
  */
 public class RatingResult
-    implements IsSerializable
+    implements Streamable, IsSerializable
 {
     /** The target's current rating. */
     public float rating;

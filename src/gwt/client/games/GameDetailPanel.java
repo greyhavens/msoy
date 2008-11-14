@@ -19,6 +19,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -27,7 +28,6 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.RatingResult;
 
 import client.comment.CommentsPanel;
 import client.item.FavoriteIndicator;

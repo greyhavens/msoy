@@ -9,6 +9,8 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
 
+import com.threerings.msoy.data.all.RatingResult;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.room.data.EntityMemoryEntry;
@@ -107,4 +109,9 @@ public interface RoomService extends InvocationService
      * @see MobInfo
      */
     void despawnMob (Client caller, int gameId, String mobId, InvocationListener listener);
+
+    /**
+     * Requests to assign this user rating to the room. Returns a RatingResult.
+     */
+    void rateRoom (Client caller, byte rating, ResultListener listener);
 }
