@@ -90,6 +90,12 @@
   margin-bottom: 15px;
 }
 
+.meFriendsPanel .GreeterTitleSub {
+  color: #326383;
+  font-size: 11px;
+  padding: 15px 0 1px 0;
+}
+
 .meFriendsPanel .Invite img {
   margin: 10px auto;
 }

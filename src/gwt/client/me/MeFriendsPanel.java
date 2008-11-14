@@ -44,11 +44,12 @@ public class MeFriendsPanel extends FlowPanel
         if (data.friends == null || data.friends.size() == 0) {
             addNoFriends(data);
         } else {
-            addPeople(data.friends, _msgs.nextFriendClick());
+            add(MsoyUI.createLabel(_msgs.nextFriendClick(), "TitleSub"));
+            addPeople(data.friends);
         }
         if (data.greeters != null && data.greeters.size() > 0) {
-            add(MsoyUI.createLabel(_msgs.nextOr(), "Or"));
-            addPeople(data.greeters, _msgs.nextGreeterClick());
+            add(MsoyUI.createLabel(_msgs.nextGreeters(), "GreeterTitleSub"));
+            addPeople(data.greeters);
         }
         add(new Image("/images/me/me_friends_footer.png"));
     }
@@ -92,10 +93,8 @@ public class MeFriendsPanel extends FlowPanel
     /**
      * Add widgets displayed when player has friends, who may or may not be online.
      */
-    protected void addPeople (List<MemberCard> people, String label)
+    protected void addPeople (List<MemberCard> people)
     {
-        add(MsoyUI.createLabel(label, "TitleSub"));
-
         // contents will scroll after a long time
         FlowPanel friendsList = MsoyUI.createFlowPanel("FriendsList");
         int size = MediaDesc.HALF_THUMBNAIL_SIZE;

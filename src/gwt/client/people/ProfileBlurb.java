@@ -104,13 +104,13 @@ public class ProfileBlurb extends Blurb
             ageSex += _msgs.age("" + _profile.age);
         }
         if (ageSex.length() > 0) {
-            info.addText(ageSex, 1, null);
+            info.addText(ageSex, 1, "LesserInfo");
         }
         if (!isBlank(_profile.location)) {
-            info.addText(_profile.location, 1, null);
+            info.addText(_profile.location, 1, "LesserInfo");
         }
         if (_greeter == GreeterStatus.GREETER) {
-            info.addText(_msgs.profileGreeterLabel(), 1, null);
+            info.addText(_msgs.profileGreeterLabel(), 1, "LesserInfo");
         }
 
         // create the detail section with level, last online, etc.
