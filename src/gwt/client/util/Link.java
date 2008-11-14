@@ -80,19 +80,31 @@ public class Link
     }
 
     /**
-     * Returns link that navigates to the specified application page with the specified
-     * arguments. A page should use this method to pass itself arguments.
+     * Returns link that navigates to the specified application page with the specified arguments.
+     * A page should use this method to pass itself arguments.
      */
     public static Widget create (String label, Pages page, String args)
     {
+        return create(label, null, page, args);
+    }
+
+    /**
+     * Returns link that navigates to the specified application page with the specified arguments.
+     * A page should use this method to pass itself arguments.
+     */
+    public static Widget create (String label, String styleName, Pages page, String args)
+    {
         Widget link = new ReroutedHyperlink(label, false, createToken(page, args));
         link.addStyleName("inline");
+        if (styleName != null) {
+            link.addStyleName(styleName);
+        }
         return link;
     }
 
     /**
-     * Returns link that navigates to the specified application page with the specified
-     * arguments. A page should use this method to pass itself arguments.
+     * Returns link that navigates to the specified application page with the specified arguments.
+     * A page should use this method to pass itself arguments.
      */
     public static Widget createImage (String path, String tip, Pages page, String args)
     {
@@ -100,8 +112,8 @@ public class Link
     }
 
     /**
-     * Returns link that navigates to the specified application page with the specified
-     * arguments. A page should use this method to pass itself arguments.
+     * Returns link that navigates to the specified application page with the specified arguments.
+     * A page should use this method to pass itself arguments.
      */
     public static Widget createImage (AbstractImagePrototype image,
                                       String tip, Pages page, String args)
