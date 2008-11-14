@@ -14,6 +14,7 @@ import com.threerings.presents.dobj.SetAdapter;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.whirled.game.client.HeadShot;
 import com.whirled.game.client.WhirledGameBackend;
 import com.whirled.game.data.WhirledGameObject;
 
@@ -56,7 +57,7 @@ public class MsoyGameBackend extends WhirledGameBackend
             var vizName :VizMemberName = info.username as VizMemberName;
             if (vizName != null) {
                 // now, we return a new one every time (in case the game wants to use two.)
-                return new Headshot(vizName.getPhoto());
+                return new HeadShot(ScalingMediaContainer.createView(vizName.getPhoto()));
             }
         }
 
@@ -150,114 +151,4 @@ public class MsoyGameBackend extends WhirledGameBackend
 
     protected var _contentListener :SetAdapter = new SetAdapter(entryAddedOnUserObject);
 }
-}
-
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-
-import flash.geom.Point;
-
-import com.threerings.msoy.ui.ScalingMediaContainer;
-
-import com.threerings.msoy.data.all.MediaDesc;
-
-/**
- * We use a MsoyMediaContainer so that the headshot can be bleeped, but we wrap
- * it inside this class so that the usercode cannot retrieve and fuxor with anything.
- */
-class Headshot extends Sprite
-{
-    public function Headshot (desc :MediaDesc)
-    {
-        super.addChild(ScalingMediaContainer.createView(desc));
-    }
-
-    override public function get width () :Number
-    {
-        return MediaDesc.THUMBNAIL_WIDTH * scaleX;
-    }
-
-    override public function set width (newVal :Number) :void
-    {
-        scaleX = newVal / MediaDesc.THUMBNAIL_WIDTH;
-    }
-
-    override public function get height () :Number
-    {
-        return MediaDesc.THUMBNAIL_HEIGHT * scaleY;
-    }
-
-    override public function set height (newVal :Number) :void
-    {
-        scaleY = newVal / MediaDesc.THUMBNAIL_HEIGHT;
-    }
-
-    override public function addChild (child :DisplayObject) :DisplayObject
-    {
-        nope();
-        return null;
-    }
-
-    override public function addChildAt (child :DisplayObject, index :int) :DisplayObject
-    {
-        nope();
-        return null;
-    }
-
-    override public function contains (child :DisplayObject) :Boolean
-    {
-        return (child == this); // make it only work for us..
-    }
-
-    override public function getChildAt (index :int) :DisplayObject
-    {
-        return null;
-    }
-
-    override public function getChildByName (name :String) :DisplayObject
-    {
-        return null;
-    }
-
-    override public function getChildIndex (child :DisplayObject) :int
-    {
-        return -1;
-    }
-
-    override public function getObjectsUnderPoint (point :Point) :Array
-    {
-        return [];
-    }
-
-    override public function removeChild (child :DisplayObject) :DisplayObject
-    {
-        nope();
-        return null;
-    }
-
-    override public function removeChildAt (index :int) :DisplayObject
-    {
-        nope();
-        return null;
-    }
-
-    override public function setChildIndex (child :DisplayObject, index :int) :void
-    {
-        nope();
-    }
-
-    override public function swapChildren (child1 :DisplayObject, child2 :DisplayObject) :void
-    {
-        nope();
-    }
-
-    override public function swapChildrenAt (index1 :int, index2 :int) :void
-    {
-        nope();
-    }
-
-    protected function nope () :void
-    {
-        throw new Error("Operation not permitted.");
-    }
 }
