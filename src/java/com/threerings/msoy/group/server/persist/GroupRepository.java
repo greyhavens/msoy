@@ -41,7 +41,10 @@ import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.SelectClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.jdbc.depot.expression.EpochSeconds;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.expression.ValueExp;
+import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 
@@ -61,7 +64,6 @@ import com.threerings.msoy.group.gwt.GroupCard;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -113,20 +115,26 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Returns a list of all public and inv-only groups, sorted by size, then by creation time.
-     *
+     * Returns a list of all public and inv-only groups, sorted by "new & popular"
+     * 
      * @param offset an offset into the collection of groups at which to start.
      * @param limit a limit to the number of groups to load or Integer.MAX_VALUE for all of them.
      */
     public List<GroupRecord> getGroupsList (int offset, int limit)
     {
+        // for "new & popular" order: subtract 2 members per day the group has been around
+        long membersPerDay = (24 * 60 * 60) / 2;
+        long nowSeconds = System.currentTimeMillis() / 1000;
         return findAll(
             GroupRecord.class,
             new Where(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE))),
             new Limit(offset, limit),
-            new OrderBy(
-                new SQLExpression[] { GroupRecord.MEMBER_COUNT_C, GroupRecord.CREATION_DATE_C },
-                new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.ASC }));
+            OrderBy.descending(
+                new Arithmetic.Sub(GroupRecord.MEMBER_COUNT_C,
+                    new Arithmetic.Div(
+                        new Arithmetic.Sub(new ValueExp(nowSeconds),
+                            new EpochSeconds(GroupRecord.CREATION_DATE_C)), membersPerDay))
+                ));
     }
 
     /**
