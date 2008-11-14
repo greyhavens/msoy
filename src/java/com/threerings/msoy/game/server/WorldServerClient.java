@@ -20,6 +20,7 @@ import com.threerings.presents.peer.net.PeerCreds;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.net.ConnectionManager;
+import com.threerings.presents.server.net.ServerCommunicator;
 
 import com.threerings.stats.data.IntSetStatAdder;
 import com.threerings.stats.data.IntStatIncrementer;
@@ -33,6 +34,7 @@ import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.server.GameGameRegistry;
@@ -76,8 +78,11 @@ public class WorldServerClient
         // create our client and connect to the server
         _client = new Client(null, _omgr) {
             protected Communicator createCommunicator () {
-                // return new ServerCommunicator(this, _conmgr, WorldServerClient.this._omgr);
-                return new BlockingCommunicator(this);
+                if (DeploymentConfig.devDeployment) {
+                    return new ServerCommunicator(this, _conmgr, WorldServerClient.this._omgr);
+                } else {
+                    return new BlockingCommunicator(this);
+                }
             }
         };
         _client.setCredentials(new PeerCreds("game:" + _port, ServerConfig.sharedSecret));
