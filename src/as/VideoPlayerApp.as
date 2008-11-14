@@ -29,10 +29,10 @@ import com.threerings.msoy.item.client.YouTubePlayer;
 // 1) Implement full volume control in the MsoyVideoDisplay UI.
 // 2) When this standalone player starts up, start with the global volume setting.
 [SWF(width="320", height="240")]
-public class VideoPlayer extends Sprite
+public class VideoPlayerApp extends Sprite
     implements ExternalMediaDisplayer
 {
-    public function VideoPlayer ()
+    public function VideoPlayerApp ()
     {
         this.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
         try {

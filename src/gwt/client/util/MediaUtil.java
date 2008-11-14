@@ -52,10 +52,10 @@ public class MediaUtil
             view = WidgetUtil.createFlashContainer("", path, width, height, null);
 
         } else if (desc.isVideo()) {
-            view = FlashClients.createVideoViewer(width, height, path);
+            view = FlashClients.createVideoPlayer(width, height, path);
 
         } else if (desc.isAudio()) {
-            view = FlashClients.createMusicViewer(width, height, path, null);
+            view = FlashClients.createAudioPlayer(width, height, path);
 
         } else if (desc.isImage()) {
             view = new Image(path);

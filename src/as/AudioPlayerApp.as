@@ -12,9 +12,9 @@ import com.threerings.util.ParameterUtil;
 import com.threerings.msoy.room.client.SoundPlayer;
 
 [SWF(width="320", height="240")]
-public class AudioPlayer extends Sprite
+public class AudioPlayerApp extends Sprite
 {
-    public function AudioPlayer ()
+    public function AudioPlayerApp ()
     {
         this.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 

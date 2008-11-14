@@ -23,32 +23,26 @@ import client.shell.Frame;
 public class FlashClients
 {
     /**
-     * Create a video viewer.
+     * Create a video player.
      *
      * @param path may be null to create an empty player that can be provided with
      *        video information later.
      */
-    public static HTML createVideoViewer (int width, int height, String path)
+    public static HTML createVideoPlayer (int width, int height, String path)
     {
         String flashVars = (path == null) ? null : "video=" + URL.encodeComponent(path);
-        return WidgetUtil.createFlashContainer("videoViewer",
-            "/clients/" + DeploymentConfig.version + "/videoviewer.swf", width, height, flashVars);
+        return WidgetUtil.createFlashContainer("videoPlayer",
+            "/clients/" + DeploymentConfig.version + "/videoplayer.swf", width, height, flashVars);
     }
 
     /**
-     * Create a music viewer.
-     *
-     * @param thumbPath may be null.
+     * Create an audio player.
      */
-    public static HTML createMusicViewer (int width, int height, String musicPath, String thumbPath)
+    public static HTML createAudioPlayer (int width, int height, String path)
     {
-        String flashVars = "music=" + URL.encodeComponent(musicPath);
-        if (thumbPath != null) {
-            flashVars += "&icon=" + URL.encodeComponent(thumbPath);
-        }
-        
-        return WidgetUtil.createFlashContainer("musicViewer",
-            "/clients/" + DeploymentConfig.version + "/musicviewer.swf", width, height, flashVars);
+        String flashVars = "audio=" + URL.encodeComponent(path);
+        return WidgetUtil.createFlashContainer("audioPlayer",
+            "/clients/" + DeploymentConfig.version + "/audioplayer.swf", width, height, flashVars);
     }
 
     /**

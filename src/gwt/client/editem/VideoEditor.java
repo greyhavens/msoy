@@ -83,7 +83,7 @@ public class VideoEditor extends BulkMediaEditor
                     } else {
                         // create a blank video viewer, ready to receive data when
                         // the user enters it
-                        setWidget(0, 0, FlashClients.createVideoViewer(
+                        setWidget(0, 0, FlashClients.createVideoPlayer(
                             MediaDesc.THUMBNAIL_WIDTH * 2, MediaDesc.THUMBNAIL_HEIGHT * 2, null));
                     }
                 }
@@ -145,7 +145,7 @@ public class VideoEditor extends BulkMediaEditor
     }
 
     /**
-     * Wire up the communication between this editor and the videoViewer.
+     * Wire up the communication between this editor and the videoPlayer.
      */
     protected static native void configureBridge () /*-{
         $wnd.gotYoutubeId = function (id) {
@@ -157,7 +157,7 @@ public class VideoEditor extends BulkMediaEditor
      * Send the youtubeId to the video player.
      */
     protected static native void relayYoutubeId (String id) /*-{
-        var player = $doc.getElementById("videoViewer");
+        var player = $doc.getElementById("videoPlayer");
         if (player != null) {
             try { player.setYoutubeId(id) } catch (e) {}
         }
