@@ -18,7 +18,6 @@ import com.samskivert.util.Tuple;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
@@ -29,7 +28,6 @@ import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
-import com.threerings.presents.util.ResultListenerList;
 
 import com.threerings.parlor.game.data.GameCodes;
 import com.threerings.stats.data.StatModifier;

@@ -4,7 +4,6 @@
 package com.threerings.msoy.server.persist;
 
 import java.util.HashMap;
-import java.util.List;
 
 import com.google.inject.Inject;
 

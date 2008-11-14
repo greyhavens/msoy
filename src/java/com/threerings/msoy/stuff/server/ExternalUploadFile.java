@@ -9,8 +9,6 @@ import java.io.IOException;
 
 import com.threerings.msoy.web.server.UploadFile;
 
-import com.threerings.msoy.data.all.MediaDesc;
-
 public class ExternalUploadFile extends UploadFile
 {
     public ExternalUploadFile (String data, byte mimeType)

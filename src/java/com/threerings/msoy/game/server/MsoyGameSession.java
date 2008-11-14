@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 
 import com.threerings.crowd.server.CrowdSession;
-import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.data.MsoyTokenRing;

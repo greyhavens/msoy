@@ -27,7 +27,6 @@ import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameContent;

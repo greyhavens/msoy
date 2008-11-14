@@ -9,10 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 
 import com.samskivert.util.IntMap;
@@ -25,11 +22,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -64,8 +58,6 @@ import com.threerings.msoy.group.gwt.GroupCard;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import static com.threerings.msoy.Log.log;
-
 /**
  * Manages the persistent store of group data.
  */

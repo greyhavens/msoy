@@ -16,7 +16,6 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 
 // TODO: remove after 2008-11-12
 import java.util.List;
-import com.google.inject.Injector;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.DataMigration;
 // END: TODO

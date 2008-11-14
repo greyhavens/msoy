@@ -25,7 +25,6 @@ import com.samskivert.jdbc.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
-import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
