@@ -28,8 +28,8 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.flash.media.FlvVideoPlayer;
+import com.threerings.flash.media.MediaPlayerCodes;
 import com.threerings.flash.media.VideoPlayer;
-import com.threerings.flash.media.VideoPlayerCodes;
 
 /**
  * The msoy-skinned video display.
@@ -50,11 +50,11 @@ public class MsoyVideoDisplay extends Sprite
     public function MsoyVideoDisplay (player :VideoPlayer, commentCallback :Function = null)
     {
         _player = player;
-        _player.addEventListener(VideoPlayerCodes.STATE, handlePlayerState);
-        _player.addEventListener(VideoPlayerCodes.SIZE, handlePlayerSize);
-        _player.addEventListener(VideoPlayerCodes.DURATION, handlePlayerDuration);
-        _player.addEventListener(VideoPlayerCodes.POSITION, handlePlayerPosition);
-        _player.addEventListener(VideoPlayerCodes.ERROR, handlePlayerError);
+        _player.addEventListener(MediaPlayerCodes.STATE, handlePlayerState);
+        _player.addEventListener(MediaPlayerCodes.SIZE, handlePlayerSize);
+        _player.addEventListener(MediaPlayerCodes.DURATION, handlePlayerDuration);
+        _player.addEventListener(MediaPlayerCodes.POSITION, handlePlayerPosition);
+        _player.addEventListener(MediaPlayerCodes.ERROR, handlePlayerError);
         _commentCallback = commentCallback;
 
         addChild(_player.getDisplay());
@@ -263,7 +263,7 @@ public class MsoyVideoDisplay extends Sprite
 
     protected function displayPlayState (state :int) :void
     {
-        _playing = (state == VideoPlayerCodes.STATE_PLAYING);
+        _playing = (state == MediaPlayerCodes.STATE_PLAYING);
         updateHUD();
 
         if (_playBtn == null) {
@@ -273,11 +273,11 @@ public class MsoyVideoDisplay extends Sprite
         var on :DisplayObject;
         var off :DisplayObject;
 
-        if (state == VideoPlayerCodes.STATE_READY || state == VideoPlayerCodes.STATE_PAUSED) {
+        if (state == MediaPlayerCodes.STATE_READY || state == MediaPlayerCodes.STATE_PAUSED) {
             on = _playBtn;
             off = _pauseBtn;
 
-        } else if (state == VideoPlayerCodes.STATE_PLAYING) {
+        } else if (state == MediaPlayerCodes.STATE_PLAYING) {
             on = _pauseBtn;
             off = _playBtn;
 

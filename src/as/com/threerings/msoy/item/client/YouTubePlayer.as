@@ -29,8 +29,8 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.LoaderUtil;
 
+import com.threerings.flash.media.MediaPlayerCodes;
 import com.threerings.flash.media.VideoPlayer;
-import com.threerings.flash.media.VideoPlayerCodes;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
@@ -98,10 +98,10 @@ public class YouTubePlayer extends EventDispatcher
     public function getState () :int
     {
         switch (_ytState) {
-        default: return VideoPlayerCodes.STATE_UNREADY;
-        case 5: return VideoPlayerCodes.STATE_READY;
-        case 1: return VideoPlayerCodes.STATE_PLAYING;
-        case 2: return VideoPlayerCodes.STATE_PAUSED;
+        default: return MediaPlayerCodes.STATE_UNREADY;
+        case 5: return MediaPlayerCodes.STATE_READY;
+        case 1: return MediaPlayerCodes.STATE_PLAYING;
+        case 2: return MediaPlayerCodes.STATE_PAUSED;
         }
     }
 
@@ -205,19 +205,19 @@ public class YouTubePlayer extends EventDispatcher
             break;
         }
 
-        dispatchEvent(new ValueEvent(VideoPlayerCodes.STATE, getState()));
+        dispatchEvent(new ValueEvent(MediaPlayerCodes.STATE, getState()));
     }
 
     protected function handleGotDuration (duration :Number) :void
     {
         _duration = duration;
-        dispatchEvent(new ValueEvent(VideoPlayerCodes.DURATION, duration));
+        dispatchEvent(new ValueEvent(MediaPlayerCodes.DURATION, duration));
     }
 
     protected function handleGotPosition (position :Number) :void
     {
         _position = position
-        dispatchEvent(new ValueEvent(VideoPlayerCodes.POSITION, position));
+        dispatchEvent(new ValueEvent(MediaPlayerCodes.POSITION, position));
     }
 
     protected var _loader :Loader;
