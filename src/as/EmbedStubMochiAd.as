@@ -34,7 +34,7 @@ public class EmbedStubMochiAd extends EmbedStub
         addChild(dynosprite);
 
         MochiAd.showPreGameAd({
-            clip: dynosprite, id: MOCHI_AD_ID, res: "700x575",
+            clip: dynosprite, id: MOCHI_AD_ID, res: WIDTH + "x" + HEIGHT,
             no_progress_bar: true, ad_started: function () :void {},
             ad_finished: function () :void {
                 removeChild(dynosprite);
