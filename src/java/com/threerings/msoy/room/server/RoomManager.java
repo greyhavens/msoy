@@ -850,6 +850,7 @@ public class RoomManager extends SpotSceneManager
             addMemoriesToRoom(member);
         }
 
+        // Don't add the user to the room until after we've added their avatar memories (above).
         super.bodyEntered(bodyOid);
     }
 
