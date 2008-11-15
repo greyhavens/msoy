@@ -6,6 +6,7 @@ package client.msgs;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -40,7 +41,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
 {
     public ThreadListPanel (ForumPanel parent)
     {
-        super(THREADS_PER_PAGE, 1, NAV_ON_BOTTOM);
+        super((Window.getClientHeight() - USED_HEIGHT)/THREAD_HEIGHT, 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
         setWidth("100%");
         _parent = parent;
@@ -268,6 +269,12 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
 
     /** The maximum number of thread search results. */
     protected static final int MAX_RESULTS = 20;
+
+    /** The height used by fixed interface elements. */
+    protected static final int USED_HEIGHT = 57;
+
+    /** The height of a thread summary row. */
+    protected static final int THREAD_HEIGHT = 34;
 
     /** Images displayed next to threads that have special flags. */
     protected static final String[] FLAG_IMAGES = { "announce", "sticky", "locked" };
