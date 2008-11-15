@@ -122,7 +122,7 @@ public class ItemUtil
         if (preview.isVideo()) {
             return FlashClients.createVideoPlayer(320, 240, preview.getMediaPath());
         } else if (preview.isAudio()) {
-            return FlashClients.createAudioPlayer(320, 240, preview.getMediaPath());
+            return FlashClients.createAudioPlayer(320, 28, preview.getMediaPath());
         }
 
         // set up the flashvars
