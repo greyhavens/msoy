@@ -256,7 +256,7 @@ public class QuestDelegate extends PlaceManagerDelegate
             _gameReg.updateGameMetrics(
                 _content.detail, true, playerMins, player.tasksCompleted, player.coinsAccrued);
         }
-        
+
         // reset their accumulated coins and whatnot
         player.reset();
     }
