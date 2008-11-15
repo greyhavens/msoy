@@ -53,12 +53,12 @@ blockquote {
 }
 
 .wrapFooter {
-  background: url(${base_url}images/email/wrap_footer.jpg) #3A86B7;
   font-size: 12px;
-  text-align: center;
-  padding-top: 70px;
+  background: #80BFE2;
+}
+
+.wrapFooter, .wrapFooter a {
   color: #FFFFFF;
-  height: 125px;
 }
 
 .thingBox {
@@ -81,8 +81,10 @@ blockquote {
 <tr><td style="padding-top: 10px">
 ${content}
 </td></tr>
-<tr><td class="wrapFooter">
-Please <a style="color: #FFFFFF" href="${base_url}#account-optout_%OPTOUTBITS%">click here</a>
+<tr><td>
+<img src="${base_url}images/email/wrap_footer.jpg"></td></tr>
+<tr><td class="wrapFooter" height="39" align="center" valign="center">
+Please <a href="${base_url}#account-optout_%OPTOUTBITS%">click here</a>
 if you no longer wish to receive announcements from Whirled.
 </td></tr>
 </table>
