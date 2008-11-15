@@ -261,7 +261,7 @@ public class GalaxyPanel extends FlowPanel
             add(MsoyUI.createLabel(_msgs.galaxyMemberCount(group.memberCount + " "),
                                    "MemberCount"), 5, 40);
             add(Link.create(_msgs.galaxyPeopleInRooms(group.population + ""), "InRooms",
-                            Pages.WORLD, "s" + group.name.getGroupId()), 5, 60);
+                            Pages.WORLD, "s" + group.homeSceneId), 5, 60);
             add(Link.create(_msgs.galaxyThreadCount(group.threadCount + ""), "ThreadCount",
                             Pages.GROUPS, Args.compose("f", group.name.getGroupId())), 5, 80);
 
