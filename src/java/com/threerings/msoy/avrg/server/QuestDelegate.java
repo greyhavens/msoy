@@ -244,20 +244,17 @@ public class QuestDelegate extends PlaceManagerDelegate
             _worldClient.updatePlayer(memberId, null);
         }
 
-        // if they accrued any coins (and are not a guest), pay them out
-        if (!player.playerObject.isGuest()) {
-            if (player.coinsAccrued > 0) {
-                // do the actual coin awarding
-                final UserAction action = UserAction.playedGame(
-                    memberId, _content.game.name, _gameId, playerSecs);
-                _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
-            }
+        // if they accrued any coins (and are not a guest), do the actual coin awarding
+        if (!player.playerObject.isGuest() && player.coinsAccrued > 0) {
+            final UserAction action = UserAction.playedGame(
+                memberId, _content.game.name, _gameId, playerSecs);
+            _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+        }
 
-            // note time played and coins awarded for coin payout factor calculation purposes
-            if (playerMins > 0 || player.coinsAccrued > 0) {
-                _gameReg.updateGameMetrics(
-                    _content.detail, true, playerMins, player.tasksCompleted, player.coinsAccrued);
-            }
+        // note time played and coins awarded for coin payout factor calculation purposes
+        if (playerMins > 0 || player.coinsAccrued > 0) {
+            _gameReg.updateGameMetrics(
+                _content.detail, true, playerMins, player.tasksCompleted, player.coinsAccrued);
         }
         
         // reset their accumulated coins and whatnot
