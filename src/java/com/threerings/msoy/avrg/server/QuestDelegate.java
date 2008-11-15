@@ -203,9 +203,11 @@ public class QuestDelegate extends PlaceManagerDelegate
             totalSecs += playerSecs;
             totalTasks += player.tasksCompleted;
             if (player.coinsAccrued > 0) {
-                final UserAction action = UserAction.playedGame(
-                    player.playerObject.getMemberId(), _content.game.name, _gameId, playerSecs);
-                _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+                if (!player.playerObject.isGuest()) {
+                    final UserAction action = UserAction.playedGame(
+                        player.playerObject.getMemberId(), _content.game.name, _gameId, playerSecs);
+                    _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+                }
                 totalAward += player.coinsAccrued;
                 player.reset();
             }
@@ -242,20 +244,22 @@ public class QuestDelegate extends PlaceManagerDelegate
             _worldClient.updatePlayer(memberId, null);
         }
 
-        // if they accrued any coins, pay them out
-        if (player.coinsAccrued > 0) {
-            // do the actual coin awarding
-            final UserAction action = UserAction.playedGame(
-                memberId, _content.game.name, _gameId, playerSecs);
-            _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
-        }
+        // if they accrued any coins (and are not a guest), pay them out
+        if (!player.playerObject.isGuest()) {
+            if (player.coinsAccrued > 0) {
+                // do the actual coin awarding
+                final UserAction action = UserAction.playedGame(
+                    memberId, _content.game.name, _gameId, playerSecs);
+                _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+            }
 
-        // note time played and coins awarded for coin payout factor calculation purposes
-        if (playerMins > 0 || player.coinsAccrued > 0) {
-            _gameReg.updateGameMetrics(
-                _content.detail, true, playerMins, player.tasksCompleted, player.coinsAccrued);
+            // note time played and coins awarded for coin payout factor calculation purposes
+            if (playerMins > 0 || player.coinsAccrued > 0) {
+                _gameReg.updateGameMetrics(
+                    _content.detail, true, playerMins, player.tasksCompleted, player.coinsAccrued);
+            }
         }
-
+        
         // reset their accumulated coins and whatnot
         player.reset();
     }
