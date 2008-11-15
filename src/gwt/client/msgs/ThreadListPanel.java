@@ -41,7 +41,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
 {
     public ThreadListPanel (ForumPanel parent)
     {
-        super((Window.getClientHeight() - USED_HEIGHT)/THREAD_HEIGHT, 1, NAV_ON_BOTTOM);
+        super(Math.max(10, (Window.getClientHeight()-USED_HEIGHT)/THREAD_HEIGHT), 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
         setWidth("100%");
         _parent = parent;
