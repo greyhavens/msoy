@@ -200,6 +200,7 @@
       <dependency groupId="com.threerings.underwire" artifactId="underwire" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings.underwire" artifactId="underwire-gwt"
                   version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.samskivert" artifactId="depot-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="org.jivesoftware.smack" artifactId="smack-component"
                   version="0.0-SNAPSHOT"/>
     </artifact:dependencies>
