@@ -19,6 +19,7 @@ import com.samskivert.util.IntMaps;
 
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.web.gwt.MessageUtil;
+import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
@@ -122,7 +123,7 @@ public class RSSServlet extends HttpServlet
         rss.append("<rss version=\"2.0\"><channel>");
         rss.append("<title>").append(group.name).append("</title>");
         rss.append("<link>").append(url);
-        rss.append("#whirleds-f_").append(group.groupId).append("</link>");
+        rss.append("#" + Pages.GROUPS.getPath() + "-f_").append(group.groupId).append("</link>");
         rss.append("<description>").append(group.blurb).append("</description>");
         if (messages.size() > 0) {
             String createdDate = _sdf.format(messages.get(0).created);
@@ -135,12 +136,14 @@ public class RSSServlet extends HttpServlet
             rss.append("<item>");
             rss.append("<title>").append(thread.subject).append("</title>");
             rss.append("<link>").append(url);
-            rss.append("#whirleds-t_").append(thread.threadId).append("</link>");
+            rss.append("#" + Pages.GROUPS.getPath() + "-t_").append(thread.threadId);
+            rss.append("</link>");
             rss.append("<description><![CDATA[ ").append(MessageUtil.expandMessage(message.message));
             rss.append("]]></description>");
             rss.append("<pubDate>").append(_sdf.format(message.created)).append("</pubDate>");
             rss.append("<guid>").append(url);
-            rss.append("#whirleds-t_").append(thread.threadId).append("</guid>");
+            rss.append("#" + Pages.GROUPS.getPath() + "-t_").append(thread.threadId);
+            rss.append("</guid>");
             rss.append("</item>");
         }
         rss.append("</channel></rss>");
