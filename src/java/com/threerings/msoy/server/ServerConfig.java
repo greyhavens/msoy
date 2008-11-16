@@ -139,7 +139,7 @@ public class ServerConfig
         }
 
         // otherwise do things using a postgres pooled data source
-        DataSource[] sources = new DataSource[2];
+        final DataSource[] sources = new DataSource[2];
         String[] prefixes = new String[] { "readonly", "readwrite" };
         for (int ii = 0; ii < sources.length; ii++) {
             Properties props = config.getSubProperties("db.default"); // start with the defaults
@@ -154,7 +154,11 @@ public class ServerConfig
             source.setMaxConnections(Integer.parseInt(props.getProperty("maxconns", "1")));
             sources[ii] = source;
         }
-        return new DataSourceConnectionProvider("jdbc:postgresql", sources[0], sources[1]);
+        return new DataSourceConnectionProvider("jdbc:postgresql", sources[0], sources[1]) {
+            @Override public void shutdown () {
+                // TODO: shutdown our datasources
+            }
+        };
     }
 
     /**
