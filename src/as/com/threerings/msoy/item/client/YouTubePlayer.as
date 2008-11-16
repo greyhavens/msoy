@@ -155,6 +155,12 @@ public class YouTubePlayer extends EventDispatcher
     }
 
     // from VideoPlayer
+    public function getMetadata () :Object
+    {
+        return null;
+    }
+
+    // from VideoPlayer
     public function unload () :void
     {
         shutdownPlayer();
