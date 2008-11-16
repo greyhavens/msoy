@@ -136,13 +136,13 @@ public class RSSServlet extends HttpServlet
             rss.append("<item>");
             rss.append("<title>").append(thread.subject).append("</title>");
             rss.append("<link>").append(url);
-            rss.append("#" + Pages.GROUPS.getPath() + "-t_").append(thread.threadId);
+            rss.append("#").append(Pages.GROUPS.getPath()).append("-t_").append(thread.threadId);
             rss.append("</link>");
             rss.append("<description><![CDATA[ ").append(MessageUtil.expandMessage(message.message));
             rss.append("]]></description>");
             rss.append("<pubDate>").append(_sdf.format(message.created)).append("</pubDate>");
             rss.append("<guid>").append(url);
-            rss.append("#" + Pages.GROUPS.getPath() + "-t_").append(thread.threadId);
+            rss.append("#").append(Pages.GROUPS.getPath()).append("-t_").append(thread.threadId);
             rss.append("</guid>");
             rss.append("</item>");
         }
