@@ -5,8 +5,8 @@ package com.threerings.msoy.item.server.persist;
 
 import com.google.common.base.Function;
 
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Index;
+import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.annotation.Index;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;

@@ -7,8 +7,8 @@ import java.util.HashMap;
 
 import com.google.inject.Inject;
 
-import com.samskivert.jdbc.depot.DatabaseException;
-import com.samskivert.jdbc.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DataMigration;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;

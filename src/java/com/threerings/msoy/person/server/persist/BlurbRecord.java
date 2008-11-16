@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.person.server.persist;
 
-import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
+import com.samskivert.depot.annotation.*; // for Depot annotations
 
 /**
  * Contains metadata for a particular blurb contained on a player's person

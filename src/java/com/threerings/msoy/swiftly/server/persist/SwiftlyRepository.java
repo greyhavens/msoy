@@ -11,17 +11,17 @@ import java.util.Set;
 import com.google.inject.Singleton;
 import com.google.inject.Inject;
 
-import com.samskivert.jdbc.depot.DatabaseException;
-import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.DuplicateKeyException;
-import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.Join;
-import com.samskivert.jdbc.depot.clause.OrderBy;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
-import com.samskivert.jdbc.depot.operator.Logic.And;
+import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.DuplicateKeyException;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.Join;
+import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.operator.Conditionals.Equals;
+import com.samskivert.depot.operator.Logic.And;
 
 import com.threerings.presents.annotation.BlockingThread;
 

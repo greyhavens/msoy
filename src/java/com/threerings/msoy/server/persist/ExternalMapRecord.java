@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.server.persist;
 
-import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Id;
+import com.samskivert.depot.expression.ColumnExp;
 
 /**
  * Maps our member accounts to external user ids. Used to integrate with external services like

@@ -5,10 +5,10 @@ package com.threerings.msoy.swiftly.server.persist;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
-import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.*; // for Depot annotations
+import com.samskivert.depot.expression.ColumnExp;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 
 /**

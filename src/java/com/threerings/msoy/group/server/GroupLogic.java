@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.DuplicateKeyException;
+import com.samskivert.depot.DuplicateKeyException;
 
 import com.threerings.presents.annotation.BlockingThread;
 

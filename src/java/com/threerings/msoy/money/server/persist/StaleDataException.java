@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.money.server.persist;
 
-import com.samskivert.jdbc.depot.DatabaseException;
+import com.samskivert.depot.DatabaseException;
 
 /**
  * Indicates an update or insert was attempted on an entity, but the entity was updated in another

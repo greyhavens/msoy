@@ -11,20 +11,20 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.IntIntMap;
 
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.Computed;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.clause.GroupBy;
-import com.samskivert.jdbc.depot.clause.Join;
-import com.samskivert.jdbc.depot.clause.Limit;
-import com.samskivert.jdbc.depot.clause.OrderBy;
-import com.samskivert.jdbc.depot.clause.QueryClause;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.SQLExpression;
-import com.samskivert.jdbc.depot.operator.Conditionals;
-import com.samskivert.jdbc.depot.operator.Logic.And;
-import com.samskivert.jdbc.depot.operator.SQLOperator;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Computed;
+import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.clause.GroupBy;
+import com.samskivert.depot.clause.Join;
+import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.QueryClause;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.SQLExpression;
+import com.samskivert.depot.operator.Conditionals;
+import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.msoy.item.data.all.Game;
 

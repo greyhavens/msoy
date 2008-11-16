@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.annotation.Column;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.Index;
-import com.samskivert.jdbc.depot.annotation.TableGenerator;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.annotation.Column;
+import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.annotation.Index;
+import com.samskivert.depot.annotation.TableGenerator;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;

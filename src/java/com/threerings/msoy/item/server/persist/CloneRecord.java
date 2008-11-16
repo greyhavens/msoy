@@ -5,8 +5,8 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
 
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.*; // for Depot annotations
 
 import com.threerings.msoy.money.data.all.Currency;
 

@@ -6,15 +6,15 @@ package com.threerings.msoy.person.server.persist;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.Column;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.GeneratedValue;
-import com.samskivert.jdbc.depot.annotation.GenerationType;
-import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.jdbc.depot.annotation.Index;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
+import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.annotation.GeneratedValue;
+import com.samskivert.depot.annotation.GenerationType;
+import com.samskivert.depot.annotation.Id;
+import com.samskivert.depot.annotation.Index;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.Gallery;

@@ -6,8 +6,8 @@ package com.threerings.msoy.item.server.persist;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.annotation.Entity;
 
 import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.server.persist.RatingRecord;

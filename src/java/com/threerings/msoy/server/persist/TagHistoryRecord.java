@@ -6,8 +6,8 @@ package com.threerings.msoy.server.persist;
 import java.sql.Timestamp;
 
 import com.google.common.base.Function;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Entity;
 
 import com.threerings.io.Streamable;
 

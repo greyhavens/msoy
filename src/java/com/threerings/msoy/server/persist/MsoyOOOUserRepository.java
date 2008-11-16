@@ -10,12 +10,12 @@ import java.sql.Date;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.clause.Join;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
-import com.samskivert.jdbc.depot.operator.Logic.And;
-import com.samskivert.jdbc.depot.operator.SQLOperator;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.clause.Join;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.operator.Conditionals.Equals;
+import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.servlet.user.User;
 import com.samskivert.servlet.user.UserUtil;

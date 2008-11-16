@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.DuplicateKeyException;
+import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 

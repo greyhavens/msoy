@@ -6,8 +6,8 @@ package com.threerings.msoy.item.server.persist;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.annotation.Entity;
 
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
@@ -16,8 +16,8 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 
 // TODO: remove after 2008-11-12
 import java.util.List;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.DataMigration;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.DataMigration;
 // END: TODO
 
 /**

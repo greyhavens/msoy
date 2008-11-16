@@ -5,7 +5,7 @@ package com.threerings.msoy.swiftly.server;
 
 import java.io.IOException;
 
-import com.samskivert.jdbc.depot.DatabaseException;
+import com.samskivert.depot.DatabaseException;
 import com.threerings.presents.client.InvocationService.ResultListener;
 
 import com.threerings.msoy.data.all.MediaDesc;

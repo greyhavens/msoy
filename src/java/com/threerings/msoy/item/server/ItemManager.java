@@ -17,7 +17,7 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.jdbc.depot.DatabaseException;
+import com.samskivert.depot.DatabaseException;
 
 import com.threerings.util.MessageBundle;
 

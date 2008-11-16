@@ -20,7 +20,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
-import com.samskivert.jdbc.depot.DuplicateKeyException;
+import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;

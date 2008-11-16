@@ -17,7 +17,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.Tuple;
 

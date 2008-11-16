@@ -12,7 +12,7 @@ import java.util.Map;
 
 import com.google.inject.Inject;
 
-import com.samskivert.jdbc.depot.DuplicateKeyException;
+import com.samskivert.depot.DuplicateKeyException;
 
 import com.threerings.presents.dobj.RootDObjectManager;
 

@@ -11,8 +11,8 @@ import com.google.inject.Injector;
 import net.sf.ehcache.CacheManager;
 
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.depot.EHCacheAdapter;
-import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.depot.EHCacheAdapter;
+import com.samskivert.depot.PersistenceContext;
 
 import com.samskivert.util.RunQueue;
 

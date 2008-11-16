@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.game.server.persist;
 
-import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.annotation.GeneratedValue;
-import com.samskivert.jdbc.depot.annotation.GenerationType;
-import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.jdbc.depot.annotation.TableGenerator;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.annotation.GeneratedValue;
+import com.samskivert.depot.annotation.GenerationType;
+import com.samskivert.depot.annotation.Id;
+import com.samskivert.depot.annotation.TableGenerator;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.game.gwt.GameDetail;

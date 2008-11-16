@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.samskivert.jdbc.depot.annotation.TableGenerator;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.annotation.TableGenerator;
 
 /** Clone records for Audios. */
 @TableGenerator(name="cloneId", pkColumnValue="AUDIO_CLONE")

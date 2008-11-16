@@ -5,10 +5,10 @@ package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
 
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.GeneratedValue;
-import com.samskivert.jdbc.depot.annotation.GenerationType;
-import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.GeneratedValue;
+import com.samskivert.depot.annotation.GenerationType;
+import com.samskivert.depot.annotation.Id;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
 

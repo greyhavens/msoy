@@ -5,7 +5,7 @@ package com.threerings.msoy.person.server.persist;
 
 import java.util.List;
 
-import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
+import com.samskivert.depot.annotation.*; // for Depot annotations
 
 /**
  * Contains the configuration of a particular member's profile page.

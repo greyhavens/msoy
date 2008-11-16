@@ -5,7 +5,7 @@ package com.threerings.msoy.money.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.samskivert.jdbc.depot.ByteEnum;
+import com.samskivert.depot.ByteEnum;
 
 public enum TransactionType
     implements IsSerializable, ByteEnum

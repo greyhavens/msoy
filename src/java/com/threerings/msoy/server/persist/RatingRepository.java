@@ -8,15 +8,15 @@ import java.util.Set;
 
 import com.samskivert.util.Tuple;
 
-import com.samskivert.jdbc.depot.CacheInvalidator;
-import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.Computed;
-import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.depot.CacheInvalidator;
+import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Computed;
+import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.presents.annotation.BlockingThread;
 

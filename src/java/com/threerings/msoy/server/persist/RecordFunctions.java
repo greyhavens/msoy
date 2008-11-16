@@ -5,8 +5,8 @@ package com.threerings.msoy.server.persist;
 
 import com.google.common.base.Function;
 
-import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.PersistentRecord;
 
 /**
  * General purpose {@link Function}s that operate on {@link PersistentRecord}s.

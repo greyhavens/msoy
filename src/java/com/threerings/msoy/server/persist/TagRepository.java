@@ -13,18 +13,18 @@ import java.util.Set;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.Modifier;
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.GroupBy;
-import com.samskivert.jdbc.depot.clause.Join;
-import com.samskivert.jdbc.depot.clause.Limit;
-import com.samskivert.jdbc.depot.clause.OrderBy;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.samskivert.jdbc.depot.operator.Conditionals.In;
+import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Modifier;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.GroupBy;
+import com.samskivert.depot.clause.Join;
+import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.operator.Conditionals.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 

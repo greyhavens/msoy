@@ -17,19 +17,19 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
-import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.SchemaMigration;
-import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.samskivert.jdbc.depot.expression.SQLExpression;
-import com.samskivert.jdbc.depot.operator.Arithmetic;
-import com.samskivert.jdbc.depot.operator.Conditionals;
-import com.samskivert.jdbc.depot.operator.Logic.And;
-import com.samskivert.jdbc.depot.operator.Logic.Or;
-import com.samskivert.jdbc.depot.operator.Logic;
+import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
+import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.SQLExpression;
+import com.samskivert.depot.operator.Arithmetic;
+import com.samskivert.depot.operator.Conditionals;
+import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.Logic.Or;
+import com.samskivert.depot.operator.Logic;
 
 import com.threerings.msoy.server.persist.CountRecord;
 

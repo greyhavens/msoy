@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Logger;
 import com.samskivert.util.RunQueue;

@@ -23,13 +23,13 @@ import java.util.jar.JarInputStream;
 
 import com.google.common.collect.Sets;
 
-import com.samskivert.jdbc.depot.DatabaseException;
-import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.LiteralExp;
-import com.samskivert.jdbc.depot.annotation.Computed;
+import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.LiteralExp;
+import com.samskivert.depot.annotation.Computed;
 
 import com.threerings.msoy.server.ServerConfig;
 

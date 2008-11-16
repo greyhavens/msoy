@@ -9,16 +9,16 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.DataMigration;
-import com.samskivert.jdbc.depot.DatabaseException;
-import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.Limit;
-import com.samskivert.jdbc.depot.clause.OrderBy;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.LiteralExp;
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.LiteralExp;
 
 import com.threerings.presents.annotation.BlockingThread;
 

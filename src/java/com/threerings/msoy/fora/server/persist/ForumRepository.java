@@ -12,21 +12,21 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.DatabaseException;
-import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.SchemaMigration;
-import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.Join;
-import com.samskivert.jdbc.depot.clause.Limit;
-import com.samskivert.jdbc.depot.clause.OrderBy;
-import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.SQLExpression;
-import com.samskivert.jdbc.depot.expression.ValueExp;
-import com.samskivert.jdbc.depot.operator.Arithmetic.*;
-import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.samskivert.jdbc.depot.operator.Logic.*;
+import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.PersistenceContext;
+import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
+import com.samskivert.depot.clause.FromOverride;
+import com.samskivert.depot.clause.Join;
+import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
+import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.SQLExpression;
+import com.samskivert.depot.expression.ValueExp;
+import com.samskivert.depot.operator.Arithmetic.*;
+import com.samskivert.depot.operator.Conditionals.*;
+import com.samskivert.depot.operator.Logic.*;
 
 import com.threerings.presents.annotation.BlockingThread;
 

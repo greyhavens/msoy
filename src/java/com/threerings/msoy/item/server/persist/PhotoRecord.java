@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.annotation.TableGenerator;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.depot.Key;
+import com.samskivert.depot.annotation.TableGenerator;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
