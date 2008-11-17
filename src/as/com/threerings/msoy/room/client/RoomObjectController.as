@@ -689,60 +689,12 @@ public class RoomObjectController extends RoomController
         }
     }
 
-    public function setBackgroundMusic (data :AudioData) :void
-    {
-        if (!UberClient.isRegularClient()) {
-            return;
-        }
-
-        if (!_musicIsBackground) {
-            if (_music.isPlaying()) {
-                // don't disrupt the other music..
-                return;
-
-            } else {
-                // oh, this other music is done. Sure, let's go for
-                // the background music again
-                _music.close();
-                _music = null;
-                _musicIsBackground = true;
-            }
-        }
-
-        var isPathValid :Boolean = data.isInitialized() && data.media != null;
-        var path :String = isPathValid ? data.media.getMediaPath() : null;
-
-        // maybe shutdown old music
-        // if _music is playing the right thing, let it keep on playing
-        if (_music != null && _music.getURL() != path) {
-            _music.close();
-            _music = null;
-        }
-        // TODO: do we want to still retrieve the sound info if the volume is 0?
-        const shouldEvenTry :Boolean = isPathValid && (Prefs.getSoundVolume() > 0) &&
-            !Prefs.isMediaBlocked(data.media.getMediaId());
-        // set up new music, if needed
-        if (shouldEvenTry && _music == null) {
-            _music = new SoundPlayer(path);
-            _music.addEventListener(Event.COMPLETE, musicFinishedPlaying);
-            // TODO: we probably need to wait for COMPLETE
-            _music.loop();
-        }
-        // set the volume, even if we're just re-setting it on
-        // already-playing music
-        if (_music != null) {
-            _music.setVolume(data.volume);
-        }
-    }
-
     // documentation inherited
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         super.willEnterPlace(plobj);
 
         _roomObj = (plobj as RoomObject);
-        _roomListener = new MessageAdapter(msgReceivedOnRoomObj);
-        _roomObj.addListener(_roomListener);
 
         // get a copy of the scene
         _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
@@ -788,12 +740,8 @@ public class RoomObjectController extends RoomController
         _roomView.removeChild(_flyTarget);
         setHoverSprite(null);
 
-        _roomObj.removeListener(_roomListener);
-
         _scene = null;
         _roomObj = null;
-
-        closeAllMusic(false);
 
         super.didLeavePlace(plobj);
     }
@@ -812,25 +760,6 @@ public class RoomObjectController extends RoomController
     }
 
     /**
-     * Close and reset all music.
-     */
-    protected function closeAllMusic (resumeBackground :Boolean) :void
-    {
-        if (_music != null && !(resumeBackground && _musicIsBackground)) {
-            _music.close();
-            _music = null;
-            _musicIsBackground = true;
-        }
-        if (_loadingMusic != null) {
-            _loadingMusic.close();
-            _loadingMusic = null;
-        }
-        if (resumeBackground && _music == null) {
-            setBackgroundMusic(_scene.getAudioData());
-        }
-    }
-
-    /**
      * Begins editing the room.
      */
     protected function beginRoomEditing (forcePublishOption :Boolean = false) :void
@@ -845,21 +774,12 @@ public class RoomObjectController extends RoomController
 
         // this function will be called when the edit panel is closing
         var wrapupFn :Function = function () :void {
-            if (_music != null && ! _musicIsBackground) {
-                _music.play(); // restart non-background music
-            }
             _roomEditBtn.selected = false;
             _editor = null;
 
             if (forcePublishOption || _scene.getVersion() != startingVersion) {
                 new PublishPanel(_wdctx, _roomObjectView);
             }
-        }
-
-        if (_music != null && ! _musicIsBackground) {
-            _music.close();    // stop non-background music
-            _music = null;
-            _musicIsBackground = true;
         }
 
         _editor = new RoomEditorController(_wdctx, _roomObjectView);
@@ -955,60 +875,6 @@ public class RoomObjectController extends RoomController
         }
 
         super.keyEvent(event);
-    }
-
-    /**
-     * Called when a message is received on the room object.
-     */
-    protected function msgReceivedOnRoomObj (event :MessageEvent) :void
-    {
-        var args :Array = event.getArgs();
-        switch (event.getName()) {
-        case RoomObject.LOAD_MUSIC:
-            if (UberClient.isFeaturedPlaceView()) {
-                break;
-            }
-            if (_loadingMusic != null) {
-                _loadingMusic.close();
-            }
-            _loadingMusic = new SoundPlayer(String(args[0]));
-            // TODO: dispatched MUSIC_LOADED back...
-            break;
-
-        case RoomObject.PLAY_MUSIC:
-            if (args == null || args.length == 0) {
-                closeAllMusic(true);
-                break;
-            }
-            var url :String = (args[0] as String);
-            if (_loadingMusic != null) {
-                if (_loadingMusic.getURL() == url) {
-                    // awesome
-                    if (_music != null) {
-                        _music.close();
-                    }
-                    _music = _loadingMusic;
-                    _loadingMusic = null;
-                    _musicIsBackground = false;
-                    _music.addEventListener(Event.COMPLETE, musicFinishedPlaying);
-                    _music.play();
-
-                } else {
-                    log.warning("Asked to play music different from loaded? " +
-                        "[loaded=" + _loadingMusic.getURL() +
-                        ", toPlay=" + url + "].");
-                }
-            }
-            break;
-        }
-    }
-
-    /**
-     * Callback when the music finishes.
-     */
-    protected function musicFinishedPlaying (... ignored) :void
-    {
-        _roomObj.manager.invoke(RoomObject.MUSIC_ENDED, _music.getURL());
     }
 
     /**
@@ -1152,26 +1018,11 @@ public class RoomObjectController extends RoomController
     /** The room object. */
     protected var _roomObj :RoomObject;
 
-    /** Our general-purpose room listener. */
-    protected var _roomListener :ChangeListener;
-
     /** The room edit button, on the control bar (imported). */
     protected var _roomEditBtn :Button;
 
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;
-
-    /** The music currently playing in the scene, which may or may not be
-     * background music. */
-    protected var _music :SoundPlayer;
-
-    /** True if _music is the room's background music. Otherwise
-     * The music playing is from some other source. */
-    protected var _musicIsBackground :Boolean = true;
-
-    /** Holds loading alternate music. Once triggered to play,
-     * it's shifted to _music. */
-    protected var _loadingMusic :SoundPlayer;
 
     /** Controller for in-room furni editing. */
     protected var _editor :RoomEditorController;

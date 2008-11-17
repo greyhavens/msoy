@@ -14,6 +14,7 @@ import flash.text.TextField;
 import caurina.transitions.Tweener;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.util.MultiLoader;
 
@@ -84,6 +85,17 @@ public class WorldControlBar extends ControlBar
         updateZoomButton();
     }
 
+    public function setMusicPlaying (playing :Boolean) :void
+    {
+        // pop down the dialog if no more music...
+        if (!playing && _musicBtn.selected) {
+            _musicBtn.activate();
+        }
+
+        FlexUtil.setVisible(_musicBtn, playing);
+        _buttons.recheckButtons();
+    }
+
     // from ControlBar
     override public function locationDidChange (place :PlaceObject) :void
     {
@@ -103,6 +115,13 @@ public class WorldControlBar extends ControlBar
     override protected function createControls () :void
     {
         super.createControls();
+
+        _musicBtn = createButton("controlBarButtonMusic", "i.music");
+        _musicBtn.toggle = true;
+        FlexUtil.setVisible(_musicBtn, false);
+        _musicBtn.setCallback(FloatingPanel.createPopper(function () :MusicDialog {
+            return new MusicDialog(_wctx);
+        }, _musicBtn));
 
         _roomeditBtn = createButton("controlBarButtonEdit", "i.editScene");
         _roomeditBtn.setCommand(WorldController.ROOM_EDIT);
@@ -141,6 +160,7 @@ public class WorldControlBar extends ControlBar
     {
         super.addControls(); 
 
+        addButton(_musicBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
         addButton(_homePageGridBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
         addButton(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
 
@@ -271,6 +291,9 @@ public class WorldControlBar extends ControlBar
     protected var _hotZoneBtn :CommandButton;
 
     protected var _hotOn :Boolean;
+
+    /** Button to display info about the currently playing music. */
+    protected var _musicBtn :CommandButton;
 
     /** Button for room snapshots. */
     protected var _snapBtn :CommandButton;

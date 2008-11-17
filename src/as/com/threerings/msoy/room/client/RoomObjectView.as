@@ -400,9 +400,6 @@ public class RoomObjectView extends RoomView
         // load the decor data we have, even if it's just default values.
         _bg.setLoadedCallback(backgroundFinishedLoading);
 
-        // start playing background audio
-        _octrl.setBackgroundMusic(_scene.getAudioData());
-
         var localOccupant :MemberInfo;
         localOccupant = _roomObj.occupantInfo.get(_ctx.getClient().getClientOid()) as MemberInfo;
         if (localOccupant != null && localOccupant.isStatic()) {
@@ -429,6 +426,7 @@ public class RoomObjectView extends RoomView
         _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         removeAllOccupants();
+        _ctx.getWorldController().handlePlayMusic(null, null);
 
         super.didLeavePlace(plobj);
 
@@ -542,6 +540,9 @@ public class RoomObjectView extends RoomView
     {
         super.backgroundFinishedLoading();
 
+        // play any music..
+        updateBackgroundAudio();
+
         // TODO: HOWSABOUT WE ONLY USE THE DOOR THINGY WHEN WE'RE MAKING DOORS!
         // inform the "floating" door editor
         DoorTargetEditController.updateLocation();
@@ -584,7 +585,10 @@ public class RoomObjectView extends RoomView
     {
         var audiodata :AudioData = _scene.getAudioData();
         if (audiodata != null) {
-            _octrl.setBackgroundMusic(audiodata);
+            _ctx.getWorldController().handlePlayMusic(audiodata.media,
+                new ItemIdent(Item.AUDIO, audiodata.itemId));
+        } else {
+            _ctx.getWorldController().handlePlayMusic(null, null);
         }
     }
 

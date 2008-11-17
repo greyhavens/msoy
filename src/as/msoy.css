@@ -531,6 +531,7 @@ TabNavigator, TabBar {
 .controlBarIdleButton, .controlBarScaleButton, .controlBarAVRGButton, .tickButton,
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
 .controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton,
+.controlBarButtonMusic,
 .roomEditScaleDown, .roomEditScaleUp, .roomEditMoveDown, .roomEditMoveUp,
 .roomEditRotateLeft, .roomEditRotateRight, .roomEditFlipH, .roomEditFlipV,
 .roomEditTrash, .roomEditAdd, .roomEditDoor, .roomRemoveDoor, .roomEditLink, .roomRemoveLink,
@@ -625,6 +626,10 @@ TabNavigator, TabBar {
 
 .controlBarHomePageGridButton {
   image: Embed(source="../../rsrc/media/skins/controlbar/grid.png");
+}
+
+.controlBarButtonMusic {
+  image: Embed(source="../../rsrc/media/skins/controlbar/music.png");
 }
 
 .tickButton {

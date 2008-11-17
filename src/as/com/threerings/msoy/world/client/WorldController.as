@@ -10,11 +10,11 @@ import flash.system.Capabilities;
 
 import mx.controls.Button;
 
-import com.threerings.flex.CommandMenu;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ResultAdapter;
@@ -23,6 +23,12 @@ import com.threerings.presents.net.Credentials;
 import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.flash.media.AudioPlayer;
+import com.threerings.flash.media.MediaPlayerCodes;
+import com.threerings.flash.media.Mp3AudioPlayer;
+
+import com.threerings.flex.CommandMenu;
 
 import com.threerings.whirled.data.Scene;
 
@@ -57,6 +63,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -157,6 +164,12 @@ public class WorldController extends MsoyController
     /** Command to display the avrg menu. */
     public static const POP_AVRG_MENU :String = "PopAVRGMenu";
 
+    /** Command to play music. Arg: null to stop, or [ MediaDesc,  ItemIdent ] */
+    public static const PLAY_MUSIC :String = "PlayMusic";
+
+    /** Get info about the currently-playing music. */
+    public static const MUSIC_INFO :String = "MusicInfo";
+
     // statically reference classes we require
     ItemMarshaller;
 
@@ -164,6 +177,8 @@ public class WorldController extends MsoyController
     {
         super(ctx, topPanel);
         _wctx = ctx;
+
+        Prefs.config.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
     }
 
     /**
@@ -739,6 +754,41 @@ public class WorldController extends MsoyController
         } else {
             log.warning("Can't access GWT to handleToggleHeight");
         }
+    }
+
+    /**
+     * Handles PLAY_MUSIC.
+     */
+    public function handlePlayMusic (music :MediaDesc, ident :ItemIdent) :void
+    {
+        _musicDesc = music;
+        _musicIdent = ident;
+
+        // TODO: fade out music if no new, unless the current music is bleeped
+        _musicPlayer.unload();
+
+        const play :Boolean = UberClient.isRegularClient() && (music != null) &&
+            (Prefs.getSoundVolume() > 0) && !Prefs.isMediaBlocked(music.getMediaId());
+        if (play) {
+            _musicPlayer.load(music.getMediaPath());
+        }
+        WorldControlBar(_wctx.getControlBar()).setMusicPlaying(play);
+    }
+
+    /**
+     * Handles MUSIC_INFO.
+     */
+    public function handleMusicInfo () :void
+    {
+        handleViewItem(_musicIdent);
+    }
+
+    /**
+     * Access the music player. Don't be too nefarious now boys!
+     */
+    public function getMusicPlayer () :AudioPlayer
+    {
+        return _musicPlayer;
     }
 
     /**
@@ -1322,8 +1372,30 @@ public class WorldController extends MsoyController
         menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
     }
 
+    protected function handleBleepChange (event :ValueEvent) :void
+    {
+        if (_musicDesc == null) {
+            return; // couldn't possibly concern us..
+        }
+        const isPlaying :Boolean = (_musicPlayer.getState() == MediaPlayerCodes.STATE_PLAYING);
+        const isBleeped :Boolean = Prefs.isMediaBlocked(_musicDesc.getMediaId());
+        if (isPlaying == isBleeped) {
+            // just call play again with the same music, it'll handle it
+            handlePlayMusic(_musicDesc, _musicIdent);
+        }
+    }
+
     /** Giver of life, context. */
     protected var _wctx :WorldContext;
+
+    /** The player of music. */
+    protected var _musicPlayer :Mp3AudioPlayer = new Mp3AudioPlayer(true /*loop*/);
+
+    /** The currently playing music. */
+    protected var _musicDesc :MediaDesc;
+
+    /** ItemIdent of the currently playing music. */
+    protected var _musicIdent :ItemIdent;
 
     /** Tracks whether we've done our first-logon movement so that we avoid trying to redo it as we
      * subsequently move between servers (and log off and on in the process). */
