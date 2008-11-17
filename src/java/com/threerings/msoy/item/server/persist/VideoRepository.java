@@ -14,12 +14,6 @@ import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 
-// TODO: remove after 2008-11-12
-import java.util.List;
-import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.DataMigration;
-// END: TODO
-
 /**
  * Manages the persistent store of {@link VideoRecord} items.
  */
@@ -39,18 +33,6 @@ public class VideoRepository extends ItemRepository<VideoRecord>
     @Inject public VideoRepository (PersistenceContext ctx)
     {
         super(ctx);
-    }
-
-    // TEMP
-    public void addYouTubeMigration (DataMigration mig)
-    {
-        registerMigration(mig);
-    }
-
-    // TODO: remove after 2008-11-12
-    public List<VideoRecord> loadLegacyYouTube ()
-    {
-        return findAll(VideoRecord.class, new Where(VideoRecord.VIDEO_MIME_TYPE_C, 34));
     }
 
     @Override
