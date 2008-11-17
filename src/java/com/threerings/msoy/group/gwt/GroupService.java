@@ -43,10 +43,34 @@ public interface GroupService extends RemoteService
         public byte rank;
     }
 
+    /** Information needed to fetch a list of groups for the main groups page. */
+    public static class GroupQuery implements IsSerializable
+    {
+        public static final byte SORT_BY_NEW_AND_POPULAR = 1;
+        public static final byte SORT_BY_NAME = 2;
+        public static final byte SORT_BY_NUM_MEMBERS = 3;
+        public static final byte SORT_BY_CREATED_DATE = 4;
+
+        /** number of group records to fetch */
+        public int count;
+
+        /** the current page of data to display, base zero */
+        public int page;
+
+        /** The current sort method, defaults to SORT_BY_NEW_AND_POPULAR */
+        public byte sort = 1;
+
+        /** String to search group name & description for */
+        public String searchString;
+
+        /** Tag to search for; preempted by searchString */
+        public String tag;
+    }
+
     /** Delivers the response to {@link #getGroups}. */
     public static class GroupsResult implements IsSerializable
     {
-        /** The total number of groups available. */
+        /** The total number of groups available, may or may not be set. */
         public int totalCount;
 
         /** The requested slice of the total groups list. */
@@ -59,25 +83,13 @@ public interface GroupService extends RemoteService
     /**
      * Loads the information displayed on the Galaxy page.
      */
-    GalaxyData getGalaxyData ()
+    GalaxyData getGalaxyData (GroupQuery query)
         throws ServiceException;
 
     /**
      * Gets a subset of the list of all groups.
      */
-    GroupsResult getGroups (int offset, int count, boolean needCount)
-        throws ServiceException;
-
-    /**
-     * Performs a search against the name, blurb and charter fields.
-     */
-    List<GroupCard> searchGroups (String searchString)
-        throws ServiceException;
-
-    /**
-     * Return all groups that are tagged with the given tag.
-     */
-    List<GroupCard> searchForTag (String tag)
+    GroupsResult getGroups (GroupQuery query, boolean needCount)
         throws ServiceException;
 
     /**

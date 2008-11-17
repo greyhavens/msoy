@@ -391,6 +391,9 @@
 .galaxyPanel .MyGroups .MyGroup a {
   text-decoration: none;
 }
+.galaxyPanel .MyGroups .MyGroup a:hover {
+  text-decoration: underline;
+}
 
 .galaxyPanel .MyGroups .SeeAll {
   display: block;

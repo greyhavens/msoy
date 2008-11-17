@@ -71,7 +71,7 @@ public class GroupServlet extends MsoyServiceServlet
     implements GroupService
 {
     // from GroupService
-    public GalaxyData getGalaxyData ()
+    public GalaxyData getGalaxyData (GroupQuery query)
         throws ServiceException
     {
         GalaxyData data = new GalaxyData();
@@ -95,21 +95,22 @@ public class GroupServlet extends MsoyServiceServlet
             popularTags.add(popRec.tag);
         }
         data.popularTags = popularTags;
+        data.publicGroups = getGroups(query, true);
 
         return data;
     }
 
     // from GroupService
-    public GroupsResult getGroups (int offset, int count, boolean needCount)
+    public GroupsResult getGroups (GroupQuery query, boolean needCount)
         throws ServiceException
     {
+        List<GroupRecord> records = _groupRepo.getGroupsList(query);
         GroupsResult result = new GroupsResult();
-        result.groups = populateGroupCard(Lists.newArrayList(Iterables.transform(
-            _groupRepo.getGroupsList(offset, count), GroupRecord.TO_CARD)));
+        result.groups = populateGroupCard(Lists.newArrayList(Iterables.transform(records,
+            GroupRecord.TO_CARD)));
 
-        // if they need the total group count, load that
         if (needCount) {
-            result.totalCount = _groupRepo.getVisibleGroupCount();
+            result.totalCount = _groupRepo.getGroupCount(query);
         }
 
         return result;
@@ -231,22 +232,6 @@ public class GroupServlet extends MsoyServiceServlet
         throws ServiceException
     {
         return _memberLogic.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
-    }
-
-    // from interface GroupService
-    public List<GroupCard> searchGroups (String searchString)
-        throws ServiceException
-    {
-        return populateGroupCard(Lists.newArrayList(
-            Iterables.transform(_groupRepo.searchGroups(searchString), GroupRecord.TO_CARD)));
-    }
-
-    // from interface GroupService
-    public List<GroupCard> searchForTag (String tag)
-        throws ServiceException
-    {
-        return populateGroupCard(Lists.newArrayList(
-            Iterables.transform(_groupRepo.searchForTag(tag), GroupRecord.TO_CARD)));
     }
 
     // from interface GroupService

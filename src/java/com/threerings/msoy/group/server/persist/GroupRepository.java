@@ -55,6 +55,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -97,63 +98,100 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Returns the total count of visible groups (which corresponds to the number of groups
-     * available via calls to {@link #getGroupsList}).
+     * Returns a list of all public and inv-only groups, sorted by "new & popular"
+     *
+     * @param count a limit to the number of groups to load or Integer.MAX_VALUE for all of them.
      */
-    public int getVisibleGroupCount ()
+    public List<GroupRecord> getGroupsList (int count)
     {
-        Where where = new Where(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE)));
-        return load(CountRecord.class, new FromOverride(GroupRecord.class), where).count;
+        GroupQuery query = new GroupQuery();
+        query.count = count;
+        return getGroupsList(query);
     }
 
     /**
      * Returns a list of all public and inv-only groups, sorted by "new & popular"
-     * 
-     * @param offset an offset into the collection of groups at which to start.
-     * @param limit a limit to the number of groups to load or Integer.MAX_VALUE for all of them.
+     *
+     * @param query Limit, search and sort options. query.searchString and query.tag are mutually
+     * exclusive. If either is set, results will be ordered by relevance instead of query.sort.
      */
-    public List<GroupRecord> getGroupsList (int offset, int limit)
+    public List<GroupRecord> getGroupsList (GroupQuery query)
     {
-        // for "new & popular" order: subtract 2 members per day the group has been around
-        long membersPerDay = (24 * 60 * 60) / 2;
-        long nowSeconds = System.currentTimeMillis() / 1000;
-        return findAll(
-            GroupRecord.class,
-            new Where(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE))),
-            new Limit(offset, limit),
-            OrderBy.descending(
+        int offset = query.page * query.count;
+
+        // if there is a search string, do a full text match, order by relevance
+        if (query.searchString != null) {
+            // for now, always operate with boolean searching enabled, without query expansion
+            return findAll(GroupRecord.class,
+                new Where(new And(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE)),
+                    new FullTextMatch(GroupRecord.class, GroupRecord.FTS_NBC, query.searchString))),
+                new Limit(offset, query.count));
+
+        // if there is a tag, fetch groups with GroupTagRecords for that tag, order by groupId
+        } else if (query.tag != null) {
+            List<Integer> groupIds = Lists.newArrayList();
+            int tagId = _tagRepo.getOrCreateTag(query.tag).tagId;
+            Where where = new Where(new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID), tagId);
+            for (GroupTagRecord tagRec : findAll(GroupTagRecord.class, where,
+                new Limit(offset, query.count))) {
+                groupIds.add(tagRec.targetId);
+            }
+            return loadGroups(groupIds);
+        }
+
+        // if no full text or tag search, return a subset of all records, order by query.sort
+        OrderBy orderBy;
+        if (query.sort == GroupQuery.SORT_BY_NAME) {
+            orderBy = OrderBy.ascending(GroupRecord.NAME_C);
+        } else if (query.sort == GroupQuery.SORT_BY_NUM_MEMBERS) {
+            orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT_C);
+        } else if (query.sort == GroupQuery.SORT_BY_CREATED_DATE) {
+            orderBy = OrderBy.ascending(GroupRecord.CREATION_DATE_C);
+        } else {
+            // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
+            long membersPerDay = (24 * 60 * 60) / 2;
+            long nowSeconds = System.currentTimeMillis() / 1000;
+            orderBy = OrderBy.descending(
                 new Arithmetic.Sub(GroupRecord.MEMBER_COUNT_C,
                     new Arithmetic.Div(
                         new Arithmetic.Sub(new ValueExp(nowSeconds),
                             new EpochSeconds(GroupRecord.CREATION_DATE_C)), membersPerDay))
-                ));
-    }
+                );
+        }
 
-    /**
-     * Searches all public and inv-only groups for the search string against the indexed blurb,
-     * charter and name fields.  Results are returned in order of relevance.
-     */
-    public List<GroupRecord> searchGroups (String search)
-    {
-        // for now, always operate with boolean searching enabled, without query expansion
         return findAll(
             GroupRecord.class,
-            new Where(new And(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE)),
-                              new FullTextMatch(GroupRecord.class, GroupRecord.FTS_NBC, search))));
+            new Where(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE))),
+            new Limit(offset, query.count),
+            orderBy);
     }
 
     /**
-     * Searches all groups for the specified tag.  Tagging is not supported on exclusive groups
+     * Returns the total count of visible groups for a given query (which corresponds to the
+     * number of groups available via calls to {@link #getGroupsList}).
      */
-    public List<GroupRecord> searchForTag (String tag)
+    public int getGroupCount (GroupQuery query)
     {
-        List<Integer> groupIds = Lists.newArrayList();
-        int tagId = _tagRepo.getOrCreateTag(tag).tagId;
-        Where where = new Where(new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID), tagId);
-        for (GroupTagRecord tagRec : findAll(GroupTagRecord.class, where)) {
-            groupIds.add(tagRec.targetId);
+        // if there is a search string, return count of full text search
+        if (query.searchString != null) {
+            Where where = new Where(new And(new Not(new Equals(
+                GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE)), new FullTextMatch(
+                GroupRecord.class, GroupRecord.FTS_NBC, query.searchString)));
+            return load(CountRecord.class, new FromOverride(GroupRecord.class), where).count;
+
+        // if there is a tag, return count of GroupTagRecords for that tag
+        } else if (query.tag != null) {
+            int tagId = _tagRepo.getOrCreateTag(query.tag).tagId;
+            Where where = new Where(new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID),
+                tagId);
+            return load(CountRecord.class, new FromOverride(GroupTagRecord.class), where).count;
+
+        // if no full text or tag search, return count of all public records
+        } else {
+            Where where = new Where(new Not(new Equals(GroupRecord.POLICY_C,
+                Group.POLICY_EXCLUSIVE)));
+            return load(CountRecord.class, new FromOverride(GroupRecord.class), where).count;
         }
-        return loadGroups(groupIds);
     }
 
     /**
