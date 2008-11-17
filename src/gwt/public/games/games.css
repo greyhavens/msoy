@@ -482,6 +482,7 @@
 }
 
 .arcade .TopGames .TopGameWidget {
+  border-right: solid #5d8db1 1px;
   border-bottom: solid #bfdaef 1px;
   background-color: white;
   width: 200px;
@@ -499,7 +500,6 @@
   float: left;
   border-left: solid #5d8db1 1px;
   border-right: solid #5d8db1 1px;
-  border-bottom: solid #5d8db1 1px;
   padding-top: 15px;
 }
 
@@ -519,7 +519,6 @@
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
-  margin-top: 15px;
 }
 
 .arcade .TopGames .Name .actionLabel {

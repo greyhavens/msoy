@@ -118,10 +118,7 @@ public class GameServlet extends MsoyServiceServlet
         }
 
         // fill in the current number of players if any
-        PopularPlacesSnapshot.Place game = _memberMan.getPPSnapshot().getGame(gameId);
-        if (game != null) {
-            detail.playingNow = game.population;
-        }
+        detail.playingNow = getGamePop(_memberMan.getPPSnapshot(), gameId);
 
         // determine how many players can play this game
         int[] players = GameUtil.getMinMaxPlayers(detail.item);
@@ -415,6 +412,7 @@ public class GameServlet extends MsoyServiceServlet
             gameInfo.gameId = game.gameId;
             gameInfo.name = game.name;
             gameInfo.thumbMedia = game.getThumbMediaDesc();
+            gameInfo.playersOnline = getGamePop(pps, game.gameId);
             data.topGames.add(gameInfo);
             if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
                 break;
@@ -440,10 +438,7 @@ public class GameServlet extends MsoyServiceServlet
                 // games rated less than 3 don't get on the main page
                 if (grec.genre == gcode && grec.rating >= MIN_ARCADE_RATING) {
                     GameInfo info = grec.toGameInfo();
-                    PopularPlacesSnapshot.Place ppg = pps.getGame(grec.gameId);
-                    if (ppg != null) {
-                        info.playersOnline = ppg.population;
-                    }
+                    info.playersOnline = getGamePop(pps, grec.gameId);
                     ggames.add(info);
                     // stop when we've got 3*HIGHLIGHTED_GAMES
                     if (ggames.size() == 3*ArcadeData.Genre.HIGHLIGHTED_GAMES) {
@@ -485,11 +480,7 @@ public class GameServlet extends MsoyServiceServlet
         List<GameInfo> infos = Lists.newArrayList();
         for (GameRecord grec : games) {
             GameInfo info = grec.toGameInfo();
-            // add the players online
-            PopularPlacesSnapshot.Place gameCard = pps.getGame(grec.gameId);
-            if (gameCard != null) {
-                info.playersOnline = gameCard.population;
-            }
+            info.playersOnline = getGamePop(pps, grec.gameId);
             infos.add(info);
         }
 
@@ -622,6 +613,13 @@ public class GameServlet extends MsoyServiceServlet
         }
 
         return results;
+    }
+
+    /** Helpy helper function. */
+    protected static int getGamePop (PopularPlacesSnapshot pps, int gameId)
+    {
+        PopularPlacesSnapshot.Place ppg = pps.getGame(gameId);
+        return (ppg == null) ? 0 : ppg.population;
     }
 
     /** Used by {@link #resetGameScores}. */

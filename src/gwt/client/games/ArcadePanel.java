@@ -6,6 +6,9 @@ package client.games;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.ArcadeData;
@@ -121,14 +124,24 @@ public class ArcadePanel extends FlowPanel
     /**
      * Display a game in the Top X Games list
      */
-    protected static class TopGameWidget extends FlowPanel
+    protected static class TopGameWidget extends SmartTable
     {
         public TopGameWidget (int index, GameInfo game) {
-            setStyleName("TopGameWidget");
-            add(MsoyUI.createLabel(index+"", "Number"));
+            super("TopGameWidget", 0, 0);
+            setText(0, 0, index+"", 1, "Number");
             String args = Args.compose("d", game.gameId);
-            add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE, Pages.GAMES, args));
-            add(Link.create(game.name, "Name", Pages.GAMES, args));
+            setWidget(0, 1, new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
+                                         Pages.GAMES, args));
+            Widget link = Link.create(game.name, "Name", Pages.GAMES, args);
+            if (game.playersOnline == 0) {
+                setWidget(0, 2, link, 1, "Info");
+            } else {
+                FlowPanel bits = new FlowPanel();
+                link.removeStyleName("inline");
+                bits.add(link);
+                bits.add(MsoyUI.createLabel(game.playersOnline + " playing now", "tipLabel"));
+                setWidget(0, 2, bits);
+            }
         }
     }
 
