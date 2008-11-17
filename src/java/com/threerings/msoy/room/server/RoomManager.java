@@ -738,7 +738,7 @@ public class RoomManager extends SpotSceneManager
             OccupantInfo prior = _occInfo.get(occInfo.getBodyOid());
             // Set to static if it was static before and the room is still crowded
             if (prior != null && prior instanceof ActorInfo && ((ActorInfo)prior).isStatic() &&
-                _numDynamicActors > ACTOR_RENDERING_LIMIT) {
+                _dynamicActors.size() > ACTOR_RENDERING_LIMIT) {
                 ((ActorInfo)occInfo).useStaticMedia();
             }
         }
@@ -1407,14 +1407,14 @@ public class RoomManager extends SpotSceneManager
     @Override
     protected void insertOccupantInfo (OccupantInfo info, BodyObject body)
     {
-        if (info instanceof ActorInfo && _numDynamicActors >= ACTOR_RENDERING_LIMIT) {
+        if (info instanceof ActorInfo && _dynamicActors.size() >= ACTOR_RENDERING_LIMIT) {
             ((ActorInfo)info).useStaticMedia();
         }
 
         super.insertOccupantInfo(info, body);
     }
 
-    public void removeAndFlushMemories (ItemIdent item)
+    protected void removeAndFlushMemories (ItemIdent item)
     {
         // clear out any memories that were loaded for this item
         List<EntityMemoryEntry> toRemove = Lists.newArrayList();
@@ -1447,7 +1447,7 @@ public class RoomManager extends SpotSceneManager
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
                 updateAvatarIdent(null, event.getEntry());
-                checkDynamic(event.getEntry(), 1);
+                checkDynamic(event.getEntry(), false);
             }
         }
 
@@ -1459,8 +1459,6 @@ public class RoomManager extends SpotSceneManager
                 Runnable onSuccess = new Runnable () {
                     public void run () {
                         updateAvatarIdent(event.getOldEntry(), event.getEntry());
-                        checkDynamic(event.getOldEntry(), -1);
-                        checkDynamic(event.getEntry(), 1);
                     }
                 };
 
@@ -1473,6 +1471,9 @@ public class RoomManager extends SpotSceneManager
                         ((MemberInfo)event.getEntry()).getItemIdent()),
                         onSuccess);
                 }
+
+                checkDynamic(event.getOldEntry(), true);
+                checkDynamic(event.getEntry(), false);
             }
         }
 
@@ -1482,7 +1483,7 @@ public class RoomManager extends SpotSceneManager
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
                 updateAvatarIdent(event.getOldEntry(), null);
-                checkDynamic(event.getOldEntry(), -1);
+                checkDynamic(event.getOldEntry(), true);
             }
         }
 
@@ -1501,12 +1502,25 @@ public class RoomManager extends SpotSceneManager
         }
 
         /**
-         * Increments the dynamic actor count if the occupant is dynamic.
+         * Adds or removes the occupant to the set of dynamic actors if dynamic.
          */
-        protected void checkDynamic (OccupantInfo info, int increment)
+        protected void checkDynamic (OccupantInfo info, boolean leaving)
         {
             if (info instanceof ActorInfo && !((ActorInfo)info).isStatic()) {
-                _numDynamicActors += increment;
+                if (leaving) {
+                    ActorInfo prev = _dynamicActors.remove(info.getBodyOid());
+                    if (prev == null) {
+                        log.warning("Leaving dynamic actor not found in map", "room",
+                            _roomObj.which(), "actor", info);
+                    }
+                } else {
+                    ActorInfo prev = _dynamicActors.remove(info.getBodyOid());
+                    if (prev != null) {
+                        log.warning("Entering dynamic actor already in map", "room",
+                            _roomObj.which(), "actor", info);
+                    }
+                    _dynamicActors.put(info.getBodyOid(), (ActorInfo)info);
+                }
             }
         }
     }
@@ -1562,8 +1576,8 @@ public class RoomManager extends SpotSceneManager
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();
 
-    /** Number of non-statically rendered avatars and pets in the room. */
-    protected int _numDynamicActors;
+    /** Non-statically rendered avatars and pets in the room. */
+    protected HashIntMap<ActorInfo> _dynamicActors = new HashIntMap<ActorInfo>();
 
     /** After this level of occupancy is reached, actors are made static. */
     protected static final int ACTOR_RENDERING_LIMIT = 20;
