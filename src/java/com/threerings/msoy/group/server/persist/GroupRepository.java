@@ -131,8 +131,8 @@ public class GroupRepository extends DepotRepository
         } else if (query.tag != null) {
             List<Integer> groupIds = Lists.newArrayList();
             int tagId = _tagRepo.getOrCreateTag(query.tag).tagId;
-            Where where = new Where(new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID), tagId);
-            for (GroupTagRecord tagRec : findAll(GroupTagRecord.class, where,
+            for (GroupTagRecord tagRec : findAll(GroupTagRecord.class,
+                new Where(new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID), tagId),
                 new Limit(offset, query.count))) {
                 groupIds.add(tagRec.targetId);
             }
