@@ -4,6 +4,7 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
@@ -285,13 +286,7 @@ public class MediaControls extends Sprite
 
     protected function updateDuration (duration :Number) :void
     {
-        if (isNaN(duration) == (_track.parent == this)) {
-            if (isNaN(duration)) {
-                removeChild(_track);
-            } else {
-                addChild(_track);
-            }
-        }
+        ensureParent(isNaN(duration), this, _track);
         _durationString = formatTime(duration);
         updateTime();
     }
@@ -309,11 +304,17 @@ public class MediaControls extends Sprite
         }
         _lastKnobX = int.MIN_VALUE;
         _knob.x = (pos / _player.getDuration()) * _trackWidth;
-        if (isNaN(pos) == (_knob.parent == _track)) {
-            if (isNaN(pos)) {
-                _track.removeChild(_knob);
+        ensureParent(isNaN(pos), _track, _knob);
+    }
+
+    protected function ensureParent (
+        off :Boolean, parent :DisplayObjectContainer, child :DisplayObject) :void
+    {
+        if (off == (child.parent == parent)) {
+            if (off) {
+                parent.removeChild(child);
             } else {
-                _track.addChild(_knob);
+                parent.addChild(child);
             }
         }
     }
