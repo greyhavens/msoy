@@ -189,8 +189,9 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             // if we're displaying unread threads from many groups, display the group name after
             // the subject
             if (_groupId == 0) {
-                bits.add(MsoyUI.createLabel(_mmsgs.tlpFromGroup(thread.group.toString()),
-                                            "tipLabel"), HasAlignment.ALIGN_BOTTOM);
+                Widget groupLink = Link.create(_mmsgs.tlpFromGroup(thread.group.toString()),
+                    "GroupName", Pages.GROUPS, Args.compose("f", thread.group.getGroupId()));
+                bits.add(groupLink, HasAlignment.ALIGN_BOTTOM);
             }
 
             setWidget(0, col, bits);

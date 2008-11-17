@@ -112,6 +112,15 @@
 .threadSummaryPanel .Subject {
 }
 
+.threadSummaryPanel .Subject .GroupName a {
+  font-size: 12px;
+  color: #6692AF;
+  text-decoration: none;
+}
+.threadSummaryPanel .Subject .GroupName a:hover {
+  text-decoration: underline;
+}
+
 .threadSummaryPanel .EditFlags {
   background-image: url(/images/msgs/edit_flags.png);
   width: 16px;
