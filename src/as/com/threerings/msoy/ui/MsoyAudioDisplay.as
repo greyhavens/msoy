@@ -113,7 +113,7 @@ public class MsoyAudioDisplay extends Sprite
     {
         const info :String = (id3 != null) ? id3[prop] as String : null;
         const text :String = (info != null) ? info : ("unknown " + unkName);
-        TextFieldUtil.updateText(field, info);
+        TextFieldUtil.updateText(field, text);
         TextFieldUtil.updateFormat(field, { italic: (info == null) });
     }
 
