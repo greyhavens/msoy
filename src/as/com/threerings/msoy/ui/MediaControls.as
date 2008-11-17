@@ -59,11 +59,20 @@ public class MediaControls extends Sprite
         return _dragging;
     }
 
+    public function unhook () :void
+    {
+        _player.removeEventListener(MediaPlayerCodes.STATE, handlePlayerState);
+        _player.removeEventListener(MediaPlayerCodes.DURATION, handlePlayerDuration);
+        _player.removeEventListener(MediaPlayerCodes.POSITION, handlePlayerPosition);
+        _player.removeEventListener(MediaPlayerCodes.ERROR, handlePlayerError);
+    }
+
     /**
      * Unload so we can be disposed.
      */
     public function unload () :void
     {
+        unhook();
         _player.unload();
     }
 
@@ -126,7 +135,6 @@ public class MediaControls extends Sprite
         _timeField.x = baseX;
         _timeField.y = (UNIT - _timeField.height) / 2
         addChild(_timeField);
-        updateTime(); // set the strings..
 
         _track.x = UNIT + PAD;
         _trackWidth = baseX - UNIT - (PAD * 2);
@@ -147,6 +155,9 @@ public class MediaControls extends Sprite
 
         // finally, make sure things are as they should be
         displayPlayState(_player.getState());
+
+        updateDuration(_player.getDuration());
+        updatePosition(_player.getPosition());
     }
 
     protected function handlePlay (event :MouseEvent) :void
@@ -205,7 +216,11 @@ public class MediaControls extends Sprite
     protected function handleKnobUp (event :MouseEvent) :void
     {   
         event.stopImmediatePropagation();
+        endDrag();
+    }
 
+    protected function endDrag () :void
+    {
         _dragging = false;
         _knob.stopDrag();
         removeEventListener(Event.ENTER_FRAME, handleKnobSeekCheck);
@@ -254,32 +269,53 @@ public class MediaControls extends Sprite
 
     protected function handlePlayerDuration (event :ValueEvent) :void
     {
-        if (_track.parent != this) {
-            addChild(_track);
-        }
-        _durationString = formatTime(Number(event.value));
-        updateTime();
+        updateDuration(Number(event.value));
     }
 
     protected function handlePlayerPosition (event :ValueEvent) :void
     {
-        updateTime(Number(event.value));
-
-        if (_dragging) {
-            return;
-        }
-        _lastKnobX = int.MIN_VALUE;
-        const pos :Number = Number(event.value);
-        _knob.x = (pos / _player.getDuration()) * _trackWidth;
-        if (_knob.parent == null) {
-            _track.addChild(_knob);
-        }
+        updatePosition(Number(event.value));
     }
 
     protected function handlePlayerError (event :ValueEvent) :void
     {
         // TODO.. maybe just redispatch
         log.warning("player error: " + event.value);
+    }
+
+    protected function updateDuration (duration :Number) :void
+    {
+        if (isNaN(duration) == (_track.parent == this)) {
+            if (isNaN(duration)) {
+                removeChild(_track);
+            } else {
+                addChild(_track);
+            }
+        }
+        _durationString = formatTime(duration);
+        updateTime();
+    }
+
+    protected function updatePosition (pos :Number) :void
+    {
+        updateTime(pos);
+
+        if (_dragging) {
+            if (isNaN(pos)) {
+                endDrag();
+            } else {
+                return;
+            }
+        }
+        _lastKnobX = int.MIN_VALUE;
+        _knob.x = (pos / _player.getDuration()) * _trackWidth;
+        if (isNaN(pos) == (_knob.parent == _track)) {
+            if (isNaN(pos)) {
+                _track.removeChild(_knob);
+            } else {
+                _track.addChild(_knob);
+            }
+        }
     }
 
     protected function adjustSeek (trackX :Number) :void
@@ -302,13 +338,14 @@ public class MediaControls extends Sprite
 
     protected function updateTime (position :Number = NaN) :void
     {
-        var posString :String = isNaN(position) ? UNKNOWN_TIME : formatTime(position);
-
-        _timeField.text = posString + " / " + _durationString;
+        _timeField.text = formatTime(position) + " / " + _durationString;
     }
 
     protected function formatTime (time :Number) :String
     {
+        if (isNaN(time)) {
+            return UNKNOWN_TIME;
+        }
         const mins :int = int(time / 60);
         time -= mins * 60;
         var secString :String = String(Math.round(time));

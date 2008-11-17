@@ -22,21 +22,28 @@ public class MusicDialog extends FloatingPanel
         setStyle("paddingRight", 0);
         setStyle("paddingBottom", 0);
         setStyle("paddingLeft", 0);
+
+        _display = new MsoyAudioDisplay(ctx.getWorldController().getMusicPlayer(), handleMusicInfo);
+    }
+
+    override public function close () :void
+    {
+        _display.unhook();
+        super.close();
     }
 
     override protected function createChildren () :void
     {
         super.createChildren();
 
-        var audioDisp :MsoyAudioDisplay = new MsoyAudioDisplay(
-            WorldContext(_ctx).getWorldController().getMusicPlayer(), handleMusicInfo);
-
-        addChild(new FlexWrapper(audioDisp, true));
+        addChild(new FlexWrapper(_display, true));
     }
 
     protected function handleMusicInfo () :void
     {
         CommandEvent.dispatch(this, WorldController.MUSIC_INFO);
     }
+
+    protected var _display :MsoyAudioDisplay;
 }
 }

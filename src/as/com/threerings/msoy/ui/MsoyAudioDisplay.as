@@ -55,11 +55,18 @@ public class MsoyAudioDisplay extends Sprite
         return HEIGHT;
     }
 
+    public function unhook () :void
+    {
+        _player.removeEventListener(MediaPlayerCodes.METADATA, handleMetadata);
+        _controls.unhook();
+    }
+
     /**
      * Stop playing our video.
      */
     public function unload () :void
     {
+        unhook();
         _controls.unload();
     }
 
