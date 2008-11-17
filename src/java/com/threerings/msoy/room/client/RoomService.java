@@ -9,8 +9,6 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
 
-import com.threerings.msoy.data.all.RatingResult;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.room.data.EntityMemoryEntry;
