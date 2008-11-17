@@ -86,21 +86,28 @@ public class MsoyAudioDisplay extends Sprite
 
         _controls.y = (FIELD_HEIGHT + PAD) * 2; //HEIGHT - MediaControls.HEIGHT;
         addChild(_controls);
+
+        checkId3(_player.getMetadata());
     }
 
     protected function handleMetadata (event :ValueEvent) :void
     {
-        const id3 :Object = event.value;
-        updateField(_artist, id3.artist as String);
-        updateField(_song, id3.songName as String);
+        checkId3(event.value);
     }
 
-    protected function updateField (field :TextField, info :String) :void
+    protected function checkId3 (id3 :Object) :void
     {
-        if (info != null) {
-            TextFieldUtil.updateText(field, info);
-            TextFieldUtil.updateFormat(field, { italic: false });
-        }
+        updateField(_artist, id3, "artist", "artist");
+        updateField(_song, id3, "songName", "song");
+    }
+
+    protected function updateField (
+        field :TextField, id3 :Object, prop :String, unkName :String) :void
+    {
+        const info :String = (id3 != null) ? id3[prop] as String : null;
+        const text :String = (info != null) ? info : ("unknown " + unkName);
+        TextFieldUtil.updateText(field, info);
+        TextFieldUtil.updateFormat(field, { italic: (info == null) });
     }
 
     protected static const FIELD_HEIGHT :int = 15;
