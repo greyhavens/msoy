@@ -41,7 +41,7 @@ public class MediaControls extends Sprite
         _player.addEventListener(MediaPlayerCodes.ERROR, handlePlayerError);
         _commentCallback = commentCallback;
 
-        MultiLoader.getContents(UI, configureUI);
+        configureUI();
     }
 
     override public function get width () :Number
@@ -67,19 +67,30 @@ public class MediaControls extends Sprite
         _player.unload();
     }
 
-    protected function configureUI (ui :DisplayObject) :void
+    protected function configureUI () :void
+    {
+        // we need to set some things up immediately, as they'll be adjusted when we get
+        // events from the player, which may happen prior to the multiloader loading the UI bits
+        _track = new Sprite();
+        _knob = new Sprite();
+        _timeField = TextFieldUtil.createField("",
+            { autoSize: TextFieldAutoSize.CENTER, selectable: false },
+            { color: 0xFFFFFF, font: "_sans", size: 10 });
+
+        MultiLoader.getContents(UI, configureUI2);
+    }
+
+    protected function configureUI2 (ui :DisplayObject) :void
     {
         _playBtn = DisplayUtil.findInHierarchy(ui, "playbutton");
         _pauseBtn = DisplayUtil.findInHierarchy(ui, "pausebutton");
         _commentBtn = DisplayUtil.findInHierarchy(ui, "commentbutton");
         _volumeBtn = DisplayUtil.findInHierarchy(ui, "fullvolumebutton");
         _muteBtn = DisplayUtil.findInHierarchy(ui, "mutebutton");
-        _track = new Sprite();
         var timeline :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
         timeline.x = 0;
         timeline.y = (UNIT - timeline.height) / 2;
-        _track.addChild(timeline);
-        _knob = new Sprite();
+        _track.addChildAt(timeline, 0);
         _knob.y = timeline.y;
         var knobBtn :DisplayObject = DisplayUtil.findInHierarchy(ui, "sliderknob");
         knobBtn.x = knobBtn.width / -2;
@@ -108,9 +119,8 @@ public class MediaControls extends Sprite
             addChild(_commentBtn);
         }
 
-        _timeField = TextFieldUtil.createField("88:88 / 88:88",
-            { autoSize: TextFieldAutoSize.CENTER, selectable: false },
-            { color: 0xFFFFFF, font: "_sans", size: 10 });
+        // size and add the timefield
+        TextFieldUtil.updateText(_timeField, "88:88 / 88:88");
         _timeField.height = UNIT;
         baseX -= _timeField.width;
         _timeField.x = baseX;
@@ -255,7 +265,6 @@ public class MediaControls extends Sprite
     {
         updateTime(Number(event.value));
 
-//        trace("Got player position: " + event.value);
         if (_dragging) {
             return;
         }
