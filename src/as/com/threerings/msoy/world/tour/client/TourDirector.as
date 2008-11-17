@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.world.tour.client {
 
+import mx.events.CloseEvent;
+
+import com.threerings.util.Command;
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.BasicDirector;
@@ -84,18 +87,21 @@ public class TourDirector extends BasicDirector
     protected function checkTouringStatus () :void
     {
         if (isOnTour()) {
-            if (_tourCtrl == null) {
-                _tourCtrl = new TourControl(_wctx, nextRoom, endTour);
+            if (_tourDialog == null) {
+                _tourDialog = new TourDialog(_wctx, nextRoom);
+                Command.bind(_tourDialog, CloseEvent.CLOSE, endTour);
+                _tourDialog.open();
             }
-            if (_tourCtrl.parent == null) {
-                _wctx.getControlBar().addCustomComponent(_tourCtrl);
-            }
+//            if (_tourDialog.parent == null) {
+//                _wctx.getControlBar().addCustomComponent(_tourDialog);
+//            }
 
-        } else if (_tourCtrl != null) {
-            if (_tourCtrl.parent != null) {
-                _tourCtrl.parent.removeChild(_tourCtrl);
-            }
-            _tourCtrl = null;
+        } else if (_tourDialog != null) {
+//            if (_tourDialog.parent != null) {
+//                _tourDialog.parent.removeChild(_tourDialog);
+//            }
+            _tourDialog.close();
+            _tourDialog = null;
         }
     }
 
@@ -128,6 +134,6 @@ public class TourDirector extends BasicDirector
 
     protected var _tsvc :TourService;
 
-    protected var _tourCtrl :TourControl;
+    protected var _tourDialog :TourDialog;
 }
 }
