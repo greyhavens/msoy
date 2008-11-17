@@ -13,7 +13,7 @@ import com.threerings.flash.media.Mp3AudioPlayer;
 
 import com.threerings.msoy.ui.MsoyAudioDisplay;
 
-[SWF(width="320", height="28")]
+[SWF(width="320", height="68")]
 public class AudioPlayerApp extends Sprite
 {
     public function AudioPlayerApp ()

@@ -73,9 +73,7 @@ public class MsoyVideoDisplay extends Sprite
         var masker :Shape = new Shape();
         this.mask = masker;
         addChild(masker);
-
         var g :Graphics = masker.graphics;
-        g.clear();
         g.beginFill(0xFFFFFF);
         g.drawRect(0, 0, WIDTH, HEIGHT);
         g.endFill();
