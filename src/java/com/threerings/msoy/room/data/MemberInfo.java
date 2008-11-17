@@ -91,6 +91,13 @@ public class MemberInfo extends ActorInfo
         return Avatar.getStaticImageAvatarMedia();
     }
 
+    @Override // from SimpleStreamableObject
+    protected void toString (StringBuilder buf)
+    {
+        super.toString(buf);
+        buf.append(", scale=").append(_scale).append(", game=").append(_game);
+    }
+
     protected float _scale;
     protected GameSummary _game;
 }

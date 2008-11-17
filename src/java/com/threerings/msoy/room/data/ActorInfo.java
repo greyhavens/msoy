@@ -79,6 +79,14 @@ public abstract class ActorInfo extends OccupantInfo
     {
     }
 
+    @Override // from SimpleStreamableObject
+    protected void toString (StringBuilder buf)
+    {
+        super.toString(buf);
+        buf.append(", media=").append(_media).append(", ident=").append(_ident);
+        buf.append(", state=").append(_state).append(", static=").append(_static);
+    }
+
     /**
      * Gets the media to use when a rendering limit is in effect for this actor.
      */

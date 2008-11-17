@@ -33,6 +33,13 @@ public class PetInfo extends ActorInfo
         return _ownerId;
     }
 
+    @Override // from SimpleStreamableObject
+    protected void toString (StringBuilder buf)
+    {
+        super.toString(buf);
+        buf.append(", ownerId=").append(_ownerId);
+    }
+
     @Override // from ActorInfo
     protected MediaDesc getStaticMedia ()
     {
