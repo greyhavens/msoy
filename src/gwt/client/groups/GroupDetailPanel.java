@@ -43,12 +43,12 @@ import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 /**
- * Displays the details of a Whirled.
+ * Displays the details of a Group.
  */
-public class WhirledDetailPanel extends FlowPanel
+public class GroupDetailPanel extends FlowPanel
 {
-    public WhirledDetailPanel () {
-        setStyleName("whirledDetail");
+    public GroupDetailPanel () {
+        setStyleName("groupDetail");
     }
 
     /**
@@ -94,7 +94,7 @@ public class WhirledDetailPanel extends FlowPanel
         _detail = detail;
         if (_detail == null) {
             _group = null;
-            add(MsoyUI.createLabel("That Whirled could not be found.", "infoLabel"));
+            add(MsoyUI.createLabel(_msgs.detailGroupNotFound(), "infoLabel"));
             return;
         }
         CShell.frame.setTitle(_detail.group.name);
@@ -106,7 +106,7 @@ public class WhirledDetailPanel extends FlowPanel
         mainDetails.setStyleName("MainDetails");
         add(mainDetails);
 
-        // icon, whirled name, creator, members
+        // icon, group name, creator, members
         FlowPanel titleBox = new FlowPanel();
         titleBox.addStyleName("TitleBox");
         mainDetails.add(titleBox);
@@ -169,7 +169,7 @@ public class WhirledDetailPanel extends FlowPanel
         }
 
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
-            // join this whirled
+            // join this group
             if (Group.canJoin(_group.policy) && !CShell.isGuest()) {
                 Label join = MsoyUI.createLabel(_msgs.detailJoin(), null);
                 new ClickCallback<Void>(join, _msgs.detailJoinPrompt()) {
@@ -189,7 +189,7 @@ public class WhirledDetailPanel extends FlowPanel
             }
 
         } else {
-            // leave this whirled
+            // leave this group
             actions.add(MsoyUI.createActionLabel(_msgs.detailLeave(), new PromptPopup(
                 _msgs.detailLeavePrompt(_group.name), removeMember(CShell.getMemberId()))));
         }
@@ -219,17 +219,17 @@ public class WhirledDetailPanel extends FlowPanel
         };
         readCharter.addClickListener(charterClick);
 
-        // edit this whirled & manage rooms
+        // edit this group & manage rooms
         if (_detail.myRank == GroupMembership.RANK_MANAGER) {
             FlowPanel managerActions = new FlowPanel();
             managerActions.setStyleName("ManagerActions");
             actions.add(managerActions);
 
             String args = Args.compose("edit", _group.groupId);
-            Label editWhirled = MsoyUI.createActionLabel(_msgs.detailEdit(), Link.createListener(
+            Label editGroup = MsoyUI.createActionLabel(_msgs.detailEdit(), Link.createListener(
                 Pages.GROUPS, args));
-            editWhirled.addStyleName("inline");
-            managerActions.add(editWhirled);
+            editGroup.addStyleName("inline");
+            managerActions.add(editGroup);
 
             managerActions.add(new InlineLabel(" | "));
 
@@ -249,7 +249,7 @@ public class WhirledDetailPanel extends FlowPanel
         screenshot.setStyleName("ScreenshotBox");
         mainDetails.add(screenshot);
 
-        // display a screenshot of the whirled that can be clicked for a live view
+        // display a screenshot of the group that can be clicked for a live view
         Widget liveView = SceneUtil.createSceneView(_group.homeSceneId, detail.homeSnapshot);
         liveView.addStyleName("Screenshot");
         screenshot.add(liveView);
@@ -325,7 +325,7 @@ public class WhirledDetailPanel extends FlowPanel
             }
             _title.setWidget(new Label(_msgs.detailTabDiscussions()));
             if (_discussions == null) {
-                _discussions = new WhirledDiscussionsPanel(_detail);
+                _discussions = new GroupDiscussionsPanel(_detail);
             }
             _content.setWidget(_discussions);
             _backButton.setVisible(false);
@@ -351,7 +351,7 @@ public class WhirledDetailPanel extends FlowPanel
             }
             _title.setWidget(new Label(_msgs.detailTabMembers()));
             if (_members == null) {
-                _members = new WhirledMembersPanel(_detail);
+                _members = new GroupMembersPanel(_detail);
             }
             _content.setWidget(_members);
             _backButton.setVisible(true);
@@ -363,7 +363,7 @@ public class WhirledDetailPanel extends FlowPanel
             }
             _title.setWidget(new Label(_msgs.detailTabRooms()));
             if (_rooms == null) {
-                _rooms = new WhirledRoomsPanel(_detail);
+                _rooms = new GroupRoomsPanel(_detail);
             }
             _content.setWidget(_rooms);
             _backButton.setVisible(true);
@@ -372,10 +372,10 @@ public class WhirledDetailPanel extends FlowPanel
         protected SimplePanel _title;
         protected SimplePanel _content;
         protected Label _backButton;
-        protected WhirledDiscussionsPanel _discussions;
+        protected GroupDiscussionsPanel _discussions;
         protected PrettyTextPanel _charter;
-        protected WhirledMembersPanel _members;
-        protected WhirledRoomsPanel _rooms;
+        protected GroupMembersPanel _members;
+        protected GroupRoomsPanel _rooms;
     }
 
     /**

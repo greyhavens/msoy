@@ -30,11 +30,11 @@ import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 /**
- * Displays the rooms of a particular Whirled.
+ * Displays the rooms of a particular Group.
  */
-public class WhirledRoomsPanel extends VerticalPanel
+public class GroupRoomsPanel extends VerticalPanel
 {
-    public WhirledRoomsPanel (GroupDetail detail)
+    public GroupRoomsPanel (GroupDetail detail)
     {
         _detail = detail;
 

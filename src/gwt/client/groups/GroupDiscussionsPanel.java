@@ -27,13 +27,13 @@ import client.util.Link;
 import client.util.MediaUtil;
 
 /**
- * Displays the members of a particular Whirled. Allows managers to manage ranks and membership.
+ * Displays the members of a particular Group. Allows managers to manage ranks and membership.
  */
-public class WhirledDiscussionsPanel extends FlowPanel
+public class GroupDiscussionsPanel extends FlowPanel
 {
-    public WhirledDiscussionsPanel (GroupDetail detail)
+    public GroupDiscussionsPanel (GroupDetail detail)
     {
-        setStyleName("WhirledDiscussionPanel");
+        setStyleName("groupDiscussionPanel");
         _detail = detail;
 
         FlowPanel rss = new FlowPanel();

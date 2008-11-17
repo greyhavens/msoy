@@ -116,7 +116,7 @@ public class GalaxyPanel extends FlowPanel
         _groupGrid.addStyleName("GroupsList");
         content.add(_groupGrid);
 
-        // add info on creating a Whirled
+        // add info on creating a Group
         if (!CShell.isGuest()) {
             SmartTable create = new SmartTable("Create", 0, 0);
             create.setText(0, 0, _msgs.galaxyCreateTitle(), 3, "Header");
@@ -235,7 +235,7 @@ public class GalaxyPanel extends FlowPanel
                 _myGroups.add(createMyGroupWidget(group));
             }
             Widget seeAllLink = Link.create(_msgs.galaxyMyGroupsSeeAll(), Pages.GROUPS,
-                "mywhirleds");
+                "mygroups");
             seeAllLink.addStyleName("SeeAll");
             _myGroups.add(seeAllLink);
         }

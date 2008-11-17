@@ -38,11 +38,11 @@ import client.util.ServiceUtil;
 /**
  * Displays a list of threads.
  */
-public class MyWhirleds extends AbsolutePanel
+public class MyGroups extends AbsolutePanel
 {
-    public MyWhirleds (byte sortMethod)
+    public MyGroups (byte sortMethod)
     {
-        setStyleName("myWhirleds");
+        setStyleName("myGroups");
 
         _sortBox = new ListBox();
         for (int ii = 0; ii < SORT_LABELS.length; ii ++) {
@@ -54,50 +54,50 @@ public class MyWhirleds extends AbsolutePanel
         _sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 byte newSortMethod = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
-                Link.go(Pages.GROUPS, Args.compose("mywhirleds", newSortMethod));
+                Link.go(Pages.GROUPS, Args.compose("mygroups", newSortMethod));
             }
         });
 
         _groupsvc.getMyGroups(sortMethod, new MsoyCallback<List<MyGroupCard>>() {
-            public void onSuccess (List<MyGroupCard> whirleds) {
-                gotData(whirleds);
+            public void onSuccess (List<MyGroupCard> groups) {
+                gotData(groups);
             }
         });
     }
 
     /**
-     * When data for this page is received, create a new WhirledsGrid to display it.
+     * When data for this page is received, create a new GroupsGrid to display it.
      */
-    protected void gotData (List<MyGroupCard> whirleds)
+    protected void gotData (List<MyGroupCard> groups)
     {
-        WhirledsGrid grid = new WhirledsGrid();
-        add(MsoyUI.createSimplePanel(grid, "WhirledsGrid"));
-        grid.setModel(new SimpleDataModel<MyGroupCard>(whirleds), 0);
+        GroupsGrid grid = new GroupsGrid();
+        add(MsoyUI.createSimplePanel(grid, "GroupsGrid"));
+        grid.setModel(new SimpleDataModel<MyGroupCard>(groups), 0);
     }
 
     /**
-     * Displays a list of whirleds in a paged grid.
+     * Displays a list of groups in a paged grid.
      */
-    protected class WhirledsGrid extends PagedGrid<MyGroupCard>
+    protected class GroupsGrid extends PagedGrid<MyGroupCard>
     {
-        public static final int WHIRLEDS_PER_PAGE = 10;
+        public static final int GROUPS_PER_PAGE = 10;
 
-        public WhirledsGrid ()
+        public GroupsGrid ()
         {
-            super(WHIRLEDS_PER_PAGE, 1);
+            super(GROUPS_PER_PAGE, 1);
             setWidth("100%");
         }
 
         @Override // from PagedGrid
         protected Widget createWidget (MyGroupCard card)
         {
-            return new WhirledWidget(card);
+            return new GroupWidget(card);
         }
 
         @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
-            return _msgs.myNoWhirleds();
+            return _msgs.myNoGroups();
         }
 
         @Override // from PagedGrid
@@ -117,29 +117,29 @@ public class MyWhirleds extends AbsolutePanel
             headers.setStyleName("Headers");
             controls.setWidget(1, 0, headers);
             controls.getFlexCellFormatter().setColSpan(1, 0, 7);
-            headers.add(MsoyUI.createLabel(_msgs.myHeaderName(), "WhirledNameHeader"));
+            headers.add(MsoyUI.createLabel(_msgs.myHeaderName(), "GroupNameHeader"));
             headers.add(MsoyUI.createLabel(_msgs.myHeaderLatest(), "LatestPostHeader"));
             headers.add(MsoyUI.createLabel(_msgs.myHeaderThreadCount(), "ThreadsHeader"));
             headers.add(MsoyUI.createLabel(_msgs.myHeaderPostCount(), "PostsHeader"));
         }
 
         /**
-         * Displays a single whirled
+         * Displays a single group
          */
-        protected class WhirledWidget extends AbsolutePanel
+        protected class GroupWidget extends AbsolutePanel
         {
-            public WhirledWidget (MyGroupCard card)
+            public GroupWidget (MyGroupCard card)
             {
-                setStyleName("WhirledWidget");
+                setStyleName("GroupWidget");
 
-                // logo links to whirled
+                // logo links to group
                 SimplePanel logoBox = new SimplePanel();
                 logoBox.setStyleName("LogoBox");
                 logoBox.setWidget(new ThumbBox(card.logo, Pages.GROUPS,
                                                Args.compose("d", card.name.getGroupId())));
                 add(logoBox);
 
-                // name links to whirled
+                // name links to group
                 FlowPanel name = new FlowPanel();
                 name.setStyleName("Name");
                 Widget nameText = Link.create(

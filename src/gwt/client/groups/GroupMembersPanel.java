@@ -33,11 +33,11 @@ import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 /**
- * Displays the members of a particular Whirled. Allows managers to manage ranks and membership.
+ * Displays the members of a particular Group. Allows managers to manage ranks and membership.
  */
-public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
+public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
 {
-   public WhirledMembersPanel (GroupDetail detail)
+   public GroupMembersPanel (GroupDetail detail)
     {
         super(5, 2, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");

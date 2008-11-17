@@ -8,7 +8,7 @@
    SINGLE GROUP DETAIL
 -------------------------------------*/
 
-.whirledDetail {
+.groupDetail {
   background: #61abd0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
@@ -16,12 +16,12 @@
   min-height: 100%;
 }
 
-.whirledDetail .MainDetails {
+.groupDetail .MainDetails {
   height: 280px;
   width: 100%;
 }
 
-.whirledDetail .MainDetails .TitleBox {
+.groupDetail .MainDetails .TitleBox {
   position: absolute;
   top: 8px;
   left: 10px;
@@ -30,19 +30,19 @@
   background: transparent url(/images/group/title_bg.png) top left no-repeat;
   padding: 5px;
 }
-.whirledDetail .MainDetails .TitleBox,
-.whirledDetail .MainDetails .TitleBox a {
+.groupDetail .MainDetails .TitleBox,
+.groupDetail .MainDetails .TitleBox a {
   color: #3f82af;
 }
 
-.whirledDetail .MainDetails .TitleBox .Logo {
+.groupDetail .MainDetails .TitleBox .Logo {
   float: left;
   width: 40px;
   margin-right: 10px;
   margin-bottom: 5px;
 }
 
-.whirledDetail .MainDetails .TitleBox .Name {
+.groupDetail .MainDetails .TitleBox .Name {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 18px;
   font-weight: bold;
@@ -53,7 +53,7 @@
   margin-top: 5px;
 }
 
-.whirledDetail .MainDetails .TitleBox .Established {
+.groupDetail .MainDetails .TitleBox .Established {
   clear: both;
   white-space: nowrap;
   overflow: hidden;
@@ -62,43 +62,43 @@
   font-style: italic;
 }
 
-.whirledDetail .MainDetails .EnterButton {
+.groupDetail .MainDetails .EnterButton {
   position: absolute;
   top: 97px;
   left: 25px;
 }
 
-.whirledDetail .MainDetails .DiscussionsButton {
+.groupDetail .MainDetails .DiscussionsButton {
   position: absolute;
   top: 97px;
   left: 155px;
 }
 
-.whirledDetail .MainDetails .Actions {
+.groupDetail .MainDetails .Actions {
   position: absolute;
   top: 135px;
   left: 10px;
   color: #FFFFFF;
 }
 
-.whirledDetail .MainDetails .Actions .actionLabel {
+.groupDetail .MainDetails .Actions .actionLabel {
   text-decoration: none;
   width: 135px;
   border-bottom: solid #5384ad 1px;
   margin-bottom: 5px;
   padding-bottom: 2px;
 }
-.whirledDetail .MainDetails .Actions .actionLabel:hover,
-.whirledDetail .MainDetails .Actions .actionLabel:active {
+.groupDetail .MainDetails .Actions .actionLabel:hover,
+.groupDetail .MainDetails .Actions .actionLabel:active {
   text-decoration: underline;
 }
 
-.whirledDetail .MainDetails .Actions .ManagerActions .actionLabel {
+.groupDetail .MainDetails .Actions .ManagerActions .actionLabel {
   border-bottom: none;
   width: auto;
 }
 
-.whirledDetail .MainDetails .ScreenshotBox {
+.groupDetail .MainDetails .ScreenshotBox {
   position: absolute;
   top: 0px;
   left: 275px;
@@ -108,28 +108,28 @@
   text-align: center;
 }
 
-.whirledDetail .MainDetails .ScreenshotBox .Screenshot {
+.groupDetail .MainDetails .ScreenshotBox .Screenshot {
   margin: 12px 25px 15px 25px;
 }
 
-.whirledDetail .MainDetails .ScreenshotBox .Online {
+.groupDetail .MainDetails .ScreenshotBox .Online {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 17px;
   color: #FFFFFF;
   margin-bottom: 5px;
 }
 
-.whirledDetail .MainDetails .ScreenshotBox .Blurb {
+.groupDetail .MainDetails .ScreenshotBox .Blurb {
   font-size: 14px;
   color: #88c3ed;
 }
 
-.whirledDetail .ContentPanel {
+.groupDetail .ContentPanel {
   margin-left: 5px;
   width: 525px;
 }
 
-.whirledDetail .ContentPanel .ContentPanelTitle {
+.groupDetail .ContentPanel .ContentPanelTitle {
   width: 525px;
   height: 25px; /* total image height = 30px*/
   padding-top: 5px;
@@ -140,26 +140,26 @@
   background: transparent url(/images/group/content_title_bg.png) bottom center no-repeat;
 }
 
-.whirledDetail .ContentPanel .ContentPanelContainer {
+.groupDetail .ContentPanel .ContentPanelContainer {
   background-color: #FFFFFF;
   min-height: 400px;
 }
 
-.whirledDetail .ContentPanel .ContentPanelContent {
+.groupDetail .ContentPanel .ContentPanelContent {
   padding: 10px;
 }
 
-.whirledDetail .ContentPanel .ContentBackButton {
+.groupDetail .ContentPanel .ContentBackButton {
   text-align: right;
   padding: 10px;
 }
 
-.whirledDetail .ContentPanel .ContentBackButton a {
+.groupDetail .ContentPanel .ContentBackButton a {
   text-decoration: none;
 }
 
-.whirledDetail .ContentPanel .ContentBackButton a:hover,
-.whirledDetail .ContentPanel .ContentBackButton a:active {
+.groupDetail .ContentPanel .ContentBackButton a:hover,
+.groupDetail .ContentPanel .ContentBackButton a:active {
   text-decoration: underline;
 }
 
@@ -167,12 +167,12 @@
    SINGLE GROUP DETAIL - TOP MEMBERS
 -------------------------------------*/
 
-.whirledDetail .TopMembersPanel {
+.groupDetail .TopMembersPanel {
   margin-left: 10px;
   width: 140px;
 }
 
-.whirledDetail .TopMembersPanel .Title {
+.groupDetail .TopMembersPanel .Title {
   background: transparent url(/images/group/sidebar_bg.png) bottom center no-repeat;
   width: 140px;
   height: 25px; /* total image height = 30px*/
@@ -183,28 +183,28 @@
   text-align: center;
 }
 
-.whirledDetail .TopMembersPanel .Content {
+.groupDetail .TopMembersPanel .Content {
   background-color: #FFFFFF;
   padding: 5px;
 }
-.whirledDetail .TopMembersPanel .Content,
-.whirledDetail .TopMembersPanel .Content a {
+.groupDetail .TopMembersPanel .Content,
+.groupDetail .TopMembersPanel .Content a {
   color: #174c74;
   font-size: 12px;
 }
 
-.whirledDetail .TopMembersPanel .SeeAll {
+.groupDetail .TopMembersPanel .SeeAll {
   text-decoration: underline;
   font-style: italic;
   text-align: right;
 }
 
-.whirledDetail .TopMembersPanel .Icon {
+.groupDetail .TopMembersPanel .Icon {
   padding-right: 5px;
   height: 35px;
 }
 
-.whirledDetail .TopMembersPanel .Manager {
+.groupDetail .TopMembersPanel .Manager {
   padding-top: 5px;
   font-weight: bold;
   font-size: 12px;
@@ -214,19 +214,19 @@
    SINGLE GROUP DETAIL - RECENT DISCUSSIONS
 -------------------------------------*/
 
-.whirledDetail .WhirledDiscussionPanel {
+.groupDetail .groupDiscussionPanel {
   padding-bottom: 30px;
 }
 
 /* positioned absolutely to the page */
-.whirledDetail .WhirledDiscussionPanel .RSS {
+.groupDetail .groupDiscussionPanel .RSS {
   position: absolute;
   left: 350px;
   top: 315px;
   width: 180px;
   text-align: right;
 }
-.whirledDetail .WhirledDiscussionPanel .RSS .RssText {
+.groupDetail .groupDiscussionPanel .RSS .RssText {
   width: 130px;
   text-align: right;
   padding-top: 3px;
@@ -234,58 +234,58 @@
   float: left;
 }
 
-.whirledDetail .WhirledDiscussionPanel .RSS a.RssText {
+.groupDetail .groupDiscussionPanel .RSS a.RssText {
   font-size: 11px;
   color: #2a6891;
   text-decoration: none;
 }
-.whirledDetail .WhirledDiscussionPanel .RSS a:hover.RssText,
-.whirledDetail .WhirledDiscussionPanel .RSS a:active.RssText {
+.groupDetail .groupDiscussionPanel .RSS a:hover.RssText,
+.groupDetail .groupDiscussionPanel .RSS a:active.RssText {
   text-decoration: underline;
 }
 
-.whirledDetail .WhirledDiscussionPanel .RSS img {
+.groupDetail .groupDiscussionPanel .RSS img {
   border: none;
   width: 38px;
   height: 38px;
   float: right;
 }
 
-.whirledDetail .WhirledDiscussionPanel .NoThreads {
+.groupDetail .groupDiscussionPanel .NoThreads {
   color: #2a6891;
   font-size: 15px;
   margin: 11px;
 }
 
-.whirledDetail .WhirledDiscussionPanel .NoThreads {
+.groupDetail .groupDiscussionPanel .NoThreads {
   color: #2a6891;
   font-size: 15px;
   margin: 10px;
 }
 
-.whirledDetail .Thread,
-.whirledDetail .Thread a {
+.groupDetail .Thread,
+.groupDetail .Thread a {
   font-size: 13px;
   color: #2a6891;
 }
 
-.whirledDetail .Thread .Date {
+.groupDetail .Thread .Date {
   color: #78a3c5;
   margin: 15px 0 0 0px;
 }
 
-.whirledDetail .Thread .Subject {
+.groupDetail .Thread .Subject {
   float: left;
   width: 500px;
   padding: 2px 0 5px 0px;
 }
-.whirledDetail .Thread .Subject a {
+.groupDetail .Thread .Subject a {
   font-size: 16px;
   font-weight: bold;
   text-decoration: none;
 }
 
-.whirledDetail .Thread .Text {
+.groupDetail .Thread .Text {
   background: #dfedfa url(/images/group/thread_text_bg.png) no-repeat top left;
   width: 450px;
   min-height: 50px;
@@ -296,22 +296,22 @@
   overflow: auto;
 }
 
-.whirledDetail .Thread .PostedByIcon {
+.groupDetail .Thread .PostedByIcon {
   float: left;
   margin: 0 5px 0 20px;
 }
 
-.whirledDetail .Thread .PostedBy {
+.groupDetail .Thread .PostedBy {
   float: left;
   margin: 7px 0 0 0;
 }
 
-.whirledDetail .Thread .Replies {
+.groupDetail .Thread .Replies {
   float: right;
   margin: 7px 10px 0 0;
 }
 
-.whirledDetail .WhirledDiscussionPanel .Divider {
+.groupDetail .groupDiscussionPanel .Divider {
   clear: both;
   background: transparent url(/images/group/thread_divider_bg.png) repeat-x bottom left;
   height: 15px;
@@ -477,10 +477,10 @@
 }
 
 /* ------------------------------------
-   MY WHIRLEDS
+   MY GROUPS
 -------------------------------------*/
 
-.myWhirleds {
+.myGroups {
   background-color: #1d5884;
   min-height: 100%;
   width: 100%;
@@ -488,31 +488,31 @@
   font-size: 12px;
 }
 
-.myWhirleds .WhirledsGrid {
+.myGroups .GroupsGrid {
   width: 665px;
   margin: 10px 0 0 10px;
 }
 
-.myWhirleds .WhirledsGrid .Header {
+.myGroups .GroupsGrid .Header {
   background-position: top center;
 }
 
-.myWhirleds .WhirledsGrid .Header .TopLeft,
-.myWhirleds .WhirledsGrid .Header .TopRight {
+.myGroups .GroupsGrid .Header .TopLeft,
+.myGroups .GroupsGrid .Header .TopRight {
   background-color: #1d5884;
   height: 29px;
 }
 
-.myWhirleds .WhirledsGrid .Header .SortBy {
+.myGroups .GroupsGrid .Header .SortBy {
   padding-right: 5px;
   width: 50px;
 }
 
-.myWhirleds .WhirledsGrid .Header td.Info {
+.myGroups .GroupsGrid .Header td.Info {
   width: 350px;
 }
 
-.myWhirleds .WhirledsGrid .Headers div {
+.myGroups .GroupsGrid .Headers div {
   float: left;
   height: 17px;
   background-color: #5683a4;
@@ -523,47 +523,47 @@
   color: #FFFFFF;
 }
 
-.myWhirleds .WhirledsGrid .Headers div.WhirledNameHeader {
+.myGroups .GroupsGrid .Headers div.GroupNameHeader {
   border-left: none;
   width: 227px;
 }
 
-.myWhirleds .WhirledsGrid .Headers div.LatestPostHeader {
+.myGroups .GroupsGrid .Headers div.LatestPostHeader {
   width: 340px;
 }
 
-.myWhirleds .WhirledsGrid .Headers div.ThreadsHeader {
+.myGroups .GroupsGrid .Headers div.ThreadsHeader {
   width: 50px;
 }
 
-.myWhirleds .WhirledsGrid .Headers div.PostsHeader {
+.myGroups .GroupsGrid .Headers div.PostsHeader {
   width: 45px;
 }
 
-.myWhirleds .WhirledWidget {
+.myGroups .GroupWidget {
   height: 80px;
   text-align: left;
   background: transparent url(/images/group/mywhirleds_row_bg.png) repeat-y top left;
   margin-bottom: 5px;
 }
-.myWhirleds .WhirledWidget,
-.myWhirleds .WhirledWidget a {
+.myGroups .GroupWidget,
+.myGroups .GroupWidget a {
   color: #073859;
 }
 
-.myWhirleds .LogoBox {
+.myGroups .LogoBox {
   position: absolute;
   top: 10px;
   left: 5px;
 }
 /* vertical centering not supported in ie */
-.myWhirleds .LogoBox div {
+.myGroups .LogoBox div {
   display: table-cell;
   vertical-align: middle;
   text-align: center;
 }
 
-.myWhirleds .Name {
+.myGroups .Name {
   position: absolute;
   top: 10px;
   left: 90px;
@@ -571,13 +571,13 @@
   height: 45px;
   overflow: hidden;
 }
-.myWhirleds .Name a {
+.myGroups .Name a {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 17px;
   color: #6692af;
 }
 
-.myWhirleds .MembersOnline {
+.myGroups .MembersOnline {
   color: #6692af;
   font-size: 12px;
   text-align: center;
@@ -586,8 +586,8 @@
   left: 90px;
 }
 
-.myWhirleds .LatestThreadSubject,
-.myWhirleds .NoThreads {
+.myGroups .LatestThreadSubject,
+.myGroups .NoThreads {
   position: absolute;
   top: 10px;
   left: 235px;
@@ -596,18 +596,18 @@
   overflow: hidden;
   text-decoration: none;
 }
-.myWhirleds .LatestThreadSubject a {
+.myGroups .LatestThreadSubject a {
   font-size: 14px;
 }
 
-.myWhirleds .PostedBy {
+.myGroups .PostedBy {
   position: absolute;
   top: 30px;
   left: 235px;
   width: 325px;
 }
 
-.myWhirleds .Date {
+.myGroups .Date {
   position: absolute;
   top: 60px;
   left: 360px;
@@ -615,12 +615,12 @@
   text-align: right;
 }
 
-.myWhirleds .Date .Time {
+.myGroups .Date .Time {
   color: #6692af;
 }
 
-.myWhirleds .NumThreads,
-.myWhirleds .NumPosts {
+.myGroups .NumThreads,
+.myGroups .NumPosts {
   position: absolute;
   top: 10px;
   font-size: 15px;
@@ -630,32 +630,32 @@
   text-align: center;
   cursor: pointer;
 }
-.myWhirleds .NumThreads a,
-.myWhirleds .NumPosts a {
+.myGroups .NumThreads a,
+.myGroups .NumPosts a {
   text-decoration: none;
 }
 
-.myWhirleds .NumThreads a:hover,
-.myWhirleds .NumPosts a:hover,
-.myWhirleds .NumThreads a:active,
-.myWhirleds .NumPosts a:active {
+.myGroups .NumThreads a:hover,
+.myGroups .NumPosts a:hover,
+.myGroups .NumThreads a:active,
+.myGroups .NumPosts a:active {
   text-decoration: underline;
 }
 
-.myWhirleds .NumThreads {
+.myGroups .NumThreads {
   left: 570px;
 }
 
-.myWhirleds .NumPosts {
+.myGroups .NumPosts {
   left: 617px;
 }
 
-.myWhirleds .ManagerStar {
+.myGroups .ManagerStar {
   margin-left: 5px;
 }
 
 /* ------------------------------------
-   EDIT WHIRLED
+   EDIT GROUP
 -------------------------------------*/
 
 .groupEditor .tagDetailPanel {

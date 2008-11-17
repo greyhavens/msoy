@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package client.groups;
 
@@ -14,14 +14,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
- * Utilities for displaying a Whirled's canonical scene snapshot.
- *
+ * Utilities for displaying a Group's canonical scene snapshot.
+ * 
  * @author robin
  */
 public class LiveViewUtil
 {
     /**
-     * Creates a display of a Whirled's canonical home scene snapshot (or the default).
+     * Creates a display of a Group's canonical home scene snapshot (or the default).
      */
     public static Widget makeLiveViewWidget (MediaDesc snapshot, ClickListener onClick)
     {

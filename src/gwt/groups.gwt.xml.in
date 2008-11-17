@@ -10,5 +10,5 @@
   <public path="public/groups"/>
   <stylesheet src="groups.css"/>
 
-  <entry-point class="client.groups.WhirledsPage"/>
+  <entry-point class="client.groups.GroupsPage"/>
 </module>

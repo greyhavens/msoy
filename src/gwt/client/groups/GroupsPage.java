@@ -19,7 +19,7 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
 
-public class WhirledsPage extends Page
+public class GroupsPage extends Page
 {
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -42,10 +42,10 @@ public class WhirledsPage extends Page
                 setContent(new GroupEdit(group, _detail.getGroupExtras()));
             }
 
-        } else if (action.equals("mywhirleds")) {
+        } else if (action.equals("mygroups")) {
             byte sortMethod = (byte) args.get(1, 0);
-            MyWhirleds myWhirleds = new MyWhirleds(sortMethod);
-            setContent(_msgs.myWhirledsTitle(), myWhirleds);
+            MyGroups myGroups = new MyGroups(sortMethod);
+            setContent(_msgs.myGroupsTitle(), myGroups);
 
         } else if (action.equals("unread")) {
             ForumPanel fpanel = new ForumPanel(_fmodels);
@@ -115,7 +115,7 @@ public class WhirledsPage extends Page
 
     protected ForumModels _fmodels = new ForumModels();
     protected IssueModels _imodels = new IssueModels();
-    protected WhirledDetailPanel _detail = new WhirledDetailPanel();
+    protected GroupDetailPanel _detail = new GroupDetailPanel();
     protected GalaxyPanel _galaxy;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);

@@ -76,7 +76,7 @@ public class SubNaviPanel extends FlowPanel
         case GROUPS:
             addLink(null, "Groups", Pages.GROUPS, "");
             if (!CShell.isGuest()) {
-                addLink(null, "My Groups", Pages.GROUPS, "mywhirleds");
+                addLink(null, "My Groups", Pages.GROUPS, "mygroups");
                 addLink(null, "My Discussions", Pages.GROUPS, "unread");
                 if (CShell.isSupport()) {
                     addLink(null, "Issues", Pages.GROUPS, "b");
