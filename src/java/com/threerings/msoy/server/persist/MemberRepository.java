@@ -291,7 +291,7 @@ public class MemberRepository extends DepotRepository
         List<Tuple<Integer, String>> emails = Lists.newArrayList();
         Where where = new Where(new Equals(annFlag, 0));
         for (MemberEmailRecord record : findAll(MemberEmailRecord.class, where)) {
-            emails.add(Tuple.create(record.memberId, record.accountName));
+            emails.add(Tuple.newTuple(record.memberId, record.accountName));
         }
         return emails;
     }

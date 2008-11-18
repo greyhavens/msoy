@@ -337,7 +337,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             // locate our forwarded member object if any
             MemObjCacheEntry entry = _mobjCache.remove(username);
             return (entry != null && now < entry.expireTime) ?
-                Tuple.create(entry.memobj, entry.locals) : null;
+                Tuple.newTuple(entry.memobj, entry.locals) : null;
 
         } finally {
             // clear other expired records from the cache

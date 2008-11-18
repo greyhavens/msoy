@@ -173,7 +173,7 @@ public class MailLogic
         // add the Return Path probe addresses (as long as we're not on dev)
         if (!DeploymentConfig.devDeployment) {
             for (String rpaddr : SpamUtil.getReturnPathAddrs()) {
-                emails.add(Tuple.create(0, rpaddr));
+                emails.add(Tuple.newTuple(0, rpaddr));
             }
         }
 
@@ -198,12 +198,12 @@ public class MailLogic
 
         // add the caller to the recipient list
         List<Tuple<Integer, String>> emails = Lists.newArrayList();
-        emails.add(Tuple.create(recipId, recip));
+        emails.add(Tuple.newTuple(recipId, recip));
 
         // add the Return Path probe addresses if they were requested
         if (includeProbeList) {
             for (String rpaddr : SpamUtil.getReturnPathAddrs()) {
-                emails.add(Tuple.create(0, rpaddr));
+                emails.add(Tuple.newTuple(0, rpaddr));
             }
         }
 
