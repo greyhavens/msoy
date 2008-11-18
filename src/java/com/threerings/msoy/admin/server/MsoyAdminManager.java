@@ -31,7 +31,6 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.admin.data.ServerConfigObject;
-import com.threerings.msoy.admin.data.StatusObject;
 
 import static com.threerings.msoy.Log.log;
 
