@@ -21,10 +21,8 @@ public class TourDialog extends FloatingPanel
 {
     public function TourDialog (ctx :WorldContext, nextRoom :Function)
     {
-        super(ctx);
+        super(ctx, Msgs.WORLD.get("t.tour"));
         _wctx = ctx;
-        
-        title = Msgs.GENERAL.get("t.tour");
         showCloseButton = true;
 
         var nextBtn :CommandButton = new CommandButton(Msgs.WORLD.get("b.tour_next"), nextRoom);
