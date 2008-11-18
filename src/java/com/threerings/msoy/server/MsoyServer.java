@@ -11,6 +11,8 @@ import java.util.Iterator;
 
 import org.apache.mina.common.IoAcceptor;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -217,22 +219,7 @@ public class MsoyServer extends MsoyBaseServer
         // start up an interval that checks to see if our code has changed and auto-restarts the
         // server as soon as possible when it has
         if (ServerConfig.autoRestart) {
-            _codeModified = codeModifiedTime();
-            new Interval() { // Note well: this interval does not run on the dobj thread
-                @Override
-                public void expired () {
-                    // ...we simply post a LongRunnable to do the job
-                    _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
-                        public void run () {
-                            checkAutoRestart();
-                        }
-                    });
-                }
-                @Override
-                public String toString () {
-                    return "checkAutoRestart interval";
-                }
-            }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
+            new AutoRestartChecker().schedule(AUTO_RESTART_CHECK_INTERVAL, true);
         }
 
         log.info("Msoy server initialized.");
@@ -326,36 +313,46 @@ public class MsoyServer extends MsoyBaseServer
         return ServerConfig.serverPorts;
     }
 
-    /**
-     * Check the filesystem and return the newest timestamp for any of our code jars. This method
-     * should remain safe to run on any thread.
-     */
-    protected long codeModifiedTime ()
+    // Note well: this interval does not run on the dobj thread
+    protected class AutoRestartChecker extends Interval
     {
-        // just the one...
-        return new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
-    }
-
-    /**
-     * Check to see if the server should be restarted.
-     */
-    protected void checkAutoRestart ()
-    {
-        // look up the last-modified time
-        final long lastModified = codeModifiedTime();
-        if (lastModified <= _codeModified || _adminMan.statObj.serverRebootTime != 0L) {
-            return;
+        public AutoRestartChecker () {
+            _codeModified = codeModifiedTime();
         }
 
-        // if someone is online, give 'em two minutes, otherwise reboot immediately
-        boolean playersOnline = false;
-        for (final Iterator<ClientObject> iter = _clmgr.enumerateClientObjects(); iter.hasNext(); ) {
-            if (iter.next() instanceof MemberObject) {
-                playersOnline = true;
-                break;
+        @Override public void expired () {
+            // look up the last-modified time
+            final long lastModified = codeModifiedTime();
+            if (lastModified <= _codeModified) {
+                return;
             }
+
+            // if someone is online, give 'em two minutes, otherwise reboot immediately
+            final boolean playersOnline = Iterators.any(
+                _clmgr.enumerateClientObjects(), new Predicate<ClientObject>() {
+                    public boolean apply (ClientObject clobj) {
+                        return (clobj instanceof MemberObject);
+                    }
+                });
+            _omgr.postRunnable(new Runnable() {
+                public void run () {
+                    _adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
+                }
+            });
+
+            // we've scheduled a reboot, so we can stop this inteval
+            cancel();
         }
-        _adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
+
+        @Override public String toString () {
+            return "checkAutoRestart interval";
+        }
+
+        protected long codeModifiedTime () {
+            return new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
+        }
+
+        protected long _codeModified;
     }
 
     /**
@@ -372,9 +369,6 @@ public class MsoyServer extends MsoyBaseServer
         }
         return delayedConn;
     }
-
-    /** Used to auto-restart the development server when its code is updated. */
-    protected long _codeModified;
 
     /** A policy server used on dev deployments. */
     protected IoAcceptor _policyServer;
