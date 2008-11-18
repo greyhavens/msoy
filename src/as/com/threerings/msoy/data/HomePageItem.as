@@ -49,11 +49,15 @@ public class HomePageItem
     /** Go to a group. The data is an <code>Integer</code> group id. */
     public static const ACTION_GROUP :int = 8;
 
-    /** Go to a user profile. The data is an <code>Integer</code> profile.*/
+    /** Go to a user profile. The data is an <code>Integer</code> profile. */
     public static const ACTION_PROFILE :int = 9;
 
-    /** Kick off the whirled tour. The data is ignored.*/
+    /** Kick off the whirled tour. The data is ignored. */
     public static const ACTION_EXPLORE :int = 10;
+
+    /** Go to an AVRG whirled. The data is The data is an instance of <code>BasicNavItemData</code>
+     * where the id is the game id and the name is the name of the game. */
+    public static const ACTION_AVR_GAME :int = 11;
 
     /**
      * Gets the action for this item.
