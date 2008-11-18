@@ -37,7 +37,7 @@ public interface RoomService extends InvocationService
     function purchaseRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService
-    function rateRoom (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function rateRoom (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService
     function requestControl (arg1 :Client, arg2 :ItemIdent) :void;

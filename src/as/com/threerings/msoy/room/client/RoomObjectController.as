@@ -351,7 +351,13 @@ public class RoomObjectController extends RoomController
      */
     public function handleRoomRate (rating :Number) :void
     {
-        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, new ReportingListener(_wdctx));
+        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, new ResultAdapter(
+            function (cause :String) :void {
+                _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
+            },
+            function (result :Object) :void {
+                // TODO: Update the stars widget, bring RatingResult to AS
+            }));
     }
 
     /**

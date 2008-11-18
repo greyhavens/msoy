@@ -688,23 +688,28 @@ public class RoomManager extends SpotSceneManager
     }
 
     // from RoomProvider
-    public void rateRoom (ClientObject caller, byte rating, RoomService.InvocationListener listener)
+    public void rateRoom (
+        ClientObject caller, final byte rating, final RoomService.ResultListener listener)
         throws InvocationException
     {
-        MemberObject member = (MemberObject) caller;
+        final MemberObject member = (MemberObject) caller;
 
         if (member.isGuest()) {
             throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
         }
 
-        Tuple<RatingRepository.RatingAverageRecord, Boolean> result =
-            _sceneRepo.getRatingRepository().rate(getScene().getSceneModel().sceneId,
-            member.getMemberId(), rating);
-
-        _roomObj.startTransaction();
-        _roomObj.setRating(result.left.average);
-        _roomObj.setRatingCount(result.left.count);
-        _roomObj.commitTransaction();
+        _invoker.postUnit(new RepositoryUnit("rateRoom") {
+            public void invokePersist () throws Exception {
+                Tuple<RatingRepository.RatingAverageRecord, Boolean> result =
+                    _sceneRepo.getRatingRepository().rate(getScene().getSceneModel().sceneId,
+                        member.getMemberId(), rating);
+                _ratingResult = new RatingResult(result.left.average, result.left.count);
+            }
+            public void handleSuccess () {
+                listener.requestProcessed(_ratingResult);
+            }
+            RatingResult _ratingResult;
+        });
     }
 
     @Override // from SpotSceneManager
@@ -811,12 +816,6 @@ public class RoomManager extends SpotSceneManager
         _roomObj = (RoomObject) _plobj;
         _roomObj.setRoomService(_invmgr.registerDispatcher(new RoomDispatcher(this)));
         _roomObj.addListener(_roomListener);
-
-        RatingRepository.RatingAverageRecord rar =
-            _sceneRepo.getRatingRepository().createAverageRecord(
-                getScene().getSceneModel().sceneId);
-        _roomObj.setRating(rar.average);
-        _roomObj.setRatingCount(rar.count);
 
         // register ourselves in our peer object
         MsoyScene mscene = (MsoyScene) _scene;

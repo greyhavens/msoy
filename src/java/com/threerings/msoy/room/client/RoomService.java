@@ -112,5 +112,5 @@ public interface RoomService extends InvocationService
     /**
      * Requests to assign this user rating to the room. Returns a {@link RatingResult}.
      */
-    void rateRoom (Client caller, byte rating, InvocationListener listener);
+    void rateRoom (Client caller, byte rating, ResultListener listener);
 }

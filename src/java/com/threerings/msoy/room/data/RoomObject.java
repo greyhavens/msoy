@@ -24,12 +24,6 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>propertySpaces</code> field. */
     public static final String PROPERTY_SPACES = "propertySpaces";
-
-    /** The field name of the <code>rating</code> field. */
-    public static final String RATING = "rating";
-
-    /** The field name of the <code>ratingCount</code> field. */
-    public static final String RATING_COUNT = "ratingCount";
     // AUTO-GENERATED: FIELDS END
 
     /** Our room service marshaller. */
@@ -43,12 +37,6 @@ public class RoomObject extends SpotSceneObject
 
     /** The property spaces associated with this room. */
     public DSet<RoomPropertiesEntry> propertySpaces = DSet.newDSet();
-
-    /** The average rating of this room. */
-    public float rating;
-
-    /** The number of players who rated this room. */
-    public int ratingCount;
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -206,38 +194,6 @@ public class RoomObject extends SpotSceneObject
         requestAttributeChange(PROPERTY_SPACES, value, this.propertySpaces);
         DSet<RoomPropertiesEntry> clone = (value == null) ? null : value.typedClone();
         this.propertySpaces = clone;
-    }
-
-    /**
-     * Requests that the <code>rating</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setRating (float value)
-    {
-        float ovalue = this.rating;
-        requestAttributeChange(
-            RATING, Float.valueOf(value), Float.valueOf(ovalue));
-        this.rating = value;
-    }
-
-    /**
-     * Requests that the <code>ratingCount</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setRatingCount (int value)
-    {
-        int ovalue = this.ratingCount;
-        requestAttributeChange(
-            RATING_COUNT, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.ratingCount = value;
     }
     // AUTO-GENERATED: METHODS END
 }

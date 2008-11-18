@@ -30,12 +30,6 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>propertySpaces</code> field. */
     public static const PROPERTY_SPACES :String = "propertySpaces";
-    
-    /** The field name of the <code>rating</code> field. */
-    public static const RATING :String = "rating";
-
-    /** The field name of the <code>ratingCount</code> field. */
-    public static const RATING_COUNT :String = "ratingCount";
     // AUTO-GENERATED: FIELDS END
 
     /** Our room service marshaller. */
@@ -52,12 +46,6 @@ public class RoomObject extends SpotSceneObject
     /** The property spaces associated with this room. */
     public var propertySpaces :DSet = new DSet();
     RoomPropertiesEntry; // reference to force linkage
-
-    /** The average rating of this room. */
-    public var rating :Number;
-
-    /** The number of players who rated this room. */
-    public var ratingCount :int;
 
     /**
      * Finds the info of an occupant who is also a member and has a given member id. Performs the
@@ -84,8 +72,6 @@ public class RoomObject extends SpotSceneObject
         memories = DSet(ins.readObject());
         controllers = DSet(ins.readObject());
         propertySpaces = DSet(ins.readObject());
-        rating = ins.readFloat();
-        ratingCount = ins.readInt();
     }
 }
 }

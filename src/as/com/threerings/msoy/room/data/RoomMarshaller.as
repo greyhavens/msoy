@@ -108,9 +108,9 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const RATE_ROOM :int = 7;
 
     // from interface RoomService
-    public function rateRoom (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function rateRoom (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, RATE_ROOM, [
             Byte.valueOf(arg2), listener3

@@ -101,9 +101,9 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int RATE_ROOM = 7;
 
     // from interface RoomService
-    public void rateRoom (Client arg1, byte arg2, InvocationService.InvocationListener arg3)
+    public void rateRoom (Client arg1, byte arg2, InvocationService.ResultListener arg3)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, RATE_ROOM, new Object[] {
             Byte.valueOf(arg2), listener3
