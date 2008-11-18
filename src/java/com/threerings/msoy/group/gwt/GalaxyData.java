@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.group.gwt.GroupService.GroupsResult;
+import com.threerings.msoy.group.gwt.GroupService;
 
 /**
  * Contains information displayed on the main groups 'Galaxy' page.
@@ -28,5 +28,5 @@ public class GalaxyData
     public List<String> popularTags;
 
     /** A subset of total public groups */
-    public GroupsResult publicGroups;
+    public GroupService.GroupsResult publicGroups;
 }

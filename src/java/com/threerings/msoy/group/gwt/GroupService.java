@@ -57,8 +57,8 @@ public interface GroupService extends RemoteService
         /** the current page of data to display, base zero */
         public int page;
 
-        /** The current sort method, defaults to SORT_BY_NEW_AND_POPULAR */
-        public byte sort = 1;
+        /** The current sort method */
+        public byte sort = SORT_BY_NEW_AND_POPULAR;
 
         /** String to search group name & description for */
         public String searchString;
@@ -70,7 +70,7 @@ public interface GroupService extends RemoteService
     /** Delivers the response to {@link #getGroups}. */
     public static class GroupsResult implements IsSerializable
     {
-        /** The total number of groups available, may or may not be set. */
+        /** The total number of groups available, will be 0 if the count was not requested. */
         public int totalCount;
 
         /** The requested slice of the total groups list. */

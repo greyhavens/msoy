@@ -3,25 +3,33 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import java.sql.Date;
-import java.sql.Timestamp;
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagRecord;
+import com.threerings.msoy.server.persist.TagRepository;
 
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-import com.samskivert.util.Tuple;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
@@ -39,26 +47,16 @@ import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals.*;
-import com.samskivert.depot.operator.Logic.*;
-
+import com.samskivert.depot.operator.SQLOperator;
+import com.samskivert.depot.operator.Conditionals.Equals;
+import com.samskivert.depot.operator.Conditionals.FullTextMatch;
+import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
+import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.Logic.Not;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
+import com.samskivert.util.Tuple;
 import com.threerings.presents.annotation.BlockingThread;
-
-
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.CountRecord;
-import com.threerings.msoy.server.persist.TagHistoryRecord;
-import com.threerings.msoy.server.persist.TagRecord;
-import com.threerings.msoy.server.persist.TagRepository;
-
-import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
-
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 /**
  * Manages the persistent store of group data.
  */
@@ -106,7 +104,7 @@ public class GroupRepository extends DepotRepository
     {
         GroupQuery query = new GroupQuery();
         query.count = count;
-        return getGroupsList(query);
+        return getGroups(query);
     }
 
     /**
@@ -115,28 +113,21 @@ public class GroupRepository extends DepotRepository
      * @param query Limit, search and sort options. query.searchString and query.tag are mutually
      * exclusive. If either is set, results will be ordered by relevance instead of query.sort.
      */
-    public List<GroupRecord> getGroupsList (GroupQuery query)
+    public List<GroupRecord> getGroups (GroupQuery query)
     {
         int offset = query.page * query.count;
 
         // if there is a search string, do a full text match, order by relevance
         if (query.searchString != null) {
             // for now, always operate with boolean searching enabled, without query expansion
-            return findAll(GroupRecord.class,
-                new Where(new And(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE)),
-                    new FullTextMatch(GroupRecord.class, GroupRecord.FTS_NBC, query.searchString))),
+            return findAll(GroupRecord.class, getGroupWhere(query),
                 new Limit(offset, query.count));
 
         // if there is a tag, fetch groups with GroupTagRecords for that tag, order by groupId
         } else if (query.tag != null) {
-            List<Integer> groupIds = Lists.newArrayList();
-            int tagId = _tagRepo.getOrCreateTag(query.tag).tagId;
-            for (GroupTagRecord tagRec : findAll(GroupTagRecord.class,
-                new Where(new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID), tagId),
-                new Limit(offset, query.count))) {
-                groupIds.add(tagRec.targetId);
-            }
-            return loadGroups(groupIds);
+            return findAll(GroupRecord.class, getGroupWhere(query), new Join(GroupRecord.class,
+                    GroupRecord.GROUP_ID, GroupTagRecord.class, GroupTagRecord.TARGET_ID),
+                new Limit(offset, query.count));
         }
 
         // if no full text or tag search, return a subset of all records, order by query.sort
@@ -160,10 +151,7 @@ public class GroupRepository extends DepotRepository
         }
 
         return findAll(
-            GroupRecord.class,
-            new Where(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE))),
-            new Limit(offset, query.count),
-            orderBy);
+            GroupRecord.class, getGroupWhere(query), new Limit(offset, query.count), orderBy);
     }
 
     /**
@@ -174,23 +162,20 @@ public class GroupRepository extends DepotRepository
     {
         // if there is a search string, return count of full text search
         if (query.searchString != null) {
-            Where where = new Where(new And(new Not(new Equals(
-                GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE)), new FullTextMatch(
-                GroupRecord.class, GroupRecord.FTS_NBC, query.searchString)));
-            return load(CountRecord.class, new FromOverride(GroupRecord.class), where).count;
+            return load(CountRecord.class, new FromOverride(GroupRecord.class),
+                getGroupWhere(query)).count;
 
         // if there is a tag, return count of GroupTagRecords for that tag
         } else if (query.tag != null) {
-            int tagId = _tagRepo.getOrCreateTag(query.tag).tagId;
-            Where where = new Where(new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID),
-                tagId);
-            return load(CountRecord.class, new FromOverride(GroupTagRecord.class), where).count;
+            return load(CountRecord.class, new FromOverride(GroupRecord.class),
+                new Join(GroupRecord.class, GroupRecord.GROUP_ID,
+                    GroupTagRecord.class, GroupTagRecord.TARGET_ID),
+                    getGroupWhere(query)).count;
 
         // if no full text or tag search, return count of all public records
         } else {
-            Where where = new Where(new Not(new Equals(GroupRecord.POLICY_C,
-                Group.POLICY_EXCLUSIVE)));
-            return load(CountRecord.class, new FromOverride(GroupRecord.class), where).count;
+            return load(CountRecord.class, new FromOverride(GroupRecord.class),
+                getGroupWhere(query)).count;
         }
     }
 
@@ -507,6 +492,24 @@ public class GroupRepository extends DepotRepository
                          new FromOverride(GroupMembershipRecord.class),
                          new Where(GroupMembershipRecord.GROUP_ID_C, groupId)));
         updateLiteral(GroupRecord.class, groupId, fieldMap);
+    }
+
+    /**
+     * Return the where clause for a group select based on a given query
+     */
+    protected Where getGroupWhere (GroupQuery query)
+    {
+        SQLOperator publicOnly = new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE));
+        if (query.searchString != null) {
+            return new Where(new And(publicOnly, new FullTextMatch(GroupRecord.class,
+                GroupRecord.FTS_NBC, query.searchString)));
+        } else if (query.tag != null) {
+            int tagId = _tagRepo.getOrCreateTag(query.tag).tagId;
+            return new Where(new And(publicOnly, new Equals(new ColumnExp(GroupTagRecord.class,
+                GroupTagRecord.TAG_ID), tagId)));
+        } else {
+            return new Where(publicOnly);
+        }
     }
 
     @Override // from DepotRepository

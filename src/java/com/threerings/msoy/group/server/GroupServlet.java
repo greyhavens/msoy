@@ -104,7 +104,7 @@ public class GroupServlet extends MsoyServiceServlet
     public GroupsResult getGroups (GroupQuery query, boolean needCount)
         throws ServiceException
     {
-        List<GroupRecord> records = _groupRepo.getGroupsList(query);
+        List<GroupRecord> records = _groupRepo.getGroups(query);
         GroupsResult result = new GroupsResult();
         result.groups = populateGroupCard(Lists.newArrayList(Iterables.transform(records,
             GroupRecord.TO_CARD)));

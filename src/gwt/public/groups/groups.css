@@ -428,19 +428,33 @@
   width: 115px;
   height: 100px;
   font-size: 12px;
+  text-align: left;
+}
+
+.galaxyPanel .GroupsList .Group .LogoAndName {
+  margin: 5px;
 }
 
 .galaxyPanel .GroupsList .Group .GroupName {
   font-weight: bold;
-  text-align: left;
   height: 30px;
+  width: 60px;
   overflow: hidden;
+  margin-left: 5px;
 }
+
 .galaxyPanel .GroupsList .Group .GroupName a {
   text-decoration: none;
 }
 .galaxyPanel .GroupsList .Group .GroupName a:hover {
   text-decoration: underline;
+}
+
+.galaxyPanel .GroupsList .Group .MemberCount,
+.galaxyPanel .GroupsList .Group .InRooms,
+.galaxyPanel .GroupsList .Group .ThreadCount {
+  display: block;
+  margin: 0 0 5px 10px;
 }
 
 .galaxyPanel .GroupsList .Group .MemberCount,

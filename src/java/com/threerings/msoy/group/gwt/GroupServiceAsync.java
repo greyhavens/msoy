@@ -9,8 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
-import com.threerings.msoy.group.gwt.GroupService.GroupsResult;
+import com.threerings.msoy.group.gwt.GroupService;
 
 import com.threerings.msoy.web.gwt.TagHistory;
 
@@ -22,12 +21,13 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getGalaxyData}
      */
-    void getGalaxyData (GroupQuery query, AsyncCallback<GalaxyData> callback);
+    void getGalaxyData (GroupService.GroupQuery query, AsyncCallback<GalaxyData> callback);
 
     /**
      * The asynchronous version of {@link GroupService#getGroups}
      */
-    void getGroups (GroupQuery query, boolean needCount, AsyncCallback<GroupsResult> callback);
+    void getGroups (GroupService.GroupQuery query, boolean needCount,
+        AsyncCallback<GroupService.GroupsResult> callback);
 
     /**
      * The asynchronous version of {@link GroupService#getGroupInfo}

@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -31,8 +30,6 @@ import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.group.gwt.MyGroupCard;
-import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
-import com.threerings.msoy.group.gwt.GroupService.GroupsResult;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -58,7 +55,11 @@ public class GalaxyPanel extends FlowPanel
         search.add(_searchInput = MsoyUI.createTextBox("", 255, 20));
         ClickListener doSearch = new ClickListener() {
             public void onClick (Widget sender) {
-                Link.go(Pages.GROUPS, Args.compose(ACTION_SEARCH, 0, _searchInput.getText()));
+                if (_searchInput.getText().equals("")) {
+                    Link.go(Pages.GROUPS, "");
+                } else {
+                    Link.go(Pages.GROUPS, Args.compose(ACTION_SEARCH, 0, _searchInput.getText()));
+                }
             }
         };
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
@@ -86,7 +87,7 @@ public class GalaxyPanel extends FlowPanel
             public void onChange (Widget widget) {
                 int sort = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
                 // sort is only available with no search/tag action, and resets the page.
-                Link.go(Pages.GROUPS, Args.compose("", 0, "", sort + ""));
+                Link.go(Pages.GROUPS, Args.compose("", 0, "", sort));
             }
         });
 
@@ -97,7 +98,7 @@ public class GalaxyPanel extends FlowPanel
                     : (_query.tag != null ? ACTION_TAG : "");
                 String arg = _query.searchString != null ? _query.searchString
                     : (_query.tag != null ? _query.tag : "");
-                Link.go(Pages.GROUPS, Args.compose(action, page + "", arg, _query.sort + ""));
+                Link.go(Pages.GROUPS, Args.compose(action, page, arg, _query.sort));
             }
             protected Widget createWidget (GroupCard card) {
                 return createGroupWidget(card);
@@ -151,7 +152,6 @@ public class GalaxyPanel extends FlowPanel
             _currentTag.add(tagLabel);
             _currentTag.add(new InlineLabel("("));
             Widget clear = Link.create(_msgs.galaxyTagClear(), Pages.GROUPS, "");
-            clear.addStyleName("inline");
             _currentTag.add(clear);
             _currentTag.add(new InlineLabel(")"));
             if (!arg.equals(_query.tag)) {
@@ -188,19 +188,18 @@ public class GalaxyPanel extends FlowPanel
 
         // page already initialized, just refresh the grid data
         } else {
-            fetchGroupData(needCount);
+            _groupsvc.getGroups(_query, needCount, new MsoyCallback<GroupService.GroupsResult>() {
+                public void onSuccess (GroupService.GroupsResult result) {
+                    if (result.totalCount > 0) {
+                        _totalGroups = result.totalCount;
+                    }
+                    _groupGrid.setModel(new GroupDataModel(result.groups), _query.page);
+                }
+            });
         }
 
-        // populate the sort box
-        setSortbox();
-    }
-
-    /**
-     * If currently displaying search results, lock the sort box to "By Relevance", otherwise
-     * display all search values and select the right one.
-     */
-    protected void setSortbox ()
-    {
+        // If currently displaying search results, lock the sort box to "By Relevance", otherwise
+        // display all search values and select the right one.
         if (_query.searchString != null || _query.tag != null) {
             if (_sortBox.getItemCount() != 1) {
                 _sortBox.clear();
@@ -245,8 +244,7 @@ public class GalaxyPanel extends FlowPanel
             _popularTags.add(MsoyUI.createLabel(_msgs.galaxyNoPopularTags(), "Link"));
         } else {
             for (String tag : data.popularTags) {
-                Widget link = Link.create(tag, Pages.GROUPS, Args.compose(ACTION_TAG, 0,
-                    tag));
+                Widget link = Link.create(tag, Pages.GROUPS, Args.compose(ACTION_TAG, 0, tag));
                 link.addStyleName("Link");
                 link.removeStyleName("inline");
                 _popularTags.add(link);
@@ -255,21 +253,6 @@ public class GalaxyPanel extends FlowPanel
 
         _totalGroups = data.publicGroups.totalCount;
         _groupGrid.setModel(new GroupDataModel(data.publicGroups.groups), _query.page);
-    }
-
-    /**
-     * Get group grid data based on the contents of _query, then set the data model.
-     */
-    protected void fetchGroupData (boolean needCount)
-    {
-        _groupsvc.getGroups(_query, needCount, new MsoyCallback<GroupsResult>() {
-            public void onSuccess (GroupsResult result) {
-                if (result.totalCount > 0) {
-                    _totalGroups = result.totalCount;
-                }
-                _groupGrid.setModel(new GroupDataModel(result.groups), _query.page);
-            }
-        });
     }
 
     /**
@@ -292,18 +275,21 @@ public class GalaxyPanel extends FlowPanel
      */
     protected Widget createGroupWidget (GroupCard group)
     {
-        AbsolutePanel widget = new AbsolutePanel();
-        widget.setStyleName("Group");
+        FlowPanel widget = MsoyUI.createFlowPanel("Group");
+
+        FloatPanel logoAndName = new FloatPanel("LogoAndName");
         String goArgs = Args.compose("d", group.name.getGroupId());
-        widget.add(new ThumbBox(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE, Pages.GROUPS, goArgs),
-            5, 5);
-        widget.add(Link.create(group.name.toString(), "GroupName", Pages.GROUPS, goArgs), 50, 5);
+        logoAndName.add(new ThumbBox(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE, Pages.GROUPS,
+            goArgs));
+        logoAndName.add(Link.create(group.name.toString(), "GroupName", Pages.GROUPS, goArgs));
+
+        widget.add(logoAndName);
         widget.add(MsoyUI.createLabel(_msgs.galaxyMemberCount(group.memberCount + " "),
-            "MemberCount"), 5, 40);
+            "MemberCount"));
         widget.add(Link.create(_msgs.galaxyPeopleInRooms(group.population + ""), "InRooms",
-            Pages.WORLD, "s" + group.homeSceneId), 5, 60);
+            Pages.WORLD, "s" + group.homeSceneId));
         widget.add(Link.create(_msgs.galaxyThreadCount(group.threadCount + ""), "ThreadCount",
-            Pages.GROUPS, Args.compose("f", group.name.getGroupId())), 5, 80);
+            Pages.GROUPS, Args.compose("f", group.name.getGroupId())));
         return widget;
     }
 
@@ -329,7 +315,7 @@ public class GalaxyPanel extends FlowPanel
     };
 
     /** The current search,tag,page, and sort being displayed */
-    protected GroupQuery _query = new GroupQuery();
+    protected GroupService.GroupQuery _query = new GroupService.GroupQuery();
 
     /** Current total number of groups to display in the grid */
     protected int _totalGroups;
@@ -350,13 +336,13 @@ public class GalaxyPanel extends FlowPanel
     protected static final int GRID_ROWS = 4;
     protected static final int GRID_COLUMNS = 4;
 
-    protected static final String[] SORT_LABELS = new String[] {
+    protected static final String[] SORT_LABELS = {
         _msgs.sortByNewAndPopular(),
         _msgs.sortByName(),
         _msgs.sortByNumMembers(),
         _msgs.sortByCreatedDate()
     };
-    protected static final byte[] SORT_VALUES = new byte[] {
+    protected static final byte[] SORT_VALUES = {
         GroupService.GroupQuery.SORT_BY_NEW_AND_POPULAR,
         GroupService.GroupQuery.SORT_BY_NAME,
         GroupService.GroupQuery.SORT_BY_NUM_MEMBERS,
