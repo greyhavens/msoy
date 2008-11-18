@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -25,6 +26,7 @@ import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.NCSARequestLog;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.ContextHandlerCollection;
+import org.mortbay.jetty.handler.ErrorHandler;
 import org.mortbay.jetty.handler.HandlerCollection;
 import org.mortbay.jetty.handler.RequestLogHandler;
 import org.mortbay.jetty.nio.SelectChannelConnector;
@@ -75,12 +77,14 @@ import com.threerings.msoy.swiftly.server.SwiftlyServlet;
 import com.threerings.msoy.swiftly.server.SwiftlyUploadServlet;
 import com.threerings.msoy.underwire.server.MsoyUnderwireServlet;
 
-import com.threerings.msoy.web.gwt.WebMemberService;
-import com.threerings.msoy.web.gwt.WebUserService;
-
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
 import com.threerings.msoy.room.server.WebRoomServlet;
+
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebUserService;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
@@ -116,6 +120,18 @@ public class MsoyHttpServer extends Server
         // wire up serving of static content
         context.setWelcomeFiles(new String[] { "index.html" });
         context.setResourceBase(new File(ServerConfig.serverRoot, "pages").getPath());
+
+        // deliver a static error page regardless of cause; errors are already logged
+        context.setErrorHandler(new ErrorHandler() {
+            protected void writeErrorPageHead (HttpServletRequest request, Writer writer, int code,
+                                               String message) throws IOException {
+                writer.write(ERROR_HEAD);
+            }
+            protected void writeErrorPageBody (HttpServletRequest request, Writer writer, int code,
+                                               String message, boolean stacks) throws IOException {
+                writer.write(ERROR_BODY);
+            }
+        });
 
         HandlerCollection handlers = new HandlerCollection();
         handlers.addHandler(contexts);
@@ -333,4 +349,22 @@ public class MsoyHttpServer extends Server
             ? MsoyThrottleServlet.class
             : MsoyDefaultServlet.class)
         .build();
+
+    protected static final String ERROR_HEAD =
+        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"/>\n" +
+        "<title>Oh noez!</title>\n" +
+        "<link rel=\"stylesheet\" href=\"/gwt/frame/global.css\" type=\"text/css\"/>\n" +
+        "<style type=\"text/css\">\n" +
+        "body { background: #61ABD0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;\n" +
+        "       color: #FFFFFF; }\n" +
+        "h2 { padding-top: 50px; }\n" +
+        "a, a:visited { color: #FFFFFF; }\n" +
+        "</style>\n";
+
+    protected static final String ERROR_BODY =
+        "<center><h2>We're not in Kansas any more Toto!</h2>\n" +
+        "Your browser clings to data whose time has passed.<br/>\n" +
+        "Click your heels together three times and click below to rejoin the Whirled.<br/>\n" +
+        "<br/><br/><a href=\"/\" target=\"_top\">Reload Whirled</a>\n" +
+        "</center>\n";
 }
