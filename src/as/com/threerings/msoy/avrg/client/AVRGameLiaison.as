@@ -144,8 +144,6 @@ public class AVRGameLiaison extends GameLiaison
     {
         super.messageReceived(event);
 
-        log.info("Woot, messageReceived", "event", event);
-
         if  (event.getName() == AVRGameObject.TASK_COMPLETED_MESSAGE) {
             var coins :int = int(event.getArgs()[1]);
             const forReal :Boolean = Boolean(event.getArgs()[2]);
