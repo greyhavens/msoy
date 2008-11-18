@@ -991,64 +991,6 @@ public class GameGameRegistry
         return content;
     }
 
-    protected void joinAVRGame (final int playerId, final AVRGameManager mgr,
-                                final AVRService.AVRGameJoinListener listener)
-    {
-        _invoker.postUnit(new RepositoryUnit("joinAVRGame") {
-            @Override
-            public void invokePersist () throws Exception {
-                _stateRecs = _avrgRepo.getPlayerGameState(mgr.getGameId(), playerId);
-            }
-            @Override
-            public void handleSuccess () {
-                PlayerObject player = _locator.lookupPlayer(playerId);
-                if (player == null) {
-                    // they left while we were resolving the game, oh well
-                    return;
-                }
-
-                int gameOid = mgr.getGameObject().getOid();
-
-                if (player.location == null || !player.location.equals(mgr.getLocation())) {
-                    // if we're not already playing this avrg, initialize our property
-                    // space from the database records
-                    if (!player.isGuest()) {
-                        Map<String, byte[]> initialState = new HashMap<String, byte[]>();
-                        for (PlayerGameStateRecord record : _stateRecs) {
-                            initialState.put(record.datumKey, record.datumValue);
-                        }
-                        PropertySpaceHelper.initWithStateFromStore(player, initialState);
-                    }
-
-                    // when we're ready, move the player into the AVRG 'place'
-                    try {
-                        _locmgr.moveTo(player, gameOid);
-
-                    } catch (InvocationException pe) {
-                        log.warning("Move to AVRGameObject failed", "gameId", mgr.getGameId(), pe);
-                        listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
-                        return;
-                    }
-
-                } else {
-                    log.warning("Unexpectedly rejoining AVRG", "playerId", playerId,
-                                "gameId", mgr.getGameId());
-                }
-
-                // if all went well, return the AVRGameConfig to the client
-                listener.avrgJoined(gameOid, (AVRGameConfig) mgr.getConfig());
-            }
-            @Override
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to resolve player state [gameId=" +
-                    mgr.getGameId() + ", player=" + playerId + "]", pe);
-                listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
-            }
-
-            protected List<PlayerGameStateRecord> _stateRecs;
-        });
-    }
-
     protected void flushPercentilers (int gameId)
     {
         final Map<TilerKey, Percentiler> toFlush = Maps.newHashMap();
@@ -1132,7 +1074,7 @@ public class GameGameRegistry
         }
 
         public void requestProcessed (Object result) {
-            joinAVRGame(_player, (AVRGameManager) result, _listener);
+            ((AVRGameManager) result).joinGame(_player, _listener);
         }
 
         public void requestFailed (String cause) {

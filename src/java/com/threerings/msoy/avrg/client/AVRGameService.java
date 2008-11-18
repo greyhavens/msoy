@@ -5,6 +5,8 @@ package com.threerings.msoy.avrg.client;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.ResultListener;
 
 /**
  * A service for AVR (in-world) games.
@@ -19,6 +21,11 @@ public interface AVRGameService extends InvocationService
      * In consequence of this call, a TASK_COMPLETED event is dispatched holding the supplied
      * quest identifier along with the actual number of coins awarded.
      */
-    public void completeTask (
+    void completeTask (
         Client caller, int playerId, String questId, float payoutLevel, ConfirmListener listener);
+
+    void loadOfflinePlayer (Client caller, int playerId, ResultListener listener);
+
+    void setOfflinePlayerProperty (Client caller, int playerId, String propName, Object data,
+                                   Integer key, boolean isArray, ConfirmListener listener);
 }

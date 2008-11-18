@@ -5,22 +5,27 @@ package com.threerings.msoy.avrg.client {
 
 import flash.utils.ByteArray;
 
+import com.threerings.util.Integer;
 import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.whirled.spot.data.SceneLocation;
 
+import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.GameData;
+import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.avrg.client.BackendUtils;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
+import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
 
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -245,6 +250,8 @@ public class ThaneAVRGameBackend
         o["getPlayerLevelPacks_v1"] = getPlayerLevelPacks_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["completeTask_v1"] = completeTask_v1;
+        o["loadOfflinePlayer_v1"] = loadOfflinePlayer_v1;
+        o["setOfflinePlayerProperty_v1"] = setOfflinePlayerProperty_v1;
         o["playAvatarAction_v1"] = playAvatarAction_v1;
         o["setAvatarState_v1"] = setAvatarState_v1;
         o["setAvatarMoveSpeed_v1"] = setAvatarMoveSpeed_v1;
@@ -510,6 +517,59 @@ public class ThaneAVRGameBackend
                 _controller.outputToUserCode));
     }
 
+    protected function loadOfflinePlayer_v1 (
+        playerId :int, success :Function, failure :Function) :void
+    {
+        PropertySpaceObjectImpl;
+
+        _gameObj.avrgService.loadOfflinePlayer(ensureGameClient(), playerId, new ResultAdapter(
+            function (cause :String) :void {
+                log.warning("Failed to load offline player properties", "playerId", playerId,
+                            "cause", cause);
+            },
+            function (props :PropertySpaceObject) :void {
+                if (props == null) {
+                    // this means the player had no existing persistent properties, which means
+                    // we are not allowed to set offline properties on it
+                    failure("Cannot set offline properties on player without existing " +
+                            " persistent properties [playerId=" + playerId + "]");
+                    return;
+                }
+                // mark this offline player as a valid target for offline property sets
+                _offline = playerId;
+                try {
+                    // trigger whatever actions the usercode wants to take for this offline player
+                    success(props.getUserProps());
+                } catch (e :Error) {
+                    // turn off offline player access
+                    failure("Error in callback: " + e);
+                    _offline = 0;
+                    throw e;
+                }
+                // turn off offline player access
+                _offline = 0;
+            }));
+    }
+
+    protected function setOfflinePlayerProperty_v1 (
+        playerId :int, name :String, value :Object, key :Object, isArray :Boolean,
+        immediate :Boolean) :void
+    {
+        if (_offline != playerId) {
+            throw new Error("Illegal access to offline player properties [playerId=" + playerId +
+                            ", name=" + name + "]");
+        }
+
+        BackendUtils.validatePropertyChange(name, value, isArray, key);
+
+        var encoded :Object = PropertySpaceHelper.encodeProperty(value, (key == null));
+        var ikey :Integer = (key == null) ? null : new Integer(int(key));
+
+        _gameObj.avrgService.setOfflinePlayerProperty(
+            ensureGameClient(), playerId, name, encoded, ikey, isArray,
+            BackendUtils.loggingConfirmListener("setOfflinePlayerProperty"));
+    }
+
     protected function playAvatarAction_v1 (playerId :int, action :String) :void
     {
         resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
@@ -664,6 +724,8 @@ public class ThaneAVRGameBackend
     protected var _ctx :MsoyBureauContext; // this is for the game server
     protected var _controller :ThaneAVRGameController;
     protected var _gameObj :AVRGameObject;
+
+    protected var _offline :int = 0;
 
     /** URL -> boolean for data packs that have been loaded */
     protected var _loadedPacks :Dictionary = new Dictionary();

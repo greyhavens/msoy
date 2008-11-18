@@ -1102,10 +1102,10 @@ public class RoomManager extends SpotSceneManager
 
             public void handleResult () {
                 // Create map of loaded properties
-                Map<String, byte[]> propsMap = Maps.newHashMap();
+                Map<String, byte[]> propRecsMap = Maps.newHashMap();
                 if (_propRecs != null) {
                     for (RoomPropertyRecord propRec : _propRecs) {
-                        propsMap.put(propRec.name, propRec.value);
+                        propRecsMap.put(propRec.name, propRec.value);
                     }
                 }
 
@@ -1113,7 +1113,8 @@ public class RoomManager extends SpotSceneManager
                 _omgr.registerObject(props);
 
                 // Populate
-                PropertySpaceHelper.initWithStateFromStore(props, propsMap);
+                PropertySpaceHelper.initWithProperties(
+                    props, PropertySpaceHelper.recordsToProperties(propRecsMap));
 
                 // Set members
                 props.setPropertiesService(

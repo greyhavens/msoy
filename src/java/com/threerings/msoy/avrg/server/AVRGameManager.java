@@ -3,23 +3,36 @@
 
 package com.threerings.msoy.avrg.server;
 
+import java.io.IOException;
+
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.inject.Inject;
 
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMap.IntEntry;
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.SimpleStreamableObject;
 import com.threerings.parlor.server.PlayManager;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.ObjectDeathListener;
@@ -35,6 +48,7 @@ import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
@@ -45,10 +59,12 @@ import com.threerings.msoy.game.server.GameWatcherManager.Observer;
 import com.threerings.msoy.game.server.PlayerLocator;
 import com.threerings.msoy.room.server.RoomManager;
 
+import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
+import com.threerings.msoy.avrg.data.PropertySpaceObjectImpl;
 import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
@@ -56,6 +72,7 @@ import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
 import com.threerings.msoy.bureau.server.MsoyBureauClient;
 
 import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.server.PrizeDispatcher;
 import com.whirled.game.server.PrizeProvider;
 import com.whirled.game.server.PropertySpaceDispatcher;
@@ -303,6 +320,102 @@ public class AVRGameManager extends PlaceManager
         _questDelegate.completeTask(player, questId, payoutLevel, listener);
     }
 
+    // from AVRGameProvider
+    public void loadOfflinePlayer (
+        ClientObject caller, final int playerId, final ResultListener listener)
+        throws InvocationException
+    {
+        if (!isAgent(caller)) {
+            log.warning("Call to loadOfflinePlayer() from non-agent", "caller", caller.who());
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+
+        // if we have a cached object for this player, reuse it as-is
+        PropertySpaceObject offlineProps = _offlineProps.get(playerId);
+        if (offlineProps != null) {
+            listener.requestProcessed(offlineProps);
+            return;
+        }
+
+        // otherwise we have to create a new one and initialize it with state from the store
+        _invoker.postUnit(new RepositoryUnit("loadOfflinePlayer") {
+            @Override
+            public void invokePersist () throws Exception {
+                // read the records
+                _stateRecs = _repo.getPlayerGameState(_gameId, playerId);
+            }
+            @Override
+            public void handleSuccess () {
+                if (_stateRecs.size() == 0) {
+                    // we only allow offline property sets on players who already have had some
+                    // not-offline properties set on then; if this test fails let the client know
+                    // by sending a null
+                    listener.requestProcessed(null);
+                    return;
+                }
+                // create the object
+                PropertySpaceObject offlineProps = new PropertySpaceObjectImpl();
+                _offlineProps.put(playerId, offlineProps);
+
+                // turn the records into a mapping
+                Map<String, byte[]> offlineState = new HashMap<String, byte[]>();
+                for (PlayerGameStateRecord record : _stateRecs) {
+                    offlineState.put(record.datumKey, record.datumValue);
+                }
+                // initialize the property space object
+                PropertySpaceHelper.initWithProperties(
+                    offlineProps, PropertySpaceHelper.recordsToProperties(offlineState));
+
+                // and finally send back the result
+                listener.requestProcessed(offlineProps);
+            }
+
+            protected List<PlayerGameStateRecord> _stateRecs;
+        });
+    }
+
+    public void setOfflinePlayerProperty (
+        ClientObject caller, int playerId, String propName, Object data, Integer key,
+        boolean isArray, ConfirmListener listener)
+        throws InvocationException
+    {
+        // make sure the call is from a kosher source
+        if (!isAgent(caller)) {
+            log.warning("Call to setOfflinePlayerProperty() from non-agent",
+                        "caller", caller.who());
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+
+        // the property should always be persistent
+        if (!PropertySpaceHelper.isPersistent(propName)) {
+            // if it isn't, it's an internal error (or a client bypassing our controls)
+            log.warning("Attempted to set non-persistent offline property",
+                        "gameId", _gameId, "playerId", playerId, "name", propName);
+            listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            return;
+        }
+
+        // we should always have loaded a player's offline records when we get here
+        PropertySpaceObject offlineProps = _offlineProps.get(playerId);
+        if (offlineProps == null) {
+            // if we don't, it's an internal error (or a client bypassing our controls)
+            log.warning("Attempted to set offline property on unknown player",
+                        "gameId", _gameId, "playerId", playerId, "name", propName);
+            listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            return;
+        }
+
+        // all is well, try to set the property
+        try {
+            PropertySpaceHelper.applyPropertySet(offlineProps, propName, data, key, isArray);
+            listener.requestProcessed();
+
+        } catch (PropertySpaceObject.PropertySetException pse) {
+            log.warning("Failed to apply offline property set", "gameId", _gameId,
+                        "playerId", playerId, "name", propName, pse);
+        }
+    }
+
     // from AVRGameAgentProvider
     public void roomSubscriptionComplete (ClientObject caller, int sceneId)
     {
@@ -364,6 +477,84 @@ public class AVRGameManager extends PlaceManager
         }
     }
 
+    public void joinGame (final int playerId, final AVRService.AVRGameJoinListener listener)
+    {
+        if (MemberName.isGuest(playerId)) {
+            doJoinGame(playerId, null, listener);
+            return;
+        }
+
+        PropertySpaceObject offlineProps = _offlineProps.remove(playerId);
+        if (offlineProps != null) {
+            // if a player joins whose offline properties have been manipulated, flush to database
+            // simultaneous to initializing the new player object with our cached data
+            doJoinGame(playerId, offlineProps.getUserProps(), listener);
+            flushPlayerGameState(playerId, offlineProps);
+            return;
+        }
+
+        _invoker.postUnit(new RepositoryUnit("joinAVRGame") {
+            @Override
+            public void invokePersist () throws Exception {
+                // read the game state records from store
+                _stateRecs = _repo.getPlayerGameState(_gameId, playerId);
+            }
+            @Override
+            public void handleSuccess () {
+                // turn them into a handy mapping
+                Map<String, byte[]> initialState = new HashMap<String, byte[]>();
+                for (PlayerGameStateRecord record : _stateRecs) {
+                    initialState.put(record.datumKey, record.datumValue);
+                }
+                // and fire up the game -- after decoding the property values
+                doJoinGame(playerId, PropertySpaceHelper.recordsToProperties(initialState),
+                           listener);
+            }
+            @Override
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to resolve player state", "gameId", _gameId,
+                            "player", playerId, pe);
+                listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            }
+
+            protected List<PlayerGameStateRecord> _stateRecs;
+        });
+    }
+
+    protected void doJoinGame (int playerId, Map<String, Object> initialProps,
+                               AVRService.AVRGameJoinListener listener)
+    {
+        PlayerObject player = _locator.lookupPlayer(playerId);
+        if (player == null) {
+            // if the player logged out while the records were being loaded from the
+            // database, the client is surely about to disintegrate anyway and we just
+            // don't respond on the listener
+            return;
+        }
+
+        if (player.location == null || !player.location.equals(getLocation())) {
+            // if we're not already playing this avrg, initialize our property
+            // space from the database records
+            if (initialProps != null) {
+                PropertySpaceHelper.initWithProperties(player, initialProps);
+            }
+
+            // when we're ready, move the player into the AVRG 'place'
+            try {
+                _locmgr.moveTo(player, _gameObj.getOid());
+
+            } catch (InvocationException pe) {
+                log.warning("Move to AVRGameObject failed", "gameId", _gameId, pe);
+                listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+                return;
+            }
+
+        } else {
+            log.warning("Unexpectedly rejoining AVRG", "playerId", playerId, "gameId", _gameId);
+        }
+        listener.avrgJoined(_gameObj.getOid(), (AVRGameConfig) _config);
+    }
+
     protected void leaveGame (int playerId)
     {
         PlayerObject player = _locator.lookupPlayer(playerId);
@@ -412,6 +603,11 @@ public class AVRGameManager extends PlaceManager
 
         _sceneCheck.cancel();
 
+        // any loaded offline players must have their dirty states (if any) flushed
+        for (IntEntry<PropertySpaceObject> entry : _offlineProps.intEntrySet()) {
+            flushPlayerGameState(entry.getIntKey(), entry.getValue());
+        }
+
         super.didShutdown();
     }
 
@@ -431,7 +627,7 @@ public class AVRGameManager extends PlaceManager
         };
 
         player.setPropertyService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(handler)));
-        
+
         if (_gameAgentObj != null) {
             MsoyBureauClient client = (MsoyBureauClient)_breg.lookupClient(_gameAgentObj.bureauId);
             if (client != null) {
@@ -470,7 +666,7 @@ public class AVRGameManager extends PlaceManager
             }
         }
 
-        flushPlayerGameState(player);
+        flushPlayerGameState(memberId, player);
 
         if (_gameAgentObj != null) {
             MsoyBureauClient client = (MsoyBureauClient)_breg.lookupClient(_gameAgentObj.bureauId);
@@ -562,20 +758,19 @@ public class AVRGameManager extends PlaceManager
         postPlayerMove(memberId, 0);
     }
 
-    protected void flushPlayerGameState (PlayerObject player)
+    protected void flushPlayerGameState (final int playerId, PropertySpaceObject player)
     {
-        if (player.isGuest()) {
+        if (MemberName.isGuest(playerId)) {
             return;
         }
         final Map<String, byte[]> state = PropertySpaceHelper.encodeDirtyStateForStore(player);
         if (!state.isEmpty()) {
-            final int memberId = player.getMemberId();
             _invoker.postUnit(new WriteOnlyUnit("flushPlayerAVRGState") {
                 @Override public void invokePersist ()
                     throws Exception {
                     for (Map.Entry<String, byte[]> entry : state.entrySet()) {
                         _repo.storePlayerState(new PlayerGameStateRecord(
-                            _gameId, memberId, entry.getKey(), entry.getValue()));
+                            _gameId, playerId, entry.getKey(), entry.getValue()));
                     }
                 }
             });
@@ -723,10 +918,13 @@ public class AVRGameManager extends PlaceManager
     protected AVRGameAgentObject _gameAgentObj;
 
     /** The map of scenes by scene id, one to one. */
-    protected HashIntMap<Scene> _scenes = new HashIntMap<Scene>();
+    protected IntMap<Scene> _scenes = new HashIntMap<Scene>();
 
     /** The map of player ids to scenes, many to one. */
-    protected HashIntMap<Scene> _playerScenes = new HashIntMap<Scene>();
+    protected IntMap<Scene> _playerScenes = new HashIntMap<Scene>();
+
+    /** The map of player ids to offline property space data. TODO: Use LRUHashMap. */
+    protected IntMap<PropertySpaceObject> _offlineProps = new HashIntMap<PropertySpaceObject>();
 
     /** Interval to run our scene checker. */
     protected Interval _sceneCheck;

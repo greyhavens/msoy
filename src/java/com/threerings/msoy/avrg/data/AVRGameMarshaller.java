@@ -30,4 +30,30 @@ public class AVRGameMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), arg3, Float.valueOf(arg4), listener5
         });
     }
+
+    /** The method id used to dispatch {@link #loadOfflinePlayer} requests. */
+    public static final int LOAD_OFFLINE_PLAYER = 2;
+
+    // from interface AVRGameService
+    public void loadOfflinePlayer (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    {
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, LOAD_OFFLINE_PLAYER, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
+    /** The method id used to dispatch {@link #setOfflinePlayerProperty} requests. */
+    public static final int SET_OFFLINE_PLAYER_PROPERTY = 3;
+
+    // from interface AVRGameService
+    public void setOfflinePlayerProperty (Client arg1, int arg2, String arg3, Object arg4, Integer arg5, boolean arg6, InvocationService.ConfirmListener arg7)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener7 = new InvocationMarshaller.ConfirmMarshaller();
+        listener7.listener = arg7;
+        sendRequest(arg1, SET_OFFLINE_PLAYER_PROPERTY, new Object[] {
+            Integer.valueOf(arg2), arg3, arg4, arg5, Boolean.valueOf(arg6), listener7
+        });
+    }
 }
