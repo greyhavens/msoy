@@ -139,7 +139,8 @@ public class ArcadePanel extends FlowPanel
                 FlowPanel bits = new FlowPanel();
                 link.removeStyleName("inline");
                 bits.add(link);
-                bits.add(MsoyUI.createLabel(game.playersOnline + " playing now", "tipLabel"));
+                bits.add(MsoyUI.createLabel(
+                             _msgs.featuredOnline(""+game.playersOnline), "tipLabel"));
                 setWidget(0, 2, bits);
             }
         }
