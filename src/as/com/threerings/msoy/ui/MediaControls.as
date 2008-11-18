@@ -23,6 +23,7 @@ import com.threerings.util.MultiLoader;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.DisplayUtil;
+import com.threerings.flash.SimpleIconButton;
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.flash.media.MediaPlayer;
 import com.threerings.flash.media.MediaPlayerCodes;
@@ -95,6 +96,7 @@ public class MediaControls extends Sprite
         _playBtn = DisplayUtil.findInHierarchy(ui, "playbutton");
         _pauseBtn = DisplayUtil.findInHierarchy(ui, "pausebutton");
         _commentBtn = DisplayUtil.findInHierarchy(ui, "commentbutton");
+//        _commentBtn = new SimpleIconButton(COMMENT_BTN);
         _volumeBtn = DisplayUtil.findInHierarchy(ui, "fullvolumebutton");
         _muteBtn = DisplayUtil.findInHierarchy(ui, "mutebutton");
         var timeline :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
@@ -386,6 +388,9 @@ public class MediaControls extends Sprite
     protected static const UNIT :int = 28;
 
     protected static const UNKNOWN_TIME :String = "-:--";
+
+//    [Embed(source="../../../../../../rsrc/media/skins/controlbar/comment.png")]
+//    protected static const COMMENT_BTN :Class;
 
     [Embed(
         source="../../../../../../rsrc/media/skins/mediaplayer.swf",
