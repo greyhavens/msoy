@@ -47,11 +47,15 @@ public class HomePageItem extends SimpleStreamableObject
      * id is the group id, and the name is the group's name. */
     public static final byte ACTION_GROUP = 8;
 
-    /** Go to a user profile. The data is an instance of {@link BasicNavItemData}.*/
+    /** Go to a user profile. The data is an instance of {@link BasicNavItemData}. */
     public static final byte ACTION_PROFILE = 9;
 
     /** Kick off the whirled tour. The data is ignored.*/
     public static final byte ACTION_EXPLORE = 10;
+
+    /** Go to an AVRG whirled. The data is The data is an instance of {@link BasicNavItemData}
+     * where the id is the game id and the name is the name of the game. */
+    public static final byte ACTION_AVR_GAME = 11;
 
     /**
      * Creates a new home page item.

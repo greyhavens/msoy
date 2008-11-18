@@ -26,8 +26,8 @@ public class TrackExperienceDelegate extends GameManagerDelegate
         final PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
         int memberId = plobj.memberName.getMemberId();
         
-        _worldClient.notifyMemberStartedGame(memberId, HomePageItem.ACTION_GAME,
-            _content.game.gameId);
+        _worldClient.notifyMemberStartedGame(memberId, _content.game.isInWorld() ?
+            HomePageItem.ACTION_AVR_GAME : HomePageItem.ACTION_GAME, _content.game.gameId);
     }
 
     /** Game description. */

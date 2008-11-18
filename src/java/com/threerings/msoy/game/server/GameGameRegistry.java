@@ -548,6 +548,7 @@ public class GameGameRegistry
 //                delegates.add(new AwardDelegate(_content));
                 delegates.add(new TrophyDelegate(_content));
                 delegates.add(new QuestDelegate(_content));
+                delegates.add(new TrackExperienceDelegate(_content));
 
                 int minLogInterval, maxLogInterval;
                 if (Game.isDevelopmentVersion(gameId)) {
