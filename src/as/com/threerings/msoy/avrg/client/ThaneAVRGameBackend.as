@@ -523,8 +523,7 @@ public class ThaneAVRGameBackend
         PropertySpaceObjectImpl;
 
         _gameObj.avrgService.loadOfflinePlayer(ensureGameClient(), playerId, new ResultAdapter(
-            failure,
-            function (props :PropertySpaceObject) :void {
+            failure, function (props :PropertySpaceObject) :void {
                 if (props == null) {
                     // this means the player had no existing persistent properties, which means
                     // we are not allowed to set offline properties on it
