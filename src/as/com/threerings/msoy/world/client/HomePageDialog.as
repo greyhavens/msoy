@@ -29,6 +29,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.AVRGameNavItemData;
 import com.threerings.msoy.data.BasicNavItemData;
 import com.threerings.msoy.badge.data.all.BadgeCodes;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
@@ -212,6 +213,7 @@ public class HomePageDialog extends FloatingPanel
             return Msgs.HOME_PAGE_GRID.get("b.visit_group", name);
 
         case HomePageItem.ACTION_GAME:
+        case HomePageItem.ACTION_AVR_GAME:
             return Msgs.HOME_PAGE_GRID.get("b.play_game", name);
 
         case HomePageItem.ACTION_EXPLORE:
@@ -265,6 +267,12 @@ public class HomePageDialog extends FloatingPanel
             trackingDetails = "game_" + BasicNavItemData(item.getNavItemData()).getId();
             _wctx.getWorldController().handleJoinGameLobby(
                 BasicNavItemData(item.getNavItemData()).getId());
+            break;
+
+        case HomePageItem.ACTION_AVR_GAME:
+            trackingDetails = "avrgame_" + BasicNavItemData(item.getNavItemData()).getId();
+            _wctx.getWorldController().handleGoGroupHome(
+                AVRGameNavItemData(item.getNavItemData()).getGroupId());
             break;
 
         case HomePageItem.ACTION_BADGE:

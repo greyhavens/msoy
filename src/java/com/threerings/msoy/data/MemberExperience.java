@@ -7,8 +7,6 @@ import java.util.Date;
 
 import com.samskivert.util.ObjectUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.presents.dobj.DSet;
 
 /**
@@ -41,17 +39,6 @@ public class MemberExperience
         this.dateOccurred = dateOccurred.getTime();
         this.action = action;
         this.data = data;
-    }
-
-    /**
-     * Creates a new home page item from this experience.
-     *
-     * @param image the image to show for this action.
-     * @param data the data for this item.
-     */
-    public HomePageItem getHomePageItem (MediaDesc image, NavItemData data)
-    {
-        return new HomePageItem(action, data, image);
     }
 
     public Date getDateOccurred ()

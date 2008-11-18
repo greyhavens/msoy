@@ -55,8 +55,8 @@ public class HomePageItem
     /** Kick off the whirled tour. The data is ignored. */
     public static const ACTION_EXPLORE :int = 10;
 
-    /** Go to an AVRG whirled. The data is The data is an instance of <code>BasicNavItemData</code>
-     * where the id is the game id and the name is the name of the game. */
+    /** Go to an AVRG whirled. The data is an instance of <code>AVRGameNavItemData</code> where the
+     * id is the game id, and the name is the name of the game. */
     public static const ACTION_AVR_GAME :int = 11;
 
     /**

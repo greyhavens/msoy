@@ -16,10 +16,12 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntSet;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.data.AVRGameNavItemData;
 import com.threerings.msoy.data.BasicNavItemData;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberExperience;
@@ -44,6 +46,7 @@ import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.peer.server.MemberNodeAction;
@@ -221,6 +224,7 @@ public class MemberLogic
                 switch (expRecord.action) {
                 case HomePageItem.ACTION_ROOM:
                 case HomePageItem.ACTION_GAME:
+                case HomePageItem.ACTION_AVR_GAME:
                     actionData = Integer.parseInt(expRecord.data);
                     break;
                 default:
@@ -246,6 +250,7 @@ public class MemberLogic
             switch (mexp.action) {
             case HomePageItem.ACTION_ROOM:
             case HomePageItem.ACTION_GAME:
+            case HomePageItem.ACTION_AVR_GAME:
                 actionData = Integer.toString(mexp.data);
                 break;
             default:
@@ -327,9 +332,19 @@ public class MemberLogic
             for (PopularPlacesSnapshot.Place place : pps.getTopGames()) {
                 if (!haveGames.contains(place.placeId)) {
                     GameRecord game = _msoyGameRepo.loadGameRecord(place.placeId);
-                    games.add(new HomePageItem(
-                        HomePageItem.ACTION_GAME, new BasicNavItemData(game.gameId, game.name),
-                        game.getThumbMediaDesc()));
+                    if (Game.detectIsInWorld(game.config)) {
+                        if (game.groupId != 0) {
+                            games.add(new HomePageItem(
+                                HomePageItem.ACTION_AVR_GAME, 
+                                new AVRGameNavItemData(game.gameId, game.name, game.groupId),
+                                game.getThumbMediaDesc()));
+                        }
+                    } else {
+                        games.add(new HomePageItem(
+                            HomePageItem.ACTION_GAME,
+                            new BasicNavItemData(game.gameId, game.name),
+                            game.getThumbMediaDesc()));
+                    }
                     haveGames.add(game.gameId);
                 }
                 if (games.size() >= desiredGameCount) {
@@ -337,7 +352,7 @@ public class MemberLogic
                 }
             }
         }
-        
+
         // Add calculated items to the array
         for (List<HomePageItem> list : experiences) {
             for (HomePageItem item : list) {
@@ -349,9 +364,18 @@ public class MemberLogic
         if (curItem < items.length) {
             for (GameRecord game : _gameRepo.loadGenre((byte)-1, items.length)) {
                 if (!haveGames.contains(game.gameId)) {
-                    items[curItem++] = new HomePageItem(
-                        HomePageItem.ACTION_GAME, new BasicNavItemData(game.gameId, game.name),
-                        game.getThumbMediaDesc());
+                    if (Game.detectIsInWorld(game.config)) {
+                        if (game.groupId != 0) {
+                            items[curItem++] = new HomePageItem(
+                                HomePageItem.ACTION_AVR_GAME, new AVRGameNavItemData(
+                                    game.gameId, game.name, game.groupId),
+                                    game.getThumbMediaDesc());
+                        }
+                    } else {
+                        items[curItem++] = new HomePageItem(
+                            HomePageItem.ACTION_GAME, new BasicNavItemData(
+                                game.gameId, game.name), game.getThumbMediaDesc());
+                    }
                 }
                 if (curItem == items.length) {
                     break;
@@ -421,8 +445,9 @@ public class MemberLogic
         });
 
         List<List<HomePageItem>> lists = Lists.newArrayList();
-        lists.add(getExperienceItems(scores, HomePageItem.ACTION_GAME, numGames));
-        lists.add(getExperienceItems(scores, HomePageItem.ACTION_ROOM, numRooms));
+        lists.add(getExperienceItems(
+            scores, numGames, HomePageItem.ACTION_GAME, HomePageItem.ACTION_AVR_GAME));
+        lists.add(getExperienceItems(scores, numRooms, HomePageItem.ACTION_ROOM));
         return lists;
     }
 
@@ -430,15 +455,15 @@ public class MemberLogic
      * Converts scored experiences to home page items, filtered by type, up to a maximum number.
      */
     protected List<HomePageItem> getExperienceItems (
-        List<ScoredExperience> scores, byte actionType, int count)
+        List<ScoredExperience> scores, int count, byte ...actionTypes)
     {
         // Convert our scored experiences to home page items.
         List<HomePageItem> items = Lists.newArrayList();
         for (ScoredExperience se : scores) {
-            if (se.experience.action != actionType) {
+            if (ArrayUtil.indexOf(actionTypes, se.experience.action) == -1) {
                 continue;
             }
-            
+
             MediaDesc media;
             final NavItemData data;
             switch (se.experience.action) {
@@ -455,18 +480,27 @@ public class MemberLogic
                 break;
             }
             case HomePageItem.ACTION_GAME:
+            case HomePageItem.ACTION_AVR_GAME:
                 GameRecord game = _msoyGameRepo.loadGameRecord(se.experience.data);
                 if (game == null) {
                     continue;
                 }
                 media = game.getThumbMediaDesc();
-                data = new BasicNavItemData(se.experience.data, game.name);
+                if (se.experience.action == HomePageItem.ACTION_GAME) {
+                    data = new BasicNavItemData(game.gameId, game.name);
+                } else {
+                    // suppress games with no home whirled (e.g. in-development games)
+                    if (game.groupId == 0) {
+                        continue;
+                    }
+                    data = new AVRGameNavItemData(game.gameId, game.name, game.groupId);
+                }
                 break;
             default:
                 // if we have no data, our caller will freak out, so skip this experience
                 continue;
             }
-            items.add(se.experience.getHomePageItem(media, data));
+            items.add(new HomePageItem(se.experience.action, data, media));
             if (items.size() == count) {
                 break; // stop when we reach our desired count
             }

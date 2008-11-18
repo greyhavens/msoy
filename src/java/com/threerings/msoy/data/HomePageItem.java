@@ -53,8 +53,8 @@ public class HomePageItem extends SimpleStreamableObject
     /** Kick off the whirled tour. The data is ignored.*/
     public static final byte ACTION_EXPLORE = 10;
 
-    /** Go to an AVRG whirled. The data is The data is an instance of {@link BasicNavItemData}
-     * where the id is the game id and the name is the name of the game. */
+    /** Go to an AVRG whirled. The data is an instance of {@link AVRGameNavItemData} where the id
+     * is the game id, and the name is the name of the game. */
     public static final byte ACTION_AVR_GAME = 11;
 
     /**
