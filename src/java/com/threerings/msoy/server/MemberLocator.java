@@ -19,7 +19,6 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyLocator;
 
-import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -99,9 +98,6 @@ public class MemberLocator extends BodyLocator
                 return true;
             }
         });
-
-        // update our members online count in the status object
-        _adminMan.statObj.setMembersOnline(_clmgr.getClientCount());
     }
 
     /**
@@ -118,9 +114,6 @@ public class MemberLocator extends BodyLocator
                 return true;
             }
         });
-
-        // update our members online count in the status object
-        _adminMan.statObj.setMembersOnline(_clmgr.getClientCount());
     }
 
     @Override // from BodyLocator
@@ -139,5 +132,4 @@ public class MemberLocator extends BodyLocator
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected MemberManager _memberMan;
     @Inject protected FriendManager _friendMan;
-    @Inject protected MsoyAdminManager _adminMan;
 }

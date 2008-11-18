@@ -20,14 +20,15 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.RebootManager;
 import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.server.net.ConnectionManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.data.StatusObject;
@@ -40,9 +41,6 @@ import static com.threerings.msoy.Log.log;
 @EventThread @Singleton
 public class MsoyAdminManager
 {
-    /** Contains server status information published to admins. */
-    public StatusObject statObj;
-
     /**
      * Prepares the admin manager for operation.
      */
@@ -50,13 +48,6 @@ public class MsoyAdminManager
     {
         // create our reboot manager
         _rebmgr = new MsoyRebootManager(_shutmgr, _omgr);
-
-        // create and configure our status object
-        statObj = _omgr.registerObject(new StatusObject());
-        statObj.serverStartTime = System.currentTimeMillis();
-
-        // start up our connection manager stat monitor
-        _conmgrStatsUpdater.schedule(5000L, true);
 
         // start up the system "snapshot" logger
         _snapshotLogger = new SnapshotLogger();
@@ -95,15 +86,18 @@ public class MsoyAdminManager
 
         public void scheduleReboot (long rebootTime, String initiator) {
             super.scheduleReboot(rebootTime, initiator);
+            final Date when = new Date(rebootTime);
 
-            String extra = "";
-            if (rebootTime != _runtime.server.nextReboot) {
-                _runtime.server.setNextReboot(rebootTime);
-                statObj.setServerRebootTime(rebootTime);
-                extra = " and propagating to peers";
+            // if we are the (production) server that originated this reboot, fire off an email to
+            // the agents if we're in production (this is safe to do on the dobject thread)
+            if (!DeploymentConfig.devDeployment && !AUTOMATIC_INITIATOR.equals(initiator)) {
+                final String body = "A Whirled reboot has been scheduled for " + when +
+                    " by " + initiator + ".\n\nThank you. Please drive through.";
+                _sender.sendEmail(ServerConfig.getAgentsAddress(), ServerConfig.getFromAddress(),
+                                  "Whirled Reboot Scheduled", body);
             }
-            log.info("Scheduling reboot on " + new Date(rebootTime) + " for " + initiator +
-                     extra + ".");
+
+            log.info("Scheduling reboot on " + when + " for " + initiator + ".");
         }
 
         // from interface AttributeChangeListener
@@ -117,7 +111,7 @@ public class MsoyAdminManager
             DObject o = _omgr.getObject(event.getSourceOid());
             String blame;
             if (o == null) {
-                blame = "automatic";
+                blame = AUTOMATIC_INITIATOR;
             } else if (o instanceof MemberObject) {
                 blame = String.valueOf(((MemberObject)o).memberName);
             } else {
@@ -160,8 +154,8 @@ public class MsoyAdminManager
         }
 
         public void expired () {
-            // iterate over the list of members, adding up a total, as well as counting up
-            // subsets of active users and guest users
+            // iterate over the list of members, adding up a total, as well as counting up subsets
+            // of active users and guest users
             int total = 0, active = 0, guests = 0, viewers = 0;
             for (MemberObject memobj : _locator.getMembersOnline()) {
                 total++;
@@ -181,16 +175,6 @@ public class MsoyAdminManager
         }
     }
 
-    /** This reads the status from the connection manager and stuffs it into
-     * our server status object every 5 seconds. Because it reads synchronized
-     * data and then just posts an event, it's OK that it runs directly on the
-     * Interval dispatch thread. */
-    protected Interval _conmgrStatsUpdater = new Interval() {
-        public void expired () {
-            statObj.setConnStats(_conmgr.getStats());
-        }
-    };
-
     /** Logs a snapshot of the running server every 10 minutes. */
     protected SnapshotLogger _snapshotLogger;
 
@@ -201,11 +185,13 @@ public class MsoyAdminManager
     @Inject protected ShutdownManager _shutmgr;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected ConnectionManager _conmgr;
+    @Inject protected MailSender _sender;
     @Inject protected MemberLocator _locator;
     @Inject protected ChatProvider _chatprov;
     @Inject protected MoneyExchange _exchange;
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;
+
+        protected static final String AUTOMATIC_INITIATOR = "automatic";
 }

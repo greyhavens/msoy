@@ -106,8 +106,8 @@ public class RuntimeConfig
             }
 
             // admins are allowed to change things, but let's log it
-            log.info("Admin configuration change [who=" + user.username +
-                     ", object=" + object.getClass().getName() + ", change=" + event + "].");
+            log.info("Admin configuration change", "who", user.username,
+                     "object", object.getClass().getName(), "change", event);
             return true;
         }
 
