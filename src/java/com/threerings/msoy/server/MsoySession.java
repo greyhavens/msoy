@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -176,7 +178,7 @@ public class MsoySession extends WhirledSession
                 (local.sessionSeconds + _connectTime - _idleTracker.getIdleTime()) / 60f);
             final int memberId = _memobj.getMemberId();
             final StatSet stats = local.stats;
-            final Iterable<MemberExperience> experiences = _memobj.experiences;
+            final List<MemberExperience> experiences = Lists.newArrayList(_memobj.experiences);
 
             log.info("Session ended [id=" + memberId + ", amins=" + activeMins + "].");
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
@@ -188,7 +190,7 @@ public class MsoySession extends WhirledSession
                     _memberRepo.noteSessionEnded(
                         memberId, activeMins, _runtime.server.humanityReassessment);
                     // save their experiences
-                    _memberLogic.saveExperiences(memberId, Lists.newArrayList(experiences));
+                    _memberLogic.saveExperiences(memberId, experiences);
                     // save any modified avatar memories
                     if (local.memories != null) {
                         _memoryRepo.storeMemories(MemoryRecord.extractModified(local.memories));
