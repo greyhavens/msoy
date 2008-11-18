@@ -11,25 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.CountRecord;
-import com.threerings.msoy.server.persist.TagHistoryRecord;
-import com.threerings.msoy.server.persist.TagRecord;
-import com.threerings.msoy.server.persist.TagRepository;
-
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
@@ -44,19 +31,39 @@ import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
+import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Conditionals.FullTextMatch;
 import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.Logic.Not;
+import com.samskivert.depot.operator.SQLOperator;
+
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Tuple;
+
 import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.server.persist.TagRecord;
+import com.threerings.msoy.server.persist.TagRepository;
+
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+
+import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupService.GroupQuery;
+
 /**
  * Manages the persistent store of group data.
  */
@@ -504,9 +511,13 @@ public class GroupRepository extends DepotRepository
             return new Where(new And(publicOnly, new FullTextMatch(GroupRecord.class,
                 GroupRecord.FTS_NBC, query.searchString)));
         } else if (query.tag != null) {
-            int tagId = _tagRepo.getOrCreateTag(query.tag).tagId;
-            return new Where(new And(publicOnly, new Equals(new ColumnExp(GroupTagRecord.class,
-                GroupTagRecord.TAG_ID), tagId)));
+            TagNameRecord tnr = _tagRepo.getTag(query.tag);
+            if (tnr == null) {
+                return new Where(new LiteralExp("false"));
+            } else {
+                return new Where(new And(publicOnly, new Equals(
+                    new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID), tnr.tagId)));
+            }
         } else {
             return new Where(publicOnly);
         }
