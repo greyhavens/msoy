@@ -140,6 +140,16 @@ public class MailSender
         _executor.execute(new SpamTask(recips, sender, headers, subject, body));
     }
 
+    /**
+     * Sends a text email to the supplied recipient.
+     */
+    public void sendEmail (String recip, String sender, String subject, String body)
+    {
+        if (!isPlaceholderAddress(recip)) {
+            _executor.execute(new MailTask(recip, sender, subject, body));
+        }
+    }
+
     /** Handles the formatting and delivery of a mail message. */
     protected static class TemplateMailTask implements Runnable
     {
@@ -268,6 +278,28 @@ public class MailSender
         protected List<Tuple<Integer, String>> _recips;
         protected String _sender, _subject, _body;
         protected String[] _headers;
+    }
+
+    /** Handles the delivery of a text mail message. */
+    protected static class MailTask implements Runnable
+    {
+        public MailTask (String recip, String sender, String subject, String body) {
+            _recip = recip;
+            _sender = sender;
+            _subject = subject;
+            _body = body;
+        }
+
+        public void run () {
+            try {
+                MailUtil.deliverMail(_recip, _sender, _subject, _body);
+            } catch (Exception e) {
+                log.warning("Failed to send simple email", "recip", _recip, "sender", _sender,
+                            "subject", _subject, e);
+            }
+        }
+
+        protected String _recip, _sender, _subject, _body;
     }
 
     /** The executor on which we will dispatch mail sending tasks. */
