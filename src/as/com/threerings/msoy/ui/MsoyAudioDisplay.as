@@ -17,6 +17,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.TextFieldUtil;
@@ -112,9 +113,9 @@ public class MsoyAudioDisplay extends Sprite
         field :TextField, id3 :Object, prop :String, unkName :String) :void
     {
         const info :String = (id3 != null) ? id3[prop] as String : null;
-        const text :String = (info != null) ? info : ("unknown " + unkName);
-        TextFieldUtil.updateText(field, text);
-        TextFieldUtil.updateFormat(field, { italic: (info == null) });
+        const blankInfo :Boolean = StringUtil.isBlank(info);
+        TextFieldUtil.updateText(field, blankInfo ? ("unknown " + unkName) : info);
+        TextFieldUtil.updateFormat(field, { italic: blankInfo });
     }
 
     protected static const FIELD_HEIGHT :int = 15;
