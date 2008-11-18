@@ -811,10 +811,17 @@ public class MemberManager
         ClientObject caller, InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final MemberObject memObj = (MemberObject) caller;
+        MemberObject memObj = (MemberObject) caller;
+        final MemberExperience[] experiences = new MemberExperience[memObj.experiences.size()];
+        memObj.experiences.toArray(experiences);
+        final boolean onTour = memObj.onTour;
+        final int memberId = memObj.getMemberId();
+        final short badgesVersion = memObj.getLocal(MemberLocal.class).badgesVersion;
+        
         _invoker.postUnit(new PersistingUnit("getHPGridItems", listener, "who", memObj.who()) {
             @Override public void invokePersistent () throws Exception {
-                reportRequestProcessed(_memberLogic.getHomePageGridItems(memObj));
+                reportRequestProcessed(_memberLogic.getHomePageGridItems(
+                    memberId, experiences, onTour, badgesVersion));
             }
         });
     }

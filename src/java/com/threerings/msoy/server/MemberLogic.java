@@ -260,20 +260,20 @@ public class MemberLogic
     /**
      * Loads up the specified member's home page grid items.
      */
-    public HomePageItem[] getHomePageGridItems (final MemberObject memObj)
+    public HomePageItem[] getHomePageGridItems (
+        int memberId, final MemberExperience[] rawExperiences, boolean onTour, short badgesVersion)
     {
         HomePageItem[] items = new HomePageItem[MWP_COUNT];
         int curItem = 0;
 
         // The first item on the home page is always a whirled tour unless already onTour
-        if (!memObj.onTour) {
+        if (!onTour) {
             items[curItem++] = EXPLORE_ITEM;
         }
 
         // The next 2 or 3 items are badges
         List<InProgressBadge> badges = _badgeLogic.getNextSuggestedBadges(
-            memObj.getMemberId(), memObj.getLocal(MemberLocal.class).badgesVersion,
-            3 - curItem);
+            memberId, badgesVersion, 3 - curItem);
         for (InProgressBadge badge : badges) {
             items[curItem++] = new HomePageItem(
                 HomePageItem.ACTION_BADGE, badge, badge.imageMedia());
@@ -285,7 +285,7 @@ public class MemberLogic
         final int desiredRoomCount = 3;
         final int desiredGameCount = 6 - curItem;
         List<List<HomePageItem>> experiences = getAllExperienceItems(
-            memObj, desiredRoomCount, desiredGameCount);
+            rawExperiences, desiredRoomCount, desiredGameCount);
         List<HomePageItem> games = experiences.get(0);
         List<HomePageItem> rooms = experiences.get(1);
 
@@ -394,10 +394,10 @@ public class MemberLogic
      * @return List of lists of the home page items, first games then rooms
      */
     protected List<List<HomePageItem>> getAllExperienceItems (
-        MemberObject memObj, int numRooms, int numGames)
+        MemberExperience[] experiences, int numRooms, int numGames)
     {
         List<ScoredExperience> scores = Lists.newArrayList();
-        for (MemberExperience experience : memObj.experiences) {
+        for (MemberExperience experience : experiences) {
             ScoredExperience newExp = new ScoredExperience(experience);
 
             // Has this member experienced this more than once?  If so, combine.
