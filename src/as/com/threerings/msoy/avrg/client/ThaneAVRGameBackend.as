@@ -523,10 +523,7 @@ public class ThaneAVRGameBackend
         PropertySpaceObjectImpl;
 
         _gameObj.avrgService.loadOfflinePlayer(ensureGameClient(), playerId, new ResultAdapter(
-            function (cause :String) :void {
-                log.warning("Failed to load offline player properties", "playerId", playerId,
-                            "cause", cause);
-            },
+            failure,
             function (props :PropertySpaceObject) :void {
                 if (props == null) {
                     // this means the player had no existing persistent properties, which means
@@ -540,6 +537,7 @@ public class ThaneAVRGameBackend
                 try {
                     // trigger whatever actions the usercode wants to take for this offline player
                     success(props.getUserProps());
+
                 } catch (e :Error) {
                     // turn off offline player access
                     failure("Error in callback: " + e);
