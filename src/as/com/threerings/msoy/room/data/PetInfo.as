@@ -10,6 +10,9 @@ import com.threerings.io.ObjectInputStream;
  */
 public class PetInfo extends ActorInfo
 {
+    // statically reference classes we require
+    PetName;
+
     /**
      * Returns the member id of this pet's owner.
      */

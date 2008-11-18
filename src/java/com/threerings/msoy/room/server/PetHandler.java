@@ -11,8 +11,6 @@ import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.text.MessageUtil;
 
-import com.threerings.util.Name;
-
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
@@ -37,6 +35,7 @@ import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.PetCodes;
 import com.threerings.msoy.room.data.PetObject;
+import com.threerings.msoy.room.data.PetName;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -50,7 +49,7 @@ public class PetHandler
     {
         _petobj = _omgr.registerObject(new PetObject());
         _petobj.memories = memories;
-        _petobj.setUsername(new Name(pet.name));
+        _petobj.setUsername(new PetName(pet.name, pet.itemId));
         _petobj.pet = pet;
         _petmgr.mapHandler(pet.itemId, this);
     }
