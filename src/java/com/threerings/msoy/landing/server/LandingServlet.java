@@ -68,7 +68,7 @@ public class LandingServlet extends MsoyServiceServlet
         // if we don't have enough people online, supplement with other groups
         if (popWhirleds.size() < LandingData.FEATURED_GROUP_COUNT) {
             int count = LandingData.FEATURED_GROUP_COUNT - popWhirleds.size();
-            for (GroupRecord group : _groupRepo.getGroupsList(count)) {
+            for (GroupRecord group : _groupRepo.getGroups(count)) {
                 popWhirleds.add(group.toGroupCard());
             }
         }

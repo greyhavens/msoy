@@ -22,8 +22,6 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.DataModel;
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -38,6 +36,7 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
 /**
@@ -94,9 +93,9 @@ public class GalaxyPanel extends FlowPanel
         _groupGrid = new PagedGrid<GroupCard>(GRID_ROWS, GRID_COLUMNS) {
             protected void displayPageFromClick (int page) {
                 // preserve action and args.
-                String action = _query.searchString != null ? ACTION_SEARCH
+                String action = _query.search != null ? ACTION_SEARCH
                     : (_query.tag != null ? ACTION_TAG : "");
-                String arg = _query.searchString != null ? _query.searchString
+                String arg = _query.search != null ? _query.search
                     : (_query.tag != null ? _query.tag : "");
                 Link.go(Pages.GROUPS, Args.compose(action, page, arg, _query.sort));
             }
@@ -127,6 +126,12 @@ public class GalaxyPanel extends FlowPanel
             create.setWidget(1, 2, new Button(_msgs.galaxyCreate(), onClick), 1, "Button");
             add(create);
         }
+
+        _groupsvc.getGalaxyData(new MsoyCallback<GalaxyData>() {
+            public void onSuccess (GalaxyData galaxy) {
+                init(galaxy);
+            }
+        });
     }
 
     /**
@@ -135,18 +140,24 @@ public class GalaxyPanel extends FlowPanel
      */
     public void setArgs (Args args)
     {
+        // Create a new GroupQuery based on the args
+        GroupService.GroupQuery query = new GroupService.GroupQuery();
         String action = args.get(0, "");
-        _query.page = args.get(1, 0);
+        int page = args.get(1, 0);
         String arg = args.get(2, "");
-        _query.sort = (byte)args.get(3, 0);
-        boolean needCount = false;
+        query.sort = (byte)args.get(3, 0);
+        if (action.equals(ACTION_SEARCH) && !arg.equals("")) {
+            query.search = arg;
+        } else if (action.equals(ACTION_TAG) && !arg.equals("")) {
+            query.tag = arg;
+        }
 
-        // clear out our status indicators (they'll be put back later)
-        _currentTag.clear();
+        // set the current tag and search text for the new query
         _searchInput.setText("");
-
-        // Search by tag: group-tag_NN_TAG
-        if (action.equals(ACTION_TAG) && !arg.equals("")) {
+        _currentTag.clear();
+        if (query.search != null) {
+            _searchInput.setText(arg);
+        } else if (query.tag != null) {
             InlineLabel tagLabel = new InlineLabel(_msgs.galaxyCurrentTag(arg) + " ");
             tagLabel.addStyleName("Label");
             _currentTag.add(tagLabel);
@@ -154,75 +165,41 @@ public class GalaxyPanel extends FlowPanel
             Widget clear = Link.create(_msgs.galaxyTagClear(), Pages.GROUPS, "");
             _currentTag.add(clear);
             _currentTag.add(new InlineLabel(")"));
-            if (!arg.equals(_query.tag)) {
-                _query.tag = arg;
-                needCount = true;
-            }
-        } else if (_query.tag != null) {
-            // clear the tag search
-            needCount = true;
-            _query.tag = null;
-        }
-
-        // Search by full text: group-search_NN_QUERY
-        if (action.equals(ACTION_SEARCH) && !arg.equals("")) {
-            _searchInput.setText(arg);
-            if (!arg.equals(_query.searchString)) {
-                _query.searchString = arg;
-                needCount = true;
-            }
-        } else if (_query.searchString != null) {
-            // clear the text search
-            needCount = true;
-            _query.searchString = null;
-        }
-
-        // first time loading the page; initialize query and get all page data
-        if (_query.count == 0) {
-            _query.count = GRID_COLUMNS * GRID_ROWS;
-            _groupsvc.getGalaxyData(_query, new MsoyCallback<GalaxyData>() {
-                public void onSuccess (GalaxyData galaxy) {
-                    init(galaxy);
-                }
-            });
-
-        // page already initialized, just refresh the grid data
-        } else {
-            _groupsvc.getGroups(_query, needCount, new MsoyCallback<GroupService.GroupsResult>() {
-                public void onSuccess (GroupService.GroupsResult result) {
-                    if (result.totalCount > 0) {
-                        _totalGroups = result.totalCount;
-                    }
-                    _groupGrid.setModel(new GroupDataModel(result.groups), _query.page);
-                }
-            });
         }
 
         // If currently displaying search results, lock the sort box to "By Relevance", otherwise
         // display all search values and select the right one.
-        if (_query.searchString != null || _query.tag != null) {
+        if (query.search != null || query.tag != null) {
             if (_sortBox.getItemCount() != 1) {
                 _sortBox.clear();
                 _sortBox.addItem(_msgs.sortByRelevance());
                 _sortBox.setEnabled(false);
             }
-
         } else {
             if (_sortBox.getItemCount() != SORT_LABELS.length) {
                 _sortBox.clear();
                 for (int ii = 0; ii < SORT_LABELS.length; ii++) {
                     _sortBox.addItem(SORT_LABELS[ii], SORT_VALUES[ii] + "");
-                    if (_query.sort == SORT_VALUES[ii]) {
+                    if (query.sort == SORT_VALUES[ii]) {
                         _sortBox.setSelectedIndex(ii);
                     }
                 }
                 _sortBox.setEnabled(true);
             }
         }
+
+        // If the query has changed, instanciate a new data model for the group grid.
+        if (_query == null || !_query.equals(query)) {
+            _query = query;
+            _groupGrid.setModel(new GroupDataModel(), page);
+        } else {
+            _groupGrid.displayPage(page, false);
+        }
     }
 
     /**
-     * Called when data is retrieved after this panel is created; populate the page with data.
+     * Called when my groups & tags data is retrieved after this panel is created; populate the
+     * page with data.
      */
     protected void init (GalaxyData data)
     {
@@ -248,9 +225,6 @@ public class GalaxyPanel extends FlowPanel
                                              Args.compose(ACTION_TAG, 0, tag, false)));
             }
         }
-
-        _totalGroups = data.publicGroups.totalCount;
-        _groupGrid.setModel(new GroupDataModel(data.publicGroups.groups), _query.page);
     }
 
     /**
@@ -295,28 +269,23 @@ public class GalaxyPanel extends FlowPanel
      * Data model for the groups list, which uses _totalGroups as the total count, and returns all
      * data whenever a subset is requested. Page limiting must be done at the repo level.
      */
-    protected class GroupDataModel implements DataModel<GroupCard>
+    protected class GroupDataModel
+        extends ServiceBackedDataModel<GroupCard, GroupService.GroupsResult>
     {
-        public GroupDataModel (List<GroupCard> groups) {
-            _groups = groups;
+        protected void callFetchService (int start, int count, boolean needCount,
+            AsyncCallback<GroupService.GroupsResult> callback) {
+            _groupsvc.getGroups(start, count, _query, needCount, callback);
         }
-        public int getItemCount () {
-            return _totalGroups;
+        protected int getCount (GroupService.GroupsResult result) {
+            return result.totalCount;
         }
-        public void doFetchRows (int start, int count, AsyncCallback<List<GroupCard>> callback) {
-            callback.onSuccess(_groups);
+        protected List<GroupCard> getRows (GroupService.GroupsResult result) {
+            return result.groups;
         }
-        public void removeItem (GroupCard item) {
-            _groups.remove(item);
-        }
-        protected List<GroupCard> _groups;
     };
 
     /** The current search,tag,page, and sort being displayed */
-    protected GroupService.GroupQuery _query = new GroupService.GroupQuery();
-
-    /** Current total number of groups to display in the grid */
-    protected int _totalGroups;
+    protected GroupService.GroupQuery _query;
 
     /* dynamic widgets */
     protected PagedGrid<GroupCard> _groupGrid;

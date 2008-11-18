@@ -71,7 +71,7 @@ public class GroupServlet extends MsoyServiceServlet
     implements GroupService
 {
     // from GroupService
-    public GalaxyData getGalaxyData (GroupQuery query)
+    public GalaxyData getGalaxyData ()
         throws ServiceException
     {
         GalaxyData data = new GalaxyData();
@@ -95,16 +95,15 @@ public class GroupServlet extends MsoyServiceServlet
             popularTags.add(popRec.tag);
         }
         data.popularTags = popularTags;
-        data.publicGroups = getGroups(query, true);
 
         return data;
     }
 
     // from GroupService
-    public GroupsResult getGroups (GroupQuery query, boolean needCount)
+    public GroupsResult getGroups (int offset, int count, GroupQuery query, boolean needCount)
         throws ServiceException
     {
-        List<GroupRecord> records = _groupRepo.getGroups(query);
+        List<GroupRecord> records = _groupRepo.getGroups(offset, count, query);
         GroupsResult result = new GroupsResult();
         result.groups = populateGroupCard(Lists.newArrayList(Iterables.transform(records,
             GroupRecord.TO_CARD)));

@@ -51,20 +51,27 @@ public interface GroupService extends RemoteService
         public static final byte SORT_BY_NUM_MEMBERS = 3;
         public static final byte SORT_BY_CREATED_DATE = 4;
 
-        /** number of group records to fetch */
-        public int count;
-
-        /** the current page of data to display, base zero */
-        public int page;
-
         /** The current sort method */
         public byte sort = SORT_BY_NEW_AND_POPULAR;
 
         /** String to search group name & description for */
-        public String searchString;
+        public String search;
 
         /** Tag to search for; preempted by searchString */
         public String tag;
+
+        public boolean equals (GroupQuery query)
+        {
+            if (query == null) {
+                return false;
+            }
+            if ((tag == query.tag || (tag != null && tag.equals(query.tag)))
+                && (search == query.search || (search != null && search.equals(query.search)))
+                && (sort == query.sort)) {
+                return true;
+            }
+            return false;
+        }
     }
 
     /** Delivers the response to {@link #getGroups}. */
@@ -83,13 +90,13 @@ public interface GroupService extends RemoteService
     /**
      * Loads the information displayed on the Galaxy page.
      */
-    GalaxyData getGalaxyData (GroupQuery query)
+    GalaxyData getGalaxyData ()
         throws ServiceException;
 
     /**
      * Gets a subset of the list of all groups.
      */
-    GroupsResult getGroups (GroupQuery query, boolean needCount)
+    GroupsResult getGroups (int offset, int count, GroupQuery query, boolean needCount)
         throws ServiceException;
 
     /**

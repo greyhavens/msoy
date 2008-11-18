@@ -107,11 +107,9 @@ public class GroupRepository extends DepotRepository
      *
      * @param count a limit to the number of groups to load or Integer.MAX_VALUE for all of them.
      */
-    public List<GroupRecord> getGroupsList (int count)
+    public List<GroupRecord> getGroups (int count)
     {
-        GroupQuery query = new GroupQuery();
-        query.count = count;
-        return getGroups(query);
+        return getGroups(0, count, new GroupQuery());
     }
 
     /**
@@ -120,21 +118,19 @@ public class GroupRepository extends DepotRepository
      * @param query Limit, search and sort options. query.searchString and query.tag are mutually
      * exclusive. If either is set, results will be ordered by relevance instead of query.sort.
      */
-    public List<GroupRecord> getGroups (GroupQuery query)
+    public List<GroupRecord> getGroups (int offset, int count, GroupQuery query)
     {
-        int offset = query.page * query.count;
-
         // if there is a search string, do a full text match, order by relevance
-        if (query.searchString != null) {
+        if (query.search != null) {
             // for now, always operate with boolean searching enabled, without query expansion
             return findAll(GroupRecord.class, getGroupWhere(query),
-                new Limit(offset, query.count));
+                new Limit(offset, count));
 
         // if there is a tag, fetch groups with GroupTagRecords for that tag, order by groupId
         } else if (query.tag != null) {
             return findAll(GroupRecord.class, getGroupWhere(query), new Join(GroupRecord.class,
                     GroupRecord.GROUP_ID, GroupTagRecord.class, GroupTagRecord.TARGET_ID),
-                new Limit(offset, query.count));
+                new Limit(offset, count));
         }
 
         // if no full text or tag search, return a subset of all records, order by query.sort
@@ -158,7 +154,7 @@ public class GroupRepository extends DepotRepository
         }
 
         return findAll(
-            GroupRecord.class, getGroupWhere(query), new Limit(offset, query.count), orderBy);
+            GroupRecord.class, getGroupWhere(query), new Limit(offset, count), orderBy);
     }
 
     /**
@@ -168,7 +164,7 @@ public class GroupRepository extends DepotRepository
     public int getGroupCount (GroupQuery query)
     {
         // if there is a search string, return count of full text search
-        if (query.searchString != null) {
+        if (query.search != null) {
             return load(CountRecord.class, new FromOverride(GroupRecord.class),
                 getGroupWhere(query)).count;
 
@@ -507,9 +503,9 @@ public class GroupRepository extends DepotRepository
     protected Where getGroupWhere (GroupQuery query)
     {
         SQLOperator publicOnly = new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE));
-        if (query.searchString != null) {
+        if (query.search != null) {
             return new Where(new And(publicOnly, new FullTextMatch(GroupRecord.class,
-                GroupRecord.FTS_NBC, query.searchString)));
+                GroupRecord.FTS_NBC, query.search)));
         } else if (query.tag != null) {
             TagNameRecord tnr = _tagRepo.getTag(query.tag);
             if (tnr == null) {
