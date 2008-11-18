@@ -19,10 +19,8 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import com.threerings.util.Log;
-import com.threerings.util.MultiLoader;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.SimpleIconButton;
 import com.threerings.flash.TextFieldUtil;
 import com.threerings.flash.media.MediaPlayer;
@@ -80,40 +78,23 @@ public class MediaControls extends Sprite
 
     protected function configureUI () :void
     {
-        // we need to set some things up immediately, as they'll be adjusted when we get
-        // events from the player, which may happen prior to the multiloader loading the UI bits
+        _playBtn = new SimpleIconButton(PLAY_BTN);
+        _pauseBtn = new SimpleIconButton(PAUSE_BTN);
+        _commentBtn = new SimpleIconButton(COMMENT_BTN);
+        _volumeBtn = new SimpleIconButton(VOLUME_BTN);
+        _muteBtn = new SimpleIconButton(MUTE_BTN);
         _track = new Sprite();
         _knob = new Sprite();
-        _timeField = TextFieldUtil.createField("",
-            { autoSize: TextFieldAutoSize.CENTER, selectable: false },
-            { color: 0xFFFFFF, font: "_sans", size: 10 });
-
-        MultiLoader.getContents(UI, configureUI2);
-    }
-
-    protected function configureUI2 (ui :DisplayObject) :void
-    {
-        _playBtn = DisplayUtil.findInHierarchy(ui, "playbutton");
-        _pauseBtn = DisplayUtil.findInHierarchy(ui, "pausebutton");
-        _commentBtn = DisplayUtil.findInHierarchy(ui, "commentbutton");
-//        _commentBtn = new SimpleIconButton(COMMENT_BTN);
-        _volumeBtn = DisplayUtil.findInHierarchy(ui, "fullvolumebutton");
-        _muteBtn = DisplayUtil.findInHierarchy(ui, "mutebutton");
-        var timeline :DisplayObject = DisplayUtil.findInHierarchy(ui, "timeline");
-        timeline.x = 0;
-        timeline.y = (UNIT - timeline.height) / 2;
-        _track.addChildAt(timeline, 0);
-        _knob.y = timeline.y;
-        var knobBtn :DisplayObject = DisplayUtil.findInHierarchy(ui, "sliderknob");
-        knobBtn.x = knobBtn.width / -2;
-        knobBtn.y = 2 + knobBtn.height / -2; // fiddle fiddle
-        _knob.addChild(knobBtn);
+        var knobThing :DisplayObject = DisplayObject(new KNOB());
+        _knob.addChild(knobThing);
 
         // position the buttons
         _playBtn.x = (UNIT - _playBtn.width) / 2;
         _playBtn.y = (UNIT - _playBtn.height) / 2;
         _pauseBtn.x = (UNIT - _pauseBtn.width) / 2;
         _pauseBtn.y = (UNIT - _pauseBtn.height) / 2;
+        knobThing.x = knobThing.width / -2;
+        knobThing.y = (UNIT - knobThing.height) / 2;
 
         var baseX :int = WIDTH;
 
@@ -132,7 +113,9 @@ public class MediaControls extends Sprite
         }
 
         // size and add the timefield
-        TextFieldUtil.updateText(_timeField, "88:88 / 88:88");
+        _timeField = TextFieldUtil.createField("88:88 / 88:88",
+            { autoSize: TextFieldAutoSize.CENTER, selectable: false },
+            { color: 0xFFFFFF, font: "_sans", size: 10 });
         _timeField.height = UNIT;
         baseX -= _timeField.width;
         _timeField.x = baseX;
@@ -141,11 +124,15 @@ public class MediaControls extends Sprite
 
         _track.x = UNIT + PAD;
         _trackWidth = baseX - UNIT - (PAD * 2);
-        _track.graphics.beginFill(0xFFFFFF, 0);
-        _track.graphics.drawRect(0, 1, _trackWidth, UNIT - 1);
-        _track.graphics.endFill();
-        timeline.width = _trackWidth;
-
+        var g :Graphics = _track.graphics;
+        g.beginFill(0xFFFFFF, 0);
+        g.drawRect(0, 1, _trackWidth, UNIT - 1);
+        g.endFill();
+        g.lineStyle(1, 0x000000);
+        g.beginFill(0xFFFFFF);
+        g.drawRect(0, 11, _trackWidth, UNIT - 22)
+        g.endFill();
+        
         _playBtn.addEventListener(MouseEvent.CLICK, handlePlay);
         _pauseBtn.addEventListener(MouseEvent.CLICK, handlePause);
 
@@ -389,12 +376,25 @@ public class MediaControls extends Sprite
 
     protected static const UNKNOWN_TIME :String = "-:--";
 
-//    [Embed(source="../../../../../../rsrc/media/skins/controlbar/comment.png")]
-//    protected static const COMMENT_BTN :Class;
+    [Embed(source="../../../../../../rsrc/media/skins/mediaplayer/play.png")]
+    protected static const PLAY_BTN :Class;
 
-    [Embed(
-        source="../../../../../../rsrc/media/skins/mediaplayer.swf",
-        mimeType="application/octet-stream")]
-    protected static const UI :Class;
+    [Embed(source="../../../../../../rsrc/media/skins/mediaplayer/pause.png")]
+    protected static const PAUSE_BTN :Class;
+
+    // TODO: re-use resource in css file, or have that use this. Or something!
+    [Embed(source="../../../../../../rsrc/media/skins/controlbar/comment.png")]
+    protected static const COMMENT_BTN :Class;
+
+    // TODO: re-use resource in css file, or have that use this. Or something!
+    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_05.png")]
+    protected static const VOLUME_BTN :Class;
+
+    // TODO: re-use resource in css file, or have that use this. Or something!
+    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_01.png")]
+    protected static const MUTE_BTN :Class;
+
+    [Embed(source="../../../../../../rsrc/media/skins/mediaplayer/knob.swf")]
+    protected static const KNOB :Class;
 }
 }
