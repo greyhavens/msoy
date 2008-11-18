@@ -12,6 +12,11 @@ import com.threerings.whirled.data.ScenePlace;
  */
 public class MsoyBodyObject extends BodyObject
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>actorState</code> field. */
+    public static final String ACTOR_STATE = "actorState";
+    // AUTO-GENERATED: FIELDS END
+
     /** Constant value for {@link #status}. */
     public static final byte AWAY = 3;
 
@@ -48,4 +53,22 @@ public class MsoyBodyObject extends BodyObject
             return super.getStatusTranslation();
         }
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the <code>actorState</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setActorState (String value)
+    {
+        String ovalue = this.actorState;
+        requestAttributeChange(
+            ACTOR_STATE, value, ovalue);
+        this.actorState = value;
+    }
+    // AUTO-GENERATED: METHODS END
 }

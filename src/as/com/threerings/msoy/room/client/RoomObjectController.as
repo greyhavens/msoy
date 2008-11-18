@@ -347,6 +347,14 @@ public class RoomObjectController extends RoomController
     }
 
     /**
+     * Handle the ROOM_RATE command.
+     */
+    public function handleRoomRate (rating :Number) :void
+    {
+        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, new ReportingListener(_wdctx));
+    }
+
+    /**
      * Handles PUBLISH_ROOM.
      */
     public function handlePublishRoom () :void

@@ -108,12 +108,7 @@ public abstract class RatingRepository extends DepotRepository
         return (record == null) ? (byte)0 : record.rating;
     }
 
-    public int getCount (int targetId)
-    {
-        return createAverageRecord(targetId).count;
-    }
-
-    protected RatingAverageRecord createAverageRecord (int targetId)
+    public RatingAverageRecord createAverageRecord (int targetId)
     {
         RatingAverageRecord record = load(RatingAverageRecord.class,
             new FromOverride(getRatingClass()),
