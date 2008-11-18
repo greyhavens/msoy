@@ -156,7 +156,9 @@ public class ServerConfig
         }
         return new DataSourceConnectionProvider("jdbc:postgresql", sources[0], sources[1]) {
             @Override public void shutdown () {
-                // TODO: shutdown our datasources
+                for (DataSource source : sources) {
+                    ((PoolingDataSource)source).close();
+                }
             }
         };
     }
