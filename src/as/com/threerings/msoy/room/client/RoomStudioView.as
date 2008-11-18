@@ -402,9 +402,10 @@ public class RoomStudioView extends RoomView
         emulateIdle(false);
         _avatar.performAvatarSpoke();
 
-        if (_pet != null) {
-            _pet.processChatMessage(_avatar.getItemIdent().toString(),
-                _avatar.getActorInfo().username.toString(), "bla bla bla");
+        var ident :String = _avatar.getItemIdent().toString();
+        var name :String = _avatar.getActorInfo().username.toString();
+        for each (var entity :MsoySprite in _entities.values()) {
+            entity.processChatMessage(ident, name, "bla bla bla");
         }
     }
 
