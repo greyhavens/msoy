@@ -24,6 +24,7 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.room.client.RoomObjectView;
 
 import com.threerings.msoy.world.tour.data.TourMarshaller;
+import com.threerings.msoy.world.tour.data.TourStop;
 
 public class TourDirector extends BasicDirector
 {
@@ -62,8 +63,9 @@ public class TourDirector extends BasicDirector
             function (cause :String) :void {
                 _wctx.displayFeedback(MsoyCodes.WORLD_MSGS, cause);
             },
-            function (sceneId :int) :void {
-                _wctx.getSceneDirector().moveTo(sceneId);
+            function (stop :TourStop) :void {
+                // TODO: Update rating
+                _wctx.getSceneDirector().moveTo(stop.sceneId);
             }));
     }
 

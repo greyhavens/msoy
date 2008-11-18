@@ -25,14 +25,18 @@ import com.threerings.presents.annotation.MainInvoker;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.RatingInfo;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
+
+import com.threerings.msoy.world.tour.data.TourStop;
 
 import static com.threerings.msoy.Log.log;
 
@@ -72,11 +76,11 @@ public class TourManager
 
     // from TourProvider
     public void nextRoom (
-        ClientObject caller, boolean finishedLoadingCurrentRoom,
-        InvocationService.ResultListener listener)
+        ClientObject caller, final boolean finishedLoadingCurrentRoom,
+        final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        MemberObject memObj = (MemberObject) caller;
+        final MemberObject memObj = (MemberObject) caller;
 
         // put them "on tour" if they're not already
         if (!memObj.onTour) {
@@ -84,13 +88,37 @@ public class TourManager
             memObj.getLocal(MemberLocal.class).touredRooms = new StreamableArrayIntSet();
         }
 
-        int nextRoom = pickNextRoom(memObj);
+        final int nextRoom = pickNextRoom(memObj);
         memObj.getLocal(MemberLocal.class).touredRooms.add(nextRoom);
-        listener.requestProcessed(nextRoom);
-        // maybe increment the user's TOURED stat
-        if (finishedLoadingCurrentRoom && !memObj.isGuest()) {
-            _statLogic.incrementStat(memObj.getMemberId(), StatType.ROOMS_TOURED, 1);
-        }
+
+        _invoker.postUnit(new RepositoryUnit("nextRoom") {
+            public void invokePersist ()
+                throws Exception
+            {
+                RatingInfo rating = new RatingInfo();
+                RatingRepository.RatingAverageRecord average =
+                    _sceneRepo.getRatingRepository().createAverageRecord(nextRoom);
+                rating.count = average.count;
+                rating.averageRating = average.average;
+                rating.myRating =
+                    _sceneRepo.getRatingRepository().getRating(nextRoom, memObj.getMemberId());
+
+                _stop.sceneId = nextRoom;
+                _stop.rating = rating;
+            }
+
+            public void handleSuccess ()
+            {
+                listener.requestProcessed(_stop);
+
+                // maybe increment the user's TOURED stat
+                if (finishedLoadingCurrentRoom && !memObj.isGuest()) {
+                    _statLogic.incrementStat(memObj.getMemberId(), StatType.ROOMS_TOURED, 1);
+                }
+            }
+
+            TourStop _stop = new TourStop();
+        });
     }
 
     // from TourProvider
