@@ -160,7 +160,7 @@ public class WorldControlBar extends ControlBar
     {
         super.addControls(); 
 
-        addButton(_musicBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
+        addButton(_musicBtn, [ UI_ROOM, UI_AVRGAME ], VOLUME_PRIORITY);
         addButton(_homePageGridBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
         addButton(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
 
