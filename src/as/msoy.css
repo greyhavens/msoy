@@ -1375,3 +1375,7 @@ GameOverPanel {
 .statusEditHover {
   textDecoration: "underline";
 }
+
+Stars {
+  horizontalGap: 0;
+}
