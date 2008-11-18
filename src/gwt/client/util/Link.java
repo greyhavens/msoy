@@ -94,10 +94,22 @@ public class Link
      */
     public static Widget create (String label, String styleName, Pages page, String args)
     {
+        return create(label, styleName, page, args, true);
+    }
+
+    /**
+     * Returns link that navigates to the specified application page with the specified arguments.
+     * A page should use this method to pass itself arguments.
+     */
+    public static Widget create (
+        String label, String styleName, Pages page, String args, boolean inline)
+    {
         Widget link = new ReroutedHyperlink(label, false, createToken(page, args));
-        link.addStyleName("inline");
         if (styleName != null) {
             link.addStyleName(styleName);
+        }
+        if (inline) {
+            link.addStyleName("inline");
         }
         return link;
     }

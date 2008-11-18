@@ -69,9 +69,7 @@ public class MyWhirled extends FlowPanel
     protected Widget makeQuickLink (String label, Pages page, String args)
     {
         // TODO: add a little bullet to the left
-        Widget link = Link.create(label, page, args);
-        link.removeStyleName("inline");
-        return link;
+        return Link.create(label, null, page, args, false);
     }
 
     protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);

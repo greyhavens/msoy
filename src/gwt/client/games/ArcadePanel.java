@@ -117,7 +117,7 @@ public class ArcadePanel extends FlowPanel
             }
 
             add(Link.create(_msgs.genreMore(""+genre.gameCount), "ViewAll",
-                            Pages.GAMES, Args.compose("g", genre.genre)));
+                            Pages.GAMES, Args.compose("g", genre.genre), false));
         }
     }
 
@@ -132,12 +132,11 @@ public class ArcadePanel extends FlowPanel
             String args = Args.compose("d", game.gameId);
             setWidget(0, 1, new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
                                          Pages.GAMES, args));
-            Widget link = Link.create(game.name, "Name", Pages.GAMES, args);
+            Widget link = Link.create(game.name, "Name", Pages.GAMES, args, false);
             if (game.playersOnline == 0) {
                 setWidget(0, 2, link, 1, "Info");
             } else {
                 FlowPanel bits = new FlowPanel();
-                link.removeStyleName("inline");
                 bits.add(link);
                 bits.add(MsoyUI.createLabel(
                              _msgs.featuredOnline(""+game.playersOnline), "tipLabel"));

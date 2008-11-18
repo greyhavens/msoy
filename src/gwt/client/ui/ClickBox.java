@@ -25,9 +25,7 @@ public class ClickBox extends SmartTable
 
         addWidget(new ThumbBox(media, page, args), getColumns(), null);
         getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-        Widget link = Link.create(name, page, args);
-        link.removeStyleName("inline");
-        addLabel(link);
+        addLabel(Link.create(name, null, page, args, false));
     }
 
     /**

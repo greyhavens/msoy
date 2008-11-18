@@ -244,10 +244,8 @@ public class GalaxyPanel extends FlowPanel
             _popularTags.add(MsoyUI.createLabel(_msgs.galaxyNoPopularTags(), "Link"));
         } else {
             for (String tag : data.popularTags) {
-                Widget link = Link.create(tag, Pages.GROUPS, Args.compose(ACTION_TAG, 0, tag));
-                link.addStyleName("Link");
-                link.removeStyleName("inline");
-                _popularTags.add(link);
+                _popularTags.add(Link.create(tag, "Link", Pages.GROUPS,
+                                             Args.compose(ACTION_TAG, 0, tag, false)));
             }
         }
 
