@@ -178,7 +178,15 @@ public class ServerConfig
      */
     public static String getFromAddress ()
     {
-        return "\"Whirled Mailbot\" <peas@whirled.com>"; // TODO: move this to the server config
+        return config.getValue("from_address", "\"Whirled Mailbot\" <peas@whirled.com>");
+    }
+
+    /**
+     * Returns the address for the Whirled Agents.
+     */
+    public static String getAgentsAddress ()
+    {
+        return config.getValue("agents_address", "\"Whirled Agents\" <msoy-agents@threerings.net>");
     }
 
     /**
