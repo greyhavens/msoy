@@ -18,7 +18,6 @@ public class LogonPagePanel extends FlowPanel
     public LogonPagePanel ()
     {
         setStyleName("logonPagePanel");
-        add(MsoyUI.createHTML(_msgs.logonPageText(), "PageText"));
         PushButton logonButton = MsoyUI.createButton(
             MsoyUI.MEDIUM_THIN, _msgs.logonPageSubmit(), null);
         logonButton.addStyleName("LogonButton");
