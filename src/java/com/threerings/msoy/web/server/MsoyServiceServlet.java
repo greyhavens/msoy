@@ -7,6 +7,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gwt.user.server.rpc.RPC;
+import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.UnexpectedException;
 import com.google.inject.Inject;
@@ -31,6 +33,25 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyServiceServlet extends RemoteServiceServlet
 {
+    @Override // from RemoteServiceServlet
+    protected void onBeforeRequestDeserialized (String payload)
+    {
+        if (PROFILING_ENABLED) {
+            RPCRequest req = RPC.decodeRequest(payload, this.getClass(), this);
+            // TODO: profiling! (use rec.getMethod())
+        }
+        super.onBeforeRequestDeserialized(payload);
+    }
+
+    @Override // from RemoteServiceServlet
+    protected void onAfterResponseSerialized (String payload)
+    {
+        if (PROFILING_ENABLED) {
+            // TODO: profiling!
+        }
+        super.onAfterResponseSerialized(payload);
+    }
+
     /**
      * Returns the member record for the member making this service request, or null if their
      * session has expired, or they are not authenticated.
@@ -162,4 +183,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     @Inject protected MemberHelper _mhelper;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
+
+    /** Whether or not RPC profiling is enabled. */
+    protected static final boolean PROFILING_ENABLED = false;
 }
