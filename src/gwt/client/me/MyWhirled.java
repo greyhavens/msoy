@@ -5,7 +5,10 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -41,6 +44,8 @@ public class MyWhirled extends FlowPanel
 
     protected void init (MyWhirledData data)
     {
+        add(new RotatingBanner());
+
         RoundBox rbits = new RoundBox(RoundBox.MEDIUM_BLUE);
         rbits.addStyleName("QuickNav");
         rbits.add(MsoyUI.createLabel(_msgs.populationDisplay(""+data.whirledPopulation), null));
@@ -70,6 +75,46 @@ public class MyWhirled extends FlowPanel
     {
         // TODO: add a little bullet to the left
         return Link.create(label, null, page, args, false);
+    }
+
+    /**
+     * Displays one of three banner images and swaps to the next image every 10 seconds.
+     */
+    protected class RotatingBanner extends AbsolutePanel
+    {
+        public RotatingBanner () {
+            addStyleName("RotatingBanner");
+
+            _banners = new Hyperlink[BANNERS.length];
+            for (int ii = 0; ii < BANNERS.length; ii++) {
+                Hyperlink banner = new Hyperlink("<img border=0 src=\"/images/me/" + BANNERS[ii]
+                    + "\"", true, WIKI_LINK);
+                MsoyUI.addTrackingListener(banner, "meAffBannerClicked", BANNERS[ii]);
+                _banners[ii] = banner;
+            }
+
+            _currentBanner = (int)(Math.random() * BANNERS.length);
+            _timer = new Timer() {
+                public void run() {
+                    rotateBanner();
+                }
+            };
+            rotateBanner();
+        }
+        protected void rotateBanner () {
+            _currentBanner = (_currentBanner + 1) % BANNERS.length;
+            // add the new image over the others, or move it to the top if already there
+            add(_banners[_currentBanner], 0, 0);
+            _timer.schedule(ROTATE_DELAY);
+        }
+        protected Timer _timer;
+        protected int _currentBanner;
+        protected Hyperlink[] _banners;
+
+        protected final String[] BANNERS = { "me_banner_games.jpg",
+            "me_banner_invite.jpg", "me_banner_rooms.jpg" };
+        protected static final int ROTATE_DELAY = 10 * 1000;
+        protected static final String WIKI_LINK = "http://wiki.whirled.com/Affiliate";
     }
 
     protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);

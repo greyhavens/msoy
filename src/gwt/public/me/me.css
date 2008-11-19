@@ -12,9 +12,10 @@
   width: 100%;
 }
 
-.myWhirled .ButtonBar {
-  padding: 10px;
-  margin-left: 10px;
+.myWhirled .RotatingBanner {
+  width: 600px;
+  height: 90px;
+  margin: 10px auto 0 auto;
 }
 
 .myWhirled .NewsAndFriends {
