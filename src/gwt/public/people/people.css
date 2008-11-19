@@ -288,6 +288,13 @@
 .invite .gwt-TextBox, .invite .gwt-PasswordTextBox, .invite .gwt-TextArea {
   border: 1px solid #316C94;
 }
+.invite .skip {
+  text-align: right;
+  padding: 5px 2px 0 0;
+}
+.invite .skip a, .invite .skip a:visited {
+  color: white;
+}
 
 .invite .Title {
   font-weight: bold;

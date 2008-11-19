@@ -30,6 +30,7 @@ import com.threerings.msoy.person.gwt.InviteServiceAsync;
 import com.threerings.msoy.person.gwt.MemberInvites;
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Invitation;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -39,6 +40,7 @@ import client.ui.DefaultTextListener;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -48,7 +50,7 @@ import client.util.ServiceUtil;
  */
 public class InvitePanel extends VerticalPanel
 {
-    public InvitePanel ()
+    public InvitePanel (boolean showSkip)
     {
         setSpacing(10);
         setStyleName("invite");
@@ -167,6 +169,11 @@ public class InvitePanel extends VerticalPanel
                 }
             }
         }));
+        if (showSkip) {
+            Widget skip = Link.create(_msgs.inviteSkipButton(), Pages.WORLD, "h");
+            skip.setStyleName("skip");
+            buttons.setWidget(1, 1, skip);
+        }
         box.add(buttons);
         add(box);
 
