@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server;
 
+import java.io.IOException;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -46,6 +48,21 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class BureauManager
 {
+    /**
+     * Exception to be thrown if the server is configured to launch bureaus remotely and a bureau
+     * launch is attempted before any remote launchers are connected.
+     */
+    public static class LauncherNotConnected extends IOException
+    {
+        /**
+         * Creates a new exception.
+         */
+        public LauncherNotConnected ()
+        {
+            super("No bureau launchers connected");
+        }
+    }
+
     /**
      * Sets up the bureau manager.
      */
@@ -165,12 +182,16 @@ public class BureauManager
 
     /** Selects a registered launcher for the next bureau. */
     protected BureauLauncherClientObject selectLauncher ()
+        throws LauncherNotConnected
     {
         // select one at random
         // TODO: select the one with the lowest current load. this should involve some measure
         // of the actual machine load since some bureaus may have more game instances than others
         // and some instances may produce more load than others.
         final int size = _launcherClients.size();
+        if (size == 0) {
+            throw new LauncherNotConnected();
+        }
         final BureauLauncherClientObject[] launchers = new BureauLauncherClientObject[size];
         _launcherClients.values().toArray(launchers);
         return launchers[(new java.util.Random()).nextInt(size)];
@@ -210,11 +231,12 @@ public class BureauManager
                 "localhost", String.valueOf(_listenPort), windowToken};
         }
     }
-    
+
     protected class RemoteBureauLauncher
         implements BureauRegistry.Launcher
     {
-        public void launchBureau (final String bureauId, final String token) {
+        public void launchBureau (final String bureauId, final String token) 
+            throws LauncherNotConnected {
             final BureauLauncherClientObject launcher = selectLauncher();
             log.info("Launching bureau", "bureauId", bureauId, "who", launcher.who(),
                      "hostname", launcher.hostname);
