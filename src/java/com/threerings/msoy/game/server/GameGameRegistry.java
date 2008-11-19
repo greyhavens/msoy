@@ -65,6 +65,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -934,7 +935,7 @@ public class GameGameRegistry
     }
 
     // from AVRGameManager.LifecycleObserver
-    public void avrGameAgentFailedToStart (AVRGameManager mgr)
+    public void avrGameAgentFailedToStart (AVRGameManager mgr, Exception error)
     {
         int gameId = mgr.getGameId();
 
@@ -945,7 +946,13 @@ public class GameGameRegistry
 
         ResultListenerList list = _loadingAVRGames.remove(gameId);
         if (list != null) {
-            list.requestFailed("e.agent_error");
+            // If the launcher wasn't connected, this is our bad, tell the user to try again later
+            // otherwise, report a generic agent failure message.
+            if (error != null && error instanceof BureauManager.LauncherNotConnected) {
+                list.requestFailed("e.game_server_not_ready");
+            } else {
+                list.requestFailed("e.agent_error");
+            }
         } else {
             log.warning(
                 "No listeners when AVRGame agent failed", "gameId", gameId);

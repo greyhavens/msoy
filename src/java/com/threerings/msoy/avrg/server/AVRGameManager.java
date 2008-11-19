@@ -101,7 +101,7 @@ public class AVRGameManager extends PlaceManager
         void avrGameReady (AVRGameManager mgr);
 
         /** Informs the observer that our agent could not start. */
-        void avrGameAgentFailedToStart (AVRGameManager mgr);
+        void avrGameAgentFailedToStart (AVRGameManager mgr, Exception error);
 
         /** Informs the observer a shutdown has happened. */
         void avrGameDidShutdown (AVRGameManager mgr);
@@ -270,9 +270,16 @@ public class AVRGameManager extends PlaceManager
         _gameAgentObj.addListener(new ObjectDeathListener() {
             public void objectDestroyed (ObjectDestroyedEvent event) {
                 if (_gameAgentObj != null) {
-                    log.info("Game agent destroyed", "gameId", getGameId(), "agent", _gameAgentObj);
+                    log.info("Game agent destroyed", "gameObj", _gameObj.which());
                     if (_lifecycleObserver != null) {
-                        _lifecycleObserver.avrGameAgentDestroyed(AVRGameManager.this);
+                        if (_agentStarted) {
+                            // we got dc'ed, kick out all the players
+                            _lifecycleObserver.avrGameAgentDestroyed(AVRGameManager.this);
+                        } else {
+                            // we failed to start, notify players of failure
+                            _lifecycleObserver.avrGameAgentFailedToStart(
+                                AVRGameManager.this, _breg.getLaunchError(_gameAgentObj));
+                        }
                     }
                 }
             }
@@ -435,6 +442,7 @@ public class AVRGameManager extends PlaceManager
     {
         log.info(
             "AVRG Agent ready", "clientOid", caller.getOid(), "agentOid", _gameAgentObj.getOid());
+        _agentStarted = true;
         _lifecycleObserver.avrGameReady(this);
     }
 
@@ -445,7 +453,7 @@ public class AVRGameManager extends PlaceManager
     {
         log.info(
             "AVRG Agent failed", "clientOid", caller.getOid(), "agentOid", _gameAgentObj.getOid());
-        _lifecycleObserver.avrGameAgentFailedToStart(this);
+        _lifecycleObserver.avrGameAgentFailedToStart(this, null);
     }
 
     // From AVRGameAgentProvider
@@ -589,7 +597,9 @@ public class AVRGameManager extends PlaceManager
     {
         if (_gameAgentObj != null) {
             _invmgr.clearDispatcher(_gameAgentObj.agentService);
-            _breg.destroyAgent(_gameAgentObj);
+            if (_gameAgentObj.isActive()) {
+                _breg.destroyAgent(_gameAgentObj);
+            }
             _gameAgentObj = null;
         }
 
@@ -916,6 +926,9 @@ public class AVRGameManager extends PlaceManager
 
     /** The distributed object that only our agent sees. */
     protected AVRGameAgentObject _gameAgentObj;
+    
+    /** True once the agent is fully established. */
+    protected boolean _agentStarted;
 
     /** The map of scenes by scene id, one to one. */
     protected IntMap<Scene> _scenes = new HashIntMap<Scene>();
