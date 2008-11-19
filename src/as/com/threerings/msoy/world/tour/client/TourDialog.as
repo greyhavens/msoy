@@ -47,17 +47,15 @@ public class TourDialog extends FloatingPanel
         hbox.addChild(nextBtn);
         hbox.addChild(commentBtn);
 
-        if (DeploymentConfig.devDeployment) {
-            _myStars = new Stars(0, Stars.USER_LEFT, Stars.USER_RIGHT);
-            _myStars.addEventListener(Stars.STAR_CLICK, handleRate);
-            _myStars.addEventListener(Stars.STAR_OVER, function (event :StarsEvent) :void {
-                _myStars.setRating(event.rating);
-            });
-            _myStars.addEventListener(MouseEvent.ROLL_OUT, function (event :MouseEvent) :void {
-                _myStars.setRating(_myRating);
-            });
-            hbox.addChild(_myStars);
-        }
+        _myStars = new Stars(0, Stars.USER_LEFT, Stars.USER_RIGHT);
+        _myStars.addEventListener(Stars.STAR_CLICK, handleRate);
+        _myStars.addEventListener(Stars.STAR_OVER, function (event :StarsEvent) :void {
+            _myStars.setRating(event.rating);
+        });
+        _myStars.addEventListener(MouseEvent.ROLL_OUT, function (event :MouseEvent) :void {
+            _myStars.setRating(_myRating);
+        });
+        hbox.addChild(_myStars);
 
         addChild(hbox);
     }
