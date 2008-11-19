@@ -257,6 +257,7 @@ public class MsoyEventLogger
     {
         if (info != null && vector != null) {
             post(new MsoyEvents.VectorAssociated(info, vector));
+            log.info(String.format("WRLD-465 stage 3 [? %s]", vector));
         } else {
             log.warning("Unexpected null VisitorInfo for vector: " + vector);
         }

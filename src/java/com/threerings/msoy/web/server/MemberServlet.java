@@ -5,6 +5,8 @@ package com.threerings.msoy.web.server;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.inject.Inject;
 
@@ -246,6 +248,21 @@ public class MemberServlet extends MsoyServiceServlet
         _eventLog.webSessionStatusChanged(info, guest, newInfo);
     }
 
+    // from WebMemberService
+    public void debugLog (String stage, String token, String vector)
+    {
+        // used for WRLD-465 - TODO: remove after the test is over
+
+        if (vector == null) {
+            Matcher m = P.matcher(token);
+            if (m.find() && m.groupCount() > 0) {
+                vector = m.group(1) + " ?";
+            }
+        }
+
+        log.info(String.format("WRLD-465 %s [%s %s]", stage, token, vector));
+    }
+
     // our dependencies
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
@@ -257,4 +274,6 @@ public class MemberServlet extends MsoyServiceServlet
 
     /** Cutoff for adding in online greeters. */
     protected static final int NEED_FRIENDS_FRIEND_COUNT = 10;
+
+    private static final Pattern P = Pattern.compile("vec_([^_]+)");
 }
