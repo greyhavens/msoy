@@ -5,9 +5,7 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -45,7 +43,18 @@ public class MyWhirled extends FlowPanel
 
     protected void init (MyWhirledData data)
     {
-        add(new RotatingBanner());
+        int selectedBanner = (int)(Math.random() * BANNERS.length);
+        Image banner = new Image("/images/me/" + BANNERS[selectedBanner]);
+        banner.addStyleName("Banner");
+        banner.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                Window.open("http://wiki.whirled.com/Affiliate", "_top",
+                    "toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,"
+                        + "scrollbars=yes,copyhistory=yes,resizable=yes");
+            }
+        });
+        MsoyUI.addTrackingListener(banner, "meAffBannerClicked", BANNERS[selectedBanner]);
+        add(banner);
 
         RoundBox rbits = new RoundBox(RoundBox.MEDIUM_BLUE);
         rbits.addStyleName("QuickNav");
@@ -78,54 +87,12 @@ public class MyWhirled extends FlowPanel
         return Link.create(label, null, page, args, false);
     }
 
-    /**
-     * Displays one of three banner images and swaps to the next image every 10 seconds.
-     */
-    protected class RotatingBanner extends AbsolutePanel
-    {
-        public RotatingBanner () {
-            addStyleName("RotatingBanner");
-
-            _banners = new Widget[BANNERS.length];
-            for (int ii = 0; ii < BANNERS.length; ii++) {
-                Image banner = new Image("/images/me/" + BANNERS[ii]);
-                banner.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        Window.open(WIKI_LINK, "_top",
-                            "toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,"
-                                + "scrollbars=yes,copyhistory=yes,resizable=yes");
-                    }
-                });
-                MsoyUI.addTrackingListener(banner, "meAffBannerClicked", BANNERS[ii]);
-                _banners[ii] = banner;
-            }
-
-            _currentBanner = (int)(Math.random() * BANNERS.length);
-            _timer = new Timer() {
-                public void run() {
-                    rotateBanner();
-                }
-            };
-            rotateBanner();
-        }
-        protected void rotateBanner () {
-            _currentBanner = (_currentBanner + 1) % BANNERS.length;
-            // add the new image over the others, or move it to the top if already there
-            add(_banners[_currentBanner], 0, 0);
-            _timer.schedule(ROTATE_DELAY);
-        }
-        protected Timer _timer;
-        protected int _currentBanner;
-        protected Widget[] _banners;
-
-        protected final String[] BANNERS = { "me_banner_games.jpg",
-            "me_banner_invite.jpg", "me_banner_rooms.jpg" };
-        protected static final int ROTATE_DELAY = 10 * 1000;
-        protected static final String WIKI_LINK = "http://wiki.whirled.com/Affiliate";
-    }
-
     protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
     protected static final MeServiceAsync _mesvc = (MeServiceAsync)
         ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
+
+    /** Banners explaining how to become an affiliate */
+    protected final String[] BANNERS = { "me_banner_games.jpg", "me_banner_invite.jpg",
+        "me_banner_rooms.jpg" };
 }
