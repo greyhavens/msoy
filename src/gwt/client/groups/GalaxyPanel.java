@@ -222,7 +222,7 @@ public class GalaxyPanel extends FlowPanel
         } else {
             for (String tag : data.popularTags) {
                 _popularTags.add(Link.create(tag, "Link", Pages.GROUPS,
-                                             Args.compose(ACTION_TAG, 0, tag, false)));
+                                             Args.compose(ACTION_TAG, 0, tag, false), false));
             }
         }
     }
