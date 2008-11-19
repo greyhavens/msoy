@@ -63,8 +63,6 @@ public class EntityBackend extends ControlBackend
         o["requestControl_v1"] = requestControl_v1;
         o["lookupMemory_v1"] = lookupMemory_v1;
         o["updateMemory_v1"] = updateMemory_v1;
-        o["getRoomProperty_v1"] = getRoomProperty_v1;
-        o["setRoomProperty_v1"] = setRoomProperty_v1;
         o["getInstanceId_v1"] = getInstanceId_v1;
         o["getViewerName_v1"] = getViewerName_v1;
         o["setHotSpot_v1"] = setHotSpot_v1;
@@ -75,7 +73,6 @@ public class EntityBackend extends ControlBackend
         o["showPopup_v1"] = showPopup_v1;
         o["clearPopup_v1"] = clearPopup_v1;
         o["getMemories_v1"] = getMemories_v1;
-        o["getRoomProperties_v1"] = getRoomProperties_v1;
         o["getCamera_v1"] = getCamera_v1;
         o["getMicrophone_v1"] = getMicrophone_v1;
         o["selfDestruct_v1"] = selfDestruct_v1;
@@ -177,24 +174,6 @@ public class EntityBackend extends ControlBackend
         return false;
     }
 
-    protected function getRoomProperties_v1 () :Object
-    {
-        log.warning("Call to deprecated getRoomProperties_v1");
-        return {};
-    }
-
-    protected function getRoomProperty_v1 (key :String) :Object
-    {
-        log.warning("Call to deprecated getRoomProperty_v1");
-        return null;
-    }
-
-    protected function setRoomProperty_v1 (key :String, value :Object) :Boolean
-    {
-        log.warning("Call to deprecated setRoomProperty_v1");
-        return false;
-    }
-
     protected function setHotSpot_v1 (x :Number, y :Number, height :Number = NaN) :void
     {
         if (_sprite != null) {
@@ -205,7 +184,8 @@ public class EntityBackend extends ControlBackend
     protected static function validateKeyName (name :String) :void
     {
         if (name != null && name.length > MAX_KEY_LENGTH) {
-            throw new ArgumentError("Key names may only be a maximum of " + MAX_KEY_LENGTH + " characters");
+            throw new ArgumentError("Key names may only be a maximum of " + MAX_KEY_LENGTH +
+                " characters");
         }
     }
 
