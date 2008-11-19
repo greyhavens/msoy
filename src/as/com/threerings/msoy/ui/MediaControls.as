@@ -277,7 +277,7 @@ public class MediaControls extends Sprite
     {
         ensureParent(isNaN(duration), this, _track);
         _durationString = formatTime(duration);
-        updateTime();
+        updateTime(_player.getPosition());
     }
 
     protected function updatePosition (pos :Number) :void
@@ -326,7 +326,7 @@ public class MediaControls extends Sprite
         _player.seek(perc * dur);
     }
 
-    protected function updateTime (position :Number = NaN) :void
+    protected function updateTime (position :Number) :void
     {
         _timeField.text = formatTime(position) + " / " + _durationString;
     }
