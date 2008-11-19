@@ -393,16 +393,19 @@ public class RemixControls extends HBox
 
         var uploader :MediaUploader = new MediaUploader(_ctx, _params["server"], _params["auth"]);
         uploader.addEventListener(Event.COMPLETE, handleUploadComplete);
-        uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
+//        uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
         uploader.addEventListener(IOErrorEvent.IO_ERROR, handleUploadError);
         uploader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleUploadError);
         uploader.upload(_params["mediaId"], "datapack.zip", _lastBytes);
     }
 
-    protected function handleUploadProgress (event :ProgressEvent) :void
-    {
-        //trace(":: progress " + (event.bytesLoaded * 100 / event.bytesTotal).toPrecision(3));
-    }
+//    protected function handleUploadProgress (event :ProgressEvent) :void
+//    {
+//        // Note: The goddamn URLLoader inside the MediaUploader is geared towards *downloading*,
+//        // so we don't get progress events until the download phase of the operation, which
+//        // is basically instantaneous.
+//        trace(":: progress " + (event.bytesLoaded * 100 / event.bytesTotal).toPrecision(3));
+//    }
 
     protected function handleUploadComplete (event :Event) :void
     {
@@ -412,8 +415,11 @@ public class RemixControls extends HBox
         uploader.close();
 
         if (ExternalInterface.available) {
-            ExternalInterface.call("setRemixHash", result.mediaId, result.hash, result.mimeType,
-                result.constraint, result.width, result.height);
+            for (var mediaId :String in result) {
+                var data :Object = result[mediaId];
+                ExternalInterface.call("setRemixHash", mediaId, data.hash, data.mimeType,
+                    data.constraint, data.width, data.height);
+            }
         }
     }
 

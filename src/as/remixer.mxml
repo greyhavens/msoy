@@ -7,8 +7,8 @@
     applicationComplete="viewStack.addChild(new RemixControls(this, viewStack));">
 <mx:Style source="msoy.css"/>
 <mx:Style source="com/threerings/msoy/applets/applets.css"/>
-<mx:Style source="com/threerings/msoy/applets/remixer/remixer.css"/>
 <mx:Style source="com/threerings/msoy/applets/image/image.css"/>
+<mx:Style source="com/threerings/msoy/applets/remixer/remixer.css"/>
 <mx:Style>
    LinkButton {
       color: #000000;

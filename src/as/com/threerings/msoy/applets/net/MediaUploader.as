@@ -23,6 +23,8 @@ import mx.containers.TitleWindow;
 
 import mx.managers.PopUpManager;
 
+import com.threerings.util.StringUtil;
+
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.applets.AppletContext;
@@ -73,6 +75,11 @@ public class MediaUploader extends TitleWindow
 
         title = ctx.APPLET.get("t.saving");
 
+        _bar = new ProgressBar();
+        _bar.percentWidth = 100;
+        _bar.indeterminate = true;
+        _bar.label = _ctx.APPLET.get("m.wait");
+
         PopUpManager.addPopUp(this, ctx.getApplication(), true);
         PopUpManager.centerPopUp(this);
     }
@@ -80,7 +87,8 @@ public class MediaUploader extends TitleWindow
     /**
      * Upload the specified media to the server.
      *
-     * @param mediaId the Item media identifier: "main", "furni", "thumb"...
+     * @param mediaId the Item media identifier: "main", "furni", "thumb"..., or "main;furni;thumb"
+     *        to upload all 3.
      * @param filename the target filename of the bytes.
      * @param media the raw media bytes. You may safely modify the bytes after starting
      *              the upload.
@@ -119,6 +127,10 @@ public class MediaUploader extends TitleWindow
                 Event.OPEN, ProgressEvent.PROGRESS, SecurityErrorEvent.SECURITY_ERROR ]) {
             _loader.addEventListener(eventType, dispatchEvent);
         }
+// Note: goddamnit, the _loader doesn't dispatch PROGRESS events until the *download* phase,
+// which we don't care about. We want to see the progress on uploading the giant wadge
+// of bytes we're sending TO the server. So we keep the bar in indeterminate mode.
+//        _bar.source = _loader;
         _loader.load(request);
     }
 
@@ -140,9 +152,9 @@ public class MediaUploader extends TitleWindow
     }
 
     /**
-     * Return the result of the upload, as an Object containing the following properties:
+     * Return the result of the upload, as an Object containing, as keys, each of the
+     * semicolon-separated mediaIds specified in upload. Each value is another Object, containing:
      * {
-     *    mediaId: String ("main", "furni", "thumb" ...)
      *    hash: String (MediaDesc hash)
      *    mimeType: int (MediaDesc mimeType)
      *    constraint: int (MediaDesc constraint)
@@ -157,30 +169,33 @@ public class MediaUploader extends TitleWindow
         }
 
         var data :String = _loader.data as String;
-        var bits :Array = data.split(" ");
+        var result :Object = {};
+        for each (var section :String in data.split("\n")) {
+            if (section == "") {
+                continue;
+            }
 
-        return {
-            mediaId: bits[0],
-            hash: bits[1],
-            mimeType: parseInt(bits[2]),
-            constraint: parseInt(bits[3]),
-            width: parseInt(bits[4]),
-            height: parseInt(bits[5])
-        };
+            var bits :Array = data.split(" ");
+            result[bits[0]] = {
+                hash: bits[1],
+                mimeType: parseInt(bits[2]),
+                constraint: parseInt(bits[3]),
+                width: parseInt(bits[4]),
+                height: parseInt(bits[5])
+            };
+        }
+        return result;
     }
 
     override protected function createChildren () :void
     {
         super.createChildren();
-
-        var bar :ProgressBar = new ProgressBar();
-        bar.percentWidth = 100;
-        bar.indeterminate = true;
-        bar.label = _ctx.APPLET.get("m.wait");
-        addChild(bar);
+        addChild(_bar);
     }
 
     protected var _ctx :AppletContext;
+
+    protected var _bar :ProgressBar;
 
     protected var _serverURL :String;
 
