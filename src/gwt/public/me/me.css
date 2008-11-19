@@ -15,7 +15,7 @@
 .myWhirled .Banner {
   width: 600px;
   height: 90px;
-  margin: 10px auto 0 auto;
+  padding-top: 10px;
   cursor: pointer;
 }
 
