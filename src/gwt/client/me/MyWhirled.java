@@ -61,6 +61,7 @@ public class MyWhirled extends FlowPanel
         rbits.add(MsoyUI.createLabel(_msgs.populationDisplay(""+data.whirledPopulation), null));
         rbits.add(makeQuickLink("My Profile", Pages.PEOPLE, ""+CShell.getMemberId()));
         rbits.add(makeQuickLink("My Passport", Pages.ME, "passport"));
+        rbits.add(makeQuickLink("Invite Friends", Pages.PEOPLE, "invites"));
 
         String empty = data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
         FriendsFeedPanel feed = new FriendsFeedPanel(empty, data.feed);
