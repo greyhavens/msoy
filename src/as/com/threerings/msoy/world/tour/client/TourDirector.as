@@ -64,8 +64,10 @@ public class TourDirector extends BasicDirector
                 _wctx.displayFeedback(MsoyCodes.WORLD_MSGS, cause);
             },
             function (stop :TourStop) :void {
-                // TODO: Update rating
                 _wctx.getSceneDirector().moveTo(stop.sceneId);
+                if (_tourDialog != null) {
+                    _tourDialog.setStop(stop);
+                }
             }));
     }
 

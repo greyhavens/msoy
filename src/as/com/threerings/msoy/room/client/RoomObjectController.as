@@ -347,20 +347,6 @@ public class RoomObjectController extends RoomController
     }
 
     /**
-     * Handle the ROOM_RATE command.
-     */
-    public function handleRoomRate (rating :Number) :void
-    {
-        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, new ResultAdapter(
-            function (cause :String) :void {
-                _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-            },
-            function (result :Object) :void {
-                // TODO: Update the stars widget, bring RatingResult to AS
-            }));
-    }
-
-    /**
      * Handles PUBLISH_ROOM.
      */
     public function handlePublishRoom () :void
@@ -537,6 +523,15 @@ public class RoomObjectController extends RoomController
                     "[type=" + ident.type + ", itemId=" + ident.itemId +
                     ", cause=" + cause + "]");
             }));
+    }
+
+    override public function rateRoom (rating :Number, onSuccess :Function) :void
+    {
+        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, new ResultAdapter(
+            function (cause :String) :void {
+                _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
+            },
+            onSuccess));
     }
 
     /**

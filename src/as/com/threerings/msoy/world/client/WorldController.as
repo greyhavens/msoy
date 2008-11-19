@@ -89,9 +89,6 @@ public class WorldController extends MsoyController
     /** Opens up a new toolbar and a new room editor. */
     public static const ROOM_EDIT :String = "RoomEdit";
 
-    /** Command to rate the current scene. */
-    public static const ROOM_RATE :String = "RoomRate";
-
     /** Command to go to a particular place (by Oid). */
     public static const GO_LOCATION :String = "GoLocation";
 
@@ -710,15 +707,6 @@ public class WorldController extends MsoyController
     public function handleRoomEdit () :void
     {
         (_topPanel.getPlaceView() as RoomObjectView).getRoomObjectController().handleRoomEdit();
-    }
-
-    /**
-     * Handle the ROOM_RATE command.
-     */
-    public function handleRoomRate (rating :Number) :void
-    {
-        (_topPanel.getPlaceView() as RoomObjectView).getRoomObjectController().
-                handleRoomRate(rating);
     }
 
     /**

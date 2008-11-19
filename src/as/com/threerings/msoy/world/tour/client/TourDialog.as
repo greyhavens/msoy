@@ -13,6 +13,8 @@ import com.threerings.util.CommandEvent;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
+import com.threerings.msoy.data.all.RatingResult;
+
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.Stars;
 import com.threerings.msoy.ui.StarsEvent;
@@ -22,8 +24,13 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 
+import com.threerings.msoy.room.client.RoomObjectView;
+
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
+import com.threerings.msoy.room.client.RoomObjectView;
+
+import com.threerings.msoy.world.tour.data.TourStop;
 
 public class TourDialog extends FloatingPanel
 {
@@ -60,10 +67,21 @@ public class TourDialog extends FloatingPanel
         addChild(hbox);
     }
 
+    public function setStop (stop :TourStop) :void
+    {
+        // TODO: Rating count
+        _averageRating.setRating(stop.rating.averageRating);
+        _myRating.setRating(stop.rating.myRating);
+    }
+
     protected function handleRate (event :StarsEvent) :void
     {
         _myRating.setRating(event.rating);
-        CommandEvent.dispatch(this, WorldController.ROOM_RATE, event.rating);
+        (_ctx.getPlaceView() as RoomObjectView).getRoomController().rateRoom(event.rating,
+            function (result :RatingResult) :void {
+                // TODO: Rating count
+                _averageRating.setRating(result.rating);
+            });
     }
 
     protected var _averageRating :Stars;

@@ -158,6 +158,14 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Requests to rate this room.
+     */
+    public function rateRoom (rating :Number, onSuccess :Function) :void
+    {
+        // see subclasses
+    }
+
+    /**
      * Handles a request by an item in our room to send an "action" (requires control) or a
      * "message" (doesn't require control).
      */
