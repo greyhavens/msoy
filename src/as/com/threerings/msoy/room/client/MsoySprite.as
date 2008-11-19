@@ -390,14 +390,6 @@ public class MsoySprite extends DataPackMediaContainer
     }
 
     /**
-     * Called when a property in this sprite's room's shared space changes.
-     */
-    public function roomPropertyChanged (key :String, value: Object) :void
-    {
-        callUserCode("roomPropertyChanged_v1", key, value);
-    }
-
-    /**
      * Called when an entity has been added to this sprite's room.
      */
     public function entityEntered (entityId :String) :void
