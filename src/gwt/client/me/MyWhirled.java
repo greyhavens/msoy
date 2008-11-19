@@ -6,9 +6,10 @@ package client.me;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -85,10 +86,16 @@ public class MyWhirled extends FlowPanel
         public RotatingBanner () {
             addStyleName("RotatingBanner");
 
-            _banners = new Hyperlink[BANNERS.length];
+            _banners = new Widget[BANNERS.length];
             for (int ii = 0; ii < BANNERS.length; ii++) {
-                Hyperlink banner = new Hyperlink("<img border=0 src=\"/images/me/" + BANNERS[ii]
-                    + "\"", true, WIKI_LINK);
+                Image banner = new Image("/images/me/" + BANNERS[ii]);
+                banner.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Window.open(WIKI_LINK, "_top",
+                            "toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,"
+                                + "scrollbars=yes,copyhistory=yes,resizable=yes");
+                    }
+                });
                 MsoyUI.addTrackingListener(banner, "meAffBannerClicked", BANNERS[ii]);
                 _banners[ii] = banner;
             }
@@ -109,7 +116,7 @@ public class MyWhirled extends FlowPanel
         }
         protected Timer _timer;
         protected int _currentBanner;
-        protected Hyperlink[] _banners;
+        protected Widget[] _banners;
 
         protected final String[] BANNERS = { "me_banner_games.jpg",
             "me_banner_invite.jpg", "me_banner_rooms.jpg" };

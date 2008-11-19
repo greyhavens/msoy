@@ -16,6 +16,7 @@
   width: 600px;
   height: 90px;
   margin: 10px auto 0 auto;
+  cursor: pointer;
 }
 
 .myWhirled .NewsAndFriends {
