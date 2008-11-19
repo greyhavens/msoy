@@ -30,8 +30,6 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
 import com.threerings.msoy.room.client.RoomObjectView;
 
-import com.threerings.msoy.world.tour.data.TourStop;
-
 public class TourDialog extends FloatingPanel
 {
     public function TourDialog (ctx :WorldContext, nextRoom :Function)
@@ -50,42 +48,34 @@ public class TourDialog extends FloatingPanel
         hbox.addChild(commentBtn);
 
         if (DeploymentConfig.devDeployment) {
-            _averageRating = new Stars(3.7, Stars.AVERAGE_LEFT, Stars.AVERAGE_RIGHT);
-            hbox.addChild(_averageRating);
-
-            _myRating = new Stars(3.7, Stars.USER_LEFT, Stars.USER_RIGHT);
-            _myRating.addEventListener(Stars.STAR_CLICK, handleRate);
-            _myRating.addEventListener(Stars.STAR_OVER, function (event :StarsEvent) :void {
-                _myRating.setRating(event.rating);
+            _myStars = new Stars(0, Stars.USER_LEFT, Stars.USER_RIGHT);
+            _myStars.addEventListener(Stars.STAR_CLICK, handleRate);
+            _myStars.addEventListener(Stars.STAR_OVER, function (event :StarsEvent) :void {
+                _myStars.setRating(event.rating);
             });
-            _myRating.addEventListener(MouseEvent.MOUSE_OUT, function (event :MouseEvent) :void {
-                _myRating.setRating(3.7);
+            _myStars.addEventListener(MouseEvent.ROLL_OUT, function (event :MouseEvent) :void {
+                _myStars.setRating(_myRating);
             });
-            hbox.addChild(_myRating);
+            hbox.addChild(_myStars);
         }
 
         addChild(hbox);
     }
 
-    public function setStop (stop :TourStop) :void
+    public function setRating (rating :Number) :void
     {
-        // TODO: Rating count
-        _averageRating.setRating(stop.rating.averageRating);
-        _myRating.setRating(stop.rating.myRating);
+        _myRating = rating;
+        _myStars.setRating(rating);
     }
 
     protected function handleRate (event :StarsEvent) :void
     {
-        _myRating.setRating(event.rating);
-        (_ctx.getPlaceView() as RoomObjectView).getRoomController().rateRoom(event.rating,
-            function (result :RatingResult) :void {
-                // TODO: Rating count
-                _averageRating.setRating(result.rating);
-            });
+        setRating(event.rating);
+        CommandEvent.dispatch(this, WorldController.ROOM_RATE, event.rating);
     }
 
-    protected var _averageRating :Stars;
-    protected var _myRating :Stars;
+    protected var _myStars :Stars;
+    protected var _myRating :Number;
 }
 
 }

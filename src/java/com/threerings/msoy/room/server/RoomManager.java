@@ -689,7 +689,7 @@ public class RoomManager extends SpotSceneManager
 
     // from RoomProvider
     public void rateRoom (
-        ClientObject caller, final byte rating, final RoomService.ResultListener listener)
+        ClientObject caller, final byte rating, final RoomService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
@@ -698,17 +698,11 @@ public class RoomManager extends SpotSceneManager
             throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
         }
 
-        _invoker.postUnit(new RepositoryUnit("rateRoom") {
+        _invoker.postUnit(new WriteOnlyUnit("rateRoom") {
             public void invokePersist () throws Exception {
-                Tuple<RatingRepository.RatingAverageRecord, Boolean> result =
-                    _sceneRepo.getRatingRepository().rate(getScene().getSceneModel().sceneId,
-                        member.getMemberId(), rating);
-                _ratingResult = new RatingResult(result.left.average, result.left.count);
+                _sceneRepo.getRatingRepository().rate(getScene().getId(),
+                    member.getMemberId(), rating);
             }
-            public void handleSuccess () {
-                listener.requestProcessed(_ratingResult);
-            }
-            RatingResult _ratingResult;
         });
     }
 
