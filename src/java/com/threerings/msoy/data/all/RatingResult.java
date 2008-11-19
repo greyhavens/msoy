@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 
 /**
- * Represents a catalog listing of an item.
+ * Updated rating information in response to the user rating something.
  */
 public class RatingResult
     implements Streamable, IsSerializable
