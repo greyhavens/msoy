@@ -149,8 +149,8 @@ public class FrameEntryPoint
                 args.setToken(token.substring(dashidx+1));
             }
         } catch (Exception e) {
-            page = getLandingPage();
-            args.setToken(getLandingArgs());
+            page = Pages.WORLD; // fall back to world-places on bogus URLs
+            args.setToken("places");
         }
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
@@ -270,13 +270,13 @@ public class FrameEntryPoint
         // TODO: preserve their current world location and log them into their new account; this
         // will require fixing a whole bunch of shit
         if (FlashClients.clientExists() && data.justCreated) {
-            closeClient();
+            closeClient(false);
         }
 
         if (data.justCreated) {
             Link.go(Pages.WORLD, "h"); // brand new users go home
         } else if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
-            Link.go(getLandingPage(), getLandingArgs());
+            Link.go(Pages.WORLD, "places");
         } else if (_page != null) {
             setPage(_page); // reloads the current page
         } else if (!data.justCreated) {
@@ -292,7 +292,7 @@ public class FrameEntryPoint
         // reload the current page
         onHistoryChanged(_currentToken);
         // close the Flash client if it's open
-        closeClient();
+        closeClient(true);
     }
 
     // from interface Frame
@@ -336,36 +336,7 @@ public class FrameEntryPoint
     // from interface Frame
     public void closeClient ()
     {
-        WorldClient.clientWillClose();
-        _closeToken = null;
-
-        if (_bar != null) {
-            _bar.setCloseVisible(false);
-        }
-
-        if (_client != null) {
-            RootPanel.get(PAGE).remove(_client);
-            _client = null;
-            if (_content != null) {
-                _content.setWidth(CONTENT_WIDTH + "px");
-                _content.setVisible(true);
-            }
-
-            // if we're on a "world" page, go to a landing page
-            if (_currentToken != null &&
-                (_currentToken.startsWith(Pages.WORLD.getPath()) || _currentToken.equals(""))) {
-                if (_currentToken.indexOf("game") != -1) {
-                    // if we were in a game, go to the games page
-                    Link.go(Pages.GAMES, "");
-                } else if (CShell.isGuest()) {
-                    // if we're a guest, go back to the landing page
-                    Link.go(getLandingPage(), getLandingArgs());
-                } else {
-                    // otherwise go to the ME page
-                    Link.go(Pages.ME, "");
-                }
-            }
-        }
+        closeClient(false);
     }
 
     // from interface Frame
@@ -610,6 +581,45 @@ public class FrameEntryPoint
         }
     }
 
+    protected void closeClient (boolean didLogoff)
+    {
+        WorldClient.clientWillClose();
+        _closeToken = null;
+
+        if (_bar != null) {
+            _bar.setCloseVisible(false);
+        }
+
+        if (_client != null) {
+            RootPanel.get(PAGE).remove(_client);
+            _client = null;
+            if (_content != null) {
+                _content.setWidth(CONTENT_WIDTH + "px");
+                _content.setVisible(true);
+            }
+
+            // if we just logged off, go to the logoff page
+            if (didLogoff) {
+                Link.go(Pages.ACCOUNT, "logoff");
+
+            // if we're on a "world" page, go to a landing page
+            } else if (_currentToken != null &&
+                       (_currentToken.startsWith(Pages.WORLD.getPath()) ||
+                        _currentToken.equals(""))) {
+                if (_currentToken.indexOf("game") != -1) {
+                    // if we were in a game, go to the games page
+                    Link.go(Pages.GAMES, "");
+                } else if (CShell.isGuest()) {
+                    // if we're a guest, go to the rooms page
+                    Link.go(Pages.ROOMS, "");
+                } else {
+                    // otherwise go to the ME page
+                    Link.go(Pages.ME, "");
+                }
+            }
+        }
+    }
+
     protected void displayWorldClient (String args, String closeToken)
     {
         // note the current history token so that we can restore it if needed
@@ -829,16 +839,6 @@ public class FrameEntryPoint
             };
             Window.addWindowResizeListener(_resizer);
         }
-    }
-
-    protected Pages getLandingPage ()
-    {
-        return CShell.isGuest() ? Pages.LANDING : Pages.WORLD;
-    }
-
-    protected String getLandingArgs ()
-    {
-        return CShell.isGuest() ? "" : "places";
     }
 
     /**
