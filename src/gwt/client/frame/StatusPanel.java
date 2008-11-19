@@ -118,8 +118,6 @@ public class StatusPanel extends SmartTable
         // add a logoff link
         setWidget(0, idx++, MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
             public void onClick (Widget sender) {
-                // redirect to the logon page when you press the logoff button
-                Link.go(Pages.ACCOUNT, "logon");
                 Session.didLogoff(Session.LogoffCondition.LOGOFF_REQUESTED);
             }
         }));
