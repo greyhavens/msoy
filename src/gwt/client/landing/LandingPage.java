@@ -4,8 +4,6 @@
 package client.landing;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.gwt.LandingServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
@@ -13,9 +11,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
-import client.shell.CShell;
 import client.shell.Page;
-import client.util.Link;
 import client.util.ServiceUtil;
 
 /**
@@ -23,9 +19,7 @@ import client.util.ServiceUtil;
  */
 public class LandingPage extends Page
 {
-    public static String CREATORS_MAIN = "creators";
-    public static String CREATORS_INFO = "creatorsinfo";
-    public static String CREATORS_LINKS = "creatorslinks";
+    public static String CREATORS = "creators";
     public static String DEVIANT_CONTEST = "dacontest";
 
     @Override // from Page
@@ -33,17 +27,9 @@ public class LandingPage extends Page
     {
         String action = args.get(0, "");
 
-        // general landing page for creators runs our custom A/B tests
-        if (action.equals(CREATORS_MAIN)) {
-            runABTests();
-
-        // landing page for content creators
-        } else if (action.equals(CREATORS_INFO)) {
+        // creators panel won our creators a/b test
+        if (action.equals(CREATORS)) {
             setContent(_msgs.titleCreators(), new CreatorsPanel());
-
-        // landing page for content creators, with a multitude of links
-        } else if (action.equals(CREATORS_LINKS)) {
-            setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
 
         // landing page for deviant art contest
         } else if (action.equals(DEVIANT_CONTEST)) {
@@ -58,41 +44,6 @@ public class LandingPage extends Page
     public Pages getPageId ()
     {
         return Pages.LANDING;
-    }
-
-    /**
-     * Runs AB tests defined on the landing page.
-     */
-    protected void runABTests ()
-    {
-        // list of redirects, based on the user's test group.
-        // part of the sep08CreatorsLanding A/B test - see JIRA WRLD-251.
-        final String[] testpages = new String[] {
-            // since groups are 1-indexed, we reuse "group 0" to mean the default value.
-            CREATORS_INFO,
-            // everything else
-            CREATORS_LINKS, CREATORS_INFO
-        };
-
-        _membersvc.getABTestGroup(
-            CShell.visitor, "sep08CreatorsLanding", true,
-            new AsyncCallback<Integer>() {
-                public void onSuccess (Integer group) {
-                    gotTestGroup(testpages, group);
-                }
-                public void onFailure (Throwable cause) {
-                    gotTestGroup(testpages, -1);
-                }
-            });
-    }
-
-    protected void gotTestGroup (String[] testpages, int group)
-    {
-        if (group > 0 && group < testpages.length) {
-            Link.go(Pages.LANDING, testpages[group]);
-        } else {
-            Link.go(Pages.LANDING, testpages[0]);
-        }
     }
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
