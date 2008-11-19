@@ -537,6 +537,7 @@ public class MemberNodeActions
         public FollowTheLeaderAction (int memberId, int leaderId, int sceneId) {
             super(memberId);
             _sceneId = sceneId;
+            _leaderId = leaderId;
         }
 
         public FollowTheLeaderAction () {
