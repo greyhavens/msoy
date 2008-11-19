@@ -275,6 +275,7 @@ public class MediaControls extends Sprite
 
     protected function updateDuration (duration :Number) :void
     {
+        _duration = duration;
         ensureParent(isNaN(duration), this, _track);
         _durationString = formatTime(duration);
         updateTime(_player.getPosition());
@@ -292,7 +293,7 @@ public class MediaControls extends Sprite
             }
         }
         _lastKnobX = int.MIN_VALUE;
-        _knob.x = (pos / _player.getDuration()) * _trackWidth;
+        _knob.x = (pos / _duration) * _trackWidth;
         ensureParent(isNaN(pos), _track, _knob);
     }
 
@@ -360,6 +361,7 @@ public class MediaControls extends Sprite
     protected var _volumeBtn :DisplayObject;
     protected var _muteBtn :DisplayObject;
 
+    protected var _duration :Number = NaN;
     protected var _durationString :String = UNKNOWN_TIME;
 
     protected var _trackWidth :Number;
