@@ -27,6 +27,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.data.MemberLocation;
@@ -44,6 +45,9 @@ import static com.threerings.msoy.Log.log;
  */
 public class StatusServlet extends HttpServlet
 {
+    /** A report on our cache performance. */
+    public static final String CACHE_TYPE = "cache";
+
     @Override // from HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
@@ -168,29 +172,11 @@ public class StatusServlet extends HttpServlet
 
         switch (details) {
         case REPORT:
-            if (client == null) { // nextgen narya will make this less hacky
-                final FutureResult<String> report = new FutureResult<String>();
-                try {
-                    _peerMan.generateReport(null, report);
-                    info.details = new Callable<String>() {
-                        public String call () throws Exception {
-                            return report.get();
-                        }
-                    };
-                } catch (Exception e) {
-                    // will not happen; if it does, details will just be null
-                    log.warning("Mission impossible!", e);
-                }
+            collectReportInfo(info, client, nodeobj, ReportManager.DEFAULT_TYPE);
+            break;
 
-            } else {
-                final FutureResult<String> report = new FutureResult<String>();
-                nodeobj.peerService.generateReport(client, report);
-                info.details = new Callable<String>() {
-                    public String call () throws Exception {
-                        return report.get();
-                    }
-                };
-            }
+        case CACHE:
+            collectReportInfo(info, client, nodeobj, CACHE_TYPE);
             break;
 
         case NONE:
@@ -209,7 +195,35 @@ public class StatusServlet extends HttpServlet
         return info;
     }
 
-    protected static enum Details { NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT };
+    protected void collectReportInfo (ServerInfo info, Client client, MsoyNodeObject nodeobj,
+                                      final String type)
+    {
+        if (client == null) { // nextgen narya will make this less hacky
+            final FutureResult<String> report = new FutureResult<String>();
+            try {
+                _peerMan.generateReport(null, type, report);
+                info.details = new Callable<String>() {
+                    public String call () throws Exception {
+                        return report.get();
+                    }
+                };
+            } catch (Exception e) {
+                // will not happen; if it does, details will just be null
+                log.warning("Mission impossible!", e);
+            }
+
+        } else {
+            final FutureResult<String> report = new FutureResult<String>();
+            nodeobj.peerService.generateReport(client, type, report);
+            info.details = new Callable<String>() {
+                public String call () throws Exception {
+                    return report.get();
+                }
+            };
+        }
+    }
+
+    protected static enum Details { NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, CACHE };
 
     protected static class ServerInfo
     {

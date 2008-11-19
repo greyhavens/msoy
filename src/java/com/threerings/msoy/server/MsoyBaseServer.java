@@ -24,6 +24,7 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.web.server.StatusServlet;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
@@ -63,7 +64,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         _eventLog.init(getIdent());
 
         // add a reporter that conveys the statistics of our cache manager
-        _reportMan.registerReporter(new CacheStatusReporter(_cacheMgr));
+        _reportMan.registerReporter(StatusServlet.CACHE_TYPE, new CacheStatusReporter(_cacheMgr));
 
         super.init(injector);
 
