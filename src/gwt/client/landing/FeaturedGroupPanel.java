@@ -6,8 +6,10 @@ package client.landing;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -77,11 +79,18 @@ public class FeaturedGroupPanel extends FlowPanel
         final GroupCard group = _whirleds[_selidx = index];
 
         // display the group's home page screenshot
-        SceneUtil.addSceneView(group.homeSceneId, group.homeSnapshot, _flashPanel);
+        FocusPanel focus = new FocusPanel();
+        MsoyUI.addTrackingListener(focus, "landingGroupClicked", group.name.getGroupId() + "");
+        SceneUtil.addSceneView(group.homeSceneId, group.homeSnapshot, focus);
+        _flashPanel.add(focus);
 
         // display the group's name and info
         _infoPanel.clear();
         Widget nameLink = Link.groupView(group.name.toString(), group.name.getGroupId());
+        if (nameLink instanceof SourcesClickEvents) {
+            MsoyUI.addTrackingListener((SourcesClickEvents)nameLink, "landingGroupClicked",
+                group.name.getGroupId() + "");
+        }
         nameLink.setStyleName("FeaturedGroupName");
         _infoPanel.add(nameLink);
         if (group.population > 0) {
