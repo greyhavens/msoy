@@ -18,4 +18,12 @@ public class EmailContact
 
     /** The memberName. */
     public MemberName mname;
+
+    public boolean equals (Object other)
+    {
+        if (other == null || !(other instanceof EmailContact)) {
+            return false;
+        }
+        return email.equals(((EmailContact)other).email);
+    }
 }

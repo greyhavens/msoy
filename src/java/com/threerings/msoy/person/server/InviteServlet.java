@@ -64,13 +64,18 @@ public class InviteServlet extends MsoyServiceServlet
             List<EmailContact> results = Lists.newArrayList();
 
             for (Contact contact : contacts) {
+                // don't invite the account owner
+                if (email.equals(contact.getEmail())) {
+                    continue;
+                }
                 EmailContact ec = new EmailContact();
                 ec.name = contact.getName();
                 ec.email = contact.getEmail();
                 MemberRecord member = _memberRepo.loadMember(ec.email);
                 if (member != null) {
-                    if (_memberRepo.getFriendStatus(memrec.memberId, member.memberId)) {
-                        // just skip people who are already friends
+                    if (_memberRepo.getFriendStatus(memrec.memberId, member.memberId) ||
+                        member.memberId == memrec.memberId) {
+                        // just skip people who are already friends or are me
                         continue;
                     }
                     ec.mname = member.getName();
