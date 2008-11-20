@@ -19,7 +19,7 @@ public class PromotionBox extends RoundBox
 {
     public PromotionBox (Promotion promo)
     {
-        super(BLUE);
+        super(MEDIUM_BLUE);
         addStyleName("promoBox");
 
         if (promo.icon != null) {
