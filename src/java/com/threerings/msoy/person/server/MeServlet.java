@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.RandomUtil;
 
@@ -90,12 +91,22 @@ public class MeServlet extends MsoyServiceServlet
         // load their feed
         data.feed = loadFeedCategories(FeedCategory.DEFAULT_COUNT, null);
 
-        // load the greeters
-        IntSet greeterIds = new ArrayIntSet();
+        // load the eligible greeters
+        ArrayIntSet greeterIds = new ArrayIntSet();
         greeterIds.addAll(_memberMan.getGreeterIdsSnapshot());
         greeterIds.remove(mrec.memberId);
         greeterIds.removeAll(friendIds);
-        data.greeters = _mhelper.resolveMemberCards(greeterIds, true, null);
+
+        // prune
+        IntSet shortList = new ArrayIntSet();
+        shortList.addAll(CollectionUtil.selectRandomSubset(
+            greeterIds, Math.min(greeterIds.size(), MAX_GREETERS_TO_SHOW)));
+
+        // load cards
+        data.greeters = _mhelper.resolveMemberCards(shortList, true, null);
+
+        // shuffle to avoid greeter fighting (shortList is sorted, thus the cards are too)
+        Collections.shuffle(data.greeters);
 
         return data;
     }
@@ -322,4 +333,5 @@ public class MeServlet extends MsoyServiceServlet
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int FEED_CUTOFF_DAYS = 7;
+    protected static final int MAX_GREETERS_TO_SHOW = 10;
 }
