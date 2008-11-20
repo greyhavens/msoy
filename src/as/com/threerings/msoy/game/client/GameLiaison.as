@@ -297,36 +297,32 @@ public class GameLiaison
             return; // we're loading it or already showing it
 
         } else {
-            
             var displayDefaultNote :Function = function () :void {
                 populateGuestFlowEarnage(amount, 
                     hasCookie ? "l.guest_flowprog_note" : "l.guest_flow_note");
             };
             
-            if (_wctx.getClient() as MsoyClient) {
-                // perform an A/B(/C) test on game over upsell text for guests 
-                MsoyClient(_wctx.getClient()).getABTestGroup(
-                    "2008 11 game over upsell", true, new ResultAdapter(
-                        function () :void {
-                            // if something goes wrong display default note
+            // perform an A/B(/C) test on game over upsell text for guests 
+            _wctx.getMsoyClient().getABTestGroup(
+                "2008 11 game over upsell", true, new ResultAdapter(
+                    function () :void {
+                        // if something goes wrong display default note
+                        displayDefaultNote();
+                    }, 
+                    function (group :int) :void {
+                        if (group == -1) {
+                            // if not in a group display default note
                             displayDefaultNote();
-                        }, 
-                        function (group :int) :void {
-                            if (group == -1) {
-                                // if not in a group display default note
-                                displayDefaultNote();
-                            } else {
-                                populateGuestFlowEarnage(amount, "l.guest_flow_note_" + group);
-                            }
-                        }));
-                return;
-            } else {
-                // if no access to MsoyClient display default note
-                displayDefaultNote();
-            }
+                        } else {
+                            populateGuestFlowEarnage(amount, "l.guest_flow_note_" + group);
+                        }
+                    }));
         }
     }
     
+    /**
+     * Set the contents of the _guestFlowPanel. 
+     */
     protected function populateGuestFlowEarnage (amount :int, ifyousignMsg :String) :void
     {
         var field :TextField = (_guestFlowPanel.getChildByName("youearned") as TextField);
@@ -336,12 +332,16 @@ public class GameLiaison
         field.text = Msgs.GAME.get(ifyousignMsg);
 
         var later :SimpleButton = (_guestFlowPanel.getChildByName("Later") as SimpleButton);
-        later.addEventListener(MouseEvent.CLICK, clearGuestFlow);
+        later.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            clearGuestFlow();
+            _wctx.getMsoyClient().trackClientAction("2008 11 game over upsell later click", null);
+        });
 
         var signUp :SimpleButton = (_guestFlowPanel.getChildByName("SignUp") as SimpleButton);
         signUp.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             _wctx.getWorldController().handleShowSignUp();
             clearGuestFlow();
+            _wctx.getMsoyClient().trackClientAction("2008 11 game over upsell signup click", null);
         });
 
         // slide the panel onto the screen, and wait for a click
