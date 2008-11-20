@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+    <title>Welcome to Whirled!</title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            font-size: 13px;
+            font-family: Arial,Helvetica,sans-serif;
+        }
+        a {
+            color: #195780;
+        }
+        h1, h2, h3 {
+            font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+            margin: 0;
+            color: #5390BC;
+        }
+        h1 {
+            color: #195780;
+            margin-top: 10px;
+        }
+        h2 {
+            display: inline;
+            margin-right: 10px;
+        }
+        .content {
+            width: 550px;
+            margin: 0 auto;
+        }
+        .header {
+            background: #195780 url(${server_url}/images/welcome/email_header.jpg) no-repeat;
+            width: 550px;
+            height: 170px;
+        }
+        .header .links {
+            text-align: right;
+            padding: 70px 5px 0 0;
+        }
+        .header .links a {
+            color: #FFFFFF;
+            margin-right: 5px;
+        }
+        .icon {
+            width: 52px;
+            height: 55px;
+            float: left;
+            margin: 5px 10px 10px 0;
+        }
+        .action {
+            height: 90px;
+            margin-left: 30px;
+            clear: both;
+        }
+        .questions {
+            clear: both;
+            margin-bottom: 30px;
+        }
+        .footer {
+            padding-bottom: 20px;
+        }
+        .footer p {
+            text-align: center;
+            margin: 4px 0;
+        }
+        .footer, .footer a {
+            font-size: 11px;
+            color: #888888;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <div class="header">
+            <div class="links">
+                <a href="${server_url}#home">My Home</a>
+                <a href="${server_url}#games">Games</a>
+                <a href="${server_url}#help">FAQ</a>
+            </div>
+        </div>
+        
+        <h1>Welcome to Whirled, ${name}</h1>
+        
+        <p>Your Whirled login is: <b>${email}</b></p>
+        
+        <p>Congratulations on joining the player-created virtual world! We've given you 1,000 
+            coins to get you started, now here's all the fun things you can do:</p>
+    
+        <div class="action">
+            <img src="${server_url}/images/welcome/email_icon_game.png" class="icon" alt="" />
+            <h3>Play Games</h3>
+            Play with friends, earn coins, have fun!<br/>
+            <a href="${server_url}#games">${server_url}#games</a>
+        </div>
+        
+        <div class="action">
+            <img src="${server_url}/images/welcome/email_icon_backdrop.png" class="icon" alt="" />
+            <h3>Decorate Your Room</h3>
+            Customize your space with stuff from the shop or your own creations.<br/>
+            <a href="${server_url}#home">${server_url}#home</a>
+        </div>
+        
+        <div class="action">
+            <img src="${server_url}/images/welcome/email_icon_avatar.png" class="icon" alt="" />
+            <h3>Go Shopping</h3>
+            Choose from thousands of awesome player-created avatars, furniture, toys, pets and more.<br/>
+            <a href="${server_url}#shop">${server_url}#shop</a>
+        </div>
+        
+        <div class="action">
+            <img src="${server_url}/images/welcome/email_icon_photo.png" class="icon" alt="" />
+            <h3>Share Whirled and Earn!</h3>
+            Invite your Friends, Share your Room or play Games with friends, and earn when they
+            shop!<br/>
+            <a href="http://wiki.whirled.com/Affiliate">http://wiki.whirled.com/Affiliate</a>
+        </div>
+        
+        <div class="action">
+            <img src="${server_url}/images/welcome/email_icon_whirled.png" class="icon" alt="" />
+            <h3>Take the Whirled Tour!</h3>
+            Explore player-created Rooms rated highly by fellow travellers<br/>
+            <a href="${server_url}#world-tour">${server_url}#world-tour</a>
+        </div>
+        
+        <div class="action">
+            <img src="${server_url}/images/welcome/email_icon_furni.png" class="icon" alt="" />
+            <h3>Create Stuff</h3>
+            Whirled is all about the players!  Create cool stuff and sell it in the catalog for 
+            everyone to buy.  A great way to earn coins!<br/>
+            <a href="${server_url}#stuff">${server_url}#stuff</a>
+        </div>
+        
+        <div class="questions">
+            <h2>Questions?</h2> 
+            Visit the <a href="${server_url}#help">Whirled FAQ</a> or the 
+            <a href="http://wiki.whirled.com/">Whirled Wiki</a> for more detailed info.
+        </div> 
+        
+        <div class="footer">
+            <p>You are receiving this because your email address was used to register at
+            <a href="${server_url}">${server_url}</a>.</p>
+            <p>
+                <a href="${server_url}#me-account">Unsubscribe from Whirled email</a> |
+                <a href="http://wiki.whirled.com/Terms_of_Service">Terms of Service</a> |
+                <a href="http://www.threerings.net/about/privacy.html">Privacy Policy</a>
+            </p>
+            <p>Copyright 2008, Three Rings.  All Rights Reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

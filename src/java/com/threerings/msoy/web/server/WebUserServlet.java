@@ -207,6 +207,14 @@ public class WebUserServlet extends MsoyServiceServlet
             }
         }
 
+        // send a welcome email
+        MailSender.Parameters params = new MailSender.Parameters();
+        params.set("server_url", ServerConfig.getServerURL());
+        params.set("name", info.displayName);
+        params.set("email", info.email);
+        _mailer.sendTemplateEmail(info.email, ServerConfig.getFromAddress(), "welcome",
+            params);
+
         return startSession(mrec, info.expireDays);
     }
 
