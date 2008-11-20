@@ -207,13 +207,16 @@ public class WebUserServlet extends MsoyServiceServlet
             }
         }
 
-        // send a welcome email
-        MailSender.Parameters params = new MailSender.Parameters();
-        params.set("server_url", ServerConfig.getServerURL());
-        params.set("name", info.displayName);
-        params.set("email", info.email);
-        _mailer.sendTemplateEmail(info.email, ServerConfig.getFromAddress(), "welcome",
-            params);
+        // send a welcome email to everyone except test group A
+        int testGroup = _memberLogic.getABTestGroup("2008 11 welcome email", info.visitor, true);
+        if (testGroup != 1) {
+            MailSender.Parameters params = new MailSender.Parameters();
+            params.set("server_url", ServerConfig.getServerURL());
+            params.set("name", info.displayName);
+            params.set("email", info.email);
+            _mailer.sendTemplateEmail(info.email, ServerConfig.getFromAddress(), "welcome",
+                params);
+        }
 
         return startSession(mrec, info.expireDays);
     }
