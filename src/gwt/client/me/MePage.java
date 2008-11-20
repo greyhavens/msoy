@@ -16,7 +16,8 @@ import client.util.Link;
 public class MePage extends Page
 {
     public static final String TRANSACTIONS = "transactions";
-    public static final String DEVIANT_CONTEST_IFRAME = "dacontesti";
+    public static final String DEVIANT_CONTEST = "dacontesti";
+    public static final String CONTESTS = "contests";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -40,7 +41,10 @@ public class MePage extends Page
             int memberId = args.get(2, CShell.getMemberId());
             setContent(_msgs.transactionsTitle(), new TransactionsPanel(report, memberId));
 
-        } else if (action.equals(DEVIANT_CONTEST_IFRAME)) {
+        } else if (action.equals(CONTESTS)) {
+            setContent(_msgs.titleContests(), new ContestsPanel());
+
+        } else if (action.equals(DEVIANT_CONTEST)) {
             setContent(_msgs.titleDAContest(), new DAContestPanel());
 
         } else if (!CShell.isGuest()) {

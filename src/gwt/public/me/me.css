@@ -519,3 +519,94 @@
 .myWhirled .DAContestBanner {
   margin: 10px auto;
 }
+
+
+/* ------------------------------------
+   ALL CONTESTS PANEL
+-------------------------------------*/
+
+.contestsPanel {
+  background: #61ABD0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
+  width: 100%;
+  min-height: 100%;
+}
+.contestsPanel, .contestsPanel table {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+}
+
+.contestsPanel .Header {
+  width: 100%;
+  height: 100px;
+}
+
+.contestsPanel .Header .Intro {
+  color: #c1e1f2;
+  width: 320px;
+}
+
+.contestsPanel .CurrentTitle {
+  background: url(/images/me/contests_dots_bg.png) repeat-x left bottom;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  color: #216fa4;
+}
+
+.contestsPanel .CurrentContests {
+  margin: 0 15px 30px 15px;
+}
+
+.contestsPanel .Contest {
+  background-color: #FFFFFF;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.contestsPanel .Contest .ContestInfo {
+  width: 370px;
+  overflow: hidden;
+  margin: 0 10px;
+}
+
+.contestsPanel .Contest .ContestName {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.contestsPanel .Contest .ContestName, 
+.contestsPanel .Contest .ContestName a {
+  color: #4c8db9;
+}
+
+.contestsPanel .Contest .ContestText {
+  margin-bottom: 10px;
+}
+.contestsPanel .Contest .ContestText,
+.contestsPanel .Contest .ContestText a {
+  color: #868585;
+}
+
+.contestsPanel .Contest .Status,
+.contestsPanel .Contest .Status a {
+  color: #ff0000;
+}
+
+.contestsPanel .Contest .Prizes {
+  text-align: center;
+  width: 155px;
+  overflow: hidden;
+}
+
+.contestsPanel .Contest .PrizesTitle {
+  color: #868585;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.contestsPanel .Contest .PrizesText {
+  line-height: 18px;
+}
