@@ -66,7 +66,7 @@ public class TongueBox extends SmartTable
 
     public void setHeader (String title, Image icon)
     {
-        SmartTable header = new SmartTable("Header", 0, 0);
+        SmartTable header = new SmartTable("THeader", 0, 0);
         if (title != null && icon == null) {
             header.setText(0, 0, title, 1, "Base");
         } else if (title == null && icon != null) {
@@ -87,17 +87,17 @@ public class TongueBox extends SmartTable
 
     public void setContent (Widget content)
     {
-        setWidget(1, 0, content, 1, "Content");
+        setWidget(1, 0, content, 1, "TContent");
     }
 
     public void setContent (String content, boolean isHTML)
     {
         if (isHTML) {
             setHTML(1, 0, content);
-            getFlexCellFormatter().setStyleName(1, 0, "Content");
+            getFlexCellFormatter().setStyleName(1, 0, "TContent");
             SafeHTML.fixAnchors(getBodyElement()); // we can't call getCellElement(), yay!
         } else {
-            setText(1, 0, content, 1, "Content");
+            setText(1, 0, content, 1, "TContent");
         }
     }
 
@@ -120,7 +120,7 @@ public class TongueBox extends SmartTable
     public void setFooter (Widget widget)
     {
         if (widget != null) {
-            setWidget(2, 0, widget, 1, "Footer");
+            setWidget(2, 0, widget, 1, "TFooter");
             getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_RIGHT);
         } else if (getRowCount() > 2) {
             clearCell(2, 0);

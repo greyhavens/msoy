@@ -289,23 +289,28 @@ img, embed, applet, object {
   background: #C9E9FE;
 }
 
+/** Promotion box. */
+.promoBox {
+  font-size: 12px;
+}
+
 /** Misc styles. */
 .tongueBox {
   width: 100%;
 }
 
-.tongueBox .Header {
+.tongueBox .THeader {
   width: 100%;
 }
 
-.tongueBox .Header .Base {
+.tongueBox .THeader .Base {
   background: url(/images/ui/tongue_base.png) #49A1E7 no-repeat left;
   padding-left: 10px;
   padding-bottom: 0;
   height: 28px;
 }
 
-.tongueBox .Header .Base, .tongueBox .Header .Base .BaseContents .BaseText {
+.tongueBox .THeader .Base, .tongueBox .THeader .Base .BaseContents .BaseText {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 16px;
   font-weight: bold;
@@ -313,21 +318,21 @@ img, embed, applet, object {
   color: white;
 }
 
-.tongueBox .Header .Base .BaseContents .BaseText {
+.tongueBox .THeader .Base .BaseContents .BaseText {
   padding-left: 10px;
 }
 
-.tongueBox .Header .Line {
+.tongueBox .THeader .Line {
   background: url(/images/ui/tongue_tip.png) no-repeat left;
   width: 100%;
   padding-left: 10px;
 }
 
-.tongueBox .Content {
+.tongueBox .TContent {
   padding: 10px;
 }
 
-.tongueBox .Footer {
+.tongueBox .TFooter {
   font-size: 12px;
   padding: 0px 10px 10px 0px;
 }
