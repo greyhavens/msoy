@@ -285,12 +285,19 @@ public class FrameEntryPoint
         }
 
         if (data.justCreated()) {
-            Link.go(Pages.WORLD, "h"); // brand new users go home
+            switch (data.registrationABGroup) {
+            default: // normal
+                Link.go(Pages.WORLD, "h"); // "a" group brand new users go home
+                break;
+            case 1: // "b" group
+                Link.go(Pages.PEOPLE, Args.compose("invites", "sk")); // "b" group go to invites
+                break;
+            }
         } else if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
             Link.go(Pages.WORLD, "places");
         } else if (_page != null) {
             setPage(_page); // reloads the current page
-        } else if (!data.justCreated()) {
+        } else {
             onHistoryChanged(_currentToken);
         }
     }

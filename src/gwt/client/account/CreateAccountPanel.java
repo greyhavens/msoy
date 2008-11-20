@@ -10,6 +10,7 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
@@ -37,6 +38,8 @@ import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.RegisterInfo;
 import com.threerings.msoy.web.gwt.SessionData;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
@@ -167,21 +170,14 @@ public class CreateAccountPanel extends FlowPanel
             }
 
             @Override protected boolean gotResult (final SessionData result) {
-                result.registrationABGroup = 0; // normal
-
                 // display a nice confirmation message, as an excuse to embed a tracking iframe.
                 // we'll show it for two seconds, and then rock on!
-                final int feedbackDelayMs = 2000;
                 setStatus(_msgs.creatingDone(),
                           ConversionTrackingUtil.createAdWordsTracker(),
                           ConversionTrackingUtil.createBeacon(EntryVectorCookie.get()));
-                Timer t = new Timer() {
-                    public void run () {
-                        // let the top-level frame know that we logged on (will trigger a redirect)
-                        CShell.frame.dispatchDidLogon(result);
-                    }
-                };
-                t.schedule(feedbackDelayMs); // this looks like it should get GCd, no?
+
+                
+                new FinishRegistration(result);
 
                 return false; // don't reenable the create button
             }
@@ -330,6 +326,49 @@ public class CreateAccountPanel extends FlowPanel
         protected SmartTable _tip;
     }
 
+    /**
+     * Requests the registration a/b group and after a minimum timeout lets the frame know we're
+     * logged on.
+     */
+    protected static class FinishRegistration extends Timer
+        implements AsyncCallback<Integer>
+    {
+        long start = System.currentTimeMillis();
+        final int feedbackDelayMs = 2000;
+        Integer group;
+        SessionData session;
+    
+        public FinishRegistration (SessionData result)
+        {
+            session = result;
+            _membersvc.getABTestGroup(result.visitor, "forceInvite", true, this);
+            schedule(feedbackDelayMs);
+        }
+    
+        public void onFailure (Throwable caught)
+        {
+            group = -1;
+        }
+    
+        public void onSuccess (Integer result)
+        {
+            group = result;
+        }
+    
+        public void run ()
+        {
+            if (group == null) {
+                // keep waiting for the member service to return
+                schedule(500);
+                return;
+            }
+    
+            // let the top-level frame know that we logged on (will trigger a redirect)
+            session.registrationABGroup = group;
+            CShell.frame.dispatchDidLogon(session);
+        }
+    }
+
     protected KeyboardListenerAdapter _onType = new KeyboardListenerAdapter() {
         public void onKeyDown (Widget sender, char keyCode, int modifiers) {
             setStatus("");
@@ -346,4 +385,6 @@ public class CreateAccountPanel extends FlowPanel
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }
