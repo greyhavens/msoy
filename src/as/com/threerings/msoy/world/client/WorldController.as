@@ -267,13 +267,11 @@ public class WorldController extends MsoyController
 
         // slap your friends in a menu
         var friends :Array = new Array();
-        for each (var fe :FriendEntry in me.getSortedEstablishedFriends()) {
-            if (fe.online) {
-                var item :Object = {
-                    label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
-                checkChatChannelOpen(fe.name, item);
-                friends.push(item);
-            }
+        for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
+            var item :Object = {
+                label: fe.name.toString(), command: OPEN_CHANNEL, arg: fe.name }
+            checkChatChannelOpen(fe.name, item);
+            friends.push(item);
         }
         if (friends.length == 0) {
             friends.push({ label: Msgs.GENERAL.get("m.no_friends"),
@@ -1372,11 +1370,9 @@ public class WorldController extends MsoyController
         }
 
         var friends :Array = new Array();
-        for each (var fe :FriendEntry in me.getSortedEstablishedFriends()) {
-            if (fe.online) {
-                friends.push({ label: fe.name.toString(),
-                    command: VISIT_MEMBER, arg: fe.name.getMemberId() });
-            }
+        for each (var fe :FriendEntry in me.getSortedOnlineFriends()) {
+            friends.push({ label: fe.name.toString(),
+                command: VISIT_MEMBER, arg: fe.name.getMemberId() });
         }
         if (friends.length == 0) {
             friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });

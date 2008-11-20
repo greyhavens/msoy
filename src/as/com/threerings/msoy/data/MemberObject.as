@@ -232,14 +232,12 @@ public class MemberObject extends MsoyBodyObject
     /**
      * Get a sorted list of friends.
      */
-    public function getSortedEstablishedFriends () :Array
+    public function getSortedOnlineFriends () :Array
     {
-        var friends :Array = this.friends.toArray();
-        friends = friends.sort(
+        return this.friends.toArray().filter(isFriendOnline).sort(
             function (fe1 :FriendEntry, fe2 :FriendEntry) :int {
                 return MemberName.BY_DISPLAY_NAME(fe1.name, fe2.name);
             });
-        return friends;
     }
 
     /**
@@ -247,9 +245,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function hasOnlineFriends () :Boolean
     {
-        return friends.toArray().some(function (fe :FriendEntry, ... rest) :Boolean {
-            return fe.online;
-        });
+        return friends.toArray().some(isFriendOnline);
     }
 
     /**
@@ -363,6 +359,14 @@ public class MemberObject extends MsoyBodyObject
         visitorInfo = VisitorInfo(ins.readObject());
         onTour = ins.readBoolean();
         experiences = DSet(ins.readObject());
+    }
+
+    /**
+     * A predicate that returns true for online friends.
+     */
+    protected function isFriendOnline (fe :FriendEntry, ... rest) :Boolean
+    {
+        return fe.online;
     }
 }
 }
