@@ -33,11 +33,12 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.PresentsServer;
+import com.threerings.presents.server.PresentsSession;
+import com.threerings.presents.server.ReportManager;
+import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.crowd.chat.server.ChatChannelManager;
@@ -96,6 +97,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(Authenticator.class).to(MsoyAuthenticator.class);
             bind(PresentsServer.class).to(MsoyServer.class);
             bind(PeerManager.class).to(MsoyPeerManager.class);
+            bind(ReportManager.class).to(MsoyReportManager.class);
             // crowd dependencies
             bind(BodyLocator.class).to(MemberLocator.class);
             bind(ChatProvider.class).to(MsoyChatProvider.class);

@@ -24,9 +24,9 @@ public interface GameServerService extends InvocationService
     void sayHello (Client client, int port);
 
     /**
-     * Delivers a state of the server report as previously requested by the world server.
+     * Delivers a report requested by the world game registry.
      */
-    void reportReport (Client client, String report);
+    void deliverReport (Client client, String type, String report);
 
     /**
      * Notes that a player is either lobbying for, playing or no longer playing the specified game.

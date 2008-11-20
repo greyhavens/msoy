@@ -42,13 +42,6 @@ public abstract class MsoyBaseServer extends WhirledServer
             // server is ready to do database operations; not initializing it now ensures that no
             // one sneaks any database manipulations into the dependency resolution phase)
             bind(PersistenceContext.class).toInstance(new PersistenceContext());
-            // presents dependencies
-            bind(ReportManager.class).toInstance(new ReportManager() {
-                // disables state of the server report logging
-                @Override public void init (RunQueue rqueue) {
-                    // nada; don't schedule our interval
-                }
-            });
         }
     }
 

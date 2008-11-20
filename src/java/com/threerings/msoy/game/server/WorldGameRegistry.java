@@ -3,6 +3,11 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.Collection;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -24,7 +29,6 @@ import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
@@ -41,6 +45,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyReportManager;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.StatLogic;
@@ -78,7 +83,7 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class WorldGameRegistry
     implements WorldGameProvider, GameServerProvider, ShutdownManager.Shutdowner,
-               MsoyPeerManager.PeerObserver, ReportManager.Reporter
+               MsoyPeerManager.PeerObserver
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
@@ -97,10 +102,6 @@ public class WorldGameRegistry
     {
         _serverRegObj = new ServerRegistryObject();
         _omgr.registerObject(_serverRegObj);
-
-        // register our reporter here so that we're sure to be after all of the reporters that are
-        // registered when all of our managers are created
-        _reportMan.registerReporter(this);
 
         // start up our servers after the rest of server initialization is completed (and we know
         // that we're listening for client connections)
@@ -337,21 +338,21 @@ public class WorldGameRegistry
     }
 
     // from interface GameServerProvider
-    public void reportReport (ClientObject caller, String report)
+    public void deliverReport (ClientObject caller, String type, String report)
     {
-        if (!checkCallerAccess(caller, "reportReport()")) {
+        if (!checkCallerAccess(caller, "deliverReport()")) {
             return;
         }
 
-        // stuff this report into the handler for this server
+        // pass this report to the handler for this server
         for (GameServerHandler handler : _handlers) {
             if (handler._clobj == caller) {
-                handler.latestReport = report;
+                handler.gotReport(type, report);
                 return;
             }
         }
 
-        log.warning("Got state-of-server report from unknown game server", "who", caller.who());
+        log.warning("Got report from unknown game server", "who", caller.who(), "type", type);
     }
 
     // from interface GameServerProvider
@@ -580,7 +581,7 @@ public class WorldGameRegistry
 
     /** Handles communications with a delegate game server. */
     protected class GameServerHandler
-        implements ObjectDeathListener
+        implements ObjectDeathListener, MsoyReportManager.AuxReporter
     {
         public int port;
         public String latestReport;
@@ -591,11 +592,21 @@ public class WorldGameRegistry
 
             // start up our game server
             startGameServer();
+
+            // register as a auxiliary report provider
+            _reportMan.registerAuxReporter(this);
         }
 
         public void setClientObject (ClientObject clobj) {
             _clobj = clobj;
             _clobj.addListener(this);
+
+            // if we had report requests out to the old server that had not yet come back, they're
+            // never coming back, so fail them now
+            for (Function<String, Void> receiver : _rpenders.values()) {
+                receiver.apply("- Server failed, request again for new server info");
+            }
+            _rpenders.clear();
         }
 
         public void hostGame (Game game) {
@@ -633,6 +644,18 @@ public class WorldGameRegistry
             }
         }
 
+        public void gotReport (String type, String report)
+        {
+            Collection<Function<String, Void>> receivers = _rpenders.removeAll(type);
+            if (receivers == null) {
+                log.warning("Got report and have no receivers!", "port", port, "type", type);
+                return;
+            }
+            for (Function<String, Void> receiver : receivers) {
+                receiver.apply(formatReport(report));
+            }
+        }
+
         // from interface ObjectDeathListener
         public void objectDestroyed (ObjectDestroyedEvent event) {
             // note that we no longer hosting this server
@@ -654,6 +677,29 @@ public class WorldGameRegistry
             }
         }
 
+        // from interface MsoyReportManager.AuxReporter
+        public void generateReport (String type, Function<String, Void> receiver)
+        {
+            // note if someone asks for a report while the game server is down, badness will ensue;
+            // "properly" solving that problem is unfortunately way more complicated than ad hoc
+            // reporting mechanism merits at the moment; we'll do some half-assed ass covering
+            if (_clobj == null || !_clobj.isActive()) {
+                receiver.apply(formatReport("- Server unavailable"));
+                return;
+            }
+
+            // add this receiver to our pending map
+            _rpenders.put(type, receiver);
+
+            // if we've already initiated a request for this report, we're done
+            if (_rpenders.get(type).size() > 1) {
+                return;
+            }
+
+            // otherwise send the game server a message requesting the report
+            _clobj.postMessage(WorldServerClient.GENERATE_REPORT, type);
+        }
+
         protected void startGameServer () throws Exception {
             String exec[] = {
                 ServerConfig.serverRoot + "/bin/rungame",
@@ -671,8 +717,15 @@ public class WorldGameRegistry
             ProcessLogger.copyOutput(log, "rungame", proc);
         }
 
+        protected String formatReport (String report)
+        {
+            return ServerConfig.nodeName + " game:" + this.port + "\n" + report;
+        }
+
         protected ClientObject _clobj;
         protected ArrayIntSet _games = new ArrayIntSet();
+        protected Multimap<String, Function<String, Void>> _rpenders =
+            Multimaps.newArrayListMultimap();
     }
 
     /** Handles dispatching invitations to users wherever they may be. */
@@ -746,7 +799,7 @@ public class WorldGameRegistry
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected ReportManager _reportMan;
+    @Inject protected MsoyReportManager _reportMan;
     @Inject protected ShutdownManager _shutMan;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected MemberManager _memberMan;

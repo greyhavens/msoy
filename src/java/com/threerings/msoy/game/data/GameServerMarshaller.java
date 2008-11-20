@@ -57,8 +57,19 @@ public class GameServerMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #deliverReport} requests. */
+    public static final int DELIVER_REPORT = 4;
+
+    // from interface GameServerService
+    public void deliverReport (Client arg1, String arg2, String arg3)
+    {
+        sendRequest(arg1, DELIVER_REPORT, new Object[] {
+            arg2, arg3
+        });
+    }
+
     /** The method id used to dispatch {@link #leaveAVRGame} requests. */
-    public static final int LEAVE_AVRGAME = 4;
+    public static final int LEAVE_AVRGAME = 5;
 
     // from interface GameServerService
     public void leaveAVRGame (Client arg1, int arg2)
@@ -69,7 +80,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #notifyMemberStartedGame} requests. */
-    public static final int NOTIFY_MEMBER_STARTED_GAME = 5;
+    public static final int NOTIFY_MEMBER_STARTED_GAME = 6;
 
     // from interface GameServerService
     public void notifyMemberStartedGame (Client arg1, int arg2, byte arg3, int arg4)
@@ -80,24 +91,13 @@ public class GameServerMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #reportCoinAward} requests. */
-    public static final int REPORT_COIN_AWARD = 6;
+    public static final int REPORT_COIN_AWARD = 7;
 
     // from interface GameServerService
     public void reportCoinAward (Client arg1, int arg2, int arg3)
     {
         sendRequest(arg1, REPORT_COIN_AWARD, new Object[] {
             Integer.valueOf(arg2), Integer.valueOf(arg3)
-        });
-    }
-
-    /** The method id used to dispatch {@link #reportReport} requests. */
-    public static final int REPORT_REPORT = 7;
-
-    // from interface GameServerService
-    public void reportReport (Client arg1, String arg2)
-    {
-        sendRequest(arg1, REPORT_REPORT, new Object[] {
-            arg2
         });
     }
 

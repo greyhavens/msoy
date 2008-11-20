@@ -6,8 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.Interval;
-
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
@@ -67,6 +65,9 @@ public class WorldServerClient
     /** A request that we flush a player's coin earnings. */
     public static final String FLUSH_COIN_EARNINGS = "flushCoinEarnings";
 
+    /** A request that we generate a particular report. */
+    public static final String GENERATE_REPORT = "generateReport";
+
     /**
      * Configures our listen and connection ports and connects to our parent world server.
      */
@@ -91,13 +92,6 @@ public class WorldServerClient
         _client.addClientObserver(_clientObs);
         _watchMan.init(_client);
         _client.logon();
-
-        // send a state of the server report to our world server every 30 seconds
-        new Interval(_omgr) {
-            public void expired () {
-                _gssvc.reportReport(_client, _reportMan.generateReport());
-            }
-        }.schedule(30*1000L, true);
     }
 
     public void leaveAVRGame (int playerId)
@@ -220,6 +214,10 @@ public class WorldServerClient
 
         } else if (event.getName().equals(FLUSH_COIN_EARNINGS)) {
             _gameReg.flushCoinEarnings((Integer)event.getArgs()[0]);
+
+        } else if (event.getName().equals(GENERATE_REPORT)) {
+            String type = (String)event.getArgs()[0];
+            _gssvc.deliverReport(_client, type, _reportMan.generateReport(type));
 
         } else if (event.getName().equals(GAME_CONTENT_PURCHASED)) {
             Object[] args = event.getArgs();

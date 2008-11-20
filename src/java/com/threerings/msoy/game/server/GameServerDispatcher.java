@@ -58,6 +58,12 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
             );
             return;
 
+        case GameServerMarshaller.DELIVER_REPORT:
+            ((GameServerProvider)provider).deliverReport(
+                source, (String)args[0], (String)args[1]
+            );
+            return;
+
         case GameServerMarshaller.LEAVE_AVRGAME:
             ((GameServerProvider)provider).leaveAVRGame(
                 source, ((Integer)args[0]).intValue()
@@ -73,12 +79,6 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
         case GameServerMarshaller.REPORT_COIN_AWARD:
             ((GameServerProvider)provider).reportCoinAward(
                 source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue()
-            );
-            return;
-
-        case GameServerMarshaller.REPORT_REPORT:
-            ((GameServerProvider)provider).reportReport(
-                source, (String)args[0]
             );
             return;
 

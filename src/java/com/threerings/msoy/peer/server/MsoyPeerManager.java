@@ -25,10 +25,12 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.server.ClientManager;
+import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ShutdownManager;
 
+import com.threerings.presents.peer.client.PeerService;
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerNode;
@@ -46,6 +48,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyReportManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
@@ -402,6 +405,19 @@ public class MsoyPeerManager extends CrowdPeerManager
         _mobjCache.put(memobj.username, new MemObjCacheEntry(memobj, locals));
     }
 
+    @Override // from PeerManager
+    public void generateReport (ClientObject caller, String type,
+                                final PeerService.ResultListener listener)
+        throws InvocationException
+    {
+        _reportMan.generateReport(type, new Function<String, Void>() {
+            public Void apply (String report) {
+                listener.requestProcessed(report);
+                return null;
+            }
+        });
+    }
+
     /**
      * Called when a member logs onto a server. Notifies observers.
      */
@@ -613,6 +629,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     @Inject protected InvocationManager _invmgr;
     @Inject protected ClientManager _clmgr;
     @Inject protected MsoyServer _msoyServer;
+    @Inject protected MsoyReportManager _reportMan;
 
     /** A counter used to assign guest ids on this server. See {@link #getNextGuestId}. */
     protected static int _guestIdCounter;

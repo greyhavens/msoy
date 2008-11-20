@@ -36,6 +36,11 @@ public interface GameServerProvider extends InvocationProvider
     void clearGameHost (ClientObject caller, int arg1, int arg2);
 
     /**
+     * Handles a {@link GameServerService#deliverReport} request.
+     */
+    void deliverReport (ClientObject caller, String arg1, String arg2);
+
+    /**
      * Handles a {@link GameServerService#leaveAVRGame} request.
      */
     void leaveAVRGame (ClientObject caller, int arg1);
@@ -49,11 +54,6 @@ public interface GameServerProvider extends InvocationProvider
      * Handles a {@link GameServerService#reportCoinAward} request.
      */
     void reportCoinAward (ClientObject caller, int arg1, int arg2);
-
-    /**
-     * Handles a {@link GameServerService#reportReport} request.
-     */
-    void reportReport (ClientObject caller, String arg1);
 
     /**
      * Handles a {@link GameServerService#reportTrophyAward} request.

@@ -8,10 +8,12 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.RunQueue;
 import com.threerings.util.Name;
 
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
+import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsSession;
@@ -59,6 +61,11 @@ public class MsoyGameServer extends MsoyBaseServer
             // presents dependencies
             bind(Authenticator.class).to(MsoyGameAuthenticator.class);
             bind(PresentsServer.class).to(MsoyGameServer.class);
+            bind(ReportManager.class).toInstance(new ReportManager() {
+                @Override public void init (RunQueue rqueue) {
+                    // disable state of the server report logging by not calling super
+                }
+            });
             // crowd dependencies
             bind(BodyLocator.class).to(PlayerLocator.class);
             bind(PlaceRegistry.class).to(GamePlaceRegistry.class);
