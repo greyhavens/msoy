@@ -719,7 +719,10 @@ public class WorldGameRegistry
 
         protected String formatReport (String report)
         {
-            return ServerConfig.nodeName + " game:" + this.port + "\n" + report;
+            // if our game server has nothing to say for the requested report type then just
+            // pretend like they don't exist
+            return report.equals("") ? "" :
+                ServerConfig.nodeName + " game:" + this.port + "\n" + report;
         }
 
         protected ClientObject _clobj;
