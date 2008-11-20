@@ -283,10 +283,10 @@ public class MsoyEventLogger
         }
     }
 
-    public void accountCreated (int newMemberId, String inviteId, String tracker)
+    public void accountCreated (int newMemberId, String inviteId, int affiliateId, String tracker)
     {
         post(new MsoyEvents.Experience(Type.ACCOUNT_CREATED, newMemberId, tracker));
-        post(new MsoyEvents.AccountCreated(newMemberId, inviteId, tracker));
+        post(new MsoyEvents.AccountCreated(newMemberId, inviteId, affiliateId, tracker));
     }
 
     public void roomUpdated (int memberId, int sceneId, String tracker)

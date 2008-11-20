@@ -458,13 +458,15 @@ public class MsoyEvents
         @Index @Field final public Date timestamp;
         @Field final public int newMemberId;
         @Field final public String inviteId;
+        @Field final public int affiliateId;
         @Field final public String tracker;
 
-        public AccountCreated (int newMemberId, String inviteId, String tracker)
+        public AccountCreated (int newMemberId, String inviteId, int affiliateId, String tracker)
         {
             this.timestamp = new Date();
             this.newMemberId = newMemberId;
             this.inviteId = toValue(inviteId);
+            this.affiliateId = affiliateId;
             this.tracker = toValue(tracker);
         }
     }
