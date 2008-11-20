@@ -10,6 +10,8 @@ import mx.containers.HBox;
 
 import com.threerings.util.Command;
 
+import com.threerings.msoy.client.Msgs;
+
 [Event(name="starClick", type="StarsEvent")]
 [Event(name="starOver", type="StarsEvent")]
 
@@ -49,6 +51,7 @@ public class Stars extends HBox
         var filledStars :int = rating * 2;
         for (var i :int = 0; i < filledStars; ++i) {
             _images[i].source = ((i%2) == 0) ? _left : _right;
+            _images[i].toolTip = Msgs.GENERAL.get("i.star" + int(i/2));
         }
         for (var k :int = filledStars; k < 10; ++k) {
             _images[k].source = ((k%2) == 0) ? EMPTY_LEFT : EMPTY_RIGHT;

@@ -4,9 +4,12 @@
 package com.threerings.msoy.world.tour.client {
 
 import flash.events.MouseEvent;
+import flash.net.URLRequest;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
+import mx.controls.Image;
+import mx.controls.Text;
 
 import com.threerings.util.CommandEvent;
 
@@ -43,9 +46,9 @@ public class TourDialog extends FloatingPanel
         commentBtn.styleName = "controlBarButtonComment"
         commentBtn.toolTip = Msgs.GENERAL.get("i.comment");
 
-        var hbox :HBox = new HBox();
-        hbox.addChild(nextBtn);
-        hbox.addChild(commentBtn);
+        var buttons :HBox = new HBox();
+        buttons.addChild(nextBtn);
+        buttons.addChild(commentBtn);
 
         _myStars = new Stars(0, Stars.USER_LEFT, Stars.USER_RIGHT);
         _myStars.addEventListener(Stars.STAR_CLICK, handleRate);
@@ -55,9 +58,24 @@ public class TourDialog extends FloatingPanel
         _myStars.addEventListener(MouseEvent.ROLL_OUT, function (event :MouseEvent) :void {
             _myStars.setRating(_myRating);
         });
-        hbox.addChild(_myStars);
 
-        addChild(hbox);
+        var stars :HBox = new HBox();
+        stars.addChild(_myStars);
+
+        var logo :Image = new Image();
+        logo.source = DeploymentConfig.staticMediaURL + "icon/home_page_tour.png";
+
+        var split :HBox = new HBox();
+        var right :VBox = new VBox();
+
+        right.addChild(FlexUtil.createLabel(Msgs.WORLD.get("l.tour_rate")));
+        right.addChild(stars);
+        right.addChild(buttons);
+
+        split.addChild(logo);
+        split.addChild(right);
+
+        addChild(split);
     }
 
     public function setRating (rating :Number) :void
