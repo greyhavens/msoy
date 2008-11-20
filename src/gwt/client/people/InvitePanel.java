@@ -316,7 +316,7 @@ public class InvitePanel extends VerticalPanel
         // only send one event per instance of this
         if (_sendEvents) {
             _membersvc.trackTestAction(
-                CShell.visitor, name, "force invite on registration", callback);
+                CShell.visitor, name, "2008 11 force invite on registration", callback);
             _sendEvents = false;
         }
     }

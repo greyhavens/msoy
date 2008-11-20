@@ -344,7 +344,8 @@ public class CreateAccountPanel extends FlowPanel
             // TODO: If this is useful beyond the force invite test, it would be more efficient
             // for the server to fill in the result.registrationABGroup before sending the result
             // rather than making a separate request.
-            _membersvc.getABTestGroup(result.visitor, "force invite on registration", true, this);
+            _membersvc.getABTestGroup(
+                result.visitor, "2008 11 force invite on registration", true, this);
             schedule(feedbackDelayMs);
         }
     
