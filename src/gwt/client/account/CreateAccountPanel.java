@@ -167,7 +167,7 @@ public class CreateAccountPanel extends FlowPanel
             }
 
             @Override protected boolean gotResult (final SessionData result) {
-                result.justCreated = true;
+                result.registrationABGroup = 0; // normal
 
                 // display a nice confirmation message, as an excuse to embed a tracking iframe.
                 // we'll show it for two seconds, and then rock on!

@@ -33,9 +33,18 @@ public class SessionData implements IsSerializable
     /** Registered user's visitor info structure. */
     public VisitorInfo visitor;
 
-    /** If we've just created an account, this will be set to true. */
-    public transient boolean justCreated;
+    /** If we've just created an account, this will be set to >=0 depending on the registration
+     * a/b/... group. If < 0, there is no group. */
+    public transient int registrationABGroup = -1;
 
+    /**
+     * Detects if this accounts was just created.
+     */
+    public boolean justCreated ()
+    {
+        return registrationABGroup >= 0;
+    }
+    
     /**
      * Creates and initializes an instance from supplied {@link #flatten}ed string.
      */
@@ -52,7 +61,7 @@ public class SessionData implements IsSerializable
         sdata.level = Integer.valueOf(data.next());
         sdata.newMailCount = Integer.valueOf(data.next());
         sdata.visitor = VisitorInfo.unflatten(data);
-        sdata.justCreated = Boolean.valueOf(data.next());
+        sdata.registrationABGroup = Integer.valueOf(data.next());
         return sdata;
     }
 
@@ -68,7 +77,7 @@ public class SessionData implements IsSerializable
         data.add(String.valueOf(level));
         data.add(String.valueOf(newMailCount));
         data.addAll(visitor.flatten());
-        data.add(String.valueOf(justCreated));
+        data.add(String.valueOf(registrationABGroup));
         return data;
     }
 }

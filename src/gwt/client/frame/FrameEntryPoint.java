@@ -280,17 +280,17 @@ public class FrameEntryPoint
 
         // TODO: preserve their current world location and log them into their new account; this
         // will require fixing a whole bunch of shit
-        if (FlashClients.clientExists() && data.justCreated) {
+        if (FlashClients.clientExists() && data.justCreated()) {
             closeClient(false);
         }
 
-        if (data.justCreated) {
+        if (data.justCreated()) {
             Link.go(Pages.WORLD, "h"); // brand new users go home
         } else if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
             Link.go(Pages.WORLD, "places");
         } else if (_page != null) {
             setPage(_page); // reloads the current page
-        } else if (!data.justCreated) {
+        } else if (!data.justCreated()) {
             onHistoryChanged(_currentToken);
         }
     }
