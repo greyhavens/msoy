@@ -6,6 +6,7 @@ package client.room;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -48,16 +49,20 @@ public class SceneUtil
 
         FlowPanel panel = new FlowPanel();
         panel.addStyleName("sceneView");
-        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE,
-                                            Link.createListener(Pages.WORLD, "s" + sceneId)));
-        Image overlay = MsoyUI.createActionImage(LIVE_VIEW_IMAGE, new ClickListener() {
+        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE, null));
+
+        PushButton liveButton = MsoyUI.createImageButton("liveButton", new ClickListener() {
             public void onClick (Widget widget) {
                 container.clear();
                 FeaturedPlaceUtil.displayFeaturedPlace(sceneId, container);
             }
         });
-        overlay.addStyleName("LiveOverlay");
-        panel.add(overlay);
+
+        PushButton enterButton = MsoyUI.createImageButton("enterButton",
+            Link.createListener(Pages.WORLD, "s" + sceneId));
+
+        panel.add(enterButton);
+        panel.add(liveButton);
         container.setWidget(panel);
 
         return container;
