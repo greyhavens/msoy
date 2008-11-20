@@ -344,6 +344,7 @@ public class OccupantSprite extends MsoySprite
         // if there's already a move, kill it
         if (_walk != null) {
             _walk.stopAnimation();
+            dispatchEntityMoved(null);
         }
 
         // set the orientation towards the new location
@@ -351,7 +352,17 @@ public class OccupantSprite extends MsoySprite
 
         _walk = new WalkAnimation(this, scene, _loc, destLoc);
         _walk.startAnimation();
+
+        dispatchEntityMoved(destLoc);
         appearanceChanged();
+    }
+
+    public function dispatchEntityMoved (destLoc :MsoyLocation) :void
+    {
+        if (getItemIdent() != null && parent is RoomView) {
+            (parent as RoomView).dispatchEntityMoved(getItemIdent(),
+                (destLoc != null) ? [destLoc.x, destLoc.y, destLoc.z] : null);
+        }
     }
 
 //    public function whirlOut (scene :MsoyScene) :void
@@ -385,9 +396,8 @@ public class OccupantSprite extends MsoySprite
     public function walkCompleted (orient :Number) :void
     {
         _walk = null;
-        if (parent is RoomView) {
-            (parent as RoomView).moveFinished(this);
-        }
+
+        dispatchEntityMoved(null);
         appearanceChanged();
     }
 
@@ -413,6 +423,9 @@ public class OccupantSprite extends MsoySprite
         switch (name) {
         case "name":
             return _occInfo.username.toString();
+
+        case "move_speed":
+            return _moveSpeed * _scale;
 
         default:
             return super.getSpecialProperty(name);

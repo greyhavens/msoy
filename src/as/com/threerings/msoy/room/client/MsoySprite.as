@@ -408,9 +408,14 @@ public class MsoySprite extends DataPackMediaContainer
     /**
      * Called when an entity has moved within the room.
      */
-    public function entityMoved (entityId :String) :void
+    public function entityMoved (entityId :String, destination :Array) :void
     {
-        callUserCode("entityMoved_v1", entityId);
+        if (hasUserCode("entityMoved_v2")) {
+            callUserCode("entityMoved_v2", entityId, destination);
+        } else if (destination == null) {
+            // v1 only fired this event upon arrival of the destination
+            callUserCode("entityMoved_v1", entityId);
+        }
     }
 
     /**

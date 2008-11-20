@@ -266,10 +266,6 @@ public class RoomView extends Sprite
             portalTraversed(sprite.getLocation(), false);
             // and remove the sprite
             removeSprite(sprite);
-        } else {
-            if (sprite.getItemIdent() != null) {
-                dispatchEntityMoved(sprite.getItemIdent());
-            }
         }
     }
 
@@ -619,13 +615,13 @@ public class RoomView extends Sprite
         });
     }
 
-    public function dispatchEntityMoved (item :ItemIdent) :void
+    public function dispatchEntityMoved (item :ItemIdent, destination :Array) :void
     {
         var entityId :String = item.toString();
 
         _entities.forEach(function (mapKey :Object, sprite :Object) :void {
             if (sprite is MsoySprite) {
-                MsoySprite(sprite).entityMoved(entityId);
+                MsoySprite(sprite).entityMoved(entityId, destination);
             } else {
                 log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
             }
