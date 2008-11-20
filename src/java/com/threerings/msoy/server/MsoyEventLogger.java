@@ -55,6 +55,9 @@ public class MsoyEventLogger
         _local = new LocalEventLogger(logloc);
         _local.start();
 
+        // do we want local debug?
+        _debugDisplayEnabled = ServerConfig.eventLogDebugDisplay;
+
         // if we're configure to log to panopticon, do so
         String host = ServerConfig.eventLogHostname;
         int port = ServerConfig.eventLogPort;
@@ -70,9 +73,6 @@ public class MsoyEventLogger
                     spoolDir = new File(ServerConfig.serverRoot, ServerConfig.eventLogSpoolDir);
                 }
                 config.setPersistPath(spoolDir.getAbsolutePath());
-
-                // do we want local debug?
-                _debugDisplayEnabled = ServerConfig.eventLogDebugDisplay;
 
                 log.info("Events logged remotely to: " + host + ":" + port);
                 _remote = EventLoggerFactory.createLogger(config);
