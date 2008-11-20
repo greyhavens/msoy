@@ -364,7 +364,7 @@ public class MemberObject extends MsoyBodyObject
     /**
      * A predicate that returns true for online friends.
      */
-    protected function isFriendOnline (fe :FriendEntry, ... rest) :Boolean
+    protected static function isFriendOnline (fe :FriendEntry, ... rest) :Boolean
     {
         return fe.online;
     }
