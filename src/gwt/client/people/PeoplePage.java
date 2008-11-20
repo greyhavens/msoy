@@ -82,8 +82,8 @@ public class PeoplePage extends Page
             setContent(new ProfilePanel(CShell.getMemberId()));
 
         } else if (action.equals("invites")) { // !guest
-            boolean showSkipToHome = args.get(1, "").equals("sk");
-            setContent(_msgs.inviteTitle(), new InvitePanel(showSkipToHome));
+            boolean justRegistered = args.get(1, "").equals("newuser");
+            setContent(_msgs.inviteTitle(), new InvitePanel(justRegistered));
 
         } else { // !guest
             setContent(new FriendsPanel(CShell.getMemberId()));

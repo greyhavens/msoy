@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -31,6 +33,8 @@ import com.threerings.msoy.person.gwt.MemberInvites;
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
@@ -42,6 +46,7 @@ import client.ui.RoundBox;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -50,8 +55,10 @@ import client.util.ServiceUtil;
  */
 public class InvitePanel extends VerticalPanel
 {
-    public InvitePanel (boolean showSkip)
+    public InvitePanel (boolean justRegistered)
     {
+        _sendEvents = justRegistered;
+
         setSpacing(10);
         setStyleName("invite");
 
@@ -169,10 +176,31 @@ public class InvitePanel extends VerticalPanel
                 }
             }
         }));
-        if (showSkip) {
-            Widget skip = Link.create(_msgs.inviteSkipButton(), Pages.WORLD, "h");
-            skip.setStyleName("skip");
-            buttons.setWidget(1, 1, skip);
+        if (justRegistered) {
+            // callback to redirect to #world-h
+            final AsyncCallback<Void> goHome = new AsyncCallback<Void>() {
+                public void onFailure (Throwable caught) {
+                    go();
+                }
+
+                public void onSuccess (Void result) {
+                    go();
+                }
+
+                void go () {
+                    Link.go(Pages.WORLD, "h");
+                }
+            };
+            // add a link that sends an event, and then redirects after the result comes back;
+            // this prevents the (presumed) synchronous redirect from cancelling the rpc
+            // TODO: also send an event if the user navigates away from the page
+            Label skip = MsoyUI.createActionLabel(
+                _msgs.inviteSkipButton(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        sendEvent("skipped", goHome);
+                    }
+                });
+            buttons.setWidget(1, 1, skip, 1, "skip");
         }
         box.add(buttons);
         add(box);
@@ -271,6 +299,9 @@ public class InvitePanel extends VerticalPanel
         if (msg.equals(_msgs.inviteCustom())) {
             msg = "";
         }
+
+        sendEvent("invited", new NoopAsyncCallback());
+
         _invitesvc.sendInvites(invited, from, msg, anon, new MsoyCallback<InvitationResults>() {
             public void onSuccess (InvitationResults ir) {
                 addPendingInvites(ir.pendingInvitations);
@@ -278,6 +309,16 @@ public class InvitePanel extends VerticalPanel
                 inviteResults(invited, ir);
             }
         });
+    }
+
+    protected void sendEvent (String name, AsyncCallback<Void> callback)
+    {
+        // only send one event per instance of this
+        if (_sendEvents) {
+            _membersvc.trackTestAction(
+                CShell.visitor, name, "force invite on registration", callback);
+            _sendEvents = false;
+        }
     }
 
     protected void inviteResults (List<EmailContact> addrs, InvitationResults invRes)
@@ -485,10 +526,14 @@ public class InvitePanel extends VerticalPanel
     protected TextBox _friendEmail;
     protected InviteList _emailList;
 
+    protected boolean _sendEvents;
+    
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
         ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 
     protected static final int MAX_NAME_LENGTH = 80;
     protected static final int MAX_WEBMAIL_LENGTH = 200;

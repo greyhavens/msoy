@@ -341,7 +341,10 @@ public class CreateAccountPanel extends FlowPanel
         public FinishRegistration (SessionData result)
         {
             session = result;
-            _membersvc.getABTestGroup(result.visitor, "forceInvite", true, this);
+            // TODO: If this is useful beyond the force invite test, it would be more efficient
+            // for the server to fill in the result.registrationABGroup before sending the result
+            // rather than making a separate request.
+            _membersvc.getABTestGroup(result.visitor, "force invite on registration", true, this);
             schedule(feedbackDelayMs);
         }
     

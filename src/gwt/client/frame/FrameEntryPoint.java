@@ -286,11 +286,13 @@ public class FrameEntryPoint
 
         if (data.justCreated()) {
             switch (data.registrationABGroup) {
-            default: // normal
-                Link.go(Pages.WORLD, "h"); // "a" group brand new users go home
+            default: // "A" group, normal
+                // go home
+                Link.go(Pages.WORLD, "h");
                 break;
-            case 1: // "b" group
-                Link.go(Pages.PEOPLE, Args.compose("invites", "sk")); // "b" group go to invites
+            case 1: // "B" group
+                // go to a specially configured invites page
+                Link.go(Pages.PEOPLE, Args.compose("invites", "newuser"));
                 break;
             }
         } else if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
