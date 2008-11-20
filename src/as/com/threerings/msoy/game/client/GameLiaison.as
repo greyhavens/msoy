@@ -22,6 +22,7 @@ import caurina.transitions.Tweener;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
@@ -37,6 +38,7 @@ import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -295,28 +297,60 @@ public class GameLiaison
             return; // we're loading it or already showing it
 
         } else {
-            var field :TextField = (_guestFlowPanel.getChildByName("youearned") as TextField);
-            field.text = Msgs.GAME.get("l.guest_flow_title", ""+amount);
-            field = (_guestFlowPanel.getChildByName("ifyousign") as TextField);
-            field.text = Msgs.GAME.get(hasCookie ? "l.guest_flowprog_note" : "l.guest_flow_note");
-
-            var later :SimpleButton = (_guestFlowPanel.getChildByName("Later") as SimpleButton);
-            later.addEventListener(MouseEvent.CLICK, clearGuestFlow);
-
-            var signUp :SimpleButton = (_guestFlowPanel.getChildByName("SignUp") as SimpleButton);
-            signUp.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                _wctx.getWorldController().handleShowSignUp();
-                clearGuestFlow();
-            });
-
-            // slide the panel onto the screen, and wait for a click
-            _wctx.getTopPanel().getPlaceContainer().addOverlay(
-                _guestFlowPanel, PlaceBox.LAYER_TRANSIENT);
-            _guestFlowPanel.x = 150;
-            _guestFlowPanel.y = -_guestFlowPanel.height;
-            Tweener.addTween(_guestFlowPanel, { y: 0, time: 0.75, transition: EASING_OUT });
-            _flowPanelAutoDismiss.start();
+            
+            var displayDefaultNote :Function = function () :void {
+                populateGuestFlowEarnage(amount, 
+                    hasCookie ? "l.guest_flowprog_note" : "l.guest_flow_note");
+            };
+            
+            if (_wctx.getClient() as MsoyClient) {
+                // perform an A/B(/C) test on game over upsell text for guests 
+                MsoyClient(_wctx.getClient()).getABTestGroup(
+                    "2008 11 game over upsell", true, new ResultAdapter(
+                        function () :void {
+                            // if something goes wrong display default note
+                            displayDefaultNote();
+                        }, 
+                        function (group :int) :void {
+                            if (group == -1) {
+                                // if not in a group display default note
+                                displayDefaultNote();
+                            } else {
+                                populateGuestFlowEarnage(amount, "l.guest_flow_note_" + group);
+                            }
+                        }));
+                return;
+            } else {
+                // if no access to MsoyClient display default note
+                displayDefaultNote();
+            }
         }
+    }
+    
+    protected function populateGuestFlowEarnage (amount :int, ifyousignMsg :String) :void
+    {
+        var field :TextField = (_guestFlowPanel.getChildByName("youearned") as TextField);
+        field.text = Msgs.GAME.get("l.guest_flow_title", ""+amount);
+        field = (_guestFlowPanel.getChildByName("ifyousign") as TextField);
+        
+        field.text = Msgs.GAME.get(ifyousignMsg);
+
+        var later :SimpleButton = (_guestFlowPanel.getChildByName("Later") as SimpleButton);
+        later.addEventListener(MouseEvent.CLICK, clearGuestFlow);
+
+        var signUp :SimpleButton = (_guestFlowPanel.getChildByName("SignUp") as SimpleButton);
+        signUp.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+            _wctx.getWorldController().handleShowSignUp();
+            clearGuestFlow();
+        });
+
+        // slide the panel onto the screen, and wait for a click
+        _wctx.getTopPanel().getPlaceContainer().addOverlay(
+            _guestFlowPanel, PlaceBox.LAYER_TRANSIENT);
+        _guestFlowPanel.x = 150;
+        _guestFlowPanel.y = -_guestFlowPanel.height;
+        Tweener.addTween(_guestFlowPanel, { y: 0, time: 0.75, transition: EASING_OUT });
+        _flowPanelAutoDismiss.start();
     }
 
     protected function clearGuestFlow (... ignored) :void
