@@ -53,6 +53,7 @@
   <!-- declare the libraries needed by the MSOY runtime -->
   <filelist dir="." id="dist.libs">
     <file name="${extlibs.dir}/activation.jar"/>
+    <file name="${extlibs.dir}/advanced-components-1.4.1.jar"/>
     <file name="${extlibs.dir}/aopalliance.jar"/>
     <file name="${extlibs.dir}/args4j-2.0.7.jar"/>
     <file name="${extlibs.dir}/backport-util-concurrent-3.1-jdk1.6.jar"/>
@@ -456,6 +457,7 @@
           <fileset dir="${deploy.dir}/lib">
             <include name="gwt-user.jar"/>
             <include name="gwt-widgets.jar"/>
+            <include name="advanced-components-1.4.1.jar"/>
             <include name="*-gwt-0.0-SNAPSHOT.jar"/>
             <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
             <include name="threerings-0.0-SNAPSHOT.jar"/>

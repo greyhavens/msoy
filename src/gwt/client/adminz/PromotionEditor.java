@@ -10,9 +10,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import org.gwt.advanced.client.ui.widget.DatePicker;
 
 import com.threerings.gwt.ui.SmartTable;
 
@@ -39,7 +42,7 @@ public class PromotionEditor extends FlowPanel
     public PromotionEditor ()
     {
         setStyleName("promoEditor");
-        add(MsoyUI.createLabel("Loading...", null));
+        add(MsoyUI.createLabel(_msgs.promoLoading(), null));
 
         _adminsvc.loadPromotions(new MsoyCallback<List<Promotion>>() {
             public void onSuccess (List<Promotion> promos) {
@@ -54,11 +57,11 @@ public class PromotionEditor extends FlowPanel
 
         // set up the header
         int col = 0;
-        _ptable.setText(0, col++, "Promo ID", 1, "Header");
-        _ptable.setText(0, col++, "Icon", 1, "Header");
-        _ptable.setText(0, col++, "Blurb", 1, "Header");
-        _ptable.setText(0, col++, "Starts", 1, "Header");
-        _ptable.setText(0, col++, "Ends", 1, "Header");
+        _ptable.setText(0, col++, _msgs.promoId(), 1, "Header");
+        _ptable.setText(0, col++, _msgs.promoIcon(), 1, "Header");
+        _ptable.setText(0, col++, _msgs.promoBlurb(), 1, "Header");
+        _ptable.setText(0, col++, _msgs.promoStarts(), 1, "Header");
+        _ptable.setText(0, col++, _msgs.promoEnds(), 1, "Header");
 
         // add the promotions
         for (Promotion promo : promos) {
@@ -68,14 +71,18 @@ public class PromotionEditor extends FlowPanel
 
         final SmartTable create = new SmartTable("Create", 0, 10);
         int row = 0;
-        create.setText(row, 0, "Promo ID:");
+        create.setText(row, 0, _msgs.promoId());
         create.setWidget(row++, 1, _promoId = MsoyUI.createTextBox("", 80, 20), 2, null);
-        create.setText(row, 0, "Start time:");
-        row++; // TODO
-        create.setText(row, 0, "End time:");
-        row++; // TODO
-        create.setText(row, 0, "Icon:");
-        create.setWidget(row++, 1, new Button("Change...", new ClickListener() {
+        create.setText(row, 0, _msgs.promoStarts());
+        create.setWidget(row++, 1, _starts = new DatePicker(new Date()));
+        _starts.setTimeVisible(true);
+        _starts.display(); // fucking crack smokers
+        create.setText(row, 0, _msgs.promoEnds());
+        create.setWidget(row++, 1, _ends = new DatePicker(new Date(199, 0, 1)));
+        _ends.setTimeVisible(true);
+        _ends.display(); // can't anyone write a sane library?
+        create.setText(row, 0, _msgs.promoIcon());
+        create.setWidget(row++, 1, new Button(_msgs.promoChange(), new ClickListener() {
             public void onClick (Widget source) {
                 ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
@@ -85,22 +92,23 @@ public class PromotionEditor extends FlowPanel
                 });
             }
         }));
-        create.setText(row, 0, "Blurb:");
-        create.setWidget(row++, 1, _blurb = new LimitedTextArea(255, 40, 5), 2, null);
+        create.setText(row, 0, _msgs.promoBlurb());
+        create.setWidget(row++, 1, _blurb = new LimitedTextArea(255, 60, 5), 2, null);
         _blurb.getTextArea().addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char keyCode, int modifiers) {
                 create.setWidget(_previewRow, 1, new PromotionBox(createPromotion()));
             }
         });
 
-        create.setText(row, 0, "Preview:");
+        create.setText(row, 0, _msgs.promoPreview());
         _previewRow = row++;
 
-        create.setWidget(row, 0, new Button("Add", new ClickListener() {
+        create.setWidget(row, 0, new Button(_msgs.promoAdd(), new ClickListener() {
             public void onClick (Widget sender) {
                 publishPromotion(createPromotion());
             }
-        }));
+        }), 2, null);
+        create.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
 
         add(new TongueBox(_msgs.promoCreate(), create));
     }
@@ -139,7 +147,8 @@ public class PromotionEditor extends FlowPanel
         promo.promoId = _promoId.getText().trim();
         promo.blurb = _blurb.getText().trim();
         promo.icon = _promoIcon;
-        // TODO: promo.starts, promo.ends
+        promo.starts = _starts.getDate();
+        promo.ends = _ends.getDate();
         return promo;
     }
 
@@ -148,8 +157,6 @@ public class PromotionEditor extends FlowPanel
         if (promo.promoId.length() == 0 || promo.blurb.length() == 0) {
             return;
         }
-        promo.starts = new Date(); // TODO
-        promo.ends = new Date(220, 1, 1); // TODO
 
         _adminsvc.addPromotion(promo, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
@@ -164,6 +171,7 @@ public class PromotionEditor extends FlowPanel
     protected SmartTable _ptable = new SmartTable("Promos", 0, 10);
 
     protected TextBox _promoId;
+    protected DatePicker _starts, _ends;
     protected LimitedTextArea _blurb;
     protected MediaDesc _promoIcon;
     protected int _previewRow;

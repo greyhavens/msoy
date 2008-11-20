@@ -1,6 +1,10 @@
 <module>
   <inherits name="item"/>
 
+  <!-- for the date picker -->
+  <inherits name='org.gwt.advanced.Grid'/>
+  <stylesheet src="aw-theme.css"/>
+
   <source path="com/threerings/msoy/admin/gwt"/>
   <source path="com/threerings/msoy/money/data/all"/>
   <source path="com/threerings/msoy/money/gwt"/>

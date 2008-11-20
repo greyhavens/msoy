@@ -1,0 +1,162 @@
+/*********************
+ * Calendar widget styles
+ */
+
+/** calendar panel styles */
+.advanced-Calendar {
+    background-color: white;
+    border: 1px solid;
+}
+
+/** calendar layout flex table styles */
+.advanced-Calendar .layout-table {
+    border: 1px solid lightgray;
+    font-family: sans-serif;
+    font-size: 10px;
+    cursor: default;
+    padding: 0;
+    border-collapse: collapse;
+    width: 200px;
+}
+
+/** layout cells styles */
+.advanced-Calendar .layout-table td {
+    vertical-align: middle;
+    padding: 1px;
+}
+
+/** button cell styles */
+.advanced-Calendar .switch-cell {
+    width: 18px;
+    text-align: center;
+}
+
+/** today button cell styles */
+.advanced-Calendar .today-button-cell {
+    width: 126px;
+    text-align: center;
+}
+
+/** header cell styles */
+.advanced-Calendar .header-cell {
+    font-weight: bold;
+    text-align: center;
+    padding: 1px 1px 1px 1px;
+    background-image: url(images/gradient.gif);
+    background-repeat: repeat-x;
+}
+
+/** small button styles */
+.advanced-Calendar .switch-button {
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    color: black;
+    padding: 1px 1px 1px 1px;
+    background-color: gainsboro;
+    border: 1px solid darkgray;
+    cursor: pointer;
+    width: 18px;
+}
+
+/** today button styles */
+.advanced-Calendar .today-button {
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    color: black;
+    padding: 1px 1px 1px 1px;
+    background-color: gainsboro;
+    border: 1px solid darkgray;
+    cursor: pointer;
+    width: 126px;
+}
+
+/** days flex table styles */
+.advanced-Calendar .days-table {
+    font-family: sans-serif;
+    font-size: 10px;
+    width: 100%;
+    padding: 1px;
+    border-collapse: collapse;
+}
+
+/** week days header cell styles */
+.advanced-Calendar .week-day-cell {
+    background-color: gainsboro;
+    text-align: center;
+    vertical-align: middle;
+    width: 14%;
+}
+
+/** week number column cell styles */
+.advanced-Calendar .week-number-cell {
+    background-color: gainsboro;
+    text-align: right;
+    vertical-align: middle;
+    width: 0;
+}
+
+/** day cell styles */
+.advanced-Calendar .day-cell {
+    text-align: right;
+    vertical-align: middle;
+    color: black;
+    cursor: pointer;
+}
+
+/** today cell styles */
+.advanced-Calendar .today-cell {
+    border: 1px dashed lightgray;
+}
+
+/** selected day styles */
+.advanced-Calendar .selected-day-cell {
+    font-weight: bold;
+    background-color: lightgoldenrodyellow;
+    cursor: default;
+    border: 1px solid lightgray;
+}
+
+/** holiday cell styles */
+.advanced-Calendar .holiday-cell {
+    color: red;
+}
+
+/** neighbour month day cell styles */
+.advanced-Calendar .disabled-day-cell {
+    text-align: right;
+    vertical-align: middle;
+    color: darkgray;
+}
+
+/** time cell styles */
+.advanced-Calendar .time-cell {
+    text-align: center;
+    border-collapse: collapse;
+}
+
+/** time table styles */
+.advanced-Calendar .time-table {
+    font-family: sans-serif;
+    font-size: 10px;
+    padding: 0;
+    border-collapse: collapse;
+    display: inline;
+}
+
+/** select box of the time section styles */
+.advanced-Calendar select {
+    font-family: sans-serif;
+    font-size: 10px;
+    width: 45px;
+}
+
+/** date picker component styles */
+.advanced-DatePicker {
+}
+
+/** makes the input wide enough */
+.advanced-TextButtonPanel input {
+  width: 250px;
+}
