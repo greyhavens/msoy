@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Promotion;
 
 /**
  * Contains the data that we need for the My Whirled views.
@@ -37,6 +38,9 @@ public class MyWhirledData
 
     /** This member's total friend count (on and offline). */
     public int friendCount;
+
+    /** A promotion to display on the My Whirled page. */
+    public Promotion promo;
 
     /**
      * This member's online friends.

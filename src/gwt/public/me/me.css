@@ -12,13 +12,6 @@
   width: 100%;
 }
 
-.myWhirled .Banner {
-  width: 600px;
-  height: 90px;
-  padding-top: 10px;
-  cursor: pointer;
-}
-
 .myWhirled .NewsAndFriends {
   width: 665px;
   margin: 0 auto;

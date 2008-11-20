@@ -53,9 +53,12 @@ public class AdminPage extends Page
 
         } else if (action.equals("exchange")) {
             setContent("Exchange", new ExchangePanel());
-            
+
         } else if (action.equals("bureaus")) {
             setContent("Bureaus", new BureauInfoPanel());
+
+        } else if (action.equals("promos")) {
+            setContent("Promotions", new PromotionEditor());
 
         } else {
             setContent(_msgs.title(), new DashboardPanel());

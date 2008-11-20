@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -23,6 +24,7 @@ import client.person.FriendsFeedPanel;
 import client.person.PersonMessages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.ui.PromotionBox;
 import client.ui.RoundBox;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -43,19 +45,6 @@ public class MyWhirled extends FlowPanel
 
     protected void init (MyWhirledData data)
     {
-        int selectedBanner = (int)(Math.random() * BANNERS.length);
-        Image banner = new Image("/images/me/" + BANNERS[selectedBanner]);
-        banner.addStyleName("Banner");
-        banner.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                Window.open("http://wiki.whirled.com/Affiliate", "_top",
-                    "toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,"
-                        + "scrollbars=yes,copyhistory=yes,resizable=yes");
-            }
-        });
-        MsoyUI.addTrackingListener(banner, "meAffBannerClicked", BANNERS[selectedBanner]);
-        add(banner);
-
         RoundBox rbits = new RoundBox(RoundBox.MEDIUM_BLUE);
         rbits.addStyleName("QuickNav");
         rbits.add(MsoyUI.createLabel(_msgs.populationDisplay(""+data.whirledPopulation), null));
@@ -71,9 +60,22 @@ public class MyWhirled extends FlowPanel
         feedBox.add(feed);
         feedBox.add(new Image("/images/me/me_feed_bottomcorners.png"));
 
-        // news feed on the left, bits and friends on the right
-        FloatPanel horiz = new FloatPanel("NewsAndFriends");
-        horiz.add(feedBox);
+        // promo and news feed on the left, bits and friends on the right
+        HorizontalPanel horiz = new HorizontalPanel();
+        horiz.setStyleName("NewsAndFriends");
+        horiz.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
+
+        // FloatPanel horiz = new FloatPanel("NewsAndFriends");
+        if (data.promo != null) {
+            FlowPanel left = MsoyUI.createFlowPanel("inline");
+            left.add(new PromotionBox(data.promo));
+            left.add(WidgetUtil.makeShim(10, 10));
+            left.add(feedBox);
+            horiz.add(left);
+        } else {
+            horiz.add(feedBox);
+        }
+
         FlowPanel right = MsoyUI.createFlowPanel("RightBits");
         right.add(rbits);
         right.add(WidgetUtil.makeShim(10, 10));
@@ -92,8 +94,4 @@ public class MyWhirled extends FlowPanel
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
     protected static final MeServiceAsync _mesvc = (MeServiceAsync)
         ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
-
-    /** Banners explaining how to become an affiliate */
-    protected final String[] BANNERS = { "me_banner_games.jpg", "me_banner_invite.jpg",
-        "me_banner_rooms.jpg" };
 }

@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -100,5 +101,23 @@ public interface AdminService extends RemoteService
      * Gets the current info for all connected bureau launchers.
      */
     BureauLauncherInfo[] getBureauLauncherInfo ()
+        throws ServiceException;
+
+    /**
+     * Loads all active promotions.
+     */
+    List<Promotion> loadPromotions ()
+        throws ServiceException;
+
+    /**
+     * Adds a new promotion.
+     */
+    void addPromotion (Promotion promo)
+        throws ServiceException;
+
+    /**
+     * Deletes the specified promotion.
+     */
+    void deletePromotion (String promoId)
         throws ServiceException;
 }

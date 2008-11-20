@@ -11,6 +11,7 @@ import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
+import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.WebCreds;
 
 /**
@@ -85,4 +86,19 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#getBureauLauncherInfo}.
      */
     void getBureauLauncherInfo (AsyncCallback<BureauLauncherInfo[]> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#loadPromotions}.
+     */
+    void loadPromotions (AsyncCallback<List<Promotion>> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#addPromotion}.
+     */
+    void addPromotion (Promotion promo, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#deletePromotion}.
+     */
+    void deletePromotion (String promoId, AsyncCallback<Void> callback);
 }

@@ -24,7 +24,10 @@ import com.threerings.msoy.server.persist.AffiliateMapRecord;
 import com.threerings.msoy.server.persist.AffiliateMapRepository;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.PromotionRecord;
+import com.threerings.msoy.server.persist.PromotionRepository;
 
+import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -312,7 +315,7 @@ public class AdminServlet extends MsoyServiceServlet
             }
         });
     }
-    
+
     // from interface AdminService
     public BureauLauncherInfo[] getBureauLauncherInfo ()
         throws ServiceException
@@ -325,22 +328,48 @@ public class AdminServlet extends MsoyServiceServlet
                 }
             });
     }
-    
+
+    // from interface AdminService
+    public List<Promotion> loadPromotions ()
+        throws ServiceException
+    {
+        requireSupportUser();
+        return Lists.newArrayList(
+            Lists.transform(_promoRepo.loadPromotions(), PromotionRecord.TO_PROMOTION));
+    }
+
+    // from interface AdminService
+    public void addPromotion (Promotion promo)
+        throws ServiceException
+    {
+        requireSupportUser();
+        _promoRepo.addPromotion(promo);
+    }
+
+    // from interface AdminService
+    public void deletePromotion (String promoId)
+        throws ServiceException
+    {
+        requireSupportUser();
+        _promoRepo.deletePromotion(promoId);
+    }
+
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
     {
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
         final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
         _mailRepo.startConversation(recipientId, senderId, subject, body, null);
     }
-    
+
     // our dependencies
     @Inject protected ServerMessages _serverMsgs;
-    @Inject protected MailRepository _mailRepo;
-    @Inject protected ABTestRepository _testRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MailRepository _mailRepo;
+    @Inject protected ABTestRepository _testRepo;
     @Inject protected AffiliateMapRepository _affMapRepo;
+    @Inject protected PromotionRepository _promoRepo;
     @Inject protected BureauManager _bureauMgr;
     @Inject protected RootDObjectManager _omgr;
 }

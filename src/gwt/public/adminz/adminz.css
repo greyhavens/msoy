@@ -223,3 +223,17 @@
   width: 17px;
   height: 17px;
 }
+
+/** PromotionEditor */
+.promoEditor {
+  border-top: 15px white solid;
+}
+
+.promoEditor .Promos .Header {
+  font-weight: bold;
+  border-bottom: 1px solid;
+}
+
+.promoEditor .Promos {
+  font-size: 12px;
+}

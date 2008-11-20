@@ -21,6 +21,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.RandomUtil;
 
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -38,18 +39,20 @@ import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
+import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.PassportData;
-import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
-import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.person.util.FeedMessageType.Category;
+import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.persist.PromotionRecord;
+import com.threerings.msoy.server.persist.PromotionRepository;
 
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -71,12 +74,20 @@ public class MeServlet extends MsoyServiceServlet
         MyWhirledData data = new MyWhirledData();
         data.whirledPopulation = _memberMan.getPPSnapshot().getPopulationCount();
 
+        // randomly select a promotion
+        List<PromotionRecord> promos = _promoRepo.loadPromotions();
+        if (promos.size() > 0) {
+            data.promo = RandomUtil.pickRandom(promos).toPromotion();
+        }
+
+        // load information on their friends
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
         data.friendCount = friendIds.size();
         if (data.friendCount > 0) {
             data.friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
         }
 
+        // load their feed
         data.feed = loadFeedCategories(FeedCategory.DEFAULT_COUNT, null);
 
         // load the greeters
@@ -304,6 +315,7 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected ServletLogic _servletLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected FeedRepository _feedRepo;
+    @Inject protected PromotionRepository _promoRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected BadgeLogic _badgeLogic;
