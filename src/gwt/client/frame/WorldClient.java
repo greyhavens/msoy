@@ -56,22 +56,7 @@ public class WorldClient extends Widget
 
         // create our client if necessary
         if (_curFlashArgs == null) {
-            clientWillClose(); // clear our Java client if we have one
-            _curFlashArgs = flashArgs; // note our new flash args before we tack on server info
-            if (flashArgs.indexOf("&host") == -1) {
-                flashArgs += "&host=" + _defaultHost;
-            }
-            if (flashArgs.indexOf("&port") == -1) {
-                flashArgs += "&port=" + _defaultPort;
-            }
-            String partner = CShell.getPartner();
-            if (partner != null) {
-                flashArgs += "&partner=" + partner;
-            }
-            if (CShell.getAuthToken() != null) {
-                flashArgs += "&token=" + CShell.getAuthToken();
-            }
-            FlashClients.embedWorldClient(pprov.get(), flashArgs);
+            embedClient(flashArgs, pprov.get());
 
         } else {
             // note our new current flash args
@@ -97,8 +82,9 @@ public class WorldClient extends Widget
 
     public static void displayJava (Widget client, PanelProvider pprov)
     {
-        // clear out any flash page args
+        // clear out any flash page stuff
         _curFlashArgs = null;
+        _curFlashEmbedParent = null;
 
         if (_jclient != client) {
             clientWillClose(); // clear out our flash client if we have one
@@ -120,6 +106,7 @@ public class WorldClient extends Widget
                 clientUnload(); // TODO: make this work for jclient
             }
             _curFlashArgs = null;
+            _curFlashEmbedParent = null;
             _jclient = null;
         }
     }
@@ -127,11 +114,41 @@ public class WorldClient extends Widget
     public static void didLogon (WebCreds creds)
     {
         if (_curFlashArgs != null) {
+            String args = _curFlashArgs;
+            Panel parent = _curFlashEmbedParent;
             clientLogon(creds.getMemberId(), creds.token);
+            embedClient(args, parent);
         }
         // TODO: let jclient know about logon?
     }
 
+    protected static void embedClient (String flashArgs, Panel parent)
+    {
+        clientWillClose(); // clear our Java client if we have one
+
+        _curFlashEmbedParent = parent;
+        _curFlashArgs = flashArgs;
+
+        // augment the arguments with things that are only relevant to the initial embed,
+        // i.e. not logically part of the location of the client
+        if (flashArgs.indexOf("&host") == -1) {
+            flashArgs += "&host=" + _defaultHost;
+        }
+        if (flashArgs.indexOf("&port") == -1) {
+            flashArgs += "&port=" + _defaultPort;
+        }
+        String partner = CShell.getPartner();
+        if (partner != null) {
+            flashArgs += "&partner=" + partner;
+        }
+        if (CShell.getAuthToken() != null) {
+            flashArgs += "&token=" + CShell.getAuthToken();
+        }
+
+        parent.clear();
+        FlashClients.embedWorldClient(parent, flashArgs);
+    }
+    
     /**
      * Tells the World client to go to a particular location.
      */
@@ -178,6 +195,7 @@ public class WorldClient extends Widget
     }-*/;
 
     protected static String _curFlashArgs;
+    protected static Panel  _curFlashEmbedParent;
     protected static Widget _jclient;
 
     /** Our default world server host and port. Configured the first time Flash is used. */
