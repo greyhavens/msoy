@@ -28,6 +28,7 @@ import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -440,7 +441,10 @@ public class GroupServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         final int memberId = mrec.memberId;
 
+        // Include Whirled Announcements in "my groups"
         List<GroupRecord> groupRecords = _groupRepo.getFullMemberships(memberId);
+        groupRecords.add(_groupRepo.loadGroup(ServerConfig.getAnnounceGroupId()));
+
         List<MyGroupCard> myGroupCards = Lists.newArrayList();
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
