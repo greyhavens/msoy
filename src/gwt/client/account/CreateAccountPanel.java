@@ -51,6 +51,7 @@ import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.DateUtil;
 import client.util.Link;
+import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -177,6 +178,12 @@ public class CreateAccountPanel extends FlowPanel
                           ConversionTrackingUtil.createBeacon(EntryVectorCookie.get()));
 
                 
+                // temporary - trying to debug Google Analytics discrepancy
+                if (_pageViewRecorded) {
+                    _membersvc.trackClientAction(CShell.visitor, "registration page - joined", null, 
+                                                 new NoopAsyncCallback());
+                }
+
                 new FinishRegistration(result);
 
                 return false; // don't reenable the create button
@@ -192,6 +199,15 @@ public class CreateAccountPanel extends FlowPanel
                 setStatus(CShell.serverError(cause));
             }
         };
+
+        // temporary - trying to debug Google Analytics discrepancy
+        _membersvc.trackClientAction(CShell.visitor, "registration page - viewed", null,
+            new AsyncCallback<Void>() {
+                public void onFailure (Throwable caught) {}
+                public void onSuccess (Void result) {
+                    _pageViewRecorded = true;
+                }
+            });
     }
 
     @Override // from Widget
@@ -384,6 +400,7 @@ public class CreateAccountPanel extends FlowPanel
     protected DateFields _dateOfBirth;
     protected CheckBox _tosBox;
     protected SimplePanel _status;
+    protected boolean _pageViewRecorded;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
