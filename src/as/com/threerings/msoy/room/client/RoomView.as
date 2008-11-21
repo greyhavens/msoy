@@ -265,6 +265,7 @@ public class RoomView extends Sprite
             // trigger a portal traversal
             portalTraversed(sprite.getLocation(), false);
             // and remove the sprite
+            dispatchEntityLeft(sprite.getItemIdent());
             removeSprite(sprite);
         }
     }
@@ -535,7 +536,7 @@ public class RoomView extends Sprite
         if (sprite != null) {
             sprite.gotControl();
         } else {
-            log.info("Received got control for unknown sprite [item=" + ident + "].");
+            log.info("Received got control for unknown sprite", "item", ident);
         }
     }
 
@@ -549,8 +550,7 @@ public class RoomView extends Sprite
         if (sprite != null) {
             sprite.messageReceived(name, ObjectMarshaller.decode(arg), isAction);
         } else {
-            log.info("Received sprite message for unknown sprite [item=" + item +
-                     ", name=" + name + "].");
+            log.info("Received sprite message for unknown sprite", "item", item, "name", name);
         }
     }
 
@@ -570,7 +570,7 @@ public class RoomView extends Sprite
             if (sprite is MsoySprite) {
                 MsoySprite(sprite).signalReceived(name, ObjectMarshaller.decode(data));
             } else {
-                log.warning("Erk, non-sprite entity [key=" + key + ", entity=" + sprite + "]");
+                log.warning("Erk, non-sprite entity", "key", key, "entity", sprite);
             }
         });
     }
@@ -584,33 +584,38 @@ public class RoomView extends Sprite
         if (sprite != null) {
             sprite.memoryChanged(key, ObjectMarshaller.decode(data));
         } else {
-            log.info("Received memory update for unknown sprite [item=" + ident +
-                ", key=" + key + "].");
+            log.info("Received memory update for unknown sprite", "item", ident, "key", key);
         }
     }
 
     public function dispatchEntityEntered (item :ItemIdent) :void
     {
+        if (item == null) {
+            return;
+        }
         var entityId :String = item.toString();
 
         _entities.forEach(function (mapKey :Object, sprite :Object) :void {
             if (sprite is MsoySprite) {
                 MsoySprite(sprite).entityEntered(entityId);
             } else {
-                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
+                log.warning("Erk, non-sprite entity", "key", mapKey, "entity", sprite);
             }
         });
     }
 
     public function dispatchEntityLeft (item :ItemIdent) :void
     {
+        if (item == null) {
+            return;
+        }
         var entityId :String = item.toString();
 
         _entities.forEach(function (mapKey :Object, sprite :Object) :void {
             if (sprite is MsoySprite) {
                 MsoySprite(sprite).entityLeft(entityId);
             } else {
-                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
+                log.warning("Erk, non-sprite entity", "key", mapKey, "entity", sprite);
             }
         });
     }
@@ -623,7 +628,7 @@ public class RoomView extends Sprite
             if (sprite is MsoySprite) {
                 MsoySprite(sprite).entityMoved(entityId, destination);
             } else {
-                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
+                log.warning("Erk, non-sprite entity", "key", mapKey, "entity", sprite);
             }
         });
     }
