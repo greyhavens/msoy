@@ -82,7 +82,7 @@ public class FeaturedGroupPanel extends FlowPanel
         FocusPanel focus = new FocusPanel();
         MsoyUI.addTrackingListener(focus, "landingGroupClicked", group.name.getGroupId() + "");
         SceneUtil.addSceneView(group.homeSceneId, group.homeSnapshot, focus);
-        _flashPanel.add(focus);
+        _flashPanel.setWidget(focus);
 
         // display the group's name and info
         _infoPanel.clear();
