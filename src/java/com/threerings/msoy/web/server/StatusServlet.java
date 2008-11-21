@@ -48,6 +48,9 @@ public class StatusServlet extends HttpServlet
     /** A report on our cache performance. */
     public static final String CACHE_TYPE = "cache";
 
+    /** A report on Depot performance. */
+    public static final String DEPOT_TYPE = "depot";
+
     @Override // from HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
@@ -179,6 +182,10 @@ public class StatusServlet extends HttpServlet
             collectReportInfo(info, client, nodeobj, CACHE_TYPE);
             break;
 
+        case DEPOT:
+            collectReportInfo(info, client, nodeobj, DEPOT_TYPE);
+            break;
+
         case NONE:
             // leave details as null in this case
             break;
@@ -223,7 +230,7 @@ public class StatusServlet extends HttpServlet
         }
     }
 
-    protected static enum Details { NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, CACHE };
+    protected static enum Details { NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, CACHE, DEPOT };
 
     protected static class ServerInfo
     {
