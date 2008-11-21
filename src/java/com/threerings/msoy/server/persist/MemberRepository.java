@@ -1222,15 +1222,6 @@ public class MemberRepository extends DepotRepository
             OrderBy.ascending(MemberExperienceRecord.DATE_OCCURRED_C));
     }
 
-    /**
-     * Tests if the supplied member id is flagged as a greeter.
-     */
-    public boolean isGreeter (int memberId)
-    {
-        return findAllKeys(MemberRecord.class, false, Collections.singletonList(new Where(new And(
-            new Equals(MemberRecord.MEMBER_ID_C, memberId), GREETER_FLAG_IS_SET)))).size() > 0;
-    }
-
     protected String randomInviteId ()
     {
         String rand = "";

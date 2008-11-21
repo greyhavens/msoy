@@ -58,6 +58,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocal;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -259,7 +260,11 @@ public class MemberManager
         _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
             boolean autoFriended;
             @Override public void invokePersistent () throws Exception {
-                if (_memberRepo.isGreeter(friendId)) {
+                MemberRecord frec = _memberRepo.loadMember(friendId);
+                if (frec == null) {
+                    log.warning("Requested to friend non-existent member", "who", user.who(),
+                                "friendId", friendId);
+                } else if (frec.isGreeter()) {
                     _memberLogic.establishFriendship(user.getMemberId(), friendId);
                     autoFriended = true;
                 } else {

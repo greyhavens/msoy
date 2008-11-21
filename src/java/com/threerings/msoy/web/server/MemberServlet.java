@@ -116,7 +116,8 @@ public class MemberServlet extends MsoyServiceServlet
     public boolean isAutomaticFriender (int friendId)
         throws ServiceException
     {
-        return _memberRepo.isGreeter(friendId);
+        MemberRecord frec = _memberRepo.loadMember(friendId);
+        return (frec != null) && frec.isGreeter();
     }
 
     // from WebMemberService
