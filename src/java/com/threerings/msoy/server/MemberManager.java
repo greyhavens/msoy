@@ -49,6 +49,7 @@ import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -124,7 +125,8 @@ public class MemberManager
         // calculated levels
         _levelForFlow = new int[256];
         for (int ii = 0; ii < BEGINNING_FLOW_LEVELS.length; ii++) {
-            _levelForFlow[ii] = BEGINNING_FLOW_LEVELS[ii];
+            // augment the value so the account creation does not cause level 3 to happen
+            _levelForFlow[ii] = BEGINNING_FLOW_LEVELS[ii] + CoinAwards.CREATED_ACCOUNT;
         }
         calculateLevelsForFlow(BEGINNING_FLOW_LEVELS.length);
     }
