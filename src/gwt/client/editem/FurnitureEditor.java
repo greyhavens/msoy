@@ -35,16 +35,7 @@ public class FurnitureEditor extends ItemEditor
     @Override // from ItemEditor
     protected void addFurniUploader ()
     {
-        addSpacer();
-        addRow(_emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
-            public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!isValidPrimaryMedia(desc)) {
-                    return _emsgs.errFurniNotFlash();
-                }
-                _item.setFurniMedia(desc);
-                return null;
-            }
-        }), _emsgs.editorFurniTitle());
+        super.addFurniUploader();
 
         RowPanel hsrow = new RowPanel();
         hsrow.add(_hotSpotX = new TextBox());

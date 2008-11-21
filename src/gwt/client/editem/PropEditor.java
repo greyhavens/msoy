@@ -27,20 +27,23 @@ public class PropEditor extends SubItemEditor
     }
 
     @Override // from ItemEditor
-    protected void addFurniUploader ()
+    protected String getFurniTabText ()
     {
-        // props are special; their furni media are their primary media
-        addSpacer();
-        addRow(_emsgs.propLabel(), createFurniUploader(true, new MediaUpdater() {
-            public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!desc.hasFlashVisual()) {
-                    return _emsgs.errPropNotFlash();
-                }
-                _item.setFurniMedia(desc);
-                return null;
-            }
-        }), _emsgs.propTip());
+        return _emsgs.propLabel();
     }
+
+    @Override // from ItemEditor
+    protected String getFurniTitleText ()
+    {
+        return _emsgs.propTip();
+    }
+
+    @Override // from ItemEditor
+    protected String invalidPrimaryMediaMessage ()
+    {
+        return _emsgs.errPropNotFlash();
+    }
+
 
     protected Prop _prop;
 

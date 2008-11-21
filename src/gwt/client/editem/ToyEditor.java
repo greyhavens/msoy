@@ -32,19 +32,9 @@ public class ToyEditor extends ItemEditor
     }
 
     @Override // from ItemEditor
-    protected void addFurniUploader ()
+    protected boolean generateFurniThumbnail ()
     {
-        // do not generate a thumbnail.
-        addSpacer();
-        addRow(getFurniTabText(), createFurniUploader(false, new MediaUpdater() {
-            public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!isValidPrimaryMedia(desc)) {
-                    return invalidPrimaryMediaMessage();
-                }
-                _item.setFurniMedia(desc);
-                return null;
-            }
-        }), getFurniTitleText());
+        return false;
     }
 
     protected Toy _toy;

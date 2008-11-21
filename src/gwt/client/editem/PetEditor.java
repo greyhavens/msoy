@@ -27,19 +27,27 @@ public class PetEditor extends ItemEditor
     }
 
     @Override // from ItemEditor
-    protected void addFurniUploader ()
+    protected String getFurniTabText ()
     {
-        // pets are special; their furni media are their primary media
-        addSpacer();
-        addRow(_emsgs.petLabel(), createFurniUploader(false, new MediaUpdater() {
-            public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!isValidPrimaryMedia(desc)) {
-                    return _emsgs.errPetNotFlash();
-                }
-                _item.setFurniMedia(desc);
-                return null;
-            }
-        }), _emsgs.petTip());
+        return _emsgs.petLabel();
+    }
+
+    @Override // from ItemEditor
+    protected boolean generateFurniThumbnail ()
+    {
+        return false;
+    }
+
+    @Override // from ItemEditor
+    protected String getFurniTitleText ()
+    {
+        return _emsgs.petTip();
+    }
+
+    @Override // from ItemEditor
+    protected String invalidPrimaryMediaMessage ()
+    {
+        return _emsgs.errPetNotFlash();
     }
 
     protected Pet _pet;

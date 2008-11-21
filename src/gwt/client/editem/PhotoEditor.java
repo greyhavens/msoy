@@ -50,6 +50,12 @@ public class PhotoEditor extends BulkMediaEditor
         return _emsgs.editorPhotoFurniTab();
     }
 
+    @Override // from ItemEditor
+    protected String getFurniType ()
+    {
+        return TYPE_IMAGE;
+    }
+
     @Override// from ItemEditor
     protected String getFurniTitleText ()
     {

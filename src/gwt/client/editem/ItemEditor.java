@@ -268,20 +268,31 @@ public abstract class ItemEditor extends FlowPanel
     protected void addFurniUploader ()
     {
         addSpacer();
-        addRow(getFurniTabText(), createFurniUploader(true, new MediaUpdater() {
-            public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!isValidPrimaryMedia(desc)) {
-                    return invalidPrimaryMediaMessage();
+        addRow(getFurniTabText(), createFurniUploader(getFurniType(), generateFurniThumbnail(),
+            new MediaUpdater() {
+                public String updateMedia (String name, MediaDesc desc, int width, int height) {
+                    if (!isValidPrimaryMedia(desc)) {
+                        return invalidPrimaryMediaMessage();
+                    }
+                    _item.setFurniMedia(desc);
+                    return null;
                 }
-                _item.setFurniMedia(desc);
-                return null;
-            }
-        }), getFurniTitleText());
+            }), getFurniTitleText());
     }
 
     protected String getFurniTabText ()
     {
         return _emsgs.editorFurniTab();
+    }
+
+    protected String getFurniType ()
+    {
+        return TYPE_FLASH;
+    }
+
+    protected boolean generateFurniThumbnail ()
+    {
+        return true;
     }
 
     protected String getFurniTitleText ()
@@ -315,6 +326,10 @@ public abstract class ItemEditor extends FlowPanel
         } else if (_type == Item.FURNITURE || _type == Item.DECOR) {
             // these can be swfs, images, or remixable
             return desc.hasFlashVisual() || desc.isRemixable();
+
+        } else if (_type == Item.PHOTO) {
+            // images must be images... wow
+            return desc.isImage();
 
         } else {
             // other types are not yet remixable
@@ -432,8 +447,8 @@ public abstract class ItemEditor extends FlowPanel
      * piece of media.
      * @param isPhoto if True, a thubmnail and 320x200 furni will also be generated and returned
      */
-    protected ItemMediaUploader createMainUploader (String type, boolean isPhoto,
-        MediaUpdater updater)
+    protected ItemMediaUploader createMainUploader (
+        String type, boolean isPhoto, MediaUpdater updater)
     {
         String mediaIds = Item.MAIN_MEDIA;
         mediaIds += isPhoto ? ";" + Item.THUMB_MEDIA + ";" + Item.FURNI_MEDIA : "";
@@ -453,11 +468,12 @@ public abstract class ItemEditor extends FlowPanel
      * This should be called if item editors want to create a custom furni uploader.
      * @param genThumb if True, a thubmnail will also be generated and returned for images
      */
-    protected ItemMediaUploader createFurniUploader (boolean genThumb, MediaUpdater updater)
+    protected ItemMediaUploader createFurniUploader (
+        String type, boolean genThumb, MediaUpdater updater)
     {
         String mediaIds = Item.FURNI_MEDIA;
         mediaIds += genThumb ? ";" + Item.THUMB_MEDIA : "";
-        return createUploader(mediaIds, TYPE_FLASH, ItemMediaUploader.MODE_NORMAL, updater);
+        return createUploader(mediaIds, type, ItemMediaUploader.MODE_NORMAL, updater);
     }
 
     /**
