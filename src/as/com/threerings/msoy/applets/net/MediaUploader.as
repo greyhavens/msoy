@@ -175,7 +175,7 @@ public class MediaUploader extends TitleWindow
                 continue;
             }
 
-            var bits :Array = data.split(" ");
+            var bits :Array = section.split(" ");
             result[bits[0]] = {
                 hash: bits[1],
                 mimeType: parseInt(bits[2]),
