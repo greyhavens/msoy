@@ -8,8 +8,12 @@ import flash.display.DisplayObject;
 import flash.geom.ColorTransform;
 
 import mx.core.UIComponent;
+import mx.controls.Image;
 
 import mx.states.State;
+
+import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.util.MultiLoader;
 
 /** The image used to be the buttons skin. Is automatically lightened/darkened/offset. */
 [Style(name="image")]
@@ -59,22 +63,36 @@ public class ImageButtonSkin extends UIComponent
      */
     protected function readImageFromStyle () :void
     {
-        if (_image != null) {
-            removeChild(_image);
-            _image = null;
-        }
-
         // the "image" style may be a class or a DisplayObject
         var rsrc :* = getStyle("image");
+
+        if (rsrc is String) {
+            // If it's a string, treat it like an URL
+            MultiLoader.getContents(DeploymentConfig.serverURL + (rsrc as String), setImage);
+            return;
+        }
         if (rsrc is Class) {
             rsrc = new (Class(rsrc))();
         }
-        if (rsrc == null) {
-            return;
+
+        setImage(rsrc as DisplayObject);
+    }
+
+    protected function setImage (image :DisplayObject) :void
+    {
+        if (_image != null) {
+            removeChild(_image);
+        }
+        _image = image;
+        if (_image != null) {
+            addChild(_image);
+            parent.width = _image.width;
+            parent.height = _image.height;
+        } else {
+            parent.width = 0;
+            parent.height = 0;
         }
 
-        _image = DisplayObject(rsrc);
-        addChild(_image);
         invalidateSize();
         updateDisplayedState();
     }
