@@ -338,6 +338,7 @@
       <fileset dir="${deploy.dir}/lib">
         <include name="gwt-widgets.jar"/>
         <include name="*-gwt-0.0-SNAPSHOT.jar"/>
+        <include name="threerings-0.0-SNAPSHOT.jar"/>
       </fileset>
       <fileset dir="lib/gwt" includes="*.jar"/>
     </path>
@@ -359,7 +360,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="gwt/${page}/${page}.html"/>
+        <arg value="gwt/0/${page}/${page}.html"/>
       </java>
     </then><else>
       <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
@@ -369,7 +370,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="gwt/${page}/"/>
+        <arg value="gwt/0/${page}/"/>
       </java>
     </else></if>
 
