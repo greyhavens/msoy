@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="MediaContainer,com.threerings.flash.MediaContainer,SIZE_KNOWN,_h,_initialized,_isImage,_media,_url,_w,log,addListeners,configureMask,containerDimensionsUpdated,contentDimensionsUpdated,didShowNewMedia,getContentHeight,getContentWidth,getContext,getMaskRectangle,getMaxContentHeight,getMaxContentWidth,getMedia,getMediaScaleX,getMediaScaleY,getSecurityDomain,handleComplete,handleError,handleInit,handleProgress,handleShutdownOnRemove,hitTestPoint,initLoader,isContentInitialized,isImage,removeListeners,setMedia,setMediaBytes,setMediaClass,setMediaObject,setShutdownOnRemove,setupBrokenImage,setupSwfOrImage,setupVideo,showNewMedia,shutdown,startedLoading,stoppedLoading,toString,updateContentDimensions,updateLoadingProgress,willShowNewMedia" name="keywords">
+<meta content="MediaContainer,com.threerings.flash.MediaContainer,SIZE_KNOWN,_h,_initialized,_isImage,_media,_url,_w,log,addListeners,configureMask,containerDimensionsUpdated,contentDimensionsUpdated,createVideoUI,didShowNewMedia,getContentHeight,getContentWidth,getContext,getMaskRectangle,getMaxContentHeight,getMaxContentWidth,getMedia,getMediaScaleX,getMediaScaleY,getSecurityDomain,handleComplete,handleError,handleInit,handleProgress,handleShutdownOnRemove,hitTestPoint,initLoader,isContentInitialized,isImage,removeListeners,setMedia,setMediaBytes,setMediaClass,setMediaObject,setShutdownOnRemove,setupBrokenImage,setupSwfOrImage,setupVideo,showNewMedia,shutdown,shutdownMedia,startedLoading,stoppedLoading,toString,updateContentDimensions,updateLoadingProgress,willShowNewMedia" name="keywords">
 <title>com.threerings.flash.MediaContainer</title>
 </head>
 <body>
@@ -268,6 +268,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#createVideoUI()">createVideoUI</a>(player:<a href="media/VideoPlayer.html">VideoPlayer</a>):DisplayObject</div>
+<div class="summaryTableDescription">
+     Create the actual display for the VideoPlayer.</div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#didShowNewMedia()">didShowNewMedia</a>():void</div>
 <div class="summaryTableDescription">
      A place where subclasses can configure things after we've setup new media.</div>
@@ -394,6 +402,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#showNewMedia()">showNewMedia</a>(url:String):void</div>
 <div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MediaContainer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#shutdownMedia()">shutdownMedia</a>():void</div>
+<div class="summaryTableDescription">
+     Do whatever is necessary to shut down the media.</div>
 </td><td class="summaryTableOwnerCol">MediaContainer</td>
 </tr>
 <tr class="">
@@ -648,6 +664,29 @@ showHideInherited();
      Called when we know the true size of the content. Subclasses may override and use this
      opportunity to do their thing, too.
      </p></div>
+<a name="createVideoUI()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">createVideoUI</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function createVideoUI(player:<a href="media/VideoPlayer.html">VideoPlayer</a>):DisplayObject</code><p>
+     Create the actual display for the VideoPlayer.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">player</span>:<a href="media/VideoPlayer.html">VideoPlayer</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>DisplayObject</code></td>
+</tr>
+</table>
+</div>
 <a name="didShowNewMedia()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1207,6 +1246,16 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="shutdownMedia()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">shutdownMedia</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function shutdownMedia():void</code><p>
+     Do whatever is necessary to shut down the media.
+     </p></div>
 <a name="startedLoading()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

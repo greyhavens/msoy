@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="EntityControl,com.whirled.EntityControl,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,canEditRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerPropertyProvider,requestControl,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPopup,triggerAction" name="keywords">
+<meta content="EntityControl,com.whirled.EntityControl,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_MOVE_SPEED,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,canEditRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerPropertyProvider,requestControl,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPopup,triggerAction" name="keywords">
 <title>com.whirled.EntityControl</title>
 </head>
 <body>
@@ -340,6 +340,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#event:chatReceived">chatReceived</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched to entities when they overhear chatter in the room.</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:controlAcquired">controlAcquired</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when this instance gains control.</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#event:entityEntered">entityEntered</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
@@ -364,14 +380,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#event:gotControl">gotControl</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when this instance gains control.</td><td class="summaryTableOwnerCol">EntityControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="#event:memoryChanged">memoryChanged</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
@@ -388,18 +396,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#event:roomPropertyChanged">roomPropertyChanged</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the instance in control updates a room property.</td><td class="summaryTableOwnerCol">EntityControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="#event:signalReceived">signalReceived</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when any instance sends a message to all instances of all entities.</td><td class="summaryTableOwnerCol">EntityControl</td>
+ Dispatched when any entity sends a message to all other entities.</td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -448,6 +448,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PROP_MEMBER_ID">PROP_MEMBER_ID</a> : String = "std:member_id"<div class="summaryTableDescription">[static] The unique Whirled player ID of the owner on an avatar (int).</div>
+</td><td class="summaryTableOwnerCol">EntityControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PROP_MOVE_SPEED">PROP_MOVE_SPEED</a> : String = "std:move_speed"<div class="summaryTableDescription">[static] The current movement speed of an actor (Number).</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -618,8 +622,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getEntityProperty(key:String, entityId:String = null):Object</code><p>
-     Looks up and returns the specified property for the specified entity. Returns null if the entity
-     does not exist or the entity has no such property.
+     Looks up and returns the specified property for the specified entity.
+     Returns null if the entity does not exist or the entity has no such property.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -863,7 +867,7 @@ showHideInherited();
      other browsers across the network). Only one client can hold the lock at any time.</p>
           <p>Note: control is <em>not</em> automatically assigned. If an entity wishes to obtain
      control, it should first call <code>requestControl</code> and it will then receive a
-     <code>GOT_CONTROL</code> event if and when control has been assigned to this client.
+     <code>CONTROL_ACQUIRED</code> event if and when control has been assigned to this client.
      There are no guarantees which of the requesting clients will receive it, or when.</p>
      <p></p>
 <span class="label">Returns</span>
@@ -1160,6 +1164,42 @@ showHideInherited();
      name: action name 
      value: action value
           </p></div>
+<a name="event:chatReceived"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">chatReceived</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/ControlEvent.html"><code>com.whirled.ControlEvent</code></a>
+<br>
+<span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#CHAT_RECEIVED"><code>com.whirled.ControlEvent.CHAT_RECEIVED</code></a>
+<br><p>
+ Dispatched to entities when they overhear chatter in the room. Only
+ the instance in control receives this event.
+ 
+ </p><p> An event type dispatched to all entities when someone chats.
+     Note that only the instance in control receives this event.
+     name: the speaker's entity ID
+     value: chat message
+          </p></div>
+<a name="event:controlAcquired"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">controlAcquired</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../whirled/ControlEvent.html"><code>com.whirled.ControlEvent</code></a>
+<br>
+<span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#CONTROL_ACQUIRED"><code>com.whirled.ControlEvent.CONTROL_ACQUIRED</code></a>
+<br><p>
+ Dispatched when this instance gains control. See the <code>hasControl</code> method.
+  </p><p> An event type dispatched when this client-side instance of the item
+     has gained "control" over the other client-side instances.
+     name: unused
+     value: unused
+          </p></div>
 <a name="event:entityEntered"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1174,6 +1214,7 @@ showHideInherited();
  Dispatched when an entity enters the room.
   </p><p>
      An event dispatched when a new entity has been added to the room.
+     Note: only the instance in control receives this event.
      name: The new entity ID
      value: unused
           </p></div>
@@ -1191,6 +1232,7 @@ showHideInherited();
  Dispatched when an entity leaves the room.
   </p><p>
      An event dispatched when an entity has been removed from the room.
+     Note: only the instance in control receives this event.
      name: The entity ID. Note that this will no longer exist in the room.
      value: unused
           </p></div>
@@ -1207,26 +1249,12 @@ showHideInherited();
 <br><p>
  Dispatched when an entity in the room (other than the listening entity) changes location.
   </p><p>
-     An event dispatched when an entity has moved around within the room.
+     An event dispatched when an actor begins and ends walking within the room.
+     Note: only the instance in control receives this event.
      name: The moving entity's ID
-     value: unused
-          </p></div>
-<a name="event:gotControl"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">gotControl</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<span class="label">Event object type: </span><a href="../whirled/ControlEvent.html"><code>com.whirled.ControlEvent</code></a>
-<br>
-<span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#GOT_CONTROL"><code>com.whirled.ControlEvent.GOT_CONTROL</code></a>
-<br><p>
- Dispatched when this instance gains control. See the <code>hasControl</code> method.
-  </p><p> An event type dispatched when this client-side instance of the item
-     has gained "control" over the other client-side instances.
-     name: unused
-     value: unused
+     value: If the actor has started moving, this is an array containing the logical location it
+       is moving to. Null when this event fires in response to the actor arriving at its
+       destination.
           </p></div>
 <a name="event:memoryChanged"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -1261,22 +1289,6 @@ showHideInherited();
      name: message name
      value: message value
           </p></div>
-<a name="event:roomPropertyChanged"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">roomPropertyChanged</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<span class="label">Event object type: </span><a href="../whirled/ControlEvent.html"><code>com.whirled.ControlEvent</code></a>
-<br>
-<span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#ROOM_PROPERTY_CHANGED"><code>com.whirled.ControlEvent.ROOM_PROPERTY_CHANGED</code></a>
-<br><p>
- Dispatched when the instance in control updates a room property.
-  </p><p> An event type dispatched when a room property has changed.
-     name: property key
-     value: property value
-          </p></div>
 <a name="event:signalReceived"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1288,9 +1300,11 @@ showHideInherited();
 <br>
 <span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#SIGNAL_RECEIVED"><code>com.whirled.ControlEvent.SIGNAL_RECEIVED</code></a>
 <br><p>
- Dispatched when any instance sends a message to all instances of all entities.
+ Dispatched when any entity sends a message to all other entities.
+ Note: this is only dispatched to the instance in control.
  
  </p><p> An event type dispatched when a signal is received.
+     Dispatched only to the instance in control.
      name: signal name
      value: signal value
           </p></div>
@@ -1356,6 +1370,14 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const PROP_MEMBER_ID:String = "std:member_id"</code><p> The unique Whirled player ID of the owner on an avatar (int).
      Querying this on non-avatars returns null. Use with getEntityProperty(). </p></div>
+<a name="PROP_MOVE_SPEED"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PROP_MOVE_SPEED</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const PROP_MOVE_SPEED:String = "std:move_speed"</code><p> The current movement speed of an actor (Number). </p></div>
 <a name="PROP_NAME"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

@@ -102,18 +102,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("MÂ
      hierarchy.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/VideoDisplayer.html#_mask">_mask</a> &mdash; Property in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/VideoDisplayer.html">VideoDisplayer</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> Our mask, also defines our boundaries for clicking.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/video/class-list.html');" href="com/threerings/flash/video/SimpleVideoDisplay.html#_mask">_mask</a> &mdash; Property in class com.threerings.flash.video.<a onclick="javascript:loadClassListFrame('com/threerings/flash/video/class-list.html');" href="com/threerings/flash/video/SimpleVideoDisplay.html">SimpleVideoDisplay</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> Our mask, also defines our boundaries for clicking.</td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/TextFieldUtil.html#MASK_FIELD_PROPS">MASK_FIELD_PROPS</a> &mdash; Constant static property in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/TextFieldUtil.html">TextFieldUtil</a></td>
 </tr>
 <tr>
@@ -163,6 +151,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("MÂ
 <tr>
 <td width="20"></td><td>
      Constructor.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/MediaPlayer.html"><i>MediaPlayer</i></a> &mdash; Interface in package <a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/package-detail.html">com.threerings.flash.media</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Implemented by media-playing backends.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/MediaPlayerCodes.html">MediaPlayerCodes</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/package-detail.html">com.threerings.flash.media</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html#event:mediaSizeKnown">mediaSizeKnown</a> &mdash; Event in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/MediaContainer.html">MediaContainer</a></td>
@@ -246,11 +247,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("MÂ
  Provides message passing functionality to a set of listener(s), e.g.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/VideoDisplayer.html#metaDataReceived()">metaDataReceived</a>(obj) &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/VideoDisplayer.html">VideoDisplayer</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/FlvVideoPlayer.html#_metadata">_metadata</a> &mdash; Property in class com.threerings.flash.media.<a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/FlvVideoPlayer.html">FlvVideoPlayer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/MediaPlayer.html#event:metadata">metadata</a> &mdash; Event in interface com.threerings.flash.media.<a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/MediaPlayer.html">MediaPlayer</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Called when metadata (if any) is found in the video stream.</td>
+ Dispatched when media metadata is available, if ever.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/MediaPlayerCodes.html#METADATA">METADATA</a> &mdash; Constant static property in class com.threerings.flash.media.<a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/MediaPlayerCodes.html">MediaPlayerCodes</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/MethodQueue.html#_methodQueue">_methodQueue</a> &mdash; Static property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/MethodQueue.html">MethodQueue</a></td>
@@ -387,6 +400,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("MÂ
 <tr>
 <td width="20"></td><td>
      Moves the mob to a new place in room coordinates.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/Mp3AudioPlayer.html">Mp3AudioPlayer</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/package-detail.html">com.threerings.flash.media</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/Mp3AudioPlayer.html#Mp3AudioPlayer()">Mp3AudioPlayer</a>(loop) &mdash; Constructor in class com.threerings.flash.media.<a onclick="javascript:loadClassListFrame('com/threerings/flash/media/class-list.html');" href="com/threerings/flash/media/Mp3AudioPlayer.html">Mp3AudioPlayer</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html#event:MsgReceived">MsgReceived</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html">GameSubControlBase</a></td>

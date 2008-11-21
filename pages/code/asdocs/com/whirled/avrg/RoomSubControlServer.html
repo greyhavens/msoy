@@ -235,7 +235,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a onclick="javascript:setInheritedVisible(true,'Event');" href="#eventSummary" class="showHideLink"><img src="../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Events</a>
 </div>
 </div>
-<table id="summaryTableEvent" class="summaryTable hideInheritedEvent" cellpadding="3" cellspacing="0">
+<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
@@ -280,6 +280,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when a player in this room takes up a new location.</td><td class="summaryTableOwnerCol"><a href="RoomSubControlBase.html">RoomSubControlBase</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:roomUnloaded">roomUnloaded</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when a room has unloaded and is no longer accessible.</td><td class="summaryTableOwnerCol">RoomSubControlServer</td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -511,6 +519,23 @@ showHideInherited();
 <a href="RoomSubControlBase.html#event:mobControlAvailable" target="">RoomSubControlBase.mobControlAvailable</a>
 </div>
 </div>
+<div class="detailSectionHeader">Event detail</div>
+<a name="event:roomUnloaded"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">roomUnloaded</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../avrg/AVRGameRoomEvent.html"><code>com.whirled.avrg.AVRGameRoomEvent</code></a>
+<br>
+<span class="label">AVRGameRoomEvent.type property = </span><a href="../avrg/AVRGameRoomEvent.html#ROOM_UNLOADED"><code>com.whirled.avrg.AVRGameRoomEvent.ROOM_UNLOADED</code></a>
+<br><p>
+ Dispatched when a room has unloaded and is no longer accessible. Note that once this has
+ happened, any further API methods called (except getRoomId()) will throw errors and no
+ further events will be dispatched on it. The purpose of this event is for local cleanup,
+ deregistration of event listeners, clearing out data structures and the like.
+  </p></div>
 <br>
 <br>
 <hr>

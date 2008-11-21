@@ -366,6 +366,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="../EntityControl.html#event:chatReceived">chatReceived</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched to entities when they overhear chatter in the room.</td><td class="summaryTableOwnerCol"><a href="../EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="../EntityControl.html#event:controlAcquired">controlAcquired</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">
+ Dispatched when this instance gains control.</td><td class="summaryTableOwnerCol"><a href="../EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedEvent">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="../EntityControl.html#event:entityEntered">entityEntered</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
@@ -386,14 +402,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
  Dispatched when an entity in the room (other than the listening entity) changes location.</td><td class="summaryTableOwnerCol"><a href="../EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="../EntityControl.html#event:gotControl">gotControl</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when this instance gains control.</td><td class="summaryTableOwnerCol"><a href="../EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -430,18 +438,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../EntityControl.html#event:roomPropertyChanged">roomPropertyChanged</a>
-</div>
-</td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the instance in control updates a room property.</td><td class="summaryTableOwnerCol"><a href="../EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedEvent">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="../EntityControl.html#event:signalReceived">signalReceived</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when any instance sends a message to all instances of all entities.</td><td class="summaryTableOwnerCol"><a href="../EntityControl.html">EntityControl</a></td>
+ Dispatched when any entity sends a message to all other entities.</td><td class="summaryTableOwnerCol"><a href="../EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -508,6 +508,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="hideInheritedConstant">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../EntityControl.html#PROP_MEMBER_ID">PROP_MEMBER_ID</a> : String = "std:member_id"<div class="summaryTableDescription">[static] The unique Whirled player ID of the owner on an avatar (int).</div>
+</td><td class="summaryTableOwnerCol"><a href="../EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedConstant">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../EntityControl.html#PROP_MOVE_SPEED">PROP_MOVE_SPEED</a> : String = "std:move_speed"<div class="summaryTableDescription">[static] The current movement speed of an actor (Number).</div>
 </td><td class="summaryTableOwnerCol"><a href="../EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedConstant">

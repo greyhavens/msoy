@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Dynamic,com.whirled.contrib.platformer.piece.Dynamic,DEAD,ENEMY,GLOBAL,PLAYER,U_POS,_inState,dx,dy,id,inter,sprite,updateState,x,y,equals,fromBytes,getBounds,hashCode,shouldSpawn,toBytes,xmlInstance" name="keywords">
+<meta content="Dynamic,com.whirled.contrib.platformer.piece.Dynamic,DEAD,DYN_COUNT,ENEMY,GLOBAL,PLAYER,SPAWN,U_INTER,U_POS,U_VEL,_dx,_dy,_inState,_inter,id,owner,sprite,updateState,x,y,dx,dy,inter,amOwner,equals,fromBytes,getBounds,hashCode,isAlive,shouldSpawn,toBytes,xmlInstance" name="keywords">
 <title>com.whirled.contrib.platformer.piece.Dynamic</title>
 </head>
 <body>
@@ -58,11 +58,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#dx">dx</a> : Number = 0<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#dx">dx</a> : Number<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#dy">dy</a> : Number = 0<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#dy">dy</a> : Number<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
 <tr class="">
@@ -71,6 +71,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#inter">inter</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#owner">owner</a> : int<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
 <tr class="">
@@ -99,7 +103,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dx">_dx</a> : Number = 0<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dy">_dy</a> : Number = 0<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_inState">_inState</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_inter">_inter</a> : int<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
 </table>
@@ -115,6 +131,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#Dynamic()">Dynamic</a>(insxml:XML = null)</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#amOwner()">amOwner</a>():Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
@@ -144,6 +167,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#hashCode()">hashCode</a>():int</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isAlive()">isAlive</a>():Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
@@ -182,6 +212,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DYN_COUNT">DYN_COUNT</a> : int = 2<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ENEMY">ENEMY</a> : int = 2<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
@@ -194,7 +228,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SPAWN">SPAWN</a> : int = 4<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#U_INTER">U_INTER</a> : int<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#U_POS">U_POS</a> : int<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#U_VEL">U_VEL</a> : int<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
 </table>
@@ -206,14 +252,37 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="dx"></a>
+<a name="_dx"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">dx</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_dx</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public var dx:Number = 0</code>
+<code>protected var _dx:Number = 0</code>
+</div>
+<a name="dx"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dx</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>dx:Number</code>&nbsp;&nbsp;[read-write]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get dx():Number</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set dx(value:Number):void</code>
+<br>
+</div>
+<a name="_dy"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_dy</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _dy:Number = 0</code>
 </div>
 <a name="dy"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -222,7 +291,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var dy:Number = 0</code>
+<code>dy:Number</code>&nbsp;&nbsp;[read-write]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get dy():Number</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set dy(value:Number):void</code>
+<br>
 </div>
 <a name="id"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -242,6 +316,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _inState:int</code>
 </div>
+<a name="_inter"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_inter</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _inter:int</code>
+</div>
 <a name="inter"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -249,7 +332,21 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var inter:int</code>
+<code>inter:int</code>&nbsp;&nbsp;[read-write]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get inter():int</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set inter(value:int):void</code>
+<br>
+</div>
+<a name="owner"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">owner</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var owner:int</code>
 </div>
 <a name="sprite"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -305,10 +402,26 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="amOwner()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">amOwner</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function amOwner():Boolean</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
 <a name="equals()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">equals</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">equals</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -369,6 +482,22 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="isAlive()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isAlive</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isAlive():Boolean</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
@@ -436,6 +565,15 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const DEAD:int = 3</code>
 </div>
+<a name="DYN_COUNT"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">DYN_COUNT</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const DYN_COUNT:int = 2</code>
+</div>
 <a name="ENEMY"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -463,6 +601,24 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const PLAYER:int = 1</code>
 </div>
+<a name="SPAWN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SPAWN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SPAWN:int = 4</code>
+</div>
+<a name="U_INTER"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">U_INTER</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const U_INTER:int</code>
+</div>
 <a name="U_POS"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -471,6 +627,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const U_POS:int</code>
+</div>
+<a name="U_VEL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">U_VEL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const U_VEL:int</code>
 </div>
 <br>
 <br>
