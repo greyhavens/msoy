@@ -72,6 +72,12 @@ public class VideoEditor extends BulkMediaEditor
         }), _emsgs.videoTip());
     }
 
+    @Override // from ItemEditor
+    protected void addFurniUploader ()
+    {
+        // suppress
+    }
+
     @Override protected ItemMediaUploader createUploaderWidget (
         String mediaIds, String type, int mode, MediaUpdater updater)
     {

@@ -43,6 +43,12 @@ public class AudioEditor extends BulkMediaEditor
         }), _emsgs.audioTip());
     }
 
+    @Override // from ItemEditor
+    protected void addFurniUploader ()
+    {
+        // suppress
+    }
+
     protected Audio _audio;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
