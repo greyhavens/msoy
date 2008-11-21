@@ -155,8 +155,14 @@ public class FrameEntryPoint
                 args.setToken(token.substring(dashidx+1));
             }
         } catch (Exception e) {
-            page = Pages.WORLD; // fall back to world-places on bogus URLs
-            args.setToken("places");
+            // on bogus or missing URLs, go to landing page for guests or world-places for members
+            if (CShell.isGuest()) {
+                page = Pages.LANDING;
+                args.setToken("");
+            } else {
+                page = Pages.WORLD;
+                args.setToken("places");
+            }
         }
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
