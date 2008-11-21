@@ -230,7 +230,7 @@ public abstract class TagRepository extends DepotRepository
     {
         final String tagTable = _ctx.getMarshaller(getTagClass()).getTableName();
         int rows = _ctx.invoke(new Modifier() {
-            public Integer invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+            protected int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
                 PreparedStatement stmt = null;
                 try {
                     stmt = conn.prepareStatement(
