@@ -6,7 +6,7 @@ package client.me;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.threerings.gwt.ui.FloatPanel;
 
@@ -44,10 +44,12 @@ public class ContestsPanel extends FlowPanel
             // center is name, text, status
             FlowPanel contestInfo = MsoyUI.createFlowPanel("ContestInfo");
             contest.add(contestInfo);
-            Hyperlink contestName = new Hyperlink(_dmsgs.xlate("contestsTitle_" + id),
-                _dmsgs.xlate(("contestsLink_" + id)));
-            contestName.addStyleName("ContestName");
+
+            HTML contestName = MsoyUI.createHTML(_dmsgs.xlate("contestsTitle_" + id),
+                "ContestName");
+            MsoyUI.addTrackingListener(contestName, "contestsNameClicked", id);
             contestInfo.add(contestName);
+
             contestInfo.add(MsoyUI.createHTML(_dmsgs.xlate("contestsText_" + id), "ContestText"));
             contestInfo.add(MsoyUI.createHTML(_dmsgs.xlate("contestsStatus_" + id), "Status"));
 
