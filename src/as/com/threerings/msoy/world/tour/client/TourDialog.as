@@ -23,7 +23,6 @@ import com.threerings.msoy.ui.Stars;
 import com.threerings.msoy.ui.StarsEvent;
 
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 
@@ -40,15 +39,12 @@ public class TourDialog extends FloatingPanel
         super(ctx, Msgs.WORLD.get("t.tour"));
         showCloseButton = true;
 
-        var nextBtn :CommandButton = new CommandButton(Msgs.WORLD.get("b.tour_next"), nextRoom);
+        var nextBtn :CommandButton = new CommandButton(null, nextRoom);
+        nextBtn.styleName = "tourNext";
 
         var commentBtn :CommandButton = new CommandButton(null, MsoyController.VIEW_COMMENT_PAGE);
         commentBtn.styleName = "controlBarButtonComment"
         commentBtn.toolTip = Msgs.GENERAL.get("i.comment");
-
-        var buttons :HBox = new HBox();
-        buttons.addChild(nextBtn);
-        buttons.addChild(commentBtn);
 
         _myStars = new Stars(0, Stars.USER_LEFT, Stars.USER_RIGHT);
         _myStars.addEventListener(Stars.STAR_CLICK, handleRate);
@@ -59,23 +55,16 @@ public class TourDialog extends FloatingPanel
             _myStars.setRating(_myRating);
         });
 
-        var stars :HBox = new HBox();
-        stars.addChild(_myStars);
+//        var logo :Image = new Image();
+//        logo.source = "/images/room/home_page_tour.png";
 
-        var logo :Image = new Image();
-        logo.source = DeploymentConfig.staticMediaURL + "icon/home_page_tour.png";
+        var hbox :HBox = new HBox();
+        hbox.addChild(FlexUtil.createLabel(Msgs.WORLD.get("l.tour_rate")));
+        hbox.addChild(_myStars);
+        hbox.addChild(commentBtn);
 
-        var split :HBox = new HBox();
-        var right :VBox = new VBox();
-
-        right.addChild(FlexUtil.createLabel(Msgs.WORLD.get("l.tour_rate")));
-        right.addChild(stars);
-        right.addChild(buttons);
-
-        split.addChild(logo);
-        split.addChild(right);
-
-        addChild(split);
+        addChild(nextBtn);
+        addChild(hbox);
     }
 
     public function setRating (rating :Number) :void

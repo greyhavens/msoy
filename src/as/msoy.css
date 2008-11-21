@@ -536,7 +536,7 @@ TabNavigator, TabBar {
 .roomEditRotateLeft, .roomEditRotateRight, .roomEditFlipH, .roomEditFlipV,
 .roomEditTrash, .roomEditAdd, .roomEditDoor, .roomRemoveDoor, .roomEditLink, .roomRemoveLink,
 .roomEditUndo, .roomEditButtonMakeMyHome,
-.roomEditResetLocation, .roomEditResetScale, .roomEditResetRotation {
+.roomEditResetLocation, .roomEditResetScale, .roomEditResetRotation, .tourNext {
   upSkin: ClassReference(null);
   downSkin: ClassReference(null);
   overSkin: ClassReference(null);
@@ -634,6 +634,10 @@ TabNavigator, TabBar {
 
 .tickButton {
   image: Embed(source="../../rsrc/media/skins/controlbar/tick.png");
+}
+
+.tourNext {
+  image: url("/images/rooms/tour_next.png");
 }
 
 .roomEditPanel {
