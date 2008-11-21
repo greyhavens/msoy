@@ -683,6 +683,9 @@
   <target name="remixer" depends="asprepare">
     <antcall target="ascompile"><param name="astype" value="remixer"/></antcall>
   </target>
+  <target name="imageeditor" depends="asprepare">
+    <antcall target="ascompile"><param name="astype" value="imageeditor"/></antcall>
+  </target>
 
   <!-- builds our video player -->
   <target name="videoplayer" depends="asprepare">
@@ -1020,7 +1023,7 @@
   <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a
        the API shuffle is done, and the tutorial code has been refactored -->
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,embedstub,videoplayer,audioplayer,remixer"
+  <target name="flashapps" depends="asprepare,mediastub,embedstub,videoplayer,audioplayer,remixer,imageeditor"
           description="Rebuilds all of our Flash clients and applets.">
     <antcall target="ascompile"><param name="astype" value="world"/></antcall>
     <antcall target="ascompile"><param name="astype" value="game"/></antcall>

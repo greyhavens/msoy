@@ -133,6 +133,9 @@ public class NewImageDialog extends TitleWindow
                 ImageUtil.normalizeImageDimension(int(_width.text)),
                 ImageUtil.normalizeImageDimension(int(_height.text)), true, fillColor);
             dispatchEvent(new ValueEvent(Event.COMPLETE, bmp));
+
+        } else {
+            dispatchEvent(new Event(Event.CANCEL));
         }
     }
 

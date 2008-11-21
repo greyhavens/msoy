@@ -3,7 +3,10 @@
 
 package com.threerings.msoy.applets.image {
 
+import mx.containers.ViewStack;
+
 import mx.core.Application;
+import mx.core.UIComponent;
 
 import com.threerings.util.MessageBundle;
 
@@ -11,9 +14,10 @@ import com.threerings.msoy.applets.AppletContext;
 
 public class ImageContext extends AppletContext
 {
-    public function ImageContext (app :Application)
+    public function ImageContext (app :Application, viewStack :ViewStack)
     {
         super(app);
+        _viewStack = viewStack;
 
         _imageBundle = _msgMgr.getBundle("image");
     }
@@ -26,7 +30,31 @@ public class ImageContext extends AppletContext
         return _imageBundle;
     }
 
+    public function getViewWidth () :int
+    {
+        return _viewStack.width;
+    }
+
+    public function getViewHeight () :int
+    {
+        return _viewStack.height;
+    }
+
+    public function pushView (view :UIComponent) :void
+    {
+        _viewStack.addChild(view);
+        _viewStack.selectedIndex++;
+    }
+
+    public function popView () :void
+    {
+        _viewStack.selectedIndex--;
+        _viewStack.removeChildAt(_viewStack.selectedIndex + 1);
+    }
+
     /** The image message bundle. */
     protected var _imageBundle :MessageBundle;
+
+    protected var _viewStack :ViewStack;
 }
 }

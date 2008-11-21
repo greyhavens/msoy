@@ -46,6 +46,30 @@ public class FlashClients
     }
 
     /**
+     * Create the uploader swf.
+     *
+     * @param currentURL may be null
+     * @param maxWidth or -1 to allow any width 
+     * @param maxHeight or -1 to allow any height
+     */
+    public static HTML createImageEditor (
+        int width, int height, String mediaIds, String currentURL, int maxWidth, int maxHeight)
+    {
+        String flashVars = "server=" + URL.encodeComponent(DeploymentConfig.serverURL) +
+            "&auth=" + URL.encodeComponent(CShell.getAuthToken()) +
+            "&mediaIds=" + URL.encodeComponent(mediaIds);
+        if (currentURL != null) {
+            flashVars += "&url=" + URL.encodeComponent(currentURL);
+        }
+        if (maxWidth > 0 && maxHeight > 0) {
+            flashVars += "&maxWidth=" + width + "&maxHeight=" + height;
+        }
+        return WidgetUtil.createFlashContainer("imageEditor",
+            "/clients/" + DeploymentConfig.version + "/imageeditor-client.swf",
+            width, height, flashVars);
+    }
+
+    /**
      * Creates a world client, and embeds it in a container object, with which it can communicate
      * via the Flash/Javascript interface.
      */

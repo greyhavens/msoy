@@ -8,7 +8,6 @@ import flash.utils.ByteArray;
 import mx.containers.ViewStack;
 
 import mx.core.Application;
-import mx.core.UIComponent;
 
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Util;
@@ -27,9 +26,7 @@ public class RemixContext extends ImageContext
      */
     public function RemixContext (app :Application, viewStack :ViewStack)
     {
-        super(app);
-
-        _viewStack = viewStack;
+        super(app, viewStack);
 
         _remixBundle = _msgMgr.getBundle("remix");
     }
@@ -66,28 +63,6 @@ public class RemixContext extends ImageContext
             }
         }
         return _hasOptionalFields;
-    }
-
-    public function getViewWidth () :int
-    {
-        return _viewStack.width;
-    }
-
-    public function getViewHeight () :int
-    {
-        return _viewStack.height;
-    }
-
-    public function pushView (view :UIComponent) :void
-    {
-        _viewStack.addChild(view);
-        _viewStack.selectedIndex++;
-    }
-
-    public function popView () :void
-    {
-        _viewStack.selectedIndex--;
-        _viewStack.removeChildAt(_viewStack.selectedIndex + 1);
     }
 
     /**
@@ -147,9 +122,6 @@ public class RemixContext extends ImageContext
         // once we've tried 1000 times, just fucking stick a fork in it.
         return origname;
     }
-
-    /** The ViewStack hosting the remixer. */
-    protected var _viewStack :ViewStack;
 
     /** Lazy-initialized with a Boolean value. */
     protected var _hasOptionalFields :Object;

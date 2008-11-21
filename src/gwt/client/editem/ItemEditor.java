@@ -42,6 +42,13 @@ import client.util.MsoyCallback;
  */
 public abstract class ItemEditor extends FlowPanel
 {
+    public static final String TYPE_IMAGE = "image";
+    public static final String TYPE_AUDIO = "audio";
+    public static final String TYPE_VIDEO = "video";
+    public static final String TYPE_FLASH = "flash";
+    public static final String TYPE_CODE = "code";
+    public static final String TYPE_ANY = "any";
+
     public static class Binder
     {
         public void textUpdated (String newText) {
@@ -502,7 +509,7 @@ public abstract class ItemEditor extends FlowPanel
     protected ItemMediaUploader createUploaderWidget (
         String mediaIds, String type, int mode, MediaUpdater updater)
     {
-        return new ItemMediaUploader(mediaIds, type, mode, updater);
+        return new ItemMediaUploader(this, mediaIds, type, mode, updater);
     }
 
     /**
@@ -760,11 +767,4 @@ public abstract class ItemEditor extends FlowPanel
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
         ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
-
-    protected static final String TYPE_IMAGE = "image";
-    protected static final String TYPE_AUDIO = "audio";
-    protected static final String TYPE_VIDEO = "video";
-    protected static final String TYPE_FLASH = "flash";
-    protected static final String TYPE_CODE = "code";
-    protected static final String TYPE_ANY = "any";
 }

@@ -4,7 +4,10 @@
 package client.editem;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -12,6 +15,8 @@ import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -19,7 +24,10 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.gwt.ui.SmartFileUpload;
 
+import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
+
+import client.util.FlashClients;
 import client.util.MediaUtil;
 
 /**
@@ -40,28 +48,35 @@ public class ItemMediaUploader extends FlexTable
      * should also generate a thumbnail image when changed.
      * @param updater the updater that knows how to set the media hash on the item.
      */
-    public ItemMediaUploader (String mediaIds, String type, int mode,
-            ItemEditor.MediaUpdater updater)
+    public ItemMediaUploader (
+        ItemEditor itemEditor, String mediaIds, String type, int mode,
+        ItemEditor.MediaUpdater updater)
     {
+        _itemEditor = itemEditor;
+        _mediaIds = mediaIds;
+        _type = type;
+        _mode = mode;
+        _updater = updater;
+
         setStyleName("mediaUploader");
         setCellPadding(0);
         setCellSpacing(0);
 
-        _mode = mode;
-        _updater = updater;
+        FlexCellFormatter fmt = getFlexCellFormatter();
 
-        getFlexCellFormatter().setRowSpan(0, 0, 2);
-        getFlexCellFormatter().setStyleName(0, 0, "ItemPreview");
-        getFlexCellFormatter().setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
-        getFlexCellFormatter().setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_MIDDLE);
+        fmt.setRowSpan(0, 0, 3);
+        //fmt.setColSpan(0, 0, 2);
+        fmt.setStyleName(0, 0, "ItemPreview");
+        fmt.setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
+        fmt.setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_MIDDLE);
         setText(0, 0, "");
 
-        getFlexCellFormatter().setWidth(0, 1, "5px");
-        getFlexCellFormatter().setRowSpan(0, 1, 2);
+        fmt.setWidth(0, 1, "5px");
+        fmt.setRowSpan(0, 1, 3);
 
         setWidget(0, 2, _hint = MsoyUI.createLabel("", "Tip"));
         _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
-        getFlexCellFormatter().setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
+        fmt.setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
 
         _form = new FormPanel();
         _panel = new HorizontalPanel();
@@ -106,14 +121,15 @@ public class ItemMediaUploader extends FlexTable
             }
         });
 
-        setWidget(1, 0, _form);
-        getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
+        setText(1, 0, "");
+        setWidget(2, 0, _form);
+        fmt.setVerticalAlignment(2, 0, HorizontalPanel.ALIGN_BOTTOM);
     }
 
     /**
      * Set the media to be shown in this uploader.
      */
-    public void setMedia (MediaDesc desc)
+    public void setMedia (final MediaDesc desc)
     {
         if (desc != null) {
             int width = MediaDesc.THUMBNAIL_WIDTH, height = MediaDesc.THUMBNAIL_HEIGHT;
@@ -122,9 +138,27 @@ public class ItemMediaUploader extends FlexTable
                 height *= 2;
             }
             setWidget(0, 0, MediaUtil.createMediaView(desc, width, height, null));
+
         } else {
-            setText(0, 0, "");
+            setMediaBlank();
         }
+//
+//        if (ItemEditor.TYPE_FLASH.equals(_type) || ItemEditor.TYPE_IMAGE.equals(_type)) {
+//            final boolean isCreate = (desc == null) || !desc.isImage();
+//
+//            setWidget(1, 0, MsoyUI.createCrUpdateButton(isCreate, new ClickListener() {
+//                public void onClick (Widget sender) {
+//                    String url = isCreate ? null : desc.getMediaPath();
+//                    int width = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_WIDTH : -1;
+//                    int height = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_HEIGHT : -1;
+//                    _editorPopup = new BorderedPopup();
+//                    _editorPopup.setWidget(FlashClients.createImageEditor(
+//                        _itemEditor.getOffsetWidth(), _itemEditor.getOffsetHeight(),
+//                        _mediaIds, url, width, height));
+//                    _editorPopup.show();
+//                }
+//            }));
+//        }
     }
 
     /**
@@ -150,6 +184,14 @@ public class ItemMediaUploader extends FlexTable
         _hint.setText(hint);
     }
 
+    /**
+     * Create the widget we show when the media descriptor is null.
+     */
+    protected void setMediaBlank ()
+    {
+        setText(0, 0, "");
+    }
+
     protected void uploadMedia ()
     {
         if (_upload.getFilename().length() == 0) {
@@ -161,6 +203,21 @@ public class ItemMediaUploader extends FlexTable
         _form.submit();
     }
 
+    protected void closeEditorPopup ()
+    {
+        if (_editorPopup != null) {
+            _editorPopup.removeFromParent();
+            _editorPopup = null;
+        }
+    }
+
+    @Override // from Widget
+    protected void onUnload ()
+    {
+        super.onUnload();
+        closeEditorPopup();
+    }
+
     protected ItemEditor.MediaUpdater _updater;
 
     protected Label _hint;
@@ -170,6 +227,11 @@ public class ItemMediaUploader extends FlexTable
     protected SmartFileUpload _upload;
     protected String _submitted;
 
+    protected BorderedPopup _editorPopup;
+
+    protected ItemEditor _itemEditor;
+    protected String _mediaIds;
+    protected String _type;
     protected int _mode;
 
     protected static final int CHOOSER_WIDTH = 60;

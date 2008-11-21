@@ -82,16 +82,12 @@ public class VideoEditor extends BulkMediaEditor
         String mediaIds, String type, int mode, MediaUpdater updater)
     {
         if (type.equals(TYPE_VIDEO)) {
-            return new ItemMediaUploader(mediaIds, type, mode, updater) {
-                @Override public void setMedia (MediaDesc desc) {
-                    if (desc != null) {
-                        super.setMedia(desc);
-                    } else {
-                        // create a blank video viewer, ready to receive data when
-                        // the user enters it
-                        setWidget(0, 0, FlashClients.createVideoPlayer(
-                            MediaDesc.THUMBNAIL_WIDTH * 2, MediaDesc.THUMBNAIL_HEIGHT * 2, null));
-                    }
+            return new ItemMediaUploader(this, mediaIds, type, mode, updater) {
+                @Override protected void setMediaBlank () {
+                    // create a blank video viewer, ready to receive data when
+                    // the user enters it
+                    setWidget(0, 0, FlashClients.createVideoPlayer(
+                        MediaDesc.THUMBNAIL_WIDTH * 2, MediaDesc.THUMBNAIL_HEIGHT * 2, null));
                 }
             };
 
