@@ -50,6 +50,12 @@ public class PetEditor extends ItemEditor
         return _emsgs.errPetNotFlash();
     }
 
+    @Override // from ItemEditor
+    protected String getFurniType ()
+    {
+        return TYPE_FLASH_ONLY;
+    }
+
     protected Pet _pet;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);

@@ -31,7 +31,7 @@ public class AvatarEditor extends ItemEditor
     protected void addExtras ()
     {
         addSpacer();
-        addRow(_emsgs.avatarLabel(), createMainUploader(TYPE_FLASH, false,
+        addRow(_emsgs.avatarLabel(), createMainUploader(TYPE_FLASH_ONLY, false,
             new MediaUpdater() {
                 public String updateMedia (String name, MediaDesc desc, int width, int height) {
                     if (!isValidPrimaryMedia(desc)) {

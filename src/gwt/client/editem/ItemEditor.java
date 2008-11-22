@@ -46,6 +46,7 @@ public abstract class ItemEditor extends FlowPanel
     public static final String TYPE_AUDIO = "audio";
     public static final String TYPE_VIDEO = "video";
     public static final String TYPE_FLASH = "flash";
+    public static final String TYPE_FLASH_ONLY = "flash_only"; // no images
     public static final String TYPE_CODE = "code";
     public static final String TYPE_ANY = "any";
 

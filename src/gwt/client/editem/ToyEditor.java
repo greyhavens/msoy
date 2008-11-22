@@ -32,6 +32,12 @@ public class ToyEditor extends ItemEditor
     }
 
     @Override // from ItemEditor
+    protected String getFurniType ()
+    {
+        return TYPE_FLASH_ONLY;
+    }
+
+    @Override // from ItemEditor
     protected boolean generateFurniThumbnail ()
     {
         return false;
