@@ -12,6 +12,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ListBox;
@@ -62,9 +63,10 @@ public class ComposePanel extends FlowPanel
         add(header);
 
         _contents = new SmartTable("Contents", 0, 5);
+        FlexTable.FlexCellFormatter fmt = _contents.getFlexCellFormatter();
         _contents.setWidget(0, 0, new ThumbBox(MemberCard.DEFAULT_PHOTO));
-        _contents.getFlexCellFormatter().setRowSpan(0, 0, 5);
-        _contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        fmt.setRowSpan(0, 0, 5);
+        fmt.setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
         _contents.setText(0, 1, _msgs.composeTo(), 1, "Label");
         _contents.setWidget(0, 2, _friendBox = new ListBox());
@@ -82,7 +84,7 @@ public class ComposePanel extends FlowPanel
         _subject.setWidth("390px");
 
         _contents.setText(2, 0, _msgs.composeMessage(), 1, "Label");
-        _contents.getFlexCellFormatter().setVerticalAlignment(2, 0, HasAlignment.ALIGN_TOP);
+        fmt.setVerticalAlignment(2, 0, HasAlignment.ALIGN_TOP);
         _contents.setWidget(2, 1, _body = new TextArea());
         _body.setVisibleLines(10);
         _body.setWidth("390px");
@@ -114,6 +116,9 @@ public class ComposePanel extends FlowPanel
             }
         });
         _contents.setWidget(4, 1, MsoyUI.createButtonPair(discard, _send));
+        fmt.setWidth(4, 1, "390px");
+        fmt.setHorizontalAlignment(4, 1, HasAlignment.ALIGN_RIGHT);
+        fmt.setWidth(4, 2, "80px");
 
         add(_contents);
 
