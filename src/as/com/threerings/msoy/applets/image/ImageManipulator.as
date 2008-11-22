@@ -168,7 +168,7 @@ public class ImageManipulator extends HBox
             [ -180, -90, 0, 90, 180 ]);
 
         box = new HBox();
-        var crop :CommandButton = new CommandButton(null, _editor.doCrop);
+        var crop :CommandButton = new CommandButton(null, doCrop);
         crop.styleName = "cropButton";
         crop.toolTip = _ctx.IMAGE.get("i.crop");
         box.addChild(crop);
@@ -373,6 +373,15 @@ public class ImageManipulator extends HBox
                 but.enabled = false;
             }
         }
+    }
+    protected function doCrop () :void
+    {
+        _editor.doCrop();
+        _scaleSlider.value = 1;
+        _rotSlider.value = 0;
+
+        // TODO: there's some sorta zoom bug
+        _zoomSlider.value = 1;
     }
 
     protected function handleUndoRedoChange (event :Event) :void
