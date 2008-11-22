@@ -29,6 +29,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.applets.AppletContext;
 
+import com.threerings.msoy.client.DeploymentConfig;
+
 /**
  * @eventType flash.events.Event.COMPLETE
  */
@@ -67,10 +69,9 @@ public class MediaUploader extends TitleWindow
     /**
      * Create a new media uploader.
      */
-    public function MediaUploader (ctx :AppletContext, serverURL :String, authToken :String)
+    public function MediaUploader (ctx :AppletContext, authToken :String)
     {
         _ctx = ctx;
-        _serverURL = serverURL;
         _authToken = authToken;
 
         title = ctx.APPLET.get("t.saving");
@@ -115,7 +116,7 @@ public class MediaUploader extends TitleWindow
         body.writeBytes(media);
         body.writeUTFBytes("\r\n--" + BOUNDARY + "--\r\n");
 
-        var request :URLRequest = new URLRequest(_serverURL + "uploadsvc");
+        var request :URLRequest = new URLRequest(DeploymentConfig.serverURL + "uploadsvc");
         request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
         request.method = URLRequestMethod.POST;
         request.data = body;
@@ -196,8 +197,6 @@ public class MediaUploader extends TitleWindow
     protected var _ctx :AppletContext;
 
     protected var _bar :ProgressBar;
-
-    protected var _serverURL :String;
 
     protected var _authToken :String;
 

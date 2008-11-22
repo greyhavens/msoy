@@ -50,13 +50,11 @@ import com.threerings.msoy.applets.net.Uploader;
 
 public class PopupFilePreview extends TitleWindow
 {
-    public function PopupFilePreview (
-        parent :FileEditor, name :String, ctx :RemixContext, serverURL :String)
+    public function PopupFilePreview (parent :FileEditor, name :String, ctx :RemixContext)
     {
         _parent = parent;
         _name = name;
         _ctx = ctx;
-        _serverURL = serverURL;
         var entry :Object = ctx.pack.getFileEntry(name);
         _type = entry.type;
         _sizeRestriction = new SizeRestriction(Number(entry.width), Number(entry.height),
@@ -216,7 +214,7 @@ public class PopupFilePreview extends TitleWindow
 
     protected function handleChooseFile () :void
     {
-        var uploader :Uploader = new Uploader(_ctx, _serverURL + "remixuploadsvc", getFilters());
+        var uploader :Uploader = new Uploader(_ctx, "remixuploadsvc", getFilters());
         uploader.addEventListener(Event.COMPLETE, handleFileUploadComplete);
     }
 
@@ -224,12 +222,6 @@ public class PopupFilePreview extends TitleWindow
     {
         var newImage :NewImageDialog = new NewImageDialog(_ctx, _sizeRestriction);
         newImage.addEventListener(Event.COMPLETE, handleImageCreated);
-    }
-
-    protected function handleChooseURL () :void
-    {
-        var ufc :URLFileChooser = new URLFileChooser(_ctx);
-        ufc.addEventListener(Event.COMPLETE, handleFileChosen);
     }
 
     protected function handleChooseExistingFile (filenames :Array) :void
@@ -445,8 +437,6 @@ public class PopupFilePreview extends TitleWindow
     protected var _type :String;
 
     protected var _sizeRestriction :SizeRestriction;
-
-    protected var _serverURL :String;
 
     protected var _filename :String;
 

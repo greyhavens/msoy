@@ -11,11 +11,10 @@ import com.threerings.flex.CommandButton;
 
 public class FileEditor extends FieldEditor
 {
-    public function FileEditor (ctx :RemixContext, name :String, serverURL :String)
+    public function FileEditor (ctx :RemixContext, name :String)
     {
         var entry :Object = ctx.pack.getFileEntry(name);
         super(ctx, name, entry);
-        _serverURL = serverURL;
     }
 
     override protected function getUI (entry :Object) :Array
@@ -70,13 +69,11 @@ public class FileEditor extends FieldEditor
 
     protected function showFile () :void
     {
-        new PopupFilePreview(this, _name, _ctx, _serverURL);
+        new PopupFilePreview(this, _name, _ctx);
     }
 
     protected var _label :Label;
 
     protected var _bytes :ByteArray;
-
-    protected var _serverURL :String;
 }
 }

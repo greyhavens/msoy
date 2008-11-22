@@ -292,9 +292,8 @@ public class RemixControls extends HBox
             _controls.addChild(new DataEditor(_ctx, name));
         }
 
-        var serverURL :String = _params["server"];
         for each (name in _ctx.pack.getFileFields()) {
-            _controls.addChild(new FileEditor(_ctx, name, serverURL));
+            _controls.addChild(new FileEditor(_ctx, name));
         }
 
         _packReady = true;
@@ -391,7 +390,7 @@ public class RemixControls extends HBox
             _lastBytes = _ctx.pack.serialize();
         }
 
-        var uploader :MediaUploader = new MediaUploader(_ctx, _params["server"], _params["auth"]);
+        var uploader :MediaUploader = new MediaUploader(_ctx, _params["auth"]);
         uploader.addEventListener(Event.COMPLETE, handleUploadComplete);
 //        uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
         uploader.addEventListener(IOErrorEvent.IO_ERROR, handleUploadError);

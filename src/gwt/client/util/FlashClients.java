@@ -55,8 +55,7 @@ public class FlashClients
     public static HTML createImageEditor (
         int width, int height, String mediaIds, String currentURL, int maxWidth, int maxHeight)
     {
-        String flashVars = "server=" + URL.encodeComponent(DeploymentConfig.serverURL) +
-            "&auth=" + URL.encodeComponent(CShell.getAuthToken()) +
+        String flashVars = "auth=" + URL.encodeComponent(CShell.getAuthToken()) +
             "&mediaIds=" + URL.encodeComponent(mediaIds);
         if (currentURL != null) {
             flashVars += "&url=" + URL.encodeComponent(currentURL);

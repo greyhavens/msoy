@@ -29,6 +29,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.applets.AppletContext;
+import com.threerings.msoy.client.DeploymentConfig;
 
 /**
  * Dispatched when we're closed.
@@ -42,10 +43,10 @@ import com.threerings.msoy.applets.AppletContext;
  */
 public class Uploader extends TitleWindow
 {
-    public function Uploader (ctx :AppletContext, serverURL :String, fileFilters :Array = null)
+    public function Uploader (ctx :AppletContext, service :String, fileFilters :Array = null)
     {
         _ctx = ctx;
-        _serverURL = serverURL;
+        _service = service;
 
         _fileRef = new FileReference();
         _fileRef.addEventListener(Event.SELECT, handleFileSelected);
@@ -94,7 +95,7 @@ public class Uploader extends TitleWindow
         PopUpManager.addPopUp(this, _ctx.getApplication(), true);
         PopUpManager.centerPopUp(this);
 
-        var req :URLRequest = new URLRequest(_serverURL);
+        var req :URLRequest = new URLRequest(DeploymentConfig.serverURL + _service);
         req.method = URLRequestMethod.POST;
         _fileRef.upload(req);
     }
@@ -115,7 +116,7 @@ public class Uploader extends TitleWindow
 
     protected var _ctx :AppletContext;
 
-    protected var _serverURL :String;
+    protected var _service :String;
 
     protected var _fileRef :FileReference;
 
