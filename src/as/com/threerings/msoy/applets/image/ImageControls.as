@@ -86,7 +86,7 @@ public class ImageControls
             break;
 
         case ImageControlOptions.CAMERA:
-            new CameraSnapshotControl(_ctx, _ctx.getApplication(), editImage);
+            new CameraSnapshotControl(_ctx, _ctx.getApplication(), handleCameraDone);
             break;
         }
     }
@@ -106,6 +106,15 @@ public class ImageControls
     protected function handleNewImage (event :ValueEvent) :void
     {
         editImage(event.value);
+    }
+
+    protected function handleCameraDone (image :Object) :void
+    {
+        if (image != null) {
+            editImage(image);
+        } else {
+            close();
+        }
     }
 
     protected function editImage (image :Object = null) :void

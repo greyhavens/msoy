@@ -114,9 +114,7 @@ public class CameraSnapshotControl extends TitleWindow
 
     protected function close (save :Boolean) :void
     {
-        if (save) {
-            _returnFn(_snapper.getSnapshot());
-        }
+        _returnFn(save ? _snapper.getSnapshot() : null);
         PopUpManager.removePopUp(this);
     }
 

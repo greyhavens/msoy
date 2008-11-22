@@ -294,6 +294,9 @@ public class PopupFilePreview extends TitleWindow
     
     protected function handleSnapshotTaken (bitmapData :BitmapData) :void
     {
+        if (bitmapData == null) {
+            return; // do nothing, they cancelled
+        }
         const fname :String = "cameragrab.png";
         if (_sizeRestriction.isValid(bitmapData.width, bitmapData.height)) {
             setFile(fname, PNGEncoder.encode(bitmapData));
