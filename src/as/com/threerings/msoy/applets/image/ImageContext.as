@@ -48,8 +48,11 @@ public class ImageContext extends AppletContext
 
     public function popView () :void
     {
-        _viewStack.selectedIndex--;
-        _viewStack.removeChildAt(_viewStack.selectedIndex + 1);
+        const oldIndex :int = _viewStack.selectedIndex;
+        if (oldIndex > 0) {
+            _viewStack.selectedIndex--;
+        }
+        _viewStack.removeChildAt(oldIndex);
     }
 
     /** The image message bundle. */

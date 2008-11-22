@@ -65,7 +65,6 @@ public class ItemMediaUploader extends FlexTable
         FlexCellFormatter fmt = getFlexCellFormatter();
 
         fmt.setRowSpan(0, 0, 3);
-        //fmt.setColSpan(0, 0, 2);
         fmt.setStyleName(0, 0, "ItemPreview");
         fmt.setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
         fmt.setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_MIDDLE);
@@ -124,6 +123,9 @@ public class ItemMediaUploader extends FlexTable
         setText(1, 0, "");
         setWidget(2, 0, _form);
         fmt.setVerticalAlignment(2, 0, HorizontalPanel.ALIGN_BOTTOM);
+
+        // sweet sweet debugging
+        //setText(3, 0, type + " : " + mediaIds + " : " + mode);
     }
 
     /**
@@ -142,23 +144,22 @@ public class ItemMediaUploader extends FlexTable
         } else {
             setMediaBlank();
         }
-//
-//        if (ItemEditor.TYPE_FLASH.equals(_type) || ItemEditor.TYPE_IMAGE.equals(_type)) {
-//            final boolean isCreate = (desc == null) || !desc.isImage();
-//
-//            setWidget(1, 0, MsoyUI.createCrUpdateButton(isCreate, new ClickListener() {
-//                public void onClick (Widget sender) {
-//                    String url = isCreate ? null : desc.getMediaPath();
-//                    int width = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_WIDTH : -1;
-//                    int height = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_HEIGHT : -1;
-//                    _editorPopup = new BorderedPopup();
-//                    _editorPopup.setWidget(FlashClients.createImageEditor(
-//                        _itemEditor.getOffsetWidth(), _itemEditor.getOffsetHeight(),
-//                        _mediaIds, url, width, height));
-//                    _editorPopup.show();
-//                }
-//            }));
-//        }
+
+        if (ItemEditor.TYPE_FLASH.equals(_type) || ItemEditor.TYPE_IMAGE.equals(_type)) {
+            final boolean isCreate = (desc == null) || !desc.isImage();
+            setWidget(1, 0, MsoyUI.createCrUpdateButton(isCreate, new ClickListener() {
+                public void onClick (Widget sender) {
+                    String url = isCreate ? null : desc.getMediaPath();
+                    int maxWidth = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_WIDTH : -1;
+                    int maxHeight = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_HEIGHT : -1;
+                    _editorPopup = new BorderedPopup();
+                    _editorPopup.setWidget(FlashClients.createImageEditor(
+                        _itemEditor.getOffsetWidth(), _itemEditor.getOffsetHeight(),
+                        _mediaIds, url, maxWidth, maxHeight));
+                    _editorPopup.show();
+                }
+            }));
+        }
     }
 
     /**
@@ -203,19 +204,32 @@ public class ItemMediaUploader extends FlexTable
         _form.submit();
     }
 
-    protected void closeEditorPopup ()
+    @Override // from Widget
+    protected void onLoad ()
     {
-        if (_editorPopup != null) {
-            _editorPopup.removeFromParent();
-            _editorPopup = null;
-        }
+        super.onLoad();
+        configureBridge();
     }
 
     @Override // from Widget
     protected void onUnload ()
     {
         super.onUnload();
-        closeEditorPopup();
+        closeImageEditor();
+    }
+
+    protected static native void configureBridge () /*-{
+        $wnd.closeImageEditor = function () {
+            @client.editem.ItemMediaUploader::closeImageEditor()();
+        };
+    }-*/;
+
+    protected static void closeImageEditor ()
+    {
+        if (_editorPopup != null) {
+            _editorPopup.removeFromParent();
+            _editorPopup = null;
+        }
     }
 
     protected ItemEditor.MediaUpdater _updater;
@@ -227,12 +241,12 @@ public class ItemMediaUploader extends FlexTable
     protected SmartFileUpload _upload;
     protected String _submitted;
 
-    protected BorderedPopup _editorPopup;
-
     protected ItemEditor _itemEditor;
     protected String _mediaIds;
     protected String _type;
     protected int _mode;
+
+    protected static BorderedPopup _editorPopup;
 
     protected static final int CHOOSER_WIDTH = 60;
     protected static final int CHOOSER_HEIGHT = 28;

@@ -62,7 +62,7 @@ public class FlashClients
             flashVars += "&url=" + URL.encodeComponent(currentURL);
         }
         if (maxWidth > 0 && maxHeight > 0) {
-            flashVars += "&maxWidth=" + width + "&maxHeight=" + height;
+            flashVars += "&maxWidth=" + maxWidth + "&maxHeight=" + maxHeight;
         }
         return WidgetUtil.createFlashContainer("imageEditor",
             "/clients/" + DeploymentConfig.version + "/imageeditor-client.swf",

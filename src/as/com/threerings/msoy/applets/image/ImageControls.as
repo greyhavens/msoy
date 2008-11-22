@@ -10,6 +10,8 @@ import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
 
+import flash.external.ExternalInterface;
+
 import flash.utils.ByteArray;
 
 import mx.core.Application;
@@ -23,6 +25,7 @@ import mx.controls.Label;
 
 import com.adobe.images.JPGEncoder;
 
+import com.threerings.util.Log;
 import com.threerings.util.ParameterUtil;
 import com.threerings.util.ValueEvent;
 
@@ -37,8 +40,13 @@ import com.threerings.msoy.applets.net.MediaUploader;
 
 import com.threerings.msoy.applets.util.Downloader;
 
+/**
+ * Standalone ImageEditor. Works with imageeditor.mxml.
+ */
 public class ImageControls
 {
+    public const log :Log = Log.getLog(this);
+
     public function ImageControls (app :Application, viewStack :ViewStack)
     {
         _ctx = new ImageContext(app, viewStack);
@@ -49,7 +57,8 @@ public class ImageControls
     {
         _params = params;
 
-        _size = new SizeRestriction(NaN, NaN, Number(params["width"]), Number(params["height"]));
+        _size = new SizeRestriction(NaN, NaN,
+            Number(params["maxWidth"]), Number(params["maxHeight"]));
         const url :String = params["url"] as String;
 
         // TODO: if url is not null, they get 3 choices: edit, new image, camera
@@ -72,7 +81,9 @@ public class ImageControls
             close();
 
         } else {
-            editImage((event.value as Array)[1]);
+            const result :Array = event.value as Array;
+            _filename = String(result[0]);
+            editImage(result[1]);
         }
     }
 
@@ -95,11 +106,17 @@ public class ImageControls
     protected function handleImageClose (event :ValueEvent) :void
     {
         _ctx.popView();
-        trace("Image closed: Save?: " + Boolean(event.value));
         if (Boolean(event.value)) {
             // do a save
             var result :Array = ImageManipulator(event.target).getImage();
-            // TODO: saving
+            var filename :String = _filename;
+            if (result.length > 1) {
+                filename = "image." + result[1];
+            }
+            doUpload(ByteArray(result[0]), filename);
+
+        } else {
+            close();
         }
     }
 
@@ -110,15 +127,18 @@ public class ImageControls
 
     protected function snapshotDone (bitmapData :BitmapData) :void
     {
-        var encoder :JPGEncoder = new JPGEncoder();
-        var jpg :ByteArray = encoder.encode(bitmapData);
+        // TODO: allow editing first? Return to top-level menu?
+        doUpload(new JPGEncoder().encode(bitmapData), "snapshot.jpg");
+    }
 
+    protected function doUpload (bytes :ByteArray, filename :String) :void
+    {
         var uploader :MediaUploader = new MediaUploader(_ctx, _params["server"], _params["auth"]);
         uploader.addEventListener(Event.COMPLETE, handleUploadComplete);
         //uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
         uploader.addEventListener(IOErrorEvent.IO_ERROR, handleUploadError);
         uploader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleUploadError);
-        uploader.upload(_params["mediaIds"], "snapshot.jpg", jpg);
+        uploader.upload(_params["mediaIds"], filename, bytes);
     }
 
     protected function handleUploadError (event :ErrorEvent) :void
@@ -135,9 +155,16 @@ public class ImageControls
 
         for (var mediaId :String in result) {
             var data :Object = result[mediaId];
-            // TODO
-            trace("hash for media " + mediaId + ": " + data.hash + ", " + data.mimeType);
+            try {
+                ExternalInterface.call("setHash", mediaId, data.hash, data.mimeType,
+                    data.constraint, data.width, data.height);
+            } catch (err :Error) {
+                log.warning("Error setting hash", err);
+            }
         }
+
+        // and now close everything
+        close();
     }
 
     /**
@@ -145,16 +172,20 @@ public class ImageControls
      */
     protected function close (... ignored) :void
     {
-        trace("Right about here we should close");
-        // TODO
+        try {
+            ExternalInterface.call("closeImageEditor");
+        } catch (err :Error) {
+            log.warning("Unable to close image editor", err);
+        }
     }
 
     protected var _ctx :ImageContext;
 
     protected var _params :Object;
 
-    protected var _size :SizeRestriction;
+    /** A filename, used only if the image editor doesn't override. */
+    protected var _filename :String;
 
-    protected var _uploader :MediaUploader;
+    protected var _size :SizeRestriction;
 }
 }
