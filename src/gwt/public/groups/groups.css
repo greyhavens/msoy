@@ -15,20 +15,14 @@
   width: 100%;
   min-height: 100%;
 }
-
-.groupDetail .MainDetails {
-  height: 280px;
-  width: 100%;
+.groupDetail table {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
 }
 
 .groupDetail .MainDetails .TitleBox {
-  position: absolute;
-  top: 8px;
-  left: 10px;
-  width: 250px;
-  height: 80px;
-  background: transparent url(/images/group/title_bg.png) top left no-repeat;
-  padding: 5px;
+  margin: 10px;
+  width: 290px;
 }
 .groupDetail .MainDetails .TitleBox,
 .groupDetail .MainDetails .TitleBox a {
@@ -47,7 +41,7 @@
   font-size: 18px;
   font-weight: bold;
   color: #24598d;
-  width: 190px;
+  width: 210px;
   white-space: nowrap;
   overflow: hidden;
   margin-top: 5px;
@@ -57,28 +51,18 @@
   clear: both;
   white-space: nowrap;
   overflow: hidden;
-  width: 235px;
+  width: 260px;
   margin-bottom: 2px;
   font-style: italic;
 }
 
 .groupDetail .MainDetails .EnterButton {
-  position: absolute;
-  top: 97px;
-  left: 25px;
-}
-
-.groupDetail .MainDetails .DiscussionsButton {
-  position: absolute;
-  top: 97px;
-  left: 155px;
+    margin: 0 10px 0 45px;
 }
 
 .groupDetail .MainDetails .Actions {
-  position: absolute;
-  top: 135px;
-  left: 10px;
   color: #FFFFFF;
+  margin: 10px;
 }
 
 .groupDetail .MainDetails .Actions .actionLabel {
@@ -99,17 +83,16 @@
 }
 
 .groupDetail .MainDetails .ScreenshotBox {
-  position: absolute;
-  top: 0px;
-  left: 275px;
-  width: 400px;
-  min-height: 242px;
+  width: 366px;
+  min-height: 220px;
   background: transparent url(/images/group/screenshot_bg.png) top center no-repeat;
   text-align: center;
+  padding-top: 12px;
 }
 
 .groupDetail .MainDetails .ScreenshotBox .Screenshot {
-  margin: 12px 25px 15px 25px;
+  width: 350px;
+  margin: 0 auto;
 }
 
 .groupDetail .MainDetails .ScreenshotBox .Online {
@@ -122,6 +105,7 @@
 .groupDetail .MainDetails .ScreenshotBox .Blurb {
   font-size: 14px;
   color: #88c3ed;
+  margin: 15px;
 }
 
 .groupDetail .ContentPanel {
@@ -168,7 +152,7 @@
 -------------------------------------*/
 
 .groupDetail .TopMembersPanel {
-  margin-left: 10px;
+  margin-left: 8px;
   width: 140px;
 }
 
@@ -215,14 +199,15 @@
 -------------------------------------*/
 
 .groupDetail .groupDiscussionPanel {
+  position: relative;
   padding-bottom: 30px;
 }
 
-/* positioned absolutely to the page */
+/** positioned above groupDiscussionPanel and first thread */
 .groupDetail .groupDiscussionPanel .RSS {
   position: absolute;
-  left: 350px;
-  top: 315px;
+  left: 330px;
+  top: -20;
   width: 180px;
   text-align: right;
 }

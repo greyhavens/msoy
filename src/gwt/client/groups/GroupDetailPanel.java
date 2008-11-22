@@ -5,7 +5,6 @@ package client.groups;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -14,6 +13,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 
@@ -35,6 +35,7 @@ import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PrettyTextPanel;
 import client.ui.PromptPopup;
+import client.ui.RoundBox;
 import client.ui.ThumbBox;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -101,30 +102,29 @@ public class GroupDetailPanel extends FlowPanel
         _group = _detail.group;
         _extras = _detail.extras;
 
-        // objects in top area are absolutely positioned in css
-        AbsolutePanel mainDetails = new AbsolutePanel();
-        mainDetails.setStyleName("MainDetails");
+        FloatPanel mainDetails = new FloatPanel("MainDetails");
         add(mainDetails);
 
+        FlowPanel leftPanel = MsoyUI.createFlowPanel("Left");
+        mainDetails.add(leftPanel);
+
         // icon, group name, creator, members
-        FlowPanel titleBox = new FlowPanel();
+        RoundBox titleBox = new RoundBox(RoundBox.MEDIUM_BLUE);
         titleBox.addStyleName("TitleBox");
-        mainDetails.add(titleBox);
+        leftPanel.add(titleBox);
 
         // use the default logo if this group doesn't have one
         MediaDesc logoMedia = _group.logo;
         if (logoMedia == null) {
             logoMedia = Group.getDefaultGroupLogoMedia();
         }
-        SimplePanel logo = new SimplePanel();
-        logo.setStyleName("Logo");
-        logo.setWidget(MediaUtil.createMediaView(logoMedia, MediaDesc.HALF_THUMBNAIL_SIZE));
+        SimplePanel logo = MsoyUI.createSimplePanel(MediaUtil.createMediaView(logoMedia,
+            MediaDesc.HALF_THUMBNAIL_SIZE), "Logo");
         titleBox.add(logo);
         titleBox.add(MsoyUI.createLabel(_group.name, "Name"));
 
         // est. [date] by [name-link] all inline but limited width
-        FlowPanel established = new FlowPanel();
-        established.setStyleName("Established");
+        FlowPanel established = MsoyUI.createFlowPanel("Established");
         established.add(new InlineLabel(_msgs.groupEst(MsoyUI.formatDate(_group.creationDate)),
             false, false, true));
         established.add(new InlineLabel(_cmsgs.creatorBy(), false, false, true));
@@ -147,20 +147,21 @@ public class GroupDetailPanel extends FlowPanel
         members.addClickListener(membersClick);
 
         // enter and discussions buttons
+        FloatPanel buttons = new FloatPanel("Buttons");
+        leftPanel.add(buttons);
         PushButton enterButton = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailEnter(),
             Link.createListener(Pages.WORLD, "s" + _group.homeSceneId));
         enterButton.addStyleName("EnterButton");
-        mainDetails.add(enterButton);
+        buttons.add(enterButton);
         PushButton discussionsButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
             _msgs.detailForums(), Link.createListener(Pages.GROUPS, Args.compose("f",
                 _group.groupId)));
         discussionsButton.addStyleName("DiscussionsButton");
-        mainDetails.add(discussionsButton);
+        buttons.add(discussionsButton);
 
         // join, charter, shop, manage, etc
-        FlowPanel actions = new FlowPanel();
-        actions.setStyleName("Actions");
-        mainDetails.add(actions);
+        FlowPanel actions = MsoyUI.createFlowPanel("Actions");
+        leftPanel.add(actions);
 
         // link to the game for this group
         if (_detail.group.gameId != 0) {
@@ -221,8 +222,7 @@ public class GroupDetailPanel extends FlowPanel
 
         // edit this group & manage rooms
         if (_detail.myRank == GroupMembership.RANK_MANAGER) {
-            FlowPanel managerActions = new FlowPanel();
-            managerActions.setStyleName("ManagerActions");
+            FlowPanel managerActions = MsoyUI.createFlowPanel("ManagerActions");
             actions.add(managerActions);
 
             String args = Args.compose("edit", _group.groupId);
@@ -244,10 +244,12 @@ public class GroupDetailPanel extends FlowPanel
             manageRooms.addClickListener(roomsClick);
         }
 
+        FlowPanel rightPanel = MsoyUI.createFlowPanel("Right");
+        mainDetails.add(rightPanel);
+
         // screenshot, #online, blurb
-        FlowPanel screenshot = new FlowPanel();
-        screenshot.setStyleName("ScreenshotBox");
-        mainDetails.add(screenshot);
+        FlowPanel screenshot = MsoyUI.createFlowPanel("ScreenshotBox");
+        rightPanel.add(screenshot);
 
         // display a screenshot of the group that can be clicked for a live view
         Widget liveView = SceneUtil.createSceneView(_group.homeSceneId, detail.homeSnapshot);
@@ -296,8 +298,7 @@ public class GroupDetailPanel extends FlowPanel
     {
         public ContentPanel () {
             setStyleName("ContentPanel");
-            add(_title = new SimplePanel());
-            _title.setStyleName("ContentPanelTitle");
+            add(_title = MsoyUI.createSimplePanel(null, "ContentPanelTitle"));
 
             // contains content and discussions button for css min-height
             FlowPanel container = new FlowPanel();

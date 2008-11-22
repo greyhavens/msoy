@@ -30,6 +30,7 @@
 .sceneView .enterButton {
   position: absolute;
   top: 0;
+  left: 0;
   background-image: url(/images/ui/snapshot_enter.png);
   background-repeat: no-repeat;
   background-position: bottom right;
