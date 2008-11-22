@@ -99,7 +99,7 @@ public class UploadDialog extends FlexTable
                 closeDialog();
             }
         });
-        setWidget(1, 1, MsoyUI.createButtonPair(submit, cancel));
+        setWidget(1, 1, MsoyUI.createButtonPair(cancel, submit));
     }
 
     /**

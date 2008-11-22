@@ -386,6 +386,7 @@ public class MsoyUI
 
     /**
      * Puts a pair buttons in a horizontal panel with a small gap betwixt them.
+     * Note: Our standard is that left is the cancel/back/revert, right is the ok/forward/submit.
      */
     public static Widget createButtonPair (Widget left, Widget right)
     {

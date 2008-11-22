@@ -151,7 +151,7 @@ public abstract class ItemEditor extends FlowPanel
 
         addSpacer();
         int row = _content.getRowCount();
-        _content.setWidget(row, 1, MsoyUI.createButtonPair(_esubmit, ecancel));
+        _content.setWidget(row, 1, MsoyUI.createButtonPair(ecancel, _esubmit));
         _content.getFlexCellFormatter().setHorizontalAlignment(row, 1, HasAlignment.ALIGN_RIGHT);
     }
 

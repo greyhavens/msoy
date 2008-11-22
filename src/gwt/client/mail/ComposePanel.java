@@ -113,7 +113,7 @@ public class ComposePanel extends FlowPanel
                 History.back();
             }
         });
-        _contents.setWidget(4, 1, MsoyUI.createButtonPair(_send, discard));
+        _contents.setWidget(4, 1, MsoyUI.createButtonPair(discard, _send));
 
         add(_contents);
 
