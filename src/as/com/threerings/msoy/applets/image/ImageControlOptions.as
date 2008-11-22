@@ -20,9 +20,8 @@ public class ImageControlOptions extends TitleWindow
 {
     /** Constants for what you want to do with yer images. */
     public static const CANCEL :int = 0;
-    public static const EDIT :int = 1;
-    public static const NEW :int = 2;
-    public static const CAMERA :int = 3;
+    public static const NEW :int = 1;
+    public static const CAMERA :int = 2;
 
     public function ImageControlOptions (ctx :ImageContext)
     {
@@ -32,23 +31,16 @@ public class ImageControlOptions extends TitleWindow
         addEventListener(Event.CLOSE, handleClose);
     }
 
-    public function open (hasImage :Boolean) :void
+    public function open () :void
     {
-        const hasCamera :Boolean = CameraSnapshotter.hasCamera();
-
-        if (!hasImage && !hasCamera) {
+        if (!CameraSnapshotter.hasCamera()) {
             // there's no choice! (well, cancel doesn't count)
             close(NEW);
             return;
         }
 
-        if (hasImage) {
-            addChild(new CommandButton(_ctx.IMAGE.get("b.edit_image"), close, EDIT));
-        }
         addChild(new CommandButton(_ctx.IMAGE.get("b.new_image"), close, NEW));
-        if (hasCamera) {
-            addChild(new CommandButton(_ctx.IMAGE.get("b.camera"), close, CAMERA));
-        }
+        addChild(new CommandButton(_ctx.IMAGE.get("b.camera"), close, CAMERA));
 
         PopUpManager.addPopUp(this, _ctx.getApplication(), true);
         PopUpUtil.center(this);

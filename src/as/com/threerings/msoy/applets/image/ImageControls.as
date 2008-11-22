@@ -59,10 +59,17 @@ public class ImageControls
         _size = new SizeRestriction(NaN, NaN,
             Number(params["maxWidth"]), Number(params["maxHeight"]));
 
-        var options :ImageControlOptions = new ImageControlOptions(_ctx);
-        options.addEventListener(Event.COMPLETE, handleOptionChoice);
         const url :String = params["url"] as String;
-        options.open(url != null);
+        if (url != null) {
+            var downloader :Downloader = new Downloader(_ctx);
+            downloader.addEventListener(Event.COMPLETE, handleDownloadComplete);
+            downloader.startDownload(url, "image" + url.substring(url.lastIndexOf(".") + 1));
+
+        } else {
+            var options :ImageControlOptions = new ImageControlOptions(_ctx);
+            options.addEventListener(Event.COMPLETE, handleOptionChoice);
+            options.open();
+        }
     }
 
     protected function handleOptionChoice (event :ValueEvent) :void
@@ -72,13 +79,6 @@ public class ImageControls
             close();
             break;
 
-        case ImageControlOptions.EDIT:
-            var downloader :Downloader = new Downloader(_ctx);
-            downloader.addEventListener(Event.COMPLETE, handleDownloadComplete);
-            var url :String = _params["url"] as String;
-            downloader.startDownload(url, "image" + url.substring(url.lastIndexOf(".") + 1));
-            break;
-
         case ImageControlOptions.NEW:
             var newImage :NewImageDialog = new NewImageDialog(_ctx, _size);
             newImage.addEventListener(Event.COMPLETE, handleNewImage);
@@ -86,7 +86,7 @@ public class ImageControls
             break;
 
         case ImageControlOptions.CAMERA:
-            new CameraSnapshotControl(_ctx, _ctx.getApplication(), editImage); //snapshotDone);
+            new CameraSnapshotControl(_ctx, _ctx.getApplication(), editImage);
             break;
         }
     }
@@ -136,11 +136,6 @@ public class ImageControls
         }
     }
 
-//    protected function snapshotDone (bitmapData :BitmapData) :void
-//    {
-//        doUpload(new JPGEncoder().encode(bitmapData), "snapshot.jpg");
-//    }
-//
     protected function doUpload (bytes :ByteArray, filename :String) :void
     {
         var uploader :MediaUploader = new MediaUploader(_ctx, _params["server"], _params["auth"]);

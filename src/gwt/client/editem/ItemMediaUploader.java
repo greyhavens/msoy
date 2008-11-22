@@ -24,8 +24,6 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.gwt.ui.SmartFileUpload;
 
-import client.shell.ShellMessages;
-
 import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
 
@@ -66,14 +64,14 @@ public class ItemMediaUploader extends FlexTable
 
         FlexCellFormatter fmt = getFlexCellFormatter();
 
-        fmt.setRowSpan(0, 0, 3);
+        fmt.setRowSpan(0, 0, 4);
         fmt.setStyleName(0, 0, "ItemPreview");
         fmt.setHorizontalAlignment(0, 0, HorizontalPanel.ALIGN_CENTER);
         fmt.setVerticalAlignment(0, 0, HorizontalPanel.ALIGN_MIDDLE);
         setText(0, 0, "");
 
         fmt.setWidth(0, 1, "5px");
-        fmt.setRowSpan(0, 1, 3);
+        fmt.setRowSpan(0, 1, 4);
 
         setWidget(0, 2, _hint = MsoyUI.createLabel("", "Tip"));
         _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
@@ -124,7 +122,9 @@ public class ItemMediaUploader extends FlexTable
 
         setText(1, 0, "");
         fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
-        setWidget(2, 0, _form);
+        setText(2, 0, "");
+        fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
+        setWidget(3, 0, _form);
         fmt.setVerticalAlignment(2, 0, HorizontalPanel.ALIGN_BOTTOM);
 
         // sweet sweet debugging
@@ -134,7 +134,7 @@ public class ItemMediaUploader extends FlexTable
     /**
      * Set the media to be shown in this uploader.
      */
-    public void setMedia (final MediaDesc desc)
+    public void setMedia (MediaDesc desc)
     {
         if (desc != null) {
             int width = MediaDesc.THUMBNAIL_WIDTH, height = MediaDesc.THUMBNAIL_HEIGHT;
@@ -149,21 +149,36 @@ public class ItemMediaUploader extends FlexTable
         }
 
         if (ItemEditor.TYPE_FLASH.equals(_type) || ItemEditor.TYPE_IMAGE.equals(_type)) {
-            final boolean isCreate = (desc == null) || !desc.isImage();
-            Button but = new Button(isCreate ? _cmsgs.create() : _cmsgs.edit());
-            but.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    String url = isCreate ? null : desc.getMediaPath();
-                    int maxWidth = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_WIDTH : -1;
-                    int maxHeight = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_HEIGHT : -1;
-                    _editorPopup = new BorderedPopup();
-                    _editorPopup.setWidget(FlashClients.createImageEditor(
-                        _itemEditor.getOffsetWidth(), _itemEditor.getOffsetHeight(),
-                        _mediaIds, url, maxWidth, maxHeight));
-                    _editorPopup.show();
-                }
-            });
-            setWidget(1, 0, but);
+            addImageEditing(desc);
+        }
+    }
+
+    protected void addImageEditing (final MediaDesc desc)
+    {
+        final Button createBtn = new Button(_emsgs.createImage());
+
+        ClickListener listener = new ClickListener() {
+            public void onClick (Widget sender) {
+                String url = (sender == createBtn) ? null : desc.getMediaPath();
+                int maxWidth = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_WIDTH : -1;
+                int maxHeight = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_HEIGHT : -1;
+                _editorPopup = new BorderedPopup();
+                _editorPopup.setWidget(FlashClients.createImageEditor(
+                    _itemEditor.getOffsetWidth(), _itemEditor.getOffsetHeight(),
+                    _mediaIds, url, maxWidth, maxHeight));
+                _editorPopup.show();
+            }
+        };
+        createBtn.addClickListener(listener);
+        setWidget(2, 0, createBtn);
+
+        if (desc != null && desc.isImage()) {
+            Button editBtn = new Button(_emsgs.editImage());
+            editBtn.addClickListener(listener);
+            setWidget(1, 0, editBtn);
+
+        } else {
+            setText(1, 0, "");
         }
     }
 
@@ -256,5 +271,5 @@ public class ItemMediaUploader extends FlexTable
     protected static final int CHOOSER_WIDTH = 60;
     protected static final int CHOOSER_HEIGHT = 28;
 
-    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }
