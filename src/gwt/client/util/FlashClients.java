@@ -23,6 +23,17 @@ import client.shell.Frame;
 public class FlashClients
 {
     /**
+     * Create an audio player.
+     */
+    public static HTML createUploader (String mediaIds)
+    {
+        String flashVars = "auth=" + URL.encodeComponent(CShell.getAuthToken()) +
+            "&mediaIds=" + URL.encodeComponent(mediaIds);
+        return WidgetUtil.createFlashContainer("uploader",
+            "/clients/" + DeploymentConfig.version + "/MediaUploader.swf", 320, 30, flashVars);
+    }
+
+    /**
      * Create a video player.
      *
      * @param path may be null to create an empty player that can be provided with
