@@ -19,7 +19,12 @@ public class BorderedPopup extends PopupPanel
 
     public BorderedPopup (boolean autoHide)
     {
-        super(autoHide);
+        this(autoHide, false);
+    }
+
+    public BorderedPopup (boolean autoHide, boolean modal)
+    {
+        super(autoHide, modal);
         setStyleName("borderedPopup");
 
         super.setWidget(_widget = new BorderedWidget());

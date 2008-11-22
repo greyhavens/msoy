@@ -4,6 +4,7 @@
 package client.editem;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -24,9 +25,9 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.gwt.ui.SmartFileUpload;
 
+import client.shell.Frame;
 import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
-
 import client.util.FlashClients;
 import client.util.MediaUtil;
 
@@ -159,13 +160,15 @@ public class ItemMediaUploader extends FlexTable
 
         ClickListener listener = new ClickListener() {
             public void onClick (Widget sender) {
+                int popWidth = _itemEditor.getOffsetWidth() - 8;
+                int popHeight = Math.max(Frame.CLIENT_HEIGHT,
+                    Math.min(_itemEditor.getOffsetHeight() - 8, Window.getClientHeight() - 8));
                 String url = (sender == createBtn) ? null : desc.getMediaPath();
                 int maxWidth = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_WIDTH : -1;
                 int maxHeight = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_HEIGHT : -1;
-                _editorPopup = new BorderedPopup();
+                _editorPopup = new BorderedPopup(false, true);
                 _editorPopup.setWidget(FlashClients.createImageEditor(
-                    _itemEditor.getOffsetWidth(), _itemEditor.getOffsetHeight(),
-                    _mediaIds, url, maxWidth, maxHeight));
+                    popWidth, popHeight, _mediaIds, url, maxWidth, maxHeight));
                 _editorPopup.show();
             }
         };
