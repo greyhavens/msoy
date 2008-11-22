@@ -19,7 +19,7 @@ import mx.validators.RegExpValidator;
 
 import com.threerings.flex.CommandButton;
 
-import com.threerings.msoy.applets.util.Downloader;
+import com.threerings.msoy.applets.net.Downloader;
 
 public class URLFileChooser extends Downloader
 {

@@ -45,8 +45,8 @@ import com.threerings.msoy.applets.image.DisplayCanvas;
 import com.threerings.msoy.applets.image.NewImageDialog;
 import com.threerings.msoy.applets.image.SizeRestriction;
 
-import com.threerings.msoy.applets.util.Downloader;
-import com.threerings.msoy.applets.util.Uploader;
+import com.threerings.msoy.applets.net.Downloader;
+import com.threerings.msoy.applets.net.Uploader;
 
 public class PopupFilePreview extends TitleWindow
 {

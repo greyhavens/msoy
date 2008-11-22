@@ -36,9 +36,8 @@ import com.threerings.flex.CommandLinkButton;
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
 import com.threerings.msoy.applets.image.ImageContext;
 
+import com.threerings.msoy.applets.net.Downloader;
 import com.threerings.msoy.applets.net.MediaUploader;
-
-import com.threerings.msoy.applets.util.Downloader;
 
 /**
  * Standalone ImageEditor. Works with imageeditor.mxml.

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.applets.util {
+package com.threerings.msoy.applets.net {
 
 import flash.events.DataEvent;
 import flash.events.ErrorEvent;
