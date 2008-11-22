@@ -24,6 +24,8 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.gwt.ui.SmartFileUpload;
 
+import client.shell.ShellMessages;
+
 import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
 
@@ -121,6 +123,7 @@ public class ItemMediaUploader extends FlexTable
         });
 
         setText(1, 0, "");
+        fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
         setWidget(2, 0, _form);
         fmt.setVerticalAlignment(2, 0, HorizontalPanel.ALIGN_BOTTOM);
 
@@ -147,7 +150,8 @@ public class ItemMediaUploader extends FlexTable
 
         if (ItemEditor.TYPE_FLASH.equals(_type) || ItemEditor.TYPE_IMAGE.equals(_type)) {
             final boolean isCreate = (desc == null) || !desc.isImage();
-            setWidget(1, 0, MsoyUI.createCrUpdateButton(isCreate, new ClickListener() {
+            Button but = new Button(isCreate ? _cmsgs.create() : _cmsgs.edit());
+            but.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     String url = isCreate ? null : desc.getMediaPath();
                     int maxWidth = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_WIDTH : -1;
@@ -158,7 +162,8 @@ public class ItemMediaUploader extends FlexTable
                         _mediaIds, url, maxWidth, maxHeight));
                     _editorPopup.show();
                 }
-            }));
+            });
+            setWidget(1, 0, but);
         }
     }
 
@@ -250,4 +255,6 @@ public class ItemMediaUploader extends FlexTable
 
     protected static final int CHOOSER_WIDTH = 60;
     protected static final int CHOOSER_HEIGHT = 28;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

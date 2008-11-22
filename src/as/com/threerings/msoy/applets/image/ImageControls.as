@@ -56,22 +56,38 @@ public class ImageControls
     protected function gotParams (params :Object) :void
     {
         _params = params;
-
         _size = new SizeRestriction(NaN, NaN,
             Number(params["maxWidth"]), Number(params["maxHeight"]));
-        const url :String = params["url"] as String;
 
-        // TODO: if url is not null, they get 3 choices: edit, new image, camera
-        // If the url is null, they only get new image and camera.
-        if (url != null) {
+        var options :ImageControlOptions = new ImageControlOptions(_ctx);
+        options.addEventListener(Event.COMPLETE, handleOptionChoice);
+        const url :String = params["url"] as String;
+        options.open(url != null);
+    }
+
+    protected function handleOptionChoice (event :ValueEvent) :void
+    {
+        switch (event.value) {
+        case ImageControlOptions.CANCEL:
+            close();
+            break;
+
+        case ImageControlOptions.EDIT:
             var downloader :Downloader = new Downloader(_ctx);
             downloader.addEventListener(Event.COMPLETE, handleDownloadComplete);
+            var url :String = _params["url"] as String;
             downloader.startDownload(url, "image" + url.substring(url.lastIndexOf(".") + 1));
+            break;
 
-        } else {
+        case ImageControlOptions.NEW:
             var newImage :NewImageDialog = new NewImageDialog(_ctx, _size);
             newImage.addEventListener(Event.COMPLETE, handleNewImage);
             newImage.addEventListener(Event.CANCEL, close);
+            break;
+
+        case ImageControlOptions.CAMERA:
+            new CameraSnapshotControl(_ctx, _ctx.getApplication(), editImage); //snapshotDone);
+            break;
         }
     }
 
@@ -120,17 +136,11 @@ public class ImageControls
         }
     }
 
-    protected function handleTakeSnapshot () :void
-    {
-        new CameraSnapshotControl(_ctx, _ctx.getApplication(), snapshotDone);
-    }
-
-    protected function snapshotDone (bitmapData :BitmapData) :void
-    {
-        // TODO: allow editing first? Return to top-level menu?
-        doUpload(new JPGEncoder().encode(bitmapData), "snapshot.jpg");
-    }
-
+//    protected function snapshotDone (bitmapData :BitmapData) :void
+//    {
+//        doUpload(new JPGEncoder().encode(bitmapData), "snapshot.jpg");
+//    }
+//
     protected function doUpload (bytes :ByteArray, filename :String) :void
     {
         var uploader :MediaUploader = new MediaUploader(_ctx, _params["server"], _params["auth"]);
