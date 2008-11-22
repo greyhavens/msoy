@@ -215,7 +215,7 @@ public class FeedMessagePanel extends FocusPanel
         // case 201: // GROUP_UPDATED_ROOM is above
 
         case 300: // SELF_ROOM_COMMENT
-            return Link.createHtml(message.data[1], Pages.WORLD, Args.compose("room",
+            return Link.createHtml(message.data[1], Pages.ROOMS, Args.compose("room",
                 message.data[0]));
 
         case 301: // SELF_ITEM_COMMENT
