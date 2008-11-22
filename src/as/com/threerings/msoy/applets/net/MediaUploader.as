@@ -12,8 +12,6 @@ import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 
 import flash.net.URLLoader;
-import flash.net.URLRequest;
-import flash.net.URLRequestMethod;
 
 import flash.utils.ByteArray;
 
@@ -25,11 +23,7 @@ import mx.managers.PopUpManager;
 
 import com.threerings.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
-
 import com.threerings.msoy.applets.AppletContext;
-
-import com.threerings.msoy.client.DeploymentConfig;
 
 /**
  * @eventType flash.events.Event.COMPLETE
@@ -102,25 +96,6 @@ public class MediaUploader extends TitleWindow
             throw new IllegalOperationError("Uploader has already been used to upload.");
         }
 
-        var mimeType :String = MediaDesc.mimeTypeToString(MediaDesc.suffixToMimeType(filename));
-
-        var body :ByteArray = new ByteArray();
-        body.writeUTFBytes("\r\n--" + BOUNDARY + "\r\n" +
-            "Content-Disposition: form-data; name=\"client\"\r\n\r\n" +
-            "mchooser\r\n--" + BOUNDARY + "\r\n" +
-            "Content-Disposition: form-data; name=\"auth\"\r\n\r\n" +
-            _authToken + "\r\n--" + BOUNDARY + "\r\n" +
-            "Content-Disposition: form-data; name=\"" + mediaId + "\"; " +
-            "filename=\"" + filename + "\"\r\n" +
-            "Content-Type: " + mimeType + "\r\n\r\n");
-        body.writeBytes(media);
-        body.writeUTFBytes("\r\n--" + BOUNDARY + "--\r\n");
-
-        var request :URLRequest = new URLRequest(DeploymentConfig.serverURL + "uploadsvc");
-        request.contentType = "multipart/form-data; boundary=" + BOUNDARY;
-        request.method = URLRequestMethod.POST;
-        request.data = body;
-
         _loader = new URLLoader();
         // we dispatch all the loader's events as our own
         for each (var eventType :String in [
@@ -132,7 +107,7 @@ public class MediaUploader extends TitleWindow
 // which we don't care about. We want to see the progress on uploading the giant wadge
 // of bytes we're sending TO the server. So we keep the bar in indeterminate mode.
 //        _bar.source = _loader;
-        _loader.load(request);
+        _loader.load(MediaUploadUtil.createRequest(_authToken, mediaId, filename, media));
     }
 
     /**
@@ -169,23 +144,7 @@ public class MediaUploader extends TitleWindow
             throw new IllegalOperationError("Uploader has not yet completed the upload.");
         }
 
-        var data :String = _loader.data as String;
-        var result :Object = {};
-        for each (var section :String in data.split("\n")) {
-            if (section == "") {
-                continue;
-            }
-
-            var bits :Array = section.split(" ");
-            result[bits[0]] = {
-                hash: bits[1],
-                mimeType: parseInt(bits[2]),
-                constraint: parseInt(bits[3]),
-                width: parseInt(bits[4]),
-                height: parseInt(bits[5])
-            };
-        }
-        return result;
+        return MediaUploadUtil.parseResult(String(_loader.data));
     }
 
     override protected function createChildren () :void
