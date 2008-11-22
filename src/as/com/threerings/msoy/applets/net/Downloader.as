@@ -34,6 +34,8 @@ public class Downloader extends TitleWindow
     public function Downloader (ctx :AppletContext)
     {
         title = ctx.APPLET.get("t.downloading");
+        showCloseButton = true;
+        addEventListener(CloseEvent.CLOSE, handleClose);
 
         _loader = new URLLoader();
         _loader.dataFormat = URLLoaderDataFormat.BINARY;
@@ -41,6 +43,12 @@ public class Downloader extends TitleWindow
         _loader.addEventListener(IOErrorEvent.IO_ERROR, handleDownloadError);
         _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleDownloadError);
         _loader.addEventListener(Event.COMPLETE, handleDownloadComplete);
+
+        _progress = new ProgressBar();
+        _progress.percentWidth = 100;
+        FlexUtil.setVisible(_progress, false);
+        _progress.source = _loader;
+        addChild(_progress);
 
         PopUpManager.addPopUp(this, ctx.getApplication(), true);
         PopUpManager.centerPopUp(this);
@@ -58,37 +66,9 @@ public class Downloader extends TitleWindow
         _loader.load(new URLRequest(url));
     }
 
-    override protected function createChildren () :void
-    {
-        super.createChildren();
-
-        var box :VBox = new VBox();
-        addChild(box);
-
-        configureUI(box);
-    }
-
-    protected function configureUI (box :VBox) :void
-    {
-        showCloseButton = true;
-        addEventListener(CloseEvent.CLOSE, handleClose);
-
-        _status = new TextArea();
-        _status.percentWidth = 100;
-        _status.editable = false;
-        _status.setStyle("borderStyle", "none");
-        box.addChild(_status);
-
-        _progress = new ProgressBar();
-        _progress.percentWidth = 100;
-        FlexUtil.setVisible(_progress, false);
-        _progress.source = _loader;
-        box.addChild(_progress);
-    }
-
     protected function handleDownloadStatus (event :HTTPStatusEvent) :void
     {
-        _status.text = "HTTP Status: " + event.status;
+        //_status.text = "HTTP Status: " + event.status;
 
         // I'm pretty sure certain URLs will give a status and that's it, so we
         // need to be prepared to stop the download here.
@@ -97,7 +77,13 @@ public class Downloader extends TitleWindow
 
     protected function handleDownloadError (event :ErrorEvent) :void
     {
-        _status.text = "Error downloading: " + event.text;
+        var status :TextArea = new TextArea();
+        status.percentWidth = 100;
+        status.editable = false;
+        status.setStyle("borderStyle", "none");
+        status.text = "Error downloading: " + event.text;
+        addChild(status);
+
         downloadStopped();
     }
 
@@ -142,8 +128,6 @@ public class Downloader extends TitleWindow
     }
 
     protected var _loader :URLLoader;
-
-    protected var _status :TextArea;
 
     protected var _progress :ProgressBar;
 
