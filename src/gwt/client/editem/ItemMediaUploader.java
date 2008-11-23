@@ -6,24 +6,16 @@ package client.editem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FormHandler;
-import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
-
-import com.threerings.gwt.ui.SmartFileUpload;
 
 import client.shell.Frame;
 import client.ui.BorderedPopup;
@@ -78,54 +70,11 @@ public class ItemMediaUploader extends FlexTable
         _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
         fmt.setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
 
-        _form = new FormPanel();
-        _panel = new HorizontalPanel();
-        _form.setWidget(_panel);
-        _form.setStyleName("Controls");
-
-        if (GWT.isScript()) {
-            _form.setAction("/uploadsvc");
-        } else {
-            _form.setAction("http://localhost:8080/uploadsvc");
-        }
-        _form.setEncoding(FormPanel.ENCODING_MULTIPART);
-        _form.setMethod(FormPanel.METHOD_POST);
-
-        _upload = new SmartFileUpload();
-        _upload.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                uploadMedia();
-            }
-        });
-
-        _upload.setName(mediaIds);
-        _panel.add(_upload);
-
-        _form.addFormHandler(new FormHandler() {
-            public void onSubmit (FormSubmitEvent event) {
-                // don't let them submit until they plug in a file...
-                if (_upload.getFilename().length() == 0) {
-                    event.setCancelled(true);
-                }
-            }
-            public void onSubmitComplete (FormSubmitCompleteEvent event) {
-                String result = event.getResults();
-                result = (result == null) ? "" : result.trim();
-                if (result.length() > 0) {
-                    // TODO: This is fugly as all hell, but at least we're now reporting
-                    // *something* to the user
-                    MsoyUI.error(result);
-                } else {
-                    _submitted = _upload.getFilename();
-                }
-            }
-        });
-
         setText(1, 0, "");
         fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
         setText(2, 0, "");
         fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
-        setWidget(3, 0, _form);
+        setWidget(3, 0, FlashClients.createUploader(mediaIds));
         fmt.setVerticalAlignment(2, 0, HorizontalPanel.ALIGN_BOTTOM);
 
         // sweet sweet debugging
@@ -216,17 +165,6 @@ public class ItemMediaUploader extends FlexTable
         setText(0, 0, "");
     }
 
-    protected void uploadMedia ()
-    {
-        if (_upload.getFilename().length() == 0) {
-            return;
-        }
-        if (_submitted != null && _submitted.equals(_upload.getFilename())) {
-            return;
-        }
-        _form.submit();
-    }
-
     @Override // from Widget
     protected void onLoad ()
     {
@@ -260,19 +198,12 @@ public class ItemMediaUploader extends FlexTable
     protected Label _hint;
     protected HorizontalPanel _panel;
 
-    protected FormPanel _form;
-    protected SmartFileUpload _upload;
-    protected String _submitted;
-
     protected ItemEditor _itemEditor;
     protected String _mediaIds;
     protected String _type;
     protected int _mode;
 
     protected static BorderedPopup _editorPopup;
-
-    protected static final int CHOOSER_WIDTH = 60;
-    protected static final int CHOOSER_HEIGHT = 28;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
 }
