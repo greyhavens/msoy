@@ -31,6 +31,11 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
 {
     // TODO: this servlet checks permissions its own special way, if we continue to keep
     // this, we should consider refactoring so that they work like the other upload servelets.
+    @Override
+    protected void validateAccess (UploadContext ctx)
+    {
+        // nada: see note above
+    }
 
     @Override // from AbstractUploadServlet
     protected void handleFileItems (UploadContext ctx)

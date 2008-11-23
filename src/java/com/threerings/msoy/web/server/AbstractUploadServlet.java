@@ -18,11 +18,15 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
+import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.msoy.web.gwt.WebCreds;
 
 import static com.threerings.msoy.Log.log;
 
@@ -101,8 +105,17 @@ public abstract class AbstractUploadServlet extends HttpServlet
     protected void validateAccess (UploadContext ctx)
         throws AccessDeniedException
     {
-        // no validation here
-        // ctx.memrec = null;
+        // We accept the auth cookie OR a 'auth' form field.
+        String token = ctx.formFields.get("auth");
+        if (token == null) {
+            token = CookieUtil.getCookieValue(ctx.req, WebCreds.credsCookie());
+        }
+        ctx.memrec = _mhelper.getAuthedUser(token);
+        if (ctx.memrec == null) {
+            throw new AccessDeniedException("Must be logged in to upload item media.");
+        }
+        // In this base class: that's good enough for us. They're a user. We could potentially
+        // log who they are if we see abuse.
     }
 
     /**
@@ -298,6 +311,9 @@ public abstract class AbstractUploadServlet extends HttpServlet
             this.function = function;
         }
     }
+
+    // our dependencies
+    @Inject protected MemberHelper _mhelper;
 
     protected static final int MEGABYTE = 1024 * 1024;
 }

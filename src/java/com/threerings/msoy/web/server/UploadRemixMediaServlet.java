@@ -22,8 +22,6 @@ public class UploadRemixMediaServlet extends AbstractUploadServlet
     protected void handleFileItems (UploadContext ctx)
         throws IOException, FileUploadException, AccessDeniedException
     {
-        // TODO: check auth
-
         UploadFile uploadFile = new FileItemUploadFile(ctx.file);
         MediaInfo info = new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType());
 

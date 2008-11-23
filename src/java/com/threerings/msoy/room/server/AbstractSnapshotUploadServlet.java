@@ -27,23 +27,14 @@ public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServl
             throw new AccessDeniedException("Snapshot request is missing data.");
         }
 
-        // pull out session token from the request header
-        String token = CookieUtil.getCookieValue(ctx.req, WebCreds.credsCookie());
-        if (token == null) {
-            throw new AccessDeniedException("Must be logged in to upload screenshots.");
-        }
-
-        Integer sceneId = -1;
         try {
-            sceneId = Integer.decode(ctx.formFields.get("scene"));
-            // make sure the user is authenticated, and pull out their record object
-            ctx.memrec = _mhelper.requireAuthedUser(token);
-            ctx.data = sceneId;
-
+            ctx.data = Integer.decode(ctx.formFields.get("scene"));
         } catch (Exception e) {
-            throw new AccessDeniedException("Could not confirm player access to scene " +
-                                            "[sceneId=" + sceneId + ", e=" + e + "].");
+            throw new AccessDeniedException("Could not parse sceneId");
         }
+
+        // finally, do normal validation
+        super.validateAccess(ctx);
     }
 
     @Override // from UploadServlet
@@ -66,7 +57,4 @@ public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServl
         desc.constraint = info.constraint;
         return desc;
     }
-
-    // our dependencies
-    @Inject protected MemberHelper _mhelper;
 }

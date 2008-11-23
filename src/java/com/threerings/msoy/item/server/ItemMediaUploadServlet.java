@@ -11,18 +11,14 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
-import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
-import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.AbstractUploadServlet;
 import com.threerings.msoy.web.server.FileItemUploadFile;
-import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.UploadFile;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 import com.threerings.msoy.web.server.UploadUtil;
@@ -162,16 +158,6 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         return LARGE_MEDIA_MAX_SIZE;
     }
 
-    @Override // from AbstractUploadServlet
-    protected void validateAccess (UploadContext ctx)
-        throws AccessDeniedException
-    {
-        String token = CookieUtil.getCookieValue(ctx.req, WebCreds.credsCookie());
-        if (_mhelper.getAuthedUser(token) == null) {
-            throw new AccessDeniedException("Must be logged in to upload item media.");
-        }
-    }
-
     /**
      * Validate that the upload size is acceptable for the specified mimetype.
      */
@@ -207,9 +193,6 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
 
     /** Represents different potential upload clients. */
     protected enum Client { GWT, MCHOOSER };
-
-    // our dependencies
-    @Inject protected MemberHelper _mhelper;
 
     /** Prevent Captain Insano from showing up to fill our drives. */
     protected static final int SMALL_MEDIA_MAX_SIZE = 5 * MEGABYTE;
