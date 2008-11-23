@@ -695,11 +695,11 @@
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/MediaUploader.swf"/>
+      <arg value="${deploy.dir}/uploader.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/MediaUploader.as"/>
+      <arg value="${asrc.dir}/UploaderApp.as"/>
     </exec>
-    <copy file="${deploy.dir}/MediaUploader.swf" todir="pages/clients/${version}"/>
+    <copy file="${deploy.dir}/uploader.swf" todir="pages/clients/${version}"/>
   </target>
 
   <!-- builds our video player -->
