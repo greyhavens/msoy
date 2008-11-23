@@ -12,9 +12,14 @@ import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 
-import flash.net.FileReference;
+import flash.external.ExternalInterface;
 
 import flash.display.Sprite;
+
+import flash.net.FileReference;
+
+import flash.text.TextField;
+import flash.text.TextFormat;
 
 import com.threerings.util.ParameterUtil;
 
@@ -24,12 +29,19 @@ import com.threerings.msoy.applets.net.MediaUploadUtil;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
-[SWF(width="200", height="30")]
+[SWF(width="200", height="40")]
 public class UploaderApp extends Sprite
 {
     public function UploaderApp ()
     {
         this.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
+
+        _progress = new Sprite();
+        addChild(_progress);
+
+        _status = new TextField();
+        _status.width = 200;
+        addChild(_status);
 
         _fileRef = new FileReference();
         _fileRef.addEventListener(Event.SELECT, handleFileSelected);
@@ -54,7 +66,13 @@ public class UploaderApp extends Sprite
 
     protected function showUploadButton () :void
     {
-        showButton("Upload file", handleChooseFile);
+        _progress.graphics.clear();
+        showButton("Upload a new file", handleChooseFile);
+    }
+
+    protected function setStatus (text :String) :void
+    {
+        _status.text = text;
     }
 
     protected function showButton (text :String, handler :Function) :void
@@ -63,9 +81,23 @@ public class UploaderApp extends Sprite
             removeChild(_button);
         }
 
-        _button = new SimpleTextButton(text, false);
+        _button = new SimpleTextButton(text, false, 0x000000, 0xCCCCCC, 0x000000, 2,
+            new TextFormat("_sans"));
+        _button.y = 15;
         _button.addEventListener(MouseEvent.CLICK, handler);
         addChild(_button);
+    }
+
+    protected function displayProgress (progress :Number) :void
+    {
+        _progress.graphics.clear();
+        if (progress > 0) {
+            _progress.graphics.beginFill(0xFF00000);
+            _progress.graphics.drawRect(0, 0, 199 * progress, 10);
+            _progress.graphics.endFill();
+        }
+        _progress.graphics.lineStyle(1, 0x000000);
+        _progress.graphics.drawRect(0, 0, 199, 10);
     }
 
     protected function handleChooseFile (event :MouseEvent) :void
@@ -73,6 +105,7 @@ public class UploaderApp extends Sprite
         // TODO: file filters based on type?
         _fileRef.browse();
 
+        setStatus("Choose the file to upload...");
         removeChild(_button);
         _button = null;
     }
@@ -81,15 +114,19 @@ public class UploaderApp extends Sprite
     {
         cancelUpload();
         showUploadButton();
+        setStatus("Upload cancelled");
     }
 
     protected function handleSelectCancelled (event :Event) :void
     {
         showUploadButton();
+        setStatus("");
     }
 
     protected function handleFileSelected (event :Event) :void
     {
+        setStatus("");
+        displayProgress(0);
         _fileRef.upload(MediaUploadUtil.createRequest("uploadsvc", String(_params["auth"])),
             String(_params["mediaIds"]));
 
@@ -98,27 +135,31 @@ public class UploaderApp extends Sprite
 
     protected function handleUploadError (event :ErrorEvent) :void
     {
-        // TODO
-        trace("Jimminy: " + event.text);
+        setStatus("Error uploading: " + event.text);
         showUploadButton();
     }
 
     protected function handleProgress (event :ProgressEvent) :void
     {
-        const progress :Number = event.bytesLoaded / event.bytesTotal;
-        // TODO
-        trace("Progress: " + progress);
+        displayProgress(event.bytesLoaded / event.bytesTotal);
     }
 
     protected function handleUploadCompleteData (event :DataEvent) :void
     {
-        trace("complete data: " + event.data);
+        if (ExternalInterface.available) {
+            var result :Object = MediaUploadUtil.parseResult(event.data);
+            for (var mediaId :String in result) {
+                var data :Object = result[mediaId];
+                ExternalInterface.call("setHash", mediaId, data.hash, data.mimeType,
+                    data.constraint, data.width, data.height);
+            }
+        }
     }
 
     protected function handleUploadComplete (event :Event) :void
     {
-        trace("complete");
         showUploadButton();
+        setStatus("Upload complete");
     }
 
     protected function cancelUpload () :void
@@ -134,6 +175,10 @@ public class UploaderApp extends Sprite
     {
         cancelUpload();
     }
+
+    protected var _progress :Sprite;
+
+    protected var _status :TextField;
 
     protected var _params :Object;
 

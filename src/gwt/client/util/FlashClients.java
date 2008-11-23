@@ -29,8 +29,8 @@ public class FlashClients
     {
         String flashVars = "auth=" + URL.encodeComponent(CShell.getAuthToken()) +
             "&mediaIds=" + URL.encodeComponent(mediaIds);
-        return WidgetUtil.createFlashContainer("uploader",
-            "/clients/" + DeploymentConfig.version + "/uploader.swf", 200, 30, flashVars);
+        return WidgetUtil.createTransparentFlashContainer("uploader",
+            "/clients/" + DeploymentConfig.version + "/uploader.swf", 200, 40, flashVars);
     }
 
     /**
