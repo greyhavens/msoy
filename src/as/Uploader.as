@@ -25,7 +25,7 @@ import com.threerings.flash.SimpleTextButton;
 
 import com.threerings.msoy.client.DeploymentConfig;
 
-[SWF(width="320", height="30")]
+[SWF(width="200", height="30")]
 public class MediaUploader extends Sprite
 {
     public function MediaUploader ()
@@ -40,7 +40,8 @@ public class MediaUploader extends Sprite
 //        _fileRef.addEventListener(HTTPStatusEvent.HTTP_STATUS, dispatchEvent);
 //        _fileRef.addEventListener(Event.OPEN, dispatchEvent);
         _fileRef.addEventListener(ProgressEvent.PROGRESS, handleProgress);
-        _fileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, handleUploadComplete);
+        _fileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, handleUploadCompleteData);
+        _fileRef.addEventListener(Event.COMPLETE, handleUploadComplete);
 
         ParameterUtil.getParameters(this, gotParams);
     }
@@ -94,11 +95,12 @@ public class MediaUploader extends Sprite
         request.contentType = "multipart/form-data; boundary=" + "ooooooTwadddle0000";
         request.method = URLRequestMethod.POST;
 
-        var variables :URLVariables = new URLVariables();
-        variables["client"] = "mchooser";
-        variables["auth"] = _params["authToken"];
+        var vars :URLVariables = new URLVariables();
+        vars.client = "mchooser";
+        vars.auth = _params["auth"];
 
-        request.data = variables;
+        trace("Vars: " + vars.toString());
+        request.data = vars;
 
         _fileRef.upload(request, String(_params["mediaIds"]));
 
@@ -119,11 +121,14 @@ public class MediaUploader extends Sprite
         trace("Progress: " + progress);
     }
 
-    /**
-     * Handles COMPLETE -or- CANCEL.
-     */
+    protected function handleUploadCompleteData (event :DataEvent) :void
+    {
+        trace("complete data: " + event.data);
+    }
+
     protected function handleUploadComplete (event :Event) :void
     {
+        trace("complete");
         showUploadButton();
     }
 
