@@ -30,7 +30,7 @@ public class FlashClients
         String flashVars = "auth=" + URL.encodeComponent(CShell.getAuthToken()) +
             "&mediaIds=" + URL.encodeComponent(mediaIds);
         return WidgetUtil.createFlashContainer("uploader",
-            "/clients/" + DeploymentConfig.version + "/MediaUploader.swf", 320, 30, flashVars);
+            "/clients/" + DeploymentConfig.version + "/uploader.swf", 200, 30, flashVars);
     }
 
     /**
@@ -57,7 +57,7 @@ public class FlashClients
     }
 
     /**
-     * Create the uploader swf.
+     * Create the image editor swf.
      *
      * @param currentURL may be null
      * @param maxWidth or -1 to allow any width 
