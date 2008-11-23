@@ -146,7 +146,7 @@ public class ImageControls
 
     protected function doUpload (bytes :ByteArray, filename :String) :void
     {
-        var uploader :MediaUploader = new MediaUploader(_ctx, _params["server"], _params["auth"]);
+        var uploader :MediaUploader = new MediaUploader(_ctx);
         uploader.addEventListener(Event.COMPLETE, handleUploadComplete);
         //uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
         uploader.addEventListener(IOErrorEvent.IO_ERROR, handleUploadError);

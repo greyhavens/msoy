@@ -390,7 +390,7 @@ public class RemixControls extends HBox
             _lastBytes = _ctx.pack.serialize();
         }
 
-        var uploader :MediaUploader = new MediaUploader(_ctx, _params["auth"]);
+        var uploader :MediaUploader = new MediaUploader(_ctx);
         uploader.addEventListener(Event.COMPLETE, handleUploadComplete);
 //        uploader.addEventListener(ProgressEvent.PROGRESS, handleUploadProgress);
         uploader.addEventListener(IOErrorEvent.IO_ERROR, handleUploadError);

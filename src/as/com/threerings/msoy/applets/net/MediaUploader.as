@@ -63,10 +63,9 @@ public class MediaUploader extends TitleWindow
     /**
      * Create a new media uploader.
      */
-    public function MediaUploader (ctx :AppletContext, authToken :String)
+    public function MediaUploader (ctx :AppletContext)
     {
         _ctx = ctx;
-        _authToken = authToken;
 
         title = ctx.APPLET.get("t.saving");
 
@@ -107,7 +106,8 @@ public class MediaUploader extends TitleWindow
 // which we don't care about. We want to see the progress on uploading the giant wadge
 // of bytes we're sending TO the server. So we keep the bar in indeterminate mode.
 //        _bar.source = _loader;
-        _loader.load(MediaUploadUtil.createRequest(_authToken, mediaId, filename, media));
+        _loader.load(
+            MediaUploadUtil.createRequest("uploadsvc", _ctx.authToken, mediaId, filename, media));
     }
 
     /**
@@ -156,8 +156,6 @@ public class MediaUploader extends TitleWindow
     protected var _ctx :AppletContext;
 
     protected var _bar :ProgressBar;
-
-    protected var _authToken :String;
 
     protected var _loader :URLLoader;
 

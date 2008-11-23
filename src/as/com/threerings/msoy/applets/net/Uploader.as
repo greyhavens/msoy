@@ -95,9 +95,7 @@ public class Uploader extends TitleWindow
         PopUpManager.addPopUp(this, _ctx.getApplication(), true);
         PopUpManager.centerPopUp(this);
 
-        var req :URLRequest = new URLRequest(DeploymentConfig.serverURL + _service);
-        req.method = URLRequestMethod.POST;
-        _fileRef.upload(req);
+        _fileRef.upload(MediaUploadUtil.createRequest(_service, _ctx.authToken));
     }
 
     protected function handleUploadError (event :ErrorEvent) :void

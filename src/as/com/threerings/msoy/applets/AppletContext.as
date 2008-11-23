@@ -7,15 +7,21 @@ import mx.core.Application;
 
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
+import com.threerings.util.ParameterUtil;
 
 public class AppletContext
 {
+    /** The user's authentication token, if any. */
+    public var authToken :String;
+    
     public function AppletContext (app :Application)
     {
         _app = app;
         _msgMgr = new MessageManager();
 
         _appletBundle = _msgMgr.getBundle("applet");
+
+        ParameterUtil.getParameters(app, gotParams);
     }
 
     /**
@@ -32,6 +38,13 @@ public class AppletContext
     public function get APPLET () :MessageBundle
     {
         return _appletBundle;
+    }
+
+    protected function gotParams (params :Object) :void
+    {
+        if ("auth" in params) {
+            authToken = String(params.auth);
+        }
     }
 
     /** The application containing this applet. If we're loaded into another
