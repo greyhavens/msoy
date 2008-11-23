@@ -13,9 +13,6 @@ import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 
 import flash.net.FileReference;
-import flash.net.URLRequest;
-import flash.net.URLRequestMethod;
-import flash.net.URLVariables;
 
 import flash.display.Sprite;
 
@@ -23,12 +20,14 @@ import com.threerings.util.ParameterUtil;
 
 import com.threerings.flash.SimpleTextButton;
 
+import com.threerings.msoy.applets.net.MediaUploadUtil;
+
 import com.threerings.msoy.client.DeploymentConfig;
 
 [SWF(width="200", height="30")]
-public class MediaUploader extends Sprite
+public class UploaderApp extends Sprite
 {
-    public function MediaUploader ()
+    public function UploaderApp ()
     {
         this.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
@@ -91,18 +90,8 @@ public class MediaUploader extends Sprite
 
     protected function handleFileSelected (event :Event) :void
     {
-        var request :URLRequest = new URLRequest(DeploymentConfig.serverURL + "uploadsvc");
-        request.contentType = "multipart/form-data; boundary=" + "ooooooTwadddle0000";
-        request.method = URLRequestMethod.POST;
-
-        var vars :URLVariables = new URLVariables();
-        vars.client = "mchooser";
-        vars.auth = _params["auth"];
-
-        trace("Vars: " + vars.toString());
-        request.data = vars;
-
-        _fileRef.upload(request, String(_params["mediaIds"]));
+        _fileRef.upload(MediaUploadUtil.createRequest("uploadsvc", String(_params["auth"])),
+            String(_params["mediaIds"]));
 
         showButton("Cancel upload", handleCancelUpload);
     }
