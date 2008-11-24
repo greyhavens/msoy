@@ -51,6 +51,9 @@ public class StatusServlet extends HttpServlet
     /** A report on Depot performance. */
     public static final String DEPOT_TYPE = "depot";
 
+    /** A report on RPC method calls. */
+    public static final String RPC_TYPE = "rpc";
+
     @Override // from HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
@@ -184,6 +187,10 @@ public class StatusServlet extends HttpServlet
 
         case DEPOT:
             collectReportInfo(info, client, nodeobj, DEPOT_TYPE);
+            break;
+
+        case RPC:
+            collectReportInfo(info, client, nodeobj, RPC_TYPE);
             break;
 
         case NONE:

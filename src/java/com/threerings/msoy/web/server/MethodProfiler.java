@@ -127,15 +127,14 @@ public class MethodProfiler
 
     /**
      * Notes that the calling thread has exited the given method and records the time delta since
-     * entry. The method parameter is not strictly necessary but allows some error checking. It must
-     * match the most recent value given to {@link #enter()} for the calling thread thread.
-     * @param method
+     * entry. The method parameter is not strictly necessary but allows some error checking. If not
+     * null, it must match the most recent value given to {@link #enter()} for the calling thread.
      */
     public void exit (String method)
     {
         long nanos = System.nanoTime();
         CurrentCall curr = _current.get();
-        if (curr.name == null || !method.equals(curr.name)) {
+        if (curr.name == null || (method != null && !method.equals(curr.name))) {
             // TODO: warn, but only once
             return;
         }
@@ -143,6 +142,16 @@ public class MethodProfiler
         long elapsed = nanos - curr.entryTime;
         recordTime(curr.name, (double)elapsed / 1000000);
         curr.name = null;
+    }
+
+    /**
+     * Clears all recorded methods and times.
+     */
+    public void reset ()
+    {
+        synchronized (_profiles) {
+            _profiles.clear();
+        }
     }
 
     /**

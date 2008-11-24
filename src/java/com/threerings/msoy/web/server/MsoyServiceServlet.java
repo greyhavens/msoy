@@ -39,7 +39,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         super.onBeforeRequestDeserialized(payload);
         if (PROFILING_ENABLED) {
             RPCRequest req = RPC.decodeRequest(payload, this.getClass(), this);
-            // TODO: profiling! (use rec.getMethod())
+            _profiler.enter(req.getMethod().getName());
         }
     }
 
@@ -47,7 +47,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     protected void onAfterResponseSerialized (String payload)
     {
         if (PROFILING_ENABLED) {
-            // TODO: profiling!
+            _profiler.exit(null);
         }
         super.onAfterResponseSerialized(payload);
     }
@@ -183,7 +183,8 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     @Inject protected MemberHelper _mhelper;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected RPCProfiler _profiler;
 
     /** Whether or not RPC profiling is enabled. */
-    protected static final boolean PROFILING_ENABLED = false;
+    protected static final boolean PROFILING_ENABLED = true;
 }
