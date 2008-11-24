@@ -52,11 +52,4 @@ public class RPCProfiler extends MethodProfiler
 
     protected static final String HEADER_FMT = "- %-28s %5s %12s %13s";
     protected static final String LINE_FMT = "- %-28s %5d %12.2f %13.2f";
-
-    protected static final NumberFormat _numberFormat = NumberFormat.getInstance();
-    static {
-        _numberFormat.setMinimumIntegerDigits(1);
-        _numberFormat.setMinimumFractionDigits(2);
-        _numberFormat.setMaximumFractionDigits(2);
-    }
 }
