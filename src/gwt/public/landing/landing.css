@@ -561,3 +561,110 @@
 .daContestLandingPanel .Rules .Judging {
   width: 340px;
 }
+
+/* ------------------------------------
+   FLASH GAME CONTEST LANDING PAGE
+-------------------------------------*/
+
+/* Spans the entire width of the page */
+.gameContestPanel {
+  background-color: #073448;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  color: #083b51;
+}
+
+.gameContestPanel a {
+  color: #083b51;
+}
+
+.gameContestPanel p {
+  margin: 10px 20px;
+  line-height: 15pt;
+}
+
+.gameContestPanel ul {
+  line-height: 15pt;
+}
+
+.gameContestPanel h3 {
+  font-size: 13pt;
+  font-weight: bold;
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  margin: 25px 0 10px 0;
+}
+
+.gameContestPanel .Title,
+.gameContestPanel .TitleAlt {
+  font-size: 20pt;
+  font-weight: bold;
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  color: #ff752a;
+  margin: 0 0 10px 0;
+}
+
+.gameContestPanel .TitleAlt {
+  color: #3595b7;
+}
+
+.gameContestPanel .Content {
+  background: url(/images/landing/contests/gamecon_content_bg.png) repeat-y;
+  width: 899px;
+  margin: auto;
+  min-height: 100%;
+}
+
+.gameContestPanel .Header {
+  margin-left: 8px;
+  width: 881px;
+  height: 241px;
+  background: url(/images/landing/contests/gamecon_header_bg.png) no-repeat;
+}
+
+.gameContestPanel .Box {
+  width: 809px;
+  margin: 15px auto;
+}
+
+.gameContestPanel .Box .BoxContent {
+  background: #FFFFFF url(/images/landing/contests/gamecon_box_bg.png) repeat-y;
+  padding: 5px 20px;
+}
+
+.gameContestPanel .Box .BoxTop {
+  background: url(/images/landing/contests/gamecon_box_top.png) no-repeat;
+  height: 12px;
+}
+
+.gameContestPanel .Box .BoxBottom {
+  background: url(/images/landing/contests/gamecon_box_bottom.png) no-repeat;
+  height: 13px;
+}
+
+.gameContestPanel .Footer {
+  background-color: #76c4e7;
+  width: 100%;
+  height: 50px;
+  border-top: #caecfc 3px solid;
+  position: relative;
+}
+
+.gameContestPanel .Footer .FooterContent {
+  width: 899px;
+  height: 50px;
+  margin: auto;
+}
+
+.gameContestPanel .Footer .FooterContent .FooterText {
+  width: 100%;
+  text-align: center;
+  color: #196e94;
+}
+.gameContestPanel .Footer .FooterContent .FooterText a {
+  color: #196e94;
+  text-decoration: none;
+}

@@ -21,6 +21,7 @@ public class LandingPage extends Page
 {
     public static String CREATORS = "creators";
     public static String DEVIANT_CONTEST = "dacontest";
+    public static String GAME_CONTEST = "gamecontest";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -34,6 +35,10 @@ public class LandingPage extends Page
         // landing page for deviant art contest
         } else if (action.equals(DEVIANT_CONTEST)) {
             setContent(_msgs.titleDAContest(), new DAContestLandingPanel());
+
+        // landing page for deviant art contest
+        } else if (action.equals(GAME_CONTEST)) {
+            setContent(_msgs.titleGameContest(), new GameContestPanel());
 
         } else {
             setContent(_msgs.landingTitle(), new LandingPanel());
