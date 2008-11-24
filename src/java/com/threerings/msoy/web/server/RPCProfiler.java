@@ -1,11 +1,12 @@
 package com.threerings.msoy.web.server;
 
-import java.text.NumberFormat;
 import java.util.Map;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.util.StringUtil;
+
 import com.threerings.presents.server.ReportManager;
 
 /**
