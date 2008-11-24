@@ -60,7 +60,6 @@ public class EntityBackend extends ControlBackend
 
         // we give usercode functions in the backend (instead of connecting them directly) so that
         // we can easily disconnect the sprite from the usercode
-        o["requestControl_v1"] = requestControl_v1;
         o["lookupMemory_v1"] = lookupMemory_v1;
         o["updateMemory_v1"] = updateMemory_v1;
         o["getInstanceId_v1"] = getInstanceId_v1;
@@ -83,6 +82,7 @@ public class EntityBackend extends ControlBackend
 
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
+        o["requestControl_v1"] = requestControl_v1;
     }
 
     override protected function populateControlInitProperties (o :Object) :void
@@ -92,6 +92,15 @@ public class EntityBackend extends ControlBackend
         var loc :MsoyLocation = _sprite.getLocation();
         o["location"] = [ loc.x, loc.y, loc.z ];
         o["datapack"] = _sprite.getAndClearDataPack();
+    }
+
+    override protected function handleUserCodeConnect (event :Object) :void
+    {
+        super.handleUserCodeConnect(event);
+
+        if (_sprite != null) {
+            _sprite.requestControl();
+        }
     }
 
     protected function selfDestruct_v1 () :void
