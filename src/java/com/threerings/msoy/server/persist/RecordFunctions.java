@@ -20,7 +20,7 @@ public class RecordFunctions
     {
         return new Function<Key<T>,Integer>() {
             public Integer apply (Key<T> key) {
-                return (Integer)key.getValues().get(0);
+                return (Integer)key.getValues()[0];
             }
         };
     }

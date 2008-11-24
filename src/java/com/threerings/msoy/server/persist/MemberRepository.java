@@ -879,15 +879,11 @@ public class MemberRepository extends DepotRepository
         // (we make a new ArrayList so that we only transform each key once, instead
         // of just creating a "view" list and re-transforming on every iteration,
         // since this collection is used in the KeySet for both querying and cache invalidating.)
-        List<Key<MemberRecord>> memKeys = Lists.newArrayList(Iterables.transform(affKeys,
-            new Function<Key<AffiliateRecord>, Key<MemberRecord>>() {
-                public Key<MemberRecord> apply (Key<AffiliateRecord> key) {
-                    return MemberRecord.getKey((Integer) key.getValues().get(0));
-                }
-            }));
+        List<Integer> memKeys = Lists.newArrayList(
+            Iterables.transform(affKeys, RecordFunctions.<AffiliateRecord>getIntKey()));
 
         // create a KeySet representing these keys
-        KeySet<MemberRecord> keySet = new KeySet<MemberRecord>(MemberRecord.class, memKeys);
+        KeySet<MemberRecord> keySet = KeySet.newSimpleKeySet(MemberRecord.class, memKeys);
 
         // then update all those members to have the new affiliateMemberId
         updatePartial(MemberRecord.class, keySet, keySet,
@@ -969,10 +965,10 @@ public class MemberRepository extends DepotRepository
      */
     public IntSet loadGreeterIds ()
     {
-        ArrayIntSet greeters = new ArrayIntSet();
+        IntSet greeters = new ArrayIntSet();
         for (Key<MemberRecord> key : findAllKeys(MemberRecord.class, false,
             Collections.singletonList(new Where(GREETER_FLAG_IS_SET)))) {
-            greeters.add((Integer)key.getValues().get(0));
+            greeters.add((Integer)key.getValues()[0]);
         }
         return greeters;
     }
