@@ -520,6 +520,17 @@ public class MsoyUI
     }
 
     /**
+     * Return an invisible area of a given size with a given click event, used for imagemaps.
+     */
+    public static Image createInvisiLink (ClickListener listener, int width, int height)
+    {
+        Image image = MsoyUI.createActionImage("/images/whirled/blank.png", listener);
+        image.setWidth(width + "px");
+        image.setHeight(height + "px");
+        return image;
+    }
+
+    /**
      * Displays informational feedback to the user in a non-offensive way.
      */
     public static void info (String message)

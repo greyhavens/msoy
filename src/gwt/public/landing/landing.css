@@ -71,17 +71,17 @@
 
 
 /* ------------------------------------
-   LANDING PAGE - LOGON PANEL
+   LANDING PAGE - LOGON PANEL (SHARED BY MULTIPLE PAGES)
 -------------------------------------*/
 
-.LandingPanel .logonPanel {
+.logonPanel {
   background: url(/images/landing/logon_bg.png) no-repeat top center;
   width: 170px;
   height: 60px;
 }
 
-.LandingPanel .logonPanel .gwt-TextBox,
-.LandingPanel .logonPanel .gwt-PasswordTextBox {
+.logonPanel .gwt-TextBox,
+.logonPanel .gwt-PasswordTextBox {
   font-size: 13px;
   color: #666666;
   width: 145px;
@@ -89,12 +89,12 @@
   border: solid #2E729F 1px;
 }
 
-.LandingPanel .logonPanel .gwt-PasswordTextBox {
+.logonPanel .gwt-PasswordTextBox {
   width: 91px;
   margin-top: -5px;
 }
 
-.LandingPanel .logonPanel .tipLabel {
+.logonPanel .tipLabel {
   position: absolute;
   top: 60px;
   left: 120px;
@@ -102,7 +102,7 @@
   font-size: 11px;
 }
 
-.LandingPanel .LogonButton {
+.LogonButton {
   font-size: 13px;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   background: url(/images/landing/logon_button_bg.png) no-repeat top center;
@@ -116,7 +116,7 @@
   left: 112px;
 }
 
-.LandingPanel .JoinButton {
+.JoinButton {
   background: url(/images/landing/join_now_button.png) no-repeat top center;
   width: 99px;
   height: 67px;
@@ -389,10 +389,10 @@
 }
 
 /* ------------------------------------
-   LANDING COPYRIGHT
+   LANDING COPYRIGHT (SHARED BY MULTIPLE PAGES)
 -------------------------------------*/
 
-.LandingPanel .LandingCopyright {
+.LandingCopyright {
   width: 708px;
   margin: auto;
   height: 25px;
@@ -403,7 +403,7 @@
   background-color: #3B85B2;
 }
 
-.LandingPanel .LandingCopyright a {
+.LandingCopyright a {
   color: #0F3F70;
 }
 
@@ -667,4 +667,78 @@
 .gameContestPanel .Footer .FooterContent .FooterText a {
   color: #196e94;
   text-decoration: none;
+}
+
+
+/* ------------------------------------
+   GAME CENTRIC LANDING PAGE
+-------------------------------------*/
+
+/* Spans the entire width of the page */
+.gameLandingPanel {
+  background: #63ABD3 url(/images/landing/bg_gradient.jpg) repeat-x top center;
+  width: 100%;
+  min-height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+}
+
+.gameLandingPanel .Content {
+  background: transparent url(/images/landing/games_content_bg.png) repeat-y top center;
+  width: 708px;
+  margin: auto;
+}
+
+.gameLandingPanel .Content .Main {
+  background: #63ABD3 url(/images/landing/games_main_bg.png) repeat-x top center;
+  width: 690px;
+  margin: auto;
+  position: relative;
+}
+
+.gameLandingPanel .Main .Header {
+  width: 100%;
+  height: 185px;
+  background: transparent url(/images/landing/games_header_bg.png) no-repeat top right;
+}
+
+.gameLandingPanel .Header .Tagline {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #FFFFFF;
+}
+
+.gameLandingPanel .LandingCopyright a {
+  color: #0F3F70;
+}
+
+.gameLandingPanel .Main .Games {
+  margin: 10px;
+}
+
+.gameLandingPanel .Games .GamesTable {
+  width: 100%;
+  background: transparent url(/images/landing/games_games_bg.png) no-repeat center center;
+}
+
+.gameLandingPanel .Games .GamesTable .CenterTitle {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  color: #193755;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.gameLandingPanel .Games .GamesTable .CenterText {
+  font-size: 12px;
+  color: #193755;
+  text-align: center;
+}
+
+.gameLandingPanel .Games .AllGames {
+  margin: 10px 0 0 525px;
 }

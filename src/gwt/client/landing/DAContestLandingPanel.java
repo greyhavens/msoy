@@ -67,7 +67,7 @@ public class DAContestLandingPanel extends SimplePanel
 
         AbsolutePanel step1 = MsoyUI.createAbsolutePanel("Step1");
         content.add(step1);
-        step1.add(createInvisiLink(Link.createListener(Pages.SHOP, "3"), 50, 20), 560, 145);
+        step1.add(MsoyUI.createInvisiLink(Link.createListener(Pages.SHOP, "3"), 50, 20), 560, 145);
         step1.add(createInvisiLink("http://wiki.whirled.com/Portal:Creators", 90, 20), 490, 160);
         step1.add(createInvisiLink("http://wiki.whirled.com/Edit_your_room", 90, 20), 130, 300);
 
@@ -104,25 +104,13 @@ public class DAContestLandingPanel extends SimplePanel
      */
     protected Widget createInvisiLink (final String offsiteLinkPath, int width, int height)
     {
-        return createInvisiLink(new ClickListener() {
+        return MsoyUI.createInvisiLink(new ClickListener() {
             public void onClick (Widget sender) {
                 Window.open(offsiteLinkPath, "_blank",
                     "toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,"
                         + "scrollbars=yes,copyhistory=yes,resizable=yes");
             }
         }, width, height);
-    }
-
-    /**
-     * Helper function for creating an invisible area of a given size with a given click event,
-     * used to create a sort of imagemap.
-     */
-    protected Widget createInvisiLink (ClickListener listener, int width, int height)
-    {
-        Image image = MsoyUI.createActionImage("/images/landing/dacontest_blank.png", listener);
-        image.setWidth(width + "px");
-        image.setHeight(height + "px");
-        return image;
     }
 
     /** Scenes to display under "check out these cool rooms!"; images are indexed by id */
