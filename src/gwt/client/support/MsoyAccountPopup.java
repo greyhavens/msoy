@@ -48,9 +48,13 @@ public class MsoyAccountPopup extends AccountPopup
         new ClickCallback<Void> (_status) {
             SocialStatus value;
             @Override protected boolean callService () {
-                _supportService.setSocialStatus(Integer.valueOf(_account.name.accountName),
-                    value = SocialStatus.values()[_status.getSelectedIndex()], this);
-                return true;
+                value = SocialStatus.values()[_status.getSelectedIndex()];
+                if (value != ((MsoyAccount)_account).status) {
+                    _supportService.setSocialStatus(Integer.valueOf(_account.name.accountName),
+                        value, this);
+                    return true;
+                }
+                return false;
             }
             @Override protected boolean gotResult (Void result) {
                 ((MsoyAccount)_account).status = value;

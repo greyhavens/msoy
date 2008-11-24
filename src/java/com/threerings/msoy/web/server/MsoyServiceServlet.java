@@ -36,11 +36,11 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     @Override // from RemoteServiceServlet
     protected void onBeforeRequestDeserialized (String payload)
     {
+        super.onBeforeRequestDeserialized(payload);
         if (PROFILING_ENABLED) {
             RPCRequest req = RPC.decodeRequest(payload, this.getClass(), this);
             // TODO: profiling! (use rec.getMethod())
         }
-        super.onBeforeRequestDeserialized(payload);
     }
 
     @Override // from RemoteServiceServlet

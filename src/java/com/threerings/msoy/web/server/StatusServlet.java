@@ -230,7 +230,8 @@ public class StatusServlet extends HttpServlet
         }
     }
 
-    protected static enum Details { NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, CACHE, DEPOT };
+    protected static enum Details { NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, CACHE, DEPOT,
+                                    RPC};
 
     protected static class ServerInfo
     {
