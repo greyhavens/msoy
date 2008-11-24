@@ -19,11 +19,12 @@ import flash.display.Sprite;
 import flash.net.FileReference;
 
 import flash.text.TextField;
-import flash.text.TextFormat;
+import flash.text.TextFieldAutoSize;
 
 import com.threerings.util.ParameterUtil;
 
-import com.threerings.flash.SimpleTextButton;
+import com.threerings.flash.SimpleSkinButton;
+import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.msoy.applets.net.MediaUploadUtil;
 
@@ -32,6 +33,9 @@ import com.threerings.msoy.client.DeploymentConfig;
 [SWF(width="200", height="40")]
 public class UploaderApp extends Sprite
 {
+    public static const WIDTH :int = 200;
+    public static const HEIGHT :int = 40;
+
     public function UploaderApp ()
     {
         this.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
@@ -39,8 +43,9 @@ public class UploaderApp extends Sprite
         _progress = new Sprite();
         addChild(_progress);
 
-        _status = new TextField();
-        _status.width = 200;
+        _status = TextFieldUtil.createField("", { autoSize: TextFieldAutoSize.LEFT },
+            { font: "_sans", size: 12, color: 0x000000 });
+        _status.width = WIDTH;
         addChild(_status);
 
         _fileRef = new FileReference();
@@ -81,9 +86,9 @@ public class UploaderApp extends Sprite
             removeChild(_button);
         }
 
-        _button = new SimpleTextButton(text, false, 0x000000, 0xCCCCCC, 0x000000, 2,
-            new TextFormat("_sans"));
-        _button.y = 15;
+        _button = new SimpleSkinButton(BUTTON_SKIN, text, { autoSize: TextFieldAutoSize.CENTER },
+            { font: "_sans", color: 0x000000, size: 12 }, 10, BUTTON_HEIGHT, 1, 0, 0x404040);
+        _button.y = HEIGHT / 2;
         _button.addEventListener(MouseEvent.CLICK, handler);
         addChild(_button);
     }
@@ -93,11 +98,11 @@ public class UploaderApp extends Sprite
         _progress.graphics.clear();
         if (progress > 0) {
             _progress.graphics.beginFill(0xFF00000);
-            _progress.graphics.drawRect(0, 0, 199 * progress, 10);
+            _progress.graphics.drawRect(0, 0, (WIDTH - 1) * progress, 15);
             _progress.graphics.endFill();
         }
         _progress.graphics.lineStyle(1, 0x000000);
-        _progress.graphics.drawRect(0, 0, 199, 10);
+        _progress.graphics.drawRect(0, 0, WIDTH - 1, 15);
     }
 
     protected function handleChooseFile (event :MouseEvent) :void
@@ -184,6 +189,11 @@ public class UploaderApp extends Sprite
 
     protected var _fileRef :FileReference;
 
-    protected var _button :SimpleTextButton;
+    protected var _button :SimpleSkinButton;
+
+    protected static const BUTTON_HEIGHT :int = 19;
+
+    [Embed(source="../../pages/images/ui/button_middle.png")]
+    protected static const BUTTON_SKIN :Class;
 }
 }
