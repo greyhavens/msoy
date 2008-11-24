@@ -137,9 +137,10 @@ public class EntityBackend extends ControlBackend
 
     protected function requestControl_v1 () :void
     {
-        if (_sprite != null) {
-            _sprite.requestControl();
-        }
+        // Legacy function disabled: All entities will already have someone in control
+//        if (_sprite != null) {
+//            _sprite.requestControl();
+//        }
     }
 
     protected function getInstanceId_v1 () :int
