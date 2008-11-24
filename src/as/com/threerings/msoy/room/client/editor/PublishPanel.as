@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.room.client.editor {
 
 import flash.events.ErrorEvent;
 import flash.events.Event;
@@ -22,6 +22,8 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.client.RoomObjectController;
+import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.snapshot.Snapshot;
 
 /**
@@ -29,8 +31,6 @@ import com.threerings.msoy.room.client.snapshot.Snapshot;
  */
 public class PublishPanel extends FloatingPanel
 {
-    public static const PUBLISH_BUTTON :int = -10;
-
     public function PublishPanel (ctx :WorldContext, view :RoomObjectView)
     {
         super(ctx, Msgs.EDITING.get("t.publish"));
@@ -57,32 +57,31 @@ public class PublishPanel extends FloatingPanel
             addChild(text);
         }
 
-        addButtons(PUBLISH_BUTTON, CANCEL_BUTTON);
-        getButton(PUBLISH_BUTTON).enabled = _snapshot.ready;
+        addButtons(OK_BUTTON, CANCEL_BUTTON);
+        getButton(OK_BUTTON).enabled = _snapshot.ready;
     }
 
     override protected function getButtonLabel (buttonId :int) :String
     {
         switch (buttonId) {
-        case CANCEL_BUTTON: return Msgs.EDITING.get("b.publish_cancel");
-        case PUBLISH_BUTTON: return Msgs.EDITING.get("b.publish");
+        case OK_BUTTON: return Msgs.EDITING.get("b.publish");
         default: return super.getButtonLabel(buttonId);
         }
     }
 
     override protected function buttonClicked (buttonId :int) :void
     {
-        if (buttonId == PUBLISH_BUTTON) {
+        if (buttonId == OK_BUTTON) {
             _snapshot.upload();
             CommandEvent.dispatch(_view, RoomObjectController.PUBLISH_ROOM);
         }
 
-        close();
+        super.buttonClicked(buttonId);
     }
 
     protected function handleSnapshotReady (event :Event) :void
     {
-        getButton(PUBLISH_BUTTON).enabled = true;
+        getButton(OK_BUTTON).enabled = true;
     }
 
     protected function handleUploadError (event :ErrorEvent) :void

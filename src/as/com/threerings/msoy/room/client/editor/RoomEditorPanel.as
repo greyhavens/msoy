@@ -52,6 +52,7 @@ public class RoomEditorPanel extends FlyingPanel
 
         styleName = "roomEditPanel";
         showCloseButton = true;
+        setButtonWidth(0); // free-width
     }
 
     // @Override from FloatingPanel
@@ -485,6 +486,26 @@ public class RoomEditorPanel extends FlyingPanel
 
         box.addChild(new CommandCheckBox(
             Msgs.EDITING.get("l.advanced_editing"), _controller.actionAdvancedEditing));
+
+        addButtons(OK_BUTTON, CANCEL_BUTTON);
+    }
+
+    override protected function getButtonLabel (buttonId :int) :String
+    {
+        switch (buttonId) {
+        case OK_BUTTON: return Msgs.EDITING.get("b.publish");
+        case CANCEL_BUTTON: return Msgs.EDITING.get("b.end_editing");
+        default: return super.getButtonLabel(buttonId);
+        }
+    }
+
+    override protected function buttonClicked (buttonId :int) :void
+    {
+        super.buttonClicked(buttonId);
+
+        if (buttonId == OK_BUTTON) {
+            new PublishPanel(_wctx, _controller.roomView);
+        }
     }
 
     // @Override from FloatingPanel

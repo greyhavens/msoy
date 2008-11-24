@@ -773,7 +773,7 @@ public class RoomObjectController extends RoomController
     {
         if (!(event.value as Boolean)) {
             if (_openEditor && !isRoomEditing()) {
-                beginRoomEditing(true);
+                beginRoomEditing();
             }
             _openEditor = false;
         }
@@ -782,7 +782,7 @@ public class RoomObjectController extends RoomController
     /**
      * Begins editing the room.
      */
-    protected function beginRoomEditing (forcePublishOption :Boolean = false) :void
+    protected function beginRoomEditing () :void
     {
         _walkTarget.visible = false;
         _flyTarget.visible = false;
@@ -790,16 +790,10 @@ public class RoomObjectController extends RoomController
         // put the room edit button in the selected state
         _roomEditBtn.selected = true;
 
-        const startingVersion :int = _scene.getVersion();
-
         // this function will be called when the edit panel is closing
         var wrapupFn :Function = function () :void {
             _roomEditBtn.selected = false;
             _editor = null;
-
-            if (forcePublishOption || _scene.getVersion() != startingVersion) {
-                new PublishPanel(_wdctx, _roomObjectView);
-            }
         }
 
         _editor = new RoomEditorController(_wdctx, _roomObjectView);
