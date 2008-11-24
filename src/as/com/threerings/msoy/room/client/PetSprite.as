@@ -61,6 +61,17 @@ public class PetSprite extends ActorSprite
         CommandEvent.dispatch(this, RoomController.PET_CLICKED, this);
     }
 
+    override protected function getSpecialProperty (name :String) :Object
+    {
+        switch (name) {
+        case "member_id":
+            return (_occInfo as PetInfo).getOwnerId();
+
+        default:
+            return super.getSpecialProperty(name);
+        }
+    }
+
     // from ActorSprite
     override protected function createBackend () :EntityBackend
     {
