@@ -23,6 +23,7 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -396,8 +397,8 @@ public class ProfileServlet extends MsoyServiceServlet
     protected static final int MAX_PROFILE_GAMES = 10;
     protected static final int MAX_PROFILE_TROPHIES = 6;
     protected static final int MAX_PROFILE_FAVORITES = 4;
-    protected static final int MIN_GREETER_LEVEL = 10;
-    protected static final int MIN_GREETER_FRIENDS = 20;
+    protected static final int MIN_GREETER_LEVEL = DeploymentConfig.devDeployment ? 5 : 10;
+    protected static final int MIN_GREETER_FRIENDS = DeploymentConfig.devDeployment ? 3 : 20;
 
     protected static final int DEFAULT_FEED_DAYS = 2;
 }
