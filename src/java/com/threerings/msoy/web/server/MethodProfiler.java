@@ -256,12 +256,12 @@ public class MethodProfiler
     }
 
     /** Name of the current method. */
-    ThreadLocal<CurrentCall> _current = new ThreadLocal<CurrentCall>() {
+    protected ThreadLocal<CurrentCall> _current = new ThreadLocal<CurrentCall>() {
         @Override protected CurrentCall initialValue () {
             return new CurrentCall();
         }
     };
 
     /** Profiles by method name. */
-    HashMap<String, MethodProfile> _profiles = Maps.newHashMap();
+    protected HashMap<String, MethodProfile> _profiles = Maps.newHashMap();
 }
