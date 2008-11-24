@@ -22,6 +22,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.client.ControlBackend;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.client.GameContext;
@@ -32,6 +33,7 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MobSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
+import com.threerings.msoy.room.client.RoomController;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
@@ -222,6 +224,8 @@ public class AVRGameBackend extends ControlBackend
         o["room_getRoomId_v1"] = room_getRoomId_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
+        o["getEntityIds_v1"] = getEntityIds_v1;
+        o["getEntityProperty_v1"] = getEntityProperty_v1;
 
         // PlayerSubControl
         o["player_getGameData_v1"] = player_getGameData_v1;
@@ -348,6 +352,23 @@ public class AVRGameBackend extends ControlBackend
             ];
         }
         return null;
+    }
+
+    // RoomSubControl
+    protected function getEntityIds_v1 (targetId :int, type :String) :Array
+    {
+        validateRoomTargetId(targetId);
+        var ctrl :RoomController = getRoomController("getEntityIds(" + type + ")");
+        return ctrl != null ? ctrl.getEntityIds(type) : null;
+    }
+
+    // RoomSubControl
+    protected function getEntityProperty_v1 (targetId :int, entityId :String, key :String) :Object
+    {
+        validateRoomTargetId(targetId);
+        var ctrl :RoomController = getRoomController(
+            "getEntityProperty(" + entityId + ", " + key + ")");
+        return ctrl != null ? ctrl.getEntityProperty(ItemIdent.fromString(entityId), key) : null;
     }
 
     // PlayerSubControl
@@ -657,35 +678,62 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // internal utility method
-    protected function getAvatarSprite (playerId :int) :MemberSprite
+    protected function getRoomView (func :String) :RoomObjectView
     {
         if (!isPlaying()) {
-            log.debug("getAvatarSprite(" + playerId + ") while !isPlaying()");
+            log.debug(func + " while !isPlaying()");
             return null;
         }
         var view :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
         if (view == null) {
-            log.debug("getAvatarSprite(" + playerId + ") without RoomView");
+            log.debug(func + " without RoomView");
+            return null;
+        }
+        return view;
+    }
+
+    // internal utility method
+    protected function getRoomController (func :String) :RoomController
+    {
+        var view :RoomObjectView = getRoomView(func);
+        if (view == null) {
+            // reason already logged
+            return null;
+        }
+        var ctrl :RoomController = view.getRoomController();
+        if (ctrl == null) {
+            log.debug(func + " without RoomController");
+            return null;
+        }
+        return ctrl;
+    }
+
+    // internal utility method
+    protected function getAvatarSprite (playerId :int) :MemberSprite
+    {
+        var func :String = "getAvatarSprite(" + playerId + ")";
+        var view :RoomObjectView = getRoomView(func);
+        if (view == null) {
             return null;
         }
         var roomObj :RoomObject = _ctrl.getRoom();
         if (roomObj == null) {
-            log.debug("getAvatarSprite(" + playerId + ") without RoomObject");
+            log.debug(func + " without RoomObject");
             return null;
         }
         var occInfo :OccupantInfo = _gameObj.getOccupantInfo(new MemberName("", playerId));
         if (occInfo == null) {
-            log.debug("getAvatarSprite(" + playerId + ") player not in game");
+            log.debug(func + ": player not in game");
             return null;
         }
         occInfo = roomObj.getOccupantInfo(occInfo.username);
         if (occInfo == null) {
-            log.debug("getAvatarSprite(" + playerId + ") player not in room");
+            log.debug(func + ": player not in room");
             return null;
         }
         var sprite :OccupantSprite = view.getOccupant(occInfo.bodyOid);
         if (sprite == null) {
-            log.debug("getAvatarSprite(" + playerId + ") sprite not found");
+            log.debug(func + ": sprite not found");
             return null;
         }
         return sprite as MemberSprite;
