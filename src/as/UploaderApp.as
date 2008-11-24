@@ -87,7 +87,7 @@ public class UploaderApp extends Sprite
         }
 
         _button = new SimpleSkinButton(BUTTON_SKIN, text, { autoSize: TextFieldAutoSize.CENTER },
-            { font: "_sans", color: 0x000000, size: 12 }, 10, BUTTON_HEIGHT, 1, 0, 0x404040);
+            { font: "_sans", color: 0x000000, size: 12 }, 8, BUTTON_HEIGHT, 1, 0, 0x404040);
         _button.y = HEIGHT / 2;
         _button.addEventListener(MouseEvent.CLICK, handler);
         addChild(_button);
