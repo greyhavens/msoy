@@ -35,11 +35,11 @@ public class DepotStatusReporter
 
         int reads = snap.queryHisto.size();
         buf.append("- reads: ").append(reads).append(", ");
-        buf.append(reads/snap.queryTime).append("ms avg\n");
+        buf.append(snap.queryTime/reads).append("ms avg\n");
 
         int writes = snap.modifierHisto.size();
         buf.append("- writes: ").append(writes).append(", ");
-        buf.append(writes/snap.modifierTime).append("ms avg\n");
+        buf.append(snap.modifierTime/writes).append("ms avg\n");
     }
 
     protected PersistenceContext _perCtx;
