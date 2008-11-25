@@ -62,9 +62,9 @@ public class MyWhirled extends FlowPanel
         horiz.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
 
         // FloatPanel horiz = new FloatPanel("NewsAndFriends");
-        if (data.promo != null) {
+        if (data.promos.size() > 0) {
             FlowPanel left = MsoyUI.createFlowPanel("inline");
-            left.add(new PromotionBox(data.promo));
+            left.add(new PromotionBox(data.promos));
             left.add(WidgetUtil.makeShim(10, 10));
             left.add(feedBox);
             horiz.add(left);

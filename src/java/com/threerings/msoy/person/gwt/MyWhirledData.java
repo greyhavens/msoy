@@ -39,8 +39,8 @@ public class MyWhirledData
     /** This member's total friend count (on and offline). */
     public int friendCount;
 
-    /** A promotion to display on the My Whirled page. */
-    public Promotion promo;
+    /** Promotions to display on the My Whirled page. */
+    public List<Promotion> promos;
 
     /**
      * This member's online friends.

@@ -73,11 +73,9 @@ public class MeServlet extends MsoyServiceServlet
         MyWhirledData data = new MyWhirledData();
         data.whirledPopulation = _memberMan.getPPSnapshot().getPopulationCount();
 
-        // randomly select a promotion
-        List<PromotionRecord> promos = _promoRepo.loadPromotions();
-        if (promos.size() > 0) {
-            data.promo = RandomUtil.pickRandom(promos).toPromotion();
-        }
+        // include all our active promotions
+        data.promos = Lists.newArrayList(
+            Iterables.transform(_promoRepo.loadPromotions(), PromotionRecord.TO_PROMOTION));
 
         // load information on their friends
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
