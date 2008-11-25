@@ -356,3 +356,14 @@
 .roomsPanel .Room .gwt-Image {
   margin: 0px; /* undo centering */
 }
+
+.share .roundBox {
+  width: 100%;
+}
+.share .MainHeaderText, .share .SubHeaderText {
+  font-size: 14px;
+  padding-left: 10px;
+}
+.share .SubHeaderText, .share .SubHeaderText a {
+  color: white;
+}

@@ -5,6 +5,7 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -82,8 +83,13 @@ public class PeoplePage extends Page
             setContent(new ProfilePanel(CShell.getMemberId()));
 
         } else if (action.equals("invites")) { // !guest
+            boolean newInvitePage = DeploymentConfig.devDeployment;
             boolean justRegistered = args.get(1, "").equals("newuser");
-            setContent(_msgs.inviteTitle(), new InvitePanel(justRegistered));
+            if (newInvitePage && !justRegistered) {
+                setContent(_msgs.inviteTitle(), new SharePanel());
+            } else {
+                setContent(_msgs.inviteTitle(), new InvitePanel(justRegistered, true, null));
+            }
 
         } else { // !guest
             setContent(new FriendsPanel(CShell.getMemberId()));

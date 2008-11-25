@@ -55,14 +55,16 @@ import client.util.ServiceUtil;
  */
 public class InvitePanel extends VerticalPanel
 {
-    public InvitePanel (boolean justRegistered)
+    public InvitePanel (boolean justRegistered, boolean showBanner, Widget topOfBox)
     {
         _sendEvents = justRegistered;
 
         setSpacing(10);
         setStyleName("invite");
 
-        add(MsoyUI.createHTML(_msgs.inviteBanner(), "Banner"));
+        if (showBanner) {
+            add(MsoyUI.createHTML(_msgs.inviteBanner(), "Banner"));
+        }
 
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
         ClickListener addEmail = new ClickListener() {
@@ -70,6 +72,10 @@ public class InvitePanel extends VerticalPanel
                 addEmail();
             }
         };
+
+        if (topOfBox != null) {
+            box.add(topOfBox);
+        }
 
         // Add a name/e-mail and import webmail section
         SmartTable input = new SmartTable(0, 5);
@@ -147,13 +153,14 @@ public class InvitePanel extends VerticalPanel
 
         // From and custom message box
         SmartTable from = new SmartTable(0, 5);
+        from.setWidth("100%");
         from.setText(0, 0, _msgs.inviteFrom(), 1, "Title");
         from.getFlexCellFormatter().setWidth(0, 0, "10px");
         _fromName = MsoyUI.createTextBox(CShell.creds.name.toString(), MAX_NAME_LENGTH, 0);
         from.setWidget(0, 1, _fromName);
         _customMessage = MsoyUI.createTextArea("", -1, 3);
         from.setWidget(1, 0, _customMessage, 2, null);
-        _customMessage.setWidth("600px");
+        _customMessage.setWidth("100%");
         DefaultTextListener.configure(_customMessage, _msgs.inviteCustom());
         box.add(WidgetUtil.makeShim(10, 10));
         box.add(from);
