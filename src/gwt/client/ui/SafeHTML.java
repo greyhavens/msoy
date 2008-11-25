@@ -54,12 +54,17 @@ public class SafeHTML extends HTML
 
     protected static boolean isWhirledLink (String href)
     {
-        return href.startsWith("#") || href.startsWith("/") ||
+        return href.startsWith("/") || href.startsWith("#") ||
             href.startsWith(DeploymentConfig.serverURL);
     }
 
     protected static String fixLink (String href)
     {
-        return href.startsWith("#") ? ("/" + href) : href;
+        if (href.startsWith("#")) {
+            return "/" + href;
+        } else if (href.startsWith(DeploymentConfig.serverURL) && href.contains("#")) {
+            return "/" + href.substring(href.indexOf("#"), href.length());
+        }
+        return href;
     }
 }
