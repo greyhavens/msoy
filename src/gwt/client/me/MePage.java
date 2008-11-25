@@ -45,7 +45,7 @@ public class MePage extends Page
             setContent(_msgs.titleContests(), new ContestsPanel());
 
         } else if (action.equals(DEVIANT_CONTEST)) {
-            setContent(_msgs.titleDAContest(), new DAContestPanel());
+            Link.go(Pages.LANDING, "dawinners");
 
         } else if (!CShell.isGuest()) {
             setContent(new MyWhirled());

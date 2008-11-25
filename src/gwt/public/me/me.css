@@ -441,87 +441,6 @@
 }
 
 /* ------------------------------------
-   DEVIANT ART CONTEST PAGE
--------------------------------------*/
-
-/* Iframe version fits inside the 685px wide iframe */
-.daContestPanel {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 13px;
-  background: #000000 url(/images/landing/dacontest_content_bg.png) repeat-x top center;
-  min-width: 100%;
-  width: 679px;
-}
-
-.daContestPanel .HowToEnter {
-  background: url(/images/landing/dacontest_howtoenter.png) no-repeat;
-  height: 406px;
-  width: 646px;
-  margin: 0 auto;
-}
-
-.daContestPanel .HowToEnter .longThickOrangeButton,
-.daContestPanel .Rules .longThickOrangeButton {
-  font-size: 20px;
-  padding-top: 10px;
-  height: 34px;
-}
-
-.daContestPanel .Step1,
-.daContestPanel .Step2,
-.daContestPanel .Step3 {
-  width: 649px;
-  margin: auto;
-}
-
-.daContestPanel .Step1 {
-  background: url(/images/landing/dacontest_step_1.png) no-repeat;
-  height: 340px;
-}
-
-.daContestPanel .Step2 {
-  background: url(/images/landing/dacontest_step_2.png) no-repeat;
-  height: 313px;
-}
-
-.daContestPanel .Step3 {
-  background: url(/images/landing/dacontest_step_3.png) no-repeat;
-  height: 515px;
-}
-
-.daContestPanel .Rules {
-  background: url(/images/landing/dacontest_rules_bg.png) no-repeat;
-  width: 669px;
-  height: 339px;
-  margin: 10px auto 20px auto;
-  color: #656565;
-}
-
-.daContestPanel .Rules .List p {
-  background: url(/images/landing/dacontest_rules_star.png) center left no-repeat;
-  width: 270px;
-  margin: 0 0 15px 0;
-  line-height: 18px;
-  padding-left: 30px;
-  min-height: 17px
-}
-
-.daContestPanel .Rules a {
-  color: #27a1d9;
-  font-weight: bold;
-}
-
-.daContestPanel .Rules .Judging {
-  width: 300px;
-}
-
-/** Displayed on the Me tab page */
-.myWhirled .DAContestBanner {
-  margin: 10px auto;
-}
-
-
-/* ------------------------------------
    ALL CONTESTS PANEL
 -------------------------------------*/
 
@@ -545,18 +464,19 @@
   width: 320px;
 }
 
-.contestsPanel .CurrentTitle {
+.contestsPanel .CurrentTitle,
+.contestsPanel .PastTitle {
   background: url(/images/me/contests_dots_bg.png) repeat-x left bottom;
   padding-bottom: 5px;
   margin-bottom: 10px;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 18px;
   font-weight: bold;
-  color: #216fa4;
+  color: #114E73;
 }
 
 .contestsPanel .CurrentContests {
-  margin: 0 15px 30px 15px;
+  margin: 0 15px;
 }
 
 .contestsPanel .Contest {
@@ -609,4 +529,15 @@
 
 .contestsPanel .Contest .PrizesText {
   line-height: 18px;
+}
+
+.contestsPanel .PastContests {
+  margin: 20px;
+}
+
+.contestsPanel .PastContest {
+  color: #FFFFFF;
+}
+.contestsPanel .PastContest a {
+  color: #FFFFFF;
 }

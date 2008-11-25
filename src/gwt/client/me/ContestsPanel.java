@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.threerings.gwt.ui.FloatPanel;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
@@ -59,9 +60,20 @@ public class ContestsPanel extends FlowPanel
             prizes.add(MsoyUI.createLabel(_msgs.contestsPrizes(), "PrizesTitle"));
             prizes.add(MsoyUI.createHTML(_dmsgs.xlate("contestsPrizes_" + id), "PrizesText"));
         }
+
+        // past contests
+        FlowPanel pastContests = MsoyUI.createFlowPanel("PastContests");
+        add(pastContests);
+        pastContests.add(MsoyUI.createLabel(_msgs.contestsPast(), "PastTitle"));
+        for (String id : CONTESTS_PAST) {
+            pastContests.add(MsoyUI.createHTML(_dmsgs.xlate("contestsPast_" + id), "PastContest"));
+        }
+
+        add(WidgetUtil.makeShim(10, 10));
     }
 
-    protected static final String[] CONTESTS = { "GameCreator", "DesignYour", "HideAndGhost" };
+    protected static final String[] CONTESTS = { "GameCreator", "HideAndGhost" };
+    protected static final String[] CONTESTS_PAST = { "DesignYour" };
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
