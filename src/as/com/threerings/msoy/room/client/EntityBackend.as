@@ -82,7 +82,6 @@ public class EntityBackend extends ControlBackend
 
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
-        o["requestControl_v1"] = requestControl_v1;
     }
 
     override protected function populateControlInitProperties (o :Object) :void
@@ -135,13 +134,13 @@ public class EntityBackend extends ControlBackend
         return Microphone.getMicrophone(index);
     }
 
-    protected function requestControl_v1 () :void
-    {
-        // Legacy function disabled: All entities will already have someone in control
+    // Legacy function disabled: All entities will already have someone in control
+//    protected function requestControl_v1 () :void
+//    {
 //        if (_sprite != null) {
 //            _sprite.requestControl();
 //        }
-    }
+//    }
 
     protected function getInstanceId_v1 () :int
     {
