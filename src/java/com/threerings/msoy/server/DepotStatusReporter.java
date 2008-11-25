@@ -29,7 +29,8 @@ public class DepotStatusReporter
         final float avgwait = snap.connectionWaitTime/(float)snap.totalOps;
         buf.append("- connection wait: ").append(String.format("%1.1f", avgwait)).append("ms avg\n");
         buf.append("- queries: ").append(snap.cachedQueries).append(" cached, ");
-        buf.append(snap.uncachedQueries).append(" uncached\n");
+        buf.append(snap.uncachedQueries).append(" uncached, ");
+        buf.append(snap.explicitQueries).append(" explicit\n");
         buf.append("- records: ").append(snap.cachedRecords).append(" cached, ");
         buf.append(snap.uncachedRecords).append(" uncached\n");
 
