@@ -30,6 +30,7 @@ import client.ui.MsoyUI;
 import client.ui.PromotionBox;
 import client.ui.TongueBox;
 import client.util.ClickCallback;
+import client.util.DateUtil;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -78,7 +79,7 @@ public class PromotionEditor extends FlowPanel
         _starts.setTimeVisible(true);
         _starts.display(); // fucking crack smokers
         create.setText(row, 0, _msgs.promoEnds());
-        create.setWidget(row++, 1, _ends = new DatePicker(new Date(199, 0, 1)));
+        create.setWidget(row++, 1, _ends = new DatePicker(DateUtil.toDate(THE_FUTURE)));
         _ends.setTimeVisible(true);
         _ends.display(); // can't anyone write a sane library?
         create.setText(row, 0, _msgs.promoIcon());
@@ -179,4 +180,6 @@ public class PromotionEditor extends FlowPanel
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
         ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
+
+    protected static final int[] THE_FUTURE = { 2099, 0, 1 };
 }
