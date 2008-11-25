@@ -504,9 +504,9 @@ public abstract class ItemEditor extends FlowPanel
      * This should be called by item editors that are used for editing media that has an additional
      * piece of media in addition to main, furni and thumbnail.
      */
-    protected ItemMediaUploader createAuxUploader (String type, MediaUpdater updater)
+    protected ItemMediaUploader createAuxUploader (String type, int mode, MediaUpdater updater)
     {
-        return createUploader(Item.AUX_MEDIA, type, ItemMediaUploader.MODE_NORMAL, updater);
+        return createUploader(Item.AUX_MEDIA, type, mode, updater);
     }
 
     /**

@@ -249,7 +249,8 @@ public class GameEditor extends ItemEditor
         // add a tab for uploading the game screenshot
         final int swidth = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
         final int sheight = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
-        ItemMediaUploader shotter = createAuxUploader(TYPE_IMAGE, new MediaUpdater() {
+        ItemMediaUploader shotter = createAuxUploader(TYPE_IMAGE, ItemMediaUploader.MODE_GAME_SHOT,
+            new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (width != swidth || height != sheight || !desc.isImage()) {
                     return _emsgs.errInvalidShot(""+swidth, ""+sheight);

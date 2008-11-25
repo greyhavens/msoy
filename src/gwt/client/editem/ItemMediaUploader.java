@@ -29,6 +29,7 @@ public class ItemMediaUploader extends FlexTable
 {
     public static final int MODE_NORMAL = 0;
     public static final int MODE_THUMB = 1;
+    public static final int MODE_GAME_SHOT = 2;
 
     /**
      * @param mediaIds a semicolon-delimited list of types for the uploader to create, e.g.
@@ -111,11 +112,20 @@ public class ItemMediaUploader extends FlexTable
                 int popHeight = Math.max(Frame.CLIENT_HEIGHT,
                     Math.min(_itemEditor.getOffsetHeight() - 8, Window.getClientHeight() - 8));
                 String url = (sender == createBtn) ? null : desc.getMediaPath();
-                int maxWidth = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_WIDTH : -1;
-                int maxHeight = (_mode == MODE_THUMB) ? MediaDesc.THUMBNAIL_HEIGHT : -1;
+                int maxWidth = -1;
+                int maxHeight = -1;
+                boolean maxRequired = false;
+                if (_mode == MODE_THUMB) {
+                    maxWidth = MediaDesc.THUMBNAIL_WIDTH;
+                    maxHeight = MediaDesc.THUMBNAIL_HEIGHT;
+                } else if (_mode == MODE_GAME_SHOT) {
+                    maxWidth = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
+                    maxHeight = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
+                    maxRequired = true;
+                }
                 _editorPopup = new BorderedPopup(false, true);
                 _editorPopup.setWidget(FlashClients.createImageEditor(
-                    popWidth, popHeight, _mediaIds, url, maxWidth, maxHeight));
+                    popWidth, popHeight, _mediaIds, url, maxWidth, maxHeight, maxRequired));
                 _editorPopup.show();
             }
         };
