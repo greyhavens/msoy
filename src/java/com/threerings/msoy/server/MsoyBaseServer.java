@@ -14,8 +14,6 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.depot.EHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
 
-import com.samskivert.util.RunQueue;
-
 import com.threerings.presents.server.ReportManager;
 
 import com.threerings.admin.server.AdminProvider;

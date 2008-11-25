@@ -159,7 +159,7 @@ public class GroupRepository extends DepotRepository
 
     /**
      * Returns the total count of visible groups for a given query (which corresponds to the
-     * number of groups available via calls to {@link #getGroupsList}).
+     * number of groups available via calls to {@link #getGroups}).
      */
     public int getGroupCount (GroupQuery query)
     {

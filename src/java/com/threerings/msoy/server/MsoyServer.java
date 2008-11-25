@@ -7,7 +7,6 @@ import static com.threerings.msoy.Log.log;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.apache.mina.common.IoAcceptor;
 
@@ -34,7 +33,6 @@ import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ReportManager;

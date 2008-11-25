@@ -65,14 +65,12 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.RatingRepository;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
 

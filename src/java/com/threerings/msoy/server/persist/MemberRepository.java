@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -20,7 +19,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.CacheKey;
 import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
@@ -29,11 +27,9 @@ import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.KeySet;
 import com.samskivert.depot.PersistenceContext.CacheListener;
-import com.samskivert.depot.PersistenceContext.CacheTraverser;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
-import com.samskivert.depot.SimpleCacheKey;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;

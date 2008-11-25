@@ -5,8 +5,6 @@ import client.ui.MsoyUI;
 import client.ui.RoundBox;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Text;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;

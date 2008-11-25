@@ -3,15 +3,12 @@
 
 package com.threerings.msoy.avrg.server;
 
-import java.io.IOException;
-
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.samskivert.jdbc.RepositoryUnit;
@@ -24,9 +21,6 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMap.IntEntry;
 
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
-import com.threerings.io.SimpleStreamableObject;
 import com.threerings.parlor.server.PlayManager;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -365,7 +359,7 @@ public class AVRGameManager extends PlaceManager
                 _offlineProps.put(playerId, offlineProps);
 
                 // turn the records into a mapping
-                Map<String, byte[]> offlineState = new HashMap<String, byte[]>();
+                Map<String, byte[]> offlineState = Maps.newHashMap();
                 for (PlayerGameStateRecord record : _stateRecs) {
                     offlineState.put(record.datumKey, record.datumValue);
                 }

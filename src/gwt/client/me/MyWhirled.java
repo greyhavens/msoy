@@ -4,15 +4,11 @@
 package client.me;
 
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.person.gwt.MeService;
