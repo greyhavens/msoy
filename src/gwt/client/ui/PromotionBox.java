@@ -3,6 +3,7 @@
 
 package client.ui;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.user.client.Random;
@@ -24,6 +25,11 @@ import client.util.MediaUtil;
  */
 public class PromotionBox extends RoundBox
 {
+    public PromotionBox (Promotion promo)
+    {
+        this(Collections.singletonList(promo));
+    }
+
     public PromotionBox (List<Promotion> promos)
     {
         super(MEDIUM_BLUE);
