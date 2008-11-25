@@ -51,14 +51,14 @@ public abstract class ItemEditor extends FlowPanel
 //    }
 
     // Note: these strings are passed directly to the uploader to restrict the files being uploaded
+    public static final String TYPE_SWF = "*.swf";
+    public static final String TYPE_ABC = "*.abc";
     public static final String TYPE_IMAGE = "*.png;*.gif;*.jpg;*.jpeg";
     public static final String TYPE_AUDIO = "*.mp3";
     public static final String TYPE_VIDEO = "*.flv";
     public static final String TYPE_FLASH = TYPE_SWF + ";" + TYPE_IMAGE;
     public static final String TYPE_FLASH_REMIXABLE = TYPE_FLASH + ";*.zip";
     public static final String TYPE_FLASH_ONLY_REMIXABLE = "*.swf;*.zip"; // no images
-    public static final String TYPE_SWF = "*.swf";
-    public static final String TYPE_ABC = "*.abc";
     public static final String TYPE_ANY = "*";
 
     public static class Binder
