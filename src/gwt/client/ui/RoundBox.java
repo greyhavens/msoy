@@ -78,6 +78,11 @@ public class RoundBox extends SmartTable
         return _contents.getWidgetCount();
     }
 
+    public void clear ()
+    {
+        _contents.clear();
+    }
+
     protected FlowPanel _contents;
 
     /** Our corner images. */
