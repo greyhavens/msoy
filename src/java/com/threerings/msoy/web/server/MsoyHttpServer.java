@@ -84,8 +84,6 @@ import com.threerings.msoy.room.server.WebRoomServlet;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebUserService;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
  */
@@ -355,16 +353,19 @@ public class MsoyHttpServer extends Server
         "<title>Oh noez!</title>\n" +
         "<link rel=\"stylesheet\" href=\"/gwt/frame/global.css\" type=\"text/css\"/>\n" +
         "<style type=\"text/css\">\n" +
-        "body { background: #61ABD0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;\n" +
-        "       color: #FFFFFF; }\n" +
-        "h2 { padding-top: 50px; }\n" +
-        "a, a:visited { color: #FFFFFF; }\n" +
+        ".kansas { width: 100%; min-height: 100%; " +
+        "    background: #61ABD0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;\n" +
+        "    color: #FFFFFF; }\n" +
+        ".kansas h2 { padding-top: 50px; }\n" +
+        ".kansas a, .kansas a:visited { color: #FFFFFF; }\n" +
         "</style>\n";
 
     protected static final String ERROR_BODY =
+        "<div class=\"kansas\">" +
         "<center><h2>We're not in Kansas any more Toto!</h2>\n" +
         "Your browser clings to data whose time has passed.<br/>\n" +
         "Click your heels together three times and click below to rejoin the Whirled.<br/>\n" +
         "<br/><br/><a href=\"/\" target=\"_top\">Reload Whirled</a>\n" +
-        "</center>\n";
+        "</center>\n"+
+        "</div>\n";
 }
