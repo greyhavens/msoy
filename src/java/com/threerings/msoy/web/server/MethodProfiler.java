@@ -128,7 +128,7 @@ public class MethodProfiler
     /**
      * Notes that the calling thread has exited the given method and records the time delta since
      * entry. The method parameter is not strictly necessary but allows some error checking. If not
-     * null, it must match the most recent value given to {@link #enter()} for the calling thread.
+     * null, it must match the most recent value given to {@link #enter} for the calling thread.
      */
     public void exit (String method)
     {
@@ -173,7 +173,7 @@ public class MethodProfiler
     }
 
     /**
-     * For testing, just calls the {@link enter()} and {@link exit()} methods at a fixed interval
+     * For testing, just calls the {@link #enter} and {@link #exit} methods at a fixed interval
      * for a given number of times.
      */
     protected class TestThread extends Thread
