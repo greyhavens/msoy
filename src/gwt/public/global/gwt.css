@@ -986,11 +986,6 @@ img, embed, applet, object {
   font-size: 15px;
 }
 
-.stretchButton-small .orangeThick .X,
-.stretchButton-small .blueThick  .X {
-  height: 25px;
-}
-
 .orangeThick .W, .orangeThick .E, .blueThick .W, .blueThick .E {
   width: 36px;
 }
