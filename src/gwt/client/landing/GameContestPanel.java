@@ -34,13 +34,20 @@ public class GameContestPanel extends FlowPanel
         header.add(MsoyUI.createActionImage("/images/landing/contests/gamecon_join_now.png",
             Link.createListener(Pages.ACCOUNT, "create")), 750, 0);
 
-        content.add(createBox(_msgs.gameconOverviewTitle(), _msgs.gameconOverviewText(), false));
-        content.add(createBox(_msgs.gameconPrizesTitle(), _msgs.gameconPrizesText(), true));
-        content.add(createBox(_msgs.gameconDatesTitle(), _msgs.gameconDatesText(), false));
-        content.add(createBox(_msgs.gameconConditionsTitle(), _msgs.gameconConditionsText(), true));
-        content.add(createBox(_msgs.gameconEnterTitle(), _msgs.gameconEnterText(), false));
-        content.add(createBox(_msgs.gameconJudgingTitle(), _msgs.gameconJudgingText(), true));
-        content.add(createBox(_msgs.gameconRulesTitle(), _msgs.gameconRulesText(), false));
+        content.add(new WideContentBox(
+            _msgs.gameconOverviewTitle(), _msgs.gameconOverviewText(), false));
+        content.add(new WideContentBox(
+            _msgs.gameconPrizesTitle(), _msgs.gameconPrizesText(), true));
+        content.add(new WideContentBox(
+            _msgs.gameconDatesTitle(), _msgs.gameconDatesText(), false));
+        content.add(new WideContentBox(
+            _msgs.gameconConditionsTitle(), _msgs.gameconConditionsText(), true));
+        content.add(new WideContentBox(
+            _msgs.gameconEnterTitle(), _msgs.gameconEnterText(), false));
+        content.add(new WideContentBox(
+            _msgs.gameconJudgingTitle(), _msgs.gameconJudgingText(), true));
+        content.add(new WideContentBox(
+            _msgs.gameconRulesTitle(), _msgs.gameconRulesText(), false));
 
         content.add(WidgetUtil.makeShim(10, 10));
 
@@ -52,22 +59,6 @@ public class GameContestPanel extends FlowPanel
             Link.createListener(Pages.LANDING, "")), 20, 5);
         footerContent.add(MsoyUI.createHTML(_msgs.gameconFooterText(), "FooterText"), 0, 15);
     }
-
-    /**
-     * Content box for this page with set height image on top and bottom
-     */
-    protected FlowPanel createBox (String title, String content, boolean altTitle)
-    {
-        FlowPanel box = MsoyUI.createFlowPanel("Box");
-        box.add(MsoyUI.createFlowPanel("BoxTop"));
-        FlowPanel boxContent = MsoyUI.createFlowPanel("BoxContent");
-        boxContent.add(MsoyUI.createLabel(title, altTitle ? "TitleAlt" : "Title"));
-        boxContent.add(MsoyUI.createHTML(content, null));
-        box.add(boxContent);
-        box.add(MsoyUI.createFlowPanel("BoxBottom"));
-        return box;
-    }
-
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
 }

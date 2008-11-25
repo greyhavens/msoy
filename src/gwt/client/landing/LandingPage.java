@@ -21,6 +21,7 @@ public class LandingPage extends Page
 {
     public static String CREATORS = "creators";
     public static String DEVIANT_CONTEST = "dacontest";
+    public static String DEVIANT_CONTEST_WINNERS = "dawinners";
     public static String GAME_CONTEST = "gamecontest";
     public static String LANDING_GAMES = "games";
 
@@ -37,11 +38,15 @@ public class LandingPage extends Page
         } else if (action.equals(DEVIANT_CONTEST)) {
             setContent(_msgs.titleDAContest(), new DAContestLandingPanel());
 
-        // landing page for deviant art contest
+        // landing page for deviant art contest winners
+        } else if (action.equals(DEVIANT_CONTEST_WINNERS)) {
+            setContent(_msgs.titleGameContest(), new DAContestWinnersPanel());
+
+        // landing page for flash game developer contest
         } else if (action.equals(GAME_CONTEST)) {
             setContent(_msgs.titleGameContest(), new GameContestPanel());
 
-        // landing page for deviant art contest
+        // game-centric landing page
         } else if (action.equals(LANDING_GAMES)) {
             setContent(_msgs.landingTitle(), new GameLandingPanel());
 

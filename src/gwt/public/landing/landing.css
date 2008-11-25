@@ -563,6 +563,95 @@
 }
 
 /* ------------------------------------
+   DEVIANT ART CONTEST WINNERS LANDING
+-------------------------------------*/
+
+/* Spans the entire width of the page */
+.daContestWinnersPanel {
+  background: #073448;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  color: #2f7a83;
+}
+.daContestWinnersPanel a {
+  color: #2f7a83;
+  font-weight: bold;
+}
+
+.daContestWinnersPanel .Content {
+  background: url(/images/landing/contests/dawinners_content_bg.png) repeat-y top center;
+  width: 899px;
+  margin: auto;
+  min-height: 100%;
+}
+
+.daContestWinnersPanel .Header {
+  width: 882px;
+  min-height: 364px;
+  margin: 0 auto;
+  background: url(/images/landing/contests/dawinners_header_bg.png) repeat-y top center;
+}
+
+.daContestWinnersPanel .Intro {
+  font-size: 15pt;
+  font-weight: bold;
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  color: #73d4eb;
+  width: 630px;
+  text-align: center;
+}
+.daContestWinnersPanel .Intro a {
+  color: #73d4eb;
+}
+
+.daContestWinnersPanel .Winner1 {
+  width: 745px;
+}
+
+.daContestWinnersPanel .Winner1 p {
+  margin: 10px 0 0 60px;
+  width: 680px;
+}
+
+.daContestWinnersPanel .Winner2,
+.daContestWinnersPanel .Winner3 {
+  width: 380px;
+}
+
+.daContestWinnersPanel .Winner2 p,
+.daContestWinnersPanel .Winner3 p {
+  width: 320px;
+  margin: 10px 0 10px 45px;
+}
+
+.daContestWinnersPanel .HonorableTop img {
+  margin-left: 30px;
+}
+
+.daContestWinnersPanel .HonorableBottom img {
+  margin-left: 100px;
+}
+
+.daContestWinnersPanel .HonorableText {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.daContestWinnersPanel .OthersColumn {
+  color: #215b75;
+  line-height: 25px;
+  margin: 20px 0 10px 20px;
+  width: 350px;
+}
+.daContestWinnersPanel .OthersColumn a {
+  color: #215b75;
+}
+
+/* ------------------------------------
    FLASH GAME CONTEST LANDING PAGE
 -------------------------------------*/
 
@@ -625,26 +714,6 @@
   background: url(/images/landing/contests/gamecon_header_bg.png) no-repeat;
 }
 
-.gameContestPanel .Box {
-  width: 809px;
-  margin: 15px auto;
-}
-
-.gameContestPanel .Box .BoxContent {
-  background: #FFFFFF url(/images/landing/contests/gamecon_box_bg.png) repeat-y;
-  padding: 5px 20px;
-}
-
-.gameContestPanel .Box .BoxTop {
-  background: url(/images/landing/contests/gamecon_box_top.png) no-repeat;
-  height: 12px;
-}
-
-.gameContestPanel .Box .BoxBottom {
-  background: url(/images/landing/contests/gamecon_box_bottom.png) no-repeat;
-  height: 13px;
-}
-
 .gameContestPanel .Footer {
   background-color: #76c4e7;
   width: 100%;
@@ -668,7 +737,6 @@
   color: #196e94;
   text-decoration: none;
 }
-
 
 /* ------------------------------------
    GAME CENTRIC LANDING PAGE
@@ -741,4 +809,28 @@
 
 .gameLandingPanel .Games .AllGames {
   margin: 10px 0 0 525px;
+}
+
+/* ------------------------------------
+   WIDE CONTENT BOX (SHARED)
+-------------------------------------*/
+
+.wideContentBox {
+  width: 809px;
+  margin: 15px auto;
+}
+
+.wideContentBox .BoxContent {
+  background: #FFFFFF url(/images/landing/wide_content_box_bg.png) repeat-y;
+  padding: 5px 20px;
+}
+
+.wideContentBox .BoxTop {
+  background: url(/images/landing/wide_content_box_top.png) no-repeat;
+  height: 12px;
+}
+
+.wideContentBox .BoxBottom {
+  background: url(/images/landing/wide_content_box_bottom.png) no-repeat;
+  height: 13px;
 }
