@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Dynamic,com.whirled.contrib.platformer.piece.Dynamic,DEAD,DYN_COUNT,ENEMY,GLOBAL,PLAYER,SPAWN,U_INTER,U_POS,U_VEL,_dx,_dy,_inState,_inter,id,owner,sprite,updateState,x,y,dx,dy,inter,amOwner,equals,fromBytes,getBounds,hashCode,isAlive,shouldSpawn,toBytes,xmlInstance" name="keywords">
+<meta content="Dynamic,com.whirled.contrib.platformer.piece.Dynamic,DEAD,DYN_COUNT,ENEMY,GLOBAL,OWN_ALL,OWN_PLAYER,OWN_SERVER,PLAYER,SPAWN,U_INTER,U_POS,U_VEL,_dx,_dy,_inState,_inter,_owner,id,sprite,updateState,x,y,dx,dy,inter,owner,amOwner,equals,fromBytes,getBounds,hashCode,isAlive,ownerType,shouldSpawn,toBytes,xmlInstance" name="keywords">
 <title>com.whirled.contrib.platformer.piece.Dynamic</title>
 </head>
 <body>
@@ -118,6 +118,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_inter">_inter</a> : int<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_owner">_owner</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
 </table>
 </div>
 <a name="methodSummary"></a>
@@ -180,6 +184,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#ownerType()">ownerType</a>():int</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#shouldSpawn()">shouldSpawn</a>():Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
@@ -221,6 +232,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#GLOBAL">GLOBAL</a> : int = 0<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OWN_ALL">OWN_ALL</a> : int = 3<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OWN_PLAYER">OWN_PLAYER</a> : int = 1<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Dynamic</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OWN_SERVER">OWN_SERVER</a> : int = 2<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Dynamic</td>
 </tr>
 <tr class="">
@@ -339,6 +362,15 @@ showHideInherited();
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function set inter(value:int):void</code>
 <br>
 </div>
+<a name="_owner"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_owner</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _owner:int</code>
+</div>
 <a name="owner"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -346,7 +378,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var owner:int</code>
+<code>owner:int</code>&nbsp;&nbsp;[read-write]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get owner():int</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set owner(value:int):void</code>
+<br>
 </div>
 <a name="sprite"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -501,6 +538,22 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="ownerType()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ownerType</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function ownerType():int</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
 <a name="shouldSpawn()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -591,6 +644,33 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const GLOBAL:int = 0</code>
+</div>
+<a name="OWN_ALL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">OWN_ALL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const OWN_ALL:int = 3</code>
+</div>
+<a name="OWN_PLAYER"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">OWN_PLAYER</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const OWN_PLAYER:int = 1</code>
+</div>
+<a name="OWN_SERVER"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">OWN_SERVER</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const OWN_SERVER:int = 2</code>
 </div>
 <a name="PLAYER"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

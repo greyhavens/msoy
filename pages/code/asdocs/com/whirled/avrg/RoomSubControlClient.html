@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="RoomSubControlClient,com.whirled.avrg.RoomSubControlClient,props,getMobSubControl,getRoomId" name="keywords">
+<meta content="RoomSubControlClient,com.whirled.avrg.RoomSubControlClient,props,getEntityIds,getEntityProperty,getMobSubControl,getRoomId" name="keywords">
 <title>com.whirled.avrg.RoomSubControlClient</title>
 </head>
 <body>
@@ -109,6 +109,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Gets all available information on the avatar of a player with the given id.</div>
 </td><td class="summaryTableOwnerCol"><a href="RoomSubControlBase.html">RoomSubControlBase</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getEntityIds()">getEntityIds</a>(type:String = null):Array</div>
+<div class="summaryTableDescription">
+     Enumerates the ids of all entities in this room.</div>
+</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getEntityProperty()">getEntityProperty</a>(key:String, entityId:String = null):Object</div>
+<div class="summaryTableDescription">
+     Looks up and returns the specified property for the specified entity.</div>
+</td><td class="summaryTableOwnerCol">RoomSubControlClient</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -303,10 +319,65 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="getEntityIds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getEntityIds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getEntityIds(type:String = null):Array</code><p>
+     Enumerates the ids of all entities in this room.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">type</span>:String</code> (default = <code>null</code>)<code></code> &mdash; an optional filter to restrict the results to a particular type of entity,
+     currently one of 'furni', 'avatar' or 'pet'.
+     </td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="getEntityProperty()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getEntityProperty</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getEntityProperty(key:String, entityId:String = null):Object</code><p>
+     Looks up and returns the specified property for the specified entity.
+     Returns null if the entity does not exist or the entity has no such property.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">entityId</span>:String</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
 <a name="getMobSubControl()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">getMobSubControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">getMobSubControl</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
