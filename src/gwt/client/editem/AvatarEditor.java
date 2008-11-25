@@ -105,7 +105,7 @@ public class AvatarEditor extends ItemEditor
     protected MediaDesc _easyImage;
 
     protected static final MediaDesc EASY_IMAGE_PROTOTYPE = new MediaDesc(
-        "c0f4e955e7634d68495fb327a51043b892ccbb64", MediaDesc.APPLICATION_ZIP,
+        "04ef038d22625f2b8b5c115cef4b6a36f18ce0a7", MediaDesc.APPLICATION_ZIP,
         MediaDesc.NOT_CONSTRAINED);
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
