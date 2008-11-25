@@ -30,6 +30,13 @@ public class ImageContext extends AppletContext
         return _imageBundle;
     }
 
+    public function changeFilename (fullNameOrURL :String, newPrefix :String) :String
+    {
+        var name :String = fullNameOrURL.substring(fullNameOrURL.lastIndexOf("/") + 1);
+        var dotdex :int = name.lastIndexOf(".");
+        return (dotdex == -1) ? newPrefix : (newPrefix + name.substring(dotdex));
+    }
+
     public function getViewWidth () :int
     {
         return _viewStack.width;

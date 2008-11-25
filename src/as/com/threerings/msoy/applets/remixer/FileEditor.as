@@ -39,8 +39,8 @@ public class FileEditor extends FieldEditor
         var filename :String = String(event.value[0]);
         var bytes :ByteArray = ByteArray(event.value[1]);
 
-        filename = "image" + filename.substring(filename.lastIndexOf(".") + 1);
-        updateValue(_ctx.createFilename(filename, bytes), bytes);
+        filename = _ctx.createFilename(_ctx.changeFilename(filename, "image"), bytes);
+        updateValue(filename, bytes);
     }
 
     override protected function getUI (entry :Object) :Array

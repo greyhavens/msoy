@@ -62,7 +62,7 @@ public class ImageControls
         if (url != null) {
             var downloader :Downloader = new Downloader(_ctx);
             downloader.addEventListener(Event.COMPLETE, handleDownloadComplete);
-            downloader.startDownload(url, "image" + url.substring(url.lastIndexOf(".") + 1));
+            downloader.startDownload(url, _ctx.changeFilename(url, "image"));
 
         } else {
             var options :ImageControlOptions = new ImageControlOptions(_ctx);
