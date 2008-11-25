@@ -84,9 +84,6 @@ import static com.threerings.msoy.Log.log;
 @Singleton @BlockingThread
 public class MemberRepository extends DepotRepository
 {
-    /** The cache identifier for the friends-of-a-member collection query. */
-    public static final String FRIENDS_CACHE_ID = "FriendsCache";
-
     /** Used by {@link #runMemberMigration}. */
     public static interface MemberMigration {
         public void apply (MemberRecord record) throws Exception;
@@ -102,22 +99,6 @@ public class MemberRepository extends DepotRepository
     @Inject public MemberRepository (final PersistenceContext ctx)
     {
         super(ctx);
-
-        // add a cache invalidator that listens to single FriendRecord updates
-        _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
-            public void entryInvalidated (final CacheKey key, final FriendRecord friend) {
-                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
-                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
-            }
-            public void entryCached (final CacheKey key, final FriendRecord newEntry,
-                                     final FriendRecord oldEntry) {
-                // nothing to do here
-            }
-            @Override
-            public String toString () {
-                return "FriendRecord -> FriendsCache";
-            }
-        });
 
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
@@ -937,12 +918,9 @@ public class MemberRepository extends DepotRepository
      */
     public boolean getFriendStatus (final int firstId, final int secondId)
     {
-        List<Where> clauses = Collections.singletonList(
-            new Where(new Or(new And(new Equals(FriendRecord.INVITER_ID_C, firstId),
-                                     new Equals(FriendRecord.INVITEE_ID_C, secondId)),
-                             new And(new Equals(FriendRecord.INVITER_ID_C, secondId),
-                                     new Equals(FriendRecord.INVITEE_ID_C, firstId)))));
-        return findAll(FriendRecord.class, true, clauses).size() > 0;
+        // TODO: migrate existing friend records to (firstId<secondId) format then just do one query
+        return ((load(FriendRecord.class, FriendRecord.getKey(firstId, secondId)) != null) ||
+                (load(FriendRecord.class, FriendRecord.getKey(secondId, firstId)) != null));
     }
 
     /**
@@ -954,7 +932,7 @@ public class MemberRepository extends DepotRepository
         List<Where> clauses = Collections.singletonList(
             new Where(new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
                              new Equals(FriendRecord.INVITEE_ID_C, memberId))));
-        for (FriendRecord record : findAll(FriendRecord.class, true, clauses)) {
+        for (FriendRecord record : findAll(FriendRecord.class, clauses)) {
             memIds.add(record.getFriendId(memberId));
         }
         return memIds;
@@ -978,8 +956,6 @@ public class MemberRepository extends DepotRepository
      * each friend will be false. The friends will be returned in order of most recently online to
      * least.
      *
-     * TODO: Bring back full collection caching to this method.
-     *
      * @param limit a limit on the number of friends to load or 0 for all of them.
      */
     public List<FriendEntry> loadFriends (int memberId, int limit)
@@ -1001,7 +977,7 @@ public class MemberRepository extends DepotRepository
 
         // prepare an ordered map of the friends in question
         Map<Integer, FriendEntry> friends = Maps.newLinkedHashMap();
-        for (FriendRecord record : findAll(FriendRecord.class, true, clauses)) {
+        for (FriendRecord record : findAll(FriendRecord.class, clauses)) {
             friends.put(record.getFriendId(memberId), null);
         }
 
@@ -1036,27 +1012,16 @@ public class MemberRepository extends DepotRepository
             return null;
         }
 
-        // see if there is already a connection, either way
-        final List<FriendRecord> existing = Lists.newArrayList();
-        existing.addAll(findAll(FriendRecord.class,
-                                new Where(FriendRecord.INVITER_ID_C, memberId,
-                                          FriendRecord.INVITEE_ID_C, otherId)));
-        existing.addAll(findAll(FriendRecord.class,
-                                new Where(FriendRecord.INVITER_ID_C, otherId,
-                                          FriendRecord.INVITEE_ID_C, memberId)));
-
-        // invalidate the FriendsCache for both members
-        _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
-        _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
-
-        // if they already have a connection, let the caller know by excepting
-        if (existing.size() > 0) {
+        // if they already have a connection, let the caller know by excepting (TODO: this can go
+        // away when we migrate all records to lowestId/highestId)
+        if (getFriendStatus(memberId, otherId)) {
             throw new DuplicateKeyException(memberId + " and " + otherId + " are already friends");
         }
 
+        // always store friend ids with the lower of the two ids first
         final FriendRecord rec = new FriendRecord();
-        rec.inviterId = memberId;
-        rec.inviteeId = otherId;
+        rec.inviterId = Math.min(memberId, otherId);
+        rec.inviteeId = Math.max(memberId, otherId);
         insert(rec);
 
         return other;
@@ -1067,8 +1032,7 @@ public class MemberRepository extends DepotRepository
      */
     public void clearFriendship (final int memberId, final int otherId)
     {
-        _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
-        _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
+        // TODO: migrate existing friend records to (firstId<secondId) format then just do one delete
         delete(FriendRecord.class, FriendRecord.getKey(memberId, otherId));
         delete(FriendRecord.class, FriendRecord.getKey(otherId, memberId));
     }
@@ -1079,31 +1043,9 @@ public class MemberRepository extends DepotRepository
      */
     public void deleteAllFriends (final int memberId)
     {
-        final CacheInvalidator invalidator = new CacheInvalidator() {
-            public void invalidate (PersistenceContext ctx) {
-                // remove the FriendsCache entry for the member
-                ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
-
-                // then remove both FriendRecord and FriendsCache entries for all related members
-                ctx.cacheTraverse(FriendRecord.class, new CacheTraverser<FriendRecord> () {
-                    public void visitCacheEntry (PersistenceContext ctx, String cacheId,
-                        Serializable key, FriendRecord record) {
-                        if (record.inviteeId == memberId) {
-                            ctx.cacheInvalidate(FRIENDS_CACHE_ID, record.inviterId);
-                            ctx.cacheInvalidate(FriendRecord.class, record.inviterId);
-                        } else if (record.inviterId == memberId) {
-                            ctx.cacheInvalidate(FRIENDS_CACHE_ID, record.inviterId);
-                            ctx.cacheInvalidate(FriendRecord.class, record.inviterId);
-                        }
-                    }
-                });
-            }
-        };
-
         deleteAll(FriendRecord.class,
                   new Where(new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
-                                   new Equals(FriendRecord.INVITEE_ID_C, memberId))),
-                  invalidator);
+                                   new Equals(FriendRecord.INVITEE_ID_C, memberId))));
     }
 
     /**
