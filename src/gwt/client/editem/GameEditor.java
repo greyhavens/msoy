@@ -215,7 +215,7 @@ public class GameEditor extends ItemEditor
         addTab(_emsgs.gameTabCode());
 
         // add a UI for uploading the game client and server code
-        addRow(_emsgs.gameLabel(), createMainUploader(TYPE_CODE, false, new MediaUpdater() {
+        addRow(_emsgs.gameLabel(), createMainUploader(TYPE_SWF, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!isValidGameMedia(desc)) {
                     return _emsgs.errGameNotFlash();
@@ -236,7 +236,7 @@ public class GameEditor extends ItemEditor
             }
         };
         ItemMediaUploader serverMediaUploader = createUploader(
-            Game.SERVER_CODE_MEDIA, TYPE_CODE, ItemMediaUploader.MODE_NORMAL, serverMediaUpdater);
+            Game.SERVER_CODE_MEDIA, TYPE_ABC, ItemMediaUploader.MODE_NORMAL, serverMediaUpdater);
         addRow(_emsgs.gameServerMediaLabel(), serverMediaUploader, _emsgs.gameServerMediaTip());
         addRow(_emsgs.gameServerClass(), _serverClass = new TextBox());
         addTip(_emsgs.gameServerClassTip());
