@@ -42,12 +42,35 @@ import client.util.MsoyCallback;
  */
 public abstract class ItemEditor extends FlowPanel
 {
-//    public static class FileType extends Tuple<String, String>
+//    public enum FileType
 //    {
-//        public FileType (String name, String types)
+//        SWF(_emsgs.typeSWF(), "*.swf"),
+//        ABC(_emsgs.typeABC(), "*.abc"),
+//        ;
+//
+//        FileType (String name, String filespec)
 //        {
-//            super(name, types);
+//            _name = name;
+//            _spec = filespec;
 //        }
+//
+//        /** 
+//         * Get the name of this filetype.
+//         */
+//        public String getName ()
+//        {
+//            return _name;
+//        }
+//
+//        /**
+//         * Get the filespec.
+//         */
+//        public String getSpec ()
+//        {
+//            return _spec;
+//        }
+//
+//        protected String _name, _spec;
 //    }
 
     // Note: these strings are passed directly to the uploader to restrict the files being uploaded
