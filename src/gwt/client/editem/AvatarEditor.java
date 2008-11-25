@@ -32,7 +32,9 @@ public class AvatarEditor extends ItemEditor
     @Override // from ItemEditor
     public Item createBlankItem ()
     {
-        return new Avatar();
+        Avatar avatar = new Avatar();
+        avatar.scale = 1f;
+        return avatar;
     }
 
     @Override // from ItemEditor
