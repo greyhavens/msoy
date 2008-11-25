@@ -97,10 +97,15 @@
   font-style: italic;
 }
 
-.profile .Profile .Detail, .profile .Profile .LesserInfo {
+.profile .Profile .LesserInfo {
+  font-size: 14px;
+}
+
+.profile .Profile .Detail {
   font-size: 14px;
   white-space: nowrap;
 }
+
 
 .profile .Interests {
   font-size: 12px;
