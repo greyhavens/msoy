@@ -49,8 +49,8 @@ public class FeedRepository extends DepotRepository
     /**
      * Loads all applicable feed messages for the specified member.
      *
-     * @param since a timestamp before which not to load messages or null if all available messages
-     * should be loaded.
+     * @param sinceMillis a timestamp before which not to load messages or null if all available
+     * messages should be loaded.
      */
     public List<FeedMessageRecord> loadPersonalFeed (int memberId, IntSet friendIds,
                                                      IntSet groupIds, long sinceMillis)
