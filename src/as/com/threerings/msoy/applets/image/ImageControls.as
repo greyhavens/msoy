@@ -55,7 +55,7 @@ public class ImageControls
     protected function gotParams (params :Object) :void
     {
         _params = params;
-        _size = new SizeRestriction(NaN, NaN,
+        _size = new SizeRestriction(Number(params["reqWidth"]), Number(params["reqHeight"]),
             Number(params["maxWidth"]), Number(params["maxHeight"]));
 
         const url :String = params["url"] as String;
