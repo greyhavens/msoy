@@ -372,3 +372,10 @@
 .share .SubHeaderText, .share .SubHeaderText a {
   color: white;
 }
+.linkToWhirled {
+  font-size: 14px;
+}
+.linkToWhirled .LogoBox {
+  color: white;
+  text-align: center;
+}

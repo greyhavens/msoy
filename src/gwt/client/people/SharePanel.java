@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.people;
 
 import client.shell.CShell;
@@ -6,7 +9,6 @@ import client.ui.RoundBox;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -35,11 +37,11 @@ public class SharePanel extends VerticalPanel
         linkToWhirled.setStyleName("SubHeader");
         linkToWhirled.setWidget(0, 0, new Image("/images/people/link_to_whirled.png"));
         TextBox embedText = new TextBox();
-        embedText.setText(getEmbedUrl());
+        embedText.setText(getAffiliateLandingUrl());
         embedText.setMaxLength(100);
         embedText.setWidth("100%");
         FlowPanel shareText = new FlowPanel();
-        shareText.add(new HTML(_msgs.shareLinkToWhirled()));
+        shareText.add(MsoyUI.createHTML(_msgs.shareLinkToWhirled(), null));
         shareText.add(embedText);
         linkToWhirled.setWidget(0, 1, shareText, 1, "SubHeaderText");
         RoundBox linkToWhirledBox = new RoundBox(RoundBox.DARK_BLUE);
@@ -65,7 +67,7 @@ public class SharePanel extends VerticalPanel
         add(invitePanel);
     }
     
-    protected static String getEmbedUrl ()
+    public static String getAffiliateLandingUrl ()
     {
         return DeploymentConfig.serverURL + "welcome/" + CShell.creds.getMemberId();
     }
