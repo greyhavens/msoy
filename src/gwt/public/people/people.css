@@ -375,6 +375,9 @@
 .linkToWhirled {
   font-size: 14px;
 }
+.linkToWhirled .IntroText {
+  width: 600px;
+}
 .linkToWhirled .LogoBox {
   color: white;
   text-align: center;

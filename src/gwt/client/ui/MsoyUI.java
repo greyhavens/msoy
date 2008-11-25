@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -630,6 +631,42 @@ public class MsoyUI
             }
         }
         return text.substring(0, maxLen-3) + "...";
+    }
+
+    /**
+     * Assign a focus listener that will select all the text in the box when focus is gained.
+     */
+    public static void selectAllOnFocus (TextBox textBox)
+    {
+        // We need some click logic too because when focus is gained due to a click the selection
+        // flashes, disappearing when the cursor appears
+        TextBoxSelector listener = new TextBoxSelector();
+        textBox.addFocusListener(listener);
+        textBox.addClickListener(listener);
+    }
+
+    protected static class TextBoxSelector
+        implements FocusListener, ClickListener
+    {
+        public void onFocus (Widget sender) {
+            _focus = true;
+            _click = false;
+            TextBox text = ((TextBox)sender);
+            text.setSelectionRange(0, text.getText().length());
+        }
+        public void onLostFocus (Widget sender) {
+            _focus = false;
+            _click = false;
+        }
+        public void onClick (Widget sender) {
+            if (!_click) {
+                _click = true;
+                TextBox text = ((TextBox)sender);
+                text.setSelectionRange(0, text.getText().length());
+            }
+        }
+        protected boolean _focus;
+        protected boolean _click;
     }
 
     protected static final SimpleDateFormat _tfmt = new SimpleDateFormat("h:mmaa");

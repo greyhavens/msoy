@@ -6,14 +6,17 @@ package client.people;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
+import client.util.Link;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 /**
  * Panel for sharing the Whirled with the ones you love and anyone else.
@@ -35,12 +38,15 @@ public class SharePanel extends VerticalPanel
         // link to whirled
         SmartTable linkToWhirled = new SmartTable();
         linkToWhirled.setStyleName("SubHeader");
-        linkToWhirled.setWidget(0, 0, new Image("/images/people/link_to_whirled.png"));
+        linkToWhirled.setWidget(0, 0, Link.createImage("/images/people/link_to_whirled.png", null,
+            Pages.PEOPLE, Args.compose("invites", "links")));
         TextBox embedText = new TextBox();
         embedText.setText(getAffiliateLandingUrl());
         embedText.setMaxLength(100);
         embedText.setWidth("100%");
-        FlowPanel shareText = new FlowPanel();
+        MsoyUI.selectAllOnFocus(embedText);
+        VerticalPanel shareText = new VerticalPanel();
+        shareText.setSpacing(5);
         shareText.add(MsoyUI.createHTML(_msgs.shareLinkToWhirled(), null));
         shareText.add(embedText);
         linkToWhirled.setWidget(0, 1, shareText, 1, "SubHeaderText");
