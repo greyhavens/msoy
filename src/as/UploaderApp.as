@@ -16,6 +16,7 @@ import flash.external.ExternalInterface;
 
 import flash.display.Sprite;
 
+import flash.net.FileFilter;
 import flash.net.FileReference;
 
 import flash.text.TextField;
@@ -107,8 +108,9 @@ public class UploaderApp extends Sprite
 
     protected function handleChooseFile (event :MouseEvent) :void
     {
-        // TODO: file filters based on type?
-        _fileRef.browse();
+        // we put all the filetypes in as one
+        var fileTypes :String = _params["filetypes"] as String;
+        _fileRef.browse((fileTypes == null) ? null : [ new FileFilter("files", fileTypes) ]);
 
         setStatus("Choose the file to upload...");
         removeChild(_button);
