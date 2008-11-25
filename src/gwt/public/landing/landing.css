@@ -743,7 +743,7 @@
 -------------------------------------*/
 
 /* Spans the entire width of the page */
-.gameLandingPanel {
+.gridLandingPanel {
   background: #63ABD3 url(/images/landing/bg_gradient.jpg) repeat-x top center;
   width: 100%;
   min-height: 100%;
@@ -754,45 +754,45 @@
   font-size: 13px;
 }
 
-.gameLandingPanel .Content {
+.gridLandingPanel .Content {
   background: transparent url(/images/landing/games_content_bg.png) repeat-y top center;
   width: 708px;
   margin: auto;
 }
 
-.gameLandingPanel .Content .Main {
+.gridLandingPanel .Content .Main {
   background: #63ABD3 url(/images/landing/games_main_bg.png) repeat-x top center;
   width: 690px;
   margin: auto;
   position: relative;
 }
 
-.gameLandingPanel .Main .Header {
+.gridLandingPanel .Main .Header {
   width: 100%;
   height: 185px;
   background: transparent url(/images/landing/games_header_bg.png) no-repeat top right;
 }
 
-.gameLandingPanel .Header .Tagline {
+.gridLandingPanel .Header .Tagline {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 14px;
   color: #FFFFFF;
 }
 
-.gameLandingPanel .LandingCopyright a {
+.gridLandingPanel .LandingCopyright a {
   color: #0F3F70;
 }
 
-.gameLandingPanel .Main .Games {
+.gridLandingPanel .Main .Grid {
   margin: 10px;
 }
 
-.gameLandingPanel .Games .GamesTable {
+.gridLandingPanel .Main .Grid .GridTable {
   width: 100%;
   background: transparent url(/images/landing/games_games_bg.png) no-repeat center center;
 }
 
-.gameLandingPanel .Games .GamesTable .CenterTitle {
+.gridLandingPanel .Grid .CenterTitle {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 24px;
   color: #193755;
@@ -801,13 +801,13 @@
   margin-bottom: 10px;
 }
 
-.gameLandingPanel .Games .GamesTable .CenterText {
+.gridLandingPanel .Grid .CenterText {
   font-size: 12px;
   color: #193755;
   text-align: center;
 }
 
-.gameLandingPanel .Games .AllGames {
+.gridLandingPanel .Grid .AllLink {
   margin: 10px 0 0 525px;
 }
 

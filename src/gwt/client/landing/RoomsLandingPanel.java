@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.LogonPanel;
@@ -26,13 +25,14 @@ import client.ui.RoundBox;
 import client.util.Link;
 
 /**
- * General landing page featuring games only.
+ * General landing page featuring rooms only.
  */
-public class GameLandingPanel extends FlowPanel
+public class RoomsLandingPanel extends FlowPanel
 {
-    public GameLandingPanel ()
+    public RoomsLandingPanel ()
     {
-        setStyleName("gameLandingPanel");
+        // shares style with the gamesLandingPanel
+        setStyleName("gridLandingPanel");
         FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
 
@@ -40,7 +40,7 @@ public class GameLandingPanel extends FlowPanel
         content.add(main);
 
         main.add(createHeader());
-        main.add(createGames());
+        main.add(createGrid());
 
         FlowPanel footer = MsoyUI.createFlowPanel("Footer");
         content.add(footer);
@@ -54,7 +54,7 @@ public class GameLandingPanel extends FlowPanel
         // join now
         final Button joinButton = new Button("", Link.createListener(Pages.ACCOUNT, "create"));
         joinButton.setStyleName("JoinButton");
-        MsoyUI.addTrackingListener(joinButton, "landingJoinButtonClicked", null);
+        MsoyUI.addTrackingListener(joinButton, "landingRooms JoinButtonClicked", null);
         header.add(joinButton, 25, 60);
 
         // logon box
@@ -68,7 +68,7 @@ public class GameLandingPanel extends FlowPanel
         header.add(logon, 10, 0);
 
         // tagline
-        final HTML tagline = MsoyUI.createHTML(_msgs.gamesTagline(), null);
+        final HTML tagline = MsoyUI.createHTML(_msgs.roomsTagline(), null);
         tagline.setStyleName("Tagline");
         header.add(tagline, 15, 140);
 
@@ -82,55 +82,59 @@ public class GameLandingPanel extends FlowPanel
             }
         };
         final Image clickToPlayImage = MsoyUI.createInvisiLink(onClick, 208, 154);
-        MsoyUI.addTrackingListener(clickToPlayImage, "gameLandingVideoPlayed", null);
+        MsoyUI.addTrackingListener(clickToPlayImage, "landingRooms VideoPlayed", null);
         video.setWidget(clickToPlayImage);
         header.add(video, 455, 10);
 
         return header;
     }
 
-    protected Widget createGames ()
+    protected Widget createGrid ()
     {
-        RoundBox games = new RoundBox(RoundBox.MEDIUM_BLUE);
-        games.addStyleName("Games");
+        RoundBox grid = new RoundBox(RoundBox.MEDIUM_BLUE);
+        grid.addStyleName("Grid");
 
-        SmartTable gamesTable = new SmartTable("GamesTable", 7, 0);
-        gamesTable.setWidget(0, 0, createGame(0));
-        gamesTable.setWidget(0, 1, createGame(1));
-        gamesTable.setWidget(0, 2, createGame(2));
-        gamesTable.setWidget(1, 0, createGame(3));
+        SmartTable gridTable = new SmartTable("GridTable", 7, 0);
+        gridTable.setWidget(0, 0, createGridItem(0));
+        gridTable.setWidget(0, 1, createGridItem(1));
+        gridTable.setWidget(0, 2, createGridItem(2));
+        gridTable.setWidget(1, 0, createGridItem(3));
 
         FlowPanel center = MsoyUI.createFlowPanel("Center");
-        center.add(MsoyUI.createHTML(_msgs.gamesCenterTitle(), "CenterTitle"));
-        center.add(MsoyUI.createHTML(_msgs.gamesCenterText(), "CenterText"));
-        gamesTable.setWidget(1, 1, center);
+        center.add(MsoyUI.createHTML(_msgs.roomsCenterTitle(), "CenterTitle"));
+        center.add(MsoyUI.createHTML(_msgs.roomsCenterText(), "CenterText"));
+        gridTable.setWidget(1, 1, center);
 
-        gamesTable.setWidget(1, 2, createGame(4));
-        gamesTable.setWidget(2, 0, createGame(5));
-        gamesTable.setWidget(2, 1, createGame(6));
-        gamesTable.setWidget(2, 2, createGame(7));
-        games.add(gamesTable);
+        gridTable.setWidget(1, 2, createGridItem(4));
+        gridTable.setWidget(2, 0, createGridItem(5));
+        gridTable.setWidget(2, 1, createGridItem(6));
+        gridTable.setWidget(2, 2, createGridItem(7));
+        grid.add(gridTable);
 
-        Image allGames = MsoyUI.createActionImage("/images/landing/games_all_games.png",
-            Link.createListener(Pages.GAMES, ""));
-        allGames.addStyleName("AllGames");
-        games.add(allGames);
+        Image allLink = MsoyUI.createActionImage("/images/landing/rooms_all_rooms.png",
+            Link.createListener(Pages.ROOMS, ""));
+        MsoyUI.addTrackingListener(allLink, "landingRooms AllClicked", null);
+        allLink.addStyleName("AllLink");
+        grid.add(allLink);
 
-        return games;
+        return grid;
     }
 
-    protected Widget createGame (int gameNum)
+    protected Widget createGridItem (int itemNum)
     {
-        Image game = MsoyUI.createActionImage("/images/landing/games_game_" + gameNum + ".png",
-            GAME_NAMES[gameNum], Link.createListener(Pages.GAMES, Args.compose("d",
-                GAME_IDS[gameNum])));
-        return game;
+        Image item = MsoyUI.createActionImage("/images/landing/rooms_room_" + itemNum + ".png",
+            ROOM_NAMES[itemNum], Link.createListener(Pages.WORLD, "s" + ROOM_IDS[itemNum]));
+        MsoyUI.addTrackingListener(item, "landingRooms RoomClicked", ROOM_NAMES[itemNum]
+            + "");
+        return item;
     }
 
-    // production ids and names of the games displayed on this page
-    protected static final int[] GAME_IDS = { 929, 827, 10, 393, 934, 7, 513, 107 };
-    protected static final String[] GAME_NAMES = { "Bella Bingo", "Corpse Craft", "Brawler",
-        "QBeez", "Fantastic Contraption", "LOLcaptions", "Bomboozle", "Tree House Defense" };
+    // production ids and names of the rooms displayed on this page
+    protected static final int[] ROOM_IDS = { 107217, 119439, 89294, 94819, 99355, 116771,
+        130834, 101315 };
+    protected static final String[] ROOM_NAMES = { "Little Red's Forest", "Whirled Train Ride",
+        "Little Monsters", "Aquatica Whirled", "Explore", "The Emerald", "Paper Whirled",
+        "Serena's Airship" };
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
 }
