@@ -3,11 +3,17 @@
 
 package com.threerings.msoy.applets.remixer {
 
+import flash.events.Event;
+
 import flash.utils.ByteArray;
 
 import mx.controls.Label;
 
+import com.threerings.util.ValueEvent;
+
 import com.threerings.flex.CommandButton;
+
+import com.threerings.msoy.applets.net.Downloader;
 
 public class FileEditor extends FieldEditor
 {
@@ -15,6 +21,26 @@ public class FileEditor extends FieldEditor
     {
         var entry :Object = ctx.pack.getFileEntry(name);
         super(ctx, name, entry);
+    }
+
+    /**
+     * "Inject" the media at the specified url into this file field, as if the user
+     * had directly uploaded it.
+     */
+    public function injectMedia (url :String) :void
+    {
+        var dl :Downloader = new Downloader(_ctx);
+        dl.addEventListener(Event.COMPLETE, handleInjectionComplete);
+        dl.startDownload(url);
+    }
+
+    protected function handleInjectionComplete (event :ValueEvent) :void
+    {
+        var filename :String = String(event.value[0]);
+        var bytes :ByteArray = ByteArray(event.value[1]);
+
+        filename = "image" + filename.substring(filename.lastIndexOf(".") + 1);
+        updateValue(_ctx.createFilename(filename, bytes), bytes);
     }
 
     override protected function getUI (entry :Object) :Array

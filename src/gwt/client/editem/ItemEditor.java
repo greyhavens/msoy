@@ -60,8 +60,11 @@ public abstract class ItemEditor extends FlowPanel
 
     public static interface MediaUpdater
     {
+        public static final String SUPPRESS_ERROR = "_se_";
+
         /**
-         * Return null, or a message indicating why the specified media will not do.
+         * Return null if ok, or SUPPRESS_ERROR, or an error message indicating why
+         * the specified media will not do.
          *
          * @param name the name of the uploaded file (from the user's local filesystem).
          * @param desc a media descriptor referencing the uploaded media.
@@ -657,19 +660,26 @@ public abstract class ItemEditor extends FlowPanel
         if (_item.itemId == 0) {
             _stuffsvc.createItem(_item, _parentItem, new MsoyCallback<Item>() {
                 public void onSuccess (Item item) {
-                    MsoyUI.info(_emsgs.msgItemCreated());
-                    _parent.editComplete(item);
+                    editComplete(item, true);
                 }
             });
 
         } else {
             _stuffsvc.updateItem(_item, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
-                    MsoyUI.info(_emsgs.msgItemUpdated());
-                    _parent.editComplete(_item);
+                    editComplete(_item, false);
                 }
             });
         }
+    }
+
+    /**
+     * Called once the item is saved to the server.
+     */
+    protected void editComplete (Item item, boolean created)
+    {
+        MsoyUI.info(created ? _emsgs.msgItemCreated() : _emsgs.msgItemUpdated());
+        _parent.editComplete(item);
     }
 
     /**

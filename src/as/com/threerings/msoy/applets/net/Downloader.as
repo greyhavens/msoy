@@ -103,11 +103,7 @@ public class Downloader extends TitleWindow
             return _forcedName;
         }
 
-        var lastSlash :int = url.lastIndexOf("/");
-        if (lastSlash == -1) {
-            return url;
-        }
-        return url.substr(lastSlash + 1);
+        return url.substr(url.lastIndexOf("/") + 1); // works even if index is -1
     }
 
     protected function handleClose (event :CloseEvent) :void

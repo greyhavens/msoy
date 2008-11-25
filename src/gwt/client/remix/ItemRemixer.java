@@ -25,6 +25,7 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+import client.util.StringUtil;
 
 public class ItemRemixer extends FlexTable
 {
@@ -39,11 +40,12 @@ public class ItemRemixer extends FlexTable
         configureBridges();
     }
 
-    public void init (RemixerHost host, Item item, int catalogId)
+    public void init (RemixerHost host, Item item, int catalogId, String injectImage)
     {
         _parent = host;
         _item = item;
         _catalogId = catalogId;
+        _injectImage = injectImage;
 
         VerticalPanel vpan = new VerticalPanel();
         vpan.add(createRemixControls(item));
@@ -79,6 +81,9 @@ public class ItemRemixer extends FlexTable
         }
         if (_catalogId != 0) {
             flashVars += "&mustBuy=true";
+        }
+        if (!StringUtil.isBlank(_injectImage)) {
+            flashVars += "&inject-image=" + URL.encodeComponent(_injectImage);
         }
 
         return WidgetUtil.createFlashContainer("remixControls",
@@ -208,6 +213,7 @@ public class ItemRemixer extends FlexTable
     protected Item _item;
 
     protected int _catalogId;
+    protected String _injectImage;
 
     protected static ItemRemixer _singleton;
 

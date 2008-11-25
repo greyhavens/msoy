@@ -294,6 +294,25 @@ public class MediaDesc
     }
 
     /**
+     * Creates a MediaDesc from a colon-delimited String.
+     */
+    public static function stringToMD (str :String) :MediaDesc
+    {
+        var data :Array = str.split(":");
+        if (data.length != 3) {
+            return null;
+        }
+
+        var hash :ByteArray = stringToHash(data[0]);
+        if (hash == null) {
+            return null;
+        }
+        var mimeType :int = parseInt(data[1]);
+        var constraint :int = parseInt(data[2]);
+        return new MediaDesc(hash, mimeType, constraint);
+    }
+
+    /**
      * Creates either a configured or blank media descriptor.
      */
     public function MediaDesc (
@@ -479,14 +498,6 @@ public class MediaDesc
         default:
             return false;
         }
-    }
-
-    /**
-     * Helper function for {@link #equals} because we must work in JavaScript land.
-     */
-    protected static function arraysEqual (a1 :ByteArray, a2 :ByteArray) :Boolean
-    {
-        throw new Error("Unimplemented");
     }
 }
 }

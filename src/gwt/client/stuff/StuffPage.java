@@ -120,10 +120,11 @@ public class StuffPage extends Page
         } else if ("r".equals(arg0)) {
             type = (byte) args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
+            final String injectMedia = args.get(3, "");
             final ItemRemixer remixer = new ItemRemixer();
             getItem(type, itemId, new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
-                    remixer.init(createRemixHost(), result, 0);
+                    remixer.init(createRemixHost(), result, 0, injectMedia);
                 }
             });
             setContent(remixer);

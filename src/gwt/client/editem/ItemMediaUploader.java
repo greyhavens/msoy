@@ -78,7 +78,7 @@ public class ItemMediaUploader extends FlexTable
         fmt.setVerticalAlignment(2, 0, HorizontalPanel.ALIGN_BOTTOM);
 
         // sweet sweet debugging
-        //setText(3, 0, type + " : " + mediaIds + " : " + mode);
+        //setText(4, 0, type + " : " + mediaIds + " : " + mode);
     }
 
     /**
@@ -144,7 +144,7 @@ public class ItemMediaUploader extends FlexTable
         String result = _updater.updateMedia("", desc, width, height);
         if (result == null) {
             setMedia(desc);
-        } else {
+        } else if (result != ItemEditor.MediaUpdater.SUPPRESS_ERROR) {
             MsoyUI.error(result);
         }
     }

@@ -41,6 +41,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyLogConfig;
 
 import com.threerings.msoy.data.UberClientModes;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.utils.UberClientLoader;
 
 /**
@@ -292,11 +293,25 @@ public class RemixControls extends HBox
             _controls.addChild(new DataEditor(_ctx, name));
         }
 
+        var injectFileEditor :FileEditor;
+        var injectMedia :String;
         for each (name in _ctx.pack.getFileFields()) {
-            _controls.addChild(new FileEditor(_ctx, name));
+            var fe :FileEditor = new FileEditor(_ctx, name);
+            _controls.addChild(fe);
+            if (("inject-" + name) in _params) {
+                injectFileEditor = fe;
+                injectMedia = MediaDesc.stringToMD(_params["inject-" + name]).getMediaPath();
+            }
         }
 
         _packReady = true;
+
+        // see if we need to inject any media
+        if (injectFileEditor != null) {
+            injectFileEditor.injectMedia(injectMedia);
+            return; // do not yet update the preview
+        }
+
         maybeUpdatePreview();
     }
 
