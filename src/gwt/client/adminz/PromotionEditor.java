@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -127,10 +128,10 @@ public class PromotionEditor extends FlowPanel
         ptable.setText(row, col++, MsoyUI.formatDateTime(promo.starts));
         ptable.setText(row, col++, MsoyUI.formatDateTime(promo.ends));
 
-        Button delete = new Button("X");
-        delete.setTitle("Delete this promotion");
+        PushButton delete = MsoyUI.createCloseButton(null);
+        delete.setTitle(_msgs.promoDeleteTip());
         ptable.setWidget(row, col++, delete);
-        new ClickCallback<Void>(delete) {
+        new ClickCallback<Void>(delete, _msgs.promoDeleteConfirm()) {
             protected boolean callService () {
                 _adminsvc.deletePromotion(promo.promoId, this);
                 return true;

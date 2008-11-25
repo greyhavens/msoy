@@ -347,7 +347,7 @@ public class MsoyUI
     /**
      * Creates a button for closing things (a square with an x in it).
      */
-    public static Widget createCloseButton (ClickListener listener)
+    public static PushButton createCloseButton (ClickListener listener)
     {
         return createImageButton("closeButton", listener);
     }
