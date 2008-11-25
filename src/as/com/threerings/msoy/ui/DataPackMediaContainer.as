@@ -44,6 +44,7 @@ import com.threerings.msoy.data.MsoyDataPack;
 /**
  * Extends MsoyMediaContainer to be able to deal with all-in-one media, that is, media
  * inside a zip file that is a datapack.
+ * Also implements Snapshottable and uses the MediaStub to take snapshots of media.
  *
  * Note that this is essentially an abstract class that should only be extended by MsoySprite.
  * I could roll all this into MsoySprite, but this is cleaner.
