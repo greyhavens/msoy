@@ -652,6 +652,15 @@ img, embed, applet, object {
   text-decoration: underline;
 }
 
+.hoverActionLabel {
+  cursor: pointer; /* for modern browsers */
+  cursor: hand; /* for IE5 */
+}
+
+.hoverActionLabel:hover {
+  text-decoration: underline;
+}
+
 .rightLabel {
   text-align: right;
   vertical-align: top;
