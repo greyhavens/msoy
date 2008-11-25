@@ -53,8 +53,10 @@ public class FeedRepository extends DepotRepository
      * should be loaded.
      */
     public List<FeedMessageRecord> loadPersonalFeed (int memberId, IntSet friendIds,
-                                                     IntSet groupIds, Timestamp since)
+                                                     IntSet groupIds, long sinceMillis)
     {
+        // round "since" to the nearest 2^18 milliseconds so that we can cache this query
+        Timestamp since = new Timestamp(sinceMillis & ~0x3FFFFL);
         List<FeedMessageRecord> messages = Lists.newArrayList();
         loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, since);
         SQLOperator self = new Conditionals.Equals(SelfFeedMessageRecord.TARGET_ID_C, memberId);

@@ -8,8 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import java.sql.Timestamp;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -201,8 +199,7 @@ public class MeServlet extends MsoyServiceServlet
         for (GroupMembershipRecord gmr : _groupRepo.getMemberships(mrec.memberId)) {
             groupMemberships.add(gmr.groupId);
         }
-        Timestamp since = new Timestamp(
-            System.currentTimeMillis() - FEED_CUTOFF_DAYS * 24*60*60*1000L);
+        long since = System.currentTimeMillis() - FEED_CUTOFF_DAYS * 24*60*60*1000L;
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
         List<FeedMessageRecord> allRecords = _feedRepo.loadPersonalFeed(
             mrec.memberId, friendIds, groupMemberships, since);
