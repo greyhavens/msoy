@@ -89,7 +89,8 @@ public class ShopPage extends Page
             final ItemRemixer remixer = new ItemRemixer();
             _stuffsvc.loadItem(new ItemIdent(type, itemId), new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
-                    remixer.init(createRemixerHost(remixer, type, catalogId), result, catalogId);
+                    remixer.init(createRemixerHost(remixer, type, catalogId),
+                        result, catalogId, null);
                 }
             });
             setContent(remixer);
