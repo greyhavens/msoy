@@ -30,9 +30,8 @@ import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.Snapshottable;
+import com.threerings.msoy.ui.DataPackMediaContainer;
 import com.threerings.msoy.ui.ScalingMediaContainer;
-
-import com.threerings.msoy.room.client.DataPackMediaContainer;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -205,7 +204,7 @@ public class AVRGamePanel extends UIComponent
 }
 }
 
-import com.threerings.msoy.room.client.DataPackMediaContainer;
+import com.threerings.msoy.ui.DataPackMediaContainer;
 
 /**
  * Ye olde hacke.

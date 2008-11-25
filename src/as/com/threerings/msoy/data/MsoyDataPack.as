@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.data {
+package com.threerings.msoy.data {
 
 import flash.utils.ByteArray;
 

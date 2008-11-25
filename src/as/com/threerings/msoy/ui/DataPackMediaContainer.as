@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.ui {
 
 import flash.events.ErrorEvent;
 import flash.events.Event;
@@ -29,12 +29,9 @@ import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.msoy.ui.MsoyMediaContainer;
-
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Snapshottable;
-
-import com.threerings.msoy.room.data.MsoyDataPack;
+import com.threerings.msoy.data.MsoyDataPack;
 
 /**
  * Dispatched when we actually are about to start loading the media, as opposed to a zip

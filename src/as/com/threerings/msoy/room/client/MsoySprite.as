@@ -25,6 +25,7 @@ import com.threerings.flash.media.VideoPlayer;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 
+import com.threerings.msoy.ui.DataPackMediaContainer;
 import com.threerings.msoy.ui.MsoyVideoDisplay;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
