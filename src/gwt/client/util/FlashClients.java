@@ -25,10 +25,11 @@ public class FlashClients
     /**
      * Create an audio player.
      */
-    public static HTML createUploader (String mediaIds)
+    public static HTML createUploader (String mediaIds, String filetypes)
     {
         String flashVars = "auth=" + URL.encodeComponent(CShell.getAuthToken()) +
-            "&mediaIds=" + URL.encodeComponent(mediaIds);
+            "&mediaIds=" + URL.encodeComponent(mediaIds) +
+            "&filetypes=" + URL.encodeComponent(filetypes);
         return WidgetUtil.createTransparentFlashContainer("uploader",
             "/clients/" + DeploymentConfig.version + "/uploader.swf", 200, 40, flashVars);
     }

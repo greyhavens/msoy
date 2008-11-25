@@ -74,7 +74,7 @@ public class ItemMediaUploader extends FlexTable
         fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
         setText(2, 0, "");
         fmt.setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
-        setWidget(3, 0, FlashClients.createUploader(mediaIds));
+        setWidget(3, 0, FlashClients.createUploader(mediaIds, type));
         fmt.setVerticalAlignment(2, 0, HorizontalPanel.ALIGN_BOTTOM);
 
         // sweet sweet debugging
@@ -98,7 +98,7 @@ public class ItemMediaUploader extends FlexTable
             setMediaBlank();
         }
 
-        if (ItemEditor.TYPE_FLASH.equals(_type) || ItemEditor.TYPE_IMAGE.equals(_type)) {
+        if (-1 != _type.indexOf(ItemEditor.TYPE_IMAGE)) {
             addImageEditing(desc);
         }
     }

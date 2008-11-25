@@ -53,7 +53,7 @@ public class PetEditor extends ItemEditor
     @Override // from ItemEditor
     protected String getFurniType ()
     {
-        return TYPE_FLASH_ONLY;
+        return TYPE_FLASH_ONLY_REMIXABLE;
     }
 
     protected Pet _pet;

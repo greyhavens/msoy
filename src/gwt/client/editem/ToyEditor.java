@@ -34,7 +34,7 @@ public class ToyEditor extends ItemEditor
     @Override // from ItemEditor
     protected String getFurniType ()
     {
-        return TYPE_FLASH_ONLY;
+        return TYPE_FLASH_ONLY_REMIXABLE;
     }
 
     @Override // from ItemEditor

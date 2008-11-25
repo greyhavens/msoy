@@ -42,13 +42,24 @@ import client.util.MsoyCallback;
  */
 public abstract class ItemEditor extends FlowPanel
 {
-    public static final String TYPE_IMAGE = "image";
-    public static final String TYPE_AUDIO = "audio";
-    public static final String TYPE_VIDEO = "video";
-    public static final String TYPE_FLASH = "flash";
-    public static final String TYPE_FLASH_ONLY = "flash_only"; // no images
-    public static final String TYPE_CODE = "code";
-    public static final String TYPE_ANY = "any";
+//    public static class FileType extends Tuple<String, String>
+//    {
+//        public FileType (String name, String types)
+//        {
+//            super(name, types);
+//        }
+//    }
+
+    // Note: these strings are passed directly to the uploader to restrict the files being uploaded
+    public static final String TYPE_IMAGE = "*.png;*.gif;*.jpg;*.jpeg";
+    public static final String TYPE_AUDIO = "*.mp3";
+    public static final String TYPE_VIDEO = "*.flv";
+    public static final String TYPE_FLASH = "*.swf;" + TYPE_IMAGE;
+    public static final String TYPE_FLASH_REMIXABLE = TYPE_FLASH + ";*.zip";
+    public static final String TYPE_FLASH_ONLY = "*.swf"; // no images
+    public static final String TYPE_FLASH_ONLY_REMIXABLE = "*.swf;*.zip"; // no images
+    public static final String TYPE_CODE = "*.swf;*.abc";
+    public static final String TYPE_ANY = "*";
 
     public static class Binder
     {
@@ -298,7 +309,7 @@ public abstract class ItemEditor extends FlowPanel
 
     protected String getFurniType ()
     {
-        return TYPE_FLASH;
+        return TYPE_FLASH_REMIXABLE;
     }
 
     protected boolean generateFurniThumbnail ()

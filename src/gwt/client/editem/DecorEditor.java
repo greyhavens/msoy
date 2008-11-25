@@ -42,7 +42,8 @@ public class DecorEditor extends ItemEditor
     protected void addFurniUploader ()
     {
         addSpacer();
-        addRow(_emsgs.decorLabel(), createFurniUploader(TYPE_FLASH, true, new MediaUpdater() {
+        addRow(_emsgs.decorLabel(), createFurniUploader(TYPE_FLASH_REMIXABLE, true,
+            new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!isValidPrimaryMedia(desc)) {
                     return _emsgs.errFurniNotFlash();
