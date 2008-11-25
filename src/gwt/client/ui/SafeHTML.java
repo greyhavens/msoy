@@ -63,7 +63,7 @@ public class SafeHTML extends HTML
         if (href.startsWith("#")) {
             return "/" + href;
         } else if (href.startsWith(DeploymentConfig.serverURL) && href.contains("#")) {
-            return "/" + href.substring(href.indexOf("#"), href.length());
+            return "/" + href.substring(href.indexOf("#"));
         }
         return href;
     }
