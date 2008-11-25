@@ -14,7 +14,6 @@ import java.util.Set;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.depot.DepotRepository;
-import com.samskivert.depot.Modifier;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.FromOverride;
@@ -24,6 +23,7 @@ import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.impl.Modifier;
 import com.samskivert.depot.operator.Conditionals.In;
 
 import com.threerings.presents.annotation.BlockingThread;
