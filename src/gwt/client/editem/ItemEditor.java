@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -22,6 +24,9 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -31,11 +36,14 @@ import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.ShellMessages;
+import client.ui.BorderedPopup;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
+import client.ui.PromptPopup;
 import client.ui.StyledTabPanel;
-import client.util.ServiceUtil;
 import client.util.MsoyCallback;
+import client.util.StringUtil;
+import client.util.ServiceUtil;
 
 /**
  * The base class for an interface for creating and editing digital items.
@@ -258,6 +266,13 @@ public abstract class ItemEditor extends FlowPanel
     {
         super.onLoad();
         configureBridge();
+    }
+
+    @Override // from Widget
+    protected void onUnload ()
+    {
+        super.onUnload();
+        cancelRemix();
     }
 
     /**
@@ -611,6 +626,9 @@ public abstract class ItemEditor extends FlowPanel
             return;
         }
 
+        // shut down the remixer, if any
+        cancelRemix();
+
         // set the new media in preview and in the item
         mu.setUploadedMedia(
             new MediaDesc(mediaHash, (byte)mimeType, (byte)constraint), width, height);
@@ -671,6 +689,14 @@ public abstract class ItemEditor extends FlowPanel
     protected static void uploadTooLarge ()
     {
         MsoyUI.error(_emsgs.errUploadTooLarge());
+    }
+
+    protected static void cancelRemix ()
+    {
+        if (_remixPopup != null) {
+            _remixPopup.removeFromParent();
+            _remixPopup = null;
+        }
     }
 
     /**
@@ -759,6 +785,48 @@ public abstract class ItemEditor extends FlowPanel
     }
 
     /**
+     * Some item types allow images to be converted into "easy items".
+     * Prompt to see if the user is ready to remix.
+     */
+    protected void promptEasyItem (
+        final MediaDesc prototype, final MediaDesc image, String prompt, String details)
+    {
+        new PromptPopup(prompt, new Command() {
+            public void execute () {
+                doEasyRemix(prototype, image);
+            }
+        }).setContext(details).prompt();
+    }
+
+
+    protected void doEasyRemix (MediaDesc prototype, MediaDesc image)
+    {
+        int popWidth = getOffsetWidth() - 8;
+        int popHeight = Math.max(550,
+            Math.min(getOffsetHeight() - 8, Window.getClientHeight() - 8));
+
+        String typename = Item.getTypeName(_item.getType());
+
+        String flashVars = "media=" + URL.encodeComponent(prototype.getMediaPath()) +
+            "&type=" + URL.encodeComponent(typename) +
+            "&name=" + URL.encodeComponent(StringUtil.isBlank(_item.name) ? typename : _item.name) +
+            "&server=" + URL.encodeComponent(DeploymentConfig.serverURL) +
+            "&mediaId="+ URL.encodeComponent(Item.MAIN_MEDIA) +
+            "&auth=" + URL.encodeComponent(CShell.getAuthToken()) +
+            "&noPickPhoto=true" + // suppress picking a photo from inventory, here
+            "&inject-image=" + URL.encodeComponent(image.getMediaPath());
+        if (_item.getType() != Item.AVATAR) {
+            flashVars += "&username=Tester";
+        }
+
+        _remixPopup = new BorderedPopup(false, true);
+        _remixPopup.setWidget(WidgetUtil.createFlashContainer("remixControls",
+            "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
+            popWidth, popHeight, flashVars));
+        _remixPopup.show();
+    }
+
+    /**
      * Makes sure that the specified text is not null or all-whitespace and is less than or equal
      * to the specified maximum length.  Usually used in {@link #prepareItem}.
      */
@@ -776,13 +844,16 @@ public abstract class ItemEditor extends FlowPanel
      */
     protected static native void configureBridge () /*-{
         $wnd.setHash = function (id, hash, type, constraint, width, height) {
-           @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IIII)(id, hash, type, constraint, width, height);
+            @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IIII)(id, hash, type, constraint, width, height);
         };
         $wnd.uploadError = function () {
-           @client.editem.ItemEditor::uploadError()();
+            @client.editem.ItemEditor::uploadError()();
         };
         $wnd.uploadTooLarge = function () {
-           @client.editem.ItemEditor::uploadTooLarge()();
+            @client.editem.ItemEditor::uploadTooLarge()();
+        };
+        $wnd.cancelRemix = function () {
+            @client.editem.ItemEditor::cancelRemix()();
         };
     }-*/;
 
@@ -806,6 +877,8 @@ public abstract class ItemEditor extends FlowPanel
     protected Map<String, ItemMediaUploader> _uploaders = new HashMap<String, ItemMediaUploader>();
 
     protected static ItemEditor _singleton;
+
+    protected static BorderedPopup _remixPopup;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);

@@ -13,7 +13,10 @@ public class AppletContext
 {
     /** The user's authentication token, if any. */
     public var authToken :String;
-    
+
+    /** Our parameters, or null if not yet known. */
+    public var params :Object;
+
     public function AppletContext (app :Application)
     {
         _app = app;
@@ -42,6 +45,7 @@ public class AppletContext
 
     protected function gotParams (params :Object) :void
     {
+        this.params = params;
         if ("auth" in params) {
             authToken = String(params.auth);
         }

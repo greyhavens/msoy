@@ -300,7 +300,7 @@ public class RemixControls extends HBox
             _controls.addChild(fe);
             if (("inject-" + name) in _params) {
                 injectFileEditor = fe;
-                injectMedia = MediaDesc.stringToMD(_params["inject-" + name]).getMediaPath();
+                injectMedia = String(_params["inject-" + name]);
             }
         }
 
@@ -431,7 +431,7 @@ public class RemixControls extends HBox
         if (ExternalInterface.available) {
             for (var mediaId :String in result) {
                 var data :Object = result[mediaId];
-                ExternalInterface.call("setRemixHash", mediaId, data.hash, data.mimeType,
+                ExternalInterface.call("setHash", mediaId, data.hash, data.mimeType,
                     data.constraint, data.width, data.height);
             }
         }

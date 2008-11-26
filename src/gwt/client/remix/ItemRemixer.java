@@ -25,7 +25,6 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.StringUtil;
 
 public class ItemRemixer extends FlexTable
 {
@@ -40,12 +39,11 @@ public class ItemRemixer extends FlexTable
         configureBridges();
     }
 
-    public void init (RemixerHost host, Item item, int catalogId, String injectImage)
+    public void init (RemixerHost host, Item item, int catalogId)
     {
         _parent = host;
         _item = item;
         _catalogId = catalogId;
-        _injectImage = injectImage;
 
         VerticalPanel vpan = new VerticalPanel();
         vpan.add(createRemixControls(item));
@@ -66,13 +64,10 @@ public class ItemRemixer extends FlexTable
     protected Widget createRemixControls (Item item)
     {
         MediaDesc main = item.getPrimaryMedia();
-        String serverURL = GWT.isScript() ? DeploymentConfig.serverURL
-                                          : "http://localhost:8080/";
 
         String flashVars = "media=" + URL.encodeComponent(main.getMediaPath()) +
             "&name=" + URL.encodeComponent(item.name) +
             "&type=" + URL.encodeComponent(Item.getTypeName(item.getType())) +
-            "&server=" + URL.encodeComponent(serverURL) +
             "&mediaId=" + URL.encodeComponent(Item.MAIN_MEDIA) +
             "&auth=" + URL.encodeComponent(CShell.getAuthToken());
 
@@ -84,9 +79,6 @@ public class ItemRemixer extends FlexTable
         }
         if (_catalogId != 0) {
             flashVars += "&mustBuy=true";
-        }
-        if (!StringUtil.isBlank(_injectImage)) {
-            flashVars += "&inject-image=" + URL.encodeComponent(_injectImage);
         }
 
         return WidgetUtil.createFlashContainer("remixControls",
@@ -198,7 +190,7 @@ public class ItemRemixer extends FlexTable
         $wnd.buyItem = function () {
             @client.remix.ItemRemixer::bridgeBuyItem()();
         };
-        $wnd.setRemixHash = function (id, hash, type, constraint, width, height) {
+        $wnd.setHash = function (id, hash, type, constraint, width, height) {
             @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIII)(
                 id, hash, type, constraint, width, height);
         };
@@ -216,7 +208,6 @@ public class ItemRemixer extends FlexTable
     protected Item _item;
 
     protected int _catalogId;
-    protected String _injectImage;
 
     protected static ItemRemixer _singleton;
 

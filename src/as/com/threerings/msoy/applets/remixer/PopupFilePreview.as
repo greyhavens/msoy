@@ -84,7 +84,7 @@ public class PopupFilePreview extends TitleWindow
         hbox.addChild(previewBox);
 
         controlBox.addChild(makeHeader(_ctx.REMIX.get("t.file_change")));
-        if (externalAvail && imageOk) {
+        if (externalAvail && imageOk && !("true" == _ctx.params["noPickPhoto"])) {
             controlBox.addChild(makeBullet(
                 new CommandLinkButton(_ctx.REMIX.get("b.use_image"), handleChoosePhoto)));
         }
