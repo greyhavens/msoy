@@ -46,7 +46,7 @@ public class LandingPage extends Page
 
         // landing page for deviant art contest winners
         } else if (action.equals(DEVIANT_CONTEST_WINNERS)) {
-            setContent(_msgs.titleGameContest(), new DAContestWinnersPanel());
+            setContent(_msgs.titleDAContestWinners(), new DAContestWinnersPanel());
 
         // landing page for flash game developer contest
         } else if (action.equals(GAME_CONTEST)) {
