@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.game.server.persist;
 
+import java.sql.Timestamp;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
@@ -79,11 +82,18 @@ public class GameDetailRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #flowToNextRecalc} field. */
     public static final ColumnExp FLOW_TO_NEXT_RECALC_C =
         new ColumnExp(GameDetailRecord.class, FLOW_TO_NEXT_RECALC);
+
+    /** The column identifier for the {@link #lastPayout} field. */
+    public static final String LAST_PAYOUT = "lastPayout";
+
+    /** The qualified column identifier for the {@link #lastPayout} field. */
+    public static final ColumnExp LAST_PAYOUT_C =
+        new ColumnExp(GameDetailRecord.class, LAST_PAYOUT);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 10;
+    public static final int SCHEMA_VERSION = 11;
 
     /** The default payout factor for newly added games. */
     public static final int DEFAULT_PAYOUT_FACTOR = 128;
@@ -117,6 +127,10 @@ public class GameDetailRecord extends PersistentRecord
     /** The amount of flow remaining for this game to award before our next payout recalc. */
     public int flowToNextRecalc;
 
+    /** When this game last paid out coins, or null if has never paid out. */
+    @Column(nullable=true)
+    public Timestamp lastPayout;
+
     /**
      * Returns the current payout factor for this game, in [0, 1).
      */
@@ -135,6 +149,7 @@ public class GameDetailRecord extends PersistentRecord
         detail.sourceItemId = sourceItemId;
         detail.averageDuration = getAverageDuration();
         detail.gamesPlayed = gamesPlayed;
+        detail.lastPayout = (lastPayout != null) ? lastPayout.getTime() : 0;
         return detail;
     }
 

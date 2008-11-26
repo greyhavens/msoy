@@ -52,6 +52,9 @@ public class GameDetail
     /** Contains member rating and favorite information about the game. */
     public MemberItemInfo memberItemInfo = new MemberItemInfo();
 
+    /** When this game last paid out coins. */
+    public long lastPayout;
+
     /**
      * Returns true if this is a party game, false otherwise.
      */

@@ -116,6 +116,9 @@ public class GameDetailPanel extends SmartTable
         if (detail.playingNow > 0) {
             play.add(MsoyUI.createLabel(_msgs.featuredOnline(""+detail.playingNow), "Online"));
         }
+        if (game.lastTouched > detail.lastPayout) {
+            play.add(MsoyUI.createLabel(_msgs.gdpNoCoins(), null));
+        }
         setWidget(1, 1, play, 1, "Play");
         getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_CENTER);
 

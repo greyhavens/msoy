@@ -25,6 +25,7 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
+import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic.And;
@@ -187,13 +188,16 @@ public class MsoyGameRepository extends DepotRepository
      * Updates the specified {@link GameDetailRecord}, recording an increase in games played and a
      * decrease in flow to next recalc.
      */
-    public void noteGamePlayed (int gameId, int playerGames, int flowAwarded)
+    protected void noteGamePlayed (GamePlayRecord gprec)
     {
-        SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED_C, playerGames);
-        SQLExpression sub = new Arithmetic.Sub(GameDetailRecord.FLOW_TO_NEXT_RECALC_C, flowAwarded);
-        updateLiteral(GameDetailRecord.class, Math.abs(gameId),
-                    ImmutableMap.of(GameDetailRecord.GAMES_PLAYED, add,
-                                        GameDetailRecord.FLOW_TO_NEXT_RECALC, sub));
+        SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED_C, gprec.playerGames);
+        SQLExpression sub = new Arithmetic.Sub(
+            GameDetailRecord.FLOW_TO_NEXT_RECALC_C, gprec.flowAwarded);
+
+        updateLiteral(GameDetailRecord.class, Math.abs(gprec.gameId),
+            ImmutableMap.of(GameDetailRecord.GAMES_PLAYED, add,
+                GameDetailRecord.FLOW_TO_NEXT_RECALC, sub,
+                GameDetailRecord.LAST_PAYOUT, new ValueExp(gprec.recorded)));
     }
 
     /**
@@ -225,7 +229,7 @@ public class MsoyGameRepository extends DepotRepository
         insert(gprec);
 
         // update our games played and flow to next recalc in the detail record
-        noteGamePlayed(gameId, playerGames, flowAwarded);
+        noteGamePlayed(gprec);
     }
     
     /**
