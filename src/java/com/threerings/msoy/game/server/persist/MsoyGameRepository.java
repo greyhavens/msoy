@@ -49,7 +49,7 @@ public class MsoyGameRepository extends DepotRepository
     /** Game logs for in development games will be purged after this many days when
      * {@link #purgeTraceLogs()} is called. */
     public static final int DAYS_TO_KEEP_DEV_GAME_LOGS = 2;
-    
+
     /** Game logs for listed development games will be purged after this many days when
      * {@link #purgeTraceLogs()} is called. */
     public static final int DAYS_TO_KEEP_LISTED_GAME_LOGS = 7;
@@ -185,22 +185,6 @@ public class MsoyGameRepository extends DepotRepository
     }
 
     /**
-     * Updates the specified {@link GameDetailRecord}, recording an increase in games played and a
-     * decrease in flow to next recalc.
-     */
-    protected void noteGamePlayed (GamePlayRecord gprec)
-    {
-        SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED_C, gprec.playerGames);
-        SQLExpression sub = new Arithmetic.Sub(
-            GameDetailRecord.FLOW_TO_NEXT_RECALC_C, gprec.flowAwarded);
-
-        updateLiteral(GameDetailRecord.class, Math.abs(gprec.gameId),
-            ImmutableMap.of(GameDetailRecord.GAMES_PLAYED, add,
-                GameDetailRecord.FLOW_TO_NEXT_RECALC, sub,
-                GameDetailRecord.LAST_PAYOUT, new ValueExp(gprec.recorded)));
-    }
-
-    /**
      * Sets the specified game's payout factor to the specified value. This is used for AVRGs which
      * manage their own payout factor.
      */
@@ -229,12 +213,17 @@ public class MsoyGameRepository extends DepotRepository
         insert(gprec);
 
         // update our games played and flow to next recalc in the detail record
-        noteGamePlayed(gprec);
+        SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED_C, playerGames);
+        SQLExpression sub = new Arithmetic.Sub(GameDetailRecord.FLOW_TO_NEXT_RECALC_C, flowAwarded);
+        updateLiteral(GameDetailRecord.class, Math.abs(gprec.gameId),
+                      ImmutableMap.of(GameDetailRecord.GAMES_PLAYED, add,
+                                      GameDetailRecord.FLOW_TO_NEXT_RECALC, sub,
+                                      GameDetailRecord.LAST_PAYOUT, new ValueExp(gprec.recorded)));
     }
-    
+
     /**
      * Gets all game plays that occurred between the start and end dates given.
-     * 
+     *
      * @param start Start of the date range, inclusive, in milliseconds since 1/1/1970
      * @param end End of the data range, exclusive, in milliseconds since 1/1/1970
      * @return All found game plays.
@@ -246,7 +235,7 @@ public class MsoyGameRepository extends DepotRepository
             new Conditionals.GreaterThanEquals(GamePlayRecord.RECORDED_C, new Timestamp(start)),
             new Conditionals.LessThan(GamePlayRecord.RECORDED_C, new Timestamp(end))
         ));
-        
+
         return findAll(GamePlayRecord.class, where);
     }
 
@@ -347,7 +336,7 @@ public class MsoyGameRepository extends DepotRepository
     {
         insert(new GameTraceLogRecord(gameId, traceLog));
     }
-    
+
     /**
      * Delete all old development and listed logs using the default time limits
      * {@link #DAYS_TO_KEEP_DEV_GAME_LOGS} and {@link #DAYS_TO_KEEP_LISTED_GAME_LOGS}.
@@ -359,7 +348,7 @@ public class MsoyGameRepository extends DepotRepository
 
     /**
      * Delete all development and listed game logs that are older than the given respective number
-     * of days.  
+     * of days.
      */
     public void purgeTraceLogs (int developmentDaysToKeep, int listedDaysToKeep)
     {
@@ -367,7 +356,7 @@ public class MsoyGameRepository extends DepotRepository
         GregorianCalendar now = new GregorianCalendar();
         now.set(Calendar.SECOND, 0);
         now.set(Calendar.MILLISECOND, 0);
-        
+
         // Subtract the cutoff days for dev
         GregorianCalendar devCutoff = new GregorianCalendar();
         devCutoff.setTimeInMillis(now.getTimeInMillis());
@@ -394,7 +383,7 @@ public class MsoyGameRepository extends DepotRepository
             new And(isListed, new Conditionals.LessThan(recorded, listedCutoffTimestamp)))));
 
         log.info(
-            "Deleted trace logs", "devCutoff", devCutoffTimestamp, "listedCutoff", 
+            "Deleted trace logs", "devCutoff", devCutoffTimestamp, "listedCutoff",
             listedCutoffTimestamp, "rows", rows);
     }
 
