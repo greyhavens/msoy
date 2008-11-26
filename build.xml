@@ -226,7 +226,6 @@
   <!-- declare our GWT classpath -->
   <path id="gwt.classpath">
     <fileset dir="${deploy.dir}/lib">
-      <include name="gwt-user.jar"/>
       <include name="gwt-widgets.jar"/>
       <include name="advanced-components-1.4.1.jar"/>
       <include name="*-gwt-0.0-SNAPSHOT.jar"/>
@@ -339,7 +338,6 @@
     <path id="gshell.classpath">
       <fileset dir="lib/gwt" includes="*.jar"/>
       <path refid="gwt.classpath"/>
-      <!--<pathelement location="${classes.dir}"/>-->
     </path>
     <available property="gwt.present" classname="com.google.gwt.dev.GWTShell"
                classpathref="gshell.classpath"/>
@@ -438,6 +436,7 @@
             classname="com.google.gwt.dev.GWTCompiler">
         <classpath>
           <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
+          <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
           <path refid="gwt.classpath"/>
         </classpath>
         <jvmarg value="-Djava.awt.headless=true"/>
