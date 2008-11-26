@@ -32,6 +32,11 @@ public interface WebMemberServiceAsync
                       AsyncCallback<WebMemberService.FriendsResult> callback);
 
     /**
+     * The asynchronous version of {@link WebMemberService#loadGreeters}.
+     */
+    void loadGreeters (AsyncCallback<WebMemberService.FriendsResult> callback);
+
+    /**
      * The asynchronous version of {@link WebMemberService#addFriend}.
      */
     void addFriend (int friendId, AsyncCallback<Void> callback);

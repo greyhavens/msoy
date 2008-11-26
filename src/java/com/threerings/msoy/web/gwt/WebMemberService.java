@@ -50,6 +50,13 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Loads up all friends for the specified member, optionally including some greeters if the
+     * friend count is very low.
+     */
+    FriendsResult loadGreeters ()
+        throws ServiceException;
+
+    /**
      * Accept a friend invitation.
      */
     void addFriend (int friendId)

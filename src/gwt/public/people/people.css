@@ -235,7 +235,7 @@
   height: 17px;
 }
 
-.friendsPanel .headerBox, .searchPanel .headerBox {
+.friendsPanel .headerBox, .searchPanel .headerBox, .greetersPanel .headerBox {
   margin-left: 10px;
   border-bottom: 10px solid white;
   width: 665px;

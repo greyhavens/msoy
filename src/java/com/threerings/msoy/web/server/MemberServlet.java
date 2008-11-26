@@ -96,6 +96,22 @@ public class MemberServlet extends MsoyServiceServlet
         return result;
     }
 
+    // from interface WebMemberService
+    public FriendsResult loadGreeters ()
+        throws ServiceException
+    {
+        MemberRecord tgtrec = getAuthedUser();
+        FriendsResult result = new FriendsResult();
+        result.name = tgtrec.getName();
+        IntSet friendIds = _memberRepo.loadFriendIds(tgtrec.memberId);
+        IntSet greeterIds = new ArrayIntSet();
+        greeterIds.addAll(_memberMan.getGreeterIdsSnapshot());
+        greeterIds.remove(tgtrec.memberId);
+        result.friendsAndGreeters = _mhelper.resolveMemberCards(greeterIds, true, friendIds);
+        Collections.sort(result.friendsAndGreeters, MemberHelper.SORT_BY_LAST_ONLINE);
+        return result;
+    }
+
     // from WebMemberService
     public void addFriend (final int friendId)
         throws ServiceException

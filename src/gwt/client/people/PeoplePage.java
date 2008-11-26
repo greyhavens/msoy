@@ -94,6 +94,9 @@ public class PeoplePage extends Page
                 setContent(_msgs.inviteTitle(), new SharePanel());
             }
 
+        } else if (action.equals("friendly")) { // !guest
+            setContent(_msgs.greetersTitle(), new GreeterPanel());
+
         } else { // !guest
             setContent(new FriendsPanel(CShell.getMemberId()));
         }
