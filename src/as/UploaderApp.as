@@ -142,6 +142,7 @@ public class UploaderApp extends Sprite
 
     protected function handleUploadError (event :ErrorEvent) :void
     {
+        trace("Full upload error: " + event.text);
         setStatus("Error uploading: " + event.text);
         showUploadButton();
     }
