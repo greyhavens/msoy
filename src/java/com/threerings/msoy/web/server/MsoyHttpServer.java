@@ -365,7 +365,9 @@ public class MsoyHttpServer extends Server
         "<center><h2>We're not in Kansas any more Toto!</h2>\n" +
         "Your browser clings to data whose time has passed.<br/>\n" +
         "Click your heels together three times and click below to rejoin the Whirled.<br/>\n" +
-        "<br/><br/><a href=\"/\" target=\"_top\">Reload Whirled</a>\n" +
+        "<br/><br/><a href=\"/\" target=\"_top\">Reload Whirled</a><br/><br/><br/>\n" +
+        "(If the link doesn't work, press CTRL+F5 on Windows or CMD+SHIFT+R on Mac to force " +
+        "a refresh)\n" +
         "</center>\n"+
         "</div>\n";
 }
