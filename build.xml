@@ -211,16 +211,6 @@
     </copy>
   </target>
 
-  <!-- enumerate our translation files -->
-  <property name="msgs1.list" value="shell.Shell,account.Account,adminz.Admin,shop.Shop"/>
-  <property name="msgs2.list" value="games.Games,groups.Groups,stuff.Stuff,editem.Editem"/>
-  <property name="msgs3.list" value="item.Item,mail.Mail,msgs.Msgs,people.People,swiftly.Swiftly"/>
-  <property name="msgs4.list" value="room.Room,rooms.Rooms,me.Me,remix.Remix,help.Help"/>
-  <property name="msgs5.list" value="support.Support,landing.Landing,person.Person"/>
-  <property name="msgs6.list" value="shell.Dynamic,shell.Server"/>
-  <property name="msgsN.list" value="${msgs1.list},${msgs2.list},${msgs3.list},${msgs4.list}"/>
-  <property name="gmsgs.list" value="${msgsN.list},${msgs5.list},${msgs6.list}"/>
-
   <!-- enumerate our GWT pages -->
   <property name="pages1.list" value="account,adminz,games,help,landing,mail,me,people"/>
   <property name="pages2.list" value="rooms,shop,stuff,support,swiftly,groups"/>
@@ -231,6 +221,21 @@
     <pathelement location="${classes.dir}"/>
     <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
     <fileset dir="lib" includes="plugin.jar"/>
+  </path>
+
+  <!-- declare our GWT classpath -->
+  <path id="gwt.classpath">
+    <fileset dir="${deploy.dir}/lib">
+      <include name="gwt-user.jar"/>
+      <include name="gwt-widgets.jar"/>
+      <include name="advanced-components-1.4.1.jar"/>
+      <include name="*-gwt-0.0-SNAPSHOT.jar"/>
+      <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
+      <include name="threerings-0.0-SNAPSHOT.jar"/>
+      <include name="gwt-dnd.jar"/>
+    </fileset>
+    <pathelement location="${src.dir}"/>
+    <pathelement location="${gsrc.dir}"/>
   </path>
 
   <!-- gets our various properties files and sticks them in dist -->
@@ -331,19 +336,13 @@
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
           unless="gwtdir.present"/>
 
-    <path id="gwt.classpath">
-      <pathelement location="${src.dir}"/>
-      <pathelement location="${gsrc.dir}"/>
-      <pathelement location="${classes.dir}"/>
-      <fileset dir="${deploy.dir}/lib">
-        <include name="gwt-widgets.jar"/>
-        <include name="*-gwt-0.0-SNAPSHOT.jar"/>
-        <include name="threerings-0.0-SNAPSHOT.jar"/>
-      </fileset>
+    <path id="gshell.classpath">
       <fileset dir="lib/gwt" includes="*.jar"/>
+      <path refid="gwt.classpath"/>
+      <!--<pathelement location="${classes.dir}"/>-->
     </path>
     <available property="gwt.present" classname="com.google.gwt.dev.GWTShell"
-               classpathref="gwt.classpath"/>
+               classpathref="gshell.classpath"/>
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution." unless="gwt.present"/>
     <fail message="You must specify -Dpage=(mail|stuff|shop|etc.)." unless="page"/>
 
@@ -352,7 +351,7 @@
           overwrite="true"/>
 
     <if><equals arg1="${platform.darwin}" arg2="true"/><then>
-      <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
+      <java classpathref="gshell.classpath" fork="true" maxmemory="256M"
             classname="com.google.gwt.dev.GWTShell">
         <jvmarg value="-XstartOnFirstThread"/>
         <arg value="-noserver"/>
@@ -363,7 +362,7 @@
         <arg value="gwt/0/${page}/${page}.html"/>
       </java>
     </then><else>
-      <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
+      <java classpathref="gshell.classpath" fork="true" maxmemory="256M"
             classname="com.google.gwt.dev.GWTShell">
         <arg value="-noserver"/>
         <arg value="-port"/>
@@ -380,27 +379,11 @@
 
   <!-- regenerates our i18n messages classes -->
   <target name="gmsgs">
-    <uptodate property="gmsgs.uptodate">
-      <srcfiles dir= "${gsrc.dir}" includes="client/*/*Messages.properties"/>
-      <mapper type="glob" from="*.properties" to="*.java"/>
-    </uptodate>
-    <if><not><isset property="gmsgs.uptodate"/></not><then>
-      <for list="${gmsgs.list}" param="which"><sequential>
-        <echo>Regenerating Java for @{which}Messages.properties...</echo>
-        <java fork="true" classname="com.google.gwt.i18n.tools.I18NSync">
-          <classpath>
-            <fileset dir="${extlibs.dir}" includes="gwt-user.jar"/>
-            <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/>
-            <pathelement location="${gsrc.dir}"/>
-          </classpath>
-          <arg value="-createMessages"/>
-          <arg value="-out"/>
-          <arg value="${gsrc.dir}"/>
-          <arg value="client.@{which}Messages"/>
-        </java>
-      </sequential></for>
-    </then></if>
-    <exec executable="${basedir}/bin/unfuckmsgs.sh" failonerror="true"/>
+    <taskdef name="i18nsync" classname="com.threerings.gwt.tools.I18nSyncTask"
+             classpathref="classpath"/>
+    <i18nsync srcdir="${gsrc.dir}">
+      <fileset dir="${gsrc.dir}" includes="client/*/*Messages.properties"/>
+    </i18nsync>
   </target>
 
   <!-- prepares to build our GWT client -->
@@ -455,17 +438,7 @@
             classname="com.google.gwt.dev.GWTCompiler">
         <classpath>
           <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
-          <fileset dir="${deploy.dir}/lib">
-            <include name="gwt-user.jar"/>
-            <include name="gwt-widgets.jar"/>
-            <include name="advanced-components-1.4.1.jar"/>
-            <include name="*-gwt-0.0-SNAPSHOT.jar"/>
-            <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
-            <include name="threerings-0.0-SNAPSHOT.jar"/>
-            <include name="gwt-dnd.jar"/>
-          </fileset>
-          <pathelement location="${src.dir}"/>
-          <pathelement location="${gsrc.dir}"/>
+          <path refid="gwt.classpath"/>
         </classpath>
         <jvmarg value="-Djava.awt.headless=true"/>
         <arg value="-style"/><arg value="${gwt_style}"/>
@@ -859,7 +832,7 @@
     <service header="lib/SOURCE_HEADER" asroot="${asrc.dir}" classpathref="classpath">
       <fileset dir="${src.dir}">
         <include name="**/client/*Service.java"/>
-        <exclude name="**/web/**"/>
+        <exclude name="**/admin/**"/>
         <exclude name="**/peer/**"/>
         <exclude name="**/swiftly/**"/>
         <exclude name="**/GameServerService.java"/>
@@ -867,6 +840,7 @@
     </service>
     <service header="lib/SOURCE_HEADER" classpathref="classpath">
       <fileset dir="${src.dir}">
+        <include name="**/admin/client/*Service.java"/>
         <include name="**/peer/client/*Service.java"/>
         <include name="**/swiftly/client/*Service.java"/>
         <include name="**/client/GameServerService.java"/>
@@ -1081,11 +1055,7 @@
     <delete file="pages/media/MediaStub.swf"/>
     <delete file="pages/index.html"/>
     <delete file="pages/crossdomain.xml"/>
-    <for list="${gmsgs.list}" param="which"><sequential>
-      <propertyregex property="file" input="@{which}" regexp="\." replace="/"/>
-      <delete file="${gsrc.dir}/client/${file}Messages.java"/>
-      <var name="file" unset="true"/>
-    </sequential></for>
+    <delete><fileset dir="${gsrc.dir}" includes="**/*Messages.java"/></delete>
     <delete><fileset dir="data/swiftly/whirled_sdk/lib" includes="*.swc"/></delete>
   </target>
 
