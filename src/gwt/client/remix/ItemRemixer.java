@@ -79,6 +79,9 @@ public class ItemRemixer extends FlexTable
         if (item instanceof Decor) {
             flashVars += "&" + ItemUtil.createDecorViewerParams((Decor) item);
         }
+        if (item.getType() != Item.AVATAR) {
+            flashVars += "&username=Tester";
+        }
         if (_catalogId != 0) {
             flashVars += "&mustBuy=true";
         }
