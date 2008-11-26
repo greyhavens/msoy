@@ -48,7 +48,9 @@ public class PromotionBox extends RoundBox
             hbox.add(MediaUtil.createMediaView(promo.icon, MediaDesc.HALF_THUMBNAIL_SIZE));
             hbox.add(WidgetUtil.makeShim(10, 10));
         }
-        hbox.add(MsoyUI.createHTML(promo.blurb, "inline"));
+        Widget blurb = MsoyUI.createHTML(promo.blurb, "inline");
+        hbox.add(blurb);
+        hbox.setCellWidth(blurb, "100%");
         if (_promos.size() > 1) {
             hbox.add(WidgetUtil.makeShim(10, 10));
             FlowPanel navi = new FlowPanel();
