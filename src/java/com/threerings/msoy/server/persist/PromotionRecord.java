@@ -44,6 +44,13 @@ public class PromotionRecord extends PersistentRecord
     public static final ColumnExp ICON_MIME_TYPE_C =
         new ColumnExp(PromotionRecord.class, ICON_MIME_TYPE);
 
+    /** The column identifier for the {@link #iconConstraint} field. */
+    public static final String ICON_CONSTRAINT = "iconConstraint";
+
+    /** The qualified column identifier for the {@link #iconConstraint} field. */
+    public static final ColumnExp ICON_CONSTRAINT_C =
+        new ColumnExp(PromotionRecord.class, ICON_CONSTRAINT);
+
     /** The column identifier for the {@link #blurb} field. */
     public static final String BLURB = "blurb";
 
