@@ -63,9 +63,11 @@ public class FlashClients
      * @param currentURL may be null
      * @param maxWidth or -1 to allow any width 
      * @param maxHeight or -1 to allow any height
+     * @param maxRequired whether the maxes are  maximums, or a _required_ size.
      */
     public static HTML createImageEditor (
-        int width, int height, String mediaIds, String currentURL, int maxWidth, int maxHeight)
+        int width, int height, String mediaIds, String currentURL,
+        int maxWidth, int maxHeight, boolean maxRequired)
     {
         String flashVars = "auth=" + URL.encodeComponent(CShell.getAuthToken()) +
             "&mediaIds=" + URL.encodeComponent(mediaIds);
@@ -73,7 +75,9 @@ public class FlashClients
             flashVars += "&url=" + URL.encodeComponent(currentURL);
         }
         if (maxWidth > 0 && maxHeight > 0) {
-            flashVars += "&maxWidth=" + maxWidth + "&maxHeight=" + maxHeight;
+            String prefix = maxRequired ? "req" : "max";
+            flashVars += "&" + prefix + "Width=" + maxWidth +
+                "&" + prefix + "Height=" + maxHeight;
         }
         return WidgetUtil.createFlashContainer("imageEditor",
             "/clients/" + DeploymentConfig.version + "/imageeditor-client.swf",
