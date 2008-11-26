@@ -249,16 +249,22 @@ public class GameEditor extends ItemEditor
         // add a tab for uploading the game screenshot
         final int swidth = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
         final int sheight = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
+        final ItemMediaUploader[] fuploader = new ItemMediaUploader[1]; // filthy hack
         ItemMediaUploader shotter = createAuxUploader(TYPE_IMAGE, ItemMediaUploader.MODE_GAME_SHOT,
             new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (width != swidth || height != sheight || !desc.isImage()) {
+                if (!desc.isImage()) {
                     return _emsgs.errInvalidShot(""+swidth, ""+sheight);
+                }
+                if (width != swidth || height != sheight) {
+                    fuploader[0].openImageEditor(desc);
+                    return SUPPRESS_ERROR;
                 }
                 _game.shotMedia = desc;
                 return null;
             }
         });
+        fuploader[0] = shotter;
         shotter.setHint(_emsgs.gameShotHint(""+swidth, ""+sheight));
         addRow(_emsgs.gameShotTab(), shotter, _emsgs.gameShotTitle());
 

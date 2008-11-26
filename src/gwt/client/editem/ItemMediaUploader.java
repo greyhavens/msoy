@@ -108,25 +108,7 @@ public class ItemMediaUploader extends FlexTable
 
         ClickListener listener = new ClickListener() {
             public void onClick (Widget sender) {
-                int popWidth = _itemEditor.getOffsetWidth() - 8;
-                int popHeight = Math.max(Frame.CLIENT_HEIGHT,
-                    Math.min(_itemEditor.getOffsetHeight() - 8, Window.getClientHeight() - 8));
-                String url = (sender == createBtn) ? null : desc.getMediaPath();
-                int maxWidth = -1;
-                int maxHeight = -1;
-                boolean maxRequired = false;
-                if (_mode == MODE_THUMB) {
-                    maxWidth = MediaDesc.THUMBNAIL_WIDTH;
-                    maxHeight = MediaDesc.THUMBNAIL_HEIGHT;
-                } else if (_mode == MODE_GAME_SHOT) {
-                    maxWidth = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
-                    maxHeight = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
-                    maxRequired = true;
-                }
-                _editorPopup = new BorderedPopup(false, true);
-                _editorPopup.setWidget(FlashClients.createImageEditor(
-                    popWidth, popHeight, _mediaIds, url, maxWidth, maxHeight, maxRequired));
-                _editorPopup.show();
+                openImageEditor((sender == createBtn) ? null : desc);
             }
         };
         createBtn.addClickListener(listener);
@@ -163,6 +145,32 @@ public class ItemMediaUploader extends FlexTable
     public void setHint (String hint)
     {
         _hint.setText(hint);
+    }
+
+    /**
+     * Force open the image editor.
+     */
+    public void openImageEditor (MediaDesc desc)
+    {
+        int popWidth = _itemEditor.getOffsetWidth() - 8;
+        int popHeight = Math.max(Frame.CLIENT_HEIGHT,
+            Math.min(_itemEditor.getOffsetHeight() - 8, Window.getClientHeight() - 8));
+        String url = (desc == null) ? null : desc.getMediaPath();
+        int maxWidth = -1;
+        int maxHeight = -1;
+        boolean maxRequired = false;
+        if (_mode == MODE_THUMB) {
+            maxWidth = MediaDesc.THUMBNAIL_WIDTH;
+            maxHeight = MediaDesc.THUMBNAIL_HEIGHT;
+        } else if (_mode == MODE_GAME_SHOT) {
+            maxWidth = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
+            maxHeight = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
+            maxRequired = true;
+        }
+        _editorPopup = new BorderedPopup(false, true);
+        _editorPopup.setWidget(FlashClients.createImageEditor(
+            popWidth, popHeight, _mediaIds, url, maxWidth, maxHeight, maxRequired));
+        _editorPopup.show();
     }
 
     /**
