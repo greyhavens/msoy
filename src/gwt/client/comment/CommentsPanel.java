@@ -181,6 +181,12 @@ public class CommentsPanel extends PagedGrid<Comment>
         new CommentComplainPopup(comment, _etype, _entityId).show();
     }
 
+    protected static boolean mayPostComment (String comment)
+    {
+        comment = comment.trim();
+        return comment.length() >= 8;
+    }
+
     protected class CommentModel
         extends ServiceBackedDataModel<Comment, CommentService.CommentResult>
     {
@@ -217,8 +223,10 @@ public class CommentsPanel extends PagedGrid<Comment>
                 public void onClick (Widget sender) {
                     clearPostPanel(PostPanel.this);
                     String text = _text.getText();
-                    if (text.length() > 0) {
+                    if (mayPostComment(text)) {
                         postComment(text);
+                    } else {
+                        MsoyUI.error(_cmsgs.commentInvalid());
                     }
                 }
             }));
