@@ -329,6 +329,20 @@
     </copy>
   </target>
 
+  <!-- creates page.gwt.xml.in from page.gwt.xml, doing user agent fiddling -->
+  <target name="preppage">
+    <if><isset property="gwt_user_agent"/><then>
+      <echo>Building GWT clients for: ${gwt_user_agent}...</echo>
+      <exec executable="bin/quickify" failonerror="true">
+        <arg value="${gsrc.dir}/${page}.gwt.xml"/>
+        <arg value="${gwt_user_agent}"/>
+      </exec>
+    </then><else>
+      <copy file="${gsrc.dir}/${page}.gwt.xml.in"
+            tofile="${gsrc.dir}/${page}.gwt.xml" overwrite="true"/>
+    </else></if>
+  </target>
+
   <!-- runs the GWT debugging shell -->
   <target name="gshell" depends="config">
     <available property="gwtdir.present" file="lib/gwt"/>
@@ -345,8 +359,7 @@
     <fail message="You must specify -Dpage=(mail|stuff|shop|etc.)." unless="page"/>
 
     <!-- we need to copy our .gwt.xml into place while gshell is running -->
-    <copy file="${gsrc.dir}/${page}.gwt.xml.in" tofile="${gsrc.dir}/${page}.gwt.xml"
-          overwrite="true"/>
+    <antcall target="preppage"><param name="page" value="${page}"/></antcall>
 
     <if><equals arg1="${platform.darwin}" arg2="true"/><then>
       <java classpathref="gshell.classpath" fork="true" maxmemory="256M"
@@ -372,7 +385,7 @@
     </else></if>
 
     <!-- now delete our temporary .gwt.xml file -->
-    <delete file="${gsrc.dir}/@{page}.gwt.xml"/>
+    <delete file="${gsrc.dir}/${page}.gwt.xml"/>
   </target>
 
   <!-- regenerates our i18n messages classes -->
@@ -422,16 +435,11 @@
     <for list="${pages}" param="page" parallel="true" threadCount="${gwt_build_threads}"><sequential>
       <delete dir="${pageout.dir}/@{page}"/>
       <mkdir dir="${pageout.dir}/@{page}"/>
-      <if><isset property="gwt_user_agent"/><then>
-          <echo>Building GWT clients for: ${gwt_user_agent}...</echo>
-          <exec executable="bin/quickify" failonerror="true">
-            <arg value="${gsrc.dir}/@{page}.gwt.xml"/>
-            <arg value="${gwt_user_agent}"/>
-          </exec>
-        </then><else>
-          <copy file="${gsrc.dir}/@{page}.gwt.xml.in"
-                tofile="${gsrc.dir}/@{page}.gwt.xml" overwrite="true"/>
-      </else></if>
+
+      <!-- prepare our temporary .gwt.xml file -->
+      <antcall target="preppage"><param name="page" value="@{page}"/></antcall>
+
+      <!-- invoke the GWT compiler and grindy grindy grindy -->
       <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
             classname="com.google.gwt.dev.GWTCompiler">
         <classpath>
