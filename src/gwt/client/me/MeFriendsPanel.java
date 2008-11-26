@@ -47,8 +47,9 @@ public class MeFriendsPanel extends FlowPanel
             add(MsoyUI.createLabel(_msgs.nextFriendClick(), "TitleSub"));
             addPeople(data.friends);
         }
+
+        add(MsoyUI.createHTML(_msgs.nextGreeters(), "GreeterTitleSub"));
         if (data.greeters != null && data.greeters.size() > 0) {
-            add(MsoyUI.createLabel(_msgs.nextGreeters(), "GreeterTitleSub"));
             addPeople(data.greeters);
         }
         add(new Image("/images/me/me_friends_footer.png"));

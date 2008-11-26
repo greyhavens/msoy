@@ -100,9 +100,12 @@
 }
 
 .meFriendsPanel .GreeterTitleSub {
+  padding: 15px 0 1px 0;
+}
+
+.meFriendsPanel .GreeterTitleSub, .meFriendsPanel .GreeterTitleSub a {
   color: #326383;
   font-size: 11px;
-  padding: 15px 0 1px 0;
 }
 
 .meFriendsPanel .Invite img {
