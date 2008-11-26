@@ -266,12 +266,33 @@ public class MailRepository extends DepotRepository
                       ConvMessageRecord.PAYLOAD_STATE, state);
     }
 
+    /**
+     * Loads all complaints about a conversation.
+     */
+    public List<ConversationComplaintRecord> loadComplaints(int convoId)
+    {
+        return findAll(ConversationComplaintRecord.class,
+            new Where(ConversationComplaintRecord.CONVERSATION_ID_C, convoId));
+    }
+
+    /**
+     * Flags a complaint on a message.
+     */
+    public void addComplaint(int convoId, int complainerId)
+    {
+        ConversationComplaintRecord complaint = new ConversationComplaintRecord();
+        complaint.complainerId = complainerId;
+        complaint.conversationId = convoId;
+        insert(complaint);
+    }
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(ConversationRecord.class);
         classes.add(ConvMessageRecord.class);
         classes.add(ParticipantRecord.class);
+        classes.add(ConversationComplaintRecord.class);
     }
 
     @Inject protected MsoyEventLogger _eventLog;
