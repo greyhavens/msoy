@@ -22,11 +22,14 @@ import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.AffiliateMapRecord;
 import com.threerings.msoy.server.persist.AffiliateMapRepository;
+import com.threerings.msoy.server.persist.ContestRecord;
+import com.threerings.msoy.server.persist.ContestRepository;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.PromotionRecord;
 import com.threerings.msoy.server.persist.PromotionRepository;
 
+import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -354,6 +357,39 @@ public class AdminServlet extends MsoyServiceServlet
         _promoRepo.deletePromotion(promoId);
     }
 
+    // from interface AdminService
+    public List<Contest> loadContests ()
+        throws ServiceException
+    {
+        requireSupportUser();
+        return Lists.newArrayList(Lists.transform(_contestRepo.loadContests(),
+            ContestRecord.TO_CONTEST));
+    }
+
+    // from interface AdminService
+    public void addContest (Contest contest)
+        throws ServiceException
+    {
+        requireSupportUser();
+        _contestRepo.addContest(contest);
+    }
+
+    // from interface AdminService
+    public void updateContest (Contest contest)
+        throws ServiceException
+    {
+        requireSupportUser();
+        _contestRepo.updateContest(contest);
+    }
+
+    // from interface AdminService
+    public void deleteContest (String contestId)
+        throws ServiceException
+    {
+        requireSupportUser();
+        _contestRepo.deleteContest(contestId);
+    }
+
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
     {
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
@@ -370,6 +406,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ABTestRepository _testRepo;
     @Inject protected AffiliateMapRepository _affMapRepo;
     @Inject protected PromotionRepository _promoRepo;
+    @Inject protected ContestRepository _contestRepo;
     @Inject protected BureauManager _bureauMgr;
     @Inject protected RootDObjectManager _omgr;
 }

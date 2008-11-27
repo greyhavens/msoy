@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.badge.data.all.Badge;
 
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
+import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -44,5 +45,11 @@ public interface MeService extends RemoteService
      * Loads all available badges. For testing only.
      */
     List<Badge> loadAllBadges()
+        throws ServiceException;
+
+    /**
+     * Loads all active contests.
+     */
+    List<Contest> loadContests ()
         throws ServiceException;
 }

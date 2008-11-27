@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -90,7 +91,7 @@ public interface AdminService extends RemoteService
      */
     Integer deleteItemAdmin (ItemIdent item, String subject, String body)
         throws ServiceException;
-    
+
     /**
      * Triggers a refresh of bureau launcher information.
      */
@@ -119,5 +120,29 @@ public interface AdminService extends RemoteService
      * Deletes the specified promotion.
      */
     void deletePromotion (String promoId)
+        throws ServiceException;
+
+    /**
+     * Loads all active contests.
+     */
+    List<Contest> loadContests ()
+        throws ServiceException;
+
+    /**
+     * Adds a new contest.
+     */
+    void addContest (Contest contest)
+        throws ServiceException;
+
+    /**
+     * Edit an existing contest.
+     */
+    void updateContest (Contest contest)
+        throws ServiceException;
+
+    /**
+     * Deletes the specified contest.
+     */
+    void deleteContest (String contestId)
         throws ServiceException;
 }

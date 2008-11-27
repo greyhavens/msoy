@@ -1076,3 +1076,75 @@ img, embed, applet, object {
 .blueThick-down-hovering .E {
   background-image: url(/images/ui/button/blue_thick_right_down.png);
 }
+
+/* ------------------------------------
+   CONTEST BOX
+-------------------------------------*/
+
+.contestBox {
+  width: 600px;
+  background-color: #FFFFFF;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+}
+
+.contestBox .Icon {
+  width: 80px;
+}
+
+.contestBox .ContestInfo {
+  width: 360px;
+  overflow: hidden;
+  margin: 0 10px;
+}
+
+.contestBox .ContestName {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.contestBox .ContestName, 
+.contestBox .ContestName a {
+  color: #4c8db9;
+}
+
+.contestBox .ContestText {
+  margin-bottom: 10px;
+}
+.contestBox .ContestText,
+.contestBox .ContestText a {
+  color: #868585;
+}
+
+.contestBox .Status,
+.contestBox .Status a {
+  color: #ff0000;
+}
+
+.contestBox .Prizes {
+  text-align: center;
+  width: 140px;
+  overflow: hidden;
+}
+
+.contestBox .PrizesTitle {
+  color: #868585;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.contestBox .PrizesText {
+  line-height: 18px;
+}
+
+.contestBox-past {
+  color: #FFFFFF;
+  background-color: transparent;
+  padding: 0;
+}
+.contestBox-past a {
+  color: #FFFFFF;
+}

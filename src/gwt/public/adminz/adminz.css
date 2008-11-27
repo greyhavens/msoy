@@ -237,3 +237,28 @@
 .promoEditor .Promos {
   font-size: 12px;
 }
+
+/* ------------------------------------
+   ContestsEditor
+-------------------------------------*/
+
+.contestsEditor {
+  border-top: 15px white solid;
+}
+
+.contestsEditor .Contests .Header {
+  font-weight: bold;
+  border-bottom: 1px solid;
+}
+
+.contestsEditor .Contests {
+  font-size: 12px;
+}
+
+.contestsEditor .contestBox {
+  border: 3px solid #CCCCCC;
+}
+
+.contestsEditor .contestBox-past {
+  background-color: #61ABD0;
+}

@@ -11,6 +11,7 @@ import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
+import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -101,4 +102,24 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#deletePromotion}.
      */
     void deletePromotion (String promoId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#loadContests}.
+     */
+    void loadContests (AsyncCallback<List<Contest>> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#addContest}.
+     */
+    void addContest (Contest contest, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#updateContest}.
+     */
+    void updateContest (Contest contest, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#deleteContest}.
+     */
+    void deleteContest (String contestId, AsyncCallback<Void> callback);
 }

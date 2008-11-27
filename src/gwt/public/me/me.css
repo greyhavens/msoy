@@ -482,58 +482,6 @@
   margin: 0 15px;
 }
 
-.contestsPanel .Contest {
-  background-color: #FFFFFF;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.contestsPanel .Contest .ContestInfo {
-  width: 370px;
-  overflow: hidden;
-  margin: 0 10px;
-}
-
-.contestsPanel .Contest .ContestName {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-.contestsPanel .Contest .ContestName, 
-.contestsPanel .Contest .ContestName a {
-  color: #4c8db9;
-}
-
-.contestsPanel .Contest .ContestText {
-  margin-bottom: 10px;
-}
-.contestsPanel .Contest .ContestText,
-.contestsPanel .Contest .ContestText a {
-  color: #868585;
-}
-
-.contestsPanel .Contest .Status,
-.contestsPanel .Contest .Status a {
-  color: #ff0000;
-}
-
-.contestsPanel .Contest .Prizes {
-  text-align: center;
-  width: 155px;
-  overflow: hidden;
-}
-
-.contestsPanel .Contest .PrizesTitle {
-  color: #868585;
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.contestsPanel .Contest .PrizesText {
-  line-height: 18px;
-}
-
 .contestsPanel .PastContests {
   margin: 20px;
 }

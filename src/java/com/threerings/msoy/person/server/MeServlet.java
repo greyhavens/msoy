@@ -20,8 +20,6 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntSet;
-import com.samskivert.util.RandomUtil;
-
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
@@ -48,11 +46,14 @@ import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
 import com.threerings.msoy.person.util.FeedMessageType.Category;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.persist.ContestRecord;
+import com.threerings.msoy.server.persist.ContestRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.PromotionRecord;
 import com.threerings.msoy.server.persist.PromotionRepository;
 
+import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletLogic;
@@ -179,6 +180,15 @@ public class MeServlet extends MsoyServiceServlet
             }
         }
         return badges;
+    }
+
+    // from interface MeService
+    public List<Contest> loadContests ()
+        throws ServiceException
+    {
+        requireSupportUser();
+        return Lists.newArrayList(Lists.transform(_contestRepo.loadContests(),
+            ContestRecord.TO_CONTEST));
     }
 
     /**
@@ -322,6 +332,7 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected GroupRepository _groupRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected PromotionRepository _promoRepo;
+    @Inject protected ContestRepository _contestRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected BadgeLogic _badgeLogic;

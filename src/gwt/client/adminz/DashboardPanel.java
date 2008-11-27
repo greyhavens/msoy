@@ -72,6 +72,8 @@ public class DashboardPanel extends SmartTable
         controls.add(new Button(_msgs.reviewButton(), Link.createListener(Pages.ADMINZ, "review")));
         controls.add(new Button(_msgs.affMapButton(), Link.createListener(Pages.ADMINZ, "affmap")));
         controls.add(new Button(_msgs.promosButton(), Link.createListener(Pages.ADMINZ, "promos")));
+        controls.add(new Button(_msgs.contestsButton(), Link.createListener(Pages.ADMINZ,
+            "contests")));
         controls.add(new Button(_msgs.browseButton(), Link.createListener(Pages.ADMINZ, "browser")));
     }
 

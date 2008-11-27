@@ -60,6 +60,9 @@ public class AdminPage extends Page
         } else if (action.equals("promos")) {
             setContent("Promotions", new PromotionEditor());
 
+        } else if (action.equals("contests")) {
+            setContent(_msgs.contestsTitle(), new ContestsEditor());
+
         } else {
             setContent(_msgs.title(), new DashboardPanel());
         }

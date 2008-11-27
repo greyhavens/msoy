@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
+import com.threerings.msoy.web.gwt.Contest;
 
 /**
  * The asynchronous (client-side) version of {@link MeService}.
@@ -34,4 +35,9 @@ public interface MeServiceAsync
      * Load all available badges.  For testing.
      */
     void loadAllBadges (AsyncCallback<List<Badge>> callback);
+
+    /**
+     * The asynchronous version of {@link MeService#loadContests}.
+     */
+    void loadContests (AsyncCallback<List<Contest>> callback);
 }
