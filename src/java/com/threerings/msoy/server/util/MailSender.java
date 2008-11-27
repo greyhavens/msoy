@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import java.util.List;
 import java.util.Set;
@@ -177,7 +178,7 @@ public class MailSender
                 String subject = body.substring(0, nidx);
                 body = body.substring(nidx+1);
                 MimeBodyPart textPart = new MimeBodyPart();
-                textPart.setContent(body, "text/plain");
+                textPart.setText(body, "UTF-8");
                 parts.addBodyPart(textPart);
 
                 // check for an HTML message template as well
@@ -199,7 +200,7 @@ public class MailSender
                     swout = new StringWriter();
                     ve.mergeTemplate(htmlPath, "UTF-8", _params.getContext(), swout);
                     MimeBodyPart htmlPart = new MimeBodyPart();
-                    htmlPart.setContent(swout.toString(), "text/html");
+                    htmlPart.setText(swout.toString(), "UTF-8", "html");
                     htmlParts.addBodyPart(htmlPart);
 
                     // now add any images referenced in the HTML message
@@ -265,7 +266,7 @@ public class MailSender
                     for (int ii = 0; ii < hcount; ii += 2) {
                         message.addHeader(_headers[ii], _headers[ii+1]);
                     }
-                    message.setContent(body, "text/html");
+                    message.setText(body, "UTF-8", "html");
                     MailUtil.deliverMail(new String[] { recip.right }, _sender, _subject, message);
 
                 } catch (Exception e) {
