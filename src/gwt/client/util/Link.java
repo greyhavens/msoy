@@ -151,11 +151,7 @@ public class Link
      */
     public static String createToken (Pages page, String args)
     {
-        String token = (page == null) ? "" : page.getPath();
-        if (args != null && args.length() > 0) {
-            token = token + "-" + args;
-        }
-        return token;
+        return Pages.makeToken(page, args);
     }
 
     /**
