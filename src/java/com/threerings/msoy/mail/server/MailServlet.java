@@ -238,7 +238,7 @@ public class MailServlet extends MsoyServiceServlet
 
         // queue up the event
         _supportLogic.addMessageComplaint(memrec.getName(), conrec.getOtherId(memrec.memberId),
-            "", reason, "/#mail-c_" + convoId);
+            "", "Conversation: " + reason, "/#mail-c_" + convoId);
     }
 
     @Inject protected MailRepository _mailRepo;
