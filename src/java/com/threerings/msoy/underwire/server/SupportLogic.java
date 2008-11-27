@@ -71,7 +71,7 @@ public class SupportLogic
     }
 
     /**
-     * Adds a mesasge complaint to the even queue.
+     * Adds a message complaint to the event queue.
      */
     public void addMessageComplaint (MemberName source, int targetId, String message,
                                      String subject, String link)
