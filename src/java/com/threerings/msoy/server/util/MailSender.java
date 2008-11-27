@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 import java.util.List;
 import java.util.Set;
