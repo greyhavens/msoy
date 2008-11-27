@@ -4,6 +4,7 @@
 package com.threerings.msoy.peer.server;
 
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.Communicator;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -11,6 +12,7 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.net.ConnectionManager;
+import com.threerings.presents.server.net.ServerCommunicator;
 
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
@@ -19,6 +21,7 @@ import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 
 import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.server.ServerConfig;
@@ -95,6 +98,16 @@ public class MsoyPeerNode extends PeerNode
     public int getHttpPort ()
     {
         return _httpPort;
+    }
+
+    @Override // from PeerNode
+    protected Communicator createCommunicator (Client client)
+    {
+        if (DeploymentConfig.devDeployment) {
+            return new ServerCommunicator(client, _conmgr, _omgr);
+        } else {
+            return super.createCommunicator(client);
+        }
     }
 
     /** The HTTP port this Whirled node is listening on.  */
