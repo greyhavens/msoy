@@ -234,6 +234,10 @@ public class InvitePanel extends VerticalPanel
         } else if (!_friendEmail.getText().matches(MsoyUI.EMAIL_REGEX)) {
             MsoyUI.info(_msgs.inviteInvalidEmail());
 
+        } else if (_friendName.getText().isEmpty() || 
+            _friendName.getText().equals(_msgs.inviteFriendName())) {
+            MsoyUI.info(_msgs.inviteInvalidName());
+
         } else {
             _emailList.addItem(_friendName.getText(), _friendEmail.getText());
             _friendName.setText(_msgs.inviteFriendName());
