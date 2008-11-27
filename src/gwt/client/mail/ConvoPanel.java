@@ -4,26 +4,32 @@
 package client.mail;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
+
+import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
+
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
@@ -59,8 +65,9 @@ public class ConvoPanel extends FlowPanel
         SmartTable header = new SmartTable("Header", 0, 0);
         header.setWidth("100%");
         header.setHTML(0, 0, "&nbsp;", 1, "TopLeft");
-        header.setText(0, 1, _msgs.convoWith(""+result.other), 1, "Title");
-        addControls(header);
+        header.setText(0, 1, result.other == null ? _msgs.convoSpectate() :
+            _msgs.convoWith(""+result.other), 1, "Title");
+        addControls(header, result.other);
         header.setHTML(0, header.getCellCount(0), "&nbsp;", 1, "TopRight");
         add(header);
 
@@ -75,7 +82,7 @@ public class ConvoPanel extends FlowPanel
         footer.setWidth("100%");
         footer.setHTML(0, 0, "&nbsp;", 1, "BottomLeft");
         footer.setHTML(0, 1, "&nbsp;", 1, "Title");
-        addControls(footer);
+        addControls(footer, result.other);
         footer.setHTML(0, footer.getCellCount(0), "&nbsp;", 1, "BottomRight");
         add(footer);
 
@@ -83,7 +90,7 @@ public class ConvoPanel extends FlowPanel
         _model.markConversationRead(_convoId);
     }
 
-    protected void addControls (SmartTable table)
+    protected void addControls (SmartTable table, MemberName targetName)
     {
         int col = table.getCellCount(0);
 
@@ -105,6 +112,12 @@ public class ConvoPanel extends FlowPanel
             }
         };
         table.setWidget(0, col++, delete, 1, "Control");
+
+        if (targetName != null) {
+            Button complain = new Button(_msgs.convoComplain());
+            new ComplainHandler(complain, targetName.toString());
+            table.setWidget(0, col++, complain, 1, "Control");
+        }
 
         table.setWidget(0, col++, new Button(_msgs.convoBack(), new ClickListener() {
             public void onClick (Widget sender) {
@@ -215,6 +228,66 @@ public class ConvoPanel extends FlowPanel
         protected FlowPanel _contents;
         protected Button _reply;
         protected TextArea _repmsg = new TextArea();
+    }
+
+    protected class ComplainHandler extends ClickCallback<Void>
+    {
+        public ComplainHandler (Button trigger, String targetName)
+        {
+            super(trigger, ""); // kludge to ensure call of displayPopup
+            _targetName = targetName;
+        }
+
+        @Override // from ClickCallback
+        protected void displayPopup ()
+        {
+            final BorderedDialog dialog = new BorderedDialog(false) {
+                protected void onClosed (boolean autoClosed) {
+                    setEnabled(true);
+                }
+            };
+
+            dialog.setHeaderTitle(_msgs.convoComplainTitle(_targetName));
+
+            final SmartTable content = new SmartTable(0, 10);
+            content.setWidth("300px");
+            content.setText(0, 0, _msgs.convoComplainTip(_targetName));
+            content.setText(1, 0, _msgs.convoComplainTip2());
+            content.setWidget(2, 0, _reason = MsoyUI.createTextBox("", 0, 64));
+            dialog.setContents(content);
+            dialog.addButton(new Button(_cmsgs.cancel(), dialog.onCancel()));
+            dialog.addButton(new Button(_msgs.convoComplain(), dialog.onAction(new Command() {
+                public void execute () {
+                    if (_reason.getText().trim().length() == 0) {
+                        // this makes the original dialog disappear for some reason
+                        // TODO: nested popups?
+                        MsoyUI.error(_msgs.convoInvalidReason());
+                    } else {
+                        takeAction(true);
+                    }
+                }
+            })));
+            dialog.show();
+        }
+
+        protected boolean callService ()
+        {
+            String reason = _reason.getText().trim();
+            if (reason.length() == 0) {
+                return false;
+            }
+            _mailsvc.complainConversation(_convoId, reason, this);
+            return true;
+        }
+
+        protected boolean gotResult (Void result)
+        {
+            MsoyUI.info(_msgs.convoComplaintRegistered());
+            return true;
+        }
+
+        TextBox _reason;
+        String _targetName;
     }
 
     protected ConvosModel _model;
