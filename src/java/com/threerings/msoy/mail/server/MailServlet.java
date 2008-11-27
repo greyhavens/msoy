@@ -30,7 +30,9 @@ import com.threerings.msoy.mail.server.persist.ConvMessageRecord;
 import com.threerings.msoy.mail.server.persist.ConversationRecord;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -238,7 +240,7 @@ public class MailServlet extends MsoyServiceServlet
 
         // queue up the event
         _supportLogic.addMessageComplaint(memrec.getName(), conrec.getOtherId(memrec.memberId),
-            "", "Conversation: " + reason, "/#mail-c_" + convoId);
+            "", "Conversation: " + reason, Pages.makeLink(Pages.MAIL, Args.compose("c", convoId)));
     }
 
     @Inject protected MailRepository _mailRepo;
