@@ -30,7 +30,8 @@ public interface MailService extends RemoteService
     /** Communicates results for {@link #loadConversation}. */
     public static class ConvoResult implements IsSerializable
     {
-        /** The name of the other party to this conversation. */
+        /** The name of the other party to this conversation. Null if this result is for a member
+         * of support staff reviewing a complained conversation. */
         public MemberName other;
 
         /** The subject of the conversation. */
@@ -83,5 +84,11 @@ public interface MailService extends RemoteService
      * Updates the payload on the specified message.
      */
     void updatePayload (int convoId, long sent, MailPayload payload)
+        throws ServiceException;
+
+    /**
+     * Marks this conversation as under review and sends a support event. 
+     */
+    void complainConversation (int convoId, String reason)
         throws ServiceException;
 }

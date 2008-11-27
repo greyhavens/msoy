@@ -45,4 +45,9 @@ public interface MailServiceAsync
      */
     public void updatePayload (int convoId, long sent, MailPayload obj,
                                AsyncCallback<Void> callback);
+    
+    /**
+     * The asynchronous version of {@link MailService#complainConversation}
+     */
+    void complainConversation (int convoId, String reason, AsyncCallback<Void> callback);
 }

@@ -9,6 +9,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.depot.DuplicateKeyException;
+
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -18,6 +20,7 @@ import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.JSONMarshaller;
+import com.threerings.msoy.underwire.server.SupportLogic;
 
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.Conversation;
@@ -86,10 +89,20 @@ public class MailServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser();
         ConvoResult convo = new ConvoResult();
 
-        // make sure this member is a conversation participant
+        // make sure this member is a conversation participant or a member of support staff
         Long lastRead = _mailRepo.loadLastRead(convoId, memrec.memberId);
+        boolean support = false;
         if (lastRead == null) {
-            return null;
+            if (memrec.isSupport()) {
+                // don't let support see uncomplained conversations
+                if (_mailRepo.loadComplaints(convoId).size() == 0) {
+                    return null;
+                }
+                lastRead = 0L;
+                support = true;
+            } else {
+                return null;
+            }
         }
         convo.lastRead = lastRead;
 
@@ -98,7 +111,11 @@ public class MailServlet extends MsoyServiceServlet
         if (conrec == null) {
             return null;
         }
-        convo.other = _memberRepo.loadMemberName(conrec.getOtherId(memrec.memberId));
+
+        // leave the other name blank if this is a support review
+        if (!support) {
+            convo.other = _memberRepo.loadMemberName(conrec.getOtherId(memrec.memberId));
+        }
         convo.subject = conrec.subject;
 
         // load up the messages in this conversation
@@ -123,7 +140,7 @@ public class MailServlet extends MsoyServiceServlet
         convo.messages = msgs;
 
         // maybe mark this member as having read the conversation
-        if (newLastRead > lastRead) {
+        if (!support && newLastRead > lastRead) {
             _mailRepo.updateLastRead(convoId, memrec.memberId, newLastRead);
             // decrement their unread mail count if they are online
             MemberNodeActions.reportUnreadMail(memrec.memberId, -1);
@@ -194,6 +211,37 @@ public class MailServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface MailService
+    public void complainConversation (int convoId, String reason)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+
+        // make sure this member is a conversation participant
+        Long lastRead = _mailRepo.loadLastRead(convoId, memrec.memberId);
+        if (lastRead == null) {
+            return;
+        }
+
+        // load the conversation
+        ConversationRecord conrec = _mailRepo.loadConversation(convoId);
+        if (conrec == null) {
+            return;
+        }
+
+        // flag the complaint, with an error if it was already flagged
+        try {
+            _mailRepo.addComplaint(convoId, memrec.memberId);
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(MailCodes.COMPLAINT_ALREADY_REGISTERED);
+        }
+
+        // queue up the event
+        _supportLogic.addMessageComplaint(memrec.getName(), conrec.getOtherId(memrec.memberId),
+            "", reason, "/#mail-c_" + convoId);
+    }
+
     @Inject protected MailRepository _mailRepo;
     @Inject protected MailLogic _mailLogic;
+    @Inject protected SupportLogic _supportLogic;
 }
