@@ -41,6 +41,7 @@ public class Prefs
     public static const OCCUPANT_LIST :String = "occupantList";
     public static const LOG_TO_CHAT :String = "logToChat";
     public static const BLEEPED_MEDIA :String = "bleepedMedia";
+    public static const GRID_AUTOSHOW :String = "gridAutoshow";
 
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
@@ -75,6 +76,16 @@ public class Prefs
     public static function setMachineIdent (ident :String) :void
     {
         config.setValue(MACHINE_IDENT, ident);
+    }
+
+    public static function getGridAutoshow () :Boolean
+    {
+        return Boolean(config.getValue(GRID_AUTOSHOW, true));
+    }
+
+    public static function setGridAutoshow (show :Boolean) :void
+    {
+        config.setValue(GRID_AUTOSHOW, show);
     }
 
     public static function setMediaBlocked (id :String, blocked :Boolean) :void

@@ -18,6 +18,7 @@ import mx.events.CloseEvent;
 
 import com.threerings.flash.GraphicsUtil;
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.io.TypedArray;
@@ -27,6 +28,7 @@ import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.AVRGameNavItemData;
@@ -56,9 +58,11 @@ public class HomePageDialog extends FloatingPanel
         title = Msgs.GENERAL.get("t.home_page");
         showCloseButton = true;
         setStyle("paddingTop", EDGE_MARGIN);
-        setStyle("paddingBottom", EDGE_MARGIN);
         setStyle("paddingLeft", EDGE_MARGIN);
         setStyle("paddingRight", EDGE_MARGIN);
+        setStyle("paddingBottom", 2);
+        setStyle("verticalGap", 0);
+        setStyle("horizontalAlign", "left");
 
         // Set up the tile container for the items
         _grid = new Tile();
@@ -67,6 +71,11 @@ public class HomePageDialog extends FloatingPanel
         _grid.setStyle("horizontalGap", CELL_HSPACING);
         _grid.setStyle("verticalGap", CELL_VSPACING);
         addChild(_grid);
+
+        var autoshow :CommandCheckBox = new CommandCheckBox(
+            Msgs.HOME_PAGE_GRID.get("b.autoshow"), Prefs.setGridAutoshow);
+        autoshow.selected = Prefs.getGridAutoshow();
+        addChild(autoshow);
 
         // Fill it with empty components just to force the layout
         gotItems(TypedArray.create(HomePageItem));

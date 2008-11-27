@@ -1000,7 +1000,9 @@ public class WorldController extends MsoyController
                     if (_wctx.getMemberObject().hasOnlineFriends()) { // also excludes guests
                         ctrlBar.friendsBtn.activate();
                     }
-                    ctrlBar.homePageGridBtn.activate();
+                    if (Prefs.getGridAutoshow()) {
+                        ctrlBar.homePageGridBtn.activate();
+                    }
                 }
             }
 
