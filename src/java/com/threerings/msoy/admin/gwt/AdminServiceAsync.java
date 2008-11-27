@@ -122,4 +122,9 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#deleteContest}.
      */
     void deleteContest (String contestId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#getStatsModel}.
+     */
+    void getStatsModel (StatsModel.Type type, AsyncCallback<StatsModel> callback);
 }

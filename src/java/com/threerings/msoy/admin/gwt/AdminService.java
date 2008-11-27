@@ -145,4 +145,10 @@ public interface AdminService extends RemoteService
      */
     void deleteContest (String contestId)
         throws ServiceException;
+
+    /**
+     * Returns the supplied server statistics model.
+     */
+    StatsModel getStatsModel (StatsModel.Type type)
+        throws ServiceException;
 }

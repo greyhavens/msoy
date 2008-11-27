@@ -58,6 +58,7 @@ import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.MemberInviteResult;
 import com.threerings.msoy.admin.gwt.MemberInviteStatus;
+import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -390,6 +391,22 @@ public class AdminServlet extends MsoyServiceServlet
         _contestRepo.deleteContest(contestId);
     }
 
+    // from interface AdminService
+    public StatsModel getStatsModel (StatsModel.Type type)
+        throws ServiceException
+    {
+        requireSupportUser();
+        try {
+            return _adminMgr.compilePeerStatistics(type).get();
+        } catch (InterruptedException ie) {
+            log.warning("Stats compilation timed out", "type", type, "error", ie);
+            throw new ServiceException(MsoyAdminCodes.E_INTERNAL_ERROR);
+        } catch (Exception e) {
+            log.warning("Stats compilation failed", "type", type, e);
+            throw new ServiceException(MsoyAdminCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
     {
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
@@ -399,6 +416,9 @@ public class AdminServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected MsoyAdminManager _adminMgr;
+    @Inject protected BureauManager _bureauMgr;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MoneyLogic _moneyLogic;
@@ -407,6 +427,4 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected AffiliateMapRepository _affMapRepo;
     @Inject protected PromotionRepository _promoRepo;
     @Inject protected ContestRepository _contestRepo;
-    @Inject protected BureauManager _bureauMgr;
-    @Inject protected RootDObjectManager _omgr;
 }

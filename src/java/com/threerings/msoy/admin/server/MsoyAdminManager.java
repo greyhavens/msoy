@@ -4,33 +4,56 @@
 package com.threerings.msoy.admin.server;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Interval;
+import com.samskivert.util.Tuple;
+
+import net.sf.ehcache.CacheManager;
+
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.annotation.AnyThread;
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.RebootManager;
 import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.MailSender;
 
+import com.threerings.msoy.money.server.MoneyExchange;
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.admin.client.PeerAdminService;
 import com.threerings.msoy.admin.data.ServerConfigObject;
+import com.threerings.msoy.admin.gwt.StatsModel;
 
 import static com.threerings.msoy.Log.log;
 
@@ -39,11 +62,12 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread @Singleton
 public class MsoyAdminManager
+    implements PeerAdminProvider
 {
     /**
      * Prepares the admin manager for operation.
      */
-    public void init ()
+    public void init (InvocationManager invmgr, CacheManager cacheMgr)
     {
         // create our reboot manager
         _rebmgr = new MsoyRebootManager(_shutmgr, _omgr);
@@ -54,6 +78,15 @@ public class MsoyAdminManager
 
         // initialize our reboot manager
         _rebmgr.init();
+
+        // register our peer service
+        ((MsoyNodeObject)_peerMan.getNodeObject()).setPeerAdminService(
+            invmgr.registerDispatcher(new PeerAdminDispatcher(this)));
+
+        // register our stat collectors
+        _collectors.put(StatsModel.Type.DEPOT, new DepotStatCollector(_perCtx));
+        _collectors.put(StatsModel.Type.DEPOT_QUERIES, new DepotQueriesStatCollector(_perCtx));
+        _collectors.put(StatsModel.Type.CACHE, new CacheStatCollector(cacheMgr));
     }
 
     /**
@@ -71,6 +104,40 @@ public class MsoyAdminManager
         // shave 5 seconds off to avoid rounding up to the next time
         long when = System.currentTimeMillis() + minutes * 60 * 1000L - 5000L;
         _rebmgr.scheduleReboot(when, initiator);
+    }
+
+    /**
+     * Compiles statistics from this and the other peers in this network. The returned result will
+     * not be ready until responses have been received from all peers.
+     */
+    @AnyThread
+    public Future<StatsModel> compilePeerStatistics (final StatsModel.Type type)
+    {
+        final StatCollector.Merger merger = _collectors.get(type).createMerger();
+        // first queue up requests from all other servers
+        _peerMan.invokeOnNodes(new Function<Tuple<Client, NodeObject>, Void>() {
+            public Void apply (Tuple<Client, NodeObject> args) {
+                merger.pendingNodes++;
+                ((MsoyNodeObject)args.right).peerAdminService.compileStatistics(
+                    args.left, type, merger.makeListener(args.right.nodeName));
+                return null;
+            }
+        });
+        try { // then get our info (which will complete immediately if there are no other servers)
+            merger.pendingNodes++;
+            compileStatistics(null, type, merger.makeListener(ServerConfig.nodeName));
+        } catch (InvocationException ie) {
+            merger.requestFailed(ie.getMessage());
+        }
+        return merger;
+    }
+
+    // from PeerAdminProvider
+    public void compileStatistics (ClientObject caller, StatsModel.Type type,
+                                   PeerAdminService.ResultListener listener)
+        throws InvocationException
+    {
+        listener.requestProcessed(_collectors.get(type).compileStats());
     }
 
     /** Used to manage automatic reboots. */
@@ -180,10 +247,15 @@ public class MsoyAdminManager
     /** Handles our reboot coordinations. */
     protected MsoyRebootManager _rebmgr;
 
+    /** A mapping of registered stat collectors. */
+    protected Map<StatsModel.Type, StatCollector> _collectors = Maps.newHashMap();
+
     @Inject protected RuntimeConfig _runtime;
+    @Inject protected PersistenceContext _perCtx;
     @Inject protected ShutdownManager _shutmgr;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MailSender _sender;
     @Inject protected MemberLocator _locator;
     @Inject protected ChatProvider _chatprov;

@@ -39,7 +39,6 @@ public class DashboardPanel extends SmartTable
 
         // admin-only controls
         if (CShell.isAdmin()) {
-            //controls.setSpacing(10);
             VerticalPanel rhs = new VerticalPanel();
             setText(row, 0, _msgs.adminControls());
             getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
@@ -52,16 +51,13 @@ public class DashboardPanel extends SmartTable
                     displayDashboard();
                 }
             }));
-            controls.add(new Button(_msgs.viewExchange(),
-                                    Link.createListener(Pages.ADMINZ, "exchange")));
-            controls.add(new Button(_msgs.cashOutButton(),
-                                    Link.createListener(Pages.ADMINZ, "cashout")));
+            controls.add(Link.create(_msgs.viewExchange(), Pages.ADMINZ, "exchange"));
+            controls.add(Link.create(_msgs.cashOutButton(), Pages.ADMINZ, "cashout"));
+            controls.add(Link.create(_msgs.statsButton(), Pages.ADMINZ, "stats"));
             rhs.add(controls = new HorizontalPanel());
             controls.setSpacing(10);
-            controls.add(new Button(_msgs.viewABTests(),
-                                    Link.createListener(Pages.ADMINZ, "testlist")));
-            controls.add(new Button(_msgs.viewBureaus(),
-                                    Link.createListener(Pages.ADMINZ, "bureaus")));
+            controls.add(Link.create(_msgs.viewABTests(), Pages.ADMINZ, "testlist"));
+            controls.add(Link.create(_msgs.viewBureaus(), Pages.ADMINZ, "bureaus"));
         }
 
         // support controls
@@ -69,12 +65,11 @@ public class DashboardPanel extends SmartTable
         getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
         setWidget(row++, 1, controls = new HorizontalPanel());
         controls.setSpacing(10);
-        controls.add(new Button(_msgs.reviewButton(), Link.createListener(Pages.ADMINZ, "review")));
-        controls.add(new Button(_msgs.affMapButton(), Link.createListener(Pages.ADMINZ, "affmap")));
-        controls.add(new Button(_msgs.promosButton(), Link.createListener(Pages.ADMINZ, "promos")));
-        controls.add(new Button(_msgs.contestsButton(), Link.createListener(Pages.ADMINZ,
-            "contests")));
-        controls.add(new Button(_msgs.browseButton(), Link.createListener(Pages.ADMINZ, "browser")));
+        controls.add(Link.create(_msgs.reviewButton(), Pages.ADMINZ, "review"));
+        controls.add(Link.create(_msgs.affMapButton(), Pages.ADMINZ, "affmap"));
+        controls.add(Link.create(_msgs.promosButton(), Pages.ADMINZ, "promos"));
+        controls.add(Link.create(_msgs.contestsButton(), Pages.ADMINZ, "contests"));
+        controls.add(Link.create(_msgs.browseButton(), Pages.ADMINZ, "browser"));
     }
 
     protected void displayDashboard ()

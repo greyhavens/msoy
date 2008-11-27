@@ -4,12 +4,13 @@
 package com.threerings.msoy.peer.data;
 
 import com.threerings.presents.dobj.DSet;
-
 import com.threerings.crowd.peer.data.CrowdNodeObject;
 
 import com.threerings.msoy.data.MemberLocation;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.web.gwt.MemberCard;
+
+import com.threerings.msoy.admin.data.PeerAdminMarshaller;
+import com.threerings.msoy.item.data.all.Game;
 
 /**
  * Maintains information on an MSOY peer server.
@@ -32,6 +33,9 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** The field name of the <code>msoyPeerService</code> field. */
     public static final String MSOY_PEER_SERVICE = "msoyPeerService";
 
+    /** The field name of the <code>peerAdminService</code> field. */
+    public static final String PEER_ADMIN_SERVICE = "peerAdminService";
+
     /** The field name of the <code>peerProjectService</code> field. */
     public static final String PEER_PROJECT_SERVICE = "peerProjectService";
     // AUTO-GENERATED: FIELDS END
@@ -50,6 +54,9 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** Handles special communication between MSOY peers. */
     public MsoyPeerMarshaller msoyPeerService;
+
+    /** Admin related peer services. */
+    public PeerAdminMarshaller peerAdminService;
 
     /** Dispatches Swiftly project room peer notifications. */
     public PeerProjectMarshaller peerProjectService;
@@ -296,6 +303,22 @@ public class MsoyNodeObject extends CrowdNodeObject
         requestAttributeChange(
             MSOY_PEER_SERVICE, value, ovalue);
         this.msoyPeerService = value;
+    }
+
+    /**
+     * Requests that the <code>peerAdminService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPeerAdminService (PeerAdminMarshaller value)
+    {
+        PeerAdminMarshaller ovalue = this.peerAdminService;
+        requestAttributeChange(
+            PEER_ADMIN_SERVICE, value, ovalue);
+        this.peerAdminService = value;
     }
 
     /**

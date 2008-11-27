@@ -33,7 +33,6 @@ public class CacheStatusReporter
     {
         buf.append("* ehcache.CacheManager:\n");
 
-        //
         List<CacheInfo> infos = Lists.newArrayList();
         for (String cname : _cacheMgr.getCacheNames()) {
             infos.add(new CacheInfo(cname, _cacheMgr.getCache(cname)));

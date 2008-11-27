@@ -182,7 +182,7 @@ public class MsoyServer extends MsoyBaseServer
                       ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
 
         // intialize various services
-        _adminMan.init();
+        _adminMan.init(_invmgr, _cacheMgr);
         _memberMan.init();
         _friendMan.init();
         _jabberMan.init();
