@@ -84,8 +84,9 @@ public class MemberServlet extends MsoyServiceServlet
         Collections.sort(list, MemberHelper.SORT_BY_LAST_ONLINE);
         result.friendsAndGreeters = list;
 
-        // Add some online greeters if this user doesn't alreay have a lot of friends
-        if (padWithGreeters && list.size() < NEED_FRIENDS_FRIEND_COUNT) {
+        // add some online greeters if this user doesn't alreay have a lot of friends and is a
+        // member
+        if (padWithGreeters && mrec != null && list.size() < NEED_FRIENDS_FRIEND_COUNT) {
             IntSet greeterIds = new ArrayIntSet();
             greeterIds.addAll(_memberMan.getGreeterIdsSnapshot());
             greeterIds.removeAll(friendIds);

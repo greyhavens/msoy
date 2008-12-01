@@ -44,10 +44,10 @@ public class SearchControls extends SmartTable
                                          Link.createListener(Pages.PEOPLE, "invites"));
         }
         setWidget(0, 0, action, 1, "Action");
-        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        getFlexCellFormatter().setRowSpan(0, 0, 3);
 
         FlowPanel bits = new FlowPanel();
-        bits.add(MsoyUI.createLabel(_msgs.searchTitle(), "Title"));
+        //bits.add(MsoyUI.createLabel(_msgs.searchTitle(), "Title"));
         bits.add(MsoyUI.createLabel(_msgs.searchTip(), "Tip"));
         setWidget(0, 1, bits, 2, null);
 
@@ -67,6 +67,8 @@ public class SearchControls extends SmartTable
         _go.setEnabled(false);
 
         setWidget(1, 2, WidgetUtil.makeShim(15, 15));
+
+        setWidget(2, 0, Link.create(_msgs.searchGreetersLink(), Pages.PEOPLE, "friendly"), 3, null);
     }
 
     public void setSearch (String query)
