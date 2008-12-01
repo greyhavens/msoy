@@ -531,16 +531,17 @@
   </target>
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
-  <property name="aspath" value="client/world.mxml"/>
-  <property name="swfname" value="world-client"/>
-  <property name="flex.debug-arg" value="-externs=DummyValueIgnore"/>
   <target name="ascompile">
-    <!-- set default properties -->
+    <!-- set default properties (they're set only if unset) -->
+    <property name="aspath" value="client/world.mxml"/>
+    <property name="swfname" value="world-client"/>
     <property name="dev_deployment" value="true"/>
+    <property name="flex.extra-arg" value="-externs=DummyValueIgnore"/>
+    <property name="copydir" value="pages/clients/${version}"/>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
-      <arg value="${flex.debug-arg}"/>
+      <arg value="${flex.extra-arg}"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-compiler.verbose-stacktraces=${dev_deployment}"/>
@@ -555,7 +556,11 @@
       <arg value="-file-specs"/>
       <arg value="${asrc.dir}/com/threerings/msoy/${aspath}"/>
     </exec>
-    <copy file="${deploy.dir}/${swfname}.swf" todir="pages/clients/${version}"/>
+    <if><not><equals arg1="${copydir}" arg2=""/></not>
+      <then>
+        <copy file="${deploy.dir}/${swfname}.swf" todir="${copydir}"/>
+      </then>
+    </if>
   </target>
 
   <target name="generate-link-report">
@@ -580,7 +585,7 @@
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare">
-    <antcall target="ascompile"><param name="flex.debug-arg" value="-compiler.debug"/></antcall>
+    <antcall target="ascompile"><param name="flex.extra-arg" value="-compiler.debug"/></antcall>
   </target>
 
   <!-- builds our thane game client -->
@@ -642,29 +647,20 @@
 
   <!-- builds the mediastub that's used to wrap SWF media -->
   <target name="mediastub">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/MediaStub.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/com/threerings/msoy/applets/MediaStub.as"/>
-    </exec>
-    <copy file="${deploy.dir}/MediaStub.swf" todir="pages/media"/>
+    <antcall target="ascompile">
+      <param name="aspath" value="applets/MediaStub.as"/>
+      <param name="swfname" value="MediaStub"/>
+      <param name="copydir" value="pages/media"/> <!-- this gets published specially -->
+    </antcall>
   </target>
 
   <target name="embedstub">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-use-network"/>
-      <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/embedstub-base.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/com/threerings/msoy/applets/EmbedStub.as"/>
-    </exec>
+    <antcall target="ascompile">
+      <param name="aspath" value="applets/EmbedStub.as"/>
+      <param name="swfname" value="embedstub-base"/>
+      <param name="flex.extra-arg" value="-use-network"/>
+      <param name="copydir" value=""/> <!-- don't copy anywhere -->
+    </antcall>
   </target>
 
   <target name="remixer" depends="asprepare">
@@ -673,6 +669,7 @@
       <param name="swfname" value="remixer"/>
     </antcall>
   </target>
+
   <target name="imageeditor" depends="asprepare">
     <antcall target="ascompile">
       <param name="aspath" value="applets/imageeditor.mxml"/>
@@ -682,47 +679,26 @@
 
   <!-- builds our media uploader -->
   <target name="uploader" depends="asprepare">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/uploader.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/com/threerings/msoy/applets/UploaderApp.as"/>
-    </exec>
-    <copy file="${deploy.dir}/uploader.swf" todir="pages/clients/${version}"/>
+    <antcall target="ascompile">
+      <param name="aspath" value="applets/UploaderApp.as"/>
+      <param name="swfname" value="uploader"/>
+    </antcall>
   </target>
 
   <!-- builds our video player -->
   <target name="videoplayer" depends="asprepare">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/videoplayer.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/com/threerings/msoy/applets/VideoPlayerApp.as"/>
-    </exec>
-    <copy file="${deploy.dir}/videoplayer.swf" todir="pages/clients/${version}"/>
+    <antcall target="ascompile">
+      <param name="aspath" value="applets/VideoPlayerApp.as"/>
+      <param name="swfname" value="videoplayer"/>
+    </antcall>
   </target>
 
   <!-- builds our audio player -->
   <target name="audioplayer" depends="asprepare">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/audioplayer.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/com/threerings/msoy/applets/AudioPlayerApp.as"/>
-    </exec>
-    <copy file="${deploy.dir}/audioplayer.swf" todir="pages/clients/${version}"/>
+    <antcall target="ascompile">
+      <param name="aspath" value="applets/AudioPlayerApp.as"/>
+      <param name="swfname" value="audioplayer"/>
+    </antcall>
   </target>
 
   <!-- builds our neighborhood visualization client -->
