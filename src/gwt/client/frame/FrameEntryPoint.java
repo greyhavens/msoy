@@ -481,8 +481,8 @@ public class FrameEntryPoint
         // clear out any lingering dialog content
         clearDialog();
 
-        // show the header for everything except the landing pages
-        _header.setVisible(Pages.LANDING != page);
+        // show the header for pages that report a tab of which they are a part
+        _header.setVisible(page.getTab() != null);
 
         // make a note of our current page and create our iframe
         _page = page;
