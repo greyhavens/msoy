@@ -6,6 +6,7 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -298,7 +299,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads up member's names and profile photos by id.
      */
-    public List<MemberCardRecord> loadMemberCards (final Set<Integer> memberIds)
+    public List<MemberCardRecord> loadMemberCards (final Collection<Integer> memberIds)
     {
         if (memberIds.size() == 0) {
             return Collections.emptyList();
@@ -935,16 +936,21 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads the ids of all members who are flagged as "greeters".
+     * Loads the ids of all members who are flagged as "greeters". Most recently online greeters
+     * are first in the array.
+     * TODO: write com.samskivert.util.IntList and use that instead of List<Integer>
      */
-    public IntSet loadGreeterIds ()
+    public List<Integer> loadGreeterIds ()
     {
-        IntSet greeters = new ArrayIntSet();
-        for (Key<MemberRecord> key : findAllKeys(MemberRecord.class, false,
-            Collections.singletonList(new Where(GREETER_FLAG_IS_SET)))) {
-            greeters.add((Integer)key.getValues()[0]);
-        }
-        return greeters;
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Where(GREETER_FLAG_IS_SET));
+        clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION_C));
+        return Lists.transform(findAllKeys(MemberRecord.class, false, clauses),
+            new Function<Key<MemberRecord>, Integer>() {
+                public Integer apply (Key<MemberRecord> key) {
+                    return (Integer)key.getValues()[0];
+                }
+            });
     }
 
     /**

@@ -110,7 +110,12 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
         }
     }
 
-    /** Calls the service to obtain data, should pass this as the callback. */
+    /**
+     * Calls the service to obtain data. Implementations should make a service call using the
+     * callback provided. If needCount is set, the implementation should also request the total
+     * number of items from the server (this is normally done in the same call that requests a
+     * page but may be optional for performance reasons).
+     */
     protected abstract void callFetchService (
         int start, int count, boolean needCount, AsyncCallback<R> callback);
 

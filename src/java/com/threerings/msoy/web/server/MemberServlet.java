@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
@@ -98,16 +99,29 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface WebMemberService
-    public FriendsResult loadGreeters ()
+    public FriendsResult loadGreeters (int offset, int limit)
         throws ServiceException
     {
+        // grab the snapshot
+        List<Integer> allGreeterIds = _memberMan.getGreeterIdsSnapshot();
+
+        // set up the name and total count
         MemberRecord tgtrec = getAuthedUser();
         FriendsResult result = new FriendsResult();
         result.name = tgtrec.getName();
-        IntSet friendIds = _memberRepo.loadFriendIds(tgtrec.memberId);
-        IntSet greeterIds = _memberRepo.loadGreeterIds();
-        result.friendsAndGreeters = _mhelper.resolveMemberCards(greeterIds, false, friendIds);
-        Collections.sort(result.friendsAndGreeters, MemberHelper.SORT_BY_LAST_ONLINE);
+        result.totalCount = allGreeterIds.size();
+
+        // return an empty list if the offset is out of range
+        if (offset >= allGreeterIds.size()) {
+            result.friendsAndGreeters = Lists.newArrayList();
+            return result;
+        }
+
+        // resolve the cards of the requested slice
+        result.friendsAndGreeters = _mhelper.resolveMemberCards(
+            allGreeterIds.subList(offset, Math.min(offset + limit, allGreeterIds.size())), false,
+            _memberRepo.loadFriendIds(tgtrec.memberId));
+
         return result;
     }
 

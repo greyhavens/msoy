@@ -28,6 +28,9 @@ public interface WebMemberService extends RemoteService
 
         /** This user's friends and potentially some greeters. */
         public List<MemberCard> friendsAndGreeters;
+
+        /** The total number of friendsAndGreeters, if requested. */
+        public int totalCount;
     }
 
     /**
@@ -53,7 +56,7 @@ public interface WebMemberService extends RemoteService
      * Loads up all friends for the specified member, optionally including some greeters if the
      * friend count is very low.
      */
-    FriendsResult loadGreeters ()
+    FriendsResult loadGreeters (int offset, int limit)
         throws ServiceException;
 
     /**

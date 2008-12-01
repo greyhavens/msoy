@@ -3,13 +3,13 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -179,7 +179,7 @@ public class MemberHelper
      * used to fill in {@link MemberCard#isFriend}, otherwise isFriend will be left false.
      */
     public List<MemberCard> resolveMemberCards (
-        final IntSet memberIds, boolean onlineOnly, IntSet friendIds)
+        final Collection<Integer> memberIds, boolean onlineOnly, IntSet friendIds)
         throws ServiceException
     {
         List<MemberCard> cards = Lists.newArrayList();
@@ -203,7 +203,7 @@ public class MemberHelper
         // now load up the rest of their member card information
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
         try {
-            Set<Integer> keys = onlineOnly ? statuses.keySet() : memberIds;
+            Collection<Integer> keys = onlineOnly ? statuses.keySet() : memberIds;
             for (MemberCardRecord mcr : _memberRepo.loadMemberCards(keys)) {
                 MemberCard card = mcr.toMemberCard();
                 cards.add(card);
