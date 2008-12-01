@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package com.threerings.msoy.applets {
 
 import flash.display.Sprite;
 

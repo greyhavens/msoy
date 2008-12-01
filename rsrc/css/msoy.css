@@ -9,7 +9,7 @@
 @font-face {
   fontFamily: "Trebuchet";
   advancedAntiAliasing: true;
-  src: url("../../rsrc/fonts/trebuc.ttf");
+  src: url("../fonts/trebuc.ttf");
   unicodeRange:
     U+0041-U+005A,
     U+0061-U+007A,
@@ -24,7 +24,7 @@
   fontFamily: "Trebuchet";
   advancedAntiAliasing: true;
   fontWeight: bold;
-  src: url("../../rsrc/fonts/trebucbd.ttf");
+  src: url("../fonts/trebucbd.ttf");
   unicodeRange:
     U+0041-U+005A,
     U+0061-U+007A,
@@ -87,7 +87,7 @@ TitleWindow {
   backgroundColor: #000000;
   backgroundAlpha: 0.85;
   backgroundImage: null;
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/window/sexy_title.png",
+  titleBackgroundSkin: Embed(source="../media/skins/window/sexy_title.png",
           scaleGridTop="8", scaleGridBottom="14",
           scaleGridLeft="8", scaleGridRight="28");
   paddingTop: 10px;
@@ -137,7 +137,7 @@ TitleWindow {
 }
 
 .entityPopup {
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/window/entity_title.png",
+  titleBackgroundSkin: Embed(source="../media/skins/window/entity_title.png",
           scaleGridTop="8", scaleGridBottom="14",
           scaleGridLeft="8", scaleGridRight="28");
   backgroundImage: null;
@@ -208,28 +208,28 @@ NumericStepper {
 ComboBox {
   fontSize: 9;
   color: black;
-  upSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
+  upSkin: Embed(source="../media/skins/combobox/up.png",
           scaleGridTop="5", scaleGridBottom="13",
           scaleGridLeft="5", scaleGridRight="40");
-  overSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
+  overSkin: Embed(source="../media/skins/combobox/up.png",
           scaleGridTop="5", scaleGridBottom="13",
           scaleGridLeft="5", scaleGridRight="40");
-  downSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
+  downSkin: Embed(source="../media/skins/combobox/up.png",
           scaleGridTop="5", scaleGridBottom="13",
           scaleGridLeft="5", scaleGridRight="40");
-  disabledSkin: Embed(source="../../rsrc/media/skins/combobox/disabled.png",
+  disabledSkin: Embed(source="../media/skins/combobox/disabled.png",
           scaleGridTop="5", scaleGridBottom="13",
           scaleGridLeft="5", scaleGridRight="40");
 }
 
 /** TODO: Get actual radio button art (Circles instead of squares) */
 CheckBox, RadioButton {
-  upIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox.png");
-  overIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
-  downIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
-  selectedUpIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
-  selectedOverIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
-  selectedDownIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+  upIcon: Embed(source="../media/skins/checkbox/checkbox.png");
+  overIcon: Embed(source="../media/skins/checkbox/checkbox_over.png");
+  downIcon: Embed(source="../media/skins/checkbox/checkbox_over.png");
+  selectedUpIcon: Embed(source="../media/skins/checkbox/checkbox_selected.png");
+  selectedOverIcon: Embed(source="../media/skins/checkbox/checkbox_selected.png");
+  selectedDownIcon: Embed(source="../media/skins/checkbox/checkbox_over.png");
 }
 
 HSlider {
@@ -254,31 +254,31 @@ Button {
   color: white;
   textRollOverColor: white;
   textSelectedColor: white;
-  upSkin: Embed(source="../../rsrc/media/skins/button/blue_up.png",
+  upSkin: Embed(source="../media/skins/button/blue_up.png",
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
-  overSkin: Embed(source="../../rsrc/media/skins/button/blue_over.png",
+  overSkin: Embed(source="../media/skins/button/blue_over.png",
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
-  downSkin: Embed(source="../../rsrc/media/skins/button/blue_down.png",
+  downSkin: Embed(source="../media/skins/button/blue_down.png",
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/blue_disabled.png",
+  disabledSkin: Embed(source="../media/skins/button/blue_disabled.png",
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
 }
 
 .orangeButton {
-  upSkin: Embed(source="../../rsrc/media/skins/button/orange_up.png",
+  upSkin: Embed(source="../media/skins/button/orange_up.png",
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
-  overSkin: Embed(source="../../rsrc/media/skins/button/orange_over.png",
+  overSkin: Embed(source="../media/skins/button/orange_over.png",
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
-  downSkin: Embed(source="../../rsrc/media/skins/button/orange_down.png",
+  downSkin: Embed(source="../media/skins/button/orange_down.png",
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/orange_disabled.png",
+  disabledSkin: Embed(source="../media/skins/button/orange_disabled.png",
           scaleGridTop="9", scaleGridBottom="10",
           scaleGridLeft="9", scaleGridRight="10");
 }
@@ -316,7 +316,7 @@ VScrollBar, HScrollBar {
 
 Menu {
   openDuration: 0;
-  backgroundImage: Embed(source="../../rsrc/media/skins/menu/background.png",
+  backgroundImage: Embed(source="../media/skins/menu/background.png",
     scaleGridTop="3", scaleGridBottom="26", scaleGridLeft="3", scaleGridRight="26");
   backgroundSize: "100%";
   backgroundColor: black;
@@ -326,8 +326,8 @@ Menu {
   borderStyle: none;
   color: #C2C2C2;
   disabledColor: #666666;
-  separatorSkin: Embed(source="../../rsrc/media/skins/menu/separator_skin.png");
-  branchIcon: Embed(source="../../rsrc/media/skins/menu/whitearrow.png");
+  separatorSkin: Embed(source="../media/skins/menu/separator_skin.png");
+  branchIcon: Embed(source="../media/skins/menu/whitearrow.png");
 }
 
 MenuBar {
@@ -389,27 +389,27 @@ TabNavigator, TabBar {
   color: #b4cbd7;
   fontFamily: Arial;
   textRollOverColor: #b4cbd7;
-  overSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
+  overSkin: Embed(source="../media/skins/tab/unselected.png",
           scaleGridTop="3", scaleGridBottom="17",
           scaleGridLeft="3", scaleGridRight="9");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
+  selectedOverSkin: Embed(source="../media/skins/tab/selected.png",
           scaleGridTop="3", scaleGridBottom="17",
           scaleGridLeft="3", scaleGridRight="9");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/tab/selected.png",
+  selectedUpSkin: Embed(source="../media/skins/tab/selected.png",
           scaleGridTop="3", scaleGridBottom="17",
           scaleGridLeft="3", scaleGridRight="9");
-  upSkin: Embed(source="../../rsrc/media/skins/tab/unselected.png",
+  upSkin: Embed(source="../media/skins/tab/unselected.png",
           scaleGridTop="3", scaleGridBottom="17",
           scaleGridLeft="3", scaleGridRight="9");
 }
 
 .largeBlueButton {
   /* TODO: scale9? */
-  upSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_up.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_disabled.png");
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/lgBlue_disabled.png");
+  upSkin: Embed(source="../media/skins/button/lgBlue_up.png");
+  overSkin: Embed(source="../media/skins/button/lgBlue_over.png");
+  downSkin: Embed(source="../media/skins/button/lgBlue_down.png");
+  disabledSkin: Embed(source="../media/skins/button/lgBlue_disabled.png");
+  selectedDisabledSkin: Embed(source="../media/skins/button/lgBlue_disabled.png");
   color: #ffffff;
   textRollOverColor: #ffffff;
   textSelectedColor: #ffffff;
@@ -417,23 +417,23 @@ TabNavigator, TabBar {
 }
 
 .joinNowButton {
-  upSkin: Embed(source="../../rsrc/media/skins/button/joinnow_default.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/joinnow_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/joinnow_down.png");
+  upSkin: Embed(source="../media/skins/button/joinnow_default.png");
+  overSkin: Embed(source="../media/skins/button/joinnow_over.png");
+  downSkin: Embed(source="../media/skins/button/joinnow_down.png");
 }
 
 .logonButton {
-  upSkin: Embed(source="../../rsrc/media/skins/button/logon_default.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/logon_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/logon_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/logon_disabled.png");
+  upSkin: Embed(source="../media/skins/button/logon_default.png");
+  overSkin: Embed(source="../media/skins/button/logon_over.png");
+  downSkin: Embed(source="../media/skins/button/logon_down.png");
+  disabledSkin: Embed(source="../media/skins/button/logon_disabled.png");
 }
 
 .unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
     .attentionGroupTab {
   fontFamily: Arial;
   fontWeight: bold;
-  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
+  closeSkin: Embed(source="../media/skins/tab/close_small.png");
 }
 
 .unselectedRoomTab, .attentionRoomTab {
@@ -452,36 +452,36 @@ TabNavigator, TabBar {
   color: white;
   fontFamily: Arial;
   fontWeight: bold;
-  closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
+  closeSkin: Embed(source="../media/skins/tab/close_small.png");
 }
 
 .unselectedRoomTab, .attentionRoomTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_room_unselected.png",
+  buttonSkin: Embed(source="../media/skins/tab/tab_room_unselected.png",
     scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 .selectedRoomTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_room_selected.png",
+  buttonSkin: Embed(source="../media/skins/tab/tab_room_selected.png",
     scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 .unselectedTellTab, .attentionTellTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_tell_unselected.png",
+  buttonSkin: Embed(source="../media/skins/tab/tab_tell_unselected.png",
     scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 .selectedTellTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_tell_selected.png",
+  buttonSkin: Embed(source="../media/skins/tab/tab_tell_selected.png",
     scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 .unselectedGroupTab, .attentionGroupTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_group_unselected.png",
+  buttonSkin: Embed(source="../media/skins/tab/tab_group_unselected.png",
     scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
 .selectedGroupTab {
-  buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_group_selected.png",
+  buttonSkin: Embed(source="../media/skins/tab/tab_group_selected.png",
     scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
 }
 
@@ -516,7 +516,7 @@ TabNavigator, TabBar {
 }
 
 .controlBar {
-  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/bg.png");
+  backgroundImage: Embed(source="../media/skins/controlbar/bg.png");
   backgroundSize: "100%";
   horizontalGap: 10;
   verticalAlign: "bottom";
@@ -549,91 +549,91 @@ TabNavigator, TabBar {
 }
 
 .controlBarButtonChat {
-  image: Embed(source="../../rsrc/media/skins/controlbar/chatoptions.png");
+  image: Embed(source="../media/skins/controlbar/chatoptions.png");
 }
 
 .controlBarButtonEdit {
-  image: Embed(source="../../rsrc/media/skins/controlbar/editroom.png");
+  image: Embed(source="../media/skins/controlbar/editroom.png");
 }
 
 .controlBarButtonVolume0 {
-  image: Embed(source="../../rsrc/media/skins/controlbar/vol_01.png");
+  image: Embed(source="../media/skins/controlbar/vol_01.png");
 }
 
 .controlBarButtonVolume1 {
-  image: Embed(source="../../rsrc/media/skins/controlbar/vol_02.png");
+  image: Embed(source="../media/skins/controlbar/vol_02.png");
 }
 
 .controlBarButtonVolume2 {
-  image: Embed(source="../../rsrc/media/skins/controlbar/vol_03.png");
+  image: Embed(source="../media/skins/controlbar/vol_03.png");
 }
 
 .controlBarButtonVolume3 {
-  image: Embed(source="../../rsrc/media/skins/controlbar/vol_04.png");
+  image: Embed(source="../media/skins/controlbar/vol_04.png");
 }
 
 .controlBarButtonVolume4 {
-  image: Embed(source="../../rsrc/media/skins/controlbar/vol_05.png");
+  image: Embed(source="../media/skins/controlbar/vol_05.png");
 }
 
 .controlBarButtonZoom {
-  image: Embed(source="../../rsrc/media/skins/controlbar/zoom.png");
+  image: Embed(source="../media/skins/controlbar/zoom.png");
 }
 
 .controlBarButtonComment {
-  image: Embed(source="../../rsrc/media/skins/controlbar/comment.png");
+  image: Embed(source="../media/skins/controlbar/comment.png");
 }
 
 .controlBarButtonInstructions {
-  image: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
+  image: Embed(source="../media/skins/controlbar/instructions.png");
 }
 
 .controlBarButtonShare {
-  image: Embed(source="../../rsrc/media/skins/controlbar/share.png");
+  image: Embed(source="../media/skins/controlbar/share.png");
 }
 
 .controlBarButtonScores {
-  image: Embed(source="../../rsrc/media/skins/controlbar/score.png");
+  image: Embed(source="../media/skins/controlbar/score.png");
 }
 
 .controlBarHoverZone {
-  image: Embed(source="../../rsrc/media/skins/controlbar/clickable.png");
+  image: Embed(source="../media/skins/controlbar/clickable.png");
 }
 
 .controlBarButtonSnapshot {
-  image: Embed(source="../../rsrc/media/skins/controlbar/snapshot.png");
+  image: Embed(source="../media/skins/controlbar/snapshot.png");
 }
 
 .controlBarFriendButton {
-  image: Embed(source="../../rsrc/media/skins/controlbar/friends.png");
+  image: Embed(source="../media/skins/controlbar/friends.png");
 }
 
 .controlBarTalkButton {
-  image: Embed(source="../../rsrc/media/skins/controlbar/talk.png");
+  image: Embed(source="../media/skins/controlbar/talk.png");
 }
 
 .controlBarIdleButton {
-  image: Embed(source="../../rsrc/media/skins/controlbar/idle.png");
+  image: Embed(source="../media/skins/controlbar/idle.png");
 }
 
 .controlBarScaleButton {
-  image: Embed(source="../../rsrc/media/skins/controlbar/scale.png");
+  image: Embed(source="../media/skins/controlbar/scale.png");
 }
 
 .controlBarAVRGButton {
-  image: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
+  image: Embed(source="../media/skins/controlbar/instructions.png");
 }
 
 .controlBarHomePageGridButton {
-  image: Embed(source="../../rsrc/media/skins/controlbar/grid.png");
+  image: Embed(source="../media/skins/controlbar/grid.png");
 }
 
 .controlBarButtonMusic {
-  image: Embed(source="../../rsrc/media/skins/controlbar/music.png");
+  image: Embed(source="../media/skins/controlbar/music.png");
 }
 
 .tickButton {
-  image: Embed(source="../../rsrc/media/skins/controlbar/tick.png");
+  image: Embed(source="../media/skins/controlbar/tick.png");
 }
 
 .tourNext {
@@ -660,7 +660,7 @@ BasePanel {
 }
 
 .roomEditNameBar {  
-  backgroundImage: Embed(source="../../rsrc/media/skins/button/roomeditor/name_bar_tile.png",
+  backgroundImage: Embed(source="../media/skins/button/roomeditor/name_bar_tile.png",
           scaleGridTop="10", scaleGridBottom="13",
           scaleGridLeft="10", scaleGridRight="20");
   backgroundSize: "100%";
@@ -744,7 +744,7 @@ BasePanel {
 }
 
 .roomEditDiv {
-  backgroundSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/dot-separator.png");
+  backgroundSkin: Embed(source="../media/skins/button/roomeditor/dot-separator.png");
 }
 
 .roomEditRight { 
@@ -754,73 +754,73 @@ BasePanel {
 }
 
 .roomEditScaleDown {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_down.png");
+  image: Embed(source="../media/skins/button/roomeditor/left_icons/scale_down.png");
 }
 
 .roomEditScaleUp {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/scale_up.png");
+  image: Embed(source="../media/skins/button/roomeditor/left_icons/scale_up.png");
 }
 
 .roomEditMoveDown {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/down-to-floor.png");
+  image: Embed(source="../media/skins/button/roomeditor/left_icons/down-to-floor.png");
 }
 
 .roomEditMoveUp {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/up-off-floor.png");
+  image: Embed(source="../media/skins/button/roomeditor/left_icons/up-off-floor.png");
 }
 
 .roomEditRotateLeft {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_left.png");
+  image: Embed(source="../media/skins/button/roomeditor/left_icons/rot_left.png");
 }
 
 .roomEditRotateRight {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/rot_right.png");
+  image: Embed(source="../media/skins/button/roomeditor/left_icons/rot_right.png");
 }
 
 .roomEditFlipH {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_horiz.png");
+  image: Embed(source="../media/skins/button/roomeditor/left_icons/flip_horiz.png");
 }
 
 .roomEditFlipV {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/left_icons/flip_vert.png");
+  image: Embed(source="../media/skins/button/roomeditor/left_icons/flip_vert.png");
 }
 
 .roomEditTrash {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/put-away.png");
+  image: Embed(source="../media/skins/button/roomeditor/right_icons/put-away.png");
 }
 
 .roomEditAdd {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/add-stuff.png");
+  image: Embed(source="../media/skins/button/roomeditor/right_icons/add-stuff.png");
 }
 
 .roomEditDoor {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/door.png");
+  image: Embed(source="../media/skins/button/roomeditor/right_icons/door.png");
 }
 
 .roomRemoveDoor {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/remove_door.png");
+  image: Embed(source="../media/skins/button/roomeditor/right_icons/remove_door.png");
 }
 
 .roomEditLink {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/make-url.png");
+  image: Embed(source="../media/skins/button/roomeditor/right_icons/make-url.png");
 }
 
 .roomRemoveLink {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/remove-url.png");
+  image: Embed(source="../media/skins/button/roomeditor/right_icons/remove-url.png");
 }
 
 .roomEditUndo {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/undo-shape.png");
+  image: Embed(source="../media/skins/button/roomeditor/right_icons/undo-shape.png");
 }
 
 /*
 .roomEditUndoAll {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/right_icons/X-Undo-All.png");
+  image: Embed(source="../media/skins/button/roomeditor/right_icons/X-Undo-All.png");
 }
 */
 
 .roomEditButtonMakeMyHome {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/button_makehome.png");
+  image: Embed(source="../media/skins/button/roomeditor/button_makehome.png");
 }
 
 .roomEditButtonLabel {
@@ -851,14 +851,14 @@ BasePanel {
 }
 
 .roomEditButtonExpand {
-  upSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
-  overSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
-  downSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
+  upSkin: Embed(source="../media/skins/button/roomeditor/rollout_plus.png");
+  overSkin: Embed(source="../media/skins/button/roomeditor/rollout_plus.png");
+  downSkin: Embed(source="../media/skins/button/roomeditor/rollout_plus.png");
+  disabledSkin: Embed(source="../media/skins/button/roomeditor/rollout_plus.png");
+  selectedUpSkin: Embed(source="../media/skins/button/roomeditor/rollout_minus.png");
+  selectedOverSkin: Embed(source="../media/skins/button/roomeditor/rollout_minus.png");
+  selectedDownSkin: Embed(source="../media/skins/button/roomeditor/rollout_minus.png");
+  selectedDisabledSkin: Embed(source="../media/skins/button/roomeditor/rollout_minus.png");
 }
 
 .roomEditAdvancedContainer { 
@@ -879,15 +879,15 @@ BasePanel {
 }
 
 .roomEditResetLocation {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_location.png");
+  image: Embed(source="../media/skins/button/roomeditor/reset_location.png");
 }
 
 .roomEditResetScale {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_scale.png");
+  image: Embed(source="../media/skins/button/roomeditor/reset_scale.png");
 }
 
 .roomEditResetRotation {
-  image: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
+  image: Embed(source="../media/skins/button/roomeditor/reset_rotation.png");
 }
 
 .attentionLabel {
@@ -896,7 +896,7 @@ BasePanel {
 }
 
 .sliderPopup {
-  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/slider_background.png",
+  backgroundSkin: Embed(source="../media/skins/controlbar/slider_background.png",
           scaleGridTop="1", scaleGridBottom="23",
           scaleGridLeft="1", scaleGridRight="31");
   backgroundSize: "100%";
@@ -936,15 +936,15 @@ BasePanel {
 }
 
 .headerBar {
-  backgroundImage: Embed(source="../../rsrc/media/skins/headerbar/bg.png");
+  backgroundImage: Embed(source="../media/skins/headerbar/bg.png");
   backgroundSize: "100%";
 }
 
 .headerBarGoButton {
-  upSkin: Embed(source="../../rsrc/media/skins/headerbar/go_default.jpg");
-  overSkin: Embed(source="../../rsrc/media/skins/headerbar/go_over.jpg");
-  downSkin: Embed(source="../../rsrc/media/skins/headerbar/go_down.jpg");
-  disabledSkin: Embed(source="../../rsrc/media/skins/headerbar/go_disabled.jpg");
+  upSkin: Embed(source="../media/skins/headerbar/go_default.jpg");
+  overSkin: Embed(source="../media/skins/headerbar/go_over.jpg");
+  downSkin: Embed(source="../media/skins/headerbar/go_down.jpg");
+  disabledSkin: Embed(source="../media/skins/headerbar/go_disabled.jpg");
 }
 
 .closeButton {
@@ -999,11 +999,11 @@ BasePanel {
 } 
 
 .plusButton {
-  icon: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_plus.png");
+  icon: Embed(source="../media/skins/button/roomeditor/rollout_plus.png");
 }
 
 .minusButton {
-  icon: Embed(source="../../rsrc/media/skins/button/roomeditor/rollout_minus.png");
+  icon: Embed(source="../media/skins/button/roomeditor/rollout_minus.png");
 }
 
 .roomToolTip {
@@ -1207,21 +1207,21 @@ BasePanel {
 }
 
 .embedHeaderSignupButton {
-  upSkin: Embed(source="../../rsrc/media/skins/embedheader/signup_default.jpg");
-  overSkin: Embed(source="../../rsrc/media/skins/embedheader/signup_over.jpg");
-  downSkin: Embed(source="../../rsrc/media/skins/embedheader/signup_down.jpg");
+  upSkin: Embed(source="../media/skins/embedheader/signup_default.jpg");
+  overSkin: Embed(source="../media/skins/embedheader/signup_over.jpg");
+  downSkin: Embed(source="../media/skins/embedheader/signup_down.jpg");
 }
 
 .embedHeaderLogonButton {
-  upSkin: Embed(source="../../rsrc/media/skins/embedheader/logon_default.jpg");
-  overSkin: Embed(source="../../rsrc/media/skins/embedheader/logon_over.jpg");
-  downSkin: Embed(source="../../rsrc/media/skins/embedheader/logon_down.jpg");
+  upSkin: Embed(source="../media/skins/embedheader/logon_default.jpg");
+  overSkin: Embed(source="../media/skins/embedheader/logon_over.jpg");
+  downSkin: Embed(source="../media/skins/embedheader/logon_down.jpg");
 }
 
 .embedHeaderAllgamesButton {
-  upSkin: Embed(source="../../rsrc/media/skins/embedheader/allgames_default.jpg");
-  overSkin: Embed(source="../../rsrc/media/skins/embedheader/allgames_over.jpg");
-  downSkin: Embed(source="../../rsrc/media/skins/embedheader/allgames_down.jpg");
+  upSkin: Embed(source="../media/skins/embedheader/allgames_default.jpg");
+  overSkin: Embed(source="../media/skins/embedheader/allgames_over.jpg");
+  downSkin: Embed(source="../media/skins/embedheader/allgames_down.jpg");
 }
 
 .noPlaceView {
@@ -1238,14 +1238,14 @@ BasePanel {
   selectedOverIcon: ClassReference(null);
   selectedDownIcon: ClassReference(null);
   selectedDisabledIcon: ClassReference(null);
-  upSkin: Embed(source="../../rsrc/media/skins/checkbox/panel.png");
-  overSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/checkbox/panel.png"); /* TODO? */
-  disabledSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_disabled.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_selected.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_selected_over.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_selected.png"); /* TODO? */
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_selected.png"); /* TODO? */
+  upSkin: Embed(source="../media/skins/checkbox/panel.png");
+  overSkin: Embed(source="../media/skins/checkbox/panel_over.png");
+  downSkin: Embed(source="../media/skins/checkbox/panel.png"); /* TODO? */
+  disabledSkin: Embed(source="../media/skins/checkbox/panel_disabled.png");
+  selectedUpSkin: Embed(source="../media/skins/checkbox/panel_selected.png");
+  selectedOverSkin: Embed(source="../media/skins/checkbox/panel_selected_over.png");
+  selectedDownSkin: Embed(source="../media/skins/checkbox/panel_selected.png"); /* TODO? */
+  selectedDisabledSkin: Embed(source="../media/skins/checkbox/panel_selected.png"); /* TODO? */
 }
 
 .notificationDisplay {
@@ -1258,7 +1258,7 @@ BasePanel {
 }
 
 .notificationCanvas {
-  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/notif_display_background.png",
+  backgroundImage: Embed(source="../media/skins/controlbar/notif_display_background.png",
                          scaleGridTop="4", scaleGridBottom="15", 
                          scaleGridLeft="4", scaleGridRight="8");
   backgroundSize: "100%";
@@ -1312,7 +1312,7 @@ GameOverPanel {
 
 /*
 .partyPopup {
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/friends_popup_header.png",
+  titleBackgroundSkin: Embed(source="../media/skins/friends_popup_header.png",
           scaleGridTop="8", scaleGridBottom="28",
           scaleGridLeft="8", scaleGridRight="315");
   headerHeight: 36;

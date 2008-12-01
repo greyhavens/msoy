@@ -531,7 +531,8 @@
   </target>
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
-  <property name="astype" value="world"/>
+  <property name="aspath" value="client/world.mxml"/>
+  <property name="swfname" value="world-client"/>
   <property name="flex.debug-arg" value="-externs=DummyValueIgnore"/>
   <target name="ascompile">
     <!-- set default properties -->
@@ -550,11 +551,11 @@
       <arg value="488"/>
       <arg value="-incremental=true"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/${astype}-client.swf"/>
+      <arg value="${deploy.dir}/${swfname}.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/${astype}.mxml"/>
+      <arg value="${asrc.dir}/com/threerings/msoy/${aspath}"/>
     </exec>
-    <copy file="${deploy.dir}/${astype}-client.swf" todir="pages/clients/${version}"/>
+    <copy file="${deploy.dir}/${swfname}.swf" todir="pages/clients/${version}"/>
   </target>
 
   <target name="generate-link-report">
@@ -563,12 +564,18 @@
 
   <!-- builds our Flash world client -->
   <target name="asclient" depends="asprepare" description="Rebuilds the Flash world client.">
-    <antcall target="ascompile"><param name="astype" value="world"/></antcall>
+    <antcall target="ascompile">
+      <param name="aspath" value="client/world.mxml"/>
+      <param name="swfname" value="world-client"/>
+    </antcall>
   </target>
 
   <!-- builds our Flash game client -->
   <target name="asgclient" depends="asprepare" description="Rebuilds the Flash game client.">
-    <antcall target="ascompile"><param name="astype" value="game"/></antcall>
+    <antcall target="ascompile">
+      <param name="aspath" value="client/game.mxml"/>
+      <param name="swfname" value="game-client"/>
+    </antcall>
   </target>
 
   <!-- builds our Flash debug client -->
@@ -661,10 +668,16 @@
   </target>
 
   <target name="remixer" depends="asprepare">
-    <antcall target="ascompile"><param name="astype" value="remixer"/></antcall>
+    <antcall target="ascompile">
+      <param name="aspath" value="applets/remixer.mxml"/>
+      <param name="swfname" value="remixer"/>
+    </antcall>
   </target>
   <target name="imageeditor" depends="asprepare">
-    <antcall target="ascompile"><param name="astype" value="imageeditor"/></antcall>
+    <antcall target="ascompile">
+      <param name="aspath" value="applets/imageeditor.mxml"/>
+      <param name="swfname" value="imageeditor"/>
+    </antcall>
   </target>
 
   <!-- builds our media uploader -->
@@ -677,7 +690,7 @@
       <arg value="-output"/>
       <arg value="${deploy.dir}/uploader.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/UploaderApp.as"/>
+      <arg value="${asrc.dir}/com/threerings/msoy/applets/UploaderApp.as"/>
     </exec>
     <copy file="${deploy.dir}/uploader.swf" todir="pages/clients/${version}"/>
   </target>
@@ -692,7 +705,7 @@
       <arg value="-output"/>
       <arg value="${deploy.dir}/videoplayer.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/VideoPlayerApp.as"/>
+      <arg value="${asrc.dir}/com/threerings/msoy/applets/VideoPlayerApp.as"/>
     </exec>
     <copy file="${deploy.dir}/videoplayer.swf" todir="pages/clients/${version}"/>
   </target>
@@ -707,7 +720,7 @@
       <arg value="-output"/>
       <arg value="${deploy.dir}/audioplayer.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/AudioPlayerApp.as"/>
+      <arg value="${asrc.dir}/com/threerings/msoy/applets/AudioPlayerApp.as"/>
     </exec>
     <copy file="${deploy.dir}/audioplayer.swf" todir="pages/clients/${version}"/>
   </target>
@@ -1019,10 +1032,16 @@
   <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a
        the API shuffle is done, and the tutorial code has been refactored -->
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,embedstub,videoplayer,audioplayer,remixer,imageeditor,uploader"
+  <target name="flashapps" depends="asprepare,mediastub,embedstub,videoplayer,audioplayer,remixer,imageeditor,uploader,asclient,asgclient"
           description="Rebuilds all of our Flash clients and applets.">
-    <antcall target="ascompile"><param name="astype" value="world"/></antcall>
-    <antcall target="ascompile"><param name="astype" value="game"/></antcall>
+<!--
+    <antcall target="ascompile">
+      <param name="astype" value="world"/>
+    </antcall>
+    <antcall target="ascompile">
+      <param name="astype" value="game"/>
+    </antcall>
+-->
   </target>
 
   <target name="distprojects-extra" depends="distprojects">

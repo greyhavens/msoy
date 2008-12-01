@@ -5,9 +5,9 @@
     width="100%" height="100%"
     preloader="com.threerings.msoy.client.Preloader"
     applicationComplete="new ImageControls(this, viewStack);">
-<mx:Style source="msoy.css"/>
-<mx:Style source="com/threerings/msoy/applets/applets.css"/>
-<mx:Style source="com/threerings/msoy/applets/image/image.css"/>
+<mx:Style source="../../../rsrc/css/msoy.css"/>
+<mx:Style source="../../../rsrc/css/applets.css"/>
+<mx:Style source="../../../rsrc/css/image.css"/>
 <mx:Style>
    LinkButton {
       color: #000000;

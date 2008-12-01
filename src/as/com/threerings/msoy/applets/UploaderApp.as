@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package {
+package com.threerings.msoy.applets {
 
 import flash.events.DataEvent;
 import flash.events.ErrorEvent;
@@ -196,7 +196,7 @@ public class UploaderApp extends Sprite
 
     protected static const BUTTON_HEIGHT :int = 19;
 
-    [Embed(source="../../pages/images/ui/button_middle.png")]
+    [Embed(source="../../../../../../pages/images/ui/button_middle.png")]
     protected static const BUTTON_SKIN :Class;
 }
 }

@@ -80,7 +80,7 @@ public class FlashClients
                 "&" + prefix + "Height=" + maxHeight;
         }
         return WidgetUtil.createFlashContainer("imageEditor",
-            "/clients/" + DeploymentConfig.version + "/imageeditor-client.swf",
+            "/clients/" + DeploymentConfig.version + "/imageeditor.swf",
             width, height, flashVars);
     }
 

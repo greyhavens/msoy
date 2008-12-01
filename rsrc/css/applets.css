@@ -1,8 +1,8 @@
 .longThinOrangeButton {
-  disabledSkin: Embed(source="../../../../../../pages/images/ui/orange/long_thin_disabled.png");
-  downSkin: Embed(source="../../../../../../pages/images/ui/orange/long_thin.png");
-  overSkin: Embed(source="../../../../../../pages/images/ui/orange/long_thin_over.png");
-  upSkin: Embed(source="../../../../../../pages/images/ui/orange/long_thin.png");
+  disabledSkin: Embed(source="../../pages/images/ui/orange/long_thin_disabled.png");
+  downSkin: Embed(source="../../pages/images/ui/orange/long_thin.png");
+  overSkin: Embed(source="../../pages/images/ui/orange/long_thin_over.png");
+  upSkin: Embed(source="../../pages/images/ui/orange/long_thin.png");
   color: #FFFFFF;
   textRollOverColor: #FFFFFF;
   textSelectedColor: #FFFFFF;

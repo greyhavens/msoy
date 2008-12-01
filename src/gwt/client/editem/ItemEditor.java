@@ -821,7 +821,7 @@ public abstract class ItemEditor extends FlowPanel
 
         _remixPopup = new BorderedPopup(false, true);
         _remixPopup.setWidget(WidgetUtil.createFlashContainer("remixControls",
-            "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
+            "/clients/" + DeploymentConfig.version + "/remixer.swf",
             popWidth, popHeight, flashVars));
         _remixPopup.show();
     }

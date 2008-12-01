@@ -82,7 +82,7 @@ public class ItemRemixer extends FlexTable
         }
 
         return WidgetUtil.createFlashContainer("remixControls",
-            "/clients/" + DeploymentConfig.version + "/remixer-client.swf",
+            "/clients/" + DeploymentConfig.version + "/remixer.swf",
             WIDTH, 550, flashVars);
     }
 

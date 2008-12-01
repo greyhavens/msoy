@@ -1,5 +1,5 @@
 .headerMid {
-  backgroundImage: Embed(source="../../../../../../../pages/images/ui/box/header_tile.png");
+  backgroundImage: Embed(source="../../pages/images/ui/box/header_tile.png");
   backgroundSize: "100%";
 }
 

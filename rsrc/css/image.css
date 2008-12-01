@@ -1,0 +1,79 @@
+.brushButton, .eraserButton, .eyedropperButton, .moveButton, .cropButton, .selectButton, .undoButton, .redoButton {
+  upSkin: Embed(source="../media/skins/image/button.png");
+  overSkin: Embed(source="../media/skins/image/button.png");
+  downSkin: Embed(source="../media/skins/image/button_down.png");
+  disabledSkin: Embed(source="../media/skins/image/button_disable.png");
+  selectedUpSkin: Embed(source="../media/skins/image/button_down.png");
+  selectedOverSkin: Embed(source="../media/skins/image/button_down.png");
+  selectedDownSkin: Embed(source="../media/skins/image/button.png");
+}
+
+.brushButton {
+  upIcon: Embed(source="../media/skins/image/icon_brush.png");
+  overIcon: Embed(source="../media/skins/image/icon_brush_over.png");
+  downIcon: Embed(source="../media/skins/image/icon_brush_over.png");
+  selectedUpIcon: Embed(source="../media/skins/image/icon_brush.png");
+  selectedOverIcon: Embed(source="../media/skins/image/icon_brush_over.png");
+  selectedDownIcon: Embed(source="../media/skins/image/icon_brush_over.png");
+}
+
+.eraserButton {
+  upIcon: Embed(source="../media/skins/image/icon_eraser.png");
+  overIcon: Embed(source="../media/skins/image/icon_eraser_over.png");
+  downIcon: Embed(source="../media/skins/image/icon_eraser_over.png");
+  selectedUpIcon: Embed(source="../media/skins/image/icon_eraser.png");
+  selectedOverIcon: Embed(source="../media/skins/image/icon_eraser_over.png");
+  selectedDownIcon: Embed(source="../media/skins/image/icon_eraser_over.png");
+}
+
+.eyedropperButton {
+  upIcon: Embed(source="../media/skins/image/icon_eyedropper.png");
+  overIcon: Embed(source="../media/skins/image/icon_eyedropper_over.png");
+  downIcon: Embed(source="../media/skins/image/icon_eyedropper_over.png");
+  selectedUpIcon: Embed(source="../media/skins/image/icon_eyedropper.png");
+  selectedOverIcon: Embed(source="../media/skins/image/icon_eyedropper_over.png");
+  selectedDownIcon: Embed(source="../media/skins/image/icon_eyedropper_over.png");
+}
+
+.moveButton {
+  upIcon: Embed(source="../media/skins/image/icon_move.png");
+  overIcon: Embed(source="../media/skins/image/icon_move_over.png");
+  downIcon: Embed(source="../media/skins/image/icon_move_over.png");
+  selectedUpIcon: Embed(source="../media/skins/image/icon_move.png");
+  selectedOverIcon: Embed(source="../media/skins/image/icon_move_over.png");
+  selectedDownIcon: Embed(source="../media/skins/image/icon_move_over.png");
+}
+
+.cropButton {
+  upIcon: Embed(source="../media/skins/image/icon_crop.png");
+  overIcon: Embed(source="../media/skins/image/icon_crop_over.png");
+  downIcon: Embed(source="../media/skins/image/icon_crop_over.png");
+  selectedUpIcon: Embed(source="../media/skins/image/icon_crop.png");
+  selectedOverIcon: Embed(source="../media/skins/image/icon_crop_over.png");
+  selectedDownIcon: Embed(source="../media/skins/image/icon_crop_over.png");
+}
+
+.selectButton {
+  upIcon: Embed(source="../media/skins/image/icon_select.png");
+  overIcon: Embed(source="../media/skins/image/icon_select_over.png");
+  downIcon: Embed(source="../media/skins/image/icon_select_over.png");
+  disabledIcon: Embed(source="../media/skins/image/icon_select_disable.png");
+  selectedUpIcon: Embed(source="../media/skins/image/icon_select.png");
+  selectedOverIcon: Embed(source="../media/skins/image/icon_select_over.png");
+  selectedDownIcon: Embed(source="../media/skins/image/icon_select_over.png");
+}
+
+.undoButton {
+  upIcon: Embed(source="../media/skins/image/icon_undo.png");
+  overIcon: Embed(source="../media/skins/image/icon_undo_over.png");
+  downIcon: Embed(source="../media/skins/image/icon_undo_over.png");
+  disabledIcon: Embed(source="../media/skins/image/icon_undo_disable.png");
+}
+
+.redoButton {
+  upIcon: Embed(source="../media/skins/image/icon_redo.png");
+  overIcon: Embed(source="../media/skins/image/icon_redo_over.png");
+  downIcon: Embed(source="../media/skins/image/icon_redo_over.png");
+  disabledIcon: Embed(source="../media/skins/image/icon_redo_disable.png");
+}
+
