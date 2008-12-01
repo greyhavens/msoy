@@ -57,16 +57,8 @@ public class MsoyGameSession extends CrowdSession
     {
         super.sessionConnectionClosed();
 
-        if (_plobj != null) {
-            int placeOid = _plobj.getPlaceOid();
-
-            // if we're a guest, end our session now, there's no way to reconnect; if we're
-            // in an avrg, the client has to resume the game through avrg specific channels
-            if (_plobj.isGuest() ||
-                (placeOid > 0 && _omgr.getObject(placeOid) instanceof AVRGameObject)) {
-                safeEndSession();
-            }
-        }
+        // there's no sensible way to resume sessions to a game at the moment
+        safeEndSession();
     }
 
     @Override // from PresentsSession
