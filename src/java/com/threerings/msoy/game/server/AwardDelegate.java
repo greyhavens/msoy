@@ -578,11 +578,7 @@ public class AwardDelegate extends RatingDelegate
     protected Percentiler getScoreDistribution (int gameMode)
     {
         // we want the "rating" game id so we use getGameId()
-        final Percentiler tiler = _gameReg.getScoreDistribution(
-            getGameId(), isMultiplayer(), gameMode);
-        // if for whatever reason we don't have a score distribution, return a blank one which will
-        // result in the default percentile being used
-        return (tiler == null) ? new Percentiler() : tiler;
+        return _gameReg.getScoreDistribution(getGameId(), isMultiplayer(), gameMode);
     }
 
     protected int getPercentile (final Percentiler tiler, final int score)

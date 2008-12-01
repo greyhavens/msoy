@@ -163,7 +163,13 @@ public class GameGameRegistry
             log.warning("Requested invalid score distribution", "gameId", gameId, "mode", gameMode);
             gameMode = 0;
         }
-        return _distribs.get(new TilerKey(gameId, multiplayer, gameMode));
+        TilerKey key = new TilerKey(gameId, multiplayer, gameMode);
+        Percentiler tiler = _distribs.get(key);
+        if (tiler == null) {
+            // a game wants to register a score for a previously unseen mode; return a fresh tiler
+            _distribs.put(key, tiler = new Percentiler());
+        }
+        return tiler;
     }
 
     /**
