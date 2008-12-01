@@ -57,8 +57,10 @@ public class MsoyGameSession extends CrowdSession
     {
         super.sessionConnectionClosed();
 
-        // there's no sensible way to resume sessions to a game at the moment
-        safeEndSession();
+        if (_plobj != null) {
+            // there's no sensible way to resume sessions to a game at the moment
+            safeEndSession();
+        }
     }
 
     @Override // from PresentsSession
