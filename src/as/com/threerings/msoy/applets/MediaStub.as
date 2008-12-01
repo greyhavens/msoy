@@ -1,4 +1,4 @@
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.applets {
 
 import flash.display.BitmapData;
 import flash.display.DisplayObject;

@@ -1,4 +1,4 @@
-package {
+package com.threerings.msoy.applets {
 
 import flash.display.Loader;
 import flash.display.LoaderInfo;

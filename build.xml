@@ -649,7 +649,7 @@
       <arg value="-output"/>
       <arg value="${deploy.dir}/MediaStub.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/com/threerings/msoy/room/client/MediaStub.as"/>
+      <arg value="${asrc.dir}/com/threerings/msoy/applets/MediaStub.as"/>
     </exec>
     <copy file="${deploy.dir}/MediaStub.swf" todir="pages/media"/>
   </target>
@@ -663,7 +663,7 @@
       <arg value="-output"/>
       <arg value="${deploy.dir}/embedstub-base.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/EmbedStub.as"/>
+      <arg value="${asrc.dir}/com/threerings/msoy/applets/EmbedStub.as"/>
     </exec>
   </target>
 
@@ -1034,14 +1034,6 @@
   <!-- builds top-level flash applications. -->
   <target name="flashapps" depends="asprepare,mediastub,embedstub,videoplayer,audioplayer,remixer,imageeditor,uploader,asclient,asgclient"
           description="Rebuilds all of our Flash clients and applets.">
-<!--
-    <antcall target="ascompile">
-      <param name="astype" value="world"/>
-    </antcall>
-    <antcall target="ascompile">
-      <param name="astype" value="game"/>
-    </antcall>
--->
   </target>
 
   <target name="distprojects-extra" depends="distprojects">
