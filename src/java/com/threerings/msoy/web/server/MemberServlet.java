@@ -104,10 +104,8 @@ public class MemberServlet extends MsoyServiceServlet
         FriendsResult result = new FriendsResult();
         result.name = tgtrec.getName();
         IntSet friendIds = _memberRepo.loadFriendIds(tgtrec.memberId);
-        IntSet greeterIds = new ArrayIntSet();
-        greeterIds.addAll(_memberMan.getGreeterIdsSnapshot());
-        greeterIds.remove(tgtrec.memberId);
-        result.friendsAndGreeters = _mhelper.resolveMemberCards(greeterIds, true, friendIds);
+        IntSet greeterIds = _memberRepo.loadGreeterIds();
+        result.friendsAndGreeters = _mhelper.resolveMemberCards(greeterIds, false, friendIds);
         Collections.sort(result.friendsAndGreeters, MemberHelper.SORT_BY_LAST_ONLINE);
         return result;
     }

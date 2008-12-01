@@ -66,7 +66,7 @@ public class FriendsPanel extends FlowPanel
         if (numFriends == data.friendsAndGreeters.size()) { // no greeters
             title = _msgs.friendsWhoseFriends(data.name.toString());
         } else if (numFriends == 0) { // no friends
-            title = _msgs.friendsWhoseGreeters();
+            title = _msgs.greetersListTitle();
         } else { // mixed
             title = _msgs.friendsWhoseFriendsAndGreeters(data.name.toString());
         }

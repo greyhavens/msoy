@@ -42,8 +42,8 @@ public class GreeterPanel extends FlowPanel
             return;
         }
 
-        MemberList greeters = new MemberList(_msgs.noGreetersOnline(), "GreetersPanel");
-        add(new HeaderBox(_msgs.friendsWhoseGreeters(), greeters));
+        MemberList greeters = new MemberList(_msgs.noGreeters(), "GreetersPanel");
+        add(new HeaderBox(_msgs.greetersListTitle(), greeters));
         greeters.setModel(new SimpleDataModel<MemberCard>(data.friendsAndGreeters), 0);
     }
 
