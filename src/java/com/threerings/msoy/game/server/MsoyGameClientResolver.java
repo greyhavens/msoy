@@ -77,7 +77,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
 
         // fill in this member's raw friends list
         playerObj.friends = new DSet<FriendEntry>(
-            _memberRepo.loadFriends(member.memberId, -1));
+            _memberRepo.loadAllFriends(member.memberId));
 
         // for players, resolve this here from the database.
         // guests will get resolution later on, in MsoyGameSession.sessionWillStart()

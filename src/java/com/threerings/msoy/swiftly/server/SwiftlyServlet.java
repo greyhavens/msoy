@@ -242,7 +242,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        return _memberRepo.loadFriends(memrec.memberId, -1);
+        return _memberRepo.loadAllFriends(memrec.memberId);
     }
 
     // from SwiftlyService

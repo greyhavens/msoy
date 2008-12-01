@@ -202,7 +202,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 //            _sceneRepo.getOwnedScenes(member.memberId).iterator());
 
         // fill in this member's raw friends list; the friend manager will update it later
-        memobj.friends = new DSet<FriendEntry>(_memberRepo.loadFriends(member.memberId, -1));
+        memobj.friends = new DSet<FriendEntry>(_memberRepo.loadAllFriends(member.memberId));
 
         // load up this member's group memberships
         memobj.groups = new DSet<GroupMembership>(

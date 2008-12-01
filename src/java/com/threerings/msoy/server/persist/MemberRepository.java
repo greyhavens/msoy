@@ -951,8 +951,18 @@ public class MemberRepository extends DepotRepository
      * Loads the FriendEntry record for all friends of the specified member. The online status of
      * each friend will be false. The friends will be returned in order of most recently online to
      * least.
+     */
+    public List<FriendEntry> loadAllFriends (int memberId)
+    {
+        return loadFriends(memberId, 0);
+    }
+
+    /**
+     * Loads the FriendEntry record for some or all of the most recently online friends of the
+     * specified member. The online status of each friend will be false. The friends will be
+     * returned in order of most recently online to least.
      *
-     * @param limit a limit on the number of friends to load or 0 for all of them.
+     * @param limit the number of friends to load or 0 for all of them.
      */
     public List<FriendEntry> loadFriends (int memberId, int limit)
     {
