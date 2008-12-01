@@ -89,6 +89,23 @@ public class MsoySceneRepository extends DepotRepository
             }
         };
 
+        // Change 30,000 design your whirled contest furni to point to the non-Da monthly contest
+        registerMigration(new DataMigration("2008_12_1_redirect_design_contest_furnis") {
+            @Override public void invoke () throws DatabaseException {
+                // skip 200 which have been turned into doors etc
+                List<Key<SceneFurniRecord>> furniIds = findAllKeys(SceneFurniRecord.class, true,
+                    new Where(SceneFurniRecord.ITEM_ID_C, 33396,
+                        SceneFurniRecord.ACTION_TYPE_C, 1));
+
+                // update each one, changing the actionData
+                Object[] newValues = { "actionData",
+                    "http://www.whirled.com/#landing-designcontest||Enter the contest!" };
+                for (Key<SceneFurniRecord> furniId : furniIds) {
+                    updatePartial(furniId, newValues);
+                }
+            }
+        });
+
         // Remove broken "Decorate Tutorial" furnis from 20,000 old home rooms
         registerMigration(new DataMigration("2008_10_27_remove_decorate_tutorial_furnis") {
             @Override public void invoke () throws DatabaseException {
