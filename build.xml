@@ -1065,7 +1065,7 @@
 
   <!-- cleans out the compiled ActionScript code and caches -->
   <target name="asclean">
-    <delete><fileset dir="${asrc.dir}" includes="*.cache"/></delete>
+    <delete><fileset dir="${asrc.dir}" includes="**/*.cache"/></delete>
     <delete file="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as"/>
   </target>
 
