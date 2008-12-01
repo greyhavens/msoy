@@ -260,7 +260,7 @@
   color: white;
 }
 
-.searchControls .Tip {
+.searchControls .Tip, .searchControls .SeeGreeters a {
   font-size: 11px;
   white-space: nowrap;
   color: #B4E0F1;

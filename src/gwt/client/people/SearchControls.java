@@ -8,7 +8,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -46,10 +45,7 @@ public class SearchControls extends SmartTable
         setWidget(0, 0, action, 1, "Action");
         getFlexCellFormatter().setRowSpan(0, 0, 3);
 
-        FlowPanel bits = new FlowPanel();
-        //bits.add(MsoyUI.createLabel(_msgs.searchTitle(), "Title"));
-        bits.add(MsoyUI.createLabel(_msgs.searchTip(), "Tip"));
-        setWidget(0, 1, bits, 2, null);
+        setWidget(0, 1, MsoyUI.createLabel(_msgs.searchTip(), "Tip"), 2, null);
 
         setWidget(1, 0, _search = MsoyUI.createTextBox("", -1, -1), 1, null);
         _search.setWidth("200px");
@@ -68,7 +64,9 @@ public class SearchControls extends SmartTable
 
         setWidget(1, 2, WidgetUtil.makeShim(15, 15));
 
-        setWidget(2, 0, Link.create(_msgs.searchGreetersLink(), Pages.PEOPLE, "friendly"), 3, null);
+        Widget friendlyLink = Link.create(_msgs.searchGreetersLink(), Pages.PEOPLE, "friendly");
+        friendlyLink.setStyleName("SeeGreeters");
+        setWidget(2, 0, friendlyLink, 3, null);
     }
 
     public void setSearch (String query)
