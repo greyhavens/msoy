@@ -5,6 +5,103 @@
  */
 
 /* ------------------------------------
+   BLUE LANDING PAGE GENERAL DESIGN (SHARED)
+-------------------------------------*/
+
+/* Spans the entire width of the page */
+.BlueLandingPage {
+  background: #073448;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  color: #083b51;
+}
+.BlueLandingPage a {
+  color: #083b51;
+}
+
+.BlueLandingPage .Header {
+  margin: 0 auto;
+}
+
+.BlueLandingPage p {
+  margin: 10px 20px;
+  line-height: 15pt;
+}
+
+.BlueLandingPage ul {
+  line-height: 15pt;
+}
+
+.BlueLandingPage h3 {
+  font-size: 13pt;
+  font-weight: bold;
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  margin: 25px 0 10px 0;
+}
+
+.BlueLandingPage .Content {
+  background: url(/images/landing/blue_landing_content_bg.png) repeat-y top center;
+  width: 899px;
+  margin: 0 auto;
+  min-height: 100%;
+  padding-bottom: 20px;
+}
+
+.BlueLandingPage .Footer {
+  background-color: #76c4e7;
+  width: 100%;
+  height: 50px;
+  border-top: #caecfc 3px solid;
+  position: relative;
+}
+
+.BlueLandingPage .Footer .LandingCopyright {
+  margin: 10px auto;
+  background-color: transparent;
+}
+
+/* ------------------------------------
+   WIDE CONTENT BOX (SHARED)
+-------------------------------------*/
+
+.wideContentBox {
+  width: 809px;
+  margin: 15px auto;
+}
+
+.wideContentBox .BoxContent {
+  background: #FFFFFF url(/images/landing/wide_content_box_bg.png) repeat-y;
+  padding: 5px 20px;
+}
+
+.wideContentBox .BoxTop {
+  background: url(/images/landing/wide_content_box_top.png) no-repeat;
+  height: 12px;
+}
+
+.wideContentBox .BoxBottom {
+  background: url(/images/landing/wide_content_box_bottom.png) no-repeat;
+  height: 13px;
+}
+
+.wideContentBox .Title,
+.wideContentBox .TitleAlt {
+  font-size: 20pt;
+  font-weight: bold;
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  color: #ff752a;
+  margin: 0 0 10px 0;
+}
+
+.wideContentBox .TitleAlt {
+  color: #3595b7;
+}
+
+/* ------------------------------------
    LANDING PAGE
 -------------------------------------*/
 
@@ -458,13 +555,7 @@
    DEVIANT ART CONTEST WINNERS LANDING
 -------------------------------------*/
 
-/* Spans the entire width of the page */
 .daContestWinnersPanel {
-  background: #073448;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 15px;
   color: #2f7a83;
@@ -473,18 +564,10 @@
   color: #2f7a83;
   font-weight: bold;
 }
-
-.daContestWinnersPanel .Content {
-  background: url(/images/landing/contests/dawinners_content_bg.png) repeat-y top center;
-  width: 899px;
-  margin: auto;
-  min-height: 100%;
-}
-
+    
 .daContestWinnersPanel .Header {
   width: 882px;
   min-height: 364px;
-  margin: 0 auto;
   background: url(/images/landing/contests/dawinners_header_bg.png) repeat-y top center;
 }
 
@@ -547,87 +630,10 @@
    FLASH GAME CONTEST LANDING PAGE
 -------------------------------------*/
 
-/* Spans the entire width of the page */
-.gameContestPanel {
-  background-color: #073448;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 13px;
-  color: #083b51;
-}
-
-.gameContestPanel a {
-  color: #083b51;
-}
-
-.gameContestPanel p {
-  margin: 10px 20px;
-  line-height: 15pt;
-}
-
-.gameContestPanel ul {
-  line-height: 15pt;
-}
-
-.gameContestPanel h3 {
-  font-size: 13pt;
-  font-weight: bold;
-  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-  margin: 25px 0 10px 0;
-}
-
-.gameContestPanel .Title,
-.gameContestPanel .TitleAlt {
-  font-size: 20pt;
-  font-weight: bold;
-  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-  color: #ff752a;
-  margin: 0 0 10px 0;
-}
-
-.gameContestPanel .TitleAlt {
-  color: #3595b7;
-}
-
-.gameContestPanel .Content {
-  background: url(/images/landing/contests/gamecon_content_bg.png) repeat-y;
-  width: 899px;
-  margin: auto;
-  min-height: 100%;
-}
-
 .gameContestPanel .Header {
-  margin-left: 8px;
-  width: 881px;
+  width: 882px;
   height: 241px;
   background: url(/images/landing/contests/gamecon_header_bg.png) no-repeat;
-}
-
-.gameContestPanel .Footer {
-  background-color: #76c4e7;
-  width: 100%;
-  height: 50px;
-  border-top: #caecfc 3px solid;
-  position: relative;
-}
-
-.gameContestPanel .Footer .FooterContent {
-  width: 899px;
-  height: 50px;
-  margin: auto;
-}
-
-.gameContestPanel .Footer .FooterContent .FooterText {
-  width: 100%;
-  text-align: center;
-  color: #196e94;
-}
-.gameContestPanel .Footer .FooterContent .FooterText a {
-  color: #196e94;
-  text-decoration: none;
 }
 
 /* ------------------------------------
@@ -704,25 +710,11 @@
 }
 
 /* ------------------------------------
-   WIDE CONTENT BOX (SHARED)
+   DESIGN YOUR WHIRLED CONTEST LANDING
 -------------------------------------*/
 
-.wideContentBox {
-  width: 809px;
-  margin: 15px auto;
-}
-
-.wideContentBox .BoxContent {
-  background: #FFFFFF url(/images/landing/wide_content_box_bg.png) repeat-y;
-  padding: 5px 20px;
-}
-
-.wideContentBox .BoxTop {
-  background: url(/images/landing/wide_content_box_top.png) no-repeat;
-  height: 12px;
-}
-
-.wideContentBox .BoxBottom {
-  background: url(/images/landing/wide_content_box_bottom.png) no-repeat;
-  height: 13px;
+.designContestPanel .Header {
+  width: 882px;
+  height: 265px;
+  background: url(/images/landing/contests/designcon_header.png) no-repeat top center;
 }

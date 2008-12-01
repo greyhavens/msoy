@@ -12,13 +12,13 @@ import client.ui.MsoyUI;
 import client.util.Link;
 
 /**
- * Landing page for the Flash Game Developer Challenge. This is a full-width page.
+ * Landing page for the design your whirled room design contest.
  */
-public class GameContestPanel extends FlowPanel
+public class DesignContestPanel extends FlowPanel
 {
-    public GameContestPanel ()
+    public DesignContestPanel ()
     {
-        setStyleName("gameContestPanel");
+        setStyleName("designContestPanel");
         addStyleName("BlueLandingPage");
         FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
@@ -31,20 +31,17 @@ public class GameContestPanel extends FlowPanel
         header.add(MsoyUI.createActionImage("/images/landing/blue_landing_join_now.png",
             Link.createListener(Pages.ACCOUNT, "create")), 750, 0);
 
-        content.add(new WideContentBox(
-            _msgs.gameconOverviewTitle(), _msgs.gameconOverviewText(), false));
-        content.add(new WideContentBox(
-            _msgs.gameconPrizesTitle(), _msgs.gameconPrizesText(), true));
-        content.add(new WideContentBox(
-            _msgs.gameconDatesTitle(), _msgs.gameconDatesText(), false));
-        content.add(new WideContentBox(
-            _msgs.gameconConditionsTitle(), _msgs.gameconConditionsText(), true));
-        content.add(new WideContentBox(
-            _msgs.gameconEnterTitle(), _msgs.gameconEnterText(), false));
-        content.add(new WideContentBox(
-            _msgs.gameconJudgingTitle(), _msgs.gameconJudgingText(), true));
-        content.add(new WideContentBox(
-            _msgs.gameconRulesTitle(), _msgs.gameconRulesText(), false));
+        // instructions etc in white boxes
+        content.add(
+            new WideContentBox(_msgs.designconIntroTitle(), _msgs.designconIntroText(), false));
+        content.add(
+            new WideContentBox(_msgs.designconPrizesTitle(), _msgs.designconPrizesText(), true));
+        content.add(
+            new WideContentBox(_msgs.designconCreateTitle(), _msgs.designconCreateText(), false));
+        content.add(
+            new WideContentBox(_msgs.designconEnterTitle(), _msgs.designconEnterText(), true));
+        content.add(
+            new WideContentBox(_msgs.designconRulesTitle(), _msgs.designconRulesText(), false));
 
         // footer stretches full width, contains copyright info
         add(MsoyUI.createSimplePanel(new LandingCopyright(), "Footer"));

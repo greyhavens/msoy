@@ -27,6 +27,7 @@ public class LandingPage extends Page
     public static String DEVIANT_CONTEST = "dacontest";
     public static String DEVIANT_CONTEST_WINNERS = "dawinners";
     public static String GAME_CONTEST = "gamecontest";
+    public static String DESIGN_CONTEST = "designcontest";
     public static String LANDING_COMBINED = "combined";
     public static String LANDING_GAMES = "games";
     public static String LANDING_ROOMS = "rooms";
@@ -51,6 +52,10 @@ public class LandingPage extends Page
         // landing page for flash game developer contest
         } else if (action.equals(GAME_CONTEST)) {
             setContent(_msgs.titleGameContest(), new GameContestPanel());
+
+        // landing page for design your whirled contest
+        } else if (action.equals(DESIGN_CONTEST)) {
+            setContent(_msgs.titleDesignContest(), new DesignContestPanel());
 
         // combined (old) landing page
         } else if (action.equals(LANDING_COMBINED)) {

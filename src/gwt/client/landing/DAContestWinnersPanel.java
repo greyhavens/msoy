@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 
 import com.threerings.gwt.ui.FloatPanel;
-import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -24,6 +23,7 @@ public class DAContestWinnersPanel extends FlowPanel
     public DAContestWinnersPanel ()
     {
         setStyleName("daContestWinnersPanel");
+        addStyleName("BlueLandingPage");
         FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
 
@@ -97,7 +97,8 @@ public class DAContestWinnersPanel extends FlowPanel
         others.add(othersColumns);
         content.add(new WideContentBox(others));
 
-        content.add(WidgetUtil.makeShim(10, 10));
+        // footer stretches full width, contains copyright info
+        add(MsoyUI.createSimplePanel(new LandingCopyright(), "Footer"));
     }
 
     // scene ids of the winning and honorable mention rooms that we show images for
