@@ -81,10 +81,12 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         // browser request. However, there is no Referer, and Flash 9 doesn't allow you to spoof
         // one. So check that the Referrer is present, and for good measure, make sure it's coming
         // from on-site.
-        String referer = getThreadLocalRequest().getHeader("Referer");
-        if (referer == null || !referer.startsWith(DeploymentConfig.serverURL)) {
-            log.info("Rejected request that contained invalid referer.", "referer", referer);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        if (CHECK_REFERRER) {
+            String referer = getThreadLocalRequest().getHeader("Referer");
+            if (referer == null || !referer.startsWith(DeploymentConfig.serverURL)) {
+                log.info("Rejected request that contained invalid referer.", "referer", referer);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
         }
 
         return mrec;
@@ -187,4 +189,8 @@ public class MsoyServiceServlet extends RemoteServiceServlet
 
     /** Whether or not RPC profiling is enabled. */
     protected static final boolean PROFILING_ENABLED = true;
+
+    /** Whether or not to skip our referrer check. The GWT shell always reports a null referrer, so
+     * we need to skip the check when we're testing with the shell. */
+    protected static final boolean CHECK_REFERRER = !Boolean.getBoolean("skip_check_referrer");
 }
