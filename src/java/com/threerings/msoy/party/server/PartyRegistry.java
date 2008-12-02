@@ -25,12 +25,11 @@ import com.threerings.msoy.party.data.PartyObject;
 
 @Singleton
 public class PartyRegistry
-    implements PartyProvider
 {
     @Inject public PartyRegistry (InvocationManager invmgr)
     {
         //System.err.println("===================== PartyRegistry started");
-        invmgr.registerDispatcher(new PartyDispatcher(this));
+//        invmgr.registerDispatcher(new PartyDispatcher(this));
     }
 
     public void init ()
@@ -86,8 +85,8 @@ public class PartyRegistry
         int partyId = 1; // TODO
 
         PartyObject pobj = _omgr.registerObject(new PartyObject());
-        pobj.name = name;
-        pobj.partyId = partyId;
+//        pobj.name = name;
+        pobj.id = partyId;
 
         pobj.setAccessController(_partyAccessController);
 

@@ -14,8 +14,8 @@ public class PartyObject extends DObject
     /** The field name of the <code>mates</code> field. */
     public static const MATES :String = "mates";
 
-    /** The field name of the <code>partyId</code> field. */
-    public static const PARTY_ID :String = "partyId";
+    /** The field name of the <code>id</code> field. */
+    public static const ID :String = "id";
 
     /** The field name of the <code>leaderId</code> field. */
     public static const LEADER_ID :String = "leaderId";
@@ -34,7 +34,7 @@ public class PartyObject extends DObject
     public var mates :DSet; // of VizMemberName
 
     /** This party's guid. */
-    public var partyId :int;
+    public var id :int;
 
     /** The member ID of the current leader. */
     public var leaderId :int;
@@ -53,12 +53,11 @@ public class PartyObject extends DObject
         super.readObject(ins);
 
         mates = DSet(ins.readObject());
-        partyId = ins.readInt();
+        id = ins.readInt();
         leaderId = ins.readInt();
         sceneId = ins.readInt();
         status = (ins.readField(String) as String);
         recruiting = ins.readByte();
     }
 }
-
 }

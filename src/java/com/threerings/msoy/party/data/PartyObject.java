@@ -14,8 +14,8 @@ public class PartyObject extends DObject
     /** The field name of the <code>mates</code> field. */
     public static final String MATES = "mates";
 
-    /** The field name of the <code>partyId</code> field. */
-    public static final String PARTY_ID = "partyId";
+    /** The field name of the <code>id</code> field. */
+    public static final String ID = "id";
 
     /** The field name of the <code>leaderId</code> field. */
     public static final String LEADER_ID = "leaderId";
@@ -34,7 +34,7 @@ public class PartyObject extends DObject
     public DSet<VizMemberName> mates = new DSet<VizMemberName>();
 
     /** This party's guid. */
-    public int partyId;
+    public int id;
 
     /** The member ID of the current leader. */
     public int leaderId;
@@ -97,19 +97,19 @@ public class PartyObject extends DObject
     }
 
     /**
-     * Requests that the <code>partyId</code> field be set to the
+     * Requests that the <code>id</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setPartyId (int value)
+    public void setId (int value)
     {
-        int ovalue = this.partyId;
+        int ovalue = this.id;
         requestAttributeChange(
-            PARTY_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.partyId = value;
+            ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.id = value;
     }
 
     /**
