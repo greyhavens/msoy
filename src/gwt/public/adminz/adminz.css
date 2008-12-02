@@ -262,3 +262,15 @@
 .contestsEditor .contestBox-past {
   background-color: #61ABD0;
 }
+
+/* ------------------------------------
+   StatsPanel
+-------------------------------------*/
+
+.statsPanel .Controls {
+  padding: 10px;
+}
+
+.statsPanel .Controls div, .statsPanel .Controls select {
+  margin-right: 5px;
+}

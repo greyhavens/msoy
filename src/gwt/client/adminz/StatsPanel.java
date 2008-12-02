@@ -4,7 +4,9 @@
 package client.adminz;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -15,6 +17,7 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.StatsModel;
 
+import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -28,21 +31,29 @@ public class StatsPanel extends FlowPanel
         addStyleName("statsPanel");
 
         _controls = new FlowPanel();
+        _controls.setStyleName("Controls");
+        _controls.add(MsoyUI.createLabel(_msgs.statsType(), "inline"));
         _controls.add(_types = new ListBox());
         for (StatsModel.Type type : StatsModel.Type.values()) {
             _types.addItem(type.toString());
         }
         _types.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
-                String tstr = _types.getItemText(_types.getSelectedIndex());
-                selectReport(Enum.valueOf(StatsModel.Type.class, tstr));
+                refresh();
             }
         });
+        _controls.add(new Button(_msgs.statsRefresh(), new ClickListener() {
+            public void onClick (Widget sender) {
+                refresh();
+            }
+        }));
         add(_controls);
     }
 
-    protected void selectReport (final StatsModel.Type type)
+    protected void refresh ()
     {
+        String tstr = _types.getItemText(_types.getSelectedIndex());
+        final StatsModel.Type type = Enum.valueOf(StatsModel.Type.class, tstr);
         _adminsvc.getStatsModel(type, new MsoyCallback<StatsModel>() {
             public void onSuccess (StatsModel model) {
                 displayReport(type, model);
