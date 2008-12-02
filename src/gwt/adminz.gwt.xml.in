@@ -5,6 +5,11 @@
   <inherits name='org.gwt.advanced.Grid'/>
   <stylesheet src="aw-theme.css"/>
 
+  <!-- for the incubator ScrollTable -->
+  <inherits name='com.google.gwt.widgetideas.WidgetIdeas'/>
+  <inherits name='com.google.gwt.widgetideas.ScrollTable'/>
+  <stylesheet src='scrolltable.css'/>
+
   <source path="com/threerings/msoy/admin/gwt"/>
   <source path="com/threerings/msoy/money/data/all"/>
   <source path="com/threerings/msoy/money/gwt"/>

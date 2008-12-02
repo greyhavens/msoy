@@ -1,0 +1,96 @@
+/**
+ * GWT Incubator ScrollTable
+ */
+.gwt-ScrollTable {
+  border-top: 1px solid;
+  border-left: 1px solid;
+  border-bottom: 1px solid;
+  border-collapse: collapse;
+}
+
+.gwt-ScrollTable .headerWrapper {
+  background: #80b0d0;
+}
+
+.gwt-ScrollTable .footerWrapper {
+  border-top: 1px solid #aaaaaa;
+  background: #80b0d0;
+}
+
+.gwt-ScrollTable .dataTable td,
+.gwt-ScrollTable .headerTable td,
+.gwt-ScrollTable .footerTable td {
+  border-right: 1px solid #000000;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.gwt-ScrollTable .headerTable td,
+.gwt-ScrollTable .footerTable td {
+  color: #fff;
+}
+
+.gwt-ScrollTable .dataTable td {
+  border-right: 1px solid;
+  border-top: 1px solid;
+}
+
+.gwt-ScrollTable .dataTable tr.hovering {
+  background: #C3D9FF;
+}
+
+.gwt-ScrollTable .dataTable td.hovering {
+  border: 1px solid blue;
+  cursor: hand;
+  cursor: pointer;
+}
+
+.gwt-ScrollTable .dataTable tr.selected {
+  background: #7AA5D6;
+}
+
+.gwt-ScrollTable .pagingOptions {
+  background: #e8eef7;
+  border-top: 1px solid #aaaaaa;
+  border-right: 1px solid #aaaaaa;
+  padding: 1px 0px;
+}
+
+.gwt-ScrollTable .pagingOptions .errorLabel {
+  color: red;
+}
+
+.gwt-CellEditor {
+  border: 3px solid #7AA5D6;
+  padding: 4px;
+  background: white;
+}
+.gwt-CellEditor td {
+  padding: 4px;
+}
+
+/**
+ * GWT Incubator TabPanel
+ */
+.gwt-TabBar {
+}
+.gwt-TabBar .gwt-TabBarFirst {
+  border-right: 1px solid blue;
+}
+.gwt-TabBar .gwt-TabBarRest {
+}
+.gwt-TabBar .gwt-TabBarItem {
+  padding: 7px;
+  background: #EEEEEE;
+  border-right: 1px solid blue;
+  border-top: 1px solid blue;
+}
+.gwt-TabBar .gwt-TabBarItem-selected {
+  background: #FFFF00;
+}
+.gwt-TabPanel {
+}
+.gwt-TabPanelBottom {
+  padding: 5px;
+  border: 2px solid blue;
+}

@@ -8,8 +8,13 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.google.gwt.widgetideas.table.client.FixedWidthFlexTable;
+import com.google.gwt.widgetideas.table.client.FixedWidthGrid;
+import com.google.gwt.widgetideas.table.client.ScrollTable;
 
 import com.threerings.gwt.ui.SmartTable;
 
@@ -17,6 +22,7 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.StatsModel;
 
+import client.shell.Frame;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -65,16 +71,37 @@ public class StatsPanel extends FlowPanel
     {
         clear();
         add(_controls);
-        SmartTable table = new SmartTable(null, 0, 10);
-        table.setText(0, 0, model.getTitleHeader());
+
+        // set up the header
+        FixedWidthFlexTable header = new FixedWidthFlexTable();
+        header.setCellSpacing(0);
+        header.setText(0, 0, model.getTitleHeader());
         for (int cc = 0, lc = model.getColumns(); cc < lc; cc++) {
-            table.setText(0, cc+1, model.getColumnHeader(cc));
+            header.setText(0, cc+1, model.getColumnHeader(cc));
+            header.getCellFormatter().setHorizontalAlignment(0, cc+1, HasAlignment.ALIGN_CENTER);
         }
+
+        // set up the table contents
+        FixedWidthGrid data = new FixedWidthGrid();
+        data.setCellSpacing(0);
         for (int rr = 0, lr = model.getRows(); rr < lr; rr++) {
-            table.setText(rr+1, 0, model.getRowTitle(rr));
+            data.setText(rr, 0, model.getRowTitle(rr));
             for (int cc = 0, lc = model.getColumns(); cc < lc; cc++) {
-                table.setText(rr+1, cc+1, ""+model.getCell(rr, cc).value(model));
+                data.setText(rr, cc+1, ""+model.getCell(rr, cc).value(model));
+                data.getCellFormatter().setHorizontalAlignment(rr, cc+1, HasAlignment.ALIGN_RIGHT);
             }
+        }
+
+        // create our table
+        ScrollTable table = new ScrollTable(data, header);
+        table.setSortingEnabled(true);
+        table.setResizePolicy(ScrollTable.ResizePolicy.UNCONSTRAINED);
+        table.setScrollPolicy(ScrollTable.ScrollPolicy.HORIZONTAL);
+        int availwid = Frame.CONTENT_WIDTH - 11 - (model.getColumns()+1)*3; // border, colgap
+        int colwid = Math.min(100, Math.max(DATA_WIDTH, (availwid-200)/model.getColumns()));
+        table.setColumnWidth(0, Math.max(100, availwid - (model.getColumns() * colwid)));
+        for (int cc = 0; cc < model.getColumns(); cc++) {
+            table.setColumnWidth(cc+1, colwid);
         }
         add(table);
     }
@@ -85,4 +112,6 @@ public class StatsPanel extends FlowPanel
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
         ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
+
+    protected static final int DATA_WIDTH = 50;
 }

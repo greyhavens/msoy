@@ -267,8 +267,12 @@
    StatsPanel
 -------------------------------------*/
 
+.statsPanel {
+  padding: 5px;
+}
+
 .statsPanel .Controls {
-  padding: 10px;
+  padding: 5px;
 }
 
 .statsPanel .Controls div, .statsPanel .Controls select {
