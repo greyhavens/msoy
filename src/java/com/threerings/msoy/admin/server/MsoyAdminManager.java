@@ -4,12 +4,10 @@
 package com.threerings.msoy.admin.server;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -37,7 +35,6 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.RebootManager;
 import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -45,6 +42,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.web.server.RPCProfiler;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.money.server.MoneyExchange;
@@ -87,6 +85,7 @@ public class MsoyAdminManager
         _collectors.put(StatsModel.Type.DEPOT, new DepotStatCollector(_perCtx));
         _collectors.put(StatsModel.Type.DEPOT_QUERIES, new DepotQueriesStatCollector(_perCtx));
         _collectors.put(StatsModel.Type.CACHE, new CacheStatCollector(cacheMgr));
+        _collectors.put(StatsModel.Type.RPC, new RPCStatCollector(_rpcProfiler));
     }
 
     /**
@@ -252,6 +251,7 @@ public class MsoyAdminManager
 
     @Inject protected RuntimeConfig _runtime;
     @Inject protected PersistenceContext _perCtx;
+    @Inject protected RPCProfiler _rpcProfiler;
     @Inject protected ShutdownManager _shutmgr;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyEventLogger _eventLog;

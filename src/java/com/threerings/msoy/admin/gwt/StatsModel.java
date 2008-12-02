@@ -14,7 +14,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class StatsModel implements IsSerializable
 {
-    public static enum Type { DEPOT, DEPOT_QUERIES, CACHE };
+    public static enum Type { DEPOT, DEPOT_QUERIES, CACHE, RPC };
 
     public static abstract class Cell implements IsSerializable {
         public abstract long value (StatsModel model);

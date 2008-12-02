@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.admin.server;
 
+import com.threerings.io.Streamable;
 import com.threerings.presents.util.FutureResult;
 
 import com.threerings.msoy.admin.client.PeerAdminService;
@@ -53,7 +54,7 @@ public abstract class StatCollector
 
     /**
      * Called on each server node to compile the desired statistics. The returned result must be a
-     * {@link Stremaable} or a primitive type that can be sent over the wire.
+     * {@link Streamable} or a primitive type that can be sent over the wire.
      */
     public abstract Object compileStats ();
 
