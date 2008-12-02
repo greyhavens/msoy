@@ -210,6 +210,8 @@ public class ComposePanel extends FlowPanel
     protected MailPayload _payload;
 
     protected ListBox _friendBox;
+    // TODO: make this a list of MemberName instead, then request the recipient member card only
+    // when the user selects a name.
     protected List<MemberCard> _friends;
 
     protected TextBox _subject;

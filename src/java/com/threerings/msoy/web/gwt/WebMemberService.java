@@ -48,6 +48,8 @@ public interface WebMemberService extends RemoteService
     /**
      * Loads up all friends for the specified member, optionally including some greeters if the
      * friend count is very low.
+     * TODO: this is an unbounded query. Include offset and limit parameters and implement paging
+     * on the server.
      */
     FriendsResult loadFriends (int memberId, boolean padWithGreeters)
         throws ServiceException;
