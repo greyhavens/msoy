@@ -139,7 +139,7 @@ public class StatsModel implements IsSerializable
     }
 
     /**
-     * Adds a row to a model been created with {@link #newRowModel}.
+     * Adds a row to a model been created with {@link #newColumnModel}.
      */
     public void addRow (String title, Cell... cells)
     {
@@ -158,7 +158,7 @@ public class StatsModel implements IsSerializable
     }
 
     /**
-     * Adds a column to a model been created with {@link #newColumnModel}.
+     * Adds a column to a model been created with {@link #newRowModel}.
      */
     public void addColumn (String header, Cell... cells)
     {
@@ -194,8 +194,8 @@ public class StatsModel implements IsSerializable
 
     protected static class PercentCell extends Cell {
         public long value (StatsModel model) {
-            long part = _part.value(model);
-            return 100 * part / (part + _remainder.value(model));
+            long part = _part.value(model), denom = (part + _remainder.value(model));
+            return (denom == 0) ? 0 : 100 * part / denom;
         }
         protected Cell _part, _remainder;
     }
