@@ -74,7 +74,7 @@ public class MsoyMediaContainer extends MediaContainer
     // TODO: doc
     public function isBlocked () :Boolean
     {
-        return Prefs.isMediaBlocked(_desc.getMediaId());
+        return isBlockable() && Prefs.isMediaBlocked(_desc.getMediaId());
     }
 
     // TODO: doc
