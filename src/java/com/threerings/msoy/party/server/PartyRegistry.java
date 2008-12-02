@@ -10,6 +10,7 @@ import com.samskivert.util.HashIntMap;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
@@ -19,78 +20,88 @@ import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyObject;
 
 // import com.threerings.msoy.data.MemberObject;
 
 @Singleton
 public class PartyRegistry
+    implements PartyBoardProvider
 {
     @Inject public PartyRegistry (InvocationManager invmgr)
     {
-        //System.err.println("===================== PartyRegistry started");
-//        invmgr.registerDispatcher(new PartyDispatcher(this));
+        invmgr.registerDispatcher(new PartyBoardDispatcher(this), MsoyCodes.MEMBER_GROUP);
     }
 
+    /**
+     * Called to initialize the PartyRegistry after server startup.
+     */
     public void init ()
     {
+        // nada, presently
     }
 
-    // from PartyProvider
+    // from PartyBoardProvider
+    public void getPartyBoard (
+        ClientObject caller, String query, InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        MemberObject member = (MemberObject)caller;
+
+        System.err.println("Asked for the party board: " + member.who());
+
+        // TODO!
+        throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+    }
+
+    // from PartyBoardProvider
     public void joinParty (ClientObject caller, int partyId, InvocationService.ResultListener rl)
         throws InvocationException
     {
-//         MemberObject member = (MemberObject)caller;
+        MemberObject member = (MemberObject)caller;
 
-        PartyObject pobj = _parties.get(partyId);
+        // TODO!
+        throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
 
-        // TODO: Don't create a party if the partyId isn't found
-        if (pobj == null) {
-            startParty(caller, "hi", rl);
-            pobj = _parties.get(partyId);
-        }
-
-        // TODO: Validate permission to join party
-
-//        member.setPartyId(partyId);
-
-        rl.requestProcessed(pobj.getOid());
-    }
-
-    // from PartyProvider
-    public void leaveParty (ClientObject caller, InvocationService.ConfirmListener cl)
-        throws InvocationException
-    {
-//        MemberObject member = (MemberObject)caller;
+//        PartyObject pobj = _parties.get(partyId);
 //
-//        if (member.partyId == 0) {
-//            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
-//        }
-//
-//        PartyObject pobj = _parties.get(member.partyId);
-//
+//        // TODO: Don't create a party if the partyId isn't found
 //        if (pobj == null) {
-//            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+//            startParty(caller, "hi", rl);
+//            pobj = _parties.get(partyId);
 //        }
 //
-//        member.setPartyId(0);
-
-        cl.requestProcessed();
+//        // TODO: Validate permission to join party
+//
+////        member.setPartyId(partyId);
     }
 
     // from PartyProvider
-    public void startParty (ClientObject caller, String name, InvocationService.ResultListener rl)
+    public void createParty (
+        ClientObject caller, String name, int groupId, InvocationService.ResultListener rl)
         throws InvocationException
     {
-        int partyId = 1; // TODO
+        MemberObject member = (MemberObject)caller;
 
-        PartyObject pobj = _omgr.registerObject(new PartyObject());
-//        pobj.name = name;
-        pobj.id = partyId;
+        // TODO!
+        throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
 
-        pobj.setAccessController(_partyAccessController);
-
-        _parties.put(partyId, pobj);
+//        // TODO!
+//        throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+//
+//        int partyId = 1; // TODO
+//
+//        PartyObject pobj = _omgr.registerObject(new PartyObject());
+////        pobj.name = name;
+//        pobj.id = partyId;
+//
+//        pobj.setAccessController(_partyAccessController);
+//
+//        _parties.put(partyId, pobj);
 
         // TODO: Call joinParty here to add the caller to the new party
         // After joinParty doesn't call on startParty

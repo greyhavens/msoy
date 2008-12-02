@@ -43,6 +43,18 @@ public interface MsoyCodes extends InvocationCodes
     /** The translation message bundle for our room editing messages. */
     public static final String EDITING_MSGS = "editing";
 
+    /** The translation message bundle for our passport messages. */
+    public static final String PASSPORT_MSGS = "passport";
+
+    /** The translation message bundle for our party messages. */
+    public static final String PARTY_MSGS = "party";
+
+    /** The translation message bundle for our studio messages. */
+    public static final String STUDIO_MSGS = "studio";
+
+    /** The translation message bundle for our home page grid messages. */
+    public static final String HOME_PAGE_GRID_MSGS = "homepagegrid";
+
     /** The translation message bundle for our group services. */
     public static final String GROUP_MSGS = "group";
 

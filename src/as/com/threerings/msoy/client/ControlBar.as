@@ -219,6 +219,12 @@ public class ControlBar extends HBox
 
         _avrgBtn = createButton("controlBarAVRGButton", "i.avrg");
         _avrgBtn.setCommand(WorldController.POP_AVRG_MENU, _avrgBtn);
+
+        _partyBtn = createButton("controlBarPartyButton", "i.party");
+        _partyBtn.toggle = true;
+        _partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+            return _ctx.getPartyDirector().createAppropriatePartyPanel();
+        }, _partyBtn));
     }
 
     protected function createButton (style :String, tipKey :String) :CommandButton
@@ -282,6 +288,10 @@ public class ControlBar extends HBox
         addButton(_shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
         addButton(_commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
         addButton(_avrgBtn, [ UI_AVRGAME ], PLACE_PRIORITY + 1);
+
+        if (DeploymentConfig.devDeployment) {
+            addButton(_partyBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], DEFAULT_PRIORITY);
+        }
 
         if (_notificationDisplay != null) {
             addControl(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ],
@@ -444,6 +454,9 @@ public class ControlBar extends HBox
 
     /** Indicates AVRG media loading and handles AVRG menu. */
     protected var _avrgBtn :CommandButton;
+
+    /** Handles the two party-related popups. */
+    protected var _partyBtn :CommandButton;
 
     /** Displays incoming notifications. */
     protected var _notificationDisplay :NotificationDisplay;

@@ -46,6 +46,9 @@ public class MsoyCodes extends InvocationCodes
     /** Identifies our passport message bundle. */
     public static const PASSPORT_MSGS :String = "passport";
 
+    /** Identifies our party message bundle. */
+    public static const PARTY_MSGS :String = "party";
+
     /** Identifies our studio message bundle. */
     public static const STUDIO_MSGS :String = "studio";
 

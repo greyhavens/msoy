@@ -73,6 +73,12 @@ public class Msgs
         return _passport;
     }
 
+    /** The party message bundle. */
+    public static function get PARTY () :MessageBundle
+    {
+        return _party;
+    }
+
     /** The home page grid message bundle. */
     public static function get HOME_PAGE_GRID () :MessageBundle
     {
@@ -98,6 +104,7 @@ public class Msgs
         _prefs = msgMgr.getBundle(MsoyCodes.PREFS_MSGS);
         _studio = msgMgr.getBundle(MsoyCodes.STUDIO_MSGS);
         _passport = msgMgr.getBundle(MsoyCodes.PASSPORT_MSGS);
+        _party = msgMgr.getBundle(MsoyCodes.PARTY_MSGS);
         _homePageGrid = msgMgr.getBundle(MsoyCodes.HOME_PAGE_GRID_MSGS);
     }
 
@@ -111,6 +118,7 @@ public class Msgs
     protected static var _prefs :MessageBundle;
     protected static var _studio :MessageBundle;
     protected static var _passport :MessageBundle;
+    protected static var _party :MessageBundle;
     protected static var _homePageGrid :MessageBundle;
 }
 }
