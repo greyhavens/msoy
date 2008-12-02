@@ -6,13 +6,11 @@ package com.threerings.msoy.party.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
-import com.threerings.msoy.party.data.PartyInfo;
-
 public interface PartyBoardService extends InvocationService
 {
     /**
      * Retrieve a list of parties.
-     * @return an array of PartyInfo objects.
+     * @returns an array of PartyInfo objects.
      */
     void getPartyBoard (Client client, String query, ResultListener rl);
 

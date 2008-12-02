@@ -23,7 +23,6 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyObject;
 
 // import com.threerings.msoy.data.MemberObject;

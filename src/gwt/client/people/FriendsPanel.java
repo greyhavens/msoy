@@ -21,7 +21,7 @@ import client.util.ServiceUtil;
 /**
  * Displays all of a member's friends. Allows a member to edit their friends list.
  * TODO: implement using a ServiceBackedDataModel so the server is not performing an unbounded
- * querying (see {@link WebMemberService#loadFriends()}). 
+ * querying (see {@link WebMemberService#loadFriends}). 
  */
 public class FriendsPanel extends FlowPanel
 {
