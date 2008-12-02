@@ -45,15 +45,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class StatusServlet extends HttpServlet
 {
-    /** A report on our cache performance. */
-    public static final String CACHE_TYPE = "cache";
-
-    /** A report on Depot performance. */
-    public static final String DEPOT_TYPE = "depot";
-
-    /** A report on RPC method calls. */
-    public static final String RPC_TYPE = "rpc";
-
     @Override // from HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
@@ -181,18 +172,6 @@ public class StatusServlet extends HttpServlet
             collectReportInfo(info, client, nodeobj, ReportManager.DEFAULT_TYPE);
             break;
 
-        case CACHE:
-            collectReportInfo(info, client, nodeobj, CACHE_TYPE);
-            break;
-
-        case DEPOT:
-            collectReportInfo(info, client, nodeobj, DEPOT_TYPE);
-            break;
-
-        case RPC:
-            collectReportInfo(info, client, nodeobj, RPC_TYPE);
-            break;
-
         case NONE:
             // leave details as null in this case
             break;
@@ -238,7 +217,7 @@ public class StatusServlet extends HttpServlet
     }
 
     protected static enum Details {
-        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, CACHE, DEPOT, RPC
+        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT
     };
 
     protected static class ServerInfo
