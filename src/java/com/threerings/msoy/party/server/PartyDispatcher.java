@@ -35,21 +35,15 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
         throws InvocationException
     {
         switch (methodId) {
-        case PartyMarshaller.JOIN_PARTY:
-            ((PartyProvider)provider).joinParty(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+        case PartyMarshaller.BOOT_MEMBER:
+            ((PartyProvider)provider).bootMember(
+                source, (InvocationService.ConfirmListener)args[0]
             );
             return;
 
         case PartyMarshaller.LEAVE_PARTY:
             ((PartyProvider)provider).leaveParty(
                 source, (InvocationService.ConfirmListener)args[0]
-            );
-            return;
-
-        case PartyMarshaller.START_PARTY:
-            ((PartyProvider)provider).startParty(
-                source, (String)args[0], (InvocationService.ResultListener)args[1]
             );
             return;
 

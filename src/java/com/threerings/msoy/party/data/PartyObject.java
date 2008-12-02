@@ -6,6 +6,8 @@ package com.threerings.msoy.party.data;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.msoy.data.VizMemberName;
+
 public class PartyObject extends DObject
 {
     // AUTO-GENERATED: FIELDS START
@@ -15,15 +17,36 @@ public class PartyObject extends DObject
     /** The field name of the <code>partyId</code> field. */
     public static final String PARTY_ID = "partyId";
 
-    /** The field name of the <code>name</code> field. */
-    public static final String NAME = "name";
+    /** The field name of the <code>leaderId</code> field. */
+    public static final String LEADER_ID = "leaderId";
+
+    /** The field name of the <code>sceneId</code> field. */
+    public static final String SCENE_ID = "sceneId";
+
+    /** The field name of the <code>status</code> field. */
+    public static final String STATUS = "status";
+
+    /** The field name of the <code>recruiting</code> field. */
+    public static final String RECRUITING = "recruiting";
     // AUTO-GENERATED: FIELDS END
 
-    public DSet<PartymateEntry> mates = new DSet<PartymateEntry>();
+    /** The list of people in this party. */
+    public DSet<VizMemberName> mates = new DSet<VizMemberName>();
 
+    /** This party's guid. */
     public int partyId;
 
-    public String name;
+    /** The member ID of the current leader. */
+    public int leaderId;
+
+    /** The current location of the party. */
+    public int sceneId;
+
+    /** Customizable flavor text. */
+    public String status;
+
+    /** TODO: Doc. */
+    public byte recruiting;
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -31,7 +54,7 @@ public class PartyObject extends DObject
      * <code>mates</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToMates (PartymateEntry elem)
+    public void addToMates (VizMemberName elem)
     {
         requestEntryAdd(MATES, mates, elem);
     }
@@ -51,7 +74,7 @@ public class PartyObject extends DObject
      * <code>mates</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateMates (PartymateEntry elem)
+    public void updateMates (VizMemberName elem)
     {
         requestEntryUpdate(MATES, mates, elem);
     }
@@ -66,10 +89,10 @@ public class PartyObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMates (DSet<PartymateEntry> value)
+    public void setMates (DSet<VizMemberName> value)
     {
         requestAttributeChange(MATES, value, this.mates);
-        DSet<PartymateEntry> clone = (value == null) ? null : value.typedClone();
+        DSet<VizMemberName> clone = (value == null) ? null : value.typedClone();
         this.mates = clone;
     }
 
@@ -90,19 +113,67 @@ public class PartyObject extends DObject
     }
 
     /**
-     * Requests that the <code>name</code> field be set to the
+     * Requests that the <code>leaderId</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setName (String value)
+    public void setLeaderId (int value)
     {
-        String ovalue = this.name;
+        int ovalue = this.leaderId;
         requestAttributeChange(
-            NAME, value, ovalue);
-        this.name = value;
+            LEADER_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.leaderId = value;
+    }
+
+    /**
+     * Requests that the <code>sceneId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setSceneId (int value)
+    {
+        int ovalue = this.sceneId;
+        requestAttributeChange(
+            SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.sceneId = value;
+    }
+
+    /**
+     * Requests that the <code>status</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setStatus (String value)
+    {
+        String ovalue = this.status;
+        requestAttributeChange(
+            STATUS, value, ovalue);
+        this.status = value;
+    }
+
+    /**
+     * Requests that the <code>recruiting</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setRecruiting (byte value)
+    {
+        byte ovalue = this.recruiting;
+        requestAttributeChange(
+            RECRUITING, Byte.valueOf(value), Byte.valueOf(ovalue));
+        this.recruiting = value;
     }
     // AUTO-GENERATED: METHODS END
 }

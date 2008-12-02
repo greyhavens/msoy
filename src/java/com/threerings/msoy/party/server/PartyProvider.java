@@ -15,20 +15,14 @@ import com.threerings.presents.server.InvocationProvider;
 public interface PartyProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link PartyService#joinParty} request.
+     * Handles a {@link PartyService#bootMember} request.
      */
-    void joinParty (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+    void bootMember (ClientObject caller, InvocationService.ConfirmListener arg1)
         throws InvocationException;
 
     /**
      * Handles a {@link PartyService#leaveParty} request.
      */
     void leaveParty (ClientObject caller, InvocationService.ConfirmListener arg1)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link PartyService#startParty} request.
-     */
-    void startParty (ClientObject caller, String arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 }

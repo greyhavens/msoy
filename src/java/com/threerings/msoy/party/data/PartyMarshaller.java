@@ -18,16 +18,16 @@ import com.threerings.presents.data.InvocationMarshaller;
 public class PartyMarshaller extends InvocationMarshaller
     implements PartyService
 {
-    /** The method id used to dispatch {@link #joinParty} requests. */
-    public static final int JOIN_PARTY = 1;
+    /** The method id used to dispatch {@link #bootMember} requests. */
+    public static final int BOOT_MEMBER = 1;
 
     // from interface PartyService
-    public void joinParty (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void bootMember (Client arg1, InvocationService.ConfirmListener arg2)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, JOIN_PARTY, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, BOOT_MEMBER, new Object[] {
+            listener2
         });
     }
 
@@ -41,19 +41,6 @@ public class PartyMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(arg1, LEAVE_PARTY, new Object[] {
             listener2
-        });
-    }
-
-    /** The method id used to dispatch {@link #startParty} requests. */
-    public static final int START_PARTY = 3;
-
-    // from interface PartyService
-    public void startParty (Client arg1, String arg2, InvocationService.ResultListener arg3)
-    {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, START_PARTY, new Object[] {
-            arg2, listener3
         });
     }
 }
