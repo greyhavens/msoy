@@ -633,7 +633,7 @@ public class ForumServlet extends MsoyServiceServlet
     {
         SceneRecord srec = _sceneRepo.loadScene(sceneId);
         return (srec == null) ? null :
-            MessageUtil.makeBox(token, srec.getSnapshot(), MediaDesc.SNAPSHOT_FULL_SIZE, srec.name);
+            MessageUtil.makeBox(token, srec.getSnapshot(), MediaDesc.SNAPSHOT_THUMB_SIZE, srec.name);
     }
 
     protected Pattern _urlPattern = Pattern.compile(

@@ -198,7 +198,8 @@ public class MessageUtil
             int cols;
             switch (boxes.get(0).size) {
             case MediaDesc.THUMBNAIL_SIZE: cols = 4; break;
-            case MediaDesc.GAME_SHOT_SIZE: cols = 2; break;
+            case MediaDesc.GAME_SHOT_SIZE:
+            case MediaDesc.SNAPSHOT_THUMB_SIZE: cols = 2; break;
             default:
             case MediaDesc.SNAPSHOT_FULL_SIZE: cols = 1; break;
             }
