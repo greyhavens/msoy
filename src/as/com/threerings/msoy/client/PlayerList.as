@@ -13,16 +13,16 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.msoy.data.all.PeerEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.PeerEntry;
 
 import com.threerings.msoy.client.MsoyContext;
 
-/** Displays a pretty list of peers, for use in popup friends and party lists. */
-public class PeerList extends List
+/** Displays a pretty list of players, for use in popup friends and party lists. */
+public class PlayerList extends List
     implements SetListener
 {
-    public function PeerList (mctx :MsoyContext, field :String, renderer :Class)
+    public function PlayerList (mctx :MsoyContext, field :String, renderer :Class)
     {
         _field = field;
 
@@ -45,12 +45,12 @@ public class PeerList extends List
         dataProvider.refresh();
     }
 
-    public function init (peers :Array) :void
+    public function init (players :Array) :void
     {
         dataProvider.removeAll();
 
-        for each (var peer :PeerEntry in peers) {
-            addPeer(peer);
+        for each (var player :PeerEntry in players) {
+            addPlayer(player);
         }
     }
 
@@ -58,7 +58,7 @@ public class PeerList extends List
     public function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == _field) {
-            addPeer(event.getEntry() as PeerEntry);
+            addPlayer(event.getEntry() as PeerEntry);
         }
     }
 
@@ -70,7 +70,7 @@ public class PeerList extends List
             var oldEntry :PeerEntry = event.getOldEntry() as PeerEntry;
 
             removePeer(oldEntry);
-            addPeer(newEntry);
+            addPlayer(newEntry);
         }
     }
 
@@ -82,22 +82,21 @@ public class PeerList extends List
         }
     }
 
-    protected function addPeer (peer :PeerEntry) :void
+    protected function addPlayer (player :PeerEntry) :void
     {
-        if ( ! dataProvider.contains(peer)) {
-            dataProvider.addItem(peer);
+        if ( ! dataProvider.contains(player)) {
+            dataProvider.addItem(player);
         }
     }
 
-    protected function removePeer (peer :PeerEntry) :void
+    protected function removePeer (player :PeerEntry) :void
     {
-        var idx :int = dataProvider.getItemIndex(peer);
+        var idx :int = dataProvider.getItemIndex(player);
         if (idx != -1) {
             dataProvider.removeItemAt(idx);
         }
     }
 
-    // TODO: Necessary since PeerEntry implements Comparable?
     protected function sortFunction (o1 :Object, o2 :Object, fields :Array = null) :int
     {
         var lhs :PeerEntry = o1 as PeerEntry;
