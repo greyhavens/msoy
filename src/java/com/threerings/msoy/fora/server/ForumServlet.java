@@ -632,8 +632,8 @@ public class ForumServlet extends MsoyServiceServlet
     protected String makeBoxedScene (String token, int sceneId)
     {
         SceneRecord srec = _sceneRepo.loadScene(sceneId);
-        return (srec == null) ? null :
-            MessageUtil.makeBox(token, srec.getSnapshot(), MediaDesc.SNAPSHOT_THUMB_SIZE, srec.name);
+        return (srec == null) ? null : MessageUtil.makeBox(token, srec.getThumbnail(),
+                                                           MediaDesc.SNAPSHOT_THUMB_SIZE, srec.name);
     }
 
     protected Pattern _urlPattern = Pattern.compile(
