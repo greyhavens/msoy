@@ -448,6 +448,46 @@ public class MsoySprite extends DataPackMediaContainer
         _hotSpot = null;
     }
 
+    /** @inheritDoc */
+    // from MediaContainer
+    final override public function getMediaScaleX () :Number
+    {
+        // use a fixed 3/4 scale for blocked media
+        if (isBlocked()) {
+            return 0.75;
+        }
+        return getSpriteMediaScaleX();
+    }
+
+    /** @inheritDoc */
+    // from MediaContainer
+    final override public function getMediaScaleY () :Number
+    {
+        // use a fixed 3/4 scale for blocked media
+        if (isBlocked()) {
+            return 0.75;
+        }
+        return getSpriteMediaScaleY();
+    }
+
+    /**
+     * Provides the horizontal scale of the sprite when not blocked. When the media is blocked, it
+     * has a fixed scale. Callers should always access the scale using <code>getMediaScaleX</code>.
+     */
+    protected function getSpriteMediaScaleX () :Number
+    {
+        return 1.0;
+    }
+
+    /**
+     * Provides the vertical scale of the sprite when not blocked. When the media is blocked, it
+     * has a fixed scale. Callers should always access the scale using <code>getMediaScaleY</code>.
+     */
+    protected function getSpriteMediaScaleY () :Number
+    {
+        return 1.0;
+    }
+
     /**
      * Configures this sprite with the item it represents.
      */

@@ -126,12 +126,16 @@ class FurniViewerSprite extends FurniSprite
         return true;
     }
 
-    override public function getMediaScaleX () :Number
+    /** @inheritDoc */
+    // from MsoySprite
+    override protected function getSpriteMediaScaleX () :Number
     {
         return _scale;
     }
 
-    override public function getMediaScaleY () :Number
+    /** @inheritDoc */
+    // from MsoySprite
+    override protected function getSpriteMediaScaleY () :Number
     {
         return _scale;
     }

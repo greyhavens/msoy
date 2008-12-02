@@ -468,18 +468,6 @@ public class OccupantSprite extends MsoySprite
     }
 
     // from MsoySprite
-    override public function getMediaScaleX () :Number
-    {
-        return _scale;
-    }
-
-    // from MsoySprite
-    override public function getMediaScaleY () :Number
-    {
-        return _scale;
-    }
-
-    // from MsoySprite
     override public function mouseClick (event :MouseEvent) :void
     {
         // see if it actually landed on a decoration
@@ -537,6 +525,20 @@ public class OccupantSprite extends MsoySprite
         super.setHotSpot(x, y, height);
         recheckLabel();
         arrangeDecorations();
+    }
+
+    /** @inheritDoc */
+    // from MsoySprite
+    override protected function getSpriteMediaScaleX () :Number
+    {
+        return _scale;
+    }
+
+    /** @inheritDoc */
+    // from MsoySprite
+    override protected function getSpriteMediaScaleY () :Number
+    {
+        return _scale;
     }
 
     // from MsoySprite

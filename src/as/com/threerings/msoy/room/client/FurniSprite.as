@@ -310,16 +310,6 @@ public class FurniSprite extends MsoySprite
         rotationUpdated();
     }
 
-    override public function getMediaScaleX () :Number
-    {
-        return _furni.scaleX;
-    }
-
-    override public function getMediaScaleY () :Number
-    {
-        return _furni.scaleY;
-    }
-
     override public function setMediaScaleX (scaleX :Number) :void
     {
         _furni.scaleX = scaleX;
@@ -358,6 +348,20 @@ public class FurniSprite extends MsoySprite
     override public function toString () :String
     {
         return "FurniSprite[" + _furni.itemType + ":" + _furni.itemId + "]";
+    }
+
+    /** @inheritDoc */
+    // from MsoySprite
+    override protected function getSpriteMediaScaleX () :Number
+    {
+        return _furni.scaleX;
+    }
+
+    /** @inheritDoc */
+    // from MsoySprite
+    override protected function getSpriteMediaScaleY () :Number
+    {
+        return _furni.scaleY;
     }
 
     override protected function updateMediaPosition () :void
