@@ -189,7 +189,7 @@ public class PetHandler
                 log.info("Owner no longer in a room? [who=" + owner.who() + ", in=" + plmgr + "].");
                 throw new InvocationException(PetCodes.E_INTERNAL_ERROR);
             }
-            ((RoomManager)plmgr).checkCanAddPet(owner);
+            ((RoomManager)plmgr).requireCanAddPet(owner);
             // potentially stop following our owner
             stopFollowing();
             // note that we want to autoload in this room

@@ -259,7 +259,7 @@ public class RoomManager extends SpotSceneManager
      * Checks whether or not the calling user can bring pets into this room. Returns normally if
      * so, throws an {@link InvocationException} if not.
      */
-    public void checkCanAddPet (MemberObject caller)
+    public void requireCanAddPet (MemberObject caller)
         throws InvocationException
     {
         if (!canManage(caller)) {
