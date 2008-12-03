@@ -3,14 +3,21 @@
 
 package com.threerings.msoy.data;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.Place;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.server.MemberLocal;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -22,9 +29,11 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
+import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
+import com.threerings.msoy.room.data.RoomObject;
 
 import static com.threerings.msoy.Log.log;
 
@@ -367,6 +376,69 @@ public class MemberObject extends MsoyBodyObject
     {
         _oid = 0;
         location = null;
+    }
+
+    @Override
+    public void didLeavePlace (PlaceObject plobj)
+    {
+        super.didLeavePlace(plobj);
+
+        // if we're not wearing an avatar, none of the rest of this method applies
+        if (avatar == null) {
+            getLocal(MemberLocal.class).memories = null;
+            return;
+        }
+
+        if (plobj instanceof RoomObject) {
+            RoomObject roomObj = (RoomObject) plobj;
+
+            // any memories we deposited in the room for safe-keeping must be enumerated
+            List<EntityMemoryEntry> mems = Lists.newArrayList();
+            ItemIdent avatar = this.avatar.getIdent();
+            for (EntityMemoryEntry entry : roomObj.memories) {
+                if (avatar.equals(entry.item)) {
+                    mems.add(entry);
+                }
+            }
+            if (mems.size() > 0) {
+                // removed from the room
+                roomObj.startTransaction();
+                try {
+                    for (EntityMemoryEntry entry : mems) {
+                        roomObj.removeFromMemories(entry.getKey());
+                    }
+                } finally {
+                    roomObj.commitTransaction();
+                }
+
+                // and and resubsumed
+                getLocal(MemberLocal.class).memories = mems;
+            }
+        }
+    }
+
+    @Override
+    public void willEnterPlace (Place place, PlaceObject plobj)
+    {
+        super.willEnterPlace(place, plobj);
+
+        if (plobj instanceof RoomObject) {
+            RoomObject roomObj = (RoomObject) plobj;
+            MemberLocal local = getLocal(MemberLocal.class);
+
+            // as we arrive at a room, we entrust it with our memories for broadcast to clients
+            if (local.memories != null) {
+                roomObj.startTransaction();
+                try {
+                    for (EntityMemoryEntry entry : local.memories) {
+                        roomObj.addToMemories(entry);
+                    }
+                } finally {
+                    roomObj.commitTransaction();
+                }
+                local.memories = null;
+            }
+        }
     }
 
     /**

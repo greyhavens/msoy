@@ -862,8 +862,6 @@ public class RoomManager extends SpotSceneManager
                 _memberMan.addExperience(member, new MemberExperience(
                                              new Date(), HomePageItem.ACTION_ROOM, model.sceneId));
             }
-
-            addMemoriesToRoom(member);
         }
 
         super.bodyEntered(bodyOid);
@@ -899,8 +897,6 @@ public class RoomManager extends SpotSceneManager
                 _eventLog.roomLeft(member.getMemberId(), model.sceneId, isWhirled,
                                    secondsInRoom, _roomObj.occupants.size(), member.getVisitorId());
             }
-
-            takeMemoriesFromRoom(member);
         }
 
         super.bodyLeft(bodyOid);
@@ -943,60 +939,6 @@ public class RoomManager extends SpotSceneManager
             RoomPropertiesObject properties = (RoomPropertiesObject)_omgr.getObject(entry.propsOid);
             flushAVRGamePropertySpace(entry.ownerId, properties);
             _omgr.destroyObject(entry.propsOid);
-        }
-    }
-
-    /**
-     * Slurp memories from incoming avatars and put them into the room.
-     */
-    protected void addMemoriesToRoom (MemberObject member)
-    {
-        MemberLocal local = member.getLocal(MemberLocal.class);
-
-        if (local.memories != null) {
-            _roomObj.startTransaction();
-            try {
-                for (EntityMemoryEntry entry : local.memories) {
-                    _roomObj.addToMemories(entry);
-                }
-            } finally {
-                _roomObj.commitTransaction();
-            }
-            local.memories = null;
-        }
-    }
-
-    /**
-     * Take memories from the room and stuff them into outgoing avatars.
-     */
-    protected void takeMemoriesFromRoom (MemberObject member)
-    {
-        if (member.avatar == null) {
-            member.getLocal(MemberLocal.class).memories = null;
-            return;
-        }
-
-        // TODO: only do it when the user is guaranteed moving rooms -- Ray
-        if (true) {
-            List<EntityMemoryEntry> mems = Lists.newArrayList();
-            ItemIdent avatar = member.avatar.getIdent();
-            for (EntityMemoryEntry entry : _roomObj.memories) {
-                if (avatar.equals(entry.item)) {
-                    mems.add(entry);
-                }
-            }
-            if (mems.size() > 0) {
-                _roomObj.startTransaction();
-                try {
-                    for (EntityMemoryEntry entry : mems) {
-                        _roomObj.removeFromMemories(entry.getKey());
-                    }
-                } finally {
-                    _roomObj.commitTransaction();
-                }
-
-                member.getLocal(MemberLocal.class).memories = mems;
-            }
         }
     }
 
