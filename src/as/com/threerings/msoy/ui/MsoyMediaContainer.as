@@ -65,16 +65,22 @@ public class MsoyMediaContainer extends MediaContainer
         setIsBlocked(Prefs.isMediaBlocked(_desc.getMediaId()));
     }
 
-    // TODO: doc
+    /**
+     * Tests if this media may be blocked (aka bleeped) by the local user.
+     */
     public function isBlockable () :Boolean
     {
         return (_desc != null) && !(_desc is StaticMediaDesc) && (_desc.getMediaPath() != null);
     }
 
-    // TODO: doc
+    /**
+     * Tests if this media is blocked (aka bleeped) for the local user. This can be due to either
+     * specific blocking of just this media or global blocking of all media. NOTE: this should
+     * never be called unless <code>isBlockable()</code> also returns true.
+     */
     public function isBlocked () :Boolean
     {
-        return isBlockable() && Prefs.isMediaBlocked(_desc.getMediaId());
+        return Prefs.isMediaBlocked(_desc.getMediaId());
     }
 
     // TODO: doc

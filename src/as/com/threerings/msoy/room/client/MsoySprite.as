@@ -453,7 +453,7 @@ public class MsoySprite extends DataPackMediaContainer
     final override public function getMediaScaleX () :Number
     {
         // use a fixed 3/4 scale for blocked media
-        if (isBlocked()) {
+        if (isBlockable() && isBlocked()) {
             return 0.75;
         }
         return getSpriteMediaScaleX();
@@ -464,7 +464,7 @@ public class MsoySprite extends DataPackMediaContainer
     final override public function getMediaScaleY () :Number
     {
         // use a fixed 3/4 scale for blocked media
-        if (isBlocked()) {
+        if (isBlockable() && isBlocked()) {
             return 0.75;
         }
         return getSpriteMediaScaleY();
