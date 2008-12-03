@@ -5,6 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,9 +15,11 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -27,32 +30,43 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.KeySet;
+
 import com.samskivert.depot.PersistenceContext.CacheListener;
+
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
+
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
+
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
+
 import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.operator.Arithmetic;
+
 import com.samskivert.depot.operator.Arithmetic.BitAnd;
+
+import com.samskivert.depot.operator.Arithmetic;
+
 import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals.NotEquals;
 import com.samskivert.depot.operator.Conditionals.FullTextMatch;
 import com.samskivert.depot.operator.Conditionals.GreaterThan;
 import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.depot.operator.Conditionals.In;
+import com.samskivert.depot.operator.Conditionals.NotEquals;
+
 import com.samskivert.depot.operator.Conditionals;
+
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.Logic.Or;
+
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.util.ArrayIntSet;
@@ -63,15 +77,18 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.presents.annotation.BlockingThread;
-
 import com.threerings.msoy.data.MsoyCodes;
+
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
+
 import com.threerings.msoy.web.gwt.MemberCard;
+
+import com.threerings.presents.annotation.BlockingThread;
 
 import static com.threerings.msoy.Log.log;
 
@@ -996,7 +1013,8 @@ public class MemberRepository extends DepotRepository
         // now load up member card records for these guys and convert them to friend entries
         for (MemberCardRecord crec : loadMemberCards(friends.keySet())) {
             MemberCard card = crec.toMemberCard();
-            friends.put(crec.memberId, new FriendEntry(card.name, false, card.photo, card.headline));
+            friends.put(crec.memberId, new FriendEntry(new VizMemberName(card.name, card.photo),
+                card.headline, false));
         }
 
         // we might have nulls if there are some legacy bastards with no profile record

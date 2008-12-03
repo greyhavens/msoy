@@ -242,7 +242,7 @@ class FriendCheckBox extends VBox
         styleName = "friendCheckBox";
         this.friend = friend;
 
-        addChild(MediaWrapper.createView(friend.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
+        addChild(MediaWrapper.createView(friend.name.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
         var name :Label = FlexUtil.createLabel(friend.name.toString());
         name.maxWidth = 4*MediaDesc.THUMBNAIL_WIDTH/5;
         addChild(name);

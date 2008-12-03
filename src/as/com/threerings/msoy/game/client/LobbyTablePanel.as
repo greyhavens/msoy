@@ -213,8 +213,8 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.item.data.all.Item;

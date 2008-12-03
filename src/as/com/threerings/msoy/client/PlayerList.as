@@ -14,7 +14,7 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.PeerEntry;
+import com.threerings.msoy.data.all.PlayerEntry;
 
 import com.threerings.msoy.client.MsoyContext;
 
@@ -49,7 +49,7 @@ public class PlayerList extends List
     {
         dataProvider.removeAll();
 
-        for each (var player :PeerEntry in players) {
+        for each (var player :PlayerEntry in players) {
             addPlayer(player);
         }
     }
@@ -58,7 +58,7 @@ public class PlayerList extends List
     public function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == _field) {
-            addPlayer(event.getEntry() as PeerEntry);
+            addPlayer(event.getEntry() as PlayerEntry);
         }
     }
 
@@ -66,8 +66,8 @@ public class PlayerList extends List
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == _field) {
-            var newEntry :PeerEntry = event.getEntry() as PeerEntry;
-            var oldEntry :PeerEntry = event.getOldEntry() as PeerEntry;
+            var newEntry :PlayerEntry = event.getEntry() as PlayerEntry;
+            var oldEntry :PlayerEntry = event.getOldEntry() as PlayerEntry;
 
             removePeer(oldEntry);
             addPlayer(newEntry);
@@ -78,18 +78,18 @@ public class PlayerList extends List
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == _field) {
-            removePeer(event.getOldEntry() as PeerEntry);
+            removePeer(event.getOldEntry() as PlayerEntry);
         }
     }
 
-    protected function addPlayer (player :PeerEntry) :void
+    protected function addPlayer (player :PlayerEntry) :void
     {
         if ( ! dataProvider.contains(player)) {
             dataProvider.addItem(player);
         }
     }
 
-    protected function removePeer (player :PeerEntry) :void
+    protected function removePeer (player :PlayerEntry) :void
     {
         var idx :int = dataProvider.getItemIndex(player);
         if (idx != -1) {
@@ -97,11 +97,9 @@ public class PlayerList extends List
         }
     }
 
-    protected function sortFunction (o1 :Object, o2 :Object, fields :Array = null) :int
+    protected function sortFunction (lhs :PlayerEntry, rhs :PlayerEntry, fields :Array = null) :int
     {
-        var lhs :PeerEntry = o1 as PeerEntry;
-        var rhs :PeerEntry = o2 as PeerEntry;
-        return MemberName.BY_DISPLAY_NAME(lhs.getName(), rhs.getName());
+        return MemberName.BY_DISPLAY_NAME(lhs.name, rhs.name);
     }
 
     protected var _field :String;

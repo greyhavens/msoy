@@ -17,11 +17,11 @@ import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.data.all.VizMemberName;
 
 /**
  * Contains information on a player logged on to an MSOY Game server.

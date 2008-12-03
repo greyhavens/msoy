@@ -6,7 +6,7 @@ package com.threerings.msoy.party.data;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.msoy.data.VizMemberName;
+import com.threerings.msoy.data.all.VizMemberName;
 
 public class PartyObject extends DObject
 {

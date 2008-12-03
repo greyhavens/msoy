@@ -7,33 +7,43 @@ import java.util.Date;
 
 import com.google.inject.Inject;
 
-import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
 
-import com.threerings.stats.data.Stat;
-import com.threerings.stats.data.StatModifier;
+import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
+import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyTokenRing;
+
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VizMemberName;
+
+import com.threerings.msoy.group.data.all.GroupMembership;
+
+import com.threerings.msoy.item.server.ItemManager;
+
+import com.threerings.msoy.notify.data.BadgeEarnedNotification;
+import com.threerings.msoy.notify.data.Notification;
+
+import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
+
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.badge.data.all.InProgressBadge;
-import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
-import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
-import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.notify.data.BadgeEarnedNotification;
-import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.room.data.RoomCodes;
+
+import com.threerings.presents.peer.data.NodeObject;
+
+import com.threerings.presents.peer.server.PeerManager;
+
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatModifier;
 
 /**
  * Contains various member node actions.
@@ -492,7 +502,7 @@ public class MemberNodeActions
         @Override protected void execute ()
         {
             final FriendEntry entry = new FriendEntry(
-                new MemberName(_displayName, _memberId), true, _photo, _status);
+                new VizMemberName(_displayName, _memberId, _photo), _status, true);
             for (final int friendId : _friends) {
                 final MemberObject memobj = _locator.lookupMember(friendId);
                 if (memobj != null) {

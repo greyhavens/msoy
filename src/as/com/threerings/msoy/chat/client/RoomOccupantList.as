@@ -112,7 +112,7 @@ import mx.core.ScrollPolicy;
 import com.whirled.ui.NameLabel;
 import com.whirled.ui.NameLabelCreator;
 
-import com.threerings.msoy.data.VizMemberName;
+import com.threerings.msoy.data.all.VizMemberName;
 
 class RoomOccupantRenderer extends HBox
 {

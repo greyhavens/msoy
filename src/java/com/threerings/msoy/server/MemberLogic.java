@@ -30,10 +30,10 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.persist.MemberExperienceRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -579,9 +579,9 @@ public class MemberLogic
         }
 
         @Override protected void execute (final MemberObject memobj) {
-            MemberName friend = new MemberName(_friendName, _friendId);
+            VizMemberName friend = new VizMemberName(_friendName, _friendId, _friendPhoto);
             boolean online = (_peerMan.locateClient(friend) != null);
-            memobj.addToFriends(new FriendEntry(friend, online, _friendPhoto, _friendStatus));
+            memobj.addToFriends(new FriendEntry(friend, _friendStatus, online));
             _friendMan.registerFriendInterest(memobj, _friendId);
         }
 

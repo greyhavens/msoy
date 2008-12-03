@@ -35,7 +35,7 @@ public class FriendRenderer extends HBox
     public var mctx :MsoyContext;
 
     /** A marker data entry to indicate that we should display the guest prompt. */
-    public static const GUEST_PROMPT :FriendEntry = new FriendEntry(null, true);
+    public static const GUEST_PROMPT :FriendEntry = new FriendEntry(null, null, true);
 
     public function FriendRenderer () 
     {
@@ -132,7 +132,7 @@ public class FriendRenderer extends HBox
         statusLabel.width = labelBox.width - 3;
         statusContainer.addChild(statusLabel);
 
-        addChild(MediaWrapper.createView(friend.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
+        addChild(MediaWrapper.createView(friend.name.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
     }
 
     protected function handleClick (event :MouseEvent) :void

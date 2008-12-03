@@ -18,7 +18,7 @@ import com.whirled.game.client.HeadShot;
 import com.whirled.game.client.WhirledGameBackend;
 import com.whirled.game.data.WhirledGameObject;
 
-import com.threerings.msoy.data.VizMemberName;
+import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.ui.ScalingMediaContainer;
 

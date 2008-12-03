@@ -1,10 +1,8 @@
 //
 // $Id$
 
-package com.threerings.msoy.data;
+package com.threerings.msoy.data.all;
 
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 
 /**
  * A member name and profile photo all rolled into one!
@@ -22,6 +20,12 @@ public class VizMemberName extends MemberName
     public VizMemberName (String displayName, int memberId, MediaDesc photo)
     {
         super(displayName, memberId);
+        _photo = photo;
+    }
+
+    public VizMemberName (MemberName name, MediaDesc photo)
+    {
+        super(name.toString(), name.getMemberId());
         _photo = photo;
     }
 

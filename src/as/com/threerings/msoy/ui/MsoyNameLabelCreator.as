@@ -11,7 +11,7 @@ import com.whirled.ui.NameLabelCreator;
 
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.data.VizMemberName;
+import com.threerings.msoy.data.all.VizMemberName;
 
 public class MsoyNameLabelCreator 
     implements NameLabelCreator
@@ -58,8 +58,8 @@ import com.threerings.flex.FlexWrapper;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.room.client.NameField;

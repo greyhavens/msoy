@@ -17,6 +17,7 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VizMemberName;
 
 import static com.threerings.msoy.Log.log;
 
@@ -56,8 +57,9 @@ public class FriendManager
             FriendEntry[] snapshot = memobj.friends.toArray(new FriendEntry[memobj.friends.size()]);
             for (FriendEntry entry : snapshot) {
                 if (_peerMan.locateClient(entry.name) != null) {
-                    memobj.updateFriends(
-                        new FriendEntry(entry.name, true, entry.photo, entry.status));
+                    memobj.updateFriends(new FriendEntry(
+                        new VizMemberName(entry.name, entry.name.getPhoto()),
+                        entry.status, true));
                 }
                 registerFriendInterest(memobj, entry.name.getMemberId());
             }
@@ -121,7 +123,8 @@ public class FriendManager
                             ", friend=" + memberId + "].");
                 continue;
             }
-            watcher.updateFriends(new FriendEntry(entry.name, online, entry.photo, entry.status));
+            watcher.updateFriends(new FriendEntry(
+                new VizMemberName(entry.name, entry.name.getPhoto()), entry.status, online));
         }
     }
 

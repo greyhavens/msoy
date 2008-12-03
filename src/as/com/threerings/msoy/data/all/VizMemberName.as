@@ -1,13 +1,10 @@
 //
 // $Id$
 
-package com.threerings.msoy.data {
+package com.threerings.msoy.data.all {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
-
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Exetnds MemberName with a profile photo.
