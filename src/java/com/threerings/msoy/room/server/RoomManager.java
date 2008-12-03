@@ -83,7 +83,6 @@ import com.threerings.msoy.room.client.RoomService;
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.Controllable;
-import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
@@ -318,12 +317,11 @@ public class RoomManager extends SpotSceneManager
 
     public void occupantLeftAVRGame (MemberObject member)
     {
-        reassignControllers(member.getOid(), true);
+        // we don't care
     }
 
     public void occupantEnteredAVRGame (MemberObject member)
     {
-        ensureAVRGameControl(member);
         ensureAVRGamePropertySpace(member);
     }
 
@@ -845,7 +843,6 @@ public class RoomManager extends SpotSceneManager
         DObject body = _omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
             final MemberObject member = (MemberObject) body;
-            ensureAVRGameControl(member);
             ensureAVRGamePropertySpace(member);
             final MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
             boolean isMemberScene = (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER);
@@ -879,7 +876,7 @@ public class RoomManager extends SpotSceneManager
 
         // if this occupant just disconnected, reassign their controlled entities
         if (info.status == OccupantInfo.DISCONNECTED) {
-            reassignControllers(info.bodyOid, false);
+            reassignControllers(info.bodyOid);
         }
     }
 
@@ -909,7 +906,7 @@ public class RoomManager extends SpotSceneManager
         super.bodyLeft(bodyOid);
 
         // reassign this occupant's controlled entities
-        reassignControllers(bodyOid, false);
+        reassignControllers(bodyOid);
     }
 
     @Override // from PlaceManager
@@ -999,20 +996,6 @@ public class RoomManager extends SpotSceneManager
                 }
 
                 member.getLocal(MemberLocal.class).memories = mems;
-            }
-        }
-    }
-
-    // if the given member is playing an AVRG, make sure it's controlled; if not, control it
-    protected void ensureAVRGameControl (MemberObject member)
-    {
-        if (member.game != null && member.game.avrGame) {
-            Controllable reference = new ControllableAVRGame(member.game.gameId);
-            EntityControl ctrl = _roomObj.controllers.get(reference);
-            if (ctrl == null) {
-                log.info("Assigning control [avrGameId=" + member.game.gameId +
-                         ", to=" + member.who() + "].");
-                _roomObj.addToControllers(new EntityControl(reference, member.getOid()));
             }
         }
     }
@@ -1297,13 +1280,12 @@ public class RoomManager extends SpotSceneManager
     /**
      * Reassigns all scene entities controlled by the specified client to new controllers.
      */
-    protected void reassignControllers (int bodyOid, boolean avrgOnly)
+    protected void reassignControllers (int bodyOid)
     {
         // determine which items were under the control of this user
         List<Controllable> items = Lists.newArrayList();
         for (EntityControl ctrl : _roomObj.controllers) {
-            if (ctrl.controllerOid == bodyOid &&
-                (!avrgOnly || (ctrl.controlled instanceof ControllableAVRGame))) {
+            if (ctrl.controllerOid == bodyOid) {
                 items.add(ctrl.controlled);
             }
         }
