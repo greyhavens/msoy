@@ -636,15 +636,14 @@ public class ForumServlet extends MsoyServiceServlet
     protected String makeBoxedScene (String token, int sceneId)
     {
         SceneRecord srec = _sceneRepo.loadScene(sceneId);
-        return (srec == null) ? null :
-            MessageUtil.makeBox(token, srec.getThumbnail(), MediaDesc.SNAPSHOT_THUMB_SIZE,
-                srec.name);
+        return (srec == null) ? null : MessageUtil.makeBox(
+            token, srec.getThumbnail(), MediaDesc.SNAPSHOT_THUMB_SIZE, srec.name);
     }
 
     protected String makeBoxedMemberHome (String token, int memberId)
     {
         MemberRecord memrec = _memberRepo.loadMember(memberId);
-        return makeBoxedScene(token, memrec.homeSceneId);
+        return (memrec == null) ? null : makeBoxedScene(token, memrec.homeSceneId);
     }
 
     protected Pattern _urlPattern = Pattern.compile(
