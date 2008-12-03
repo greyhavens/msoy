@@ -36,7 +36,7 @@ public class PetEditor extends ItemEditor
             new MediaUpdater() {
                 public String updateMedia (String name, MediaDesc desc, int width, int height) {
                     if (desc.isImage()) {
-                        promptEasyItem(
+                        promptEasyItem(Item.FURNI_MEDIA,
                             new StaticMediaDesc(MediaDesc.APPLICATION_ZIP, "pet", "easy-proto"),
                             desc, _emsgs.makeEasyPet(), _emsgs.makeEasyPetDetails());
                         return SUPPRESS_ERROR;

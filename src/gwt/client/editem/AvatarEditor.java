@@ -39,7 +39,7 @@ public class AvatarEditor extends ItemEditor
             new MediaUpdater() {
                 public String updateMedia (String name, MediaDesc desc, int width, int height) {
                     if (desc.isImage()) {
-                        promptEasyItem(
+                        promptEasyItem(Item.MAIN_MEDIA,
                             new StaticMediaDesc(MediaDesc.APPLICATION_ZIP, "avatar", "easy-proto"),
                             desc, _emsgs.makeEasyAvatar(), _emsgs.makeEasyAvatarDetails());
                         return SUPPRESS_ERROR;

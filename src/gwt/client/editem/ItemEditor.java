@@ -789,17 +789,18 @@ public abstract class ItemEditor extends FlowPanel
      * Prompt to see if the user is ready to remix.
      */
     protected void promptEasyItem (
-        final MediaDesc prototype, final MediaDesc image, String prompt, String details)
+        final String mediaId, final MediaDesc prototype, final MediaDesc image,
+        String prompt, String details)
     {
         new PromptPopup(prompt, new Command() {
             public void execute () {
-                doEasyRemix(prototype, image);
+                doEasyRemix(mediaId, prototype, image);
             }
         }).setContext(details).prompt();
     }
 
 
-    protected void doEasyRemix (MediaDesc prototype, MediaDesc image)
+    protected void doEasyRemix (String mediaId, MediaDesc prototype, MediaDesc image)
     {
         int popWidth = getOffsetWidth() - 8;
         int popHeight = Math.max(550,
@@ -811,7 +812,7 @@ public abstract class ItemEditor extends FlowPanel
             "&type=" + URL.encodeComponent(typename) +
             "&name=" + URL.encodeComponent(StringUtil.isBlank(_item.name) ? typename : _item.name) +
             "&server=" + URL.encodeComponent(DeploymentConfig.serverURL) +
-            "&mediaId="+ URL.encodeComponent(Item.MAIN_MEDIA) +
+            "&mediaId="+ URL.encodeComponent(mediaId) +
             "&auth=" + URL.encodeComponent(CShell.getAuthToken()) +
             "&noPickPhoto=true" + // suppress picking a photo from inventory, here
             "&inject-image=" + URL.encodeComponent(image.getMediaPath());
