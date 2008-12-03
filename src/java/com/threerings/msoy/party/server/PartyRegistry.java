@@ -6,7 +6,8 @@ package com.threerings.msoy.party.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -106,7 +107,7 @@ public class PartyRegistry
         // After joinParty doesn't call on startParty
     }
 
-    protected HashIntMap<PartyManager> _parties = new HashIntMap<PartyManager>();
+    protected IntMap<PartyManager> _parties = IntMaps.newHashIntMap();
 
     protected AccessController _partyAccessController = new AccessController()
     {
