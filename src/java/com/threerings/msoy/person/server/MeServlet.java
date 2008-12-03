@@ -186,7 +186,6 @@ public class MeServlet extends MsoyServiceServlet
     public List<Contest> loadContests ()
         throws ServiceException
     {
-        requireSupportUser();
         return Lists.newArrayList(Lists.transform(_contestRepo.loadContests(),
             ContestRecord.TO_CONTEST));
     }
