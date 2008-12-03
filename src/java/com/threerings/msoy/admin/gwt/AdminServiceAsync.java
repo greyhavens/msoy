@@ -127,4 +127,10 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#getStatsModel}.
      */
     void getStatsModel (StatsModel.Type type, AsyncCallback<StatsModel> callback);
+    
+    /**
+     * The asynchronous version of {@link AdminService#setCharityInfo}.
+     */
+    void setCharityInfo (int memberId, boolean charity, boolean coreCharity,
+        AsyncCallback<Void> callback);
 }

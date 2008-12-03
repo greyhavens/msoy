@@ -33,6 +33,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.UserActionRepository;
@@ -106,6 +107,7 @@ public class MoneyLogic
         _nodeActions = nodeActions;
         _exchange = exchange;
         _blingDistributor = blingDistributor;
+        _memberRepo = memberRepo;
     }
 
     /**
@@ -296,9 +298,10 @@ public class MoneyLogic
             _repo.storeTransaction(buyerTx);
 
             // see what kind of payouts we're going pay- null means don't load, don't care
-            CurrencyAmount creatorPayout = magicFree ? null : computePayout(false, quote);
-            CurrencyAmount affiliatePayout = magicFree ? null : computePayout(true, quote);
-
+            CurrencyAmount creatorPayout = magicFree ? null : computeCreatorPayout(quote);
+            CurrencyAmount affiliatePayout = magicFree ? null : computeAffiliatePayout(quote);
+            CurrencyAmount charityPayout = magicFree ? null : computeCharityPayout(quote);
+            
             MoneyTransactionRecord creatorTx = null;
             if (creatorPayout != null) {
                 try {
@@ -336,6 +339,24 @@ public class MoneyLogic
                     // but, we continue, just having no affiliateTx
                 }
             }
+            
+            // Determine the ID of the charity that will receive a payout.
+            int charityId = getChosenCharity(buyerRec);
+            MoneyTransactionRecord charityTx = null;
+            if (charityId != 0 && charityPayout != null) {
+                try {
+                    charityTx = _repo.accumulateAndStoreTransaction(charityId,
+                        charityPayout.currency, charityPayout.amount,
+                        TransactionType.CHARITY_PAYOUT,
+                        MessageBundle.tcompose("m.item_charity", buyerRec.name, buyerRec.memberId),
+                        item, buyerTx.id, buyerId);
+                } catch (MoneyRepository.NoSuchMemberException nsme) {
+                    log.warning("Invalid user charity, payout cancelled.",
+                        "buyer", buyerId, "charity", charityId,
+                        "item", itemDescription, "catalogIdent", item);
+                    // but, we continue, just having no charityTx
+                }
+            }
 
             // log this!
             logAction(UserAction.boughtItem(buyerId), buyerTx);
@@ -345,6 +366,9 @@ public class MoneyLogic
             if (affiliateTx != null) {
                 logAction(UserAction.receivedPayout(affiliateId), affiliateTx);
             }
+            if (charityTx != null) {
+                logAction(UserAction.receivedPayout(charityId), charityTx);
+            }
 
             // notify affected members of their money changes
             _nodeActions.moneyUpdated(buyerTx);
@@ -353,6 +377,9 @@ public class MoneyLogic
             }
             if (affiliateTx != null) {
                 _nodeActions.moneyUpdated(affiliateTx);
+            }
+            if (charityTx != null) {
+                _nodeActions.moneyUpdated(charityTx);
             }
 
             // The price no longer needs to be in the cache.
@@ -364,7 +391,8 @@ public class MoneyLogic
 
             return new BuyResult(magicFree, buyerTx.toMoneyTransaction(),
                 (creatorTx == null) ? null : creatorTx.toMoneyTransaction(),
-                (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction());
+                (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction(),
+                (charityTx == null) ? null : charityTx.toMoneyTransaction());
 
         } finally {
             // We may have never inserted the buyerTx if the creation failed or
@@ -624,14 +652,45 @@ public class MoneyLogic
     }
 
     /**
-     * Compute an affiliate or creator payout.
+     * Compute the payout that the creator should receive for the given price quote.
      */
-    protected CurrencyAmount computePayout (boolean affiliate, PriceQuote quote)
+    protected CurrencyAmount computeCreatorPayout (PriceQuote quote)
+    {
+        return computePayout(quote, _runtime.money.creatorPercentage);
+    }
+
+    /**
+     * Compute the payout that the affiliate should receive for the given price quote.  There
+     * should be no payout transaction if the amount is 0.
+     */
+    protected CurrencyAmount computeAffiliatePayout (PriceQuote quote)
+    {
+        CurrencyAmount ca = computePayout(quote, _runtime.money.affiliatePercentage);
+        
+        // for creators, we pay out "0" so that they get a sales report,
+        // but we never do that for affiliates
+        return (ca.amount == 0 ? null : ca);
+    }
+    
+    /**
+     * Compute the payout that the charity should receive for the given price quote.
+     */
+    protected CurrencyAmount computeCharityPayout (PriceQuote quote)
+    {
+        CurrencyAmount ca = computePayout(quote, _runtime.money.charityPercentage);
+        
+        // Like affiliates, if the payout amount is 0, return null to avoid creating a tx.
+        return (ca.amount == 0 ? null : ca);
+    }
+    
+    /**
+     * Compute a payout with the given percentage.
+     */
+    protected CurrencyAmount computePayout (PriceQuote quote, float percentage)
     {
         Currency currency;
         int amount;
-        float percentage = affiliate ? _runtime.money.affiliatePercentage
-                                     : _runtime.money.creatorPercentage;
+
         switch (quote.getListedCurrency()) {
         case COINS:
             currency = Currency.COINS;
@@ -648,12 +707,6 @@ public class MoneyLogic
             throw new RuntimeException();
         }
 
-        // for creators, we pay out "0" so that they get a sales report,
-        // but we never do that for affiliates
-        if ((amount == 0) && affiliate) {
-            return null;
-        }
-
         return new CurrencyAmount(currency, amount);
     }
 
@@ -664,6 +717,29 @@ public class MoneyLogic
 
         // record this to panopticon for the greater glory of our future AI overlords
         _eventLog.moneyTransaction(action, tx.currency, tx.amount);
+    }
+    
+    /**
+     * Selects the charity that will be used for this purchase.  If the member has chosen a
+     * specific charity, it will be used.  Otherwise, a random core charity will be selected.
+     * If there are no charities available, returns 0.
+     */
+    protected int getChosenCharity (MemberRecord member)
+    {
+        // If the user has selected a specific charity, use it.
+        if (member.charityMemberId != 0) {
+            return member.charityMemberId;
+        }
+        
+        // Otherwise, we must select a random core charity.  This is a fast query, but it is a DB
+        // trip, so perhaps some optimization could be used here.  However, compared to the writes
+        // that have to be done at the same time, this is somewhat trivial.
+        List<CharityRecord> charities = _memberRepo.getCoreCharities();
+        if (!charities.isEmpty()) {
+            return charities.get((int)(Math.random() * charities.size())).memberId;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -731,4 +807,5 @@ public class MoneyLogic
     protected final MoneyMessageListener _msgReceiver;
     protected final MoneyNodeActions _nodeActions;
     protected final BlingPoolDistributor _blingDistributor;
+    protected final MemberRepository _memberRepo;
 }

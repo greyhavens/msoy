@@ -23,6 +23,9 @@ public class MoneyConfigObject extends ConfigObject
     /** The field name of the <code>affiliatePercentage</code> field. */
     public static final String AFFILIATE_PERCENTAGE = "affiliatePercentage";
 
+    /** The field name of the <code>charityPercentage</code> field. */
+    public static final String CHARITY_PERCENTAGE = "charityPercentage";
+
     /** The field name of the <code>blingPoolSize</code> field. */
     public static final String BLING_POOL_SIZE = "blingPoolSize";
 
@@ -53,6 +56,9 @@ public class MoneyConfigObject extends ConfigObject
      * bought the item. */
     public float affiliatePercentage = 0.3f;
 
+    /** Percentage of the purchase price that will be awarded to the charity the user has chosen. */
+    public float charityPercentage = 0.1f;
+    
     /** The amount of bling (NOT centibling) to grant daily to game creators. */
     public int blingPoolSize = 403;
 
@@ -131,6 +137,22 @@ public class MoneyConfigObject extends ConfigObject
         requestAttributeChange(
             AFFILIATE_PERCENTAGE, Float.valueOf(value), Float.valueOf(ovalue));
         this.affiliatePercentage = value;
+    }
+
+    /**
+     * Requests that the <code>charityPercentage</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setCharityPercentage (float value)
+    {
+        float ovalue = this.charityPercentage;
+        requestAttributeChange(
+            CHARITY_PERCENTAGE, Float.valueOf(value), Float.valueOf(ovalue));
+        this.charityPercentage = value;
     }
 
     /**

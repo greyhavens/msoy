@@ -20,12 +20,13 @@ public class BuyResult
      */
     public BuyResult (
         boolean magicFreeBuy, MoneyTransaction memberTx,
-        MoneyTransaction creatorTx, MoneyTransaction affiliateTx)
+        MoneyTransaction creatorTx, MoneyTransaction affiliateTx, MoneyTransaction charityTx)
     {
         _magicFree = magicFreeBuy;
         _memberTransaction = memberTx;
         _creatorTransaction = creatorTx;
         _affiliateTransaction = affiliateTx;
+        _charityTransaction = charityTx;
     }
 
     public boolean wasMagicFreeBuy ()
@@ -59,6 +60,15 @@ public class BuyResult
     public MoneyTransaction getAffiliateTransaction ()
     {
         return _affiliateTransaction;
+    }
+    
+    /**
+     * The transaction that was performed on the charity's account.  Null if no charity was
+     * involved.
+     */
+    public MoneyTransaction getCharityTransaction ()
+    {
+        return _charityTransaction;
     }
 
     public BalanceInfo getBuyerBalances ()
@@ -98,4 +108,5 @@ public class BuyResult
     protected MoneyTransaction _memberTransaction;
     protected MoneyTransaction _creatorTransaction;
     protected MoneyTransaction _affiliateTransaction;
+    protected MoneyTransaction _charityTransaction;
 }

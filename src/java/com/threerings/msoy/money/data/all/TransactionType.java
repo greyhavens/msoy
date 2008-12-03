@@ -25,6 +25,7 @@ public enum TransactionType
     REQUEST_CASH_OUT(10),
     CANCEL_CASH_OUT(11),
     SUPPORT_ADJUST(12),
+    CHARITY_PAYOUT(13),
     ;
 
     // Required by ByteEnum

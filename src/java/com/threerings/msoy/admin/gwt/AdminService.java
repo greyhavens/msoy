@@ -151,4 +151,15 @@ public interface AdminService extends RemoteService
      */
     StatsModel getStatsModel (StatsModel.Type type)
         throws ServiceException;
+    
+    /**
+     * Sets charity info for a particular member.
+     * 
+     * @param memberId ID of the member whose charity info is being updated.
+     * @param charity True if this member should be a charity.
+     * @param coreCharity True if this member should be a core charity.  "charity" must also be
+     *      true.
+     */
+    void setCharityInfo (int memberId, boolean charity, boolean coreCharity)
+        throws ServiceException;
 }

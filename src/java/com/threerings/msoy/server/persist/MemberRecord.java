@@ -227,6 +227,13 @@ public class MemberRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #visitorId} field. */
     public static final ColumnExp VISITOR_ID_C =
         new ColumnExp(MemberRecord.class, VISITOR_ID);
+
+    /** The column identifier for the {@link #charityMemberId} field. */
+    public static final String CHARITY_MEMBER_ID = "charityMemberId";
+
+    /** The qualified column identifier for the {@link #charityMemberId} field. */
+    public static final ColumnExp CHARITY_MEMBER_ID_C =
+        new ColumnExp(MemberRecord.class, CHARITY_MEMBER_ID);
     // AUTO-GENERATED: FIELDS END
 
     /** The identifer for the full text index on the display name. */
@@ -234,7 +241,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 27;
+    public static final int SCHEMA_VERSION = 28;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -298,6 +305,10 @@ public class MemberRecord extends PersistentRecord
     @Column(nullable=true, defaultValue="")
     public String visitorId;
 
+    /** The ID of the charity member that this member has selected to receive donations. */
+    @Column(defaultValue="0")
+    public int charityMemberId = 0;
+    
     /** A blank constructor used when loading records from the database. */
     public MemberRecord ()
     {

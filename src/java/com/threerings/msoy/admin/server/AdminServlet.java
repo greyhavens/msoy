@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -22,6 +23,7 @@ import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.AffiliateMapRecord;
 import com.threerings.msoy.server.persist.AffiliateMapRepository;
+import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.ContestRecord;
 import com.threerings.msoy.server.persist.ContestRepository;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
@@ -118,6 +120,15 @@ public class AdminServlet extends MsoyServiceServlet
         }
         info.invitees = _memberRepo.loadMembersInvitedBy(memberId);
 
+        // Check if this member is set as a charity.
+        CharityRecord charity = _memberRepo.getCharityRecord(memberId);
+        if (charity == null) {
+            info.charity = false;
+            info.coreCharity = false;
+        } else {
+            info.charity = true;
+            info.coreCharity = charity.core;
+        }
         return info;
     }
 
@@ -412,6 +423,21 @@ public class AdminServlet extends MsoyServiceServlet
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
         final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
         _mailRepo.startConversation(recipientId, senderId, subject, body, null);
+    }
+    
+    public void setCharityInfo (int memberId, boolean charity, boolean coreCharity)
+        throws ServiceException
+    {
+        Preconditions.checkArgument(charity == true || coreCharity == false, 
+            "Core charities must also be set as charities.");
+        
+        // Save or delete charity record depending on value of 'charity.
+        if (charity) {
+            CharityRecord charityRec = new CharityRecord(memberId, coreCharity);
+            _memberRepo.saveCharity(charityRec);
+        } else {
+            _memberRepo.deleteCharity(memberId);
+        }
     }
 
     // our dependencies

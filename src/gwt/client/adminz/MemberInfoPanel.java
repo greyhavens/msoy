@@ -6,6 +6,9 @@ package client.adminz;
 import java.util.EnumSet;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -130,9 +133,49 @@ public class MemberInfoPanel extends SmartTable
         }
         setWidget(row, 1, invited);
 
+        final CheckBox charity = new CheckBox();
+        charity.setChecked(info.charity);
+        row = addWidget(charity, 1, "Label");
+        setText(row, 1, "Make this member a charity");
+        
+        final CheckBox coreCharity = new CheckBox("This charity can be selected randomly when a member " +
+        		"making a purchase has not already selected a charity.");
+        coreCharity.setChecked(info.coreCharity);
+        coreCharity.setEnabled(charity.isChecked());
+        setWidget(++row, 1, coreCharity);
+        
+        // When clicking either charity check box, update the charity info.
+        ClickListener updateCharityListener = new ClickListener() {
+            public void onClick (Widget sender) {
+                final boolean isCharity = charity.isChecked();
+                if (!isCharity) {
+                    coreCharity.setChecked(false);
+                }
+                final boolean isCoreCharity = coreCharity.isChecked();
+                _adminsvc.setCharityInfo(info.name.getMemberId(), isCharity, isCoreCharity, 
+                    new AsyncCallback<Void>() {
+                        public void onFailure (Throwable caught) {
+                            CShell.log("Could not update charity info.", caught);
+                            MsoyUI.error(CShell.serverError(caught));
+                            charity.setChecked(info.charity);
+                            coreCharity.setChecked(info.coreCharity);
+                            coreCharity.setEnabled(info.charity);
+                        }
+                        public void onSuccess (Void result) {
+                            info.charity = isCharity;
+                            info.coreCharity = isCoreCharity;
+                            coreCharity.setEnabled(info.charity);
+                            MsoyUI.info(_msgs.mipUpdatedCharityStatus());
+                        }
+                });
+            }
+        };
+        charity.addClickListener(updateCharityListener);
+        coreCharity.addClickListener(updateCharityListener);
+        
         // TODO
     }
-
+    
     protected Widget infoLink (MemberName name)
     {
         return Link.create("" + name, Pages.ADMINZ, Args.compose("info", name.getMemberId()));

@@ -1171,6 +1171,48 @@ public class MemberRepository extends DepotRepository
             new Where(MemberExperienceRecord.MEMBER_ID_C, memberId),
             OrderBy.ascending(MemberExperienceRecord.DATE_OCCURRED_C));
     }
+    
+    /**
+     * Saves the given charity record.
+     */
+    public void saveCharity (CharityRecord record)
+    {
+        store(record);
+    }
+    
+    /**
+     * Deletes the charity record for the given member.
+     */
+    public void deleteCharity (int memberId)
+    {
+        delete(CharityRecord.class, memberId);
+    }
+    
+    /**
+     * Retrieves all charities.
+     */
+    public List<CharityRecord> getCharities ()
+    {
+        return findAll(CharityRecord.class);
+    }
+    
+    /**
+     * Retrieves all core charities, i.e., those that can be randomly selected when a user has not
+     * yet chosen a specific charity.
+     */
+    public List<CharityRecord> getCoreCharities ()
+    {
+        return findAll(CharityRecord.class, new Where(CharityRecord.CORE_C, true));
+    }
+    
+    /**
+     * Retrieves the charity record for the given member.  If the member is not a charity, returns
+     * null.
+     */
+    public CharityRecord getCharityRecord (int memberId)
+    {
+        return load(CharityRecord.class, memberId);
+    }
 
     protected String randomInviteId ()
     {
@@ -1196,6 +1238,7 @@ public class MemberRepository extends DepotRepository
         classes.add(AffiliateRecord.class);
         classes.add(ReferralRecord.class);
         classes.add(MemberExperienceRecord.class);
+        classes.add(CharityRecord.class);
     }
 
     @Inject protected UserActionRepository _actionRepo;
