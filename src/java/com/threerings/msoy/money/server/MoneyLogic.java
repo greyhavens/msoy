@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Invoker;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
@@ -735,10 +736,10 @@ public class MoneyLogic
         // trip, so perhaps some optimization could be used here.  However, compared to the writes
         // that have to be done at the same time, this is somewhat trivial.
         List<CharityRecord> charities = _memberRepo.getCoreCharities();
-        if (!charities.isEmpty()) {
-            return charities.get((int)(Math.random() * charities.size())).memberId;
-        } else {
+        if (charities.isEmpty()) {
             return 0;
+        } else {
+            return RandomUtil.pickRandom(charities).memberId;
         }
     }
 
