@@ -28,6 +28,9 @@ public class PartyObject extends DObject
 
     /** The field name of the <code>recruiting</code> field. */
     public static const RECRUITING :String = "recruiting";
+    
+    /** The field name of the <code>partyService</code> field. */
+    public static final String PARTY_SERVICE = "partyService";
     // AUTO-GENERATED: FIELDS END
 
     /** The list of people in this party. */
@@ -45,8 +48,10 @@ public class PartyObject extends DObject
     /** Customizable flavor text. */
     public var status :String;
 
-    /** TODO: Doc. */
+    /** This party's access control. @see PartyCodes */
     public var recruiting :int;
+
+    public var partyService :PartyMarshaller;
 
     override public function readObject (ins :ObjectInputStream) :void
     {
@@ -58,6 +63,7 @@ public class PartyObject extends DObject
         sceneId = ins.readInt();
         status = (ins.readField(String) as String);
         recruiting = ins.readByte();
+        partyService = PartyMarshaller(ins.readObject());
     }
 }
 }

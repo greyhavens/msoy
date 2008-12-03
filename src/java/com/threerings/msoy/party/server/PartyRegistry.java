@@ -106,7 +106,7 @@ public class PartyRegistry
         // After joinParty doesn't call on startParty
     }
 
-    protected HashIntMap<PartyObject> _parties = new HashIntMap<PartyObject>();
+    protected HashIntMap<PartyManager> _parties = new HashIntMap<PartyManager>();
 
     protected AccessController _partyAccessController = new AccessController()
     {
