@@ -27,6 +27,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.HTMLSanitizer;
 
 import com.threerings.msoy.web.gwt.Args;
@@ -593,6 +594,9 @@ public class ForumServlet extends MsoyServiceServlet
                 // handle scene links
                 if (args.isPrefixedId(0, "s")) {
                     return makeBoxedScene(token, args.getPrefixedId(0, "s", 0));
+
+                } else if (args.isPrefixedId(0, "m")) {
+                    return makeBoxedMemberHome(token, args.getPrefixedId(0, "m", 0));
                 }
                 break;
             }
@@ -632,8 +636,15 @@ public class ForumServlet extends MsoyServiceServlet
     protected String makeBoxedScene (String token, int sceneId)
     {
         SceneRecord srec = _sceneRepo.loadScene(sceneId);
-        return (srec == null) ? null : MessageUtil.makeBox(token, srec.getThumbnail(),
-                                                           MediaDesc.SNAPSHOT_THUMB_SIZE, srec.name);
+        return (srec == null) ? null :
+            MessageUtil.makeBox(token, srec.getThumbnail(), MediaDesc.SNAPSHOT_THUMB_SIZE,
+                srec.name);
+    }
+
+    protected String makeBoxedMemberHome (String token, int memberId)
+    {
+        MemberRecord memrec = _memberRepo.loadMember(memberId);
+        return makeBoxedScene(token, memrec.homeSceneId);
     }
 
     protected Pattern _urlPattern = Pattern.compile(
@@ -646,6 +657,7 @@ public class ForumServlet extends MsoyServiceServlet
     @Inject protected SupportLogic _supportLogic;
     @Inject protected MailLogic _mailLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyGameRepository _gameRepo;
