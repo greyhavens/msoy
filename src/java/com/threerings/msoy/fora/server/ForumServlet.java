@@ -570,33 +570,34 @@ public class ForumServlet extends MsoyServiceServlet
         }
         Args args = Args.fromToken(token.substring(didx+1));
 
+        String box = null;
         try {
             switch (page) {
             case SHOP:
                 // handle shop listings
                 if (args.get(0, "").equals("l")) {
-                    return makeBoxedItem(token, (byte)args.get(1, 0), args.get(2, 0));
+                    box = makeBoxedItem(token, (byte)args.get(1, 0), args.get(2, 0));
                 }
                 break;
             case GAMES:
                 // handle game detail page links
                 if (args.get(0, "").equals("d")) {
-                    return makeBoxedGame(token, args.get(1, 0));
+                    box = makeBoxedGame(token, args.get(1, 0));
                 }
                 break;
             case GROUPS:
                 // handle whirled detail page links
                 if (args.get(0, "").equals("d")) {
-                    return makeBoxedWhirled(token, args.get(1, 0));
+                    box = makeBoxedWhirled(token, args.get(1, 0));
                 }
                 break;
             case WORLD:
                 // handle scene links
                 if (args.isPrefixedId(0, "s")) {
-                    return makeBoxedScene(token, args.getPrefixedId(0, "s", 0));
+                    box = makeBoxedScene(token, args.getPrefixedId(0, "s", 0));
 
                 } else if (args.isPrefixedId(0, "m")) {
-                    return makeBoxedMemberHome(token, args.getPrefixedId(0, "m", 0));
+                    box = makeBoxedMemberHome(token, args.getPrefixedId(0, "m", 0));
                 }
                 break;
             }
@@ -604,8 +605,8 @@ public class ForumServlet extends MsoyServiceServlet
             log.warning("Failed to box page", "token", token, e);
         }
 
-        return original; // hrm, bogosity
-        // return "_URL_" + token;
+        return (box == null) ? original : box;
+        // return "_URL_" + token; // TODO: mark URLs so that we can auto-link them
     }
 
     protected String makeBoxedItem (String token, byte type, int catalogId)
