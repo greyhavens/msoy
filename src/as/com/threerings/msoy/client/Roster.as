@@ -18,11 +18,11 @@ import com.threerings.msoy.data.all.PlayerEntry;
 
 import com.threerings.msoy.client.MsoyContext;
 
-/** Displays a pretty list of players, for use in popup friends and party lists. */
-public class PlayerList extends List
+/** A list of players, for use in popup friends and party lists. */
+public class Roster extends List
     implements SetListener
 {
-    public function PlayerList (mctx :MsoyContext, field :String, renderer :Class)
+    public function Roster (mctx :MsoyContext, field :String, renderer :Class)
     {
         _field = field;
 
@@ -35,7 +35,7 @@ public class PlayerList extends List
         selectable = false;
         variableRowHeight = true;
 
-        var cf :ClassFactory = new ClassFactory(renderer);;
+        var cf :ClassFactory = new ClassFactory(renderer);
         cf.properties =  { mctx: mctx };
         itemRenderer = cf;
 

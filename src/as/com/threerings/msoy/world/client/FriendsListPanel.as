@@ -30,7 +30,7 @@ import com.threerings.msoy.ui.FlyingPanel;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.PlayerList;
+import com.threerings.msoy.client.Roster;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 
@@ -96,7 +96,7 @@ public class FriendsListPanel extends FlyingPanel
     {
         super.createChildren();
 
-        _friendsList = new PlayerList(_wctx, MemberObject.FRIENDS, FriendRenderer);
+        _friendsList = new Roster(_wctx, MemberObject.FRIENDS, FriendRenderer);
         _friendsList.dataProvider.filterFunction = function (friend :FriendEntry) :Boolean {
             // Only show online friends
             return friend.online;
@@ -231,7 +231,7 @@ public class FriendsListPanel extends FlyingPanel
     protected var _wctx :WorldContext;
 
     protected var _cliObs :ClientAdapter;
-    protected var _friendsList :PlayerList;
+    protected var _friendsList :Roster;
     protected var _nameLabel :Label;
     protected var _statusEdit :TextInput;
 }
