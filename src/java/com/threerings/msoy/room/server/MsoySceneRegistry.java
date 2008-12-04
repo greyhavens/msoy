@@ -3,20 +3,14 @@
 
 package com.threerings.msoy.room.server;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
-import com.threerings.crowd.server.PlaceManager;
-import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -25,18 +19,13 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.data.SceneCodes;
-import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.server.SceneManager;
-import com.threerings.whirled.server.SceneRegistry;
-import com.threerings.whirled.util.UpdateList;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.server.SpotSceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -44,13 +33,11 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.PetObject;
 import com.threerings.msoy.room.data.RoomCodes;
-import com.threerings.msoy.room.server.persist.MemoryRecord;
-import com.threerings.msoy.room.server.persist.MemoryRepository;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -192,72 +179,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         });
     }
 
-    // After the scene is successfully read from the database, we must hijack the process
-    // to resolve item memories before the room manager is initialized. 
-    @Override
-    protected void processSuccessfulResolution (SceneModel model, UpdateList updates)
-    {
-        try {
-            final MsoyScene scene = (MsoyScene) _scfact.createScene(
-                model, _confact.createPlaceConfig(model));
-
-            // now that the scene is loaded, determine which items in this room have memories
-            List<ItemIdent> memoryIds = Lists.newArrayList();
-            for (FurniData furni : scene.getFurni()) {
-                if (furni.itemType != Item.NOT_A_TYPE) {
-                    memoryIds.add(furni.getItemIdent());
-                }
-            }
-
-            if (memoryIds.size() > 0) {
-                // if there are memories, kick off the unit that loads them from the database
-                loadMemories(memoryIds, scene, updates);
-
-            } else {
-                // if not, go straight to room creation
-                createRoom(null, scene, updates);
-            }
-        } catch (Exception e) {
-            processFailedResolution(model.sceneId, e);
-        }
-    }
-
-    protected void loadMemories (final List<ItemIdent> itemIdents,
-                                 final MsoyScene scene, final UpdateList updates)
-    {
-        // load the memories for a given set of items
-        _invoker.postUnit(new RepositoryUnit("loadMemories(" + scene.getId() + ")") {
-            @Override
-            public void invokePersist () throws Exception {
-                _memories = _memoryRepo.loadMemories(itemIdents);
-            }
-            public void handleSuccess () {
-                // if all went well, finally create the room & its manager
-                createRoom(_memories, scene, updates);
-            }
-            public void handleFailure (Exception error) {
-                processFailedResolution(scene.getId(), error);
-            }
-            protected Collection<MemoryRecord> _memories;
-        });
-    }
-
-    protected void createRoom (final Collection<MemoryRecord> memories,
-                               final MsoyScene scene, final UpdateList updates)
-    {
-        try {
-            // create our room manager
-            _plreg.createPlace(scene.getPlaceConfig(), new PlaceRegistry.PreStartupHook() {
-                public void invoke (PlaceManager pmgr) {
-                    ((RoomManager)pmgr).configureRoom(
-                        memories, scene, updates, MsoySceneRegistry.this);
-                }
-            });
-        } catch (Exception e) {
-            processFailedResolution(scene.getId(), e);
-        }
-    }
-        
     protected void sendClientToNode (String nodeName, MemberObject memobj,
                                      SceneService.SceneMoveListener listener)
     {
@@ -285,5 +206,4 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     @Inject protected PetManager _petMan;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected FeedRepository _feedRepo;
-    @Inject protected MemoryRepository _memoryRepo;
 }

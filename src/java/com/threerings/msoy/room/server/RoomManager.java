@@ -60,7 +60,6 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
-//import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
@@ -98,6 +97,7 @@ import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
 import com.threerings.msoy.room.data.RoomCodes;
+import com.threerings.msoy.room.data.RoomExtras;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
@@ -745,19 +745,6 @@ public class RoomManager extends SpotSceneManager
         super.updateOccupantInfo(occInfo);
     }
 
-    // When the scene registry resolves a room, it also loads up the memories for the
-    // items in that room and calls this method to let us know what they are; this is
-    // to ensure that the memories are in place on the client before the item's media
-    // load. can be sure that the item's media don't load on the client before
-    // memories have had a chance to get there. This method is also responsible for
-    // callinng setSceneData() on our superclass.
-    public void configureRoom (Collection<MemoryRecord> memories, Scene scene,
-                               UpdateList updates, MsoySceneRegistry registry)
-    {
-        _startupMemories = memories;
-        setSceneData(scene, updates, registry);
-    }
-
     /**
      * Checks to see if an item is being controlled by any client. If not, the calling client is
      * assigned as the item's controller and true is returned. If the item is already being
@@ -812,6 +799,14 @@ public class RoomManager extends SpotSceneManager
         return ROOM_IDLE_UNLOAD_PERIOD;
     }
 
+    @Override // from SceneManager
+    protected void gotSceneData (Object extras)
+    {
+        super.gotSceneData(extras);
+
+        _extras = (RoomExtras) extras;
+    }
+
     @Override // from PlaceManager
     protected void didStartup ()
     {
@@ -822,30 +817,14 @@ public class RoomManager extends SpotSceneManager
         _roomObj.setRoomService(_invmgr.registerDispatcher(new RoomDispatcher(this)));
         _roomObj.addListener(_roomListener);
 
-        // if we have memories for the items in our room, add'em to the room object
-        if (_startupMemories != null) {
-            _roomObj.startTransaction();
-            try {
-                for (MemoryRecord mrec : _startupMemories) {
-                    _roomObj.addToMemories(mrec.toEntry());
-                }
-            } finally {
-                _roomObj.commitTransaction();
-            }
-            _startupMemories = null;
-        }
-
         // register ourselves in our peer object
         MsoyScene mscene = (MsoyScene) _scene;
         _peerMan.roomDidStartup(mscene.getId(), mscene.getName(), mscene.getOwnerId(),
                                           mscene.getOwnerType(), mscene.getAccessControl());
 
-        // determine which (if any) items in this room have memories and load them up
-        List<ItemIdent> memoryIds = Lists.newArrayList();
-        for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
-            if (furni.itemType != Item.NOT_A_TYPE) {
-                memoryIds.add(furni.getItemIdent());
-            }
+        // if we have memories for the items in our room, add'em to the room object
+        if (_extras.memories != null) {
+            addMemoriesToRoom(_extras.memories);
         }
 
         // load up any pets that are "let out" in this room scene
@@ -1329,20 +1308,25 @@ public class RoomManager extends SpotSceneManager
                 _mems = _memoryRepo.loadMemories(idents);
             }
             public void handleSuccess () {
-                _roomObj.startTransaction();
-                try {
-                    for (MemoryRecord mrec : _mems) {
-                        _roomObj.addToMemories(mrec.toEntry());
-                    }
-                } finally {
-                    _roomObj.commitTransaction();
-                }
+                addMemoriesToRoom(_mems);
                 if (onSuccess != null) {
                     onSuccess.run();
                 }
             }
             protected Collection<MemoryRecord> _mems;
         });
+    }
+
+    protected void addMemoriesToRoom (Collection<MemoryRecord> memories)
+    {
+        _roomObj.startTransaction();
+        try {
+            for (MemoryRecord mrec : memories) {
+                _roomObj.addToMemories(mrec.toEntry());
+            }
+        } finally {
+            _roomObj.commitTransaction();
+        }
     }
 
     @Override
@@ -1499,6 +1483,9 @@ public class RoomManager extends SpotSceneManager
     /** The room object. */
     protected RoomObject _roomObj;
 
+    /** Extra data from scene resolution. */
+    protected RoomExtras _extras;
+
     /** Game ids of properties we are currently loading. */
     protected ArrayIntSet _pendingGameIds = new ArrayIntSet();
 
@@ -1519,9 +1506,6 @@ public class RoomManager extends SpotSceneManager
 
     /** Non-statically rendered avatars and pets in the room. */
     protected HashIntMap<ActorInfo> _dynamicActors = new HashIntMap<ActorInfo>();
-
-    /** Initial memories for the items in this room, only non-null very briefly. */
-    protected Collection<MemoryRecord> _startupMemories;
 
     /** After this level of occupancy is reached, actors are made static. */
     protected static final int ACTOR_RENDERING_LIMIT = 20;

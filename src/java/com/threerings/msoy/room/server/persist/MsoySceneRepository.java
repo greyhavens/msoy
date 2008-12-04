@@ -53,6 +53,8 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 
@@ -63,6 +65,7 @@ import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.RoomExtras;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 
 import static com.threerings.msoy.Log.log;
@@ -283,7 +286,19 @@ public class MsoySceneRepository extends DepotRepository
     // from interface SceneRepository
     public Object loadExtras (int sceneId, SceneModel model)
     {
-        return null;
+        List<ItemIdent> memoryIds = Lists.newArrayList();
+        for (FurniData furni : ((MsoySceneModel) model).furnis) {
+            if (furni.itemType != Item.NOT_A_TYPE) {
+                memoryIds.add(furni.getItemIdent());
+            }
+        }
+        RoomExtras extras = new RoomExtras();
+        if (memoryIds.size() > 0) {
+            extras.memories = _memoryRepo.loadMemories(memoryIds);
+        } else {
+            extras.memories = null;
+        }
+        return extras;
     }
 
     /**
@@ -591,4 +606,5 @@ public class MsoySceneRepository extends DepotRepository
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected HotnessConfig _hconfig;
+    @Inject protected MemoryRepository _memoryRepo;
 }
