@@ -121,16 +121,16 @@ public class GroupEdit extends FlexTable
             _catalogTag = MsoyUI.createTextBox(_extras.catalogTag, 24, 24));
 
         HorizontalPanel footer = new HorizontalPanel();
-        footer.add(_submit = new Button(_cmsgs.change(), new ClickListener() {
-            public void onClick (Widget sender) {
-                commitEdit();
-            }
-        }));
-        footer.add(WidgetUtil.makeShim(5, 5));
         footer.add(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 Link.go(Pages.GROUPS, _group.groupId == 0 ? "" :
                         Args.compose("d", _group.groupId));
+            }
+        }));
+        footer.add(WidgetUtil.makeShim(5, 5));
+        footer.add(_submit = new Button(_cmsgs.change(), new ClickListener() {
+            public void onClick (Widget sender) {
+                commitEdit();
             }
         }));
         int frow = getRowCount();
