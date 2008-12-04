@@ -136,22 +136,7 @@ public class MemberManager
      */
     public void init ()
     {
-        _ppSnapshot = PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan);
-        _ppInvalidator = new Interval(_omgr) {
-            @Override public void expired() {
-                final PopularPlacesSnapshot newSnapshot =
-                    PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan);
-                synchronized(MemberManager.this) {
-                    _ppSnapshot = newSnapshot;
-                }
-            }
-        };
-        _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
-
-        // loading all the greeter ids is a pretty expensive query, so only run it every 2 minutes.
-        // TODO: store the greeter flag in MemberName or MsoyClientInfo and move the greeter id
-        // cache into the popular places snapshot and make it cache only the online greeters. As it
-        // stands, the online determination is done later by MemberHelper.resolveMemberCards.
+        // loading all the greeter ids is a pretty expensive query, so run it infrequently.
         _greeterIdsSnapshot = _memberRepo.loadGreeterIds();
         _greeterIdsInvalidator = new Interval(_invoker) {
             @Override public void expired() {
@@ -162,6 +147,18 @@ public class MemberManager
             }
         };
         _greeterIdsInvalidator.schedule(GREETERS_REFRESH_PERIOD, true);
+
+        _ppSnapshot = PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan, getGreeterIdsSnapshot());
+        _ppInvalidator = new Interval(_omgr) {
+            @Override public void expired() {
+                final PopularPlacesSnapshot newSnapshot =
+                    PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan, getGreeterIdsSnapshot());
+                synchronized(MemberManager.this) {
+                    _ppSnapshot = newSnapshot;
+                }
+            }
+        };
+        _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
     }
 
     /**
@@ -171,17 +168,6 @@ public class MemberManager
     {
         synchronized(this) {
             return _ppSnapshot;
-        }
-    }
-
-    /**
-     * Returns the most recently loaded set of greeter ids.
-     */
-    public List<Integer> getGreeterIdsSnapshot ()
-    {
-        // using the same monitor here should be ok as the block is only 2 atoms on a 64 bit OS
-        synchronized (this) {
-            return _greeterIdsSnapshot;
         }
     }
 
@@ -1001,6 +987,19 @@ public class MemberManager
         }
     }
 
+    /**
+     * Returns the most recently loaded set of greeter ids, sorted by last session time. This is
+     * only used to construct the popular places snapshot, which figures out which greeters are
+     * currently online and sorts and caches a separate list.
+     */
+    protected List<Integer> getGreeterIdsSnapshot ()
+    {
+        // using the same monitor here should be ok as the block is only 2 atoms on a 64 bit OS
+        synchronized (this) {
+            return _greeterIdsSnapshot;
+        }
+    }
+
     /** An interval that updates the popular places snapshot every so often. */
     protected Interval _ppInvalidator;
 
@@ -1047,7 +1046,7 @@ public class MemberManager
     protected static final long POP_PLACES_REFRESH_PERIOD = 30*1000;
 
     /** The frequency with which we recalculate our greeter ids snapshot. */
-    protected static final long GREETERS_REFRESH_PERIOD = 120*1000;
+    protected static final long GREETERS_REFRESH_PERIOD = 30 * 60 * 1000;
 
     /** Maximum number of experiences we will keep track of per user. */
     protected static final int MAX_EXPERIENCES = 20;

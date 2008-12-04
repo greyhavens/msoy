@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -87,12 +90,15 @@ public class MemberServlet extends MsoyServiceServlet
 
         // add some online greeters if this user doesn't alreay have a lot of friends and is a
         // member
-        if (padWithGreeters && mrec != null && list.size() < NEED_FRIENDS_FRIEND_COUNT) {
-            IntSet greeterIds = new ArrayIntSet();
-            greeterIds.addAll(_memberMan.getGreeterIdsSnapshot());
+        int deficit = NEED_FRIENDS_FRIEND_COUNT - list.size();
+        if (padWithGreeters && mrec != null && deficit > 0) {
+            HashSet<Integer> greeterIds = new HashSet<Integer>();
+            greeterIds.addAll(_memberMan.getPPSnapshot().getOnlineGreeters());
             greeterIds.removeAll(friendIds);
             greeterIds.remove(mrec.memberId);
-            result.friendsAndGreeters.addAll(_mhelper.resolveMemberCards(greeterIds, true, null));
+            Collection<Integer> subset = CollectionUtil.selectRandomSubset(
+                greeterIds, Math.min(greeterIds.size(), deficit));
+            result.friendsAndGreeters.addAll(_mhelper.resolveMemberCards(subset, true, null));
         }
 
         return result;
@@ -103,7 +109,7 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // grab the snapshot
-        List<Integer> allGreeterIds = _memberMan.getGreeterIdsSnapshot();
+        List<Integer> allGreeterIds = _memberMan.getPPSnapshot().getGreeters();
 
         // set up the name and total count
         MemberRecord tgtrec = getAuthedUser();

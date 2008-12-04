@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.server;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -27,6 +29,8 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.room.data.MsoySceneModel;
+
+import com.threerings.msoy.server.persist.MemberRepository; // just for a @link
 
 /**
  * Contains a snapshot of all of the popular places in the Whirled.
@@ -57,14 +61,18 @@ public class PopularPlacesSnapshot
 
     /**
      * Iterates over all the games, lobbies and the scenes in the world, finds out the N most
-     * populated ones and sorts all scenes by owner, caching the values.
+     * populated ones and sorts all scenes by owner, caching the values. Also builds lists of
+     * greeters, sorting by who is online.
+     * 
+     * @param greeterIds the most recently read list of greeter ids from {@link
+     * MemberRepository#loadGreeterIds()} (sorted by last online).
      */
     @EventThread
     public static PopularPlacesSnapshot takeSnapshot (
-        PresentsDObjectMgr omgr, MsoyPeerManager peerMan)
+        PresentsDObjectMgr omgr, MsoyPeerManager peerMan, List<Integer> greeterIds)
     {
         omgr.requireEventThread();
-        return new PopularPlacesSnapshot(peerMan);
+        return new PopularPlacesSnapshot(peerMan, greeterIds);
     }
 
     /**
@@ -93,6 +101,23 @@ public class PopularPlacesSnapshot
     public Iterable<Place> getTopGames ()
     {
         return _glist;
+    }
+
+    /**
+     * Returns a list of the greeters currently registered on the system. Online ones are first
+     * and they are sorted by last online time.
+     */
+    public List<Integer> getGreeters ()
+    {
+        return _greeters;
+    }
+
+    /**
+     * Returns a list of the greeters currently online.
+     */
+    public List<Integer> getOnlineGreeters ()
+    {
+        return _onlineGreeters;
     }
 
     /**
@@ -135,7 +160,7 @@ public class PopularPlacesSnapshot
         return _totalPopulation;
     }
 
-    protected PopularPlacesSnapshot (MsoyPeerManager peerMan)
+    protected PopularPlacesSnapshot (MsoyPeerManager peerMan, List<Integer> greeterIds)
     {
         // any member on any world server can be playing any game on any game server, so we first
         // need to make a first pass to collect metadata on all hosted games
@@ -150,12 +175,18 @@ public class PopularPlacesSnapshot
             }
         });
 
-        // now we can count up the population in all scenes and games
+        // intermediate greeter hash tables
+        final HashSet<Integer> greeters = new HashSet<Integer>(greeterIds);
+        final HashSet<Integer> onlineGreeters = new HashSet<Integer>();
+
+        // now we can count up the population in all scenes and games. collect greeter online info
+        // while we're at it
         peerMan.applyToNodes(new Function<NodeObject,Void>() {
             public Void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
                 for (MemberLocation memloc : mnobj.memberLocs) {
                     _totalPopulation++;
+                    boolean online = false;
                     if (memloc.sceneId > 0) {
                         HostedRoom room = mnobj.hostedScenes.get(memloc.sceneId);
                         if (room != null && room.accessControl == MsoySceneModel.ACCESS_EVERYONE) {
@@ -164,6 +195,7 @@ public class PopularPlacesSnapshot
                                 increment(_whirleds, _whlist, room.ownerId, room);
                             }
                             increment(_scenes, _sclist, room.placeId, room);
+                            online = true;
                         }
                     }
                     if (memloc.gameId != 0 && !Game.isDevelopmentVersion(memloc.gameId)) {
@@ -171,7 +203,13 @@ public class PopularPlacesSnapshot
                         if (game != null) {
                             // map games by game id
                             increment(_games, _glist, game.placeId, game);
+                            online = true;
                         }
+                    }
+
+                    // mark as an online greeter if appropriate
+                    if (online && greeters.contains(memloc.memberId)) {
+                        onlineGreeters.add(memloc.memberId);
                     }
                 }
                 return null;
@@ -195,6 +233,25 @@ public class PopularPlacesSnapshot
         sortAndPrune(_whlist);
         sortAndPrune(_sclist);
         sortAndPrune(_glist);
+
+        // build sorted lists of greeter ids (do two passes for a cheap stable sort)
+        ((ArrayList)_greeters).ensureCapacity(greeters.size());
+        ((ArrayList)_onlineGreeters).ensureCapacity(onlineGreeters.size());
+        for (Integer id : greeterIds) {
+            if (onlineGreeters.contains(id)) {
+                _greeters.add(id);
+                _onlineGreeters.add(id);
+            }
+        }
+        for (Integer id : greeterIds) {
+            if (greeters.contains(id) && !onlineGreeters.contains(id)) {
+                _greeters.add(id);
+            }
+        }
+
+        // and voila, we are read-only lists
+        _greeters = Collections.unmodifiableList(_greeters);
+        _onlineGreeters = Collections.unmodifiableList(_onlineGreeters);
     }
 
     protected static void sortAndPrune (List<Place> list)
@@ -208,6 +265,9 @@ public class PopularPlacesSnapshot
 
     /** The total number of people in the Whirled. */
     protected int _totalPopulation;
+
+    /** A phase count to limit refreshing cache of some lists to every N refreshes. */
+    protected int _phase;
 
     /** A mapping of all resolved whirleds in the whole wide Whirled. */
     protected IntMap<Place> _whirleds = IntMaps.newHashIntMap();
@@ -226,4 +286,13 @@ public class PopularPlacesSnapshot
 
     /** The most popular games, sorted. */
     protected List<Place> _glist = Lists.newArrayList();
+
+    /** Greeters, sorted by online now then last online time. */
+    protected List<Integer> _greeters = Lists.newArrayList();
+
+    /** Greeters, only online ones. */
+    protected List<Integer> _onlineGreeters = Lists.newArrayList();
+
+    /** Every so many times, update the greeters. */
+    protected static final int GREETER_PHASE_MODULUS = 4;
 }

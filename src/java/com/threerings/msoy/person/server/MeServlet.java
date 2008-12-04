@@ -3,8 +3,10 @@
 
 package com.threerings.msoy.person.server;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -107,15 +109,14 @@ public class MeServlet extends MsoyServiceServlet
         }
 
         // load the eligible greeters
-        ArrayIntSet greeterIds = new ArrayIntSet();
-        greeterIds.addAll(_memberMan.getGreeterIdsSnapshot());
+        HashSet<Integer> greeterIds = new HashSet<Integer>(
+            _memberMan.getPPSnapshot().getOnlineGreeters());
         greeterIds.remove(mrec.memberId);
         greeterIds.removeAll(friendIds);
 
         // prune
-        IntSet shortList = new ArrayIntSet();
-        shortList.addAll(CollectionUtil.selectRandomSubset(
-            greeterIds, Math.min(greeterIds.size(), MAX_GREETERS_TO_SHOW)));
+        Collection<Integer> shortList = CollectionUtil.selectRandomSubset(
+            greeterIds, Math.min(greeterIds.size(), MAX_GREETERS_TO_SHOW));
 
         // load cards
         data.greeters = _mhelper.resolveMemberCards(shortList, true, null);
