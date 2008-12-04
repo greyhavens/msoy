@@ -1184,11 +1184,12 @@
       </filelist>
     </copyfilelist>
 
-    <!-- copy in the swiftly build stuff (msoy only) -->
+    <!-- copy in the dictionaries and swiftly build stuff (msoy only) -->
     <mkdir dir="${approot.server}/data"/>
     <copy todir="${approot.server}/data">
       <fileset dir="data">
-        <include name="**"/>
+        <include name="dictionary/**"/>
+        <include name="swiftly/**"/>
         <exclude name="swiftly/flex_sdk/asdoc/**"/>
         <exclude name="swiftly/flex_sdk/runtimes/**"/>
         <exclude name="swiftly/flex_sdk/samples/**"/>
@@ -1222,8 +1223,8 @@
     <copy todir="${approot.server}/pages">
       <fileset dir="pages">
         <exclude name="**/*.in"/>
-        <exclude name="source/**"/>
-        <exclude name="**/source/**"/>
+        <exclude name="**/.gwt-tmp/**"/>
+        <exclude name="**/*-aux/**"/>
       </fileset>
       <fileset dir="data" includes="whirled_sdk*.zip"/>
     </copy>
