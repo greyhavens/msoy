@@ -12,6 +12,9 @@ import com.threerings.presents.dobj.DSet;
  */
 public class FriendEntry extends PlayerEntry
 {
+    /** This player's current status. */
+    public String status;
+
     /** Is the friend online? */
     public boolean online;
 
@@ -23,7 +26,8 @@ public class FriendEntry extends PlayerEntry
     /** Mr. Constructor. */
     public FriendEntry (VizMemberName name, String status, boolean online)
     {
-    	super(name, status);
+    	super(name);
+        this.status = status;
         this.online = online;
     }
 

@@ -13,18 +13,14 @@ public class PlayerEntry
     /** The display name of the friend. */
     public VizMemberName name;
 
-    /** This player's current status. */
-    public String status;
-
     /** Suitable for deserialization. */
     public PlayerEntry ()
     {
     }
 
-    public PlayerEntry (VizMemberName name, String status)
+    public PlayerEntry (VizMemberName name)
     {
         this.name = name;
-        this.status = status;
     }
 
     // from interface DSet.Entry

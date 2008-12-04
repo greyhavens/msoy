@@ -16,9 +16,9 @@ public class PartierEntry extends PlayerEntry
     }
 
     /** Mr. Constructor. */
-    public PartierEntry (VizMemberName name, String status)
+    public PartierEntry (VizMemberName name)
     {
-    	super(name, status);
+    	super(name);
     }
 
     @Override

@@ -19,13 +19,9 @@ public class PlayerEntry
     /** The display name of the friend. */
     public var name :VizMemberName;
 
-    /** This player's current status. */
-    public var status :String;
-
-    public function PlayerEntry (name :VizMemberName = null, status :String = null)
+    public function PlayerEntry (name :VizMemberName = null)
     {
         this.name = name;
-        this.status = status;
     }
 
     // from Hashable
@@ -56,14 +52,12 @@ public class PlayerEntry
     public function readObject (ins :ObjectInputStream) :void
     {
         name = VizMemberName(ins.readObject());
-        status = (ins.readField(String) as String);
     }
 
     // from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeObject(name);
-        out.writeField(status);
     }
 }
 }

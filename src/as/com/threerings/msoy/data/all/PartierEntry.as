@@ -14,10 +14,9 @@ public class PartierEntry extends PlayerEntry
 {
     // Nothing for now
 
-    public function PartierEntry (
-        name :VizMemberName = null, status :String = null)
+    public function PartierEntry (name :VizMemberName = null)
     {
-        super(name, status);
+        super(name);
     }
 
     override public function toString () :String

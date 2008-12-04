@@ -12,6 +12,9 @@ import com.threerings.presents.dobj.DSet_Entry;
  */
 public class FriendEntry extends PlayerEntry
 {
+    /** This player's current status. */
+    public var status :String;
+
     /** Is the friend online? */
     public var online :Boolean;
 
@@ -19,7 +22,8 @@ public class FriendEntry extends PlayerEntry
     public function FriendEntry (
         name :VizMemberName = null, status :String = null, online :Boolean = false)
     {
-        super(name, status);
+        super(name);
+        this.status = status;
         this.online = online;
     }
 
@@ -33,6 +37,7 @@ public class FriendEntry extends PlayerEntry
     {
         super.readObject(ins);
 
+        status = (ins.readField(String) as String);
         online = ins.readBoolean();
     }
 
@@ -41,6 +46,7 @@ public class FriendEntry extends PlayerEntry
     {
         super.writeObject(out);
 
+        out.writeField(status);
         out.writeBoolean(online);
     }
 }
