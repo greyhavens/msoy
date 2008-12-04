@@ -65,8 +65,8 @@ import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.data.RoomExtras;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
+import com.threerings.msoy.room.server.RoomExtras;
 
 import static com.threerings.msoy.Log.log;
 
