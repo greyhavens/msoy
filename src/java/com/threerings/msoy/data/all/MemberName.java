@@ -5,8 +5,6 @@ package com.threerings.msoy.data.all;
 
 import java.util.Comparator;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.DSet;
@@ -15,7 +13,7 @@ import com.threerings.presents.dobj.DSet;
  * Extends {@link Name} with persistent member information.
  */
 public class MemberName extends Name
-    implements DSet.Entry, IsSerializable
+    implements DSet.Entry
 {
     /** The minimum allowable length of a permaname. */
     public static final int MINIMUM_PERMANAME_LENGTH = 4;
