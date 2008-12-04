@@ -56,7 +56,7 @@ public class TextUtil
             } else {
                 // links at the odd indexes
                 array.splice(ii, 0, 
-                    createLinkFormat(String(array[ii]), defaultFormat, useDefaultColor));
+                    createLinkFormat(String(array[ii]), defaultFormat, useDefaultColor, true));
             }
         }
 
@@ -116,7 +116,7 @@ public class TextUtil
                 var index :int = int(result.index);
                 array.push(defaultFormat, text.substring(0, index));
                 array.push(
-                    createLinkFormat(String(result[2]), defaultFormat, useDefaultColor), 
+                    createLinkFormat(String(result[2]), defaultFormat, useDefaultColor, false), 
                     String(result[1]));
 
                 // and advance the text
@@ -135,9 +135,10 @@ public class TextUtil
 
     /**
      * Create a link format for the specified link text.
+     * @param isURL Whether to treat this link as a true URL or a link event dispatcher.
      */
     protected static function createLinkFormat (url :String, defaultFormat :TextFormat,
-        useDefaultColor :Boolean) :TextFormat
+        useDefaultColor :Boolean, isURL :Boolean) :TextFormat
     {
         var fmt :TextFormat = new TextFormat();
         fmt.align = defaultFormat.align;
@@ -146,7 +147,12 @@ public class TextUtil
         fmt.underline = true;
         fmt.color = useDefaultColor ? defaultFormat.color : 0x0093dd;
         fmt.bold = true;
-        fmt.url = "event:" + url;
+        if (isURL) {
+            fmt.url = url;
+            fmt.target = "_blank";
+        } else {
+            fmt.url = "event:" + url;
+        }
         return fmt;
     }
 
