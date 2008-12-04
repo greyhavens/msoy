@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -63,19 +64,27 @@ public class CreateAccountPanel extends FlowPanel
     {
         setStyleName("createAccount");
 
-        FlowPanel logonLink = MsoyUI.createFlowPanel("Logon");
-        add(logonLink);
-        logonLink.add(new Label(_msgs.createAlreadyMember()));
+        add(WidgetUtil.makeShim(15, 15));
+        FlowPanel content = MsoyUI.createFlowPanel("Content");
+        add(content);
+
+        // Logon button floats on the right
+        FloatPanel logonLink = new FloatPanel("Logon");
+        content.add(logonLink);
+        logonLink.add(MsoyUI.createLabel(_msgs.createAlreadyMember(), "AlreadyMember"));
         PushButton logonButton = MsoyUI.createButton(
             MsoyUI.SHORT_THIN, _msgs.createLogonLink(),
             Link.createListener(Pages.ACCOUNT, "logon"));
         MsoyUI.addTrackingListener(logonButton, "signupLogonButtonClicked", null);
         logonLink.add(logonButton);
 
-        add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
-        add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
+        content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
+        content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
 
-        add(new LabeledBox(_msgs.createEmail(),
+        // A/B (/C/D) test banner floats on the right and promotes some part of whirled
+        content.add(_promoPanel = MsoyUI.createSimplePanel(null, "Promo"));
+
+        content.add(new LabeledBox(_msgs.createEmail(),
                            _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1),
                            _msgs.createEmailTip()));
         _email.addKeyboardListener(_onType);
@@ -85,36 +94,36 @@ public class CreateAccountPanel extends FlowPanel
             _email.setText(invite.inviteeEmail);
         }
 
-        add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
+        content.add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
                            _msgs.createRealNameTip()));
         _rname.addKeyboardListener(_onType);
 
-        add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
+        content.add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
                            _msgs.createDateOfBirthTip()));
 
-        add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
+        content.add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
                            _msgs.createPasswordTip()));
         _password.addKeyboardListener(_onType);
 
-        add(new LabeledBox(_msgs.createConfirm(), _confirm = new PasswordTextBox(),
+        content.add(new LabeledBox(_msgs.createConfirm(), _confirm = new PasswordTextBox(),
                            _msgs.createConfirmTip()));
         _confirm.addKeyboardListener(_onType);
 
         _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, -1);
         _name.addKeyboardListener(_onType);
-        add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
+        content.add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
 
         // optionally add the recaptcha component
         if (RecaptchaUtil.isEnabled()) {
-            add(new LabeledBox(_msgs.createCaptcha(),
+            content.add(new LabeledBox(_msgs.createCaptcha(),
                                new HTML("<div id=\"recaptchaDiv\"></div>"), null));
-            add(new HTML("<div id=\"recaptchaDiv\"></div>"));
+            content.add(new HTML("<div id=\"recaptchaDiv\"></div>"));
         }
 
-        add(new LabeledBox(_msgs.createTOS(), _tosBox = new CheckBox(_msgs.createTOSAgree()), null));
+        content.add(new LabeledBox("", _tosBox = new CheckBox(_msgs.createTOSAgree(), true), null));
 
         HorizontalPanel controls = new HorizontalPanel();
-        controls.setWidth("500px");
+        controls.setWidth("475px");
 
         controls.add(_status = MsoyUI.createSimplePanel(null, "Status"));
         controls.add(WidgetUtil.makeShim(10, 10));
@@ -122,7 +131,7 @@ public class CreateAccountPanel extends FlowPanel
 
         PushButton create = MsoyUI.createButton(MsoyUI.LONG_THICK, _msgs.createGo(), null);
         controls.add(create);
-        add(controls);
+        content.add(controls);
 
         // create our click callback that handles the actual registation process
         new ClickCallback<SessionData>(create) {
@@ -177,10 +186,10 @@ public class CreateAccountPanel extends FlowPanel
                           ConversionTrackingUtil.createAdWordsTracker(),
                           ConversionTrackingUtil.createBeacon(EntryVectorCookie.get()));
 
-                
+
                 // temporary - trying to debug Google Analytics discrepancy
                 if (_pageViewRecorded) {
-                    _membersvc.trackClientAction(CShell.visitor, "registration page - joined", null, 
+                    _membersvc.trackClientAction(CShell.visitor, "registration page - joined", null,
                                                  new NoopAsyncCallback());
                 }
 
@@ -208,6 +217,39 @@ public class CreateAccountPanel extends FlowPanel
                     _pageViewRecorded = true;
                 }
             });
+
+
+        // A/B test different header images on this page
+        _membersvc.getABTestGroup(CShell.visitor, "2008 12 AccountCreationHeader", true,
+            new AsyncCallback<Integer>() {
+            public void onSuccess (Integer group) {
+                gotABTestGroup(group);
+            }
+
+            public void onFailure (Throwable cause) {
+                gotABTestGroup(-1);
+            }
+        });
+    }
+
+    /**
+     * Display a different banner (or none) for each one of the test groups.
+     */
+    protected void gotABTestGroup (int groupId)
+    {
+        String imagePath = null;
+        if (groupId == 2) {
+            imagePath = "/images/account/create_banner_avatars.png";
+        } else if (groupId == 3) {
+            imagePath = "/images/account/create_banner_deorate.png";
+        } else if (groupId == 4) {
+            imagePath = "/images/account/create_banner_games.png";
+        }
+        // Group 1 and No Group don't see a banner.
+        if (imagePath == null) {
+            return;
+        }
+        _promoPanel.setWidget(new Image(imagePath));
     }
 
     @Override // from Widget
@@ -353,7 +395,7 @@ public class CreateAccountPanel extends FlowPanel
         final int feedbackDelayMs = 2000;
         Integer group;
         SessionData session;
-    
+
         public FinishRegistration (SessionData result)
         {
             session = result;
@@ -364,17 +406,17 @@ public class CreateAccountPanel extends FlowPanel
                 result.visitor, "2008 11 force invite on registration", true, this);
             schedule(feedbackDelayMs);
         }
-    
+
         public void onFailure (Throwable caught)
         {
             group = -1;
         }
-    
+
         public void onSuccess (Integer result)
         {
             group = result;
         }
-    
+
         public void run ()
         {
             if (group == null) {
@@ -382,7 +424,7 @@ public class CreateAccountPanel extends FlowPanel
                 schedule(500);
                 return;
             }
-    
+
             // let the top-level frame know that we logged on (will trigger a redirect)
             session.registrationABGroup = group;
             CShell.frame.dispatchDidLogon(session);
@@ -401,6 +443,7 @@ public class CreateAccountPanel extends FlowPanel
     protected CheckBox _tosBox;
     protected SimplePanel _status;
     protected boolean _pageViewRecorded;
+    protected SimplePanel _promoPanel;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
