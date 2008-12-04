@@ -56,6 +56,7 @@ import com.threerings.msoy.server.persist.PromotionRepository;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.msoy.web.server.RPCProfiler;
 import com.threerings.msoy.web.server.ServletLogic;
 
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -74,9 +75,17 @@ public class MeServlet extends MsoyServiceServlet
         MyWhirledData data = new MyWhirledData();
         data.whirledPopulation = _memberMan.getPPSnapshot().getPopulationCount();
 
+        if (PROFILING_ENABLED) {
+            _profiler.enter("promotions");
+        }
+
         // include all our active promotions
         data.promos = Lists.newArrayList(
             Iterables.transform(_promoRepo.loadPromotions(), PromotionRecord.TO_PROMOTION));
+
+        if (PROFILING_ENABLED) {
+            _profiler.swap("friends");
+        }
 
         // load information on their friends
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
@@ -85,8 +94,16 @@ public class MeServlet extends MsoyServiceServlet
             data.friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
         }
 
+        if (PROFILING_ENABLED) {
+            _profiler.swap("feed");
+        }
+
         // load their feed
         data.feed = loadFeedCategories(FeedCategory.DEFAULT_COUNT, null);
+
+        if (PROFILING_ENABLED) {
+            _profiler.swap("greeters");
+        }
 
         // load the eligible greeters
         ArrayIntSet greeterIds = new ArrayIntSet();
@@ -104,6 +121,10 @@ public class MeServlet extends MsoyServiceServlet
 
         // shuffle to avoid greeter fighting (shortList is sorted, thus the cards are too)
         Collections.shuffle(data.greeters);
+
+        if (PROFILING_ENABLED) {
+            _profiler.exit(null);
+        }
 
         return data;
     }
@@ -335,6 +356,7 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected BadgeLogic _badgeLogic;
+    @Inject protected RPCProfiler _profiler;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int FEED_CUTOFF_DAYS = 7;
