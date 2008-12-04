@@ -219,9 +219,11 @@ public class EntityBackend extends ControlBackend
         return (_sprite == null) ? [ 1, 1, 1] : _sprite.getRoomBounds();
     }
 
-    protected function canEditRoom_v1 () :Boolean
+    // note: the original version of this method took no args, which is why we now
+    // have a default value.
+    protected function canEditRoom_v1 (memberId :int = 0) :Boolean
     {
-        return (_sprite != null) && _sprite.canManageRoom();
+        return (_sprite != null) && _sprite.canManageRoom(memberId);
     }
 
     protected function showPopup_v1 (

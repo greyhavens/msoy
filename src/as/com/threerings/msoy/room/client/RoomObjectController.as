@@ -515,9 +515,15 @@ public class RoomObjectController extends RoomController
         return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
     }
 
-    override public function canManageRoom () :Boolean
+    override public function canManageRoom (memberId :int = 0) :Boolean
     {
-        return (_scene != null && _scene.canManage(_wdctx.getMemberObject()));
+        var me :MemberObject = _wdctx.getMemberObject();
+        if (memberId == 0 || (memberId == me.getMemberId())) { // self
+            return (_scene != null && _scene.canManage(me));
+
+        } else { // others
+            return false; // TODO
+        }
     }
 
     override public function deleteItem (ident :ItemIdent) :void

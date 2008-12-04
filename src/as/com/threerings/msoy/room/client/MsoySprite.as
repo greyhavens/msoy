@@ -840,10 +840,10 @@ public class MsoySprite extends DataPackMediaContainer
      * Returns true if this client has management privileges in the current room.
      * Called by our backend in response to a request from usercode.
      */
-    internal function canManageRoom () :Boolean
+    internal function canManageRoom (memberId :int) :Boolean
     {
         var ctrl :RoomController = getController();
-        return (ctrl != null) && ctrl.canManageRoom();
+        return (ctrl != null) && ctrl.canManageRoom(memberId);
     }
 
     /**
