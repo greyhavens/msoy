@@ -737,8 +737,8 @@ public class RoomManager extends SpotSceneManager
         if (occInfo instanceof ActorInfo) {
             OccupantInfo prior = _occInfo.get(occInfo.getBodyOid());
             // Set to static if it was static before and the room is still crowded
-            if (prior != null && prior instanceof ActorInfo && ((ActorInfo)prior).isStatic() &&
-                _dynamicActors.size() > ACTOR_RENDERING_LIMIT) {
+            if (prior instanceof ActorInfo && ((ActorInfo)prior).isStatic() &&
+                    _dynamicActors.size() > ACTOR_RENDERING_LIMIT) {
                 ((ActorInfo)occInfo).useStaticMedia();
             }
         }
