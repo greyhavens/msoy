@@ -62,12 +62,15 @@ public class ConvoPanel extends FlowPanel
 
     protected void init (MailService.ConvoResult result)
     {
+        boolean review = result.other == null; // the server leaves this null for support reviews
         SmartTable header = new SmartTable("Header", 0, 0);
         header.setWidth("100%");
         header.setHTML(0, 0, "&nbsp;", 1, "TopLeft");
-        header.setText(0, 1, result.other == null ? _msgs.convoSpectate() :
+        header.setText(0, 1, review ? _msgs.convoReview() :
             _msgs.convoWith(""+result.other), 1, "Title");
-        addControls(header, result.other);
+        if (!review) {
+            addControls(header, result.other);
+        }
         header.setHTML(0, header.getCellCount(0), "&nbsp;", 1, "TopRight");
         add(header);
 
@@ -75,14 +78,16 @@ public class ConvoPanel extends FlowPanel
             ConvMessage msg = result.messages.get(ii);
             add(new MessageWidget((ii == 0) ? result.subject : null, msg,
                                   msg.sent.getTime() > result.lastRead,
-                                  ii == result.messages.size()-1));
+                                  ii == result.messages.size()-1 && !review));
         }
 
         SmartTable footer = new SmartTable("Footer", 0, 0);
         footer.setWidth("100%");
         footer.setHTML(0, 0, "&nbsp;", 1, "BottomLeft");
         footer.setHTML(0, 1, "&nbsp;", 1, "Title");
-        addControls(footer, result.other);
+        if (!review) {
+            addControls(footer, result.other);
+        }
         footer.setHTML(0, footer.getCellCount(0), "&nbsp;", 1, "BottomRight");
         add(footer);
 
@@ -113,11 +118,9 @@ public class ConvoPanel extends FlowPanel
         };
         table.setWidget(0, col++, delete, 1, "Control");
 
-        if (targetName != null) {
-            Button complain = new Button(_msgs.convoComplain());
-            new ComplainHandler(complain, targetName.toString());
-            table.setWidget(0, col++, complain, 1, "Control");
-        }
+        Button complain = new Button(_msgs.convoComplain());
+        new ComplainHandler(complain, targetName.toString());
+        table.setWidget(0, col++, complain, 1, "Control");
 
         table.setWidget(0, col++, new Button(_msgs.convoBack(), new ClickListener() {
             public void onClick (Widget sender) {
