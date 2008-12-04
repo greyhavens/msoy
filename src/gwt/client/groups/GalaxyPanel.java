@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -20,8 +19,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
-import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -51,6 +48,8 @@ public class GalaxyPanel extends FlowPanel
 
         // search box floats on far right
         FloatPanel search = new FloatPanel("Search");
+        search.add(MsoyUI.createLabel(_msgs.galaxySearchTitle(), "SearchTitle"));
+
         search.add(_searchInput = MsoyUI.createTextBox("", 255, 20));
         ClickListener doSearch = new ClickListener() {
             public void onClick (Widget sender) {
@@ -62,11 +61,24 @@ public class GalaxyPanel extends FlowPanel
             }
         };
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
-        search.add(new Button(_msgs.galaxySearch(), doSearch));
+        search.add(MsoyUI.createImageButton("GoButton", doSearch));
         add(search);
 
-        // tag currently being searched floats in middle
+        // tag currently being searched for, or blank
         add(_currentTag = MsoyUI.createFlowPanel("CurrentTag"));
+
+        // title hugs the top
+        add(MsoyUI.createLabel(_msgs.galaxyTitle(), "Title"));
+
+        FloatPanel introCreate = new FloatPanel("IntroCreate");
+        add(introCreate);
+        introCreate.add(MsoyUI.createHTML(_msgs.galaxyIntroBlurb(), "IntroBlurb"));
+
+        // add create group button
+        if (!CShell.isGuest()) {
+            introCreate.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.galaxyCreate(),
+                Link.createListener(Pages.GROUPS, "edit")));
+        }
 
         FloatPanel content = new FloatPanel("Content");
         add(content);
@@ -115,17 +127,6 @@ public class GalaxyPanel extends FlowPanel
         };
         _groupGrid.addStyleName("GroupsList");
         content.add(_groupGrid);
-
-        // add info on creating a Group
-        if (!CShell.isGuest()) {
-            SmartTable create = new SmartTable("Create", 0, 0);
-            create.setText(0, 0, _msgs.galaxyCreateTitle(), 3, "Header");
-            create.setText(1, 0, _msgs.galaxyCreateBlurb(), 1, "Pitch");
-            create.setWidget(1, 1, WidgetUtil.makeShim(10, 10));
-            ClickListener onClick = Link.createListener(Pages.GROUPS, "edit");
-            create.setWidget(1, 2, new Button(_msgs.galaxyCreate(), onClick), 1, "Button");
-            add(create);
-        }
 
         _groupsvc.getGalaxyData(new MsoyCallback<GalaxyData>() {
             public void onSuccess (GalaxyData galaxy) {
