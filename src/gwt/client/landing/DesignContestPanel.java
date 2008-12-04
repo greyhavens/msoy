@@ -37,8 +37,6 @@ public class DesignContestPanel extends FlowPanel
         content.add(
             new WideContentBox(_msgs.designconPrizesTitle(), _msgs.designconPrizesText(), true));
         content.add(
-            new WideContentBox(_msgs.designconCreateTitle(), _msgs.designconCreateText(), false));
-        content.add(
             new WideContentBox(_msgs.designconEnterTitle(), _msgs.designconEnterText(), true));
         content.add(
             new WideContentBox(_msgs.designconRulesTitle(), _msgs.designconRulesText(), false));
