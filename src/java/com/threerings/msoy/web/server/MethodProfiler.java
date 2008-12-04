@@ -250,7 +250,7 @@ public class MethodProfiler
         /** The time the method was entered. */
         public long entryTime;
 
-        /** The time the method was entered. */
+        /** The parent of the method. */
         public Method caller;
 
         /**
@@ -350,7 +350,7 @@ public class MethodProfiler
         log.info(name, "results", prof.toResult());
     }
 
-    /** Name of the current method. */
+    /** Set of active methods in the current thread. */
     protected ThreadLocal<Stack> _stack = new ThreadLocal<Stack>() {
         @Override protected Stack initialValue () {
             return new Stack();
