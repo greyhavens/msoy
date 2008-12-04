@@ -4,14 +4,13 @@
 package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.samskivert.util.IntSet;
 
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
@@ -52,8 +51,8 @@ public class FeedRepository extends DepotRepository
      * @param sinceMillis a timestamp before which not to load messages or null if all available
      * messages should be loaded.
      */
-    public List<FeedMessageRecord> loadPersonalFeed (int memberId, IntSet friendIds,
-                                                     IntSet groupIds, long sinceMillis)
+    public List<FeedMessageRecord> loadPersonalFeed (int memberId, Collection<Integer> friendIds,
+                                                     Collection<Integer> groupIds, long sinceMillis)
     {
         // round "since" to the nearest 2^18 milliseconds so that we can cache this query
         Timestamp since = new Timestamp(sinceMillis & ~0x3FFFFL);
