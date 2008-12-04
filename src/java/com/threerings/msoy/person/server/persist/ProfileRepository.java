@@ -11,18 +11,24 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DataMigration;
+import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.Conditionals.*;
+import com.samskivert.depot.operator.Logic.And;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.RecordFunctions;
 
 import com.threerings.msoy.person.gwt.Interest;
+import com.threerings.msoy.profile.gwt.Profile;
 
 /**
  * Manages the persistent store of profile profile data.
@@ -33,6 +39,29 @@ public class ProfileRepository extends DepotRepository
     @Inject public ProfileRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // 142 MemberRecords from the early days do not have corresponding ProfileRecords
+        registerMigration(new DataMigration("2008_12_04_create_missing_ProfileRecords") {
+            @Override public void invoke ()
+                throws DatabaseException
+            {
+                // select all the MemberRecords with missing ProfileRecords
+                // only search for memberIds < 400 for efficiency, only these are affected
+                List<MemberRecord> members = findAll(MemberRecord.class,
+                    new Join(MemberRecord.MEMBER_ID_C,
+                        ProfileRecord.MEMBER_ID_C).setType(Join.Type.LEFT_OUTER),
+                    new Where(new And(
+                        new LessThanEquals(MemberRecord.MEMBER_ID_C, 400),
+                        new IsNull(ProfileRecord.MEMBER_ID_C))
+                    ));
+
+                // create blank ProfileRecords with all defaults
+                for (MemberRecord member : members) {
+                    ProfileRecord profile = new ProfileRecord(member.memberId, new Profile());
+                    store(profile);
+                }
+            }
+        });
     }
 
     /**
