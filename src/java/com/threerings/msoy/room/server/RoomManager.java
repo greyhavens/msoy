@@ -830,6 +830,8 @@ public class RoomManager extends SpotSceneManager
         // load up any pets that are "let out" in this room scene
         _petMan.loadRoomPets(_roomObj, _scene.getId());
 
+        // we're done with our auxiliary scene information, let's let it garbage collect
+        _extras = null;
     }
 
     @Override // from PlaceManager
