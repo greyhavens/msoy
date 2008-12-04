@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -99,7 +100,7 @@ public class MeServlet extends MsoyServiceServlet
         }
 
         // load their feed
-        data.feed = loadFeedCategories(FeedCategory.DEFAULT_COUNT, null);
+        data.feed = loadFeedCategories(mrec, friendIds, FeedCategory.DEFAULT_COUNT, null);
 
         if (PROFILING_ENABLED) {
             _profiler.swap("greeters");
@@ -133,8 +134,10 @@ public class MeServlet extends MsoyServiceServlet
     public FeedCategory loadFeedCategory (int category, boolean fullSize)
         throws ServiceException
     {
+        MemberRecord mrec = requireAuthedUser();
         int itemsPerCategory = fullSize ? FeedCategory.FULL_COUNT : FeedCategory.DEFAULT_COUNT;
-        List<FeedCategory> categories = loadFeedCategories(itemsPerCategory,
+        List<FeedCategory> categories = loadFeedCategories(
+            mrec, _memberRepo.loadFriendIds(mrec.memberId), itemsPerCategory,
             Category.values()[category]);
         return (categories.size() > 0) ? categories.get(0) : null;
     }
@@ -215,20 +218,24 @@ public class MeServlet extends MsoyServiceServlet
      * Pull up a list of news feed events for the current member, grouped by category. Only
      * itemsPerCategory items will be returned, or in the case of aggregation only items from the
      * first itemsPerCategory actors.
+     *
      * @param category If null, load all categories, otherwise only load that one.
      */
-    protected List<FeedCategory> loadFeedCategories (int itemsPerCategory, Category onlyCategory)
+    protected List<FeedCategory> loadFeedCategories (
+        MemberRecord mrec, IntSet friendIds, int itemsPerCategory, Category onlyCategory)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-
-        // fetch all messages for the member's friends & groups from the past FEED_CUTOFF_DAYS
-        IntSet groupMemberships = new ArrayIntSet();
-        for (GroupMembershipRecord gmr : _groupRepo.getMemberships(mrec.memberId)) {
-            groupMemberships.add(gmr.groupId);
+        int feedDays = MAX_FEED_CUTOFF_DAYS;
+        // if we're loading all categories, adjust the number of days of data we load based on how
+        // many friends this member has
+        if (onlyCategory == null) {
+            feedDays = Math.max(MIN_FEED_CUTOFF_DAYS, feedDays-friendIds.size()/FRIENDS_PER_DAY);
         }
-        long since = System.currentTimeMillis() - FEED_CUTOFF_DAYS * 24*60*60*1000L;
-        IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
+
+        // fetch all messages for the member's friends & groups from the past feedDays days
+        Set<Integer> groupMemberships = Sets.newHashSet(Iterables.transform(
+            _groupRepo.getMemberships(mrec.memberId), GroupMembershipRecord.TO_GROUP_ID));
+        long since = System.currentTimeMillis() - feedDays * 24*60*60*1000L;
         List<FeedMessageRecord> allRecords = _feedRepo.loadPersonalFeed(
             mrec.memberId, friendIds, groupMemberships, since);
 
@@ -359,6 +366,8 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected RPCProfiler _profiler;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
-    protected static final int FEED_CUTOFF_DAYS = 7;
     protected static final int MAX_GREETERS_TO_SHOW = 10;
+    protected static final int MAX_FEED_CUTOFF_DAYS = 7;
+    protected static final int MIN_FEED_CUTOFF_DAYS = 2;
+    protected static final int FRIENDS_PER_DAY = 25;
 }
