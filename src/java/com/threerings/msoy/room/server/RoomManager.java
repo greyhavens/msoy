@@ -1337,6 +1337,9 @@ public class RoomManager extends SpotSceneManager
         if (info instanceof ActorInfo && _dynamicActors.size() >= ACTOR_RENDERING_LIMIT) {
             ((ActorInfo)info).useStaticMedia();
         }
+        if (info instanceof MemberInfo) {
+            ((MemberInfo)info).setIsManager(canManage((MemberObject)body));
+        }
 
         super.insertOccupantInfo(info, body);
     }

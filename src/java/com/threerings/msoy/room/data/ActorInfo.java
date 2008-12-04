@@ -97,6 +97,7 @@ public abstract class ActorInfo extends OccupantInfo
     protected String _state;
     protected byte _flags;
 
-    protected static final byte STATIC = 1;
-    protected static final byte MANAGER = 2; // used by MemberInfo but defined here for safety
+    /** Bit flags used to check values in the _flags member. */
+    protected static final byte STATIC = 1 << 0;
+    protected static final byte MANAGER = 1 << 1; // used by MemberInfo but defined here for safety
 }

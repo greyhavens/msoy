@@ -94,7 +94,8 @@ public class ActorInfo extends OccupantInfo
     protected var _state :String;
     protected var _flags :int;
 
-    protected static const STATIC :int = 1;
-    protected static const MANAGER :int = 2; // used by MemberInfo but defined here for safety
+    /** Bit flags used to check values in the _flags member. */
+    protected static const STATIC :int = 1 << 0;
+    protected static const MANAGER :int = 1 << 1; // used by MemberInfo but defined here for safety
 }
 }

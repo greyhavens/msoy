@@ -223,12 +223,9 @@ public class RoomObjectController extends RoomController
         var name :String = super.getViewerName(instanceId);
         if (name == null) {
             // look for the name in the OccupantInfos
-            for each (var obj :Object in _roomObj.occupantInfo.toArray()) {
-                var memInfo :MemberInfo = obj as MemberInfo;
-                if (memInfo != null && memInfo.getMemberId() == instanceId) {
-                    name = memInfo.username.toString();
-                    break;
-                }
+            var info :MemberInfo = findOccupantById(instanceId);
+            if (info != null) {
+                name = info.username.toString();
             }
         }
         return name;
@@ -522,7 +519,8 @@ public class RoomObjectController extends RoomController
             return (_scene != null && _scene.canManage(me));
 
         } else { // others
-            return false; // TODO
+            var info :MemberInfo = findOccupantById(memberId);
+            return (info != null) && info.isManager();
         }
     }
 
@@ -957,6 +955,20 @@ public class RoomObjectController extends RoomController
         } else {
             return false;
         }
+    }
+
+    /**
+     * Find a user's MemberInfo by their memberId.
+     */
+    protected function findOccupantById (memberId :int) :MemberInfo
+    {
+        for each (var obj :Object in _roomObj.occupantInfo.toArray()) {
+            var info :MemberInfo = obj as MemberInfo;
+            if (info != null && info.getMemberId() == memberId) {
+                return info;
+            }
+        }
+        return null;
     }
 
     override protected function sceneUpdated (update :SceneUpdate) :void

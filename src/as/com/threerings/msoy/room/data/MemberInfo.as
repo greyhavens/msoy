@@ -58,6 +58,10 @@ public class MemberInfo extends ActorInfo
 
     /**
      * Tests if this member is able to manage the room.
+     * Note that this is not a definitive check, but rather one that can be used by clients
+     * to check other occupants. The value is computed at the time the occupant enters the
+     * room, and is not recomputed even if the room ownership changes. The server should
+     * continue to do definitive checks where it matters.
      */
     public function isManager () :Boolean
     {
