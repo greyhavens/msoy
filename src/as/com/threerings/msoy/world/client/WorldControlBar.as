@@ -9,6 +9,8 @@ import flash.display.SimpleButton;
 
 import flash.events.MouseEvent;
 
+import flash.geom.Point;
+
 import flash.text.TextField;
 
 import caurina.transitions.Tweener;
@@ -120,7 +122,7 @@ public class WorldControlBar extends ControlBar
         _musicBtn.toggle = true;
         FlexUtil.setVisible(_musicBtn, false);
         _musicBtn.setCallback(FloatingPanel.createPopper(function () :MusicDialog {
-            return new MusicDialog(_wctx);
+            return new MusicDialog(_wctx, _musicBtn.localToGlobal(new Point()));
         }, _musicBtn));
 
         _roomeditBtn = createButton("controlBarButtonEdit", "i.editScene");
