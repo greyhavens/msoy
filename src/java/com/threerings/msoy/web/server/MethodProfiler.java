@@ -81,6 +81,20 @@ public class MethodProfiler
         case 3:
             simpleSampleTest("Multi", 0, 25, 50, 100, 125, 150, 175, 200, 112.5, 112.5, 112.5);
             break;
+        case 4:
+            MethodProfiler test4 = new MethodProfiler();
+            test4.enter("L1a");
+            test4.enter("L2a");
+            test4.swap("L2b");
+            test4.enter("L3a");
+            test4.exit(null);
+            test4.exit(null);
+            test4.swap("L1b");
+            test4.swap("L1c");
+            test4.exit(null);
+            for (Map.Entry<String, Result> result : test4.getResults().entrySet()) {
+                log.info("Results", "name", result.getKey(), "value", result.getValue());
+            }
         }
     }
 
@@ -114,34 +128,56 @@ public class MethodProfiler
     /**
      * Notes that the calling thread has entered the given method and records the time stamp.
      */
-    public void enter (String method)
+    public void enter (String methodName)
     {
-        CurrentCall curr = _current.get();
-        if (curr.name != null) {
-            // TODO: warn, but only once
-            return;
-        }
-        curr.entryTime = System.nanoTime();
-        curr.name = method;
+        Method method = _stack.get().push();
+        method.name = methodName;
+        method.entryTime = System.nanoTime();
     }
 
     /**
      * Notes that the calling thread has exited the given method and records the time delta since
      * entry. The method parameter is not strictly necessary but allows some error checking. If not
-     * null, it must match the most recent value given to {@link #enter} for the calling thread.
+     * null, it must match the most recent value given to {@link #enter()} for the calling thread.
      */
-    public void exit (String method)
+    public void exit (String methodName)
     {
         long nanos = System.nanoTime();
-        CurrentCall curr = _current.get();
-        if (curr.name == null || (method != null && !method.equals(curr.name))) {
+        Method method = _stack.get().pop();
+        if (method == null || (methodName != null && !methodName.equals(method.name))) {
             // TODO: warn, but only once
             return;
         }
 
-        long elapsed = nanos - curr.entryTime;
-        recordTime(curr.name, (double)elapsed / 1000000);
-        curr.name = null;
+        long elapsed = nanos - method.entryTime;
+        recordTime(method.fullName(), (double)elapsed / 1000000);
+        method.name = null;
+    }
+
+    /**
+     * Transition to a new method or segment. Exits the current one and enters the given one.
+     */
+    public void swap (String methodName)
+    {
+        exit(null);
+        enter(methodName);
+    }
+
+    /**
+     * Clears out the profile for the current thread, and invokes the exit of the top-level method.
+     * This allows callers to use one try... finally block in their top-level method without skewing
+     * the results for nested methods that may have thrown exceptions and/or not called
+     * {@link #exit()}.
+     */
+    public void exitAndClear (String methodName)
+    {
+        Stack stack = _stack.get();
+        while (stack.size() > 1) {
+            stack.pop();
+        }
+        if (stack.size() > 0) {
+            exit(methodName);
+        }
     }
 
     /**
@@ -204,15 +240,65 @@ public class MethodProfiler
     }
 
     /**
-     * Class describing what we know about a thread's current method call.
+     * Describes what we know about an in-progress method call.
      */
-    protected static class CurrentCall
+    protected static class Method
     {
         /** The name of the entered method. */
         public String name;
 
         /** The time the method was entered. */
-        long entryTime;
+        public long entryTime;
+
+        /** The time the method was entered. */
+        public Method caller;
+
+        /**
+         * Gets this method's name, prefixed with all parent method names separated by dots.
+         */ 
+        public String fullName ()
+        {
+            if (caller != null) {
+                return caller.fullName() + "." + name;
+            }
+            return name;
+        }
+    }
+
+    /**
+     * Describes what we know about a nested set of in progress method calls. This is a fake stack
+     * that avoid reallocating entries, i.e. pop() == push() and push() == pop().
+     */
+    protected static class Stack
+    {
+        public Method push ()
+        {
+            if (_size == _methods.length) {
+                Method []realloc = new Method[_size + 1];
+                System.arraycopy(_methods, 0, realloc, 0, _size);
+                _methods = realloc;
+                _methods[_size] = new Method();
+            }
+            _methods[_size].name = null;
+            _methods[_size].caller = _size > 0 ? _methods[_size - 1] : null;
+            return _methods[_size++];
+        }
+
+        public Method pop ()
+        {
+            if (_size == 0) {
+                return null;
+            }
+            return _methods[--_size];
+        }
+
+        public int size ()
+        {
+            return _size;
+        }
+        
+        protected int _size;
+        protected Method[] _methods = {new Method()};
     }
 
     /**
@@ -265,9 +351,9 @@ public class MethodProfiler
     }
 
     /** Name of the current method. */
-    protected ThreadLocal<CurrentCall> _current = new ThreadLocal<CurrentCall>() {
-        @Override protected CurrentCall initialValue () {
-            return new CurrentCall();
+    protected ThreadLocal<Stack> _stack = new ThreadLocal<Stack>() {
+        @Override protected Stack initialValue () {
+            return new Stack();
         }
     };
 

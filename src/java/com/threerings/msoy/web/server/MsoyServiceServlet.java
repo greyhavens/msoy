@@ -47,7 +47,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     protected void onAfterResponseSerialized (String payload)
     {
         if (PROFILING_ENABLED) {
-            _profiler.exit(null);
+            _profiler.exitAndClear(null);
         }
         super.onAfterResponseSerialized(payload);
     }
