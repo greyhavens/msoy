@@ -281,7 +281,7 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     // from interface SceneRepository
-    public Object loadExtras (int sceneId)
+    public Object loadExtras (int sceneId, SceneModel model)
     {
         return null;
     }
