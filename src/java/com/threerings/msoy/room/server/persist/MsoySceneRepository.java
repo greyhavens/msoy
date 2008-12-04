@@ -220,13 +220,6 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     // from interface SceneRepository
-    public UpdateList loadUpdates (int sceneId)
-        throws NoSuchSceneException
-    {
-        return new UpdateList(); // we don't do scene updates
-    }
-
-    // from interface SceneRepository
     public SceneModel loadSceneModel (int sceneId)
         throws NoSuchSceneException
     {
@@ -279,6 +272,18 @@ public class MsoySceneRepository extends DepotRepository
         }
 
         return model;
+    }
+
+    // from interface SceneRepository
+    public UpdateList loadUpdates (int sceneId)
+    {
+        return new UpdateList(); // we don't do scene updates
+    }
+
+    // from interface SceneRepository
+    public Object loadExtras (int sceneId)
+    {
+        return null;
     }
 
     /**
