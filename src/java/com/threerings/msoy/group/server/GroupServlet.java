@@ -443,7 +443,10 @@ public class GroupServlet extends MsoyServiceServlet
 
         // Include Whirled Announcements in "my groups"
         List<GroupRecord> groupRecords = _groupRepo.getFullMemberships(memberId);
-        groupRecords.add(_groupRepo.loadGroup(ServerConfig.getAnnounceGroupId()));
+        GroupRecord announceGroup = _groupRepo.loadGroup(ServerConfig.getAnnounceGroupId());
+        if (announceGroup != null) {
+            groupRecords.add(announceGroup);
+        }
 
         List<MyGroupCard> myGroupCards = Lists.newArrayList();
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
