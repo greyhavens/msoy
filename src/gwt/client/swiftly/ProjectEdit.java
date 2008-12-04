@@ -215,7 +215,7 @@ public class ProjectEdit extends FlexTable
         CSwiftly.swiftlysvc.getFriends(new AsyncCallback<List<FriendEntry>>() {
             public void onSuccess (List<FriendEntry> friends) {
                 for (FriendEntry friend : friends) {
-                    _friends.put(new Integer(friend.getMemberId()), friend);
+                    _friends.put(new Integer(friend.name.getMemberId()), friend);
                 }
                 // we now have our collaborators and friends, so display them both. displaying of
                 // friends relies on both the collaborators list and friends list so we need them
