@@ -97,6 +97,14 @@ public class MoneyRepository extends DepotRepository
     {
         return load(MemberAccountRecord.class, memberId);
     }
+    
+    /**
+     * Retries all member accounts from the given list of member IDs.
+     */
+    public List<MemberAccountRecord> loadAll (Set<Integer> memberIds)
+    {
+        return loadAll(MemberAccountRecord.class, memberIds);
+    }
 
     /**
      * Deduct money from the specified member's money.

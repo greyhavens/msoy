@@ -4,10 +4,12 @@
 package client.shop;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
@@ -66,8 +68,9 @@ public class BuyPanel extends FlowPanel
         updatePrice(_listing.quote);
     }
 
-    protected void itemPurchased (Item item, Currency currency)
+    protected void itemPurchased (CatalogService.PurchaseResult result, Currency currency)
     {
+        Item item = result.item;
         byte itype = item.getType();
 
         // clear out the buy button
@@ -97,6 +100,14 @@ public class BuyPanel extends FlowPanel
             add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
         }
 
+        String percentage = NumberFormat.getPercentFormat().format(
+            (int)(100.0 * result.charityPercentage) / 100.0);
+        add(WidgetUtil.makeShim(10, 10));
+        add(new InlineLabel(_msgs.donatedToCharity(percentage)));
+        add(Link.create(result.charity.toString(), Pages.PEOPLE, ""+result.charity.getMemberId()));
+        add(WidgetUtil.makeShim(10, 10));
+        add(Link.create(_msgs.changeCharity(), Pages.ME, "account"));
+        
         FlowPanel again = new FlowPanel();
         again.setStyleName("Buy");
         BuyButton buyAgain = (currency == Currency.BARS) ? _buyBars : _buyCoins;
@@ -159,7 +170,7 @@ public class BuyPanel extends FlowPanel
             _timesBought += 1;
             MoneyUtil.updateBalances(result.balances);
             updatePrice(result.quote);
-            itemPurchased(result.item, _currency);
+            itemPurchased(result, _currency);
             return true;
         }
 

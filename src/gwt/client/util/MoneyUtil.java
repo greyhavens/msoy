@@ -7,6 +7,7 @@ import client.shell.CShell;
 
 import client.util.events.StatusChangeEvent;
 
+import com.google.gwt.i18n.client.NumberFormat;
 import com.threerings.msoy.money.data.all.BalanceInfo;
 
 /**
@@ -34,5 +35,20 @@ public class MoneyUtil
             CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS,
                 balances.bars, balances.bars));
         }
+    }
+
+    /**
+     * Converts the amount of pennies into a string to display to the user as a valid currency.
+     * Note: there are some other utilities around to do this, but they're either in a different
+     * project (and there's some concern about exposing them directly), or they don't properly
+     * take into account floating-point round off errors.  This may get replaced or expanded
+     * later on.
+     */
+    public static String formatUSD (int pennies)
+    {
+        int dollars = pennies / 100;
+        int cents = pennies % 100;
+        return "USD $" + NumberFormat.getDecimalFormat().format(dollars) + '.' +
+            (cents < 10 ? '0' : "") + cents;
     }
 }

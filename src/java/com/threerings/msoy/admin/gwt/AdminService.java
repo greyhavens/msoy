@@ -14,6 +14,7 @@ import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
+import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 
@@ -153,13 +154,14 @@ public interface AdminService extends RemoteService
         throws ServiceException;
     
     /**
-     * Sets charity info for a particular member.
-     * 
-     * @param memberId ID of the member whose charity info is being updated.
-     * @param charity True if this member should be a charity.
-     * @param coreCharity True if this member should be a core charity.  "charity" must also be
-     *      true.
+     * Sets charity info for a particular member, upgrading them to charity status if necessary.
      */
-    void setCharityInfo (int memberId, boolean charity, boolean coreCharity)
+    void setCharityInfo (CharityInfo charityInfo)
+        throws ServiceException;
+    
+    /**
+     * Removes charity status from the specified member.  If not currently a charity, does nothing.
+     */
+    void removeCharityStatus (int memberId)
         throws ServiceException;
 }

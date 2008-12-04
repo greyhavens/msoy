@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -63,6 +62,7 @@ import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
+import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.presents.dobj.RootDObjectManager;
 
 /**
@@ -125,9 +125,11 @@ public class AdminServlet extends MsoyServiceServlet
         if (charity == null) {
             info.charity = false;
             info.coreCharity = false;
+            info.charityDescription = "";
         } else {
             info.charity = true;
             info.coreCharity = charity.core;
+            info.charityDescription = charity.description;
         }
         return info;
     }
@@ -425,19 +427,19 @@ public class AdminServlet extends MsoyServiceServlet
         _mailRepo.startConversation(recipientId, senderId, subject, body, null);
     }
     
-    public void setCharityInfo (int memberId, boolean charity, boolean coreCharity)
+    public void setCharityInfo (CharityInfo charityInfo)
         throws ServiceException
     {
-        Preconditions.checkArgument(charity == true || coreCharity == false, 
-            "Core charities must also be set as charities.");
-        
         // Save or delete charity record depending on value of 'charity.
-        if (charity) {
-            CharityRecord charityRec = new CharityRecord(memberId, coreCharity);
-            _memberRepo.saveCharity(charityRec);
-        } else {
-            _memberRepo.deleteCharity(memberId);
-        }
+        CharityRecord charityRec = new CharityRecord(charityInfo.memberId, charityInfo.core,
+            charityInfo.description);
+        _memberRepo.saveCharity(charityRec);
+    }
+    
+    public void removeCharityStatus (int memberId)
+        throws ServiceException
+    {
+        _memberRepo.deleteCharity(memberId);
     }
 
     // our dependencies

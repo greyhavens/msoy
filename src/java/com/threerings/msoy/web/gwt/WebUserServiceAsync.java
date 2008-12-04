@@ -79,4 +79,9 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#updateAccountInfo}.
      */
     void updateAccountInfo (AccountInfo info, AsyncCallback<Void> callback);
+    
+    /**
+     * The asynchronous version of {@link WebUserService#updateCharity}.
+     */
+    void updateCharity (int selectedCharityId, AsyncCallback<Void> callback);
 }

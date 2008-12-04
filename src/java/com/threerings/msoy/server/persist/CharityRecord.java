@@ -5,6 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
@@ -29,9 +30,16 @@ public class CharityRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #core} field. */
     public static final ColumnExp CORE_C =
         new ColumnExp(CharityRecord.class, CORE);
+
+    /** The column identifier for the {@link #description} field. */
+    public static final String DESCRIPTION = "description";
+
+    /** The qualified column identifier for the {@link #description} field. */
+    public static final ColumnExp DESCRIPTION_C =
+        new ColumnExp(CharityRecord.class, DESCRIPTION);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
     
     /** Member ID for this charity. */
     @Id
@@ -40,6 +48,10 @@ public class CharityRecord extends PersistentRecord
     /** Whether or not this charity is a core charity. */
     public boolean core;
 
+    /** Description of the charity to display to members. */
+    @Column(defaultValue="")
+    public String description;
+    
     /** For depot */
     public CharityRecord ()
     {
@@ -49,12 +61,14 @@ public class CharityRecord extends PersistentRecord
      * Constructs a new charity.
      * 
      * @param memberId ID of the member for this charity.
-     * @param core True if this is a "core" charity, 
+     * @param core True if this is a "core" charity,
+     * @param description Description of the charity that members can see. 
      */
-    public CharityRecord (int memberId, boolean core)
+    public CharityRecord (int memberId, boolean core, String description)
     {
         this.memberId = memberId;
         this.core = core;
+        this.description = description;
     }
     
     // AUTO-GENERATED: METHODS START

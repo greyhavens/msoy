@@ -8,10 +8,12 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -56,7 +59,7 @@ public class EditAccountPanel extends FlowPanel
         });
     }
 
-    protected void init (AccountInfo accountInfo)
+    protected void init (final AccountInfo accountInfo)
     {
         _accountInfo = accountInfo;
 
@@ -171,6 +174,52 @@ public class EditAccountPanel extends FlowPanel
         _uppass.setEnabled(false);
         table.setWidget(1, 2, _uppass);
         add(new TongueBox(_msgs.editPasswordHeader(), table));
+        
+        // Select charity interface
+        if (DeploymentConfig.devDeployment) {
+            final SmartTable charityTable = new SmartTable(0, 10);
+            charityTable.setText(0, 0, _msgs.charities(), 3, "Tip");
+            /*List<RadioButton> charityButtons = new ArrayList<RadioButton>(accountInfo.charityNames.size());
+            RadioButton
+            for (MemberName name : accountInfo.charityNames) {
+                RadioButton rb = new RadioButton("charitiesGroup");
+                charityButtons.add(rb);
+                int row = charityTable.addWidget(rb, 1, null);
+                charityTable.setText(row, 1, name.getNormal());
+                charityTable.setText(++row, 1, accountInfo.charities.get(name.getMemberId()).description, 1, "Tip");
+            }*/
+            
+            charityTable.setText(1, 0, _msgs.selectCharity(), 1, "rightLabel");
+            _lstCharities = new ListBox();
+            _lstCharities.addItem(_msgs.defaultCharity(), "0");
+            _lstCharities.setStylePrimaryName("charityList");
+            int i = 1;
+            for (MemberName name : accountInfo.charityNames) {
+                _lstCharities.addItem(name.getNormal(), Integer.toString(name.getMemberId()));
+                if (name.getMemberId() == accountInfo.charityMemberId) {
+                    _lstCharities.setSelectedIndex(i);
+                }
+                i++;
+            }
+            _lstCharities.addChangeListener(new ChangeListener() {
+                public void onChange (Widget sender) {
+                    if (_lstCharities.getSelectedIndex() > 0) {
+                        int memberId = accountInfo.charityNames
+                            .get(_lstCharities.getSelectedIndex() - 1).getMemberId();
+                        charityTable.setText(2, 0, accountInfo.charities.get(memberId).description, 3, "Tip");
+                    } else {
+                        charityTable.setText(2, 0, "", 3, "Tip");
+                    }
+                }
+            });
+            charityTable.setWidget(1, 1, _lstCharities);
+            charityTable.setWidget(1, 2, _upcharity = new Button(_cmsgs.update(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    updateCharity();
+                }
+            }));
+            add(new TongueBox(_msgs.charitiesHeader(), charityTable));
+        }
     }
 
     protected void updateRealName ()
@@ -223,6 +272,22 @@ public class EditAccountPanel extends FlowPanel
                 _upeprefs.setEnabled(true);
                 MsoyUI.errorNear(CShell.serverError(cause), _upeprefs);
             }
+        });
+    }
+    
+    protected void updateCharity ()
+    {
+        _upcharity.setEnabled(false);
+        _usersvc.updateCharity(Integer.parseInt(_lstCharities.getValue(
+            _lstCharities.getSelectedIndex())), new AsyncCallback<Void>() {
+                public void onFailure (Throwable caught) {
+                    _upcharity.setEnabled(true);
+                    MsoyUI.errorNear(CShell.serverError(caught), _upcharity);
+                }
+                public void onSuccess (Void result) {
+                    _upcharity.setEnabled(true);
+                    MsoyUI.infoNear(_msgs.echarityUpdated(), _upcharity);
+                }
         });
     }
 
@@ -342,8 +407,9 @@ public class EditAccountPanel extends FlowPanel
     protected TextBox _email, _pname, _rname;
     protected CheckBox _whirledEmail, _announceEmail;
     protected PasswordTextBox _password, _confirm;
-    protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname;
-
+    protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname, _upcharity;
+    protected ListBox _lstCharities;
+    
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)

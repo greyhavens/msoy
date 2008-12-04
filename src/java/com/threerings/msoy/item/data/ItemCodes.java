@@ -30,4 +30,7 @@ public interface ItemCodes extends InvocationCodes
 
     /** An error code for delisting super items that have listed sub items. */
     public static final String E_NO_DELIST_LISTED_SUBITEM_HAVER = "e.no_delist_listed_subitem_haver";
+
+    /** An error code indicating charities cannot list an item for bars. */
+    public static final String E_CHARITIES_CANNOT_LIST_FOR_BARS = "e.charities_cannot_list_for_bars";
 }

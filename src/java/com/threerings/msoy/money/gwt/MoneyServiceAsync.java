@@ -11,6 +11,7 @@ import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
+import com.threerings.msoy.money.data.all.CharityBlingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ExchangeStatusData;
 import com.threerings.msoy.money.data.all.ReportType;
@@ -65,5 +66,15 @@ public interface MoneyServiceAsync
      * The asynchronous version of {@link MoneyService#getExchangeStatus}.
      */
     void getExchangeStatus (int start, int count, AsyncCallback<ExchangeStatusData> callback);
+    
+    /**
+     * The asynchronous version of {@link MoneyService#getCharityBlingInfo()}.
+     */
+    void getCharityBlingInfo (AsyncCallback<List<CharityBlingInfo>> callback);
+    
+    /**
+     * The asynchronous version of {@link MoneyService#charityCashOutBling(int, int)}.
+     */
+    void charityCashOutBling (int memberId, int blingAmount, AsyncCallback<Void> callback);
 }
 

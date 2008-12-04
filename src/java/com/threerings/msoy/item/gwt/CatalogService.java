@@ -46,6 +46,12 @@ public interface CatalogService extends RemoteService
 
         /** Another price quote if they wish to buy again. */
         public PriceQuote quote;
+        
+        /** The percentage of the purchase price the charity received. */
+        public float charityPercentage;
+        
+        /** The name of the charity that received the donation. */
+        public MemberName charity;
     }
 
     /** Provides results for {@link #loadFavorites}. */

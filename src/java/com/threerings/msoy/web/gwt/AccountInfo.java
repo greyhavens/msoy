@@ -3,7 +3,12 @@
 
 package com.threerings.msoy.web.gwt;
 
+import java.util.List;
+import java.util.Map;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Contains all account information not already contained in WebCreds.
@@ -18,4 +23,13 @@ public class AccountInfo implements IsSerializable
 
     /** Whether or not to send announcement email. */
     public boolean emailAnnouncements;
+    
+    /** ID of the charity member who will receive donations from this account. */
+    public int charityMemberId;
+    
+    /** List of available charities that can be selected. */
+    public List<MemberName> charityNames;
+    
+    /** Map of member ID to all the charities. */
+    public Map<Integer, CharityInfo> charities;
 }

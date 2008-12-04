@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.web.gwt.Contest;
@@ -131,6 +132,10 @@ public interface AdminServiceAsync
     /**
      * The asynchronous version of {@link AdminService#setCharityInfo}.
      */
-    void setCharityInfo (int memberId, boolean charity, boolean coreCharity,
-        AsyncCallback<Void> callback);
+    void setCharityInfo (CharityInfo charityInfo, AsyncCallback<Void> callback);
+    
+    /**
+     * The asynchronous version of {@link AdminService#removeCharityStatus(int)}.
+     */
+    void removeCharityStatus (int memberId, AsyncCallback<Void> callback);
 }

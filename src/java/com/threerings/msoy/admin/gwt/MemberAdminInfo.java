@@ -63,4 +63,7 @@ public class MemberAdminInfo
     
     /** True if this member is a core charity.  Can only be true if isCharity is also true. */
     public boolean coreCharity;
+    
+    /** Description of the charity as shown to other members. */
+    public String charityDescription;
 }

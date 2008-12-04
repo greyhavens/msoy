@@ -8,7 +8,9 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.quartz.CronTrigger;
@@ -45,6 +47,8 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.persist.MoneyConfigRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
+import com.threerings.msoy.server.persist.CharityRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 /**
  * Responsible for distributing bling to creators of games that players have played on a daily
@@ -63,13 +67,14 @@ public class BlingPoolDistributor
     implements ShutdownManager.Shutdowner
 {
     @Inject
-    public BlingPoolDistributor (RuntimeConfig runtime, MoneyRepository repo,
-                                 MsoyGameRepository mgameRepo, ShutdownManager sm)
+    public BlingPoolDistributor (RuntimeConfig runtime, MoneyRepository repo, 
+        MsoyGameRepository mgameRepo, ShutdownManager sm, MemberRepository memberRepo)
     {
         _runtime = runtime;
         _repo = repo;
         _mgameRepo = mgameRepo;
-
+        _memberRepo = memberRepo;
+        
         sm.registerShutdowner(this);
 
         try {
@@ -181,26 +186,39 @@ public class BlingPoolDistributor
         // Get all the game play sessions for that day.
         Collection<GamePlayRecord> gamePlays = _mgameRepo.getGamePlaysBetween(
             midnight1.getTimeInMillis(), midnight2.getTimeInMillis());
-
-        // Calculate a total and a map of game ID to the total minutes spent in the game.
-        long totalMinutes = 0;
-        Map<Integer, Long> minutesPerGame = new HashMap<Integer, Long>();
+        Set<Integer> gameIds = new HashSet<Integer>();
         for (GamePlayRecord gamePlay : gamePlays) {
-            totalMinutes += gamePlay.playerMins;
-            if (minutesPerGame.get(gamePlay.gameId) == null) {
-                minutesPerGame.put(gamePlay.gameId, (long)gamePlay.playerMins);
-            } else {
-                minutesPerGame.put(gamePlay.gameId, 
-                    minutesPerGame.get(gamePlay.gameId) + gamePlay.playerMins);
-            }
+            gameIds.add(gamePlay.gameId);
         }
 
         // Load up all of the games for which we're going to award bling.
         Map<Integer, GameRecord> gameMap = new HashMap<Integer, GameRecord>();
-        for (GameRecord game : _mgameRepo.loadListedGameRecords(minutesPerGame.keySet())) {
+        for (GameRecord game : _mgameRepo.loadListedGameRecords(gameIds)) {
             gameMap.put(game.gameId, game);
         }
 
+        // No bling should be distributed from the pool to charities
+        Set<Integer> charityIds = new HashSet<Integer>();
+        for (CharityRecord charity : _memberRepo.getCharities()) {
+            charityIds.add(charity.memberId);
+        }
+        
+        // Calculate a total and a map of game ID to the total minutes spent in the game.
+        long totalMinutes = 0;
+        Map<Integer, Long> minutesPerGame = new HashMap<Integer, Long>();
+        for (GamePlayRecord gamePlay : gamePlays) {
+            // Ignore if creator is a charity
+            if (!charityIds.contains(gameMap.get(gamePlay.gameId).creatorId)) {
+                totalMinutes += gamePlay.playerMins;
+                if (minutesPerGame.get(gamePlay.gameId) == null) {
+                    minutesPerGame.put(gamePlay.gameId, (long)gamePlay.playerMins);
+                } else {
+                    minutesPerGame.put(gamePlay.gameId, 
+                        minutesPerGame.get(gamePlay.gameId) + gamePlay.playerMins);
+                }
+            }
+        }
+        
         // Assuming we have a non-zero number of minutes games were played this day, grant a
         // portion of the bling pool to each game's creator.
         if (totalMinutes > 0) {
@@ -278,4 +296,5 @@ public class BlingPoolDistributor
     protected final MoneyRepository _repo;
     protected final MsoyGameRepository _mgameRepo;
     protected final Scheduler _scheduler;
+    protected final MemberRepository _memberRepo;
 }

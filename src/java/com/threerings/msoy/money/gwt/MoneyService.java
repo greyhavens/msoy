@@ -12,6 +12,7 @@ import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
+import com.threerings.msoy.money.data.all.CharityBlingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ExchangeStatusData;
 import com.threerings.msoy.money.data.all.ReportType;
@@ -75,5 +76,17 @@ public interface MoneyService extends RemoteService
      * Used by admins to view exchange status.
      */
     ExchangeStatusData getExchangeStatus (int start, int count)
+        throws ServiceException;
+    
+    /**
+     * Retrieves bling info for all the charities in the system.
+     */
+    List<CharityBlingInfo> getCharityBlingInfo ();
+    
+    /**
+     * Immediately cashes out the specified member (which must be a charity).  This will
+     * automatically fill in blank billing information.
+     */
+    void charityCashOutBling (int memberId, int blingAmount)
         throws ServiceException;
 }

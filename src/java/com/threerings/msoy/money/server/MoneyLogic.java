@@ -5,8 +5,10 @@ package com.threerings.msoy.money.server;
 
 import java.text.NumberFormat;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -18,7 +20,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Invoker;
-import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
@@ -134,6 +135,21 @@ public class MoneyLogic
             "Cannot retrieve money info for guests.");
 
         return _repo.load(memberId).getMemberMoney();
+    }
+    
+    /**
+     * Returns the current account balances (coins, bars, and bling) for the given members.
+     * 
+     * @param memberIds IDs of the members to retrieve money for.
+     * @return Map of the member ID to the money in their account.
+     */
+    public Map<Integer, MemberMoney> getMoneyFor (Set<Integer> memberIds)
+    {
+        Map<Integer, MemberMoney> monies = new HashMap<Integer, MemberMoney>();
+        for (MemberAccountRecord mar : _repo.loadAll(memberIds)) {
+            monies.put(mar.memberId, mar.getMemberMoney());
+        }
+        return monies;
     }
 
     /**
@@ -736,10 +752,10 @@ public class MoneyLogic
         // trip, so perhaps some optimization could be used here.  However, compared to the writes
         // that have to be done at the same time, this is somewhat trivial.
         List<CharityRecord> charities = _memberRepo.getCoreCharities();
-        if (charities.isEmpty()) {
-            return 0;
+        if (!charities.isEmpty()) {
+            return charities.get((int)(Math.random() * charities.size())).memberId;
         } else {
-            return RandomUtil.pickRandom(charities).memberId;
+            return 0;
         }
     }
 

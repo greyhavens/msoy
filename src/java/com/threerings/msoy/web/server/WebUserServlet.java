@@ -14,7 +14,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
@@ -33,6 +37,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -42,6 +47,7 @@ import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
@@ -403,6 +409,19 @@ public class WebUserServlet extends MsoyServiceServlet
         }
         ainfo.emailWhirledMail = !mrec.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL);
         ainfo.emailAnnouncements = !mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL);
+        ainfo.charityMemberId = mrec.charityMemberId;
+        
+        // Load charities and sort by name.
+        List<CharityRecord> charities = _memberRepo.getCharities();
+        ainfo.charities = new HashMap<Integer, CharityInfo>();
+        for (CharityRecord charity : charities) {
+            ainfo.charities.put(charity.memberId, new CharityInfo(charity.memberId, charity.core, 
+                charity.description));
+        }
+        ainfo.charityNames = new ArrayList<MemberName>(
+                _memberRepo.loadMemberNames(ainfo.charities.keySet()).values());
+        Collections.sort(ainfo.charityNames, MemberName.BY_DISPLAY_NAME);
+        
         return ainfo;
     }
 
@@ -414,6 +433,13 @@ public class WebUserServlet extends MsoyServiceServlet
         ProfileRecord prec = _profileRepo.loadProfile(mrec.memberId);
         prec.realName = info.realName;
         _profileRepo.storeProfile(prec);
+    }
+
+    public void updateCharity (int selectedCharityId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        _memberRepo.updateSelectedCharity(mrec.memberId, selectedCharityId);
     }
 
     protected void checkClientVersion (String clientVersion, String who)

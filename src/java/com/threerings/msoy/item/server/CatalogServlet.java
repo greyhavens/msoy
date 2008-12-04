@@ -16,12 +16,14 @@ import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
@@ -259,6 +261,14 @@ public class CatalogServlet extends MsoyServiceServlet
         purchResult.item = buyOp.getItem();
         purchResult.balances = result.getBuyerBalances();
         purchResult.quote = quote;
+        
+        // If a charity was selected, set charity info
+        if (result.getCharityTransaction() != null) {
+            purchResult.charityPercentage = _runtime.money.charityPercentage;
+            purchResult.charity = _memberRepo.loadMemberName(
+                result.getCharityTransaction().memberId);
+        }
+        
         return purchResult;
     }
 
@@ -274,6 +284,14 @@ public class CatalogServlet extends MsoyServiceServlet
             log.warning("Requested to list an item for invalid price",
                         "item", item, "currency", currency, "cost", cost);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+        
+        // Charities cannot list items in bars
+        if (currency == Currency.BARS) {
+            CharityRecord charityRec = _memberRepo.getCharityRecord(mrec.memberId);
+            if (charityRec != null) {
+                throw new ServiceException(ItemCodes.E_CHARITIES_CANNOT_LIST_FOR_BARS);
+            }
         }
 
         // load a copy of the original item
@@ -633,4 +651,5 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected GameLogic _gameLogic;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected StatLogic _statLogic;
+    @Inject protected RuntimeConfig _runtime;
 }

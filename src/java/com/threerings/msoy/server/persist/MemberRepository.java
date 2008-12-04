@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 
 import com.google.common.collect.Iterables;
@@ -1230,6 +1231,15 @@ public class MemberRepository extends DepotRepository
     public CharityRecord getCharityRecord (int memberId)
     {
         return load(CharityRecord.class, memberId);
+    }
+    
+    /**
+     * Changes the member's charity to the specified member ID.
+     */
+    public void updateSelectedCharity (int memberId, int charityMemberId)
+    {
+        Preconditions.checkArgument(charityMemberId >= 0, "Charity member ID must be zero or positive.");
+        updatePartial(MemberRecord.class, memberId, MemberRecord.CHARITY_MEMBER_ID, charityMemberId);
     }
 
     protected String randomInviteId ()

@@ -175,6 +175,10 @@
   font-weight: bold;
 }
 
+.editAccount .charityList {
+  width: 300px;
+}
+
 /* ------------------------------------
    ROOMS PAGE
 -------------------------------------*/

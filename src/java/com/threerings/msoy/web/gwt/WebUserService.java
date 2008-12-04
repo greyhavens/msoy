@@ -101,4 +101,10 @@ public interface WebUserService extends RemoteService
      */
     void updateAccountInfo (AccountInfo info)
         throws ServiceException;
+    
+    /**
+     * Sets the user's charity to the given member ID.
+     */
+    void updateCharity (int selectedCharityId)
+        throws ServiceException;
 }
