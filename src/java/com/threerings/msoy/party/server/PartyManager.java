@@ -34,6 +34,13 @@ public class PartyManager
         listener.requestProcessed(); // TODO
     }
 
+    // from interface PartyProvider
+    public void assignLeader (
+        ClientObject caller, int memberId, InvocationService.ConfirmListener listener)
+    {
+        listener.requestProcessed(); // TODO
+    }
+
     protected PartyObject _partyObj;
 
 //    @Inject protected RootDObjectManager _omgr;

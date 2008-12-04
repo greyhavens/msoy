@@ -13,6 +13,9 @@ import com.threerings.presents.client.InvocationService_ConfirmListener;
 public interface PartyService extends InvocationService
 {
     // from Java interface PartyService
+    function assignLeader (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
+
+    // from Java interface PartyService
     function bootMember (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface PartyService

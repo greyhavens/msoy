@@ -15,6 +15,12 @@ import com.threerings.presents.server.InvocationProvider;
 public interface PartyProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link PartyService#assignLeader} request.
+     */
+    void assignLeader (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link PartyService#bootMember} request.
      */
     void bootMember (ClientObject caller, InvocationService.ConfirmListener arg1)

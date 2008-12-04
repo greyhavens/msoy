@@ -35,6 +35,12 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
         throws InvocationException
     {
         switch (methodId) {
+        case PartyMarshaller.ASSIGN_LEADER:
+            ((PartyProvider)provider).assignLeader(
+                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
         case PartyMarshaller.BOOT_MEMBER:
             ((PartyProvider)provider).bootMember(
                 source, (InvocationService.ConfirmListener)args[0]

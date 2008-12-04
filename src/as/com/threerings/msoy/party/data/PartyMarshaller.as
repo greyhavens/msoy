@@ -8,6 +8,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
+import com.threerings.util.Integer;
 
 /**
  * Provides the implementation of the <code>PartyService</code> interface
@@ -19,8 +20,21 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 public class PartyMarshaller extends InvocationMarshaller
     implements PartyService
 {
+    /** The method id used to dispatch <code>assignLeader</code> requests. */
+    public static const ASSIGN_LEADER :int = 1;
+
+    // from interface PartyService
+    public function assignLeader (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, ASSIGN_LEADER, [
+            Integer.valueOf(arg2), listener3
+        ]);
+    }
+
     /** The method id used to dispatch <code>bootMember</code> requests. */
-    public static const BOOT_MEMBER :int = 1;
+    public static const BOOT_MEMBER :int = 2;
 
     // from interface PartyService
     public function bootMember (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void
@@ -33,7 +47,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>leaveParty</code> requests. */
-    public static const LEAVE_PARTY :int = 2;
+    public static const LEAVE_PARTY :int = 3;
 
     // from interface PartyService
     public function leaveParty (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void

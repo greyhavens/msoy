@@ -18,8 +18,21 @@ import com.threerings.presents.data.InvocationMarshaller;
 public class PartyMarshaller extends InvocationMarshaller
     implements PartyService
 {
+    /** The method id used to dispatch {@link #assignLeader} requests. */
+    public static final int ASSIGN_LEADER = 1;
+
+    // from interface PartyService
+    public void assignLeader (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, ASSIGN_LEADER, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #bootMember} requests. */
-    public static final int BOOT_MEMBER = 1;
+    public static final int BOOT_MEMBER = 2;
 
     // from interface PartyService
     public void bootMember (Client arg1, InvocationService.ConfirmListener arg2)
@@ -32,7 +45,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #leaveParty} requests. */
-    public static final int LEAVE_PARTY = 2;
+    public static final int LEAVE_PARTY = 3;
 
     // from interface PartyService
     public void leaveParty (Client arg1, InvocationService.ConfirmListener arg2)

@@ -13,4 +13,7 @@ public interface PartyService extends InvocationService
 
     /** Requests to boot a player from the party. */
     void bootMember (Client client, ConfirmListener cl);
+
+    /** Requests to reassign leadership to another player. */
+    void assignLeader (Client client, int memberId, ConfirmListener cl);
 }
