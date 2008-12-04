@@ -1382,24 +1382,20 @@ public class RoomManager extends SpotSceneManager
         }
 
         // from SetListener
-        public void entryUpdated (final EntryUpdatedEvent<OccupantInfo> event)
+        public void entryUpdated (EntryUpdatedEvent<OccupantInfo> event)
         {
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
-                Runnable onSuccess = new Runnable () {
-                    public void run () {
-                        updateAvatarIdent(event.getOldEntry(), event.getEntry());
-                    }
-                };
-
-                if (event.getOldEntry() instanceof MemberInfo) {
-                    removeAndFlushMemories(((MemberInfo)event.getOldEntry()).getItemIdent());
-                    onSuccess.run();
-                }
                 if (event.getEntry() instanceof MemberInfo) {
-                    resolveMemories(Collections.singleton(
-                        ((MemberInfo)event.getEntry()).getItemIdent()),
-                        onSuccess);
+                    MemberInfo entry = (MemberInfo)event.getEntry();
+                    MemberInfo oldEntry = (MemberInfo)event.getOldEntry();
+
+                    // see if they actually switched avatars
+                    if (!entry.getItemIdent().equals(oldEntry.getItemIdent())) {
+                        updateAvatarIdent(oldEntry, entry);
+                        removeAndFlushMemories(oldEntry.getItemIdent());
+                        resolveMemories(Collections.singleton(entry.getItemIdent()), null);
+                    }
                 }
 
                 checkDynamic(event.getOldEntry(), true);
