@@ -5,6 +5,8 @@ package com.threerings.msoy.group.server.persist;
 
 import java.sql.Timestamp;
 
+import com.google.common.base.Function;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.expression.ColumnExp;
@@ -57,6 +59,14 @@ public class GroupMembershipRecord extends PersistentRecord
     public static final ColumnExp RANK_ASSIGNED_C =
         new ColumnExp(GroupMembershipRecord.class, RANK_ASSIGNED);
     // AUTO-GENERATED: FIELDS END
+
+    /** Converts a persistent record into a {@link GroupCard}. */
+    public static final Function<GroupMembershipRecord, Integer> TO_GROUP_ID =
+        new Function<GroupMembershipRecord, Integer>() {
+        public Integer apply (GroupMembershipRecord record) {
+            return record.groupId;
+        }
+    };
 
     public static final int SCHEMA_VERSION = 3;
 
