@@ -68,8 +68,17 @@ public class ConvoPanel extends FlowPanel
         header.setHTML(0, 0, "&nbsp;", 1, "TopLeft");
         header.setText(0, 1, review ? _msgs.convoReview() :
             _msgs.convoWith(""+result.other), 1, "Title");
+
+        boolean otherHasReplied = false;
+        for (ConvMessage msg : result.messages) {
+            if (msg.author.name.getMemberId() != CShell.getMemberId()) {
+                otherHasReplied = false;
+                break;
+            }
+        }
+
         if (!review) {
-            addControls(header, result.other);
+            addControls(header, result.other, otherHasReplied);
         }
         header.setHTML(0, header.getCellCount(0), "&nbsp;", 1, "TopRight");
         add(header);
@@ -86,7 +95,7 @@ public class ConvoPanel extends FlowPanel
         footer.setHTML(0, 0, "&nbsp;", 1, "BottomLeft");
         footer.setHTML(0, 1, "&nbsp;", 1, "Title");
         if (!review) {
-            addControls(footer, result.other);
+            addControls(footer, result.other, otherHasReplied);
         }
         footer.setHTML(0, footer.getCellCount(0), "&nbsp;", 1, "BottomRight");
         add(footer);
@@ -95,7 +104,7 @@ public class ConvoPanel extends FlowPanel
         _model.markConversationRead(_convoId);
     }
 
-    protected void addControls (SmartTable table, MemberName targetName)
+    protected void addControls (SmartTable table, MemberName targetName, boolean includeComplain)
     {
         int col = table.getCellCount(0);
 
@@ -118,9 +127,11 @@ public class ConvoPanel extends FlowPanel
         };
         table.setWidget(0, col++, delete, 1, "Control");
 
-        Button complain = new Button(_msgs.convoComplain());
-        new ComplainHandler(complain, targetName.toString());
-        table.setWidget(0, col++, complain, 1, "Control");
+        if (includeComplain) {
+            Button complain = new Button(_msgs.convoComplain());
+            new ComplainHandler(complain, targetName.toString());
+            table.setWidget(0, col++, complain, 1, "Control");
+        }
 
         table.setWidget(0, col++, new Button(_msgs.convoBack(), new ClickListener() {
             public void onClick (Widget sender) {
