@@ -55,7 +55,7 @@ public class ActorInfo extends OccupantInfo
      */
     public function isStatic () :Boolean
     {
-        return _static;
+        return (_flags & STATIC) != 0;
     }
 
     override public function clone () :Object
@@ -64,7 +64,7 @@ public class ActorInfo extends OccupantInfo
         that._media = this._media;
         that._ident = this._ident;
         that._state = this._state;
-        that._static = this._static;
+        that._flags = this._flags;
         return that;
     }
 
@@ -75,7 +75,7 @@ public class ActorInfo extends OccupantInfo
         _media = MediaDesc(ins.readObject());
         _ident = ItemIdent(ins.readObject());
         _state = (ins.readField(String) as String);
-        _static = ins.readBoolean();
+        _flags = ins.readByte();
     }
 
     /** @inheritDoc */
@@ -86,12 +86,15 @@ public class ActorInfo extends OccupantInfo
         buf.append(", media=", _media);
         buf.append(", ident=", _ident);
         buf.append(", state=", _state);
-        buf.append(", static=", _static);
+        buf.append(", flags=", _flags);
     }
 
     protected var _media :MediaDesc;
     protected var _ident :ItemIdent;
     protected var _state :String;
-    protected var _static :Boolean;
+    protected var _flags :int;
+
+    protected static const STATIC :int = 1;
+    protected static const MANAGER :int = 2; // used by MemberInfo but defined here for safety
 }
 }

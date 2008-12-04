@@ -52,7 +52,27 @@ public class MemberInfo extends ActorInfo
         super.useStaticMedia();
         _scale = 1f;
     }
-    
+
+    /**
+     * Sets whether this member can manage the room.
+     */
+    public void setIsManager (boolean isManager)
+    {
+        if (isManager) {
+            _flags |= MANAGER;
+        } else {
+            _flags &= ~MANAGER;
+        }
+    }
+
+    /**
+     * Tests if this member is able to manage the room.
+     */
+    public boolean isManager ()
+    {
+        return (_flags & MANAGER) != 0; 
+    }
+
     /**
      * Get the member id for this user, or 0 if they're a guest.
      */

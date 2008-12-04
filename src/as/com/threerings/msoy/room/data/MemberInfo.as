@@ -56,6 +56,14 @@ public class MemberInfo extends ActorInfo
         _scale = scale;
     }
 
+    /**
+     * Tests if this member is able to manage the room.
+     */
+    public function isManager () :Boolean
+    {
+        return (_flags & MANAGER) != 0;
+    }
+
     // from ActorInfo
     override public function clone () :Object
     {

@@ -55,7 +55,7 @@ public abstract class ActorInfo extends OccupantInfo
     {
         _media = getStaticMedia();
         _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
-        _static = true;
+        _flags |= STATIC;
     }
 
     /**
@@ -63,9 +63,9 @@ public abstract class ActorInfo extends OccupantInfo
      */
     public boolean isStatic ()
     {
-        return _static;
+        return (_flags & STATIC) != 0;
     }
-    
+
     protected ActorInfo (MsoyBodyObject body, MediaDesc media, ItemIdent ident)
     {
         super(body);
@@ -84,7 +84,7 @@ public abstract class ActorInfo extends OccupantInfo
     {
         super.toString(buf);
         buf.append(", media=").append(_media).append(", ident=").append(_ident);
-        buf.append(", state=").append(_state).append(", static=").append(_static);
+        buf.append(", state=").append(_state).append(", flags=").append(_flags);
     }
 
     /**
@@ -95,5 +95,8 @@ public abstract class ActorInfo extends OccupantInfo
     protected MediaDesc _media;
     protected ItemIdent _ident;
     protected String _state;
-    protected boolean _static;
+    protected byte _flags;
+
+    protected static final byte STATIC = 1;
+    protected static final byte MANAGER = 2; // used by MemberInfo but defined here for safety
 }
