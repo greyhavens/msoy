@@ -104,9 +104,9 @@ public class LobbyPanel extends FloatingPanel
 
     override protected function didOpen () :void
     {
-        super.didOpen();
         x = 20; // force layout
         y = 40;
+        super.didOpen();
     }
 
     override protected function createChildren () :void

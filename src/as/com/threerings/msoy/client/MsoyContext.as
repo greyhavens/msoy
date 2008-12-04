@@ -5,6 +5,8 @@ package com.threerings.msoy.client {
 
 import flash.display.Stage;
 
+import flash.geom.Rectangle;
+
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
 
@@ -224,6 +226,14 @@ public /*abstract*/ class MsoyContext
     public function getMsoyController () :MsoyController
     {
         throw new Error("abstract");
+    }
+
+    /**
+     * Get the current boundaries of the PlaceView, in global coordinates.
+     */
+    public function getPlaceViewBounds () :Rectangle
+    {
+        return _topPanel.getPlaceViewBounds();
     }
 
     /**

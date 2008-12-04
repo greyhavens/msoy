@@ -47,12 +47,9 @@ public class FlyingPanel extends FloatingPanel
 
     protected function checkPositioning (... ignored) :void
     {
-        var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds();
-        // fit the popup within the new bounds, minux padding.
-        placeBounds.x += PADDING;
-        placeBounds.y += PADDING;
-        placeBounds.width -= PADDING * 2;
-        placeBounds.height -= PADDING * 2;
+        var placeBounds :Rectangle = _ctx.getPlaceViewBounds();
+        // fit the popup within the new bounds, minus padding.
+        placeBounds.inflate(-PADDING, -PADDING);
 
         // fix our height (Avoid using Math.min here, because it re-assigns height and
         // screws up some things during resizing..
@@ -77,7 +74,5 @@ public class FlyingPanel extends FloatingPanel
 
     /** Saves our x value across client minimizations. */
     protected var _currentX :Number = NaN;
-
-    protected static const PADDING :int = 10;
 }
 }

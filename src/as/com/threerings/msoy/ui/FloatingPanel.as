@@ -25,6 +25,7 @@ import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.PopUpUtil;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Msgs;
@@ -42,6 +43,9 @@ public class FloatingPanel extends TitleWindow
     public static const OK_BUTTON :int = int.MAX_VALUE;
 
     public static const DEFAULT_BUTTON_WIDTH :int = 72;
+
+    /** Padding, used for various things, like the space between popups. */
+    public static const PADDING :int = 10;
 
     /**
      * A convenience function for all FloatingPanels, to track up/down state and do the
@@ -346,7 +350,7 @@ public class FloatingPanel extends TitleWindow
      */
     protected function didOpen () :void
     {
-        // nada, currently, in the base class
+        PopUpUtil.avoidOtherPopups(this, _ctx.getPlaceViewBounds(), PADDING);
     }
 
     /** Provides client services. */

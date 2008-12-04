@@ -7,6 +7,8 @@ import flash.events.Event;
 
 import flash.external.ExternalInterface;
 
+import flash.geom.Rectangle;
+
 import mx.binding.utils.BindingUtils;
 
 import mx.controls.ComboBox;
@@ -53,11 +55,12 @@ public class DecorEditPanel extends FlyingPanel
 
     override protected function didOpen () :void
     {
-        super.didOpen();
-
         // position ourselves
-        this.x = stage.stageWidth - width - 10;
-        this.y = 10;
+        var r :Rectangle = _ctx.getPlaceViewBounds();
+        this.x = r.right - width - PADDING;
+        this.y = r.y + PADDING;
+
+        super.didOpen();
 
         callLater(doHookup);
     }

@@ -5,6 +5,8 @@ package com.threerings.msoy.room.client.editor {
 
 import flash.events.Event;
 
+import flash.geom.Rectangle;
+
 import mx.containers.Box;
 import mx.containers.Grid;
 import mx.containers.HBox;
@@ -38,7 +40,6 @@ import com.threerings.msoy.world.client.WorldController;
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.data.FurniData;
 
-// TODO: Update this panel to the sexy black theme
 /**
  * A separate room editing panel, which lets the player edit furniture inside the room.
  */
@@ -511,10 +512,11 @@ public class RoomEditorPanel extends FlyingPanel
     // @Override from FloatingPanel
     override protected function didOpen () :void
     {
-        super.didOpen();
+        var r :Rectangle = _ctx.getPlaceViewBounds();
+        this.x = r.right - width - PADDING;
+        this.y = r.y + PADDING;
 
-        this.x = stage.stageWidth - width - GAP;
-        this.y = HeaderBar.HEIGHT + TopPanel.DECORATIVE_MARGIN_HEIGHT + GAP;
+        super.didOpen();
     }
 
     protected static const Y_DELTA :Number = 0.1;
@@ -550,7 +552,5 @@ public class RoomEditorPanel extends FlyingPanel
     protected var _room :RoomPanel;
     protected var _namebox :ComboBox;
     protected var _controller :RoomEditorController;
-
-    protected static const GAP :int = 10;
 }
 }

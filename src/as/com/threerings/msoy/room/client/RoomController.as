@@ -354,7 +354,7 @@ public class RoomController extends SceneController
         if (menuItems.length > 0) {
             var menu :CommandMenu = CommandMenu.createMenu(menuItems, _roomView);
             menu.variableRowHeight = true;
-            menu.setBounds(_wdctx.getTopPanel().getPlaceViewBounds());
+            menu.setBounds(_wdctx.getPlaceViewBounds());
             menu.popUpAtMouse();
 
 //            var menu :RadialMenu = new RadialMenu(100);
@@ -600,7 +600,7 @@ public class RoomController extends SceneController
         tipComp.styleName = "roomToolTip";
         tipComp.x -= tipComp.width/2;
         tipComp.y -= tipComp.height/2;
-        PopUpUtil.fitInRect(tipComp, _wdctx.getTopPanel().getPlaceViewBounds());
+        PopUpUtil.fitInRect(tipComp, _wdctx.getPlaceViewBounds());
         var hoverColor :uint = sprite.getHoverColor();
         tipComp.setStyle("color", hoverColor);
         if (hoverColor == 0) {

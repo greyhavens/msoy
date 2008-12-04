@@ -75,16 +75,6 @@ public class FriendsListPanel extends FlyingPanel
         }
     }
 
-    /**
-     * Tests if this panel is within a few pixels of its default position.
-     */
-    public function isAtRightEdge() :Boolean
-    {
-        var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds(); 
-        var distance :Number = x - (placeBounds.x + placeBounds.width - width - PADDING);
-        return Math.abs(distance) < 20;
-    }
-
     // part of ClientObserver, adapted by _cliObs
     protected function clientDidLogon (... ignored) :void
     {
@@ -93,13 +83,13 @@ public class FriendsListPanel extends FlyingPanel
 
     override protected function didOpen () :void
     {
-        super.didOpen();
-
         // auto-position ourselves
-        var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds(); 
+        var placeBounds :Rectangle = _wctx.getPlaceViewBounds(); 
         height = placeBounds.height - PADDING * 2;
-        x = placeBounds.x + placeBounds.width - width - PADDING;
+        x = placeBounds.right - width - PADDING;
         y = placeBounds.y + PADDING;
+
+        super.didOpen();
     }
 
     override protected function createChildren () :void
@@ -234,8 +224,6 @@ public class FriendsListPanel extends FlyingPanel
     }
 
     private static const log :Log = Log.getLog(FriendsListPanel);
-
-    protected static const PADDING :int = 10;
 
     /** Defined in Java as com.threerings.msoy.person.data.Profile.MAX_STATUS_LENGTH */
     protected static const PROFILE_MAX_STATUS_LENGTH :int = 100;

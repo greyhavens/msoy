@@ -19,6 +19,7 @@ import mx.events.CloseEvent;
 import com.threerings.flash.GraphicsUtil;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.PopUpUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.io.TypedArray;
@@ -235,34 +236,12 @@ public class HomePageDialog extends FloatingPanel
 
     override protected function didOpen () :void
     {
-        super.didOpen();
-
-        // Vertical center in place view
-        var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds();
+        // Vertical center in place view, and against right edge with padding
+        var placeBounds :Rectangle = _wctx.getPlaceViewBounds();
         y = placeBounds.y + (placeBounds.height - height) / 2;
+        x = placeBounds.right - width - PADDING;
 
-        // Find the friends panel
-        var friends :FriendsListPanel = null;
-        for (var ii :int = 0; ii < parent.numChildren; ++ii) {
-            if (parent.getChildAt(ii) is FriendsListPanel) {
-                friends = FriendsListPanel(parent.getChildAt(ii));
-                break;
-            }
-        }
-
-        // Check if it is in the default position
-        if (friends != null && !friends.isAtRightEdge()) {
-            friends = null;
-        }
-
-        var padding :int = 10;
-        if (friends != null) {
-            // We want to be just to the left of the friends
-            x = friends.x - width - padding;
-        } else {
-            // Otherwise, at right edge of place view
-            x = placeBounds.x + placeBounds.width - width - padding;
-        }
+        super.didOpen();
 
         refresh();
     }
