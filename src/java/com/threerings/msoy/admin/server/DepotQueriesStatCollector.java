@@ -4,7 +4,7 @@
 package com.threerings.msoy.admin.server;
 
 import com.samskivert.depot.PersistenceContext;
-import com.samskivert.depot.Stats;
+// import com.samskivert.depot.Stats;
 
 import com.threerings.msoy.admin.gwt.StatsModel;
 
@@ -21,7 +21,7 @@ public class DepotQueriesStatCollector extends StatCollector
     @Override // from StatCollector
     public Object compileStats ()
     {
-        Stats.Snapshot stats = _perCtx.getStats();
+//         Stats.Snapshot stats = _perCtx.getStats();
         return null; // TODO
     }
 

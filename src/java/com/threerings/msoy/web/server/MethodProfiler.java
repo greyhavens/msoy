@@ -138,7 +138,7 @@ public class MethodProfiler
     /**
      * Notes that the calling thread has exited the given method and records the time delta since
      * entry. The method parameter is not strictly necessary but allows some error checking. If not
-     * null, it must match the most recent value given to {@link #enter()} for the calling thread.
+     * null, it must match the most recent value given to {@link #enter} for the calling thread.
      */
     public void exit (String methodName)
     {
@@ -167,7 +167,7 @@ public class MethodProfiler
      * Clears out the profile for the current thread, and invokes the exit of the top-level method.
      * This allows callers to use one try... finally block in their top-level method without skewing
      * the results for nested methods that may have thrown exceptions and/or not called
-     * {@link #exit()}.
+     * {@link #exit}.
      */
     public void exitAndClear (String methodName)
     {

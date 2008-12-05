@@ -10,7 +10,6 @@ import java.util.Map;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-import com.threerings.io.Streamable;
 import com.threerings.util.StreamableHashMap;
 
 import com.threerings.msoy.admin.gwt.StatsModel;

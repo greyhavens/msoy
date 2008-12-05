@@ -24,7 +24,7 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.party.data.PartyObject;
+// import com.threerings.msoy.party.data.PartyObject;
 
 // import com.threerings.msoy.data.MemberObject;
 
@@ -62,7 +62,7 @@ public class PartyRegistry
     public void joinParty (ClientObject caller, int partyId, InvocationService.ResultListener rl)
         throws InvocationException
     {
-        MemberObject member = (MemberObject)caller;
+//         MemberObject member = (MemberObject)caller;
 
         // TODO!
         throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
@@ -85,7 +85,7 @@ public class PartyRegistry
         ClientObject caller, String name, int groupId, InvocationService.ResultListener rl)
         throws InvocationException
     {
-        MemberObject member = (MemberObject)caller;
+//         MemberObject member = (MemberObject)caller;
 
         // TODO!
         throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all;
 
+import com.threerings.util.Name;
+
 /**
  * A member name and profile photo all rolled into one!
  *

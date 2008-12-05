@@ -51,10 +51,8 @@ import com.threerings.crowd.server.LocationManager;
 
 import com.threerings.crowd.chat.server.SpeakUtil;
 
-import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.SceneRegistry;
-import com.threerings.whirled.util.UpdateList;
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
