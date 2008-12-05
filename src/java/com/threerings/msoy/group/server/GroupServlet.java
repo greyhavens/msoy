@@ -33,7 +33,6 @@ import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
-import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -88,14 +87,6 @@ public class GroupServlet extends MsoyServiceServlet
                 }
             }
         }
-
-        // load up our popular tags
-        List<String> popularTags = Lists.newArrayList();
-        for (TagPopularityRecord popRec : _groupRepo.getTagRepository().getPopularTags(
-                 GalaxyData.POPULAR_TAG_COUNT)) {
-            popularTags.add(popRec.tag);
-        }
-        data.popularTags = popularTags;
 
         return data;
     }

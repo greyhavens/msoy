@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GalaxyData;
@@ -49,7 +50,6 @@ public class GalaxyPanel extends FlowPanel
         // search box floats on far right
         FloatPanel search = new FloatPanel("Search");
         search.add(MsoyUI.createLabel(_msgs.galaxySearchTitle(), "SearchTitle"));
-
         search.add(_searchInput = MsoyUI.createTextBox("", 255, 20));
         ClickListener doSearch = new ClickListener() {
             public void onClick (Widget sender) {
@@ -64,21 +64,17 @@ public class GalaxyPanel extends FlowPanel
         search.add(MsoyUI.createImageButton("GoButton", doSearch));
         add(search);
 
-        // tag currently being searched for, or blank
-        add(_currentTag = MsoyUI.createFlowPanel("CurrentTag"));
-
-        // title hugs the top
-        add(MsoyUI.createLabel(_msgs.galaxyTitle(), "Title"));
-
-        FloatPanel introCreate = new FloatPanel("IntroCreate");
-        add(introCreate);
-        introCreate.add(MsoyUI.createHTML(_msgs.galaxyIntroBlurb(), "IntroBlurb"));
-
-        // add create group button
+        // blurb about groups on the left
+        InlinePanel introBlurb = new InlinePanel("IntroBlurb");
+        add(introBlurb);
+        introBlurb.add(MsoyUI.createHTML(_msgs.galaxyIntroBlurb(), null));
         if (!CShell.isGuest()) {
-            introCreate.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.galaxyCreate(),
-                Link.createListener(Pages.GROUPS, "edit")));
+            introBlurb.add(MsoyUI.createHTML(_msgs.galaxyIntroCreate(), null));
         }
+
+        // category tag links
+        _categoryLinks = MsoyUI.createFlowPanel("CategoryLinks");
+        add(_categoryLinks);
 
         FloatPanel content = new FloatPanel("Content");
         add(content);
@@ -90,7 +86,6 @@ public class GalaxyPanel extends FlowPanel
             leftColumn.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsTitle(), "MyGroupsHeader"));
             leftColumn.add(_myGroups = MsoyUI.createFlowPanel("MyGroups"));
         }
-        leftColumn.add(_popularTags = MsoyUI.createFlowPanel("tagCloud"));
         content.add(leftColumn);
 
         _sortBox = new ListBox();
@@ -155,18 +150,22 @@ public class GalaxyPanel extends FlowPanel
 
         // set the current tag and search text for the new query
         _searchInput.setText("");
-        _currentTag.clear();
         if (query.search != null) {
             _searchInput.setText(arg);
-        } else if (query.tag != null) {
-            InlineLabel tagLabel = new InlineLabel(_msgs.galaxyCurrentTag(arg) + " ");
-            tagLabel.addStyleName("Label");
-            _currentTag.add(tagLabel);
-            _currentTag.add(new InlineLabel("("));
-            Widget clear = Link.create(_msgs.galaxyTagClear(), Pages.GROUPS, "");
-            _currentTag.add(clear);
-            _currentTag.add(new InlineLabel(")"));
         }
+
+        _categoryLinks.clear();
+        _categoryLinks.add(MsoyUI.createLabel(_msgs.galaxyCategoryTitle(), "CategoryTitle inline"));
+        for (String tag : CATEGORY_TAGS) {
+            String tagStyle = "Link";
+            if (query.tag != null && query.tag.equals(tag.toLowerCase())) {
+                tagStyle = "SelectedLink";
+            }
+            _categoryLinks.add(Link.create(tag, tagStyle, Pages.GROUPS, Args.compose(ACTION_TAG,
+                0, tag.toLowerCase(), false)));
+        }
+        _categoryLinks.add(Link.create(_msgs.galaxyCategoryAll(), "Link", Pages.GROUPS, ""));
+
 
         // If currently displaying search results, lock the sort box to "By Relevance", otherwise
         // display all search values and select the right one.
@@ -215,16 +214,6 @@ public class GalaxyPanel extends FlowPanel
                 "mygroups");
             seeAllLink.addStyleName("SeeAll");
             _myGroups.add(seeAllLink);
-        }
-
-        // set up our popular tags
-        if (data.popularTags.size() == 0) {
-            _popularTags.add(MsoyUI.createLabel(_msgs.galaxyNoPopularTags(), "Link"));
-        } else {
-            for (String tag : data.popularTags) {
-                _popularTags.add(Link.create(tag, "Link", Pages.GROUPS,
-                                             Args.compose(ACTION_TAG, 0, tag, false), false));
-            }
         }
     }
 
@@ -290,10 +279,10 @@ public class GalaxyPanel extends FlowPanel
 
     /* dynamic widgets */
     protected PagedGrid<GroupCard> _groupGrid;
-    protected FlowPanel _popularTags, _currentTag;
     protected TextBox _searchInput;
     protected FlowPanel _myGroups;
     protected ListBox _sortBox;
+    protected FlowPanel _categoryLinks;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
@@ -316,4 +305,7 @@ public class GalaxyPanel extends FlowPanel
         GroupService.GroupQuery.SORT_BY_NUM_MEMBERS,
         GroupService.GroupQuery.SORT_BY_CREATED_DATE,
     };
+
+    protected static final String[] CATEGORY_TAGS = { "Games", "Music", "Dance", "Art", "Flash",
+        "Fashion", "Pets", "Sports", "Humor" };
 }

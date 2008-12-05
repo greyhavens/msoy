@@ -21,7 +21,4 @@ public class GalaxyData
 
     /** The member's MY_GROUPS_COUNT groups */
     public List<MyGroupCard> myGroups;
-
-    /** Popular group tags. */
-    public List<String> popularTags;
 }

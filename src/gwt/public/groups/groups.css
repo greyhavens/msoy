@@ -338,7 +338,7 @@
 
 .galaxyPanel .IntroBlurb {
   color: #FFFFFF;
-  padding: 0 50px 15px 15px;
+  padding: 10px 0 15px 15px;
   width: 450px;
   font-size: 13px;
 }
@@ -350,7 +350,7 @@
   float: right;
   margin: 0 10px 10px 0;
   padding: 5px;
-  width: 200px;
+  width: 210px;
 }
 
 .galaxyPanel .Search .SearchTitle {
@@ -363,6 +363,27 @@
 
 .galaxyPanel .Search .gwt-TextBox {
   margin-right: 5px;
+}
+
+.galaxyPanel .CategoryLinks {
+  width: 100%;
+  text-align: center;
+  color: #b4ddf9;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.galaxyPanel .CategoryLinks .CategoryTitle {
+  color: #FFFFFF;
+}
+
+.galaxyPanel .CategoryLinks a {
+  color: #b4ddf9;
+  margin: 0 5px 0 5px;
+}
+
+.galaxyPanel .CategoryLinks .SelectedLink a {
+  color: #FFFFFF;
 }
 
 .galaxyPanel .LeftColumn {
