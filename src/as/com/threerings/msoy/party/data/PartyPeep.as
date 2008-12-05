@@ -12,7 +12,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 /**
  * Represents a fellow party-goer connection.
  */
-public class PartierEntry extends PlayerEntry
+public class PartyPeep extends PlayerEntry
 {
     /**
      * The order of the partier among all the players who have joined this party. The lower this
@@ -22,7 +22,7 @@ public class PartierEntry extends PlayerEntry
 
     override public function toString () :String
     {
-        return "PartierEntry[" + name + "]";
+        return "PartyPeep[" + name + "]";
     }
 
     // from interface Streamable

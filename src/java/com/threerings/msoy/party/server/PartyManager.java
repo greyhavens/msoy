@@ -13,7 +13,7 @@ import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.party.data.PartierEntry;
+import com.threerings.msoy.party.data.PartyPeep;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyObject;
 
@@ -39,12 +39,12 @@ public class PartyManager
 
         // figure out the highest yet-seen joinOrder
         int joinOrder = 0;
-        for (PartierEntry partier : _partyObj.mates) {
-            joinOrder = Math.max(joinOrder, partier.joinOrder + 1);
+        for (PartyPeep peep : _partyObj.peeps) {
+            joinOrder = Math.max(joinOrder, peep.joinOrder + 1);
         }
 
         // go ahead and add them
-        _partyObj.addToMates(new PartierEntry(member.memberName, joinOrder));
+        _partyObj.addToPeeps(new PartyPeep(member.memberName, joinOrder));
         member.setPartyId(_partyObj.id);
 
         // tell them the OID so they can subscribe

@@ -20,8 +20,8 @@ public class PartyObject extends DObject
     /** The field name of the <code>group</code> field. */
     public static final String GROUP = "group";
 
-    /** The field name of the <code>mates</code> field. */
-    public static final String MATES = "mates";
+    /** The field name of the <code>peeps</code> field. */
+    public static final String PEEPS = "peeps";
 
     /** The field name of the <code>leaderId</code> field. */
     public static final String LEADER_ID = "leaderId";
@@ -49,7 +49,7 @@ public class PartyObject extends DObject
     public GroupName group;
 
     /** The list of people in this party. */
-    public DSet<PartierEntry> mates = DSet.newDSet();
+    public DSet<PartyPeep> peeps = DSet.newDSet();
 
     /** The member ID of the current leader. */
     public int leaderId;
@@ -117,36 +117,36 @@ public class PartyObject extends DObject
 
     /**
      * Requests that the specified entry be added to the
-     * <code>mates</code> set. The set will not change until the event is
+     * <code>peeps</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToMates (PartierEntry elem)
+    public void addToPeeps (PartyPeep elem)
     {
-        requestEntryAdd(MATES, mates, elem);
+        requestEntryAdd(PEEPS, peeps, elem);
     }
 
     /**
      * Requests that the entry matching the supplied key be removed from
-     * the <code>mates</code> set. The set will not change until the
+     * the <code>peeps</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromMates (Comparable<?> key)
+    public void removeFromPeeps (Comparable<?> key)
     {
-        requestEntryRemove(MATES, mates, key);
+        requestEntryRemove(PEEPS, peeps, key);
     }
 
     /**
      * Requests that the specified entry be updated in the
-     * <code>mates</code> set. The set will not change until the event is
+     * <code>peeps</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateMates (PartierEntry elem)
+    public void updatePeeps (PartyPeep elem)
     {
-        requestEntryUpdate(MATES, mates, elem);
+        requestEntryUpdate(PEEPS, peeps, elem);
     }
 
     /**
-     * Requests that the <code>mates</code> field be set to the
+     * Requests that the <code>peeps</code> field be set to the
      * specified value. Generally one only adds, updates and removes
      * entries of a distributed set, but certain situations call for a
      * complete replacement of the set value. The local value will be
@@ -155,11 +155,11 @@ public class PartyObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMates (DSet<PartierEntry> value)
+    public void setPeeps (DSet<PartyPeep> value)
     {
-        requestAttributeChange(MATES, value, this.mates);
-        DSet<PartierEntry> clone = (value == null) ? null : value.typedClone();
-        this.mates = clone;
+        requestAttributeChange(PEEPS, value, this.peeps);
+        DSet<PartyPeep> clone = (value == null) ? null : value.typedClone();
+        this.peeps = clone;
     }
 
     /**

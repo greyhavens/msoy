@@ -9,7 +9,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 /**
  * Represents a fellow party-goer connection.
  */
-public class PartierEntry extends PlayerEntry
+public class PartyPeep extends PlayerEntry
 {
     /**
      * The order of the partier among all the players who have joined this party. The lower this
@@ -18,12 +18,12 @@ public class PartierEntry extends PlayerEntry
     public int joinOrder;
 
     /** Suitable for deserialization. */
-    public PartierEntry ()
+    public PartyPeep ()
     {
     }
 
     /** Mr. Constructor. */
-    public PartierEntry (VizMemberName name, int joinOrder)
+    public PartyPeep (VizMemberName name, int joinOrder)
     {
     	super(name);
         this.joinOrder = joinOrder;
@@ -32,6 +32,6 @@ public class PartierEntry extends PlayerEntry
     @Override
     public String toString ()
     {
-        return "PartierEntry[" + name + "]";
+        return "PartyPeep[" + name + "]";
     }
 }

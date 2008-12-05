@@ -28,8 +28,8 @@ public class PartyPanel extends FloatingPanel
     {
         super.createChildren();
 
-        _roster = new Roster(_ctx, PartyObject.MATES, MateRenderer);
-        _roster.init(_partyObj.mates.toArray());
+        _roster = new Roster(_ctx, PartyObject.PEEPS, MateRenderer);
+        _roster.init(_partyObj.peeps.toArray());
         _partyObj.addListener(_roster);
 
         addChild(_roster);

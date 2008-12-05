@@ -23,8 +23,8 @@ public class PartyObject extends DObject
     /** The field name of the <code>group</code> field. */
     public static const GROUP :String = "group";
 
-    /** The field name of the <code>mates</code> field. */
-    public static const MATES :String = "mates";
+    /** The field name of the <code>peeps</code> field. */
+    public static const PEEPS :String = "peeps";
 
     /** The field name of the <code>leaderId</code> field. */
     public static const LEADER_ID :String = "leaderId";
@@ -52,7 +52,7 @@ public class PartyObject extends DObject
     public var group :GroupName;
 
     /** The list of people in this party. */
-    public var mates :DSet; /* of */ PartierEntry; // link the class in. :)
+    public var peeps :DSet; /* of */ PartyPeep; // link the class in. :)
 
     /** The member ID of the current leader. */
     public var leaderId :int;
@@ -76,7 +76,7 @@ public class PartyObject extends DObject
         id = ins.readInt();
         name = ins.readField(String) as String;
         group = GroupName(ins.readObject());
-        mates = DSet(ins.readObject());
+        peeps = DSet(ins.readObject());
         leaderId = ins.readInt();
         sceneId = ins.readInt();
         status = ins.readField(String) as String;
