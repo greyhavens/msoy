@@ -385,7 +385,31 @@ public class MemberObject extends MsoyBodyObject
         location = null;
     }
 
-    @Override
+    @Override // from MsoyBodyObject
+    public void willEnterPlace (Place place, PlaceObject plobj)
+    {
+        super.willEnterPlace(place, plobj);
+
+        if (plobj instanceof RoomObject) {
+            RoomObject roomObj = (RoomObject) plobj;
+            MemberLocal local = getLocal(MemberLocal.class);
+
+            // as we arrive at a room, we entrust it with our memories for broadcast to clients
+            if (local.memories != null) {
+                roomObj.startTransaction();
+                try {
+                    for (EntityMemoryEntry entry : local.memories) {
+                        roomObj.addToMemories(entry);
+                    }
+                } finally {
+                    roomObj.commitTransaction();
+                }
+                local.memories = null;
+            }
+        }
+    }
+
+    @Override // from MsoyBodyObject
     public void didLeavePlace (PlaceObject plobj)
     {
         super.didLeavePlace(plobj);
@@ -420,30 +444,6 @@ public class MemberObject extends MsoyBodyObject
 
                 // and and resubsumed
                 getLocal(MemberLocal.class).memories = mems;
-            }
-        }
-    }
-
-    @Override
-    public void willEnterPlace (Place place, PlaceObject plobj)
-    {
-        super.willEnterPlace(place, plobj);
-
-        if (plobj instanceof RoomObject) {
-            RoomObject roomObj = (RoomObject) plobj;
-            MemberLocal local = getLocal(MemberLocal.class);
-
-            // as we arrive at a room, we entrust it with our memories for broadcast to clients
-            if (local.memories != null) {
-                roomObj.startTransaction();
-                try {
-                    for (EntityMemoryEntry entry : local.memories) {
-                        roomObj.addToMemories(entry);
-                    }
-                } finally {
-                    roomObj.commitTransaction();
-                }
-                local.memories = null;
             }
         }
     }

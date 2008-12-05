@@ -95,6 +95,7 @@ import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
 import com.threerings.msoy.room.data.RoomCodes;
+import com.threerings.msoy.room.data.RoomLocal;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
@@ -692,6 +693,28 @@ public class RoomManager extends SpotSceneManager
                     member.getMemberId(), rating);
             }
         });
+    }
+
+    @Override // from PlaceManager
+    public OccupantInfo buildOccupantInfo (BodyObject body)
+    {
+        // provide MsoyBodyObject instances with a RoomLocal they can use to determine stoniness
+        // and managerness; MsoyBodyObject clears this local out in its didLeavePlace() override;
+        // this is a little hacky, but this is the only hook PlaceManager provides for interacting
+        // with a body before its occupant info is created for our place
+        if (body instanceof MsoyBodyObject) {
+            body.setLocal(RoomLocal.class, new RoomLocal() {
+                public boolean useStaticMedia (MsoyBodyObject body) {
+                    return _dynamicActors.size() >= ACTOR_RENDERING_LIMIT; // TODO
+                }
+                public boolean isManager (MsoyBodyObject body) {
+                    return (body instanceof MemberObject) && canManage((MemberObject)body);
+                }
+            });
+        }
+
+        // now let our superclass continue with its occupant info construction
+        return super.buildOccupantInfo(body);
     }
 
     @Override // from SpotSceneManager
@@ -1320,19 +1343,6 @@ public class RoomManager extends SpotSceneManager
         } finally {
             _roomObj.commitTransaction();
         }
-    }
-
-    @Override
-    protected void insertOccupantInfo (OccupantInfo info, BodyObject body)
-    {
-        if (info instanceof ActorInfo && _dynamicActors.size() >= ACTOR_RENDERING_LIMIT) {
-            ((ActorInfo)info).useStaticMedia();
-        }
-        if (info instanceof MemberInfo) {
-            ((MemberInfo)info).setIsManager(canManage((MemberObject)body));
-        }
-
-        super.insertOccupantInfo(info, body);
     }
 
     protected void removeAndFlushMemories (ItemIdent item)

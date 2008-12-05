@@ -49,16 +49,6 @@ public abstract class ActorInfo extends OccupantInfo
     }
 
     /**
-     * Sets this actor to use simpler media for when rendering limits are in place.
-     */
-    public void useStaticMedia ()
-    {
-        _media = getStaticMedia();
-        _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
-        _flags |= STATIC;
-    }
-
-    /**
      * Returns true if this actor has static media due to rendering limits.
      */
     public boolean isStatic ()
@@ -69,14 +59,33 @@ public abstract class ActorInfo extends OccupantInfo
     protected ActorInfo (MsoyBodyObject body, MediaDesc media, ItemIdent ident)
     {
         super(body);
-        _media = media;
-        _ident = ident;
         _state = body.actorState;
+        useDynamicMedia(media, ident);
     }
 
     /** Used for unserialization. */
     protected ActorInfo ()
     {
+    }
+
+    /**
+     * Configures this actor to use the supplied dynamic media.
+     */
+    protected void useDynamicMedia (MediaDesc media, ItemIdent ident)
+    {
+        _media = media;
+        _ident = ident;
+        _flags &= ~STATIC;
+    }
+
+    /**
+     * Configures this actor to use simpler media for when rendering limits are in place.
+     */
+    protected void useStaticMedia ()
+    {
+        _media = getStaticMedia();
+        _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
+        _flags |= STATIC;
     }
 
     @Override // from SimpleStreamableObject

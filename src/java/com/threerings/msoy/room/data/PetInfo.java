@@ -33,6 +33,19 @@ public class PetInfo extends ActorInfo
         return _ownerId;
     }
 
+    /**
+     * Updates the media used by this pet (making it static if required or dynamic if possible).
+     */
+    public void updateMedia (PetObject petobj)
+    {
+        RoomLocal local = petobj.getLocal(RoomLocal.class);
+        if (local != null && local.useStaticMedia(petobj)) {
+            useStaticMedia();
+        } else {
+            useDynamicMedia(petobj.pet.getFurniMedia(), petobj.pet.getIdent());
+        }
+    }
+
     @Override // from SimpleStreamableObject
     protected void toString (StringBuilder buf)
     {

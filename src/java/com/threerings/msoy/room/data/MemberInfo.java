@@ -40,6 +40,9 @@ public class MemberInfo extends ActorInfo
 
         // note our current game
         updateGameSummary(memobj);
+
+        // configure our managerness
+        updateIsManager(memobj);
     }
 
     /** Used for unserialization. */
@@ -83,11 +86,12 @@ public class MemberInfo extends ActorInfo
     }
 
     /**
-     * Sets whether this member can manage the room.
+     * Updates our room manager status.
      */
-    public void setIsManager (boolean isManager)
+    public void updateIsManager (MemberObject memobj)
     {
-        if (isManager) {
+        RoomLocal local = memobj.getLocal(RoomLocal.class);
+        if (local != null && local.isManager(memobj)) {
             _flags |= MANAGER;
         } else {
             _flags &= ~MANAGER;
@@ -119,24 +123,27 @@ public class MemberInfo extends ActorInfo
     }
 
     /**
-     * Updates our avatar information.
+     * Updates our avatar information. This may result in a static avatar being used if the room
+     * occupied by the member requests it.
      */
     public void updateAvatar (MemberObject memobj)
     {
-        if (memobj.avatar != null) {
-            _media = memobj.avatar.avatarMedia;
-            _scale = memobj.avatar.scale;
-            _ident = memobj.avatar.getIdent();
-        } else if (memobj.isGuest()) {
-            _media = Avatar.getDefaultGuestAvatarMedia();
-            _scale = 1f;
-            _ident = new ItemIdent(Item.OCCUPANT, memobj.getOid());
+        RoomLocal local = memobj.getLocal(RoomLocal.class);
+        if (local != null && local.useStaticMedia(memobj)) {
+            useStaticMedia();
+
         } else {
-            _media = Avatar.getDefaultMemberAvatarMedia();
-            _scale = 1f;
-            _ident = new ItemIdent(Item.OCCUPANT, memobj.getOid());
+            if (memobj.avatar != null) {
+                useDynamicMedia(memobj.avatar.avatarMedia, memobj.avatar.getIdent());
+                _scale = memobj.avatar.scale;
+            } else {
+                MediaDesc desc = memobj.isGuest() ?
+                    Avatar.getDefaultGuestAvatarMedia() : Avatar.getDefaultMemberAvatarMedia();
+                useDynamicMedia(desc, new ItemIdent(Item.OCCUPANT, memobj.getOid()));
+                _scale = 1f;
+            }
+            _state = memobj.actorState;
         }
-        _state = memobj.actorState;
     }
 
     // from ActorInfo
