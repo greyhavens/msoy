@@ -35,7 +35,8 @@ import com.threerings.msoy.group.gwt.GroupExtras;
  * Contains the details of a group.
  */
 @Entity(indices={
-    @Index(name="ixPolicy", fields={ GroupRecord.POLICY })
+    @Index(name="ixPolicy", fields={ GroupRecord.POLICY }),
+    @Index(name="ixOfficial", fields={ GroupRecord.OFFICIAL })
 }, fullTextIndices={
     @FullTextIndex(name=GroupRecord.FTS_NBC, fields={
         GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })
@@ -203,7 +204,7 @@ public class GroupRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 20;
+    public static final int SCHEMA_VERSION = 21;
 
     /** Converts a persistent record into a {@link GroupCard}. */
     public static final Function<GroupRecord, GroupCard> TO_CARD =
