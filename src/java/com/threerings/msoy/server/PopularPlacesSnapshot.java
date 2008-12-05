@@ -3,13 +3,13 @@
 
 package com.threerings.msoy.server;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
@@ -176,8 +176,8 @@ public class PopularPlacesSnapshot
         });
 
         // intermediate greeter hash tables
-        final HashSet<Integer> greeters = new HashSet<Integer>(greeterIds);
-        final HashSet<Integer> onlineGreeters = new HashSet<Integer>();
+        final Set<Integer> greeters = Sets.newHashSet(greeterIds);
+        final Set<Integer> onlineGreeters = Sets.newHashSet();
 
         // now we can count up the population in all scenes and games. collect greeter online info
         // while we're at it
@@ -235,23 +235,23 @@ public class PopularPlacesSnapshot
         sortAndPrune(_glist);
 
         // build sorted lists of greeter ids (do two passes for a cheap stable sort)
-        ((ArrayList)_greeters).ensureCapacity(greeters.size());
-        ((ArrayList)_onlineGreeters).ensureCapacity(onlineGreeters.size());
+        List<Integer> glist = Lists.newArrayListWithExpectedSize(greeters.size());
+        List<Integer> oglist = Lists.newArrayListWithExpectedSize(onlineGreeters.size());
         for (Integer id : greeterIds) {
             if (onlineGreeters.contains(id)) {
-                _greeters.add(id);
-                _onlineGreeters.add(id);
+                glist.add(id);
+                oglist.add(id);
             }
         }
         for (Integer id : greeterIds) {
             if (greeters.contains(id) && !onlineGreeters.contains(id)) {
-                _greeters.add(id);
+                glist.add(id);
             }
         }
 
         // and voila, we are read-only lists
-        _greeters = Collections.unmodifiableList(_greeters);
-        _onlineGreeters = Collections.unmodifiableList(_onlineGreeters);
+        _greeters = Collections.unmodifiableList(glist);
+        _onlineGreeters = Collections.unmodifiableList(oglist);
     }
 
     protected static void sortAndPrune (List<Place> list)
