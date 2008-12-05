@@ -77,6 +77,7 @@
 
 .shopPanel .FeatListingBox .Descrip {
   max-height: 85px;
+  max-width: 115px;
   overflow: hidden;
 }
 
