@@ -21,8 +21,6 @@ import com.google.gwt.widgetideas.table.client.ScrollTable;
 import com.google.gwt.widgetideas.table.client.SortableGrid;
 import com.google.gwt.widgetideas.table.client.TableModel;
 
-import com.threerings.gwt.ui.SmartTable;
-
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.StatsModel;
