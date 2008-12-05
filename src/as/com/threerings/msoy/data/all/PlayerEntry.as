@@ -19,11 +19,6 @@ public class PlayerEntry
     /** The display name of the friend. */
     public var name :VizMemberName;
 
-    public function PlayerEntry (name :VizMemberName = null)
-    {
-        this.name = name;
-    }
-
     // from Hashable
     public function hashCode () :int
     {

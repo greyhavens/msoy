@@ -18,15 +18,6 @@ public class FriendEntry extends PlayerEntry
     /** Is the friend online? */
     public var online :Boolean;
 
-    /** Mr. Constructor. */
-    public function FriendEntry (
-        name :VizMemberName = null, status :String = null, online :Boolean = false)
-    {
-        super(name);
-        this.status = status;
-        this.online = online;
-    }
-
     override public function toString () :String
     {
         return "FriendEntry[" + name + "]";

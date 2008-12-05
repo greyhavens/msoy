@@ -35,7 +35,8 @@ public class FriendRenderer extends HBox
     public var mctx :MsoyContext;
 
     /** A marker data entry to indicate that we should display the guest prompt. */
-    public static const GUEST_PROMPT :FriendEntry = new FriendEntry(null, null, true);
+    public static const GUEST_PROMPT :FriendEntry = new FriendEntry();
+    GUEST_PROMPT.online = true;
 
     public function FriendRenderer () 
     {
