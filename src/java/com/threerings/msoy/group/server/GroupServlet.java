@@ -374,7 +374,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         MemberRecord mrec = requireAuthedUser();
         GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-        if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
+        if ((gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) && !mrec.isSupport()) {
             log.warning("in tagGroup, invalid permissions");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }

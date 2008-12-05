@@ -221,7 +221,7 @@ public class GroupDetailPanel extends FlowPanel
         readCharter.addClickListener(charterClick);
 
         // edit this group & manage rooms
-        if (_detail.myRank == GroupMembership.RANK_MANAGER) {
+        if (_detail.myRank == GroupMembership.RANK_MANAGER || CShell.isSupport()) {
             FlowPanel managerActions = MsoyUI.createFlowPanel("ManagerActions");
             actions.add(managerActions);
 
