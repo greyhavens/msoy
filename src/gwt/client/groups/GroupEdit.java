@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -120,6 +121,11 @@ public class GroupEdit extends FlexTable
         addRow(_msgs.editCatalogTag(),
             _catalogTag = MsoyUI.createTextBox(_extras.catalogTag, 24, 24));
 
+        if (CShell.isAdmin()) {
+            addRow(_msgs.editOfficial(), _official = new CheckBox());
+            _official.setChecked(_group.official);
+        }
+
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
@@ -190,6 +196,7 @@ public class GroupEdit extends FlexTable
         _group.policy = (byte)(_policy.getSelectedIndex()+Group.POLICY_PUBLIC);
         _group.forumPerms = Group.makePerms(_thread.getSelectedIndex()+Group.PERM_ALL,
                                             _post.getSelectedIndex()+Group.PERM_ALL);
+        _group.official = _official != null && _official.isChecked();
         _extras.charter = _charter.getText().trim();
         _extras.homepageUrl = _homepage.getText().trim();
         _extras.catalogItemType = Item.SHOP_TYPES[_catalogType.getSelectedIndex()];
@@ -244,6 +251,7 @@ public class GroupEdit extends FlexTable
     protected ListBox _policy, _thread, _post, _catalogType;
     protected LimitedTextArea _charter;
     protected Button _submit;
+    protected CheckBox _official;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

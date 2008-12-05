@@ -54,11 +54,17 @@ public class GroupLogic
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
+        if (group.official && !mrec.isAdmin()) {
+            log.warning("Non-admin creating official group", "member", mrec.who());
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
         try {
             final GroupRecord grec = new GroupRecord();
             grec.name = group.name;
             grec.blurb = group.blurb;
             grec.policy = group.policy;
+            grec.official = group.official;
             if (group.logo != null) {
                 grec.logoMimeType = group.logo.mimeType;
                 grec.logoMediaHash = group.logo.hash;
@@ -107,6 +113,11 @@ public class GroupLogic
             if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
                 log.warning("in updateGroup, invalid permissions");
                 throw new ServiceException("m.invalid_permissions");
+            }
+
+            if (group.official && !mrec.isAdmin()) {
+                log.warning("Non-admin updating group to be official", "member", mrec.who());
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
 
             GroupRecord grec = _groupRepo.loadGroup(group.groupId);

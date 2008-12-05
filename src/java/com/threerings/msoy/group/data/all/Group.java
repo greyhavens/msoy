@@ -86,6 +86,9 @@ public class Group
     /** The id of the game associated with this whirled, or 0 if there is none */
     public int gameId;
 
+    /** If the group is displayed more prominently, set only by admin. */
+    public boolean official;
+
     /**
      * Creates a default logo for use with groups that have no logo.
      */

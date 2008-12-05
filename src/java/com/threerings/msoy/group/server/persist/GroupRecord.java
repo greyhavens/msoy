@@ -189,6 +189,13 @@ public class GroupRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #gameId} field. */
     public static final ColumnExp GAME_ID_C =
         new ColumnExp(GroupRecord.class, GAME_ID);
+
+    /** The column identifier for the {@link #official} field. */
+    public static final String OFFICIAL = "official";
+
+    /** The qualified column identifier for the {@link #official} field. */
+    public static final ColumnExp OFFICIAL_C =
+        new ColumnExp(GroupRecord.class, OFFICIAL);
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on Name, Blurb, Charter */
@@ -196,7 +203,7 @@ public class GroupRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 19;
+    public static final int SCHEMA_VERSION = 20;
 
     /** Converts a persistent record into a {@link GroupCard}. */
     public static final Function<GroupRecord, GroupCard> TO_CARD =
@@ -278,6 +285,9 @@ public class GroupRecord extends PersistentRecord
     /** The id of the game associated with this whirled, or 0 if there is none */
     public int gameId;
 
+    /** If the group is an official whirled group. */
+    public boolean official;
+
     /**
      * Creates a web-safe version of this group.
      */
@@ -295,6 +305,7 @@ public class GroupRecord extends PersistentRecord
         group.forumPerms = forumPerms;
         group.memberCount = memberCount;
         group.gameId = gameId;
+        group.official = official;
         return group;
     }
 
@@ -344,6 +355,7 @@ public class GroupRecord extends PersistentRecord
         card.blurb = blurb;
         card.homeSceneId = homeSceneId;
         card.memberCount = memberCount;
+        card.official = official;
         return card;
     }
 
@@ -372,6 +384,9 @@ public class GroupRecord extends PersistentRecord
         }
         if (groupDef.forumPerms != forumPerms) {
             updates.put(FORUM_PERMS, groupDef.forumPerms);
+        }
+        if (groupDef.official != official) {
+            updates.put(OFFICIAL, groupDef.official);
         }
         if (extrasDef.charter != null && !extrasDef.charter.equals(charter)) {
             updates.put(CHARTER, extrasDef.charter);
