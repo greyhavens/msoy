@@ -83,10 +83,12 @@ public class NotificationDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = event.getEntry() as FriendEntry;
-            addGenericNotification(
-                MessageBundle.tcompose(
-                "m.friend_added", entry.name, entry.name.getMemberId()),
-                Notification.PERSONAL);
+            var notif :String = MessageBundle.tcompose("m.friend_added",
+                entry.name, entry.name.getMemberId());
+            if (entry.online) {
+                notif += " " + MessageBundle.tcompose("m.friend_visit", entry.name.getMemberId());
+            }
+            addGenericNotification(notif, Notification.PERSONAL);
         }
     }
 
