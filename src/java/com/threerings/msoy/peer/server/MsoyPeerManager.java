@@ -344,11 +344,10 @@ public class MsoyPeerManager extends CrowdPeerManager
 
         } finally {
             // clear other expired records from the cache
-            for (Iterator<Map.Entry<Name,MemObjCacheEntry>> iter =
-                     _mobjCache.entrySet().iterator(); iter.hasNext(); ) {
-                Map.Entry<Name,MemObjCacheEntry> entry = iter.next();
-                if (now < entry.getValue().expireTime) {
-                    iter.remove();
+            for (Iterator<MemObjCacheEntry> itr = _mobjCache.values().iterator(); itr.hasNext();) {
+                MemObjCacheEntry entry = itr.next();
+                if (now > entry.expireTime) {
+                    itr.remove();
                 }
             }
         }
