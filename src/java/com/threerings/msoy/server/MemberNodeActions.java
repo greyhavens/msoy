@@ -237,7 +237,7 @@ public class MemberNodeActions
             memobj.updateDisplayName(_displayName, _photo);
             memobj.setHeadline(_status);
             _bodyMan.updateOccupantInfo(
-                memobj, new OccupantInfo.NameUpdate(memobj.getVisibleName()));
+                memobj, new OccupantInfo.NameUpdater(memobj.getVisibleName()));
 
             // Update FriendEntrys on friend's member objects.  Rather than preparing a
             // MemberNodeAction for every friend, we use a custom NodeAction to check for servers
