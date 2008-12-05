@@ -86,11 +86,6 @@ public class ImageButtonSkin extends UIComponent
         _image = image;
         if (_image != null) {
             addChild(_image);
-            parent.width = _image.width;
-            parent.height = _image.height;
-        } else {
-            parent.width = 0;
-            parent.height = 0;
         }
 
         invalidateSize();
