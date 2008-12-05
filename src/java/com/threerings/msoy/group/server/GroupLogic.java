@@ -109,9 +109,8 @@ public class GroupLogic
         }
 
         try {
-            GroupMembershipRecord gmrec = _groupRepo.getMembership(group.groupId, mrec.memberId);
-            if ((gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER)
-                && !mrec.isSupport()) {
+            if (!mrec.isSupport() &&
+                _groupRepo.getRank(group.groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
                 log.warning("in updateGroup, invalid permissions");
                 throw new ServiceException("m.invalid_permissions");
             }

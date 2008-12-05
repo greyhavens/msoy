@@ -121,8 +121,8 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
             return (scene.ownerId == member.memberId);
 
         case MsoySceneModel.OWNER_TYPE_GROUP: {
-            GroupMembershipRecord gmr = _groupRepo.getMembership(scene.ownerId, member.memberId);
-            return (gmr != null) && (gmr.rank == GroupMembership.RANK_MANAGER);
+            return (_groupRepo.getRank(scene.ownerId, member.memberId) ==
+                    GroupMembership.RANK_MANAGER);
         }
 
         default:

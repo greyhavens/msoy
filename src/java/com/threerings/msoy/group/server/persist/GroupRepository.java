@@ -321,13 +321,25 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetches the membership details for a given group and member, or null.
+     * Returns the rank of the specified member in the specified group or {@link
+     * GroupMembership#RANK_NON_MEMBER} if they are a non-member.
      */
-    public GroupMembershipRecord getMembership (int groupId, int memberId)
+    public byte getRank (int groupId, int memberId)
     {
-        return load(GroupMembershipRecord.class,
-                    GroupMembershipRecord.GROUP_ID, groupId,
-                    GroupMembershipRecord.MEMBER_ID, memberId);
+        GroupMembershipRecord gmr = loadMembership(groupId, memberId);
+        return (gmr == null) ? GroupMembership.RANK_NON_MEMBER : gmr.rank;
+    }
+
+    /**
+     * Fetches the membership details for a given group and member. If the member is not a member
+     * of the specified group, a tuple will be provided with non-member as their rank and the start
+     * of the epoch for their rank assigned time.
+     */
+    public Tuple<Byte, Long> getMembership (int groupId, int memberId)
+    {
+        GroupMembershipRecord gmr = loadMembership(groupId, memberId);
+        return gmr == null ? Tuple.newTuple(GroupMembership.RANK_NON_MEMBER, 0L) :
+            Tuple.newTuple(gmr.rank, gmr.rankAssigned.getTime());
     }
 
     /**
@@ -483,6 +495,12 @@ public class GroupRepository extends DepotRepository
         }
 
         return rec.homeSceneId;
+    }
+
+    protected GroupMembershipRecord loadMembership (int groupId, int memberId)
+    {
+        return load(GroupMembershipRecord.class,
+            GroupMembershipRecord.GROUP_ID, groupId, GroupMembershipRecord.MEMBER_ID, memberId);
     }
 
     protected void updateMemberCount (int groupId)

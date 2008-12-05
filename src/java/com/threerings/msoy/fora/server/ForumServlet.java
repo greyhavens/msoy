@@ -503,10 +503,7 @@ public class ForumServlet extends MsoyServiceServlet
             if (mrec.isSupport()) { // support+ is always treated as managers
                 return GroupMembership.RANK_MANAGER;
             }
-            GroupMembershipRecord grm = _groupRepo.getMembership(groupId, mrec.memberId);
-            if (grm != null) {
-                rank = grm.rank;
-            }
+            rank = _groupRepo.getRank(groupId, mrec.memberId);
         }
         return rank;
     }

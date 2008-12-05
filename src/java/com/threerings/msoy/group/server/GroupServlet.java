@@ -133,11 +133,9 @@ public class GroupServlet extends MsoyServiceServlet
 
         // determine our rank info if we're a member
         if (mrec != null) {
-            GroupMembershipRecord gmrec = _groupRepo.getMembership(grec.groupId, mrec.memberId);
-            if (gmrec != null) {
-                detail.myRank = gmrec.rank;
-                detail.myRankAssigned = gmrec.rankAssigned.getTime();
-            }
+            Tuple<Byte, Long> minfo = _groupRepo.getMembership(grec.groupId, mrec.memberId);
+            detail.myRank = minfo.left;
+            detail.myRankAssigned = minfo.right;
         }
 
         // load up recent threads for this group (ordered by thread id)
@@ -181,8 +179,7 @@ public class GroupServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser();
 
         // ensure the caller is a manager of this group
-        GroupMembershipRecord membership = _groupRepo.getMembership(groupId, mrec.memberId);
-        if (membership.rank != GroupMembership.RANK_MANAGER) {
+        if (_groupRepo.getRank(groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
@@ -210,10 +207,7 @@ public class GroupServlet extends MsoyServiceServlet
         GroupInfo info = new GroupInfo();
         info.name = grec.toGroupName();
         if (mrec != null) {
-            GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-            if (gmrec != null) {
-                info.rank = gmrec.rank;
-            }
+            info.rank = _groupRepo.getRank(groupId, mrec.memberId);
         }
         return info;
     }
@@ -274,8 +268,8 @@ public class GroupServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
 
-        GroupMembershipRecord tgtrec = _groupRepo.getMembership(groupId, memberId);
-        if (tgtrec == null) {
+        Tuple<Byte, Long> tgtinfo = _groupRepo.getMembership(groupId, memberId);
+        if (tgtinfo.left == GroupMembership.RANK_NON_MEMBER) {
             log.info("Requested to remove non-member from group [who=" + mrec.who() +
                      ", gid=" + groupId + ", mid=" + memberId + "].");
             return; // no harm no foul
@@ -283,13 +277,11 @@ public class GroupServlet extends MsoyServiceServlet
 
         // if we're not removing ourselves, make sure we're a manager and outrank the target
         if (mrec.memberId != memberId) {
-            GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-            if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER ||
-                (tgtrec.rank == GroupMembership.RANK_MANAGER &&
-                 tgtrec.rankAssigned.getTime() < gmrec.rankAssigned.getTime())) {
-                log.warning("Rejecting remove from group request [who=" + mrec.who() +
-                            ", gid=" + groupId + ", mid=" + memberId +
-                            ", reqrec=" + gmrec + ", tgtrec=" + tgtrec + "].");
+            Tuple<Byte, Long> gminfo = _groupRepo.getMembership(groupId, mrec.memberId);
+            if (gminfo.left != GroupMembership.RANK_MANAGER ||
+                (tgtinfo.left == GroupMembership.RANK_MANAGER && tgtinfo.right < gminfo.right)) {
+                log.warning("Rejecting remove from group request", "who", mrec.who(),
+                            "gid", groupId, "mid", memberId, "reqinfo", gminfo, "tgtinfo", tgtinfo);
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
         }
@@ -350,9 +342,8 @@ public class GroupServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
 
-        GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
         if (!mrec.isSupport() &&
-            (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER)) {
+            _groupRepo.getRank(groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
             log.warning("in updateMemberRank, invalid permissions");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -373,8 +364,8 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         MemberRecord mrec = requireAuthedUser();
-        GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-        if ((gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) && !mrec.isSupport()) {
+        if (!mrec.isSupport() &&
+            _groupRepo.getRank(groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
             log.warning("in tagGroup, invalid permissions");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -472,11 +463,7 @@ public class GroupServlet extends MsoyServiceServlet
             }
 
             // determine our rank info
-            GroupMembershipRecord gmrec =
-                _groupRepo.getMembership(record.groupId, mrec.memberId);
-            if (gmrec != null) {
-                card.rank = gmrec.rank;
-            }
+            card.rank = _groupRepo.getRank(record.groupId, mrec.memberId);
 
             myGroupCards.add(card);
         }
