@@ -117,6 +117,9 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>onTour</code> field. */
     public static final String ON_TOUR = "onTour";
 
+    /** The field name of the <code>partyId</code> field. */
+    public static final String PARTY_ID = "partyId";
+
     /** The field name of the <code>experiences</code> field. */
     public static final String EXPERIENCES = "experiences";
     // AUTO-GENERATED: FIELDS END
@@ -219,6 +222,9 @@ public class MemberObject extends MsoyBodyObject
     /** Whether this player is on the "whirled tour". We could also check whether touredRooms
      * is null, but that's not sent to the client. */
     public boolean onTour;
+
+    /** The player's current partyId, or 0 if they're not in a party. */
+    public int partyId;
     
     /** List of experiences this member has had recently. */
     public DSet<MemberExperience> experiences = new DSet<MemberExperience>();
@@ -1122,6 +1128,22 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             ON_TOUR, Boolean.valueOf(value), Boolean.valueOf(ovalue));
         this.onTour = value;
+    }
+
+    /**
+     * Requests that the <code>partyId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPartyId (int value)
+    {
+        int ovalue = this.partyId;
+        requestAttributeChange(
+            PARTY_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.partyId = value;
     }
 
     /**

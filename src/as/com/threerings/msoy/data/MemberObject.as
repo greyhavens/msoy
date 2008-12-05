@@ -195,6 +195,9 @@ public class MemberObject extends MsoyBodyObject
     /** Whether this player is on the "whirled tour". */
     public var onTour :Boolean;
 
+    /** The player's current partyId, or 0 if they're not in a party. */
+    public var partyId :int;
+
     /** Experiences this player has had. */
     public var experiences :DSet; /* of */ MemberExperience;
 
@@ -359,6 +362,7 @@ public class MemberObject extends MsoyBodyObject
         headline = ins.readField(String) as String;
         visitorInfo = VisitorInfo(ins.readObject());
         onTour = ins.readBoolean();
+        partyId = ins.readInt();
         experiences = DSet(ins.readObject());
     }
 

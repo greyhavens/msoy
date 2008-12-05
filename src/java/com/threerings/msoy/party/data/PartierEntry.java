@@ -1,7 +1,10 @@
 //
 // $Id$
 
-package com.threerings.msoy.data.all;
+package com.threerings.msoy.party.data;
+
+import com.threerings.msoy.data.all.PlayerEntry;
+import com.threerings.msoy.data.all.VizMemberName;
 
 /**
  * Represents a fellow party-goer connection.
@@ -20,9 +23,10 @@ public class PartierEntry extends PlayerEntry
     }
 
     /** Mr. Constructor. */
-    public PartierEntry (VizMemberName name)
+    public PartierEntry (VizMemberName name, int joinOrder)
     {
     	super(name);
+        this.joinOrder = joinOrder;
     }
 
     @Override

@@ -8,16 +8,23 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.VizMemberName;
 
 public class PartyObject extends DObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>mates</code> field. */
-    public static const MATES :String = "mates";
-
     /** The field name of the <code>id</code> field. */
     public static const ID :String = "id";
+
+    /** The field name of the <code>name</code> field. */
+    public static const NAME :String = "name";
+
+    /** The field name of the <code>group</code> field. */
+    public static const GROUP :String = "group";
+
+    /** The field name of the <code>mates</code> field. */
+    public static const MATES :String = "mates";
 
     /** The field name of the <code>leaderId</code> field. */
     public static const LEADER_ID :String = "leaderId";
@@ -30,16 +37,22 @@ public class PartyObject extends DObject
 
     /** The field name of the <code>recruiting</code> field. */
     public static const RECRUITING :String = "recruiting";
-    
+
     /** The field name of the <code>partyService</code> field. */
     public static const PARTY_SERVICE :String = "partyService";
     // AUTO-GENERATED: FIELDS END
 
-    /** The list of people in this party. */
-    public var mates :DSet; // of VizMemberName
-
     /** This party's guid. */
     public var id :int;
+
+    /** The name of this party. */
+    public var name :String;
+
+    /** The group under whose auspices we woop-it-up. */
+    public var group :GroupName;
+
+    /** The list of people in this party. */
+    public var mates :DSet; /* of */ PartierEntry; // link the class in. :)
 
     /** The member ID of the current leader. */
     public var leaderId :int;
@@ -53,17 +66,20 @@ public class PartyObject extends DObject
     /** This party's access control. @see PartyCodes */
     public var recruiting :int;
 
+    /** The service for doing things on this party. */
     public var partyService :PartyMarshaller;
 
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
-        mates = DSet(ins.readObject());
         id = ins.readInt();
+        name = ins.readField(String) as String;
+        group = GroupName(ins.readObject());
+        mates = DSet(ins.readObject());
         leaderId = ins.readInt();
         sceneId = ins.readInt();
-        status = (ins.readField(String) as String);
+        status = ins.readField(String) as String;
         recruiting = ins.readByte();
         partyService = PartyMarshaller(ins.readObject());
     }

@@ -6,16 +6,22 @@ package com.threerings.msoy.party.data;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.data.all.GroupName;
 
 public class PartyObject extends DObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>mates</code> field. */
-    public static final String MATES = "mates";
-
     /** The field name of the <code>id</code> field. */
     public static final String ID = "id";
+
+    /** The field name of the <code>name</code> field. */
+    public static final String NAME = "name";
+
+    /** The field name of the <code>group</code> field. */
+    public static final String GROUP = "group";
+
+    /** The field name of the <code>mates</code> field. */
+    public static final String MATES = "mates";
 
     /** The field name of the <code>leaderId</code> field. */
     public static final String LEADER_ID = "leaderId";
@@ -33,11 +39,17 @@ public class PartyObject extends DObject
     public static final String PARTY_SERVICE = "partyService";
     // AUTO-GENERATED: FIELDS END
 
-    /** The list of people in this party. */
-    public DSet<VizMemberName> mates = new DSet<VizMemberName>();
-
     /** This party's guid. */
     public int id;
+
+    /** The name of this party. */
+    public String name;
+
+    /** The group under whose auspices we woop-it-up. */
+    public GroupName group;
+
+    /** The list of people in this party. */
+    public DSet<PartierEntry> mates = DSet.newDSet();
 
     /** The member ID of the current leader. */
     public int leaderId;
@@ -51,15 +63,64 @@ public class PartyObject extends DObject
     /** This party's access control. @see PartyCodes */
     public byte recruiting;
 
+    /** The service for doing things on this party. */
     public PartyMarshaller partyService;
 
     // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the <code>id</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setId (int value)
+    {
+        int ovalue = this.id;
+        requestAttributeChange(
+            ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.id = value;
+    }
+
+    /**
+     * Requests that the <code>name</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setName (String value)
+    {
+        String ovalue = this.name;
+        requestAttributeChange(
+            NAME, value, ovalue);
+        this.name = value;
+    }
+
+    /**
+     * Requests that the <code>group</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGroup (GroupName value)
+    {
+        GroupName ovalue = this.group;
+        requestAttributeChange(
+            GROUP, value, ovalue);
+        this.group = value;
+    }
+
     /**
      * Requests that the specified entry be added to the
      * <code>mates</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToMates (VizMemberName elem)
+    public void addToMates (PartierEntry elem)
     {
         requestEntryAdd(MATES, mates, elem);
     }
@@ -79,7 +140,7 @@ public class PartyObject extends DObject
      * <code>mates</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateMates (VizMemberName elem)
+    public void updateMates (PartierEntry elem)
     {
         requestEntryUpdate(MATES, mates, elem);
     }
@@ -94,27 +155,11 @@ public class PartyObject extends DObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMates (DSet<VizMemberName> value)
+    public void setMates (DSet<PartierEntry> value)
     {
         requestAttributeChange(MATES, value, this.mates);
-        DSet<VizMemberName> clone = (value == null) ? null : value.typedClone();
+        DSet<PartierEntry> clone = (value == null) ? null : value.typedClone();
         this.mates = clone;
-    }
-
-    /**
-     * Requests that the <code>id</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setId (int value)
-    {
-        int ovalue = this.id;
-        requestAttributeChange(
-            ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.id = value;
     }
 
     /**

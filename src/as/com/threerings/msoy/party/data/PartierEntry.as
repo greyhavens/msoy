@@ -1,11 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.data.all {
+package com.threerings.msoy.party.data {
 
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
-import com.threerings.presents.dobj.DSet_Entry;
+
+import com.threerings.msoy.data.all.PlayerEntry;
+import com.threerings.msoy.data.all.VizMemberName;
 
 /**
  * Represents a fellow party-goer connection.
@@ -17,11 +19,6 @@ public class PartierEntry extends PlayerEntry
      * value, the better priority they have to be auto-assigned leadership.
      */
     public var joinOrder :int;
-
-    public function PartierEntry (name :VizMemberName = null)
-    {
-        super(name);
-    }
 
     override public function toString () :String
     {
