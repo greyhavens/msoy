@@ -696,12 +696,10 @@ public class RoomManager extends SpotSceneManager
     }
 
     @Override // from PlaceManager
-    public OccupantInfo buildOccupantInfo (BodyObject body)
+    public void bodyWillEnter (BodyObject body)
     {
         // provide MsoyBodyObject instances with a RoomLocal they can use to determine stoniness
-        // and managerness; MsoyBodyObject clears this local out in its didLeavePlace() override;
-        // this is a little hacky, but this is the only hook PlaceManager provides for interacting
-        // with a body before its occupant info is created for our place
+        // and managerness; MsoyBodyObject clears this local out in its didLeavePlace() override
         if (body instanceof MsoyBodyObject) {
             body.setLocal(RoomLocal.class, new RoomLocal() {
                 public boolean useStaticMedia (MsoyBodyObject body) {
@@ -713,8 +711,7 @@ public class RoomManager extends SpotSceneManager
             });
         }
 
-        // now let our superclass continue with its occupant info construction
-        return super.buildOccupantInfo(body);
+        super.bodyWillEnter(body);
     }
 
     @Override // from SpotSceneManager
@@ -742,22 +739,6 @@ public class RoomManager extends SpotSceneManager
         // we want to explicitly disable the standard method calling by name that we allow in more
         // trusted environments
     }
-
-// TODO: this needs to change
-//     @Override
-//     public void updateOccupantInfo (OccupantInfo occInfo)
-//     {
-//         // Prior to inserting and cloning, make sure we enforce render limits
-//         if (occInfo instanceof ActorInfo) {
-//             OccupantInfo prior = _occInfo.get(occInfo.getBodyOid());
-//             // Set to static if it was static before and the room is still crowded
-//             if (prior instanceof ActorInfo && ((ActorInfo)prior).isStatic() &&
-//                     _dynamicActors.size() > ACTOR_RENDERING_LIMIT) {
-//                 ((ActorInfo)occInfo).useStaticMedia();
-//             }
-//         }
-//         super.updateOccupantInfo(occInfo);
-//     }
 
     /**
      * Checks to see if an item is being controlled by any client. If not, the calling client is
@@ -855,27 +836,32 @@ public class RoomManager extends SpotSceneManager
 
         DObject body = _omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
-            final MemberObject member = (MemberObject) body;
+            MemberObject member = (MemberObject) body;
             ensureAVRGamePropertySpace(member);
-            final MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
+
+            // update some panopticon tracking that we'll log at the end of their session
+            MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
             boolean isMemberScene = (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER);
             member.getLocal(MemberLocal.class).metrics.room.init(isMemberScene, model.ownerId);
 
+            // update stats for badge/passport reasons
             if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
                 member.getLocal(MemberLocal.class).stats.addToSetStat(
                     StatType.WHIRLEDS_VISITED, model.ownerId);
             }
 
-            // log it!
+            // log this room entry to panopticon for future grindery
             boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
             _eventLog.roomEntered(member.getMemberId(), isWhirled, member.getVisitorId());
 
-            // Indicate the user visited the room (unless it's their home).
+            // update this user's experiences re: visiting this room (unless it's their home)
             if (member.homeSceneId != model.sceneId) {
-                _memberMan.addExperience(member, new MemberExperience(
-                                             new Date(), HomePageItem.ACTION_ROOM, model.sceneId));
+                _memberMan.addExperience(member,
+                    new MemberExperience(new Date(), HomePageItem.ACTION_ROOM, model.sceneId));
             }
         }
+
+        // TODO: if this is an actor, add them to our list
     }
 
     @Override // from PlaceManager
@@ -914,6 +900,8 @@ public class RoomManager extends SpotSceneManager
 
         // reassign this occupant's controlled entities
         reassignControllers(bodyOid);
+
+        // TODO: determine whether someone should get unstoned
     }
 
     @Override // from PlaceManager
