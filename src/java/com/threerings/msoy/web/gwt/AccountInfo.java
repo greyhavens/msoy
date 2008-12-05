@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 /**
@@ -32,4 +33,7 @@ public class AccountInfo implements IsSerializable
     
     /** Map of member ID to all the charities. */
     public Map<Integer, CharityInfo> charities;
+    
+    /** Map of member ID to charity photos. */
+    public Map<Integer, MediaDesc> charityPhotos;
 }

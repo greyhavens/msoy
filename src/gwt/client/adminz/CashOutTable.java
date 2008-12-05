@@ -5,14 +5,13 @@ package client.adminz;
 
 import java.util.List;
 
-import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MoneyUtil;
+import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -67,10 +66,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
     
     protected void reload ()
     {
-        _moneysvc.getBlingCashOutRequests(new AsyncCallback<List<CashOutEntry>>() {
-            public void onFailure (Throwable caught) {
-                
-            }
+        _moneysvc.getBlingCashOutRequests(new MsoyCallback<List<CashOutEntry>>() {
             public void onSuccess (List<CashOutEntry> result) {
                 setModel(new SimpleDataModel<CashOutEntry>(result), 0);
             }
@@ -107,11 +103,8 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             SmartTable extras = new SmartTable("Extras", 0, 5);
             Button btn = new Button(_msgs.cashOutEntryTransactionsButton());
             btn.addStyleName("sideButton");
-            btn.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.ME, Args.compose("transactions", "3", Integer.toString(item.memberId)));
-                }
-            });
+            btn.addClickListener(Link.createListener(Pages.ME, Args.compose("transactions", "3", 
+                String.valueOf(item.memberId))));
             extras.addWidget(btn, 0, null);
             btn = new Button(_msgs.cashOutEntryCashOutButton());
             btn.addStyleName("sideButton");
@@ -168,10 +161,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             
             protected void doCancel ()
             {
-                _moneysvc.cancelCashOut(entry.memberId, _reasonBox.getText(), new AsyncCallback<Void>() {
-                    public void onFailure (Throwable cause) {
-                        MsoyUI.error(CShell.serverError(cause));
-                    }
+                _moneysvc.cancelCashOut(entry.memberId, _reasonBox.getText(), new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         reload();
                         MsoyUI.info(_msgs.cashOutEntryCancelSuccess());
@@ -215,10 +205,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             protected void doCashOut()
             {
                 int blingAmount = Currency.BLING.parse(_amountBox.getText());
-                _moneysvc.cashOutBling(entry.memberId, blingAmount, new AsyncCallback<Void>() {
-                    public void onFailure (Throwable cause) {
-                        MsoyUI.error(CShell.serverError(cause));
-                    }
+                _moneysvc.cashOutBling(entry.memberId, blingAmount, new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         reload();
                         MsoyUI.info(_msgs.cashOutEntryCashOutSuccess());

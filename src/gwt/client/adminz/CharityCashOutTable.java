@@ -5,14 +5,13 @@ package client.adminz;
 
 import java.util.List;
 
-import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MoneyUtil;
+import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -66,10 +65,7 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
     
     protected void reload ()
     {
-        _moneysvc.getCharityBlingInfo(new AsyncCallback<List<CharityBlingInfo>>() {
-            public void onFailure (Throwable caught) {
-                
-            }
+        _moneysvc.getCharityBlingInfo(new MsoyCallback<List<CharityBlingInfo>>() {
             public void onSuccess (List<CharityBlingInfo> result) {
                 setModel(new SimpleDataModel<CharityBlingInfo>(result), 0);
             }
@@ -95,11 +91,8 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
             SmartTable extras = new SmartTable("Extras", 0, 5);
             Button btn = new Button(_msgs.cashOutEntryTransactionsButton());
             btn.addStyleName("sideButton");
-            btn.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.ME, Args.compose("transactions", "3", Integer.toString(item.memberId)));
-                }
-            });
+            btn.addClickListener(Link.createListener(Pages.ME, Args.compose("transactions", "3", 
+                String.valueOf(item.memberId))));
             extras.addWidget(btn, 0, null);
             btn = new Button(_msgs.cashOutEntryCashOutButton());
             btn.addStyleName("sideButton");
@@ -154,10 +147,7 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
             protected void doCashOut()
             {
                 int blingAmount = Currency.BLING.parse(_amountBox.getText());
-                _moneysvc.charityCashOutBling(entry.memberId, blingAmount, new AsyncCallback<Void>() {
-                    public void onFailure (Throwable cause) {
-                        MsoyUI.error(CShell.serverError(cause));
-                    }
+                _moneysvc.charityCashOutBling(entry.memberId, blingAmount, new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         reload();
                         MsoyUI.info(_msgs.cashOutEntryCashOutSuccess());

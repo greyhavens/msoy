@@ -14,13 +14,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
@@ -413,14 +412,17 @@ public class WebUserServlet extends MsoyServiceServlet
         
         // Load charities and sort by name.
         List<CharityRecord> charities = _memberRepo.getCharities();
-        ainfo.charities = new HashMap<Integer, CharityInfo>();
+        ainfo.charities = Maps.newHashMap();
         for (CharityRecord charity : charities) {
             ainfo.charities.put(charity.memberId, new CharityInfo(charity.memberId, charity.core, 
                 charity.description));
         }
-        ainfo.charityNames = new ArrayList<MemberName>(
+        ainfo.charityNames = Lists.newArrayList(
                 _memberRepo.loadMemberNames(ainfo.charities.keySet()).values());
-        Collections.sort(ainfo.charityNames, MemberName.BY_DISPLAY_NAME);
+        ainfo.charityPhotos = Maps.newHashMap();
+        for (ProfileRecord profileRec : _profileRepo.loadProfiles(ainfo.charities.keySet())) {
+            ainfo.charityPhotos.put(profileRec.memberId, profileRec.getPhoto());
+        }
         
         return ainfo;
     }

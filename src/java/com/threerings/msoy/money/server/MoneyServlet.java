@@ -179,16 +179,6 @@ public class MoneyServlet extends MsoyServiceServlet
         }
         return charityBlingInfos;
     }
-    
-    private boolean isCharity (int memberId, List<CharityRecord> charities)
-    {
-        for (CharityRecord charity : charities) {
-            if (charity.memberId == memberId) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void supportAdjust (int memberId, Currency currency, int delta)
         throws ServiceException
@@ -266,6 +256,16 @@ public class MoneyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         return _moneyLogic.getBlingInfo(memberId);
+    }
+    
+    protected boolean isCharity (int memberId, List<CharityRecord> charities)
+    {
+        for (CharityRecord charity : charities) {
+            if (charity.memberId == memberId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Inject protected MoneyLogic _moneyLogic;

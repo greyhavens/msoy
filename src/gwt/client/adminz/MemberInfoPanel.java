@@ -173,10 +173,9 @@ public class MemberInfoPanel extends SmartTable
                 final boolean isCharity = charity.isChecked();
                 final boolean isCoreCharity = coreCharity.isChecked();
                 final String description = charityDescription.getText();
-                AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+                AsyncCallback<Void> callback = new MsoyCallback<Void>() {
                     public void onFailure (Throwable caught) {
-                        CShell.log("Could not update charity info.", caught);
-                        MsoyUI.error(CShell.serverError(caught));
+                        super.onFailure(caught);
                         charity.setChecked(info.charity);
                         coreCharity.setChecked(info.coreCharity);
                         coreCharity.setEnabled(info.charity);

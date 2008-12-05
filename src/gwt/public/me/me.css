@@ -179,6 +179,11 @@
   width: 300px;
 }
 
+.editAccount .charityDescription {
+  width: 400px;
+  font-size: 12px;
+}
+
 /* ------------------------------------
    ROOMS PAGE
 -------------------------------------*/
