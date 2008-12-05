@@ -266,33 +266,27 @@ public class PopularPlacesSnapshot
     /** The total number of people in the Whirled. */
     protected int _totalPopulation;
 
-    /** A phase count to limit refreshing cache of some lists to every N refreshes. */
-    protected int _phase;
-
     /** A mapping of all resolved whirleds in the whole wide Whirled. */
-    protected IntMap<Place> _whirleds = IntMaps.newHashIntMap();
+    protected final IntMap<Place> _whirleds = IntMaps.newHashIntMap();
 
     /** A mapping of all resolved scenes in the whole wide Whirled. */
-    protected IntMap<Place> _scenes = IntMaps.newHashIntMap();
+    protected final IntMap<Place> _scenes = IntMaps.newHashIntMap();
 
     /** A mapping of all resolved games in the whole wide Whirled. */
-    protected IntMap<Place> _games = IntMaps.newHashIntMap();
+    protected final IntMap<Place> _games = IntMaps.newHashIntMap();
 
     /** The most popular whirleds, sorted. */
-    protected List<Place> _whlist = Lists.newArrayList();
+    protected final List<Place> _whlist = Lists.newArrayList();
 
     /** The most popular scenes, sorted. */
-    protected List<Place> _sclist = Lists.newArrayList();
+    protected final List<Place> _sclist = Lists.newArrayList();
 
     /** The most popular games, sorted. */
-    protected List<Place> _glist = Lists.newArrayList();
+    protected final List<Place> _glist = Lists.newArrayList();
 
     /** Greeters, sorted by online now then last online time. */
-    protected List<Integer> _greeters = Lists.newArrayList();
+    protected final List<Integer> _greeters;
 
     /** Greeters, only online ones. */
-    protected List<Integer> _onlineGreeters = Lists.newArrayList();
-
-    /** Every so many times, update the greeters. */
-    protected static final int GREETER_PHASE_MODULUS = 4;
+    protected final List<Integer> _onlineGreeters;
 }
