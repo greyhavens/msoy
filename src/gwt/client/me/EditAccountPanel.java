@@ -3,6 +3,8 @@
 
 package client.me;
 
+import java.util.Collections;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
@@ -12,6 +14,7 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -179,21 +182,13 @@ public class EditAccountPanel extends FlowPanel
         if (DeploymentConfig.devDeployment) {
             final SmartTable charityTable = new SmartTable(0, 10);
             charityTable.setText(0, 0, _msgs.charities(), 3, "Tip");
-            /*List<RadioButton> charityButtons = new ArrayList<RadioButton>(accountInfo.charityNames.size());
-            RadioButton
-            for (MemberName name : accountInfo.charityNames) {
-                RadioButton rb = new RadioButton("charitiesGroup");
-                charityButtons.add(rb);
-                int row = charityTable.addWidget(rb, 1, null);
-                charityTable.setText(row, 1, name.getNormal());
-                charityTable.setText(++row, 1, accountInfo.charities.get(name.getMemberId()).description, 1, "Tip");
-            }*/
             
             charityTable.setText(1, 0, _msgs.selectCharity(), 1, "rightLabel");
             _lstCharities = new ListBox();
             _lstCharities.addItem(_msgs.defaultCharity(), "0");
             _lstCharities.setStylePrimaryName("charityList");
             int i = 1;
+            Collections.sort(accountInfo.charityNames, MemberName.BY_DISPLAY_NAME);
             for (MemberName name : accountInfo.charityNames) {
                 _lstCharities.addItem(name.getNormal(), Integer.toString(name.getMemberId()));
                 if (name.getMemberId() == accountInfo.charityMemberId) {
@@ -206,9 +201,10 @@ public class EditAccountPanel extends FlowPanel
                     if (_lstCharities.getSelectedIndex() > 0) {
                         int memberId = accountInfo.charityNames
                             .get(_lstCharities.getSelectedIndex() - 1).getMemberId();
-                        charityTable.setText(2, 0, accountInfo.charities.get(memberId).description, 3, "Tip");
+                        charityTable.setWidget(2, 0, new HTML(
+                            accountInfo.charities.get(memberId).description), 3, "Tip");
                     } else {
-                        charityTable.setText(2, 0, "", 3, "Tip");
+                        charityTable.setWidget(2, 0, new HTML(""), 3, "Tip");
                     }
                 }
             });
