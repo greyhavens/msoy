@@ -469,12 +469,7 @@ public class MemberManager
             }
             @Override public void handleSuccess () {
                 user.updateDisplayName(name);
-                _bodyMan.updateOccupantInfo(user, new MemberInfo.Updater<MemberInfo>() {
-                    public boolean update (MemberInfo info) {
-                        info.username = user.getVisibleName();
-                        return true;
-                    }
-                });
+                _bodyMan.updateOccupantInfo(user, new MemberInfo.NameUpdater(user.getVisibleName()));
             }
         });
     }
