@@ -9,9 +9,12 @@ import com.threerings.presents.client.Client;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.MsoyContext;
+
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
+import com.threerings.msoy.party.data.PartyMarshaller;
+import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyCodes;
 
 /**
@@ -35,6 +38,8 @@ public class PartyDirector extends BasicDirector
     {
         // TODO: if the user is already partying, return a board for their party
         return new PartyBoardPanel(_mctx, _pbsvc);
+
+        PartyPanel; // Force linkage until we work this out
     }
 
     // from BasicDirector
@@ -56,5 +61,7 @@ public class PartyDirector extends BasicDirector
     protected var _mctx :MsoyContext;
 
     protected var _pbsvc :PartyBoardService;
+
+    protected var _partyObj :PartyObject; // TODO: Pull this out of a hat
 }
 }

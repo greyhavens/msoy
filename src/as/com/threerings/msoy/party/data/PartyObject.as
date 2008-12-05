@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.data {
 
+import com.threerings.io.ObjectInputStream;
+
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
@@ -30,7 +32,7 @@ public class PartyObject extends DObject
     public static const RECRUITING :String = "recruiting";
     
     /** The field name of the <code>partyService</code> field. */
-    public static final String PARTY_SERVICE = "partyService";
+    public static const PARTY_SERVICE :String = "partyService";
     // AUTO-GENERATED: FIELDS END
 
     /** The list of people in this party. */
