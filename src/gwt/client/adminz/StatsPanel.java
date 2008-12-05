@@ -89,7 +89,7 @@ public class StatsPanel extends FlowPanel
         // set up the table contents
         FixedWidthGrid data = new FixedWidthGrid();
         data.setCellSpacing(0);
-        data.setColumnSorter(new StatsColumnSorter(model));
+//         data.setColumnSorter(new StatsColumnSorter(model));
         for (int rr = 0, lr = model.getRows(); rr < lr; rr++) {
             data.setText(rr, 0, model.getRowTitle(rr));
             for (int cc = 0, lc = model.getColumns(); cc < lc; cc++) {
