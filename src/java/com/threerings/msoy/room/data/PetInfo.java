@@ -3,7 +3,11 @@
 
 package com.threerings.msoy.room.data;
 
+import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MediaDesc;
+
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 
 /**
@@ -16,7 +20,7 @@ public class PetInfo extends ActorInfo
      */
     public PetInfo (PetObject petobj)
     {
-        super(petobj, petobj.pet.getFurniMedia(), petobj.pet.getIdent());
+        super(petobj);
         _ownerId = petobj.pet.ownerId;
     }
 
@@ -33,19 +37,6 @@ public class PetInfo extends ActorInfo
         return _ownerId;
     }
 
-    /**
-     * Updates the media used by this pet (making it static if required or dynamic if possible).
-     */
-    public void updateMedia (PetObject petobj)
-    {
-        RoomLocal local = petobj.getLocal(RoomLocal.class);
-        if (local != null && local.useStaticMedia(petobj)) {
-            useStaticMedia();
-        } else {
-            useDynamicMedia(petobj.pet.getFurniMedia(), petobj.pet.getIdent());
-        }
-    }
-
     @Override // from SimpleStreamableObject
     protected void toString (StringBuilder buf)
     {
@@ -54,9 +45,18 @@ public class PetInfo extends ActorInfo
     }
 
     @Override // from ActorInfo
-    protected MediaDesc getStaticMedia ()
+    protected void useStaticMedia ()
     {
-        return Pet.getStaticImagePetMedia();
+        _media = Pet.getStaticImagePetMedia();
+        _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
+    }
+
+    @Override // from ActorInfo
+    protected void useDynamicMedia (MsoyBodyObject body)
+    {
+        PetObject petobj = (PetObject)body;
+        _media = petobj.pet.getFurniMedia();
+        _ident = petobj.pet.getIdent();
     }
 
     protected int _ownerId;

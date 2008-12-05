@@ -7,7 +7,6 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
@@ -56,11 +55,26 @@ public abstract class ActorInfo extends OccupantInfo
         return (_flags & STATIC) != 0;
     }
 
-    protected ActorInfo (MsoyBodyObject body, MediaDesc media, ItemIdent ident)
+    /**
+     * Updates the media for this actor, potentially selecting static media.
+     */
+    public void updateMedia (MsoyBodyObject body)
+    {
+        RoomLocal local = body.getLocal(RoomLocal.class);
+        if (local != null && local.useStaticMedia(body)) {
+            useStaticMedia();
+            _flags |= STATIC;
+        } else {
+            useDynamicMedia(body);
+            _flags &= ~STATIC;
+        }
+    }
+
+    protected ActorInfo (MsoyBodyObject body)
     {
         super(body);
         _state = body.actorState;
-        useDynamicMedia(media, ident);
+        useDynamicMedia(body);
     }
 
     /** Used for unserialization. */
@@ -69,24 +83,14 @@ public abstract class ActorInfo extends OccupantInfo
     }
 
     /**
-     * Configures this actor to use the supplied dynamic media.
+     * Configures {@link #_media} and {@link #_ident} with the appropriate static media.
      */
-    protected void useDynamicMedia (MediaDesc media, ItemIdent ident)
-    {
-        _media = media;
-        _ident = ident;
-        _flags &= ~STATIC;
-    }
+    protected abstract void useStaticMedia ();
 
     /**
-     * Configures this actor to use simpler media for when rendering limits are in place.
+     * Configures {@link #_media} and {@link #_ident} using information from the supplied body.
      */
-    protected void useStaticMedia ()
-    {
-        _media = getStaticMedia();
-        _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
-        _flags |= STATIC;
-    }
+    protected abstract void useDynamicMedia (MsoyBodyObject body);
 
     @Override // from SimpleStreamableObject
     protected void toString (StringBuilder buf)
@@ -95,11 +99,6 @@ public abstract class ActorInfo extends OccupantInfo
         buf.append(", media=").append(_media).append(", ident=").append(_ident);
         buf.append(", state=").append(_state).append(", flags=").append(_flags);
     }
-
-    /**
-     * Gets the media to use when a rendering limit is in effect for this actor.
-     */
-    abstract protected MediaDesc getStaticMedia ();
 
     protected MediaDesc _media;
     protected ItemIdent _ident;

@@ -3,15 +3,16 @@
 
 package com.threerings.msoy.room.data;
 
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.game.data.GameSummary;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 
 /**
  * Contains published information about a member in a scene.
@@ -25,7 +26,7 @@ public class MemberInfo extends ActorInfo
             _mobj = mobj;
         }
         public boolean update (MemberInfo info) {
-            info.updateAvatar(_mobj);
+            info.updateMedia(_mobj);
             return true;
         }
         protected MemberObject _mobj;
@@ -33,10 +34,7 @@ public class MemberInfo extends ActorInfo
 
     public MemberInfo (MemberObject memobj)
     {
-        super(memobj, null, null); // we'll fill these in later
-
-        // configure our media and scale
-        updateAvatar(memobj);
+        super(memobj); // we'll fill these in later
 
         // note our current game
         updateGameSummary(memobj);
@@ -48,13 +46,6 @@ public class MemberInfo extends ActorInfo
     /** Used for unserialization. */
     public MemberInfo ()
     {
-    }
-
-    @Override // from ActorInfo
-    public void useStaticMedia ()
-    {
-        super.useStaticMedia();
-        _scale = 1f;
     }
 
     /**
@@ -122,34 +113,29 @@ public class MemberInfo extends ActorInfo
         return _scale;
     }
 
-    /**
-     * Updates our avatar information. This may result in a static avatar being used if the room
-     * occupied by the member requests it.
-     */
-    public void updateAvatar (MemberObject memobj)
+    @Override // from ActorInfo
+    protected void useStaticMedia ()
     {
-        RoomLocal local = memobj.getLocal(RoomLocal.class);
-        if (local != null && local.useStaticMedia(memobj)) {
-            useStaticMedia();
-
-        } else {
-            if (memobj.avatar != null) {
-                useDynamicMedia(memobj.avatar.avatarMedia, memobj.avatar.getIdent());
-                _scale = memobj.avatar.scale;
-            } else {
-                MediaDesc desc = memobj.isGuest() ?
-                    Avatar.getDefaultGuestAvatarMedia() : Avatar.getDefaultMemberAvatarMedia();
-                useDynamicMedia(desc, new ItemIdent(Item.OCCUPANT, memobj.getOid()));
-                _scale = 1f;
-            }
-            _state = memobj.actorState;
-        }
+        _media = Avatar.getStaticImageAvatarMedia();
+        _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
+        _scale = 1f;
     }
 
-    // from ActorInfo
-    protected MediaDesc getStaticMedia ()
+    @Override // from ActorInfo
+    protected void useDynamicMedia (MsoyBodyObject body)
     {
-        return Avatar.getStaticImageAvatarMedia();
+        MemberObject memobj = (MemberObject)body;
+        if (memobj.avatar != null) {
+            _media = memobj.avatar.avatarMedia;
+            _ident = memobj.avatar.getIdent();
+            _scale = memobj.avatar.scale;
+        } else {
+            _media = memobj.isGuest() ?
+                Avatar.getDefaultGuestAvatarMedia() : Avatar.getDefaultMemberAvatarMedia();
+            _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
+            _scale = 1f;
+        }
+        _state = memobj.actorState;
     }
 
     @Override // from SimpleStreamableObject

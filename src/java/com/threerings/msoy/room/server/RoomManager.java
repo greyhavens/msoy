@@ -703,7 +703,7 @@ public class RoomManager extends SpotSceneManager
         if (body instanceof MsoyBodyObject) {
             body.setLocal(RoomLocal.class, new RoomLocal() {
                 public boolean useStaticMedia (MsoyBodyObject body) {
-                    return _dynamicActors.size() >= ACTOR_RENDERING_LIMIT; // TODO
+                    return _actors.indexOf(body.getOid()) >= ACTOR_RENDERING_LIMIT;
                 }
                 public boolean isManager (MsoyBodyObject body) {
                     return (body instanceof MemberObject) && canManage((MemberObject)body);
@@ -861,7 +861,10 @@ public class RoomManager extends SpotSceneManager
             }
         }
 
-        // TODO: if this is an actor, add them to our list
+        // if this is an actor, add them to our list
+        if (_plobj.occupantInfo.get(bodyOid) instanceof ActorInfo) {
+            _actors.add(bodyOid);
+        }
     }
 
     @Override // from PlaceManager
@@ -901,7 +904,25 @@ public class RoomManager extends SpotSceneManager
         // reassign this occupant's controlled entities
         reassignControllers(bodyOid);
 
-        // TODO: determine whether someone should get unstoned
+        // remove this body from our actor list
+        _actors.remove(bodyOid);
+
+        // potentially unstone one or more actors
+        for (int ii = 0, ll = _actors.size(); ii < ll; ii++) {
+            boolean shouldBeStatic = (ii >= ACTOR_RENDERING_LIMIT);
+            ActorInfo info = (ActorInfo)_plobj.occupantInfo.get(_actors.get(ii));
+            if (info != null && info.isStatic() != shouldBeStatic) {
+                final MsoyBodyObject abody = (MsoyBodyObject)_omgr.getObject(info.bodyOid);
+                if (abody != null) {
+                    updateOccupantInfo(bodyOid, new ActorInfo.Updater<ActorInfo>() {
+                        public boolean update (ActorInfo info) {
+                            info.updateMedia(abody);
+                            return true;
+                        }
+                    });
+                }
+            }
+        }
     }
 
     @Override // from PlaceManager
@@ -1366,7 +1387,6 @@ public class RoomManager extends SpotSceneManager
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
                 updateAvatarIdent(null, event.getEntry());
-                checkDynamic(event.getEntry(), false);
             }
         }
 
@@ -1386,9 +1406,6 @@ public class RoomManager extends SpotSceneManager
                         resolveMemories(Collections.singleton(entry.getItemIdent()), null);
                     }
                 }
-
-                checkDynamic(event.getOldEntry(), true);
-                checkDynamic(event.getEntry(), false);
             }
         }
 
@@ -1398,7 +1415,6 @@ public class RoomManager extends SpotSceneManager
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
                 updateAvatarIdent(event.getOldEntry(), null);
-                checkDynamic(event.getOldEntry(), true);
             }
         }
 
@@ -1413,29 +1429,6 @@ public class RoomManager extends SpotSceneManager
             }
             if (newInfo instanceof MemberInfo) {
                 _avatarIdents.put(((MemberInfo)newInfo).getItemIdent(), newInfo.bodyOid);
-            }
-        }
-
-        /**
-         * Adds or removes the occupant to the set of dynamic actors if dynamic.
-         */
-        protected void checkDynamic (OccupantInfo info, boolean leaving)
-        {
-            if (info instanceof ActorInfo && !((ActorInfo)info).isStatic()) {
-                if (leaving) {
-                    ActorInfo prev = _dynamicActors.remove(info.getBodyOid());
-                    if (prev == null) {
-                        log.warning("Leaving dynamic actor not found in map", "room",
-                            _roomObj.which(), "actor", info);
-                    }
-                } else {
-                    ActorInfo prev = _dynamicActors.remove(info.getBodyOid());
-                    if (prev != null) {
-                        log.warning("Entering dynamic actor already in map", "room",
-                            _roomObj.which(), "actor", info);
-                    }
-                    _dynamicActors.put(info.getBodyOid(), (ActorInfo)info);
-                }
             }
         }
     }
@@ -1485,6 +1478,9 @@ public class RoomManager extends SpotSceneManager
     /** Listens to the room object. */
     protected RoomListener _roomListener = new RoomListener();
 
+    /** A list of the body oids of all actors in the room, ordered by when they entered. */
+    protected List<Integer> _actors = Lists.newArrayList();
+
     /** Mapping to keep track of spawned mobs. */
     protected Map<Tuple<Integer, String>, MobObject> _mobs = Maps.newHashMap();
 
@@ -1492,10 +1488,7 @@ public class RoomManager extends SpotSceneManager
     protected HashIntMap<Location> _startingLocs = new HashIntMap<Location>();
 
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
-    protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();
-
-    /** Non-statically rendered avatars and pets in the room. */
-    protected HashIntMap<ActorInfo> _dynamicActors = new HashIntMap<ActorInfo>();
+    protected Map<ItemIdent, Integer> _avatarIdents = Maps.newHashMap();
 
     /** After this level of occupancy is reached, actors are made static. */
     protected static final int ACTOR_RENDERING_LIMIT = 20;
