@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.party.client {
 
-import com.threerings.presents.client.ResultAdapter;
+import com.threerings.presents.client.ConfirmAdapter;
+
+import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -11,6 +13,8 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Roster;
 import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.party.data.PartyObject;
 
@@ -33,6 +37,17 @@ public class PartyPanel extends FloatingPanel
         _partyObj.addListener(_roster);
 
         addChild(_roster);
+
+        addChild(new CommandButton(Msgs.PARTY.get("b.leave"), handleLeaveParty));
+    }
+
+    protected function handleLeaveParty () :void
+    {
+        _partyObj.partyService.leaveParty(_ctx.getClient(), new ConfirmAdapter(
+            function (cause :String) :void {
+                _ctx.displayFeedback(MsoyCodes.PARTY_MSGS, cause);
+            },
+            close));
     }
 
     override public function close () :void

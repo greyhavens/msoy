@@ -7,7 +7,6 @@ import flash.events.Event;
 import flash.events.ProgressEvent;
 
 import flash.display.BitmapData;
-import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 
