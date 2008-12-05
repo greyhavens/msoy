@@ -18,27 +18,28 @@ import com.threerings.msoy.data.all.MemberName;
  */
 public class MemberInfo extends ActorInfo
 {
+    /** Used to update our avatar info when that changes. */
+    public static class AvatarUpdater implements Updater<MemberInfo>
+    {
+        public AvatarUpdater (MemberObject mobj) {
+            _mobj = mobj;
+        }
+        public boolean update (MemberInfo info) {
+            info.updateAvatar(_mobj);
+            return true;
+        }
+        protected MemberObject _mobj;
+    }
+
     public MemberInfo (MemberObject memobj)
     {
         super(memobj, null, null); // we'll fill these in later
 
         // configure our media and scale
-        if (memobj.avatar != null) {
-            _media = memobj.avatar.avatarMedia;
-            _scale = memobj.avatar.scale;
-            _ident = memobj.avatar.getIdent();
-        } else if (memobj.isGuest()) {
-            _media = Avatar.getDefaultGuestAvatarMedia();
-            _scale = 1f;
-            _ident = new ItemIdent(Item.OCCUPANT, memobj.getOid());
-        } else {
-            _media = Avatar.getDefaultMemberAvatarMedia();
-            _scale = 1f;
-            _ident = new ItemIdent(Item.OCCUPANT, memobj.getOid());
-        }
+        updateAvatar(memobj);
 
         // note our current game
-        _game = memobj.game;
+        updateGameSummary(memobj);
     }
 
     /** Used for unserialization. */
@@ -51,30 +52,6 @@ public class MemberInfo extends ActorInfo
     {
         super.useStaticMedia();
         _scale = 1f;
-    }
-
-    /**
-     * Sets whether this member can manage the room.
-     */
-    public void setIsManager (boolean isManager)
-    {
-        if (isManager) {
-            _flags |= MANAGER;
-        } else {
-            _flags &= ~MANAGER;
-        }
-    }
-
-    /**
-     * Tests if this member is able to manage the room.
-     * Note that this is not a definitive check, but rather one that can be used by clients
-     * to check other occupants. The value is computed at the time the occupant enters the
-     * room, and is not recomputed even if the room ownership changes. The server should
-     * continue to do definitive checks where it matters.
-     */
-    public boolean isManager ()
-    {
-        return (_flags & MANAGER) != 0; 
     }
 
     /**
@@ -94,6 +71,30 @@ public class MemberInfo extends ActorInfo
     }
 
     /**
+     * Tests if this member is able to manage the room.
+     * Note that this is not a definitive check, but rather one that can be used by clients
+     * to check other occupants. The value is computed at the time the occupant enters the
+     * room, and is not recomputed even if the room ownership changes. The server should
+     * continue to do definitive checks where it matters.
+     */
+    public boolean isManager ()
+    {
+        return (_flags & MANAGER) != 0; 
+    }
+
+    /**
+     * Sets whether this member can manage the room.
+     */
+    public void setIsManager (boolean isManager)
+    {
+        if (isManager) {
+            _flags |= MANAGER;
+        } else {
+            _flags &= ~MANAGER;
+        }
+    }
+
+    /**
      * Returns information on a game this user is currently lobbying or playing.
      */
     public GameSummary getGameSummary ()
@@ -102,11 +103,40 @@ public class MemberInfo extends ActorInfo
     }
 
     /**
+     * Updates our game summary information.
+     */
+    public void updateGameSummary (MemberObject memobj)
+    {
+        _game = memobj.game;
+    }
+
+    /**
      * Return the scale that should be used for the media.
      */
     public float getScale ()
     {
         return _scale;
+    }
+
+    /**
+     * Updates our avatar information.
+     */
+    public void updateAvatar (MemberObject memobj)
+    {
+        if (memobj.avatar != null) {
+            _media = memobj.avatar.avatarMedia;
+            _scale = memobj.avatar.scale;
+            _ident = memobj.avatar.getIdent();
+        } else if (memobj.isGuest()) {
+            _media = Avatar.getDefaultGuestAvatarMedia();
+            _scale = 1f;
+            _ident = new ItemIdent(Item.OCCUPANT, memobj.getOid());
+        } else {
+            _media = Avatar.getDefaultMemberAvatarMedia();
+            _scale = 1f;
+            _ident = new ItemIdent(Item.OCCUPANT, memobj.getOid());
+        }
+        _state = memobj.actorState;
     }
 
     // from ActorInfo

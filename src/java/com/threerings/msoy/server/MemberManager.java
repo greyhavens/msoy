@@ -43,7 +43,6 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.SpeakUtil;
-import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -79,6 +78,7 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.profile.gwt.Profile;
+import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
@@ -168,17 +168,6 @@ public class MemberManager
     {
         synchronized(this) {
             return _ppSnapshot;
-        }
-    }
-
-    /**
-     * Update the user's occupant info.
-     */
-    public void updateOccupantInfo (final MemberObject user)
-    {
-        final PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
-        if (pmgr != null) {
-            pmgr.updateOccupantInfo(user.createOccupantInfo(pmgr.getPlaceObject()));
         }
     }
 
@@ -426,8 +415,7 @@ public class MemberManager
     {
         final MemberObject user = (MemberObject) caller;
         user.setAwayMessage(away ? message : null);
-        _bodyMan.updateOccupantStatus(
-            user, user.location, away ? MsoyBodyObject.AWAY : OccupantInfo.ACTIVE);
+        _bodyMan.updateOccupantStatus(user, away ? MsoyBodyObject.AWAY : MemberInfo.ACTIVE);
     }
 
     // from interface MemberProvider
@@ -476,15 +464,17 @@ public class MemberManager
 
         _invoker.postUnit(new PersistingUnit("setDisplayName", listener,
                                              "user", user.who(), "name", name) {
-            @Override public void invokePersistent ()
-                throws Exception
-            {
+            @Override public void invokePersistent () throws Exception {
                 _memberRepo.configureDisplayName(user.getMemberId(), name);
             }
-            @Override public void handleSuccess ()
-            {
+            @Override public void handleSuccess () {
                 user.updateDisplayName(name);
-                updateOccupantInfo(user);
+                _bodyMan.updateOccupantInfo(user, new MemberInfo.Updater<MemberInfo>() {
+                    public boolean update (MemberInfo info) {
+                        info.username = user.getVisibleName();
+                        return true;
+                    }
+                });
             }
         });
     }
@@ -954,7 +944,7 @@ public class MemberManager
                     // now set the new avatar
                     user.setAvatar(avatar);
                     user.actorState = null; // clear out their state
-                    updateOccupantInfo(user);
+                    _bodyMan.updateOccupantInfo(user, new MemberInfo.AvatarUpdater(user));
 
                 } finally {
                     user.commitTransaction();

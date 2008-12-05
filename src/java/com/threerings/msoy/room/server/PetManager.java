@@ -256,7 +256,7 @@ public class PetManager
 
         } else {
             // get occupant info, make sure the given oid is a pet in the room!
-            OccupantInfo info = mgr.getOccupantInfo(bodyOid);
+            OccupantInfo info = mgr.getPlaceObject().occupantInfo.get(bodyOid);
             if (!(info instanceof PetInfo)) {
                 log.warning("sendChat() on invalid occupant [bodyOid=" + bodyOid +
                             ", loc=" + user.location);

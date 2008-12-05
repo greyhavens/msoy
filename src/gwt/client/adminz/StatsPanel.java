@@ -3,6 +3,9 @@
 
 package client.adminz;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -15,6 +18,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.widgetideas.table.client.FixedWidthFlexTable;
 import com.google.gwt.widgetideas.table.client.FixedWidthGrid;
 import com.google.gwt.widgetideas.table.client.ScrollTable;
+import com.google.gwt.widgetideas.table.client.SortableGrid;
+import com.google.gwt.widgetideas.table.client.TableModel;
 
 import com.threerings.gwt.ui.SmartTable;
 
@@ -84,6 +89,7 @@ public class StatsPanel extends FlowPanel
         // set up the table contents
         FixedWidthGrid data = new FixedWidthGrid();
         data.setCellSpacing(0);
+        data.setColumnSorter(new StatsColumnSorter(model));
         for (int rr = 0, lr = model.getRows(); rr < lr; rr++) {
             data.setText(rr, 0, model.getRowTitle(rr));
             for (int cc = 0, lc = model.getColumns(); cc < lc; cc++) {
@@ -104,6 +110,50 @@ public class StatsPanel extends FlowPanel
             table.setColumnWidth(cc+1, colwid);
         }
         add(table);
+    }
+
+    protected static class StatsColumnSorter extends SortableGrid.ColumnSorter
+    {
+        public StatsColumnSorter (StatsModel model) {
+            _model = model;
+            _curIndexes = makeIndexes();
+        }
+
+        @Override // from SortableGrid.ColumnSorter
+        public void onSortColumn (SortableGrid grid, TableModel.ColumnSortList sortList,
+                                  SortableGrid.ColumnSorterCallback callback) {
+            final int column = sortList.getPrimaryColumn()-1; // -1 accounts for row label
+            final boolean ascending = sortList.isPrimaryAscending();
+            Integer[] newIndexes = makeIndexes();
+            Arrays.sort(newIndexes, new Comparator<Integer>() {
+                public int compare (Integer r1, Integer r2) {
+                    long r1v = _model.value(_curIndexes[r1], column);
+                    long r2v = _model.value(_curIndexes[r2], column);
+                    if (ascending) {
+                        return (r1v > r2v) ? 1 : (r1v < r2v ? -1 : 0);
+                    } else {
+                        return (r2v > r1v) ? 1 : (r2v < r1v ? -1 : 0);
+                    }
+                }
+            });
+            int[] indexes = new int[newIndexes.length];
+            for (int ii = 0; ii < _curIndexes.length; ii++) {
+                indexes[ii] = newIndexes[ii];
+                _curIndexes[ii] = _curIndexes[newIndexes[ii]];
+            }
+            callback.onSortingComplete(indexes);
+        }
+
+        protected Integer[] makeIndexes () {
+            Integer[] indexes = new Integer[_model.getRows()];
+            for (int ii = 0; ii < indexes.length; ii++) {
+                indexes[ii] = ii;
+            }
+            return indexes;
+        }
+
+        protected StatsModel _model;
+        protected Integer[] _curIndexes;
     }
 
     protected FlowPanel _controls;

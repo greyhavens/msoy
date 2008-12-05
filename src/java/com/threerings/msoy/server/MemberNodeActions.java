@@ -7,6 +7,15 @@ import java.util.Date;
 
 import com.google.inject.Inject;
 
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.peer.server.PeerManager;
+
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.server.BodyManager;
+
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatModifier;
+
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 
@@ -32,18 +41,10 @@ import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
-
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.room.data.RoomCodes;
-
-import com.threerings.presents.peer.data.NodeObject;
-
-import com.threerings.presents.peer.server.PeerManager;
-
-import com.threerings.stats.data.Stat;
-import com.threerings.stats.data.StatModifier;
 
 /**
  * Contains various member node actions.
@@ -235,7 +236,8 @@ public class MemberNodeActions
         @Override protected void execute (final MemberObject memobj) {
             memobj.updateDisplayName(_displayName, _photo);
             memobj.setHeadline(_status);
-            _memberMan.updateOccupantInfo(memobj);
+            _bodyMan.updateOccupantInfo(
+                memobj, new OccupantInfo.NameUpdate(memobj.getVisibleName()));
 
             // Update FriendEntrys on friend's member objects.  Rather than preparing a
             // MemberNodeAction for every friend, we use a custom NodeAction to check for servers
@@ -249,13 +251,12 @@ public class MemberNodeActions
         protected MediaDesc _photo;
         protected String _status;
 
-        @Inject protected transient MemberManager _memberMan;
+        @Inject protected transient BodyManager _bodyMan;
     }
 
     protected static class TokensChanged extends MemberNodeAction
     {
-        public TokensChanged (
-            int memberId, MsoyTokenRing tokens) {
+        public TokensChanged (int memberId, MsoyTokenRing tokens) {
             super(memberId);
             _tokens = tokens;
         }
@@ -265,12 +266,9 @@ public class MemberNodeActions
 
         @Override protected void execute (final MemberObject memobj) {
             memobj.setTokens(_tokens);
-            _memberMan.updateOccupantInfo(memobj);
         }
 
         protected MsoyTokenRing _tokens;
-
-        @Inject protected transient MemberManager _memberMan;
     }
 
     protected static class ReportUnreadMail extends MemberNodeAction

@@ -31,13 +31,13 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.ResultAdapter;
 
+import com.threerings.crowd.server.BodyManager;
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -59,6 +59,7 @@ import com.threerings.msoy.item.server.ItemLogic.LookupList;
 import com.threerings.msoy.item.server.ItemLogic.MissingRepositoryException;
 
 import com.threerings.msoy.room.data.FurniData;
+import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.server.RoomManager;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -353,7 +354,7 @@ public class ItemManager
             // if they're wearing it, update that.
             if (avatar.equals(memObj.avatar)) {
                 memObj.setAvatar(remove ? null : avatar);
-                _memberMan.updateOccupantInfo(memObj);
+                _bodyMan.updateOccupantInfo(memObj, new MemberInfo.AvatarUpdater(memObj));
             }
 
             // probably we'll update it in their cache, too.
@@ -397,7 +398,7 @@ public class ItemManager
             if ((memObj.avatar != null) && (memObj.avatar.itemId == avatarId)) {
                 // the user is wearing this item: delete
                 memObj.setAvatar(null);
-                _memberMan.updateOccupantInfo(memObj);
+                _bodyMan.updateOccupantInfo(memObj, new MemberInfo.AvatarUpdater(memObj));
             }
             ItemIdent ident = new ItemIdent(Item.AVATAR, avatarId);
             if (memObj.avatarCache.containsKey(ident)) {
@@ -767,9 +768,9 @@ public class ItemManager
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected RootDObjectManager _omgr;
+    @Inject protected BodyManager _bodyMan;
     @Inject protected SceneRegistry _sceneReg;
     @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected MemberManager _memberMan;
     @Inject protected ItemListRepository _listRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemLogic _itemLogic;

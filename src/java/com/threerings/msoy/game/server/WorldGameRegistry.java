@@ -20,8 +20,6 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.crowd.server.PlaceManager;
-import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
@@ -33,6 +31,10 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
 
+import com.threerings.crowd.server.BodyManager;
+import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceRegistry;
+
 import com.threerings.parlor.game.data.GameCodes;
 import com.threerings.stats.data.StatModifier;
 
@@ -43,7 +45,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyReportManager;
 import com.threerings.msoy.server.ServerConfig;
@@ -72,6 +73,7 @@ import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
+import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.server.RoomManager;
 
 import static com.threerings.msoy.Log.log;
@@ -135,7 +137,7 @@ public class WorldGameRegistry
      * Called to update that a player is either lobbying for, playing, or no longer playing
      * the specified game.
      */
-    public void updatePlayerOnPeer (MemberObject memObj, GameSummary game)
+    public void updatePlayerOnPeer (final MemberObject memObj, GameSummary game)
     {
         memObj.startTransaction();
         try {
@@ -175,7 +177,12 @@ public class WorldGameRegistry
         }
 
         // update their occupant info if they're in a scene
-        _memberMan.updateOccupantInfo(memObj);
+        _bodyMan.updateOccupantInfo(memObj, new MemberInfo.Updater<MemberInfo>() {
+            public boolean update (MemberInfo info) {
+                info.updateGameSummary(memObj);
+                return true;
+            }
+        });
 
         // update their published location in our peer object
         _peerMan.updateMemberLocation(memObj);
@@ -804,8 +811,8 @@ public class WorldGameRegistry
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected MsoyReportManager _reportMan;
     @Inject protected ShutdownManager _shutMan;
+    @Inject protected BodyManager _bodyMan;
     @Inject protected PlaceRegistry _placeReg;
-    @Inject protected MemberManager _memberMan;
     @Inject protected ItemManager _itemMan;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MsoyGameRepository _mgameRepo;

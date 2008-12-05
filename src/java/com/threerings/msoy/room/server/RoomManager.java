@@ -161,30 +161,22 @@ public class RoomManager extends SpotSceneManager
     /**
      * Forcibly change the state of an actor.
      */
-    public void setState (MsoyBodyObject actor, String state)
+    public void setState (MsoyBodyObject actor, final String state)
     {
         // update the state in their body object
         actor.actorState = state;
 
-        // update the occupant info
-        OccupantInfo occInfo = getOccupantInfo(actor.getOid());
-        if (occInfo == null) {
-            return; // if they're gone, no problem
-        }
-        if (!(occInfo instanceof ActorInfo)) {
-            log.warning("Cannot update state for non-actor: " + occInfo);
-            return;
-        }
-
-        ActorInfo winfo = (ActorInfo) occInfo;
-        if (ObjectUtil.equals(winfo.getState(), state)) {
-            return; // if there was no change, we're done.
-        }
-
         // TODO: consider, instead of updating the whole dang occInfo, dispatching a custom event
         // that will update just the state and serve as the trigger event to usercode...
-        winfo.setState(state);
-        updateOccupantInfo(winfo);
+        updateOccupantInfo(actor.getOid(), new ActorInfo.Updater<ActorInfo>() {
+            public boolean update (ActorInfo info) {
+                if (ObjectUtil.equals(info.getState(), state)) {
+                    return false; // if there was no change, we're done.
+                }
+                info.setState(state);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -730,20 +722,21 @@ public class RoomManager extends SpotSceneManager
         // trusted environments
     }
 
-    @Override
-    public void updateOccupantInfo (OccupantInfo occInfo)
-    {
-        // Prior to inserting and cloning, make sure we enforce render limits
-        if (occInfo instanceof ActorInfo) {
-            OccupantInfo prior = _occInfo.get(occInfo.getBodyOid());
-            // Set to static if it was static before and the room is still crowded
-            if (prior instanceof ActorInfo && ((ActorInfo)prior).isStatic() &&
-                    _dynamicActors.size() > ACTOR_RENDERING_LIMIT) {
-                ((ActorInfo)occInfo).useStaticMedia();
-            }
-        }
-        super.updateOccupantInfo(occInfo);
-    }
+// TODO: this needs to change
+//     @Override
+//     public void updateOccupantInfo (OccupantInfo occInfo)
+//     {
+//         // Prior to inserting and cloning, make sure we enforce render limits
+//         if (occInfo instanceof ActorInfo) {
+//             OccupantInfo prior = _occInfo.get(occInfo.getBodyOid());
+//             // Set to static if it was static before and the room is still crowded
+//             if (prior instanceof ActorInfo && ((ActorInfo)prior).isStatic() &&
+//                     _dynamicActors.size() > ACTOR_RENDERING_LIMIT) {
+//                 ((ActorInfo)occInfo).useStaticMedia();
+//             }
+//         }
+//         super.updateOccupantInfo(occInfo);
+//     }
 
     /**
      * Checks to see if an item is being controlled by any client. If not, the calling client is

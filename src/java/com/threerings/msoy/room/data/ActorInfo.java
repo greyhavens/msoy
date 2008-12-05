@@ -47,7 +47,7 @@ public abstract class ActorInfo extends OccupantInfo
     {
         _state = state;
     }
-    
+
     /**
      * Sets this actor to use simpler media for when rendering limits are in place.
      */
