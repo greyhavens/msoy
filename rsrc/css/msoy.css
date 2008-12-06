@@ -101,6 +101,11 @@ TitleWindow {
   color: white;
 }
 
+List {
+  backgroundAlpha: 0;
+  borderStyle: none;
+}
+
 .sexyTabber {
   backgroundAlpha: 0;
   backgroundColor: #f97527;
@@ -1188,8 +1193,6 @@ BasePanel {
 }
 
 .playerList {
-  backgroundAlpha: 0;
-  borderStyle: none;
   selectionColor: #437393;
 }
 
