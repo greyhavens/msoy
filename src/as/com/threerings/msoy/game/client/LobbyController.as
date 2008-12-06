@@ -435,6 +435,9 @@ public class LobbyController extends Controller
     public function seatednessDidChange (nowSeated :Boolean) :void
     {
         _isSeated = nowSeated;
+        if (nowSeated && _tableDir.getSeatedTable().shouldBeStarted()) {
+            return;
+        }
         _panel.setMode(nowSeated ? MODE_SEATED : MODE_MATCH);
     }
 
