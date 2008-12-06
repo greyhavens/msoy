@@ -88,8 +88,10 @@ public class PromotionEditor extends FlowPanel
             public void onClick (Widget source) {
                 ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
-                        _promoIcon = photo;
-                        create.setWidget(_previewRow, 1, new PromotionBox(createPromotion()));
+                        if (photo != null) {
+                            _promoIcon = photo;
+                            create.setWidget(_previewRow, 1, new PromotionBox(createPromotion()));
+                        }
                     }
                 });
             }

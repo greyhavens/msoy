@@ -103,8 +103,17 @@ public class ItemRemixer extends FlexTable
     protected void pickPhoto ()
     {
         ImageChooserPopup.displayImageChooser(false, new MsoyCallback<MediaDesc>() {
+            public void onFailure (Throwable caught) {
+                super.onFailure(caught);
+                // we need to re-configure the bridges
+                configureBridges();
+            }
             public void onSuccess (MediaDesc photo) {
-                setPhotoUrl(photo.getMediaPath());
+                if (photo != null) {
+                    setPhotoUrl(photo.getMediaPath());
+                }
+                // we need to re-configure the bridges
+                configureBridges();
             }
         });
     }

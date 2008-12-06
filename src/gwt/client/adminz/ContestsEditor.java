@@ -72,8 +72,10 @@ public class ContestsEditor extends FlowPanel
             public void onClick (Widget source) {
                 ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
-                        _contestIcon = photo;
-                        _previewContainer.setWidget(new ContestBox(createContest()));
+                        if (photo != null) {
+                            _contestIcon = photo;
+                            _previewContainer.setWidget(new ContestBox(createContest()));
+                        }
                     }
                 });
             }

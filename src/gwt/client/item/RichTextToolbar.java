@@ -432,7 +432,9 @@ public class RichTextToolbar extends Composite
             } else if (sender == insertImage) {
                 ImageChooserPopup.displayImageChooser(false, new AsyncCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc image) {
-                        extended.insertImage(image.getMediaPath());
+                        if (image != null) {
+                            extended.insertImage(image.getMediaPath());
+                        }
                     }
                     public void onFailure (Throwable t) {
                         // not used

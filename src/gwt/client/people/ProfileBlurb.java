@@ -234,9 +234,11 @@ public class ProfileBlurb extends Blurb
             public void onClick (Widget source) {
                 ImageChooserPopup.displayImageChooser(true, new MsoyCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc photo) {
-                        _profile.photo = photo;
-                        _ephoto.setWidget(
-                            MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE));
+                        if (photo != null) {
+                            _profile.photo = photo;
+                            _ephoto.setWidget(MediaUtil.createMediaView(
+                                _profile.photo, MediaDesc.THUMBNAIL_SIZE));
+                        }
                     }
                 });
             }

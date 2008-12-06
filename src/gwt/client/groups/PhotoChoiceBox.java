@@ -36,7 +36,9 @@ public class PhotoChoiceBox extends FlexTable
             public void onClick (Widget source) {
                 ImageChooserPopup.displayImageChooser(thumbnail, new MsoyCallback<MediaDesc>() {
                     public void onSuccess (MediaDesc media) {
-                        setMedia(media);
+                        if (media != null) {
+                            setMedia(media);
+                        }
                     }
                 });
             }

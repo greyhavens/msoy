@@ -79,7 +79,19 @@ public class ImageChooserPopup extends VerticalPanel
     protected void imageChosen (MediaDesc media)
     {
         _callback.onSuccess(media);
+        _callback = null;
         CShell.frame.clearDialog();
+    }
+
+    @Override
+    protected void onUnload ()
+    {
+        super.onUnload();
+
+        // if we haven't said success, then say null success
+        if (_callback != null) {
+            _callback.onSuccess(null);
+        }
     }
 
     protected class PhotoGrid extends PagedGrid<Photo>
