@@ -363,7 +363,7 @@ public class ForumServlet extends MsoyServiceServlet
         _forumRepo.noteLastReadPostId(mrec.memberId, ftr.threadId, fmr.messageId, ftr.posts+1);
 
         // and create and return the runtime record for the post
-        return fmr.toForumMessage(getCardsMap(mrec.memberId));
+        return fmr.toForumMessage(getCardsMap(fmr.posterId));
     }
 
     // from interface ForumService
@@ -389,7 +389,7 @@ public class ForumServlet extends MsoyServiceServlet
 
         // update the message record and create and return the runtime record for the post
         fmr.message = message;
-        return fmr.toForumMessage(getCardsMap(mrec.memberId));
+        return fmr.toForumMessage(getCardsMap(fmr.posterId));
     }
 
     // from interface ForumService
