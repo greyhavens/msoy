@@ -3,6 +3,11 @@
 
 package com.threerings.msoy.party.client {
 
+import mx.core.ClassFactory;
+import mx.controls.List;
+
+import com.threerings.presents.client.ResultAdapter;
+
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.ui.FloatingPanel;
@@ -20,6 +25,12 @@ public class PartyBoardPanel extends FloatingPanel
         super(ctx, Msgs.PARTY.get("t.board"));
         showCloseButton = true;
 
+        var cf :ClassFactory = new ClassFactory(PartyRenderer);
+        cf.properties =  { mctx: _ctx };
+        _partyList = new List();
+        _partyList.itemRenderer = cf;
+        _partyList.styleName = "playerList";
+
         getPartyBoard();
     }
 
@@ -31,6 +42,8 @@ public class PartyBoardPanel extends FloatingPanel
             FloatingPanel.createPopper(function () :FloatingPanel {
                 return new CreatePartyPanel(_ctx);
             })));
+
+        addChild(_partyList);
     }
 
     protected function getPartyBoard (query :String = null) :void
@@ -41,15 +54,11 @@ public class PartyBoardPanel extends FloatingPanel
     /**
      * Called with the result of a getPartyBoard request.
      */
-    protected function gotPartyBoard (result :Object) :void
+    protected function gotPartyBoard (result :Array) :void
     {
-        // TODO (result is an Array of PartyInfo objects, or should be.)
-
-        var infos :Array = result as Array;
-        trace("We got infos: " + infos.length);
-        for each (var info :PartyInfo in infos) {
-            trace("Party id " + info.id);
-        }
+        _partyList.dataProvider = result;
     }
+
+    protected var _partyList :List;
 }
 }
