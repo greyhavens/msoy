@@ -24,6 +24,7 @@ public class PartyBoardPanel extends FloatingPanel
     {
         super(ctx, Msgs.PARTY.get("t.board"));
         showCloseButton = true;
+        setButtonWidth(0);
 
         var cf :ClassFactory = new ClassFactory(PartyRenderer);
         cf.properties =  { mctx: _ctx };
@@ -37,12 +38,12 @@ public class PartyBoardPanel extends FloatingPanel
     {
         super.createChildren();
 
+        addChild(_partyList);
+
         addButtons(new CommandButton(Msgs.PARTY.get("b.create"), 
             FloatingPanel.createPopper(function () :FloatingPanel {
                 return new CreatePartyPanel(_ctx);
             })));
-
-        addChild(_partyList);
     }
 
     protected function getPartyBoard (query :String = null) :void

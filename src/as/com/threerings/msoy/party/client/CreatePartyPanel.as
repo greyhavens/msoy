@@ -33,6 +33,7 @@ public class CreatePartyPanel extends FloatingPanel
     public function CreatePartyPanel (ctx :MsoyContext)
     {
         super(ctx, Msgs.PARTY.get("t.create"));
+        setButtonWidth(0);
     }
 
     override protected function createChildren () :void
@@ -57,6 +58,7 @@ public class CreatePartyPanel extends FloatingPanel
         _group = new ComboBox();
         _group.dataProvider = us.groups.toArray().sort(
             function (one :GroupMembership, two :GroupMembership) :int {
+                // sort groups by your rank, then by name
                 var cmp :int = Integer.compare(one.rank, two.rank);
                 if (cmp == 0) {
                     cmp = MemberName.BY_DISPLAY_NAME(one.group, two.group);
