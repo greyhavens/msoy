@@ -13,9 +13,12 @@ import com.threerings.presents.data.ClientObject;
 
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.party.data.PartyPeep;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+
 import com.threerings.msoy.party.data.PartyCodes;
+import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
+import com.threerings.msoy.party.data.PartyPeep;
 
 public class PartyManager
     implements PartyProvider
@@ -24,13 +27,29 @@ public class PartyManager
     {
         _partyObj = partyObj;
 
-        _partyObj.setPartyService(_invmgr.registerDispatcher(new PartyDispatcher(this)));
+        _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
+    }
+
+    /**
+     * Shutdown this party.
+     */
+    public void shutdown ()
+    {
+        removeFromNode();
+    }
+
+    /**
+     * Remove this party from the current node.
+     */
+    public void removeFromNode ()
+    {
+        _peerMgr.removePartyInfo(_partyObj.id);
     }
 
     /**
      * Add the specified player to the party.
      */
-    public void addMate (MemberObject member, InvocationService.ResultListener rl)
+    public void addPlayer (MemberObject member, InvocationService.ResultListener rl)
         throws InvocationException
     {
         if (!canJoinParty(member)) {
@@ -49,6 +68,8 @@ public class PartyManager
 
         // tell them the OID so they can subscribe
         rl.requestProcessed(_partyObj.getOid());
+
+        updatePartyInfo();
     }
 
     // from interface PartyProvider
@@ -93,8 +114,19 @@ public class PartyManager
         }
     }
 
+    /**
+     * Update the partyInfo we have currently published in the node object.
+     */
+    protected void updatePartyInfo ()
+    {
+        _peerMgr.updatePartyInfo(new PartyInfo(
+            _partyObj.id, _partyObj.name, _partyObj.group, _partyObj.status,
+            _partyObj.peeps.size(), _partyObj.recruiting));
+    }
+
     protected PartyObject _partyObj;
 
 //    @Inject protected RootDObjectManager _omgr;
-    @Inject protected InvocationManager _invmgr;
+    @Inject protected InvocationManager _invMgr;
+    @Inject protected MsoyPeerManager _peerMgr;
 }

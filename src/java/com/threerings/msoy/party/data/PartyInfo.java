@@ -5,6 +5,8 @@ package com.threerings.msoy.party.data;
 
 import com.threerings.io.SimpleStreamableObject;
 
+import com.threerings.presents.dobj.DSet;
+
 import com.threerings.msoy.data.all.GroupName;
 
 /**
@@ -15,6 +17,7 @@ import com.threerings.msoy.data.all.GroupName;
  * one usage but not the other, we may need to consider having two different objects...
  */
 public class PartyInfo extends SimpleStreamableObject
+    implements DSet.Entry
 {
     /** The unique party id. */
     public int id;
@@ -33,4 +36,27 @@ public class PartyInfo extends SimpleStreamableObject
 
     /** The current recruitment status of this party. */
     public byte recruitment;
+
+    /** Suitable for unserialization. */
+    public PartyInfo ()
+    {
+    }
+
+    /** Create a PartyInfo. */
+    public PartyInfo (
+        int id, String name, GroupName group, String status, int population, byte recruitment)
+    {
+        this.id = id;
+        this.name = name;
+        this.group = group;
+        this.status = status;
+        this.population = population;
+        this.recruitment = recruitment;
+    }
+            
+    // from DSet.Entry
+    public Comparable<?> getKey ()
+    {
+        return id;
+    }
 }

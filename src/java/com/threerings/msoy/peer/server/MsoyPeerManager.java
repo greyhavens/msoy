@@ -48,6 +48,7 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.server.MsoyReportManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -195,6 +196,28 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
+     * Add or update the specified PartyInfo.
+     */
+    public void updatePartyInfo (PartyInfo partyInfo)
+    {
+        if (_mnobj.parties.contains(partyInfo)) {
+            _mnobj.updateParties(partyInfo);
+        } else {
+            _mnobj.addToParties(partyInfo);
+        }
+    }
+
+    /**
+     * Remove the PartyInfo for the specified party.
+     */
+    public void removePartyInfo (int partyId)
+    {
+        if (_mnobj.parties.containsKey(partyId)) {
+            _mnobj.removeFromParties(partyId);
+        }
+    }
+
+    /**
      * Returns the node name of the peer that is hosting the specified scene, or null if no peer
      * has published that they are hosting the scene.
      */
@@ -328,6 +351,19 @@ public class MsoyPeerManager extends CrowdPeerManager
             _guestIdCounter = 0;
         }
         return -(ServerConfig.nodeId + MAX_NODES * ++_guestIdCounter);
+    }
+
+    /**
+     * Returns the next party id that may be assigned by this server.
+     * Only called from the PartyRegistry, does not need synchronization.
+     */
+    public int getNextPartyId ()
+    {
+        if (_partyIdCounter >= Integer.MAX_VALUE / MAX_NODES) {
+            log.warning("ZOMG! We plumb run out of id space [party id=" + _partyIdCounter + "].");
+            _partyIdCounter = 0;
+        }
+        return -(ServerConfig.nodeId + MAX_NODES * ++_partyIdCounter);
     }
 
     /**
@@ -632,6 +668,9 @@ public class MsoyPeerManager extends CrowdPeerManager
 
     /** A counter used to assign guest ids on this server. See {@link #getNextGuestId}. */
     protected static int _guestIdCounter;
+
+    /** A counter used to assign party ids on this server. */
+    protected static int _partyIdCounter;
 
     /** An arbitrary limit on the number of nodes allowed in our network so that we can partition
      * id space for guest member id assignment. It's a power of 10 to make id values look nicer. */
