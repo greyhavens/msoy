@@ -29,7 +29,6 @@ public class PartyBoardPanel extends FloatingPanel
         cf.properties =  { mctx: _ctx };
         _partyList = new List();
         _partyList.itemRenderer = cf;
-        _partyList.styleName = "playerList";
 
         getPartyBoard();
     }
