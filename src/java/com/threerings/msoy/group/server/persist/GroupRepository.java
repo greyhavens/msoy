@@ -477,6 +477,15 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Load all groups with the official flag set.
+     */
+    public List<GroupRecord> getOfficialGroups ()
+    {
+        return findAll(GroupRecord.class, new Where(new Equals(GroupRecord.OFFICIAL_C,
+            new LiteralExp("true"))));
+    }
+    
+    /**
      * Sets the home scene id for the given group.
      */
     public void setHomeSceneId (int groupId, int sceneId)

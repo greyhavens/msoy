@@ -88,6 +88,12 @@ public class GroupServlet extends MsoyServiceServlet
             }
         }
 
+        // TODO: make sure these are in a sensible order?
+        data.officialGroups = Lists.newArrayList();
+        for (GroupRecord grec : _groupRepo.getOfficialGroups()) {
+            data.officialGroups.add(grec.toGroupCard());
+        }
+
         return data;
     }
 
@@ -443,6 +449,7 @@ public class GroupServlet extends MsoyServiceServlet
                 card.logo = record.toLogo();
             }
             card.name = record.toGroupName();
+            card.official = record.official;
 
             // fetch thread information
             card.numThreads = _forumRepo.loadThreadCount(record.groupId);

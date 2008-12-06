@@ -391,54 +391,64 @@
   margin: 0 10px 10px 10px;
 }
 
-.galaxyPanel .MyGroupsHeader {
+.galaxyPanel .MyGroupsHeader, .galaxyPanel .OfficialGroupsHeader {
   background: url(/images/group/galaxy_mygroups_title_bg.png) no-repeat;
   width: 130px;
-  height: 25px; /* plus padding */
   color: #FFFFFF;
   font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
-  font-size: 17px;
   text-align: center;
-  padding-top: 5px;
 }
 
-.galaxyPanel .MyGroups {
+.galaxyPanel .MyGroupsHeader {
+  height: 25px; /* plus padding */
+  padding-top: 5px;
+  font-size: 17px;
+}
+
+.galaxyPanel .OfficialGroupsHeader {
+  height: 22px; /* plus padding */
+  padding-top: 8px;
+  font-size: 14px;
+  font-weight :bold;
+}
+
+.galaxyPanel .QuickGroups {
   width: 120px; /* plus padding */
   background-color: #FFFFFF;
   padding: 5px;
   margin-bottom: 15px;
 }
 
-.galaxyPanel .MyGroups .MyGroup {
+.galaxyPanel .QuickGroups .Group {
   margin: 5px 0;
 }
 
-.galaxyPanel .MyGroups .MyGroup .GroupName {
+.galaxyPanel .QuickGroups .Group .Name {
   width: 90px;
   margin-left: 5px;
   white-space: nowrap;
   overflow: hidden;
 }
 
-.galaxyPanel .MyGroups .MyGroup .Discussions a {
+.galaxyPanel .QuickGroups .Group .Discussions a {
   margin-left: 5px;
   color: #487999;
 }
 
-.galaxyPanel .MyGroups .MyGroup a {
+.galaxyPanel .QuickGroups .Group a {
   text-decoration: none;
 }
-.galaxyPanel .MyGroups .MyGroup a:hover {
+.galaxyPanel .QuickGroups .Group a:hover {
   text-decoration: underline;
 }
 
-.galaxyPanel .MyGroups .SeeAll {
+.galaxyPanel .QuickGroups .SeeAll {
   display: block;
   margin: 5px;
   text-align: right;
   color: #487999;
 }
-.galaxyPanel .MyGroups .SeeAll a {
+.galaxyPanel .QuickGroups .SeeAll a {
   color: #487999;
 }
 

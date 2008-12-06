@@ -13,12 +13,12 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class GalaxyData
     implements IsSerializable
 {
-    /** The number of popular tags we show on the Galaxy page. */
-    public static final int POPULAR_TAG_COUNT = 10;
-
     /** The number of my groups to show on the Galaxy page */
     public static final int MY_GROUPS_COUNT = 7;
 
     /** The member's MY_GROUPS_COUNT groups */
     public List<MyGroupCard> myGroups;
+
+    /** The official whirled groups */
+    public List<GroupCard> officialGroups;
 }

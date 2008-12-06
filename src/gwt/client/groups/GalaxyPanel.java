@@ -81,11 +81,17 @@ public class GalaxyPanel extends FlowPanel
 
         FlowPanel leftColumn = MsoyUI.createFlowPanel("LeftColumn");
 
-        _myGroups = MsoyUI.createFlowPanel("MyGroups");
+        _myGroups = MsoyUI.createFlowPanel("QuickGroups");
         if (!CShell.isGuest()) {
             leftColumn.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsTitle(), "MyGroupsHeader"));
-            leftColumn.add(_myGroups = MsoyUI.createFlowPanel("MyGroups"));
+            leftColumn.add(_myGroups = MsoyUI.createFlowPanel("QuickGroups"));
+            _myGroups.addStyleName("MyGroups");
         }
+
+        leftColumn.add(MsoyUI.createLabel(_msgs.galaxyOfficialGroupsTitle(),
+            "OfficialGroupsHeader"));
+        leftColumn.add(_officialGroups = MsoyUI.createFlowPanel("QuickGroups"));
+        _officialGroups.addStyleName("OfficialGroups");
         content.add(leftColumn);
 
         _sortBox = new ListBox();
@@ -208,25 +214,30 @@ public class GalaxyPanel extends FlowPanel
             _myGroups.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsNone(), "NoGroups"));
         } else {
             for (MyGroupCard group : data.myGroups) {
-                _myGroups.add(createMyGroupWidget(group));
+                _myGroups.add(createQuickGroupWidget(group));
             }
             Widget seeAllLink = Link.create(_msgs.galaxyMyGroupsSeeAll(), Pages.GROUPS,
                 "mygroups");
             seeAllLink.addStyleName("SeeAll");
             _myGroups.add(seeAllLink);
         }
+
+        // set up official groups
+        for (GroupCard group : data.officialGroups) {
+            _officialGroups.add(createQuickGroupWidget(group));
+        }
     }
 
     /**
      * A single one of "my" groups on the left column.
      */
-    protected Widget createMyGroupWidget (GroupCard group)
+    protected Widget createQuickGroupWidget (GroupCard group)
     {
-        FloatPanel widget = new FloatPanel("MyGroup");
+        FloatPanel widget = new FloatPanel("Group");
         String goArgs = Args.compose("d", group.name.getGroupId());
         widget.add(new ThumbBox(group.logo, MediaDesc.QUARTER_THUMBNAIL_SIZE, Pages.GROUPS,
             goArgs));
-        widget.add(Link.create(group.name.toString(), "GroupName", Pages.GROUPS, goArgs));
+        widget.add(Link.create(group.name.toString(), "Name", Pages.GROUPS, goArgs));
         widget.add(Link.create(_msgs.galaxyMyGroupsDiscussions(), "Discussions", Pages.GROUPS,
             Args.compose("f", group.name.getGroupId())));
         return widget;
@@ -281,6 +292,7 @@ public class GalaxyPanel extends FlowPanel
     protected PagedGrid<GroupCard> _groupGrid;
     protected TextBox _searchInput;
     protected FlowPanel _myGroups;
+    protected FlowPanel _officialGroups;
     protected ListBox _sortBox;
     protected FlowPanel _categoryLinks;
 
