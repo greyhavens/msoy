@@ -5,6 +5,7 @@ package com.threerings.msoy.party.client {
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -37,9 +38,42 @@ public class PartyDirector extends BasicDirector
     public function createAppropriatePartyPanel () :FloatingPanel
     {
         // TODO: if the user is already partying, return a board for their party
-        return new PartyBoardPanel(_mctx, _pbsvc);
+        return new PartyBoardPanel(_mctx);
 
         PartyPanel; // Force linkage until we work this out
+    }
+
+    /**
+     * Get the party board.
+     */
+    public function getPartyBoard (resultHandler :Function, query :String = null) :void
+    {
+        _pbsvc.getPartyBoard(_mctx.getClient(), query, new ResultAdapter(
+            function (fail :String) :void {
+                _mctx.displayFeedback(MsoyCodes.PARTY_MSGS, fail);
+            }, resultHandler));
+    }
+
+    /**
+     * Create a new party.
+     */
+    public function createParty (name :String, groupId :int) :void
+    {
+        _pbsvc.createParty(_mctx.getClient(), name, groupId, new ResultAdapter(
+            function (fail :String) :void {
+                _mctx.displayFeedback(MsoyCodes.PARTY_MSGS, fail);
+            }, partyOidKnown));
+    }
+
+    /**
+     * Join a party.
+     */
+    public function joinParty (id :int) :void
+    {
+        _pbsvc.joinParty(_mctx.getClient(), id, new ResultAdapter(
+            function (fail :String) :void {
+                _mctx.displayFeedback(MsoyCodes.PARTY_MSGS, fail);
+            }, partyOidKnown));
     }
 
     // from BasicDirector
@@ -56,6 +90,15 @@ public class PartyDirector extends BasicDirector
         super.fetchServices(client);
 
         _pbsvc = (client.requireService(PartyBoardService) as PartyBoardService);
+    }
+
+    /**
+     * A success handler for creating and joining parties.
+     */
+    protected function partyOidKnown (oid :int) :void
+    {
+        // TODO: subscribe to this party
+        trace("We're in the party: the oid is : " + oid);
     }
 
     protected var _mctx :MsoyContext;
