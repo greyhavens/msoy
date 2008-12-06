@@ -16,5 +16,8 @@ public class PartyCodes
 
     /** Recruitment constant indicating that only members of the party's group may join. */
     public static const RECRUITMENT_GROUP :int = 2;
+
+    /** The maximum length of a party name. */
+    public static const MAX_NAME_LENGTH :int = 32;
 }
 }

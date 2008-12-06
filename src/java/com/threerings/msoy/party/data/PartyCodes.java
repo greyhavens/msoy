@@ -17,6 +17,8 @@ public class PartyCodes
     /** Recruitment constant indicating nobody but those invited by the leader may join. */
     public static final byte RECRUITMENT_CLOSED = 2;
 
+    /** The maximum length of a party name. */
+    public static final int MAX_NAME_LENGTH = 32;
 
     /** Error codes. */
     public static final String E_NO_SUCH_PARTY = "e.no_such_party";
