@@ -24,6 +24,9 @@ public class PartyInfo extends SimpleStreamableObject
     /** The name of this party. */
     public var name :String;
 
+    /** The memberId of the leader of the party. */
+    public var leaderId :int;
+
     /** The group sponsoring this party. */
     public var group :GroupName;
 
@@ -42,6 +45,7 @@ public class PartyInfo extends SimpleStreamableObject
 
         id = ins.readInt();
         name = ins.readField(String) as String;
+        leaderId = ins.readInt();
         group = GroupName(ins.readObject());
         status = ins.readField(String) as String;
         population = ins.readInt();
@@ -54,6 +58,7 @@ public class PartyInfo extends SimpleStreamableObject
 
         out.writeInt(id);
         out.writeField(name);
+        out.writeInt(leaderId);
         out.writeObject(group);
         out.writeField(status);
         out.writeInt(population);

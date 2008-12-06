@@ -147,9 +147,12 @@ public class PartyRegistry
     protected PartySort computePartySort (PartyInfo party, MemberObject member)
     {
         int score = 0;
-        // start by giving you a score of 100 * your rank in the group.
+        // start by giving you a score of 100 * your rank in the group. (0, 100, or 200)
         score += (100 * member.getGroupRank(party.group.getGroupId()));
-        // TODO: put the leader in PartyInfo, give score for friends leading
+        // give additional score if your friend is leading the party
+        if (member.isFriend(party.leaderId)) {
+            score += 250;
+        }
         return new PartySort(score, party.id);
     }
 

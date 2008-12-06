@@ -25,6 +25,9 @@ public class PartyInfo extends SimpleStreamableObject
     /** The name of this party. */
     public String name;
 
+    /** The leader of this party. */
+    public int leaderId;
+
     /** The group sponsoring this party. */
     public GroupName group;
 
@@ -44,10 +47,12 @@ public class PartyInfo extends SimpleStreamableObject
 
     /** Create a PartyInfo. */
     public PartyInfo (
-        int id, String name, GroupName group, String status, int population, byte recruitment)
+        int id, String name, int leaderId, GroupName group, String status,
+        int population, byte recruitment)
     {
         this.id = id;
         this.name = name;
+        this.leaderId = leaderId;
         this.group = group;
         this.status = status;
         this.population = population;

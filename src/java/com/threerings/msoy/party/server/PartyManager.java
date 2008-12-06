@@ -120,7 +120,7 @@ public class PartyManager
     protected void updatePartyInfo ()
     {
         _peerMgr.updatePartyInfo(new PartyInfo(
-            _partyObj.id, _partyObj.name, _partyObj.group, _partyObj.status,
+            _partyObj.id, _partyObj.name, _partyObj.leaderId, _partyObj.group, _partyObj.status,
             _partyObj.peeps.size(), _partyObj.recruiting));
     }
 
