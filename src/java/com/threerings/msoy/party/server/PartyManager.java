@@ -23,9 +23,11 @@ import com.threerings.msoy.party.data.PartyPeep;
 public class PartyManager
     implements PartyProvider
 {
-    public PartyManager (PartyObject partyObj)
+    public PartyManager (PartyObject partyObj, InvocationManager invMgr, MsoyPeerManager peerMgr)
     {
         _partyObj = partyObj;
+        _invMgr = invMgr;
+        _peerMgr = peerMgr;
 
         _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
     }
@@ -126,7 +128,6 @@ public class PartyManager
 
     protected PartyObject _partyObj;
 
-//    @Inject protected RootDObjectManager _omgr;
-    @Inject protected InvocationManager _invMgr;
-    @Inject protected MsoyPeerManager _peerMgr;
+    protected InvocationManager _invMgr;
+    protected MsoyPeerManager _peerMgr;
 }

@@ -47,6 +47,7 @@ public class PartyRegistry
 {
     @Inject public PartyRegistry (InvocationManager invmgr)
     {
+        _invmgr = invmgr;
         invmgr.registerDispatcher(new PartyBoardDispatcher(this), MsoyCodes.MEMBER_GROUP);
     }
 
@@ -124,7 +125,7 @@ public class PartyRegistry
         pobj.setAccessController(_partyAccessController);
 
         // Create the PartyManager and add the member
-        PartyManager mgr = new PartyManager(pobj);
+        PartyManager mgr = new PartyManager(pobj, _invmgr, _peerMgr);
         boolean success = false;
         try {
             mgr.addPlayer(member, rl);
@@ -212,6 +213,7 @@ public class PartyRegistry
 
     protected static final int PARTIES_PER_BOARD = 16;
 
+    protected InvocationManager _invmgr;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyPeerManager _peerMgr;
 }
