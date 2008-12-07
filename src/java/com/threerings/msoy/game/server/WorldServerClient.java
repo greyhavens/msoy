@@ -202,7 +202,8 @@ public class WorldServerClient
         } else if (event.getName().equals(RESET_SCORE_PERCENTILER)) {
             int gameId = (Integer)event.getArgs()[0];
             boolean single = (Boolean)event.getArgs()[1];
-            _gameReg.resetScorePercentiler(gameId, single);
+            int gameMode = (Integer)event.getArgs()[2];
+            _gameReg.resetScorePercentiler(gameId, single, gameMode);
 
         } else if (event.getName().equals(FORWARD_BROADCAST)) {
             Object[] args = event.getArgs();

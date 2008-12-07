@@ -74,7 +74,7 @@ public interface GameService extends RemoteService
      * @param single if true the single player scores will be reset, if false the multiplayer
      * scores will be reset.
      */
-    public void resetGameScores (int gameId, boolean single)
+    public void resetGameScores (int gameId, boolean single, int gameMode)
         throws ServiceException;
 
     /**

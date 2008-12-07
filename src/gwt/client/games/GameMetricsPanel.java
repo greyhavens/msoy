@@ -67,29 +67,36 @@ public class GameMetricsPanel extends VerticalPanel
         clear();
 
         int shown = 0;
-        shown += addMetrics(metrics.singleDistributions, _msgs.gmpSingleHeader());
-        shown += addMetrics(metrics.multiDistributions, _msgs.gmpMultiHeader());
+        shown += addMetrics(metrics.singleDistributions, true);
+        shown += addMetrics(metrics.multiDistributions, false);
 
         if (shown == 0) {
             add(new Label(_msgs.gmpNoMetrics()));
         }
     }
 
-    protected int addMetrics (Map<Integer, TilerSummary> metricList, String header)
+    protected int addMetrics (Map<Integer, TilerSummary> metricList, boolean single)
     {
         int count = 0;
         for (Map.Entry<Integer, TilerSummary> entry : metricList.entrySet()) {
             TilerSummary summary = entry.getValue();
             if (summary.totalCount > 0) {
                 int gameMode = entry.getKey();
-                if (gameMode != 0) {
-                    header += " " + _msgs.gmpGameMode("" + gameMode);
+
+                String header;
+                if (gameMode == 0) {
+                    header = single ? _msgs.gmpSingleHeader() : _msgs.gmpMultiHeader();
+
+                } else {
+                    header = single ? _msgs.gmpSingleHeaderWithMode("" + gameMode) :
+                        _msgs.gmpMultiHeaderWithMode("" + gameMode);
                 }
+
                 add(MsoyUI.createLabel(header, "Header"));
                 add(createTilerDisplay(summary.totalCount, summary.counts,
                                        summary.maxScore, summary.scores));
                 add(WidgetUtil.makeShim(5, 5));
-                add(createResetUI(true));
+                add(createResetUI(single, gameMode));
                 count ++;
             }
         }
@@ -136,7 +143,7 @@ public class GameMetricsPanel extends VerticalPanel
     }
 
     // TODO: make tiler resetting game-mode-aware
-    protected RowPanel createResetUI (final boolean single)
+    protected RowPanel createResetUI (final boolean single, final int gameMode)
     {
         RowPanel row = new RowPanel();
         row.add(MsoyUI.createLabel(_msgs.gmpResetHint(), "tipLabel"));
@@ -144,7 +151,7 @@ public class GameMetricsPanel extends VerticalPanel
         row.add(reset);
         new ClickCallback<Void>(reset, _msgs.gmpResetConfirm()) {
             @Override protected boolean callService () {
-                _gamesvc.resetGameScores(_detail.gameId, single, this);
+                _gamesvc.resetGameScores(_detail.gameId, single, gameMode, this);
                 return true;
             }
             @Override protected boolean gotResult (Void result) {

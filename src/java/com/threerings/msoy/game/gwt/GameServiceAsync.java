@@ -38,7 +38,8 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#resetGameScores}.
      */
-    public void resetGameScores (int gameId, boolean single, AsyncCallback<Void> callback);
+    public void resetGameScores (int gameId, boolean single, int gameMode,
+                                 AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameTrophies}.

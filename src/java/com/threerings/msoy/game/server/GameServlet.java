@@ -206,17 +206,17 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public void resetGameScores (int gameId, boolean single)
+    public void resetGameScores (int gameId, boolean single, int gameMode)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
         requireIsGameOwner(gameId, mrec);
 
         // wipe the percentiler in the database
-        _ratingRepo.deletePercentiles(single ? -gameId : gameId);
+        _ratingRepo.deletePercentile(single ? -gameId : gameId, gameMode);
 
         // tell any resolved instance of this game to clear its in memory percentiler
-        _peerMan.invokeNodeAction(new ResetScoresAction(gameId, single));
+        _peerMan.invokeNodeAction(new ResetScoresAction(gameId, single, gameMode));
     }
 
     // from interface GameService
@@ -638,9 +638,10 @@ public class GameServlet extends MsoyServiceServlet
     /** Used by {@link #resetGameScores}. */
     protected static class ResetScoresAction extends GameNodeAction
     {
-        public ResetScoresAction (int gameId, boolean single) {
+        public ResetScoresAction (int gameId, boolean single, int gameMode) {
             super(gameId);
             _single = single;
+            _gameMode = gameMode;
         }
 
         public ResetScoresAction () {
@@ -648,10 +649,12 @@ public class GameServlet extends MsoyServiceServlet
 
         @Override // from PeerManager.NodeAction
         protected void execute () {
-            _gameReg.resetGameScores(_gameId, _single);
+            _gameReg.resetGameScores(_gameId, _single, _gameMode);
         }
 
         protected boolean _single;
+        protected int _gameMode;
+
         @Inject protected transient WorldGameRegistry _gameReg;
     }
 

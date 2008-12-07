@@ -344,18 +344,14 @@ public class GameGameRegistry
     }
 
     /**
-     * Resets our in-memory percentiler for the specified game. This is triggered by a request from
-     * our world server.
+     * Resets our in-memory percentiler for the specified game and game mode.
+     * This is triggered by a request from our world server.
      */
-    public void resetScorePercentiler (int gameId, boolean single)
+    public void resetScorePercentiler (int gameId, boolean single, int gameMode)
     {
-        log.info("Resetting in-memory percentiler", "gameId", gameId, "single", single);
-        for (int mode = 0; mode < MAX_GAME_MODES; mode++) {
-            TilerKey key = new TilerKey(gameId, !single, mode);
-            if (_distribs.containsKey(key)) {
-                _distribs.put(key, new Percentiler());
-            }
-        }
+        log.info("Resetting in-memory percentiler", "gameId", gameId, "single", single,
+                 "gameMode", gameMode);
+        _distribs.remove(new TilerKey(gameId, !single, gameMode));
     }
 
     /**

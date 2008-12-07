@@ -223,14 +223,14 @@ public class WorldGameRegistry
      * Forwards a request to our game server to have the specified resolved game reset its
      * percentiler score trackers in memory.
      */
-    public void resetGameScores (int gameId, boolean single)
+    public void resetGameScores (int gameId, boolean single, int gameMode)
     {
         GameServerHandler handler = _handmap.get(gameId);
         if (handler == null) {
             log.info("Eek, handler vanished", "gameId", gameId);
             return;
         }
-        handler.postMessage(WorldServerClient.RESET_SCORE_PERCENTILER, gameId, single);
+        handler.postMessage(WorldServerClient.RESET_SCORE_PERCENTILER, gameId, single, gameMode);
     }
 
     /**
