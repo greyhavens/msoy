@@ -163,10 +163,12 @@ public class GameGameRegistry
             log.warning("Requested invalid score distribution", "gameId", gameId, "mode", gameMode);
             gameMode = 0;
         }
+        log.info("Attempting to locate score distribution", "gameId", gameId, "mp", multiplayer, "gameMode", gameMode);
         TilerKey key = new TilerKey(gameId, multiplayer, gameMode);
         Percentiler tiler = _distribs.get(key);
         if (tiler == null) {
             // a game wants to register a score for a previously unseen mode; return a fresh tiler
+            log.info("Creating & stashing fresh percentiler!");
             _distribs.put(key, tiler = new Percentiler());
         }
         return tiler;
@@ -886,6 +888,8 @@ public class GameGameRegistry
     // from interface LobbyManager.ShutdownObserver
     public void lobbyDidShutdown (int gameId)
     {
+        log.info("Shutting down lobby", "gameId", gameId);
+
         // destroy our record of that lobby
         _lobbies.remove(gameId);
         _loadingLobbies.remove(gameId); // just in case
@@ -1012,6 +1016,7 @@ public class GameGameRegistry
                 if (tiler == null || !tiler.isModified()) {
                     continue;
                 }
+                log.info("Marking percentiler as needing a flush");
                 toFlush.put(key, tiler);
             }
         }
@@ -1023,6 +1028,7 @@ public class GameGameRegistry
                         TilerKey key = entry.getKey();
                         int gameId = key.multiplayer ? key.gameId : -key.gameId;
                         try {
+                            log.info("Actually updating percentiler", "gameMode", key.gameMode);
                             _ratingRepo.updatePercentile(gameId, key.gameMode, entry.getValue());
                         } catch (Exception e) {
                             log.warning("Failed to update score distribution", "gameId", gameId,

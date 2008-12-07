@@ -51,6 +51,7 @@ import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameLogs;
 import com.threerings.msoy.game.gwt.GameMetrics;
+import com.threerings.msoy.game.gwt.GameMetrics.TilerSummary;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.game.gwt.TrophyCase;
@@ -138,20 +139,32 @@ public class GameServlet extends MsoyServiceServlet
         GameMetrics metrics = new GameMetrics();
         metrics.gameId = gameId;
 
-        Percentiler stiler = _ratingRepo.loadPercentile(-gameId, 0);
-        if (stiler != null) {
-            metrics.singleTotalCount = stiler.getRecordedCount();
-            metrics.singleCounts = stiler.getCounts();
-            metrics.singleScores = stiler.getRequiredScores();
-            metrics.singleMaxScore = stiler.getMaxScore();
+        metrics.singleDistributions = Maps.newHashMap();
+        for (Map.Entry<Integer, Percentiler> entry :
+                 _ratingRepo.loadPercentiles(-gameId).entrySet()) {
+            Percentiler tiler = entry.getValue();
+
+            TilerSummary summary = new TilerSummary();
+            summary.totalCount = tiler.getRecordedCount();
+            summary.counts = tiler.getCounts();
+            summary.scores = tiler.getRequiredScores();
+            summary.maxScore = tiler.getMaxScore();
+
+            metrics.singleDistributions.put(entry.getKey(), summary);
         }
 
-        Percentiler mtiler = _ratingRepo.loadPercentile(gameId, 0);
-        if (stiler != null) {
-            metrics.multiTotalCount = mtiler.getRecordedCount();
-            metrics.multiCounts = mtiler.getCounts();
-            metrics.multiScores = mtiler.getRequiredScores();
-            metrics.multiMaxScore = mtiler.getMaxScore();
+        metrics.multiDistributions = Maps.newHashMap();
+        for (Map.Entry<Integer, Percentiler> entry :
+                 _ratingRepo.loadPercentiles(gameId).entrySet()) {
+            Percentiler tiler = entry.getValue();
+
+            TilerSummary summary = new TilerSummary();
+            summary.totalCount = tiler.getRecordedCount();
+            summary.counts = tiler.getCounts();
+            summary.scores = tiler.getRequiredScores();
+            summary.maxScore = tiler.getMaxScore();
+
+            metrics.multiDistributions.put(entry.getKey(), summary);
         }
 
         return metrics;

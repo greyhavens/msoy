@@ -3,6 +3,8 @@
 
 package client.games;
 
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -18,6 +20,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameMetrics;
+import com.threerings.msoy.game.gwt.GameMetrics.TilerSummary;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
@@ -63,25 +66,34 @@ public class GameMetricsPanel extends VerticalPanel
         _metrics = metrics;
         clear();
 
-        if (metrics.singleTotalCount > 0) {
-            add(MsoyUI.createLabel(_msgs.gmpSingleHeader(), "Header"));
-            add(createTilerDisplay(metrics.singleTotalCount, metrics.singleCounts,
-                                   metrics.singleMaxScore, metrics.singleScores));
-            add(WidgetUtil.makeShim(5, 5));
-            add(createResetUI(true));
-        }
+        int shown = 0;
+        shown += addMetrics(metrics.singleDistributions, _msgs.gmpSingleHeader());
+        shown += addMetrics(metrics.multiDistributions, _msgs.gmpMultiHeader());
 
-        if (metrics.multiTotalCount > 0) {
-            add(MsoyUI.createLabel(_msgs.gmpMultiHeader(), "Header"));
-            add(createTilerDisplay(metrics.multiTotalCount, metrics.multiCounts,
-                                   metrics.multiMaxScore, metrics.multiScores));
-            add(WidgetUtil.makeShim(5, 5));
-            add(createResetUI(false));
-        }
-
-        if (metrics.singleTotalCount + metrics.multiTotalCount == 0) {
+        if (shown == 0) {
             add(new Label(_msgs.gmpNoMetrics()));
         }
+    }
+
+    protected int addMetrics (Map<Integer, TilerSummary> metricList, String header)
+    {
+        int count = 0;
+        for (Map.Entry<Integer, TilerSummary> entry : metricList.entrySet()) {
+            TilerSummary summary = entry.getValue();
+            if (summary.totalCount > 0) {
+                int gameMode = entry.getKey();
+                if (gameMode != 0) {
+                    header += " " + _msgs.gmpGameMode("" + gameMode);
+                }
+                add(MsoyUI.createLabel(header, "Header"));
+                add(createTilerDisplay(summary.totalCount, summary.counts,
+                                       summary.maxScore, summary.scores));
+                add(WidgetUtil.makeShim(5, 5));
+                add(createResetUI(true));
+                count ++;
+            }
+        }
+        return count;
     }
 
     protected FlexTable createTilerDisplay (long totalCount, int[] counts,
@@ -123,6 +135,7 @@ public class GameMetricsPanel extends VerticalPanel
         return table;
     }
 
+    // TODO: make tiler resetting game-mode-aware
     protected RowPanel createResetUI (final boolean single)
     {
         RowPanel row = new RowPanel();
