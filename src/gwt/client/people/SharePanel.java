@@ -73,11 +73,11 @@ public class SharePanel extends VerticalPanel
         add(invitePanel);
     }
     
-    public static String getAffiliateLandingUrl (Pages where)
+    public static String getAffiliateLandingUrl (Pages page, Object ...args)
     {
         String path = DeploymentConfig.serverURL + "welcome/" + CShell.creds.getMemberId();
-        if (where != Pages.LANDING) {
-            path += "/" + where.getPath();
+        if (page != Pages.LANDING) {
+            path += "/" + Pages.makeToken(page, Args.compose(args));
         }
         return path;
     }
