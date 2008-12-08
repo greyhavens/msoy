@@ -37,13 +37,13 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
         switch (methodId) {
         case PartyMarshaller.ASSIGN_LEADER:
             ((PartyProvider)provider).assignLeader(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
             );
             return;
 
         case PartyMarshaller.BOOT_MEMBER:
             ((PartyProvider)provider).bootMember(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
             );
             return;
 

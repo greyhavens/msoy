@@ -76,10 +76,10 @@ public class PartyManager
 
     // from interface PartyProvider
     public void bootMember (
-        ClientObject caller, int memberId, InvocationService.ConfirmListener listener)
+        ClientObject caller, int memberId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        listener.requestProcessed(); // TODO
+        // TODO
     }
 
     // from interface PartyProvider
@@ -91,10 +91,10 @@ public class PartyManager
 
     // from interface PartyProvider
     public void assignLeader (
-        ClientObject caller, int memberId, InvocationService.ConfirmListener listener)
+        ClientObject caller, int memberId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        listener.requestProcessed(); // TODO
+        // TODO
     }
 
     /**

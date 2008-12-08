@@ -32,13 +32,13 @@ public class PartyPanel extends FloatingPanel
     {
         super.createChildren();
 
-        _roster = new Roster(_ctx, PartyObject.PEEPS, MateRenderer);
+        _roster = new Roster(_ctx, PartyObject.PEEPS, PeepRenderer);
         _roster.init(_partyObj.peeps.toArray());
         _partyObj.addListener(_roster);
 
         addChild(_roster);
 
-        addChild(new CommandButton(Msgs.PARTY.get("b.leave"), handleLeaveParty));
+        addChild(new CommandButton(Msgs.PARTY.get("b.leave"), _ctx.getPartyDirector().leaveParty));
     }
 
     protected function handleLeaveParty () :void
@@ -57,6 +57,5 @@ public class PartyPanel extends FloatingPanel
     protected var _partyObj :PartyObject;
     protected var _roster :Roster;
 }
-}
 
-internal class MateRenderer { } // TODO: Placeholder
+}

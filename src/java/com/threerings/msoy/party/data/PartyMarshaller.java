@@ -22,9 +22,9 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int ASSIGN_LEADER = 1;
 
     // from interface PartyService
-    public void assignLeader (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void assignLeader (Client arg1, int arg2, InvocationService.InvocationListener arg3)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        ListenerMarshaller listener3 = new ListenerMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, ASSIGN_LEADER, new Object[] {
             Integer.valueOf(arg2), listener3
@@ -35,9 +35,9 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int BOOT_MEMBER = 2;
 
     // from interface PartyService
-    public void bootMember (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    public void bootMember (Client arg1, int arg2, InvocationService.InvocationListener arg3)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        ListenerMarshaller listener3 = new ListenerMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, BOOT_MEMBER, new Object[] {
             Integer.valueOf(arg2), listener3

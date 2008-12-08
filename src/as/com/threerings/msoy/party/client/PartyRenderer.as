@@ -19,6 +19,8 @@ public class PartyRenderer extends HBox
 
     override public function set data (value :Object) :void
     {
+        super.data = value;
+
         var info :PartyInfo = PartyInfo(value);
         _name.text = info.name;
         _join.setCallback(mctx.getPartyDirector().joinParty, info.id);

@@ -5,18 +5,23 @@ package com.threerings.msoy.party.client {
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.world.client.WorldController;
+
+import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyMarshaller;
 import com.threerings.msoy.party.data.PartyObject;
-import com.threerings.msoy.party.data.PartyCodes;
+import com.threerings.msoy.party.data.PartyPeep;
 
 /**
  * Manages party stuff on the client.
@@ -41,6 +46,23 @@ public class PartyDirector extends BasicDirector
         return new PartyBoardPanel(_mctx);
 
         PartyPanel; // Force linkage until we work this out
+    }
+
+    public function getPeepMenuItems (peep :PartyPeep) :Array
+    {
+        var menuItems :Array = [];
+
+        menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
+                         command: WorldController.OPEN_CHANNEL, arg: peep.name });
+        menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
+                         command: WorldController.VIEW_MEMBER, arg: peep.name.getMemberId() });
+
+        if (_partyObj.leaderId == _mctx.getMyName().getMemberId()) {
+            menuItems.push({ label: Msgs.PARTY.get("b.boot_peep"),
+                             callback: bootMember, arg: peep.name.getMemberId() });
+        }
+
+        return menuItems;
     }
 
     /**
@@ -68,6 +90,33 @@ public class PartyDirector extends BasicDirector
     {
         _pbsvc.joinParty(_mctx.getClient(), id,
             new ResultAdapter(_mctx.chatErrHandler(MsoyCodes.PARTY_MSGS), partyOidKnown));
+    }
+
+    /**
+     * Leaves the current party.
+     */
+    public function leaveParty () :void
+    {
+        _partyObj.partyService.leaveParty(_mctx.getClient(), new ConfirmAdapter(
+            _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS),
+            function () :void {
+                trace("Left the party"); // TODO: Close the party window, other stuff
+            }));
+    }
+
+    public function assignLeader (memberId :int) :void
+    {
+        _partyObj.partyService.assignLeader(_mctx.getClient(), memberId,
+            _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS));
+    }
+
+    /**
+     * Leaves the current party.
+     */
+    public function bootMember (memberId :int) :void
+    {
+        _partyObj.partyService.bootMember(_mctx.getClient(), memberId,
+            _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS));
     }
 
     // from BasicDirector

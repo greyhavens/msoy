@@ -6,8 +6,10 @@ package com.threerings.msoy.party.data {
 import com.threerings.msoy.party.client.PartyService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.util.Integer;
 
 /**
@@ -24,9 +26,9 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const ASSIGN_LEADER :int = 1;
 
     // from interface PartyService
-    public function assignLeader (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function assignLeader (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, ASSIGN_LEADER, [
             Integer.valueOf(arg2), listener3
@@ -37,9 +39,9 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const BOOT_MEMBER :int = 2;
 
     // from interface PartyService
-    public function bootMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
+    public function bootMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, BOOT_MEMBER, [
             Integer.valueOf(arg2), listener3

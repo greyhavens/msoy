@@ -12,8 +12,8 @@ public interface PartyService extends InvocationService
     void leaveParty (Client client, ConfirmListener cl);
 
     /** Requests to boot a player from the party. */
-    void bootMember (Client client, int memberId, ConfirmListener cl);
+    void bootMember (Client client, int memberId, InvocationListener il);
 
     /** Requests to reassign leadership to another player. */
-    void assignLeader (Client client, int memberId, ConfirmListener cl);
+    void assignLeader (Client client, int memberId, InvocationListener il);
 }
