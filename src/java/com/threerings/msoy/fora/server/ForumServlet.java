@@ -49,7 +49,6 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.mail.server.MailLogic;
@@ -299,7 +298,7 @@ public class ForumServlet extends MsoyServiceServlet
         } else if (thread.isAnnouncement()) {
             _feedRepo.publishGroupMessage(
                 groupId, FeedMessageType.GROUP_ANNOUNCEMENT,
-                group.name + "\t" + subject + "\t" + thread.threadId + "\t" 
+                group.name + "\t" + subject + "\t" + thread.threadId + "\t"
                     + MediaDesc.mdToString(group.getLogo()));
         }
 

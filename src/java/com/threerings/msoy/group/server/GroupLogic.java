@@ -26,7 +26,6 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupCodes;
 import com.threerings.msoy.group.gwt.GroupExtras;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 

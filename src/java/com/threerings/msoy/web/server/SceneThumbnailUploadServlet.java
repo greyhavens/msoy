@@ -16,7 +16,6 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.room.data.MsoySceneModel;

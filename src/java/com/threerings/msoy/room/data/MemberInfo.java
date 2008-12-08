@@ -5,7 +5,6 @@ package com.threerings.msoy.room.data;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.data.GameSummary;
@@ -73,7 +72,7 @@ public class MemberInfo extends ActorInfo
      */
     public boolean isManager ()
     {
-        return (_flags & MANAGER) != 0; 
+        return (_flags & MANAGER) != 0;
     }
 
     /**

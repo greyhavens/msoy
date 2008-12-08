@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.data;
 
 import com.threerings.msoy.data.MsoyBodyObject;
-import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
