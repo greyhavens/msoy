@@ -374,11 +374,58 @@
 }
 .linkToWhirled {
   font-size: 14px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
-.linkToWhirled .IntroText {
-  width: 600px;
-}
-.linkToWhirled .LogoBox {
-  color: white;
+.linkToWhirled .Title {
+  background: url(/images/whirled/orange_header.png) no-repeat;
+  width: 233px;
+  height: 38px; /* 41 - padding */
+  color: #FFFFFF;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 26px;
   text-align: center;
+  padding-top: 3px;
+  margin-bottom: 10px;
+}
+.linkToWhirled td.IntroCell {
+  width: 60%;
+}
+.linkToWhirled .Intro, .linkToWhirled .ImageGridLabel {
+  color: #3382AD;
+  font-weight: bold;
+}
+.linkToWhirled .Intro {
+  text-align: center;
+  vertical-align: center;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+.linkToWhirled .ImageGridLabel {
+  font-size: 14px;
+  padding: 15px 0 5px;
+}
+.linkToWhirled .Instructions {
+  width: 100%;
+  padding: 10px 0 10px;
+}
+.linkToWhirled .LogoImagePanel {
+  text-align: center;
+}
+.linkToWhirled .ImageGridCell {
+  text-align: center;
+  font-size: 1px;
+  padding: 8px 0 8px;
+}
+.linkToWhirled .LogoImage {
+  text-align: center;
+  font-size: 1px;
+  display: inline;
+}
+.linkToWhirled hr {
+  color: #dfdfdf;
+  background-color: #dfdfdf;
+  width: 80%;
+  height: 1px;
+  border: none;
 }

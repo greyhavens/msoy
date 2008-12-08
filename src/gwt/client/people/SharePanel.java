@@ -41,7 +41,7 @@ public class SharePanel extends VerticalPanel
         linkToWhirled.setWidget(0, 0, Link.createImage("/images/people/link_to_whirled.png", null,
             Pages.PEOPLE, Args.compose("invites", "links")));
         TextBox embedText = new TextBox();
-        embedText.setText(getAffiliateLandingUrl());
+        embedText.setText(getAffiliateLandingUrl(Pages.LANDING));
         embedText.setMaxLength(100);
         embedText.setWidth("100%");
         MsoyUI.selectAllOnFocus(embedText);
@@ -73,9 +73,13 @@ public class SharePanel extends VerticalPanel
         add(invitePanel);
     }
     
-    public static String getAffiliateLandingUrl ()
+    public static String getAffiliateLandingUrl (Pages where)
     {
-        return DeploymentConfig.serverURL + "welcome/" + CShell.creds.getMemberId();
+        String path = DeploymentConfig.serverURL + "welcome/" + CShell.creds.getMemberId();
+        if (where != Pages.LANDING) {
+            path += "/" + where.getPath();
+        }
+        return path;
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);

@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
@@ -636,7 +637,7 @@ public class MsoyUI
     /**
      * Assign a focus listener that will select all the text in the box when focus is gained.
      */
-    public static void selectAllOnFocus (TextBox textBox)
+    public static void selectAllOnFocus (TextBoxBase textBox)
     {
         // We need some click logic too because when focus is gained due to a click the selection
         // flashes, disappearing when the cursor appears
@@ -651,7 +652,7 @@ public class MsoyUI
         public void onFocus (Widget sender) {
             _focus = true;
             _click = false;
-            TextBox text = ((TextBox)sender);
+            TextBoxBase text = ((TextBoxBase)sender);
             text.setSelectionRange(0, text.getText().length());
         }
         public void onLostFocus (Widget sender) {
@@ -661,7 +662,7 @@ public class MsoyUI
         public void onClick (Widget sender) {
             if (!_click) {
                 _click = true;
-                TextBox text = ((TextBox)sender);
+                TextBoxBase text = ((TextBoxBase)sender);
                 text.setSelectionRange(0, text.getText().length());
             }
         }
