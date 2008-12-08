@@ -10,6 +10,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Comparators;
@@ -125,7 +126,8 @@ public class PartyRegistry
         pobj.setAccessController(_partyAccessController);
 
         // Create the PartyManager and add the member
-        PartyManager mgr = new PartyManager(pobj, _invmgr, _peerMgr);
+        PartyManager mgr = _injector.getInstance(PartyManager.class); //new PartyManager(pobj, _invmgr, _peerMgr, _omgr);
+        mgr.init(pobj);
         boolean success = false;
         try {
             mgr.addPlayer(member, rl);
@@ -143,6 +145,15 @@ public class PartyRegistry
                 _omgr.destroyObject(pobj.getOid());
             }
         }
+    }
+
+    /**
+     * Called by a PartyManager when it's removed.
+     */
+    void partyWasRemoved (int partyId)
+    {
+        // TODO: this will get more complicated
+        _parties.remove(partyId);
     }
 
     protected PartySort computePartySort (PartyInfo party, MemberObject member)
@@ -213,6 +224,7 @@ public class PartyRegistry
 
     protected static final int PARTIES_PER_BOARD = 16;
 
+    @Inject protected Injector _injector;
     protected InvocationManager _invmgr;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyPeerManager _peerMgr;
