@@ -69,16 +69,16 @@ public class ConvoPanel extends FlowPanel
         header.setText(0, 1, review ? _msgs.convoReview() :
             _msgs.convoWith(""+result.other), 1, "Title");
 
-        boolean otherHasReplied = false;
+        boolean otherHasPosted = false;
         for (ConvMessage msg : result.messages) {
             if (msg.author.name.getMemberId() != CShell.getMemberId()) {
-                otherHasReplied = false;
+                otherHasPosted = true;
                 break;
             }
         }
 
         if (!review) {
-            addControls(header, result.other, otherHasReplied);
+            addControls(header, result.other, otherHasPosted);
         }
         header.setHTML(0, header.getCellCount(0), "&nbsp;", 1, "TopRight");
         add(header);
@@ -95,7 +95,7 @@ public class ConvoPanel extends FlowPanel
         footer.setHTML(0, 0, "&nbsp;", 1, "BottomLeft");
         footer.setHTML(0, 1, "&nbsp;", 1, "Title");
         if (!review) {
-            addControls(footer, result.other, otherHasReplied);
+            addControls(footer, result.other, otherHasPosted);
         }
         footer.setHTML(0, footer.getCellCount(0), "&nbsp;", 1, "BottomRight");
         add(footer);
