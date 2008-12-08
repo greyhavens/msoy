@@ -6,11 +6,14 @@ package com.threerings.msoy.party.data {
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
 
+import com.threerings.util.Integer;
+
 import com.threerings.msoy.data.all.PlayerEntry;
 import com.threerings.msoy.data.all.VizMemberName;
 
 /**
  * Represents a fellow party-goer connection.
+ * Note that the DSet key is the player id.
  */
 public class PartyPeep extends PlayerEntry
 {
@@ -19,6 +22,27 @@ public class PartyPeep extends PlayerEntry
      * value, the better priority they have to be auto-assigned leadership.
      */
     public var joinOrder :int;
+
+    /**
+     * Create a sort function for sorting PartyPeep entries.
+     */
+    public static function createSortByOrder (pobj :PartyObject) :Function
+    {
+        return function (lhs :PartyPeep, rhs :PartyPeep, ... rest) :int {
+            // always show the leader on top
+            if (pobj.leaderId == lhs.name.getMemberId()) {
+                return -1;
+
+            } else if (pobj.leaderId == rhs.name.getMemberId()) {
+                return 1;
+            }
+            var cmp :int = Integer.compare(lhs.joinOrder, rhs.joinOrder);
+            if (cmp == 0) {
+                cmp = PlayerEntry.sortByName(lhs, rhs);
+            }
+            return cmp;
+        };
+    }
 
     override public function toString () :String
     {
