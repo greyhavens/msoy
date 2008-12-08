@@ -183,7 +183,8 @@ public class MoneyServlet extends MsoyServiceServlet
     public void supportAdjust (int memberId, Currency currency, int delta)
         throws ServiceException
     {
-        MemberRecord mrec = requireSupportUser();
+        // Support can modify coins, but only admin can modify other currencies.
+        MemberRecord mrec = (currency == Currency.COINS ? requireSupportUser() : requireAdminUser());
 
         try {
             // Additional safety checks in MoneyLogic

@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -71,8 +72,13 @@ public class TransactionsPanel extends FlowPanel
         // extra bits
         if (report == ReportType.BLING) {
             add(new BlingPanel(model)); // does its own tongue-boxing
-        } else if (CShell.isSupport() && report == ReportType.COINS) {
-            add(new TongueBox("Deduct coins", new DeductPanel(memberId)));
+        }
+        if (CShell.isSupport() && report == ReportType.COINS) {
+            add(new TongueBox("Deduct coins", new DeductPanel(memberId, Currency.COINS)));
+        } else if (CShell.isAdmin() && report == ReportType.BARS) {
+            add(new TongueBox("Deduct bars", new DeductPanel(memberId, Currency.BARS)));
+        } else if (CShell.isAdmin() && report == ReportType.BLING) {
+            add(new TongueBox("Deduct bling", new DeductPanel(memberId, Currency.BLING)));
         }
     }
 

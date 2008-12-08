@@ -223,7 +223,6 @@ public class MoneyLogic
         int memberId, Currency currency, int delta, MemberName support)
         throws NotEnoughMoneyException
     {
-        Preconditions.checkArgument(Currency.COINS == currency, "Only coin adjustment supported.");
         Preconditions.checkArgument(delta <= 0, "Only deduction supported.");
 
         UserAction action = UserAction.supportAdjust(memberId, support);
