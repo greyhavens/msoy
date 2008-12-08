@@ -104,10 +104,13 @@ public class BuyPanel extends FlowPanel
             String percentage = NumberFormat.getPercentFormat().format(
                 (int)(100.0 * result.charityPercentage) / 100.0);
             add(WidgetUtil.makeShim(10, 10));
-            add(new InlineLabel(_msgs.donatedToCharity(percentage)));
-            add(Link.create(result.charity.toString(), Pages.PEOPLE, ""+result.charity.getMemberId()));
-            add(WidgetUtil.makeShim(10, 10));
-            add(Link.create(_msgs.changeCharity(), Pages.ME, "account"));
+            FlowPanel charityPanel = new FlowPanel();
+            charityPanel.setStyleName("Charity");
+            charityPanel.add(new InlineLabel(_msgs.donatedToCharity(percentage)));
+            charityPanel.add(Link.create(result.charity.toString(), Pages.PEOPLE, ""+result.charity.getMemberId()));
+            charityPanel.add(WidgetUtil.makeShim(10, 10));
+            charityPanel.add(Link.create(_msgs.changeCharity(), Pages.ME, "account"));
+            add(charityPanel);
         }
         
         FlowPanel again = new FlowPanel();

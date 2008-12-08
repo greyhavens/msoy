@@ -155,6 +155,10 @@
   text-align: center;
 }
 
+.listingDetailPanel .Bought .Charity {
+  font-size: 12px;
+}
+
 .listingDetailPanel .Buy table {
   margin-left: auto;
   margin-right: auto;
