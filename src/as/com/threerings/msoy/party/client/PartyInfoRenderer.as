@@ -8,6 +8,7 @@ import mx.controls.Label;
 
 import com.threerings.flex.CommandButton;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.party.data.PartyInfo;
@@ -35,6 +36,6 @@ public class PartyInfoRenderer extends HBox
     }
 
     protected var _name :Label = new Label();
-    protected var _join :CommandButton = new CommandButton("Join");
+    protected var _join :CommandButton = new CommandButton(Msgs.PARTY.get("b.join"));
 }
 }
