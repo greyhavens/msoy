@@ -23,7 +23,7 @@ public interface PartyProvider extends InvocationProvider
     /**
      * Handles a {@link PartyService#bootMember} request.
      */
-    void bootMember (ClientObject caller, InvocationService.ConfirmListener arg1)
+    void bootMember (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**

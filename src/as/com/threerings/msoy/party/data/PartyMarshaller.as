@@ -37,12 +37,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static const BOOT_MEMBER :int = 2;
 
     // from interface PartyService
-    public function bootMember (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void
+    public function bootMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener2 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener2.listener = arg2;
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, BOOT_MEMBER, [
-            listener2
+            Integer.valueOf(arg2), listener3
         ]);
     }
 

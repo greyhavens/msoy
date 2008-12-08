@@ -75,7 +75,8 @@ public class PartyManager
     }
 
     // from interface PartyProvider
-    public void bootMember (ClientObject caller, InvocationService.ConfirmListener listener)
+    public void bootMember (
+        ClientObject caller, int memberId, InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         listener.requestProcessed(); // TODO

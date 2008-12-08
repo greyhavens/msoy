@@ -35,12 +35,12 @@ public class PartyMarshaller extends InvocationMarshaller
     public static final int BOOT_MEMBER = 2;
 
     // from interface PartyService
-    public void bootMember (Client arg1, InvocationService.ConfirmListener arg2)
+    public void bootMember (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
     {
-        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
-        listener2.listener = arg2;
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, BOOT_MEMBER, new Object[] {
-            listener2
+            Integer.valueOf(arg2), listener3
         });
     }
 

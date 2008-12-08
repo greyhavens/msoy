@@ -16,7 +16,7 @@ public interface PartyService extends InvocationService
     function assignLeader (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface PartyService
-    function bootMember (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;
+    function bootMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface PartyService
     function leaveParty (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;

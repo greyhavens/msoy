@@ -43,7 +43,7 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
 
         case PartyMarshaller.BOOT_MEMBER:
             ((PartyProvider)provider).bootMember(
-                source, (InvocationService.ConfirmListener)args[0]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 
