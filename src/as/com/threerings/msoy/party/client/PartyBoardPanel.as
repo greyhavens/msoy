@@ -26,7 +26,7 @@ public class PartyBoardPanel extends FloatingPanel
         showCloseButton = true;
         setButtonWidth(0);
 
-        var cf :ClassFactory = new ClassFactory(PartyRenderer);
+        var cf :ClassFactory = new ClassFactory(PartyInfoRenderer);
         cf.properties =  { mctx: _ctx };
         _partyList = new List();
         _partyList.itemRenderer = cf;

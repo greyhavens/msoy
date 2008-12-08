@@ -12,7 +12,7 @@ import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.party.data.PartyInfo;
 
-public class PartyRenderer extends HBox
+public class PartyInfoRenderer extends HBox
 {
     // Initialized by ClassFactory
     public var mctx :MsoyContext;
