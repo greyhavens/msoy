@@ -20,7 +20,9 @@ public class PartyRenderer extends HBox
     override public function set data (value :Object) :void
     {
         super.data = value;
-
+        if (value == null) {
+            return;
+        }
         var info :PartyInfo = PartyInfo(value);
         _name.text = info.name;
         _join.setCallback(mctx.getPartyDirector().joinParty, info.id);
@@ -35,5 +37,4 @@ public class PartyRenderer extends HBox
     protected var _name :Label = new Label();
     protected var _join :CommandButton = new CommandButton("Join");
 }
-
 }
