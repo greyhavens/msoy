@@ -599,7 +599,7 @@ public class RoomObjectController extends RoomController
 
                 if (item.getType() == Item.DECOR) {
                     newScene = _scene.clone() as MsoyScene;
-                    var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
+                    var newSceneModel :MsoySceneModel = MsoySceneModel(newScene.getSceneModel());
                     newSceneModel.decor = item as Decor;
                     applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
 
@@ -639,8 +639,7 @@ public class RoomObjectController extends RoomController
                 (new ItemUsedDialog(_wdctx, Msgs.ITEM.get(msg), function () :void {
                     var confWrap :ConfirmAdapter = new ConfirmAdapter(
                         _wdctx.chatErrHandler(MsoyCodes.EDITING_MSGS, "e.failed_to_remove",
-                            "Failed to remove item from its current location",
-                            "id", item.itemId, "type", item.getType()),
+                            "Failed to reclaim item", "item", ident),
                         useNewItem);
                     isvc.reclaimItem(_wdctx.getClient(), ident, confWrap);
                 })).open(true);
