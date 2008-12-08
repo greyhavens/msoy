@@ -109,6 +109,7 @@ public class LinkToWhirledPanel extends VerticalPanel
             imagePanel.setStyleName("LogoImagePanel");
             Image image = new Image(imagePath);
             image.setStyleName("LogoImage");
+            image.addStyleName("actionLabel");
             imagePanel.add(image);
 
             final String embed = "<a href=\"" + SharePanel.getAffiliateLandingUrl(Pages.LANDING) +
@@ -116,6 +117,7 @@ public class LinkToWhirledPanel extends VerticalPanel
             image.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     _htmlCode.setText(embed);
+                    _htmlCode.setFocus(true);
                 }
             });
 
