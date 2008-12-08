@@ -13,7 +13,6 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PlayerEntry;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -22,7 +21,9 @@ import com.threerings.msoy.client.MsoyContext;
 public class Roster extends List
     implements SetListener
 {
-    public function Roster (mctx :MsoyContext, field :String, renderer :Class)
+    public function Roster (
+        mctx :MsoyContext, field :String, renderer :Class,
+        sortFn :Function = null, filterFn :Function = null)
     {
         _field = field;
 
@@ -40,8 +41,9 @@ public class Roster extends List
         itemRenderer = cf;
 
         var sort :Sort = new Sort();
-        sort.compareFunction = sortFunction;
+        sort.compareFunction = sortFn;
         dataProvider.sort = sort;
+        dataProvider.filterFunction = filterFn;
         dataProvider.refresh();
     }
 
@@ -97,12 +99,6 @@ public class Roster extends List
         }
     }
 
-    protected function sortFunction (lhs :PlayerEntry, rhs :PlayerEntry, fields :Array = null) :int
-    {
-        return MemberName.BY_DISPLAY_NAME(lhs.name, rhs.name);
-    }
-
     protected var _field :String;
 }
-
 }

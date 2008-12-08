@@ -17,6 +17,7 @@ import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.PlayerEntry;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
 
@@ -238,10 +239,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function getSortedOnlineFriends () :Array
     {
-        return this.friends.toArray().filter(isFriendOnline).sort(
-            function (fe1 :FriendEntry, fe2 :FriendEntry) :int {
-                return MemberName.BY_DISPLAY_NAME(fe1.name, fe2.name);
-            });
+        return friends.toArray().filter(FriendEntry.isOnline).sort(PlayerEntry.sortByName);
     }
 
     /**
@@ -249,7 +247,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public function hasOnlineFriends () :Boolean
     {
-        return friends.toArray().some(isFriendOnline);
+        return friends.toArray().some(FriendEntry.isOnline);
     }
 
     /**
@@ -364,14 +362,6 @@ public class MemberObject extends MsoyBodyObject
         onTour = ins.readBoolean();
         partyId = ins.readInt();
         experiences = DSet(ins.readObject());
-    }
-
-    /**
-     * A predicate that returns true for online friends.
-     */
-    protected static function isFriendOnline (fe :FriendEntry, ... rest) :Boolean
-    {
-        return fe.online;
     }
 }
 }

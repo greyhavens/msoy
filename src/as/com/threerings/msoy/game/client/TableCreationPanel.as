@@ -152,7 +152,7 @@ public class TableCreationPanel extends VBox
         // TODO: add with label to HBox
 
         var onlineFriends :Array = _ctx.getOnlineFriends();
-        if (onlineFriends.length ==  0) {
+        if (onlineFriends.length == 0) {
             addChild(FlexUtil.createLabel(Msgs.GAME.get("l.invite_no_friends")));
 
         } else {

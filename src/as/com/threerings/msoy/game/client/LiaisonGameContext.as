@@ -11,7 +11,6 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -136,10 +135,7 @@ public class LiaisonGameContext
     // from GameContext
     public function getOnlineFriends () :Array
     {
-        return _wctx.getMemberObject().friends.toArray().filter(
-            function (friend :FriendEntry, index :int, array :Array) :Boolean {
-                return friend.online;
-            });
+        return _wctx.getMemberObject().getSortedOnlineFriends();
     }
 
     protected var _wctx :WorldContext;

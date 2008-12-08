@@ -18,6 +18,14 @@ public class FriendEntry extends PlayerEntry
     /** Is the friend online? */
     public var online :Boolean;
 
+    /**
+     * An "online" predicate/filterFunction.
+     */
+    public static function isOnline (fe :FriendEntry, ... rest) :Boolean
+    {
+        return fe.online;
+    }
+
     override public function toString () :String
     {
         return "FriendEntry[" + name + "]";

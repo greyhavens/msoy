@@ -33,6 +33,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Roster;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.PlayerEntry;
 
 public class FriendsListPanel extends FlyingPanel
     implements AttributeChangeListener
@@ -96,11 +97,8 @@ public class FriendsListPanel extends FlyingPanel
     {
         super.createChildren();
 
-        _friendsList = new Roster(_wctx, MemberObject.FRIENDS, FriendRenderer);
-        _friendsList.dataProvider.filterFunction = function (friend :FriendEntry) :Boolean {
-            // Only show online friends
-            return friend.online;
-        }
+        _friendsList = new Roster(_wctx, MemberObject.FRIENDS, FriendRenderer,
+            PlayerEntry.sortByName, FriendEntry.isOnline);
 
         addChild(_friendsList);
 

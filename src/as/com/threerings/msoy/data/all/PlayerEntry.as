@@ -19,6 +19,14 @@ public class PlayerEntry
     /** The display name of the friend. */
     public var name :VizMemberName;
 
+    /**
+     * A aort function that may be used for PlayerEntrys
+     */
+    public static function sortByName (lhs :PlayerEntry, rhs :PlayerEntry, ... rest) :int
+    {
+        return MemberName.BY_DISPLAY_NAME(lhs.name, rhs.name);
+    }
+
     // from Hashable
     public function hashCode () :int
     {
