@@ -234,7 +234,7 @@ public class InvitePanel extends VerticalPanel
         } else if (!_friendEmail.getText().matches(MsoyUI.EMAIL_REGEX)) {
             MsoyUI.info(_msgs.inviteInvalidEmail());
 
-        } else if (_friendName.getText().isEmpty() || 
+        } else if (_friendName.getText().length() == 0 ||
             _friendName.getText().equals(_msgs.inviteFriendName())) {
             MsoyUI.info(_msgs.inviteInvalidName());
 
@@ -538,7 +538,7 @@ public class InvitePanel extends VerticalPanel
     protected InviteList _emailList;
 
     protected boolean _sendEvents;
-    
+
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
