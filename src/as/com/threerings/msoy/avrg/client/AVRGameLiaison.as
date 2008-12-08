@@ -100,11 +100,8 @@ public class AVRGameLiaison extends GameLiaison
     public function leaveAVRGame () :void
     {
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
-        svc.deactivateGame(_gctx.getClient(), _gameId, new ConfirmAdapter (
-            function (cause :String) :void {
-                log.warning("Failed to deactivate AVRG [gameId=" + _gameId +
-                            ", cause=" + cause + "].");        
-            }, 
+        svc.deactivateGame(_gctx.getClient(), _gameId, new ConfirmAdapter(
+            _gctx.getMsoyContext().chatErrHandler(null, null, "gameId", _gameId),
             function () :void {
                 _gctx.getLocationDirector().leavePlace();
             }));

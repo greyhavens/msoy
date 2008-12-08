@@ -359,11 +359,11 @@ public class ThaneAVRGameController
         log.debug("Opening window", "scene", scene);
         var resultListener :com.threerings.util.ResultAdapter = 
             new com.threerings.util.ResultAdapter(
-                function (wnd :Window) :void {
-                    gotWindow(binding, wnd);
-                },
                 function (cause :Error) :void {
                     log.warning("Failed to open window", "scene", scene, "cause", cause);
+                },
+                function (wnd :Window) :void {
+                    gotWindow(binding, wnd);
                 });
 
         _ctx.getWindowDirector().openWindow(scene.hostname, scene.port, resultListener);

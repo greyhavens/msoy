@@ -7,6 +7,7 @@ import flash.display.Stage;
 
 import flash.geom.Rectangle;
 
+import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
 
@@ -132,6 +133,34 @@ public /*abstract*/ class MsoyContext
     public function getPartner () :String
     {
         return MsoyParameters.get()["partner"];
+    }
+
+    /**
+     * For use with Invocation service listener adapters. A function for handling any error
+     * and reporting via a chat feedback message.
+     *
+     * @param bundle the MessageBundle identifier to use for translating error causes.
+     * @param errWrap a translation key in which to wrap the 'cause' string from the server.
+     * @poram logArgs any arguments you wish to pass to be logged. If the number of args is
+     *        even then the message logged is [ "Reporting failure", <your args>, "cause", cause ];
+     *        if the number of args is odd then your first arg is used in place of
+     *        "Reporting failure".
+     */
+    public function chatErrHandler (
+        bundle :String = null, errWrap :String = null, ... logArgs) :Function
+    {
+        return function (cause :String) :void {
+            var args :Array = logArgs.concat("cause", cause); // make a copy, we're reentrant
+            if (args.length % 2 == 0) {
+                args.unshift("Reporting failure");
+            }
+            Log.getLog(MsoyContext).info.apply(null, args);
+
+            if (errWrap != null) {
+                cause = MessageBundle.compose(errWrap, cause);
+            }
+            displayFeedback(bundle, cause);
+        };
     }
 
     /**

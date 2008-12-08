@@ -43,11 +43,8 @@ public class PartyPanel extends FloatingPanel
 
     protected function handleLeaveParty () :void
     {
-        _partyObj.partyService.leaveParty(_ctx.getClient(), new ConfirmAdapter(
-            function (cause :String) :void {
-                _ctx.displayFeedback(MsoyCodes.PARTY_MSGS, cause);
-            },
-            close));
+        _partyObj.partyService.leaveParty(_ctx.getClient(),
+            new ConfirmAdapter(_ctx.chatErrHandler(MsoyCodes.PARTY_MSGS), close));
     }
 
     override public function close () :void

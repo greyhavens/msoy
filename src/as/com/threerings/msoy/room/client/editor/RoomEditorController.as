@@ -496,11 +496,9 @@ public class RoomEditorController
 
         // now ask the server for ids
         var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
-        svc.getItemNames(
-            _ctx.getClient(), idents, new ResultAdapter(function (cause :String) :void {
-                // do nothing
-                log.warning("Unable to get item names [cause=" + cause + "].");
-            }, function (names :Array /* of String */) :void {
+        svc.getItemNames(_ctx.getClient(), idents,
+            new ResultAdapter(_ctx.chatErrHandler(),
+            function (names :Array /* of String */) :void {
                 // we got an array of names! put them all in the cache and update the list.
                 for (var i :int = 0; i < idents.length; i++) {
                     _names.put(idents[i], { label: names[i], data: idents[i] });

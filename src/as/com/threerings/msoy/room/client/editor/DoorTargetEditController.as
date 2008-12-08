@@ -178,11 +178,8 @@ public class DoorTargetEditController
     protected function purchase () :void
     {
         var roomObj :RoomObject = (_ctx.getLocationDirector().getPlaceObject() as RoomObject);
-        roomObj.roomService.purchaseRoom(_ctx.getClient(), new ResultAdapter (
-            function (cause :String) :void { // failure handler
-                Log.getLog(this).info("Room purchase failure: " + cause);
-                _ctx.displayFeedback(null, cause);
-            },
+        roomObj.roomService.purchaseRoom(_ctx.getClient(), new ResultAdapter(
+            _ctx.chatErrHandler(),
             function (result :Object) :void { // success handler
                 if (result != null) {
                     var newSceneId :int = int(Number(result));

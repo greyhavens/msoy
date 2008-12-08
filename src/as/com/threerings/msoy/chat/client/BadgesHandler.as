@@ -29,9 +29,8 @@ public class BadgesHandler extends CommandHandler
     {
         var client :Client = ctx.getClient();
         var msvc :MemberService = client.requireService(MemberService) as MemberService;
-        msvc.loadAllBadges(client, new ResultAdapter(function (cause :String) :void {
-                log.warning("Unable load badges [cause=" + cause + "].");
-            }, function (badges :Array /* of EarnedBadge */) :void {
+        msvc.loadAllBadges(client, new ResultAdapter(MsoyContext(ctx).chatErrHandler(),
+            function (badges :Array /* of EarnedBadge */) :void {
                 (new BadgeListPanel(ctx as MsoyContext, badges)).open();
             }));
 

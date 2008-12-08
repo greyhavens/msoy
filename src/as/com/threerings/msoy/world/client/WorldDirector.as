@@ -69,11 +69,8 @@ public class WorldDirector extends BasicDirector
             return;
         } 
 
-        _msvc.getCurrentMemberLocation(_wctx.getClient(), memberId, new ResultAdapter(
-            function (cause :String) :void {
-                _wctx.displayFeedback(null, cause);
-            },
-            finishGoToMemberLocation));
+        _msvc.getCurrentMemberLocation(_wctx.getClient(), memberId,
+            new ResultAdapter(_wctx.chatErrHandler(), finishGoToMemberLocation));
     }
 
     /**
@@ -100,14 +97,8 @@ public class WorldDirector extends BasicDirector
             _wctx.getClient().addClientObserver(waiter);
             return;
         }
-        _msvc.getHomeId(_wctx.getClient(), ownerType, ownerId, new ResultAdapter(
-            function (cause :String) :void {
-                log.warning("Unable to go to home [type=" + ownerType + ", id=" + ownerId +
-                            ", cause=" + cause);
-            }, 
-            function (sceneId :int) :void {
-                _wctx.getSceneDirector().moveTo(sceneId);
-            }));
+        _msvc.getHomeId(_wctx.getClient(), ownerType, ownerId,
+            new ResultAdapter(_wctx.chatErrHandler(), _wctx.getSceneDirector().moveTo));
     }
 
     /**

@@ -312,9 +312,7 @@ public class RoomObjectController extends RoomController
         }
 
         _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultAdapter(
-            function (cause :String) :void {
-                _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-            },
+            _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS),
             function (result :Object) :void {
                 DoorTargetEditController.start(furniData, _wdctx);
             }));
@@ -335,9 +333,7 @@ public class RoomObjectController extends RoomController
             return;
         }
         _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultAdapter(
-            function (cause :String) :void {
-                _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-            },
+            _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS),
             function (result :Object) :void {
                 beginRoomEditing();
             }));
@@ -528,22 +524,13 @@ public class RoomObjectController extends RoomController
     {
         var svc :ItemService = _wdctx.getClient().requireService(ItemService) as ItemService;
 
-        svc.deleteItem(_wdctx.getClient(), ident, new ConfirmAdapter(
-            function (cause :String) :void {
-                Log.getLog(this).debug(
-                    "Failed to delete item " +
-                    "[type=" + ident.type + ", itemId=" + ident.itemId +
-                    ", cause=" + cause + "]");
-            }));
+        svc.deleteItem(_wdctx.getClient(), ident, new ConfirmAdapter(_wdctx.chatErrHandler()));
     }
 
     override public function rateRoom (rating :Number, onSuccess :Function) :void
     {
-        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, new ResultAdapter(
-            function (cause :String) :void {
-                _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-            },
-            onSuccess));
+        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating,
+            new ResultAdapter(_wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS), onSuccess));
     }
 
     /**
@@ -651,14 +638,10 @@ public class RoomObjectController extends RoomController
                 var msg :String = Item.getTypeKey(itemType);
                 (new ItemUsedDialog(_wdctx, Msgs.ITEM.get(msg), function () :void {
                     var confWrap :ConfirmAdapter = new ConfirmAdapter(
-                        // failure function
-                        function (cause :String) :void {
-                            Log.getLog(this).debug(
-                                "Failed to remove item from its current location " +
-                                "[id=" + item.itemId + ", type=" + item.getType() +
-                                ", cause=" + cause + "]");
-                            _wdctx.displayInfo(MsoyCodes.EDITING_MSGS, "e.failed_to_remove");
-                        }, useNewItem);
+                        _wdctx.chatErrHandler(MsoyCodes.EDITING_MSGS, "e.failed_to_remove",
+                            "Failed to remove item from its current location",
+                            "id", item.itemId, "type", item.getType()),
+                        useNewItem);
                     isvc.reclaimItem(_wdctx.getClient(), ident, confWrap);
                 })).open(true);
             } else {
@@ -666,10 +649,8 @@ public class RoomObjectController extends RoomController
             }
         };
 
-        isvc.peepItem(_wdctx.getClient(), ident, new ResultAdapter(
-            function (cause :String) :void {
-                _wdctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
-            }, gotItem));
+        isvc.peepItem(_wdctx.getClient(), ident,
+            new ResultAdapter(_wdctx.chatErrHandler(MsoyCodes.EDITING_MSGS), gotItem));
     }
 
     /**
@@ -865,9 +846,7 @@ public class RoomObjectController extends RoomController
         // ship the update request off to the server
         _roomObj.roomService.updateMemory(_wdctx.getClient(),
             new EntityMemoryEntry(ident, key, data), new ResultAdapter(
-                function (cause :String) :void {
-                    _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-                },
+                _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS),
                 function (success :Boolean) :void {
                     if (callback != null) {
                         try {

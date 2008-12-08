@@ -348,9 +348,7 @@ public class WorldController extends MsoyController
     {
         var isvc :ItemService = _wctx.getClient().requireService(ItemService) as ItemService;
         isvc.getCatalogId(_wctx.getClient(), ident, new ResultAdapter(
-            function (cause :String) :void {
-                _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
-            },
+            _wctx.chatErrHandler(MsoyCodes.GENERAL_MSGS),
             function (result :Object) :void {
                 if (result == null) {
                     // it's an object we own, or it's not listed but we are support+
