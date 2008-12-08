@@ -15,6 +15,7 @@ import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.world.client.WorldController;
 
 import com.threerings.msoy.party.data.PartyCodes;
@@ -107,7 +108,7 @@ public class PartyDirector extends BasicDirector
     public function assignLeader (memberId :int) :void
     {
         _partyObj.partyService.assignLeader(_mctx.getClient(), memberId,
-            _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS));
+            new ReportingListener(_mctx, MsoyCodes.PARTY_MSGS));
     }
 
     /**
@@ -116,7 +117,7 @@ public class PartyDirector extends BasicDirector
     public function bootMember (memberId :int) :void
     {
         _partyObj.partyService.bootMember(_mctx.getClient(), memberId,
-            _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS));
+            new ReportingListener(_mctx, MsoyCodes.PARTY_MSGS));
     }
 
     // from BasicDirector
