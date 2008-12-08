@@ -137,7 +137,8 @@ public /*abstract*/ class MsoyContext
 
     /**
      * For use with Invocation service listener adapters. A function for handling any error
-     * and reporting via a chat feedback message.
+     * and reporting via a chat feedback message. If you want to just use something like this
+     * as your complete listener, see ReportingListener.
      *
      * @param bundle the MessageBundle identifier to use for translating error causes.
      * @param errWrap a translation key in which to wrap the 'cause' string from the server.
