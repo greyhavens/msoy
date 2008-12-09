@@ -65,7 +65,7 @@ public class MedalRecord extends PersistentRecord
     /** The name of the medal. */
     public String name;
 
-    /** The media hash of the medal icon.  We do'nt store the constraint because they're all
+    /** The media hash of the medal icon.  We don't store the constraint because they're all
      * 60x60 */
     public byte[] iconHash;
 
