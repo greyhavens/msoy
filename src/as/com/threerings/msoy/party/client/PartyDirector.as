@@ -104,10 +104,23 @@ public class PartyDirector extends BasicDirector
      */
     public function leaveParty () :void
     {
+        // TODO: we might possibly need to be able to leave a party prior to receiving
+        // our subscription response.
+        if (_partyObj == null) {
+            // we have no party to leave
+            return;
+        }
         _partyObj.partyService.leaveParty(_mctx.getClient(), new ConfirmAdapter(
             _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS),
             function () :void {
-                trace("Left the party"); // TODO: Close the party window, other stuff
+                _safeSubscriber.unsubscribe(_ctx.getDObjectManager());
+                _safeSubscriber = null;
+                _partyObj = null;
+
+                var btn :CommandButton = _mctx.getControlBar().partyBtn;
+                if (btn.selected) {
+                    btn.activate(); // pop down the party window.
+                }
             }));
     }
 
@@ -152,6 +165,9 @@ public class PartyDirector extends BasicDirector
         _safeSubscriber.subscribe(_ctx.getDObjectManager());
     }
 
+    /**
+     * Called if our safe subscriber has succeeded in getting the party object.
+     */
     protected function gotPartyObject (obj :PartyObject) :void
     {
         _partyObj = obj;
@@ -165,6 +181,9 @@ public class PartyDirector extends BasicDirector
         }
     }
 
+    /**
+     * Called when we've failed to subscribe to a party.
+     */
     protected function subscribeFailed (oid :int, cause :ObjectAccessError) :void
     {
         // TODO

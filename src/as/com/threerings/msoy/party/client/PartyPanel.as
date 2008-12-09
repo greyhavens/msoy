@@ -29,31 +29,30 @@ public class PartyPanel extends FloatingPanel
         _partyObj = partyObj;
     }
 
+    override public function close () :void
+    {
+        _partyObj.removeListener(_roster);
+
+        super.close();
+    }
+
+    override protected function didOpen () :void
+    {
+        super.didOpen();
+
+        _roster.init(_partyObj.peeps.toArray());
+        _partyObj.addListener(_roster);
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
 
         _roster = new Roster(_ctx, PartyObject.PEEPS, PeepRenderer,
             PartyPeep.createSortByOrder(_partyObj));
-        _roster.init(_partyObj.peeps.toArray());
-        _partyObj.addListener(_roster);
-
         addChild(_roster);
 
         addChild(new CommandButton(Msgs.PARTY.get("b.leave"), _ctx.getPartyDirector().leaveParty));
-    }
-
-    protected function handleLeaveParty () :void
-    {
-        _partyObj.partyService.leaveParty(_ctx.getClient(),
-            new ConfirmAdapter(_ctx.chatErrHandler(MsoyCodes.PARTY_MSGS), close));
-    }
-
-    override public function close () :void
-    {
-        _partyObj.removeListener(_roster);
-
-        super.close();
     }
 
     protected var _partyObj :PartyObject;
