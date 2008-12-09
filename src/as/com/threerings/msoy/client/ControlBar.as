@@ -74,6 +74,11 @@ public class ControlBar extends HBox
         return _avrgBtn;
     }
 
+    public function get partyBtn () :CommandButton
+    {
+        return _partyBtn;
+    }
+
     public function init (top :TopPanel) :void
     {
         styleName = "controlBar";

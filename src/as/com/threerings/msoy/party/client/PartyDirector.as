@@ -7,6 +7,11 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultAdapter;
+import com.threerings.presents.dobj.ObjectAccessError;
+import com.threerings.presents.dobj.SubscriberAdapter;
+import com.threerings.presents.util.SafeSubscriber;
+
+import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -43,10 +48,11 @@ public class PartyDirector extends BasicDirector
      */
     public function createAppropriatePartyPanel () :FloatingPanel
     {
-        // TODO: if the user is already partying, return a board for their party
-        return new PartyBoardPanel(_mctx);
-
-        PartyPanel; // Force linkage until we work this out
+        if (_partyObj != null) {
+            return new PartyPanel(_mctx, _partyObj);
+        } else {
+            return new PartyBoardPanel(_mctx);
+        }
     }
 
     public function getPeepMenuItems (peep :PartyPeep) :Array
@@ -141,14 +147,35 @@ public class PartyDirector extends BasicDirector
      */
     protected function partyOidKnown (oid :int) :void
     {
-        // TODO: subscribe to this party
-        trace("We're in the party: the oid is : " + oid);
+        _safeSubscriber = new SafeSubscriber(oid,
+            new SubscriberAdapter(gotPartyObject, subscribeFailed));
+        _safeSubscriber.subscribe(_ctx.getDObjectManager());
+    }
+
+    protected function gotPartyObject (obj :PartyObject) :void
+    {
+        _partyObj = obj;
+
+        // if the party popup is up, change to the new popup...
+        var btn :CommandButton = _mctx.getControlBar().partyBtn;
+        if (btn.selected) {
+            // click it down and then back up...
+            btn.activate();
+            btn.activate();
+        }
+    }
+
+    protected function subscribeFailed (oid :int, cause :ObjectAccessError) :void
+    {
+        // TODO
     }
 
     protected var _mctx :MsoyContext;
 
     protected var _pbsvc :PartyBoardService;
 
-    protected var _partyObj :PartyObject; // TODO: Pull this out of a hat
+    protected var _partyObj :PartyObject;
+
+    protected var _safeSubscriber :SafeSubscriber;
 }
 }

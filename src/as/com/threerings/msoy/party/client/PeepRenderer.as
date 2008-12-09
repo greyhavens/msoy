@@ -30,6 +30,7 @@ public class PeepRenderer extends HBox
 
     override protected function createChildren () :void
     {
+        super.createChildren();
     }
 
     protected function handleClick (event :MouseEvent) :void
