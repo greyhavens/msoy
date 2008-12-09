@@ -19,114 +19,48 @@ import com.threerings.util.CommandEvent;
 import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.PlayerRenderer;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.PlayerEntry;
 
-public class FriendRenderer extends HBox 
+public class FriendRenderer extends PlayerRenderer 
 {
-    // Initialized by the ClassFactory
-    public var mctx :MsoyContext;
-
     public function FriendRenderer () 
     {
         super();
 
-        verticalScrollPolicy = ScrollPolicy.OFF;
-        horizontalScrollPolicy = ScrollPolicy.OFF;
-
         addEventListener(MouseEvent.CLICK, handleClick);
     }
 
-    override public function set data (value :Object) :void
+    override protected function addCustomControls (content :VBox) :void
     {
-        super.data = value;
+        var friend :FriendEntry = FriendEntry(this.data);
 
-        if (processedDescriptors) {
-            configureUI();
-        }
-    }
-
-    override protected function createChildren () :void
-    {
-        super.createChildren();
-
-        // The style name for this renderer isn't getting respected, and I'm through with trying
-        // to get it to work, so lets just inline the styles here
-        setStyle("paddingTop", 0);
-        setStyle("paddingBottom", 0);
-        setStyle("paddingLeft", 3);
-        setStyle("paddingRight", 3);
-        setStyle("verticalAlign", "middle");
-        setStyle("horizontalGap", 0);
-
-        configureUI();
-    }
-
-    /**
-     * Update the UI elements with the data we're displaying.
-     */
-    protected function configureUI () :void
-    {
-        // TODO: This renderer represents a considerable departure from the way that we display
-        // names in msoy.  It is quite a bit different from how we show them in channel and game
-        // occupant lists, and floating over avatars.  I brought this up to bill, and he says we 
-        // need to just go in and change how they look everywhere.  This style won't look good
-        // everywhere, so I'm waiting to see if we come up with a single style that looks good
-        // everywhere before just using MsoyNameLabelCreator here, which is what this should 
-        // probably be doing (or the whole list should just be a new kind of PlayerList).
-
-        removeAllChildren();
-        _name = null;
-
-        if (this.data == null) {
-            return;
-        }
-        var friend :FriendEntry = this.data as FriendEntry;
-        if (friend != null) {
-            _name = friend.name;
-        }
-
-        var labelBox :VBox = new VBox();
-        labelBox.verticalScrollPolicy = ScrollPolicy.OFF;
-        labelBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-        labelBox.setStyle("verticalGap", 0);
-        addChild(labelBox);
-
-        labelBox.width = 
-            FriendsListPanel.POPUP_WIDTH - MediaDesc.THUMBNAIL_WIDTH / 2 - ScrollBar.THICKNESS -
-            4 /* list border * 2 */ - 6 /* padding */;
-        var friendLabel :Label = FlexUtil.createLabel(_name.toString(), "friendLabel");
-        friendLabel.width = labelBox.width;
-        labelBox.addChild(friendLabel);
+        var name :Label = FlexUtil.createLabel(friend.name.toString(), "friendLabel");
+        name.width = content.width;
+        content.addChild(name);
 
         var statusContainer :HBox = new HBox();
         statusContainer.setStyle("paddingLeft", 3);
-        labelBox.addChild(statusContainer);
-        var statusLabel :Label = new Label();
-        statusLabel.styleName = "friendStatusLabel";
-        statusLabel.text = friend.status;
-        statusLabel.percentWidth = 100;
-        statusLabel.width = labelBox.width - 3;
-        statusContainer.addChild(statusLabel);
 
-        addChild(MediaWrapper.createView(friend.name.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
+        var status :Label = FlexUtil.createLabel(friend.status, "friendStatusLabel");
+        status.width = content.width;
+        statusContainer.addChild(status);
+
+        content.addChild(statusContainer);
     }
 
     protected function handleClick (event :MouseEvent) :void
     {
-        if (_name != null) {
+        var friend :FriendEntry = this.data as FriendEntry;
+        if (friend != null) {
             var menuItems :Array = [];
-            mctx.getMsoyController().addFriendMenuItems(_name, menuItems);
+            mctx.getMsoyController().addFriendMenuItems(friend.name, menuItems);
             CommandMenu.createMenu(menuItems, mctx.getTopPanel()).popUpAtMouse();
         }
     }
-
-    protected var _name :MemberName;
 }
 }

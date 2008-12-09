@@ -5,40 +5,31 @@ package com.threerings.msoy.party.client {
 
 import flash.events.MouseEvent;
 
-import mx.containers.HBox;
+import mx.containers.VBox;
 import mx.controls.Label;
 
 import com.threerings.flex.CommandMenu;
+import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.ui.PlayerRenderer;
 
 import com.threerings.msoy.party.data.PartyPeep;
 
-public class PeepRenderer extends HBox
+public class PeepRenderer extends PlayerRenderer
 {
-    // Initialized by ClassFactory
-    public var mctx :MsoyContext;
-
     public function PeepRenderer ()
     {
         addEventListener(MouseEvent.CLICK, handleClick);
     }
 
-    override public function set data (value :Object) :void
+    override protected function addCustomControls (content :VBox) :void
     {
-        super.data = value;
+        var peep :PartyPeep = PartyPeep(this.data);
 
-        if (value != null) {
-            var peep :PartyPeep = PartyPeep(value);
-            _label.text = peep.name.toString();
-        }
-    }
-
-    override protected function createChildren () :void
-    {
-        super.createChildren();
-        _label = new Label();
-        addChild(_label);
+        // TODO: add peepLabel style
+        var name :Label = FlexUtil.createLabel(peep.name.toString(), "friendLabel");
+        name.width = content.width;
+        content.addChild(name);
     }
 
     protected function handleClick (event :MouseEvent) :void
@@ -47,7 +38,5 @@ public class PeepRenderer extends HBox
             mctx.getPartyDirector().popPeepMenu(PartyPeep(data));
         }
     }
-
-    protected var _label :Label;
 }
 }
