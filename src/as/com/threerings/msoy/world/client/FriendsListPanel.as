@@ -26,10 +26,14 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 
 import com.threerings.util.Log;
 
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
+
 import com.threerings.msoy.ui.FlyingPanel;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.Roster;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -97,15 +101,18 @@ public class FriendsListPanel extends FlyingPanel
     {
         super.createChildren();
 
+        if (_wctx.getMemberObject().isGuest()) {
+            var joinBtn :CommandButton = new CommandButton(null, MsoyController.SHOW_SIGN_UP);
+            joinBtn.styleName = "joinNowButton";
+            addChild(FlexUtil.createWideText(Msgs.GENERAL.get("m.guest_friends"), "friendLabel"));
+            addChild(joinBtn);
+            return;
+        }
+
         _friendsList = new Roster(_wctx, MemberObject.FRIENDS, FriendRenderer,
             PlayerEntry.sortByName, FriendEntry.isOnline);
 
         addChild(_friendsList);
-
-        if (_wctx.getMemberObject().isGuest()) {
-            _friendsList.init([ FriendRenderer.GUEST_PROMPT ]);
-            return;
-        }
 
         // add a little separator
         var separator :VBox = new VBox();
