@@ -69,6 +69,25 @@ public class MailLogic
     }
 
     /**
+     * Starts a mail conversation between the specified two parties without filling up the author's
+     * inbox.
+     */
+    public void startBulkConversation (MemberRecord sender, MemberRecord recip, String subject,
+                                       String body)
+        throws ServiceException
+    {
+        // now start the conversation (and deliver the message)
+        _mailRepo.startConversation(recip.memberId, sender.memberId, subject, body, null, false);
+
+        // potentially send a real email to the recipient
+        sendMailEmail(sender, recip, subject, body);
+
+        // let recipient know they've got mail
+        MemberNodeActions.reportUnreadMail(
+            recip.memberId, _mailRepo.loadUnreadConvoCount(recip.memberId));
+    }
+
+    /**
      * Starts a mail conversation between the specified two parties.
      */
     public void startConversation (MemberRecord sender, MemberRecord recip,
@@ -79,7 +98,8 @@ public class MailLogic
         processPayload(sender.memberId, recip.memberId, attachment);
 
         // now start the conversation (and deliver the message)
-        _mailRepo.startConversation(recip.memberId, sender.memberId, subject, body, attachment);
+        _mailRepo.startConversation(
+            recip.memberId, sender.memberId, subject, body, attachment, true);
 
         // potentially send a real email to the recipient
         sendMailEmail(sender, recip, subject, body);

@@ -303,6 +303,8 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         // finally delete the actual item
+        // TODO: this does not seem to delete the original upload from the creator's inventory,
+        // allowing the item to still be used by the creator and immediately put back in the shop
         repo.deleteItem(item.itemId);
         deletionCount ++;
 
@@ -313,7 +315,7 @@ public class AdminServlet extends MsoyServiceServlet
             }
             final MemberRecord owner = _memberRepo.loadMember(ownerId);
             if (owner != null) {
-                _mailLogic.startConversation(memrec, owner, subject, body, null);
+                _mailLogic.startBulkConversation(memrec, owner, subject, body);
             }
         }
 
@@ -424,7 +426,7 @@ public class AdminServlet extends MsoyServiceServlet
     {
         final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
         final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
-        _mailRepo.startConversation(recipientId, senderId, subject, body, null);
+        _mailRepo.startConversation(recipientId, senderId, subject, body, null, true);
     }
     
     public void setCharityInfo (CharityInfo charityInfo)

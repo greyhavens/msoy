@@ -129,7 +129,8 @@ public class MailRepository extends DepotRepository
      * Starts a conversation with the specified subject.
      */
     public ConversationRecord startConversation (int recipientId, int authorId, String subject,
-                                                 String body, MailPayload payload)
+                                                 String body, MailPayload payload,
+                                                 boolean authorParticipation)
     {
         // first serialize the payload so that we can fail early if that fails
         ConvMessageRecord cmrec = new ConvMessageRecord();
@@ -159,11 +160,13 @@ public class MailRepository extends DepotRepository
         cmrec.body = body;
         insert(cmrec);
 
-        ParticipantRecord aprec = new ParticipantRecord();
-        aprec.conversationId = conrec.conversationId;
-        aprec.participantId = authorId;
-        aprec.lastRead = conrec.lastSent;
-        insert(aprec);
+        if (authorParticipation) {
+            ParticipantRecord aprec = new ParticipantRecord();
+            aprec.conversationId = conrec.conversationId;
+            aprec.participantId = authorId;
+            aprec.lastRead = conrec.lastSent;
+            insert(aprec);
+        }
 
         ParticipantRecord rprec = new ParticipantRecord();
         rprec.conversationId = conrec.conversationId;
