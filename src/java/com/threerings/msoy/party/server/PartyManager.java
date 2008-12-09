@@ -22,7 +22,6 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
