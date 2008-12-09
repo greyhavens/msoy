@@ -63,6 +63,7 @@ import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.MedalRepository;
 
 /**
  * Provides the server implementation of {@link GroupService}.
@@ -586,6 +587,7 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected MedalRepository _medalRepo;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
