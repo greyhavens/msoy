@@ -12,6 +12,7 @@ import com.threerings.presents.dobj.SubscriberAdapter;
 import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandMenu;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -21,7 +22,6 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.chat.client.ReportingListener;
-import com.threerings.msoy.world.client.WorldController;
 
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
@@ -55,21 +55,21 @@ public class PartyDirector extends BasicDirector
         }
     }
 
-    public function getPeepMenuItems (peep :PartyPeep) :Array
+    public function popPeepMenu (peep :PartyPeep) :void
     {
         var menuItems :Array = [];
 
-        menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
-                         command: WorldController.OPEN_CHANNEL, arg: peep.name });
-        menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
-                         command: WorldController.VIEW_MEMBER, arg: peep.name.getMemberId() });
+        _mctx.getMsoyController().addMemberMenuItems(peep.name, menuItems);
 
-        if (_partyObj.leaderId == _mctx.getMyName().getMemberId()) {
+        const peepId :int = peep.name.getMemberId();
+        const ourId :int = _mctx.getMyName().getMemberId();
+        if (_partyObj.leaderId == ourId && peepId != ourId) {
+            menuItems.push({ type: "separator" });
             menuItems.push({ label: Msgs.PARTY.get("b.boot_peep"),
                              callback: bootMember, arg: peep.name.getMemberId() });
         }
 
-        return menuItems;
+        CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
     }
 
     /**
