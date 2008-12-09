@@ -15,7 +15,6 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 
-import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
