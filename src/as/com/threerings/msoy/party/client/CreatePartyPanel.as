@@ -43,7 +43,7 @@ public class CreatePartyPanel extends FloatingPanel
 
         // see which groups are valid
         var us :MemberObject = (_ctx.getClient().getClientObject() as MemberObject);
-        if (us.groups.size() == 0) {
+        if (us.groups == null || us.groups.size() == 0) {
             addChild(FlexUtil.createLabel(Msgs.PARTY.get("e.party_need_group")));
             addButtons(CANCEL_BUTTON);
             return;
