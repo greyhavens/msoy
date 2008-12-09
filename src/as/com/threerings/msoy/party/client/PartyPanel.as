@@ -82,7 +82,6 @@ public class PartyPanel extends FloatingPanel
         _ctx.getPartyDirector().updateStatus(_status.text);
     }
 
-
     protected var _partyObj :PartyObject;
 
     protected var _roster :Roster;
