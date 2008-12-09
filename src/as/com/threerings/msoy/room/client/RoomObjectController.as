@@ -351,6 +351,7 @@ public class RoomObjectController extends RoomController
     public function handlePublishRoom () :void
     {
         _roomObj.roomService.publishRoom(_wdctx.getClient(), new ReportingListener(_wdctx));
+        WorldControlBar(_wdctx.getTopPanel().getControlBar()).showShareButtonBubble();
     }
 
     /**

@@ -24,6 +24,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
+import com.threerings.msoy.client.BubblePopup;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
@@ -70,6 +71,17 @@ public class WorldControlBar extends ControlBar
     public function get friendsBtn () :CommandButton
     {
         return _friendsBtn;
+    }
+
+    /**
+     * Shows a help bubble emphasizing the use of the share button.
+     * TODO: make more generic
+     */
+    public function showShareButtonBubble () :void
+    {
+        // top center of the button (w/ vertical offset to clear the control bar)
+        var gloc :Point = _shareBtn.localToGlobal(new Point(_shareBtn.width / 2, -7));
+        BubblePopup.showHelpBubble(_ctx.getTopPanel().getPlaceContainer(), "m.room_share", gloc);
     }
 
     /**
