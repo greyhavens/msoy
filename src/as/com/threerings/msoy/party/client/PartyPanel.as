@@ -17,6 +17,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.party.data.PartyObject;
+import com.threerings.msoy.party.data.PartyPeep;
 
 public class PartyPanel extends FloatingPanel
 {
@@ -32,7 +33,8 @@ public class PartyPanel extends FloatingPanel
     {
         super.createChildren();
 
-        _roster = new Roster(_ctx, PartyObject.PEEPS, PeepRenderer);
+        _roster = new Roster(_ctx, PartyObject.PEEPS, PeepRenderer,
+            PartyPeep.createSortByOrder(_partyObj));
         _roster.init(_partyObj.peeps.toArray());
         _partyObj.addListener(_roster);
 
