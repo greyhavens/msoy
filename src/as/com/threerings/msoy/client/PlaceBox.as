@@ -21,6 +21,9 @@ import com.threerings.msoy.client.MsoyPlaceView;
  */
 public class PlaceBox extends LayeredContainer
 {
+    /** The layer priority of help text bubbles. */
+    public static const LAYER_HELP_BUBBLES :int = 5;
+
     /** The layer priority of the loading spinner. */
     public static const LAYER_ROOM_SPINNER :int = 10;
 
