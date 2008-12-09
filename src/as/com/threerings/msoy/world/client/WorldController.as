@@ -1069,16 +1069,20 @@ public class WorldController extends MsoyController
 
     // from MsoyController
     override public function addMemberMenuItems (
-        member :MemberName, menuItems :Array, addAvatarItems :Boolean = false) :void
+        member :MemberName, menuItems :Array,
+        addPlaceItems :Boolean = false, addAvatarItems :Boolean = false) :void
     {
         const memId :int = member.getMemberId();
         const us :MemberObject = _wctx.getMemberObject();
         const isUs :Boolean = (memId == us.getMemberId());
         const isGuest :Boolean = MemberName.isGuest(memId);
-        var placeCtrl :Object = _wctx.getLocationDirector().getPlaceController();
-        if (placeCtrl == null) {
-            // check the gamecontext's place
-            placeCtrl = _wctx.getGameDirector().getGameController();
+        var placeCtrl :Object = null;
+        if (addPlaceItems) {
+            placeCtrl = _wctx.getLocationDirector().getPlaceController();
+            if (placeCtrl == null) {
+                // check the gamecontext's place
+                placeCtrl = _wctx.getGameDirector().getGameController();
+            }
         }
 
         // if we're not a guest, populate availability menu.

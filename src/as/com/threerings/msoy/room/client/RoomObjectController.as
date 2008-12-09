@@ -404,7 +404,7 @@ public class RoomObjectController extends RoomController
 
         var menuItems :Array = [];
         _wdctx.getMsoyController().addMemberMenuItems(
-            occInfo.username as MemberName, menuItems, true);
+            occInfo.username as MemberName, menuItems, true, true);
         popActorMenu(avatar, menuItems);
     }
 

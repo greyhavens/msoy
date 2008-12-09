@@ -131,7 +131,7 @@ class LabelBox extends HBox
     protected function handleClick (event :MouseEvent) :void
     {
         var menuItems :Array = [];
-        _mctx.getMsoyController().addMemberMenuItems(_name, menuItems, _forRoom);
+        _mctx.getMsoyController().addMemberMenuItems(_name, menuItems, _forRoom, _forRoom);
         CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
     }
 
