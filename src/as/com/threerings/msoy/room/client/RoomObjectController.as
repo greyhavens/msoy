@@ -351,7 +351,16 @@ public class RoomObjectController extends RoomController
     public function handlePublishRoom () :void
     {
         _roomObj.roomService.publishRoom(_wdctx.getClient(), new ReportingListener(_wdctx));
-        WorldControlBar(_wdctx.getControlBar()).showShareButtonBubble();
+        // TODO: remove when A/B test is finished
+        _wdctx.getMsoyClient().getABTestGroup("2008 12 share hint", true, new ResultAdapter(
+            function (group :int) :void {
+                // group 1: no help, group 2: help
+                if (group == 2) {
+                    WorldControlBar(_wdctx.getControlBar()).showShareButtonBubble();
+                }
+            },
+            function (cause :String) :void {
+            }));
     }
 
     /**

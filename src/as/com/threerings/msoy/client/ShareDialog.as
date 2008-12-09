@@ -312,6 +312,15 @@ public class ShareDialog extends FloatingPanel
         }
     }
 
+    // from FloatingPanel
+    /** @inheritDoc */
+    protected override function didOpen () :void
+    {
+        // TODO: remove this method when A/B test is finished
+        super.didOpen();
+        _ctx.getMsoyClient().trackTestAction("share dialog opened", "2008 12 share hint");
+    }
+
     protected var _inGame :Boolean;
     protected var _placeName :String;
     protected var _placeId :int;
