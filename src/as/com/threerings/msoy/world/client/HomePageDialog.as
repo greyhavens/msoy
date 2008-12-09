@@ -139,24 +139,9 @@ public class HomePageDialog extends FloatingPanel
         }
 
         // Create the image
-        var image :UIComponent;
-        if (true) {
-            var view :ScalingMediaContainer = new ScalingMediaContainer(IMAGE_WIDTH, IMAGE_HEIGHT);
-            view.setMediaDesc(item.getImage());
-            image = new MediaWrapper(view, IMAGE_WIDTH, IMAGE_HEIGHT, true);
-
-        } else {
-            // test code for before we have lots of images
-            image = new UIComponent();
-            function rand (bits :int) :int { return int(128 + Math.random() * 128) << bits; }
-            image.graphics.beginFill(rand(16) + rand(8) + rand(0));
-            if (Math.random() < .25) {
-                image.graphics.drawRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
-            } else {
-                image.graphics.drawEllipse(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
-            }
-            image.graphics.endFill();
-        }
+        var view :ScalingMediaContainer = new ScalingMediaContainer(IMAGE_WIDTH, IMAGE_HEIGHT);
+        view.setMediaDesc(item.getImage());
+        var image :UIComponent = new MediaWrapper(view, IMAGE_WIDTH, IMAGE_HEIGHT, true);
 
         // create the label
         var label :Text = new Text();
