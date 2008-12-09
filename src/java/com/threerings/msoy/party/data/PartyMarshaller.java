@@ -56,4 +56,17 @@ public class PartyMarshaller extends InvocationMarshaller
             listener2
         });
     }
+
+    /** The method id used to dispatch {@link #updateStatus} requests. */
+    public static final int UPDATE_STATUS = 4;
+
+    // from interface PartyService
+    public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)
+    {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, UPDATE_STATUS, new Object[] {
+            arg2, listener3
+        });
+    }
 }

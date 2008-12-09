@@ -85,13 +85,19 @@ public class PartyManager
         ClientObject caller, int playerId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject member = (MemberObject)caller;
-        // only the leader may boot
+        requireLeader(caller);
+
+        removePlayer(playerId);
+    }
+
+    protected MemberObject requireLeader (ClientObject client)
+        throws InvocationException
+    {
+        MemberObject member = (MemberObject)client;
         if (member.getMemberId() != _partyObj.leaderId) {
             throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
         }
-
-        removePlayer(playerId);
+        return member;
     }
 
     // from interface PartyProvider
@@ -109,7 +115,19 @@ public class PartyManager
         ClientObject caller, int memberId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
+        MemberObject member = requireLeader(caller);
+
         // TODO
+    }
+
+    // from interface PartyProvider
+    public void updateStatus (
+        ClientObject caller, String status, InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        requireLeader(caller);
+
+        _partyObj.setStatus(status);
     }
 
     /**

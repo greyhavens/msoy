@@ -141,6 +141,12 @@ public class PartyDirector extends BasicDirector
             new ReportingListener(_mctx, MsoyCodes.PARTY_MSGS));
     }
 
+    public function updateStatus (status :String) :void
+    {
+        _partyObj.partyService.updateStatus(_mctx.getClient(), status,
+            new ReportingListener(_mctx, MsoyCodes.PARTY_MSGS));
+    }
+
     /**
      * Leaves the current party.
      */

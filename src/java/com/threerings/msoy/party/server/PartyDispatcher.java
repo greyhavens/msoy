@@ -53,6 +53,12 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
             );
             return;
 
+        case PartyMarshaller.UPDATE_STATUS:
+            ((PartyProvider)provider).updateStatus(
+                source, (String)args[0], (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;
