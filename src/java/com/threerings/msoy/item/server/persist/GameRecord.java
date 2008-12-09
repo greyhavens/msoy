@@ -193,7 +193,7 @@ public class GameRecord extends ItemRecord
     public byte genre;
 
     /** The XML game configuration. */
-    @Column(type="TEXT")
+    @Column(length=65535)
     public String config;
 
     /** A hash code identifying the game media. */
