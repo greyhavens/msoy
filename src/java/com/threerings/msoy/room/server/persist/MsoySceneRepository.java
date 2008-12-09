@@ -559,7 +559,13 @@ public class MsoySceneRepository extends DepotRepository
         model.version = 1;
         model.name = stock.getName();
 
-        if (stock != SceneRecord.Stock.PUBLIC_ROOM) {
+        if (stock == SceneRecord.Stock.PUBLIC_ROOM) {
+            // set it up to be owned by group 1
+            model.ownerType = MsoySceneModel.OWNER_TYPE_GROUP;
+            model.ownerId = 1;
+
+        } else {
+            // add a door to the PUBLIC_ROOM
             FurniData f = new FurniData();
             f.id = 1;
             f.media = new MediaDesc("e8b660ec5aa0aa30dab46b267daf3b80996269e7.swf");
