@@ -55,6 +55,9 @@ public class MsoyCodes extends InvocationCodes
     /** Identifies our home page grid message bundle. */
     public static const HOME_PAGE_GRID_MSGS :String = "homepagegrid";
 
+    /** Identifies our help message bundle. */
+    public static const HELP_MSGS :String = "help";
+
     /** The maximum length of any name we store in our database tables. */
     public static const MAX_NAME_LENGTH :int = 254; // the db indicates 255, but reality is 254
 }

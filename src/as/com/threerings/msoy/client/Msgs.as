@@ -85,6 +85,12 @@ public class Msgs
         return _homePageGrid;
     }
 
+    /** The help message bundle. */
+    public static function get HELP () :MessageBundle
+    {
+        return _help;
+    }
+
     /**
      * Initialize the bundles.
      */
@@ -106,6 +112,7 @@ public class Msgs
         _passport = msgMgr.getBundle(MsoyCodes.PASSPORT_MSGS);
         _party = msgMgr.getBundle(MsoyCodes.PARTY_MSGS);
         _homePageGrid = msgMgr.getBundle(MsoyCodes.HOME_PAGE_GRID_MSGS);
+        _help = msgMgr.getBundle(MsoyCodes.HELP_MSGS);
     }
 
     protected static var _general :MessageBundle;
@@ -120,5 +127,6 @@ public class Msgs
     protected static var _passport :MessageBundle;
     protected static var _party :MessageBundle;
     protected static var _homePageGrid :MessageBundle;
+    protected static var _help :MessageBundle;
 }
 }
