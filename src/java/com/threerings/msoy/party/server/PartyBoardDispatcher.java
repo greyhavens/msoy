@@ -37,13 +37,19 @@ public class PartyBoardDispatcher extends InvocationDispatcher<PartyBoardMarshal
         switch (methodId) {
         case PartyBoardMarshaller.CREATE_PARTY:
             ((PartyBoardProvider)provider).createParty(
-                source, (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
+                source, (String)args[0], ((Integer)args[1]).intValue(), ((Boolean)args[2]).booleanValue(), (InvocationService.ResultListener)args[3]
             );
             return;
 
         case PartyBoardMarshaller.GET_PARTY_BOARD:
             ((PartyBoardProvider)provider).getPartyBoard(
                 source, (String)args[0], (InvocationService.ResultListener)args[1]
+            );
+            return;
+
+        case PartyBoardMarshaller.GET_PARTY_DETAIL:
+            ((PartyBoardProvider)provider).getPartyDetail(
+                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
             );
             return;
 

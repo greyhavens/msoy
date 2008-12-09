@@ -5,6 +5,7 @@ package com.threerings.msoy.party.client {
 
 import mx.containers.Grid;
 
+import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.TextInput;
 
@@ -68,9 +69,13 @@ public class CreatePartyPanel extends FloatingPanel
                 return { label: item.group.toString(), data: item.group.getGroupId() };
             });
 
+        _inviteAll = new CheckBox();
+        _inviteAll.selected = true;
+
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, Msgs.PARTY.get("l.name"), _name);
         GridUtil.addRow(grid, Msgs.PARTY.get("l.group"), _group);
+        GridUtil.addRow(grid, Msgs.PARTY.get("l.invite_friends"), _inviteAll);
         addChild(grid);
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
@@ -87,7 +92,8 @@ public class CreatePartyPanel extends FloatingPanel
     override protected function buttonClicked (buttonId :int) :void
     {
         if (buttonId == OK_BUTTON) {
-            _ctx.getPartyDirector().createParty(_name.text, int(_group.selectedItem.data));
+            _ctx.getPartyDirector().createParty(
+                _name.text, int(_group.selectedItem.data), _inviteAll.selected);
         }
 
         super.buttonClicked(buttonId);
@@ -96,5 +102,7 @@ public class CreatePartyPanel extends FloatingPanel
     protected var _name :TextInput;
 
     protected var _group :ComboBox;
+
+    protected var _inviteAll :CheckBox;
 }
 }

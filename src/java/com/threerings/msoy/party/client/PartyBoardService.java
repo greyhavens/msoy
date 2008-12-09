@@ -24,5 +24,11 @@ public interface PartyBoardService extends InvocationService
      * Create your own party.
      * Returns an oid, of the party object on success.
      */
-    void createParty (Client client, String name, int groupId, ResultListener rl);
+    void createParty (
+        Client client, String name, int groupId, boolean inviteAllFriends, ResultListener rl);
+
+    /**
+     * Retreive detailed information on a party.
+     */
+    void getPartyDetail (Client client, int partyId, ResultListener rl);
 }

@@ -19,6 +19,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.chat.client.ReportingListener;
@@ -43,6 +44,17 @@ public class PartyDirector extends BasicDirector
         _mctx = ctx;
     }
 
+    public function isInParty () :Boolean
+    {
+        var clobj :Object = _mctx.getClient().getClientObject();
+        return (clobj is MemberObject) && (MemberObject(clobj).partyId != 0);
+    }
+
+    public function isPartyLeader () :Boolean
+    {
+        return (_partyObj != null) && (_partyObj.leaderId == _mctx.getMyName().getMemberId());
+    }
+
     /**
      * Create either a party board popup, or a party popup if we're already in a party.
      */
@@ -65,7 +77,7 @@ public class PartyDirector extends BasicDirector
         const ourId :int = _mctx.getMyName().getMemberId();
         if (_partyObj.leaderId == ourId && peepId != ourId) {
             menuItems.push({ type: "separator" });
-            menuItems.push({ label: Msgs.PARTY.get("b.boot_peep"),
+            menuItems.push({ label: Msgs.PARTY.get("b.boot"),
                              callback: bootMember, arg: peep.name.getMemberId() });
         }
 
@@ -84,9 +96,9 @@ public class PartyDirector extends BasicDirector
     /**
      * Create a new party.
      */
-    public function createParty (name :String, groupId :int) :void
+    public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void
     {
-        _pbsvc.createParty(_mctx.getClient(), name, groupId,
+        _pbsvc.createParty(_mctx.getClient(), name, groupId, inviteAllFriends,
             new ResultAdapter(partyOidKnown, _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 

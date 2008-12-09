@@ -120,17 +120,12 @@ public class PartyManager
     {
         // TODO: allow players specifically invited by the leader
 
-        switch (_partyObj.recruiting) {
-        case PartyCodes.RECRUITMENT_OPEN:
+        if (_lastInfo == null) {
+            // allow the first player to join, which happens immediately
             return true;
-
-        case PartyCodes.RECRUITMENT_GROUP:
-            return member.isGroupMember(_partyObj.group.getGroupId());
-
-        default:
-        case PartyCodes.RECRUITMENT_CLOSED:
-            return false;
         }
+
+        return _lastInfo.hasAccess(member);
     }
 
     /**
@@ -206,9 +201,10 @@ public class PartyManager
      */
     protected void updatePartyInfo ()
     {
-        _peerMgr.updatePartyInfo(new PartyInfo(
+        _lastInfo = new PartyInfo(
             _partyObj.id, _partyObj.name, _partyObj.leaderId, _partyObj.group, _partyObj.status,
-            _partyObj.peeps.size(), _partyObj.recruiting));
+            _partyObj.peeps.size(), _partyObj.recruiting);
+        _peerMgr.updatePartyInfo(_lastInfo);
     }
 
     protected class UserListener
@@ -228,6 +224,8 @@ public class PartyManager
     }
 
     protected PartyObject _partyObj;
+
+    protected PartyInfo _lastInfo;
 
     protected IntMap<UserListener> _userListeners = IntMaps.newHashIntMap();
 

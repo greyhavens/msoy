@@ -7,6 +7,7 @@ import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.GroupName;
 
 /**
@@ -58,7 +59,25 @@ public class PartyInfo extends SimpleStreamableObject
         this.population = population;
         this.recruitment = recruitment;
     }
-            
+
+    /**
+     * Can the specified user access this party?
+     */
+    public boolean hasAccess (MemberObject member)
+    {
+        switch (recruitment) {
+        case PartyCodes.RECRUITMENT_OPEN:
+            return true;
+
+        case PartyCodes.RECRUITMENT_GROUP:
+            return member.isGroupMember(group.getGroupId());
+
+        default:
+        case PartyCodes.RECRUITMENT_CLOSED:
+            return false;
+        }
+    }
+
     // from DSet.Entry
     public Comparable<?> getKey ()
     {

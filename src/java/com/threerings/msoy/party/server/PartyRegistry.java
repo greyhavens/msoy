@@ -72,7 +72,9 @@ public class PartyRegistry
         _peerMgr.applyToNodes(new Function<NodeObject,Void>() {
             public Void apply (NodeObject node) {
                 for (PartyInfo party : ((MsoyNodeObject) node).parties) {
-                    myParties.put(computePartySort(party, member), party);
+                    if (party.hasAccess(member)) {
+                        myParties.put(computePartySort(party, member), party);
+                    }
                 }
                 return null; // Void
             }
@@ -100,7 +102,8 @@ public class PartyRegistry
 
     // from PartyProvider
     public void createParty (
-        ClientObject caller, String name, int groupId, InvocationService.ResultListener rl)
+        ClientObject caller, String name, int groupId, boolean inviteAllFriends,
+        InvocationService.ResultListener rl)
         throws InvocationException
     {
          MemberObject member = (MemberObject)caller;
@@ -147,6 +150,15 @@ public class PartyRegistry
         }
     }
 
+    // from PartyProvider
+    public void getPartyDetail (
+        ClientObject caller, int partyId, InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        // TODO
+        throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+    }
+
     /**
      * Called by a PartyManager when it's removed.
      */
@@ -156,11 +168,32 @@ public class PartyRegistry
         _parties.remove(partyId);
     }
 
+    /**
+     * Can the specified member access this party?
+     */
+    protected boolean canAccessParty (PartyInfo party, MemberObject member)
+    {
+        switch (party.recruitment) {
+        case PartyCodes.RECRUITMENT_OPEN:
+            return true;
+
+        default:
+        case PartyCodes.RECRUITMENT_CLOSED:
+            return false;
+
+        case PartyCodes.RECRUITMENT_GROUP:
+            return member.isGroupMember(party.group.getGroupId());
+        }
+    }
+
+    /**
+     * Compute the score for the specified party, or return null if the user
+     * does not have access to it.
+     */
     protected PartySort computePartySort (PartyInfo party, MemberObject member)
     {
-        int score = 0;
         // start by giving you a score of 100 * your rank in the group. (0, 100, or 200)
-        score += (100 * member.getGroupRank(party.group.getGroupId()));
+        int score = 100 * member.getGroupRank(party.group.getGroupId());
         // give additional score if your friend is leading the party
         if (member.isFriend(party.leaderId)) {
             score += 250;
