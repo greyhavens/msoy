@@ -81,7 +81,8 @@ public class WorldControlBar extends ControlBar
     {
         // top center of the button (w/ vertical offset to clear the control bar)
         var gloc :Point = _shareBtn.localToGlobal(new Point(_shareBtn.width / 2, -7));
-        BubblePopup.showHelpBubble(_ctx.getTopPanel().getPlaceContainer(), "m.room_share", gloc);
+        BubblePopup.showHelpBubble(_ctx.getTopPanel().getPlaceContainer(),
+            Msgs.WORLD.get("h.room_share"), gloc);
     }
 
     /**

@@ -27,7 +27,7 @@ public class BubblePopup extends Sprite
      * Fades in a bubble as an overlay and fades it out again. If the user hovers over it, it fades
      * back in. If the user clicks it, it goes away.
      * @param parent the place box to overlay the bubble
-     * @param str the untranslated string to show in the bubble
+     * @param str the string to show in the bubble
      * @param gloc the global location where the tail of the bubble should be
      */
     public static function showHelpBubble (
@@ -36,7 +36,7 @@ public class BubblePopup extends Sprite
         // convert to local coordinates
         var loc :Point = parent.globalToLocal(gloc);
         // TODO: orient bubble tail based on the edge of the container the new point is closest to
-        var bubble :BubblePopup = new BubblePopup(Msgs.HELP.get(str));
+        var bubble :BubblePopup = new BubblePopup(str);
         bubble.x = loc.x;
         bubble.y = loc.y;
         bubble.alpha = 0;

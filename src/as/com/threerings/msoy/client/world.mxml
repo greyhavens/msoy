@@ -21,7 +21,6 @@
     [ResourceBundle("party")]
     [ResourceBundle("studio")]
     [ResourceBundle("homepagegrid")]
-    [ResourceBundle("help")]
 </mx:Metadata>
 <mx:Script>
     <![CDATA[
