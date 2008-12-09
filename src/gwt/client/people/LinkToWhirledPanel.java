@@ -48,7 +48,7 @@ public class LinkToWhirledPanel extends VerticalPanel
         _htmlCode.setText(_msgs.linkToWhirledClickBelow());
         MsoyUI.selectAllOnFocus(_htmlCode);
 
-        Logo[] squareImageFiles = {
+        addLogoGrid(_msgs.linkToWhirledSquareImages(), 4,
             new Logo("125ad.jpg", Pages.LANDING),
             new Logo("125create.png", Pages.SHOP),
             new Logo("125design.jpg", Pages.LANDING),
@@ -66,42 +66,39 @@ public class LinkToWhirledPanel extends VerticalPanel
             new Logo("125play.png", Pages.GAMES),
             new Logo("125see.png", Pages.ROOMS),
             new Logo("125tofu.png", Pages.LANDING),
-            new Logo("125trophies.png", Pages.GAMES),
-        };
-        // hard wired production game ids
-        Logo[] gameImageFiles = {
-            new Logo("g_bingo.jpg", Pages.GAMES, "d", 929),
-            new Logo("g_brawl.jpg", Pages.GAMES, "d", 10),
-            new Logo("g_corpse.jpg", Pages.GAMES, "d", 827),
-            new Logo("g_ghost.jpg", Pages.GAMES, "d", 206),
-            new Logo("g_lol.jpg", Pages.GAMES, "d", 7),
-            new Logo("g_THD.jpg", Pages.GAMES, "d", 107),
-        };
-        // hard wired production group ids
-        Logo[] groupImageFiles = {
-            new Logo("gr_arcade.jpg", Pages.GROUPS, "d", 10),
-            new Logo("gr_bella.jpg", Pages.GROUPS, "d", 5),
-            new Logo("gr_kawaii.jpg", Pages.GROUPS, "d", 8),
-        };
-        Logo[] tinyImageFiles = {
+            new Logo("125trophies.png", Pages.GAMES));
+
+        add(MsoyUI.createHTML("<hr>", null));
+
+        addLogoGrid(_msgs.linkToWhirledTinyImages(), 3,
             new Logo("tb_blue.png", Pages.LANDING),
             new Logo("tb_green.png", Pages.LANDING),
             new Logo("tb_grey.png", Pages.LANDING),
             new Logo("tb_orange.png", Pages.LANDING),
             new Logo("tb_pink.png", Pages.LANDING),
-            new Logo("tb_red.png", Pages.LANDING),
-        };
+            new Logo("tb_red.png", Pages.LANDING));
 
-        addLogoGrid(_msgs.linkToWhirledSquareImages(), squareImageFiles, 4);
         add(MsoyUI.createHTML("<hr>", null));
-        addLogoGrid(_msgs.linkToWhirledTinyImages(), tinyImageFiles, 3);
+
+        addLogoGrid(_msgs.linkToWhirledGameImages(), 3,
+            // hard wired production game ids
+            new Logo("g_bingo.jpg", Pages.GAMES, "d", 929),
+            new Logo("g_brawl.jpg", Pages.GAMES, "d", 10),
+            new Logo("g_corpse.jpg", Pages.GAMES, "d", 827),
+            new Logo("g_ghost.jpg", Pages.GAMES, "d", 206),
+            new Logo("g_lol.jpg", Pages.GAMES, "d", 7),
+            new Logo("g_THD.jpg", Pages.GAMES, "d", 107));
+
         add(MsoyUI.createHTML("<hr>", null));
-        addLogoGrid(_msgs.linkToWhirledGameImages(), gameImageFiles, 3);
-        add(MsoyUI.createHTML("<hr>", null));
-        addLogoGrid(_msgs.linkToWhirledGroupImages(), groupImageFiles, 3);
+
+        addLogoGrid(_msgs.linkToWhirledGroupImages(), 3,
+            // hard wired production group ids
+            new Logo("gr_arcade.jpg", Pages.GROUPS, "d", 10),
+            new Logo("gr_bella.jpg", Pages.GROUPS, "d", 5),
+            new Logo("gr_kawaii.jpg", Pages.GROUPS, "d", 8));
     }
 
-    protected void addLogoGrid (String title, Logo[] logos, int columns)
+    protected void addLogoGrid (String title, int columns, Logo ...logos)
     {
         add(MsoyUI.createLabel(title, "ImageGridLabel"));
         SmartTable grid = new SmartTable(0, 0);
