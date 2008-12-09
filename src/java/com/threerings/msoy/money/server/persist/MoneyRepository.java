@@ -159,34 +159,6 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
-     * Accumulate money, return a partially-populated MoneyTransactionRecord for
-     * storing.
-     */
-    public MoneyTransactionRecord accumulate (int memberId, Currency currency, int amount)
-    {
-        Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
-
-        ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
-        ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
-        Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
-            .put(currencyCol.getField(), new Arithmetic.Add(currencyCol, amount))
-            .put(currencyAccCol.getField(), new Arithmetic.Add(currencyAccCol, amount))
-            .build();
-        Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
-
-        int count = updateLiteral(MemberAccountRecord.class, key, key, fieldValues);
-        if (count == 0) {
-            // the accumulate should always work, so if we mod'd 0 rows, it means there's
-            // no member.
-            throw new NoSuchMemberException(memberId);
-        }
-        // TODO: be able to get the balance at the same time as the update, pending Depot changes
-        int balance = load(MemberAccountRecord.class, key).getAmount(currency);
-
-        return new MoneyTransactionRecord(memberId, currency, amount, balance);
-    }
-
-    /**
      * Accumulate and store the specified MoneyTransaction.
      */
     public MoneyTransactionRecord accumulateAndStoreTransaction (
@@ -290,11 +262,6 @@ public class MoneyRepository extends DepotRepository
             new Conditionals.Equals(MoneyTransactionRecord.CURRENCY_C, currency),
             new Conditionals.LessThan(
                 MoneyTransactionRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp)))));
-    }
-
-    public List<MoneyTransactionRecord> getTransactions (final Set<Integer> ids)
-    {
-        return loadAll(MoneyTransactionRecord.class, ids);
     }
 
     /**
@@ -509,23 +476,6 @@ public class MoneyRepository extends DepotRepository
         return bpRec;
     }
     
-    /** Cache invalidator that invalidates a member's current cash out record. */
-    protected static class ActiveCashOutInvalidator extends TraverseWithFilter<BlingCashOutRecord>
-    {
-        public ActiveCashOutInvalidator (int memberId)
-        {
-            super(BlingCashOutRecord.class);
-            _memberId = memberId;
-        }
-        
-        protected boolean testForEviction (Serializable key, BlingCashOutRecord record) 
-        {
-            return record.memberId == _memberId && record.timeFinished == null;
-        }
-        
-        protected final int _memberId;
-    }
-    
     /** Helper method to setup a query for a transaction history search. */
     protected void populateSearch (
         List<QueryClause> clauses, int memberId,
@@ -554,5 +504,50 @@ public class MoneyRepository extends DepotRepository
         classes.add(BlingCashOutRecord.class);
         classes.add(BarPoolRecord.class);
         classes.add(ExchangeRecord.class);
+    }
+
+    /**
+     * Accumulate money, return a partially-populated MoneyTransactionRecord for
+     * storing.
+     */
+    protected MoneyTransactionRecord accumulate (int memberId, Currency currency, int amount)
+    {
+        Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
+
+        ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
+        ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
+        Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
+            .put(currencyCol.getField(), new Arithmetic.Add(currencyCol, amount))
+            .put(currencyAccCol.getField(), new Arithmetic.Add(currencyAccCol, amount))
+            .build();
+        Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
+
+        int count = updateLiteral(MemberAccountRecord.class, key, key, fieldValues);
+        if (count == 0) {
+            // the accumulate should always work, so if we mod'd 0 rows, it means there's
+            // no member.
+            throw new NoSuchMemberException(memberId);
+        }
+        // TODO: be able to get the balance at the same time as the update, pending Depot changes
+        int balance = load(MemberAccountRecord.class, key).getAmount(currency);
+
+        return new MoneyTransactionRecord(memberId, currency, amount, balance);
+    }
+
+    /** Cache invalidator that invalidates a member's current cash out record. */
+    protected static class ActiveCashOutInvalidator extends TraverseWithFilter<BlingCashOutRecord>
+    {
+        public ActiveCashOutInvalidator (int memberId)
+        {
+            super(BlingCashOutRecord.class);
+            _memberId = memberId;
+        }
+        
+        protected boolean testForEviction (Serializable key, BlingCashOutRecord record) 
+        {
+            return record.memberId == _memberId && record.timeFinished == null;
+        }
+        
+        protected final int _memberId;
     }
 }
