@@ -386,13 +386,13 @@ public class ThaneAVRGameController
         // locate the room oid
         var resultListener :com.threerings.presents.client.ResultAdapter = 
             new com.threerings.presents.client.ResultAdapter(
+                function (roomOid :int) :void {
+                    gotRoomOid(binding, roomOid);
+                },
                 function (cause :String) :void {
                     log.warning(
                         "Failed to get room oid", "binding", binding, "window", window, "cause",
                         cause);
-                },
-                function (roomOid :int) :void {
-                    gotRoomOid(binding, roomOid);
                 });
 
         var thaneSvc :ThaneWorldService = 

@@ -59,11 +59,10 @@ public class TourDirector extends BasicDirector
         const roomView :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
         const loadingDone :Boolean = (roomView != null) && roomView.loadingDone();
         _tsvc.nextRoom(_ctx.getClient(), loadingDone, new ResultAdapter(
-            _wctx.chatErrHandler(MsoyCodes.WORLD_MSGS),
             function (sceneId :int) :void {
                 _wctx.getSceneDirector().moveTo(sceneId);
                 _tourDialog.setRating(0);
-            }));
+            }, _wctx.chatErrHandler(MsoyCodes.WORLD_MSGS)));
     }
 
     public function endTour () :void

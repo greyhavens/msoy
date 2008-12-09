@@ -348,16 +348,17 @@ public class BackendUtils
         svc :String, processed :Function = null, altOutputFn :Function = null)
         :InvocationService_ConfirmListener
     {
-        return new ConfirmAdapter(function (cause :String) :void {
-            if (altOutputFn != null) {
-                var msg :String = new Date().toLocaleTimeString();
-                msg += ": service failure [service=" + svc + ", cause=" + cause + "]";
-                altOutputFn(msg);
+        return new ConfirmAdapter(processed,
+            function (cause :String) :void {
+                if (altOutputFn != null) {
+                    var msg :String = new Date().toLocaleTimeString();
+                    msg += ": service failure [service=" + svc + ", cause=" + cause + "]";
+                    altOutputFn(msg);
 
-            } else {
-                log.warning("Service failure", "service", svc, "cause", cause);
-            }
-        }, processed);
+                } else {
+                    log.warning("Service failure", "service", svc, "cause", cause);
+                }
+            });
     }
 
     /**

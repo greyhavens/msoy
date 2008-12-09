@@ -348,7 +348,6 @@ public class WorldController extends MsoyController
     {
         var isvc :ItemService = _wctx.getClient().requireService(ItemService) as ItemService;
         isvc.getCatalogId(_wctx.getClient(), ident, new ResultAdapter(
-            _wctx.chatErrHandler(MsoyCodes.GENERAL_MSGS),
             function (result :Object) :void {
                 if (result == null) {
                     // it's an object we own, or it's not listed but we are support+
@@ -361,7 +360,7 @@ public class WorldController extends MsoyController
                 } else {
                     displayPage("shop", "l_" + ident.type + "_" + result);
                 }
-            }));
+            }, _wctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
     }
 
     /**

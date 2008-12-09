@@ -37,13 +37,12 @@ public class MemberDirector extends BasicDirector
     public function inviteToBeFriend (friendId :int) :void
     {
         _msvc.inviteToBeFriend(_wctx.getClient(), friendId, new ResultAdapter(
-            _wctx.chatErrHandler(MsoyCodes.GENERAL_MSGS),
             function (automatic :Boolean) : void {
                 if (!automatic) {
                     _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.friend_invited")
                 }
                 // else: A status updated should be reported here no need to output to chat
-            }));
+            }, _wctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
     }
 
     /**

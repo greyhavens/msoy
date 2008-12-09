@@ -58,7 +58,7 @@ public class GameController extends MsoyController
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         lsvc.identifyLobby(_gctx.getClient(), gameId,
-            new ResultAdapter(_mctx.chatErrHandler(MsoyCodes.GAME_MSGS), gotLobbyOid));
+            new ResultAdapter(gotLobbyOid, _mctx.chatErrHandler(MsoyCodes.GAME_MSGS)));
     }
 
     protected function gotLobbyOid (lobbyOid :int) :void

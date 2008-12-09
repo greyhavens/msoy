@@ -65,13 +65,14 @@ public class LobbyGameLiaison extends GameLiaison
         }
 
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultAdapter = new ResultAdapter(function (cause :String) :void {
-            _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-            // some failure cases are innocuous, and should be followed up by a display of the 
-            // lobby; if we really are hosed, joinLobby() will cause the liaison to shut down
-            _wctx.getWorldController().restoreSceneURL();
-            joinLobby();
-        }, gotPlayerGameOid);
+        var cb :ResultAdapter = new ResultAdapter(gotPlayerGameOid,
+            function (cause :String) :void {
+                _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+                // some failure cases are innocuous, and should be followed up by a display of the 
+                // lobby; if we really are hosed, joinLobby() will cause the liaison to shut down
+                _wctx.getWorldController().restoreSceneURL();
+                joinLobby();
+            });
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
     }
 
@@ -109,16 +110,17 @@ public class LobbyGameLiaison extends GameLiaison
     public function playNow (mode :int) :void
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultAdapter = new ResultAdapter(function (cause :String) :void {
-            _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-            shutdown();
-        },
-        function (lobbyOid :int) :void {
-            if (lobbyOid != 0) {
-                // we failed to start a game (see below) so join the lobby instead
-                gotLobbyOid(lobbyOid);
-            }
-        });
+        var cb :ResultAdapter = new ResultAdapter(
+            function (lobbyOid :int) :void {
+                if (lobbyOid != 0) {
+                    // we failed to start a game (see below) so join the lobby instead
+                    gotLobbyOid(lobbyOid);
+                }
+            },
+            function (cause :String) :void {
+                _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+                shutdown();
+            });
 
         // the playNow() call will resolve the lobby on the game server, then attempt to start a
         // game for us; if it succeeds, it sends back a zero result and we need take no further
@@ -232,10 +234,11 @@ public class LobbyGameLiaison extends GameLiaison
     protected function joinLobby () :void
     {
 //        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-//        var cb :ResultAdapter = new ResultAdapter(function (cause :String) :void {
-//            _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-//            shutdown();
-//        }, gotLobbyOid);
+//        var cb :ResultAdapter = new ResultAdapter(gotLobbyOid,
+//            function (cause :String) :void {
+//                _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+//                shutdown();
+//            });
 //        lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
 
         // It's the new-style! Same as above, but if single player is the only option-

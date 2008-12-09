@@ -105,12 +105,11 @@ public class RoomPanel extends BasePanel
                 var svc :MemberService = 
                     _controller.ctx.getClient().requireService(MemberService) as MemberService;
                 svc.getGroupHomeSceneId(_controller.ctx.getClient(), sceneModel.ownerId,
-                    new ResultAdapter(_controller.ctx.chatErrHandler(MsoyCodes.EDITING_MSGS),
-                        // processed function
-                        function (result :Object) :void {
+                    new ResultAdapter(
+                        function (result :Object) :void { // processed function
                             _homeButton.enabled = sceneModel.sceneId != (result as int);
-                        }
-                    ));
+                        },
+                        _controller.ctx.chatErrHandler(MsoyCodes.EDITING_MSGS)));
             }
 
         } else {

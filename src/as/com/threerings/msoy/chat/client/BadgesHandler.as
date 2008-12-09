@@ -29,10 +29,10 @@ public class BadgesHandler extends CommandHandler
     {
         var client :Client = ctx.getClient();
         var msvc :MemberService = client.requireService(MemberService) as MemberService;
-        msvc.loadAllBadges(client, new ResultAdapter(MsoyContext(ctx).chatErrHandler(),
+        msvc.loadAllBadges(client, new ResultAdapter(
             function (badges :Array /* of EarnedBadge */) :void {
                 (new BadgeListPanel(ctx as MsoyContext, badges)).open();
-            }));
+            }, MsoyContext(ctx).chatErrHandler()));
 
         return ChatCodes.SUCCESS;
     }

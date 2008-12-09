@@ -70,7 +70,7 @@ public class WorldDirector extends BasicDirector
         } 
 
         _msvc.getCurrentMemberLocation(_wctx.getClient(), memberId,
-            new ResultAdapter(_wctx.chatErrHandler(), finishGoToMemberLocation));
+            new ResultAdapter(finishGoToMemberLocation, _wctx.chatErrHandler()));
     }
 
     /**
@@ -98,7 +98,7 @@ public class WorldDirector extends BasicDirector
             return;
         }
         _msvc.getHomeId(_wctx.getClient(), ownerType, ownerId,
-            new ResultAdapter(_wctx.chatErrHandler(), _wctx.getSceneDirector().moveTo));
+            new ResultAdapter(_wctx.getSceneDirector().moveTo, _wctx.chatErrHandler()));
     }
 
     /**

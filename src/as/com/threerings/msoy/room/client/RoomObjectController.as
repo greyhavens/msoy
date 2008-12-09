@@ -312,10 +312,9 @@ public class RoomObjectController extends RoomController
         }
 
         _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultAdapter(
-            _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS),
             function (result :Object) :void {
                 DoorTargetEditController.start(furniData, _wdctx);
-            }));
+            }, _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
     }
 
     /**
@@ -333,10 +332,9 @@ public class RoomObjectController extends RoomController
             return;
         }
         _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultAdapter(
-            _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS),
             function (result :Object) :void {
                 beginRoomEditing();
-            }));
+            }, _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
     }
 
     /**
@@ -524,13 +522,14 @@ public class RoomObjectController extends RoomController
     {
         var svc :ItemService = _wdctx.getClient().requireService(ItemService) as ItemService;
 
-        svc.deleteItem(_wdctx.getClient(), ident, new ConfirmAdapter(_wdctx.chatErrHandler()));
+        svc.deleteItem(_wdctx.getClient(), ident,
+            new ConfirmAdapter(null, _wdctx.chatErrHandler()));
     }
 
     override public function rateRoom (rating :Number, onSuccess :Function) :void
     {
         _roomObj.roomService.rateRoom(_wdctx.getClient(), rating,
-            new ResultAdapter(_wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS), onSuccess));
+            new ResultAdapter(onSuccess, _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
     }
 
     /**
@@ -637,10 +636,9 @@ public class RoomObjectController extends RoomController
             if (item.isUsed()) {
                 var msg :String = Item.getTypeKey(itemType);
                 (new ItemUsedDialog(_wdctx, Msgs.ITEM.get(msg), function () :void {
-                    var confWrap :ConfirmAdapter = new ConfirmAdapter(
+                    var confWrap :ConfirmAdapter = new ConfirmAdapter(useNewItem,
                         _wdctx.chatErrHandler(MsoyCodes.EDITING_MSGS, "e.failed_to_remove",
-                            "Failed to reclaim item", "item", ident),
-                        useNewItem);
+                            "Failed to reclaim item", "item", ident));
                     isvc.reclaimItem(_wdctx.getClient(), ident, confWrap);
                 })).open(true);
             } else {
@@ -649,7 +647,7 @@ public class RoomObjectController extends RoomController
         };
 
         isvc.peepItem(_wdctx.getClient(), ident,
-            new ResultAdapter(_wdctx.chatErrHandler(MsoyCodes.EDITING_MSGS), gotItem));
+            new ResultAdapter(gotItem, _wdctx.chatErrHandler(MsoyCodes.EDITING_MSGS)));
     }
 
     /**
@@ -845,7 +843,6 @@ public class RoomObjectController extends RoomController
         // ship the update request off to the server
         _roomObj.roomService.updateMemory(_wdctx.getClient(),
             new EntityMemoryEntry(ident, key, data), new ResultAdapter(
-                _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS),
                 function (success :Boolean) :void {
                     if (callback != null) {
                         try {
@@ -855,7 +852,7 @@ public class RoomObjectController extends RoomController
                             // ignored- error in usercode
                         }
                     }
-                }));
+                }, _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
     }
 
     // documentation inherited

@@ -107,7 +107,7 @@ public class HomePageDialog extends FloatingPanel
     {
         log.info("Requesting home page items");
         var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        svc.getHomePageGridItems(_ctx.getClient(), new ResultAdapter(failedToGetItems, gotItems));
+        svc.getHomePageGridItems(_ctx.getClient(), new ResultAdapter(gotItems, failedToGetItems));
     }
 
     protected function failedToGetItems (cause :String) :void

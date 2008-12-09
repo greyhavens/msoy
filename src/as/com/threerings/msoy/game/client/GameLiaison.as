@@ -305,10 +305,6 @@ public class GameLiaison
             // perform an A/B(/C) test on game over upsell text for guests 
             _wctx.getMsoyClient().getABTestGroup(
                 "2008 11 game over upsell", true, new ResultAdapter(
-                    function () :void {
-                        // if something goes wrong display default note
-                        displayDefaultNote();
-                    }, 
                     function (group :int) :void {
                         if (group == -1) {
                             // if not in a group display default note
@@ -316,6 +312,10 @@ public class GameLiaison
                         } else {
                             populateGuestFlowEarnage(amount, "l.guest_flow_note_" + group);
                         }
+                    },
+                    function (cause :String) :void {
+                        // if something goes wrong display default note
+                        displayDefaultNote();
                     }));
         }
     }

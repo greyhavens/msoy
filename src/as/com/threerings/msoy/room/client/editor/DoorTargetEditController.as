@@ -179,14 +179,13 @@ public class DoorTargetEditController
     {
         var roomObj :RoomObject = (_ctx.getLocationDirector().getPlaceObject() as RoomObject);
         roomObj.roomService.purchaseRoom(_ctx.getClient(), new ResultAdapter(
-            _ctx.chatErrHandler(),
             function (result :Object) :void { // success handler
                 if (result != null) {
                     var newSceneId :int = int(Number(result));
                     // Log.getLog(this).info("Room purchase success, id = " + newSceneId);
                     setDoor(newSceneId);
                 }
-            }));
+            }, _ctx.chatErrHandler()));
     }
 
     /**

@@ -156,17 +156,17 @@ public class MsoyChatDirector extends ChatDirector
     public function requestJabber (target :JabberName, msg :String, feedbackLocaltype :String) :void
     {
         _jservice.sendMessage(_mctx.getClient(), target, msg, new ResultAdapter(
-            function (cause :String) :void {
-                var msg :String = MessageBundle.compose(
-                    "e.im_tell_failed", MessageBundle.taint(cause));
-                displaySystem(MsoyCodes.CHAT_MSGS, msg, SystemMessage.FEEDBACK, feedbackLocaltype);
-            },
             function (result :Object) :void {
                 if (result != null && result is String) {
                     displaySystem(MsoyCodes.CHAT_MSGS, (result as String), SystemMessage.FEEDBACK,
                                   feedbackLocaltype);
                 }
                 dispatchMessage(new TellFeedbackMessage(target, msg), feedbackLocaltype);
+            },
+            function (cause :String) :void {
+                var msg :String = MessageBundle.compose(
+                    "e.im_tell_failed", MessageBundle.taint(cause));
+                displaySystem(MsoyCodes.CHAT_MSGS, msg, SystemMessage.FEEDBACK, feedbackLocaltype);
             }));
     }
 

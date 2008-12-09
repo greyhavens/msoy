@@ -15,11 +15,11 @@ public class ReportingListener extends ConfirmAdapter
     public function ReportingListener (
         ctx :MsoyContext, msgBundle :String = null, errWrap :String = null, success :String = null)
     {
-        super(ctx.chatErrHandler(msgBundle, errWrap),
-            (success == null) ? null :
+        super((success == null) ? null :
             function () :void {
                 ctx.displayFeedback(msgBundle, success);
-            });
+            },
+            ctx.chatErrHandler(msgBundle, errWrap));
     }
 }
 }

@@ -78,7 +78,7 @@ public class PartyDirector extends BasicDirector
     public function getPartyBoard (resultHandler :Function, query :String = null) :void
     {
         _pbsvc.getPartyBoard(_mctx.getClient(), query,
-            new ResultAdapter(_mctx.chatErrHandler(MsoyCodes.PARTY_MSGS), resultHandler));
+            new ResultAdapter(resultHandler, _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     /**
@@ -87,7 +87,7 @@ public class PartyDirector extends BasicDirector
     public function createParty (name :String, groupId :int) :void
     {
         _pbsvc.createParty(_mctx.getClient(), name, groupId,
-            new ResultAdapter(_mctx.chatErrHandler(MsoyCodes.PARTY_MSGS), partyOidKnown));
+            new ResultAdapter(partyOidKnown, _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     /**
@@ -96,7 +96,7 @@ public class PartyDirector extends BasicDirector
     public function joinParty (id :int) :void
     {
         _pbsvc.joinParty(_mctx.getClient(), id,
-            new ResultAdapter(_mctx.chatErrHandler(MsoyCodes.PARTY_MSGS), partyOidKnown));
+            new ResultAdapter(partyOidKnown, _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     /**
@@ -111,7 +111,6 @@ public class PartyDirector extends BasicDirector
             return;
         }
         _partyObj.partyService.leaveParty(_mctx.getClient(), new ConfirmAdapter(
-            _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS),
             function () :void {
                 _safeSubscriber.unsubscribe(_ctx.getDObjectManager());
                 _safeSubscriber = null;
@@ -121,7 +120,7 @@ public class PartyDirector extends BasicDirector
                 if (btn.selected) {
                     btn.activate(); // pop down the party window.
                 }
-            }));
+            }, _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     public function assignLeader (memberId :int) :void

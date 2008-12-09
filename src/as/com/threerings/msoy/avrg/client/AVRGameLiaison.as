@@ -101,10 +101,9 @@ public class AVRGameLiaison extends GameLiaison
     {
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
         svc.deactivateGame(_gctx.getClient(), _gameId, new ConfirmAdapter(
-            _gctx.getMsoyContext().chatErrHandler(null, null, "gameId", _gameId),
             function () :void {
                 _gctx.getLocationDirector().leavePlace();
-            }));
+            }, _gctx.getMsoyContext().chatErrHandler(null, null, "gameId", _gameId)));
     }
 
     /**
