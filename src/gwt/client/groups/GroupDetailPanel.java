@@ -17,6 +17,7 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -210,15 +211,20 @@ public class GroupDetailPanel extends FlowPanel
         }
 
         // read charter
-        Label readCharter = new Label(_msgs.detailReadCharter());
-        actions.add(readCharter);
-        readCharter.addStyleName("actionLabel");
-        ClickListener charterClick = new ClickListener() {
+        actions.add(MsoyUI.createActionLabel(_msgs.detailReadCharter(), new ClickListener() {
             public void onClick (Widget sender) {
                 _contentPanel.showCharter();
             }
-        };
-        readCharter.addClickListener(charterClick);
+        }));
+
+        if (DeploymentConfig.devDeployment) {
+            // view medals
+            actions.add(MsoyUI.createActionLabel(_msgs.detailViewMedals(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    _contentPanel.showMedals();
+                }
+            }));
+        }
 
         // edit this group & manage rooms
         if (_detail.myRank == GroupMembership.RANK_MANAGER || CShell.isSupport()) {
@@ -226,22 +232,26 @@ public class GroupDetailPanel extends FlowPanel
             actions.add(managerActions);
 
             String args = Args.compose("edit", _group.groupId);
-            Label editGroup = MsoyUI.createActionLabel(_msgs.detailEdit(), Link.createListener(
-                Pages.GROUPS, args));
-            editGroup.addStyleName("inline");
-            managerActions.add(editGroup);
+            managerActions.add(MsoyUI.createActionLabel(
+                _msgs.detailEdit(), "inline", Link.createListener(Pages.GROUPS, args)));
 
             managerActions.add(new InlineLabel(" | "));
+            managerActions.add(MsoyUI.createActionLabel(
+                _msgs.detailManageRooms(), "inline", new ClickListener() {
+                    public void onClick(Widget sender) {
+                        _contentPanel.showRooms();
+                    }
+                }));
 
-            InlineLabel manageRooms = new InlineLabel(_msgs.detailManageRooms());
-            managerActions.add(manageRooms);
-            manageRooms.addStyleName("actionLabel");
-            ClickListener roomsClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    _contentPanel.showRooms();
-                }
-            };
-            manageRooms.addClickListener(roomsClick);
+            if (DeploymentConfig.devDeployment) {
+                managerActions.add(new InlineLabel(" | "));
+                managerActions.add(MsoyUI.createActionLabel(
+                    _msgs.detailEditMedals(), "inline", new ClickListener() {
+                        public void onClick(Widget sender) {
+                            _contentPanel.showEditMedals();
+                        }
+                    }));
+            }
         }
 
         FlowPanel rightPanel = MsoyUI.createFlowPanel("Right");
@@ -368,6 +378,16 @@ public class GroupDetailPanel extends FlowPanel
             }
             _content.setWidget(_rooms);
             _backButton.setVisible(true);
+        }
+
+        public void showEditMedals () {
+            _title.setWidget(new Label(_msgs.detailTabEditMedals()));
+            _content.clear();
+        }
+
+        public void showMedals () {
+            _title.setWidget(new Label(_msgs.detailTabViewMedals()));
+            _content.clear();
         }
 
         protected SimplePanel _title;
