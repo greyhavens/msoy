@@ -116,7 +116,7 @@ public class AwardPanel
         }
 
         // display a chat message reporting their award
-        _ctx.getChatDirector().displayInfo(messageBundle, msg);
+        _ctx.displayInfo(messageBundle, msg);
 
         // configure the award display panel with the award info
         (_panel.getChildByName("statement") as TextField).text = title;

@@ -403,7 +403,7 @@ public class RoomObjectView extends RoomView
         var localOccupant :MemberInfo;
         localOccupant = _roomObj.occupantInfo.get(_ctx.getClient().getClientOid()) as MemberInfo;
         if (localOccupant != null && localOccupant.isStatic()) {
-            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS, "m.static_avatar");
+            _ctx.displayInfo(MsoyCodes.GENERAL_MSGS, "m.static_avatar");
         }
     }
 
@@ -524,10 +524,10 @@ public class RoomObjectView extends RoomView
     protected function dispatchAVRGameGotControl (gameId :int) :void
     {
         if (gameId != _ctx.getGameDirector().getGameId()) {
-            log.warning("Got control over an AVRG we're not playing [gameId=" + gameId + "]");
+            log.warning("Got control over an AVRG we're not playing", "gameId", gameId);
             return;
         }
-        log.debug("AVRG got control [gameId=" + gameId + "]");
+        log.debug("AVRG got control", "gameId", gameId);
 
         // TODO: remove this
         var backend :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();

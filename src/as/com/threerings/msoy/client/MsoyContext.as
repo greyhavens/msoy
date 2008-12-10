@@ -173,9 +173,9 @@ public /*abstract*/ class MsoyContext
     /**
      * Convenience method.
      */
-    public function displayInfo (bundle :String, message :String) :void
+    public function displayInfo (bundle :String, message :String, localType :String = null) :void
     {
-        _chatDir.displayInfo(bundle, message);
+        _chatDir.displayInfo(bundle, message, localType);
     }
 
     /**

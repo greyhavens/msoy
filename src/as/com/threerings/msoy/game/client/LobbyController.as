@@ -397,7 +397,7 @@ public class LobbyController extends Controller
         // create our table director
         _tableDir = new TableDirector(_gctx, LobbyObject.TABLES);
         _tableDir.setFailureHandler(function (cause :String) :void {
-            _mctx.getChatDirector().displayFeedback(MsoyCodes.GAME_MSGS, cause);
+            _mctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
         });
         _tableDir.setTableObject(obj);
         _tableDir.addSeatednessObserver(this);

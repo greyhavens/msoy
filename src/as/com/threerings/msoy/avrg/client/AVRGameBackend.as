@@ -648,7 +648,7 @@ public class AVRGameBackend extends ControlBackend
      */
     protected function displayInfo (bundle :String, msg :String, localType :String = null) :void
     {
-        _wctx.getChatDirector().displayInfo(bundle, msg, localType);
+        _wctx.displayInfo(bundle, msg, localType);
     }
 
     // internal utility method

@@ -384,7 +384,7 @@ public class AVRGameController extends PlaceController
     {
         var msg :String = forReal ?
             MessageBundle.tcompose("m.coins_awarded", amount) : "m.no_coins_dev";
-        _wctx.getChatDirector().displayInfo(WhirledGameCodes.WHIRLEDGAME_MESSAGE_BUNDLE, msg);
+        _wctx.displayInfo(WhirledGameCodes.WHIRLEDGAME_MESSAGE_BUNDLE, msg);
     }
 
     protected var _wctx :WorldContext;
