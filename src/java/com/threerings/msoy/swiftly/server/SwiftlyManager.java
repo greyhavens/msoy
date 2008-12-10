@@ -36,8 +36,6 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.peer.server.PeerProjectDispatcher;
-import com.threerings.msoy.peer.server.PeerProjectProvider;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.server.ServletWaiter;
@@ -61,7 +59,7 @@ import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
  */
 @Singleton @EventThread
 public class SwiftlyManager
-    implements SwiftlyProvider, PeerProjectProvider, ShutdownManager.Shutdowner
+    implements SwiftlyProvider, ShutdownManager.Shutdowner
 {
     /** This thread pool is used to execute potentially long running project builds on separate
      * threads so that they do not interfere with normal server operation. */
@@ -80,10 +78,6 @@ public class SwiftlyManager
     {
         // create our build thread pool
         buildExecutor = Executors.newFixedThreadPool(MAX_BUILD_THREADS);
-
-        // register and initialize our peer project service
-        ((MsoyNodeObject)_peerMan.getNodeObject()).setPeerProjectService(
-            invmgr.registerDispatcher(new PeerProjectDispatcher(this)));
     }
 
     /**
@@ -139,6 +133,42 @@ public class SwiftlyManager
         _peerMan.performWithLock(lock, createOp);
     }
 
+    /**
+     * Called by a swiftly node action when a project was updated on any node.
+     */
+    public void projectUpdated (final SwiftlyProject project)
+    {
+        ProjectRoomManager manager = _managers.get(project.projectId);
+        // this node is hosting the manager, send the message to the room manager
+        if (manager != null) {
+            manager.updateProject(project);
+        }
+    }
+
+    /**
+     * Called by a swiftly node action when a collaborator was added on some node.
+     */
+    public void collaboratorAdded (final int projectId, final MemberName name)
+    {
+        ProjectRoomManager manager = _managers.get(projectId);
+        // this node is hosting the manager, send the message to the room manager
+        if (manager != null) {
+            manager.addCollaborator(name);
+        }
+    }
+
+    /**
+     * Called by a swiftly node action when a collaborator was removed on some node.
+     */
+    public void collaboratorRemoved (final int projectId, final MemberName name)
+    {
+        ProjectRoomManager manager = _managers.get(projectId);
+        // this node is hosting the manager, send the message to the room manager
+        if (manager != null) {
+            manager.removeCollaborator(name);
+        }
+    }
+
     // from interface SwiftlyProvider
     public void enterProject (final ClientObject caller, final int projectId,
                               final InvocationService.ResultListener listener)
@@ -158,86 +188,6 @@ public class SwiftlyManager
         curmgr.requireReadPermissions(caller);
         listener.requestProcessed(curmgr.getPlaceObject().getOid());
         return;
-    }
-
-    // from interface PeerProjectProvider
-    public void projectUpdated (ClientObject caller, final SwiftlyProject project)
-    {
-        if (!checkPeerCallerAccess(caller, "projectUpdated(" + project + ")")) {
-            return;
-        }
-
-        ProjectRoomManager manager = _managers.get(project.projectId);
-        // this node is hosting the manager, send the message to the room manager
-        if (manager != null) {
-            manager.updateProject(project);
-            return;
-        }
-
-        // locate the peer that is hosting this project and forward the project update there
-        _peerMan.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
-            public Void apply (Tuple<Client,NodeObject> data) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)data.right;
-                if (msnobj.hostedProjects.containsKey(project.projectId)) {
-                    msnobj.peerProjectService.projectUpdated(data.left, project);
-                }
-                return null;
-            }
-        });
-    }
-
-    // from interface PeerProjectProvider
-    public void collaboratorAdded (ClientObject caller, final int projectId, final MemberName name)
-    {
-        if (!checkPeerCallerAccess(caller, "collaboratorAdded(" + projectId + ", " + name + ")")) {
-            return;
-        }
-
-        ProjectRoomManager manager = _managers.get(projectId);
-        // this node is hosting the manager, send the message to the room manager
-        if (manager != null) {
-            manager.addCollaborator(name);
-            return;
-        }
-
-        // locate the peer that is hosting this project and forward the collaborator update there
-        _peerMan.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
-            public Void apply (Tuple<Client,NodeObject> data) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)data.right;
-                if (msnobj.hostedProjects.containsKey(projectId)) {
-                    msnobj.peerProjectService.collaboratorAdded(data.left, projectId, name);
-                }
-                return null;
-            }
-        });
-    }
-
-    // from interface PeerProjectProvider
-    public void collaboratorRemoved (ClientObject caller, final int projectId,
-                                     final MemberName name)
-    {
-        if (!checkPeerCallerAccess(caller, "collaboratorRemoved(" + projectId + ", " +
-            name + ")")) {
-            return;
-        }
-
-        ProjectRoomManager manager = _managers.get(projectId);
-        // this node is hosting the manager, send the message to the room manager
-        if (manager != null) {
-            manager.removeCollaborator(name);
-            return;
-        }
-
-        // locate the peer that is hosting this project and forward the collaborator update there
-        _peerMan.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
-            public Void apply (Tuple<Client,NodeObject> data) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)data.right;
-                if (msnobj.hostedProjects.containsKey(projectId)) {
-                    msnobj.peerProjectService.collaboratorRemoved(data.left, projectId, name);
-                }
-                return null;
-            }
-        });
     }
 
     // from interface ShutdownManager.Shutdowner
@@ -263,7 +213,7 @@ public class SwiftlyManager
      */
     public void updateProject (SwiftlyProject project, ResultListener<Void> lner)
     {
-        projectUpdated(project);
+        SwiftlyNodeActions.projectUpdated(project);
         lner.requestCompleted(null);
     }
 
@@ -273,7 +223,7 @@ public class SwiftlyManager
      */
     public void addCollaborator (int projectId, MemberName name, ResultListener<Void> lner)
     {
-        collaboratorAdded(projectId, name);
+        SwiftlyNodeActions.collaboratorAdded(projectId, name);
         lner.requestCompleted(null);
     }
 
@@ -283,7 +233,7 @@ public class SwiftlyManager
      */
     public void removeCollaborator (int projectId, MemberName name, ResultListener<Void> lner)
     {
-        collaboratorRemoved(projectId, name);
+        SwiftlyNodeActions.collaboratorRemoved(projectId, name);
         lner.requestCompleted(null);
     }
 
@@ -327,30 +277,6 @@ public class SwiftlyManager
         config.port = ServerConfig.serverPorts[0];
         config.httpPort = ServerConfig.httpPort;
         return config;
-    }
-
-    /**
-     * Call projectUpdated() with this server as the client.
-     */
-    protected void projectUpdated (SwiftlyProject project)
-    {
-        projectUpdated(null, project);
-    }
-
-    /**
-     * Call collaboratorAdded() with this server as the client.
-     */
-    protected void collaboratorAdded (int projectId, MemberName name)
-    {
-        collaboratorAdded(null, projectId, name);
-    }
-
-    /**
-     * Call collaboratorRemoved() with this server as the client.
-     */
-    protected void collaboratorRemoved (int projectId, MemberName name)
-    {
-        collaboratorRemoved(null, projectId, name);
     }
 
     /**
@@ -433,20 +359,6 @@ public class SwiftlyManager
             waiter.requestFailed(e);
             return;
         }
-    }
-
-    /**
-     * Used to check peer node caller access.
-     */
-    protected boolean checkPeerCallerAccess (ClientObject caller, String method)
-    {
-        // peers will not have member objects and server local calls will be a null caller
-        if (caller instanceof MemberObject) {
-            log.warning("Rejecting non-peer caller of " + method +
-                        " [who=" + ((MemberObject)caller).who() + "].");
-            return false;
-        }
-        return true;
     }
 
     /** Repository of Swiftly data. */

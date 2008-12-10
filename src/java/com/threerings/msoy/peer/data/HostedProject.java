@@ -21,6 +21,16 @@ public class HostedProject extends HostedPlace
     public int httpPort;
 
     /**
+     * Creates a key that can be used to look up a {@link HostedProject} in a DSet.
+     */
+    public static HostedProject makeKey (int projectId)
+    {
+        HostedProject key = new HostedProject();
+        key.placeId = projectId;
+        return key;
+    }
+
+    /**
      * Empty constructor used for unserializing
      */
     public HostedProject ()
