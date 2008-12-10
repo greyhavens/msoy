@@ -295,7 +295,7 @@ public class ControlBar extends HBox
         addButton(_avrgBtn, [ UI_AVRGAME ], PLACE_PRIORITY + 1);
 
         if (DeploymentConfig.devDeployment) {
-            addButton(_partyBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], DEFAULT_PRIORITY);
+            addButton(_partyBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY + 1);
         }
 
         if (_notificationDisplay != null) {
