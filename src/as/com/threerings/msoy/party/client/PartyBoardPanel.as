@@ -65,6 +65,6 @@ public class PartyBoardPanel extends FloatingPanel
 
     protected var _partyList :List;
 
-    protected var _loading :Label = FlexUtil.createLabel(Msgs.GENERAL.get("m.loading"), null);
+    protected var _loading :Label = FlexUtil.createLabel(Msgs.PARTY.get("m.loading"), null);
 }
 }
