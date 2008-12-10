@@ -105,7 +105,9 @@ public class PartyRegistry
     {
         final MemberObject member = (MemberObject)caller;
 
-        // shit, I think we need to iterate over every damn PartyInfo
+        // add every party we have access to to a collection sorted by score
+        // Note: maybe we use a KeyValue, and create a top-N data structure that only even
+        // saves the top-N candidates
         final TreeMap<PartySort,PartyInfo> myParties = Maps.newTreeMap();
         _peerMgr.applyToNodes(new Function<NodeObject,Void>() {
             public Void apply (NodeObject node) {

@@ -93,7 +93,7 @@ public class PartyManager
 //        _userListeners.put(member.getMemberId(), listener);
 //        member.addListener(listener);
 
-        // tell them the OID so they can subscribe
+        // inform them of the sceneId so that they can move there.
         rl.requestProcessed(_partyObj.sceneId);
     }
 

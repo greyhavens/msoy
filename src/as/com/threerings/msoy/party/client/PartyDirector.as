@@ -129,19 +129,8 @@ public class PartyDirector extends BasicDirector
             // we have no party to leave
             return;
         }
-        _partyObj.partyService.leaveParty(_wctx.getClient(), new ConfirmAdapter(
-            function () :void {
-                _safeSubscriber.unsubscribe(_ctx.getDObjectManager());
-                _safeSubscriber = null;
-                _partyObj.removeListener(_partyListener);
-                _partyListener = null;
-                _partyObj = null;
-
-                var btn :CommandButton = WorldControlBar(_wctx.getControlBar()).partyBtn;
-                if (btn.selected) {
-                    btn.activate(); // pop down the party window.
-                }
-            }, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+        _partyObj.partyService.leaveParty(_wctx.getClient(),
+            new ConfirmAdapter(handleLeaveParty, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     public function assignLeader (memberId :int) :void
@@ -165,20 +154,16 @@ public class PartyDirector extends BasicDirector
             new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
     }
 
-    // from BasicDirector
-    override protected function registerServices (client :Client) :void
+    protected function checkPartyId () :void
     {
-        super.registerServices(client);
-
-        client.addServiceGroup(MsoyCodes.WORLD_GROUP);
-    }
-
-    // from BasicDirector
-    override protected function fetchServices (client :Client) :void
-    {
-        super.fetchServices(client);
-
-        _pbsvc = (client.requireService(PartyBoardService) as PartyBoardService);
+        const partyId :int = _wctx.getMemberObject().partyId;
+        if (partyId == 0 || (_partyObj != null && _partyObj.id != partyId)) {
+            unsubscribeParty();
+        }
+        if (partyId != 0 && (_partyObj == null)) {
+            _pbsvc.locateMyParty(_ctx.getClient(),
+                new ResultAdapter(handleLocateParty, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+        }
     }
 
     protected function checkFollowParty () :void
@@ -196,11 +181,52 @@ public class PartyDirector extends BasicDirector
         }
     }
 
-    protected function subscribeToParty (oid :int) :void
+    /**
+     * Handles the response from a locateMyParty() request.
+     */
+    protected function handleLocateParty (result :Object) :void
     {
+        // we get either an int[] or an Integer back.
+        if (result is Array) {
+            subscribeParty(int(result[0]));
+        } else {
+            visitPartyScene(int(result));
+        }
+    }
+
+    /**
+     * Handles the respponse from a leaveParty() request.
+     */
+    protected function handleLeaveParty () :void
+    {
+        unsubscribeParty();
+
+        // TODO: have the party popup pop itself down, or something
+        var btn :CommandButton = WorldControlBar(_wctx.getControlBar()).partyBtn;
+        if (btn.selected) {
+            btn.activate(); // pop down the party window.
+        }
+    }
+
+    protected function subscribeParty (oid :int) :void
+    {
+        unsubscribeParty(); // TODO: maybe noop if we're asked to subscribe to the same oid?
+
         _safeSubscriber = new SafeSubscriber(oid,
             new SubscriberAdapter(gotPartyObject, subscribeFailed));
         _safeSubscriber.subscribe(_ctx.getDObjectManager());
+    }
+
+    protected function unsubscribeParty () :void
+    {
+        if (_safeSubscriber == null) {
+            return;
+        }
+        _safeSubscriber.unsubscribe(_ctx.getDObjectManager());
+        _safeSubscriber = null;
+        _partyObj.removeListener(_partyListener);
+        _partyListener = null;
+        _partyObj = null;
     }
 
     /**
@@ -239,6 +265,39 @@ public class PartyDirector extends BasicDirector
             checkFollowParty();
             break;
         }
+    }
+
+    protected function userAttrChanged (event :AttributeChangedEvent) :void
+    {
+        switch (event.getName()) {
+        case MemberObject.PARTY_ID:
+            checkPartyId();
+        }
+    }
+
+    // from BasicDirector
+    override protected function clientObjectUpdated (client :Client) :void
+    {
+        super.clientObjectUpdated(client);
+
+        client.getClientObject().addListener(new AttributeChangeAdapter(userAttrChanged));
+        checkPartyId();
+    }
+
+    // from BasicDirector
+    override protected function registerServices (client :Client) :void
+    {
+        super.registerServices(client);
+
+        client.addServiceGroup(MsoyCodes.WORLD_GROUP);
+    }
+
+    // from BasicDirector
+    override protected function fetchServices (client :Client) :void
+    {
+        super.fetchServices(client);
+
+        _pbsvc = (client.requireService(PartyBoardService) as PartyBoardService);
     }
 
     protected var _wctx :WorldContext;

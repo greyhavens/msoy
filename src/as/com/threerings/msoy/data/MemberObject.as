@@ -101,6 +101,12 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>onTour</code> field. */
     public static const ON_TOUR :String = "onTour";
 
+    /** The field name of the <code>partyId</code> field. */
+    public static const PARTY_ID :String = "partyId";
+
+    /** The field name of the <code>experiences</code> field. */
+    public static const EXPERIENCES :String = "experiences";
+
     /** A message sent by the server to denote a notification to be displayed.
      * Format: [ Notification ]. */
     public static const NOTIFICATION :String = "notification";
