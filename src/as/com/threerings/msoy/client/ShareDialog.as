@@ -318,7 +318,7 @@ public class ShareDialog extends FloatingPanel
     {
         // TODO: remove this method when A/B test is finished
         super.didOpen();
-        _ctx.getMsoyClient().trackTestAction("share dialog opened", "2008 12 share hint");
+        _ctx.getMsoyClient().trackClientAction("2008 12 share hint dialog opened", null);
     }
 
     protected var _inGame :Boolean;
