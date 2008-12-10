@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
+
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -72,6 +74,12 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#getFlaggedItems}.
      */
     void getFlaggedItems (int count, AsyncCallback<List<ItemDetail>> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#getItemTransactions}.
+     */
+    void getItemTransactions (ItemIdent iident, int from, int count, boolean needCount,
+        AsyncCallback<ItemTransactionResult> callback);
 
     /**
      * The asynchronous version of {@link AdminService#deleteItemAdmin}.

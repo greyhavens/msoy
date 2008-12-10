@@ -7,10 +7,13 @@ import static com.threerings.msoy.Log.log;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
@@ -37,6 +40,8 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
+import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -49,6 +54,7 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
@@ -270,6 +276,38 @@ public class AdminServlet extends MsoyServiceServlet
             }
         }
         return items;
+    }
+
+    // from interface AdminService
+    public ItemTransactionResult getItemTransactions (
+        ItemIdent iident, int from, int count, boolean needCount)
+        throws ServiceException
+    {
+        requireSupportUser();
+
+        final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
+        final ItemRecord item = repo.loadOriginalItem(iident.itemId);
+
+        if (item == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        }
+        if (item.catalogId == 0) {
+            throw new ServiceException(ItemCodes.E_ITEM_NOT_LISTED);
+        }
+        CatalogIdent cident = new CatalogIdent(iident.type, item.catalogId);
+        ItemTransactionResult result = new ItemTransactionResult();
+        if (needCount) {
+            result.count = _moneyLogic.getItemTransactionCount(cident);
+        }
+        result.transactions = _moneyLogic.getItemTransactions(cident, from, count, false);
+
+        Set<Integer> memberIds = Sets.newHashSet();
+        for (MoneyTransaction tx : result.transactions) {
+            memberIds.add(tx.memberId);
+        }
+        result.memberNames = Maps.newHashMap();
+        result.memberNames.putAll(_memberRepo.loadMemberNames(memberIds));
+        return result;
     }
 
     // from interface AdminService

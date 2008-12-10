@@ -4,7 +4,9 @@
 package com.threerings.msoy.admin.gwt;
 
 import java.util.List;
+import java.util.Map;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.gwt.util.PagedResult;
@@ -15,8 +17,13 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
 import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
+
 import com.threerings.msoy.item.gwt.ItemDetail;
+
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 /**
  * Defines remote services available to admins.
@@ -25,6 +32,22 @@ public interface AdminService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/adminsvc";
+
+    /**
+     * Return value for an item transaction query.
+     */
+    public static class ItemTransactionResult
+        implements IsSerializable
+    {
+        /** If requested, the total number of transactions for the item. */
+        public int count;
+
+        /** The list of transactions for the requested pagee. */
+        public List<MoneyTransaction> transactions;
+
+        /** Member names for each account in the transaction list. */
+        public Map<Integer, MemberName> memberNames;
+    }
 
     /**
      * Get the specified page of affiliate mappings.
@@ -84,6 +107,13 @@ public interface AdminService extends RemoteService
      * Fetches the first 'count' items flagged as mature or copyright in the database.
      */
     List<ItemDetail> getFlaggedItems (int count)
+        throws ServiceException;
+
+    /**
+     * Gets a page of transactions for a flagged item.
+     */
+    ItemTransactionResult getItemTransactions (
+        ItemIdent iident, int from, int count, boolean needCount)
         throws ServiceException;
 
     /**
