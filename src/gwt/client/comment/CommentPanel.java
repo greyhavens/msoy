@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.InlinePanel;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -29,10 +30,8 @@ public class CommentPanel extends MessagePanel
         _parent = parent;
         _comment = comment;
 
-        MemberCard card = new MemberCard();
-        card.name = comment.commentor;
-        card.photo = comment.photo;
-        setMessage(card, new Date(comment.posted), comment.text);
+        _displayComment = _parent.shouldDisplay(_comment);
+        updateComment();
     }
 
     @Override // from MessagePanel
@@ -61,6 +60,72 @@ public class CommentPanel extends MessagePanel
             complain.addStyleName("actionLabel");
             info.add(complain);
         }
+
+        InlineLabel rating = new InlineLabel(
+            _cmsgs.rating("" + _comment.currentRating), false, true, false);
+        rating.addStyleName("Posted");
+        info.add(rating);
+
+        if (!_displayComment) {
+            InlineLabel showComment = new InlineLabel(_cmsgs.showComment(), false, true, false);
+            showComment.addStyleName("Posted");
+            showComment.addStyleName("actionLabel");
+            showComment.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    _displayComment = true;
+                    updateComment();
+                }
+            });
+            info.add(showComment);
+
+        } else if (_comment.myRating == Comment.RATED_NONE) {
+            InlineLabel upRate = new InlineLabel("[+]", false, false, false);
+            upRate.addStyleName("Posted");
+            upRate.addStyleName("actionLabel");
+            upRate.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    _parent.rateComment(_comment, true);
+
+                    _comment.currentRating += 1;
+                    _comment.totalRatings ++;
+                    _comment.myRating = Comment.RATED_UP;
+
+                    updateComment();
+                }
+            });
+            info.add(upRate);
+
+            InlineLabel downRate = new InlineLabel("[-]", false, false, false);
+            downRate.addStyleName("Posted");
+            downRate.addStyleName("actionLabel");
+            downRate.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    _parent.rateComment(_comment, false);
+
+                    _comment.currentRating -= 1;
+                    _comment.totalRatings ++;
+                    _comment.myRating = Comment.RATED_DOWN;
+
+                    updateComment();
+                }
+            });
+            info.add(downRate);
+        }
+
+    }
+
+    protected void updateComment ()
+    {
+        MemberCard card = new MemberCard();
+        card.name = _comment.commentor;
+        card.photo = _comment.photo;
+
+        if (_displayComment) {
+            setMessage(card, new Date(_comment.posted), _comment.text);
+        } else {
+            // TODO
+            setMessage(card, new Date(_comment.posted), "");
+        }
     }
 
     @Override // from MessagePanel
@@ -71,6 +136,8 @@ public class CommentPanel extends MessagePanel
 
     protected CommentsPanel _parent;
     protected Comment _comment;
+
+    protected boolean _displayComment;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

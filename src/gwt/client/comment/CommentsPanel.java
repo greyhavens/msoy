@@ -30,6 +30,7 @@ import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.MsoyCallback;
+import client.util.NoopAsyncCallback;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
@@ -104,7 +105,7 @@ public class CommentsPanel extends PagedGrid<Comment>
      */
     protected int getThumbnailSize ()
     {
-        return MediaDesc.THUMBNAIL_SIZE;
+        return MediaDesc.HALF_THUMBNAIL_SIZE;
     }
 
     /**
@@ -114,6 +115,14 @@ public class CommentsPanel extends PagedGrid<Comment>
     {
         return CShell.isSupport() || Comment.canDelete(
             _etype, _entityId, comment.commentor.getMemberId(), CShell.getMemberId());
+    }
+
+    /**
+     * Returns true if the viewer should be shown the text of the supplied comment.
+     */
+    protected boolean shouldDisplay (Comment comment)
+    {
+        return comment.totalRatings < 5 || comment.currentRating >= 0;
     }
 
     /**
@@ -154,6 +163,13 @@ public class CommentsPanel extends PagedGrid<Comment>
     {
         remove(panel);
         _post.setEnabled(true);
+    }
+
+    protected void rateComment (final Comment comment, final boolean rating)
+    {
+        // comment rating is extremely light-weight: if it didn't go through, we just don't care
+        _commentsvc.rateComment(_etype, _entityId, comment.posted, rating,
+                                new NoopAsyncCallback());
     }
 
     protected Command deleteComment (final Comment comment)
