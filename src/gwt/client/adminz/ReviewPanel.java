@@ -45,6 +45,16 @@ public class ReviewPanel extends FlowPanel
         refresh();
     }
 
+    public ItemDetail getItemDetail (int id)
+    {
+        for (ItemDetail detail : _items) {
+            if (detail.item.itemId == id) {
+                return detail;
+            }
+        }
+        return null;
+    }
+
     // clears the UI and repopuplates the list
     protected void refresh ()
     {
@@ -54,20 +64,21 @@ public class ReviewPanel extends FlowPanel
         add(_contents = new FlexTable());
         _adminsvc.getFlaggedItems(10, new MsoyCallback<List<ItemDetail>>() {
             public void onSuccess (List<ItemDetail> items) {
-                populateUI(items);
+                _items = items;
+                populateUI();
             }
         });
     }
 
     // builds the UI from the given list
-    protected void populateUI (List<ItemDetail> items)
+    protected void populateUI ()
     {
-        if (items.size() == 0) {
+        if (_items.size() == 0) {
             _contents.setText(0, 0, _msgs.reviewNoItems());
             return;
         }
 
-        for (ItemDetail detail : items) {
+        for (ItemDetail detail : _items) {
             int row = _contents.getRowCount();
             _contents.setWidget(row, 0, new ThumbBox(detail.item.getThumbnailMedia()));
             _contents.setWidget(row, 1, new ReviewItem(this, detail));
@@ -77,6 +88,7 @@ public class ReviewPanel extends FlowPanel
     }
 
     protected FlexTable _contents;
+    protected List<ItemDetail> _items;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)

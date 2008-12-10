@@ -44,6 +44,24 @@
   padding-top: 10px;
 }
 
+/*** Item transactions review ***/
+.itemTransactions .Table .row1 {
+  background: #dbeffc;
+}
+
+.itemTransactions .Table .header {
+  background: #ff992b;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+.itemTransactions .Table .col2 { /* Description */
+  width: 50%;
+}
+
 /*** Player Browser ***/
 .playerBrowser .PlayerList {
   text-align: center;

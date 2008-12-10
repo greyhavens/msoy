@@ -5,6 +5,7 @@ package client.adminz;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -37,7 +38,22 @@ public class AdminPage extends Page
             _playerBrowser.displayPlayersInvitedBy(args.get(1, 0));
 
         } else if (action.equals("review")) {
-            setContent(_msgs.reviewTitle(), new ReviewPanel());
+            int item = args.get(1, 0);
+            if (item != 0) {
+                ItemDetail detail = _reviewPanel != null ? _reviewPanel.getItemDetail(item) : null;
+                if (detail == null) {
+                    MsoyUI.error("Cannot view transactions for that item");
+                    return;
+                } else {
+                    setContent(_msgs.reviewItemTransactionsTitle(),
+                        new ItemTransactionsPanel(detail));
+                }
+            } else {
+                if (_reviewPanel == null) {
+                    _reviewPanel = new ReviewPanel();
+                }
+                setContent(_msgs.reviewTitle(), _reviewPanel);
+            }
 
         } else if (action.equals("info")) {
             setContent(_msgs.infoTitle(), new MemberInfoPanel(args.get(1, 0)));
@@ -78,6 +94,7 @@ public class AdminPage extends Page
     }
 
     protected PlayerBrowserPanel _playerBrowser;
+    protected ReviewPanel _reviewPanel;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
 }

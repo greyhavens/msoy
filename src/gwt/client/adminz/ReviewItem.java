@@ -35,6 +35,7 @@ import client.util.Link;
 
 /**
  * Displays an item to be reviewed.
+ * TODO: i18n
  */
 public class ReviewItem extends FlowPanel
 {
@@ -58,6 +59,12 @@ public class ReviewItem extends FlowPanel
         String name = _item.name + " - " + detail.creator.toString();
         String args = Args.compose("d", ""+_item.getType(), ""+_item.itemId);
         add(Link.create(name, Pages.STUFF, args));
+
+        // transactions link
+        FlowPanel transactions = new FlowPanel();
+        transactions.add(Link.create("Transactions", Pages.ADMINZ,
+            Args.compose("review", _item.itemId)));
+        add(transactions);
 
         add(MsoyUI.createLabel(_item.description, null));
 
