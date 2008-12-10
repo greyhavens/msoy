@@ -213,7 +213,7 @@ public class SwiftlyManager
      */
     public void updateProject (SwiftlyProject project, ResultListener<Void> lner)
     {
-        SwiftlyNodeActions.projectUpdated(project);
+        _nodeActions.projectUpdated(project);
         lner.requestCompleted(null);
     }
 
@@ -223,7 +223,7 @@ public class SwiftlyManager
      */
     public void addCollaborator (int projectId, MemberName name, ResultListener<Void> lner)
     {
-        SwiftlyNodeActions.collaboratorAdded(projectId, name);
+        _nodeActions.collaboratorAdded(projectId, name);
         lner.requestCompleted(null);
     }
 
@@ -233,7 +233,7 @@ public class SwiftlyManager
      */
     public void removeCollaborator (int projectId, MemberName name, ResultListener<Void> lner)
     {
-        SwiftlyNodeActions.collaboratorRemoved(projectId, name);
+        _nodeActions.collaboratorRemoved(projectId, name);
         lner.requestCompleted(null);
     }
 
@@ -369,6 +369,9 @@ public class SwiftlyManager
 
     /** Provides peer related services. */
     @Inject protected MsoyPeerManager _peerMan;
+
+    /** Used to notify peers of project changes. */
+    @Inject protected SwiftlyNodeActions _nodeActions;
 
     /** Used to create rooms. */
     @Inject protected PlaceRegistry _plreg;

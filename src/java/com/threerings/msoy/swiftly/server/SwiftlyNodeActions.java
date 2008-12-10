@@ -23,6 +23,7 @@ public class SwiftlyNodeActions
      */
     public void projectUpdated (SwiftlyProject project)
     {
+        _peerMan.invokeNodeAction(new ProjectUpdatedAction(project));
     }
 
     /**
@@ -30,6 +31,7 @@ public class SwiftlyNodeActions
      */
     public void collaboratorAdded (int projectId, MemberName name)
     {
+        _peerMan.invokeNodeAction(new CollaboratorAddedAction(projectId, name));
     }
 
     /**
@@ -37,7 +39,59 @@ public class SwiftlyNodeActions
      */
     public void collaboratorRemoved (int projectId, MemberName name)
     {
+        _peerMan.invokeNodeAction(new CollaboratorRemovedAction(projectId, name));
     }
 
-    @Inject protected final MsoyPeerManager _peerMan;
+    protected static class ProjectUpdatedAction extends SwiftlyNodeAction
+    {
+        public ProjectUpdatedAction (SwiftlyProject project) {
+            super(project.projectId);
+            _project = project;
+        }
+
+        public ProjectUpdatedAction () {
+        }
+
+        @Override protected void execute (SwiftlyManager swiftlyMan) {
+            swiftlyMan.projectUpdated(_project);
+        }
+
+        protected SwiftlyProject _project;
+    }
+
+    protected static class CollaboratorAddedAction extends SwiftlyNodeAction
+    {
+        public CollaboratorAddedAction (int projectId, MemberName name) {
+            super(projectId);
+            _name = name;
+        }
+
+        public CollaboratorAddedAction () {
+        }
+
+        @Override protected void execute (SwiftlyManager swiftlyMan) {
+            swiftlyMan.collaboratorAdded(_projectId, _name);
+        }
+
+        protected MemberName _name;
+    }
+
+    protected static class CollaboratorRemovedAction extends SwiftlyNodeAction
+    {
+        public CollaboratorRemovedAction (int projectId, MemberName name) {
+            super(projectId);
+            _name = name;
+        }
+
+        public CollaboratorRemovedAction () {
+        }
+
+        @Override protected void execute (SwiftlyManager swiftlyMan) {
+            swiftlyMan.collaboratorRemoved(_projectId, _name);
+        }
+
+        protected MemberName _name;
+    }
+
+    @Inject protected MsoyPeerManager _peerMan;
 }

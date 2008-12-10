@@ -8,7 +8,6 @@ import com.google.inject.Inject;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.peer.server.PeerManager;
 
-import com.threerings.msoy.peer.data.HostedProject;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 /**
@@ -28,8 +27,7 @@ public abstract class SwiftlyNodeAction extends PeerManager.NodeAction
     @Override // from PeerManager.NodeAction
     public boolean isApplicable (NodeObject nodeobj)
     {
-        return ((MsoyNodeObject)nodeobj).hostedProjects.containsKey(
-            HostedProject.makeKey(_projectId));
+        return ((MsoyNodeObject)nodeobj).hostedProjects.containsKey(_projectId);
     }
 
     @Override // from PeerManager.NodeAction
