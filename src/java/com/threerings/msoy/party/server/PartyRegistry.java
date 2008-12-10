@@ -20,15 +20,20 @@ import com.samskivert.util.IntMaps;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.server.PresentsSession;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.peer.data.NodeObject;
+
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.Subscriber;
-import com.threerings.presents.server.PresentsSession;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.peer.data.NodeObject;
+
+import com.threerings.crowd.data.Place;
+
+import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -126,6 +131,9 @@ public class PartyRegistry
         pobj.name = name;
         pobj.group = groupInfo.group;
         pobj.leaderId = member.getMemberId();
+        if (member.location instanceof ScenePlace) {
+            pobj.sceneId = ((ScenePlace) member.location).sceneId;
+        }
         pobj.setAccessController(_partyAccessController);
 
         // Create the PartyManager and add the member

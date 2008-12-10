@@ -7,8 +7,13 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultAdapter;
+
+import com.threerings.presents.dobj.AttributeChangeAdapter;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.ChangeListener;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.SubscriberAdapter;
+
 import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.flex.CommandButton;
@@ -29,6 +34,10 @@ import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyMarshaller;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
+
+// TODO: we shouldn't reach into 'world'. We should either be there, or do some other
+// refiguring
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Manages party stuff on the client.
@@ -126,6 +135,8 @@ public class PartyDirector extends BasicDirector
             function () :void {
                 _safeSubscriber.unsubscribe(_ctx.getDObjectManager());
                 _safeSubscriber = null;
+                _partyObj.removeListener(_partyListener);
+                _partyListener = null;
                 _partyObj = null;
 
                 var btn :CommandButton = _mctx.getControlBar().partyBtn;
@@ -172,6 +183,13 @@ public class PartyDirector extends BasicDirector
         _pbsvc = (client.requireService(PartyBoardService) as PartyBoardService);
     }
 
+    protected function checkFollowParty () :void
+    {
+        if (_partyObj.sceneId != 0) {
+            WorldContext(_mctx).getSceneDirector().moveTo(_partyObj.sceneId);
+        }
+    }
+
     /**
      * A success handler for creating and joining parties.
      */
@@ -188,6 +206,8 @@ public class PartyDirector extends BasicDirector
     protected function gotPartyObject (obj :PartyObject) :void
     {
         _partyObj = obj;
+        _partyListener = new AttributeChangeAdapter(partyAttrChanged);
+        _partyObj.addListener(_partyListener);
 
         // if the party popup is up, change to the new popup...
         var btn :CommandButton = _mctx.getControlBar().partyBtn;
@@ -196,6 +216,9 @@ public class PartyDirector extends BasicDirector
             btn.activate();
             btn.activate();
         }
+
+        // we might need to warp to the party location
+        checkFollowParty();
     }
 
     /**
@@ -206,6 +229,15 @@ public class PartyDirector extends BasicDirector
         // TODO
     }
 
+    protected function partyAttrChanged (event :AttributeChangedEvent) :void
+    {
+        switch (event.getName()) {
+        case PartyObject.SCENE_ID:
+            checkFollowParty();
+            break;
+        }
+    }
+
     protected var _mctx :MsoyContext;
 
     protected var _pbsvc :PartyBoardService;
@@ -213,5 +245,7 @@ public class PartyDirector extends BasicDirector
     protected var _partyObj :PartyObject;
 
     protected var _safeSubscriber :SafeSubscriber;
+
+    protected var _partyListener :ChangeListener;
 }
 }

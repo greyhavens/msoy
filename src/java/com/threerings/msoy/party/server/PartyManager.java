@@ -14,9 +14,15 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
+
+import com.threerings.crowd.data.Place;
+
+import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
 
@@ -26,6 +32,11 @@ import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 
+import static com.threerings.msoy.Log.log;
+
+/**
+ * Manages a particular party while it lives on a single node.
+ */
 public class PartyManager
     implements PartyProvider
 {
@@ -182,11 +193,40 @@ public class PartyManager
     }
 
     /**
+     * React to a player changing location.
+     */
+    protected void playerChangedLocation (MemberObject player, Place place)
+    {
+        if (place == null) {
+            // TODO?
+            log.debug("Player moved to nowhere", "who", player.who());
+            // ignore for now
+            return;
+        }
+
+        // see if it's a new scene
+        if (place instanceof ScenePlace) {
+            int sceneId = ((ScenePlace)place).sceneId;
+            if (sceneId == _partyObj.sceneId) {
+                return;
+            }
+            if (_partyObj.leaderId == player.getMemberId()) {
+                // the leader just moved location.
+                _partyObj.setSceneId(sceneId);
+
+            } else {
+                // otherwise, they leave the party with a notification that they've done so
+                log.info("TODO: partier left party scene.");
+            }
+        }
+    }
+
+    /**
      * Return the next join order.
      */
     protected int nextJoinOrder ()
     {
-        // return 0, or 1 higher than any other joinOrder
+        // return 1 higher than any other joinOrder, or 0.
         int joinOrder = -1;
         for (PartyPeep peep : _partyObj.peeps) {
             if (peep.joinOrder > joinOrder) {
@@ -224,8 +264,11 @@ public class PartyManager
         _peerMgr.updatePartyInfo(_lastInfo);
     }
 
+    /**
+     * A listener is created for each participant in the party.
+     */
     protected class UserListener
-        implements ObjectDeathListener
+        implements AttributeChangeListener, ObjectDeathListener
     {
         public MemberObject memObj;
 
@@ -234,11 +277,20 @@ public class PartyManager
             this.memObj = memObj;
         }
 
+        // from AttributeChangeListener
+        public void attributeChanged (AttributeChangedEvent event)
+        {
+            if (MemberObject.LOCATION.equals(event.getName())) {
+                playerChangedLocation(memObj, (Place) event.getValue());
+            }
+        }
+
+        // from ObjectDeathListener
         public void objectDestroyed (ObjectDestroyedEvent event)
         {
             removePlayer(memObj.getMemberId());
         }
-    }
+    } // end: class UserListener
 
     protected PartyObject _partyObj;
 
