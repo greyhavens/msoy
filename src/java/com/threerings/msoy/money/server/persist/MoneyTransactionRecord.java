@@ -133,6 +133,15 @@ public class MoneyTransactionRecord extends PersistentRecord
 
     public static final int SCHEMA_VERSION = 4;
 
+    /** Value of {@link #subjectType} when there is no subject. */
+    public static final int SUBJECT_NONE = 0;
+
+    /** Value of {@link #subjectType} when the transaction was regarding a catalog item. */
+    public static final int SUBJECT_CATALOG_IDENT = 1;
+    
+    /** Value of {@link #subjectType} when the transaction was regarding an item. */
+    public static final int SUBJECT_ITEM_IDENT = 2;
+
     /**
      * A Function for transforming a MoneyTransactionRecord into a MoneyTransaction.
      */
@@ -153,7 +162,49 @@ public class MoneyTransactionRecord extends PersistentRecord
             return record.toMoneyTransaction(true);
         }
     };
-    
+
+    /**
+     * Stores the data for the subject of a transaction.
+     */
+    public static class Subject
+    {
+        /** The type of the subject. */
+        public byte type;
+
+        /** The type of id held. */
+        public byte idType;
+
+        /** The subject's actual id. */
+        public int id;
+
+        /**
+         * Creates a new subject. An exception is thrown if the subject does not fit one of our
+         * subject categories.
+         */
+        public Subject (Object subject)
+        {
+            type = SUBJECT_NONE;
+
+            if (subject != null) {
+                if (subject instanceof CatalogIdent) {
+                    type = SUBJECT_CATALOG_IDENT;
+                    CatalogIdent ident = (CatalogIdent) subject;
+                    idType = ident.type;
+                    id = ident.catalogId;
+
+                } else if (subject instanceof ItemIdent) {
+                    type = SUBJECT_ITEM_IDENT;
+                    ItemIdent ident = (ItemIdent) subject;
+                    idType = ident.type;
+                    id = ident.itemId;
+
+                } else {
+                    throw new RuntimeException("Unknown subject: " + subject);
+                }
+            }
+        }
+    }
+
     /** ID of this record. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -217,24 +268,10 @@ public class MoneyTransactionRecord extends PersistentRecord
         this.transactionType = transType;
         this.description = description;
 
-        // MUCH TODO ABOUT NOTHING
-        if (subject != null) {
-            if (subject instanceof CatalogIdent) {
-                this.subjectType = (byte)1; // TODO! TODO! TODO!
-                CatalogIdent ident = (CatalogIdent) subject;
-                this.subjectIdType = ident.type;
-                this.subjectId = ident.catalogId;
-
-            } else if (subject instanceof ItemIdent) {
-                this.subjectType = (byte)2; // TODO! TODO! TODO!
-                ItemIdent ident = (ItemIdent) subject;
-                this.subjectIdType = ident.type;
-                this.subjectId = ident.itemId;
-
-            } else {
-                throw new RuntimeException("Unknown subject: " + subject);
-            }
-        }
+        Subject subj = new Subject(subject);
+        this.subjectType = subj.type;
+        this.subjectIdType = subj.idType;
+        this.subjectId = subj.id;
     }
 
     /** Suitable for unserialization. */
