@@ -106,6 +106,12 @@ List {
   borderStyle: none;
 }
 
+.comboDropdown {
+  /* Undo some of our above changes to List */
+  backgroundAlpha: 1;
+  borderStyle: "solid";
+}
+
 .sexyTabber {
   backgroundAlpha: 0;
   backgroundColor: #f97527;
