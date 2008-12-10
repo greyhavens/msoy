@@ -49,6 +49,10 @@ import client.util.ServiceUtil;
  */
 public class GroupDetailPanel extends FlowPanel
 {
+    public interface SubContentDisplay {
+        public void showContent (String title, Widget content);
+    }
+
     public GroupDetailPanel () {
         setStyleName("groupDetail");
     }
@@ -381,10 +385,15 @@ public class GroupDetailPanel extends FlowPanel
         }
 
         public void showMedals () {
+            if (_medalList != null && _content.getWidget() == _medalList) {
+                return;
+            }
             _title.setWidget(new Label(_msgs.detailTabViewMedals()));
-            _content.clear();
-            // TODO: Currently being mocked.  Managers will have an extra link to edit any of the
-            // badges.  They'll also have an extra link at the bottom to add a new badge.
+            if (_medalList == null) {
+                _medalList = new MedalListPanel(_detail, _contentDisplay);
+            }
+            _content.setWidget(_medalList);
+            _backButton.setVisible(true);
         }
 
         public void showAwardMedals () {
@@ -401,6 +410,14 @@ public class GroupDetailPanel extends FlowPanel
         protected PrettyTextPanel _charter;
         protected GroupMembersPanel _members;
         protected GroupRoomsPanel _rooms;
+        protected MedalListPanel _medalList;
+
+        protected SubContentDisplay _contentDisplay = new SubContentDisplay () {
+            public void showContent (String title, Widget content) {
+                _title.setWidget(new Label(title));
+                _content.setWidget(content);
+            }
+        };
     }
 
     /**
