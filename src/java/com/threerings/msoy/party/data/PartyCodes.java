@@ -20,6 +20,10 @@ public class PartyCodes
     /** The maximum length of a party name. */
     public static final int MAX_NAME_LENGTH = 32;
 
+    /** The maximum size of a party. */
+    public static final int MAX_PARTY_SIZE = 50;
+
     /** Error codes. */
     public static final String E_NO_SUCH_PARTY = "e.no_such_party";
+    public static final String E_PARTY_FULL = "e.party_full";
 }

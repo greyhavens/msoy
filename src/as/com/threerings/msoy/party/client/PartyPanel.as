@@ -22,6 +22,7 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 
+import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 
@@ -65,6 +66,7 @@ public class PartyPanel extends FloatingPanel
         addChild(new CommandButton(Msgs.PARTY.get("b.leave"), _wctx.getPartyDirector().leaveParty));
 
         _status = new TextInput();
+        _status.maxChars = PartyCodes.MAX_NAME_LENGTH;
         _status.percentWidth = 100;
         _status.styleName = "statusEdit"; // Punked from FriendsListPanel
         _status.text = _partyObj.status;
@@ -89,7 +91,7 @@ public class PartyPanel extends FloatingPanel
 
     protected function commitStatus (event :FlexEvent) :void
     {
-        _wctx.getPartyDirector().updateStatus(_status.text);
+        _wctx.getPartyDirector().updateNameOrStatus(_status.text, false);
     }
 
     protected var _wctx :WorldContext;

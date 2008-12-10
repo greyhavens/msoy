@@ -106,7 +106,7 @@ public class PartyDirector extends BasicDirector
     public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void
     {
         _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends,
-            new ResultAdapter(partyOidKnown, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+            new ResultAdapter(visitPartyScene, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     /**
@@ -115,7 +115,7 @@ public class PartyDirector extends BasicDirector
     public function joinParty (id :int) :void
     {
         _pbsvc.joinParty(_wctx.getClient(), id,
-            new ResultAdapter(partyOidKnown, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+            new ResultAdapter(visitPartyScene, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     /**
@@ -150,9 +150,9 @@ public class PartyDirector extends BasicDirector
             new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
     }
 
-    public function updateStatus (status :String) :void
+    public function updateNameOrStatus (s :String, name :Boolean) :void
     {
-        _partyObj.partyService.updateStatus(_wctx.getClient(), status,
+        _partyObj.partyService.updateNameOrStatus(_wctx.getClient(), s, name,
             new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
     }
 
@@ -183,15 +183,20 @@ public class PartyDirector extends BasicDirector
 
     protected function checkFollowParty () :void
     {
-        if (_partyObj.sceneId != 0) {
-            _wctx.getSceneDirector().moveTo(_partyObj.sceneId);
-        }
+        visitPartyScene(_partyObj.sceneId);
     }
 
     /**
      * A success handler for creating and joining parties.
      */
-    protected function partyOidKnown (oid :int) :void
+    protected function visitPartyScene (sceneId :int) :void
+    {
+        if (sceneId != 0) {
+            _wctx.getSceneDirector().moveTo(sceneId);
+        }
+    }
+
+    protected function subscribeToParty (oid :int) :void
     {
         _safeSubscriber = new SafeSubscriber(oid,
             new SubscriberAdapter(gotPartyObject, subscribeFailed));

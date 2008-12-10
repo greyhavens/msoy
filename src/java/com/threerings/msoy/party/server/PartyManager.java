@@ -3,10 +3,14 @@
 
 package com.threerings.msoy.party.server;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -25,9 +29,11 @@ import com.threerings.crowd.data.Place;
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
@@ -69,26 +75,39 @@ public class PartyManager
     /**
      * Add the specified player to the party.
      */
-    public void addPlayer (MemberObject member, InvocationService.ResultListener rl)
+    public void addPlayer (VizMemberName name, byte groupRank, InvocationService.ResultListener rl)
         throws InvocationException
     {
-        if (!canJoinParty(member)) {
-            throw new InvocationException("TODO");
+        String snub = _partyObj.mayJoin(name, groupRank);
+        if (snub != null) {
+            throw new InvocationException(snub);
         }
 
-        // go ahead and add them
-        _partyObj.addToPeeps(new PartyPeep(member.memberName, nextJoinOrder()));
-        member.setPartyId(_partyObj.id);
-
-        // start listening for them to die
-        UserListener listener = new UserListener(member);
-        _userListeners.put(member.getMemberId(), listener);
-        member.addListener(listener);
-
+        // go ahead and add them and update our info
+        _partyObj.addToPeeps(new PartyPeep(name, nextJoinOrder()));
         updatePartyInfo();
 
+//        // TODO: add the listener in the subscription handling?
+//        // start listening for them to die
+//        UserListener listener = new UserListener(member);
+//        _userListeners.put(member.getMemberId(), listener);
+//        member.addListener(listener);
+
         // tell them the OID so they can subscribe
-        rl.requestProcessed(_partyObj.getOid());
+        rl.requestProcessed(_partyObj.sceneId);
+    }
+
+    /**
+     * Get the party detail.
+     */
+    public List<PartyPeep> getPartyDetail ()
+    {
+        return Lists.newArrayList(_partyObj.peeps);
+    }
+
+    public int getPartyOid ()
+    {
+        return _partyObj.getOid();
     }
 
     // from interface PartyProvider
@@ -126,34 +145,41 @@ public class PartyManager
         ClientObject caller, int memberId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject member = requireLeader(caller);
+        requireLeader(caller);
 
-        // TODO
+        PartyPeep leader = _partyObj.peeps.get(_partyObj.leaderId);
+        PartyPeep peep = _partyObj.peeps.get(memberId);
+        if (peep == null) {
+            // TODO: nicer error? The player may have just left
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+
+        _partyObj.startTransaction();
+        try {
+            peep.joinOrder = leader.joinOrder;
+            leader.joinOrder = leader.joinOrder + 1;
+            _partyObj.updatePeeps(peep);
+            _partyObj.updatePeeps(leader);
+            _partyObj.setLeaderId(peep.name.getMemberId());
+        } finally {
+            _partyObj.commitTransaction();
+        }
     }
 
     // from interface PartyProvider
-    public void updateStatus (
-        ClientObject caller, String status, InvocationService.InvocationListener listener)
+    public void updateNameOrStatus (
+        ClientObject caller, String s, boolean name, InvocationService.InvocationListener listener)
         throws InvocationException
     {
         requireLeader(caller);
 
-        _partyObj.setStatus(status);
-    }
-
-    /**
-     * Can the specified member join this party?
-     */
-    protected boolean canJoinParty (MemberObject member)
-    {
-        // TODO: allow players specifically invited by the leader
-
-        if (_lastInfo == null) {
-            // allow the first player to join, which happens immediately
-            return true;
+        s = StringUtil.truncate(s, PartyCodes.MAX_NAME_LENGTH);
+        if (name) {
+            _partyObj.setName(s);
+        } else {
+            _partyObj.setStatus(s);
         }
-
-        return _lastInfo.hasAccess(member);
+        updatePartyInfo();
     }
 
     /**
@@ -258,10 +284,9 @@ public class PartyManager
      */
     protected void updatePartyInfo ()
     {
-        _lastInfo = new PartyInfo(
+        _peerMgr.updatePartyInfo(new PartyInfo(
             _partyObj.id, _partyObj.name, _partyObj.leaderId, _partyObj.group, _partyObj.status,
-            _partyObj.peeps.size(), _partyObj.recruiting);
-        _peerMgr.updatePartyInfo(_lastInfo);
+            _partyObj.peeps.size(), _partyObj.recruiting));
     }
 
     /**
@@ -293,8 +318,6 @@ public class PartyManager
     } // end: class UserListener
 
     protected PartyObject _partyObj;
-
-    protected PartyInfo _lastInfo;
 
     protected IntMap<UserListener> _userListeners = IntMaps.newHashIntMap();
 

@@ -3,10 +3,14 @@
 
 package com.threerings.msoy.party.data;
 
+import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.group.data.all.GroupMembership;
 
 public class PartyObject extends DObject
 {
@@ -242,4 +246,34 @@ public class PartyObject extends DObject
         this.partyService = value;
     }
     // AUTO-GENERATED: METHODS END
+
+    /**
+     * May the specified player join this party? Note that you may join a party
+     * you can't even see on the party board.
+     *
+     * @return the reason for failure, or null if joinage may proceed.
+     */ 
+    public String mayJoin (MemberName member, byte groupRank)
+    {
+        if (peeps.size() >= PartyCodes.MAX_PARTY_SIZE) {
+            return PartyCodes.E_PARTY_FULL;
+        }
+
+        // TODO: invitation checking
+
+        switch (recruiting) {
+        case PartyCodes.RECRUITMENT_OPEN:
+            return null;
+
+        case PartyCodes.RECRUITMENT_GROUP:
+            if (groupRank > GroupMembership.RANK_NON_MEMBER) {
+                return null;
+            }
+            return InvocationCodes.E_ACCESS_DENIED;
+
+        default:
+        case PartyCodes.RECRUITMENT_CLOSED:
+            return InvocationCodes.E_ACCESS_DENIED;
+        }
+    }
 }

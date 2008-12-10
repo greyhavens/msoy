@@ -37,4 +37,10 @@ public interface PartyBoardProvider extends InvocationProvider
      */
     void joinParty (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
+
+    /**
+     * Handles a {@link PartyBoardService#locateMyParty} request.
+     */
+    void locateMyParty (ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException;
 }

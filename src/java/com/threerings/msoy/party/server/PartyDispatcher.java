@@ -53,9 +53,9 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
             );
             return;
 
-        case PartyMarshaller.UPDATE_STATUS:
-            ((PartyProvider)provider).updateStatus(
-                source, (String)args[0], (InvocationService.InvocationListener)args[1]
+        case PartyMarshaller.UPDATE_NAME_OR_STATUS:
+            ((PartyProvider)provider).updateNameOrStatus(
+                source, (String)args[0], ((Boolean)args[1]).booleanValue(), (InvocationService.InvocationListener)args[2]
             );
             return;
 

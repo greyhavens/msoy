@@ -16,7 +16,7 @@ public interface PartyBoardService extends InvocationService
 
     /**
      * Join the specified party.
-     * Returns an oid, of the party object on success.
+     * Returns the (Integer) sceneId the party object on success.
      */
     void joinParty (Client client, int partyId, ResultListener rl);
 
@@ -28,7 +28,15 @@ public interface PartyBoardService extends InvocationService
         Client client, String name, int groupId, boolean inviteAllFriends, ResultListener rl);
 
     /**
-     * Retreive detailed information on a party.
+     * If the client has a partyId set, it may call this method to learn about the oid
+     * of the party object (if on the right server), or the sceneId (if not).
+     * Returns an int[] {oid}, or an Integer(sceneId). So sue me.
+     */
+    void locateMyParty (Client client, ResultListener rl);
+
+    /**
+     * Retrieve detailed information on a party.
+     * Returns a List<PartyPeep>.
      */
     void getPartyDetail (Client client, int partyId, ResultListener rl);
 }

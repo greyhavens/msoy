@@ -33,8 +33,8 @@ public interface PartyProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link PartyService#updateStatus} request.
+     * Handles a {@link PartyService#updateNameOrStatus} request.
      */
-    void updateStatus (ClientObject caller, String arg1, InvocationService.InvocationListener arg2)
+    void updateNameOrStatus (ClientObject caller, String arg1, boolean arg2, InvocationService.InvocationListener arg3)
         throws InvocationException;
 }

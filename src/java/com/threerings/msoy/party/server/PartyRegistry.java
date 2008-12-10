@@ -37,6 +37,7 @@ import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 
@@ -49,12 +50,12 @@ import com.threerings.msoy.party.data.PartyObject;
 
 @Singleton
 public class PartyRegistry
-    implements PartyBoardProvider
+    implements PartyBoardProvider, PeerPartyProvider
 {
     @Inject public PartyRegistry (InvocationManager invmgr)
     {
         _invmgr = invmgr;
-        invmgr.registerDispatcher(new PartyBoardDispatcher(this), MsoyCodes.MEMBER_GROUP);
+        invmgr.registerDispatcher(new PartyBoardDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
 
     /**
@@ -63,6 +64,34 @@ public class PartyRegistry
     public void init ()
     {
         // nada, presently
+    }
+
+    // from PartyBoardProvider
+    public void locateMyParty (ClientObject caller, InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        MemberObject member = (MemberObject)caller;
+
+        if (member.partyId == 0) {
+            // TODO: throw no error, or just ignore it on the client
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+
+        // see if we have the party here
+        PartyManager mgr = _parties.get(member.partyId);
+        if (mgr != null) {
+            rl.requestProcessed(new int[] { mgr.getPartyOid() });
+            return;
+        }
+
+        // else, find it and return the sceneId
+        PartyInfo info = _peerMgr.getPartyInfo(member.partyId);
+        if (info == null) {
+            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
+        }
+        // TODO : we actually need to forward this to the right node... sigh
+        rl.requestProcessed(-1);
+        //rl.requestProcessed(info.sceneId);
     }
 
     // from PartyBoardProvider
@@ -77,7 +106,7 @@ public class PartyRegistry
         _peerMgr.applyToNodes(new Function<NodeObject,Void>() {
             public Void apply (NodeObject node) {
                 for (PartyInfo party : ((MsoyNodeObject) node).parties) {
-                    if (party.hasAccess(member)) {
+                    if (party.isVisible(member)) {
                         myParties.put(computePartySort(party, member), party);
                     }
                 }
@@ -90,28 +119,60 @@ public class PartyRegistry
     }
 
     // from PartyBoardProvider
-    public void joinParty (ClientObject caller, int partyId, InvocationService.ResultListener rl)
+    public void joinParty (
+        ClientObject caller, final int partyId, final InvocationService.ResultListener rl)
         throws InvocationException
     {
-        MemberObject member = (MemberObject)caller;
+        final MemberObject member = (MemberObject)caller;
 
-        // right now, we just pass the buck to the PartyManager
-        PartyManager mgr = _parties.get(partyId);
-        if (mgr == null) {
+        // reject them if they're already in a party
+        if (member.partyId != 0) {
+            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+        }
+
+        // figure out their rank in the specified party
+        PartyInfo info = _peerMgr.getPartyInfo(partyId);
+        if (info == null) {
             throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
         }
 
-        // pass the buck completely to the manager
-        mgr.addPlayer(member, rl);
+        // pass the buck
+        joinParty(null, partyId, member.memberName, member.getGroupRank(info.group.getGroupId()),
+            new InvocationService.ResultListener() {
+                public void requestFailed (String cause) {
+                    rl.requestFailed(cause);
+                }
+
+                public void requestProcessed (Object result) {
+                    rl.requestProcessed(result); // send along the sceneId first
+                    member.setPartyId(partyId); // then set the partyId.
+                }
+            });
     }
 
-    // from PartyProvider
+    // from PeerPartyProvider
+    public void joinParty (
+        ClientObject caller, int partyId, VizMemberName name, byte groupRank,
+        InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        PartyManager mgr = _parties.get(partyId);
+        if (mgr != null) {
+            // we can satisfy this request directly!
+            mgr.addPlayer(name, groupRank, rl);
+            return;
+        }
+
+        // TODO: sorry Mario, your party is in another castle
+    }
+
+    // from PartyBoardProvider
     public void createParty (
         ClientObject caller, String name, int groupId, boolean inviteAllFriends,
         InvocationService.ResultListener rl)
         throws InvocationException
     {
-         MemberObject member = (MemberObject)caller;
+        final MemberObject member = (MemberObject)caller;
 
         if (member.partyId != 0) {
             // TODO: possibly a better error? Surely this will be blocked on the client
@@ -137,11 +198,11 @@ public class PartyRegistry
         pobj.setAccessController(_partyAccessController);
 
         // Create the PartyManager and add the member
-        PartyManager mgr = _injector.getInstance(PartyManager.class); //new PartyManager(pobj, _invmgr, _peerMgr, _omgr);
+        PartyManager mgr = _injector.getInstance(PartyManager.class);
         mgr.init(pobj);
         boolean success = false;
         try {
-            mgr.addPlayer(member, rl);
+            mgr.addPlayer(member.memberName, groupInfo.rank, rl);
             // if we return from that without throwing an Exception, then we are success
             success = true;
 
@@ -150,6 +211,8 @@ public class PartyRegistry
             if (success) {
                 // register the party
                 _parties.put(pobj.id, mgr);
+                // set the partyId
+                member.setPartyId(pobj.id);
 
             } else {
                 // kill the party object we created
@@ -158,13 +221,20 @@ public class PartyRegistry
         }
     }
 
-    // from PartyProvider
+    // from PartyBoardProvider & PeerPartyProvider
     public void getPartyDetail (
         ClientObject caller, int partyId, InvocationService.ResultListener rl)
         throws InvocationException
     {
+        // see if we can handle it locally
+        PartyManager mgr = _parties.get(partyId);
+        if (mgr != null) {
+            rl.requestProcessed(mgr.getPartyDetail());
+            return;
+        }
+
+        // else forward it on
         // TODO
-        throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
     }
 
     /**

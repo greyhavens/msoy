@@ -72,5 +72,18 @@ public class PartyBoardMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), listener3
         ]);
     }
+
+    /** The method id used to dispatch <code>locateMyParty</code> requests. */
+    public static const LOCATE_MY_PARTY :int = 5;
+
+    // from interface PartyBoardService
+    public function locateMyParty (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    {
+        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, LOCATE_MY_PARTY, [
+            listener2
+        ]);
+    }
 }
 }

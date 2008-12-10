@@ -61,10 +61,16 @@ public class PartyInfo extends SimpleStreamableObject
     }
 
     /**
-     * Can the specified user access this party?
+     * Does this party appear on the partyBoard for the specified user?
+     * Note that this just affects visibility, not whether the member may join.
+     * Compare with PartyObject.mayJoin.
      */
-    public boolean hasAccess (MemberObject member)
+    public boolean isVisible (MemberObject member)
     {
+        if (population >= PartyCodes.MAX_PARTY_SIZE) {
+            return false;
+        }
+
         switch (recruitment) {
         case PartyCodes.RECRUITMENT_OPEN:
             return true;

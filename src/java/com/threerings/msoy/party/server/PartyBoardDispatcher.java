@@ -59,6 +59,12 @@ public class PartyBoardDispatcher extends InvocationDispatcher<PartyBoardMarshal
             );
             return;
 
+        case PartyBoardMarshaller.LOCATE_MY_PARTY:
+            ((PartyBoardProvider)provider).locateMyParty(
+                source, (InvocationService.ResultListener)args[0]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

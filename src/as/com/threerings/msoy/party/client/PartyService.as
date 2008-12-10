@@ -23,6 +23,6 @@ public interface PartyService extends InvocationService
     function leaveParty (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface PartyService
-    function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
+    function updateNameOrStatus (arg1 :Client, arg2 :String, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void;
 }
 }

@@ -154,11 +154,25 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Returns the location of the specified member, or null if they are not online on any peer.
      */
-    public MemberLocation getMemberLocation (final int memberId)
+    public MemberLocation getMemberLocation (int memberId)
     {
+        final Integer memberKey = memberId;
         return lookupNodeDatum(new Function<NodeObject,MemberLocation>() {
             public MemberLocation apply (NodeObject nodeobj) {
-                return ((MsoyNodeObject)nodeobj).memberLocs.get(memberId);
+                return ((MsoyNodeObject)nodeobj).memberLocs.get(memberKey);
+            }
+        });
+    }
+
+    /**
+     * Get the PartyInfo of the specified party, or null if not found.
+     */
+    public PartyInfo getPartyInfo (int partyId)
+    {
+        final Integer partyKey = partyId;
+        return lookupNodeDatum(new Function<NodeObject,PartyInfo>() {
+            public PartyInfo apply (NodeObject nodeobj) {
+                return ((MsoyNodeObject)nodeobj).parties.get(partyKey);
             }
         });
     }
