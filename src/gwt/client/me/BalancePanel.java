@@ -31,6 +31,7 @@ public class BalancePanel extends MoneyPanel
             debit = " ";
             credit = amt;
         }
+
         row.add(MsoyUI.createLabel(debit, "Debit"));
         row.add(MsoyUI.createLabel(credit, "Credit"));
         row.add(MsoyUI.createLabel(entry.currency.format(entry.balance), "Balance"));
@@ -39,8 +40,8 @@ public class BalancePanel extends MoneyPanel
     @Override
     protected void addCustomHeader (List<Widget> header)
     {
-        header.add(MsoyUI.createLabel("Debit", null));
-        header.add(MsoyUI.createLabel("Credit", null));
-        header.add(MsoyUI.createLabel("Balance", null));
+        header.add(MsoyUI.createLabel(_msgs.reportColumnDebit(), null));
+        header.add(MsoyUI.createLabel(_msgs.reportColumnCredit(), null));
+        header.add(MsoyUI.createLabel(_msgs.reportColumnBalance(), null));
     }
 }

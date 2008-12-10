@@ -43,9 +43,9 @@ public class IncomePanel extends MoneyPanel
     @Override
     protected void addCustomHeader (List<Widget> header)
     {
-        header.add(MsoyUI.createLabel("Income", null));
+        header.add(MsoyUI.createLabel(_msgs.reportColumnIncome(), null));
         if (CShell.isSupport()) {
-            header.add(MsoyUI.createLabel("Buyer", null));
+            header.add(MsoyUI.createLabel(_msgs.reportColumnBuyer(), null));
         }
     }
 }

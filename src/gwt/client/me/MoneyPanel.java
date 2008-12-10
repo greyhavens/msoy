@@ -65,8 +65,8 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
     {
         List<Widget> header = new ArrayList<Widget>();
 
-        header.add(MsoyUI.createLabel("When", null));
-        header.add(MsoyUI.createLabel("How", null));
+        header.add(MsoyUI.createLabel(_msgs.reportColumnWhen(), null));
+        header.add(MsoyUI.createLabel(_msgs.reportColumnHow(), null));
 
         addCustomHeader(header);
 
