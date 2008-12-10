@@ -66,14 +66,22 @@ public class PartyPanel extends FloatingPanel
         _status.percentWidth = 100;
         _status.styleName = "statusEdit"; // Punked from FriendsListPanel
         _status.text = _partyObj.status;
+        _status.editable = (_partyObj.leaderId == _ctx.getMyName().getMemberId());
         _status.addEventListener(FlexEvent.ENTER, commitStatus);
         addChild(_status);
     }
 
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
-        if (event.getName() == PartyObject.STATUS) {
-            _status.text = String(event.getValue());
+        switch (event.getName()) {
+            case PartyObject.STATUS:
+                _status.text = String(event.getValue());
+                break;
+
+            case PartyObject.LEADER_ID:
+                var leaderId :int = int(event.getValue());
+                _status.editable = (leaderId == _ctx.getMyName().getMemberId());
+                break;
         }
     }
 
