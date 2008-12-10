@@ -102,13 +102,13 @@ public class MemberInfoPanel extends SmartTable
         row = addText("Role:", 1, "Label");
         setWidget(row, 1, role);
 
-        row = addText("Flow:", 1, "Label");
+        row = addText("Coins:", 1, "Label");
         setText(row, 1, ""+info.flow);
 
-        row = addText("Accum Flow:", 1, "Label");
+        row = addText("Accum Coins:", 1, "Label");
         setText(row, 1, ""+info.accFlow);
 
-        row = addText("Gold:", 1, "Label");
+        row = addText("Bars:", 1, "Label");
         setText(row, 1, ""+info.gold);
 
         row = addText("Sessions:", 1, "Label");
