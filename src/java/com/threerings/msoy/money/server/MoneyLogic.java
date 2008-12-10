@@ -254,7 +254,7 @@ public class MoneyLogic
      * @return a BuyResult, or null if the BuyOperation returned false.
      */
     public BuyResult buyItem (
-        final MemberRecord buyerRec, CatalogIdent item, int creatorId, String itemDescription,
+        final MemberRecord buyerRec, CatalogIdent item, int creatorId, String itemName,
         Currency listedCurrency, int listedAmount, Currency buyCurrency, int authedAmount,
         BuyOperation buyOp)
         throws NotEnoughMoneyException, NotSecuredException
@@ -311,7 +311,7 @@ public class MoneyLogic
             buyerTx.fill(
                 TransactionType.ITEM_PURCHASE,
                 MessageBundle.tcompose(magicFree ? "m.item_magicfree" : "m.item_bought",
-                    itemDescription, item.type, item.catalogId),
+                    itemName, item.type, item.catalogId),
                 item);
             _repo.storeTransaction(buyerTx);
 
@@ -327,13 +327,13 @@ public class MoneyLogic
                         creatorPayout.currency, creatorPayout.amount,
                         TransactionType.CREATOR_PAYOUT,
                         MessageBundle.tcompose("m.item_sold",
-                            itemDescription, item.type, item.catalogId),
+                            itemName, item.type, item.catalogId),
                         item, buyerTx.id, buyerId);
 
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     log.warning("Invalid item creator, payout cancelled.",
                         "buyer", buyerId, "creator", creatorId,
-                        "item", itemDescription, "catalogIdent", item);
+                        "item", itemName, "catalogIdent", item);
                     // but, we continue, just having no creatorTx
                 }
             }
@@ -353,7 +353,7 @@ public class MoneyLogic
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     log.warning("Invalid user affiliate, payout cancelled.",
                         "buyer", buyerId, "affiliate", affiliateId,
-                        "item", itemDescription, "catalogIdent", item);
+                        "item", itemName, "catalogIdent", item);
                     // but, we continue, just having no affiliateTx
                 }
             }
@@ -371,7 +371,7 @@ public class MoneyLogic
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     log.warning("Invalid user charity, payout cancelled.",
                         "buyer", buyerId, "charity", charityId,
-                        "item", itemDescription, "catalogIdent", item);
+                        "item", itemName, "catalogIdent", item);
                     // but, we continue, just having no charityTx
                 }
             }
