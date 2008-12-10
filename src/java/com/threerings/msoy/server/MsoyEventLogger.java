@@ -274,12 +274,14 @@ public class MsoyEventLogger
 
     public void webSessionStatusChanged (VisitorInfo info, boolean guest, boolean newInfo)
     {
-        if (info != null) {
+        if (info == null) {
+            log.warning("Got null VisitorInfo during web status change", "guest", guest);
+        } else if (info.id == null) {
+            log.warning("Got null VisitorInfo.id during web status change", "guest", guest);
+        } else {
             boolean player = info.isAuthoritative;
             boolean other = player ? false : !guest;
             post(new MsoyEvents.WebSessionStatusChanged(info.id, player, guest, other, newInfo));
-        } else {
-            log.warning("Got null VisitorInfo during web status change", "guest", guest);
         }
     }
 
