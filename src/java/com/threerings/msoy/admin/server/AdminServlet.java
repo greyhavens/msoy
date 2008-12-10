@@ -324,13 +324,19 @@ public class AdminServlet extends MsoyServiceServlet
         int deletionCount = 0;
         owners.add(item.creatorId);
 
+        CatalogRecord catrec = null;
+        
         // we've loaded the original item, if it represents the original listing or a catalog
         // master item, we want to squish the original catalog listing.
         if (item.catalogId != 0) {
-            final CatalogRecord catrec = repo.loadListing(item.catalogId, false);
-            if (catrec != null && catrec.listedItemId == item.itemId) {
-                _itemLogic.removeListing(memrec, type, item.catalogId);
+            catrec = repo.loadListing(item.catalogId, true);
+            if (catrec != null && catrec.listedItemId != item.itemId) {
+                catrec = null;
             }
+        }
+
+        if (catrec != null) {
+            _itemLogic.removeListing(memrec, type, item.catalogId);
         }
 
         // then delete any potential clones
@@ -355,6 +361,14 @@ public class AdminServlet extends MsoyServiceServlet
             if (owner != null) {
                 _mailLogic.startBulkConversation(memrec, owner, subject, body);
             }
+        }
+
+        // now do the refunds
+        if (catrec != null) {
+            int refunds = _moneyLogic.refundAllItemPurchases(new CatalogIdent(
+                type, item.catalogId), item.name);
+            // TODO: return compound result and remove log message
+            log.info("Refunded item purshases", "count", refunds);
         }
 
         return Integer.valueOf(deletionCount);

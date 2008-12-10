@@ -5,6 +5,7 @@ package com.threerings.msoy.money.server;
 
 import java.text.NumberFormat;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -424,16 +425,70 @@ public class MoneyLogic
     /**
      * Refunds all the money spent on an item to purchasers and deducts the bling or coins from
      * the creator, affiliate and charity. For each applicable transaction, introduces an inverse
-     * transaction. Note that since we purge old transactions periodically, this method may only
-     * affects recent transactions.
+     * transaction. Note that since we purge old transactions periodically, this method can only
+     * affect the ones we still have.
      *
      * @param item the identity of the catalog listing.
+     * @return the number of refund transactions created
      * @see MoneyTransactionExpirer
      */
-    public void refundAllItemPurchases (
-        CatalogIdent item, int creatorId, String itemDescription)
+    public int refundAllItemPurchases (CatalogIdent item, String itemName)
     {
-        // TODO: load all transactions for the catalog item and insert an inverse for each
+        // aggregate refunds per member and currency type
+        HashMap<Integer, int[]> refunds = Maps.newHashMap();
+        for (MoneyTransactionRecord txRec :
+            _repo.getTransactionsForSubject(item, 0, Integer.MAX_VALUE, false)) {
+            int[] currencies = refunds.get(txRec.memberId);
+            if (currencies == null) {
+                refunds.put(txRec.memberId, currencies = new int[Currency.values().length]);
+            }
+            currencies[txRec.currency.ordinal()] -= txRec.amount;
+        }
+
+        // apply all refunds as a support adjustment and log updates
+        List<MoneyTransactionRecord> updates = Lists.newArrayList();
+        for (Map.Entry<Integer, int[]> refund : refunds.entrySet()) {
+            int memberId = refund.getKey();
+            int[] currencies = refund.getValue();
+            for (Currency currency : Currency.values()) {
+                int amount = currencies[currency.ordinal()];
+                if (amount == 0) {
+                    continue;
+                }
+
+                if (amount > 0) {
+                    updates.add(_repo.accumulateAndStoreTransaction(memberId, currency, amount,
+                        TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose("m.item_refund",
+                        itemName, item.type, item.catalogId), item));
+                    continue;
+
+                }
+
+                // loop in case user is spending money right now and we are breaking the bank
+                while (amount < 0) {
+                    try {
+                        updates.add(_repo.deductAndStoreTransaction(memberId, currency, -amount,
+                            TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose(
+                            "m.item_refunded", itemName, item.type, item.catalogId), item));
+                        amount = 0;
+
+                    } catch (NotEnoughMoneyException neme) {
+                        // not enough money, take what they've got
+                        log.warning("Could not deduct full amount for refund, reducing",
+                            "item", item, "amount", amount, "available", neme.getMoneyAvailable());
+                        amount = -neme.getMoneyAvailable();
+                    }
+                }
+            }
+        }
+
+        for (MoneyTransactionRecord txRec : updates) {
+            // TODO: logAction?
+            // notify members
+            _nodeActions.moneyUpdated(txRec);
+        }
+
+        return updates.size();
     }
 
     /**
