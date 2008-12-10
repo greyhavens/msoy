@@ -238,20 +238,18 @@ public class GroupDetailPanel extends FlowPanel
             managerActions.add(new InlineLabel(" | "));
             managerActions.add(MsoyUI.createActionLabel(
                 _msgs.detailManageRooms(), "inline", new ClickListener() {
-                    public void onClick(Widget sender) {
+                    public void onClick (Widget sender) {
                         _contentPanel.showRooms();
                     }
                 }));
 
-            if (DeploymentConfig.devDeployment) {
-                managerActions.add(new InlineLabel(" | "));
-                managerActions.add(MsoyUI.createActionLabel(
-                    _msgs.detailEditMedals(), "inline", new ClickListener() {
-                        public void onClick(Widget sender) {
-                            _contentPanel.showEditMedals();
-                        }
-                    }));
-            }
+            managerActions.add(new InlineLabel(" | "));
+            managerActions.add(MsoyUI.createActionLabel(
+                _msgs.detailAwardMedals(), "inline", new ClickListener() {
+                    public void onClick (Widget sender) {
+                        _contentPanel.showAwardMedals();
+                    }
+                }));
         }
 
         FlowPanel rightPanel = MsoyUI.createFlowPanel("Right");
@@ -380,14 +378,18 @@ public class GroupDetailPanel extends FlowPanel
             _backButton.setVisible(true);
         }
 
-        public void showEditMedals () {
-            _title.setWidget(new Label(_msgs.detailTabEditMedals()));
-            _content.clear();
-        }
-
         public void showMedals () {
             _title.setWidget(new Label(_msgs.detailTabViewMedals()));
             _content.clear();
+            // TODO: Currently being mocked.  Managers will have an extra link to edit any of the
+            // badges.  They'll also have an extra link at the bottom to add a new badge.
+        }
+
+        public void showAwardMedals () {
+            _title.setWidget(new Label(_msgs.detailTabAwardMedals()));
+            _content.clear();
+            //TODO: award medal panel with searching for members, then awarding medals to a member
+            // return in the search results.
         }
 
         protected SimplePanel _title;
