@@ -4,11 +4,13 @@
 package com.threerings.msoy.party.client {
 
 import mx.core.ClassFactory;
+import mx.controls.Label;
 import mx.controls.List;
 
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -38,6 +40,7 @@ public class PartyBoardPanel extends FloatingPanel
     {
         super.createChildren();
 
+        addChild(_loading);
         addChild(_partyList);
 
         addButtons(new CommandButton(Msgs.PARTY.get("b.create"), 
@@ -56,9 +59,12 @@ public class PartyBoardPanel extends FloatingPanel
      */
     protected function gotPartyBoard (result :Array) :void
     {
+        removeChild(_loading);
         _partyList.dataProvider = result;
     }
 
     protected var _partyList :List;
+
+    protected var _loading :Label = FlexUtil.createLabel(Msgs.GENERAL.get("m.loading"), null);
 }
 }
