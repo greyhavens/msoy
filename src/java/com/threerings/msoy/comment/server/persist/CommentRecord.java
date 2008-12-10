@@ -55,6 +55,20 @@ public class CommentRecord extends PersistentRecord
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(CommentRecord.class, MEMBER_ID);
 
+    /** The column identifier for the {@link #currentRating} field. */
+    public static final String CURRENT_RATING = "currentRating";
+
+    /** The qualified column identifier for the {@link #currentRating} field. */
+    public static final ColumnExp CURRENT_RATING_C =
+        new ColumnExp(CommentRecord.class, CURRENT_RATING);
+
+    /** The column identifier for the {@link #totalRatings} field. */
+    public static final String TOTAL_RATINGS = "totalRatings";
+
+    /** The qualified column identifier for the {@link #totalRatings} field. */
+    public static final ColumnExp TOTAL_RATINGS_C =
+        new ColumnExp(CommentRecord.class, TOTAL_RATINGS);
+
     /** The column identifier for the {@link #text} field. */
     public static final String TEXT = "text";
 
@@ -65,7 +79,7 @@ public class CommentRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The type of entity on which this comment was made (see {@link Comment}). */
     @Id
@@ -82,6 +96,12 @@ public class CommentRecord extends PersistentRecord
     /** The id of the member that made this comment. */
     public int memberId;
 
+    /** The absolute rating of this comment. */
+    public int currentRating;
+
+    /** The total number of times this comment has been rated. */
+    public int totalRatings;
+
     /** The text of this comment. */
     @Column(length=Comment.MAX_TEXT_LENGTH)
     public String text;
@@ -92,7 +112,7 @@ public class CommentRecord extends PersistentRecord
      * @param cards a mapping from member id to {@link MemberCard} that should contain {@link
      * #memberId}.
      */
-    public Comment toComment (Map<Integer, MemberCard> cards)
+    public Comment toComment (Map<Integer, MemberCard> cards, Map <Long, Boolean> ratings)
     {
         Comment comment = new Comment();
         MemberCard card = cards.get(memberId);
@@ -101,6 +121,15 @@ public class CommentRecord extends PersistentRecord
             comment.photo = card.photo;
         }
         comment.posted = posted.getTime();
+
+        Boolean rating = ratings.get(comment.posted);
+        if (rating != null) {
+            comment.myRating = rating ? Comment.RATED_UP : Comment.RATED_DOWN;
+        } else {
+            comment.myRating = Comment.RATED_NONE;
+        }
+        comment.currentRating = currentRating;
+        comment.totalRatings = totalRatings;
         comment.text = text;
         return comment;
     }

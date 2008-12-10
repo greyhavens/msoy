@@ -22,6 +22,12 @@ public interface CommentServiceAsync
     void postComment (int entityType, int entityId, String text, AsyncCallback<Comment> callback);
 
     /**
+     * The asynchronous version of {@link CommentService#rateComment}.
+     */
+    void rateComment (int entityType, int entityId, long posted, boolean rating,
+                      AsyncCallback<Void> callback);
+
+    /**
      * The asynchronous version of {@link CommentService#deleteComment}.
      */
     void deleteComment (int entityType, int entityId, long when, AsyncCallback<Boolean> callback);

@@ -4,17 +4,24 @@
 package com.threerings.msoy.comment.server.persist;
 
 import java.sql.Timestamp;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.DuplicateKeyException;
+import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.operator.Arithmetic;
+import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -25,6 +32,8 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.server.persist.CountRecord;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages member comments on various and sundry things.
@@ -51,6 +60,27 @@ public class CommentRepository extends DepotRepository
                                  CommentRecord.ENTITY_ID_C, entityId),
                        OrderBy.descending(CommentRecord.POSTED_C),
                        new Limit(start, count));
+    }
+
+    /**
+     * Loads the given member's ratings of the comments for the given entity.
+     */
+    public List<CommentRatingRecord> loadRatings (int entityType, int entityId, int memberId)
+    {
+        return findAll(CommentRatingRecord.class,
+                       new Where(CommentRatingRecord.ENTITY_TYPE_C, entityType,
+                                 CommentRatingRecord.ENTITY_ID_C, entityId,
+                                 CommentRatingRecord.MEMBER_ID_C, memberId));
+    }
+
+    /**
+     * Loads the given member's ratings of the comments for the given entity.
+     */
+    public CommentRatingRecord loadRating (
+        int entityType, int entityId, long posted, int memberId)
+    {
+        return load(CommentRatingRecord.class, CommentRatingRecord.getKey(
+                        entityType, entityId, memberId, new Timestamp(posted)));
     }
 
     /**
@@ -97,6 +127,36 @@ public class CommentRepository extends DepotRepository
     }
 
     /**
+     * Inserts a new rating for a comment by a given member.
+     * @return true for success, false if the member had already rated the comment
+     */
+    public boolean rateComment (
+        int entityType, int entityId, long posted, int memberId, boolean rating)
+    {
+        Timestamp postedStamp = new Timestamp(posted);
+        try {
+            // insert a new rating record for us
+            insert(new CommentRatingRecord(entityType, entityId, postedStamp, memberId, rating));
+
+            // then update the sums in the comment
+            Key<CommentRecord> comment = CommentRecord.getKey(entityType, entityId, postedStamp);
+            Map<String, SQLExpression> updates = Maps.newHashMap();
+            updates.put(CommentRecord.CURRENT_RATING, new Arithmetic.Add(
+                            CommentRecord.CURRENT_RATING_C, rating ? 1 : -1));
+            updates.put(CommentRecord.TOTAL_RATINGS, new Arithmetic.Add(
+                            CommentRecord.TOTAL_RATINGS_C, 1));
+            updateLiteral(CommentRecord.class, comment, comment, updates);
+            return true;
+
+        } catch (DuplicateKeyException dke) {
+            log.warning("Ignoring duplicate comment rating", "entityType", entityType,
+                        "entityId", entityId, "posted", postedStamp, "memberId", memberId,
+                        "rating", rating);
+            return false;
+        }
+    }
+
+    /**
      * Deletes the comment with the specified key.
      */
     public void deleteComment (int entityType, int entityId, long posted)
@@ -109,5 +169,6 @@ public class CommentRepository extends DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(CommentRecord.class);
+        classes.add(CommentRatingRecord.class);
     }
 }

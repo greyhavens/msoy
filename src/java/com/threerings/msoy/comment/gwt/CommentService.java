@@ -45,6 +45,14 @@ public interface CommentService extends RemoteService
         throws ServiceException;
 
     /**
+     * Rate the given comment up (true) or down (false).
+     *
+     * @return true if the rating was counted.
+     */
+    void rateComment (int entityType, int entityId, long posted, boolean rating)
+        throws ServiceException;
+
+    /**
      * Deletes the specified comment from the specified entity. The caller must be the owner of the
      * comment or an admin.
      *

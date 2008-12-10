@@ -33,6 +33,15 @@ public class Comment
     /** The number of comments displayed per page. */
     public static final int COMMENTS_PER_PAGE = 5;
 
+    /** A value for {@link #myRating} that means we have not yet rated this item. */
+    public static final int RATED_NONE = 0;
+
+    /** A value for {@link #myRating} that means we have rated this item positively. */
+    public static final int RATED_UP = 1;
+
+    /** A value for {@link #myRating} that means we have rated this item negatively. */
+    public static final int RATED_DOWN = 2;
+
     /**
      * Returns true if the specified member can delete a comment.
      */
@@ -50,6 +59,18 @@ public class Comment
 
     /** The time at which this comment was posted. */
     public long posted;
+
+    /** The absolute rating of this comment. */
+    public int currentRating;
+
+    /** The total number of times this comment has been rated. */
+    public int totalRatings;
+
+    /**
+     * The authenticated user's rating of this comment. See {@link #RATED_NONE},
+     * {@link #RATED_UP}, {@link #RATED_DOWN}.
+     */
+    public int myRating;
 
     /** The text of this comment. */
     public String text;
