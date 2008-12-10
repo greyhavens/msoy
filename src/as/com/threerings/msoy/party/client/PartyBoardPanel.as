@@ -4,6 +4,8 @@
 package com.threerings.msoy.party.client {
 
 import mx.core.ClassFactory;
+import mx.core.ScrollPolicy;
+import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.List;
 
@@ -34,6 +36,18 @@ public class PartyBoardPanel extends FloatingPanel
         cf.properties = { wctx: _wctx };
         _partyList = new List();
         _partyList.itemRenderer = cf;
+        _partyList.verticalScrollPolicy = ScrollPolicy.ON;
+        _partyList.percentWidth = 100;
+        _partyList.percentHeight = 100;
+
+        var loading :Label = FlexUtil.createLabel(Msgs.PARTY.get("m.loading"), null);
+        loading.percentWidth = 100;
+        loading.percentHeight = 100;
+
+        _content = new VBox();
+        _content.width = 400; // TODO: tweak
+        _content.height = 200; // TODO: tweak
+        _content.addChild(loading);
 
         getPartyBoard();
     }
@@ -42,8 +56,7 @@ public class PartyBoardPanel extends FloatingPanel
     {
         super.createChildren();
 
-        addChild(_loading);
-        addChild(_partyList);
+        addChild(_content);
 
         addButtons(new CommandButton(Msgs.PARTY.get("b.create"), 
             FloatingPanel.createPopper(function () :FloatingPanel {
@@ -61,7 +74,8 @@ public class PartyBoardPanel extends FloatingPanel
      */
     protected function gotPartyBoard (result :Array) :void
     {
-        removeChild(_loading);
+        _content.removeAllChildren();
+        _content.addChild(_partyList);
         _partyList.dataProvider = result;
     }
 
@@ -69,6 +83,7 @@ public class PartyBoardPanel extends FloatingPanel
 
     protected var _partyList :List;
 
-    protected var _loading :Label = FlexUtil.createLabel(Msgs.PARTY.get("m.loading"), null);
+    /** Contains either the loading Label or party List. */
+    protected var _content :VBox;
 }
 }
