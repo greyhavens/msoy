@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="BoardSprite,com.whirled.contrib.platformer.display.BoardSprite,ACTOR_LAYER,BACK_DYNAMIC_LAYER,BACK_PARTICLE_LAYER,BG_LAYER,BUFFER,FRONT_LEVEL_LAYER,FRONT_PARTICLE_LAYER,LBUFFER,LEVEL_LAYER,NUM_LAYERS,PARALLAX,SHOT_LAYER,SHOW_DETAILS,Y_ADJUST,_board,_centerX,_centerY,_lastDelta,_lastY,_layers,_lowBounds,_maxX,_minX,_showBG,addParticleEffect,addPieces,centerOn,ensureCentered,ensureVisible,handleDynamicAdded,handleDynamicRemoved,initBounds,initDisplay,moveDelta,tick,updateActors,updateDisplay" name="keywords">
+<meta content="BoardSprite,com.whirled.contrib.platformer.display.BoardSprite,ACTOR_LAYER,BACK_DYNAMIC_LAYER,BACK_PARTICLE_LAYER,BG_LAYER,BUFFER,FRONT_LEVEL_LAYER,FRONT_PARTICLE_LAYER,LBUFFER,LEVEL_LAYER,NUM_LAYERS,PARALLAX,SHOT_LAYER,SHOW_DETAILS,Y_ADJUST,_board,_centerX,_centerY,_lastDelta,_lastY,_layers,_lowBounds,_maxX,_minX,_showBG,centerX,centerY,addParticleEffect,addPieces,centerOn,ensureCentered,ensureVisible,handleDynamicAdded,handleDynamicRemoved,initBounds,initDisplay,moveDelta,shutdown,tick,updateActors,updateDisplay" name="keywords">
 <title>com.whirled.contrib.platformer.display.BoardSprite</title>
 </head>
 <body>
@@ -47,7 +47,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <br>
 <hr>
 </div>
-<a name="propertySummary"></a><a name="protectedPropertySummary"></a>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#centerX">centerX</a> : Number<div class="summaryTableDescription">[read-only]</div>
+</td><td class="summaryTableOwnerCol">BoardSprite</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#centerY">centerY</a> : Number<div class="summaryTableDescription">[read-only]</div>
+</td><td class="summaryTableOwnerCol">BoardSprite</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Protected Properties</div>
 <table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
@@ -143,6 +160,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#moveDelta()">moveDelta</a>(dX:Number, dY:Number):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoardSprite</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#shutdown()">shutdown</a>():void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
@@ -311,6 +335,18 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _centerX:Number = 0</code>
 </div>
+<a name="centerX"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">centerX</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>centerX:Number</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get centerX():Number</code>
+<br>
+</div>
 <a name="_centerY"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -319,6 +355,18 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _centerY:Number = 0</code>
+</div>
+<a name="centerY"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">centerY</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>centerY:Number</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get centerY():Number</code>
+<br>
 </div>
 <a name="_lastDelta"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -577,6 +625,15 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">dY</span>:Number</code></td>
 </tr>
 </table>
+</div>
+<a name="shutdown()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">shutdown</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function shutdown():void</code>
 </div>
 <a name="tick()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

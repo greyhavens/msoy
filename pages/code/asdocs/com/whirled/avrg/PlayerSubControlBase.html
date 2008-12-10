@@ -274,10 +274,11 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>props:<a href="../net/PropertySubControl.html">PropertySubControl</a></code>&nbsp;&nbsp;[read-only]<p>
-     Accesses the read-write properties of this player. Properties may be persisted and will be
-     restored when the player rejoins the game. Persistent properties should only be used when
-     genuinely necessary. Persisting properties on a guest player will have no effect.
-     </p><span class="label">Implementation</span>
+     Accesses the read-write properties of this player. Properties marked as such will be
+     persisted and restored whenever the player joins the game. Persistent properties should
+     only be used when genuinely necessary. Persisting properties on a guest player will have
+     no effect.
+          </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get props():<a href="../net/PropertySubControl.html">PropertySubControl</a></code>
 <br>

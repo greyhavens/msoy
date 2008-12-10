@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="TextFieldUtil,com.threerings.flash.TextFieldUtil,DEFAULT_FORMAT_PROPS,HEIGHT_PAD,MASK_FIELD_PROPS,WIDTH_PAD,_lastSelected,createField,createFormat,handleLastSelectedRemoved,handleTrackedSelection,setMaximumTextWidth,trackSingleSelectable,updateFormat,updateSelection,updateText" name="keywords">
+<meta content="TextFieldUtil,com.threerings.flash.TextFieldUtil,DEFAULT_FORMAT_PROPS,HEIGHT_PAD,MASK_FIELD_PROPS,WIDTH_PAD,_lastSelected,createField,createFormat,handleFieldFocus,handleLastSelectedRemoved,handleTrackedSelection,setFocusable,setMaximumTextWidth,trackSingleSelectable,updateFormat,updateSelection,updateText" name="keywords">
 <title>com.threerings.flash.TextFieldUtil</title>
 </head>
 <body>
@@ -82,6 +82,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#setFocusable()">setFocusable</a>(field:TextField):void</div>
+<div class="summaryTableDescription">[static]
+     Add a special MouseEvent.CLICK listener so that the specified field is focusable
+     even inside a security boundary.</div>
+</td><td class="summaryTableOwnerCol">TextFieldUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#setMaximumTextWidth()">setMaximumTextWidth</a>(tf:TextField, width:Number, truncationString:String = "..."):Boolean</div>
 <div class="summaryTableDescription">[static]
      Ensures that a single-line TextField is not wider than the specified width, and
@@ -121,6 +130,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#handleFieldFocus()">handleFieldFocus</a>(event:MouseEvent):void</div>
+<div class="summaryTableDescription">[static]
+     Handle focusing the text field.</div>
+</td><td class="summaryTableOwnerCol">TextFieldUtil</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -208,6 +225,9 @@ showHideInherited();
 <div class="detailBody">
 <code>public static function createField(text:String, initProps:Object = null, formatProps:Object = null, clazz:Class = null):TextField</code><p>
      Create a TextField.
+     The field will have setFocusable() called on it.
+     Note that if the autoSize property is not none, then the field will be resized
+     to the size of the text, overwriting any width/height properties specified.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -270,6 +290,22 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="handleFieldFocus()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleFieldFocus</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function handleFieldFocus(event:MouseEvent):void</code><p>
+     Handle focusing the text field.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:MouseEvent</code></td>
+</tr>
+</table>
+</div>
 <a name="handleLastSelectedRemoved()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -299,6 +335,23 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">event</span>:MouseEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="setFocusable()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setFocusable</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function setFocusable(field:TextField):void</code><p>
+     Add a special MouseEvent.CLICK listener so that the specified field is focusable
+     even inside a security boundary.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">field</span>:TextField</code></td>
 </tr>
 </table>
 </div>

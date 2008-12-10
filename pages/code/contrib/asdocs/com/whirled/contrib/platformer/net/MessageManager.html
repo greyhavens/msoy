@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="MessageManager,com.whirled.contrib.platformer.net.MessageManager,_gameCtrl,_lastRec,_msgTypes,_rec,addMessageType,checkSend,getMessage,onMessageReceived,sendMessage,shutdown" name="keywords">
+<meta content="MessageManager,com.whirled.contrib.platformer.net.MessageManager,_gameCtrl,_lastRec,_msgTypes,_rec,addMessageType,checkSend,getMessage,ifServerSend,notLocalSend,onMessageReceived,sendMessage,shutdown" name="keywords">
 <title>com.whirled.contrib.platformer.net.MessageManager</title>
 </head>
 <body>
@@ -101,6 +101,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getMessage()">getMessage</a>(name:String, bytes:ByteArray):<a href="../net/GameMessage.html">GameMessage</a>
 </div>
 <div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">MessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#ifServerSend()">ifServerSend</a>(createMsg:Function, ... args):void</div>
+<div class="summaryTableDescription">
+     Sends the GameMessage only if being run on the server.</div>
+</td><td class="summaryTableOwnerCol">MessageManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#notLocalSend()">notLocalSend</a>(createMsg:Function, ... args):void</div>
+<div class="summaryTableDescription">
+     Sends the GameMessage if the game isn't run locally.</div>
 </td><td class="summaryTableOwnerCol">MessageManager</td>
 </tr>
 <tr class="">
@@ -255,6 +271,50 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code><a href="../net/GameMessage.html">GameMessage</a></code></td>
+</tr>
+</table>
+</div>
+<a name="ifServerSend()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ifServerSend</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function ifServerSend(createMsg:Function, ... args):void</code><p>
+     Sends the GameMessage only if being run on the server.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">createMsg</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">args</span></code></td>
+</tr>
+</table>
+</div>
+<a name="notLocalSend()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">notLocalSend</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function notLocalSend(createMsg:Function, ... args):void</code><p>
+     Sends the GameMessage if the game isn't run locally.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">createMsg</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code>... <span class="label">args</span></code></td>
 </tr>
 </table>
 </div>

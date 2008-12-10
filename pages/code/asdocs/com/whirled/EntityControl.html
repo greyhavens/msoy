@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="EntityControl,com.whirled.EntityControl,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_MOVE_SPEED,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,canEditRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerPropertyProvider,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPopup,triggerAction" name="keywords">
+<meta content="EntityControl,com.whirled.EntityControl,PROP_DIMENSIONS,PROP_HOTSPOT,PROP_LOCATION_LOGICAL,PROP_LOCATION_PIXEL,PROP_MEMBER_ID,PROP_MOVE_SPEED,PROP_NAME,PROP_ORIENTATION,PROP_TYPE,TYPE_AVATAR,TYPE_FURNI,TYPE_PET,canManageRoom,clearPopup,dispatchCtrlEvent,getCamera,getDefaultDataPack,getEntityIds,getEntityProperty,getInstanceId,getLogicalLocation,getMemories,getMemory,getMicrophone,getMyEntityId,getPixelLocation,getRoomBounds,getViewerName,hasControl,registerPropertyProvider,sendMessage,sendSignal,setHotSpot,setMemory,setTickInterval,showPopup,triggerAction" name="keywords">
 <title>com.whirled.EntityControl</title>
 </head>
 <body>
@@ -77,9 +77,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#canEditRoom()">canEditRoom</a>():Boolean</div>
+<a class="signatureLink" href="#canManageRoom()">canManageRoom</a>(memberId:int = 0):Boolean</div>
 <div class="summaryTableDescription">
-     Returns true if the local client has editing privileges in the current room.</div>
+     Returns true if the local client has management privileges in the current room.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
 </tr>
 <tr class="">
@@ -483,18 +483,26 @@ showHideInherited();
 <div class="MainContent">
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="canEditRoom()"></a>
+<a name="canManageRoom()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">canEditRoom</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">canManageRoom</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function canEditRoom():Boolean</code><p>
-     Returns true if the local client has editing privileges in the current room.  Note that this
-     may change without notice. This value should be re-checked prior to persisting any sort of
-     setting in the entity memory.
-     </p><p></p>
+<code>public function canManageRoom(memberId:int = 0):Boolean</code><p>
+     Returns true if the local client has management privileges in the current room.
+     A user with management permissions can edit the room, among other things.
+     Passing 0 for the memberId indicates that this instance's viewing user should be checked.
+     Note that this may change without notice, meaning that you shouldn't just check it once
+     for a user and assume they still have management permissions later.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">memberId</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -720,7 +728,6 @@ showHideInherited();
 <code>public function getMemory(key:String, defval:Object = null):Object</code><p>
      Returns the value associated with the supplied key in this item's memory. If no value is
      mapped in the item's memory, the supplied default value will be returned.
-          NOTE: Avatar memories are inconsistent at the moment and should not be used.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -988,7 +995,6 @@ showHideInherited();
      contents of the Pet's memory (keys and values) must not exceed 4096 bytes when AMF3 encoded.
           Setting the memory for a key to null clears that key; subsequent lookups will return the
      default value.
-          NOTE: Avatar memories are inconsistent at the moment and should not be used.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

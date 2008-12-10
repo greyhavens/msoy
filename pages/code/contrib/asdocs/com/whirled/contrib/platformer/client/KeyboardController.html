@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="KeyboardController,com.whirled.contrib.platformer.client.KeyboardController,DOUBLE_TAP,_doubleTap,_downKeys,_dx,_dy,_ed,_lastDown,_wasRead,getDx,getDy,init,isDoubleTap,isDown,jumping,keyPressed,keyReleased,markPressed,readOnce,shooting,shutdown,updateACS" name="keywords">
+<meta content="KeyboardController,com.whirled.contrib.platformer.client.KeyboardController,DOUBLE_TAP,IGNORE_DOUBLE,_doubleTap,_downKeys,_dx,_dy,_ed,_lastDown,_lastUp,_wasRead,getDx,getDy,init,isDoubleTap,isDown,jumping,keyPressed,keyReleased,markPressed,readOnce,shooting,shutdown,updateACS" name="keywords">
 <title>com.whirled.contrib.platformer.client.KeyboardController</title>
 </head>
 <body>
@@ -72,6 +72,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_lastDown">_lastDown</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">KeyboardController</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_lastUp">_lastUp</a> : Array<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">KeyboardController</td>
 </tr>
 <tr class="">
@@ -200,6 +204,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DOUBLE_TAP">DOUBLE_TAP</a> : int = 250<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">KeyboardController</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#IGNORE_DOUBLE">IGNORE_DOUBLE</a> : int = 40<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">KeyboardController</td>
+</tr>
 </table>
 </div>
 <script type="text/javascript" language="javascript">
@@ -262,6 +270,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _lastDown:Array</code>
+</div>
+<a name="_lastUp"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_lastUp</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _lastUp:Array</code>
 </div>
 <a name="_wasRead"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -490,6 +507,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected static const DOUBLE_TAP:int = 250</code>
+</div>
+<a name="IGNORE_DOUBLE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">IGNORE_DOUBLE</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const IGNORE_DOUBLE:int = 40</code>
 </div>
 <br>
 <br>

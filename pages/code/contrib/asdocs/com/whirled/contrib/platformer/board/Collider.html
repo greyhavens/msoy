@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Collider,com.whirled.contrib.platformer.board.Collider,DEBUG,MAX_DX,MAX_DY,MIN_DELTA,_boundLineSections,_boundLines,_dynamicBounds,_dynamics,_lines,_sindex,_tasks,_tickCounter,addBoundedPiece,addDynamic,addLine,addShot,closeIndices,collide,debug,doesInteract,findLineCloseHit,getBounds,getDynamicBounds,getDynamicBoundsByType,getLines,getLinesFromLine,getLinesPt,getStartDelta,isInteresting,numBounds,numTasks,removeDynamic,setBound,tick,translateDynamic,updateBoundLines,updateInter" name="keywords">
+<meta content="Collider,com.whirled.contrib.platformer.board.Collider,DEBUG,MAX_DX,MAX_DY,MIN_DELTA,_boundLineSections,_boundLines,_dynamicBounds,_dynamics,_lines,_sindex,_tasks,_tickCounter,addBoundedPiece,addDynamic,addLine,addShot,closeIndices,collide,debug,doesInteract,findLineCloseHit,getBounds,getDynamicBounds,getDynamicBoundsByType,getLines,getLinesFromLine,getLinesPt,getStartDelta,isInteresting,numBounds,numTasks,removeDynamic,setBound,tick,translateDynamic,updateBoundLines,updateInter,updateInterTo" name="keywords">
 <title>com.whirled.contrib.platformer.board.Collider</title>
 </head>
 <body>
@@ -250,7 +250,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#updateInter()">updateInter</a>(ac:<a href="../game/ActorController.html">ActorController</a>, inter:int):void</div>
+<a class="signatureLink" href="#updateInter()">updateInter</a>(dc:<a href="../game/DynamicController.html">DynamicController</a>, inter:int):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Collider</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#updateInterTo()">updateInterTo</a>(d:<a href="../piece/Dynamic.html">Dynamic</a>, oldInter:int, newInter:int):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
@@ -917,16 +924,42 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function updateInter(ac:<a href="../game/ActorController.html">ActorController</a>, inter:int):void</code><span class="label">Parameters</span>
+<code>public function updateInter(dc:<a href="../game/DynamicController.html">DynamicController</a>, inter:int):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">ac</span>:<a href="../game/ActorController.html">ActorController</a></code></td>
+<td width="20px"></td><td><code><span class="label">dc</span>:<a href="../game/DynamicController.html">DynamicController</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">inter</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="updateInterTo()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateInterTo</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function updateInterTo(d:<a href="../piece/Dynamic.html">Dynamic</a>, oldInter:int, newInter:int):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">d</span>:<a href="../piece/Dynamic.html">Dynamic</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">oldInter</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">newInter</span>:int</code></td>
 </tr>
 </table>
 </div>
