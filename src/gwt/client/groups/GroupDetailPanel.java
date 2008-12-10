@@ -243,13 +243,15 @@ public class GroupDetailPanel extends FlowPanel
                     }
                 }));
 
-            managerActions.add(new InlineLabel(" | "));
-            managerActions.add(MsoyUI.createActionLabel(
-                _msgs.detailAwardMedals(), "inline", new ClickListener() {
-                    public void onClick (Widget sender) {
-                        _contentPanel.showAwardMedals();
-                    }
-                }));
+            if (DeploymentConfig.devDeployment) {
+                managerActions.add(new InlineLabel(" | "));
+                managerActions.add(MsoyUI.createActionLabel(
+                    _msgs.detailAwardMedals(), "inline", new ClickListener() {
+                        public void onClick (Widget sender) {
+                            _contentPanel.showAwardMedals();
+                        }
+                    }));
+            }
         }
 
         FlowPanel rightPanel = MsoyUI.createFlowPanel("Right");
