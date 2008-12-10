@@ -65,9 +65,7 @@ public class MoneyServlet extends MsoyServiceServlet
         if (mrec.isSupport()) {
             Set<Integer> memberIds = new HashSet<Integer>();
             for (MoneyTransaction tx : page) {
-                if (memberId > 0) {
-                    memberIds.add(tx.referenceMemberName.getMemberId());
-                }
+                memberIds.add(tx.referenceMemberName.getMemberId());
             }
             IntMap<MemberName> names = _memberRepo.loadMemberNames(memberIds);
             for (MoneyTransaction tx : page) {
