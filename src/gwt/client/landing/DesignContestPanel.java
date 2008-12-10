@@ -36,8 +36,13 @@ public class DesignContestPanel extends FlowPanel
             new WideContentBox(_msgs.designconIntroTitle(), _msgs.designconIntroText(), false));
         content.add(
             new WideContentBox(_msgs.designconPrizesTitle(), _msgs.designconPrizesText(), true));
-        content.add(
-            new WideContentBox(_msgs.designconEnterTitle(), _msgs.designconEnterText(), true));
+        
+        FlowPanel enterPanel = MsoyUI.createFlowPanel(null);
+        enterPanel.add(MsoyUI.createHTML(_msgs.designconEnterText(), null));
+        enterPanel.add(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.designconSignup(), 
+            Link.createListener(Pages.ACCOUNT, "create")));
+        content.add(new WideContentBox(_msgs.designconEnterTitle(), enterPanel, true));
+
         content.add(
             new WideContentBox(_msgs.designconRulesTitle(), _msgs.designconRulesText(), false));
 
