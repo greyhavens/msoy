@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
@@ -60,23 +59,11 @@ public class Link
     }
 
     /**
-     * Get the billing URL, appending the username for easy logins if available.
-     */
-    public static String billingURL ()
-    {
-        String href = DeploymentConfig.billingURL;
-        if (CShell.creds != null) {
-            href += "?initUsername=" + CShell.creds.accountName;
-        }
-        return href;
-    }
-
-    /**
      * Returns link that pops up the billing page.
      */
     public static Anchor buyBars (String label)
     {
-        return new Anchor(billingURL(), label, "_blank");
+        return new Anchor(BillingURLs.getEntryPoint(CShell.creds), label, "_blank");
     }
 
     /**

@@ -3,6 +3,8 @@
 
 package client.util;
 
+import client.shell.CShell;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
@@ -81,7 +83,7 @@ public class NaviUtil
     {
         return new ClickListener() {
             public void onClick (Widget sender) {
-                Window.open(Link.billingURL(), "_blank",
+                Window.open(BillingURLs.getEntryPoint(CShell.creds), "_blank",
                     // For those silly browsers that open this in a new window instead of a new
                     // tab, enable all the chrome options on the new window.
                     "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");

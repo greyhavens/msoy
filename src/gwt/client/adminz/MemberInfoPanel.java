@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.admin.gwt.AdminService;
@@ -28,6 +29,7 @@ import com.threerings.msoy.web.gwt.WebCreds;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.util.BillingURLs;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -60,7 +62,9 @@ public class MemberInfoPanel extends SmartTable
         int row;
         setWidget(0, 0, Link.memberView(info.name), 2, "Name");
         setWidget(1, 0, Link.transactionsView("Transaction history", info.name.getMemberId()));
-
+        setWidget(2, 0, new Anchor(BillingURLs.getUserStatusPage(info.accountName, info.permaName), 
+            "Billing Transactions", "_blank"));
+        
         row = addText("Account name:", 1, "Label");
         setText(row, 1, info.accountName);
 

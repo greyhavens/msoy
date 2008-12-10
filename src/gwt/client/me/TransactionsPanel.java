@@ -20,6 +20,7 @@ import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.ui.StretchButton;
 import client.ui.TongueBox;
+import client.util.BillingURLs;
 import client.util.NaviUtil;
 import client.util.Link;
 
@@ -89,6 +90,7 @@ public class TransactionsPanel extends FlowPanel
     };
 
     protected static final String[] REPORT_TIPS = {
-        _msgs.tipCoins(), _msgs.tipBars(Link.billingURL()), _msgs.tipBling(), _msgs.tipCreator()
+        _msgs.tipCoins(), _msgs.tipBars(BillingURLs.getEntryPoint(CShell.creds)), _msgs.tipBling(), 
+        _msgs.tipCreator()
     };
 }
