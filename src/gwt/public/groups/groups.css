@@ -339,7 +339,7 @@
 .galaxyPanel .IntroBlurb {
   color: #FFFFFF;
   padding: 10px 0 15px 15px;
-  width: 450px;
+  width: 60%;
   font-size: 13px;
 }
 .galaxyPanel .IntroBlurb a {
@@ -350,7 +350,7 @@
   float: right;
   margin: 0 10px 10px 0;
   padding: 5px;
-  width: 210px;
+  width: 30%;
 }
 
 .galaxyPanel .Search .SearchTitle {
