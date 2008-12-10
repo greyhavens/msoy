@@ -18,9 +18,10 @@ import com.threerings.flex.GridUtil;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 
@@ -31,7 +32,7 @@ import com.threerings.msoy.party.data.PartyCodes;
  */
 public class CreatePartyPanel extends FloatingPanel
 {
-    public function CreatePartyPanel (ctx :MsoyContext)
+    public function CreatePartyPanel (ctx :WorldContext)
     {
         super(ctx, Msgs.PARTY.get("t.create"));
         setButtonWidth(0);
@@ -92,7 +93,7 @@ public class CreatePartyPanel extends FloatingPanel
     override protected function buttonClicked (buttonId :int) :void
     {
         if (buttonId == OK_BUTTON) {
-            _ctx.getPartyDirector().createParty(
+            WorldContext(_ctx).getPartyDirector().createParty(
                 _name.text, int(_group.selectedItem.data), _inviteAll.selected);
         }
 

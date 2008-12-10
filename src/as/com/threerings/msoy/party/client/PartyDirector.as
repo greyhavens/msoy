@@ -22,7 +22,6 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -35,9 +34,8 @@ import com.threerings.msoy.party.data.PartyMarshaller;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 
-// TODO: we shouldn't reach into 'world'. We should either be there, or do some other
-// refiguring
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 /**
  * Manages party stuff on the client.
@@ -47,21 +45,21 @@ public class PartyDirector extends BasicDirector
     // reference the PartyBoardMarshaller class
     PartyBoardMarshaller;
 
-    public function PartyDirector (ctx :MsoyContext)
+    public function PartyDirector (ctx :WorldContext)
     {
         super(ctx);
-        _mctx = ctx;
+        _wctx = ctx;
     }
 
     public function isInParty () :Boolean
     {
-        var clobj :Object = _mctx.getClient().getClientObject();
+        var clobj :Object = _wctx.getClient().getClientObject();
         return (clobj is MemberObject) && (MemberObject(clobj).partyId != 0);
     }
 
     public function isPartyLeader () :Boolean
     {
-        return (_partyObj != null) && (_partyObj.leaderId == _mctx.getMyName().getMemberId());
+        return (_partyObj != null) && (_partyObj.leaderId == _wctx.getMyName().getMemberId());
     }
 
     /**
@@ -70,9 +68,9 @@ public class PartyDirector extends BasicDirector
     public function createAppropriatePartyPanel () :FloatingPanel
     {
         if (_partyObj != null) {
-            return new PartyPanel(_mctx, _partyObj);
+            return new PartyPanel(_wctx, _partyObj);
         } else {
-            return new PartyBoardPanel(_mctx);
+            return new PartyBoardPanel(_wctx);
         }
     }
 
@@ -80,17 +78,17 @@ public class PartyDirector extends BasicDirector
     {
         var menuItems :Array = [];
 
-        _mctx.getMsoyController().addMemberMenuItems(peep.name, menuItems);
+        _wctx.getMsoyController().addMemberMenuItems(peep.name, menuItems);
 
         const peepId :int = peep.name.getMemberId();
-        const ourId :int = _mctx.getMyName().getMemberId();
+        const ourId :int = _wctx.getMyName().getMemberId();
         if (_partyObj.leaderId == ourId && peepId != ourId) {
             menuItems.push({ type: "separator" });
             menuItems.push({ label: Msgs.PARTY.get("b.boot"),
                              callback: bootMember, arg: peep.name.getMemberId() });
         }
 
-        CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
+        CommandMenu.createMenu(menuItems, _wctx.getTopPanel()).popUpAtMouse();
     }
 
     /**
@@ -98,8 +96,8 @@ public class PartyDirector extends BasicDirector
      */
     public function getPartyBoard (resultHandler :Function, query :String = null) :void
     {
-        _pbsvc.getPartyBoard(_mctx.getClient(), query,
-            new ResultAdapter(resultHandler, _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+        _pbsvc.getPartyBoard(_wctx.getClient(), query,
+            new ResultAdapter(resultHandler, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     /**
@@ -107,8 +105,8 @@ public class PartyDirector extends BasicDirector
      */
     public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void
     {
-        _pbsvc.createParty(_mctx.getClient(), name, groupId, inviteAllFriends,
-            new ResultAdapter(partyOidKnown, _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+        _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends,
+            new ResultAdapter(partyOidKnown, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     /**
@@ -116,8 +114,8 @@ public class PartyDirector extends BasicDirector
      */
     public function joinParty (id :int) :void
     {
-        _pbsvc.joinParty(_mctx.getClient(), id,
-            new ResultAdapter(partyOidKnown, _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+        _pbsvc.joinParty(_wctx.getClient(), id,
+            new ResultAdapter(partyOidKnown, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     /**
@@ -131,7 +129,7 @@ public class PartyDirector extends BasicDirector
             // we have no party to leave
             return;
         }
-        _partyObj.partyService.leaveParty(_mctx.getClient(), new ConfirmAdapter(
+        _partyObj.partyService.leaveParty(_wctx.getClient(), new ConfirmAdapter(
             function () :void {
                 _safeSubscriber.unsubscribe(_ctx.getDObjectManager());
                 _safeSubscriber = null;
@@ -139,23 +137,23 @@ public class PartyDirector extends BasicDirector
                 _partyListener = null;
                 _partyObj = null;
 
-                var btn :CommandButton = _mctx.getControlBar().partyBtn;
+                var btn :CommandButton = WorldControlBar(_wctx.getControlBar()).partyBtn;
                 if (btn.selected) {
                     btn.activate(); // pop down the party window.
                 }
-            }, _mctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+            }, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     public function assignLeader (memberId :int) :void
     {
-        _partyObj.partyService.assignLeader(_mctx.getClient(), memberId,
-            new ReportingListener(_mctx, MsoyCodes.PARTY_MSGS));
+        _partyObj.partyService.assignLeader(_wctx.getClient(), memberId,
+            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
     }
 
     public function updateStatus (status :String) :void
     {
-        _partyObj.partyService.updateStatus(_mctx.getClient(), status,
-            new ReportingListener(_mctx, MsoyCodes.PARTY_MSGS));
+        _partyObj.partyService.updateStatus(_wctx.getClient(), status,
+            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
     }
 
     /**
@@ -163,8 +161,8 @@ public class PartyDirector extends BasicDirector
      */
     public function bootMember (memberId :int) :void
     {
-        _partyObj.partyService.bootMember(_mctx.getClient(), memberId,
-            new ReportingListener(_mctx, MsoyCodes.PARTY_MSGS));
+        _partyObj.partyService.bootMember(_wctx.getClient(), memberId,
+            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
     }
 
     // from BasicDirector
@@ -172,7 +170,7 @@ public class PartyDirector extends BasicDirector
     {
         super.registerServices(client);
 
-        client.addServiceGroup(MsoyCodes.MEMBER_GROUP);
+        client.addServiceGroup(MsoyCodes.WORLD_GROUP);
     }
 
     // from BasicDirector
@@ -186,7 +184,7 @@ public class PartyDirector extends BasicDirector
     protected function checkFollowParty () :void
     {
         if (_partyObj.sceneId != 0) {
-            WorldContext(_mctx).getSceneDirector().moveTo(_partyObj.sceneId);
+            _wctx.getSceneDirector().moveTo(_partyObj.sceneId);
         }
     }
 
@@ -210,7 +208,7 @@ public class PartyDirector extends BasicDirector
         _partyObj.addListener(_partyListener);
 
         // if the party popup is up, change to the new popup...
-        var btn :CommandButton = _mctx.getControlBar().partyBtn;
+        var btn :CommandButton = WorldControlBar(_wctx.getControlBar()).partyBtn;
         if (btn.selected) {
             // click it down and then back up...
             btn.activate();
@@ -238,7 +236,7 @@ public class PartyDirector extends BasicDirector
         }
     }
 
-    protected var _mctx :MsoyContext;
+    protected var _wctx :WorldContext;
 
     protected var _pbsvc :PartyBoardService;
 

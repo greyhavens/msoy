@@ -15,9 +15,10 @@ import com.threerings.flex.CommandButton;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Roster;
 import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 
@@ -27,9 +28,10 @@ import com.threerings.msoy.party.data.PartyPeep;
 public class PartyPanel extends FloatingPanel
     implements AttributeChangeListener
 {
-    public function PartyPanel (ctx :MsoyContext, partyObj :PartyObject)
+    public function PartyPanel (ctx :WorldContext, partyObj :PartyObject)
     {
         super(ctx, Msgs.PARTY.get("t.party"));
+        _wctx = ctx;
         showCloseButton = true;
 
         _partyObj = partyObj;
@@ -60,7 +62,7 @@ public class PartyPanel extends FloatingPanel
             PartyPeep.createSortByOrder(_partyObj));
         addChild(_roster);
 
-        addChild(new CommandButton(Msgs.PARTY.get("b.leave"), _ctx.getPartyDirector().leaveParty));
+        addChild(new CommandButton(Msgs.PARTY.get("b.leave"), _wctx.getPartyDirector().leaveParty));
 
         _status = new TextInput();
         _status.percentWidth = 100;
@@ -87,8 +89,10 @@ public class PartyPanel extends FloatingPanel
 
     protected function commitStatus (event :FlexEvent) :void
     {
-        _ctx.getPartyDirector().updateStatus(_status.text);
+        _wctx.getPartyDirector().updateStatus(_status.text);
     }
+
+    protected var _wctx :WorldContext;
 
     protected var _partyObj :PartyObject;
 

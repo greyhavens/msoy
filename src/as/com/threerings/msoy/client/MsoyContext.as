@@ -32,8 +32,6 @@ import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.notify.client.NotificationDirector;
 
-import com.threerings.msoy.party.client.PartyDirector;
-
 /**
  * Provides services shared by all clients.
  */
@@ -235,14 +233,6 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
-     * Get the party director.
-     */
-    public function getPartyDirector () :PartyDirector
-    {
-        return _partyDir;
-    }
-
-    /**
      * Get the message manager.
      */
     public function getMessageManager () :MessageManager
@@ -308,7 +298,6 @@ public /*abstract*/ class MsoyContext
         _notifyDir = new NotificationDirector(this);
         _muteDir = new MuteDirector(this);
         _muteDir.setChatDirector(_chatDir);
-        _partyDir = new PartyDirector(this);
     }
 
     /**
@@ -336,6 +325,5 @@ public /*abstract*/ class MsoyContext
     protected var _chatDir :MsoyChatDirector;
     protected var _muteDir :MuteDirector;
     protected var _notifyDir :NotificationDirector;
-    protected var _partyDir :PartyDirector;
 }
 }

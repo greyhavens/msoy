@@ -73,6 +73,11 @@ public class WorldControlBar extends ControlBar
         return _friendsBtn;
     }
 
+    public function get partyBtn () :CommandButton
+    {
+        return _partyBtn;
+    }
+
     /**
      * Shows a help bubble emphasizing the use of the share button.
      * TODO: make more generic
@@ -168,6 +173,12 @@ public class WorldControlBar extends ControlBar
         _homePageGridBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return new HomePageDialog(_wctx);
         }, _homePageGridBtn));
+
+        _partyBtn = createButton("controlBarPartyButton", "i.party");
+        _partyBtn.toggle = true;
+        _partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+            return _wctx.getPartyDirector().createAppropriatePartyPanel();
+        }, _partyBtn));
     }
 
     // from ControlBar
@@ -185,6 +196,9 @@ public class WorldControlBar extends ControlBar
         addButton(_snapBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
         addButton(_roomeditBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
 
+        if (DeploymentConfig.devDeployment) {
+            addButton(_partyBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY + 1);
+        }
     }
 
     // from ControlBar
@@ -318,6 +332,9 @@ public class WorldControlBar extends ControlBar
 
     /** Brings up the recent places grid. */
     protected var _homePageGridBtn :CommandButton;
+
+   /** Handles the two party-related popups. */
+    protected var _partyBtn :CommandButton;
 
     /** An introduction to avatars shown to brand new players. */
     protected var _avatarIntro :DisplayObjectContainer;

@@ -13,6 +13,8 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.PlayerRenderer;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.party.data.PartyPeep;
 
 public class PeepRenderer extends PlayerRenderer
@@ -35,7 +37,7 @@ public class PeepRenderer extends PlayerRenderer
     protected function handleClick (event :MouseEvent) :void
     {
         if (data != null) {
-            mctx.getPartyDirector().popPeepMenu(PartyPeep(data));
+            WorldContext(mctx).getPartyDirector().popPeepMenu(PartyPeep(data));
         }
     }
 }

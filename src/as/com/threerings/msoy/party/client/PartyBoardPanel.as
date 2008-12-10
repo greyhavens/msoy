@@ -15,21 +15,23 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.party.data.PartyInfo;
 
 public class PartyBoardPanel extends FloatingPanel
 {
-    public function PartyBoardPanel (ctx :MsoyContext)
+    public function PartyBoardPanel (ctx :WorldContext)
     {
         super(ctx, Msgs.PARTY.get("t.board"));
+        _wctx = ctx;
         showCloseButton = true;
         setButtonWidth(0);
 
         var cf :ClassFactory = new ClassFactory(PartyInfoRenderer);
-        cf.properties =  { mctx: _ctx };
+        cf.properties = { wctx: _wctx };
         _partyList = new List();
         _partyList.itemRenderer = cf;
 
@@ -45,13 +47,13 @@ public class PartyBoardPanel extends FloatingPanel
 
         addButtons(new CommandButton(Msgs.PARTY.get("b.create"), 
             FloatingPanel.createPopper(function () :FloatingPanel {
-                return new CreatePartyPanel(_ctx);
+                return new CreatePartyPanel(_wctx);
             })));
     }
 
     protected function getPartyBoard (query :String = null) :void
     {
-        _ctx.getPartyDirector().getPartyBoard(gotPartyBoard, query);
+        _wctx.getPartyDirector().getPartyBoard(gotPartyBoard, query);
     }
 
     /**
@@ -62,6 +64,8 @@ public class PartyBoardPanel extends FloatingPanel
         removeChild(_loading);
         _partyList.dataProvider = result;
     }
+
+    protected var _wctx :WorldContext;
 
     protected var _partyList :List;
 

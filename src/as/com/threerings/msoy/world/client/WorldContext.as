@@ -22,6 +22,8 @@ import com.threerings.msoy.data.MsoyTokenRing;
 
 import com.threerings.msoy.world.tour.client.TourDirector;
 
+import com.threerings.msoy.party.client.PartyDirector;
+
 /**
  * Defines services for the World client.
  */
@@ -112,6 +114,14 @@ public class WorldContext extends MsoyContext
     }
 
     /**
+     * Get the party director.
+     */
+    public function getPartyDirector () :PartyDirector
+    {
+        return _partyDir;
+    }
+
+    /**
      * Returns the top-level world controller.
      */
     public function getWorldController () :WorldController
@@ -154,6 +164,7 @@ public class WorldContext extends MsoyContext
         _worldDir = new WorldDirector(this);
         _memberDir = new MemberDirector(this);
         _tourDir = new TourDirector(this);
+        _partyDir = new PartyDirector(this);
     }
 
     protected var _controller :WorldController;
@@ -165,5 +176,6 @@ public class WorldContext extends MsoyContext
     protected var _worldDir :WorldDirector;
     protected var _memberDir :MemberDirector;
     protected var _tourDir :TourDirector;
+    protected var _partyDir :PartyDirector;
 }
 }
