@@ -35,7 +35,9 @@ import com.threerings.msoy.money.data.all.TransactionType;
     @Index(name = "ixMemberId", fields = { MoneyTransactionRecord.MEMBER_ID }),
     @Index(name = "ixTimestamp", fields = { MoneyTransactionRecord.TIMESTAMP }),
     @Index(name = "ixTransactionType", fields = { MoneyTransactionRecord.TRANSACTION_TYPE }),
-    @Index(name = "ixCurrency", fields = { MoneyTransactionRecord.CURRENCY }) })
+    @Index(name = "ixCurrency", fields = { MoneyTransactionRecord.CURRENCY }),
+    @Index(name = "ixSubject", fields = { MoneyTransactionRecord.SUBJECT_TYPE,
+        MoneyTransactionRecord.SUBJECT_ID_TYPE, MoneyTransactionRecord.SUBJECT_ID }) })
 public class MoneyTransactionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -131,7 +133,7 @@ public class MoneyTransactionRecord extends PersistentRecord
         new ColumnExp(MoneyTransactionRecord.class, REFERENCE_MEMBER_ID);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** Value of {@link #subjectType} when there is no subject. */
     public static final int SUBJECT_NONE = 0;

@@ -5,6 +5,7 @@ package com.threerings.msoy.money.server;
 
 import java.text.NumberFormat;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
@@ -420,6 +422,21 @@ public class MoneyLogic
     }
 
     /**
+     * Refunds all the money spent on an item to purchasers and deducts the bling or coins from
+     * the creator, affiliate and charity. For each applicable transaction, introduces an inverse
+     * transaction. Note that since we purge old transactions periodically, this method may only
+     * affects recent transactions.
+     *
+     * @param item the identity of the catalog listing.
+     * @see MoneyTransactionExpirer
+     */
+    public void refundAllItemPurchases (
+        CatalogIdent item, int creatorId, String itemDescription)
+    {
+        // TODO: load all transactions for the catalog item and insert an inverse for each
+    }
+
+    /**
      * Called to effect the removal of bling from a member's account for cash-out purposes.
      *
      * @param memberId ID of the member whose bling will be cashed out.
@@ -583,10 +600,15 @@ public class MoneyLogic
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
         // we can't just use Lists.transform because it returns a non-serializable list
-        return Lists.newArrayList(Iterables.transform(
+        List<MoneyTransaction> txList = Lists.newArrayList(Iterables.transform(
             _repo.getTransactions(memberId, transactionTypes, currency, start, count, descending),
             support ? MoneyTransactionRecord.TO_TRANSACTION_SUPPORT
                     : MoneyTransactionRecord.TO_TRANSACTION));
+
+        if (support) {
+            fillInMemberNames(txList);
+        }
+        return txList;
     }
 
     /**
@@ -602,6 +624,27 @@ public class MoneyLogic
         int memberId, EnumSet<TransactionType> transactionTypes, Currency currency)
     {
         return _repo.getTransactionCount(memberId, transactionTypes, currency);
+    }
+
+    /**
+     * Loads all transactions that were inserted with the given subject.
+     */
+    public List<MoneyTransaction> getItemTransactions (
+        CatalogIdent item, int from, int count, boolean descending)
+    {
+        List<MoneyTransaction> txList = Lists.newArrayList(Iterables.transform(
+            _repo.getTransactionsForSubject(item, from, count, descending),
+            MoneyTransactionRecord.TO_TRANSACTION_SUPPORT));
+        fillInMemberNames(txList);
+        return txList;
+    }
+
+    /**
+     * Counts the number of transactions that were inserted with the given subject.
+     */
+    public int getItemTransactionCount (CatalogIdent item)
+    {
+        return _repo.getTransactionCountForSubject(item);
     }
 
     /**
@@ -755,6 +798,18 @@ public class MoneyLogic
             return 0;
         } else {
             return RandomUtil.pickRandom(charities).memberId;
+        }
+    }
+
+    protected void fillInMemberNames (List<MoneyTransaction> txList)
+    {
+        Set<Integer> memberIds = new HashSet<Integer>();
+        for (MoneyTransaction tx : txList) {
+            memberIds.add(tx.referenceMemberName.getMemberId());
+        }
+        IntMap<MemberName> names = _memberRepo.loadMemberNames(memberIds);
+        for (MoneyTransaction tx : txList) {
+            tx.referenceMemberName = names.get(tx.referenceMemberName.getMemberId());
         }
     }
 

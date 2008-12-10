@@ -265,6 +265,42 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
+     * Loads recent transactions that were inserted with the given subject.
+     * @param subject the subject of the transaction to search for
+     * @param from offset in the list of transactions to return first
+     * @param count maximum number of transactions to return
+     * @param descending if set, transactions are ordered newest to oldest
+     */
+    public List<MoneyTransactionRecord> getTransactionsForSubject (
+        Object subject, int from, int count, boolean descending)
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(makeSubjectSearch(subject));
+
+        clauses.add(descending ?
+            OrderBy.descending(MoneyTransactionRecord.TIMESTAMP_C) :
+            OrderBy.ascending(MoneyTransactionRecord.TIMESTAMP_C));
+
+        if (count != Integer.MAX_VALUE) {
+            clauses.add(new Limit(from, count));
+        }
+
+        return findAll(MoneyTransactionRecord.class, clauses);
+    }
+
+    /**
+     * Loads the number of recent transactions that were inserted with the given subject.
+     * @param subject the subject of the transaction to search for
+     */
+    public int getTransactionCountForSubject (Object subject)
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new FromOverride(MoneyTransactionRecord.class));
+        clauses.add(makeSubjectSearch(subject));
+        return load(CountRecord.class, clauses).count;
+    }
+
+    /**
      * Get the number of bars and the coin balance in the bar pool.
      */
     public int[] getBarPool (int defaultBarPoolSize)
@@ -493,6 +529,16 @@ public class MoneyRepository extends DepotRepository
         }
 
         clauses.add(new Where(new And(where)));
+    }
+
+    protected Where makeSubjectSearch (Object subject)
+    {
+        MoneyTransactionRecord.Subject subj = new MoneyTransactionRecord.Subject(subject);
+        List<SQLOperator> where = Lists.newArrayList();
+        where.add(new Conditionals.Equals(MoneyTransactionRecord.SUBJECT_TYPE_C, subj.type));
+        where.add(new Conditionals.Equals(MoneyTransactionRecord.SUBJECT_ID_TYPE_C, subj.idType));
+        where.add(new Conditionals.Equals(MoneyTransactionRecord.SUBJECT_ID_C, subj.id));
+        return new Where(new And(where));
     }
 
     @Override
