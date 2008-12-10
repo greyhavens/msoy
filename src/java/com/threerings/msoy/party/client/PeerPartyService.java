@@ -23,4 +23,9 @@ public interface PeerPartyService extends InvocationService
      */
     void joinParty (
         Client client, int partyId, VizMemberName player, byte groupRank, ResultListener rl);
+
+    /**
+     * Get the scene for a party.
+     */
+    void getPartyScene (Client client, int partyId, ResultListener rl);
 }

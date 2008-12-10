@@ -32,8 +32,21 @@ public class PeerPartyMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #getPartyScene} requests. */
+    public static final int GET_PARTY_SCENE = 2;
+
+    // from interface PeerPartyService
+    public void getPartyScene (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    {
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, GET_PARTY_SCENE, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #joinParty} requests. */
-    public static final int JOIN_PARTY = 2;
+    public static final int JOIN_PARTY = 3;
 
     // from interface PeerPartyService
     public void joinParty (Client arg1, int arg2, VizMemberName arg3, byte arg4, InvocationService.ResultListener arg5)

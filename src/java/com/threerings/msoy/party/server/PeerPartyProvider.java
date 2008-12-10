@@ -22,6 +22,12 @@ public interface PeerPartyProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link PeerPartyService#getPartyScene} request.
+     */
+    void getPartyScene (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link PeerPartyService#joinParty} request.
      */
     void joinParty (ClientObject caller, int arg1, VizMemberName arg2, byte arg3, InvocationService.ResultListener arg4)

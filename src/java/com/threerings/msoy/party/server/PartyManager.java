@@ -110,6 +110,11 @@ public class PartyManager
         return _partyObj.getOid();
     }
 
+    public int getSceneId ()
+    {
+        return _partyObj.sceneId;
+    }
+
     // from interface PartyProvider
     public void bootMember (
         ClientObject caller, int playerId, InvocationService.InvocationListener listener)

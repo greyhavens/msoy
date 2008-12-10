@@ -12,6 +12,7 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.admin.data.PeerAdminMarshaller;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.party.data.PartyInfo;
+import com.threerings.msoy.party.data.PeerPartyMarshaller;
 
 /**
  * Maintains information on an MSOY peer server.
@@ -39,6 +40,9 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** The field name of the <code>peerAdminService</code> field. */
     public static final String PEER_ADMIN_SERVICE = "peerAdminService";
+
+    /** The field name of the <code>peerPartyService</code> field. */
+    public static final String PEER_PARTY_SERVICE = "peerPartyService";
     // AUTO-GENERATED: FIELDS END
 
     /** Contains info on all scenes hosted by this server. */
@@ -61,6 +65,9 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /** Admin related peer services. */
     public PeerAdminMarshaller peerAdminService;
+
+    /** Handles party communication between peers. */
+    public PeerPartyMarshaller peerPartyService;
 
     /**
      * If the specified member is in a room on this server, creates and populates a status card
@@ -367,6 +374,22 @@ public class MsoyNodeObject extends CrowdNodeObject
         requestAttributeChange(
             PEER_ADMIN_SERVICE, value, ovalue);
         this.peerAdminService = value;
+    }
+
+    /**
+     * Requests that the <code>peerPartyService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPeerPartyService (PeerPartyMarshaller value)
+    {
+        PeerPartyMarshaller ovalue = this.peerPartyService;
+        requestAttributeChange(
+            PEER_PARTY_SERVICE, value, ovalue);
+        this.peerPartyService = value;
     }
     // AUTO-GENERATED: METHODS END
 }

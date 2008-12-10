@@ -16,7 +16,9 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.Tuple;
 
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -42,9 +44,12 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.party.client.PeerPartyService;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
+
+import static com.threerings.msoy.Log.log;
 
 @Singleton
 public class PartyRegistry
@@ -61,7 +66,8 @@ public class PartyRegistry
      */
     public void init ()
     {
-        // nada, presently
+        ((MsoyNodeObject) _peerMgr.getNodeObject()).setPeerPartyService(
+            _invmgr.registerDispatcher(new PeerPartyDispatcher(this)));
     }
 
     // from PartyBoardProvider
@@ -82,14 +88,14 @@ public class PartyRegistry
             return;
         }
 
-        // else, find it and return the sceneId
-        PartyInfo info = _peerMgr.getPartyInfo(member.partyId);
-        if (info == null) {
-            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
+        Tuple<Client,PeerPartyService> tuple = locatePeerService(member.partyId);
+        if (tuple == null) {
+            log.warning("Member in party that cannot be found",
+                "member", member.who(), "partyId", member.partyId);
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
-        // TODO : we actually need to forward this to the right node... sigh
-        rl.requestProcessed(-1);
-        //rl.requestProcessed(info.sceneId);
+
+        tuple.right.getPartyScene(tuple.left, member.partyId, rl);
     }
 
     // from PartyBoardProvider
@@ -161,7 +167,25 @@ public class PartyRegistry
             return;
         }
 
-        // TODO: sorry Mario, your party is in another castle
+        Tuple<Client,PeerPartyService> tuple = locatePeerService(partyId);
+        if (tuple == null) {
+            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
+        }
+        tuple.right.joinParty(tuple.left, partyId, name, groupRank, rl);
+    }
+
+    // from PeerPartyProvider
+    public void getPartyScene (
+        ClientObject caller, int partyId, InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        // this will only be run on the appropriate node
+        PartyManager mgr = _parties.get(partyId);
+        if (mgr == null) {
+            log.warning("Party not found on node, should be present", "partyId", partyId);
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+        rl.requestProcessed(mgr.getSceneId());
     }
 
     // from PartyBoardProvider
@@ -231,8 +255,11 @@ public class PartyRegistry
             return;
         }
 
-        // else forward it on
-        // TODO
+        Tuple<Client,PeerPartyService> tuple = locatePeerService(partyId);
+        if (tuple == null) {
+            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
+        }
+        tuple.right.getPartyDetail(tuple.left, partyId, rl);
     }
 
     /**
@@ -275,6 +302,32 @@ public class PartyRegistry
             score += 250;
         }
         return new PartySort(score, party.id);
+    }
+
+    /**
+     * Find and return the PeerPartyService for the specified partyId.
+     */
+    protected Tuple<Client,PeerPartyService> locatePeerService (int partyId)
+    {
+        final Integer partyKey = partyId;
+        final Object[] result = new Object[1];
+
+        _peerMgr.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
+            public Void apply (Tuple<Client,NodeObject> clinode) {
+                if (result[0] == null) {
+                    MsoyNodeObject mnode = (MsoyNodeObject)clinode.right;
+                    if (mnode.parties.containsKey(partyKey)) {
+                        result[0] = new Tuple<Client,PeerPartyService>(
+                            clinode.left, mnode.peerPartyService);
+                    }
+                }
+                return null; // Void
+            }
+        });
+
+        @SuppressWarnings("unchecked") // fucking A
+        Tuple<Client,PeerPartyService> retval = (Tuple<Client,PeerPartyService>)result[0];
+        return retval;
     }
 
     protected AccessController _partyAccessController = new AccessController()

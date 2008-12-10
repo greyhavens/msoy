@@ -42,6 +42,12 @@ public class PeerPartyDispatcher extends InvocationDispatcher<PeerPartyMarshalle
             );
             return;
 
+        case PeerPartyMarshaller.GET_PARTY_SCENE:
+            ((PeerPartyProvider)provider).getPartyScene(
+                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+            );
+            return;
+
         case PeerPartyMarshaller.JOIN_PARTY:
             ((PeerPartyProvider)provider).joinParty(
                 source, ((Integer)args[0]).intValue(), (VizMemberName)args[1], ((Byte)args[2]).byteValue(), (InvocationService.ResultListener)args[3]
