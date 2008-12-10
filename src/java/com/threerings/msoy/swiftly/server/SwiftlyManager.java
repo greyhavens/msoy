@@ -12,18 +12,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.peer.data.NodeObject;
@@ -34,14 +31,12 @@ import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.crowd.server.PlaceRegistry;
 
-import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.web.server.UploadFile;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;

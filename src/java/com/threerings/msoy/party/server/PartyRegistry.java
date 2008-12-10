@@ -31,8 +31,6 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.Subscriber;
 
-import com.threerings.crowd.data.Place;
-
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
