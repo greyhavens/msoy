@@ -34,6 +34,7 @@ import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.PartyInviteNotification;
 
 import com.threerings.msoy.party.data.PartyCodes;
@@ -151,8 +152,7 @@ public class PartyManager
 
     public void inviteAllFriends (MemberObject inviter)
     {
-        MemberNodeActions.notifyAllFriends(inviter,
-            new PartyInviteNotification(inviter.memberName, _partyObj.id, _partyObj.name));
+        MemberNodeActions.notifyAllFriends(inviter, createInvite(inviter));
     }
 
     // from interface PartyProvider
@@ -290,6 +290,14 @@ public class PartyManager
 //            }
 //        }
 //    }
+
+    /**
+     * Create an invitation to this party.
+     */
+    protected Notification createInvite (MemberObject inviter)
+    {
+        return new PartyInviteNotification(inviter.memberName, _partyObj.id, _partyObj.name);
+    }
 
     /**
      * Return the next join order.
