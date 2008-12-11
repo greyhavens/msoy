@@ -83,16 +83,23 @@ public class MemberNodeActions
      * Updates the member's friends that are online with a new FriendEntry pulled out of the data
      * on the member object.
      */
-    public static void updateFriendEntries (final MemberObject memobj)
+    public static void updateFriendEntries (MemberObject memobj)
     {
-        final int[] friends = new int[memobj.friends.size()];
-        int ii = 0;
-        for (final FriendEntry entry : memobj.friends) {
-            friends[ii++] = entry.name.getMemberId();
+        if (memobj.friends.size() == 0) {
+            return;
         }
-        _peerMan.invokeNodeAction(
-            new FriendEntryUpdate(friends, memobj.getMemberId(), memobj.memberName.toString(),
-                                  memobj.memberName.getPhoto(), memobj.headline));
+        _peerMan.invokeNodeAction(new FriendEntryUpdate(memobj));
+    }
+
+    /**
+     * Send a mass-notification to all your friends.
+     */
+    public static void notifyAllFriends (MemberObject memobj, Notification notif)
+    {
+        if (memobj.friends.size() == 0) {
+            return;
+        }
+        _peerMan.invokeNodeAction(new NotifyFriendsAction(memobj, notif));
     }
 
     /**
@@ -471,24 +478,23 @@ public class MemberNodeActions
         protected StatModifier<T> _modifier;
     }
 
-    protected static class FriendEntryUpdate extends PeerManager.NodeAction
+    protected static abstract class AllFriendsAction extends PeerManager.NodeAction
     {
-        public FriendEntryUpdate (int[] friends, int memberId, String displayName, MediaDesc photo,
-                                  String status) {
-            _friends = friends;
-            _memberId = memberId;
-            _displayName = displayName;
-            _photo = photo;
-            _status = status;
-        }
+        public AllFriendsAction () {}
 
-        public FriendEntryUpdate () {
+        public AllFriendsAction (MemberObject memobj)
+        {
+            _friends = new int[memobj.friends.size()];
+            int ii = 0;
+            for (FriendEntry entry : memobj.friends) {
+                _friends[ii++] = entry.name.getMemberId();
+            }
         }
 
         @Override public boolean isApplicable (final NodeObject nodeobj)
         {
             final MsoyNodeObject msoyNode = (MsoyNodeObject)nodeobj;
-            for (final int friendId : _friends) {
+            for (int friendId : _friends) {
                 if (msoyNode.clients.containsKey(MemberName.makeKey(friendId))) {
                     return true;
                 }
@@ -499,24 +505,59 @@ public class MemberNodeActions
 
         @Override protected void execute ()
         {
-            final FriendEntry entry = new FriendEntry(
-                new VizMemberName(_displayName, _memberId, _photo), _status, true);
-            for (final int friendId : _friends) {
-                final MemberObject memobj = _locator.lookupMember(friendId);
+            for (int friendId : _friends) {
+                MemberObject memobj = _locator.lookupMember(friendId);
                 if (memobj != null) {
-                    memobj.updateFriends(entry);
+                    execute(memobj);
                 }
             }
         }
 
+        protected abstract void execute (MemberObject memobj);
+
         protected int[] _friends;
-        protected int _memberId;
-        protected String _displayName;
-        protected MediaDesc _photo;
-        protected String _status;
 
         /** Used to look up member objects. */
         @Inject protected transient MemberLocator _locator;
+    }
+
+    protected static class FriendEntryUpdate extends AllFriendsAction
+    {
+        public FriendEntryUpdate () {}
+
+        public FriendEntryUpdate (MemberObject memobj)
+        {
+            super(memobj);
+
+            _entry = new FriendEntry(memobj.memberName, memobj.headline, true);
+        }
+
+        @Override protected void execute (MemberObject memobj)
+        {
+            memobj.updateFriends(_entry);
+        }
+
+        protected FriendEntry _entry;
+    }
+
+    protected static class NotifyFriendsAction extends AllFriendsAction
+    {
+        public NotifyFriendsAction () {}
+
+        public NotifyFriendsAction (MemberObject memobj, Notification notification)
+        {
+            super(memobj);
+            _notification = notification;
+        }
+
+        @Override protected void execute (MemberObject memobj)
+        {
+            _notifyMan.notify(memobj, _notification);
+        }
+
+        protected Notification _notification;
+
+        @Inject protected transient NotificationManager _notifyMan;
     }
 
     protected static class AddExperienceAction extends MemberNodeAction
