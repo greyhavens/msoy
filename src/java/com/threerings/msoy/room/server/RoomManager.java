@@ -35,6 +35,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -42,6 +43,7 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.PresentsObjectAccess;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
@@ -800,6 +802,15 @@ public class RoomManager extends SpotSceneManager
         super.gotSceneData(extras);
 
         _extras = (RoomExtras) extras;
+    }
+
+    @Override
+    protected AccessController getAccessController ()
+    {
+        // TODO: Turn off CrowdObjectAccess's restrictive policing of subscription until we have
+        // TODO: breathing room to give bureaus their own ClientObject subclasses, making it a
+        // TODO: bit easier to detect when the agent is attempting to snoop on the room object.
+        return PresentsObjectAccess.DEFAULT;
     }
 
     @Override // from PlaceManager
