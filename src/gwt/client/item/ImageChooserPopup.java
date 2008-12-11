@@ -6,8 +6,8 @@ package client.item;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTMLTable;
@@ -15,24 +15,24 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.util.SimpleDataModel;
+
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.gwt.util.SimpleDataModel;
-
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
+import client.shell.CShell;
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.MediaUploader;
 import client.util.MediaUtil;
 import client.util.ServiceUtil;
-
-import client.shell.CShell;
-import client.shell.ShellMessages;
 
 /**
  * Allows a member to select an image from their inventory. In the future, will support fancy
@@ -59,6 +59,35 @@ public class ImageChooserPopup extends VerticalPanel
         });
     }
 
+    /**
+     * Displays an image chooser which will select the main image of a photo from the user's
+     * inventory, or allow them to upload an image directly.  This method will ensure that the
+     * MediaDesc returned to the callback is exactly the dimensions required by the caller.
+     */
+    public static void displayRestrictedImageChooser (
+        final int requiredWidth, final int requiredHeight, final AsyncCallback<MediaDesc> callback)
+    {
+        _itemsvc.loadPhotos(new AsyncCallback<List<Photo>>() {
+            public void onSuccess(List<Photo> items) {
+                ImageChooserPopup popup = new ImageChooserPopup(items, false, callback) {
+                    @Override public void imageChosen (MediaDesc media, int width, int height) {
+                        if (width != requiredWidth || height != requiredHeight) {
+                            MsoyUI.error(
+                                _cmsgs.icRestrictedError("" + requiredWidth, "" + requiredHeight));
+                        } else {
+                            super.imageChosen(media, width, height);
+                        }
+                    }
+                };
+                CShell.frame.showDialog(_cmsgs.icTitle(), popup);
+            }
+
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
+
     protected ImageChooserPopup (
         List<Photo> images, boolean thumbnail, AsyncCallback<MediaDesc> callback)
     {
@@ -76,7 +105,11 @@ public class ImageChooserPopup extends VerticalPanel
         add(new PhotoUploader(_thumbnail));
     }
 
-    protected void imageChosen (MediaDesc media)
+    /**
+     * This method is provided with the image's width and height in case a subclass needs that
+     * information.
+     */
+    protected void imageChosen (MediaDesc media, int width, int height)
     {
         _callback.onSuccess(media);
         _callback = null;
@@ -114,12 +147,12 @@ public class ImageChooserPopup extends VerticalPanel
         }
 
         @Override // from PagedGrid
-        protected Widget createWidget (Photo photo) {
+        protected Widget createWidget (final Photo photo) {
             final MediaDesc media = _thumbnail ? photo.getThumbnailMedia() : photo.photoMedia;
             Widget image = MediaUtil.createMediaView(
                 photo.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
                     public void onClick (Widget sender) {
-                        imageChosen(media);
+                        imageChosen(media, photo.photoWidth, photo.photoHeight);
                     }
                 });
             image.addStyleName("Photo");
@@ -161,6 +194,8 @@ public class ImageChooserPopup extends VerticalPanel
                         return;
                     }
                     _media = desc;
+                    _width = width;
+                    _height = height;
                     _upload.setEnabled(true);
                     int size = thumbnail ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
                     _preview.setWidget(MediaUtil.createMediaView(_media, size));
@@ -168,7 +203,7 @@ public class ImageChooserPopup extends VerticalPanel
             }));
             setWidget(1, 1, _upload = new Button(_cmsgs.icUploadGo(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    imageChosen(_media);
+                    imageChosen(_media, _width, _height);
                 }
             }));
             _upload.setEnabled(false);
@@ -177,6 +212,8 @@ public class ImageChooserPopup extends VerticalPanel
         protected SimplePanel _preview;
         protected Button _upload;
         protected MediaDesc _media;
+        protected int _width;
+        protected int _height;
     }
 
     protected boolean _thumbnail;

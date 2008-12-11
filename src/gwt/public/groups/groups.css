@@ -742,3 +742,15 @@
   float: right;
   width: 75px;
 }
+
+/* ------------------------------------
+   EDIT MEDAL PANEL
+-------------------------------------*/
+
+.editMedalPanel {
+  width: 505px;
+}
+
+.editMedalPanel .nowrapLabel {
+  font-size: 16px;
+}

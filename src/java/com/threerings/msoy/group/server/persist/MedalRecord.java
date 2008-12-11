@@ -1,13 +1,19 @@
+//
+// $Id$
+
 package com.threerings.msoy.group.server.persist;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
+
+import com.threerings.msoy.group.data.all.Medal;
 
 @Entity(indices={
     @Index(name="gropuIdIdx", fields={ MedalRecord.GROUP_ID })
@@ -36,6 +42,13 @@ public class MedalRecord extends PersistentRecord
     public static final ColumnExp NAME_C =
         new ColumnExp(MedalRecord.class, NAME);
 
+    /** The column identifier for the {@link #description} field. */
+    public static final String DESCRIPTION = "description";
+
+    /** The qualified column identifier for the {@link #description} field. */
+    public static final ColumnExp DESCRIPTION_C =
+        new ColumnExp(MedalRecord.class, DESCRIPTION);
+
     /** The column identifier for the {@link #iconHash} field. */
     public static final String ICON_HASH = "iconHash";
 
@@ -53,7 +66,7 @@ public class MedalRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The unique id of this medal */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -65,8 +78,12 @@ public class MedalRecord extends PersistentRecord
     /** The name of the medal. */
     public String name;
 
+    /** The description of the medal */
+    @Column(length=Medal.MAX_DESCRIPTION_LENGTH)
+    public String description;
+
     /** The media hash of the medal icon.  We don't store the constraint because they're all
-     * 60x60 */
+     * 80x60 */
     public byte[] iconHash;
 
     /** The mime type of the medal icon. */

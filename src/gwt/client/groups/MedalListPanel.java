@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.groups;
 
 import com.google.gwt.core.client.GWT;
@@ -28,7 +31,7 @@ public class MedalListPanel extends FlowPanel
         final String createMedal = _msgs.medalListCreateMedal();
         add(MsoyUI.createActionLabel(createMedal, new ClickListener () {
             public void onClick (Widget sender) {
-                _contentDisplay.showContent(createMedal, new EditMedalPanel());
+                _contentDisplay.showContent(createMedal, new EditMedalPanel(null, _contentDisplay));
             }
         }));
     }

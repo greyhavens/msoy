@@ -51,6 +51,7 @@ public class GroupDetailPanel extends FlowPanel
 {
     public interface SubContentDisplay {
         public void showContent (String title, Widget content);
+        public void revertContent ();
     }
 
     public GroupDetailPanel () {
@@ -411,11 +412,26 @@ public class GroupDetailPanel extends FlowPanel
         protected GroupMembersPanel _members;
         protected GroupRoomsPanel _rooms;
         protected MedalListPanel _medalList;
+        protected Widget _previousContent;
+        protected Widget _previousTitle;
 
         protected SubContentDisplay _contentDisplay = new SubContentDisplay () {
             public void showContent (String title, Widget content) {
+                _previousContent = _content.getWidget();
+                _previousTitle = _title.getWidget();
                 _title.setWidget(new Label(title));
                 _content.setWidget(content);
+            }
+
+            public void revertContent() {
+                if (_previousContent != null && _previousTitle != null) {
+                    _title.setWidget(_previousTitle);
+                    _content.setWidget(_previousContent);
+
+                } else {
+                    _title.clear();
+                    _content.clear();
+                }
             }
         };
     }
