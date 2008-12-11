@@ -60,10 +60,10 @@ public class CommentPanel extends MessagePanel
             info.add(complain);
         }
 
-        InlineLabel rating = new InlineLabel(
-            _cmsgs.rating("" + _comment.currentRating), false, true, false);
-        rating.addStyleName("Posted");
-        info.add(rating);
+//        InlineLabel rating = new InlineLabel(
+//            _cmsgs.rating("" + _comment.currentRating), false, true, false);
+//        rating.addStyleName("Posted");
+//        info.add(rating);
 
         if (!_displayComment) {
             InlineLabel showComment = new InlineLabel(_cmsgs.showComment(), false, true, false);
