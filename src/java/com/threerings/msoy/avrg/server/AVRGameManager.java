@@ -29,11 +29,13 @@ import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsObjectAccess;
 
 import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.crowd.data.BodyObject;
@@ -571,7 +573,16 @@ public class AVRGameManager extends PlaceManager
         // game as opposed to just leaving it tempoararily.
         _worldClient.leaveAVRGame(playerId);
     }
-    
+
+    @Override
+    protected AccessController getAccessController ()
+    {
+        // TODO: Turn off CrowdObjectAccess's restrictive policing of subscription until we have
+        // TODO: breathing room to give bureaus their own ClientObject subclasses, making it a
+        // TODO: bit easier to detect when the agent is attempting to snoop on the game object.
+        return PresentsObjectAccess.DEFAULT;
+    }
+
     /**
      * Post the given member's movement to the game object for all to see.
      */
@@ -696,7 +707,7 @@ public class AVRGameManager extends PlaceManager
             log.info("Ignoring entry of scene 0", "memberId", memberId);
             return;
         }
-        
+
         SceneInfo info = new SceneInfo(sceneId, hostname, port);
         SceneInfo existing = _gameAgentObj.scenes.get(info.getKey());
         if (existing != null) {
@@ -749,7 +760,7 @@ public class AVRGameManager extends PlaceManager
             log.info("Player left scene twice", "memberId", memberId);
             return;
         }
-        
+
         Scene noScene = _scenes.get(0);
         if (noScene == null) {
             _scenes.put(0, noScene = new Scene(0));
@@ -920,7 +931,7 @@ public class AVRGameManager extends PlaceManager
 
     /** The distributed object that only our agent sees. */
     protected AVRGameAgentObject _gameAgentObj;
-    
+
     /** True once the agent is fully established. */
     protected boolean _agentStarted;
 
