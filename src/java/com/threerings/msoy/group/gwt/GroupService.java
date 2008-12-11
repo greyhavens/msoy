@@ -9,10 +9,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.GroupName;
-
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
-
+import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
 
@@ -196,6 +195,13 @@ public interface GroupService extends RemoteService
      * is a manager, and which are tied to the given gameId or to no gameId.
      */
     List<GroupMembership> getGameGroups (int gameId)
+        throws ServiceException;
+
+    /**
+     * Updates the data for a Medal, or creates it if the Medal's medalId is 0 and the name is
+     * unique within the set of medals with the same groupId.
+     */
+    void updateMedal (Medal medal)
         throws ServiceException;
 
 }

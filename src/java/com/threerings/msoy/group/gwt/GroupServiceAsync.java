@@ -9,8 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.gwt.GroupService;
-
+import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 /**
@@ -109,4 +108,9 @@ public interface GroupServiceAsync
      * The asynchronous version of {@link GroupService#getGameGroups}
      */
     void getGameGroups (int gameId, AsyncCallback<List<GroupMembership>> callback);
+
+    /**
+     * The asynchronous version of {@link GroupService#updateMedal}
+     */
+    void updateMedal (Medal medal, AsyncCallback<Void> callback);
 }

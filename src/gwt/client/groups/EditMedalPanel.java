@@ -69,7 +69,11 @@ public class EditMedalPanel extends FlexTable
             return;
         }
 
-        _listPanel.restoreListPanel(true);
+        _groupsvc.updateMedal(_medal, new MsoyCallback<Void>() {
+            public void onSuccess(Void result) {
+                _listPanel.restoreListPanel(true);
+            }
+        });
     }
 
     protected void addRow (String label, Widget widget)

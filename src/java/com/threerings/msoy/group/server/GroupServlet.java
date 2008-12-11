@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.group.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -53,8 +51,10 @@ import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupCodes;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
@@ -63,7 +63,10 @@ import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.MedalRecord;
 import com.threerings.msoy.group.server.persist.MedalRepository;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link GroupService}.
@@ -235,7 +238,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         MemberRecord mRec = _memberRepo.loadMember(memberId);
         if (mRec == null) {
-            log.warning("Requested group membership for unknown member [id=" + memberId + "].");
+            log.warning("Requested group membership for unknown member", "memberId", memberId);
             return Collections.emptyList();
         }
 
@@ -277,8 +280,8 @@ public class GroupServlet extends MsoyServiceServlet
 
         Tuple<Byte, Long> tgtinfo = _groupRepo.getMembership(groupId, memberId);
         if (tgtinfo.left == GroupMembership.RANK_NON_MEMBER) {
-            log.info("Requested to remove non-member from group [who=" + mrec.who() +
-                     ", gid=" + groupId + ", mid=" + memberId + "].");
+            log.info("Requested to remove non-member from group", "who", mrec.who(), "gid", groupId,
+                "mid", memberId);
             return; // no harm no foul
         }
 
@@ -299,8 +302,8 @@ public class GroupServlet extends MsoyServiceServlet
         // if the group has no members left, remove the group as well
         if (_groupRepo.countMembers(groupId) == 0) {
             // TODO: delete this group's scenes
-            log.warning("Group deleted, but we haven't implemented group scene deletion! " +
-                        "[id=" + groupId + "].");
+            log.warning("Group deleted, but we haven't implemented group scene deletion!",
+                "groupId", groupId);
             _groupRepo.deleteGroup(groupId);
         }
 
@@ -321,8 +324,7 @@ public class GroupServlet extends MsoyServiceServlet
         // make sure the group in question exists
         final GroupRecord grec = _groupRepo.loadGroup(groupId);
         if (grec == null) {
-            log.warning("Requested to join non-existent group [who=" + mrec.who() +
-                        ", gid=" + groupId + "].");
+            log.warning("Requested to join non-existent group", "who", mrec.who(), "gid", groupId);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -366,7 +368,7 @@ public class GroupServlet extends MsoyServiceServlet
     {
         String tagName = tag.trim().toLowerCase();
         if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
-            log.warning("in tagGroup, invalid tag: " + tagName);
+            log.warning("in tagGroup, invalid tag", "tag", tagName);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -502,7 +504,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         MemberRecord mRec = _memberRepo.loadMember(memberId);
         if (mRec == null) {
-            log.warning("Requested group membership for unknown member [id=" + memberId + "].");
+            log.warning("Requested group membership for unknown member", "memberId", memberId);
             return Collections.emptyList();
         }
 
@@ -521,6 +523,46 @@ public class GroupServlet extends MsoyServiceServlet
                     return true;
                 }
             });
+    }
+
+    // from interface GroupService
+    public void updateMedal (Medal medal)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        if (medal.groupId < 1) {
+            log.warning("Medal provided with an invalid group id", "groupId", medal.groupId);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        if (medal.name == null || medal.name.equals("") ||
+            medal.description == null || medal.description.equals("") ||
+            medal.icon == null) {
+            log.warning("Incomplete medal provided, but it should have been checked on the client");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        if (!mrec.isSupport() &&
+            _groupRepo.getRank(medal.groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
+            log.warning("Non-manager attempted to update a group medal", "memberId", mrec.memberId,
+                "groupId", medal.groupId);
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
+        if (medal.medalId == 0 && _medalRepo.groupContainsMedalName(medal.groupId, medal.name)) {
+            log.warning("Attempted to create a medal with a duplicate name");
+            throw new ServiceException(GroupCodes.E_GROUP_MEDAL_NAME_IN_USE);
+        }
+
+        MedalRecord medalRec = new MedalRecord();
+        medalRec.medalId = medal.medalId;
+        medalRec.groupId = medal.groupId;
+        medalRec.name = medal.name;
+        medalRec.description = medal.description;
+        medalRec.iconHash = medal.icon.hash;
+        medalRec.iconMimeType = medal.icon.mimeType;
+        _medalRepo.storeMedal(medalRec);
     }
 
     /**
@@ -563,7 +605,7 @@ public class GroupServlet extends MsoyServiceServlet
             for (GroupMemberCard gmc : mlist) {
                 stale.remove(gmc.name.getMemberId());
             }
-            log.warning("Group has stale members [groupId=" + groupId + ", ids=" + stale + "].");
+            log.warning("Gropu has stale members", "groupId", groupId, "ids", stale);
         }
         if (sortByRank) {
             Collections.sort(mlist, MemberHelper.SORT_BY_RANK);
