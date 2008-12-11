@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.client {
 
+import com.threerings.util.Log;
+
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;
@@ -44,6 +46,8 @@ public class PartyDirector extends BasicDirector
 {
     // reference the PartyBoardMarshaller class
     PartyBoardMarshaller;
+
+    public const log :Log = Log.getLog(this);
 
     public function PartyDirector (ctx :WorldContext)
     {
@@ -115,7 +119,7 @@ public class PartyDirector extends BasicDirector
     public function joinParty (id :int) :void
     {
         _pbsvc.joinParty(_wctx.getClient(), id,
-            new ResultAdapter(visitPartyScene, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+            new ResultAdapter(handleJoinParty, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
     }
 
     /**
@@ -161,6 +165,7 @@ public class PartyDirector extends BasicDirector
             unsubscribeParty();
         }
         if (partyId != 0 && (_partyObj == null)) {
+            log.debug("requested locateMyParty");
             _pbsvc.locateMyParty(_ctx.getClient(),
                 new ResultAdapter(handleLocateParty, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
         }
@@ -182,14 +187,41 @@ public class PartyDirector extends BasicDirector
     }
 
     /**
+     * Handles the response from a joinParty() request.
+     */
+    protected function handleJoinParty (sceneId :int) :void
+    {
+        log.debug("handleJoinParty", "sceneId", sceneId);
+        visitPartyScene(sceneId);
+
+        /* Note:
+        if (onSameServer) {
+            visitPartyScene(); // could be a no-op.
+            // then, reacting to partyId being set:
+            locateMyParty(); // returns oid, you subscribe
+
+        } else {
+            visitPartyScene(); // you request a new server
+            // then, reacting to partyId being set:
+            locateMyParty(); // you get told the sceneId *again*, moveTo is suppressed
+            // when you arrive on the new server
+            locateMyParty(); // get told the new oid
+            // if the party has since moved to another scene, you'll hear about it on the partyObj
+        }
+        */
+    }
+
+    /**
      * Handles the response from a locateMyParty() request.
      */
     protected function handleLocateParty (result :Object) :void
     {
         // we get either an int[] or an Integer back.
         if (result is Array) {
+            log.debug("handleLocateParty", "oid", result[0]);
             subscribeParty(int(result[0]));
         } else {
+            log.debug("handleLocateParty", "sceneId", result);
             visitPartyScene(int(result));
         }
     }
@@ -255,9 +287,13 @@ public class PartyDirector extends BasicDirector
      */
     protected function subscribeFailed (oid :int, cause :ObjectAccessError) :void
     {
+        log.warning("Party subscription failed", "cause", cause);
         // TODO
     }
 
+    /**
+     * Handles changes on the party object.
+     */
     protected function partyAttrChanged (event :AttributeChangedEvent) :void
     {
         switch (event.getName()) {
@@ -267,6 +303,9 @@ public class PartyDirector extends BasicDirector
         }
     }
 
+    /**
+     * Handles changes on the client object.
+     */
     protected function userAttrChanged (event :AttributeChangedEvent) :void
     {
         switch (event.getName()) {

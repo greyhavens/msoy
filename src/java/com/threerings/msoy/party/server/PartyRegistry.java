@@ -22,12 +22,10 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.peer.data.NodeObject;
 
-import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -219,7 +217,6 @@ public class PartyRegistry
         if (member.location instanceof ScenePlace) {
             pobj.sceneId = ((ScenePlace) member.location).sceneId;
         }
-        pobj.setAccessController(_partyAccessController);
 
         // Create the PartyManager and add the member
         PartyManager mgr = _injector.getInstance(PartyManager.class);
@@ -331,29 +328,6 @@ public class PartyRegistry
         Tuple<Client,PeerPartyService> retval = (Tuple<Client,PeerPartyService>)result[0];
         return retval;
     }
-
-    protected AccessController _partyAccessController = new AccessController()
-    {
-        // documentation inherited from interface
-        public boolean allowSubscribe (DObject object, Subscriber<?> sub)
-        {
-            // if the subscriber is a client, ensure that they are in this party
-            if (PresentsSession.class.isInstance(sub)) {
-                MemberObject mobj = (MemberObject)PresentsSession.class.cast(sub).getClientObject();
-                PartyObject partyObj = (PartyObject)object;
-                return mobj.partyId == partyObj.id;
-            }
-
-            // else: server
-            return true;
-        }
-
-        // documentation inherited from interface
-        public boolean allowDispatch (DObject object, DEvent event)
-        {
-            return true; // TODO
-        }
-    };
 
     /** Holds compared order between parties without having to recompute it for
      * every comparison. */

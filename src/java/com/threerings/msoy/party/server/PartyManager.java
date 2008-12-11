@@ -49,6 +49,7 @@ public class PartyManager
     public void init (PartyObject partyObj)
     {
         _partyObj = partyObj;
+        _partyObj.setAccessController(new PartyAccessController(this));
         _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
     }
 
@@ -83,26 +84,33 @@ public class PartyManager
             throw new InvocationException(snub);
         }
 
-        // go ahead and add them and update our info
+        // TODO: Rethink! The client could fuck-off, and then we have a stale peep in the party
+        // But, if we wait until they subscribe to add them then we won't necessarily know when
+        // the party fills up.
         _partyObj.addToPeeps(new PartyPeep(name, nextJoinOrder()));
         updatePartyInfo();
-
-//        // TODO: add the listener in the subscription handling?
-//        // start listening for them to die
-//        UserListener listener = new UserListener(member);
-//        _userListeners.put(member.getMemberId(), listener);
-//        member.addListener(listener);
 
         // inform them of the sceneId so that they can move there.
         rl.requestProcessed(_partyObj.sceneId);
     }
 
     /**
+     * Called from the access controller when subscription is approved for the specified member.
+     */
+    public void clientSubscribed (MemberObject member)
+    {
+        // start listening for them to die
+        UserListener listener = new UserListener(member);
+        _userListeners.put(member.getMemberId(), listener);
+        member.addListener(listener);
+    }
+
+    /**
      * Get the party detail.
      */
-    public List<PartyPeep> getPartyDetail ()
+    public PartyPeep[] getPartyDetail ()
     {
-        return Lists.newArrayList(_partyObj.peeps);
+        return _partyObj.peeps.toArray(null);
     }
 
     public int getPartyOid ()
@@ -221,6 +229,7 @@ public class PartyManager
         } finally {
             _partyObj.commitTransaction();
         }
+        updatePartyInfo();
     }
 
     /**
