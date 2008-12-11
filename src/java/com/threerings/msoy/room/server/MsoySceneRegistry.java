@@ -32,6 +32,8 @@ import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
@@ -77,6 +79,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         throws InvocationException
     {
         MsoyBodyObject mover = (MsoyBodyObject)caller;
+        final MemberObject memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
 
         // if they are departing a scene hosted by this server, move them to the exit; if we fail
         // later, they will have walked to the exit and then received an error message, alas
@@ -94,10 +97,9 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         }
 
         // if this is a member with followers, tell them all to make the same scene move
-        final MemberObject memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
         if (memobj != null) {
-            // iterate over a copy of the DSet, as may modify the DSet via the MemberNodeAction
-            for (MemberName follower : memobj.followers.toArray(null)) {
+            // iterate over a copy of the DSet, as we may modify it via the MemberNodeActions
+            for (MemberName follower : Lists.newArrayList(memobj.followers)) {
                 // this will notify the follower to change scenes and if the follower cannot be
                 // found or if the follower is found and is found no longer to be following this
                 // leader, dispatch a second action requesting that the follower be removed from
@@ -112,8 +114,13 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             new MsoySceneMoveHandler(_locman, _peerMan, mover, version, destLoc, listener) {
             protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
                 super.effectSceneMove(scmgr);
-                // if we're a member and we have a pet following us, we need to move the pet
+
+                // for members, check for following entities
                 if (memobj != null) {
+                    // inform the party registry
+                    _partyReg.playerWillMove(memobj, sceneId);
+
+                    // deal with pets
                     PetObject petobj = _petMan.getPetObject(memobj.walkingId);
                     if (petobj != null) {
                         moveTo(petobj, sceneId, Integer.MAX_VALUE, portalId, destLoc,
@@ -205,6 +212,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     @Inject protected MemberLocator _locator;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected PetManager _petMan;
+    @Inject protected PartyRegistry _partyReg;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected FeedRepository _feedRepo;
 }

@@ -83,6 +83,9 @@ public class PartyManager
     public void addPlayer (VizMemberName name, byte groupRank, InvocationService.ResultListener rl)
         throws InvocationException
     {
+        // TODO: now that we don't modify the _partyObj here, we could simplify the PartyRegistry
+        // to not register the dobj until the user successfully joins.
+
         String snub = _partyObj.mayJoin(name, groupRank);
         if (snub != null) {
             throw new InvocationException(snub);
@@ -90,6 +93,25 @@ public class PartyManager
 
         // inform them of the sceneId so that they can move there.
         rl.requestProcessed(_partyObj.sceneId);
+    }
+
+    /**
+     * Called via the PartyRegistry (from MsoySceneRegistry) to inform us that a player
+     * is moving scenes.
+     */
+    public void playerWillMove (MemberObject member, int sceneId)
+    {
+        int memberId = member.getMemberId();
+        if (memberId == _partyObj.leaderId) {
+            // the leader will move- inform the party immediately because this object may soon die
+            // if it needs to be squirted across nodes
+            _partyObj.setSceneId(sceneId);
+
+        } else if (_partyObj.peeps.containsKey(memberId) && (sceneId != _partyObj.sceneId)) {
+            // otherwise, they leave the party with a notification that they've done so
+            // TODO
+            log.info("TODO: partier left party scene", "who", member.who(), "sceneId", sceneId);
+        }
     }
 
     /**
@@ -240,34 +262,34 @@ public class PartyManager
         updatePartyInfo();
     }
 
-    /**
-     * React to a player changing location.
-     */
-    protected void playerChangedLocation (MemberObject player, Place place)
-    {
-        if (place == null) {
-            // TODO?
-            log.debug("Player moved to nowhere", "who", player.who());
-            // ignore for now
-            return;
-        }
-
-        // see if it's a new scene
-        if (place instanceof ScenePlace) {
-            int sceneId = ((ScenePlace)place).sceneId;
-            if (sceneId == _partyObj.sceneId) {
-                return;
-            }
-            if (_partyObj.leaderId == player.getMemberId()) {
-                // the leader just moved location.
-                _partyObj.setSceneId(sceneId);
-
-            } else {
-                // otherwise, they leave the party with a notification that they've done so
-                log.info("TODO: partier left party scene.");
-            }
-        }
-    }
+//    /**
+//     * React to a player changing location.
+//     */
+//    protected void playerChangedLocation (MemberObject player, Place place)
+//    {
+//        if (place == null) {
+//            // TODO?
+//            log.debug("Player moved to nowhere", "who", player.who());
+//            // ignore for now
+//            return;
+//        }
+//
+//        // see if it's a new scene
+//        if (place instanceof ScenePlace) {
+//            int sceneId = ((ScenePlace)place).sceneId;
+//            if (sceneId == _partyObj.sceneId) {
+//                return;
+//            }
+//            if (_partyObj.leaderId == player.getMemberId()) {
+//                // the leader just moved location.
+//                _partyObj.setSceneId(sceneId);
+//
+//            } else {
+//                // otherwise, they leave the party with a notification that they've done so
+//                log.info("TODO: partier left party scene.");
+//            }
+//        }
+//    }
 
     /**
      * Return the next join order.
@@ -327,9 +349,9 @@ public class PartyManager
         // from AttributeChangeListener
         public void attributeChanged (AttributeChangedEvent event)
         {
-            if (MemberObject.LOCATION.equals(event.getName())) {
-                playerChangedLocation(memObj, (Place) event.getValue());
-            }
+//            if (MemberObject.LOCATION.equals(event.getName())) {
+//                playerChangedLocation(memObj, (Place) event.getValue());
+//            }
         }
 
         // from ObjectDeathListener

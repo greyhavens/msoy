@@ -68,6 +68,19 @@ public class PartyRegistry
             _invmgr.registerDispatcher(new PeerPartyDispatcher(this)));
     }
 
+    /**
+     * Called by the MsoySceneRegistry when a player changes scenes.
+     */
+    public void playerWillMove (MemberObject member, int sceneId)
+    {
+        if (member.partyId != 0) {
+            PartyManager mgr = _parties.get(member.partyId);
+            if (mgr != null) {
+                mgr.playerWillMove(member, sceneId);
+            }
+        }
+    }
+
     // from PartyBoardProvider
     public void locateMyParty (ClientObject caller, InvocationService.ResultListener rl)
         throws InvocationException
