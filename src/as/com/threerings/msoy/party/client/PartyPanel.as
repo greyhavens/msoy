@@ -59,6 +59,17 @@ public class PartyPanel extends FloatingPanel
     {
         super.createChildren();
 
+        var isLeader :Boolean = (_partyObj.leaderId == _ctx.getMyName().getMemberId());
+
+        _name = new TextInput();
+        _name.styleName = "partyTitle";
+        _name.maxChars = PartyCodes.MAX_NAME_LENGTH;
+        _name.percentWidth = 100;
+        _name.text = _partyObj.name;
+        _name.editable = isLeader;
+        _name.addEventListener(FlexEvent.ENTER, commitName);
+        addChild(_name);
+
         _roster = new Roster(_ctx, PartyObject.PEEPS, PeepRenderer,
             PartyPeep.createSortByOrder(_partyObj));
         addChild(_roster);
@@ -66,11 +77,11 @@ public class PartyPanel extends FloatingPanel
         addChild(new CommandButton(Msgs.PARTY.get("b.leave"), _wctx.getPartyDirector().leaveParty));
 
         _status = new TextInput();
+        _status.styleName = "partyStatus";
         _status.maxChars = PartyCodes.MAX_NAME_LENGTH;
         _status.percentWidth = 100;
-        _status.styleName = "statusEdit"; // Punked from FriendsListPanel
         _status.text = _partyObj.status;
-        _status.editable = (_partyObj.leaderId == _ctx.getMyName().getMemberId());
+        _status.editable = isLeader;
         _status.addEventListener(FlexEvent.ENTER, commitStatus);
         addChild(_status);
     }
@@ -83,10 +94,16 @@ public class PartyPanel extends FloatingPanel
                 break;
 
             case PartyObject.LEADER_ID:
-                var leaderId :int = int(event.getValue());
-                _status.editable = (leaderId == _ctx.getMyName().getMemberId());
+                var isLeader :Boolean = (event.getValue() == _ctx.getMyName().getMemberId());
+                _name.editable = isLeader;
+                _status.editable = isLeader;
                 break;
         }
+    }
+
+    protected function commitName (event :FlexEvent) :void
+    {
+        _wctx.getPartyDirector().updateNameOrStatus(_name.text, true);
     }
 
     protected function commitStatus (event :FlexEvent) :void
@@ -99,6 +116,7 @@ public class PartyPanel extends FloatingPanel
     protected var _partyObj :PartyObject;
 
     protected var _roster :Roster;
+    protected var _name :TextInput;
     protected var _status :TextInput;
 }
 

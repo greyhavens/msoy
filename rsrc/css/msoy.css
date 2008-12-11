@@ -1375,13 +1375,17 @@ GameOverPanel {
   borderThickness: 2;
 }
 
-.sexyTextInput, .statusEdit, .statusEditHover {
+.sexyTextInput, .statusEdit, .statusEditHover, .partyTitle, .partyStatus {
   backgroundAlpha: 0;
   borderStyle: "none";
   color: #568EAF;
 }
 
-.statusEdit, .statusEditHover {
+.partyTitle {
+  fontSize: 18;
+}
+
+.partyStatus, .statusEdit, .statusEditHover {
   fontSize: 10;
 }
 
