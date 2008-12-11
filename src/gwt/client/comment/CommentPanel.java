@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
-import com.threerings.gwt.ui.InlinePanel;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -78,38 +77,38 @@ public class CommentPanel extends MessagePanel
             });
             info.add(showComment);
 
-        } else if (_comment.myRating == Comment.RATED_NONE) {
-            InlineLabel upRate = new InlineLabel("[+]", false, false, false);
-            upRate.addStyleName("Posted");
-            upRate.addStyleName("actionLabel");
-            upRate.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    _parent.rateComment(_comment, true);
-
-                    _comment.currentRating += 1;
-                    _comment.totalRatings ++;
-                    _comment.myRating = Comment.RATED_UP;
-
-                    updateComment();
-                }
-            });
-            info.add(upRate);
-
-            InlineLabel downRate = new InlineLabel("[-]", false, false, false);
-            downRate.addStyleName("Posted");
-            downRate.addStyleName("actionLabel");
-            downRate.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    _parent.rateComment(_comment, false);
-
-                    _comment.currentRating -= 1;
-                    _comment.totalRatings ++;
-                    _comment.myRating = Comment.RATED_DOWN;
-
-                    updateComment();
-                }
-            });
-            info.add(downRate);
+//        } else if (_comment.myRating == Comment.RATED_NONE) {
+//            InlineLabel upRate = new InlineLabel("[+]", false, false, false);
+//            upRate.addStyleName("Posted");
+//            upRate.addStyleName("actionLabel");
+//            upRate.addClickListener(new ClickListener() {
+//                public void onClick (Widget sender) {
+//                    _parent.rateComment(_comment, true);
+//
+//                    _comment.currentRating += 1;
+//                    _comment.totalRatings ++;
+//                    _comment.myRating = Comment.RATED_UP;
+//
+//                    updateComment();
+//                }
+//            });
+//            info.add(upRate);
+//
+//            InlineLabel downRate = new InlineLabel("[-]", false, false, false);
+//            downRate.addStyleName("Posted");
+//            downRate.addStyleName("actionLabel");
+//            downRate.addClickListener(new ClickListener() {
+//                public void onClick (Widget sender) {
+//                    _parent.rateComment(_comment, false);
+//
+//                    _comment.currentRating -= 1;
+//                    _comment.totalRatings ++;
+//                    _comment.myRating = Comment.RATED_DOWN;
+//
+//                    updateComment();
+//                }
+//            });
+//            info.add(downRate);
         }
 
     }
