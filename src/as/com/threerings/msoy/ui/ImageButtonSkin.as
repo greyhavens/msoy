@@ -4,7 +4,7 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
-
+import flash.events.Event;
 import flash.geom.ColorTransform;
 
 import mx.core.UIComponent;
@@ -13,7 +13,9 @@ import mx.controls.Image;
 import mx.states.State;
 
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.util.MultiLoader;
+
+import com.threerings.flash.MediaContainer;
+import com.threerings.util.ValueEvent;
 
 /** The image used to be the buttons skin. Is automatically lightened/darkened/offset. */
 [Style(name="image")]
@@ -68,14 +70,19 @@ public class ImageButtonSkin extends UIComponent
 
         if (rsrc is String) {
             // If it's a string, treat it like an URL
-            MultiLoader.getContents(DeploymentConfig.serverURL + (rsrc as String), setImage);
-            return;
-        }
-        if (rsrc is Class) {
-            rsrc = new (Class(rsrc))();
-        }
+            rsrc = new MediaContainer(DeploymentConfig.serverURL + (rsrc as String));
+            rsrc.addEventListener(MediaContainer.SIZE_KNOWN, function (event :ValueEvent) :void {
+                parent.width = event.value[0];
+                parent.height = event.value[1];
+                setImage(rsrc as DisplayObject);
+            });
+        } else {
+            if (rsrc is Class) {
+                rsrc = new (Class(rsrc))();
+            }
 
-        setImage(rsrc as DisplayObject);
+            setImage(rsrc as DisplayObject);
+        }
     }
 
     protected function setImage (image :DisplayObject) :void
