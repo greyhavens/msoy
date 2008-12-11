@@ -19,7 +19,7 @@ public class MsoyObjectAccess
     public static AccessController DEFAULT = PresentsObjectAccess.DEFAULT;
 
     /** The user access controller. */
-    public static AccessController USER = DEFAULT;
+    public static AccessController USER = PresentsObjectAccess.CLIENT;
 
     /** The game access controller. */
     public static AccessController GAME = new AccessController() {
