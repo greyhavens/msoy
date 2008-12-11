@@ -234,6 +234,9 @@ public class PartyRegistry
                 _parties.put(pobj.id, mgr);
                 // set the partyId
                 member.setPartyId(pobj.id);
+                if (inviteAllFriends) {
+                    mgr.inviteAllFriends(member);
+                }
 
             } else {
                 // kill the party object we created
@@ -268,24 +271,6 @@ public class PartyRegistry
     {
         // TODO: this will get more complicated
         _parties.remove(partyId);
-    }
-
-    /**
-     * Can the specified member access this party?
-     */
-    protected boolean canAccessParty (PartyInfo party, MemberObject member)
-    {
-        switch (party.recruitment) {
-        case PartyCodes.RECRUITMENT_OPEN:
-            return true;
-
-        default:
-        case PartyCodes.RECRUITMENT_CLOSED:
-            return false;
-
-        case PartyCodes.RECRUITMENT_GROUP:
-            return member.isGroupMember(party.group.getGroupId());
-        }
     }
 
     /**

@@ -13,13 +13,14 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 
 import com.threerings.msoy.party.data.PartyInfo;
 
 public class PartyInfoRenderer extends HBox
 {
-    // Initialized by ClassFactory
-    public var wctx :WorldContext;
+//    // Initialized by ClassFactory
+//    public var wctx :WorldContext;
 
     override public function set data (value :Object) :void
     {
@@ -34,7 +35,7 @@ public class PartyInfoRenderer extends HBox
         _population.text = Msgs.PARTY.get("l.population", info.population);
         _status.text = info.status;
         // TODO: Recruitment
-        _join.setCallback(wctx.getPartyDirector().joinParty, info.id);
+        _join.setCommand(WorldController.JOIN_PARTY, info.id);
     }
 
     override protected function createChildren () :void

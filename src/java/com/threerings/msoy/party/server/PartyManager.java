@@ -30,8 +30,11 @@ import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.notify.data.PartyInviteNotification;
 
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyInfo;
@@ -74,7 +77,8 @@ public class PartyManager
     }
 
     /**
-     * Add the specified player to the party.
+     * Add the specified player to the party. Called from the PartyRegistry, which also
+     * takes care of filling-in the partyId in the MemberObject.
      */
     public void addPlayer (VizMemberName name, byte groupRank, InvocationService.ResultListener rl)
         throws InvocationException
@@ -83,12 +87,6 @@ public class PartyManager
         if (snub != null) {
             throw new InvocationException(snub);
         }
-
-        // TODO: Rethink! The client could fuck-off, and then we have a stale peep in the party
-        // But, if we wait until they subscribe to add them then we won't necessarily know when
-        // the party fills up.
-        _partyObj.addToPeeps(new PartyPeep(name, nextJoinOrder()));
-        updatePartyInfo();
 
         // inform them of the sceneId so that they can move there.
         rl.requestProcessed(_partyObj.sceneId);
@@ -103,6 +101,12 @@ public class PartyManager
         UserListener listener = new UserListener(member);
         _userListeners.put(member.getMemberId(), listener);
         member.addListener(listener);
+
+        // Crap, we used to do this in addPlayer, but they could never actually enter the party
+        // and leave it hosed. The downside of doing it this way is that we could approve
+        // more than MAX_PLAYERS to join the party...
+        _partyObj.addToPeeps(new PartyPeep(member.memberName, nextJoinOrder()));
+        updatePartyInfo();
     }
 
     /**
@@ -123,13 +127,18 @@ public class PartyManager
         return _partyObj.sceneId;
     }
 
+    public void inviteAllFriends (MemberObject inviter)
+    {
+        MemberNodeActions.notifyAllFriends(inviter,
+            new PartyInviteNotification(inviter.memberName, _partyObj.id, _partyObj.name));
+    }
+
     // from interface PartyProvider
     public void bootMember (
         ClientObject caller, int playerId, InvocationService.InvocationListener listener)
         throws InvocationException
     {
         requireLeader(caller);
-
         removePlayer(playerId);
     }
 
@@ -148,7 +157,6 @@ public class PartyManager
         throws InvocationException
     {
         MemberObject member = (MemberObject)caller;
-
         removePlayer(member.getMemberId());
         listener.requestProcessed();
     }

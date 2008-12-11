@@ -110,6 +110,9 @@ public class WorldController extends MsoyController
     /** Command to join an in-world game. */
     public static const JOIN_AVR_GAME :String = "JoinAVRGame";
 
+    /** Command to join a party. */
+    public static const JOIN_PARTY :String = "JoinParty";
+
     /** Command to leave the in-world game. */
     public static const LEAVE_AVR_GAME :String = "LeaveAVRGame";
 
@@ -610,6 +613,14 @@ public class WorldController extends MsoyController
     public function handleJoinPlayerGame (gameId :int, playerId :int) :void
     {
         _wctx.getGameDirector().joinPlayer(gameId, playerId);
+    }
+
+    /**
+     * Handles the JOIN_PARTY command.
+     */
+    public function handleJoinParty (partyId :int) :void
+    {
+        _wctx.getPartyDirector().joinParty(partyId);
     }
 
     /**

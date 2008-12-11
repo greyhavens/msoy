@@ -33,7 +33,7 @@ public class PartyBoardPanel extends FloatingPanel
         setButtonWidth(0);
 
         var cf :ClassFactory = new ClassFactory(PartyInfoRenderer);
-        cf.properties = { wctx: _wctx };
+//        cf.properties = { wctx: _wctx };
         _partyList = new List();
         _partyList.itemRenderer = cf;
         _partyList.verticalScrollPolicy = ScrollPolicy.ON;

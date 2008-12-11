@@ -377,7 +377,7 @@ public class MsoyPeerManager extends CrowdPeerManager
             log.warning("ZOMG! We plumb run out of id space [party id=" + _partyIdCounter + "].");
             _partyIdCounter = 0;
         }
-        return -(ServerConfig.nodeId + MAX_NODES * ++_partyIdCounter);
+        return (ServerConfig.nodeId + MAX_NODES * ++_partyIdCounter);
     }
 
     /**

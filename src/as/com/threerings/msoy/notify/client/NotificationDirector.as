@@ -37,21 +37,22 @@ import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.MoneyNotification;
 import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.notify.data.PartyInviteNotification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
 public class NotificationDirector extends BasicDirector
     implements AttributeChangeListener, SetListener, MessageListener
 {
-
     // statically reference classes we require
     BadgeEarnedNotification;
     EntityCommentedNotification;
-    LevelUpNotification;
-    ReleaseNotesNotification;
-    InviteAcceptedNotification;
-    GameInviteNotification;
     FollowInviteNotification;
+    GameInviteNotification;
+    InviteAcceptedNotification;
+    LevelUpNotification;
     MoneyNotification;
+    PartyInviteNotification;
+    ReleaseNotesNotification;
 
     public function NotificationDirector (ctx :MsoyContext)
     {
