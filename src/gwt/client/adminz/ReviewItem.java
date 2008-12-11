@@ -199,9 +199,10 @@ public class ReviewItem extends FlowPanel
             _adminsvc.deleteItemAdmin(
                 _item.getIdent(), _msgs.reviewDeletionMailHeader(),
                 _msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
-                new AsyncCallback<Integer>() {
-                    public void onSuccess (Integer result) {
-                        MsoyUI.info(_msgs.reviewDeletionSuccess(result.toString()));
+                new AsyncCallback<AdminService.ItemDeletionResult>() {
+                    public void onSuccess (AdminService.ItemDeletionResult result) {
+                        MsoyUI.info(_msgs.reviewDeletionSuccess(
+                            String.valueOf(result.deletionCount), String.valueOf(result.refunds)));
                         if (_mark != null) {
                             _mark.setEnabled(false);
                         }

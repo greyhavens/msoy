@@ -44,6 +44,18 @@ public interface AdminService extends RemoteService
     }
 
     /**
+     * Return value for an item deletion.
+     */
+    public static class ItemDeletionResult
+    {
+        /** Number of deleted items. */
+        public int deletionCount;
+
+        /** Number of refund transactions created. */
+        public int refunds;
+    }
+
+    /**
      * Get the specified page of affiliate mappings.
      */
     PagedResult<AffiliateMapping> getAffiliateMappings (int start, int count, boolean needTotal)
@@ -114,7 +126,7 @@ public interface AdminService extends RemoteService
      * Deletes an item and notifies people who care with the given message.  If the item is listed
      * in the catalog, also delists it and deletes any clones.
      */
-    Integer deleteItemAdmin (ItemIdent item, String subject, String body)
+    ItemDeletionResult deleteItemAdmin (ItemIdent item, String subject, String body)
         throws ServiceException;
 
     /**

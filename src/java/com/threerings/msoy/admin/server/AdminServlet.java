@@ -311,7 +311,8 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public Integer deleteItemAdmin (final ItemIdent iident, final String subject, final String body)
+    public ItemDeletionResult deleteItemAdmin (
+        final ItemIdent iident, final String subject, final String body)
         throws ServiceException
     {
         final MemberRecord memrec = requireSupportUser();
@@ -321,7 +322,7 @@ public class AdminServlet extends MsoyServiceServlet
         final ItemRecord item = repo.loadOriginalItem(iident.itemId);
         final IntSet owners = new ArrayIntSet();
 
-        int deletionCount = 0;
+        ItemDeletionResult result = new ItemDeletionResult();
         owners.add(item.creatorId);
 
         CatalogRecord catrec = null;
@@ -342,7 +343,7 @@ public class AdminServlet extends MsoyServiceServlet
         // then delete any potential clones
         for (final CloneRecord record : repo.loadCloneRecords(item.itemId)) {
             repo.deleteItem(record.itemId);
-            deletionCount ++;
+            result.deletionCount ++;
             owners.add(record.ownerId);
         }
 
@@ -350,7 +351,7 @@ public class AdminServlet extends MsoyServiceServlet
         // TODO: this does not seem to delete the original upload from the creator's inventory,
         // allowing the item to still be used by the creator and immediately put back in the shop
         repo.deleteItem(item.itemId);
-        deletionCount ++;
+        result.deletionCount ++;
 
         // notify the owners of the deletion
         for (final int ownerId : owners) {
@@ -365,13 +366,11 @@ public class AdminServlet extends MsoyServiceServlet
 
         // now do the refunds
         if (catrec != null) {
-            int refunds = _moneyLogic.refundAllItemPurchases(new CatalogIdent(
+            result.refunds = _moneyLogic.refundAllItemPurchases(new CatalogIdent(
                 type, item.catalogId), item.name);
-            // TODO: return compound result and remove log message
-            log.info("Refunded item purshases", "count", refunds);
         }
 
-        return Integer.valueOf(deletionCount);
+        return result;
     }
 
     // from interface AdminService

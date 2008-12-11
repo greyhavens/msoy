@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.admin.gwt.AdminService.ItemDeletionResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 
 import com.threerings.msoy.data.all.CharityInfo;
@@ -85,7 +86,7 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#deleteItemAdmin}.
      */
     void deleteItemAdmin (ItemIdent item, String subject, String body,
-                          AsyncCallback<Integer> callback);
+                          AsyncCallback<ItemDeletionResult> callback);
 
     /**
      * The asynchronous version of {@link AdminService#refreshBureauLauncherInfo}.
