@@ -10,8 +10,8 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -114,7 +114,7 @@ public class EditMedalPanel extends FlexTable
 
     protected void addIconUploader ()
     {
-        FlowPanel panel = new FlowPanel();
+        HorizontalPanel panel = new HorizontalPanel();
         panel.add(_iconPreview = new SimplePanel());
         if (_medal.icon != null) {
             setIconImage(_medal.icon);
