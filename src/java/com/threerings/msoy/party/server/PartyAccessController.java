@@ -6,8 +6,8 @@ package com.threerings.msoy.party.server;
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.Subscriber;
-import com.threerings.presents.server.PresentsSession;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyObjectAccess;
@@ -25,8 +25,8 @@ public class PartyAccessController implements AccessController
     public boolean allowSubscribe (DObject object, Subscriber<?> sub)
     {
         // if the subscriber is a client, ensure that they are in this party
-        if (PresentsSession.class.isInstance(sub)) {
-            MemberObject mobj = (MemberObject)PresentsSession.class.cast(sub).getClientObject();
+        if (sub instanceof ProxySubscriber) {
+            MemberObject mobj = (MemberObject) ((ProxySubscriber) sub).getClientObject();
             PartyObject partyObj = (PartyObject)object;
             boolean canSubscribe = (mobj.partyId == partyObj.id);
             if (canSubscribe) {
