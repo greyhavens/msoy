@@ -112,7 +112,7 @@ public class CommentRecord extends PersistentRecord
      * @param cards a mapping from member id to {@link MemberCard} that should contain {@link
      * #memberId}.
      */
-    public Comment toComment (Map<Integer, MemberCard> cards, Map <Long, Boolean> ratings)
+    public Comment toComment (Map<Integer, MemberCard> cards)
     {
         Comment comment = new Comment();
         MemberCard card = cards.get(memberId);
@@ -122,12 +122,6 @@ public class CommentRecord extends PersistentRecord
         }
         comment.posted = posted.getTime();
 
-        Boolean rating = ratings.get(comment.posted);
-        if (rating != null) {
-            comment.myRating = rating ? Comment.RATED_UP : Comment.RATED_DOWN;
-        } else {
-            comment.myRating = Comment.RATED_NONE;
-        }
         comment.currentRating = currentRating;
         comment.totalRatings = totalRatings;
         comment.text = text;

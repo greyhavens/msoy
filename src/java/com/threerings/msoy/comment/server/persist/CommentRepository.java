@@ -128,23 +128,50 @@ public class CommentRepository extends DepotRepository
 
     /**
      * Inserts a new rating for a comment by a given member.
-     * @return true for success, false if the member had already rated the comment
+     * @return true if the comment's rating changed
      */
     public boolean rateComment (
         int entityType, int entityId, long posted, int memberId, boolean rating)
     {
         Timestamp postedStamp = new Timestamp(posted);
         try {
-            // insert a new rating record for us
-            insert(new CommentRatingRecord(entityType, entityId, postedStamp, memberId, rating));
+            // see if this person has rated this record before
+            CommentRatingRecord record = load(CommentRatingRecord.class,
+                CommentRatingRecord.getKey(entityType, entityId, memberId, postedStamp));
+
+            int adjustment;
+            if (record != null) {
+                if (record.rating == rating) {
+                    // re-rated precisely as previously; we're done
+                    return false;
+                }
+                // previously rated and user changed their mind; comment gains or loses 2 votes
+                adjustment = rating ? 2 : -2;
+            } else {
+                // previously unrated; the comment gains or loses 1 vote
+                adjustment = rating ? 1 : -1;
+            }
+
+            // create a new record with the new rating
+            CommentRatingRecord newRecord =
+                new CommentRatingRecord(entityType, entityId, postedStamp, memberId, rating);
+
+            // insert or update depending on what we already had
+            if (record == null) {
+                insert(newRecord);
+            } else {
+                update(newRecord);
+            }
 
             // then update the sums in the comment
             Key<CommentRecord> comment = CommentRecord.getKey(entityType, entityId, postedStamp);
             Map<String, SQLExpression> updates = Maps.newHashMap();
-            updates.put(CommentRecord.CURRENT_RATING, new Arithmetic.Add(
-                            CommentRecord.CURRENT_RATING_C, rating ? 1 : -1));
-            updates.put(CommentRecord.TOTAL_RATINGS, new Arithmetic.Add(
-                            CommentRecord.TOTAL_RATINGS_C, 1));
+            updates.put(CommentRecord.CURRENT_RATING,
+                        new Arithmetic.Add(CommentRecord.CURRENT_RATING_C, adjustment));
+            if (record != null) {
+                updates.put(CommentRecord.TOTAL_RATINGS,
+                            new Arithmetic.Add(CommentRecord.TOTAL_RATINGS_C, 1));
+            }
             updateLiteral(CommentRecord.class, comment, comment, updates);
             return true;
 

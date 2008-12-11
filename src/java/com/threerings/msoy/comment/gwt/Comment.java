@@ -33,15 +33,6 @@ public class Comment
     /** The number of comments displayed per page. */
     public static final int COMMENTS_PER_PAGE = 5;
 
-    /** A value for {@link #myRating} that means we have not yet rated this item. */
-    public static final int RATED_NONE = 0;
-
-    /** A value for {@link #myRating} that means we have rated this item positively. */
-    public static final int RATED_UP = 1;
-
-    /** A value for {@link #myRating} that means we have rated this item negatively. */
-    public static final int RATED_DOWN = 2;
-
     /**
      * Returns true if the specified member can delete a comment.
      */

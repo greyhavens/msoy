@@ -5,10 +5,8 @@ package com.threerings.msoy.comment.server;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.samskivert.depot.DatabaseException;
@@ -28,7 +26,6 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
-import com.threerings.msoy.comment.server.persist.CommentRatingRecord;
 import com.threerings.msoy.comment.server.persist.CommentRecord;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.data.StatType;
@@ -75,19 +72,10 @@ public class CommentServlet extends MsoyServiceServlet
             cards.put(mcrec.memberId, mcrec.toMemberCard());
         }
 
-        // if this is a logged-in user, get their comment rating data
-        Map<Long, Boolean> ratings = Maps.newHashMap();
-        MemberRecord mrec = getAuthedUser();
-        if (mrec != null) {
-            for (CommentRatingRecord record : _commentRepo.loadRatings(etype, eid, mrec.memberId)) {
-                ratings.put(record.posted.getTime(), record.rating);
-            }
-        }
-
         // convert the comment records to runtime records
         List<Comment> comments = Lists.newArrayList();
         for (CommentRecord record : records) {
-            Comment comment = record.toComment(cards, ratings);
+            Comment comment = record.toComment(cards);
             if (comment.commentor == null) {
                 continue; // this member was deleted, shouldn't happen
             }
@@ -183,8 +171,7 @@ public class CommentServlet extends MsoyServiceServlet
         }
 
         // convert the record to a runtime record to return to the caller
-        Comment comment = crec.toComment(Collections.<Integer, MemberCard>emptyMap(),
-                                         Collections.<Long, Boolean>emptyMap());
+        Comment comment = crec.toComment(Collections.<Integer, MemberCard>emptyMap());
         comment.commentor = mrec.getName();
         return comment;
     }
