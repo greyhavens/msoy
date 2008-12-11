@@ -163,6 +163,15 @@ public class MemberName extends Name
         return isViewer(_memberId);
     }
 
+    /**
+     * Ensure that this object is just a base MemberName, and not an extended class with
+     * additional information. This is sometimes desired when sending names "over the wire".
+     */
+    public MemberName toMemberName ()
+    {
+        return this;
+    }
+
     // from DSet.Entry
     public Comparable<?> getKey ()
     {

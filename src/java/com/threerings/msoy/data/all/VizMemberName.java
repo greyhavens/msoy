@@ -48,6 +48,12 @@ public class VizMemberName extends MemberName
         return _photo;
     }
 
+    @Override
+    public MemberName toMemberName ()
+    {
+        return new MemberName(_name, _memberId);
+    }
+
     /** This member's profile photo. */
     protected MediaDesc _photo;
 }

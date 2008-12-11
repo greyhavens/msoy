@@ -13,7 +13,7 @@ public class PartyInviteNotification extends Notification
     /** Normal constructor. */
     public PartyInviteNotification (MemberName inviter, int partyId, String partyName)
     {
-        _inviter = inviter;
+        _inviter = inviter.toMemberName();
         _partyId = partyId;
         _partyName = partyName;
     }

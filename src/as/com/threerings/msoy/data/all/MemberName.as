@@ -84,6 +84,15 @@ public class MemberName extends Name
         return MemberName.isViewer(_memberId);
     }
 
+    /**
+     * Ensure that this object is just a base MemberName, and not an extended class with
+     * additional information. This is sometimes desired when sending names "over the wire".
+     */
+    public function toMemberName () :MemberName
+    {
+        return this;
+    }
+
     // from DSet_Entry
     public function getKey () :Object
     {

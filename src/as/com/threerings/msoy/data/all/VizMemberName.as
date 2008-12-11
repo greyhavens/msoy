@@ -19,6 +19,12 @@ public class VizMemberName extends MemberName
         return _photo;
     }
 
+    // from MemberName
+    override public function toMemberName () :MemberName
+    {
+        return new MemberName(_name, _memberId);
+    }
+
     // from OccupantInfo
     override public function readObject (ins :ObjectInputStream) :void
     {
