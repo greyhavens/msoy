@@ -20,6 +20,9 @@ public interface PartyService extends InvocationService
     function bootMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
+    function inviteMember (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+
+    // from Java interface PartyService
     function leaveParty (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;
 
     // from Java interface PartyService

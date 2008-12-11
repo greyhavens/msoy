@@ -225,6 +225,16 @@ public class PartyManager
         updatePartyInfo();
     }
 
+    // from interface PartyProvider
+    public void inviteMember (
+        ClientObject caller, int memberId, InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        MemberObject inviter = (MemberObject)caller;
+        MemberNodeActions.sendNotification(memberId,
+            new PartyInviteNotification(inviter.memberName, _partyObj.id, _partyObj.name));
+    }
+
     /**
      * Remove the specified player from the party.
      */

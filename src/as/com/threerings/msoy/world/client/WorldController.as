@@ -176,6 +176,9 @@ public class WorldController extends MsoyController
     /** Get info about the currently-playing music. */
     public static const MUSIC_INFO :String = "MusicInfo";
 
+    /** Command to invite a member to the current party. */
+    public static const INVITE_TO_PARTY :String = "InviteToParty";
+
     // statically reference classes we require
     ItemMarshaller;
 
@@ -802,6 +805,14 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles INVITE_TO_PARTY.
+     */
+    public function handleInviteToParty (memberId :int) :void
+    {
+        _wctx.getPartyDirector().inviteMember(memberId);
+    }
+
+    /**
      * Access the music player. Don't be too nefarious now boys!
      */
     public function getMusicPlayer () :AudioPlayer
@@ -1125,7 +1136,7 @@ public class WorldController extends MsoyController
                                  command: GO_MEMBER_HOME, arg: memId });
                 if (!us.isGuest() && !us.friends.containsKey(memId)) {
                     menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
-                                     command: INVITE_FRIEND, arg: [memId] });
+                                     command: INVITE_FRIEND, arg: memId });
                 }
             }
             menuItems.push({ label: Msgs.GENERAL.get("b.complain"),
@@ -1136,6 +1147,11 @@ public class WorldController extends MsoyController
                     BootablePlaceController(placeCtrl).canBoot()) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.boot"),
                     callback: handleBootFromPlace, arg: memId });
+            }
+
+            if (_wctx.getPartyDirector().isInParty()) {
+                menuItems.push({ label: Msgs.PARTY.get("b.invite_member"),
+                                 command: INVITE_TO_PARTY, arg: memId });
             }
         }
 

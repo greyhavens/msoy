@@ -158,6 +158,12 @@ public class PartyDirector extends BasicDirector
             new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
     }
 
+    public function inviteMember (memberId :int) :void
+    {
+        _partyObj.partyService.inviteMember(_wctx.getClient(), memberId,
+            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
+    }
+
     protected function checkPartyId () :void
     {
         const partyId :int = _wctx.getMemberObject().partyId;
