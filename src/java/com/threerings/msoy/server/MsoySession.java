@@ -80,6 +80,7 @@ public class MsoySession extends WhirledSession
         super.sessionWillStart();
 
         _memobj = (MemberObject) _clobj;
+        _memobj.setAccessController(MsoyObjectAccess.USER);
         _memobj.addListener(_idleTracker);
 
         MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account)_authdata;

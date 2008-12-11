@@ -102,7 +102,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         }
 
         final MemberObject memobj = (MemberObject) clobj;
-        memobj.setAccessController(MsoyObjectAccess.USER);
         MemberLocal local = memobj.getLocal(MemberLocal.class);
 
         // create a deferred notifications array so that we can track any notifications dispatched
@@ -227,7 +226,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // for players, resolve this here from the database.
         // guests will get resolution later on, in MsoySession.sessionWillStart()
         memobj.visitorInfo = new VisitorInfo(member.visitorId, true);
-        
+
         // Load up the member's experiences
         memobj.experiences = new DSet<MemberExperience>(
                 _memberLogic.getExperiences(member.memberId));

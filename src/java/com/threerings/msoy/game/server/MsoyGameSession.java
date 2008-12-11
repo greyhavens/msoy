@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.MsoyObjectAccess;
 
 import static com.threerings.msoy.Log.log;
 
@@ -27,6 +28,7 @@ public class MsoyGameSession extends CrowdSession
         super.sessionWillStart();
 
         _plobj = (PlayerObject) _clobj;
+        _plobj.setAccessController(MsoyObjectAccess.USER);
 
         // configure their access control tokens
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
