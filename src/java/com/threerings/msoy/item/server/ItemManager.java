@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,13 +10,10 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.Tuple;
 
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.depot.DatabaseException;
 
 import com.threerings.util.MessageBundle;
 
@@ -26,7 +22,6 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.ResultAdapter;
@@ -40,10 +35,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -55,10 +46,8 @@ import com.threerings.msoy.item.data.ItemCodes;
 // we'll avoid import verbosity in this rare case
 import com.threerings.msoy.item.server.persist.*;
 
-import com.threerings.msoy.item.server.ItemLogic.LookupList;
 import com.threerings.msoy.item.server.ItemLogic.MissingRepositoryException;
 
-import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.server.RoomManager;
 
@@ -88,57 +77,6 @@ public class ItemManager
     }
 
     /**
-     * Provides a reference to the {@link GameRepository} which is used for nefarious ToyBox
-     * purposes.
-     */
-    public GameRepository getGameRepository ()
-    {
-        return _itemLogic.getGameRepository();
-    }
-
-    /**
-     * Provides a reference to the {@link PetRepository} which is used to load pets into rooms.
-     */
-    public PetRepository getPetRepository ()
-    {
-        return _itemLogic.getPetRepository();
-    }
-
-    /**
-     * Provides a reference to the {@link AvatarRepository} which is used to load pets into rooms.
-     */
-    public AvatarRepository getAvatarRepository ()
-    {
-        return _itemLogic.getAvatarRepository();
-    }
-
-    /**
-     * Provides a reference to the {@link DecorRepository} which is used to load room decor.
-     */
-    public DecorRepository getDecorRepository ()
-    {
-        return _itemLogic.getDecorRepository();
-    }
-
-    /**
-     * Provides a reference to the {@link TrophySourceRepository}.
-     */
-    public TrophySourceRepository getTrophySourceRepository ()
-    {
-        return _itemLogic.getTrophySourceRepository();
-    }
-
-    /**
-     * TODO: This is a blocking call. Get rid of this and replace
-     * calls to this method with calls to ItemLogic.
-     */
-    public ItemRepository<ItemRecord> getRepository (byte itemType)
-        throws ServiceException
-    {
-        return _itemLogic.getRepository(itemType);
-    }
-
-    /**
      * Returns the repository used to manage items of the specified type.
      */
     public ItemRepository<ItemRecord> getRepository (ItemIdent ident, ResultListener<?> rl)
@@ -160,20 +98,6 @@ public class ItemManager
     }
 
     /**
-     * Returns the repository used to manage items of the specified type.
-     */
-    public ItemRepository<ItemRecord> getRepository (
-        byte type, InvocationService.InvocationListener lner)
-    {
-        try {
-            return _itemLogic.getRepositoryFor(type);
-        } catch (MissingRepositoryException mre) {
-            lner.requestFailed(ItemCodes.E_INTERNAL_ERROR);
-            return null;
-        }
-    }
-
-    /**
      * Get the specified item.
      */
     public void getItem (final ItemIdent ident, ResultListener<Item> lner)
@@ -189,48 +113,6 @@ public class ItemManager
                     throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
                 }
                 return rec.toItem();
-            }
-        });
-    }
-
-    /**
-     * Mass-load the specified items. If any type is invalid, none are returned. If specific
-     * itemIds are invalid, they are omitted from the result list.
-     */
-    public void getItems (Collection<ItemIdent> ids, ResultListener<List<Item>> lner)
-    {
-        final LookupList list = _itemLogic.new LookupList();
-        try {
-            for (ItemIdent ident : ids) {
-                list.addItem(ident);
-            }
-
-        } catch (MissingRepositoryException mre) {
-            lner.requestFailed(mre);
-            return;
-        }
-
-        // do it all at once
-        _invoker.postUnit(new RepositoryListenerUnit<List<Item>>("getItems", lner) {
-            public List<Item> invokePersistResult () throws Exception {
-                // create a list to hold the results
-                List<Item> items = Lists.newArrayList();
-                // mass-lookup items, a repo at a time
-                for (Tuple<ItemRepository<ItemRecord>, Collection<Integer>> tup : list) {
-                    for (ItemRecord rec : tup.left.loadItems(tup.right)) {
-                        items.add(rec.toItem());
-                    }
-                }
-                return items;
-            }
-        });
-    }
-
-    public void loadItemList (final int listId, ResultListener<List<Item>> lner)
-    {
-        _invoker.postUnit(new RepositoryListenerUnit<List<Item>>("loadItemList", lner) {
-            public List<Item> invokePersistResult () throws Exception {
-                return _itemLogic.loadItemList(listId);
             }
         });
     }
@@ -410,68 +292,6 @@ public class ItemManager
     }
 
     /**
-     * Update usage of the specified items.
-     *
-     * The supplied listener will be notified of success with null.
-     */
-    public void updateItemUsage (final int editorMemberId, final int sceneId,
-                                 FurniData[] removedFurni, FurniData[] addedFurni,
-                                 ResultListener<Object> lner)
-    {
-        final LookupList unused = _itemLogic.new LookupList();
-        final LookupList scened = _itemLogic.new LookupList();
-
-        try {
-            ArrayIntSet props = null;
-            if (removedFurni != null) {
-                for (FurniData furni : removedFurni) {
-                    // allow removal of 'props'
-                    if (furni.itemType == Item.NOT_A_TYPE) {
-                        if (props == null) {
-                            props = new ArrayIntSet();
-                        }
-                        props.add(furni.id);
-                        continue;
-                    }
-                    unused.addItem(furni.itemType, furni.itemId);
-                }
-            }
-
-            if (addedFurni != null) {
-                for (FurniData furni :addedFurni) {
-                    if (furni.itemType == Item.NOT_A_TYPE) {
-                        // it's only legal to add props that were already there
-                        if (props == null || !props.contains(furni.id)) {
-                            lner.requestFailed(new Exception("Furni added with invalid item " +
-                                                             "source " + furni + "."));
-                            return;
-                        }
-                        continue;
-                    }
-                    scened.addItem(furni.itemType, furni.itemId);
-                    unused.removeItem(furni.itemType, furni.itemId);
-                }
-            }
-
-        } catch (MissingRepositoryException mre) {
-            lner.requestFailed(mre);
-            return;
-        }
-
-        _invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemsUsage", lner) {
-            public Object invokePersistResult () throws Exception {
-                for (Tuple<ItemRepository<ItemRecord>, Collection<Integer>> tup : unused) {
-                    tup.left.markItemUsage(tup.right, Item.UNUSED, 0);
-                }
-                for (Tuple<ItemRepository<ItemRecord>, Collection<Integer>> tup : scened) {
-                    tup.left.markItemUsage(tup.right, Item.USED_AS_FURNITURE, sceneId);
-                }
-                return null;
-            }
-        });
-    }
-
-    /**
      * Load at most maxCount recently-touched items from the specified user's inventory.
      */
     public void loadRecentlyTouched (
@@ -493,56 +313,6 @@ public class ItemManager
                     returnList.add(list.get(ii).toItem());
                 }
                 return returnList;
-            }
-        });
-    }
-
-    /**
-     * Atomically sets or clears one or more flags on an item.
-     * TODO: If things get really tight, this could use updatePartial() later.
-     */
-    public void setFlags (final ItemIdent ident, final byte mask, final byte value,
-                          ResultListener<Void> lner)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        _invoker.postUnit(new RepositoryListenerUnit<Void>("setFlags", lner) {
-            public Void invokePersistResult () throws Exception {
-                ItemRecord item = repo.loadItem(ident.itemId);
-                if (item == null) {
-                    throw new DatabaseException("Can't find item [item=" + ident + "]");
-                }
-                item.flagged = (byte) ((item.flagged & ~mask) | value);
-                repo.updateOriginalItem(item, false);
-                return null;
-            }
-        });
-    }
-
-    /**
-     * Sets or clears the 'mature' flag.
-     */
-    public void setMature (final ItemIdent ident, final boolean value, ResultListener<Void> lner)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = getRepository(ident, lner);
-        if (repo == null) {
-            return;
-        }
-
-        _invoker.postUnit(new RepositoryListenerUnit<Void>("setMature", lner) {
-            public Void invokePersistResult () throws Exception {
-                ItemRecord item = repo.loadItem(ident.itemId);
-                if (item == null) {
-                    throw new DatabaseException("Can't find item [item=" + ident + "]");
-                }
-                item.mature = value;
-                repo.updateOriginalItem(item, false);
-                return null;
             }
         });
     }
@@ -732,46 +502,11 @@ public class ItemManager
         });
     }
 
-    /**
-     * Get a random item out of the catalog.
-     *
-     * @param tags limits selection to one that matches any of these tags. If omitted, selection is
-     * from all catalog entries.
-     */
-    public void getRandomCatalogItem (
-        final byte itemType, final String[] tags, ResultListener<Item> lner)
-    {
-        final ItemRepository<ItemRecord> repo = getRepository(itemType, lner);
-        if (repo == null) {
-            return;
-        }
-
-        _invoker.postUnit(new RepositoryListenerUnit<Item>("getRandomCatalogItem", lner) {
-            public Item invokePersistResult () throws Exception {
-                CatalogRecord record;
-                if (tags == null || tags.length == 0) {
-                    record = repo.pickRandomCatalogEntry();
-
-                } else {
-                    record = repo.findRandomCatalogEntryByTags(tags);
-                }
-                if (record == null) {
-                    return null;
-                }
-                return record.item.toItem();
-            }
-        });
-    }
-
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected BodyManager _bodyMan;
     @Inject protected SceneRegistry _sceneReg;
-    @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected ItemListRepository _listRepo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemLogic _itemLogic;
 }

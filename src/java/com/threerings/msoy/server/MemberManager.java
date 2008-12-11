@@ -70,6 +70,7 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.notify.data.LevelUpNotification;
@@ -900,7 +901,7 @@ public class MemberManager
                 _memberRepo.configureAvatarId(user.getMemberId(),
                     (avatar == null) ? 0 : avatar.itemId);
                 if (newScale != 0 && avatar != null && avatar.scale != newScale) {
-                    _itemMan.getAvatarRepository().updateScale(avatar.itemId, newScale);
+                    _itemLogic.getAvatarRepository().updateScale(avatar.itemId, newScale);
                 }
             }
 
@@ -1016,6 +1017,7 @@ public class MemberManager
     @Inject protected BadgeManager _badgeMan;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected ItemManager _itemMan;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MemberLocator _locator;
     @Inject protected MemberRepository _memberRepo;

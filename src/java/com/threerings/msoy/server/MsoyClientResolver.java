@@ -49,6 +49,7 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.mail.server.persist.MailRepository;
@@ -214,7 +215,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {
-            final AvatarRecord avatar = _itemMan.getAvatarRepository().loadItem(member.avatarId);
+            final AvatarRecord avatar = _itemLogic.getAvatarRepository().loadItem(member.avatarId);
             if (avatar != null) {
                 memobj.avatar = (Avatar)avatar.toItem();
                 local.memories = Lists.newArrayList(Iterables.transform(
@@ -265,6 +266,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     // dependencies
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ItemManager _itemMan;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GroupRepository _groupRepo;
