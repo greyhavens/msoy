@@ -161,8 +161,16 @@ public class CommentRepository extends DepotRepository
      */
     public void deleteComment (int entityType, int entityId, long posted)
     {
-        delete(CommentRecord.class,
-               CommentRecord.getKey(entityType, entityId, new Timestamp(posted)));
+        Timestamp postedStamp = new Timestamp(posted);
+
+        // delete the comment
+        delete(CommentRecord.class, CommentRecord.getKey(entityType, entityId, postedStamp));
+
+        // delete all its ratings
+        deleteAll(CommentRatingRecord.class,
+                  new Where(CommentRatingRecord.ENTITY_TYPE_C, entityType,
+                            CommentRatingRecord.ENTITY_ID_C, entityId,
+                            CommentRatingRecord.POSTED_C, postedStamp));
     }
 
     @Override // from DepotRepository
