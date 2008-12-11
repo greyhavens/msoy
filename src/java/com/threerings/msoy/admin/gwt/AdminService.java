@@ -47,6 +47,7 @@ public interface AdminService extends RemoteService
      * Return value for an item deletion.
      */
     public static class ItemDeletionResult
+        implements IsSerializable
     {
         /** Number of deleted items. */
         public int deletionCount;
