@@ -297,12 +297,12 @@ public class AdminServlet extends MsoyServiceServlet
         CatalogIdent cident = new CatalogIdent(iident.type, item.catalogId);
         ItemTransactionResult result = new ItemTransactionResult();
         if (needCount) {
-            result.count = _moneyLogic.getItemTransactionCount(cident);
+            result.total = _moneyLogic.getItemTransactionCount(cident);
         }
-        result.transactions = _moneyLogic.getItemTransactions(cident, from, count, false);
+        result.page = _moneyLogic.getItemTransactions(cident, from, count, false);
 
         Set<Integer> memberIds = Sets.newHashSet();
-        for (MoneyTransaction tx : result.transactions) {
+        for (MoneyTransaction tx : result.page) {
             memberIds.add(tx.memberId);
         }
         result.memberNames = Maps.newHashMap();

@@ -124,13 +124,13 @@ public class ItemTransactionsPanel extends VerticalPanel
         @Override // from ServiceBackedDataModel
         protected int getCount (ItemTransactionResult result)
         {
-            return result.count;
+            return result.total;
         }
 
         @Override // from ServiceBackedDataModel
         protected List<MoneyTransaction> getRows (ItemTransactionResult result)
         {
-            return result.transactions;
+            return result.page;
         }
     }
 

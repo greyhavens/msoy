@@ -36,15 +36,9 @@ public interface AdminService extends RemoteService
     /**
      * Return value for an item transaction query.
      */
-    public static class ItemTransactionResult
+    public static class ItemTransactionResult extends PagedResult<MoneyTransaction>
         implements IsSerializable
     {
-        /** If requested, the total number of transactions for the item. */
-        public int count;
-
-        /** The list of transactions for the requested pagee. */
-        public List<MoneyTransaction> transactions;
-
         /** Member names for each account in the transaction list. */
         public Map<Integer, MemberName> memberNames;
     }
