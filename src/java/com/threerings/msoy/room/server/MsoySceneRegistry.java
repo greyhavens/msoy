@@ -96,7 +96,8 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         // if this is a member with followers, tell them all to make the same scene move
         final MemberObject memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
         if (memobj != null) {
-            for (MemberName follower : memobj.followers) {
+            // iterate over a copy of the DSet, as may modify the DSet via the MemberNodeAction
+            for (MemberName follower : memobj.followers.toArray(null)) {
                 // this will notify the follower to change scenes and if the follower cannot be
                 // found or if the follower is found and is found no longer to be following this
                 // leader, dispatch a second action requesting that the follower be removed from
