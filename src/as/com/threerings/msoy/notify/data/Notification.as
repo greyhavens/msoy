@@ -39,7 +39,7 @@ public /* abstract */ class Notification extends SimpleStreamableObject
      */
     public function getCategory () :int
     {
-        throw new Error("Abstract");
+        return BUTTSCRATCHING;
     }
 
     /**

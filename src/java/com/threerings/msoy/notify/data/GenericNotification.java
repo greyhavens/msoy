@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.notify.data {
+package com.threerings.msoy.notify.data;
 
 import com.threerings.io.ObjectInputStream;
 
@@ -16,40 +16,42 @@ import com.threerings.msoy.data.all.MemberName;
  */
 public class GenericNotification extends Notification
 {
-    public function GenericNotification (
-        msg :String = null, category :int = 0, sender :MemberName = null)
+    /** Suitable for unserialization. */
+    public GenericNotification () {}
+
+    /** Normal constructor. */
+    public GenericNotification (String msg, byte category)
+    {
+        this(msg, category, null);
+    }
+
+    /** Normal constructor. */
+    public GenericNotification (String msg, byte category, MemberName sender)
     {
         _msg = msg;
         _cat = category;
         _sender = sender;
     }
 
-    override public function getAnnouncement () :String
+    @Override
+    public String getAnnouncement ()
     {
         return _msg;
     }
 
-    override public function getCategory () :int
+    @Override
+    public byte getCategory ()
     {
         return _cat;
     }
 
-    override public function getSender () :MemberName
+    @Override
+    public MemberName getSender ()
     {
         return _sender;
     }
 
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-
-        _msg = ins.readField(String) as String;
-        _cat = ins.readByte();
-        _sender = MemberName(ins.readObject());
-    }
-
-    protected var _msg :String;
-    protected var _cat :int;
-    protected var _sender :MemberName;
-}
+    protected String _msg;
+    protected byte _cat;
+    protected MemberName _sender;
 }

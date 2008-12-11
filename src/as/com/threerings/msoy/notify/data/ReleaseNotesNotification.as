@@ -11,11 +11,5 @@ public class ReleaseNotesNotification extends Notification
     {
         return "m.new_release_notes";
     }
-
-    // from Notification
-    override public function getCategory () :int
-    {
-        return BUTTSCRATCHING;
-    }
 }
 }

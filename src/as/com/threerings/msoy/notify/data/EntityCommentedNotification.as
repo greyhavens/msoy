@@ -31,12 +31,6 @@ public class EntityCommentedNotification extends Notification
         }
     }
 
-    // from Notification
-    override public function getCategory () :int
-    {
-        return BUTTSCRATCHING;
-    }
-
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);

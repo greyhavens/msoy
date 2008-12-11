@@ -13,6 +13,13 @@ import com.threerings.msoy.data.all.MemberName;
  */
 public abstract class Notification extends SimpleStreamableObject
 {
+    // TODO: these are just placeholder categories. These will expand and users will
+    // be able to customize a filtering level.
+    public static final byte SYSTEM = 0;
+    public static final byte INVITE = 1;
+    public static final byte PERSONAL = 2;
+    public static final byte BUTTSCRATCHING = 3;
+
     @ActionScript(omit=true)
     public Notification ()
     {
@@ -27,6 +34,15 @@ public abstract class Notification extends SimpleStreamableObject
      * You can qualify the string if you want a different bundle.
      */
     public abstract String getAnnouncement ();
+
+    /**
+     * Get the category of the notification.
+     */
+    public byte getCategory ()
+    {
+        // on the client this method is abstract, but we try not to be annoying here
+        return BUTTSCRATCHING;
+    }
 
     /**
      * Get the username of the person who sent/triggered this notification, or null
