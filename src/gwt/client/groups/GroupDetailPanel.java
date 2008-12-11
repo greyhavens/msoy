@@ -4,6 +4,7 @@
 package client.groups;
 
 import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -30,11 +31,11 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ShopUtil;
+
 import client.room.SceneUtil;
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
-import client.ui.PrettyTextPanel;
 import client.ui.PromptPopup;
 import client.ui.RoundBox;
 import client.ui.ThumbBox;
@@ -49,11 +50,6 @@ import client.util.ServiceUtil;
  */
 public class GroupDetailPanel extends FlowPanel
 {
-    public interface SubContentDisplay {
-        public void showContent (String title, Widget content);
-        public void revertContent ();
-    }
-
     public GroupDetailPanel () {
         setStyleName("groupDetail");
     }
@@ -283,7 +279,7 @@ public class GroupDetailPanel extends FlowPanel
         HorizontalPanel lowerArea = new HorizontalPanel();
         add(lowerArea);
         // content panel defaults to discussions
-        lowerArea.add(_contentPanel = new ContentPanel());
+        lowerArea.add(_contentPanel = new DetailContentPanel(_detail));
         _contentPanel.showDiscussions();
         // list managers and some members
         lowerArea.add(new TopMembersPanel());
@@ -301,137 +297,6 @@ public class GroupDetailPanel extends FlowPanel
         return new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 loadGroup(_group.groupId);
-            }
-        };
-    }
-
-    /**
-     * Displays multiple panels: Discussions, Charter, Members, Rooms. Panels are cached and not
-     * regenerated when swapping back to one.
-     */
-    protected class ContentPanel extends FlowPanel
-    {
-        public ContentPanel () {
-            setStyleName("ContentPanel");
-            add(_title = MsoyUI.createSimplePanel(null, "ContentPanelTitle"));
-
-            // contains content and discussions button for css min-height
-            FlowPanel container = new FlowPanel();
-            container.setStyleName("ContentPanelContainer");
-            add(container);
-            container.add(_content = new SimplePanel());
-            _content.setStyleName("ContentPanelContent");
-
-            // back to discussions button hidden by default
-            container.add(_backButton = new Label(_msgs.detailBackToDiscussions()));
-            _backButton.setVisible(false);
-            _backButton.addStyleName("actionLabel");
-            _backButton.addStyleName("ContentBackButton");
-            ClickListener backClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    _contentPanel.showDiscussions();
-                }
-            };
-            _backButton.addClickListener(backClick);
-        }
-
-        public void showDiscussions () {
-            if (_discussions != null && _content.getWidget() == _discussions) {
-                return;
-            }
-            _title.setWidget(new Label(_msgs.detailTabDiscussions()));
-            if (_discussions == null) {
-                _discussions = new GroupDiscussionsPanel(_detail);
-            }
-            _content.setWidget(_discussions);
-            _backButton.setVisible(false);
-        }
-
-        public void showCharter () {
-            if (_charter != null && _content.getWidget() == _charter) {
-                return;
-            }
-            _title.setWidget(new Label(_msgs.detailTabCharter()));
-            if (_charter == null) {
-                String charterText = (_extras.charter == null) ? _msgs.detailNoCharter()
-                    : _extras.charter;
-                _charter = new PrettyTextPanel(charterText);
-            }
-            _content.setWidget(_charter);
-            _backButton.setVisible(true);
-        }
-
-        public void showMembers () {
-            if (_members != null && _content.getWidget() == _members) {
-                return;
-            }
-            _title.setWidget(new Label(_msgs.detailTabMembers()));
-            if (_members == null) {
-                _members = new GroupMembersPanel(_detail);
-            }
-            _content.setWidget(_members);
-            _backButton.setVisible(true);
-        }
-
-        public void showRooms () {
-            if (_rooms != null && _content.getWidget() == _rooms) {
-                return;
-            }
-            _title.setWidget(new Label(_msgs.detailTabRooms()));
-            if (_rooms == null) {
-                _rooms = new GroupRoomsPanel(_detail);
-            }
-            _content.setWidget(_rooms);
-            _backButton.setVisible(true);
-        }
-
-        public void showMedals () {
-            if (_medalList != null && _content.getWidget() == _medalList) {
-                return;
-            }
-            _title.setWidget(new Label(_msgs.detailTabViewMedals()));
-            if (_medalList == null) {
-                _medalList = new MedalListPanel(_detail, _contentDisplay);
-            }
-            _content.setWidget(_medalList);
-            _backButton.setVisible(true);
-        }
-
-        public void showAwardMedals () {
-            _title.setWidget(new Label(_msgs.detailTabAwardMedals()));
-            _content.clear();
-            //TODO: award medal panel with searching for members, then awarding medals to a member
-            // return in the search results.
-        }
-
-        protected SimplePanel _title;
-        protected SimplePanel _content;
-        protected Label _backButton;
-        protected GroupDiscussionsPanel _discussions;
-        protected PrettyTextPanel _charter;
-        protected GroupMembersPanel _members;
-        protected GroupRoomsPanel _rooms;
-        protected MedalListPanel _medalList;
-        protected Widget _previousContent;
-        protected Widget _previousTitle;
-
-        protected SubContentDisplay _contentDisplay = new SubContentDisplay () {
-            public void showContent (String title, Widget content) {
-                _previousContent = _content.getWidget();
-                _previousTitle = _title.getWidget();
-                _title.setWidget(new Label(title));
-                _content.setWidget(content);
-            }
-
-            public void revertContent() {
-                if (_previousContent != null && _previousTitle != null) {
-                    _title.setWidget(_previousTitle);
-                    _content.setWidget(_previousContent);
-
-                } else {
-                    _title.clear();
-                    _content.clear();
-                }
             }
         };
     }
@@ -483,7 +348,7 @@ public class GroupDetailPanel extends FlowPanel
     protected Group _group;
     protected GroupDetail _detail;
     protected GroupExtras _extras;
-    protected ContentPanel _contentPanel;
+    protected DetailContentPanel _contentPanel;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

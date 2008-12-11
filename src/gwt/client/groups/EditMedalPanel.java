@@ -32,11 +32,11 @@ import client.util.ServiceUtil;
 
 public class EditMedalPanel extends FlexTable
 {
-    public EditMedalPanel (Medal medal, GroupDetailPanel.SubContentDisplay contentDisplay)
+    public EditMedalPanel (Medal medal, MedalListPanel listPanel)
     {
         setStyleName("editMedalPanel");
-        _medal = medal == null ? new Medal() : medal;
-        _contentDisplay = contentDisplay;
+        _medal = medal;
+        _listPanel = listPanel;
 
         addName();
         addIconUploader();
@@ -51,7 +51,7 @@ public class EditMedalPanel extends FlexTable
         Button ecancel = new Button(_msgs.editMedalCancel());
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                _contentDisplay.revertContent();
+                _listPanel.restoreListPanel(false);
             }
         });
 
@@ -62,7 +62,14 @@ public class EditMedalPanel extends FlexTable
 
     protected void commitEdit ()
     {
-        _contentDisplay.revertContent();
+        if (_medal.name == null || _medal.name.equals("") ||
+            _medal.description == null || _medal.description.equals("") ||
+            _medal.icon == null) {
+            MsoyUI.error(_msgs.editMedalAllRequired());
+            return;
+        }
+
+        _listPanel.restoreListPanel(true);
     }
 
     protected void addRow (String label, Widget widget)
@@ -98,13 +105,13 @@ public class EditMedalPanel extends FlexTable
     {
         _description = new LimitedTextArea(Medal.MAX_DESCRIPTION_LENGTH, 40, 3);
         if (_medal.description != null) {
-            _description.getTextArea().setText(_medal.description);
+            _description.setText(_medal.description);
         }
         _description.getTextArea().addKeyboardListener(new KeyboardListenerAdapter() {
             @Override public void onKeyPress (Widget sender, char keyCode, int mods) {
                 DeferredCommand.addCommand(new Command() {
                     public void execute () {
-                        _medal.description = _description.getTextArea().getText();
+                        _medal.description = _description.getText();
                     }
                 });
             }
@@ -126,7 +133,7 @@ public class EditMedalPanel extends FlexTable
                     Medal.MEDAL_WIDTH, Medal.MEDAL_HEIGHT, new MsoyCallback<MediaDesc>() {
                         public void onSuccess(MediaDesc media) {
                             if (media != null) {
-                                setIconImage(media);
+                                setIconImage(_medal.icon = media);
                             }
                         }
                     });
@@ -142,10 +149,10 @@ public class EditMedalPanel extends FlexTable
     }
 
     protected Medal _medal;
-    protected GroupDetailPanel.SubContentDisplay _contentDisplay;
     protected TextBox _name;
     protected LimitedTextArea _description;
     protected SimplePanel _iconPreview;
+    protected MedalListPanel _listPanel;
 
     protected static final String ICON_MEDIA_ID = "medalIcon";
 

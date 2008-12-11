@@ -31,4 +31,21 @@ public class Medal
     /** The media of the medal icon.  It is assumed that it conforms to the width and height
      * constants defined in this class. */
     public MediaDesc icon;
+
+    /**
+     * An empty constructor for deserialization
+     */
+    public Medal ()
+    {
+    }
+
+    /**
+     * A constructor to create an empty Medal that is attached to the given groupId.
+     *
+     * @param groupId The owner of this particular Medal.
+     */
+    public Medal (int groupId)
+    {
+        this.groupId = groupId;
+    }
 }
