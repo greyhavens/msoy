@@ -65,7 +65,13 @@ public class PartyManager
         removeFromNode();
 
         _invMgr.clearDispatcher(_partyObj.partyService);
-        _omgr.destroyObject(_partyObj.getOid());
+//        _omgr.destroyObject(_partyObj.getOid());
+        _partyObj.setDestroyOnLastSubscriberRemoved(true);
+
+        for (UserListener listener : _userListeners.values()) {
+            listener.memObj.removeListener(listener);
+        }
+        _userListeners.clear();
     }
 
     /**
@@ -128,8 +134,16 @@ public class PartyManager
         // Crap, we used to do this in addPlayer, but they could never actually enter the party
         // and leave it hosed. The downside of doing it this way is that we could approve
         // more than MAX_PLAYERS to join the party...
-        _partyObj.addToPeeps(new PartyPeep(member.memberName, nextJoinOrder()));
+        // The user may already be in the party if they arrived from another node.
+        if (!_partyObj.peeps.containsKey(member.getMemberId())) {
+            _partyObj.addToPeeps(new PartyPeep(member.memberName, nextJoinOrder()));
+        }
         updatePartyInfo();
+    }
+
+    public PartyObject getPartyObject ()
+    {
+        return _partyObj;
     }
 
     /**
@@ -137,12 +151,7 @@ public class PartyManager
      */
     public PartyPeep[] getPartyDetail ()
     {
-        return _partyObj.peeps.toArray(null);
-    }
-
-    public int getPartyOid ()
-    {
-        return _partyObj.getOid();
+        return _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]);
     }
 
     public int getSceneId ()

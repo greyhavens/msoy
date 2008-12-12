@@ -36,6 +36,7 @@ import com.threerings.whirled.data.ScenePlace;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.server.MemberLocator;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 
@@ -66,6 +67,20 @@ public class PartyRegistry
     {
         ((MsoyNodeObject) _peerMgr.getNodeObject()).setPeerPartyService(
             _invmgr.registerDispatcher(new PeerPartyDispatcher(this)));
+
+        _peerMgr.memberFwdObs.add(new MsoyPeerManager.MemberForwardObserver() {
+            public void memberWillBeSent (String nodeName, MemberObject member) {
+                playerLeavingNode(member);
+            }
+        });
+        _locator.addObserver(new MemberLocator.Observer() {
+            public void memberLoggedOn (MemberObject member) {
+                playerArrivingNode(member);
+            }
+            public void memberLoggedOff (MemberObject member) {
+                // nada
+            }
+        });
     }
 
     /**
@@ -95,7 +110,7 @@ public class PartyRegistry
         // see if we have the party here
         PartyManager mgr = _parties.get(member.partyId);
         if (mgr != null) {
-            rl.requestProcessed(new int[] { mgr.getPartyOid() });
+            rl.requestProcessed(new int[] { mgr.getPartyObject().getOid() });
             return;
         }
 
@@ -144,6 +159,9 @@ public class PartyRegistry
 
         // reject them if they're already in a party
         if (member.partyId != 0) {
+            if (member.partyId == partyId) {
+                throw new InvocationException(PartyCodes.E_ALREADY_IN_PARTY);
+            }
             throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
         }
 
@@ -198,7 +216,7 @@ public class PartyRegistry
             log.warning("Party not found on node, should be present", "partyId", partyId);
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
-        rl.requestProcessed(mgr.getSceneId());
+        rl.requestProcessed(mgr.getPartyObject().sceneId);
     }
 
     // from PartyBoardProvider
@@ -287,6 +305,36 @@ public class PartyRegistry
     }
 
     /**
+     * Called prior to a member leaving a node.
+     */
+    protected void playerLeavingNode (MemberObject member) 
+    {
+        if (member.partyId != 0) {
+            PartyManager mgr = _parties.get(member.partyId);
+            if (mgr != null) {
+                PartyObject pobj = mgr.getPartyObject();
+                if (pobj.leaderId == member.getMemberId()) {
+                    _parties.remove(member.partyId);
+                    member.setLocal(PartyObject.class, (PartyObject)mgr.getPartyObject().clone());
+                    mgr.shutdown();
+                }
+            }
+        }
+    }
+
+    protected void playerArrivingNode (MemberObject member)
+    {
+        PartyObject pobj = member.getLocal(PartyObject.class);
+        if (pobj != null) {
+            member.setLocal(PartyObject.class, null);
+            _omgr.registerObject(pobj);
+            PartyManager mgr = _injector.getInstance(PartyManager.class);
+            mgr.init(pobj);
+            _parties.put(pobj.id, mgr);
+        }
+    }
+
+    /**
      * Compute the score for the specified party, or return null if the user
      * does not have access to it.
      */
@@ -364,4 +412,5 @@ public class PartyRegistry
     protected InvocationManager _invmgr;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyPeerManager _peerMgr;
+    @Inject protected MemberLocator _locator;
 }

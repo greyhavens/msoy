@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.GroupMembership;
 
 public class PartyObject extends DObject
+    implements Cloneable
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>id</code> field. */
@@ -274,6 +275,20 @@ public class PartyObject extends DObject
         default:
         case PartyCodes.RECRUITMENT_CLOSED:
             return InvocationCodes.E_ACCESS_DENIED;
+        }
+    }
+
+    @Override
+    public Object clone ()
+    {
+        try {
+            PartyObject that = (PartyObject)super.clone();
+            that.peeps = this.peeps.typedClone();
+            that.partyService = null;
+            return that;
+
+        } catch (CloneNotSupportedException cnse) {
+            throw new AssertionError(cnse);
         }
     }
 }

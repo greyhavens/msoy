@@ -7,6 +7,7 @@ import com.threerings.util.Log;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
@@ -170,9 +171,17 @@ public class PartyDirector extends BasicDirector
             new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
     }
 
+    override public function clientDidLogoff (event :ClientEvent) :void
+    {
+        super.clientDidLogoff(event);
+
+        unsubscribeParty();
+    }
+
     protected function checkPartyId () :void
     {
         const partyId :int = _wctx.getMemberObject().partyId;
+        log.debug("checking partyId: " + partyId + "  " + _partyObj);
         if (partyId == 0 || (_partyObj != null && _partyObj.id != partyId)) {
             unsubscribeParty();
         }
@@ -239,7 +248,7 @@ public class PartyDirector extends BasicDirector
     }
 
     /**
-     * Handles the respponse from a leaveParty() request.
+     * Handles the response from a leaveParty() request.
      */
     protected function handleLeaveParty () :void
     {
@@ -331,6 +340,7 @@ public class PartyDirector extends BasicDirector
     {
         super.clientObjectUpdated(client);
 
+        log.debug("Oy, I see to be updated: " + client.getClientObject().who());
         client.getClientObject().addListener(new AttributeChangeAdapter(userAttrChanged));
         checkPartyId();
     }
