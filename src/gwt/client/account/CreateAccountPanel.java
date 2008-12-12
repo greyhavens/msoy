@@ -241,7 +241,7 @@ public class CreateAccountPanel extends FlowPanel
         if (groupId == 2) {
             imagePath = "/images/account/create_banner_avatars.png";
         } else if (groupId == 3) {
-            imagePath = "/images/account/create_banner_deorate.png";
+            imagePath = "/images/account/create_banner_decorate.png";
         } else if (groupId == 4) {
             imagePath = "/images/account/create_banner_games.png";
         }
