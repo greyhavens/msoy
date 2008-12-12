@@ -304,16 +304,23 @@ public class GameLiaison
             
             // perform an A/B(/C) test on game over upsell text for guests 
             _wctx.getMsoyClient().getABTestGroup(
-                "2008 11 game over upsell", true, new ResultAdapter(
+                "2008 12 game over upsell 2", true, new ResultAdapter(
                     function (group :int) :void {
-                        if (group == -1) {
-                            // if not in a group display default note
-                            displayDefaultNote();
+                        if (group == 2) {
+                            // group 2 sees a general whirled note
+                            populateGuestFlowEarnage(amount, "l.guest_flow_whirled_note");
+                        } else if (group == 3) {
+                            // group 3 sees one of three notes rotating in order (#0, 1 or 2)
+                            populateGuestFlowEarnage(
+                                amount, "l.guest_flow_rotate_note_" + _flowPanelNoteNext);
+                            _flowPanelNoteNext = (_flowPanelNoteNext + 1) % 3;
                         } else {
-                            populateGuestFlowEarnage(amount, "l.guest_flow_note_" + group);
+                            // group 1 and no_group see keep your coins &/or progress note
+                            displayDefaultNote();
                         }
                     },
                     function (cause :String) :void {
+                        populateGuestFlowEarnage(amount, "l.guest_flow_note");
                         // if something goes wrong display default note
                         displayDefaultNote();
                     }));
@@ -327,21 +334,21 @@ public class GameLiaison
     {
         var field :TextField = (_guestFlowPanel.getChildByName("youearned") as TextField);
         field.text = Msgs.GAME.get("l.guest_flow_title", ""+amount);
-        field = (_guestFlowPanel.getChildByName("ifyousign") as TextField);
         
+        field = (_guestFlowPanel.getChildByName("ifyousign") as TextField);
         field.text = Msgs.GAME.get(ifyousignMsg);
 
         var later :SimpleButton = (_guestFlowPanel.getChildByName("Later") as SimpleButton);
         later.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             clearGuestFlow();
-            _wctx.getMsoyClient().trackClientAction("2008 11 game over upsell later click", null);
+            _wctx.getMsoyClient().trackClientAction("2008 12 game over upsell 2 later click", null);
         });
 
         var signUp :SimpleButton = (_guestFlowPanel.getChildByName("SignUp") as SimpleButton);
         signUp.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             _wctx.getWorldController().handleShowSignUp();
             clearGuestFlow();
-            _wctx.getMsoyClient().trackClientAction("2008 11 game over upsell signup click", null);
+            _wctx.getMsoyClient().trackClientAction("2008 12 game over upsell 2 signup click", null);
         });
 
         // slide the panel onto the screen, and wait for a click
@@ -378,6 +385,9 @@ public class GameLiaison
 
     /** Automatically dismisses the flow panel. */
     protected var _flowPanelAutoDismiss :Timer;
+    
+    /** Which one of the rotating flow panel messages will be seen next? */
+    protected var _flowPanelNoteNext :int = 0;
 
     /** Used to note that we're loading an embedded SWF. */
     protected static const LOADING :Sprite = new Sprite();
