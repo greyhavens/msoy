@@ -36,19 +36,22 @@ import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AccessController;
+import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.SetListener;
+import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.PresentsObjectAccess;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.crowd.server.CrowdObjectAccess;
 import com.threerings.crowd.server.LocationManager;
 
 import com.threerings.crowd.chat.server.SpeakUtil;
@@ -807,10 +810,7 @@ public class RoomManager extends SpotSceneManager
     @Override
     protected AccessController getAccessController ()
     {
-        // TODO: Turn off CrowdObjectAccess's restrictive policing of subscription until we have
-        // TODO: breathing room to give bureaus their own ClientObject subclasses, making it a
-        // TODO: bit easier to detect when the agent is attempting to snoop on the room object.
-        return PresentsObjectAccess.DEFAULT;
+        return ROOM;
     }
 
     @Override // from PlaceManager
@@ -1503,6 +1503,33 @@ public class RoomManager extends SpotSceneManager
 
     /** After this level of occupancy is reached, actors are made static. */
     protected static final int ACTOR_RENDERING_LIMIT = 20;
+
+    /**
+     * We allow access as in {@link CrowdObjectAccess#PLACE} but also give full subscription
+     * powers to {@link WindowClientObject} instances; these are the world server representatives
+     * of server-side agents. We need this for AVRGs to be able to access room data.
+     */
+    protected static AccessController ROOM = new AccessController()
+    {
+        // documentation inherited from interface
+        public boolean allowSubscribe (DObject object, Subscriber<?> sub)
+        {
+            if (sub instanceof ProxySubscriber) {
+                ClientObject co = ((ProxySubscriber)sub).getClientObject();
+                if (co instanceof WindowClientObject) {
+                    return true;
+                }
+            }
+            return CrowdObjectAccess.PLACE.allowSubscribe(object, sub);
+        }
+
+        // documentation inherited from interface
+        public boolean allowDispatch (DObject object, DEvent event)
+        {
+            return CrowdObjectAccess.PLACE.allowDispatch(object, event);
+        }
+    };
+
 
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ItemManager _itemMan;
