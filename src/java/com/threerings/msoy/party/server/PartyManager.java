@@ -20,11 +20,15 @@ import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.crowd.data.Place;
+
+import com.threerings.crowd.chat.server.SpeakDispatcher;
+import com.threerings.crowd.chat.server.SpeakHandler;
 
 import com.threerings.whirled.data.ScenePlace;
 
@@ -48,13 +52,20 @@ import static com.threerings.msoy.Log.log;
  * Manages a particular party while it lives on a single node.
  */
 public class PartyManager
-    implements PartyProvider
+    implements PartyProvider, SpeakHandler.SpeakerValidator
 {
     public void init (PartyObject partyObj)
     {
         _partyObj = partyObj;
         _partyObj.setAccessController(new PartyAccessController(this));
-        _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
+        _partyObj.startTransaction();
+        try {
+            _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
+            _partyObj.setSpeakService(_invMgr.registerDispatcher(
+                new SpeakDispatcher(new SpeakHandler(_partyObj, this))));
+        } finally {
+            _partyObj.commitTransaction();
+        }
     }
 
     /**
@@ -65,6 +76,7 @@ public class PartyManager
         removeFromNode();
 
         _invMgr.clearDispatcher(_partyObj.partyService);
+        _invMgr.clearDispatcher(_partyObj.speakService);
 //        _omgr.destroyObject(_partyObj.getOid());
         _partyObj.setDestroyOnLastSubscriberRemoved(true);
 
@@ -319,6 +331,13 @@ public class PartyManager
 //            }
 //        }
 //    }
+
+    // from SpeakHandler.SpeakerValidator
+    public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode)
+    {
+        return (speaker instanceof MemberObject) && 
+            ((MemberObject) speaker).partyId == _partyObj.id;
+    }
 
     /**
      * Create an invitation to this party.

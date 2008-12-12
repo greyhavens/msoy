@@ -8,6 +8,8 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.crowd.chat.data.SpeakMarshaller;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.VizMemberName;
 
@@ -40,6 +42,9 @@ public class PartyObject extends DObject
 
     /** The field name of the <code>partyService</code> field. */
     public static const PARTY_SERVICE :String = "partyService";
+
+    /** The field name of the <code>speakService</code> field. */
+    public static const SPEAK_SERVICE :String = "speakService";
     // AUTO-GENERATED: FIELDS END
 
     /** This party's guid. */
@@ -69,6 +74,9 @@ public class PartyObject extends DObject
     /** The service for doing things on this party. */
     public var partyService :PartyMarshaller;
 
+    /** Speaking on this party object. */
+    public var speakService :SpeakMarshaller;
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
@@ -82,6 +90,7 @@ public class PartyObject extends DObject
         status = ins.readField(String) as String;
         recruiting = ins.readByte();
         partyService = PartyMarshaller(ins.readObject());
+        speakService = SpeakMarshaller(ins.readObject());
     }
 }
 }
