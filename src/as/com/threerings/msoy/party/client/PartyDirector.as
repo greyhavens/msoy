@@ -171,6 +171,9 @@ public class PartyDirector extends BasicDirector
     {
         super.clientDidLogoff(event);
 
+        // if they're in a party and have the popup down, make a note to not pop it
+        // up on the new node
+        _suppressPartyPop = (_partyObj != null) && !getButton().selected;
         unsubscribeParty();
     }
 
@@ -251,7 +254,7 @@ public class PartyDirector extends BasicDirector
         unsubscribeParty();
 
         // TODO: have the party popup pop itself down, or something
-        var btn :CommandButton = WorldControlBar(_wctx.getControlBar()).partyBtn;
+        var btn :CommandButton = getButton();
         if (btn.selected) {
             btn.activate(); // pop down the party window.
         }
@@ -288,12 +291,16 @@ public class PartyDirector extends BasicDirector
         _partyObj.addListener(_partyListener);
 
         // if the party popup is up, change to the new popup...
-        var btn :CommandButton = WorldControlBar(_wctx.getControlBar()).partyBtn;
+        var btn :CommandButton = getButton();
         if (btn.selected) {
             // click it down and then back up...
             btn.activate();
             btn.activate();
+
+        } else if (!_suppressPartyPop) {
+            btn.activate();
         }
+        _suppressPartyPop = false;
 
         // we might need to warp to the party location
         checkFollowParty();
@@ -336,7 +343,6 @@ public class PartyDirector extends BasicDirector
     {
         super.clientObjectUpdated(client);
 
-        log.debug("Oy, I see to be updated: " + client.getClientObject().who());
         client.getClientObject().addListener(new AttributeChangeAdapter(userAttrChanged));
         checkPartyId();
     }
@@ -357,6 +363,14 @@ public class PartyDirector extends BasicDirector
         _pbsvc = (client.requireService(PartyBoardService) as PartyBoardService);
     }
 
+    /**
+     * Access the party button.
+     */
+    protected function getButton () :CommandButton
+    {
+        return WorldControlBar(_wctx.getControlBar()).partyBtn;
+    }
+
     protected var _wctx :WorldContext;
 
     protected var _pbsvc :PartyBoardService;
@@ -364,6 +378,9 @@ public class PartyDirector extends BasicDirector
     protected var _partyObj :PartyObject;
 
     protected var _safeSubscriber :SafeSubscriber;
+
+    /** True if we should not pop up the party panel when subscribing to a party. */
+    protected var _suppressPartyPop :Boolean = false;
 
     protected var _partyListener :ChangeListener;
 }

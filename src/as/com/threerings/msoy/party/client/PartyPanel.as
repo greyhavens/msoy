@@ -7,6 +7,8 @@ import mx.collections.ArrayCollection;
 import mx.controls.TextInput;
 import mx.events.FlexEvent;
 
+import com.threerings.util.Log;
+
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
