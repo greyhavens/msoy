@@ -122,6 +122,9 @@ public class MsoyServer extends MsoyBaseServer
         // if we're on the dev server, up our long invoker warning to 3 seconds
         if (ServerConfig.autoRestart) {
             Invoker.setDefaultLongThreshold(3000L);
+
+            // TEMP: enable PING debugging
+            System.setProperty("ping_debug", "true");
         }
 
         final Injector injector = Guice.createInjector(new Module());

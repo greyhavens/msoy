@@ -41,6 +41,7 @@ import com.whirled.game.server.RepoCookieManager;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;
+import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
@@ -84,6 +85,11 @@ public class MsoyGameServer extends MsoyBaseServer
         if (args.length < 2) {
             System.err.println("Usage: MsoyGameServer listenPort connectPort");
             System.exit(-1);
+        }
+
+        // TEMP: enable PING debugging on the dev server
+        if (ServerConfig.autoRestart) {
+            System.setProperty("ping_debug", "true");
         }
 
         Injector injector = Guice.createInjector(new Module());
