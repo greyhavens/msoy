@@ -219,6 +219,7 @@ NumericStepper {
 ComboBox {
   fontSize: 9;
   color: black;
+  disabledColor: #666666;
   upSkin: Embed(source="../media/skins/combobox/up.png",
           scaleGridTop="5", scaleGridBottom="13",
           scaleGridLeft="5", scaleGridRight="40");
