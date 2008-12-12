@@ -87,12 +87,12 @@ public class PartyPanel extends FloatingPanel
         _status.addEventListener(FlexEvent.ENTER, commitStatus);
         addChild(_status);
 
+        var options :Array = [];
+        for (var ii :int = 0; ii < PartyCodes.RECRUITMENT_COUNT; ii++) {
+            options.push({ label: Msgs.PARTY.get("l.recruitment_" + ii), data: ii });
+        }
         _recruiting = new CommandComboBox(_wctx.getPartyDirector().updateRecruiting);
-        _recruiting.dataProvider = [
-            {label: Msgs.PARTY.get("l.recruitment_open"), data: PartyCodes.RECRUITMENT_OPEN},
-            {label: Msgs.PARTY.get("l.recruitment_closed"), data: PartyCodes.RECRUITMENT_CLOSED},
-            {label: Msgs.PARTY.get("l.recruitment_group"), data: PartyCodes.RECRUITMENT_GROUP}
-        ];
+        _recruiting.dataProvider = options;
         _recruiting.selectedIndex = _partyObj.recruiting;
         _recruiting.enabled = isLeader;
         addChild(_recruiting);
