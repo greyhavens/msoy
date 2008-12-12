@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -45,24 +46,24 @@ public class ReviewItem extends FlowPanel
         _parent = parent;
         _item = detail.item;
 
+        // the name displays an item inspector and the creator name links to profile
+        HorizontalPanel nameCreator = new HorizontalPanel();
+        nameCreator.setSpacing(4);
+        nameCreator.add(Link.create(_item.name, Pages.STUFF,
+            Args.compose("d", _item.getType(), _item.itemId)));
+        nameCreator.add(MsoyUI.createLabel(" by ", null));
+        nameCreator.add(Link.memberView(detail.creator));
+        add(nameCreator);
+
         // say what flags are set on it
         FlowPanel flaggedAs = new FlowPanel();
         flaggedAs.add(new InlineLabel("Flagged as:"));
         flaggedAs.add(new InlineLabel(flag.toString(), false, true, false));
         add(flaggedAs);
 
-        // the name displays an item inspector
-        String name = _item.name + " - " + detail.creator.toString();
-        String args = Args.compose("d", _item.getType(), _item.itemId);
-        add(Link.create(name, Pages.STUFF, args));
-
         // transactions link
-        FlowPanel transactions = new FlowPanel();
-        transactions.add(Link.create("Transactions", Pages.ADMINZ,
+        add(Link.create("Transactions", Pages.ADMINZ,
             Args.compose("review", _item.getType(), _item.itemId)));
-        add(transactions);
-
-        add(MsoyUI.createLabel(_item.description, null));
 
         // then a row of action buttons
         RowPanel line = new RowPanel();

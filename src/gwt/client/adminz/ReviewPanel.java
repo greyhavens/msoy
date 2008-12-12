@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -89,14 +90,7 @@ public class ReviewPanel extends FlowPanel
                 row.add(new ThumbBox(detail.item.getThumbnailMedia()));
 
                 // reporter, comment and timestamp
-                VerticalPanel comment = new VerticalPanel();
-                MemberName memberName = _result.memberNames.get(item.memberId);
-                comment.add(Link.memberView(memberName.toString(), item.memberId));
-                comment.add(MsoyUI.createLabel(MsoyUI.escapeHTML(item.comment), "Comment"));
-                Label time = MsoyUI.createLabel(MsoyUI.formatDateTime(item.timestamp), "Time");
-                time.setWordWrap(false);
-                comment.add(time);
-                row.add(comment);
+                row.add(new Comment(item));
 
                 // item actions
                 row.add(new ReviewItem(ReviewPanel.this, detail, item.flag));
@@ -111,6 +105,29 @@ public class ReviewPanel extends FlowPanel
         _contents.setModel(new ItemFlagsModel(), 0);
         _contents.addStyleName("Table");
         add(_contents);
+    }
+
+    protected class Comment extends VerticalPanel
+    {
+        public Comment (ItemFlag item)
+        {
+            setStyleName("Comment");
+            setSpacing(2);
+            MemberName memberName = _result.memberNames.get(item.memberId);
+            HorizontalPanel nameTime = new HorizontalPanel();
+            nameTime.setSpacing(2);
+            nameTime.add(Link.memberView(memberName.toString(), item.memberId));
+            nameTime.add(MsoyUI.createLabel(" - ", null));
+            Label time = MsoyUI.createLabel(MsoyUI.formatDateTime(item.timestamp), "Time");
+            time.setWordWrap(false);
+            nameTime.add(time);
+            add(nameTime);
+            if (item.comment.length() > 0) {
+                add(MsoyUI.createLabel(MsoyUI.escapeHTML(item.comment), "CommentText"));
+            } else {
+                add(MsoyUI.createLabel("Empty", "EmptyCommentText"));
+            }
+        }
     }
 
     protected class ItemFlagsModel

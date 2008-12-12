@@ -59,8 +59,22 @@
 }
 
 .itemTransactions .Table .col2 /* Description */,
-.reviewPanel .Table .col2 /* Comment */ { 
+.reviewPanel .Table .col1 /* Comment */ {
   width: 50%;
+}
+
+.reviewPanel .Table .col1 {
+  vertical-align: top;
+}
+
+.reviewPanel .Table .Comment .CommentText /* Comment */ { 
+  border: 1px black solid;
+  font-size :12px;
+}
+
+.reviewPanel .Table .Comment .EmptyCommentText /* Comment */ { 
+  font-size :12px;
+  font-style: italic;
 }
 
 /*** Player Browser ***/
