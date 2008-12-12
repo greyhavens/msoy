@@ -182,7 +182,14 @@ public class NotificationDirector extends BasicDirector
         client.getClientObject().addListener(this);
 
         // and, let's always update the control bar button
-        showStartupNotifications();
+        if (!_didStartupNotifs) {
+            _didStartupNotifs = true;
+            showStartupNotifications();
+        }
+
+        // tell the server to go ahead and dispatch any notifications it had saved up.
+        const msvc :MemberService = client.requireService(MemberService) as MemberService;
+        msvc.dispatchDeferredNotifications(_ctx.getClient());
     }
 
     /**
@@ -192,16 +199,11 @@ public class NotificationDirector extends BasicDirector
      */
     protected function showStartupNotifications () :void
     {
-        const client :Client = _ctx.getClient();
-        const clobj :Object = client.getClientObject();
+        const clobj :Object = _ctx.getClient().getClientObject();
         const newMail :int = (clobj is MemberObject) ? MemberObject(clobj).newMailCount : 0;
         if (newMail > 0) {
             notifyNewMail(newMail);
         }
-
-        // tell the server to go ahead and dispatch any notifications it had saved up.
-        const msvc :MemberService = client.requireService(MemberService) as MemberService;
-        msvc.dispatchDeferredNotifications(client);
     }
 
     protected function notifyNewMail (count :int) :void
@@ -259,6 +261,7 @@ public class NotificationDirector extends BasicDirector
     /** An ExpiringSet to track which notifications are relevant */
     protected var _currentNotifications :ExpiringSet;
 
+    protected var _didStartupNotifs :Boolean;
     protected var _lastId :uint = 0;
     protected var _notifications :Array = [];
     protected var _awardPanel :AwardPanel;
