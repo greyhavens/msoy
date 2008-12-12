@@ -42,8 +42,10 @@ import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.PartyInviteNotification;
+import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyInfo;
@@ -139,8 +141,9 @@ public class PartyManager
 
         } else if (_partyObj.peeps.containsKey(memberId) && (sceneId != _partyObj.sceneId)) {
             // otherwise, they leave the party with a notification that they've done so
-            // TODO
-            log.info("TODO: partier left party scene", "who", member.who(), "sceneId", sceneId);
+            removePlayer(memberId);
+            _notifyMgr.notify(member, new GenericNotification(
+                MessageBundle.tcompose("m.party_left", _partyObj.id), Notification.INVITE));
         }
     }
 
@@ -460,4 +463,5 @@ public class PartyManager
     @Inject protected RootDObjectManager _omgr;
     @Inject protected InvocationManager _invMgr;
     @Inject protected MsoyPeerManager _peerMgr;
+    @Inject protected NotificationManager _notifyMgr;
 }
