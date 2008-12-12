@@ -20,7 +20,7 @@ public class FollowInviteNotification extends Notification
     @ActionScript(omit=true)
     public FollowInviteNotification (MemberName inviter)
     {
-        _inviter = inviter;
+        _inviter = inviter.toMemberName();
     }
 
     // from Notification

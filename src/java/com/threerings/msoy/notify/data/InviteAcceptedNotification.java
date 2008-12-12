@@ -20,7 +20,7 @@ public class InviteAcceptedNotification extends Notification
     @ActionScript(omit=true)
     public InviteAcceptedNotification (MemberName invitee, String inviteeEmail)
     {
-        _invitee = invitee;
+        _invitee = invitee.toMemberName();
         _inviteeEmail = inviteeEmail;
     }
 

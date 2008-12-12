@@ -20,7 +20,7 @@ public class GameInviteNotification extends Notification
     @ActionScript(omit=true)
     public GameInviteNotification (MemberName inviter, String game, int gameId)
     {
-        _inviter = inviter;
+        _inviter = inviter.toMemberName();
         _game = game;
         _gameId = gameId;
     }
