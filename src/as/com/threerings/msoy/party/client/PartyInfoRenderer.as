@@ -33,7 +33,7 @@ public class PartyInfoRenderer extends HBox
         _name.text = info.name;
         _group.text = info.group.toString();
         _population.text = Msgs.PARTY.get("l.population", info.population);
-        _status.text = info.status;
+        _status.text = Msgs.PARTY.xlate(info.status);
         // TODO: Recruitment
         _join.setCommand(WorldController.JOIN_PARTY, info.id);
     }

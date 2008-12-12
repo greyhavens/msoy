@@ -84,7 +84,7 @@ public class PartyPanel extends FloatingPanel
         _status.styleName = "partyStatus";
         _status.maxChars = PartyCodes.MAX_NAME_LENGTH;
         _status.percentWidth = 100;
-        _status.text = _partyObj.status;
+        _status.text = Msgs.PARTY.xlate(_partyObj.status);
         _status.enabled = isLeader;
         _status.addEventListener(FlexEvent.ENTER, commitStatus);
         addChild(_status);
@@ -104,7 +104,7 @@ public class PartyPanel extends FloatingPanel
     {
         switch (event.getName()) {
             case PartyObject.STATUS:
-                _status.text = String(event.getValue());
+                _status.text = Msgs.PARTY.xlate(String(event.getValue()));
                 break;
 
             case PartyObject.LEADER_ID:
@@ -122,13 +122,17 @@ public class PartyPanel extends FloatingPanel
 
     protected function commitName (event :FlexEvent) :void
     {
-        _wctx.getPartyDirector().updateNameOrStatus(_name.text, true);
-        _wctx.getControlBar().giveChatFocus();
+        updateNameOrStatus(_name.text, true);
     }
 
     protected function commitStatus (event :FlexEvent) :void
     {
-        _wctx.getPartyDirector().updateNameOrStatus(_status.text, false);
+        updateNameOrStatus(_status.text, false);
+    }
+
+    protected function updateNameOrStatus (text :String, isName :Boolean) :void
+    {
+        _wctx.getPartyDirector().updateNameOrStatus(text, isName);
         _wctx.getControlBar().giveChatFocus();
     }
 

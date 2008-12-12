@@ -11,6 +11,9 @@ import com.google.inject.Inject;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
+
+import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -36,6 +39,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 
+import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.notify.data.Notification;
@@ -63,6 +67,7 @@ public class PartyManager
             _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
             _partyObj.setSpeakService(_invMgr.registerDispatcher(
                 new SpeakDispatcher(new SpeakHandler(_partyObj, this))));
+            updateStatus();
         } finally {
             _partyObj.commitTransaction();
         }
@@ -124,7 +129,13 @@ public class PartyManager
         if (memberId == _partyObj.leaderId) {
             // the leader will move- inform the party immediately because this object may soon die
             // if it needs to be squirted across nodes
-            _partyObj.setSceneId(sceneId);
+            _partyObj.startTransaction();
+            try {
+                _partyObj.setSceneId(sceneId);
+                updateStatus();
+            } finally {
+                _partyObj.commitTransaction();
+            }
 
         } else if (_partyObj.peeps.containsKey(memberId) && (sceneId != _partyObj.sceneId)) {
             // otherwise, they leave the party with a notification that they've done so
@@ -235,15 +246,20 @@ public class PartyManager
         ClientObject caller, String s, boolean name, InvocationService.InvocationListener listener)
         throws InvocationException
     {
+        if (s == null) {
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        }
         requireLeader(caller);
 
         s = StringUtil.truncate(s, PartyCodes.MAX_NAME_LENGTH);
         if (name) {
-            _partyObj.setName(s);
+            if (!_partyObj.name.equals(s)) {
+                _partyObj.setName(s);
+                updatePartyInfo();
+            }
         } else {
-            _partyObj.setStatus(s);
+            setStatus(MessageBundle.taint(s));
         }
-        updatePartyInfo();
     }
 
     // from interface PartyProvider
@@ -345,6 +361,25 @@ public class PartyManager
     protected Notification createInvite (MemberObject inviter)
     {
         return new PartyInviteNotification(inviter.memberName, _partyObj.id, _partyObj.name);
+    }
+
+    /**
+     * Automatically update the status of the party based on the current scene.
+     */
+    protected void updateStatus ()
+    {
+        Tuple<String, HostedRoom> room = _peerMgr.getSceneHost(_partyObj.sceneId);
+        if (room != null) {
+            setStatus(MessageBundle.tcompose("m.status_room", room.right.name));
+        }
+    }
+
+    protected void setStatus (String status)
+    {
+        if (!_partyObj.status.equals(status)) {
+            _partyObj.setStatus(status);
+            updatePartyInfo();
+        }
     }
 
     /**
