@@ -57,15 +57,20 @@
 }
 
 .groupDetail .MainDetails .EnterButton {
-    margin: 0 6px 0 10px;
+  margin: 0 6px 0 10px;
 }
 
 .groupDetail .MainDetails .DiscussionsButton {
-    margin: 0 6px 0 0;
+  margin: 0 6px 0 0;
 }
 
 .groupDetail .MainDetails .MedalsButton {
-    margin: 0 10px 0 0;
+  margin: 0 10px 0 0;
+  font-size: 14px;
+}
+
+.groupDetail .MainDetails .MedalsButton .html-face {
+  margin-top: 2px;
 }
 
 .groupDetail .MainDetails .Actions {
