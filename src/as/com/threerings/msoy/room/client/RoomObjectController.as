@@ -713,8 +713,14 @@ public class RoomObjectController extends RoomController
 
         _wdctx.getMsoyController().addGoMenuProvider(populateGoMenu);
 
-        _roomEditBtn = WorldControlBar(_wdctx.getControlBar()).roomEditBtn;
+        var bar :WorldControlBar = WorldControlBar(_wdctx.getControlBar());
+        _roomEditBtn = bar.roomEditBtn;
         _roomEditBtn.enabled = canManageRoom();
+
+        // deactivate any hot zoneiness
+        if (bar.hotZoneBtn.selected) {
+            bar.hotZoneBtn.activate();
+        }
 
         _walkTarget.visible = false;
         _flyTarget.visible = false;

@@ -3,7 +3,19 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.SimpleButton;
+import flash.display.Sprite;
+
+import flash.events.MouseEvent;
+
+import flash.text.TextField;
+
+import caurina.transitions.Tweener;
+
 import com.threerings.util.Log;
+import com.threerings.util.MultiLoader;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
@@ -11,16 +23,24 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.client.LocationAdapter;
+import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 
+import com.threerings.msoy.item.data.all.Item;
+
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetMarshaller;
 import com.threerings.msoy.room.data.RoomConfig;
+import com.threerings.msoy.room.data.RoomObject;
 
 /**
  * Handles moving around in the virtual world.
@@ -37,6 +57,8 @@ public class WorldDirector extends BasicDirector
     {
         super(ctx);
         _wctx = ctx;
+        _wctx.getLocationDirector().addLocationObserver(
+            new LocationAdapter(null, locationDidChange, null));
 
         _followingNotifier = new FollowingNotifier(_wctx);
     }
@@ -128,13 +150,27 @@ public class WorldDirector extends BasicDirector
         }
 
         // otherwise we have to do things the hard way
-        var gameLauncher :LocationAdapter;
-        gameLauncher = new LocationAdapter(null, function (...ignored) :void {
-            _wctx.getLocationDirector().removeLocationObserver(gameLauncher);
-            goToGame();
-        }, null);
-        _wctx.getLocationDirector().addLocationObserver(gameLauncher);
+        _goToGame = goToGame;
         _wctx.getWorldController().handleGoScene(location.sceneId);
+    }
+
+    /**
+     * Adapted as a LocationObserver method.
+     */
+    protected function locationDidChange (place :PlaceObject) :void
+    {
+        if (place == null) {
+            _wctx.clearPlaceView(null);
+        }
+
+        if (_goToGame != null) {
+            var fn :Function = _goToGame;
+            _goToGame = null;
+            fn();
+
+        } else if (place is RoomObject && !_wctx.getGameDirector().isGaming()) {
+            maybeDisplayAvatarIntro();
+        }
     }
 
     // from BasicDirector
@@ -159,10 +195,65 @@ public class WorldDirector extends BasicDirector
         _msvc = (client.requireService(MemberService) as MemberService);
     }
 
+    /**
+     * This has nowhere else good to live.
+     */
+    protected function maybeDisplayAvatarIntro () :void
+    {
+        // if we have already shown the intro, they are a guest, are not wearing the tofu avatar,
+        // or have ever worn any non-tofu avatar, don't show the avatar intro
+        var mobj :MemberObject = _wctx.getMemberObject();
+        if (_avatarIntro != null || mobj.isGuest() || mobj.avatar != null ||
+                mobj.avatarCache.size() > 0) {
+            return;
+        }
+
+        MultiLoader.getContents(DeploymentConfig.serverURL + "rsrc/avatar_intro.swf",
+            function (result :DisplayObjectContainer) :void {
+            _avatarIntro = result;
+            _avatarIntro.x = 15;
+
+            var title :TextField = (_avatarIntro.getChildByName("txt_welcome") as TextField);
+            title.text = Msgs.GENERAL.get("t.avatar_intro");
+
+            var info :TextField = (_avatarIntro.getChildByName("txt_description") as TextField);
+            info.text = Msgs.GENERAL.get("m.avatar_intro");
+
+            var fadeOut :Function = function (event :MouseEvent) :void {
+                Tweener.addTween(_avatarIntro, { alpha: 0, time: .75, transition: "linear",
+                    onComplete: function () :void {
+                        _wctx.getTopPanel().getPlaceContainer().removeOverlay(_avatarIntro);
+                        // gc the intro, but suppress further popups this session
+                        _avatarIntro = new Sprite();
+                    } });
+            };
+
+            var close :SimpleButton = (_avatarIntro.getChildByName("btn_nothanks") as SimpleButton);
+            close.addEventListener(MouseEvent.CLICK, fadeOut);
+
+            var go :SimpleButton = (_avatarIntro.getChildByName("btn_gotoshop") as SimpleButton);
+            go.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
+                _wctx.getWorldController().handleViewShop(Item.AVATAR);
+            });
+            go.addEventListener(MouseEvent.CLICK, fadeOut);
+
+            _avatarIntro.alpha = 0;
+            _wctx.getTopPanel().getPlaceContainer().addOverlay(
+                _avatarIntro, PlaceBox.LAYER_TRANSIENT);
+            Tweener.addTween(_avatarIntro, { alpha: 1, time: .75, transition: "linear" });
+        });
+    }
+
     protected var _wctx :WorldContext;
     protected var _msvc :MemberService;
 
     protected var _followingNotifier :FollowingNotifier;
+
+    /** If non-null, we should call it when we change places. */
+    protected var _goToGame :Function;
+
+    /** An introduction to avatars shown to brand new players. */
+    protected var _avatarIntro :DisplayObjectContainer;
 }
 }
 

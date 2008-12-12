@@ -24,7 +24,6 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MemberName;
@@ -116,15 +115,6 @@ public class ControlBar extends HBox
         if (_chatControl != null) {
             _chatControl.setFocus();
         }
-    }
-
-    /**
-     * Called by the TopPanel when we move to a new location. This should some day take over for
-     * setLocation().
-     */
-    public function locationDidChange (place :PlaceObject) :void
-    {
-        // by default we do nothing, but our derived classes do things
     }
 
     /**

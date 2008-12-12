@@ -28,7 +28,6 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
 
 public class TopPanel extends Canvas
-    implements LocationObserver
 {
     public static const DECORATIVE_MARGIN_HEIGHT :int = 0;
 
@@ -40,7 +39,6 @@ public class TopPanel extends Canvas
     public function TopPanel (ctx :MsoyContext, controlBar :ControlBar)
     {
         _ctx = ctx;
-        _ctx.getLocationDirector().addLocationObserver(this);
         percentWidth = 100;
         percentHeight = 100;
         verticalScrollPolicy = ScrollPolicy.OFF;
@@ -148,29 +146,6 @@ public class TopPanel extends Canvas
             // ah well, whatever, let 'em in and hope for the best
         }
         return true;
-    }
-
-    // from LocationObserver
-    public function locationMayChange (placeId :int) :Boolean
-    {
-        return true;
-    }
-
-    // from LocationObserver
-    public function locationDidChange (place :PlaceObject) :void
-    {
-        if (_controlBar != null) {
-            _controlBar.locationDidChange(place);
-        }
-        if (place == null) {
-            clearPlaceView(null);
-        }
-    }
-
-    // from LocationObserver
-    public function locationChangeFailed (placeId :int, reason :String) :void
-    {
-        // NOOP
     }
 
     /**
