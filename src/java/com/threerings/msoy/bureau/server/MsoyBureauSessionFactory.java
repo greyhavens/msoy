@@ -4,6 +4,7 @@
 package com.threerings.msoy.bureau.server;
 
 import com.threerings.bureau.data.BureauCredentials;
+import com.threerings.bureau.server.BureauClientResolver;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.SessionFactory;
 import com.threerings.presents.server.ClientResolver;
@@ -39,7 +40,7 @@ public class MsoyBureauSessionFactory
     public Class<? extends ClientResolver> getClientResolverClass (Name username)
     {
         if (BureauCredentials.isBureau(username)) {
-            return ClientResolver.class;
+            return BureauClientResolver.class;
         } else {
             return _delegate.getClientResolverClass(username);
         }
