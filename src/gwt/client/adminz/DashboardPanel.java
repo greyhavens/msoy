@@ -58,6 +58,7 @@ public class DashboardPanel extends SmartTable
             controls.setSpacing(10);
             controls.add(Link.create(_msgs.viewABTests(), Pages.ADMINZ, "testlist"));
             controls.add(Link.create(_msgs.viewBureaus(), Pages.ADMINZ, "bureaus"));
+            controls.add(Link.create(_msgs.panopticonStatus(), Pages.ADMINZ, "panopticonStatus"));
         }
 
         // support controls

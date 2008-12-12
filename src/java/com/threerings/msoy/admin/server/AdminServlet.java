@@ -22,6 +22,7 @@ import com.samskivert.util.IntSet;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.server.BureauManager;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.AffiliateMapRecord;
 import com.threerings.msoy.server.persist.AffiliateMapRepository;
@@ -69,6 +70,7 @@ import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.data.all.PanopticonStatus;
 import com.threerings.presents.dobj.RootDObjectManager;
 
 /**
@@ -483,6 +485,8 @@ public class AdminServlet extends MsoyServiceServlet
     public void setCharityInfo (CharityInfo charityInfo)
         throws ServiceException
     {
+        requireSupportUser();
+        
         // Save or delete charity record depending on value of 'charity.
         CharityRecord charityRec = new CharityRecord(charityInfo.memberId, charityInfo.core,
             charityInfo.description);
@@ -492,9 +496,18 @@ public class AdminServlet extends MsoyServiceServlet
     public void removeCharityStatus (int memberId)
         throws ServiceException
     {
+        requireSupportUser();
+        
         _memberRepo.deleteCharity(memberId);
     }
 
+    public PanopticonStatus getPanopticonStatus ()
+        throws ServiceException
+    {
+        requireAdminUser();
+        return _eventLogger.getStatus();
+    }
+    
     // our dependencies
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected RootDObjectManager _omgr;
@@ -508,4 +521,5 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected AffiliateMapRepository _affMapRepo;
     @Inject protected PromotionRepository _promoRepo;
     @Inject protected ContestRepository _contestRepo;
+    @Inject protected MsoyEventLogger _eventLogger;
 }

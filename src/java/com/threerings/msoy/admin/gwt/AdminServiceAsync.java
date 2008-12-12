@@ -13,6 +13,7 @@ import com.threerings.msoy.admin.gwt.AdminService.ItemDeletionResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 
 import com.threerings.msoy.data.all.CharityInfo;
+import com.threerings.msoy.data.all.PanopticonStatus;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.web.gwt.Contest;
@@ -147,4 +148,6 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#removeCharityStatus(int)}.
      */
     void removeCharityStatus (int memberId, AsyncCallback<Void> callback);
+    
+    void getPanopticonStatus (AsyncCallback<PanopticonStatus> callback);
 }

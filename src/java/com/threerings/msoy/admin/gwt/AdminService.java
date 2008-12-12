@@ -18,6 +18,7 @@ import com.threerings.msoy.web.gwt.WebCreds;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.PanopticonStatus;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -200,5 +201,11 @@ public interface AdminService extends RemoteService
      * Removes charity status from the specified member.  If not currently a charity, does nothing.
      */
     void removeCharityStatus (int memberId)
+        throws ServiceException;
+    
+    /**
+     * Gets the current status of the Panopticon client.
+     */
+    PanopticonStatus getPanopticonStatus ()
         throws ServiceException;
 }

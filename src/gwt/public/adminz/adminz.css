@@ -307,3 +307,11 @@
 .statsPanel .Controls div, .statsPanel .Controls select {
   margin-right: 5px;
 }
+
+.panopticonStatus {
+  font-size: 10pt;
+}
+
+.panopticonStatus .header {
+  font-weight: bold;
+}

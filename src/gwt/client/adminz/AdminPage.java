@@ -81,7 +81,10 @@ public class AdminPage extends Page
 
         } else if (action.equals("stats")) {
             setContent("Stats", new StatsPanel());
-
+            
+        } else if (action.equals("panopticonStatus")) {
+            setContent("Panopticon Status", new PanopticonStatusPanel());
+            
         } else {
             setContent(_msgs.title(), new DashboardPanel());
         }
