@@ -208,7 +208,8 @@ public class BlingPoolDistributor
         Map<Integer, Long> minutesPerGame = new HashMap<Integer, Long>();
         for (GamePlayRecord gamePlay : gamePlays) {
             // Ignore if creator is a charity
-            if (!charityIds.contains(gameMap.get(gamePlay.gameId).creatorId)) {
+            if (gameMap.get(gamePlay.gameId) == null || 
+                    !charityIds.contains(gameMap.get(gamePlay.gameId).creatorId)) {
                 totalMinutes += gamePlay.playerMins;
                 if (minutesPerGame.get(gamePlay.gameId) == null) {
                     minutesPerGame.put(gamePlay.gameId, (long)gamePlay.playerMins);
