@@ -98,18 +98,6 @@ public class DetailContentPanel extends FlowPanel
         _backButton.setVisible(true);
     }
 
-    public void showMedals () {
-        if (_medalList != null && _content.getWidget() == _medalList) {
-            return;
-        }
-        _title.setWidget(new Label(_msgs.detailTabViewMedals()));
-        if (_medalList == null) {
-            _medalList = new MedalListPanel(_detail, this);
-        }
-        _content.setWidget(_medalList);
-        _backButton.setVisible(true);
-    }
-
     public void showAwardMedals () {
         _title.setWidget(new Label(_msgs.detailTabAwardMedals()));
         _content.clear();
@@ -137,7 +125,6 @@ public class DetailContentPanel extends FlowPanel
     protected PrettyTextPanel _charter;
     protected GroupMembersPanel _members;
     protected GroupRoomsPanel _rooms;
-    protected MedalListPanel _medalList;
     protected Widget _previousContent;
     protected Widget _previousTitle;
 

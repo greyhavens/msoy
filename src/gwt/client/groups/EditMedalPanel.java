@@ -21,22 +21,32 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ImageChooserPopup;
 
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 public class EditMedalPanel extends FlexTable
 {
-    public EditMedalPanel (Medal medal, MedalListPanel listPanel)
+    public EditMedalPanel (int groupId, int medalId)
     {
         setStyleName("editMedalPanel");
+        if (medalId == 0) {
+            init(new Medal(groupId));
+        } else {
+            // TODO: service call to get current medal definition.
+        }
+    }
+
+    protected void init (Medal medal)
+    {
         _medal = medal;
-        _listPanel = listPanel;
 
         addName();
         addIconUploader();
@@ -51,7 +61,7 @@ public class EditMedalPanel extends FlexTable
         Button ecancel = new Button(_msgs.editMedalCancel());
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                _listPanel.restoreListPanel(false);
+                Link.go(Pages.GROUPS, GroupsPage.Nav.MEDALS.composeArgs(_medal.groupId));
             }
         });
 
@@ -71,7 +81,7 @@ public class EditMedalPanel extends FlexTable
 
         _groupsvc.updateMedal(_medal, new MsoyCallback<Void>() {
             public void onSuccess(Void result) {
-                _listPanel.restoreListPanel(true);
+                Link.go(Pages.GROUPS, GroupsPage.Nav.MEDALS.composeArgs(_medal.groupId));
             }
         });
     }
@@ -156,7 +166,6 @@ public class EditMedalPanel extends FlexTable
     protected TextBox _name;
     protected LimitedTextArea _description;
     protected SimplePanel _iconPreview;
-    protected MedalListPanel _listPanel;
 
     protected static final String ICON_MEDIA_ID = "medalIcon";
 

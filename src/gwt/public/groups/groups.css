@@ -57,7 +57,15 @@
 }
 
 .groupDetail .MainDetails .EnterButton {
-    margin: 0 10px 0 45px;
+    margin: 0 6px 0 10px;
+}
+
+.groupDetail .MainDetails .DiscussionsButton {
+    margin: 0 6px 0 0;
+}
+
+.groupDetail .MainDetails .MedalsButton {
+    margin: 0 10px 0 0;
 }
 
 .groupDetail .MainDetails .Actions {

@@ -148,18 +148,25 @@ public class GroupDetailPanel extends FlowPanel
         };
         members.addClickListener(membersClick);
 
-        // enter and discussions buttons
+        // enter, discussions and medals buttons
         FloatPanel buttons = new FloatPanel("Buttons");
         leftPanel.add(buttons);
-        PushButton enterButton = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailEnter(),
+        PushButton enterButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.detailEnter(),
             Link.createListener(Pages.WORLD, "s" + _group.homeSceneId));
         enterButton.addStyleName("EnterButton");
         buttons.add(enterButton);
         PushButton discussionsButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
-            _msgs.detailForums(), Link.createListener(Pages.GROUPS, Args.compose("f",
-                _group.groupId)));
+            _msgs.detailForums(), Link.createListener(
+                Pages.GROUPS, GroupsPage.Nav.FORUM.composeArgs(_group.groupId)));
         discussionsButton.addStyleName("DiscussionsButton");
         buttons.add(discussionsButton);
+        if (DeploymentConfig.devDeployment) {
+            PushButton medalsButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
+                _msgs.detailViewMedals(), Link.createListener(
+                    Pages.GROUPS, GroupsPage.Nav.MEDALS.composeArgs(_group.groupId)));
+            medalsButton.addStyleName("MedalsButton");
+            buttons.add(medalsButton);
+        }
 
         // join, charter, shop, manage, etc
         FlowPanel actions = MsoyUI.createFlowPanel("Actions");
@@ -218,21 +225,12 @@ public class GroupDetailPanel extends FlowPanel
             }
         }));
 
-        if (DeploymentConfig.devDeployment) {
-            // view medals
-            actions.add(MsoyUI.createActionLabel(_msgs.detailViewMedals(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    _contentPanel.showMedals();
-                }
-            }));
-        }
-
         // edit this group & manage rooms
         if (_detail.myRank == GroupMembership.RANK_MANAGER || CShell.isSupport()) {
             FlowPanel managerActions = MsoyUI.createFlowPanel("ManagerActions");
             actions.add(managerActions);
 
-            String args = Args.compose("edit", _group.groupId);
+            String args = GroupsPage.Nav.EDIT.composeArgs(_group.groupId);
             managerActions.add(MsoyUI.createActionLabel(
                 _msgs.detailEdit(), "inline", Link.createListener(Pages.GROUPS, args)));
 
