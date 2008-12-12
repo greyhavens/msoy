@@ -13,6 +13,9 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.google.common.base.Function;
+
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Medal;
 
 @Entity(indices={
@@ -68,6 +71,13 @@ public class MedalRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 3;
 
+    /** Converts a persistent record into a {@link Medal}. */
+    public static final Function<MedalRecord, Medal> TO_MEDAL = new Function<MedalRecord, Medal>() {
+        public Medal apply (MedalRecord record) {
+            return record.toMedal();
+        }
+    };
+
     /** The unique id of this medal */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int medalId;
@@ -89,6 +99,17 @@ public class MedalRecord extends PersistentRecord
 
     /** The mime type of the medal icon. */
     public byte iconMimeType;
+
+    public Medal toMedal ()
+    {
+        Medal medal = new Medal();
+        medal.medalId = medalId;
+        medal.groupId = groupId;
+        medal.name = name;
+        medal.description = description;
+        medal.icon = new MediaDesc(iconHash, iconMimeType);
+        return medal;
+    }
 
     // AUTO-GENERATED: METHODS START
     /**

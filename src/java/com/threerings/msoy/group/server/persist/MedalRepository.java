@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.inject.Inject;
@@ -50,6 +51,14 @@ public class MedalRepository extends DepotRepository
         Equals groupIdEquals = new Equals(MedalRecord.GROUP_ID_C, groupId);
         Equals nameEquals = new Equals(MedalRecord.NAME_C, name);
         return load(MedalRecord.class, new Where(new And(groupIdEquals, nameEquals))) != null;
+    }
+
+    /**
+     * Returns a list of MedalRecords for the medals that belong to the given group.
+     */
+    public List<MedalRecord> loadGroupMedals (int groupId)
+    {
+        return findAll(MedalRecord.class, new Where(MedalRecord.GROUP_ID_C, groupId));
     }
 
     @Override

@@ -113,4 +113,9 @@ public interface GroupServiceAsync
      * The asynchronous version of {@link GroupService#updateMedal}
      */
     void updateMedal (Medal medal, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link GroupService#getMedals}
+     */
+    void getMedals (int groupid, AsyncCallback<GroupService.MedalsResult> callback);
 }

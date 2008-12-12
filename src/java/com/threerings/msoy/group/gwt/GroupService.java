@@ -83,6 +83,16 @@ public interface GroupService extends RemoteService
         public List<GroupCard> groups;
     }
 
+    /** Delivers the response to {@link #getMedals}. */
+    public static class MedalsResult implements IsSerializable
+    {
+        /** The name of the group, used in the UI. */
+        public GroupName groupName;
+
+        /** The list of Medals for this group.  We currently do all paging on the client. */
+        public List<Medal> medals;
+    }
+
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/groupsvc";
 
@@ -204,4 +214,9 @@ public interface GroupService extends RemoteService
     void updateMedal (Medal medal)
         throws ServiceException;
 
+    /**
+     * Retreives the set of Medals for this group.
+     */
+    MedalsResult getMedals (int groupId)
+        throws ServiceException;
 }

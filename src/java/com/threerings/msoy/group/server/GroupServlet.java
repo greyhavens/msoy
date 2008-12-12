@@ -565,6 +565,15 @@ public class GroupServlet extends MsoyServiceServlet
         _medalRepo.storeMedal(medalRec);
     }
 
+    public GroupService.MedalsResult getMedals (int groupId)
+    {
+        GroupService.MedalsResult result = new GroupService.MedalsResult();
+        result.groupName = _groupRepo.loadGroupName(groupId);
+        result.medals = Lists.newArrayList(
+            Lists.transform(_medalRepo.loadGroupMedals(groupId), MedalRecord.TO_MEDAL));
+        return result;
+    }
+
     /**
      * Fill in the current number of people in rooms (population) and the number of total threads
      * for a list of group cards.
