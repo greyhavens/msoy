@@ -91,13 +91,13 @@ public class PartyPanel extends FloatingPanel
 
         var options :Array = [];
         for (var ii :int = 0; ii < PartyCodes.RECRUITMENT_COUNT; ii++) {
-            options.push({ label: Msgs.PARTY.get("l.recruitment_" + ii), data: ii });
+            options.push({ label: Msgs.PARTY.get("l.recruit_" + ii), data: ii });
         }
-        _recruiting = new CommandComboBox(_wctx.getPartyDirector().updateRecruiting);
-        _recruiting.dataProvider = options;
-        _recruiting.selectedIndex = _partyObj.recruiting;
-        _recruiting.enabled = isLeader;
-        addChild(_recruiting);
+        _recruit = new CommandComboBox(_wctx.getPartyDirector().updateRecruitment);
+        _recruit.dataProvider = options;
+        _recruit.selectedIndex = _partyObj.recruitment;
+        _recruit.enabled = isLeader;
+        addChild(_recruit);
     }
 
     public function attributeChanged (event :AttributeChangedEvent) :void
@@ -111,12 +111,13 @@ public class PartyPanel extends FloatingPanel
                 var isLeader :Boolean = (event.getValue() == _ctx.getMyName().getMemberId());
                 _name.enabled = isLeader;
                 _status.enabled = isLeader;
-                _recruiting.enabled = isLeader;
+                _recruit.enabled = isLeader;
                 break;
 
-            case PartyObject.RECRUITING:
+            case PartyObject.RECRUITMENT:
                 // This will be a problem if the values of RECRUITMENT_* don't match up to indexes
-                _recruiting.selectedIndex = int(event.getValue());
+                _recruit.selectedIndex = int(event.getValue());
+                break;
         }
     }
 
@@ -143,7 +144,6 @@ public class PartyPanel extends FloatingPanel
     protected var _roster :Roster;
     protected var _name :TextInput;
     protected var _status :TextInput;
-    protected var _recruiting :CommandComboBox;
+    protected var _recruit :CommandComboBox;
 }
-
 }

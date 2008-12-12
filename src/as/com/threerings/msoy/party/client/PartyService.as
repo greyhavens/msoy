@@ -29,6 +29,6 @@ public interface PartyService extends InvocationService
     function updateNameOrStatus (arg1 :Client, arg2 :String, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void;
 
     // from Java interface PartyService
-    function updateRecruiting (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+    function updateRecruitment (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
 }
 }

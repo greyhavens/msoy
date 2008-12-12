@@ -40,8 +40,8 @@ public class PartyObject extends DObject
     /** The field name of the <code>status</code> field. */
     public static final String STATUS = "status";
 
-    /** The field name of the <code>recruiting</code> field. */
-    public static final String RECRUITING = "recruiting";
+    /** The field name of the <code>recruitment</code> field. */
+    public static final String RECRUITMENT = "recruitment";
 
     /** The field name of the <code>partyService</code> field. */
     public static final String PARTY_SERVICE = "partyService";
@@ -72,7 +72,7 @@ public class PartyObject extends DObject
     public String status;
 
     /** This party's access control. @see PartyCodes */
-    public byte recruiting;
+    public byte recruitment;
 
     /** The service for doing things on this party. */
     public PartyMarshaller partyService;
@@ -225,19 +225,19 @@ public class PartyObject extends DObject
     }
 
     /**
-     * Requests that the <code>recruiting</code> field be set to the
+     * Requests that the <code>recruitment</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setRecruiting (byte value)
+    public void setRecruitment (byte value)
     {
-        byte ovalue = this.recruiting;
+        byte ovalue = this.recruitment;
         requestAttributeChange(
-            RECRUITING, Byte.valueOf(value), Byte.valueOf(ovalue));
-        this.recruiting = value;
+            RECRUITMENT, Byte.valueOf(value), Byte.valueOf(ovalue));
+        this.recruitment = value;
     }
 
     /**
@@ -295,7 +295,7 @@ public class PartyObject extends DObject
 
         // TODO: invitation checking
 
-        switch (recruiting) {
+        switch (recruitment) {
         case PartyCodes.RECRUITMENT_OPEN:
             return null;
 

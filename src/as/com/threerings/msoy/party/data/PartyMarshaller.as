@@ -89,15 +89,15 @@ public class PartyMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>updateRecruiting</code> requests. */
-    public static const UPDATE_RECRUITING :int = 6;
+    /** The method id used to dispatch <code>updateRecruitment</code> requests. */
+    public static const UPDATE_RECRUITMENT :int = 6;
 
     // from interface PartyService
-    public function updateRecruiting (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    public function updateRecruitment (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
     {
         var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_RECRUITING, [
+        sendRequest(arg1, UPDATE_RECRUITMENT, [
             Byte.valueOf(arg2), listener3
         ]);
     }

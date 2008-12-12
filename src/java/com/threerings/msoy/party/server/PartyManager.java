@@ -263,13 +263,13 @@ public class PartyManager
     }
 
     // from interface PartyProvider
-    public void updateRecruiting (
-        ClientObject caller, byte recruiting, InvocationService.InvocationListener listener)
+    public void updateRecruitment (
+        ClientObject caller, byte recruitment, InvocationService.InvocationListener listener)
         throws InvocationException
     {
         requireLeader(caller);
 
-        _partyObj.setRecruiting(recruiting);
+        _partyObj.setRecruitment(recruitment);
         updatePartyInfo();
     }
 
@@ -376,7 +376,7 @@ public class PartyManager
 
     protected void setStatus (String status)
     {
-        if (!_partyObj.status.equals(status)) {
+        if (_partyObj.status == null || !_partyObj.status.equals(status)) {
             _partyObj.setStatus(status);
             updatePartyInfo();
         }
@@ -421,7 +421,7 @@ public class PartyManager
     {
         _peerMgr.updatePartyInfo(new PartyInfo(
             _partyObj.id, _partyObj.name, _partyObj.leaderId, _partyObj.group, _partyObj.status,
-            _partyObj.peeps.size(), _partyObj.recruiting));
+            _partyObj.peeps.size(), _partyObj.recruitment));
     }
 
     /**

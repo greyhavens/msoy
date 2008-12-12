@@ -11,6 +11,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
@@ -19,8 +20,8 @@ import com.threerings.msoy.party.data.PartyInfo;
 
 public class PartyInfoRenderer extends HBox
 {
-//    // Initialized by ClassFactory
-//    public var wctx :WorldContext;
+    // Initialized by ClassFactory
+    public var wctx :WorldContext;
 
     override public function set data (value :Object) :void
     {
@@ -34,7 +35,21 @@ public class PartyInfoRenderer extends HBox
         _group.text = info.group.toString();
         _population.text = Msgs.PARTY.get("l.population", info.population);
         _status.text = Msgs.PARTY.xlate(info.status);
-        // TODO: Recruitment
+
+        var deets :String = "";
+        var us :MemberObject = wctx.getMemberObject();
+        if (us.friends.containsKey(info.leaderId)) {
+            deets += "F";
+        }
+        if (us.groups != null && us.groups.containsKey(info.group.getGroupId())) {
+            deets += "G";
+        }
+        if (deets != "") {
+            deets += "  -  ";
+        }
+        deets += Msgs.PARTY.get("l.recruit_" + info.recruitment);
+        _details.text = deets;
+
         _join.setCommand(WorldController.JOIN_PARTY, info.id);
     }
 
@@ -48,6 +63,7 @@ public class PartyInfoRenderer extends HBox
         col = new VBox();
         col.addChild(_status);
         col.addChild(_population);
+        col.addChild(_details);
         addChild(col);
 
         addChild(_join);
@@ -57,6 +73,7 @@ public class PartyInfoRenderer extends HBox
     protected var _group :Label = FlexUtil.createLabel(null, "partyGroup");
     protected var _population :Label = FlexUtil.createLabel(null, "partyPopulation");
     protected var _status :Label = FlexUtil.createLabel(null, "partyStatus");
+    protected var _details :Label = FlexUtil.createLabel("");
     protected var _join :CommandButton = new CommandButton(Msgs.PARTY.get("b.join"));
 }
 }

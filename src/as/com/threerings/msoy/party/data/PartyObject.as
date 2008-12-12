@@ -37,8 +37,8 @@ public class PartyObject extends DObject
     /** The field name of the <code>status</code> field. */
     public static const STATUS :String = "status";
 
-    /** The field name of the <code>recruiting</code> field. */
-    public static const RECRUITING :String = "recruiting";
+    /** The field name of the <code>recruitment</code> field. */
+    public static const RECRUITMENT :String = "recruitment";
 
     /** The field name of the <code>partyService</code> field. */
     public static const PARTY_SERVICE :String = "partyService";
@@ -69,7 +69,7 @@ public class PartyObject extends DObject
     public var status :String;
 
     /** This party's access control. @see PartyCodes */
-    public var recruiting :int;
+    public var recruitment :int;
 
     /** The service for doing things on this party. */
     public var partyService :PartyMarshaller;
@@ -88,7 +88,7 @@ public class PartyObject extends DObject
         leaderId = ins.readInt();
         sceneId = ins.readInt();
         status = ins.readField(String) as String;
-        recruiting = ins.readByte();
+        recruitment = ins.readByte();
         partyService = PartyMarshaller(ins.readObject());
         speakService = SpeakMarshaller(ins.readObject());
     }

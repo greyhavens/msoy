@@ -45,8 +45,8 @@ public interface PartyProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link PartyService#updateRecruiting} request.
+     * Handles a {@link PartyService#updateRecruitment} request.
      */
-    void updateRecruiting (ClientObject caller, byte arg1, InvocationService.InvocationListener arg2)
+    void updateRecruitment (ClientObject caller, byte arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
 }
