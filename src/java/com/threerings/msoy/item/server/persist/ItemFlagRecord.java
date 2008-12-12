@@ -66,7 +66,7 @@ public class ItemFlagRecord extends PersistentRecord
         new ColumnExp(ItemFlagRecord.class, COMMENT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** Member who entered the flag. */
     @Id public int memberId;
@@ -77,8 +77,8 @@ public class ItemFlagRecord extends PersistentRecord
     /** Id of item flagged. */
     @Id public int itemId;
 
-    /** Type of flag. */
-    @Id public ItemFlag.Flag flag;
+    /** Type of flag (from {@link ItemFlag.Flag}. */
+    @Id public byte flag;
 
     /** When the flag was entered. */
     public Timestamp timestamp;
@@ -91,7 +91,7 @@ public class ItemFlagRecord extends PersistentRecord
         ItemFlag itemFlag = new ItemFlag();
         itemFlag.memberId = memberId;
         itemFlag.itemIdent = new ItemIdent(itemType, itemId);
-        itemFlag.flag = flag;
+        itemFlag.flag = ItemFlag.Flag.values()[flag];
         itemFlag.comment = comment;
         itemFlag.timestamp = new Date(timestamp.getTime());
         return itemFlag;

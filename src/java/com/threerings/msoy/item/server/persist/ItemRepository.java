@@ -1313,7 +1313,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         ItemFlagRecord frec = new ItemFlagRecord();
         frec.comment = "";
-        frec.flag = flag;
+        frec.flag = (byte)flag.ordinal();
         frec.itemId = item.itemId;
         frec.itemType = item.getType();
         frec.memberId = 1; // nicer than special casing 0 everywhere. Mr. Bayne uberflagger :)

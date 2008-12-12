@@ -7,8 +7,6 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.samskivert.depot.ByteEnum;
-
 /**
  * A flag on an item.
  */
@@ -17,17 +15,9 @@ public class ItemFlag
 {
     /** Kinds of flags. */
     public enum Flag
-        implements ByteEnum, IsSerializable
+        implements IsSerializable
     {
         MATURE, COPYRIGHT;
-
-        public byte toByte () {
-            return (byte)ordinal();
-        }
-
-        public static Flag fromByte (byte byteVal) {
-            return values()[byteVal];
-        }
     }
 
     /** Item flagged. */

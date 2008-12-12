@@ -301,7 +301,7 @@ public class ItemServlet extends MsoyServiceServlet
 
         ItemFlagRecord frec = new ItemFlagRecord();
         frec.comment = comment;
-        frec.flag = flag;
+        frec.flag = (byte)flag.ordinal();
         frec.memberId = memrec.memberId;
         frec.itemType = iitem.type;
         frec.itemId = iitem.itemId;
