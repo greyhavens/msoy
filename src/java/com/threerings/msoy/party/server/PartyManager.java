@@ -251,8 +251,7 @@ public class PartyManager
         throws InvocationException
     {
         MemberObject inviter = (MemberObject)caller;
-        MemberNodeActions.sendNotification(memberId,
-            new PartyInviteNotification(inviter.memberName, _partyObj.id, _partyObj.name));
+        MemberNodeActions.sendNotification(memberId, createInvite(inviter));
     }
 
     /**
