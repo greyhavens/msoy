@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
@@ -29,7 +27,9 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
+import com.samskivert.util.StringUtil;
 
+import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.SchemaMigration;
@@ -57,7 +57,6 @@ import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Conditionals.*;
 import com.samskivert.depot.operator.Logic.*;
 import com.samskivert.depot.operator.SQLOperator;
-import com.samskivert.jdbc.DatabaseLiaison;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -142,24 +141,19 @@ public abstract class ItemRepository<T extends ItemRecord>
         _ctx.registerMigration(getCloneClass(),
             new SchemaMigration.Add(cloneCurrencyMigrationVersion, CloneRecord.CURRENCY, "0"));
 
+        String migrationName = "2008_12_12_flags_" + StringUtil.shortClassName(getItemClass());
         // migrate each item with a non-zero flagged to a row in the new table
-        _ctx.registerMigration(getItemClass(), new SchemaMigration(18000) {
-            @Override protected int invoke (Connection conn, DatabaseLiaison liaison)
-                throws SQLException
-            {
-                int rows = 0;
+        registerMigration(new DataMigration(migrationName) {
+            @Override public void invoke () throws DatabaseException {
                 Where flagged = new Where(new GreaterThan(getItemColumn(ItemRecord.FLAGGED), 0));
                 for (T item : findAll(getItemClass(), flagged)) {
                     if ((item.flagged & 2) != 0) {
                         _itemFlagRepo.addFlag(convertFromLegacyFlag(item, ItemFlag.Flag.COPYRIGHT));
-                        ++rows;
                     }
                     if ((item.flagged & 1) != 0) {
                         _itemFlagRepo.addFlag(convertFromLegacyFlag(item, ItemFlag.Flag.MATURE));
-                        ++rows;
                     }
                 }
-                return rows;
             }
         });
     }
