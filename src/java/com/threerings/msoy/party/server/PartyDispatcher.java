@@ -65,6 +65,12 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
             );
             return;
 
+        case PartyMarshaller.UPDATE_RECRUITING:
+            ((PartyProvider)provider).updateRecruiting(
+                source, ((Byte)args[0]).byteValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

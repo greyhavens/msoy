@@ -20,6 +20,9 @@ public interface PartyService extends InvocationService
     /** Requests to update the party name. */
     void updateNameOrStatus (Client client, String s, boolean name, InvocationListener il);
 
+    /** Requests to change the party access control. */
+    void updateRecruiting (Client client, byte recruiting, InvocationListener il);
+
     /** Invites a specific player to this party. */
     void inviteMember (Client client, int memberId, InvocationListener il);
 }

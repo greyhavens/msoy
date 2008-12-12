@@ -226,6 +226,17 @@ public class PartyManager
     }
 
     // from interface PartyProvider
+    public void updateRecruiting (
+        ClientObject caller, byte recruiting, InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        requireLeader(caller);
+
+        _partyObj.setRecruiting(recruiting);
+        updatePartyInfo();
+    }
+
+    // from interface PartyProvider
     public void inviteMember (
         ClientObject caller, int memberId, InvocationService.InvocationListener listener)
         throws InvocationException

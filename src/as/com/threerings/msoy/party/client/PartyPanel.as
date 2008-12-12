@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.party.client {
 
+import mx.collections.ArrayCollection;
 import mx.controls.TextInput;
 import mx.events.FlexEvent;
 
@@ -11,6 +12,7 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandComboBox;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -66,7 +68,7 @@ public class PartyPanel extends FloatingPanel
         _name.maxChars = PartyCodes.MAX_NAME_LENGTH;
         _name.percentWidth = 100;
         _name.text = _partyObj.name;
-        _name.editable = isLeader;
+        _name.enabled = isLeader;
         _name.addEventListener(FlexEvent.ENTER, commitName);
         addChild(_name);
 
@@ -81,9 +83,19 @@ public class PartyPanel extends FloatingPanel
         _status.maxChars = PartyCodes.MAX_NAME_LENGTH;
         _status.percentWidth = 100;
         _status.text = _partyObj.status;
-        _status.editable = isLeader;
+        _status.enabled = isLeader;
         _status.addEventListener(FlexEvent.ENTER, commitStatus);
         addChild(_status);
+
+        _recruiting = new CommandComboBox(_wctx.getPartyDirector().updateRecruiting);
+        _recruiting.dataProvider = [
+            {label: Msgs.PARTY.get("l.recruitment_open"), data: PartyCodes.RECRUITMENT_OPEN},
+            {label: Msgs.PARTY.get("l.recruitment_closed"), data: PartyCodes.RECRUITMENT_CLOSED},
+            {label: Msgs.PARTY.get("l.recruitment_group"), data: PartyCodes.RECRUITMENT_GROUP}
+        ];
+        _recruiting.selectedIndex = _partyObj.recruiting;
+        _recruiting.enabled = isLeader;
+        addChild(_recruiting);
     }
 
     public function attributeChanged (event :AttributeChangedEvent) :void
@@ -95,9 +107,14 @@ public class PartyPanel extends FloatingPanel
 
             case PartyObject.LEADER_ID:
                 var isLeader :Boolean = (event.getValue() == _ctx.getMyName().getMemberId());
-                _name.editable = isLeader;
-                _status.editable = isLeader;
+                _name.enabled = isLeader;
+                _status.enabled = isLeader;
+                _recruiting.enabled = isLeader;
                 break;
+
+            case PartyObject.RECRUITING:
+                // This will be a problem if the values of RECRUITMENT_* don't match up to indexes
+                _recruiting.selectedIndex = int(event.getValue());
         }
     }
 
@@ -118,6 +135,7 @@ public class PartyPanel extends FloatingPanel
     protected var _roster :Roster;
     protected var _name :TextInput;
     protected var _status :TextInput;
+    protected var _recruiting :CommandComboBox;
 }
 
 }

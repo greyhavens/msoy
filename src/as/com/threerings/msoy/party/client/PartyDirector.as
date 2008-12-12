@@ -149,6 +149,12 @@ public class PartyDirector extends BasicDirector
             new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
     }
 
+    public function updateRecruiting (recruiting :int) :void
+    {
+        _partyObj.partyService.updateRecruiting(_wctx.getClient(), recruiting,
+            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
+    }
+
     /**
      * Leaves the current party.
      */

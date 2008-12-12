@@ -82,4 +82,17 @@ public class PartyMarshaller extends InvocationMarshaller
             arg2, Boolean.valueOf(arg3), listener4
         });
     }
+
+    /** The method id used to dispatch {@link #updateRecruiting} requests. */
+    public static final int UPDATE_RECRUITING = 6;
+
+    // from interface PartyService
+    public void updateRecruiting (Client arg1, byte arg2, InvocationService.InvocationListener arg3)
+    {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, UPDATE_RECRUITING, new Object[] {
+            Byte.valueOf(arg2), listener3
+        });
+    }
 }

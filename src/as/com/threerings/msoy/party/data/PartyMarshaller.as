@@ -10,6 +10,7 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
+import com.threerings.util.Byte;
 import com.threerings.util.Integer;
 import com.threerings.util.langBoolean;
 
@@ -85,6 +86,19 @@ public class PartyMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, UPDATE_NAME_OR_STATUS, [
             arg2, langBoolean.valueOf(arg3), listener4
+        ]);
+    }
+
+    /** The method id used to dispatch <code>updateRecruiting</code> requests. */
+    public static const UPDATE_RECRUITING :int = 6;
+
+    // from interface PartyService
+    public function updateRecruiting (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
+    {
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, UPDATE_RECRUITING, [
+            Byte.valueOf(arg2), listener3
         ]);
     }
 }
