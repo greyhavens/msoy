@@ -11,6 +11,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Logic.And;
@@ -26,6 +27,10 @@ public class MedalRepository extends DepotRepository
     @Inject public MedalRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // New maximum values were imposed on these fields on 2008.12.11
+        ctx.registerMigration(MedalRecord.class, new SchemaMigration.Retype(3, "name"));
+        ctx.registerMigration(MedalRecord.class, new SchemaMigration.Retype(3, "description"));
     }
 
     /**

@@ -13,8 +13,8 @@ public class Medal
     public static final int MEDAL_WIDTH = 80;
     public static final int MEDAL_HEIGHT = 60;
 
-    public static final int MAX_DESCRIPTION_LENGTH = 200;
-    public static final int MAX_NAME_LENGTH = 64;
+    public static final int MAX_DESCRIPTION_LENGTH = 70;
+    public static final int MAX_NAME_LENGTH = 25;
 
     /** The unique id of this medal. */
     public int medalId;

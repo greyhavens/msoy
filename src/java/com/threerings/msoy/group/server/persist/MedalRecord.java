@@ -66,7 +66,7 @@ public class MedalRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The unique id of this medal */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -76,6 +76,7 @@ public class MedalRecord extends PersistentRecord
     public int groupId;
 
     /** The name of the medal. */
+    @Column(length=Medal.MAX_NAME_LENGTH)
     public String name;
 
     /** The description of the medal */
