@@ -28,7 +28,7 @@ public class MsoyGameSession extends CrowdSession
         super.sessionWillStart();
 
         _plobj = (PlayerObject) _clobj;
-        _plobj.setAccessController(MsoyObjectAccess.USER);
+        _plobj.setAccessController(MsoyObjectAccess.PLAYER);
 
         // configure their access control tokens
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
