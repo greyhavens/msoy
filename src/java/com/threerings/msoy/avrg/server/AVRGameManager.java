@@ -35,11 +35,11 @@ import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsObjectAccess;
 
 import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.server.CrowdObjectAccess;
 import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
@@ -577,10 +577,7 @@ public class AVRGameManager extends PlaceManager
     @Override
     protected AccessController getAccessController ()
     {
-        // TODO: Turn off CrowdObjectAccess's restrictive policing of subscription until we have
-        // TODO: breathing room to give bureaus their own ClientObject subclasses, making it a
-        // TODO: bit easier to detect when the agent is attempting to snoop on the game object.
-        return PresentsObjectAccess.DEFAULT;
+        return CrowdObjectAccess.BUREAU_ACCESS_PLACE;
     }
 
     /**
