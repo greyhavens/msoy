@@ -103,6 +103,10 @@ public class PartyPanel extends FloatingPanel
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         switch (event.getName()) {
+            case PartyObject.NAME:
+                _name.text = String(event.getValue());
+                break;
+
             case PartyObject.STATUS:
                 _status.text = Msgs.PARTY.xlate(String(event.getValue()));
                 break;
