@@ -121,11 +121,13 @@ public class PartyPanel extends FloatingPanel
     protected function commitName (event :FlexEvent) :void
     {
         _wctx.getPartyDirector().updateNameOrStatus(_name.text, true);
+        _wctx.getControlBar().giveChatFocus();
     }
 
     protected function commitStatus (event :FlexEvent) :void
     {
         _wctx.getPartyDirector().updateNameOrStatus(_status.text, false);
+        _wctx.getControlBar().giveChatFocus();
     }
 
     protected var _wctx :WorldContext;
