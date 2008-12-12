@@ -158,12 +158,6 @@ public class GroupEdit extends FlexTable
                 public void getTags (AsyncCallback<List<String>> cback) {
                     _groupsvc.getTags(_group.groupId, cback);
                 }
-                public boolean supportFlags () {
-                    return false;
-                }
-                public void setFlags (byte flag) {
-                    // nada
-                }
                 public void addMenuItems (final String tag, PopupMenu menu) {
                     menu.addMenuItem(_msgs.detailTagLink(), new Command() {
                         public void execute () {
@@ -171,7 +165,7 @@ public class GroupEdit extends FlexTable
                         }
                     });
                 }
-            }, null, true);
+            }, null, null, true);
             addRow("", WidgetUtil.makeShim(1, 20));
             addRow("", tags);
         }

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.RatingResult;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.Photo;
@@ -73,9 +74,15 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Atomically sets or clears one or more flags on an item.
+     * Adds a user flag to an item, for subsequent review by support.
      */
-    void setFlags (ItemIdent item, byte mask, byte values)
+    void addFlag (ItemIdent item, ItemFlag.Flag flag, String comment)
+        throws ServiceException;
+
+    /**
+     * Removes all flags for an item, support only.
+     */
+    void removeAllFlags (ItemIdent iitem)
         throws ServiceException;
 
     /**

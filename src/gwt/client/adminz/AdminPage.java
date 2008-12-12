@@ -38,9 +38,10 @@ public class AdminPage extends Page
             _playerBrowser.displayPlayersInvitedBy(args.get(1, 0));
 
         } else if (action.equals("review")) {
-            int item = args.get(1, 0);
-            if (item != 0) {
-                ItemDetail detail = _reviewPanel != null ? _reviewPanel.getItemDetail(item) : null;
+            byte type = (byte)args.get(1, 0);
+            int item = args.get(2, 0);
+            if (item != 0 && _reviewPanel != null) {
+                ItemDetail detail = _reviewPanel.getItemDetail(type, item);
                 if (detail == null) {
                     MsoyUI.error("Cannot view transactions for that item");
                     return;

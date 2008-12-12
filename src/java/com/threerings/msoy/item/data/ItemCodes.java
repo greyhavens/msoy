@@ -36,4 +36,7 @@ public interface ItemCodes extends InvocationCodes
 
     /** An error code indicating charities cannot list an item for bars. */
     public static final String E_CHARITIES_CANNOT_LIST_FOR_BARS = "e.charities_cannot_list_for_bars";
+
+    /** Error when a user flags an item more than once (with the same flag). */
+    public static final String E_ITEM_ALREADY_FLAGGED = "e.item_already_flagged";
 }

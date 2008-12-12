@@ -20,6 +20,7 @@ import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PanopticonStatus;
 
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -55,6 +56,19 @@ public interface AdminService extends RemoteService
 
         /** Number of refund transactions created. */
         public int refunds;
+    }
+
+    /**
+     * Return value when querying flagged items.
+     */
+    public static class ItemFlagsResult extends PagedResult<ItemFlag>
+        implements IsSerializable
+    {
+        /** Details for flagged items. */
+        public Map<ItemIdent, ItemDetail> items;
+
+        /** Member names of flagging members. */
+        public Map<Integer, MemberName> memberNames;
     }
 
     /**
@@ -112,9 +126,9 @@ public interface AdminService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetches the first 'count' items flagged as mature or copyright in the database.
+     * Fetches a page of item flags from the database and some more information to display them.
      */
-    List<ItemDetail> getFlaggedItems (int count)
+    ItemFlagsResult getItemFlags (int from, int count, boolean needCount)
         throws ServiceException;
 
     /**

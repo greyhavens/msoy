@@ -96,12 +96,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /** An identifier used to coordinate with the server when uploading media. */
     public static final String AUX_MEDIA = "aux";
 
-    /** Indicates that somebody has flagged this item as mature content. */
-    public static final byte FLAG_FLAGGED_MATURE = 1 << 0;
-
-    /** Indicates that somebody has flagged this item as copyrighted content. */
-    public static final byte FLAG_FLAGGED_COPYRIGHT = 1 << 1;
-
     /** Indicates that this item is a "remixed clone", that we can revert to the original mix. */
     public static final byte ATTR_REMIXED_CLONE = 1 << 0;
 
@@ -122,10 +116,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
 
     /** The item id from which this object was cloned, or 0 if this is not a clone. */
     public int sourceId;
-
-    /** A bit-mask of flags that we need to know about every digital item without doing further
-     * database lookups or network requests. */
-    public byte flagged;
 
     /** A bit-mask of runtime attributes about this item. These are not saved in the database
      * anywhere, these are created on-the-fly when looking at metadata not otherwise sent
@@ -328,22 +318,6 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     public int getSuiteId ()
     {
         return (isCatalogMaster() || isCatalogClone()) ? -catalogId : itemId;
-    }
-
-    /**
-     * Tests whether a given flag is set on this item.
-     */
-    public boolean isFlagSet (byte flag)
-    {
-        return (flagged & flag) != 0;
-    }
-
-    /**
-     * Sets a given flag to on or off.
-     */
-    public void setFlag (byte flag, boolean value)
-    {
-        flagged = (byte) (value ? flagged | flag : flagged ^ ~flag);
     }
 
     /**

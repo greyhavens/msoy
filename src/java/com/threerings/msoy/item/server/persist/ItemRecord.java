@@ -103,7 +103,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The identifier for the full text search index on Name, Description */
     public static final String FTS_ND = "ND";
 
-    public static final int BASE_SCHEMA_VERSION = 17;
+    public static final int BASE_SCHEMA_VERSION = 18;
     public static final int BASE_MULTIPLIER = 1000;
 
     /** A function for converting this persistent record into a runtime record. */
@@ -127,6 +127,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
+    // TODO: remove
     public byte flagged;
 
     /** A bit-mask of runtime attributes about this item. These are not saved in the database
@@ -340,7 +341,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.name = name;
         item.description = description;
         item.creatorId = creatorId;
-        item.flagged = flagged;
         item.attrs = attrs;
         item.mature = mature;
         if (furniMediaHash != null) {

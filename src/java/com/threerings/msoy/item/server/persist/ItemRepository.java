@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
@@ -55,6 +57,7 @@ import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Conditionals.*;
 import com.samskivert.depot.operator.Logic.*;
 import com.samskivert.depot.operator.SQLOperator;
+import com.samskivert.jdbc.DatabaseLiaison;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -73,6 +76,7 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 
@@ -137,6 +141,27 @@ public abstract class ItemRepository<T extends ItemRecord>
                 "flowPaid", CloneRecord.AMOUNT_PAID));
         _ctx.registerMigration(getCloneClass(),
             new SchemaMigration.Add(cloneCurrencyMigrationVersion, CloneRecord.CURRENCY, "0"));
+
+        // migrate each item with a non-zero flagged to a row in the new table
+        _ctx.registerMigration(getItemClass(), new SchemaMigration(18000) {
+            @Override protected int invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException
+            {
+                int rows = 0;
+                Where flagged = new Where(new GreaterThan(getItemColumn(ItemRecord.FLAGGED), 0));
+                for (T item : findAll(getItemClass(), flagged)) {
+                    if ((item.flagged & 2) != 0) {
+                        _itemFlagRepo.addFlag(convertFromLegacyFlag(item, ItemFlag.Flag.COPYRIGHT));
+                        ++rows;
+                    }
+                    if ((item.flagged & 1) != 0) {
+                        _itemFlagRepo.addFlag(convertFromLegacyFlag(item, ItemFlag.Flag.MATURE));
+                        ++rows;
+                    }
+                }
+                return rows;
+            }
+        });
     }
 
     /**
@@ -356,17 +381,6 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
         }
         return result;
-    }
-
-    /**
-     * Loads all items who have a non-zero {@link ItemRecord#flagged} field, limited to a given
-     * number of rows.
-     */
-    public List<T> loadFlaggedItems (int count)
-    {
-        return findAll(getItemClass(),
-                       new Where(new GreaterThan(getItemColumn(ItemRecord.FLAGGED), 0)),
-                       new Limit(0, count));
     }
 
     /**
@@ -1295,6 +1309,18 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
     };
 
+    protected static ItemFlagRecord convertFromLegacyFlag (ItemRecord item, ItemFlag.Flag flag)
+    {
+        ItemFlagRecord frec = new ItemFlagRecord();
+        frec.comment = "";
+        frec.flag = flag;
+        frec.itemId = item.itemId;
+        frec.itemType = item.getType();
+        frec.memberId = 1; // nicer than special casing 0 everywhere. Mr. Bayne uberflagger :)
+        frec.timestamp = new Timestamp(System.currentTimeMillis());
+        return frec;
+    }
+
     /** The byte type of our item. */
     protected byte _itemType;
 
@@ -1309,6 +1335,9 @@ public abstract class ItemRepository<T extends ItemRecord>
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyExchange _exchange;
     @Inject protected HotnessConfig _hconfig;
+
+    // TODO: remove after flagged column is dropped from ItemRecord
+    @Inject protected ItemFlagRepository _itemFlagRepo;
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;

@@ -10,12 +10,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.admin.gwt.AdminService.ItemDeletionResult;
+import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.PanopticonStatus;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -75,7 +75,8 @@ public interface AdminServiceAsync
     /**
      * The asynchronous version of {@link AdminService#getFlaggedItems}.
      */
-    void getFlaggedItems (int count, AsyncCallback<List<ItemDetail>> callback);
+    void getItemFlags (int start, int count, boolean needCount,
+        AsyncCallback<ItemFlagsResult> callback);
 
     /**
      * The asynchronous version of {@link AdminService#getItemTransactions}.

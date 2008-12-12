@@ -18,6 +18,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -39,7 +40,7 @@ import client.util.Link;
  */
 public class ReviewItem extends FlowPanel
 {
-    public ReviewItem (ReviewPanel parent, ItemDetail detail)
+    public ReviewItem (ReviewPanel parent, ItemDetail detail, ItemFlag.Flag flag)
     {
         _parent = parent;
         _item = detail.item;
@@ -47,23 +48,18 @@ public class ReviewItem extends FlowPanel
         // say what flags are set on it
         FlowPanel flaggedAs = new FlowPanel();
         flaggedAs.add(new InlineLabel("Flagged as:"));
-        if (_item.isFlagSet(Item.FLAG_FLAGGED_MATURE)) {
-            flaggedAs.add(new InlineLabel("Mature", false, true, false));
-        }
-        if (_item.isFlagSet(Item.FLAG_FLAGGED_COPYRIGHT)) {
-            flaggedAs.add(new InlineLabel("Copyright Violation", false, true, false));
-        }
+        flaggedAs.add(new InlineLabel(flag.toString(), false, true, false));
         add(flaggedAs);
 
         // the name displays an item inspector
         String name = _item.name + " - " + detail.creator.toString();
-        String args = Args.compose("d", ""+_item.getType(), ""+_item.itemId);
+        String args = Args.compose("d", _item.getType(), _item.itemId);
         add(Link.create(name, Pages.STUFF, args));
 
         // transactions link
         FlowPanel transactions = new FlowPanel();
         transactions.add(Link.create("Transactions", Pages.ADMINZ,
-            Args.compose("review", _item.itemId)));
+            Args.compose("review", _item.getType(), _item.itemId)));
         add(transactions);
 
         add(MsoyUI.createLabel(_item.description, null));
@@ -92,7 +88,7 @@ public class ReviewItem extends FlowPanel
 //             }
 
         // a button to mark someting as mature
-        if (_item.isFlagSet(Item.FLAG_FLAGGED_MATURE)) {
+        if (flag == ItemFlag.Flag.MATURE) {
             _mark = new Button(_msgs.reviewMark());
             new ClickCallback<Void>(_mark) {
                 @Override protected boolean callService () {
@@ -133,8 +129,7 @@ public class ReviewItem extends FlowPanel
                     _parent.refresh();
                     return false;
                 }
-                byte flags = (byte) (Item.FLAG_FLAGGED_COPYRIGHT | Item.FLAG_FLAGGED_MATURE);
-                _itemsvc.setFlags(_item.getIdent(), flags, (byte) 0, this);
+                _itemsvc.removeAllFlags(_item.getIdent(), this);
                 return true;
             }
             @Override protected boolean gotResult (Void result) {

@@ -26,7 +26,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.TagCodes;
 
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
@@ -47,7 +47,7 @@ import client.shell.ShellMessages;
 public class TagDetailPanel extends VerticalPanel
 {
     /**
-     * Interface to the interaction between this panel and the service handling tagging/flagging in
+     * Interface to the interaction between this panel and the service handling tagging in
      * the background.
      */
     public interface TagService
@@ -56,15 +56,6 @@ public class TagDetailPanel extends VerticalPanel
         void untag (String tag, AsyncCallback<TagHistory> callback);
         void getRecentTags (AsyncCallback<List<TagHistory>> callback);
         void getTags (AsyncCallback<List<String>> callback);
-        boolean supportFlags ();
-
-        /**
-         * In this case, the implementor is responsible for editing the flags on the local object
-         * that is being flagged, and is therefore responsible for providing the callback.
-         *
-         * @param flag the flag to send to the server and set on the local object on success
-         */
-        void setFlags (byte flag);
 
         /**
          * If additional entries are required on the Menu that pops up when a tag is clicked, this
@@ -73,10 +64,22 @@ public class TagDetailPanel extends VerticalPanel
         void addMenuItems (String tag, PopupMenu menu);
     }
 
-    public TagDetailPanel (TagService service, List<String> tags, boolean showAddUI)
+    /**
+     * Interface to the interaction between this panel and the service handling flagging in
+     * the background.
+     */
+    public interface FlagService
+    {
+        // TODO: add a comment string
+        void addFlag (ItemFlag.Flag flag);
+    }
+
+    public TagDetailPanel (
+        TagService service, FlagService flagger, List<String> tags, boolean showAddUI)
     {
         setStyleName("tagDetailPanel");
         _service = service;
+        _flagger = flagger;
         _canEdit = !CShell.isGuest() && showAddUI;
 
         _tags = new FlowPanel();
@@ -108,14 +111,14 @@ public class TagDetailPanel extends VerticalPanel
 //                 }
 //             });
 
-            if (_service.supportFlags()) {
+            if (_flagger != null) {
                 InlineLabel flagLabel = new InlineLabel(_cmsgs.tagFlag());
                 new PopupMenu(flagLabel) {
                     protected void addMenuItems () {
                         addFlag(_cmsgs.tagMatureFlag(), _cmsgs.tagMaturePrompt(),
-                                updateFlag(Item.FLAG_FLAGGED_MATURE));
+                                updateFlag(ItemFlag.Flag.MATURE));
                         addFlag(_cmsgs.tagCopyrightFlag(), _cmsgs.tagCopyrightPrompt(),
-                                updateFlag(Item.FLAG_FLAGGED_COPYRIGHT));
+                                updateFlag(ItemFlag.Flag.COPYRIGHT));
                     }
                     protected void addFlag (String label, String prompt, Command action) {
                         addMenuItem(label, new PromptPopup(prompt, _cmsgs.tagFlagFlag(),
@@ -136,11 +139,11 @@ public class TagDetailPanel extends VerticalPanel
         }
     }
 
-    protected Command updateFlag (final byte flag)
+    protected Command updateFlag (final ItemFlag.Flag flag)
     {
         return new Command() {
             public void execute () {
-                _service.setFlags(flag);
+                _flagger.addFlag(flag);
                 MsoyUI.info(_cmsgs.tagThanks());
             }
         };
@@ -317,6 +320,7 @@ public class TagDetailPanel extends VerticalPanel
     }
 
     protected TagService _service;
+    protected FlagService _flagger;
     protected boolean _canEdit;
 
     protected FlowPanel _tags;

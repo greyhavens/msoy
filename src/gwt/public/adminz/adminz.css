@@ -44,12 +44,12 @@
   padding-top: 10px;
 }
 
-/*** Item transactions review ***/
-.itemTransactions .Table .row1 {
+/*** Item transactions and review panel tables ***/
+.itemTransactions .Table .row1, .reviewPanel .Table .row1 {
   background: #dbeffc;
 }
 
-.itemTransactions .Table .header {
+.itemTransactions .Table .header, .reviewPanel .Table .header {
   background: #ff992b;
   color: white;
   text-align: center;
@@ -58,7 +58,8 @@
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 }
 
-.itemTransactions .Table .col2 { /* Description */
+.itemTransactions .Table .col2 /* Description */,
+.reviewPanel .Table .col2 /* Comment */ { 
   width: 50%;
 }
 

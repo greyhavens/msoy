@@ -7,9 +7,11 @@ import static com.threerings.msoy.Log.log;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -43,12 +45,14 @@ import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
+import com.threerings.msoy.item.server.persist.ItemFlagRecord;
+import com.threerings.msoy.item.server.persist.ItemFlagRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
@@ -252,32 +256,62 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public List<ItemDetail> getFlaggedItems (final int count)
+    public ItemFlagsResult getItemFlags (int start, int count, boolean needCount)
         throws ServiceException
     {
         requireSupportUser();
+        ItemFlagsResult result = new ItemFlagsResult();
 
-        // it'd be nice to round-robin the item types or something, so the first items in the queue
-        // aren't always from the same type... perhaps we'll just do something clever in the UI
-        final List<ItemDetail> items = Lists.newArrayList();
-        for (final byte type : _itemLogic.getRepositoryTypes()) {
-            final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
-            for (final ItemRecord record : repo.loadFlaggedItems(count)) {
-                final Item item = record.toItem();
+        // get the total if needed
+        if (needCount) {
+            result.total = _itemFlagRepo.countItemFlags();
+        }
 
-                // get auxiliary info and construct an ItemDetail
-                final ItemDetail detail = new ItemDetail();
-                detail.item = item;
-                detail.creator = _memberRepo.loadMemberName(record.creatorId);
-
-                // add the detail to our result and see if we're done
-                items.add(detail);
-                if (items.size() == count) {
-                    return items;
+        // get the page of item flags
+        result.page = Lists.newArrayList(Iterables.transform(_itemFlagRepo.loadFlags(start, count),
+            new Function<ItemFlagRecord, ItemFlag>() {
+                public ItemFlag apply (ItemFlagRecord rec) {
+                    return rec.toItemFlag();
                 }
+            }));
+
+        // collect all ids by type that we require
+        Map<Byte, Set<Integer>> itemsToLoad = Maps.newHashMap();
+        for (ItemFlag flag : result.page) {
+            Set<Integer> itemIds = itemsToLoad.get(flag.itemIdent.type);
+            if (itemIds == null) {
+                itemsToLoad.put(flag.itemIdent.type, itemIds = Sets.newHashSet());
+            }
+            itemIds.add(flag.itemIdent.itemId);
+        }
+
+        // load items and stash by ident, also grab the creator id
+        result.items = Maps.newHashMap();
+        Set<Integer> memberIds = Sets.newHashSet();
+        for (Map.Entry<Byte, Set<Integer>> ee : itemsToLoad.entrySet()) {
+            for (ItemRecord rec : _itemLogic.getRepository(ee.getKey()).loadItems(ee.getValue())) {
+                ItemDetail detail = new ItemDetail();
+                detail.item = rec.toItem();
+                result.items.put(detail.item.getIdent(), detail);
+                memberIds.add(detail.item.creatorId);
             }
         }
-        return items;
+
+        // now add all the reporters
+        for (ItemFlag flag : result.page) {
+            memberIds.add(flag.memberId);
+        }
+
+        // resolve and store names for display
+        result.memberNames = Maps.newHashMap();
+        result.memberNames.putAll(_memberRepo.loadMemberNames(memberIds));
+
+        // backfill the creator names
+        for (ItemDetail detail : result.items.values()) {
+            detail.creator = result.memberNames.get(detail.item.creatorId);
+        }
+
+        return result;
     }
 
     // from interface AdminService
@@ -350,10 +384,11 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         // finally delete the actual item
-        // TODO: this does not seem to delete the original upload from the creator's inventory,
-        // allowing the item to still be used by the creator and immediately put back in the shop
         repo.deleteItem(item.itemId);
         result.deletionCount ++;
+
+        // get rid of the flags
+        _itemFlagRepo.removeItemFlags(item.getType(), item.itemId);
 
         // notify the owners of the deletion
         for (final int ownerId : owners) {
@@ -522,4 +557,5 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected PromotionRepository _promoRepo;
     @Inject protected ContestRepository _contestRepo;
     @Inject protected MsoyEventLogger _eventLogger;
+    @Inject protected ItemFlagRepository _itemFlagRepo;
 }

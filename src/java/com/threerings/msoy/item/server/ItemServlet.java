@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Tuple;
 
@@ -24,6 +26,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.Photo;
@@ -31,6 +34,8 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.ItemFlagRecord;
+import com.threerings.msoy.item.server.persist.ItemFlagRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRecord;
@@ -282,20 +287,39 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void setFlags (ItemIdent iident, byte mask, byte value)
+    public void addFlag (ItemIdent iitem, ItemFlag.Flag flag, String comment)
         throws ServiceException
     {
-        requireAuthedUser();
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
+        MemberRecord memrec = requireAuthedUser();
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iitem.type);
         // TODO: If things get really tight, this could use updatePartial() later.
-        ItemRecord item = repo.loadItem(iident.itemId);
+        ItemRecord item = repo.loadItem(iitem.itemId);
         if (item == null) {
-            log.warning("Missing item for setFlags() [item=" + iident + ", mask=" + mask +
-                        ", value=" + value + "].");
+            log.warning("Missing item for addFlag()", "flag", flag, "");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-        item.flagged = (byte) ((item.flagged & ~mask) | value);
-        repo.updateOriginalItem(item, false);
+
+        ItemFlagRecord frec = new ItemFlagRecord();
+        frec.comment = comment;
+        frec.flag = flag;
+        frec.memberId = memrec.memberId;
+        frec.itemType = iitem.type;
+        frec.itemId = iitem.itemId;
+        frec.timestamp = new Timestamp(System.currentTimeMillis());
+        try {
+            _itemFlagRepo.addFlag(frec);
+
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(ItemCodes.E_ITEM_ALREADY_FLAGGED);
+        }
+    }
+
+    // from ItemService
+    public void removeAllFlags (ItemIdent iitem)
+        throws ServiceException
+    {
+        requireSupportUser();
+        _itemFlagRepo.removeItemFlags(iitem.type, iitem.itemId);
     }
 
     // from ItemService interface
@@ -346,6 +370,7 @@ public class ItemServlet extends MsoyServiceServlet
     @Inject protected ItemLogic _itemLogic;
     @Inject protected StatLogic _statLogic;
     @Inject protected PhotoRepository _photoRepo;
+    @Inject protected ItemFlagRepository _itemFlagRepo;
 
     protected static final int MIN_SOLID_RATINGS = 20;
 }

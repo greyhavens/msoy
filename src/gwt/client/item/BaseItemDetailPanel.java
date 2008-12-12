@@ -20,6 +20,7 @@ import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -40,6 +41,7 @@ import client.ui.StyledTabPanel;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -127,19 +129,13 @@ public abstract class BaseItemDetailPanel extends SmartTable
             public void getTags (AsyncCallback<List<String>> callback) {
                 _itemsvc.getTags(_item.getIdent(), callback);
             }
-            public boolean supportFlags () {
-                return true;
-            }
-            public void setFlags (final byte flag) {
-                ItemIdent ident = new ItemIdent(_item.getType(), _item.getMasterId());
-                _itemsvc.setFlags(ident, flag, flag, new MsoyCallback<Void>() {
-                    public void onSuccess (Void result) {
-                        _item.flagged |= flag;
-                    }
-                });
-            }
             public void addMenuItems (String tag, PopupMenu menu) {
                 addTagMenuItems(tag, menu);
+            }
+        }, new TagDetailPanel.FlagService() {
+            public void addFlag (final ItemFlag.Flag flag) {
+                ItemIdent ident = new ItemIdent(_item.getType(), _item.getMasterId());
+                _itemsvc.addFlag(ident, flag, "", new NoopAsyncCallback());
             }
         }, detail.tags, true));
 

@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.web.gwt.TagHistory;
 
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.Photo;
@@ -52,9 +53,14 @@ public interface ItemServiceAsync
     void tagItem (ItemIdent item, String tag, boolean set, AsyncCallback<TagHistory> callback);
 
     /**
-     * The asynchronous version of {@link ItemService#setFlags}.
+     * The asynchronous version of {@link ItemService#addFlag}.
      */
-    void setFlags (ItemIdent item, byte mask, byte values, AsyncCallback<Void> callback);
+    void addFlag (ItemIdent item, ItemFlag.Flag flag, String comment, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link ItemService#removeAllFlags}.
+     */
+    void removeAllFlags (ItemIdent iitem, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#setMature}.
