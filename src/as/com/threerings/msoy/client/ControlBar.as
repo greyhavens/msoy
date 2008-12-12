@@ -59,18 +59,34 @@ public class ControlBar extends HBox
     public static const ALL_UI_GROUPS :Array = [ 
         UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ];
 
+    /** The chat preferences button. */
+    public var chatOptsBtn :CommandButton;
+
+    /** Handles volume adjustment. */
+    public var volBtn :CommandButton;
+
+    /** Handles full screening. */
+//    public var fullBtn :CommandButton;
+
+    /** Handles viewing game instructions. */
+    public var instructBtn :CommandButton;
+
+    /** Handles commenting on the current scene or game. */
+    public var commentBtn :CommandButton;
+
+    /** Handles bringing up a share dialog. */
+    public var shareBtn :CommandButton;
+
+    /** Indicates AVRG media loading and handles AVRG menu. */
+    public var avrgBtn :CommandButton;
+
+    /**
+     * Construct.
+     */
     public function ControlBar (ctx :MsoyContext)
     {
         _ctx = ctx;
         // the rest is in init()
-    }
-
-    /**
-     * Get the avrg button.
-     */
-    public function get avrgBtn () :CommandButton
-    {
-        return _avrgBtn;
     }
 
     public function init (top :TopPanel) :void
@@ -186,29 +202,29 @@ public class ControlBar extends HBox
      */
     protected function createControls () :void
     {
-        _chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
-        _chatOptsBtn.setCommand(WorldController.POP_CHANNEL_MENU, _chatOptsBtn);
+        chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
+        chatOptsBtn.setCommand(WorldController.POP_CHANNEL_MENU, chatOptsBtn);
 
-        _volBtn = createButton(getVolumeStyle(Prefs.getSoundVolume()), "i.volume");
-        _volBtn.setCallback(handlePopVolume);
+        volBtn = createButton(getVolumeStyle(Prefs.getSoundVolume()), "i.volume");
+        volBtn.setCallback(handlePopVolume);
 
-//        _fullBtn = createButton("controlBarButtonFull", "i.full");
-//        _fullBtn.setCallback(handleFullScreen);
+//        fullBtn = createButton("controlBarButtonFull", "i.full");
+//        fullBtn.setCallback(handleFullScreen);
 
-        _commentBtn = createButton("controlBarButtonComment", "i.comment");
-        _commentBtn.setCommand(MsoyController.VIEW_COMMENT_PAGE);
+        commentBtn = createButton("controlBarButtonComment", "i.comment");
+        commentBtn.setCommand(MsoyController.VIEW_COMMENT_PAGE);
 
-        _shareBtn = createButton("controlBarButtonShare", "i.share");
-        _shareBtn.toggle = true;
-        _shareBtn.setCallback(FloatingPanel.createPopper(function () :ShareDialog {
+        shareBtn = createButton("controlBarButtonShare", "i.share");
+        shareBtn.toggle = true;
+        shareBtn.setCallback(FloatingPanel.createPopper(function () :ShareDialog {
             return new ShareDialog(_ctx);
-        }, _shareBtn));
+        }, shareBtn));
 
-        _instructBtn = createButton("controlBarButtonInstructions", "i.instructions");
-        _instructBtn.setCommand(MsoyController.VIEW_GAME_INSTRUCTIONS);
+        instructBtn = createButton("controlBarButtonInstructions", "i.instructions");
+        instructBtn.setCommand(MsoyController.VIEW_GAME_INSTRUCTIONS);
 
-        _avrgBtn = createButton("controlBarAVRGButton", "i.avrg");
-        _avrgBtn.setCommand(WorldController.POP_AVRG_MENU, _avrgBtn);
+        avrgBtn = createButton("controlBarAVRGButton", "i.avrg");
+        avrgBtn.setCommand(WorldController.POP_AVRG_MENU, avrgBtn);
     }
 
     protected function createButton (style :String, tipKey :String) :CommandButton
@@ -249,29 +265,29 @@ public class ControlBar extends HBox
     protected function sortControls () :void
     {
         DisplayUtil.sortDisplayChildren(this, comparePriority);
-        DisplayUtil.sortDisplayChildren(_volBtn.parent, comparePriority);
+        DisplayUtil.sortDisplayChildren(volBtn.parent, comparePriority);
     }
 
     protected function addControls () :void
     {
         // add our standard control bar features
-        addControl(_chatOptsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
+        addControl(chatOptsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
         _chatControl = new ChatControl(_ctx, Msgs.GENERAL.get("b.chat_send"));
         _chatControl.chatInput.height = HEIGHT - 8;
         addControl(_chatControl, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
         addControl(_buttons, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], BUTTON_SECTION);
 
         // add buttons
-        addButton(_volBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], VOLUME_PRIORITY);
+        addButton(volBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], VOLUME_PRIORITY);
 //        if (DeploymentConfig.devDeployment) {
-//            addButton(_fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ],
+//            addButton(fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ],
 //                GLOBAL_PRIORITY);
 //        }
 
-        addButton(_instructBtn, [ UI_GAME ]);
-        addButton(_shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
-        addButton(_commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
-        addButton(_avrgBtn, [ UI_AVRGAME ], PLACE_PRIORITY + 1);
+        addButton(instructBtn, [ UI_GAME ]);
+        addButton(shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
+        addButton(commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
+        addButton(avrgBtn, [ UI_AVRGAME ], PLACE_PRIORITY + 1);
 
         if (_notificationDisplay != null) {
             addControl(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ],
@@ -361,14 +377,14 @@ public class ControlBar extends HBox
         var dfmt :Function = function (value :Number) :String {
             return Msgs.GENERAL.get("i.percent_fmt", ""+Math.floor(value*100));
         };
-        SliderPopup.toggle(_volBtn, Prefs.getSoundVolume(), updateVolume,
+        SliderPopup.toggle(volBtn, Prefs.getSoundVolume(), updateVolume,
             { styleName: "volumeSlider", tickValues: [ 0, 1 ], dataTipFormatFunction: dfmt });
     }
 
     protected function updateVolume (level :Number) :void
     {
         Prefs.setSoundVolume(level);
-        _volBtn.styleName = getVolumeStyle(level);
+        volBtn.styleName = getVolumeStyle(level);
     }
 
 //    protected function handleFullScreen () :void
@@ -378,7 +394,7 @@ public class ControlBar extends HBox
 //                ? StageDisplayState.FULL_SCREEN
 //                : StageDisplayState.NORMAL;
 //        } catch (se :SecurityError) {
-//            _fullBtn.enabled = false;
+//            fullBtn.enabled = false;
 //        }
 //    }
 
@@ -408,32 +424,11 @@ public class ControlBar extends HBox
     /** Button priority levels. */
     protected var _priorities :Dictionary = new Dictionary(true);
 
-    /** Holds the 22x22 button area. */
-    protected var _buttons :ButtonPalette;
-
     /** Our chat control. */
     protected var _chatControl :ChatControl;
 
-    /** The chat preferences button. */
-    protected var _chatOptsBtn :CommandButton;
-
-    /** Handles volume adjustment. */
-    protected var _volBtn :CommandButton;
-
-    /** Handles full screening. */
-//    protected var _fullBtn :CommandButton;
-
-    /** Handles viewing game instructions. */
-    protected var _instructBtn :CommandButton;
-
-    /** Handles commenting on the current scene or game. */
-    protected var _commentBtn :CommandButton;
-
-    /** Handles bringing up a share dialog. */
-    protected var _shareBtn :CommandButton;
-
-    /** Indicates AVRG media loading and handles AVRG menu. */
-    protected var _avrgBtn :CommandButton;
+    /** Holds the 22x22 button area. */
+    protected var _buttons :ButtonPalette;
 
     /** Displays incoming notifications. */
     protected var _notificationDisplay :NotificationDisplay;

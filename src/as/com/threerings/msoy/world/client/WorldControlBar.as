@@ -29,42 +29,37 @@ import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
  */
 public class WorldControlBar extends ControlBar
 {
+    /** Handles room zooming. */
+    public var zoomBtn :CommandButton;
+
+    /** Button for editing the current scene. */
+    public var roomEditBtn :CommandButton;
+
+    /** Hovering over this shows clickable components. */
+    public var hotZoneBtn :CommandButton;
+
+    /** Button to display info about the currently playing music. */
+    public var musicBtn :CommandButton;
+
+    /** Button for room snapshots. */
+    public var snapBtn :CommandButton;
+
+    /** A button for popping up the friends list. */
+    public var friendsBtn :CommandButton;
+
+    /** Brings up the recent places grid. */
+    public var homePageGridBtn :CommandButton;
+
+   /** Handles the two party-related popups. */
+    public var partyBtn :CommandButton;
+
+    /**
+     * Constructor.
+     */
     public function WorldControlBar (ctx :WorldContext)
     {
         super(ctx);
         _wctx = ctx;
-    }
-
-    /**
-     * This is needed by the room controller, so that it can enable/disable the edit button.
-     */
-    public function get roomEditBtn () :CommandButton
-    {
-        return _roomeditBtn;
-    }
-
-    /**
-     * This is needed by the world controller, so that it can make sure the grid is popped up
-     * when the user enters their home.
-     */
-    public function get homePageGridBtn () :CommandButton
-    {
-        return _homePageGridBtn;
-    }
-
-    public function get friendsBtn () :CommandButton
-    {
-        return _friendsBtn;
-    }
-
-    public function get partyBtn () :CommandButton
-    {
-        return _partyBtn;
-    }
-
-    public function get hotZoneBtn () :CommandButton
-    {
-        return _hotZoneBtn;
     }
 
     /**
@@ -74,34 +69,26 @@ public class WorldControlBar extends ControlBar
     public function showShareButtonBubble () :void
     {
         // top center of the button (w/ vertical offset to clear the control bar)
-        var gloc :Point = _shareBtn.localToGlobal(new Point(_shareBtn.width / 2, -7));
+        var gloc :Point = shareBtn.localToGlobal(new Point(shareBtn.width / 2, -7));
         BubblePopup.showHelpBubble(_ctx.getTopPanel().getPlaceContainer(),
             Msgs.WORLD.get("h.room_share"), gloc);
     }
 
-    /**
-     * This is needed by the room controller, so that it can properly know how to hover.
-     */
-    public function get hoverAll () :Boolean
-    {
-        return _hotZoneBtn.selected;
-    }
-
     public function enableZoomControl (enabled :Boolean ) :void
     {
-        _zoomBtn.enabled = enabled;
-        _zoomBtn.toolTip = Msgs.GENERAL.get(enabled ? "i.zoom" : "i.zoom_disabled");
+        zoomBtn.enabled = enabled;
+        zoomBtn.toolTip = Msgs.GENERAL.get(enabled ? "i.zoom" : "i.zoom_disabled");
         updateZoomButton();
     }
 
     public function setMusicPlaying (playing :Boolean) :void
     {
         // pop down the dialog if no more music...
-        if (!playing && _musicBtn.selected) {
-            _musicBtn.activate();
+        if (!playing && musicBtn.selected) {
+            musicBtn.activate();
         }
 
-        FlexUtil.setVisible(_musicBtn, playing);
+        FlexUtil.setVisible(musicBtn, playing);
         _buttons.recheckButtons();
     }
 
@@ -110,49 +97,49 @@ public class WorldControlBar extends ControlBar
     {
         super.createControls();
 
-        _musicBtn = createButton("controlBarButtonMusic", "i.music");
-        _musicBtn.toggle = true;
-        FlexUtil.setVisible(_musicBtn, false);
-        _musicBtn.setCallback(FloatingPanel.createPopper(function () :MusicDialog {
-            return new MusicDialog(_wctx, _musicBtn.localToGlobal(new Point()));
-        }, _musicBtn));
+        musicBtn = createButton("controlBarButtonMusic", "i.music");
+        musicBtn.toggle = true;
+        FlexUtil.setVisible(musicBtn, false);
+        musicBtn.setCallback(FloatingPanel.createPopper(function () :MusicDialog {
+            return new MusicDialog(_wctx, musicBtn.localToGlobal(new Point()));
+        }, musicBtn));
 
-        _roomeditBtn = createButton("controlBarButtonEdit", "i.editScene");
-        _roomeditBtn.setCommand(WorldController.ROOM_EDIT);
-        _roomeditBtn.enabled = false;
+        roomEditBtn = createButton("controlBarButtonEdit", "i.editScene");
+        roomEditBtn.setCommand(WorldController.ROOM_EDIT);
+        roomEditBtn.enabled = false;
 
-        _zoomBtn = createButton("controlBarButtonZoom", "i.zoom");
-        _zoomBtn.setCallback(handleToggleZoom);
+        zoomBtn = createButton("controlBarButtonZoom", "i.zoom");
+        zoomBtn.setCallback(handleToggleZoom);
 
-        _hotZoneBtn = createButton("controlBarHoverZone", "i.hover");
-        _hotZoneBtn.toggle = true;
-        _hotZoneBtn.setCallback(updateHot);
-        _hotZoneBtn.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
-        _hotZoneBtn.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
+        hotZoneBtn = createButton("controlBarHoverZone", "i.hover");
+        hotZoneBtn.toggle = true;
+        hotZoneBtn.setCallback(updateHot);
+        hotZoneBtn.addEventListener(MouseEvent.ROLL_OVER, hotHandler);
+        hotZoneBtn.addEventListener(MouseEvent.ROLL_OUT, hotHandler);
 
-        _snapBtn = createButton("controlBarButtonSnapshot", "i.snapshot");
-        _snapBtn.toggle = true;
-        _snapBtn.setCallback(FloatingPanel.createPopper(function () :SnapshotPanel {
+        snapBtn = createButton("controlBarButtonSnapshot", "i.snapshot");
+        snapBtn.toggle = true;
+        snapBtn.setCallback(FloatingPanel.createPopper(function () :SnapshotPanel {
             return new SnapshotPanel(_wctx);
-        }, _snapBtn));
+        }, snapBtn));
 
-        _friendsBtn = createButton("controlBarFriendButton", "i.friends");
-        _friendsBtn.toggle = true;
-        _friendsBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+        friendsBtn = createButton("controlBarFriendButton", "i.friends");
+        friendsBtn.toggle = true;
+        friendsBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return new FriendsListPanel(_wctx);
-        }, _friendsBtn));
+        }, friendsBtn));
 
-        _homePageGridBtn = createButton("controlBarHomePageGridButton", "i.homePageGrid");
-        _homePageGridBtn.toggle = true;
-        _homePageGridBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+        homePageGridBtn = createButton("controlBarHomePageGridButton", "i.homePageGrid");
+        homePageGridBtn.toggle = true;
+        homePageGridBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return new HomePageDialog(_wctx);
-        }, _homePageGridBtn));
+        }, homePageGridBtn));
 
-        _partyBtn = createButton("controlBarPartyButton", "i.party");
-        _partyBtn.toggle = true;
-        _partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+        partyBtn = createButton("controlBarPartyButton", "i.party");
+        partyBtn.toggle = true;
+        partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return _wctx.getPartyDirector().createAppropriatePartyPanel();
-        }, _partyBtn));
+        }, partyBtn));
     }
 
     // from ControlBar
@@ -160,18 +147,18 @@ public class WorldControlBar extends ControlBar
     {
         super.addControls(); 
 
-        addButton(_musicBtn, [ UI_ROOM, UI_AVRGAME ], VOLUME_PRIORITY);
-        addButton(_homePageGridBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
-        addButton(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
+        addButton(musicBtn, [ UI_ROOM, UI_AVRGAME ], VOLUME_PRIORITY);
+        addButton(homePageGridBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
+        addButton(friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
 
-        addButton(_hotZoneBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
-        addButton(_zoomBtn, [ UI_ROOM, UI_VIEWER, UI_AVRGAME ], PLACE_PRIORITY);
+        addButton(hotZoneBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
+        addButton(zoomBtn, [ UI_ROOM, UI_VIEWER, UI_AVRGAME ], PLACE_PRIORITY);
 
-        addButton(_snapBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
-        addButton(_roomeditBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
+        addButton(snapBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
+        addButton(roomEditBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
 
         if (DeploymentConfig.devDeployment) {
-            addButton(_partyBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY + 1);
+            addButton(partyBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY + 1);
         }
     }
 
@@ -192,7 +179,7 @@ public class WorldControlBar extends ControlBar
 
     protected function updateZoomButton () :void
     {
-        _zoomBtn.selected = (getZoom() == 0);
+        zoomBtn.selected = (getZoom() == 0);
     }
 
     protected function getZoom () :Number
@@ -227,7 +214,7 @@ public class WorldControlBar extends ControlBar
 
     protected function hotHandler (event :MouseEvent) :void
     {
-        if (!_hotZoneBtn.selected) {
+        if (!hotZoneBtn.selected) {
             updateHot(event.type == MouseEvent.ROLL_OVER);
         }
     }
@@ -235,30 +222,6 @@ public class WorldControlBar extends ControlBar
     /** Our context, cast as a WorldContext. */
     protected var _wctx :WorldContext;
 
-    /** Handles room zooming. */
-    protected var _zoomBtn :CommandButton;
-
-    /** Button for editing the current scene. */
-    protected var _roomeditBtn :CommandButton;
-
-    /** Hovering over this shows clickable components. */
-    protected var _hotZoneBtn :CommandButton;
-
     protected var _hotOn :Boolean;
-
-    /** Button to display info about the currently playing music. */
-    protected var _musicBtn :CommandButton;
-
-    /** Button for room snapshots. */
-    protected var _snapBtn :CommandButton;
-
-    /** A button for popping up the friends list. */
-    protected var _friendsBtn :CommandButton;
-
-    /** Brings up the recent places grid. */
-    protected var _homePageGridBtn :CommandButton;
-
-   /** Handles the two party-related popups. */
-    protected var _partyBtn :CommandButton;
 }
 }

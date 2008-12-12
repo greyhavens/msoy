@@ -537,7 +537,7 @@ public class RoomController extends SceneController
     protected function setHoverSprite (
         sprite :MsoySprite, stageX :Number = NaN, stageY :Number = NaN) :void
     {
-        if (sprite is FurniSprite && WorldControlBar(_wdctx.getControlBar()).hoverAll) {
+        if (sprite is FurniSprite && WorldControlBar(_wdctx.getControlBar()).hotZoneBtn.selected) {
             return; // not right now, they're all hovered
         }
 

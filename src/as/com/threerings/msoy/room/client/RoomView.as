@@ -926,7 +926,7 @@ public class RoomView extends Sprite
     }
 //  This belongs with the above... somehow: but layout timing booches it
 //        if (sprite is FurniSprite &&
-//                (WorldControlBar(_ctx.getControlBar()).hoverAll)) {
+//                (WorldControlBar(_ctx.getControlBar()).hotZonBtn.selected)) {
 //            doGlobalHover(FurniSprite(sprite), true);
 //        }
 
