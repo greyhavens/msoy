@@ -87,6 +87,8 @@ public class PartyDirector extends BasicDirector
             menuItems.push({ type: "separator" });
             menuItems.push({ label: Msgs.PARTY.get("b.boot"),
                              callback: bootMember, arg: peep.name.getMemberId() });
+            menuItems.push({ label: Msgs.PARTY.get("b.assign_leader"),
+                             callback: assignLeader, arg: peep.name.getMemberId() });
         }
 
         CommandMenu.createMenu(menuItems, _wctx.getTopPanel()).popUpAtMouse();
