@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Board,com.whirled.contrib.platformer.board.Board,ACTORS,ACTOR_ADDED,BOTTOM_BOUND,DYNAMIC_ADDED,DYNAMIC_REMOVED,GENERICS,GROUP_ADDED,ITEM_BACK,ITEM_DOWN,ITEM_FORWARD,ITEM_REMOVED,ITEM_UP,ITEM_UPDATED,LEFT_BOUND,PIECE_ADDED,PIECE_LOADED,PIECE_REMOVED,PLATFORMS,RIGHT_BOUND,SHOT_ADDED,SPAWNERS,TOP_BOUND,_actors,_bound,_dynamicIns,_dynamics,_globalDynamicIns,_groupNames,_listeners,_maxId,_name,_pieceTree,_shotId,_shots,_xml,addActor,addDynamic,addDynamicIns,addEventListener,addOrReplaceXML,addPiece,addPieceGroup,addShot,adjustMaxId,boardHas,flipPiece,genDynamicsXML,genPieceTreeXML,getActor,getActors,getBackgroundXML,getBound,getDynamic,getDynamicIns,getDynamicInsById,getDynamics,getDynamicsXML,getEventXML,getGroup,getGroupNames,getItem,getMaxId,getName,getPieceTreeXML,getPieces,getXML,hasActor,hasDynamic,isItem,loadCoords,loadDynamic,loadDynamics,loadFromXML,loadPieceTree,moveItemBack,moveItemDown,moveItemForward,moveItemUp,removeDynamic,removeEventListener,removeItem,reserveId,sendEvent,setBound,setDynamicIns,setName,updateDynamicIns,updatePiece" name="keywords">
+<meta content="Board,com.whirled.contrib.platformer.board.Board,ACTORS,ACTOR_ADDED,BOTTOM_BOUND,DEBUG,DYNAMIC_ADDED,DYNAMIC_REMOVED,GENERICS,GROUP_ADDED,ITEM_BACK,ITEM_DOWN,ITEM_FORWARD,ITEM_REMOVED,ITEM_UP,ITEM_UPDATED,LEFT_BOUND,PIECE_ADDED,PIECE_LOADED,PIECE_REMOVED,PLATFORMS,RIGHT_BOUND,SHOT_ADDED,SPAWNERS,TOP_BOUND,_actors,_bound,_dynamicIns,_dynamics,_globalDynamicIns,_groupNames,_listeners,_maxId,_name,_pieceTree,_shotId,_shots,_xml,addActor,addDynamic,addDynamicIns,addEventListener,addOrReplaceXML,addPiece,addPieceGroup,addShot,adjustMaxId,boardHas,debug,flipPiece,genDynamicsXML,genPieceTreeXML,getActor,getActors,getBackgroundXML,getBound,getDynamic,getDynamicIns,getDynamicInsById,getDynamics,getDynamicsXML,getEventXML,getGroup,getGroupNames,getItem,getMaxId,getName,getPieceTreeXML,getPieces,getXML,hasActor,hasDynamic,isItem,loadCoords,loadDynamic,loadDynamics,loadFromXML,loadPieceTree,moveItemBack,moveItemDown,moveItemForward,moveItemUp,removeDynamic,removeEventListener,removeItem,reserveId,sendEvent,setBound,setDynamicIns,setName,updateDynamicIns,updatePiece" name="keywords">
 <title>com.whirled.contrib.platformer.board.Board</title>
 </head>
 <body>
@@ -443,6 +443,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#debug()">debug</a>(msg:String):void</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Board</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#genDynamicsXML()">genDynamicsXML</a>(dynamics:Object, nodename:String):XML</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
@@ -522,6 +529,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#BOTTOM_BOUND">BOTTOM_BOUND</a> : int = 2<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Board</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DEBUG">DEBUG</a> : Boolean = false<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
 <tr class="">
@@ -917,6 +928,20 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="debug()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">debug</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function debug(msg:String):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">msg</span>:String</code></td>
 </tr>
 </table>
 </div>
@@ -1784,6 +1809,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const BOTTOM_BOUND:int = 2</code>
+</div>
+<a name="DEBUG"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">DEBUG</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const DEBUG:Boolean = false</code>
 </div>
 <a name="DYNAMIC_ADDED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

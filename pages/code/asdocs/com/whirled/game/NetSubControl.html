@@ -51,7 +51,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
  a property it is immediately distributed to the other clients in the game. Reading a property
  is immediate, you are reading the properties that have already been distributed. When a client
  connects to an already-running game, any properties already set will be available.
+  Neessages can be sent by either a server agent or a client at a maximum rate of 10 messages per
+ second.  Messages sent at a greater rate will be buffered until sending them will not cause this
+ limit to be  exceeded.  A message sent to all players counts as a single message against this
+ limit.  Changing a property value also counts as sending a single message.
+ 
+ The doBatch method can be used to combine a number of otherwise unrelated messages or property 
+ changes into a single unit so that they count only once against the limit.  
  <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/NetSubControl.html#doBatch" target="">doBatch</a>
+</div>
 <br>
 <hr>
 </div>

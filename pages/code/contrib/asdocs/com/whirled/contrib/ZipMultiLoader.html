@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="ZipMultiLoader,com.whirled.contrib.ZipMultiLoader,_appDom,_completeCallback,loaderLoaded" name="keywords">
+<meta content="ZipMultiLoader,com.whirled.contrib.ZipMultiLoader,_appDom,_completeCallback,_loader,loaderLoaded" name="keywords">
 <title>com.whirled.contrib.ZipMultiLoader</title>
 </head>
 <body>
@@ -37,6 +37,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr>
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class ZipMultiLoader</td>
 </tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">ZipMultiLoader <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+</tr>
 </table>
 <p></p>
  Utility class for MultiLoading all the files contained in a zip.
@@ -57,6 +60,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_completeCallback">_completeCallback</a> : Function<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ZipMultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_loader">_loader</a> : URLLoader<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ZipMultiLoader</td>
 </tr>
 </table>
@@ -118,6 +125,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _completeCallback:Function</code>
+</div>
+<a name="_loader"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_loader</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _loader:URLLoader</code>
 </div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
