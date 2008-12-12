@@ -11,7 +11,6 @@ import mx.containers.Box;
 import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.controls.ComboBox;
 import mx.controls.HRule;
 import mx.controls.Label;
 import mx.controls.Text;
@@ -20,6 +19,7 @@ import mx.core.UIComponent;
 import mx.events.ListEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
@@ -226,14 +226,6 @@ public class RoomEditorPanel extends FlyingPanel
         selectInNameList(null);
     }
     
-    /** Handler for dealing with changes in the name selection box. */
-    protected function nameListChanged (event :ListEvent) :void
-    {
-        if (_namebox.selectedItem != null) {
-            _controller.findAndSetTarget(_namebox.selectedItem.data);
-        }
-    }
-
     /** See if we should display the custom panel button for the specified furni. */
     protected function checkCustomPanel () :void
     {
@@ -323,12 +315,11 @@ public class RoomEditorPanel extends FlyingPanel
         box.percentWidth = 100;
         GridUtil.addRow(contents, box, [3, 1]);
         
-        _namebox = new ComboBox();
+        _namebox = new CommandComboBox(_controller.findAndSetTarget);
         _namebox.percentWidth = 100;
         _namebox.maxWidth = 300;
         _namebox.prompt = Msgs.EDITING.get("l.select_item");
         _namebox.toolTip = Msgs.EDITING.get("i.namebox_tip");
-        _namebox.addEventListener(ListEvent.CHANGE, nameListChanged);
         box.addChild(_namebox);
 
         var spacer :VBox = new VBox();
@@ -550,7 +541,7 @@ public class RoomEditorPanel extends FlyingPanel
     protected var _genericIcons :Box;
     
     protected var _room :RoomPanel;
-    protected var _namebox :ComboBox;
+    protected var _namebox :CommandComboBox;
     protected var _controller :RoomEditorController;
 }
 }

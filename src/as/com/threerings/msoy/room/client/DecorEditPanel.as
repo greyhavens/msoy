@@ -11,7 +11,6 @@ import flash.geom.Rectangle;
 
 import mx.binding.utils.BindingUtils;
 
-import mx.controls.ComboBox;
 import mx.controls.VSlider;
 import mx.containers.Grid;
 import mx.core.UIComponent;
@@ -24,6 +23,7 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flash.MediaContainer;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
@@ -181,13 +181,12 @@ public class DecorEditPanel extends FlyingPanel
     {
         super.createChildren();
 
-        _roomType = new ComboBox();
+        _roomType = new CommandComboBox(saveChanges);
         var types :Array = [];
         for (var ii :int = 0; ii < ROOM_KEYS.length; ii++) {
             types[ii] = { label: Msgs.STUDIO.get(ROOM_KEYS[ii]) };
         }
         _roomType.dataProvider = types;
-        _roomType.addEventListener(Event.CHANGE, saveChanges);
 
         _actorScale = new VSlider();
         _actorScale.liveDragging = true;
@@ -344,7 +343,7 @@ public class DecorEditPanel extends FlyingPanel
     protected const ROOM_KEYS :Array =
         [ "m.room_normal", "m.room_no_walls", "m.room_flat", "m.room_topdown" ];
 
-    protected var _roomType :ComboBox;
+    protected var _roomType :CommandComboBox;
     protected var _actorScale :VSlider;
     protected var _furniScale :VSlider;
     protected var _horizon :VSlider;

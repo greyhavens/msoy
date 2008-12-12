@@ -6,7 +6,6 @@ package com.threerings.msoy.applets.image {
 import flash.media.Camera;
 
 import mx.controls.ButtonBar;
-import mx.controls.ComboBox;
 
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
@@ -21,6 +20,7 @@ import mx.managers.PopUpManager;
 import com.threerings.flash.CameraSnapshotter;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexWrapper;
 
 public class CameraSnapshotControl extends TitleWindow
@@ -40,19 +40,17 @@ public class CameraSnapshotControl extends TitleWindow
         _wrapper = new FlexWrapper(_snapper);
         box.addChild(_wrapper);
 
-        var sources :ComboBox = new ComboBox();
+        var sources :ComboBox = new CommandComboBox(handleCameraChange, null);
         sources.prompt = ctx.IMAGE.get("p.cam_src");
         sources.dataProvider = Camera.names;
         sources.selectedItem = _snapper.getCameraName();
-        sources.addEventListener(ListEvent.CHANGE, handleCameraChange);
 
-        _sizes = new ComboBox();
+        _sizes = new CommandComboBox(updateCameraSize);
         _sizes.dataProvider = [
             { label: "160x120", data: [ 160, 120 ] },
             { label: "320x240", data: [ 320, 240 ] },
             { label: "640x480", data: [ 640, 480 ] } ];
         _sizes.selectedIndex = 1; // default to 320x240
-        _sizes.addEventListener(ListEvent.CHANGE, updateCameraSize);
 
         var hbox :HBox = new HBox();
         hbox.addChild(sources);
@@ -68,20 +66,18 @@ public class CameraSnapshotControl extends TitleWindow
         box.addChild(bar);
 
         PopUpManager.addPopUp(this, parent, true);
-        updateCameraSize();
+        updateCameraSize(_sizes.selectedItem.data);
     }
 
-    protected function handleCameraChange (event :ListEvent) :void
+    protected function handleCameraChange (selectedItem :Object) :void
     {
-        _snapper.setCameraName(ComboBox(event.target).selectedItem as String);
-        updateCameraSize();
+        _snapper.setCameraName(selectedItem as String);
+        updateCameraSize(_sizes.selectedItem.data);
     }
 
-    protected function updateCameraSize (... ignored) :void
+    protected function updateCameraSize (size :Array) :void
     {
-        var obj :Object = _sizes.selectedItem;
-
-        _snapper.setMode(int(obj.data[0]), int(obj.data[1]), 15);
+        _snapper.setMode(int(size[0]), int(size[1]), 15);
         _wrapper.width = _snapper.width;
         _wrapper.height = _snapper.height;
         PopUpManager.centerPopUp(this);

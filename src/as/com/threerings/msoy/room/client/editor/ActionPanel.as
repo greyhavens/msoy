@@ -11,7 +11,6 @@ import mx.containers.Grid;
 import mx.containers.VBox;
 import mx.containers.ViewStack;
 import mx.controls.CheckBox;
-import mx.controls.ComboBox;
 import mx.controls.TextInput;
 import mx.core.UIComponent;
 import mx.events.FlexEvent;
@@ -20,6 +19,7 @@ import mx.events.ListEvent;
 import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.GridUtil;
 import com.threerings.flex.FlexUtil;
 import com.threerings.msoy.client.Msgs;
@@ -94,9 +94,8 @@ public class ActionPanel extends BasePanel
         addChild(grid);
 
         // this combo box will let the user pick a type
-        _actionTypeSelection = new ComboBox();
+        _actionTypeSelection = new CommandComboBox(applyHandler);
         _actionTypeSelection.dataProvider = entries;
-        _actionTypeSelection.addEventListener(ListEvent.CHANGE, applyHandler);
 
         // and this will be displayed instead of the drop-down box if the user can't edit it
         _readOnlyActionLabel = new TextInput();
@@ -416,7 +415,7 @@ public class ActionPanel extends BasePanel
 
     protected var _comboEntries :Array = new Array();
     protected var _readOnlyActionLabel :TextInput;
-    protected var _actionTypeSelection :ComboBox;
+    protected var _actionTypeSelection :CommandComboBox;
     protected var _actionPanels :ViewStack;
     protected var _ignoreMouse :CheckBox;
     protected var _url :TextInput;
