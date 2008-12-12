@@ -40,4 +40,17 @@ public interface MsgsImages extends ImageBundle
 
     @Resource("sendmail.png")
     AbstractImagePrototype sendmail ();
+
+    @Resource("thdown_default.png")
+    AbstractImagePrototype thumb_down_default();
+
+    @Resource("thup_default.png")
+    AbstractImagePrototype thumb_up_default();
+
+    @Resource("thdown_over.png")
+    AbstractImagePrototype thumb_down_over();
+
+    @Resource("thup_over.png")
+    AbstractImagePrototype thumb_up_over();
+
 }
