@@ -12,6 +12,12 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
 
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ConfirmAdapter;
+import com.threerings.presents.client.InvocationAdapter;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
+import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.dobj.DObjectManager;
 
 import com.threerings.crowd.client.LocationDirector;
@@ -131,6 +137,36 @@ public /*abstract*/ class MsoyContext
     public function getPartner () :String
     {
         return MsoyParameters.get()["partner"];
+    }
+
+    public function listener (
+        bundle :String = null, errWrap :String = null, ... logArgs)
+        :InvocationService_InvocationListener
+    {
+        logArgs.unshift(bundle, errWrap);
+        return new InvocationAdapter(chatErrHandler.apply(null, logArgs));
+    }
+
+    public function confirmListener (
+        confirm :* = null, bundle :String = null, errWrap :String = null, ... logArgs)
+        :InvocationService_ConfirmListener
+    {
+        var success :Function = confirm as Function; // turns to null if not
+        if (confirm is String) {
+            success = function () :void {
+                displayFeedback(bundle, String(confirm));
+            };
+        }
+        logArgs.unshift(bundle, errWrap);
+        return new ConfirmAdapter(success, chatErrHandler.apply(null, logArgs));
+    }
+
+    public function resultListener (
+        success :Function, bundle :String = null, errWrap :String = null, ... logArgs)
+        :InvocationService_ResultListener
+    {
+        logArgs.unshift(bundle, errWrap);
+        return new ResultAdapter(success, chatErrHandler.apply(null, logArgs));
     }
 
     /**

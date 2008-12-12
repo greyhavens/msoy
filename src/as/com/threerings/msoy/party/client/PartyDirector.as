@@ -8,8 +8,6 @@ import com.threerings.util.Log;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -28,8 +26,6 @@ import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
@@ -102,7 +98,7 @@ public class PartyDirector extends BasicDirector
     public function getPartyBoard (resultHandler :Function, query :String = null) :void
     {
         _pbsvc.getPartyBoard(_wctx.getClient(), query,
-            new ResultAdapter(resultHandler, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+            _wctx.resultListener(resultHandler, MsoyCodes.PARTY_MSGS));
     }
 
     /**
@@ -111,7 +107,7 @@ public class PartyDirector extends BasicDirector
     public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void
     {
         _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends,
-            new ResultAdapter(visitPartyScene, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+            _wctx.resultListener(visitPartyScene, MsoyCodes.PARTY_MSGS));
     }
 
     /**
@@ -120,7 +116,7 @@ public class PartyDirector extends BasicDirector
     public function joinParty (id :int) :void
     {
         _pbsvc.joinParty(_wctx.getClient(), id,
-            new ResultAdapter(handleJoinParty, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+            _wctx.resultListener(handleJoinParty, MsoyCodes.PARTY_MSGS));
     }
 
     /**
@@ -135,25 +131,25 @@ public class PartyDirector extends BasicDirector
             return;
         }
         _partyObj.partyService.leaveParty(_wctx.getClient(),
-            new ConfirmAdapter(handleLeaveParty, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+            _wctx.confirmListener(handleLeaveParty, MsoyCodes.PARTY_MSGS));
     }
 
     public function assignLeader (memberId :int) :void
     {
         _partyObj.partyService.assignLeader(_wctx.getClient(), memberId,
-            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
+            _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function updateNameOrStatus (s :String, name :Boolean) :void
     {
         _partyObj.partyService.updateNameOrStatus(_wctx.getClient(), s, name,
-            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
+            _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function updateRecruiting (recruiting :int) :void
     {
         _partyObj.partyService.updateRecruiting(_wctx.getClient(), recruiting,
-            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
+            _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     /**
@@ -162,13 +158,13 @@ public class PartyDirector extends BasicDirector
     public function bootMember (memberId :int) :void
     {
         _partyObj.partyService.bootMember(_wctx.getClient(), memberId,
-            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
+            _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     public function inviteMember (memberId :int) :void
     {
         _partyObj.partyService.inviteMember(_wctx.getClient(), memberId,
-            new ReportingListener(_wctx, MsoyCodes.PARTY_MSGS));
+            _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
     override public function clientDidLogoff (event :ClientEvent) :void
@@ -188,7 +184,7 @@ public class PartyDirector extends BasicDirector
         if (partyId != 0 && (_partyObj == null)) {
             log.debug("requested locateMyParty");
             _pbsvc.locateMyParty(_ctx.getClient(),
-                new ResultAdapter(handleLocateParty, _wctx.chatErrHandler(MsoyCodes.PARTY_MSGS)));
+                _wctx.resultListener(handleLocateParty, MsoyCodes.PARTY_MSGS));
         }
     }
 
