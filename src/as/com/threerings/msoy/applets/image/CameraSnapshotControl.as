@@ -40,7 +40,7 @@ public class CameraSnapshotControl extends TitleWindow
         _wrapper = new FlexWrapper(_snapper);
         box.addChild(_wrapper);
 
-        var sources :ComboBox = new CommandComboBox(handleCameraChange, null);
+        var sources :CommandComboBox = new CommandComboBox(handleCameraChange, null);
         sources.prompt = ctx.IMAGE.get("p.cam_src");
         sources.dataProvider = Camera.names;
         sources.selectedItem = _snapper.getCameraName();
@@ -126,6 +126,6 @@ public class CameraSnapshotControl extends TitleWindow
     protected var _snap :CommandButton;
     protected var _cancel :CommandButton;
 
-    protected var _sizes :ComboBox;
+    protected var _sizes :CommandComboBox;
 }
 }
