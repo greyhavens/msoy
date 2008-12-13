@@ -78,6 +78,14 @@ public class MedalRecord extends PersistentRecord
         }
     };
 
+    /** Converts a persistent record into an Integer representing the medal id */
+    public static final Function<MedalRecord, Integer> TO_MEDAL_ID =
+        new Function<MedalRecord, Integer>() {
+            public Integer apply (MedalRecord record) {
+                return record.medalId;
+            }
+        };
+
     /** The unique id of this medal */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int medalId;

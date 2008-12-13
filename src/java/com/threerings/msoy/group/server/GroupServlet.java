@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -10,9 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -22,6 +25,7 @@ import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -29,10 +33,12 @@ import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
@@ -60,6 +66,7 @@ import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.MyGroupCard;
+import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -565,13 +572,65 @@ public class GroupServlet extends MsoyServiceServlet
         _medalRepo.storeMedal(medalRec);
     }
 
-    public GroupService.MedalsResult getMedals (int groupId)
+    // from interface GroupService
+    public GroupService.MedalsResult getAwardedMedals (int groupId)
     {
         GroupService.MedalsResult result = new GroupService.MedalsResult();
         result.groupName = _groupRepo.loadGroupName(groupId);
-        result.medals = Lists.newArrayList(
-            Lists.transform(_medalRepo.loadGroupMedals(groupId), MedalRecord.TO_MEDAL));
+        result.medals = Maps.newHashMap();
+
+        // we could do a Join to accomplish a similar result, but we need to make sure we return
+        // Medals that have not been earned by anybody yet, so we need to first grab the full set
+        // of available medals
+        List<MedalRecord> groupMedals = _medalRepo.loadGroupMedals(groupId);
+        for (MedalRecord medalRec : groupMedals) {
+            // Apparently Lists.newArrayList() can't determine the type from a new list being put
+            // into a typed Map...
+            result.medals.put(medalRec.toMedal(), new ArrayList<VizMemberName>());
+        }
+        List<EarnedMedalRecord> earnedMedals = _medalRepo.loadEarnedMedals(
+            Lists.transform(groupMedals, MedalRecord.TO_MEDAL_ID));
+        // go through a couple of transformations and a db query to get VizMemberNames for each
+        // member.
+        List<Integer> memberIds = Lists.transform(earnedMedals, EarnedMedalRecord.TO_MEMBER_ID);
+        List<VizMemberName> memberNames = Lists.transform(_memberRepo.loadMemberCards(memberIds),
+            new Function<MemberCardRecord, VizMemberName>() {
+                public VizMemberName apply (MemberCardRecord memberCardRec) {
+                    MemberCard memberCard = memberCardRec.toMemberCard();
+                    return new VizMemberName(memberCard.name, memberCard.photo);
+                }
+            });
+        // now that we have each member's VizMemberName, add them to the appropriate list and ship
+        // the whole package off to the client.
+        for (EarnedMedalRecord earnedMedalRec : earnedMedals) {
+            List<VizMemberName> earnees =
+                result.medals.get(Medal.getMapKey(earnedMedalRec.medalId));
+            earnees.add(memberNames.get(earnedMedalRec.memberId));
+        }
         return result;
+    }
+
+    // from interface GroupService
+    public List<Medal> getMedals (int groupId)
+        throws ServiceException
+    {
+        return Lists.newArrayList(
+            Lists.transform(_medalRepo.loadGroupMedals(groupId), MedalRecord.TO_MEDAL));
+    }
+
+    // from interface GroupService
+    public List<GroupMembership> searchGroupMembers (int groupId, String search)
+        throws ServiceException
+    {
+        // TODO
+        return Lists.newArrayList();
+    }
+
+    // from interface GroupService
+    public void awardMedal (int memberId, int medalId)
+        throws ServiceException
+    {
+        // TODO
     }
 
     /**
@@ -639,6 +698,7 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected MemberLogic _memberLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MedalRepository _medalRepo;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected MsoySceneRepository _sceneRepo;

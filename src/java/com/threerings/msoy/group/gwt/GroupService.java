@@ -4,11 +4,13 @@
 package com.threerings.msoy.group.gwt;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Medal;
@@ -89,8 +91,9 @@ public interface GroupService extends RemoteService
         /** The name of the group, used in the UI. */
         public GroupName groupName;
 
-        /** The list of Medals for this group.  We currently do all paging on the client. */
-        public List<Medal> medals;
+        /** The map of medals to those that have awarded them from this group.  If nobody has
+         * earned a given medal yet, that medal will map to null. */
+        public Map<Medal, List<VizMemberName>> medals;
     }
 
     /** The entry point for this service. */
@@ -215,8 +218,26 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
-     * Retreives the set of Medals for this group.
+     * Retrieves the set of Medals for this group, and the people who have been awarded each one.
      */
-    MedalsResult getMedals (int groupId)
+    MedalsResult getAwardedMedals (int groupId)
+        throws ServiceException;
+
+    /**
+     * Returns a flat list of the medals that have been defined for the given group.
+     */
+    List<Medal> getMedals (int groupId)
+        throws ServiceException;
+
+    /**
+     * Returns the group members that match the given search.
+     */
+    List<GroupMembership> searchGroupMembers (int groupId, String search)
+        throws ServiceException;
+
+    /**
+     * Awards the given medal to the given member.
+     */
+    void awardMedal (int memberId, int medalId)
         throws ServiceException;
 }

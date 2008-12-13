@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -15,9 +16,12 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.Conditionals.Equals;
+import com.samskivert.depot.operator.Conditionals.In;
 import com.samskivert.depot.operator.Logic.And;
 
 import com.threerings.presents.annotation.BlockingThread;
+
+import com.google.common.collect.Lists;
 
 /**
  * Manages the persistent store of Medal data.
@@ -59,6 +63,18 @@ public class MedalRepository extends DepotRepository
     public List<MedalRecord> loadGroupMedals (int groupId)
     {
         return findAll(MedalRecord.class, new Where(MedalRecord.GROUP_ID_C, groupId));
+    }
+
+    /**
+     * Returns a list of the EarnedMedalRecords that match the given set of medalIds.
+     */
+    public List<EarnedMedalRecord> loadEarnedMedals (Collection<Integer> medalIds)
+    {
+        if (medalIds.size() == 0) {
+            return Lists.newArrayList();
+        }
+        return findAll(EarnedMedalRecord.class,
+            new Where(new In(EarnedMedalRecord.MEDAL_ID_C, medalIds)));
     }
 
     @Override

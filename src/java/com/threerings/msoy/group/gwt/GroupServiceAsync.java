@@ -115,7 +115,23 @@ public interface GroupServiceAsync
     void updateMedal (Medal medal, AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link GroupService#getAwardedMedals}
+     */
+    void getAwardedMedals (int groupId, AsyncCallback<GroupService.MedalsResult> callback);
+
+    /**
      * The asynchronous version of {@link GroupService#getMedals}
      */
-    void getMedals (int groupid, AsyncCallback<GroupService.MedalsResult> callback);
+    void getMedals (int groupId, AsyncCallback<List<Medal>> callback);
+
+    /**
+     * The asynchronous version of {@link GroupService#searchGroupMembers}
+     */
+    void searchGroupMembers (
+        int groupId, String search, AsyncCallback<List<GroupMembership>> callback);
+
+    /**
+     * The asynchronous version of {@link GroupService#awardMedal}
+     */
+    void awardMedal (int memberId, int medalId, AsyncCallback<Void> callback);
 }

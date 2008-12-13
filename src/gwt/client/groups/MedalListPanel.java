@@ -4,6 +4,7 @@
 package client.groups;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 
@@ -13,6 +14,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -31,7 +33,8 @@ public class MedalListPanel extends FlowPanel
     public MedalListPanel (int groupId)
     {
         setStyleName("medalListPanel");
-        _groupsvc.getMedals(_groupId = groupId, new MsoyCallback<GroupService.MedalsResult>() {
+        _groupId = groupId;
+        _groupsvc.getAwardedMedals(groupId, new MsoyCallback<MedalsResult>() {
             public void onSuccess (MedalsResult result) {
                 CShell.frame.setTitle(result.groupName.toString());
                 displayMedals(result.medals);
@@ -39,7 +42,7 @@ public class MedalListPanel extends FlowPanel
         });
     }
 
-    protected void displayMedals (List<Medal> medals)
+    protected void displayMedals (Map<Medal, List<VizMemberName>> medals)
     {
         AbsolutePanel header = MsoyUI.createAbsolutePanel("Header");
         header.add(new Image("/images/group/medal_title.png"), 30, 0);

@@ -99,10 +99,15 @@ public class DetailContentPanel extends FlowPanel
     }
 
     public void showAwardMedals () {
+        if (_awardMedals != null && _content.getWidget() == _awardMedals) {
+                return;
+        }
         _title.setWidget(new Label(_msgs.detailTabAwardMedals()));
-        _content.clear();
-        //TODO: award medal panel with searching for members, then awarding medals to a member
-        // return in the search results.
+        if (_awardMedals == null) {
+            _awardMedals = new AwardMedalsPanel(_detail.group.groupId);
+        }
+        _content.setWidget(_awardMedals);
+        _backButton.setVisible(true);
     }
 
     /**
@@ -125,6 +130,7 @@ public class DetailContentPanel extends FlowPanel
     protected PrettyTextPanel _charter;
     protected GroupMembersPanel _members;
     protected GroupRoomsPanel _rooms;
+    protected AwardMedalsPanel _awardMedals;
     protected Widget _previousContent;
     protected Widget _previousTitle;
 

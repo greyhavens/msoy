@@ -16,6 +16,16 @@ public class Medal
     public static final int MAX_DESCRIPTION_LENGTH = 70;
     public static final int MAX_NAME_LENGTH = 25;
 
+    /**
+     * Returns a Medal that is suitable as a map key, given a medalId.
+     */
+    public static Medal getMapKey (int medalId)
+    {
+        Medal medal = new Medal();
+        medal.medalId = medalId;
+        return medal;
+    }
+
     /** The unique id of this medal. */
     public int medalId;
 
@@ -47,5 +57,17 @@ public class Medal
     public Medal (int groupId)
     {
         this.groupId = groupId;
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        return medalId;
+    }
+
+    @Override
+    public boolean equals (Object other)
+    {
+        return other instanceof Medal && ((Medal)other).medalId == medalId;
     }
 }

@@ -11,6 +11,8 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.google.common.base.Function;
+
 @Entity
 public class EarnedMedalRecord extends PersistentRecord
 {
@@ -40,6 +42,15 @@ public class EarnedMedalRecord extends PersistentRecord
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
+
+    /** A function to convert an EarnedMedalRecord into an Integer representing the memberId that
+     * earned it */
+    public static final Function<EarnedMedalRecord, Integer> TO_MEMBER_ID =
+        new Function<EarnedMedalRecord, Integer>() {
+            public Integer apply (EarnedMedalRecord earnedMedalRec) {
+                return earnedMedalRec.memberId;
+            }
+        };
 
     /** The unique id of the medal that was earned. */
     @Id public int medalId;
