@@ -139,16 +139,34 @@ public /*abstract*/ class MsoyContext
         return MsoyParameters.get()["partner"];
     }
 
+    /**
+     * Create an InvocationListener that will automatically log and report errors to chat.
+     *
+     * @param bundle the MessgeBundle to use to translate the error message.
+     * @param errWrap if not null, a translation key used to report the error, with the
+     *        'cause' String from the server as it's argument.
+     * @param logArgs arguments to use when logging the error. An even number of arguments
+     *        may be specified in the "description", value, "description", value format.
+     *        Specifying an odd number of arguments uses the first arg as the primary log message,
+     *        instead of something generic like "An error occurred".
+     */
     public function listener (
-        bundle :String = null, errWrap :String = null, ... logArgs)
+        bundle :String = MsoyCodes.GENERAL_MSGS, errWrap :String = null, ... logArgs)
         :InvocationService_InvocationListener
     {
-        logArgs.unshift(bundle, errWrap);
-        return new InvocationAdapter(chatErrHandler.apply(null, logArgs));
+        return new InvocationAdapter(chatErrHandler(bundle, errWrap, logArgs));
     }
 
+    /**
+     * Create a ConfirmListener that will automatically log and report errors to chat.
+     *
+     * @param confirm if a String, a message that will be reported on success. If a function,
+     *        it will be run on success.
+     * @see listener() for a description of the rest of the arguments.
+     */
     public function confirmListener (
-        confirm :* = null, bundle :String = null, errWrap :String = null, ... logArgs)
+        confirm :* = null, bundle :String = MsoyCodes.GENERAL_MSGS, errWrap :String = null,
+        ... logArgs)
         :InvocationService_ConfirmListener
     {
         var success :Function = confirm as Function; // turns to null if not
@@ -157,45 +175,21 @@ public /*abstract*/ class MsoyContext
                 displayFeedback(bundle, String(confirm));
             };
         }
-        logArgs.unshift(bundle, errWrap);
-        return new ConfirmAdapter(success, chatErrHandler.apply(null, logArgs));
-    }
-
-    public function resultListener (
-        success :Function, bundle :String = null, errWrap :String = null, ... logArgs)
-        :InvocationService_ResultListener
-    {
-        logArgs.unshift(bundle, errWrap);
-        return new ResultAdapter(success, chatErrHandler.apply(null, logArgs));
+        return new ConfirmAdapter(success, chatErrHandler(bundle, errWrap, logArgs));
     }
 
     /**
-     * For use with Invocation service listener adapters. A function for handling any error
-     * and reporting via a chat feedback message. If you want to just use something like this
-     * as your complete listener, see ReportingListener.
+     * Create a ResultListener that will automatically log and report errors to chat.
      *
-     * @param bundle the MessageBundle identifier to use for translating error causes.
-     * @param errWrap a translation key in which to wrap the 'cause' string from the server.
-     * @poram logArgs any arguments you wish to pass to be logged. If the number of args is
-     *        even then the message logged is [ "Reporting failure", <your args>, "cause", cause ];
-     *        if the number of args is odd then your first arg is used in place of
-     *        "Reporting failure".
+     * @param gotResult a function that will be passed a single result argument from the server.
+     * @see listener() for a description of the rest of the arguments.
      */
-    public function chatErrHandler (
-        bundle :String = null, errWrap :String = null, ... logArgs) :Function
+    public function resultListener (
+        gotResult :Function, bundle :String = MsoyCodes.GENERAL_MSGS, errWrap :String = null,
+        ... logArgs)
+        :InvocationService_ResultListener
     {
-        return function (cause :String) :void {
-            var args :Array = logArgs.concat("cause", cause); // make a copy, we're reentrant
-            if (args.length % 2 == 0) {
-                args.unshift("Reporting failure");
-            }
-            Log.getLog(MsoyContext).info.apply(null, args);
-
-            if (errWrap != null) {
-                cause = MessageBundle.compose(errWrap, cause);
-            }
-            displayFeedback(bundle, cause);
-        };
+        return new ResultAdapter(gotResult, chatErrHandler(bundle, errWrap, logArgs));
     }
 
     /**
@@ -324,6 +318,25 @@ public /*abstract*/ class MsoyContext
         }
         var mb :MessageBundle = _msgMgr.getBundle(bundle);
         return mb.get.apply(mb, args);
+    }
+
+    /**
+     * Create an error handling function for use with InvocationService listener adapters.
+     */
+    protected function chatErrHandler (bundle :String, errWrap :String, logArgs :Array) :Function
+    {
+        return function (cause :String) :void {
+            var args :Array = logArgs.concat("cause", cause); // make a copy, we're reentrant
+            if (args.length % 2 == 0) {
+                args.unshift("Reporting failure");
+            }
+            Log.getLog(MsoyContext).info.apply(null, args);
+
+            if (errWrap != null) {
+                cause = MessageBundle.compose(errWrap, cause);
+            }
+            displayFeedback(bundle, cause);
+        };
     }
 
     /**
