@@ -14,17 +14,8 @@
 }
 
 .dashboardPanel .Title {
-  background: #222222;
-  font-size: 14px;
   font-weight: bold;
-  font-style: italic;
-  color: white;
   text-align: left;
-  padding: 5px;
-}
-
-.dashboardPanel .Applet {
-  padding: 10px;
 }
 
 .invitePlayersPopup {

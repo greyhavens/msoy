@@ -6,6 +6,7 @@ package client.adminz;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -21,6 +22,7 @@ import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
+import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -32,45 +34,39 @@ public class DashboardPanel extends SmartTable
 {
     public DashboardPanel ()
     {
-        super("dashboardPanel", 0, 0);
-
-        int row = 0;
-        HorizontalPanel controls;
+        super("dashboardPanel", 0, 10);
+        int col = 0;
 
         // admin-only controls
         if (CShell.isAdmin()) {
-            VerticalPanel rhs = new VerticalPanel();
-            setText(row, 0, _msgs.adminControls());
-            getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-            setWidget(row++, 1, rhs);
-            rhs.add(controls = new HorizontalPanel());
-            controls.setSpacing(10);
-            controls.add(new Button(_msgs.displayDashboard(), new ClickListener() {
+            FlowPanel admin = new FlowPanel();
+            admin.add(MsoyUI.createLabel(_msgs.adminControls(), "Title"));
+            admin.add(new Button(_msgs.displayDashboard(), new ClickListener() {
                 public void onClick (Widget sender) {
                     ((Button)sender).setEnabled(false);
                     displayDashboard();
                 }
             }));
-            controls.add(Link.create(_msgs.viewExchange(), Pages.ADMINZ, "exchange"));
-            controls.add(Link.create(_msgs.cashOutButton(), Pages.ADMINZ, "cashout"));
-            controls.add(Link.create(_msgs.statsButton(), Pages.ADMINZ, "stats"));
-            rhs.add(controls = new HorizontalPanel());
-            controls.setSpacing(10);
-            controls.add(Link.create(_msgs.viewABTests(), Pages.ADMINZ, "testlist"));
-            controls.add(Link.create(_msgs.viewBureaus(), Pages.ADMINZ, "bureaus"));
-            controls.add(Link.create(_msgs.panopticonStatus(), Pages.ADMINZ, "panopticonStatus"));
+            admin.add(makeLink(_msgs.viewExchange(), "exchange"));
+            admin.add(makeLink(_msgs.cashOutButton(), "cashout"));
+            admin.add(makeLink(_msgs.statsButton(), "stats"));
+            admin.add(makeLink(_msgs.viewABTests(), "testlist"));
+            admin.add(makeLink(_msgs.viewBureaus(), "bureaus"));
+            admin.add(makeLink(_msgs.panopticonStatus(), "panopticonStatus"));
+            setWidget(0, col, admin);
+            getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
         }
 
         // support controls
-        setText(row, 0, _msgs.supportControls());
-        getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        setWidget(row++, 1, controls = new HorizontalPanel());
-        controls.setSpacing(10);
-        controls.add(Link.create(_msgs.reviewButton(), Pages.ADMINZ, "review"));
-        controls.add(Link.create(_msgs.affMapButton(), Pages.ADMINZ, "affmap"));
-        controls.add(Link.create(_msgs.promosButton(), Pages.ADMINZ, "promos"));
-        controls.add(Link.create(_msgs.contestsButton(), Pages.ADMINZ, "contests"));
-        controls.add(Link.create(_msgs.browseButton(), Pages.ADMINZ, "browser"));
+        FlowPanel support = new FlowPanel();
+        support.add(MsoyUI.createLabel(_msgs.supportControls(), "Title"));
+        support.add(makeLink(_msgs.reviewButton(), "review"));
+        support.add(makeLink(_msgs.affMapButton(), "affmap"));
+        support.add(makeLink(_msgs.promosButton(), "promos"));
+        support.add(makeLink(_msgs.contestsButton(), "contests"));
+        support.add(makeLink(_msgs.browseButton(), "browser"));
+        setWidget(0, col, support);
+        getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
     }
 
     protected void displayDashboard ()
@@ -81,6 +77,13 @@ public class DashboardPanel extends SmartTable
                 finishDisplayDashboard(config);
             }
         });
+    }
+
+    protected Widget makeLink (String title, String args)
+    {
+        Widget link = Link.create(title, Pages.ADMINZ, args);
+        link.removeStyleName("inline");
+        return link;
     }
 
     protected void finishDisplayDashboard (ConnectConfig config)
@@ -100,7 +103,7 @@ public class DashboardPanel extends SmartTable
                       new String[] { "server", config.server,
                                      "port", "" + config.port,
                                      "authtoken", CShell.getAuthToken() }),
-                  2, null);
+                  getCellCount(0), null);
     }
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
