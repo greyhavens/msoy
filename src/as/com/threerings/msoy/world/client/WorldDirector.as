@@ -20,7 +20,6 @@ import com.threerings.util.MultiLoader;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
-import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.data.PlaceObject;
@@ -32,8 +31,6 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.item.data.all.Item;
 
@@ -92,7 +89,7 @@ public class WorldDirector extends BasicDirector
         } 
 
         _msvc.getCurrentMemberLocation(_wctx.getClient(), memberId,
-            new ResultAdapter(finishGoToMemberLocation, _wctx.chatErrHandler()));
+            _wctx.resultListener(finishGoToMemberLocation));
     }
 
     /**
@@ -102,7 +99,7 @@ public class WorldDirector extends BasicDirector
      */
     public function setAvatar (avatarId :int, newScale :Number = 0) :void
     {
-        _msvc.setAvatar(_wctx.getClient(), avatarId, newScale, new ReportingListener(_wctx));
+        _msvc.setAvatar(_wctx.getClient(), avatarId, newScale, _wctx.confirmListener());
     }
 
     /**
@@ -120,7 +117,7 @@ public class WorldDirector extends BasicDirector
             return;
         }
         _msvc.getHomeId(_wctx.getClient(), ownerType, ownerId,
-            new ResultAdapter(_wctx.getSceneDirector().moveTo, _wctx.chatErrHandler()));
+            _wctx.resultListener(_wctx.getSceneDirector().moveTo));
     }
 
     /**

@@ -18,7 +18,6 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.presents.dobj.ChangeListener;
@@ -85,7 +84,6 @@ import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
-import com.threerings.msoy.chat.client.ReportingListener;
 
 /**
  * Manages the various interactions that take place in a room scene.
@@ -269,8 +267,7 @@ public class RoomObjectController extends RoomController
     public function inviteFollow (member :MemberName) :void
     {
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        msvc.inviteToFollow(_ctx.getClient(), member.getMemberId(),
-            new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS));
+        msvc.inviteToFollow(_ctx.getClient(), member.getMemberId(), _wdctx.listener());
     }
 
     /**
@@ -279,8 +276,7 @@ public class RoomObjectController extends RoomController
     public function clearFollow () :void
     {
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        msvc.followMember(_ctx.getClient(), 0,
-            new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS));
+        msvc.followMember(_ctx.getClient(), 0, _wdctx.listener());
     }
 
     /**
@@ -291,7 +287,7 @@ public class RoomObjectController extends RoomController
     {
         var msvc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
         msvc.ditchFollower(_ctx.getClient(), (member != null) ? member.getMemberId() : 0,
-            new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS));
+            _wdctx.listener());
     }
 
     /**
@@ -311,10 +307,10 @@ public class RoomObjectController extends RoomController
             cancelRoomEditing();
         }
 
-        _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultAdapter(
-            function (result :Object) :void {
-                DoorTargetEditController.start(furniData, _wdctx);
-            }, _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
+        var handleResult :Function = function (result :Object) :void {
+            DoorTargetEditController.start(furniData, _wdctx);
+        };
+        _roomObj.roomService.editRoom(_wdctx.getClient(), _wdctx.resultListener(handleResult));
     }
 
     /**
@@ -331,10 +327,11 @@ public class RoomObjectController extends RoomController
             cancelRoomEditing();
             return;
         }
-        _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultAdapter(
-            function (result :Object) :void {
-                beginRoomEditing();
-            }, _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
+
+        var handleResult :Function = function (result :Object) :void {
+            beginRoomEditing();
+        };
+        _roomObj.roomService.editRoom(_wdctx.getClient(), _wdctx.resultListener(handleResult));
     }
 
     /**
@@ -342,7 +339,7 @@ public class RoomObjectController extends RoomController
      */
     public function handleRoomRate (rating :Number) :void
     {
-        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, new ReportingListener(_wdctx));
+        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, _wdctx.listener());
     }
 
     /**
@@ -350,7 +347,7 @@ public class RoomObjectController extends RoomController
      */
     public function handlePublishRoom () :void
     {
-        _roomObj.roomService.publishRoom(_wdctx.getClient(), new ReportingListener(_wdctx));
+        _roomObj.roomService.publishRoom(_wdctx.getClient(), _wdctx.listener());
         // TODO: remove when A/B test is finished
         _wdctx.getMsoyClient().getABTestGroup("2008 12 share hint", true, new ResultAdapter(
             function (group :int) :void {
@@ -494,7 +491,7 @@ public class RoomObjectController extends RoomController
     {
         var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
         svc.orderPet(_wdctx.getClient(), petId, command,
-            new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS, null, "m.pet_ordered" + command));
+            _wdctx.confirmListener("m.pet_ordered" + command));
     }
 
     override public function getMemories (ident :ItemIdent) :Object
@@ -532,14 +529,12 @@ public class RoomObjectController extends RoomController
     {
         var svc :ItemService = _wdctx.getClient().requireService(ItemService) as ItemService;
 
-        svc.deleteItem(_wdctx.getClient(), ident,
-            new ConfirmAdapter(null, _wdctx.chatErrHandler()));
+        svc.deleteItem(_wdctx.getClient(), ident, _wdctx.confirmListener());
     }
 
     override public function rateRoom (rating :Number, onSuccess :Function) :void
     {
-        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating,
-            new ResultAdapter(onSuccess, _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
+        _roomObj.roomService.rateRoom(_wdctx.getClient(), rating, _wdctx.resultListener(onSuccess));
     }
 
     /**
@@ -582,9 +577,7 @@ public class RoomObjectController extends RoomController
 
         if (itemType == Item.PET) {
             var svc :PetService = _ctx.getClient().requireService(PetService) as PetService;
-            svc.callPet(_wdctx.getClient(), itemId,
-                        new ReportingListener(_wdctx, MsoyCodes.GENERAL_MSGS, null,
-                                              "m.pet_called"));
+            svc.callPet(_wdctx.getClient(), itemId, _wdctx.confirmListener("m.pet_called"));
             return;
         }
 
@@ -646,10 +639,9 @@ public class RoomObjectController extends RoomController
             if (item.isUsed()) {
                 var msg :String = Item.getTypeKey(itemType);
                 (new ItemUsedDialog(_wdctx, Msgs.ITEM.get(msg), function () :void {
-                    var confWrap :ConfirmAdapter = new ConfirmAdapter(useNewItem,
-                        _wdctx.chatErrHandler(MsoyCodes.EDITING_MSGS, "e.failed_to_remove",
-                            "Failed to reclaim item", "item", ident));
-                    isvc.reclaimItem(_wdctx.getClient(), ident, confWrap);
+                    isvc.reclaimItem(_wdctx.getClient(), ident,
+                        _wdctx.confirmListener(useNewItem, MsoyCodes.EDITING_MSGS,
+                            "e.failed_to_remove", "Failed to reclaim item", "item", ident));
                 })).open(true);
             } else {
                 useNewItem();
@@ -657,7 +649,7 @@ public class RoomObjectController extends RoomController
         };
 
         isvc.peepItem(_wdctx.getClient(), ident,
-            new ResultAdapter(gotItem, _wdctx.chatErrHandler(MsoyCodes.EDITING_MSGS)));
+            _wdctx.resultListener(gotItem, MsoyCodes.EDITING_MSGS));
     }
 
     /**
@@ -804,7 +796,7 @@ public class RoomObjectController extends RoomController
      */
     protected function updateRoom (update :SceneUpdate) :void
     {
-        _roomObj.roomService.updateRoom(_wdctx.getClient(), update, new ReportingListener(_wdctx));
+        _roomObj.roomService.updateRoom(_wdctx.getClient(), update, _wdctx.listener());
     }
 
     override protected function checkMouse2 (
@@ -849,26 +841,26 @@ public class RoomObjectController extends RoomController
     {
         var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
         svc.sendChat(_wdctx.getClient(), info.bodyOid, _scene.getId(), msg,
-            new ReportingListener(_wdctx));
+            _wdctx.confirmListener());
     }
 
     // documentation inherited
     override protected function updateMemory2 (
         ident :ItemIdent, key :String, data: ByteArray, callback :Function) :void
     {
+        var resultHandler :Function = function (success :Boolean) :void {
+            if (callback != null) {
+                try {
+                    callback(success);
+                } catch (error :*) {
+                    // ignored- error in usercode
+                }
+            }
+        };
+
         // ship the update request off to the server
         _roomObj.roomService.updateMemory(_wdctx.getClient(),
-            new EntityMemoryEntry(ident, key, data), new ResultAdapter(
-                function (success :Boolean) :void {
-                    if (callback != null) {
-                        try {
-                            callback(success);
-                        }
-                        catch (error :*) {
-                            // ignored- error in usercode
-                        }
-                    }
-                }, _wdctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
+            new EntityMemoryEntry(ident, key, data), _wdctx.resultListener(resultHandler));
     }
 
     // documentation inherited

@@ -6,7 +6,6 @@ package com.threerings.msoy.avrg.client {
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -100,10 +99,9 @@ public class AVRGameLiaison extends GameLiaison
     public function leaveAVRGame () :void
     {
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
-        svc.deactivateGame(_gctx.getClient(), _gameId, new ConfirmAdapter(
-            function () :void {
-                _gctx.getLocationDirector().leavePlace();
-            }, _gctx.getMsoyContext().chatErrHandler(null, null, "gameId", _gameId)));
+        svc.deactivateGame(_gctx.getClient(), _gameId,
+            _gctx.getMsoyContext().confirmListener(_gctx.getLocationDirector().leavePlace,
+                null, null, "gameId", _gameId));
     }
 
     /**

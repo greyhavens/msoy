@@ -11,7 +11,6 @@ import com.threerings.util.Log;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
-import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -58,11 +57,8 @@ public class TourDirector extends BasicDirector
     {
         const roomView :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
         const loadingDone :Boolean = (roomView != null) && roomView.loadingDone();
-        _tsvc.nextRoom(_ctx.getClient(), loadingDone, new ResultAdapter(
-            function (sceneId :int) :void {
-                _wctx.getSceneDirector().moveTo(sceneId);
-                _tourDialog.setRating(0);
-            }, _wctx.chatErrHandler(MsoyCodes.WORLD_MSGS)));
+        _tsvc.nextRoom(_ctx.getClient(), loadingDone,
+            _wctx.resultListener(handleNextRoomResult, MsoyCodes.WORLD_MSGS));
     }
 
     public function endTour () :void
@@ -70,6 +66,12 @@ public class TourDirector extends BasicDirector
         if (isOnTour()) {
             _tsvc.endTour(_ctx.getClient());
         }
+    }
+
+    protected function handleNextRoomResult (sceneId :int) :void
+    {
+        _wctx.getSceneDirector().moveTo(sceneId);
+        _tourDialog.setRating(0);
     }
 
     /**

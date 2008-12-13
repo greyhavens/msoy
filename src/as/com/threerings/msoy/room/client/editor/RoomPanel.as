@@ -18,8 +18,6 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.util.Log;
 
-import com.threerings.presents.client.ResultAdapter;
-
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MemberService;
 
@@ -102,14 +100,13 @@ public class RoomPanel extends BasePanel
             _homeButton.enabled = false;
 
             if (memberObject.isGroupManager(sceneModel.ownerId)) {
+                var resultHandler :Function = function (result :Object) :void {
+                    _homeButton.enabled = (sceneModel.sceneId != (result as int));
+                };
                 var svc :MemberService = 
                     _controller.ctx.getClient().requireService(MemberService) as MemberService;
                 svc.getGroupHomeSceneId(_controller.ctx.getClient(), sceneModel.ownerId,
-                    new ResultAdapter(
-                        function (result :Object) :void { // processed function
-                            _homeButton.enabled = sceneModel.sceneId != (result as int);
-                        },
-                        _controller.ctx.chatErrHandler(MsoyCodes.EDITING_MSGS)));
+                    _controller.ctx.resultListener(resultHandler, MsoyCodes.EDITING_MSGS));
             }
 
         } else {

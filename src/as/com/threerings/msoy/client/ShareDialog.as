@@ -33,7 +33,6 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.io.TypedArray;
 import com.threerings.util.MailUtil;
 
-import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -286,7 +285,7 @@ public class ShareDialog extends FloatingPanel
         // send the emails and messages off to the server for delivery
         (_ctx.getClient().requireService(MemberService) as MemberService).emailShare(
             _ctx.getClient(), _inGame, _placeName, _placeId, emails, message,
-            new ReportingListener(_ctx, MsoyCodes.GENERAL_MSGS, null, "m.share_email_sent"));
+            _ctx.confirmListener("m.share_email_sent"));
 
         close(); // and make like the proverbial audi 5000
     }

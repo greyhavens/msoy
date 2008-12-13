@@ -10,8 +10,6 @@ import mx.core.ScrollPolicy;
 
 import com.threerings.util.Log;
 
-import com.threerings.presents.client.ResultAdapter;
-
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
@@ -177,15 +175,15 @@ public class DoorTargetEditController
      */
     protected function purchase () :void
     {
+        var resultHandler :Function = function (result :Object) :void {
+            if (result != null) {
+                var newSceneId :int = int(result);
+                // Log.getLog(this).info("Room purchase success, id = " + newSceneId);
+                setDoor(newSceneId);
+            }
+        };
         var roomObj :RoomObject = (_ctx.getLocationDirector().getPlaceObject() as RoomObject);
-        roomObj.roomService.purchaseRoom(_ctx.getClient(), new ResultAdapter(
-            function (result :Object) :void { // success handler
-                if (result != null) {
-                    var newSceneId :int = int(Number(result));
-                    // Log.getLog(this).info("Room purchase success, id = " + newSceneId);
-                    setDoor(newSceneId);
-                }
-            }, _ctx.chatErrHandler()));
+        roomObj.roomService.purchaseRoom(_ctx.getClient(), _ctx.resultListener(resultHandler));
     }
 
     /**

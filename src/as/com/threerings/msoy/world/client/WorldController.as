@@ -17,7 +17,6 @@ import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.net.Credentials;
 
 import com.threerings.crowd.client.PlaceView;
@@ -33,7 +32,6 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.chat.client.IMRegisterDialog;
-import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.ItemMarshaller;
@@ -352,21 +350,21 @@ public class WorldController extends MsoyController
      */
     public function handleViewItem (ident :ItemIdent) :void
     {
+        var resultHandler :Function = function (result :Object) :void {
+            if (result == null) {
+                // it's an object we own, or it's not listed but we are support+
+                displayPage("stuff", "d_" + ident.type + "_" + ident.itemId);
+
+            } else if (result == 0) {
+                _wctx.displayFeedback(MsoyCodes.ITEM_MSGS,
+                    MessageBundle.compose("m.not_listed", Item.getTypeKey(ident.type)));
+
+            } else {
+                displayPage("shop", "l_" + ident.type + "_" + result);
+            }
+        };
         var isvc :ItemService = _wctx.getClient().requireService(ItemService) as ItemService;
-        isvc.getCatalogId(_wctx.getClient(), ident, new ResultAdapter(
-            function (result :Object) :void {
-                if (result == null) {
-                    // it's an object we own, or it's not listed but we are support+
-                    displayPage("stuff", "d_" + ident.type + "_" + ident.itemId);
-
-                } else if (result == 0) {
-                    _wctx.displayFeedback(MsoyCodes.ITEM_MSGS,
-                        MessageBundle.compose("m.not_listed", Item.getTypeKey(ident.type)));
-
-                } else {
-                    displayPage("shop", "l_" + ident.type + "_" + result);
-                }
-            }, _wctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
+        isvc.getCatalogId(_wctx.getClient(), ident, _wctx.resultListener(resultHandler));
     }
 
     /**
@@ -709,8 +707,7 @@ public class WorldController extends MsoyController
     public function handleRespondFollow (memberId :int) :void
     {
         var msvc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
-        msvc.followMember(_wctx.getClient(), memberId,
-            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS));
+        msvc.followMember(_wctx.getClient(), memberId, _wctx.listener());
     }
 
     /**
@@ -754,8 +751,7 @@ public class WorldController extends MsoyController
     public function handleBootFromPlace (memberId :int) :void
     {
         var svc :MemberService = _wctx.getClient().requireService(MemberService) as MemberService;
-        svc.bootFromPlace(_wctx.getClient(), memberId,
-            new ReportingListener(_wctx, MsoyCodes.GENERAL_MSGS));
+        svc.bootFromPlace(_wctx.getClient(), memberId, _wctx.confirmListener());
     }
 
     /**

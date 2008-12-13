@@ -11,8 +11,6 @@ import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.presents.client.ResultAdapter;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
@@ -27,8 +25,6 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.world.client.WorldContext;
-
-import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.MsoySprite;
@@ -419,11 +415,11 @@ public class RoomEditorController
         _panel.setHomeButtonEnabled(false);
 
         var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
+        var successMsg :String = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) ?
+            "m.group_home_room_changed" : "m.home_room_changed";
         var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
         svc.setHomeSceneId(_ctx.getClient(), model.ownerType, model.ownerId, model.sceneId, 
-            new ReportingListener(_ctx, MsoyCodes.EDITING_MSGS, null,
-                (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) ? "m.group_home_room_changed"
-                                                                     : "m.home_room_changed"));
+            _ctx.confirmListener(successMsg, MsoyCodes.EDITING_MSGS));
     }
 
     /**
@@ -495,15 +491,15 @@ public class RoomEditorController
         }
 
         // now ask the server for ids
+        var resultHandler :Function = function (names :Array /* of String */) :void {
+            // we got an array of names! put them all in the cache and update the list.
+            for (var i :int = 0; i < idents.length; i++) {
+                _names.put(idents[i], { label: names[i], data: idents[i] });
+            }
+            updateNameDisplay();
+        };
         var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
-        svc.getItemNames(_ctx.getClient(), idents, new ResultAdapter(
-            function (names :Array /* of String */) :void {
-                // we got an array of names! put them all in the cache and update the list.
-                for (var i :int = 0; i < idents.length; i++) {
-                    _names.put(idents[i], { label: names[i], data: idents[i] });
-                }
-                updateNameDisplay();
-            }, _ctx.chatErrHandler()));
+        svc.getItemNames(_ctx.getClient(), idents, _ctx.resultListener(resultHandler));
     }
 
     /**

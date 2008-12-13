@@ -23,7 +23,6 @@ import com.threerings.flex.PopUpUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.io.TypedArray;
-import com.threerings.presents.client.ResultAdapter;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.ScalingMediaContainer;
@@ -105,14 +104,8 @@ public class HomePageDialog extends FloatingPanel
 
     public function refresh () :void
     {
-        log.info("Requesting home page items");
         var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        svc.getHomePageGridItems(_ctx.getClient(), new ResultAdapter(gotItems, failedToGetItems));
-    }
-
-    protected function failedToGetItems (cause :String) :void
-    {
-        log.warning("Failed to get home page items", "cause", cause);
+        svc.getHomePageGridItems(_ctx.getClient(), _ctx.resultListener(gotItems));
     }
 
     protected function gotItems (items :TypedArray) :void

@@ -5,13 +5,11 @@ package com.threerings.msoy.world.client {
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.MemberService;
 
-import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.data.MemberMarshaller;
@@ -36,13 +34,8 @@ public class MemberDirector extends BasicDirector
      */
     public function inviteToBeFriend (friendId :int) :void
     {
-        _msvc.inviteToBeFriend(_wctx.getClient(), friendId, new ResultAdapter(
-            function (automatic :Boolean) : void {
-                if (!automatic) {
-                    _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.friend_invited")
-                }
-                // else: A status updated should be reported here no need to output to chat
-            }, _wctx.chatErrHandler(MsoyCodes.GENERAL_MSGS)));
+        _msvc.inviteToBeFriend(_wctx.getClient(), friendId,
+            _wctx.resultListener(handleInviteResult));
     }
 
     /**
@@ -50,7 +43,14 @@ public class MemberDirector extends BasicDirector
      */
     public function setDisplayName (newName :String) :void
     {
-        _msvc.setDisplayName(_wctx.getClient(), newName, new ReportingListener(_wctx));
+        _msvc.setDisplayName(_wctx.getClient(), newName, _wctx.listener());
+    }
+
+    protected function handleInviteResult (automatic :Boolean) : void
+    {
+        if (!automatic) {
+            _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.friend_invited")
+        }
     }
 
     // from BasicDirector

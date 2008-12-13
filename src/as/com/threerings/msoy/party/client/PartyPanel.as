@@ -9,7 +9,6 @@ import mx.events.FlexEvent;
 
 import com.threerings.util.Log;
 
-import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
@@ -23,8 +22,6 @@ import com.threerings.msoy.client.Roster;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
-
-import com.threerings.msoy.chat.client.ReportingListener;
 
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyObject;

@@ -9,8 +9,6 @@ import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.List;
 
-import com.threerings.presents.client.ResultAdapter;
-
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
