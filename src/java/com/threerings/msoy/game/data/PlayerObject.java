@@ -49,9 +49,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
 
-    /** The field name of the <code>friends</code> field. */
-    public static final String FRIENDS = "friends";
-
     /** The field name of the <code>gameContent</code> field. */
     public static final String GAME_CONTENT = "gameContent";
 
@@ -71,11 +68,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** Our current assessment of how likely to be human this member is, in [0, {@link
      * MsoyCodes#MAX_HUMANITY}]. */
     public int humanity;
-
-    /** A snapshot of this players friends loaded when they logged onto the game server. Online
-     * status is not filled in and this set is *not* updated if friendship is made or broken during
-     * a game. */
-    public DSet<FriendEntry> friends;
 
     /** Contains information on player's ownership of game content (populated lazily). */
     public DSet<GameContentOwnership> gameContent = new DSet<GameContentOwnership>();
@@ -225,53 +217,6 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(
             HUMANITY, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.humanity = value;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>friends</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToFriends (FriendEntry elem)
-    {
-        requestEntryAdd(FRIENDS, friends, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>friends</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromFriends (Comparable<?> key)
-    {
-        requestEntryRemove(FRIENDS, friends, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>friends</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateFriends (FriendEntry elem)
-    {
-        requestEntryUpdate(FRIENDS, friends, elem);
-    }
-
-    /**
-     * Requests that the <code>friends</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setFriends (DSet<FriendEntry> value)
-    {
-        requestAttributeChange(FRIENDS, value, this.friends);
-        DSet<FriendEntry> clone = (value == null) ? null : value.typedClone();
-        this.friends = clone;
     }
 
     /**

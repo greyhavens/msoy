@@ -16,11 +16,8 @@ public interface LobbyCodes extends InvocationCodes
     public static final int PLAY_NOW_SINGLE = 0;
 
     /** A mode constant for {@link LobbyService#playNow}. */
-    public static final int PLAY_NOW_FRIENDS = 1;
-
-    /** A mode constant for {@link LobbyService#playNow}. */
-    public static final int PLAY_NOW_ANYONE = 2;
+    public static final int PLAY_NOW_ANYONE = 1;
 
     /** Indicates that we should start a single player game if that's the only option. */
-    public static final int PLAY_NOW_IF_SINGLE = 5;
+    public static final int PLAY_NOW_IF_SINGLE = 4;
 }

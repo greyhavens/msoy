@@ -188,16 +188,14 @@ public class LobbyManager
 
     /**
      * Attempts to send the specified player directly into a game.
-     *
-     * @return if the player was sent into a game, false if they should display the lobby.
      */
-    public boolean playNowMulti (PlayerObject player, boolean friendsOnly)
+    public boolean playNowMulti (PlayerObject player)
     {
         // if this is a party game (or seated continuous); send them into an existing game
         if (_lobj.gameDef.match.getMatchType() != MsoyGameConfig.SEATED_GAME) {
             // TODO: order the tables most occupants to least?
             for (Table table : _lobj.tables) {
-                if (table.gameOid > 0 && shouldJoinGame(player, table, friendsOnly)) {
+                if (table.gameOid > 0 && shouldJoinGame(player, table)) {
                     ParlorSender.gameIsReady(player, table.gameOid);
                     return true;
                 }
@@ -212,7 +210,7 @@ public class LobbyManager
         return false;
     }
 
-    protected boolean shouldJoinGame (PlayerObject player, Table table, boolean friendsOnly)
+    protected boolean shouldJoinGame (PlayerObject player, Table table)
     {
         // if this table has been marked as private, we don't want to butt in
         if (table.tconfig.privateTable) {
@@ -224,20 +222,7 @@ public class LobbyManager
         if (table.watchers.length >= maxSeats) {
             return false;
         }
-
-        // if we're not looking for friends, then this game is fine!
-        if (!friendsOnly) {
-            return true;
-        }
-
-        // see if any of our friends are in this game
-        for (Name occ : table.players) {
-            int memberId = ((MemberName)occ).getMemberId();
-            if (player != null && player.friends.containsKey(memberId)) {
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 
     public void shutdown ()

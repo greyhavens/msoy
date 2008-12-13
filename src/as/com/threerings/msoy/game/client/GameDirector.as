@@ -92,9 +92,7 @@ public class GameDirector extends BasicDirector
     public function playNow (gameId :int, modeStr: String, ghost :String, gport :int) :void
     {
         var mode :int = LobbyCodes.PLAY_NOW_SINGLE;
-        if (modeStr == "f") {
-            mode = LobbyCodes.PLAY_NOW_FRIENDS;
-        } else if (modeStr == "m") {
+        if (modeStr == "m") {
             mode = LobbyCodes.PLAY_NOW_ANYONE;
         }
         if (_liaison != null) {

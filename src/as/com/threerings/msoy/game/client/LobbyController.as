@@ -28,6 +28,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.NoPlaceView;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.client.WorldGameService;
@@ -158,6 +159,8 @@ public class LobbyController extends Controller
      */
     public function countFriends (table :Table) :int
     {
+        var friendIds :Array = _gctx.getOnlineFriends().map(
+            function (f :FriendEntry) :int { return f.name.getMemberId() });
         var plobj :PlayerObject = _gctx.getPlayerObject();
         var friends :int = 0, ourId :int = plobj.memberName.getMemberId();
         for (var ii :int; ii < table.players.length; ii++) {
@@ -166,7 +169,7 @@ public class LobbyController extends Controller
                 continue;
             }
             var friendId :int = name.getMemberId();
-            if (plobj.friends.containsKey(friendId) || friendId == ourId) {
+            if (friendIds.indexOf(friendId) >= 0 || friendId == ourId) {
                 friends++;
             }
         }
@@ -415,11 +418,8 @@ public class LobbyController extends Controller
         } else {
             // otherwise do something appropriate based on our mode
             switch (_mode) {
-            case LobbyCodes.PLAY_NOW_FRIENDS:
-                joinSomeTable(true);
-                break;
             case LobbyCodes.PLAY_NOW_ANYONE:
-                joinSomeTable(false);
+                joinSomeTable();
                 break;
             }
         }
@@ -444,10 +444,10 @@ public class LobbyController extends Controller
     /**
      * Looks for a table that we can join and joins it.
      */
-    protected function joinSomeTable (friendsOnly :Boolean) :Boolean
+    protected function joinSomeTable () :Boolean
     {
         for each (var table :Table in _lobj.tables.toArray()) {
-            if (table.inPlay() || (friendsOnly && countFriends(table) == 0)) {
+            if (table.inPlay()) {
                 continue;
             }
             for (var ii :int; ii < table.players.length; ii++) {

@@ -726,7 +726,7 @@ public class FrameEntryPoint
                 }
             } else if (action.equals("g")) {
                 args = "gameLocation=" + otherId;
-            } else if (action.equals("m") || action.equals("f") || action.equals("s")) {
+            } else if (action.equals("m") || action.equals("s")) {
                 args = "playNow=" + config.gameId + "&mode=" + action;
             } else {
                 args = "gameLobby=" + config.gameId;

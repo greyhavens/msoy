@@ -200,7 +200,6 @@ public class LobbyGameLiaison extends GameLiaison
             break;
 
         case LobbyCodes.PLAY_NOW_SINGLE:
-        case LobbyCodes.PLAY_NOW_FRIENDS:
         case LobbyCodes.PLAY_NOW_ANYONE:
             playNow(_mode);
             _mode = LobbyCodes.SHOW_LOBBY; // in case we end up back here after the game

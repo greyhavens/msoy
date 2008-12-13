@@ -17,7 +17,6 @@ import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -57,12 +56,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
-
-    /** A snapshot of this players friends loaded when they logged onto the game server. Online
-     * status is not filled in and this set is *not* updated if friendship is made or broken during
-     * a game. */
-    public var friends :DSet /* FriendEntry */;
-    FriendEntry; // reference to force compilation
 
     /** Contains information on player's ownership of game content (populated lazily). */
     public var gameContent :DSet; /* GameContentOwnership */
@@ -171,7 +164,6 @@ public class PlayerObject extends WhirledPlayerObject
         memberName = VizMemberName(ins.readObject());
         tokens = MsoyTokenRing(ins.readObject());
         humanity = ins.readInt();
-        friends = DSet(ins.readObject());
         gameContent = DSet(ins.readObject());
         visitorInfo = VisitorInfo(ins.readObject());
         propertyService = PropertySpaceMarshaller(ins.readObject());

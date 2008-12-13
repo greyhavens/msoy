@@ -787,12 +787,8 @@ public class GameGameRegistry
                     gameCreated = mgr.playNowSingle(plobj);
                     break;
 
-                case LobbyCodes.PLAY_NOW_FRIENDS:
-                    gameCreated = mgr.playNowMulti(plobj, true);
-                    break;
-
                 case LobbyCodes.PLAY_NOW_ANYONE:
-                    gameCreated = mgr.playNowMulti(plobj, false);
+                    gameCreated = mgr.playNowMulti(plobj);
                     break;
                 }
                 listener.requestProcessed(gameCreated ? 0 : result);
