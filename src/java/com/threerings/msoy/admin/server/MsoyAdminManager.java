@@ -280,5 +280,5 @@ public class MsoyAdminManager
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;
 
-        protected static final String AUTOMATIC_INITIATOR = "automatic";
+    protected static final String AUTOMATIC_INITIATOR = "automatic";
 }
