@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -41,9 +42,10 @@ public class DashboardPanel extends SmartTable
         if (CShell.isAdmin()) {
             FlowPanel admin = new FlowPanel();
             admin.add(MsoyUI.createLabel(_msgs.adminControls(), "Title"));
-            admin.add(new Button(_msgs.displayDashboard(), new ClickListener() {
+            admin.add(MsoyUI.createActionLabel(_msgs.displayDashboard(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    ((Button)sender).setEnabled(false);
+                    ((Label)sender).removeClickListener(this);
+                    sender.removeStyleName("actionLabel");
                     displayDashboard();
                 }
             }));
