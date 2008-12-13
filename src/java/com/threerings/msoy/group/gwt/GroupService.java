@@ -92,7 +92,7 @@ public interface GroupService extends RemoteService
         public GroupName groupName;
 
         /** The map of medals to those that have awarded them from this group.  If nobody has
-         * earned a given medal yet, that medal will map to null. */
+         * earned a given medal yet, that medal will map to an empty list. */
         public Map<Medal, List<VizMemberName>> medals;
     }
 
