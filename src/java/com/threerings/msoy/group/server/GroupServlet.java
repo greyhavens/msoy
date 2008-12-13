@@ -592,7 +592,8 @@ public class GroupServlet extends MsoyServiceServlet
             Lists.transform(groupMedals, MedalRecord.TO_MEDAL_ID));
         // go through a couple of transformations and a db query to get VizMemberNames for each
         // member.
-        List<Integer> memberIds = Lists.transform(earnedMedals, EarnedMedalRecord.TO_MEMBER_ID);
+        Set<Integer> memberIds = Sets.newHashSet(
+            Lists.transform(earnedMedals, EarnedMedalRecord.TO_MEMBER_ID));
         List<VizMemberName> memberNames = Lists.transform(_memberRepo.loadMemberCards(memberIds),
             new Function<MemberCardRecord, VizMemberName>() {
                 public VizMemberName apply (MemberCardRecord memberCardRec) {
