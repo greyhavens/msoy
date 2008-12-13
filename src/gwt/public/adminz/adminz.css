@@ -18,6 +18,11 @@
   text-align: left;
 }
 
+.dashboardPanel .gwt-Button {
+  display: block;
+  margin-bottom: 5px;
+}
+
 .invitePlayersPopup {
   padding: 10px;
 }

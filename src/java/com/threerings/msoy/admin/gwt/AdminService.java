@@ -222,4 +222,12 @@ public interface AdminService extends RemoteService
      */
     PanopticonStatus getPanopticonStatus ()
         throws ServiceException;
+
+    /**
+     * Requests that the server be rebooted in the specified number of minutes. If the value is
+     * zero the server will be rebooted immediately, if it is negative, a pending reboot will be
+     * aborted and a new regularly scheduled reboot scheduled.
+     */
+    void scheduleReboot (int minutes)
+        throws ServiceException;
 }

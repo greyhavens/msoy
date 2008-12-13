@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.Pages;
@@ -24,6 +26,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -57,6 +60,15 @@ public class DashboardPanel extends SmartTable
             admin.add(makeLink(_msgs.panopticonStatus(), "panopticonStatus"));
             setWidget(0, col, admin);
             getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
+
+            FlowPanel reboot = new FlowPanel();
+            reboot.add(MsoyUI.createLabel(_msgs.adminReboot(), "Title"));
+            reboot.add(makeReboot(_msgs.rebootNow(), 0));
+            reboot.add(makeReboot(_msgs.rebootInFive(), 5));
+            reboot.add(makeReboot(_msgs.rebootInFifteen(), 15));
+            reboot.add(makeReboot(_msgs.rebootCancel(), -1));
+            setWidget(0, col, reboot);
+            getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
         }
 
         // support controls
@@ -88,6 +100,23 @@ public class DashboardPanel extends SmartTable
         return link;
     }
 
+    protected Widget makeReboot (String title, final int minutes)
+    {
+        Button reboot = new Button(title);
+        new ClickCallback<Void>(reboot) {
+            protected boolean callService () {
+                _adminsvc.scheduleReboot(minutes, this);
+                return true;
+            }
+            protected boolean gotResult (Void result) {
+                MsoyUI.info(minutes < 0 ? _msgs.rebootCancelled() :
+                            _msgs.rebootScheduled(""+minutes));
+                return true;
+            }
+        };
+        return reboot;
+    }
+
     protected void finishDisplayDashboard (ConnectConfig config)
     {
         CShell.frame.closeClient();
@@ -109,6 +138,8 @@ public class DashboardPanel extends SmartTable
     }
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
+    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
+        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

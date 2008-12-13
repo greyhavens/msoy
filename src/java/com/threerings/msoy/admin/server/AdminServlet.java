@@ -509,14 +509,8 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAdminCodes.E_INTERNAL_ERROR);
         }
     }
-
-    protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
-    {
-        final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
-        final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
-        _mailRepo.startConversation(recipientId, senderId, subject, body, null, true);
-    }
     
+    // from interface AdminService
     public void setCharityInfo (CharityInfo charityInfo)
         throws ServiceException
     {
@@ -528,6 +522,7 @@ public class AdminServlet extends MsoyServiceServlet
         _memberRepo.saveCharity(charityRec);
     }
     
+    // from interface AdminService
     public void removeCharityStatus (int memberId)
         throws ServiceException
     {
@@ -536,11 +531,27 @@ public class AdminServlet extends MsoyServiceServlet
         _memberRepo.deleteCharity(memberId);
     }
 
+    // from interface AdminService
     public PanopticonStatus getPanopticonStatus ()
         throws ServiceException
     {
         requireAdminUser();
         return _eventLogger.getStatus();
+    }
+
+    // from interface AdminService
+    public void scheduleReboot (int minutes)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAdminUser();
+        _adminMgr.scheduleReboot(minutes, mrec.accountName);
+    }
+
+    protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
+    {
+        final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
+        final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
+        _mailRepo.startConversation(recipientId, senderId, subject, body, null, true);
     }
     
     // our dependencies

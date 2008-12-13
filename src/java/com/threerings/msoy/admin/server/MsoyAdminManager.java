@@ -93,16 +93,30 @@ public class MsoyAdminManager
      */
     public void scheduleReboot (int minutes, String initiator)
     {
-        // if this is a zero minute reboot, just do the deed
         if (minutes == 0) {
-            log.info("Performing immediate shutdown [for=" + initiator + "].");
-            _shutmgr.shutdown();
-            return;
-        }
+            // if this is a zero minute reboot, do it in one second so that we have a chance to
+            // send our response back to the requester
+            log.info("Performing immediate shutdown", "for", initiator);
+            new Interval(_omgr) {
+                public void expired () {
+                    _shutmgr.shutdown();
+                }
+            }.schedule(1000L);
 
-        // shave 5 seconds off to avoid rounding up to the next time
-        long when = System.currentTimeMillis() + minutes * 60 * 1000L - 5000L;
-        _rebmgr.scheduleReboot(when, initiator);
+        } else if (minutes < 0) {
+            log.info("Reverting to regularly scheduled reboot", "for", initiator);
+            // revert to our next regularly scheduled reboot
+            if (!_rebmgr.scheduleRegularReboot()) {
+                // if we have no such thing, schedule one for long time future
+                _rebmgr.scheduleReboot(System.currentTimeMillis() + 365*24*60*60*1000L, initiator);
+            }
+
+        } else {
+            log.info("Scheduling reboot", "mins", minutes, "for", initiator);
+            // shave 5 seconds off to avoid rounding up to the next time
+            long when = System.currentTimeMillis() + minutes*60*1000L - 5000L;
+            _rebmgr.scheduleReboot(when, initiator);
+        }
     }
 
     /**

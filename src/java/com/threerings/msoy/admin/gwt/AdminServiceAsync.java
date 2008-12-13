@@ -139,16 +139,24 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#getStatsModel}.
      */
     void getStatsModel (StatsModel.Type type, AsyncCallback<StatsModel> callback);
-    
+
     /**
      * The asynchronous version of {@link AdminService#setCharityInfo}.
      */
     void setCharityInfo (CharityInfo charityInfo, AsyncCallback<Void> callback);
-    
+
     /**
-     * The asynchronous version of {@link AdminService#removeCharityStatus(int)}.
+     * The asynchronous version of {@link AdminService#removeCharityStatus}.
      */
     void removeCharityStatus (int memberId, AsyncCallback<Void> callback);
-    
+
+    /**
+     * The asynchronous version of {@link AdminService#getPanopticonStatus}.
+     */
     void getPanopticonStatus (AsyncCallback<PanopticonStatus> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#scheduleReboot}.
+     */
+    void scheduleReboot (int minutes, AsyncCallback<Void> callback);
 }
