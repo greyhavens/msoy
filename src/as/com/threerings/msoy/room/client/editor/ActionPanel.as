@@ -298,7 +298,7 @@ public class ActionPanel extends BasePanel
         }
 
         var newData :FurniData;
-        var type :int = _actionTypeSelection.selectedItem.data;
+        var type :int = int(_actionTypeSelection.selectedData);
 
         if (! isActionTypeEditable(type)) {
             // these aren't handled by this editor, so let's not touch the data

@@ -23,8 +23,8 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flash.MediaContainer;
 
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 

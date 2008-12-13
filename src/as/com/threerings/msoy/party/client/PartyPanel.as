@@ -92,8 +92,8 @@ public class PartyPanel extends FloatingPanel
         }
         _recruit = new CommandComboBox(_wctx.getPartyDirector().updateRecruitment);
         _recruit.dataProvider = options;
+        _recruit.selectedData = _partyObj.recruitment;
         _recruit.enabled = isLeader;
-        _recruit.setSelectedValue(_partyObj.recruitment);
         addChild(_recruit);
     }
 
@@ -116,7 +116,7 @@ public class PartyPanel extends FloatingPanel
                 break;
 
             case PartyObject.RECRUITMENT:
-                _recruit.setSelectedValue(int(event.getValue()));
+                _recruit.selectedData = int(event.getValue());
                 break;
         }
     }
