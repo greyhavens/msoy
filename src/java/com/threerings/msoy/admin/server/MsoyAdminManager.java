@@ -206,11 +206,13 @@ public class MsoyAdminManager
         }
 
         protected int getDayFrequency () {
-            return -1; // no automatically scheduled reboots for now
+            // reboot dev nightly, production never (for now)
+            return DeploymentConfig.devDeployment ? 1 : -1;
         }
 
         protected int getRebootHour () {
-            return 8;
+            // reboot dev at 1am, production (if we ever autoreboot, at 9am)
+            return DeploymentConfig.devDeployment ? 1 : 9;
         }
 
         protected boolean getSkipWeekends () {
