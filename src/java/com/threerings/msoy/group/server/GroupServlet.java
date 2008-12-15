@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
+import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Tuple;
@@ -652,7 +653,41 @@ public class GroupServlet extends MsoyServiceServlet
     public void awardMedal (int memberId, int medalId)
         throws ServiceException
     {
-        // TODO
+        MemberRecord mrec = requireAuthedUser();
+
+        // make sure the medal exists
+        MedalRecord medalRec = _medalRepo.loadMedal(medalId);
+        if (medalRec == null) {
+            log.warning("Attempted to award an unknown medal", "medalId", medalId);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        // make sure the person calling this method has the correct permission.
+        if (!mrec.isSupport() &&
+            _groupRepo.getRank(medalRec.groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
+            log.warning("Non-manager attempted to award a group medal", "memberId", mrec.memberId,
+                "groupId", medalRec.groupId);
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
+        // Make sure the group is either official or contains this member.
+        GroupRecord groupRec = _groupRepo.loadGroup(medalRec.groupId);
+        if (!groupRec.official &&
+            _groupRepo.getRank(medalRec.groupId, memberId) == GroupMembership.RANK_NON_MEMBER) {
+            log.warning("Attempted to grant a medal to a group non-member", "recipientId", memberId,
+                "granterId", mrec.memberId, "medalId", medalId);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        // finally, award the medal.
+        try {
+            _medalRepo.awardMedal(memberId, medalId);
+
+        } catch (DuplicateKeyException dke) {
+            // Not really log noteworthy.  This just means the person attempting to grant the
+            // medal made a mistake that our UI allows him to make.
+            throw new ServiceException(GroupCodes.E_GROUP_MEMBER_HAS_MEDAL);
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,14 @@ public class MedalRepository extends DepotRepository
     }
 
     /**
+     * Returns the required MedalRecord
+     */
+    public MedalRecord loadMedal (int medalId)
+    {
+        return load(MedalRecord.class, medalId);
+    }
+
+    /**
      * Returns true if the groupId and name combination is already in use.
      */
     public boolean groupContainsMedalName (int groupId, String name)
@@ -74,6 +83,20 @@ public class MedalRepository extends DepotRepository
         }
         return findAll(EarnedMedalRecord.class,
             new Where(new In(EarnedMedalRecord.MEDAL_ID_C, medalIds)));
+    }
+
+    /**
+     * Awards the given medal to the given member.
+     *
+     * @throws DuplicateKeyException If this member has already earned that medal.
+     */
+    public void awardMedal (int memberId, int medalId)
+    {
+        EarnedMedalRecord earnedMedalRec = new EarnedMedalRecord();
+        earnedMedalRec.memberId = memberId;
+        earnedMedalRec.medalId = medalId;
+        earnedMedalRec.whenEarned = new Timestamp(System.currentTimeMillis());
+        insert(earnedMedalRec);
     }
 
     @Override
