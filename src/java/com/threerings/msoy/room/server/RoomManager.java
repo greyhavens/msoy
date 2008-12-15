@@ -494,7 +494,6 @@ public class RoomManager extends SpotSceneManager
                 _sceneRepo.publishScene(_scene.getId());
             }
         });
-        ((MsoySceneRegistry)_screg).memberPublishedRoom(user, (MsoyScene)_scene);
     }
 
     // documentation inherited from RoomProvider

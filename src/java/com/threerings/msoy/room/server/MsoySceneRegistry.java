@@ -66,13 +66,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         _eventLog.roomUpdated(memId, scene.getId(), user.getVisitorId());
     }
 
-    /**
-     * Called by the RoomManager when a member publishes a room.
-     */
-    public void memberPublishedRoom (MemberObject user, final MsoyScene scene)
-    {
-    }
-
     // from interface MsoySceneProvider
     public void moveTo (ClientObject caller, final int sceneId, int version, final int portalId,
                         final MsoyLocation destLoc, final SceneService.SceneMoveListener listener)
