@@ -595,12 +595,7 @@ public class GroupServlet extends MsoyServiceServlet
         Set<Integer> memberIds = Sets.newHashSet(
             Iterables.transform(earnedMedals, EarnedMedalRecord.TO_MEMBER_ID));
         List<VizMemberName> memberNames = Lists.transform(_memberRepo.loadMemberCards(memberIds),
-            new Function<MemberCardRecord, VizMemberName>() {
-                public VizMemberName apply (MemberCardRecord memberCardRec) {
-                    MemberCard memberCard = memberCardRec.toMemberCard();
-                    return new VizMemberName(memberCard.name, memberCard.photo);
-                }
-            });
+            MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME);
         // now that we have each member's VizMemberName, add them to the appropriate list and ship
         // the whole package off to the client.
         for (EarnedMedalRecord earnedMedalRec : earnedMedals) {
@@ -620,11 +615,37 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<GroupMembership> searchGroupMembers (int groupId, String search)
+    public List<VizMemberName> searchGroupMembers (int groupId, String search)
         throws ServiceException
     {
-        // TODO
-        return Lists.newArrayList();
+        MemberRecord mrec = requireAuthedUser();
+
+        // Group member searching is currently only used for finding people to award medals to,
+        // which is a manager-only ability.
+        Byte rank = _groupRepo.getMembership(groupId, mrec.memberId).left;
+        if (!mrec.isSupport() && rank != GroupMembership.RANK_MANAGER) {
+            log.warning("Non-manager attempted to search through group members", "memberId",
+                mrec.memberId, "groupId", groupId);
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
+        // If this person is support+, we need to check if this is an official group.  If so, we
+        // search across all Whirled members.
+        if (mrec.isSupport()) {
+            GroupRecord grec = _groupRepo.loadGroup(groupId);
+            if (grec.official) {
+                return Lists.newArrayList(Lists.transform(
+                    _memberRepo.loadMemberCards(_memberRepo.findMembersByDisplayName(
+                        search, false, MAX_MEMBER_MATCHES)),
+                    MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME));
+            }
+        }
+
+        Set<Integer> memberIds = Sets.newHashSet(Iterables.transform(
+            _groupRepo.getMembers(groupId), GroupMembershipRecord.TO_MEMBER_ID));
+        return Lists.newArrayList(Lists.transform(
+            _memberRepo.loadMemberCards(_memberRepo.findMembersInCollection(search, memberIds)),
+            MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME));
     }
 
     // from interface GroupService
@@ -706,6 +727,9 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected GroupLogic _groupLogic;
     @Inject protected MsoyChatChannelManager _channelMan;
 
+    /** The number of matches to return when searching against all display names in the database. */
+    protected static int MAX_MEMBER_MATCHES = 100;
+
     /** Compartor for sorting by population then by last post date. */
     protected static Comparator<MyGroupCard> SORT_BY_PEOPLE_ONLINE =
         new Comparator<MyGroupCard>() {
@@ -778,4 +802,14 @@ public class GroupServlet extends MsoyServiceServlet
             return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
         }
     };
+
+    /** Function to convert from MemberCardRecords to VizMemberNames */
+    protected static Function<MemberCardRecord, VizMemberName> MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME =
+        new Function<MemberCardRecord, VizMemberName>() {
+            public VizMemberName apply (MemberCardRecord memberCardRec) {
+                MemberCard memberCard = memberCardRec.toMemberCard();
+                return new VizMemberName(memberCard.name, memberCard.photo);
+            }
+        };
+
 }

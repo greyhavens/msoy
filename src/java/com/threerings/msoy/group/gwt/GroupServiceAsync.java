@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Medal;
@@ -128,7 +129,7 @@ public interface GroupServiceAsync
      * The asynchronous version of {@link GroupService#searchGroupMembers}
      */
     void searchGroupMembers (
-        int groupId, String search, AsyncCallback<List<GroupMembership>> callback);
+        int groupId, String search, AsyncCallback<List<VizMemberName>> callback);
 
     /**
      * The asynchronous version of {@link GroupService#awardMedal}

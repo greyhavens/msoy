@@ -343,6 +343,25 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns MemberCardRecords for all members that are part of the given collection and also
+     * match their displayName against the given search string.
+     */
+    public List<Integer> findMembersInCollection (String search,
+        Collection<Integer> memberIds)
+    {
+        if (memberIds.size() == 0) {
+            return Collections.emptyList();
+        }
+        search = search.toLowerCase();
+        Where whereClause = new Where(new And(
+            new In(MemberRecord.MEMBER_ID_C, memberIds),
+            new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search)));
+        return Lists.transform(
+            findAllKeys(MemberRecord.class, false, whereClause),
+            RecordFunctions.<MemberRecord>getIntKey());
+    }
+
+    /**
      * Returns the members with the highest levels
      */
     public List<Integer> getLeadingMembers (final int limit)
@@ -1169,13 +1188,13 @@ public class MemberRepository extends DepotRepository
         }
         return migrated;
     }
-    
+
     public void deleteExperiences (int memberId)
     {
-        deleteAll(MemberExperienceRecord.class, 
+        deleteAll(MemberExperienceRecord.class,
             new Where(MemberExperienceRecord.MEMBER_ID_C, memberId));
     }
-    
+
     public void saveExperiences (List<MemberExperienceRecord> experiences)
     {
         // Might be nice to batch these.  Maybe depot does that automatically, not sure.
@@ -1183,14 +1202,14 @@ public class MemberRepository extends DepotRepository
             store(experience);
         }
     }
-    
+
     public List<MemberExperienceRecord> getExperiences (int memberId)
     {
-        return findAll(MemberExperienceRecord.class, 
+        return findAll(MemberExperienceRecord.class,
             new Where(MemberExperienceRecord.MEMBER_ID_C, memberId),
             OrderBy.ascending(MemberExperienceRecord.DATE_OCCURRED_C));
     }
-    
+
     /**
      * Saves the given charity record.
      */
@@ -1198,7 +1217,7 @@ public class MemberRepository extends DepotRepository
     {
         store(record);
     }
-    
+
     /**
      * Deletes the charity record for the given member.
      */
@@ -1206,7 +1225,7 @@ public class MemberRepository extends DepotRepository
     {
         delete(CharityRecord.class, memberId);
     }
-    
+
     /**
      * Retrieves all charities.
      */
@@ -1214,7 +1233,7 @@ public class MemberRepository extends DepotRepository
     {
         return findAll(CharityRecord.class);
     }
-    
+
     /**
      * Retrieves all core charities, i.e., those that can be randomly selected when a user has not
      * yet chosen a specific charity.
@@ -1223,7 +1242,7 @@ public class MemberRepository extends DepotRepository
     {
         return findAll(CharityRecord.class, new Where(CharityRecord.CORE_C, true));
     }
-    
+
     /**
      * Retrieves the charity record for the given member.  If the member is not a charity, returns
      * null.
@@ -1232,7 +1251,7 @@ public class MemberRepository extends DepotRepository
     {
         return load(CharityRecord.class, memberId);
     }
-    
+
     /**
      * Changes the member's charity to the specified member ID.
      */

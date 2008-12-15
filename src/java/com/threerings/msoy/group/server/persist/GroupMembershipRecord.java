@@ -71,6 +71,14 @@ public class GroupMembershipRecord extends PersistentRecord
 
     public static final int SCHEMA_VERSION = 3;
 
+    /** A function to convert GroupMembershipRecords to the memberId they represent. */
+    public static final Function<GroupMembershipRecord, Integer> TO_MEMBER_ID =
+        new Function<GroupMembershipRecord, Integer>() {
+            public Integer apply (GroupMembershipRecord record) {
+                return record.memberId;
+            }
+        };
+
     /** The id of the member in the group membership. */
     @Id
     public int memberId;

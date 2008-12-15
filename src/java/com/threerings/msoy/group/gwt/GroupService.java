@@ -232,7 +232,7 @@ public interface GroupService extends RemoteService
     /**
      * Returns the group members that match the given search.
      */
-    List<GroupMembership> searchGroupMembers (int groupId, String search)
+    List<VizMemberName> searchGroupMembers (int groupId, String search)
         throws ServiceException;
 
     /**
