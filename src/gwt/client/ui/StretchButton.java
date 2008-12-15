@@ -14,9 +14,18 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class StretchButton extends FocusPanel
 {
-    public static final String
-        ORANGE_THICK = "orangeThick",
-        BLUE_THICK = "blueThick";
+    public static final String ORANGE_THICK = "orangeThick";
+    public static final String BLUE_THICK = "blueThick";
+
+    public static StretchButton makeOrange (String label, ClickListener listener)
+    {
+        return new StretchButton(ORANGE_THICK, label, listener);
+    }
+
+    public static StretchButton makeBlue (String label, ClickListener listener)
+    {
+        return new StretchButton(BLUE_THICK, label, listener);
+    }
 
     public StretchButton (String styleName, String textContent, ClickListener listener)
     {
