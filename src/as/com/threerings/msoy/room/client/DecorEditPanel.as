@@ -136,7 +136,7 @@ public class DecorEditPanel extends FlyingPanel
 
         _suppressSaves = true;
         try {
-            _roomType.selectedIndex = figureRoomType();
+            _roomType.selectedData = figureRoomType();
             _depth.maximum = Math.max(height * 8, depth); // in case there's legacy deepness
             _depth.value = depth;
             _depth.tickValues = [ height ];
@@ -183,8 +183,8 @@ public class DecorEditPanel extends FlyingPanel
 
         _roomType = new CommandComboBox(saveChanges);
         var types :Array = [];
-        for (var ii :int = 0; ii < ROOM_KEYS.length; ii++) {
-            types[ii] = { label: Msgs.STUDIO.get(ROOM_KEYS[ii]) };
+        for (var ii :int = 0; ii < TYPE_COUNT; ii++) {
+            types[ii] = { label: Msgs.STUDIO.get(ROOM_KEYS[ii]), data: ii };
         }
         _roomType.dataProvider = types;
 
@@ -232,13 +232,13 @@ public class DecorEditPanel extends FlyingPanel
         _checkRoomTypes = function ( ... ignored) :void {
             // turn depth and horizon off for flatland
             const on :Boolean =
-                _roomType.selectedIndex != ROOM_FLATLAND && _roomType.selectedIndex != ROOM_TOPDOWN;
+                _roomType.selectedData != ROOM_FLATLAND && _roomType.selectedData != ROOM_TOPDOWN;
             for each (var comp :UIComponent in [ horzP, depthP ]){
                 FlexUtil.setVisible(comp, on);
             }
         };
         _roomType.addEventListener(Event.CHANGE, _checkRoomTypes);
-        _roomType.selectedIndex = ROOM_FLATLAND; // flatland is smallest layout
+        _roomType.selectedData = ROOM_FLATLAND; // flatland is smallest layout
         _checkRoomTypes();
 
         GridUtil.addRow(_grid, typeP);
@@ -282,11 +282,11 @@ public class DecorEditPanel extends FlyingPanel
      */
     protected function readRoomType () :void
     {
-        switch (_roomType.selectedIndex) {
+        switch (_roomType.selectedData) {
         case ROOM_NORMAL:
         case ROOM_NO_WALLS:
             _decor.type = Decor.IMAGE_OVERLAY;
-            _decor.hideWalls = (_roomType.selectedIndex == ROOM_NO_WALLS);
+            _decor.hideWalls = (_roomType.selectedData == ROOM_NO_WALLS);
             break;
 
         case ROOM_FLATLAND:
@@ -339,6 +339,7 @@ public class DecorEditPanel extends FlyingPanel
     protected const ROOM_NO_WALLS :int = 1;
     protected const ROOM_FLATLAND :int = 2;
     protected const ROOM_TOPDOWN :int = 3;
+    protected const TYPE_COUNT :int = 4;
 
     protected const ROOM_KEYS :Array =
         [ "m.room_normal", "m.room_no_walls", "m.room_flat", "m.room_topdown" ];
