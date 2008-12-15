@@ -32,5 +32,6 @@
   <script id="swfobject" type="text/javascript"></script>
   <script id="md5" type="text/javascript"></script>
   <script id="googanal" type="text/javascript"></script>
+  <script id="fbconnect" type="text/javascript"></script>
 </body>
 </html>
