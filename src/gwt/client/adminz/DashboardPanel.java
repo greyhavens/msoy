@@ -39,7 +39,11 @@ public class DashboardPanel extends SmartTable
     public DashboardPanel ()
     {
         super("dashboardPanel", 0, 10);
-        int col = 0;
+        int row = 0, col = 0;
+
+        // display some infoez
+        setHTML(row, 0, _msgs.dashVersion(DeploymentConfig.version));
+        setHTML(row++, 1, _msgs.dashBuilt(DeploymentConfig.buildTime));
 
         // admin-only controls
         if (CShell.isAdmin()) {
@@ -58,7 +62,7 @@ public class DashboardPanel extends SmartTable
             admin.add(makeLink(_msgs.viewABTests(), "testlist"));
             admin.add(makeLink(_msgs.viewBureaus(), "bureaus"));
             admin.add(makeLink(_msgs.panopticonStatus(), "panopticonStatus"));
-            setWidget(0, col, admin);
+            setWidget(row, col, admin);
             getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
 
             FlowPanel reboot = new FlowPanel();
@@ -67,7 +71,7 @@ public class DashboardPanel extends SmartTable
             reboot.add(makeReboot(_msgs.rebootInFive(), 5));
             reboot.add(makeReboot(_msgs.rebootInFifteen(), 15));
             reboot.add(makeReboot(_msgs.rebootCancel(), -1));
-            setWidget(0, col, reboot);
+            setWidget(row, col, reboot);
             getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
         }
 
@@ -79,7 +83,7 @@ public class DashboardPanel extends SmartTable
         support.add(makeLink(_msgs.promosButton(), "promos"));
         support.add(makeLink(_msgs.contestsButton(), "contests"));
         support.add(makeLink(_msgs.browseButton(), "browser"));
-        setWidget(0, col, support);
+        setWidget(row++, col, support);
         getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
     }
 
