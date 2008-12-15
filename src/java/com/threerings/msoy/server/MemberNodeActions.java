@@ -29,7 +29,6 @@ import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
 
@@ -622,7 +621,7 @@ public class MemberNodeActions
                 memobj.removeFromFollowers(_followerId);
             }
         }
-        
+
         protected int _followerId;
     }
 

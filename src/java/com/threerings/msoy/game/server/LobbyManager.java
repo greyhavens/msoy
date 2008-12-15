@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
-import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -33,7 +32,6 @@ import com.threerings.parlor.server.ParlorSender;
 import com.whirled.game.data.GameDefinition;
 import com.whirled.game.data.TableMatchConfig;
 
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.server.MsoyEventLogger;

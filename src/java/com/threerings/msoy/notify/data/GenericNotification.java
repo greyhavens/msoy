@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.notify.data;
 
-import com.threerings.io.ObjectInputStream;
-
-import com.threerings.msoy.data.all.MemberName;
-
 /**
  * Used for two purposes:
  *  - Generate a notification purely in the client, from the NotificationDirector

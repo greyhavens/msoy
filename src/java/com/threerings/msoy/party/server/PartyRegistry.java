@@ -26,10 +26,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.peer.data.NodeObject;
 
-import com.threerings.presents.dobj.DEvent;
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.RootDObjectManager;
-import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.whirled.data.ScenePlace;
 
@@ -307,7 +304,7 @@ public class PartyRegistry
     /**
      * Called prior to a member leaving a node.
      */
-    protected void playerLeavingNode (MemberObject member) 
+    protected void playerLeavingNode (MemberObject member)
     {
         if (member.partyId != 0) {
             PartyManager mgr = _parties.get(member.partyId);

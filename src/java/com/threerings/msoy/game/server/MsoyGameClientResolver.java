@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
@@ -14,7 +13,6 @@ import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;

@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.party.server;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.util.IntMap;
@@ -28,12 +25,8 @@ import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 
-import com.threerings.crowd.data.Place;
-
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 import com.threerings.crowd.chat.server.SpeakHandler;
-
-import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -51,8 +44,6 @@ import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages a particular party while it lives on a single node.
@@ -354,7 +345,7 @@ public class PartyManager
     // from SpeakHandler.SpeakerValidator
     public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode)
     {
-        return (speaker instanceof MemberObject) && 
+        return (speaker instanceof MemberObject) &&
             ((MemberObject) speaker).partyId == _partyObj.id;
     }
 
