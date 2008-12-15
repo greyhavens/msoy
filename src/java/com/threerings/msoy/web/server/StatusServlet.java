@@ -37,6 +37,7 @@ import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyClientInfo;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.server.MsoyEventLogger;
 
 import static com.threerings.msoy.Log.log;
 
@@ -172,6 +173,10 @@ public class StatusServlet extends HttpServlet
             collectReportInfo(info, client, nodeobj, ReportManager.DEFAULT_TYPE);
             break;
 
+        case PANOPTICON:
+            collectReportInfo(info, client, nodeobj, MsoyEventLogger.PANOPTICON_REPORT_TYPE);
+            break;
+            
         case NONE:
             // leave details as null in this case
             break;
@@ -217,7 +222,7 @@ public class StatusServlet extends HttpServlet
     }
 
     protected static enum Details {
-        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT
+        NONE, MEMBERS, ROOMS, GAMES, CHANNELS, REPORT, PANOPTICON
     };
 
     protected static class ServerInfo

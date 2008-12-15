@@ -554,6 +554,13 @@ public class AdminServlet extends MsoyServiceServlet
         _mailRepo.startConversation(recipientId, senderId, subject, body, null, true);
     }
     
+    public void restartPanopticon ()
+        throws ServiceException
+    {
+        requireAdminUser();
+        _eventLogger.restart();
+    }
+    
     // our dependencies
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected RootDObjectManager _omgr;

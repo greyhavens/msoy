@@ -154,6 +154,8 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#getPanopticonStatus}.
      */
     void getPanopticonStatus (AsyncCallback<PanopticonStatus> callback);
+    
+    void restartPanopticon (AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link AdminService#scheduleReboot}.

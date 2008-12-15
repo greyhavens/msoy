@@ -8,7 +8,10 @@ import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
@@ -25,32 +28,42 @@ public class PanopticonStatusPanel extends SmartTable
     {
         addStyleName("panopticonStatus");
         
-        int row = addText(_msgs.panTimeStarted(), 0, "header");
+        int row = addText(_msgs.panTimeStarted(), 1, "header");
         setWidget(row, 1, _timeStarted = new Label());
         
-        row = addText(_msgs.panQueuedEvents(), 0, "header");
+        row = addText(_msgs.panQueuedEvents(), 1, "header");
         setWidget(row, 1, _currentlyQueued = new Label());
         
-        row = addText(_msgs.panDroppedEvents(), 0, "header");
+        row = addText(_msgs.panDroppedEvents(), 1, "header");
         setWidget(row, 1, _dropped = new Label());
         
-        row = addText(_msgs.panEventsSent(), 0, "header");
+        row = addText(_msgs.panEventsSent(), 1, "header");
         setWidget(row, 1, _totalSent = new Label());
         
-        row = addText(_msgs.panOverflowed(), 0, "header");
+        row = addText(_msgs.panOverflowed(), 1, "header");
         setWidget(row, 1, _overflowed = new Label());
         
-        row = addText(_msgs.panLastTimeEnteredRetryMode(), 0, "header");
+        row = addText(_msgs.panLastTimeEnteredRetryMode(), 1, "header");
         setWidget(row, 1, _lastTimeEnteredRetryMode = new Label());
-        row = addText(_msgs.panLastTimeRecoveredFromRetryMode(), 0, "header");
+        row = addText(_msgs.panLastTimeRecoveredFromRetryMode(), 1, "header");
         setWidget(row, 1, _lastTimeRecoveredFromRetryMode = new Label());
-        row = addText(_msgs.panLastTempFailed(), 0, "header");
+        row = addText(_msgs.panLastTempFailed(), 1, "header");
         setWidget(row, 1, _lastTimeTempFailed = new Label());
         
-        row = addText(_msgs.panLastTempFailure(), 0, "header");
-        row = addWidget(_lastTempFailureInfo = new Label(), 0, null);
-        row = addText(_msgs.panLastPermFailure(), 0, "header");
-        row = addWidget(_lastPermFailureInfo = new Label(), 3, null);
+        row = addText(_msgs.panLastTempFailure(), 1, "header");
+        row = addWidget(_lastTempFailureInfo = new Label(), 2, null);
+        row = addText(_msgs.panLastPermFailure(), 1, "header");
+        row = addWidget(_lastPermFailureInfo = new Label(), 2, null);
+        
+        row = addWidget(new Button(_msgs.panRestart(), new ClickListener() {
+            public void onClick (Widget sender) {
+                _adminsvc.restartPanopticon(new MsoyCallback<Void>() {
+                    public void onSuccess (Void result) {
+                        // Nothing needed.
+                    }
+                });
+            }
+        }), 2, null);
         
         refresh();
     }

@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.text.DateFormat;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
@@ -15,6 +17,9 @@ import com.samskivert.util.StringUtil;
 import com.threerings.panopticon.client.EventLogger;
 import com.threerings.panopticon.client.EventLoggerConfig;
 import com.threerings.panopticon.client.EventLoggerFactory;
+import com.threerings.panopticon.client.EventLoggerStats;
+import com.threerings.presents.server.ReportManager;
+import com.threerings.presents.server.ReportManager.Reporter;
 
 import com.threerings.msoy.money.data.all.Currency;
 
@@ -46,11 +51,16 @@ public class MsoyEventLogger
      */
     public static final int UNKNOWN_MEMBER_ID = -1;
 
+    /** Type identifier for the Panopticon client status report. */
+    public static final String PANOPTICON_REPORT_TYPE = "Panopticon";
+    
     /**
      * Initializes the logger; this must happen before any events can be logged.
      */
-    public void init (String ident)
+    public synchronized void init (String ident)
     {
+        _ident = ident;
+        
         // log locally (always for now)
         File logloc = new File(new File(ServerConfig.serverRoot, "log"), "events_" + ident
             + ".log");
@@ -79,7 +89,9 @@ public class MsoyEventLogger
 
                 log.info("Events logged remotely to: " + host + ":" + port);
                 _remote = EventLoggerFactory.createLogger(config);
-
+                
+                // Add a report to indicate current Panopticon client status.
+                _reportMan.registerReporter(PANOPTICON_REPORT_TYPE, new EventLoggerReporter());
             } catch (Exception e) {
                 log.warning("Failed to connect to remote logging server.", e);
             }
@@ -90,7 +102,7 @@ public class MsoyEventLogger
      * Shuts down our event logger. This is called by MsoyBaseServer after everything else has
      * shutdown so that we can log events during the shutdown process.
      */
-    public void shutdown ()
+    public synchronized void shutdown ()
     {
         if (_remote != null) {
             _remote.dispose();
@@ -98,6 +110,17 @@ public class MsoyEventLogger
         if (_local != null) {
             _local.shutdown();
         }
+    }
+    
+    /**
+     * Restarts the existing logger.  This can be done in cases where the logger client gets into
+     * a bad state and needs to be fixed without restarting the whole server.
+     */
+    public synchronized void restart ()
+    {
+        // shutdown and reinitialize everything.
+        shutdown();
+        init(_ident);
     }
 
     public void currentMemberStats (String serverName, int total, int active, int guests,
@@ -398,8 +421,62 @@ public class MsoyEventLogger
         return status;
     }
 
+    /**
+     * Reporter for Panopticon client info.
+     * 
+     * @author Kyle Sampson <kyle@threerings.net>
+     */
+    protected final class EventLoggerReporter
+        implements Reporter
+    {
+        public void appendReport (StringBuilder buffer, long now, long sinceLast,
+                boolean reset) {
+            EventLoggerStats stats = _remote.getStats();
+            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, 
+                DateFormat.LONG);
+            buffer.append("Time started: ").append(df.format(stats.getTimeStarted()));
+            buffer.append("\nShut down: ").append(_remote.isDisposed() ? "Yes" : "No");
+            buffer.append("\nConnected to server: ").append(
+                _remote.isConnectedToServer() ? "Yes" : "No");
+            buffer.append("\nSender disposed: ").append(_remote.isSenderDisposed() ? "Yes" : "No");
+            buffer.append("\nPersistence manager disposed: ").append(
+                _remote.isPersistenceManagerDisposed() ? "Yes" : "No");
+            buffer.append("\nEvents in queue:\n\tCurrent: ").append(stats.getCurrentlyQueued());
+            buffer.append("\n\tTotal: ").append(stats.getTotalQueued());
+            buffer.append("\n\tLast queued: ").append(stats.getLastTimeQueued() == null ? "Never" : 
+                df.format(stats.getLastTimeQueued()));
+            buffer.append("\nEvents dropped:\n\tTotal: ").append(stats.getDropped());
+            buffer.append("\n\tLast dropped: ").append(stats.getLastTimeDropped() == null ? 
+                "Never" : df.format(stats.getLastTimeDropped()));
+            buffer.append("\n\tReason for last drop: ").append(
+                stats.getLastPermFailure() == null ? "N/A" : stats.getLastPermFailure());
+            buffer.append("\nEvents sent:\n\tTotal: ").append(stats.getTotalSent());
+            buffer.append("\n\tLast sent: ").append(stats.getLastTimeSent() == null ? "Never" : 
+                df.format(stats.getLastTimeSent()));
+            buffer.append("\nEvents overflowed to disk:\n\tCurrent: ").append(
+                stats.getOverflowedCount());
+            buffer.append("\n\tLast overflowed: ").append(stats.getLastTimeOverflowed() == null ? 
+                "Never" : df.format(stats.getLastTimeOverflowed()));
+            buffer.append("\n\tLast requeued: ").append(stats.getLastTimeQueueOverflowed() == null ? 
+                "Never" : df.format(stats.getLastTimeQueueOverflowed()));
+            buffer.append("\nRetry mode:\n\tStatus: ").append(
+                _remote.isInRetryMode() ? "On" : "Off");
+            buffer.append("\n\tLast entered: ").append(stats.getLastTimeEnteredRetryMode() == null ? 
+                "Never" : df.format(stats.getLastTimeEnteredRetryMode()));
+            buffer.append("\n\tLast recovered: ").append(
+                stats.getLastTimeRecoveredFromRetryMode() == null ? "Never" : 
+                df.format(stats.getLastTimeRecoveredFromRetryMode()));
+            buffer.append("\nLast temporary failure: ").append(
+                stats.getLastTimeTempFailed() == null ? "Never" : 
+                df.format(stats.getLastTimeTempFailed()));
+            buffer.append("\n\tReason for last failure: ").append(
+                stats.getLastTempFailure() == null ? "N/A" : stats.getLastTempFailure());
+            buffer.append('\n');
+        }
+    }
+
     /** Posts a log message to the appropriate place. */
-    protected void post (MsoyEvent message)
+    protected synchronized void post (MsoyEvent message)
     {
         // log locally
         _local.log(message);
@@ -446,6 +523,11 @@ public class MsoyEventLogger
     /** Used to log events to the local filesystem. */
     protected LocalEventLogger _local;
 
+    /** Identity used to initialize this logger. */
+    protected String _ident;
+    
+    @Inject protected ReportManager _reportMan;
+    
     /** Timeout value when connecting to the Panopticon server, in milliseconds. */
     protected static final int TIMEOUT = 1000;
 

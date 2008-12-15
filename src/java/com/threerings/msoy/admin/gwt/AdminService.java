@@ -222,6 +222,12 @@ public interface AdminService extends RemoteService
      */
     PanopticonStatus getPanopticonStatus ()
         throws ServiceException;
+    
+    /**
+     * Restarts the Panopticon logging client.
+     */
+    void restartPanopticon ()
+        throws ServiceException;
 
     /**
      * Requests that the server be rebooted in the specified number of minutes. If the value is
