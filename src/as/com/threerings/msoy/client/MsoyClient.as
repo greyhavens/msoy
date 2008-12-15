@@ -232,7 +232,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         testName :String, logEvent :Boolean, listener :InvocationService_ResultListener) :void
     {
         var msvc :MemberService = requireService(MemberService) as MemberService;
-        var member :MemberObject = _clobj as MemberObject;
         msvc.getABTestGroup(this, testName, logEvent, listener);
     }
 
@@ -247,7 +246,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         // place view. So I say: fuck tracking shit if we can't track shit. I'd rather
         // not piss off the user-- in this case ME.
         if (msvc != null) {
-            var member :MemberObject = _clobj as MemberObject;
             msvc.trackClientAction(this, actionName, details);
         }
     }
@@ -260,7 +258,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public function trackTestAction (actionName :String, testName :String) :void
     {
         var msvc :MemberService = requireService(MemberService) as MemberService;
-        var member :MemberObject = _clobj as MemberObject;
         msvc.trackTestAction(this, actionName, testName);
     }
 
