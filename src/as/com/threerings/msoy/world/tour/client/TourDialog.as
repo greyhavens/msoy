@@ -11,6 +11,7 @@ import mx.containers.VBox;
 import mx.controls.Image;
 import mx.controls.Text;
 
+import com.threerings.presents.client.ResultAdapter;
 import com.threerings.util.CommandEvent;
 
 import com.threerings.flex.CommandButton;
@@ -65,6 +66,12 @@ public class TourDialog extends FloatingPanel
 
         addChild(nextBtn);
         addChild(hbox);
+
+        // log that we've shown this panel, so we can compare conversion/retention rates later
+        ctx.getMsoyClient().getABTestGroup(
+            "2008 12 world tour", true, new ResultAdapter(function (group :int) :void {
+                ctx.getMsoyClient().trackClientAction("2008 12 world tour shown", null);
+            }, function (cause :String) :void { /* ignore errors */ }));
     }
 
     public function setRating (rating :Number) :void
