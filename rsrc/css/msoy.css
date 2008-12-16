@@ -1324,7 +1324,7 @@ GameOverPanel {
   verticalGap: 0;
 }
 
-.friendList {
+Roster {
   borderThickness: 0;
   backgroundAlpha: 0;
 }

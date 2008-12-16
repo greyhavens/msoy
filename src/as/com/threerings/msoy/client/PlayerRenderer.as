@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.ui {
+package com.threerings.msoy.client {
 
 import flash.events.MouseEvent;
 

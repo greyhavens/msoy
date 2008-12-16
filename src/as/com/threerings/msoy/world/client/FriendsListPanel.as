@@ -16,6 +16,8 @@ import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.TextInput;
 
+import mx.core.ClassFactory;
+
 import mx.events.FlexEvent;
 
 import com.threerings.presents.client.InvocationAdapter;
@@ -109,7 +111,10 @@ public class FriendsListPanel extends FlyingPanel
             return;
         }
 
-        _friendsList = new Roster(_wctx, MemberObject.FRIENDS, FriendRenderer,
+        var renderer :ClassFactory = new ClassFactory(FriendRenderer);
+        renderer.properties = { mctx: _wctx };
+
+        _friendsList = new Roster(_wctx, MemberObject.FRIENDS, renderer,
             PlayerEntry.sortByName, FriendEntry.isOnline);
 
         addChild(_friendsList);

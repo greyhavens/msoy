@@ -1,6 +1,6 @@
 package com.threerings.msoy.client {
 
-import mx.core.ClassFactory;
+import mx.core.IFactory;
 import mx.core.ScrollPolicy;
 
 import mx.collections.ArrayCollection;
@@ -24,12 +24,11 @@ public class Roster extends List
     implements SetListener
 {
     public function Roster (
-        mctx :MsoyContext, field :String, renderer :Class,
+        mctx :MsoyContext, field :String, renderer :IFactory,
         sortFn :Function = null, filterFn :Function = null)
     {
         _field = field;
 
-        styleName = "friendList"; // TODO: "peerList";
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.ON;
         percentWidth = 100;
@@ -37,9 +36,7 @@ public class Roster extends List
         selectable = false;
         variableRowHeight = true;
 
-        var cf :ClassFactory = new ClassFactory(renderer);
-        cf.properties =  { mctx: mctx };
-        itemRenderer = cf;
+        itemRenderer = renderer;
 
         _list = new ArrayCollection();
         var sort :Sort = new Sort();
@@ -79,6 +76,7 @@ public class Roster extends List
      */
     public function updatePlayer (player :PlayerEntry) :void
     {
+        trace("Must find: " + player);
         var idx :int = findKeyIndex(player.getKey());
         if (idx == -1) {
             throw new Error("Player not in list.");

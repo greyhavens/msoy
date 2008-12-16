@@ -19,10 +19,9 @@ import com.threerings.util.CommandEvent;
 import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.ui.PlayerRenderer;
-
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.PlayerRenderer;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.PlayerEntry;
 

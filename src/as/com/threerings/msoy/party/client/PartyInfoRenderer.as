@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.client {
 
+import flash.events.MouseEvent;
+
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
@@ -22,6 +24,11 @@ public class PartyInfoRenderer extends HBox
 {
     // Initialized by ClassFactory
     public var wctx :WorldContext;
+
+    public function PartyInfoRenderer ()
+    {
+        addEventListener(MouseEvent.CLICK, handleClick);
+    }
 
     override public function set data (value :Object) :void
     {
@@ -67,6 +74,14 @@ public class PartyInfoRenderer extends HBox
         addChild(col);
 
         addChild(_join);
+    }
+
+    protected function handleClick (event :MouseEvent) :void
+    {
+        var info :PartyInfo = PartyInfo(data);
+        if (info != null) {
+            wctx.getPartyDirector().getPartyDetail(info.id);
+        }
     }
 
     protected var _name :Label = FlexUtil.createLabel(null, "partyName");

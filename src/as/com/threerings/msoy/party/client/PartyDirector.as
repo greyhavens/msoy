@@ -122,6 +122,7 @@ public class PartyDirector extends BasicDirector
      */
     public function getPartyDetail (partyId :int) :void
     {
+        trace("Requested party detail: " + partyId);
         // TODO
     }
 
