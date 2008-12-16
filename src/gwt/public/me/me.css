@@ -280,6 +280,21 @@
   font-style: italic;
 }
 
+.passport .SectionLinks {
+  color: white;
+  height: 19px;
+  width: 670px;
+  text-align: right;
+  font-size: 12px;
+  position: relative;
+  padding-top: 12px;
+}
+
+.passport .SectionLink {
+  display: inline;
+  margin-top: 20px;
+}
+
 /* ------------------------------------
    BADGE DISPLAYS ANYWHERE
 -------------------------------------*/

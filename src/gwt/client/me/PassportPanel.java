@@ -42,39 +42,75 @@ public class PassportPanel extends FlowPanel
                 if (data == null) {
                     MsoyUI.error(_msgs.passportPlayerNotFound());
                 } else {
-                    init(data);
+                    _data = data;
+                    init();
                 }
             }
         });
     }
 
-    protected void init (PassportData data)
+    protected void init ()
     {
-        if (data.nextBadges != null) {
-            add(new NextPanel(data.nextBadges));
+        if (_data.nextBadges != null) {
+            add(new NextPanel(_data.nextBadges));
         }
 
-        HeaderBox contents = new HeaderBox(null, _msgs.passportStampsTitle(data.stampOwner));
-        contents.makeRoundBottom();
-        add(contents);
+        FlowPanel sectionLinks = new FlowPanel();
+        sectionLinks.setStyleName("SectionLinks");
+        add(sectionLinks);
+        sectionLinks.add(MsoyUI.createActionLabel(_msgs.passportStampsLink(), "SectionLink",
+            new ClickListener() {
+                public void onClick (Widget sender) {
+                    displayBadges();
+                }
+            }));
+        sectionLinks.add(MsoyUI.createLabel(" | ", "SectionLink"));
+        sectionLinks.add(MsoyUI.createActionLabel(_msgs.passportMedalsLink(), "SectionLink",
+            new ClickListener() {
+                public void onClick (Widget sender) {
+                    displayStamps();
+                }
+            }));
+
+        displayBadges();
+    }
+
+    protected void displayBadges ()
+    {
+        if (_contents != null) {
+            remove(_contents);
+        }
+        _contents = new HeaderBox(null, _msgs.passportStampsTitle(_data.stampOwner));
+        _contents.makeRoundBottom();
+        add(_contents);
         for (StampCategory category : StampCategory.values()) {
             String catNameLower = category.toString().toLowerCase();
             String catName = _dmsgs.xlate("passportCategory_" + catNameLower);
             FlowPanel stamps = new FlowPanel();
-            contents.add(new TongueBox(MsoyUI.createImage(
+            _contents.add(new TongueBox(MsoyUI.createImage(
                 "/images/me/icon_" + catNameLower + ".png", null), catName, stamps));
 
-            if (data.stamps.get(category).size() == 0) {
+            if (_data.stamps.get(category).size() == 0) {
                 stamps.add(MsoyUI.createSimplePanel(MsoyUI.createLabel(
-                    _msgs.passportEmptyCategory(data.stampOwner, catName), null), "EmptyLabel"));
+                    _msgs.passportEmptyCategory(_data.stampOwner, catName), null), "EmptyLabel"));
                 continue;
             }
 
-            for (Badge badge : data.stamps.get(category)) {
+            for (Badge badge : _data.stamps.get(category)) {
                 stamps.add(MsoyUI.createSimplePanel(new BadgeDisplay(badge), "BoxedBadge"));
             }
         }
-   }
+    }
+
+    protected void displayStamps ()
+    {
+        if (_contents != null) {
+            remove(_contents);
+        }
+        _contents = new HeaderBox(null, _msgs.passportMedalsTitle(_data.stampOwner));
+        _contents.makeRoundBottom();
+        add(_contents);
+    }
 
     protected static class NextPanel extends VerticalPanel
     {
@@ -148,6 +184,9 @@ public class PassportPanel extends FlowPanel
         protected HorizontalPanel _badgePanel;
         protected List<InProgressBadge> _badges;
     }
+
+    protected PassportData _data;
+    protected HeaderBox _contents;
 
     protected static final int MAX_NEXT_BADGES = 4;
 
