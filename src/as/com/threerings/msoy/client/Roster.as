@@ -53,10 +53,37 @@ public class Roster extends List
     public function init (players :Array) :void
     {
         _list.removeAll();
-
         for each (var player :PlayerEntry in players) {
             _list.addItem(player);
         }
+        _list.refresh();
+    }
+
+    public function addPlayer (player :PlayerEntry) :void
+    {
+        _list.addItem(player);
+        _list.refresh();
+    }
+
+    public function removePlayer (key :Object) :void
+    {
+        var idx :int = findKeyIndex(key);
+        if (idx != -1) {
+            _list.removeItemAt(idx);
+            _list.refresh();
+        }
+    }
+
+    /**
+     * Update the specified player, replacing the entry with the same key.
+     */
+    public function updatePlayer (player :PlayerEntry) :void
+    {
+        var idx :int = findKeyIndex(player.getKey());
+        if (idx == -1) {
+            throw new Error("Player not in list.");
+        }
+        _list.setItemAt(player, idx);
         _list.refresh();
     }
 
@@ -72,14 +99,7 @@ public class Roster extends List
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == _field) {
-            _list.disableAutoUpdate();
-            try {
-                removePlayer(PlayerEntry(event.getOldEntry()));
-                addPlayer(PlayerEntry(event.getEntry()));
-            } finally {
-                _list.enableAutoUpdate();
-            }
-            _list.refresh();
+            updatePlayer(PlayerEntry(event.getEntry()));
         }
     }
 
@@ -87,26 +107,18 @@ public class Roster extends List
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == _field) {
-            removePlayer(PlayerEntry(event.getOldEntry()));
+            removePlayer(event.getKey());
         }
     }
 
-    protected function addPlayer (player :PlayerEntry) :void
+    protected function findKeyIndex (key :Object) :int
     {
-        _list.addItem(player);
-        _list.refresh();
-    }
-
-    protected function removePlayer (player :PlayerEntry) :void
-    {
-        const key :Object = player.getKey();
         for (var ii :int = 0; ii < _list.length; ii++) {
             if (Util.equals(key, PlayerEntry(_list.getItemAt(ii)).getKey())) {
-                _list.removeItemAt(ii);
-                _list.refresh();
-                return;
+                return ii;
             }
         }
+        return -1;
     }
 
     protected var _list :ArrayCollection;
