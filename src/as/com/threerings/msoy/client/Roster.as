@@ -79,6 +79,7 @@ public class Roster extends List
             } finally {
                 _list.enableAutoUpdate();
             }
+            _list.refresh();
         }
     }
 
@@ -92,7 +93,6 @@ public class Roster extends List
 
     protected function addPlayer (player :PlayerEntry) :void
     {
-//        trace("Adding player (key=" + player.getKey() + ", p=" + player + ")");
         _list.addItem(player);
         _list.refresh();
     }
@@ -100,17 +100,13 @@ public class Roster extends List
     protected function removePlayer (player :PlayerEntry) :void
     {
         const key :Object = player.getKey();
-//        trace("Remove key: " + key);
         for (var ii :int = 0; ii < _list.length; ii++) {
-//            trace("  checking key: " + PlayerEntry(_list.getItemAt(ii)).getKey());
             if (Util.equals(key, PlayerEntry(_list.getItemAt(ii)).getKey())) {
-//                trace("  .removed: " + player);
                 _list.removeItemAt(ii);
                 _list.refresh();
                 return;
             }
         }
-//        trace("  .never found key: " + player);
     }
 
     protected var _list :ArrayCollection;

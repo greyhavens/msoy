@@ -100,6 +100,8 @@ public class PartyPanel extends FloatingPanel
                 var isLeader :Boolean = (event.getValue() == _ctx.getMyName().getMemberId());
                 _status.enabled = isLeader;
                 _recruit.enabled = isLeader;
+                // re-sort the list
+                _roster.dataProvider.refresh();
                 break;
 
             case PartyObject.RECRUITMENT:
