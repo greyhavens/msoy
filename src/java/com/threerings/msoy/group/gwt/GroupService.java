@@ -4,7 +4,6 @@
 package com.threerings.msoy.group.gwt;
 
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -93,7 +92,22 @@ public interface GroupService extends RemoteService
 
         /** The map of medals to those that have awarded them from this group.  If nobody has
          * earned a given medal yet, that medal will map to an empty list. */
-        public Map<Medal, List<VizMemberName>> medals;
+        public List<MedalOwners> medals;
+    }
+
+    /** A Single-object encapsulation of a Medal and the people who have earned it. */
+    public static class MedalOwners implements IsSerializable, Comparable<MedalOwners>
+    {
+        /** The Medal */
+        public Medal medal;
+
+        /** The owners of the Medal */
+        public List<VizMemberName> owners;
+
+        public int compareTo (MedalOwners o)
+        {
+            return medal.name.compareTo(o.medal.name);
+        }
     }
 
     /** The entry point for this service. */

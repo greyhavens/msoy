@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.group.server;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -578,16 +577,19 @@ public class GroupServlet extends MsoyServiceServlet
     {
         GroupService.MedalsResult result = new GroupService.MedalsResult();
         result.groupName = _groupRepo.loadGroupName(groupId);
-        result.medals = Maps.newHashMap();
+        result.medals = Lists.newArrayList();
 
         // we could do a Join to accomplish a similar result, but we need to make sure we return
         // Medals that have not been earned by anybody yet, so we need to first grab the full set
         // of available medals
         List<MedalRecord> groupMedals = _medalRepo.loadGroupMedals(groupId);
+        Map<Integer, List<VizMemberName>> memberNameLists = Maps.newHashMap();
         for (MedalRecord medalRec : groupMedals) {
-            // Apparently Lists.newArrayList() can't determine the type from a new list being put
-            // into a typed Map...
-            result.medals.put(medalRec.toMedal(), new ArrayList<VizMemberName>());
+            GroupService.MedalOwners owners = new GroupService.MedalOwners();
+            owners.medal = medalRec.toMedal();
+            owners.owners = Lists.newArrayList();
+            result.medals.add(owners);
+            memberNameLists.put(medalRec.medalId, owners.owners);
         }
         List<EarnedMedalRecord> earnedMedals = _medalRepo.loadEarnedMedals(
             Lists.transform(groupMedals, MedalRecord.TO_MEDAL_ID));
@@ -600,11 +602,10 @@ public class GroupServlet extends MsoyServiceServlet
                 _memberRepo.loadMemberCards(memberIds), MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME)) {
             memberNames.put(vizMemberName.getMemberId(), vizMemberName);
         }
-        // now that we have each member's VizMemberName, add them to the appropriate list and ship
+        // now that we have each member's VizMemberName, add them to the appropriate lists and ship
         // the whole package off to the client.
         for (EarnedMedalRecord earnedMedalRec : earnedMedals) {
-            List<VizMemberName> earnees =
-                result.medals.get(Medal.getMapKey(earnedMedalRec.medalId));
+            List<VizMemberName> earnees = memberNameLists.get(earnedMedalRec.medalId);
             earnees.add(memberNames.get(earnedMedalRec.memberId));
         }
         return result;
