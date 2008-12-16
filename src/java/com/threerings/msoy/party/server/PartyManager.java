@@ -251,7 +251,7 @@ public class PartyManager
 
         PartyPeep leader = _partyObj.peeps.get(_partyObj.leaderId);
         PartyPeep peep = _partyObj.peeps.get(memberId);
-        if (peep == null) {
+        if (peep == null || peep == leader) {
             // TODO: nicer error? The player may have just left
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
@@ -260,9 +260,9 @@ public class PartyManager
         try {
             peep.joinOrder = leader.joinOrder;
             leader.joinOrder = leader.joinOrder + 1;
+            _partyObj.setLeaderId(peep.name.getMemberId());
             _partyObj.updatePeeps(peep);
             _partyObj.updatePeeps(leader);
-            _partyObj.setLeaderId(peep.name.getMemberId());
         } finally {
             _partyObj.commitTransaction();
         }
