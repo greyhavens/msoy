@@ -111,17 +111,16 @@ public class MemberRepository extends DepotRepository
         public String accountName;
     }
 
-    @Inject public MemberRepository (final PersistenceContext ctx)
+    @Inject public MemberRepository (PersistenceContext ctx)
     {
         super(ctx);
 
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
-            public void entryInvalidated (final CacheKey key, final MemberRecord member) {
+            public void entryInvalidated (CacheKey key, MemberRecord member) {
                 _ctx.cacheInvalidate(MemberNameRecord.getKey(member.memberId));
             }
-            public void entryCached (final CacheKey key, final MemberRecord newEntry,
-                                     final MemberRecord oldEntry) {
+            public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
             }
             @Override
             public String toString () {
@@ -145,7 +144,7 @@ public class MemberRepository extends DepotRepository
                 // first, copy all referral trackers over to member records
                 List<ReferralRecord> todos = findAll(ReferralRecord.class);
                 for (ReferralRecord referral : todos) {
-                    final String visitorId = VisitorInfo.normalizeVisitorId(referral.tracker);
+                    String visitorId = VisitorInfo.normalizeVisitorId(referral.tracker);
                     updatePartial(MemberRecord.class, referral.memberId,
                         MemberRecord.VISITOR_ID, visitorId);
                     if (++converted % 100 == 0) {
@@ -195,7 +194,7 @@ public class MemberRepository extends DepotRepository
      * Loads up the member record associated with the specified account.  Returns null if no
      * matching record could be found.
      */
-    public MemberRecord loadMember (final String accountName)
+    public MemberRecord loadMember (String accountName)
     {
         return load(MemberRecord.class,
                     new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()));
@@ -205,7 +204,7 @@ public class MemberRepository extends DepotRepository
      * Loads up a member record by id. Returns null if no member exists with the specified id. The
      * record will be fetched from the cache if possible and cached if not.
      */
-    public MemberRecord loadMember (final int memberId)
+    public MemberRecord loadMember (int memberId)
     {
         return load(MemberRecord.class, memberId);
     }
@@ -213,7 +212,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the member records with the supplied set of ids.
      */
-    public List<MemberRecord> loadMembers (final Set<Integer> memberIds)
+    public List<MemberRecord> loadMembers (Set<Integer> memberIds)
     {
         return loadAll(MemberRecord.class, memberIds);
     }
@@ -232,9 +231,9 @@ public class MemberRepository extends DepotRepository
      */
     public int getActivePopulationCount ()
     {
-        final Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -60); // TODO: unmagick
-        final Date when = new Date(cal.getTimeInMillis());
+        Date when = new Date(cal.getTimeInMillis());
         return load(CountRecord.class, new FromOverride(MemberRecord.class),
                     new Where(new GreaterThan(MemberRecord.LAST_SESSION_C, // TODO: DateExp?
                                               new LiteralExp("'" + when + "'")))).count;
@@ -243,9 +242,9 @@ public class MemberRepository extends DepotRepository
     /**
      * Looks up a member's name by id. Returns null if no member exists with the specified id.
      */
-    public MemberName loadMemberName (final int memberId)
+    public MemberName loadMemberName (int memberId)
     {
-        final MemberNameRecord name = load(MemberNameRecord.class,
+        MemberNameRecord name = load(MemberNameRecord.class,
                                      new Where(MemberRecord.MEMBER_ID_C, memberId));
         return (name == null) ? null : name.toMemberName();
     }
@@ -254,11 +253,10 @@ public class MemberRepository extends DepotRepository
      * Extracts the set of member id from the supplied collection of records using the supplied
      * <code>getId</code> function and loads up the associated names.
      */
-    public <C> IntMap<MemberName> loadMemberNames (
-        final Iterable<C> records, final Function<C,Integer> getId)
+    public <C> IntMap<MemberName> loadMemberNames (Iterable<C> records, Function<C,Integer> getId)
     {
-        final Set<Integer> memberIds = new ArrayIntSet();
-        for (final C record : records) {
+        Set<Integer> memberIds = new ArrayIntSet();
+        for (C record : records) {
             memberIds.add(getId.apply(record));
         }
         return loadMemberNames(memberIds);
@@ -267,9 +265,9 @@ public class MemberRepository extends DepotRepository
     /**
      * Looks up members' names by id.
      */
-    public IntMap<MemberName> loadMemberNames (final Set<Integer> memberIds)
+    public IntMap<MemberName> loadMemberNames (Set<Integer> memberIds)
     {
-        final IntMap<MemberName> names = IntMaps.newHashIntMap();
+        IntMap<MemberName> names = IntMaps.newHashIntMap();
         for (MemberNameRecord name : loadAll(MemberNameRecord.class, memberIds)) {
             names.put(name.memberId, name.toMemberName());
         }
@@ -295,19 +293,19 @@ public class MemberRepository extends DepotRepository
     /**
      * Looks up a member name and id from by username.
      */
-    public MemberName loadMemberName (final String username)
+    public MemberName loadMemberName (String username)
     {
-        final MemberNameRecord record = load(MemberNameRecord.class,
-                new Where(MemberRecord.ACCOUNT_NAME_C, username));
+        MemberNameRecord record = load(
+            MemberNameRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, username));
         return (record == null ? null : record.toMemberName());
     }
 
     /**
      * Loads up the card for the specified member. Returns null if no member exists with that id.
      */
-    public MemberCard loadMemberCard (final int memberId)
+    public MemberCard loadMemberCard (int memberId)
     {
-        final MemberCardRecord mcr = load(
+        MemberCardRecord mcr = load(
             MemberCardRecord.class, new FromOverride(MemberRecord.class),
             new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
             new Where(MemberRecord.MEMBER_ID_C, memberId));
@@ -317,7 +315,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads up member's names and profile photos by id.
      */
-    public List<MemberCardRecord> loadMemberCards (final Collection<Integer> memberIds)
+    public List<MemberCardRecord> loadMemberCards (Collection<Integer> memberIds)
     {
         if (memberIds.size() == 0) {
             return Collections.emptyList();
@@ -364,12 +362,12 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns the members with the highest levels
      */
-    public List<Integer> getLeadingMembers (final int limit)
+    public List<Integer> getLeadingMembers (int limit)
     {
-        final List<Integer> ids = Lists.newArrayList();
-        final List<MemberRecord> mrecs = findAll(
+        List<Integer> ids = Lists.newArrayList();
+        List<MemberRecord> mrecs = findAll(
             MemberRecord.class, OrderBy.descending(MemberRecord.LEVEL_C), new Limit(0, limit));
-        for (final MemberRecord mrec : mrecs) {
+        for (MemberRecord mrec : mrecs) {
             ids.add(mrec.memberId);
         }
 
@@ -380,7 +378,7 @@ public class MemberRepository extends DepotRepository
      * Loads up the member associated with the supplied session token. Returns null if the session
      * has expired or is not valid.
      */
-    public MemberRecord loadMemberForSession (final String sessionToken)
+    public MemberRecord loadMemberForSession (String sessionToken)
     {
         SessionRecord session = load(SessionRecord.class, sessionToken);
         if (session != null && session.expires.getTime() < System.currentTimeMillis()) {
@@ -396,12 +394,12 @@ public class MemberRepository extends DepotRepository
      * session is reused, its expiration date will be adjusted as if the session was newly created
      * as of now (using the supplied <code>persist</code> setting).
      */
-    public String startOrJoinSession (final int memberId, final int expireDays)
+    public String startOrJoinSession (int memberId, int expireDays)
     {
         // create a new session record for this member
         SessionRecord nsess = new SessionRecord();
-        final Calendar cal = Calendar.getInstance();
-        final long now = cal.getTimeInMillis();
+        Calendar cal = Calendar.getInstance();
+        long now = cal.getTimeInMillis();
         cal.add(Calendar.DATE, expireDays);
         nsess.expires = new Date(cal.getTimeInMillis());
         nsess.memberId = memberId;
@@ -409,9 +407,9 @@ public class MemberRepository extends DepotRepository
 
         try {
             insert(nsess);
-        } catch (final DuplicateKeyException dke) {
+        } catch (DuplicateKeyException dke) {
             // if that fails with a duplicate key, reuse the old record but adjust its expiration
-            final SessionRecord esess = load(
+            SessionRecord esess = load(
                 SessionRecord.class, new Where(SessionRecord.MEMBER_ID_C, memberId));
             esess.expires = nsess.expires;
             update(esess, SessionRecord.EXPIRES);
@@ -429,14 +427,14 @@ public class MemberRepository extends DepotRepository
      * @return the member associated with the session if it is valid and was refreshed, null if the
      * session has expired.
      */
-    public MemberRecord refreshSession (final String token, final int expireDays)
+    public MemberRecord refreshSession (String token, int expireDays)
     {
-        final SessionRecord sess = load(SessionRecord.class, token);
+        SessionRecord sess = load(SessionRecord.class, token);
         if (sess == null) {
             return null;
         }
 
-        final Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, expireDays);
         sess.expires = new Date(cal.getTimeInMillis());
         update(sess);
@@ -446,7 +444,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Clears out a session to member id mapping. This should be called when a user logs off.
      */
-    public void clearSession (final String sessionToken)
+    public void clearSession (String sessionToken)
     {
         delete(SessionRecord.class, sessionToken);
     }
@@ -454,9 +452,9 @@ public class MemberRepository extends DepotRepository
     /**
      * Clears out a session to member id mapping.
      */
-    public void clearSession (final int memberId)
+    public void clearSession (int memberId)
     {
-        final SessionRecord record =
+        SessionRecord record =
             load(SessionRecord.class, new Where(SessionRecord.MEMBER_ID_C, memberId));
         if (record != null) {
             delete(record);
@@ -468,12 +466,12 @@ public class MemberRepository extends DepotRepository
      * process. The {@link MemberRecord#created} field will be filled in by this method if it is
      * not already.
      */
-    public void insertMember (final MemberRecord member)
+    public void insertMember (MemberRecord member)
     {
         // flatten account name (email address) on insertion
         member.accountName = member.accountName.toLowerCase();
         if (member.created == null) {
-            final long now = System.currentTimeMillis();
+            long now = System.currentTimeMillis();
             member.created = new Date(now);
             member.lastSession = new Timestamp(now);
             member.lastHumanityAssessment = new Timestamp(now);
@@ -485,7 +483,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Configures a member's account name (email address).
      */
-    public void configureAccountName (final int memberId, final String accountName)
+    public void configureAccountName (int memberId, String accountName)
     {
         updatePartial(MemberRecord.class, memberId,
                       MemberRecord.ACCOUNT_NAME, accountName.toLowerCase());
@@ -494,7 +492,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Configures a member's display name.
      */
-    public void configureDisplayName (final int memberId, final String name)
+    public void configureDisplayName (int memberId, String name)
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.NAME, name);
     }
@@ -502,7 +500,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Configures a member's permanent name.
      */
-    public void configurePermaName (final int memberId, final String permaName)
+    public void configurePermaName (int memberId, String permaName)
     {
         // permaName will be a non-null lower-case string
         updatePartial(MemberRecord.class, memberId, MemberRecord.PERMA_NAME, permaName);
@@ -511,7 +509,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Writes the supplied member's flags to the database.
      */
-    public void storeFlags (final MemberRecord mrec)
+    public void storeFlags (MemberRecord mrec)
     {
         updatePartial(MemberRecord.class, mrec.memberId, MemberRecord.FLAGS, mrec.flags);
     }
@@ -544,7 +542,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Deletes the specified member from the repository.
      */
-    public void deleteMember (final MemberRecord member)
+    public void deleteMember (MemberRecord member)
     {
         delete(member);
 
@@ -570,7 +568,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Set the home scene id for the specified memberId.
      */
-    public void setHomeSceneId (final int memberId, final int homeSceneId)
+    public void setHomeSceneId (int memberId, int homeSceneId)
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.HOME_SCENE_ID, homeSceneId);
     }
@@ -580,10 +578,10 @@ public class MemberRepository extends DepotRepository
      * our member management system. This is triggered by us receiving a member action indicating
      * that the member was deleted.
      */
-    public void disableMember (final String accountName, final String disabledName)
+    public void disableMember (String accountName, String disabledName)
     {
         // TODO: Cache Invalidation
-        final int mods = updatePartial(
+        int mods = updatePartial(
             MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()),
             null, MemberRecord.ACCOUNT_NAME, disabledName);
         switch (mods) {
@@ -613,15 +611,14 @@ public class MemberRepository extends DepotRepository
      * @param humanityReassessFreq the number of seconds between humanity reassessments or zero if
      * humanity assessment is disabled.
      */
-    public void noteSessionEnded (final int memberId, final int minutes,
-                                  final int humanityReassessFreq)
+    public void noteSessionEnded (int memberId, int minutes, int humanityReassessFreq)
     {
-        final long now = System.currentTimeMillis();
-        final MemberRecord record = loadMember(memberId);
-        final Timestamp nowStamp = new Timestamp(now);
+        long now = System.currentTimeMillis();
+        MemberRecord record = loadMember(memberId);
+        Timestamp nowStamp = new Timestamp(now);
 
         // reassess their humanity if the time has come
-        final int secsSinceLast = (int)((now - record.lastHumanityAssessment.getTime())/1000);
+        int secsSinceLast = (int)((now - record.lastHumanityAssessment.getTime())/1000);
         if (humanityReassessFreq > 0 && humanityReassessFreq < secsSinceLast) {
             record.humanity = _actionRepo.assessHumanity(memberId, record.humanity, secsSinceLast);
             record.lastHumanityAssessment = nowStamp;
@@ -642,9 +639,9 @@ public class MemberRepository extends DepotRepository
      * Returns the NeighborFriendRecords for all the established friends of a given member, through
      * an inner join between {@link MemberRecord} and {@link FriendRecord}.
      */
-    public List<NeighborFriendRecord> getNeighborhoodFriends (final int memberId)
+    public List<NeighborFriendRecord> getNeighborhoodFriends (int memberId)
     {
-        final SQLOperator joinCondition =
+        SQLOperator joinCondition =
             new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
                            new Equals(FriendRecord.INVITEE_ID_C, MemberRecord.MEMBER_ID_C)),
                    new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
@@ -659,12 +656,12 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns the NeighborFriendRecords for all the given members.
      */
-    public List<NeighborFriendRecord> getNeighborhoodMembers (final int[] memberIds)
+    public List<NeighborFriendRecord> getNeighborhoodMembers (int[] memberIds)
     {
         if (memberIds.length == 0) {
             return Collections.emptyList();
         }
-        final Comparable<?>[] idArr = IntListUtil.box(memberIds);
+        Comparable<?>[] idArr = IntListUtil.box(memberIds);
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
@@ -674,7 +671,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Grants the specified number of invites to the given member.
      */
-    public void grantInvites (final int memberId, final int number)
+    public void grantInvites (int memberId, int number)
     {
         InviterRecord inviterRec = load(InviterRecord.class, memberId);
         if (inviterRec != null) {
@@ -698,7 +695,7 @@ public class MemberRepository extends DepotRepository
      *
      * @return an array containing the member ids of all members that received invites.
      */
-    public int[] grantInvites (final int number, final Timestamp lastSession)
+    public int[] grantInvites (int number, Timestamp lastSession)
     {
         List<MemberRecord> activeUsers;
         if (lastSession != null) {
@@ -708,8 +705,8 @@ public class MemberRepository extends DepotRepository
             activeUsers = findAll(MemberRecord.class);
         }
 
-        final IntSet ids = new ArrayIntSet();
-        for (final MemberRecord memRec : activeUsers) {
+        IntSet ids = new ArrayIntSet();
+        for (MemberRecord memRec : activeUsers) {
             grantInvites(memRec.memberId, number);
             ids.add(memRec.memberId);
         }
@@ -719,18 +716,18 @@ public class MemberRepository extends DepotRepository
     /**
      * Get the number of invites this member has available to send out.
      */
-    public int getInvitesGranted (final int memberId)
+    public int getInvitesGranted (int memberId)
     {
-        final InviterRecord inviter = load(InviterRecord.class, memberId);
+        InviterRecord inviter = load(InviterRecord.class, memberId);
         return inviter != null ? inviter.invitesGranted : 0;
     }
 
     /**
      * get the total number of invites that this user has sent
      */
-    public int getInvitesSent (final int memberId)
+    public int getInvitesSent (int memberId)
     {
-        final InviterRecord inviter = load(InviterRecord.class, memberId);
+        InviterRecord inviter = load(InviterRecord.class, memberId);
         return inviter != null ? inviter.invitesSent : 0;
     }
 
@@ -753,7 +750,7 @@ public class MemberRepository extends DepotRepository
      * Add a new invitation. Also decrements the available invitation count for the inviterId and
      * increments the number of invites sent, iff the inviterId is non-zero.
      */
-    public void addInvite (final String inviteeEmail, final int inviterId, final String inviteId)
+    public void addInvite (String inviteeEmail, int inviterId, String inviteId)
     {
         insert(new InvitationRecord(inviteeEmail, inviterId, inviteId));
 
@@ -774,19 +771,19 @@ public class MemberRepository extends DepotRepository
      * Check if the invitation is available for use, or has been claimed already. Returns null if
      * it has already been claimed, an invite record if not.
      */
-    public InvitationRecord inviteAvailable (final String inviteId)
+    public InvitationRecord inviteAvailable (String inviteId)
     {
-        final InvitationRecord rec = load(InvitationRecord.class,
-                                    new Where(InvitationRecord.INVITE_ID_C, inviteId));
+        InvitationRecord rec = load(
+            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID_C, inviteId));
         return (rec == null || rec.inviteeId != 0) ? null : rec;
     }
 
     /**
      * Update the invitation indicated with the new memberId.
      */
-    public void linkInvite (final String inviteId, final MemberRecord member)
+    public void linkInvite (String inviteId, MemberRecord member)
     {
-        final InvitationRecord invRec = load(InvitationRecord.class, inviteId);
+        InvitationRecord invRec = load(InvitationRecord.class, inviteId);
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
     }
@@ -795,7 +792,7 @@ public class MemberRepository extends DepotRepository
      * Get a list of the invites that this user has already sent out that have not yet been
      * accepted.
      */
-    public List<InvitationRecord> loadPendingInvites (final int memberId)
+    public List<InvitationRecord> loadPendingInvites (int memberId)
     {
         return findAll(
             InvitationRecord.class,
@@ -806,9 +803,9 @@ public class MemberRepository extends DepotRepository
     /**
      * Return the InvitationRecord that corresponds to the given unique code.
      */
-    public InvitationRecord loadInvite (final String inviteId, final boolean markViewed)
+    public InvitationRecord loadInvite (String inviteId, boolean markViewed)
     {
-        final InvitationRecord invRec = load(
+        InvitationRecord invRec = load(
             InvitationRecord.class, new Where(InvitationRecord.INVITE_ID_C, inviteId));
         if (invRec != null && invRec.viewed == null) {
             invRec.viewed = new Timestamp((new java.util.Date()).getTime());
@@ -820,7 +817,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Return the InvitationRecord that corresponds to the given inviter
      */
-    public InvitationRecord loadInvite (final String inviteeEmail, final int inviterId)
+    public InvitationRecord loadInvite (String inviteeEmail, int inviterId)
     {
         // TODO: This does a row scan on email after using ixInviter. Should be OK, but let's check.
         return load(InvitationRecord.class, new Where(
@@ -831,7 +828,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Delete the InvitationRecord that corresponds to the given unique code.
      */
-    public void deleteInvite (final String inviteId)
+    public void deleteInvite (String inviteId)
     {
         delete(InvitationRecord.class, inviteId);
     }
@@ -839,7 +836,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Add an email address to the opt-out list.
      */
-    public void addOptOutEmail (final String email)
+    public void addOptOutEmail (String email)
     {
         insert(new OptOutRecord(email.toLowerCase()));
     }
@@ -847,7 +844,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns true if the given email address is on the opt-out list
      */
-    public boolean hasOptedOut (final String email)
+    public boolean hasOptedOut (String email)
     {
         return load(OptOutRecord.class, email.toLowerCase()) != null;
     }
@@ -856,9 +853,9 @@ public class MemberRepository extends DepotRepository
      * Adds the invitee's email address to the opt-out list, and sets this invitation's inviteeId
      * to -1, indicating that it is no longer available, and the invitee chose to opt-out.
      */
-    public void optOutInvite (final String inviteId)
+    public void optOutInvite (String inviteId)
     {
-        final InvitationRecord invRec = loadInvite(inviteId, false);
+        InvitationRecord invRec = loadInvite(inviteId, false);
         if (invRec != null) {
             invRec.inviteeId = -1;
             update(invRec, InvitationRecord.INVITEE_ID);
@@ -908,7 +905,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Sets the reported level for the given member
      */
-    public void setUserLevel (final int memberId, final int level)
+    public void setUserLevel (int memberId, int level)
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.LEVEL, level);
     }
@@ -916,16 +913,16 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the names of the members invited by the specified member.
      */
-    public List<MemberName> loadMembersInvitedBy (final int memberId)
+    public List<MemberName> loadMembersInvitedBy (int memberId)
     {
         // TODO: this needs fixing: your affiliate is not necessarily your inviter
         // (I mean, if you have an inviter, they will be your affiliate, and you can't have
         // both, but we can't just look at an affiliate id and know that that's your inviter)
-        final Join join = new Join(MemberRecord.MEMBER_ID_C,
+        Join join = new Join(MemberRecord.MEMBER_ID_C,
                              InviterRecord.MEMBER_ID_C).setType(Join.Type.LEFT_OUTER);
-        final Where where = new Where(MemberRecord.AFFILIATE_MEMBER_ID_C, memberId);
-        final List<MemberName> names = Lists.newArrayList();
-        for (final MemberNameRecord name : findAll(MemberNameRecord.class, join, where)) {
+        Where where = new Where(MemberRecord.AFFILIATE_MEMBER_ID_C, memberId);
+        List<MemberName> names = Lists.newArrayList();
+        for (MemberNameRecord name : findAll(MemberNameRecord.class, join, where)) {
             names.add(name.toMemberName());
         }
         return names;
@@ -935,7 +932,7 @@ public class MemberRepository extends DepotRepository
      * Returns info on all members invited by the specified member. This method will only return
      * 500 results, which avoids mayhem when asking for all members invited by memberId 0.
      */
-    public List<MemberInviteStatusRecord> getMembersInvitedBy (final int memberId)
+    public List<MemberInviteStatusRecord> getMembersInvitedBy (int memberId)
     {
         // TODO: this needs fixing: your affiliate is not necessarily your inviter
         // (I mean, if you have an inviter, they will be your affiliate, and you can't have
@@ -950,7 +947,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Determine what the friendship status is between one member and another.
      */
-    public boolean getFriendStatus (final int firstId, final int secondId)
+    public boolean getFriendStatus (int firstId, int secondId)
     {
         // TODO: migrate existing friend records to (firstId<secondId) format then just do one query
         return ((load(FriendRecord.class, FriendRecord.getKey(firstId, secondId)) != null) ||
@@ -1052,10 +1049,10 @@ public class MemberRepository extends DepotRepository
      * exists.
      * @exception DuplicateKeyException if the members are already friends.
      */
-    public MemberCard noteFriendship (final int memberId,  final int otherId)
+    public MemberCard noteFriendship (int memberId,  int otherId)
     {
         // first load the member record of the potential friend
-        final MemberCard other = loadMemberCard(otherId);
+        MemberCard other = loadMemberCard(otherId);
         if (other == null) {
             log.warning("Failed to establish friends: member no longer exists " +
                         "[missingId=" + otherId + ", reqId=" + memberId + "].");
@@ -1069,7 +1066,7 @@ public class MemberRepository extends DepotRepository
         }
 
         // always store friend ids with the lower of the two ids first
-        final FriendRecord rec = new FriendRecord();
+        FriendRecord rec = new FriendRecord();
         rec.inviterId = Math.min(memberId, otherId);
         rec.inviteeId = Math.max(memberId, otherId);
         insert(rec);
@@ -1080,7 +1077,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Remove a friend mapping from the database.
      */
-    public void clearFriendship (final int memberId, final int otherId)
+    public void clearFriendship (int memberId, int otherId)
     {
         // TODO: migrate existing friend records to (firstId<secondId) format then just do one delete
         delete(FriendRecord.class, FriendRecord.getKey(memberId, otherId));
@@ -1091,7 +1088,7 @@ public class MemberRepository extends DepotRepository
      * Delete all the friend relations involving the specified memberId, usually because that
      * member is being deleted.
      */
-    public void deleteAllFriends (final int memberId)
+    public void deleteAllFriends (int memberId)
     {
         deleteAll(FriendRecord.class,
                   new Where(new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
@@ -1103,19 +1100,19 @@ public class MemberRepository extends DepotRepository
      * responsible for confirming the authenticity of the external id information) or 0 if no
      * account is associated with that external account.
      */
-    public int lookupExternalAccount (final int partnerId, final String externalId)
+    public int lookupExternalAccount (int partnerId, String externalId)
     {
-        final ExternalMapRecord record =
-            load(ExternalMapRecord.class, ExternalMapRecord.getKey(partnerId, externalId));
+        ExternalMapRecord record = load(
+            ExternalMapRecord.class, ExternalMapRecord.getKey(partnerId, externalId));
         return (record == null) ? 0 : record.memberId;
     }
 
     /**
      * Notes that the specified Whirled account is associated with the specified external account.
      */
-    public void mapExternalAccount (final int partnerId, final String externalId, final int memberId)
+    public void mapExternalAccount (int partnerId, String externalId, int memberId)
     {
-        final ExternalMapRecord record = new ExternalMapRecord();
+        ExternalMapRecord record = new ExternalMapRecord();
         record.partnerId = partnerId;
         record.externalId = externalId;
         record.memberId = memberId;
@@ -1125,9 +1122,9 @@ public class MemberRepository extends DepotRepository
     /**
      * Creates a temp ban record for a member, or updates a pre-existing temp ban record.
      */
-    public void tempBanMember (final int memberId, final Timestamp expires, final String warning)
+    public void tempBanMember (int memberId, Timestamp expires, String warning)
     {
-        final MemberWarningRecord record = new MemberWarningRecord();
+        MemberWarningRecord record = new MemberWarningRecord();
         record.memberId = memberId;
         record.banExpires = expires;
         record.warning = warning;
@@ -1137,11 +1134,11 @@ public class MemberRepository extends DepotRepository
     /**
      * Updates the warning message for a member, or creates a new warning message if none exists.
      */
-    public void updateMemberWarning (final int memberId, final String warning)
+    public void updateMemberWarning (int memberId, String warning)
     {
         if (updatePartial(MemberWarningRecord.class, memberId,
                           MemberWarningRecord.WARNING, warning) == 0) {
-            final MemberWarningRecord record = new MemberWarningRecord();
+            MemberWarningRecord record = new MemberWarningRecord();
             record.memberId = memberId;
             record.warning = warning;
             insert(record);
@@ -1151,7 +1148,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Clears a warning message from a member (this includes any temp ban information).
      */
-    public void clearMemberWarning (final int memberId)
+    public void clearMemberWarning (int memberId)
     {
         delete(MemberWarningRecord.class, memberId);
     }
@@ -1159,7 +1156,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns the MemberWarningRecord for the memberId, or null if none found.
      */
-    public MemberWarningRecord loadMemberWarningRecord (final int memberId)
+    public MemberWarningRecord loadMemberWarningRecord (int memberId)
     {
         return load(MemberWarningRecord.class, memberId);
     }
@@ -1177,12 +1174,12 @@ public class MemberRepository extends DepotRepository
      * migration executes without failure, but we return the number anyway so that you can be
      * excited about how large it is).
      */
-    public int runMemberMigration (final MemberMigration migration)
+    public int runMemberMigration (MemberMigration migration)
         throws Exception
     {
         // TODO: break this up into chunks when our member base is larger
         int migrated = 0;
-        for (final MemberRecord mrec : findAll(MemberRecord.class)) {
+        for (MemberRecord mrec : findAll(MemberRecord.class)) {
             migration.apply(mrec);
             migrated++;
         }
@@ -1257,7 +1254,8 @@ public class MemberRepository extends DepotRepository
      */
     public void updateSelectedCharity (int memberId, int charityMemberId)
     {
-        Preconditions.checkArgument(charityMemberId >= 0, "Charity member ID must be zero or positive.");
+        Preconditions.checkArgument(
+            charityMemberId >= 0, "Charity member ID must be zero or positive.");
         updatePartial(MemberRecord.class, memberId, MemberRecord.CHARITY_MEMBER_ID, charityMemberId);
     }
 
@@ -1272,7 +1270,7 @@ public class MemberRepository extends DepotRepository
     }
 
     @Override // from DepotRepository
-    protected void getManagedRecords (final Set<Class<? extends PersistentRecord>> classes)
+    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(MemberRecord.class);
         classes.add(FriendRecord.class);
