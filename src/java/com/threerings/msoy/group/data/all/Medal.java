@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.msoy.data.all.MediaDesc;
 
 public class Medal
-    implements IsSerializable
+    implements IsSerializable, Comparable<Medal>
 {
     public static final int MEDAL_WIDTH = 80;
     public static final int MEDAL_HEIGHT = 60;
@@ -66,8 +66,19 @@ public class Medal
     }
 
     @Override
-    public boolean equals (Object other)
+    public boolean equals (Object o)
     {
-        return other instanceof Medal && ((Medal)other).medalId == medalId;
+        if (!(o instanceof Medal)) {
+            return false;
+        }
+        Medal other = (Medal)o;
+        return other.medalId == medalId && other.name.equals(name);
+    }
+
+    /**
+     * Medals are compared by String natural ordering on the name member.
+     */
+    public int compareTo (Medal o) {
+        return name.compareTo(o.name);
     }
 }

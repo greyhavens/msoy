@@ -105,6 +105,9 @@ public class DetailContentPanel extends FlowPanel
         _title.setWidget(new Label(_msgs.detailTabAwardMedals()));
         if (_awardMedals == null) {
             _awardMedals = new AwardMedalsPanel(_detail.group.groupId);
+        } else {
+            // make sure the medals are fresh.
+            _awardMedals.reloadMedals();
         }
         _content.setWidget(_awardMedals);
         _backButton.setVisible(true);
