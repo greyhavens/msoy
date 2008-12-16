@@ -20,6 +20,7 @@ import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -41,29 +42,34 @@ import client.util.Link;
  */
 public class ReviewItem extends FlowPanel
 {
-    public ReviewItem (ReviewPanel parent, ItemDetail detail, ItemFlag.Flag flag)
+    public ReviewItem (ReviewPanel parent, ItemDetail detail, ItemFlag flag)
     {
         _parent = parent;
-        _item = detail.item;
+        _item = detail != null ? detail.item : null;
+        _ident = flag.itemIdent;
+
+        byte type = flag.itemIdent.type;
+        int id = flag.itemIdent.itemId;
 
         // the name displays an item inspector and the creator name links to profile
         HorizontalPanel nameCreator = new HorizontalPanel();
         nameCreator.setSpacing(4);
-        nameCreator.add(Link.create(_item.name, Pages.STUFF,
-            Args.compose("d", _item.getType(), _item.itemId)));
+        String itemName = _item != null ? _item.name : "Unknown";
+        nameCreator.add(Link.create(itemName, Pages.STUFF, Args.compose("d", type, id)));
         nameCreator.add(MsoyUI.createLabel(" by ", null));
-        nameCreator.add(Link.memberView(detail.creator));
+        if (detail != null) {
+            nameCreator.add(Link.memberView(detail.creator));
+        }
         add(nameCreator);
 
         // say what flags are set on it
         FlowPanel flaggedAs = new FlowPanel();
         flaggedAs.add(new InlineLabel("Flagged as:"));
-        flaggedAs.add(new InlineLabel(flag.toString(), false, true, false));
+        flaggedAs.add(new InlineLabel(flag.flag.toString(), false, true, false));
         add(flaggedAs);
 
         // transactions link
-        add(Link.create("Transactions", Pages.ADMINZ,
-            Args.compose("review", _item.getType(), _item.itemId)));
+        add(Link.create("Transactions", Pages.ADMINZ, Args.compose("review", type, id)));
 
         // then a row of action buttons
         RowPanel line = new RowPanel();
@@ -89,7 +95,7 @@ public class ReviewItem extends FlowPanel
 //             }
 
         // a button to mark someting as mature
-        if (flag == ItemFlag.Flag.MATURE) {
+        if (flag.flag == ItemFlag.Flag.MATURE) {
             _mark = new Button(_msgs.reviewMark());
             new ClickCallback<Void>(_mark) {
                 @Override protected boolean callService () {
@@ -109,28 +115,30 @@ public class ReviewItem extends FlowPanel
         }
 
         // a button to delete an item and possibly all its clones
-        _delete = new Button(_item.ownerId != 0 ?
-                             _msgs.reviewDelete() : _msgs.reviewDeleteAll());
-        _delete.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                if (_item == null) {
-                    // should not happen, but let's be careful
-                    return;
+        if (_item != null) {
+            _delete = new Button(_item.ownerId != 0 ?
+                                 _msgs.reviewDelete() : _msgs.reviewDeleteAll());
+            _delete.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    if (_item == null) {
+                        // should not happen, but let's be careful
+                        return;
+                    }
+                    new DeleteDialog().show();
                 }
-                new DeleteDialog().show();
-            }
-        });
-        line.add(_delete);
+            });
+            line.add(_delete);
+        }
 
         // a button to signal we're done
         _done = new Button(_msgs.reviewDone());
         new ClickCallback<Void>(_done) {
             @Override protected boolean callService () {
-                if (_item == null) {
+                if (_ident == null) {
                     _parent.refresh();
                     return false;
                 }
-                _itemsvc.removeAllFlags(_item.getIdent(), this);
+                _itemsvc.removeAllFlags(_ident, this);
                 return true;
             }
             @Override protected boolean gotResult (Void result) {
@@ -204,6 +212,7 @@ public class ReviewItem extends FlowPanel
                         }
                         _delete.setEnabled(false);
                         _item = null;
+                        _ident = null;
                         hide();
                     }
                     public void onFailure (Throwable caught) {
@@ -223,6 +232,7 @@ public class ReviewItem extends FlowPanel
 
     protected ReviewPanel _parent;
     protected Item _item;
+    protected ItemIdent _ident;
     protected Button _mark, _delete, _done;
 
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);

@@ -87,13 +87,17 @@ public class ReviewPanel extends FlowPanel
                 ItemDetail detail = _result.items.get(item.itemIdent);
 
                 // thumbnail
-                row.add(new ThumbBox(detail.item.getThumbnailMedia()));
+                if (detail != null) {
+                    row.add(new ThumbBox(detail.item.getThumbnailMedia()));
+                } else {
+                    row.add(new Label("Item not found"));
+                }
 
                 // reporter, comment and timestamp
                 row.add(new Comment(item));
 
                 // item actions
-                row.add(new ReviewItem(ReviewPanel.this, detail, item.flag));
+                row.add(new ReviewItem(ReviewPanel.this, detail, item));
 
                 return row;
             }
