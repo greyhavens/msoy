@@ -100,10 +100,11 @@ public class MedalListPanel extends FlowPanel
                 ownerWidget.add(MediaUtil.createMediaView(
                     owner.getPhoto(), MediaDesc.THUMBNAIL_SIZE));
                 ownerWidget.add(Link.create(
-                    owner.toString(), Pages.PEOPLE, "" + owner.getMemberId()));
+                    owner.toString(), null, Pages.PEOPLE, "" + owner.getMemberId(), false));
                 ownerWidgets.add(ownerWidget);
             }
             add(ownerWidgets);
+            setCellWidth(ownerWidgets, "100%");
         }
     }
 

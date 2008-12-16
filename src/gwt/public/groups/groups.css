@@ -805,6 +805,7 @@
 
 .medalListPanel .MedalOwnerWidget {
   background-color: white;
+  width: 100%;
 }
 
 .medalListPanel .MedalOwnerWidget .OwnerWidgets {
@@ -812,38 +813,43 @@
 }
 
 .medalListPanel .MedalOwnerWidget .OwnerWidgets .OwnerWidget {
-  display: inline;
   text-align: center;
+  width: 120px;
 }
 
 .medalListPanel .MedalOwnerWidget .MedalWidget {
   border: solid 1px #C9E9FE;
   position: relative;
+  width: 198px;
+  height: 90px;
+  margin: 3px;
 }
 
 .medalListPanel .MedalOwnerWidget .MedalWidget .Icon {
   position: absolute;
-  left: 5px;
-  top: 5px;
+  left: 3px;
+  top: 3px;
 }
 
 .medalListPanel .MedalOwnerWidget .MedalWidget .Name {
   position: absolute;
-  left: 25px;
+  left: 83px;
   top: 5px;
-  width: 100px;
+  width: 110px;
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
+  color: #1f4e78;
 }
 
 .medalListPanel .MedalOwnerWidget .MedalWidget .Description {
   position: absolute;
-  left: 25px;
-  top: 20px;
-  width: 100px;
+  left: 83px;
+  top: 27px;
+  width: 110px;
   text-align: center;
-  font-size: 14px;
+  font-size: 11px;
+  color: #1f4e78;
 }
 
 /* ------------------------------------
