@@ -72,7 +72,7 @@ public class Medal
             return false;
         }
         Medal other = (Medal)o;
-        return other.medalId == medalId && other.name.equals(name);
+        return other.medalId == medalId;
     }
 
     /**

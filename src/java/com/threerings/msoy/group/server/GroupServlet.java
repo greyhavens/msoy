@@ -595,8 +595,11 @@ public class GroupServlet extends MsoyServiceServlet
         // member.
         Set<Integer> memberIds = Sets.newHashSet(
             Iterables.transform(earnedMedals, EarnedMedalRecord.TO_MEMBER_ID));
-        List<VizMemberName> memberNames = Lists.transform(_memberRepo.loadMemberCards(memberIds),
-            MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME);
+        Map<Integer, VizMemberName> memberNames = Maps.newHashMap();
+        for (VizMemberName vizMemberName : Lists.transform(
+                _memberRepo.loadMemberCards(memberIds), MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME)) {
+            memberNames.put(vizMemberName.getMemberId(), vizMemberName);
+        }
         // now that we have each member's VizMemberName, add them to the appropriate list and ship
         // the whole package off to the client.
         for (EarnedMedalRecord earnedMedalRec : earnedMedals) {
