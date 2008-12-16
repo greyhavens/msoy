@@ -1156,7 +1156,7 @@ public class WorldController extends MsoyController
                     callback: handleBootFromPlace, arg: memId });
             }
 
-            if (_wctx.getPartyDirector().isInParty()) {
+            if (_wctx.getPartyDirector().canInviteToParty(memId)) {
                 menuItems.push({ label: Msgs.PARTY.get("b.invite_member"),
                                  command: INVITE_TO_PARTY, arg: memId });
             }
@@ -1191,7 +1191,7 @@ public class WorldController extends MsoyController
                          command: VIEW_MEMBER, arg: memId });
         menuItems.push({ label: Msgs.GENERAL.get("b.visit_member"),
                          command: VISIT_MEMBER, arg: memId });
-        if (_wctx.getPartyDirector().isInParty()) {
+        if (_wctx.getPartyDirector().canInviteToParty(memId)) {
             menuItems.push({ label: Msgs.PARTY.get("b.invite_member"),
                              command: INVITE_TO_PARTY, arg: memId });
         }

@@ -52,6 +52,24 @@ public class PartyDirector extends BasicDirector
         _wctx = ctx;
     }
 
+    /**
+     * Can we invite the other member to our party?
+     */
+    public function canInviteToParty (memberId :int) :Boolean
+    {
+        if (_partyObj == null) {
+            return false;
+        }
+        // make sure the member's not in the party already
+        if (_partyObj.peeps.containsKey(memberId)) {
+            return false;
+        }
+        if (isPartyLeader()) {
+            return true;
+        }
+        return (_partyObj.recruitment == PartyCodes.RECRUITMENT_OPEN);
+    }
+
     public function isInParty () :Boolean
     {
         var clobj :Object = _wctx.getClient().getClientObject();
