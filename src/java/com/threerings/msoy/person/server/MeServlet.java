@@ -22,9 +22,16 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntSet;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
 
+import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.MedalRecord;
+import com.threerings.msoy.group.server.persist.MedalRepository;
+
+import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -147,9 +154,6 @@ public class MeServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-
-        // PassportData contains the owner's name because we'll eventually be viewing passports for
-        // other players as well
         PassportData data = new PassportData();
 
         if (mrec.memberId == memberId) {
@@ -157,6 +161,40 @@ public class MeServlet extends MsoyServiceServlet
             // for now, we just ship along every badge relevant to this player.
             data.nextBadges = _badgeLogic.getInProgressBadges(
                 mrec.memberId, mrec.badgesVersion, true);
+
+            // first grab the set of earned medals
+            data.medals = Maps.newHashMap();
+            data.officialGroups = Lists.newArrayList();
+            Map<Integer, Award> medals = Maps.newHashMap();
+            List<Integer> medalIds = Lists.newArrayList();
+            for (EarnedMedalRecord earnedMedalRec : _medalRepo.loadEarnedMedals(memberId)) {
+                Award medal = new Award();
+                medal.whenEarned = earnedMedalRec.whenEarned.getTime();
+                medals.put(earnedMedalRec.medalId, medal);
+                medalIds.add(earnedMedalRec.medalId);
+            }
+            // flesh out the details from the MedalRecord
+            Map<Integer, List<Award>> groupMedals = Maps.newHashMap();
+            for (MedalRecord medalRec : _medalRepo.loadMedals(medalIds)) {
+                Award medal = medals.get(medalRec.medalId);
+                medal.name = medalRec.name;
+                medal.description = medalRec.description;
+                medal.icon = medalRec.createIconMedia();
+
+                List<Award> medalList = groupMedals.get(medalRec.groupId);
+                if (medalList == null) {
+                    groupMedals.put(medalRec.groupId, medalList = Lists.newArrayList());
+                }
+                medalList.add(medal);
+            }
+            // finally get the group names and the officialness of each group.
+            for (GroupRecord groupRec : _groupRepo.loadGroups(groupMedals.keySet())) {
+                GroupName groupName = groupRec.toGroupName();
+                data.medals.put(groupName, groupMedals.get(groupRec.groupId));
+                if (groupRec.official) {
+                    data.officialGroups.add(groupName);
+                }
+            }
 
         } else {
             MemberName stampOwner = _memberRepo.loadMemberName(memberId);
@@ -357,6 +395,7 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ServletLogic _servletLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected MedalRepository _medalRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected PromotionRepository _promoRepo;
     @Inject protected ContestRepository _contestRepo;

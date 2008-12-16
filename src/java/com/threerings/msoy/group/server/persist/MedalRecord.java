@@ -115,8 +115,13 @@ public class MedalRecord extends PersistentRecord
         medal.groupId = groupId;
         medal.name = name;
         medal.description = description;
-        medal.icon = new MediaDesc(iconHash, iconMimeType);
+        medal.icon = createIconMedia();
         return medal;
+    }
+
+    public MediaDesc createIconMedia()
+    {
+        return new MediaDesc(iconHash, iconMimeType);
     }
 
     // AUTO-GENERATED: METHODS START

@@ -55,6 +55,14 @@ public class MedalRepository extends DepotRepository
         return load(MedalRecord.class, medalId);
     }
 
+    public List<MedalRecord> loadMedals (Collection<Integer> medalIds)
+    {
+        if (medalIds.size() == 0) {
+            return Collections.emptyList();
+        }
+        return loadAll(MedalRecord.class, medalIds);
+    }
+
     /**
      * Returns true if the groupId and name combination is already in use.
      */
@@ -71,6 +79,14 @@ public class MedalRepository extends DepotRepository
     public List<MedalRecord> loadGroupMedals (int groupId)
     {
         return findAll(MedalRecord.class, new Where(MedalRecord.GROUP_ID_C, groupId));
+    }
+
+    /**
+     * Returns a list of the EarnedMedalRecords that have been earned by the given individual.
+     */
+    public List<EarnedMedalRecord> loadEarnedMedals (int memberId)
+    {
+        return findAll(EarnedMedalRecord.class, new Where(EarnedMedalRecord.MEMBER_ID_C, memberId));
     }
 
     /**

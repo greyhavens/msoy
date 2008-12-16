@@ -12,6 +12,9 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.gwt.StampCategory;
 
+import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.GroupName;
+
 public class PassportData
     implements IsSerializable
 {
@@ -19,9 +22,13 @@ public class PassportData
     public String stampOwner;
 
     /** The set of badges that this player has earned. */
-    // TODO: this is going to have to map to a list of some interface that badges implements, along
-    // with trophies, agent-granted goodies, stamps, etc.
     public Map<StampCategory, List<Badge>> stamps;
+
+    /** The set of group medals that this player has earned. */
+    public Map<GroupName, List<Award>> medals;
+
+    /** The list of groups in the medals map that are official. */
+    public List<GroupName> officialGroups;
 
     /** The set of badges this player has available, but not earned. */
     public List<InProgressBadge> nextBadges;
