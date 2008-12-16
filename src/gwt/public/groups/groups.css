@@ -821,6 +821,11 @@
   float: left;
 }
 
+.medalListPanel .MedalOwnerWidget .OwnerWidgets .OwnerLink {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .medalListPanel .MedalOwnerWidget .Hidden {
   display: none;
 }
@@ -834,8 +839,8 @@
 
 .medalListPanel .MedalOwnerWidget .OwnerWidgets .NotAwarded {
   position: absolute;
-  left: 102px;
-  top: 42px;
+  left: 100px;
+  top: 45px;
 }
 
 .medalListPanel .MedalOwnerWidget .MedalWidget {

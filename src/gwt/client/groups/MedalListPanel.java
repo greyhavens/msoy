@@ -114,7 +114,8 @@ public class MedalListPanel extends FlowPanel
                 ownerWidget.add(MediaUtil.createMediaView(
                     owner.getPhoto(), MediaDesc.THUMBNAIL_SIZE,
                     Link.createListener(Pages.PEOPLE, ""+owner.getMemberId())));
-                ownerWidget.add(Link.memberView(owner));
+                ownerWidget.add(Link.create(owner.toString(), "OwnerLink", Pages.PEOPLE,
+                    ""+owner.getMemberId(), false));
                 _ownerWidgets.add(ownerWidget);
                 if (_ownerWidgets.getWidgetCount() > 4) {
                     ownerWidget.addStyleName("Hidden");
