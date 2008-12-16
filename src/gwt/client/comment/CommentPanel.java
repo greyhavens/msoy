@@ -41,6 +41,8 @@ public class CommentPanel extends MessagePanel
         _rated = false;
         _displayed = _parent.shouldDisplay(_comment);
 
+        addStyleName("commentPanel");
+
         updateComment();
     }
 
@@ -154,7 +156,7 @@ public class CommentPanel extends MessagePanel
             setMessage(card, new Date(_comment.posted), _comment.text);
         } else {
             // TODO
-            setMessage(card, new Date(_comment.posted), "");
+            setMessage(card, new Date(_comment.posted), null);
         }
     }
 

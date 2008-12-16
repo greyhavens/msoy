@@ -42,7 +42,9 @@ public class MessagePanel extends FlexTable
         ThumbBox box = getThumbBox(poster);
         if (box != null) {
             setWidget(0, 0, box);
-            getFlexCellFormatter().setRowSpan(0, 0, 2);
+            if (text != null) {
+                getFlexCellFormatter().setRowSpan(0, 0, 2);
+            }
             getFlexCellFormatter().setStyleName(0, 0, "Photo");
             getFlexCellFormatter().addStyleName(0, 0, "BottomPad");
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
@@ -74,29 +76,33 @@ public class MessagePanel extends FlexTable
         if (tools != null) {
             setWidget(0, 2, tools);
             getFlexCellFormatter().setStyleName(0, 2, "Tools");
-            getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_RIGHT);
-            getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+            getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
+            getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         };
 
         ScrollPanel scroller = new ScrollPanel();
         scroller.addStyleName("Scroller");
-        if (textIsHTML()) {
-            text = text.replaceAll(WHIRLED_REGEX, WHIRLED_REPLACE);
-            text = text.replaceAll(
-                "href=\"\\s*[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]:.*\"", "href=\"#\"");
-            text = MessageUtil.expandMessage(text);
-            scroller.add(MsoyUI.createHTML(text, null));
-        } else {
-            scroller.add(MsoyUI.createRestrictedHTML(text));
+        if (text != null) {
+            if (textIsHTML()) {
+                text = text.replaceAll(WHIRLED_REGEX, WHIRLED_REPLACE);
+                text = text.replaceAll(
+                    "href=\"\\s*[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]:.*\"", "href=\"#\"");
+                text = MessageUtil.expandMessage(text);
+                scroller.add(MsoyUI.createHTML(text, null));
+            } else {
+                scroller.add(MsoyUI.createRestrictedHTML(text));
+            }
         }
         setWidget(1, 0, scroller);
+        if (text != null) {
+            getFlexCellFormatter().setStyleName(1, 0, "Text");
+            getFlexCellFormatter().addStyleName(1, 0, "LeftPad");
+            getFlexCellFormatter().addStyleName(1, 0, "BottomPad");
+        }
 
         if (tools != null) {
             getFlexCellFormatter().setColSpan(1, 0, 2);
         }
-        getFlexCellFormatter().setStyleName(1, 0, "Text");
-        getFlexCellFormatter().addStyleName(1, 0, "LeftPad");
-        getFlexCellFormatter().addStyleName(1, 0, "BottomPad");
     }
 
     /**
