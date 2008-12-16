@@ -18,7 +18,6 @@ import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -160,13 +159,11 @@ public class GroupDetailPanel extends FlowPanel
                 Pages.GROUPS, GroupsPage.Nav.FORUM.composeArgs(_group.groupId)));
         discussionsButton.addStyleName("DiscussionsButton");
         buttons.add(discussionsButton);
-        if (DeploymentConfig.devDeployment) {
-            PushButton medalsButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
-                _msgs.detailViewMedals(), Link.createListener(
-                    Pages.GROUPS, GroupsPage.Nav.MEDALS.composeArgs(_group.groupId)));
-            medalsButton.addStyleName("MedalsButton");
-            buttons.add(medalsButton);
-        }
+        PushButton medalsButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
+            _msgs.detailViewMedals(), Link.createListener(
+                Pages.GROUPS, GroupsPage.Nav.MEDALS.composeArgs(_group.groupId)));
+        medalsButton.addStyleName("MedalsButton");
+        buttons.add(medalsButton);
 
         // join, charter, shop, manage, etc
         FlowPanel actions = MsoyUI.createFlowPanel("Actions");
@@ -242,15 +239,13 @@ public class GroupDetailPanel extends FlowPanel
                     }
                 }));
 
-            if (DeploymentConfig.devDeployment) {
-                managerActions.add(new InlineLabel(" | "));
-                managerActions.add(MsoyUI.createActionLabel(
-                    _msgs.detailAwardMedals(), "inline", new ClickListener() {
-                        public void onClick (Widget sender) {
-                            _contentPanel.showAwardMedals();
-                        }
-                    }));
-            }
+            managerActions.add(new InlineLabel(" | "));
+            managerActions.add(MsoyUI.createActionLabel(
+                _msgs.detailAwardMedals(), "inline", new ClickListener() {
+                    public void onClick (Widget sender) {
+                        _contentPanel.showAwardMedals();
+                    }
+                }));
         }
 
         FlowPanel rightPanel = MsoyUI.createFlowPanel("Right");
