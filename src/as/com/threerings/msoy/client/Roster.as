@@ -8,6 +8,8 @@ import mx.collections.Sort;
 
 import mx.controls.List;
 
+import com.threerings.util.Util;
+
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -28,7 +30,6 @@ public class Roster extends List
         _field = field;
 
         styleName = "friendList"; // TODO: "peerList";
-        dataProvider = new ArrayCollection();
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.ON;
         percentWidth = 100;
@@ -40,27 +41,30 @@ public class Roster extends List
         cf.properties =  { mctx: mctx };
         itemRenderer = cf;
 
+        _list = new ArrayCollection();
         var sort :Sort = new Sort();
         sort.compareFunction = sortFn;
-        dataProvider.sort = sort;
-        dataProvider.filterFunction = filterFn;
-        dataProvider.refresh();
+        _list.sort = sort;
+        _list.filterFunction = filterFn;
+        _list.refresh();
+        dataProvider = _list;
     }
 
     public function init (players :Array) :void
     {
-        dataProvider.removeAll();
+        _list.removeAll();
 
         for each (var player :PlayerEntry in players) {
-            addPlayer(player);
+            _list.addItem(player);
         }
+        _list.refresh();
     }
 
     // from SetListener
     public function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == _field) {
-            addPlayer(event.getEntry() as PlayerEntry);
+            addPlayer(PlayerEntry(event.getEntry()));
         }
     }
 
@@ -68,11 +72,13 @@ public class Roster extends List
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == _field) {
-            var newEntry :PlayerEntry = event.getEntry() as PlayerEntry;
-            var oldEntry :PlayerEntry = event.getOldEntry() as PlayerEntry;
-
-            removePeer(oldEntry);
-            addPlayer(newEntry);
+            _list.disableAutoUpdate();
+            try {
+                removePlayer(PlayerEntry(event.getOldEntry()));
+                addPlayer(PlayerEntry(event.getEntry()));
+            } finally {
+                _list.enableAutoUpdate();
+            }
         }
     }
 
@@ -80,24 +86,34 @@ public class Roster extends List
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == _field) {
-            removePeer(event.getOldEntry() as PlayerEntry);
+            removePlayer(PlayerEntry(event.getOldEntry()));
         }
     }
 
     protected function addPlayer (player :PlayerEntry) :void
     {
-        if ( ! dataProvider.contains(player)) {
-            dataProvider.addItem(player);
-        }
+//        trace("Adding player (key=" + player.getKey() + ", p=" + player + ")");
+        _list.addItem(player);
+        _list.refresh();
     }
 
-    protected function removePeer (player :PlayerEntry) :void
+    protected function removePlayer (player :PlayerEntry) :void
     {
-        var idx :int = dataProvider.getItemIndex(player);
-        if (idx != -1) {
-            dataProvider.removeItemAt(idx);
+        const key :Object = player.getKey();
+//        trace("Remove key: " + key);
+        for (var ii :int = 0; ii < _list.length; ii++) {
+//            trace("  checking key: " + PlayerEntry(_list.getItemAt(ii)).getKey());
+            if (Util.equals(key, PlayerEntry(_list.getItemAt(ii)).getKey())) {
+//                trace("  .removed: " + player);
+                _list.removeItemAt(ii);
+                _list.refresh();
+                return;
+            }
         }
+//        trace("  .never found key: " + player);
     }
+
+    protected var _list :ArrayCollection;
 
     protected var _field :String;
 }
