@@ -368,7 +368,7 @@ public class AdminServlet extends MsoyServiceServlet
         owners.add(item.creatorId);
 
         CatalogRecord catrec = null;
-        
+
         // we've loaded the original item, if it represents the original listing or a catalog
         // master item, we want to squish the original catalog listing.
         if (item.catalogId != 0) {
@@ -392,9 +392,6 @@ public class AdminServlet extends MsoyServiceServlet
         // finally delete the actual item
         repo.deleteItem(item.itemId);
         result.deletionCount ++;
-
-        // get rid of the flags
-        _itemFlagRepo.removeItemFlags(item.getType(), item.itemId);
 
         // notify the owners of the deletion
         for (final int ownerId : owners) {

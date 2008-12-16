@@ -878,6 +878,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
             // delete tag records relating to this item
             _tagRepo.deleteTags(itemId);
+
+            // delete support flags on this item
+            _itemFlagRepo.removeItemFlags(getItemType(), itemId);
         }
 
         // delete any entity memory for this item as well
@@ -1329,8 +1332,6 @@ public abstract class ItemRepository<T extends ItemRecord>
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyExchange _exchange;
     @Inject protected HotnessConfig _hconfig;
-
-    // TODO: remove after flagged column is dropped from ItemRecord
     @Inject protected ItemFlagRepository _itemFlagRepo;
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
