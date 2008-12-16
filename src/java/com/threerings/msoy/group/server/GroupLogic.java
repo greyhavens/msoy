@@ -150,7 +150,7 @@ public class GroupLogic
 
     protected static boolean isValidName (String name)
     {
-        return Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0));
+        return Character.isLetterOrDigit(name.charAt(0));
     }
 
     // our dependencies
