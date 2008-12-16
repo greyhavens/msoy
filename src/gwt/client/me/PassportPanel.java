@@ -102,7 +102,7 @@ public class PassportPanel extends FlowPanel
             }
 
             for (Badge badge : _data.stamps.get(category)) {
-                stamps.add(MsoyUI.createSimplePanel(new BadgeDisplay(badge), "BoxedBadge"));
+                stamps.add(MsoyUI.createSimplePanel(new BadgeDisplay(badge), "BoxedAward"));
             }
         }
     }
@@ -134,7 +134,9 @@ public class PassportPanel extends FlowPanel
             FlowPanel medals = new FlowPanel();
             _contents.add(new TongueBox(group.toString(), medals));
             for (Award award : _data.medals.get(group)) {
-                medals.add(MsoyUI.createSimplePanel(new AwardDisplay(award), "BoxedBadge"));
+                AwardDisplay display = new AwardDisplay(award);
+                display.addStyleName("MedalDisplay");
+                medals.add(MsoyUI.createSimplePanel(display, "BoxedAward"));
             }
         }
     }

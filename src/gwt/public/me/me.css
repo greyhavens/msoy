@@ -295,6 +295,18 @@
   margin-top: 20px;
 }
 
+.passport .MedalDisplay {
+  width: 211px;
+}
+
+.passport .MedalDisplay .AwardName {
+  width: 109px;
+}
+
+.passport .MedalDisplay .AwardDescription, .passport .MedalDisplay .WhenEarned {
+  width: 196px;
+}
+
 /* ------------------------------------
    BADGE DISPLAYS ANYWHERE
 -------------------------------------*/
@@ -380,7 +392,7 @@
   right: 7px;
 }
 
-.BoxedBadge {
+.BoxedAward {
   border-color: #d6e8f6;
   border-style: solid;
   border-width: 1px;

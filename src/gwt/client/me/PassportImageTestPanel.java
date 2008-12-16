@@ -42,7 +42,7 @@ public class PassportImageTestPanel extends PagedGrid<Badge>
     @Override
     protected Widget createWidget(Badge badge)
     {
-        return MsoyUI.createSimplePanel(new BadgeDisplay(badge), "BoxedBadge");
+        return MsoyUI.createSimplePanel(new BadgeDisplay(badge), "BoxedAward");
     }
 
     @Override
