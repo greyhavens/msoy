@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -91,14 +92,22 @@ public class MedalListPanel extends FlowPanel
     }
 
     protected class MedalOwnerWidget extends HorizontalPanel
+        implements ClickListener
     {
         public MedalOwnerWidget (MedalOwners owners)
         {
             setStyleName("MedalOwnerWidget");
             add(new MedalWidget(owners.medal));
 
-            FlowPanel ownerWidgets = new FlowPanel();
-            ownerWidgets.setStyleName("OwnerWidgets");
+            _ownerWidgets = new FlowPanel();
+            _ownerWidgets.setStyleName("OwnerWidgets");
+            add(_ownerWidgets);
+            setCellWidth(_ownerWidgets, "100%");
+            if (owners.owners.size() == 0) {
+                _ownerWidgets.add(MsoyUI.createLabel(_msgs.medalListNotAwarded(), "NotAwarded"));
+                return;
+            }
+
             for (VizMemberName owner : owners.owners) {
                 FlowPanel ownerWidget = new FlowPanel();
                 ownerWidget.setStyleName("OwnerWidget");
@@ -106,11 +115,42 @@ public class MedalListPanel extends FlowPanel
                     owner.getPhoto(), MediaDesc.THUMBNAIL_SIZE,
                     Link.createListener(Pages.PEOPLE, ""+owner.getMemberId())));
                 ownerWidget.add(Link.memberView(owner));
-                ownerWidgets.add(ownerWidget);
+                _ownerWidgets.add(ownerWidget);
+                if (_ownerWidgets.getWidgetCount() > 4) {
+                    ownerWidget.addStyleName("Hidden");
+                }
             }
-            add(ownerWidgets);
-            setCellWidth(ownerWidgets, "100%");
+
+            if (_ownerWidgets.getWidgetCount() > 4) {
+                _ownerWidgets.add(MsoyUI.createActionLabel(
+                    _msgs.medalListSeeAll(""+_ownerWidgets.getWidgetCount()), "SeeAllLink", this));
+            }
         }
+
+        public void onClick (Widget sender)
+        {
+            int ownerCount = _ownerWidgets.getWidgetCount();
+            if (_hidden) {
+                for (int ii = 0; ii < ownerCount; ii++) {
+                    _ownerWidgets.getWidget(ii).removeStyleName("Hidden");
+                }
+
+            } else {
+                for (int ii = 4; ii < ownerCount; ii++) {
+                    Widget ownerWidget = _ownerWidgets.getWidget(ii);
+                    if (!(ownerWidget instanceof Label)) {
+                        ownerWidget.addStyleName("Hidden");
+                    }
+                }
+            }
+
+            _hidden = !_hidden;
+            ((Label)sender).setText(
+                _hidden ? _msgs.medalListSeeAll(""+(ownerCount - 1)) : _msgs.medalListHide());
+        }
+
+        protected FlowPanel _ownerWidgets;
+        protected boolean _hidden = true;
     }
 
     protected class MedalWidget extends FlowPanel

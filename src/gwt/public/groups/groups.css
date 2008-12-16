@@ -809,7 +809,7 @@
 }
 
 .medalListPanel .MedalOwnerWidget .OwnerWidgets {
-  width: 100%;
+  position: relative;
 }
 
 .medalListPanel .MedalOwnerWidget .OwnerWidgets .OwnerWidget {
@@ -819,6 +819,23 @@
   padding-top: 9px;
   font-size: 12px;
   float: left;
+}
+
+.medalListPanel .MedalOwnerWidget .Hidden {
+  display: none;
+}
+
+.medalListPanel .MedalOwnerWidget .OwnerWidgets .SeeAllLink {
+  position: absolute;
+  bottom: -108px;
+  right: 6px;
+  font-size: 12px;
+}
+
+.medalListPanel .MedalOwnerWidget .OwnerWidgets .NotAwarded {
+  position: absolute;
+  left: 102px;
+  top: 42px;
 }
 
 .medalListPanel .MedalOwnerWidget .MedalWidget {
