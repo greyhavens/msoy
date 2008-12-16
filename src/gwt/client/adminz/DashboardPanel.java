@@ -61,7 +61,7 @@ public class DashboardPanel extends SmartTable
             admin.add(makeLink(_msgs.viewBureaus(), "bureaus"));
             admin.add(makeLink(_msgs.panopticonStatus(), "panopticonStatus"));
             setWidget(row, col, admin);
-            getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
+            getFlexCellFormatter().setVerticalAlignment(row, col++, HasAlignment.ALIGN_TOP);
 
             FlowPanel reboot = new FlowPanel();
             reboot.add(MsoyUI.createLabel(_msgs.adminReboot(), "Title"));
@@ -70,7 +70,7 @@ public class DashboardPanel extends SmartTable
             reboot.add(makeReboot(_msgs.rebootInFifteen(), 15));
             reboot.add(makeReboot(_msgs.rebootCancel(), -1));
             setWidget(row, col, reboot);
-            getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
+            getFlexCellFormatter().setVerticalAlignment(row, col++, HasAlignment.ALIGN_TOP);
         }
 
         // support controls
@@ -81,8 +81,8 @@ public class DashboardPanel extends SmartTable
         support.add(makeLink(_msgs.promosButton(), "promos"));
         support.add(makeLink(_msgs.contestsButton(), "contests"));
         support.add(makeLink(_msgs.browseButton(), "browser"));
-        setWidget(row++, col, support);
-        getFlexCellFormatter().setVerticalAlignment(0, col++, HasAlignment.ALIGN_TOP);
+        setWidget(row, col, support);
+        getFlexCellFormatter().setVerticalAlignment(row++, col++, HasAlignment.ALIGN_TOP);
     }
 
     protected void displayDashboard ()
