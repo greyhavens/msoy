@@ -70,7 +70,7 @@ public class MedalListPanel extends FlowPanel
         HorizontalPanel title = new HorizontalPanel();
         title.setStyleName("MedalTitle");
         title.add(new Label(_msgs.medalListHeader()));
-        if (CShell.isSupport()) {
+        if (CShell.isSupport() || _rank == GroupMembership.RANK_MANAGER) {
             title.add(MsoyUI.createActionLabel(
                 _msgs.medalListAddMedal(), "AddMedal", Link.createListener(
                     Pages.GROUPS, GroupsPage.Nav.CREATEMEDAL.composeArgs(_groupId))));
