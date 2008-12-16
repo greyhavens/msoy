@@ -25,7 +25,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import client.images.navi.NaviImages;
 import client.shell.CShell;
-import client.shell.LogonPanel;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;

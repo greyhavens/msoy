@@ -309,7 +309,6 @@ public class PartyRegistry
     {
         PartyObject pobj = null;
         PartyManager mgr = null;
-        boolean success = false;
         try {
 
             // TODO: validate with that group who can create parties (may just be managers)
