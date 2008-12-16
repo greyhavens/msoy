@@ -213,8 +213,12 @@ public class ThaneAVRGameBackend
         o["startTransaction"] = startTransaction_v1;
         o["commitTransaction"] = commitTransaction_v1;
 
+        // .game & .player
+        o["getPlayerInfo_v1"] = getPlayerInfo_v1;
+
         // .game
         o["game_getPlayerIds_v1"] = game_getPlayerIds_v1;
+        o["game_getPlayerInfos_v1"] = game_getPlayerInfos_v1;
         o["game_sendMessage_v1"] = game_sendMessage_v1;
         o["isRoomLoaded_v1"] = isRoomLoaded_v1
         o["getLevelPacks_v2"] = getLevelPacks_v2;
@@ -275,10 +279,21 @@ public class ThaneAVRGameBackend
         _controller.getTransactions().commit();
     }
 
+    // on more than one control
+    protected function getPlayerInfo_v1 (playerId :int) :Object
+    {
+        return {};
+    }
+
     // -------------------- .game --------------------
     protected function game_getPlayerIds_v1 () :Array
     {
         return BackendUtils.getPlayerIds(_gameObj, null, 0, filterPlayer);
+    }
+
+    protected function game_getPlayerInfos_v1 () :Array
+    {
+        return [];
     }
 
     protected function game_sendMessage_v1 (name :String, value :Object) :void
