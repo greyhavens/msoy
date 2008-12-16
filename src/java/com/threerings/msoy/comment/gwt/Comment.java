@@ -31,7 +31,7 @@ public class Comment
     public static final int MAX_TEXT_LENGTH = 1024;
 
     /** The number of comments displayed per page. */
-    public static final int COMMENTS_PER_PAGE = 5;
+    public static final int COMMENTS_PER_PAGE = 12;
 
     /**
      * Returns true if the specified member can delete a comment.
