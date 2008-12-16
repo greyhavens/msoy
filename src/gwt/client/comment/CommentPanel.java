@@ -21,6 +21,7 @@ import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 import client.images.msgs.MsgsImages;
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MessagePanel;
 import client.ui.MsoyUI;
@@ -105,7 +106,7 @@ public class CommentPanel extends MessagePanel
             return tools;
         }
 
-        if (_rated) {
+        if (CShell.isGuest() || _rated) {
             return tools;
         }
 
@@ -155,7 +156,6 @@ public class CommentPanel extends MessagePanel
         if (_displayed) {
             setMessage(card, new Date(_comment.posted), _comment.text);
         } else {
-            // TODO
             setMessage(card, new Date(_comment.posted), null);
         }
     }
