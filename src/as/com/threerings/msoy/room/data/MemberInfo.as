@@ -57,6 +57,14 @@ public class MemberInfo extends ActorInfo
     }
 
     /**
+     * Get this player's partyId.
+     */
+    public function getPartyId () :int
+    {
+        return _partyId;
+    }
+
+    /**
      * Tests if this member is able to manage the room.
      * Note that this is not a definitive check, but rather one that can be used by clients
      * to check other occupants. The value is computed at the time the occupant enters the
@@ -74,6 +82,7 @@ public class MemberInfo extends ActorInfo
         var that :MemberInfo = super.clone() as MemberInfo;
         that._scale = this._scale;
         that._game = this._game;
+        that._partyId = this._partyId;
         return that;
     }
 
@@ -83,6 +92,7 @@ public class MemberInfo extends ActorInfo
         super.readObject(ins);
         _scale = ins.readFloat();
         _game = GameSummary(ins.readObject());
+        _partyId = ins.readInt();
     }
 
     /** @inheritDoc */
@@ -92,9 +102,11 @@ public class MemberInfo extends ActorInfo
         super.toStringBuilder(buf);
         buf.append(", scale=", _scale);
         buf.append(", game=", _game);
+        buf.append(", partyId=", _partyId);
     }
 
     protected var _scale :Number;
     protected var _game :GameSummary;
+    protected var _partyId :int;
 }
 }

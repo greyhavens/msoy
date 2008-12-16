@@ -140,7 +140,7 @@ public class RoomObjectView extends RoomView
             var occInfo :MemberInfo = (avatar.getOccupantInfo() as MemberInfo);
             if (occInfo.getItemIdent().equals(new ItemIdent(Item.AVATAR, avatarId))) {
                 occInfo.setScale(newScale);
-                avatar.setOccupantInfo(occInfo);
+                avatar.setOccupantInfo(occInfo, _roomObj);
             }
         }
     }
@@ -608,7 +608,7 @@ public class RoomObjectView extends RoomView
         var occupant :OccupantSprite = (_pendingRemovals.remove(bodyOid) as OccupantSprite);
 
         if (occupant == null) {
-            occupant = _ctx.getMediaDirector().getSprite(occInfo);
+            occupant = _ctx.getMediaDirector().getSprite(occInfo, _roomObj);
             if (occupant == null) {
                 return; // we have no visualization for this kind of occupant, no problem
             }
@@ -632,7 +632,7 @@ public class RoomObjectView extends RoomView
         } else {
             // update the sprite
             spriteWillUpdate(occupant);
-            occupant.setOccupantInfo(occInfo);
+            occupant.setOccupantInfo(occInfo, _roomObj);
             spriteDidUpdate(occupant);
 
             // place the sprite back into the set of active sprites
@@ -693,7 +693,7 @@ public class RoomObjectView extends RoomView
             return;
         }
         spriteWillUpdate(sprite);
-        sprite.setOccupantInfo(newInfo);
+        sprite.setOccupantInfo(newInfo, _roomObj);
         spriteDidUpdate(sprite);
     }
 

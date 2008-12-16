@@ -108,9 +108,6 @@ public class WorldController extends MsoyController
     /** Command to join an in-world game. */
     public static const JOIN_AVR_GAME :String = "JoinAVRGame";
 
-    /** Command to join a party. */
-    public static const JOIN_PARTY :String = "JoinParty";
-
     /** Command to leave the in-world game. */
     public static const LEAVE_AVR_GAME :String = "LeaveAVRGame";
 
@@ -174,8 +171,14 @@ public class WorldController extends MsoyController
     /** Get info about the currently-playing music. */
     public static const MUSIC_INFO :String = "MusicInfo";
 
+    /** Command to join a party. */
+    public static const JOIN_PARTY :String = "JoinParty";
+
     /** Command to invite a member to the current party. */
     public static const INVITE_TO_PARTY :String = "InviteToParty";
+
+    /** Command to request detailed info on a party. */
+    public static const GET_PARTY_DETAIL :String = "GetPartyDetail";
 
     // statically reference classes we require
     ItemMarshaller;
@@ -622,6 +625,14 @@ public class WorldController extends MsoyController
     public function handleJoinParty (partyId :int) :void
     {
         _wctx.getPartyDirector().joinParty(partyId);
+    }
+
+    /**
+     * Handles the GET_PARTY_DETAIL command.
+     */
+    public function handleGetPartyDetail (partyId :int) :void
+    {
+        _wctx.getPartyDirector().getPartyDetail(partyId);
     }
 
     /**

@@ -9,6 +9,8 @@ import com.threerings.util.Iterator;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.msoy.party.data.PartySummary;
+
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
@@ -30,22 +32,28 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>propertySpaces</code> field. */
     public static const PROPERTY_SPACES :String = "propertySpaces";
+
+    /** The field name of the <code>parties</code> field. */
+    public static const PARTIES :String = "parties";
     // AUTO-GENERATED: FIELDS END
 
     /** Our room service marshaller. */
     public var roomService :RoomMarshaller;
 
     /** Contains the memories for all entities in this room. */
-    public var memories :DSet = new DSet();
+    public var memories :DSet;
     EntityMemoryEntry; // reference to force linkage
 
     /** Contains mappings for all controlled entities in this room. */
-    public var controllers :DSet = new DSet();
+    public var controllers :DSet;
     EntityControl; // reference to force linkage
 
     /** The property spaces associated with this room. */
-    public var propertySpaces :DSet = new DSet();
+    public var propertySpaces :DSet;
     RoomPropertiesEntry; // reference to force linkage
+
+    /** Information of the parties presently in this room. */
+    public var parties :DSet; /* of */ PartySummary;
 
     /**
      * Finds the info of an occupant who is also a member and has a given member id. Performs the
@@ -72,6 +80,7 @@ public class RoomObject extends SpotSceneObject
         memories = DSet(ins.readObject());
         controllers = DSet(ins.readObject());
         propertySpaces = DSet(ins.readObject());
+        parties = DSet(ins.readObject());
     }
 }
 }

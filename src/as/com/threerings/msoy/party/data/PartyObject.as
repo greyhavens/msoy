@@ -11,7 +11,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.chat.data.SpeakMarshaller;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.data.all.MediaDesc;
 
 public class PartyObject extends DObject
 {
@@ -21,6 +21,9 @@ public class PartyObject extends DObject
 
     /** The field name of the <code>name</code> field. */
     public static const NAME :String = "name";
+
+    /** The field name of the <code>icon</code> field. */
+    public static const ICON :String = "icon";
 
     /** The field name of the <code>group</code> field. */
     public static const GROUP :String = "group";
@@ -53,6 +56,9 @@ public class PartyObject extends DObject
     /** The name of this party. */
     public var name :String;
 
+    /** The icon for this party. */
+    public var icon :MediaDesc;
+
     /** The group under whose auspices we woop-it-up. */
     public var group :GroupName;
 
@@ -83,6 +89,7 @@ public class PartyObject extends DObject
 
         id = ins.readInt();
         name = ins.readField(String) as String;
+        icon = MediaDesc(ins.readObject());
         group = GroupName(ins.readObject());
         peeps = DSet(ins.readObject());
         leaderId = ins.readInt();

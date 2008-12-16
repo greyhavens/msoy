@@ -14,9 +14,9 @@ import com.threerings.msoy.room.data.PetInfo;
  */
 public class PetSprite extends ActorSprite
 {
-    public function PetSprite (ctx :WorldContext, occInfo :PetInfo)
+    public function PetSprite (ctx :WorldContext, occInfo :PetInfo, extraInfo :Object)
     {
-        super(ctx, occInfo);
+        super(ctx, occInfo, extraInfo);
     }
 
     /**

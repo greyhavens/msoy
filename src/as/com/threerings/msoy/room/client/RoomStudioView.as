@@ -142,7 +142,7 @@ public class RoomStudioView extends RoomView
         var info :ActorInfo = actor.getActorInfo().clone() as ActorInfo;
         info.setState(state);
         info.status = OccupantInfo.ACTIVE; // un-idle, if needed
-        actor.setOccupantInfo(info);
+        actor.setOccupantInfo(info, {});
     }
 
     override public function dispatchSpriteMessage (
@@ -162,7 +162,7 @@ public class RoomStudioView extends RoomView
             var info :StudioMemberInfo = avatar.getActorInfo().clone() as StudioMemberInfo;
             info.setScale(scale);
             info.status = OccupantInfo.ACTIVE; // while we're at it, un-idle
-            avatar.setOccupantInfo(info);
+            avatar.setOccupantInfo(info, {});
 
         } else if (_testingSprite is FurniSprite) {
             var furni :FurniSprite = (_testingSprite as FurniSprite);
@@ -225,7 +225,7 @@ public class RoomStudioView extends RoomView
         var avatar :String = params["media"] || params["avatar"];
         var info :StudioMemberInfo = new StudioMemberInfo(_sctx, avatar);
         info.setScale(getScaleFromParams(params));
-        _avatar = new MemberSprite(_ctx, info);
+        _avatar = new MemberSprite(_ctx, info, {});
         addSprite(_avatar);
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         _avatar.roomScaleUpdated();
@@ -249,7 +249,7 @@ public class RoomStudioView extends RoomView
         var pet :String = params["media"];
         var name :String = params["name"] || "Pet";
         var info :StudioPetInfo = new StudioPetInfo(name, pet);
-        _pet = new PetSprite(_ctx, info);
+        _pet = new PetSprite(_ctx, info, {});
         _pet.setEntering(new MsoyLocation(.1, 0, .25));
         addSprite(_pet);
         setCenterSprite(_pet);
@@ -302,7 +302,7 @@ public class RoomStudioView extends RoomView
         } else {
             avatarPath = findSDKMediaPath() + "default-avatar.swf";
         }
-        _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx, avatarPath));
+        _avatar = new MemberSprite(_ctx, new StudioMemberInfo(_sctx, avatarPath), {});
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
         addSprite(_avatar);
         setCenterSprite(_avatar);
@@ -421,7 +421,7 @@ public class RoomStudioView extends RoomView
         }
         info = info.clone() as StudioMemberInfo;
         info.status = newStatus;
-        _avatar.setOccupantInfo(info);
+        _avatar.setOccupantInfo(info, {});
     }
 
     /**

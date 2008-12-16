@@ -24,9 +24,9 @@ public class MemberSprite extends ActorSprite
     /**
      * Creates a sprite for the supplied member.
      */
-    public function MemberSprite (ctx :WorldContext, occInfo :MemberInfo)
+    public function MemberSprite (ctx :WorldContext, occInfo :MemberInfo, extraInfo :Object)
     {
-        super(ctx, occInfo);
+        super(ctx, occInfo, extraInfo);
     }
 
     /**
@@ -69,9 +69,9 @@ public class MemberSprite extends ActorSprite
     }
 
     // from OccupantSprite
-    override public function setOccupantInfo (newInfo :OccupantInfo) :void
+    override public function setOccupantInfo (newInfo :OccupantInfo, extraInfo :Object) :void
     {
-        super.setOccupantInfo(newInfo);
+        super.setOccupantInfo(newInfo, extraInfo);
 
         // take care of setting up or changing our TableIcon
         var newSummary :GameSummary = (newInfo as MemberInfo).getGameSummary();
@@ -81,6 +81,16 @@ public class MemberSprite extends ActorSprite
         }
         if (_tableIcon == null && newSummary != null) {
             _tableIcon = new TableIcon(this, newSummary);
+        }
+
+        // take care of setting up or changing our PartyIcon
+        var newId :int = (newInfo as MemberInfo).getPartyId();
+        if (_partyIcon != null && (_partyIcon.id != newId)) {
+            _partyIcon.shutdown();
+            _partyIcon = null;
+        }
+        if (_partyIcon == null && newId != 0) {
+            _partyIcon = new PartyIcon(this, newId, extraInfo);
         }
     }
 
@@ -219,6 +229,9 @@ public class MemberSprite extends ActorSprite
 
     /** A decoration added when we've idled out. */
     protected var _idleIcon :DisplayObject;
+
+    /** A decoration used when we're in a party. */
+    protected var _partyIcon :PartyIcon;
 }
 }
 
@@ -229,16 +242,21 @@ import flash.geom.Rectangle;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextField;
 
+import com.threerings.util.Command;
 import com.threerings.util.CommandEvent;
+import com.threerings.util.Log;
 
 import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.world.client.WorldController;
+
+import com.threerings.msoy.party.data.PartySummary;
 
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MsoySprite;
@@ -278,7 +296,13 @@ class TableIcon extends Sprite
 
         addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
         addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
-        addEventListener(MouseEvent.CLICK, handleMouseClick);
+        if (gameSummary.avrGame) {
+            Command.bind(this, MouseEvent.CLICK, WorldController.JOIN_AVR_GAME, gameSummary.gameId);
+        } else {
+            var memberId :int = (host.getActorInfo().username as MemberName).getMemberId();
+            Command.bind(this, MouseEvent.CLICK,
+                WorldController.JOIN_PLAYER_GAME, [ gameSummary.gameId, memberId ] );
+        }
 
         _host.addDecoration(this,
             // specify our bounds explicitly, as our width is centered at 0.
@@ -306,18 +330,59 @@ class TableIcon extends Sprite
         this.filters = null;
     }
 
-    protected function handleMouseClick (... ignored) :void
-    {
-        if (_gameSummary.avrGame) {
-            CommandEvent.dispatch(this, WorldController.JOIN_AVR_GAME, _gameSummary.gameId);
-        } else {
-            var memberId :int = (_host.getActorInfo().username as MemberName).getMemberId();
-            CommandEvent.dispatch(
-                this, WorldController.JOIN_PLAYER_GAME, [ _gameSummary.gameId, memberId ] );
-        }
-    }
-
     protected var _host :MemberSprite;
     protected var _gameSummary :GameSummary;
     protected var _gameThumb :ScalingMediaContainer;
+}
+
+class PartyIcon extends Sprite
+{
+    /** The party id. */
+    public var id :int;
+
+    public function PartyIcon (host :MemberSprite, partyId :int, extraInfo :Object)
+    {
+        _host = host;
+        id = partyId;
+
+        var summ :PartySummary = extraInfo.parties.get(partyId) as PartySummary;
+        if (summ == null) {
+            Log.getLog(this).warning("Ohnoez, couldn't set up PartyIcon.");
+            return;
+        }
+
+        _icon = ScalingMediaContainer.createView(summ.icon, MediaDesc.QUARTER_THUMBNAIL_SIZE);
+        _icon.x = _icon.maxW / -2; // position with 0 at center
+        addChild(_icon);
+
+        var width :int = _icon.maxW;
+        var height :int = _icon.maxH
+
+        addEventListener(MouseEvent.MOUSE_OVER, handleMouseIn);
+        addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
+        Command.bind(this, MouseEvent.CLICK, WorldController.GET_PARTY_DETAIL, summ.id);
+
+        _host.addDecoration(this,
+            // specify our bounds explicitly, as our width is centered at 0.
+            { toolTip: summ.name, bounds: new Rectangle(width/-2, 0, width, height) });
+    }
+
+    public function shutdown () :void
+    {
+        _icon.shutdown();
+        _host.removeDecoration(this);
+    }
+
+    protected function handleMouseIn (... ignored) :void
+    {
+        this.filters = [ new GlowFilter(MsoySprite.OTHER_HOVER, 1, 32, 32, 2) ];
+    }
+
+    protected function handleMouseOut (... ignored) :void
+    {
+        this.filters = null;
+    }
+
+    protected var _host :MemberSprite;
+    protected var _icon :ScalingMediaContainer;
 }

@@ -51,7 +51,7 @@ public class OccupantSprite extends MsoySprite
     /**
      * Creates a sprite for the supplied occupant.
      */
-    public function OccupantSprite (ctx :WorldContext, occInfo :OccupantInfo)
+    public function OccupantSprite (ctx :WorldContext, occInfo :OccupantInfo, extraInfo :Object)
     {
         super(ctx);
 
@@ -68,7 +68,7 @@ public class OccupantSprite extends MsoySprite
         _extras.addChild(_label);
 
         if (occInfo != null) {
-            setOccupantInfo(occInfo);
+            setOccupantInfo(occInfo, extraInfo);
         }
     }
 
@@ -234,7 +234,7 @@ public class OccupantSprite extends MsoySprite
     /**
      * Updates this occupant's info.
      */
-    public function setOccupantInfo (newInfo :OccupantInfo) :void
+    public function setOccupantInfo (newInfo :OccupantInfo, extraInfo :Object) :void
     {
         var oldInfo :OccupantInfo = _occInfo;
         _occInfo = newInfo;

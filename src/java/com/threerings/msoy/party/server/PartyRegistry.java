@@ -13,11 +13,16 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.RepositoryUnit;
+
 import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -28,6 +33,8 @@ import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.presents.dobj.RootDObjectManager;
 
+import com.threerings.crowd.server.BodyManager;
+
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
@@ -35,10 +42,15 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberLocator;
 
+import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.room.data.MemberInfo;
 
 import com.threerings.msoy.party.client.PeerPartyService;
 import com.threerings.msoy.party.data.PartyCodes;
@@ -177,7 +189,7 @@ public class PartyRegistry
 
                 public void requestProcessed (Object result) {
                     rl.requestProcessed(result); // send along the sceneId first
-                    member.setPartyId(partyId); // then set the partyId.
+                    updatePartyId(member, partyId); // set the partyId
                 }
             });
     }
@@ -218,8 +230,8 @@ public class PartyRegistry
 
     // from PartyBoardProvider
     public void createParty (
-        ClientObject caller, String name, int groupId, boolean inviteAllFriends,
-        InvocationService.ResultListener rl)
+        ClientObject caller, final String name, final int groupId, final boolean inviteAllFriends,
+        final InvocationService.ResultListener rl)
         throws InvocationException
     {
         final MemberObject member = (MemberObject)caller;
@@ -229,47 +241,82 @@ public class PartyRegistry
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
         // verify that the user is at least a member of the specified group
-        GroupMembership groupInfo = member.groups.get(groupId);
+        final GroupMembership groupInfo = member.groups.get(groupId);
         if (groupInfo == null) {
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR); // shouldn't happen
         }
-        // TODO: validate with that group who can create parties (may just be managers)
-        // TODO: any other party creation restriction checks
 
-        // set up the new PartyObject
-        PartyObject pobj = _omgr.registerObject(new PartyObject());
-        pobj.id = _peerMgr.getNextPartyId();
-        pobj.name = name;
-        pobj.group = groupInfo.group;
-        pobj.leaderId = member.getMemberId();
-        if (member.location instanceof ScenePlace) {
-            pobj.sceneId = ((ScenePlace) member.location).sceneId;
-        }
+        _invoker.postUnit(new RepositoryUnit("loadPartyGroup") {
+            public void invokePersist () throws Exception {
+                _group = _groupRepo.loadGroup(groupId);
+            }
 
-        // Create the PartyManager and add the member
-        PartyManager mgr = _injector.getInstance(PartyManager.class);
-        mgr.init(pobj);
+            public void handleSuccess () {
+                finishCreateParty(member, name, _group, groupInfo, inviteAllFriends, rl);
+            }
+
+            protected GroupRecord _group;
+        });
+    }
+
+    protected void finishCreateParty (
+        MemberObject member, String name, GroupRecord group, GroupMembership groupInfo,
+        boolean inviteAllFriends, InvocationService.ResultListener rl)
+    {
+        PartyObject pobj = null;
+        PartyManager mgr = null;
         boolean success = false;
         try {
+
+            // TODO: validate with that group who can create parties (may just be managers)
+            // TODO: any other party creation restriction checks
+
+            // set up the new PartyObject
+            pobj = _omgr.registerObject(new PartyObject());
+            pobj.id = _peerMgr.getNextPartyId();
+            pobj.name = StringUtil.truncate(name, PartyCodes.MAX_NAME_LENGTH);
+            pobj.group = groupInfo.group;
+            pobj.icon = group.toLogo();
+            if (pobj.icon == null) {
+                pobj.icon = Group.getDefaultGroupLogoMedia(); // TODO: leave as null, xlate on cli?
+            }
+            pobj.leaderId = member.getMemberId();
+            if (member.location instanceof ScenePlace) {
+                pobj.sceneId = ((ScenePlace) member.location).sceneId;
+            }
+
+            // Create the PartyManager and add the member
+            mgr = _injector.getInstance(PartyManager.class);
+            mgr.init(pobj);
+
+            // This can throw an InvocationException, or will send the response to the user..
             mgr.addPlayer(member.memberName, groupInfo.rank, rl);
-            // if we return from that without throwing an Exception, then we are success
-            success = true;
 
-        } finally {
-            // do any final poo TODO: this could change as I learn more about the natural lifecycle
-            if (success) {
-                // register the party
-                _parties.put(pobj.id, mgr);
-                // set the partyId
-                member.setPartyId(pobj.id);
-                if (inviteAllFriends) {
-                    mgr.inviteAllFriends(member);
-                }
-
+        } catch (Exception e) {
+            log.warning("Problem creating party", e);
+            if (e instanceof InvocationException) {
+                rl.requestFailed(e.getMessage());
             } else {
-                // kill the party object we created
+                rl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            }
+
+            // kill the party object we created
+            if (mgr != null) {
+                mgr.shutdown();
+            }
+            if (pobj != null) {
                 _omgr.destroyObject(pobj.getOid());
             }
+            return;
+        }
+
+        // And now do any final party registration and setup
+        // register the party
+        _parties.put(pobj.id, mgr);
+        // set the partyId
+        updatePartyId(member, pobj.id);
+        if (inviteAllFriends) {
+            mgr.inviteAllFriends(member);
         }
     }
 
@@ -290,6 +337,19 @@ public class PartyRegistry
             throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
         }
         tuple.right.getPartyDetail(tuple.left, partyId, rl);
+    }
+
+    /**
+     * Called here and by PartyManager to update a member's party id.
+     */
+    public void updatePartyId (MemberObject member, final int newPartyId)
+    {
+        member.setPartyId(newPartyId);
+        _bodyMan.updateOccupantInfo(member, new MemberInfo.Updater<MemberInfo>() {
+            public boolean update (MemberInfo info) {
+                return info.updatePartyId(newPartyId);
+            }
+        });
     }
 
     /**
@@ -405,9 +465,12 @@ public class PartyRegistry
 
     protected static final int PARTIES_PER_BOARD = 16;
 
-    @Inject protected Injector _injector;
     protected InvocationManager _invmgr;
+    @Inject protected Injector _injector;
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected MemberLocator _locator;
+    @Inject protected GroupRepository _groupRepo;
+    @Inject protected BodyManager _bodyMan;
 }

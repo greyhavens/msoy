@@ -40,6 +40,8 @@ public class MemberInfo extends ActorInfo
 
         // configure our managerness
         updateIsManager(memobj);
+
+        updatePartyId(memobj.partyId);
     }
 
     /** Used for unserialization. */
@@ -61,6 +63,14 @@ public class MemberInfo extends ActorInfo
     public boolean isGuest ()
     {
         return ((MemberName) username).isGuest();
+    }
+
+    /**
+     * Get this player's partyId.
+     */
+    public int getPartyId ()
+    {
+        return _partyId;
     }
 
     /**
@@ -86,6 +96,15 @@ public class MemberInfo extends ActorInfo
         } else {
             _flags &= ~MANAGER;
         }
+    }
+
+    public boolean updatePartyId (int partyId)
+    {
+        if (partyId != _partyId) {
+            _partyId = partyId;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -146,4 +165,5 @@ public class MemberInfo extends ActorInfo
 
     protected float _scale;
     protected GameSummary _game;
+    protected int _partyId;
 }

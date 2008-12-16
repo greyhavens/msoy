@@ -104,6 +104,14 @@ public class PartyDirector extends BasicDirector
     }
 
     /**
+     * Request info on the specified party. Results will be displayed in a popup.
+     */
+    public function getPartyDetail (partyId :int) :void
+    {
+        // TODO
+    }
+
+    /**
      * Create a new party.
      */
     public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void

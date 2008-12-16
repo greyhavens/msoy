@@ -156,7 +156,7 @@ class PetViewerSprite extends PetSprite
 {
     public function PetViewerSprite ()
     {
-        super(null, null);
+        super(null, null, {});
     }
 
     public function setScale (scale :Number) :void

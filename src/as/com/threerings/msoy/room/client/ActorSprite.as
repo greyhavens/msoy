@@ -23,9 +23,9 @@ public class ActorSprite extends OccupantSprite
     /**
      * Creates an actor sprite for the supplied actor.
      */
-    public function ActorSprite (ctx :WorldContext, occInfo :ActorInfo)
+    public function ActorSprite (ctx :WorldContext, occInfo :ActorInfo, extraInfo :Object)
     {
-        super(ctx, occInfo);
+        super(ctx, occInfo, extraInfo);
     }
 
     /**
@@ -62,7 +62,7 @@ public class ActorSprite extends OccupantSprite
     }
 
     // from OccupantSprite
-    override public function setOccupantInfo (newInfo :OccupantInfo) :void
+    override public function setOccupantInfo (newInfo :OccupantInfo, extraInfo :Object) :void
     {
         // note whether our state changed (we don't consider it a change if the old info was null,
         // as getting our initial state isn't a "change"); this is reason to have a special
@@ -71,7 +71,7 @@ public class ActorSprite extends OccupantSprite
             (_occInfo != null && !Util.equals((_occInfo as ActorInfo).getState(),
                                               (newInfo as ActorInfo).getState()));
 
-        super.setOccupantInfo(newInfo);
+        super.setOccupantInfo(newInfo, extraInfo);
 
         // note our new item ident, our entity id in the room
         setItemIdent((newInfo is ActorInfo) ? (newInfo as ActorInfo).getItemIdent() : null);

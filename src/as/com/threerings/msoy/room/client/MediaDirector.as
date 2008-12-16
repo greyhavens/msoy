@@ -39,27 +39,29 @@ public class MediaDirector extends BasicDirector
 
     /**
      * Creates an occupant sprite for the specified occupant info.
+     *
+     * @param extraInfo not yet defined, but an object from which to cull additional info
      */
-    public function getSprite (occInfo :OccupantInfo) :OccupantSprite
+    public function getSprite (occInfo :OccupantInfo, extraInfo :Object) :OccupantSprite
     {
         if (occInfo is MemberInfo) {
             var isOurs :Boolean = _wctx.getMyName().equals(occInfo.username);
             if (isOurs && _ourAvatar != null) {
-                _ourAvatar.setOccupantInfo(occInfo);
+                _ourAvatar.setOccupantInfo(occInfo, extraInfo);
                 return _ourAvatar;
             }
-            var sprite :MemberSprite = new MemberSprite(_wctx, occInfo as MemberInfo);
+            var sprite :MemberSprite = new MemberSprite(_wctx, occInfo as MemberInfo, extraInfo);
             if (isOurs) {
                 _ourAvatar = sprite;
             }
             return sprite;
 
         } else if (occInfo is PetInfo) {
-            return new PetSprite(_wctx, occInfo as PetInfo);
+            return new PetSprite(_wctx, occInfo as PetInfo, extraInfo);
 
         } else if (occInfo is MobInfo) {
             if (MobInfo(occInfo).getGameId() == _wctx.getGameDirector().getGameId()) {
-                return new MobSprite(_wctx, occInfo as MobInfo,
+                return new MobSprite(_wctx, occInfo as MobInfo, extraInfo,
                     _wctx.getGameDirector().getAVRGameBackend());
             }
             return null;

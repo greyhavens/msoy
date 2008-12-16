@@ -28,6 +28,9 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.crowd.chat.server.SpeakDispatcher;
 import com.threerings.crowd.chat.server.SpeakHandler;
 
+import com.threerings.whirled.server.SceneManager;
+import com.threerings.whirled.server.SceneRegistry;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -40,10 +43,15 @@ import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.PartyInviteNotification;
 import com.threerings.msoy.notify.server.NotificationManager;
 
+import com.threerings.msoy.room.data.RoomObject;
+
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
+import com.threerings.msoy.party.data.PartySummary;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages a particular party while it lives on a single node.
@@ -64,6 +72,9 @@ public class PartyManager
         } finally {
             _partyObj.commitTransaction();
         }
+
+        // on init, we should always be able to find the SceneManager and update the Summary
+        addPartySummary(_screg.getSceneManager(partyObj.sceneId));
     }
 
     /**
@@ -124,7 +135,7 @@ public class PartyManager
             // if it needs to be squirted across nodes
             _partyObj.startTransaction();
             try {
-                _partyObj.setSceneId(sceneId);
+                updateSceneId(sceneId);
                 updateStatus();
             } finally {
                 _partyObj.commitTransaction();
@@ -290,7 +301,8 @@ public class PartyManager
         UserListener listener = _userListeners.remove(memberId);
         if (listener != null && listener.memObj.isActive()) {
             listener.memObj.removeListener(listener);
-            listener.memObj.setPartyId(0); // clear the party id
+            // clear the party id
+            _partyReg.updatePartyId(listener.memObj, 0);
         }
 
         // if they're the last one, just kill the party
@@ -368,7 +380,45 @@ public class PartyManager
         }
     }
 
-    protected void setStatus (String status)
+    protected void updateSceneId (final int sceneId)
+    {
+        int oldSceneId = _partyObj.sceneId;
+        if (oldSceneId == sceneId) {
+            return;
+        }
+
+        _partyObj.setSceneId(sceneId);
+
+        // we should always be able to find the old scene manager
+        removePartySummary(_screg.getSceneManager(oldSceneId));
+
+        SceneManager newmgr = _screg.getSceneManager(sceneId);
+        if (newmgr != null) {
+            addPartySummary(newmgr);
+
+        } else {
+            Tuple<String, HostedRoom> room = _peerMgr.getSceneHost(sceneId);
+            if (room == null) {
+                // if the room is not in the list, we must be about to resolve it here....
+                _screg.resolveScene(sceneId, new SceneRegistry.ResolutionListener() {
+                    public void sceneWasResolved (SceneManager scmgr) {
+                        // make sure it's still the right scene
+                        if (_partyObj.sceneId == sceneId) {
+                            addPartySummary(scmgr);
+                        }
+                    }
+
+                    public void sceneFailedToResolve (int sceneId, Exception reason) {
+                        log.warning("Could not resolve scene for PartySummary", reason);
+                    }
+                });
+
+            }
+            // else: the room is resolving elsewhere, and we'll be there soon...
+        }
+    }
+
+   protected void setStatus (String status)
     {
         if (_partyObj.status == null || !_partyObj.status.equals(status)) {
             _partyObj.setStatus(status);
@@ -418,6 +468,29 @@ public class PartyManager
             _partyObj.peeps.size(), _partyObj.recruitment));
     }
 
+    protected void addPartySummary (SceneManager scmgr)
+    {
+        RoomObject roomObj = (RoomObject) scmgr.getPlaceObject();
+        PartySummary summary = new PartySummary(
+            _partyObj.id, _partyObj.name, _partyObj.group, _partyObj.icon);
+
+        if (roomObj.parties.containsKey(summary.getKey())) {
+            log.warning("Actually, I don't think this should happen");
+            roomObj.updateParties(summary);
+
+        } else {
+            roomObj.addToParties(summary);
+        }
+    }
+
+    protected void removePartySummary (SceneManager scmgr)
+    {
+        RoomObject roomObj = (RoomObject) scmgr.getPlaceObject();
+        if (roomObj.parties.containsKey(_partyObj.id)) {
+            roomObj.removeFromParties(_partyObj.id);
+        }
+    }
+
     /**
      * A listener is created for each participant in the party.
      */
@@ -455,4 +528,5 @@ public class PartyManager
     @Inject protected InvocationManager _invMgr;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected NotificationManager _notifyMgr;
+    @Inject protected SceneRegistry _screg;
 }
