@@ -40,7 +40,16 @@ public class EditMedalPanel extends FlexTable
         if (medalId == 0) {
             init(new Medal(groupId));
         } else {
-            // TODO: service call to get current medal definition.
+            _groupsvc.getMedal(medalId, new MsoyCallback<Medal>() {
+                public void onSuccess (Medal medal) {
+                    if (medal == null) {
+                        MsoyUI.error(_msgs.editMedalNotFound());
+                        return;
+                    }
+
+                    init(medal);
+                }
+            });
         }
     }
 

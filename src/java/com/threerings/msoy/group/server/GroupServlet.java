@@ -698,6 +698,14 @@ public class GroupServlet extends MsoyServiceServlet
         }
     }
 
+    // from GroupService
+    public Medal getMedal (int medalId)
+        throws ServiceException
+    {
+        MedalRecord medalRec = _medalRepo.loadMedal(medalId);
+        return medalRec == null ? null : medalRec.toMedal();
+    }
+
     /**
      * Fill in the current number of people in rooms (population) and the number of total threads
      * for a list of group cards.

@@ -257,4 +257,10 @@ public interface GroupService extends RemoteService
      */
     void awardMedal (int memberId, int medalId)
         throws ServiceException;
+
+    /**
+     * Returns the requested medal.
+     */
+    Medal getMedal (int medalId)
+        throws ServiceException;
 }
