@@ -93,6 +93,9 @@ public interface GroupService extends RemoteService
         /** The map of medals to those that have awarded them from this group.  If nobody has
          * earned a given medal yet, that medal will map to an empty list. */
         public List<MedalOwners> medals;
+
+        /** The group rank of the person who made the service call. */
+        public byte rank;
     }
 
     /** A Single-object encapsulation of a Medal and the people who have earned it. */

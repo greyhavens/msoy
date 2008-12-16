@@ -3,6 +3,7 @@
 
 package client.groups;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -21,6 +22,7 @@ import com.threerings.gwt.ui.PagedWidget;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -45,6 +47,7 @@ public class MedalListPanel extends FlowPanel
         _groupsvc.getAwardedMedals(groupId, new MsoyCallback<MedalsResult>() {
             public void onSuccess (MedalsResult result) {
                 CShell.frame.setTitle(result.groupName.toString());
+                _rank = result.rank;
                 displayMedals(result.medals);
             }
         });
@@ -52,6 +55,8 @@ public class MedalListPanel extends FlowPanel
 
     protected void displayMedals (List<MedalOwners> medals)
     {
+        Collections.sort(medals);
+
         AbsolutePanel header = MsoyUI.createAbsolutePanel("Header");
         header.add(new Image("/images/group/medal_title.png"), 30, 0);
         header.add(MsoyUI.createLabel(_msgs.medalListIntro(), "Intro"), 235, 10);
@@ -85,7 +90,7 @@ public class MedalListPanel extends FlowPanel
         medalList.add(grid);
     }
 
-    protected static class MedalOwnerWidget extends HorizontalPanel
+    protected class MedalOwnerWidget extends HorizontalPanel
     {
         public MedalOwnerWidget (MedalOwners owners)
         {
@@ -108,7 +113,7 @@ public class MedalListPanel extends FlowPanel
         }
     }
 
-    protected static class MedalWidget extends FlowPanel
+    protected class MedalWidget extends FlowPanel
     {
         public MedalWidget (Medal medal)
         {
@@ -118,11 +123,15 @@ public class MedalListPanel extends FlowPanel
             add(icon);
             add(MsoyUI.createLabel(medal.name, "Name"));
             add(MsoyUI.createLabel(medal.description, "Description"));
-            // TODO: add support+/manager link for editing medal.
+            if (CShell.isSupport() || _rank == GroupMembership.RANK_MANAGER) {
+                add(MsoyUI.createActionLabel(_msgs.medalListEdit(), "Edit", Link.createListener(
+                    Pages.GROUPS, GroupsPage.Nav.EDITMEDAL.composeArgs(medal.medalId))));
+            }
         }
     }
 
     protected int _groupId;
+    protected byte _rank;
 
     protected static final int MEDALS_COLS = 1;
     protected static final int MEDALS_ROWS = 6;

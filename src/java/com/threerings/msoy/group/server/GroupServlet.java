@@ -574,10 +574,14 @@ public class GroupServlet extends MsoyServiceServlet
 
     // from interface GroupService
     public GroupService.MedalsResult getAwardedMedals (int groupId)
+        throws ServiceException
     {
+        MemberRecord mrec = getAuthedUser();
         GroupService.MedalsResult result = new GroupService.MedalsResult();
         result.groupName = _groupRepo.loadGroupName(groupId);
         result.medals = Lists.newArrayList();
+        result.rank = mrec == null ? GroupMembership.RANK_NON_MEMBER :
+            _groupRepo.getMembership(groupId, mrec.memberId).left;
 
         // we could do a Join to accomplish a similar result, but we need to make sure we return
         // Medals that have not been earned by anybody yet, so we need to first grab the full set
