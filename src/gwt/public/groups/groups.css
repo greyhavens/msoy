@@ -814,15 +814,18 @@
 
 .medalListPanel .MedalOwnerWidget .OwnerWidgets .OwnerWidget {
   text-align: center;
-  width: 120px;
+  width: 103px;
+  height: 90px;
+  padding-top: 9px;
+  font-size: 12px;
   float: left;
 }
 
 .medalListPanel .MedalOwnerWidget .MedalWidget {
   border: solid 1px #C9E9FE;
   position: relative;
-  width: 198px;
-  height: 90px;
+  width: 200px;
+  height: 103px;
   margin: 3px;
 }
 
@@ -835,18 +838,19 @@
 .medalListPanel .MedalOwnerWidget .MedalWidget .Name {
   position: absolute;
   left: 83px;
-  top: 5px;
+  top: 3px;
   width: 110px;
   text-align: center;
   font-size: 12px;
   font-weight: bold;
   color: #1f4e78;
+  line-height: 13px;
 }
 
 .medalListPanel .MedalOwnerWidget .MedalWidget .Description {
   position: absolute;
   left: 83px;
-  top: 27px;
+  top: 37px;
   width: 110px;
   text-align: center;
   font-size: 11px;
