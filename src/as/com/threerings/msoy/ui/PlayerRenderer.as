@@ -83,17 +83,25 @@ public class PlayerRenderer extends HBox
         var player :PlayerEntry = this.data as PlayerEntry;
 
         if (player != null) {
+            var icon :MediaWrapper = MediaWrapper.createView(player.name.getPhoto(), getIconSize());
+            addChild(icon);
             var content :VBox = new VBox();
             content.verticalScrollPolicy = ScrollPolicy.OFF;
             content.horizontalScrollPolicy = ScrollPolicy.OFF;
             content.setStyle("verticalGap", 0);
-            content.width = parent.width - MediaDesc.THUMBNAIL_WIDTH/2;
+            content.width = parent.width - icon.measuredWidth;
             addChild(content);
 
             addCustomControls(content);
-
-            addChild(MediaWrapper.createView(player.name.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
         }
+    }
+
+    /**
+     * Get the size of the icon to use for this widget.
+     */
+    protected function getIconSize () :int
+    {
+        return MediaDesc.HALF_THUMBNAIL_SIZE;
     }
 }
 }
