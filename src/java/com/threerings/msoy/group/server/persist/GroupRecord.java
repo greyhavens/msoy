@@ -351,7 +351,7 @@ public class GroupRecord extends PersistentRecord
         GroupCard card = new GroupCard();
         card.name = toGroupName();
         if (logoMediaHash != null) {
-            card.logo = new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint);
+            card.logo = toLogo();
         }
         card.blurb = blurb;
         card.homeSceneId = homeSceneId;
@@ -374,8 +374,7 @@ public class GroupRecord extends PersistentRecord
         if (groupDef.blurb != null && !groupDef.blurb.equals(blurb)) {
             updates.put(BLURB, groupDef.blurb);
         }
-        if (groupDef.logo != null && (logoMediaHash == null || !groupDef.logo.equals(
-                new MediaDesc(logoMediaHash, logoMimeType, logoMediaConstraint)))) {
+        if (groupDef.logo != null && !groupDef.logo.equals(toLogo())) {
             updates.put(LOGO_MEDIA_HASH, groupDef.logo.hash);
             updates.put(LOGO_MIME_TYPE, groupDef.logo.mimeType);
             updates.put(LOGO_MEDIA_CONSTRAINT, groupDef.logo.constraint);
