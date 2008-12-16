@@ -14,7 +14,6 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.BubblePopup;
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
@@ -157,9 +156,7 @@ public class WorldControlBar extends ControlBar
         addButton(snapBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
         addButton(roomEditBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
 
-        if (DeploymentConfig.devDeployment) {
-            addButton(partyBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY + 1);
-        }
+        addButton(partyBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY + 1);
     }
 
     // from ControlBar
