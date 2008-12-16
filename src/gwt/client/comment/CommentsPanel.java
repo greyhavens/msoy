@@ -30,7 +30,6 @@ import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.MsoyCallback;
-import client.util.NoopAsyncCallback;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
@@ -122,7 +121,7 @@ public class CommentsPanel extends PagedGrid<Comment>
      */
     protected boolean shouldDisplay (Comment comment)
     {
-        return comment.totalRatings < 5 || comment.currentRating >= 0;
+        return comment.currentRating >= 0;
     }
 
     /**
@@ -165,11 +164,11 @@ public class CommentsPanel extends PagedGrid<Comment>
         _post.setEnabled(true);
     }
 
-    protected void rateComment (final Comment comment, final boolean rating)
+    protected void rateComment (
+        final Comment comment, final boolean rating, MsoyCallback<Integer> callback)
+
     {
-        // comment rating is extremely light-weight: if it didn't go through, we just don't care
-        _commentsvc.rateComment(_etype, _entityId, comment.posted, rating,
-                                new NoopAsyncCallback());
+        _commentsvc.rateComment(_etype, _entityId, comment.posted, rating, callback);
     }
 
     protected Command deleteComment (final Comment comment)

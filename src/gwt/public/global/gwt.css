@@ -891,6 +891,11 @@ img, embed, applet, object {
   padding-top: 5px;
 }
 
+.messagePanel .Tools {
+  padding-top: 5px;
+  text-align: right;
+}
+
 .messagePanel .Author {
   font-weight: bold;
   font-size: 12px;

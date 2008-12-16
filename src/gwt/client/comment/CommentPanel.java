@@ -6,18 +6,27 @@ package client.comment;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.InlinePanel;
 
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.web.gwt.MemberCard;
 
+import client.images.msgs.MsgsImages;
 import client.shell.ShellMessages;
 import client.ui.MessagePanel;
+import client.ui.MsoyUI;
 import client.ui.PromptPopup;
+import client.ui.ThumbBox;
+import client.util.MsoyCallback;
 
 /**
  * Displays a single comment.
@@ -29,7 +38,9 @@ public class CommentPanel extends MessagePanel
         _parent = parent;
         _comment = comment;
 
-        _displayComment = _parent.shouldDisplay(_comment);
+        _rated = false;
+        _displayed = _parent.shouldDisplay(_comment);
+
         updateComment();
     }
 
@@ -59,58 +70,78 @@ public class CommentPanel extends MessagePanel
             complain.addStyleName("actionLabel");
             info.add(complain);
         }
+    }
 
-//        InlineLabel rating = new InlineLabel(
-//            _cmsgs.rating("" + _comment.currentRating), false, true, false);
-//        rating.addStyleName("Posted");
-//        info.add(rating);
+    @Override
+    protected ThumbBox getThumbBox (MemberCard poster)
+    {
+        // don't show an icon for hidden messages
+        return _displayed ? super.getThumbBox(poster) : null;
+    }
 
-        if (!_displayComment) {
+    @Override
+    protected Panel getTools ()
+    {
+        InlinePanel tools = new InlinePanel("Tools");
+
+        InlineLabel rating = new InlineLabel("" + _comment.currentRating, false, true, false);
+        rating.addStyleName("Posted");
+        tools.add(rating);
+
+        if (!_displayed) {
             InlineLabel showComment = new InlineLabel(_cmsgs.showComment(), false, true, false);
             showComment.addStyleName("Posted");
             showComment.addStyleName("actionLabel");
             showComment.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    _displayComment = true;
+                    _displayed = true;
+                    _rated = false;
                     updateComment();
                 }
             });
-            info.add(showComment);
-
-//        } else if (_comment.myRating == Comment.RATED_NONE) {
-//            InlineLabel upRate = new InlineLabel("[+]", false, false, false);
-//            upRate.addStyleName("Posted");
-//            upRate.addStyleName("actionLabel");
-//            upRate.addClickListener(new ClickListener() {
-//                public void onClick (Widget sender) {
-//                    _parent.rateComment(_comment, true);
-//
-//                    _comment.currentRating += 1;
-//                    _comment.totalRatings ++;
-//                    _comment.myRating = Comment.RATED_UP;
-//
-//                    updateComment();
-//                }
-//            });
-//            info.add(upRate);
-//
-//            InlineLabel downRate = new InlineLabel("[-]", false, false, false);
-//            downRate.addStyleName("Posted");
-//            downRate.addStyleName("actionLabel");
-//            downRate.addClickListener(new ClickListener() {
-//                public void onClick (Widget sender) {
-//                    _parent.rateComment(_comment, false);
-//
-//                    _comment.currentRating -= 1;
-//                    _comment.totalRatings ++;
-//                    _comment.myRating = Comment.RATED_DOWN;
-//
-//                    updateComment();
-//                }
-//            });
-//            info.add(downRate);
+            tools.add(showComment);
+            return tools;
         }
 
+        if (_rated) {
+            return tools;
+        }
+
+        _upRate = makeThumbButton(_images.thumb_up_default(), _images.thumb_up_over(),
+            _cmsgs.upComment(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    rateComment(true);
+                }
+            });
+        tools.add(_upRate);
+
+        _downRate = makeThumbButton(_images.thumb_down_default(), _images.thumb_down_over(),
+            _cmsgs.downComment(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    rateComment(false);
+                }
+            });
+        tools.add(_downRate);
+
+        return tools;
+    }
+
+    protected void rateComment (boolean rating)
+    {
+        _upRate.setEnabled(false);
+        _downRate.setEnabled(false);
+        _parent.rateComment(_comment, rating, new MsoyCallback<Integer>() {
+            public void onSuccess (Integer adjustment) {
+                _comment.currentRating += adjustment;
+                // if this was not a re-rating, the sum will have gone up or down by 1
+                if (adjustment == -1 || adjustment == 1) {
+                    _comment.totalRatings++;
+                }
+                _rated = true;
+                _displayed = _parent.shouldDisplay(_comment);
+                updateComment();
+            }
+        });
     }
 
     protected void updateComment ()
@@ -119,7 +150,7 @@ public class CommentPanel extends MessagePanel
         card.name = _comment.commentor;
         card.photo = _comment.photo;
 
-        if (_displayComment) {
+        if (_displayed) {
             setMessage(card, new Date(_comment.posted), _comment.text);
         } else {
             // TODO
@@ -133,10 +164,29 @@ public class CommentPanel extends MessagePanel
         return _parent.getThumbnailSize();
     }
 
+    protected static PushButton makeThumbButton (
+        AbstractImagePrototype def, AbstractImagePrototype over, String tip, ClickListener onClick)
+    {
+        Image defImg = def.createImage();
+        defImg.addStyleName("inline");
+        defImg.setTitle(tip);
+
+        Image overImg = over.createImage();
+        overImg.addStyleName("inline");
+        overImg.setTitle(tip);
+
+        PushButton button = MsoyUI.createPushButton(defImg, overImg, overImg, onClick);
+        button.addStyleName("ActionIcon");
+        return button;
+    }
+
     protected CommentsPanel _parent;
     protected Comment _comment;
 
-    protected boolean _displayComment;
+    protected boolean _displayed;
+    protected boolean _rated;
+    protected PushButton _upRate, _downRate;
 
+    protected static final MsgsImages _images = GWT.create(MsgsImages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

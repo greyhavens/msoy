@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -34,15 +35,17 @@ public class MessagePanel extends FlexTable
         setCellSpacing(0);
     }
 
-    public void setMessage (final MemberCard poster, Date whenPosted, String text)
+    public void setMessage (MemberCard poster, Date whenPosted, String text)
     {
-        setWidget(0, 0, new ThumbBox(poster.photo, getThumbnailSize(),
-                                     Pages.PEOPLE, ""+poster.name.getMemberId()));
-        getFlexCellFormatter().setRowSpan(0, 0, 2);
-        getFlexCellFormatter().setStyleName(0, 0, "Photo");
-        getFlexCellFormatter().addStyleName(0, 0, "BottomPad");
-        getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-        getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        ThumbBox box = getThumbBox(poster);
+        if (box != null) {
+            setWidget(0, 0, box);
+            getFlexCellFormatter().setRowSpan(0, 0, 2);
+            getFlexCellFormatter().setStyleName(0, 0, "Photo");
+            getFlexCellFormatter().addStyleName(0, 0, "BottomPad");
+            getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
+            getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        }
 
         FlowPanel info = new FlowPanel();
         info.setStyleName("Info");
@@ -65,6 +68,14 @@ public class MessagePanel extends FlexTable
         setWidget(0, 1, info);
         getFlexCellFormatter().setStyleName(0, 1, "LeftPad");
 
+        Panel tools = getTools();
+        if (tools != null) {
+            setWidget(0, 2, tools);
+            getFlexCellFormatter().setStyleName(0, 2, "Tools");
+            getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_RIGHT);
+            getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        };
+
         ScrollPanel scroller = new ScrollPanel();
         scroller.addStyleName("Scroller");
         if (textIsHTML()) {
@@ -78,9 +89,30 @@ public class MessagePanel extends FlexTable
         }
         setWidget(1, 0, scroller);
 
+        if (tools != null) {
+            getFlexCellFormatter().setColSpan(1, 0, 2);
+        }
         getFlexCellFormatter().setStyleName(1, 0, "Text");
         getFlexCellFormatter().addStyleName(1, 0, "LeftPad");
         getFlexCellFormatter().addStyleName(1, 0, "BottomPad");
+    }
+
+    /**
+     * Return the ThumbBox to use for this poster. Override and return null for no photo.
+     */
+    protected ThumbBox getThumbBox (MemberCard poster)
+    {
+        return new ThumbBox(poster.photo, getThumbnailSize(),
+                            Pages.PEOPLE, ""+poster.name.getMemberId());
+    }
+
+    /**
+     * If this message should have a toolbar floated to the right of the info section,
+     * subclasses may return a Panel here.
+     */
+    protected Panel getTools ()
+    {
+        return null;
     }
 
     /**
