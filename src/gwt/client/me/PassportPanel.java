@@ -4,6 +4,8 @@
 package client.me;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -22,6 +24,9 @@ import com.threerings.msoy.badge.gwt.StampCategory;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.PassportData;
+
+import com.threerings.msoy.data.all.Award;
+import com.threerings.msoy.data.all.GroupName;
 
 import client.shell.DynamicLookup;
 import client.ui.HeaderBox;
@@ -110,6 +115,28 @@ public class PassportPanel extends FlowPanel
         _contents = new HeaderBox(null, _msgs.passportMedalsTitle(_data.stampOwner));
         _contents.makeRoundBottom();
         add(_contents);
+
+        List<GroupName> groups = new ArrayList<GroupName>(_data.medals.keySet());
+        // Sort first by official groups before unofficial groups, then alphabetically by normalized
+        // name.
+        Collections.sort(groups, new Comparator<GroupName>() {
+            public int compare (GroupName group1, GroupName group2) {
+                boolean contains1 = _data.officialGroups.contains(group1);
+                boolean contains2 = _data.officialGroups.contains(group2);
+                if (contains1 != contains2) {
+                    return contains1 ? -1 : 1;
+                }
+
+                return group1.getNormal().compareTo(group2.getNormal());
+            }
+        });
+        for (GroupName group : groups) {
+            FlowPanel medals = new FlowPanel();
+            _contents.add(new TongueBox(group.toString(), medals));
+            for (Award award : _data.medals.get(group)) {
+                medals.add(MsoyUI.createSimplePanel(new AwardDisplay(award), "BoxedBadge"));
+            }
+        }
     }
 
     protected static class NextPanel extends VerticalPanel

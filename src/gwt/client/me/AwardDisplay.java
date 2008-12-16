@@ -25,7 +25,7 @@ public class AwardDisplay extends FlowPanel
 
     public AwardDisplay (Award award)
     {
-        super();
+        this();
 
         addIcon(award.icon.getMediaPath());
         addName(award.name);
