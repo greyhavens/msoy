@@ -53,21 +53,17 @@ public class PartyDirector extends BasicDirector
     }
 
     /**
-     * Can we invite the other member to our party?
+     * Can we invite people to our party?
      */
-    public function canInviteToParty (memberId :int) :Boolean
+    public function canInviteToParty () :Boolean
     {
-        if (_partyObj == null) {
-            return false;
-        }
-        // make sure the member's not in the party already
-        if (_partyObj.peeps.containsKey(memberId)) {
-            return false;
-        }
-        if (isPartyLeader()) {
-            return true;
-        }
-        return (_partyObj.recruitment == PartyCodes.RECRUITMENT_OPEN);
+        return (_partyObj != null) &&
+            ((_partyObj.recruitment == PartyCodes.RECRUITMENT_OPEN) || isPartyLeader());
+    }
+
+    public function partyContainsPlayer (memberId :int) :Boolean
+    {
+        return (_partyObj != null) && _partyObj.peeps.containsKey(memberId);
     }
 
     public function isInParty () :Boolean
