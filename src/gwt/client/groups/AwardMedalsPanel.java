@@ -28,8 +28,10 @@ import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.ui.MsoyUI;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -113,7 +115,7 @@ public class AwardMedalsPanel extends FlowPanel
             HorizontalPanel row = new HorizontalPanel();
             row.setSpacing(10);
             row.add(MediaUtil.createMediaView(member.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
-            row.add(new Label(member.toString()));
+            row.add(Link.create(member.toString(), Pages.PEOPLE, "" + member.getMemberId()));
             // TODO: this will be really inefficient for groups that have a ton of Medals.  This
             // UI should contain only one drop down if at all possible.
             final ListBox awardDrop = createDropDown();
