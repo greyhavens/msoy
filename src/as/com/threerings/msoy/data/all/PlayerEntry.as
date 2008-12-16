@@ -5,6 +5,8 @@ package com.threerings.msoy.data.all {
 
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
+import com.threerings.util.Hashable;
+
 import com.threerings.presents.dobj.DSet_Entry;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -14,7 +16,7 @@ import com.threerings.msoy.data.all.MediaDesc;
  * Represents a friend connection.
  */
 public class PlayerEntry
-    implements DSet_Entry
+    implements Hashable, DSet_Entry
 {
     /** The display name of the friend. */
     public var name :VizMemberName;
