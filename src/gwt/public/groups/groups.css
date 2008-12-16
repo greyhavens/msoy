@@ -815,6 +815,7 @@
 .medalListPanel .MedalOwnerWidget .OwnerWidgets .OwnerWidget {
   text-align: center;
   width: 120px;
+  float: left;
 }
 
 .medalListPanel .MedalOwnerWidget .MedalWidget {
