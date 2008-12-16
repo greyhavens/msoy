@@ -10,6 +10,7 @@ import flash.events.MouseEvent;
 import flash.events.TextEvent;
 
 import mx.containers.TitleWindow;
+import mx.containers.VBox;
 
 import mx.controls.Button;
 import mx.controls.ButtonBar;
@@ -189,7 +190,11 @@ public class FloatingPanel extends TitleWindow
             setButtonWidth(DEFAULT_BUTTON_WIDTH);
         }
         if (_buttonBar.parent == null) {
-            addChild(_buttonBar);
+            var box :VBox = new VBox();
+            box.percentWidth = 100;
+            box.setStyle("horizontalAlign", "right");
+            box.addChild(_buttonBar);
+            addChild(box);
         }
 
         ArrayUtil.stableSort(buttonSources, buttonSort);
@@ -223,7 +228,6 @@ public class FloatingPanel extends TitleWindow
     {
         if (_buttonBar == null) {
             _buttonBar = new ButtonBar();
-            _buttonBar.percentWidth = 100;
         }
         if (width > 0) {
             _buttonBar.setStyle("buttonWidth", width);
