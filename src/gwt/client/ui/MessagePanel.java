@@ -37,6 +37,8 @@ public class MessagePanel extends FlexTable
 
     public void setMessage (MemberCard poster, Date whenPosted, String text)
     {
+        clear();
+
         ThumbBox box = getThumbBox(poster);
         if (box != null) {
             setWidget(0, 0, box);
@@ -48,7 +50,7 @@ public class MessagePanel extends FlexTable
         }
 
         FlowPanel info = new FlowPanel();
-        info.setStyleName("Info");
+        info.setStyleName("MsgInfo");
         String iconPath = getIconPath();
         if (iconPath != null) {
             Image icon = new Image(iconPath);
