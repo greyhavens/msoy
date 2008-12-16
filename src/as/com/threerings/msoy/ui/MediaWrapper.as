@@ -41,7 +41,8 @@ public class MediaWrapper extends Container
         _alwaysUseAlt = alwaysUseAlt;
         rawChildren.addChild(cont);
         if (!alwaysUseAlt) {
-            cont.addEventListener(MediaContainer.SIZE_KNOWN, handleMediaSizeChanged, false, 0, true);
+            cont.addEventListener(MediaContainer.SIZE_KNOWN, handleMediaSizeChanged,
+                false, 0, true);
         }
     }
 
