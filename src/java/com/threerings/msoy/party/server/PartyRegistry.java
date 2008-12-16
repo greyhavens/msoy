@@ -259,6 +259,50 @@ public class PartyRegistry
         });
     }
 
+    // from PartyBoardProvider & PeerPartyProvider
+    public void getPartyDetail (
+        ClientObject caller, int partyId, InvocationService.ResultListener rl)
+        throws InvocationException
+    {
+        // see if we can handle it locally
+        PartyManager mgr = _parties.get(partyId);
+        if (mgr != null) {
+            rl.requestProcessed(mgr.getPartyDetail());
+            return;
+        }
+
+        Tuple<Client,PeerPartyService> tuple = locatePeerService(partyId);
+        if (tuple == null) {
+            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
+        }
+        tuple.right.getPartyDetail(tuple.left, partyId, rl);
+    }
+
+    /**
+     * Called here and by PartyManager to update a member's party id.
+     */
+    public void updatePartyId (MemberObject member, final int newPartyId)
+    {
+        member.setPartyId(newPartyId);
+        _bodyMan.updateOccupantInfo(member, new MemberInfo.Updater<MemberInfo>() {
+            public boolean update (MemberInfo info) {
+                return info.updatePartyId(newPartyId);
+            }
+        });
+    }
+
+    /**
+     * Called by a PartyManager when it's removed.
+     */
+    void partyWasRemoved (int partyId)
+    {
+        // TODO: this will get more complicated
+        _parties.remove(partyId);
+    }
+
+    /**
+     * Finish creating a new party.
+     */
     protected void finishCreateParty (
         MemberObject member, String name, GroupRecord group, GroupMembership groupInfo,
         boolean inviteAllFriends, InvocationService.ResultListener rl)
@@ -318,47 +362,6 @@ public class PartyRegistry
         if (inviteAllFriends) {
             mgr.inviteAllFriends(member);
         }
-    }
-
-    // from PartyBoardProvider & PeerPartyProvider
-    public void getPartyDetail (
-        ClientObject caller, int partyId, InvocationService.ResultListener rl)
-        throws InvocationException
-    {
-        // see if we can handle it locally
-        PartyManager mgr = _parties.get(partyId);
-        if (mgr != null) {
-            rl.requestProcessed(mgr.getPartyDetail());
-            return;
-        }
-
-        Tuple<Client,PeerPartyService> tuple = locatePeerService(partyId);
-        if (tuple == null) {
-            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
-        }
-        tuple.right.getPartyDetail(tuple.left, partyId, rl);
-    }
-
-    /**
-     * Called here and by PartyManager to update a member's party id.
-     */
-    public void updatePartyId (MemberObject member, final int newPartyId)
-    {
-        member.setPartyId(newPartyId);
-        _bodyMan.updateOccupantInfo(member, new MemberInfo.Updater<MemberInfo>() {
-            public boolean update (MemberInfo info) {
-                return info.updatePartyId(newPartyId);
-            }
-        });
-    }
-
-    /**
-     * Called by a PartyManager when it's removed.
-     */
-    void partyWasRemoved (int partyId)
-    {
-        // TODO: this will get more complicated
-        _parties.remove(partyId);
     }
 
     /**

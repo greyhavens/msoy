@@ -5,6 +5,7 @@ package com.threerings.msoy.party.server;
 
 import com.google.inject.Inject;
 
+import com.samskivert.util.Interval;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
@@ -75,6 +76,21 @@ public class PartyManager
 
         // on init, we should always be able to find the SceneManager and update the Summary
         addPartySummary(_screg.getSceneManager(partyObj.sceneId));
+
+        // prevent fuckups after a node move: wait 2 minutes and clean out any non-present peeps
+        _nodeMoveCleaner = new Interval(_omgr) {
+            public void expired () {
+                cleanAbsentPeeps();
+                _nodeMoveCleaner = null;
+            }
+        };
+        _nodeMoveCleaner.schedule(2 * 60 * 1000); // once
+    }
+
+    public void endParty ()
+    {
+        removePartySummary();
+        shutdown();
     }
 
     /**
@@ -86,8 +102,9 @@ public class PartyManager
 
         _invMgr.clearDispatcher(_partyObj.partyService);
         _invMgr.clearDispatcher(_partyObj.speakService);
-//        _omgr.destroyObject(_partyObj.getOid());
+        // TODO: this won't work if nobody is subscribed
         _partyObj.setDestroyOnLastSubscriberRemoved(true);
+//        _omgr.destroyObject(_partyObj.getOid());
 
         for (UserListener listener : _userListeners.values()) {
             listener.memObj.removeListener(listener);
@@ -102,6 +119,11 @@ public class PartyManager
     {
         _peerMgr.removePartyInfo(_partyObj.id);
         _partyReg.partyWasRemoved(_partyObj.id);
+
+        if (_nodeMoveCleaner != null) {
+            _nodeMoveCleaner.cancel();
+            _nodeMoveCleaner = null;
+        }
     }
 
     /**
@@ -307,7 +329,7 @@ public class PartyManager
 
         // if they're the last one, just kill the party
         if (_partyObj.peeps.size() == 1) {
-            shutdown();
+            endParty();
             return;
         }
 
@@ -382,16 +404,16 @@ public class PartyManager
 
     protected void updateSceneId (final int sceneId)
     {
-        int oldSceneId = _partyObj.sceneId;
-        if (oldSceneId == sceneId) {
+        if (_partyObj.sceneId  == sceneId) {
             return;
         }
 
+        // remove the old
+        removePartySummary();
+        // update the sceneId
         _partyObj.setSceneId(sceneId);
 
-        // we should always be able to find the old scene manager
-        removePartySummary(_screg.getSceneManager(oldSceneId));
-
+        // then, set up the new summary
         SceneManager newmgr = _screg.getSceneManager(sceneId);
         if (newmgr != null) {
             addPartySummary(newmgr);
@@ -459,6 +481,20 @@ public class PartyManager
     }
 
     /**
+     * Clean out any people who are not yet subscribed to the party object.
+     */
+    protected void cleanAbsentPeeps ()
+    {
+        // make a copy to prevent co-mod
+        for (PartyPeep peep : _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()])) {
+            if (!_userListeners.containsKey(peep.name.getMemberId())) {
+                removePlayer(peep.name.getMemberId());
+            }
+        }
+        // that should be enough...
+    }
+
+    /**
      * Update the partyInfo we have currently published in the node object.
      */
     protected void updatePartyInfo ()
@@ -483,9 +519,9 @@ public class PartyManager
         }
     }
 
-    protected void removePartySummary (SceneManager scmgr)
+    protected void removePartySummary ()
     {
-        RoomObject roomObj = (RoomObject) scmgr.getPlaceObject();
+        RoomObject roomObj = (RoomObject)_screg.getSceneManager(_partyObj.sceneId).getPlaceObject();
         if (roomObj.parties.containsKey(_partyObj.id)) {
             roomObj.removeFromParties(_partyObj.id);
         }
@@ -522,6 +558,8 @@ public class PartyManager
     protected PartyObject _partyObj;
 
     protected IntMap<UserListener> _userListeners = IntMaps.newHashIntMap();
+
+    protected Interval _nodeMoveCleaner;
 
     @Inject protected PartyRegistry _partyReg;
     @Inject protected RootDObjectManager _omgr;
