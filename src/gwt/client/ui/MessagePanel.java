@@ -37,7 +37,9 @@ public class MessagePanel extends FlexTable
 
     public void setMessage (MemberCard poster, Date whenPosted, String text)
     {
-        clear();
+        for (int ii = 0; getRowCount() > 0 && ii < 2; ii ++) {
+            removeRow(0);
+        }
 
         ThumbBox box = getThumbBox(poster);
         if (box != null) {
