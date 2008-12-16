@@ -25,7 +25,7 @@ public interface CommentServiceAsync
      * The asynchronous version of {@link CommentService#rateComment}.
      */
     void rateComment (int entityType, int entityId, long posted, boolean rating,
-                      AsyncCallback<Void> callback);
+                      AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link CommentService#deleteComment}.

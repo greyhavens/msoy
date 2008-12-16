@@ -57,12 +57,6 @@ public class Comment
     /** The total number of times this comment has been rated. */
     public int totalRatings;
 
-    /**
-     * The authenticated user's rating of this comment. See {@link #RATED_NONE},
-     * {@link #RATED_UP}, {@link #RATED_DOWN}.
-     */
-    public int myRating;
-
     /** The text of this comment. */
     public String text;
 }

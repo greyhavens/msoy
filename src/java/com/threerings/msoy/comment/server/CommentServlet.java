@@ -177,11 +177,11 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // from interface CommentService
-    public void rateComment (int etype, int eid, long posted, boolean rating)
+    public int rateComment (int etype, int eid, long posted, boolean rating)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        _commentRepo.rateComment(etype, eid, posted, mrec.memberId, rating);
+        return _commentRepo.rateComment(etype, eid, posted, mrec.memberId, rating);
     }
 
     // from interface CommentService

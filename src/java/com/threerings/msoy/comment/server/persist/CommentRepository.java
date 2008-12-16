@@ -120,6 +120,7 @@ public class CommentRepository extends DepotRepository
         record.entityId = entityId;
         record.posted = new Timestamp(System.currentTimeMillis());
         record.memberId = memberId;
+        record.currentRating = 1;
         record.text = text;
         insert(record);
 
@@ -130,7 +131,7 @@ public class CommentRepository extends DepotRepository
      * Inserts a new rating for a comment by a given member.
      * @return true if the comment's rating changed
      */
-    public boolean rateComment (
+    public int rateComment (
         int entityType, int entityId, long posted, int memberId, boolean rating)
     {
         Timestamp postedStamp = new Timestamp(posted);
@@ -143,7 +144,7 @@ public class CommentRepository extends DepotRepository
             if (record != null) {
                 if (record.rating == rating) {
                     // re-rated precisely as previously; we're done
-                    return false;
+                    return 0;
                 }
                 // previously rated and user changed their mind; comment gains or loses 2 votes
                 adjustment = rating ? 2 : -2;
@@ -173,13 +174,13 @@ public class CommentRepository extends DepotRepository
                             new Arithmetic.Add(CommentRecord.TOTAL_RATINGS_C, 1));
             }
             updateLiteral(CommentRecord.class, comment, comment, updates);
-            return true;
+            return adjustment;
 
         } catch (DuplicateKeyException dke) {
             log.warning("Ignoring duplicate comment rating", "entityType", entityType,
                         "entityId", entityId, "posted", postedStamp, "memberId", memberId,
                         "rating", rating);
-            return false;
+            return 0;
         }
     }
 

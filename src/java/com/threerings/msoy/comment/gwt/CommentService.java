@@ -47,9 +47,9 @@ public interface CommentService extends RemoteService
     /**
      * Rate the given comment up (true) or down (false).
      *
-     * @return true if the rating was counted.
+     * @return how much the item's rating changed: -2, -1, 0, 1 or 2
      */
-    void rateComment (int entityType, int entityId, long posted, boolean rating)
+    int rateComment (int entityType, int entityId, long posted, boolean rating)
         throws ServiceException;
 
     /**
