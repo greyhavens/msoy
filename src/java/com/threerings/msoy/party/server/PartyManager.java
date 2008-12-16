@@ -269,24 +269,16 @@ public class PartyManager
     }
 
     // from interface PartyProvider
-    public void updateNameOrStatus (
-        ClientObject caller, String s, boolean name, InvocationService.InvocationListener listener)
+    public void updateStatus (
+        ClientObject caller, String status, InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        if (s == null) {
+        if (status == null) {
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
         requireLeader(caller);
-
-        s = StringUtil.truncate(s, PartyCodes.MAX_NAME_LENGTH);
-        if (name) {
-            if (!_partyObj.name.equals(s)) {
-                _partyObj.setName(s);
-                updatePartyInfo();
-            }
-        } else {
-            setStatus(MessageBundle.taint(s));
-        }
+        setStatus(MessageBundle.taint(
+            StringUtil.truncate(status, PartyCodes.MAX_NAME_LENGTH)));
     }
 
     // from interface PartyProvider

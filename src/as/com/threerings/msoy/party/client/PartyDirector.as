@@ -164,9 +164,9 @@ public class PartyDirector extends BasicDirector
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
-    public function updateNameOrStatus (s :String, name :Boolean) :void
+    public function updateStatus (status :String) :void
     {
-        _partyObj.partyService.updateNameOrStatus(_wctx.getClient(), s, name,
+        _partyObj.partyService.updateStatus(_wctx.getClient(), status,
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 

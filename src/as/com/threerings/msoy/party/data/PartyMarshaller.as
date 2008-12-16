@@ -12,7 +12,6 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.util.Byte;
 import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the <code>PartyService</code> interface
@@ -76,21 +75,8 @@ public class PartyMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>updateNameOrStatus</code> requests. */
-    public static const UPDATE_NAME_OR_STATUS :int = 5;
-
-    // from interface PartyService
-    public function updateNameOrStatus (arg1 :Client, arg2 :String, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void
-    {
-        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, UPDATE_NAME_OR_STATUS, [
-            arg2, langBoolean.valueOf(arg3), listener4
-        ]);
-    }
-
     /** The method id used to dispatch <code>updateRecruitment</code> requests. */
-    public static const UPDATE_RECRUITMENT :int = 6;
+    public static const UPDATE_RECRUITMENT :int = 5;
 
     // from interface PartyService
     public function updateRecruitment (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
@@ -99,6 +85,19 @@ public class PartyMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, UPDATE_RECRUITMENT, [
             Byte.valueOf(arg2), listener3
+        ]);
+    }
+
+    /** The method id used to dispatch <code>updateStatus</code> requests. */
+    public static const UPDATE_STATUS :int = 6;
+
+    // from interface PartyService
+    public function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
+    {
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, UPDATE_STATUS, [
+            arg2, listener3
         ]);
     }
 }

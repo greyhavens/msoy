@@ -1316,30 +1316,13 @@ GameOverPanel {
   color: #519cdd;
 }
 
-.friendsListPanel {
+.friendsListPanel, .partyPanel {
   paddingTop: 0;
   paddingBottom: 0;
   paddingLeft: 0;
   paddingRight: 0;
   verticalGap: 0;
 }
-
-/*
-.partyPopup {
-  titleBackgroundSkin: Embed(source="../media/skins/friends_popup_header.png",
-          scaleGridTop="8", scaleGridBottom="28",
-          scaleGridLeft="8", scaleGridRight="315");
-  headerHeight: 36;
-  backgroundColor: black;
-  backgroundAlpha: 0.85;
-  backgroundImage: null;
-  paddingTop: 0;
-  paddingBottom: 0;
-  paddingLeft: 0;
-  paddingRight: 0;
-  verticalGap: 0;
-}
-*/
 
 .friendList {
   borderThickness: 0;
@@ -1376,14 +1359,10 @@ GameOverPanel {
   borderThickness: 2;
 }
 
-.sexyTextInput, .statusEdit, .statusEditHover, .partyTitle, .partyStatus {
+.sexyTextInput, .statusEdit, .statusEditHover, .partyStatus {
   backgroundAlpha: 0;
   borderStyle: "none";
   color: #568EAF;
-}
-
-.partyTitle {
-  fontSize: 18;
 }
 
 .partyStatus, .statusEdit, .statusEditHover {

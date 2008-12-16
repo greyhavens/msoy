@@ -32,9 +32,10 @@ public class PartyPanel extends FloatingPanel
 {
     public function PartyPanel (ctx :WorldContext, partyObj :PartyObject)
     {
-        super(ctx, Msgs.PARTY.get("t.party"));
+        super(ctx, partyObj.name);
         _wctx = ctx;
         showCloseButton = true;
+        styleName = "partyPanel";
 
         _partyObj = partyObj;
     }
@@ -61,15 +62,6 @@ public class PartyPanel extends FloatingPanel
         super.createChildren();
 
         var isLeader :Boolean = (_partyObj.leaderId == _ctx.getMyName().getMemberId());
-
-        _name = new TextInput();
-        _name.styleName = "partyTitle";
-        _name.maxChars = PartyCodes.MAX_NAME_LENGTH;
-        _name.percentWidth = 100;
-        _name.text = _partyObj.name;
-        _name.enabled = isLeader;
-        _name.addEventListener(FlexEvent.ENTER, commitName);
-        addChild(_name);
 
         _roster = new Roster(_ctx, PartyObject.PEEPS, PeepRenderer,
             PartyPeep.createSortByOrder(_partyObj));
@@ -100,17 +92,12 @@ public class PartyPanel extends FloatingPanel
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
         switch (event.getName()) {
-            case PartyObject.NAME:
-                _name.text = String(event.getValue());
-                break;
-
             case PartyObject.STATUS:
                 _status.text = Msgs.PARTY.xlate(String(event.getValue()));
                 break;
 
             case PartyObject.LEADER_ID:
                 var isLeader :Boolean = (event.getValue() == _ctx.getMyName().getMemberId());
-                _name.enabled = isLeader;
                 _status.enabled = isLeader;
                 _recruit.enabled = isLeader;
                 break;
@@ -121,19 +108,9 @@ public class PartyPanel extends FloatingPanel
         }
     }
 
-    protected function commitName (event :FlexEvent) :void
-    {
-        updateNameOrStatus(_name.text, true);
-    }
-
     protected function commitStatus (event :FlexEvent) :void
     {
-        updateNameOrStatus(_status.text, false);
-    }
-
-    protected function updateNameOrStatus (text :String, isName :Boolean) :void
-    {
-        _wctx.getPartyDirector().updateNameOrStatus(text, isName);
+        _wctx.getPartyDirector().updateStatus(_status.text);
         _wctx.getControlBar().giveChatFocus();
     }
 
@@ -142,7 +119,6 @@ public class PartyPanel extends FloatingPanel
     protected var _partyObj :PartyObject;
 
     protected var _roster :Roster;
-    protected var _name :TextInput;
     protected var _status :TextInput;
     protected var _recruit :CommandComboBox;
 }

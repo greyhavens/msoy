@@ -70,21 +70,8 @@ public class PartyMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #updateNameOrStatus} requests. */
-    public static final int UPDATE_NAME_OR_STATUS = 5;
-
-    // from interface PartyService
-    public void updateNameOrStatus (Client arg1, String arg2, boolean arg3, InvocationService.InvocationListener arg4)
-    {
-        ListenerMarshaller listener4 = new ListenerMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, UPDATE_NAME_OR_STATUS, new Object[] {
-            arg2, Boolean.valueOf(arg3), listener4
-        });
-    }
-
     /** The method id used to dispatch {@link #updateRecruitment} requests. */
-    public static final int UPDATE_RECRUITMENT = 6;
+    public static final int UPDATE_RECRUITMENT = 5;
 
     // from interface PartyService
     public void updateRecruitment (Client arg1, byte arg2, InvocationService.InvocationListener arg3)
@@ -93,6 +80,19 @@ public class PartyMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, UPDATE_RECRUITMENT, new Object[] {
             Byte.valueOf(arg2), listener3
+        });
+    }
+
+    /** The method id used to dispatch {@link #updateStatus} requests. */
+    public static final int UPDATE_STATUS = 6;
+
+    // from interface PartyService
+    public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)
+    {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, UPDATE_STATUS, new Object[] {
+            arg2, listener3
         });
     }
 }
