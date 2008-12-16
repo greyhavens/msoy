@@ -881,6 +881,34 @@ img, embed, applet, object {
   white-space: nowrap;
 }
 
+.CommentsPanel .messagePanel {
+  padding: 0px;
+}
+
+.CommentsPanel .messagePanel .Photo {
+  padding: 1px;
+}
+
+.CommentsPanel .messagePanel .Text {
+  font-size: 12px;
+}
+
+.CommentsPanel .messagePanel .MsgInfo {
+  padding-top: 1px;
+}
+
+.CommentsPanel .messagePanel .Tools {
+  padding-top: 1px;
+}
+
+.CommentsPanel .messagePanel .Author {
+  font-size: 11px;
+}
+
+.CommentsPanel .messagePanel .Posted {
+  font-size: 11px;
+}
+
 /** MessagePanel styles */
 .messagePanel .Photo {
   background: #EDEDED;

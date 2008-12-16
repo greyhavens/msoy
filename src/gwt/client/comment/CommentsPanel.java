@@ -46,6 +46,7 @@ public class CommentsPanel extends PagedGrid<Comment>
     public CommentsPanel (int entityType, int entityId, int commentsPerPage)
     {
         super(commentsPerPage, 1, NAV_ON_BOTTOM);
+        addStyleName("CommentsPanel");
         addStyleName("dottedGrid");
         setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
 
@@ -166,7 +167,6 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected void rateComment (
         final Comment comment, final boolean rating, MsoyCallback<Integer> callback)
-
     {
         _commentsvc.rateComment(_etype, _entityId, comment.posted, rating, callback);
     }
