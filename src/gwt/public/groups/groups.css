@@ -815,3 +815,20 @@
 .editMedalPanel .nowrapLabel {
   font-size: 16px;
 }
+
+/* ------------------------------------
+   AWARD MEDALS PANEL
+-------------------------------------*/
+
+.awardMedalsPanel {
+  padding: 10px;
+  padding-bottom: 30px;
+}
+
+.awardMedalsPanel table {
+  font-size: 16px;
+}
+
+.awardMedalsPanel .SearchBox {
+  padding-bottom: 15px;
+}

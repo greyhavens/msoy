@@ -4,16 +4,20 @@
 package client.groups;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.KeyboardListener;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -35,6 +39,7 @@ public class AwardMedalsPanel extends FlowPanel
     public AwardMedalsPanel (int groupId)
     {
         _groupId = groupId;
+        setStyleName("awardMedalsPanel");
         reloadMedals();
         init();
     }
@@ -42,6 +47,7 @@ public class AwardMedalsPanel extends FlowPanel
     public void reloadMedals ()
     {
         _medals = null;
+        _medalMap.clear();
         clearSearchResults();
 
         _groupsvc.getMedals(_groupId, new MsoyCallback<List<Medal>>() {
@@ -50,7 +56,7 @@ public class AwardMedalsPanel extends FlowPanel
                 Collections.sort(_medals);
                 // the drop downs need a map of String name to medal instance.
                 for (Medal medal : _medals) {
-                    _medalMap.put(medal.toString(), medal);
+                    _medalMap.put(medal.name, medal);
                 }
                 if (_medalsValidCommand != null) {
                     _medalsValidCommand.execute();
@@ -63,8 +69,21 @@ public class AwardMedalsPanel extends FlowPanel
     protected void init ()
     {
         HorizontalPanel searchBox = new HorizontalPanel();
+        searchBox.setSpacing(10);
+        searchBox.setStyleName("SearchBox");
         searchBox.add(new Label(_msgs.awardMedalsMemberSearch()));
         searchBox.add(_search = new TextBox());
+        _search.addKeyboardListener(new KeyboardListenerAdapter() {
+            @Override public void onKeyPress(Widget sender, char keyCode, int modifiers) {
+                if (keyCode == KeyboardListener.KEY_ENTER) {
+                    DeferredCommand.addCommand(new Command() {
+                        public void execute () {
+                            search();
+                        }
+                    });
+                }
+            }
+        });
         searchBox.add(new Button(_msgs.awardMedalsFind(), new ClickListener() {
             public void onClick (Widget sender) {
                 search();
@@ -85,20 +104,29 @@ public class AwardMedalsPanel extends FlowPanel
             return;
         }
 
+        if (members.size() == 0) {
+            MsoyUI.info(_msgs.awardMedalsNoMembersFound());
+            return;
+        }
+
         for (final VizMemberName member : members) {
             HorizontalPanel row = new HorizontalPanel();
-            row.add(MediaUtil.createMediaView(member.getPhoto(), MediaDesc.THUMBNAIL_SIZE));
+            row.setSpacing(10);
+            row.add(MediaUtil.createMediaView(member.getPhoto(), MediaDesc.HALF_THUMBNAIL_SIZE));
             row.add(new Label(member.toString()));
             // TODO: this will be really inefficient for groups that have a ton of Medals.  This
             // UI should contain only one drop down if at all possible.
             final ListBox awardDrop = createDropDown();
             row.add(awardDrop);
             row.add(new Button(_msgs.awardMedalsAward(), new ClickListener() {
-                public void onClick(Widget sender) {
-                    grantMedal(member,
-                        _medalMap.get(awardDrop.getValue(awardDrop.getSelectedIndex())));
+                public void onClick (Widget sender) {
+                    int selected = Math.max(0, awardDrop.getSelectedIndex());
+                    Medal medal = awardDrop.getItemCount() < 0 ?
+                        null : _medalMap.get(awardDrop.getValue(selected));
+                    grantMedal(member, medal);
                 }
             }));
+            add(row);
         }
     }
 
@@ -106,7 +134,7 @@ public class AwardMedalsPanel extends FlowPanel
     {
         ListBox dropDown = new ListBox();
         for (Medal medal : _medals) {
-            dropDown.addItem(medal.toString());
+            dropDown.addItem(medal.name);
         }
         return dropDown;
     }
@@ -125,6 +153,10 @@ public class AwardMedalsPanel extends FlowPanel
 
     protected void grantMedal (final VizMemberName member, final Medal medal)
     {
+        if (medal == null) {
+            MsoyUI.error(_msgs.awardMedalsNoMedalChosen());
+        }
+
         _groupsvc.awardMedal(member.getMemberId(), medal.medalId, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 MsoyUI.info(_msgs.awardMedalsMedalGranted(member.toString(), medal.name));
@@ -141,7 +173,7 @@ public class AwardMedalsPanel extends FlowPanel
 
     protected int _groupId;
     protected List<Medal> _medals;
-    protected Map<String, Medal> _medalMap;
+    protected Map<String, Medal> _medalMap = new HashMap<String, Medal>();
     protected Command _medalsValidCommand;
     protected TextBox _search;
 
