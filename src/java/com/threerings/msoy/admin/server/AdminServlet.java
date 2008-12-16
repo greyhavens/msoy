@@ -20,9 +20,12 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
+import com.samskivert.util.Invoker;
+import com.samskivert.util.Invoker.Unit;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
@@ -43,6 +46,7 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
+import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemFlag;
@@ -74,8 +78,10 @@ import com.threerings.msoy.admin.gwt.StatsModel;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
 import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.all.CharityInfo;
-import com.threerings.msoy.data.all.PanopticonStatus;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.peer.server.PeerManager.NodeAction;
 
 /**
  * Provides the server implementation of {@link AdminService}.
@@ -530,13 +536,23 @@ public class AdminServlet extends MsoyServiceServlet
         
         _memberRepo.deleteCharity(memberId);
     }
-
+    
     // from interface AdminService
-    public PanopticonStatus getPanopticonStatus ()
+    public Set<String> getPeerNodeNames ()
         throws ServiceException
     {
-        requireAdminUser();
-        return _eventLogger.getStatus();
+        requireSupportUser();
+        
+        // Collect the names of all the nodes
+        final Set<String> names = Sets.newHashSet();
+        _peerMgr.applyToNodes(new Function<NodeObject, Void>() {
+            public Void apply (NodeObject node) {
+                names.add(node.nodeName);
+                return null;
+            }
+        });
+        
+        return names;
     }
 
     // from interface AdminService
@@ -554,11 +570,44 @@ public class AdminServlet extends MsoyServiceServlet
         _mailRepo.startConversation(recipientId, senderId, subject, body, null, true);
     }
     
-    public void restartPanopticon ()
+    public void restartPanopticon (Set<String> nodeNames)
         throws ServiceException
     {
         requireAdminUser();
-        _eventLogger.restart();
+        
+        for (String node : nodeNames) {
+            _peerMgr.invokeNodeAction(node, new RestartPanopticonAction());
+        }
+    }
+    
+    protected static class RestartPanopticonAction extends NodeAction
+    {
+        public RestartPanopticonAction () {}
+        
+        @Override 
+        protected void execute () 
+        {
+            // Restart the logger on this node and all game servers attached to this node.
+            // Restarting is a blocking operation, so run it on the invoker.
+            _invoker.postUnit(new Unit() {
+                @Override public boolean invoke () {
+                    _nodeLogger.restart();
+                    return false;
+                }
+            });
+            _gameReg.resetEventLogger();
+        }
+        
+        @Override 
+        public boolean isApplicable (NodeObject nodeobj) 
+        {
+            // This will automatically go to the node we want.
+            return true;
+        }
+        
+        @Inject protected transient MsoyEventLogger _nodeLogger;
+        @Inject protected transient WorldGameRegistry _gameReg;
+        @Inject protected transient @MainInvoker Invoker _invoker;
     }
     
     // our dependencies
@@ -576,4 +625,5 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ContestRepository _contestRepo;
     @Inject protected MsoyEventLogger _eventLogger;
     @Inject protected ItemFlagRepository _itemFlagRepo;
+    @Inject protected MsoyPeerManager _peerMgr;
 }

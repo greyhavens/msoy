@@ -4,6 +4,7 @@
 package com.threerings.msoy.admin.gwt;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -14,7 +15,6 @@ import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;
 
 import com.threerings.msoy.data.all.CharityInfo;
-import com.threerings.msoy.data.all.PanopticonStatus;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.Promotion;
@@ -149,13 +149,10 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#removeCharityStatus}.
      */
     void removeCharityStatus (int memberId, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#getPanopticonStatus}.
-     */
-    void getPanopticonStatus (AsyncCallback<PanopticonStatus> callback);
     
-    void restartPanopticon (AsyncCallback<Void> callback);
+    void getPeerNodeNames (AsyncCallback<Set<String>> callback);
+    
+    void restartPanopticon (Set<String> nodeNames, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link AdminService#scheduleReboot}.

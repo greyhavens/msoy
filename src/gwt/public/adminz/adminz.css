@@ -326,3 +326,7 @@
 .panopticonStatus .header {
   font-weight: bold;
 }
+
+.panopticonStatus .statusText {
+  white-space: pre !important;
+}

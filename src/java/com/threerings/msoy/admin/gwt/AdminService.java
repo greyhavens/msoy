@@ -5,6 +5,7 @@ package com.threerings.msoy.admin.gwt;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -18,7 +19,6 @@ import com.threerings.msoy.web.gwt.WebCreds;
 
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.PanopticonStatus;
 
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -216,17 +216,11 @@ public interface AdminService extends RemoteService
      */
     void removeCharityStatus (int memberId)
         throws ServiceException;
-    
-    /**
-     * Gets the current status of the Panopticon client.
-     */
-    PanopticonStatus getPanopticonStatus ()
-        throws ServiceException;
-    
+        
     /**
      * Restarts the Panopticon logging client.
      */
-    void restartPanopticon ()
+    void restartPanopticon (Set<String> nodeNames)
         throws ServiceException;
 
     /**
@@ -235,5 +229,8 @@ public interface AdminService extends RemoteService
      * aborted and a new regularly scheduled reboot scheduled.
      */
     void scheduleReboot (int minutes)
+        throws ServiceException;
+    
+    Set<String> getPeerNodeNames ()
         throws ServiceException;
 }

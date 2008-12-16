@@ -6,6 +6,9 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.Invoker;
+import com.samskivert.util.Invoker.Unit;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.BlockingCommunicator;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
@@ -29,6 +32,7 @@ import com.threerings.util.Name;
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Prize;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.data.UserAction;
@@ -67,6 +71,9 @@ public class WorldServerClient
 
     /** A request that we generate a particular report. */
     public static final String GENERATE_REPORT = "generateReport";
+    
+    /** A request that we reset the event logger. */
+    public static final String EVENT_LOGGER_RESET = "eventLoggerReset";
 
     /**
      * Configures our listen and connection ports and connects to our parent world server.
@@ -227,6 +234,16 @@ public class WorldServerClient
             byte itemType = (Byte) args[2];
             String ident = (String) args[3];
             _gameReg.gameContentPurchased(playerId, gameId, itemType, ident);
+            
+        } else if (event.getName().equals(EVENT_LOGGER_RESET)) {
+            // Restarting the event logger is a blocking operation, so run on the main invoker.
+            _invoker.postUnit(new Unit() {
+                @Override public boolean invoke () {
+                    _eventLogger.restart();
+                    return false;
+                }
+            });
+            
         }
     }
 
@@ -269,4 +286,6 @@ public class WorldServerClient
     @Inject protected GameGameRegistry _gameReg;
     @Inject protected GameWatcherManager _watchMan;
     @Inject protected ChatProvider _chatProv;
+    @Inject protected MsoyEventLogger _eventLogger;
+    @Inject protected @MainInvoker Invoker _invoker;
 }

@@ -203,6 +203,16 @@ public class WorldGameRegistry
     }
 
     /**
+     * This will reset the event logger on all game servers attached to this world server.
+     */
+    public void resetEventLogger ()
+    {
+        for (GameServerHandler handler : _handlers) {
+            handler.postMessage(WorldServerClient.EVENT_LOGGER_RESET);
+        }
+    }
+
+    /**
      * Called when the user has purchased game content.
      *
      * @param itemType the type of content item that was purchased (ie. {@link Item#LEVEL_PACK}).

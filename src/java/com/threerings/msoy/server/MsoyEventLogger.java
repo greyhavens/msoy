@@ -4,8 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 
@@ -27,7 +25,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.PanopticonStatus;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MsoyEvents.Experience.Type;
@@ -91,11 +88,15 @@ public class MsoyEventLogger
                 _remote = EventLoggerFactory.createLogger(config);
                 
                 // Add a report to indicate current Panopticon client status.
-                _reportMan.registerReporter(PANOPTICON_REPORT_TYPE, new EventLoggerReporter());
+                if (!initialized) {
+                    _reportMan.registerReporter(PANOPTICON_REPORT_TYPE, new EventLoggerReporter());
+                }
             } catch (Exception e) {
                 log.warning("Failed to connect to remote logging server.", e);
             }
         }
+        
+        initialized = true;
     }
 
     /**
@@ -378,48 +379,6 @@ public class MsoyEventLogger
     {
         post(new MsoyEvents.TestAction(tracker, actionName, testName, abTestGroup));
     }
-    
-    /**
-     * Gets a snapshot of the current Panopticon status.
-     */
-    public PanopticonStatus getStatus ()
-    {
-        PanopticonStatus status = new PanopticonStatus();
-        status.currentlyQueued = _remote.getStats().getCurrentlyQueued();
-        status.totalQueued = _remote.getStats().getTotalQueued();
-        status.dropped = _remote.getStats().getDropped();
-        status.totalSent = _remote.getStats().getTotalSent();
-        status.overflowed = _remote.getStats().getOverflowedCount();
-        status.lastTimeQueued = _remote.getStats().getLastTimeQueued();
-        status.lastTimeSent = _remote.getStats().getLastTimeSent();
-        status.lastTimeDropped = _remote.getStats().getLastTimeDropped();
-        status.lastTimeOverflowed = _remote.getStats().getLastTimeOverflowed();
-        status.lastTimeQueueOverflowed = _remote.getStats().getLastTimeQueueOverflowed();
-        status.timeStarted = _remote.getStats().getTimeStarted();
-        status.lastTimeEnteredRetryMode = _remote.getStats().getLastTimeEnteredRetryMode();
-        status.lastTimeRecoveredFromRetryMode = _remote.getStats().getLastTimeRecoveredFromRetryMode();
-        status.lastTimeTempFailed = _remote.getStats().getLastTimeTempFailed();
-        if (_remote.getStats().getLastTempFailure() != null) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            _remote.getStats().getLastTempFailure().printStackTrace(pw);
-            status.lastTempFailureInfo = sw.toString();
-        }
-        if (_remote.getStats().getLastPermFailure() != null) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            _remote.getStats().getLastPermFailure().printStackTrace(pw);
-            status.lastPermFailureInfo = sw.toString();
-        }
-        
-        status.inRetryMode = _remote.isInRetryMode();
-        status.disposed = _remote.isDisposed();
-        status.connectedToServer = _remote.isConnectedToServer();
-        status.senderDisposed = _remote.isSenderDisposed();
-        status.persistenceManagerDisposed = _remote.isPersistenceManagerDisposed();
-        
-        return status;
-    }
 
     /**
      * Reporter for Panopticon client info.
@@ -525,6 +484,9 @@ public class MsoyEventLogger
 
     /** Identity used to initialize this logger. */
     protected String _ident;
+    
+    /** True if we've intialized this event logger before. */
+    protected boolean initialized = false;
     
     @Inject protected ReportManager _reportMan;
     
