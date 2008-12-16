@@ -283,20 +283,20 @@
 /* ------------------------------------
    BADGE DISPLAYS ANYWHERE
 -------------------------------------*/
-.badgeDisplay {
+.awardDisplay {
   position: relative;
   width: 156px;
   height: 141px;
 }
 
-.badgeDisplay .StampImage {
+.awardDisplay .AwardIcon {
   position: absolute;
   left: 7px;
   top: 7px;
   margin-left: 0;
 }
 
-.badgeDisplay .StampName {
+.awardDisplay .AwardName {
   position: absolute;
   left: 90px;
   top: 8px;
@@ -308,7 +308,7 @@
   line-height: 12px;
 }
 
-.badgeDisplay .CoinReward {
+.awardDisplay .CoinReward {
   position: absolute;
   left: 90px;
   top: 48px;
@@ -316,17 +316,17 @@
   color: black;
 }
 
-.badgeDisplay .CoinReward img {
+.awardDisplay .CoinReward img {
   float: left;
   padding-top: 1px;
 }
 
-.badgeDisplay .CoinReward div {
+.awardDisplay .CoinReward div {
   float: left;
   padding-left: 3px;
 }
 
-.badgeDisplay .StampDescription {
+.awardDisplay .AwardDescription {
   position: absolute;
   top: 69px;
   left: 7px;
@@ -337,29 +337,29 @@
   text-align: center;
 }
 
-.badgeDisplay .WhenEarned, .badgeDisplay .ProgressBar {
+.awardDisplay .WhenEarned, .awardDisplay .ProgressBar {
   position: absolute;
   top: 118px;
   left: 7px;
 }
 
-.badgeDisplay .ProgressLabel {
+.awardDisplay .ProgressLabel {
   position: absolute;
   top: 118px;
   left: 31px;
 }
 
-.badgeDisplay .WhenEarned {
+.awardDisplay .WhenEarned {
   width: 142px;
   font-size: 12px;
   text-align: center;
 }
 
-.badgeDisplay .ProgressBar .Fill {
+.awardDisplay .ProgressBar .Fill {
   background-repeat: repeat;
 }
 
-.badgeDisplay .GoButton {
+.awardDisplay .GoButton {
   position: absolute;
   top: 118px;
   right: 7px;
@@ -374,7 +374,7 @@
   margin-top: 3px;
 }
 
-.badgeDisplay a.external {
+.awardDisplay a.external {
   padding-right: 11px;
   color: #4a7595;
 }

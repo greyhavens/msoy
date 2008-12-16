@@ -28,13 +28,21 @@ import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.util.Link;
 
-class BadgeDisplay extends FlowPanel
+class BadgeDisplay extends AwardDisplay
 {
     public BadgeDisplay (Badge badge)
     {
-        setStyleName("badgeDisplay");
+        addIcon(badge.imageUrl());
+        String hexCode = Integer.toHexString(badge.badgeCode);
+        addName(_dmsgs.get("badge_" + hexCode, Badge.getLevelName(badge.level)));
+        // first look for a specific message for this level
+        String badgeDesc = _dmsgs.xlate("badgeDesc" + badge.level + "_" + hexCode);
+        // TODO: unhack this by adding contains() to MessagesLookup
+        if (badgeDesc.startsWith("Invalid key")) {
+            badgeDesc = _dmsgs.get("badgeDescN_" + hexCode, badge.levelUnits);
+        }
+        addDescription(badgeDesc);
 
-        buildBasics(badge);
         if (badge instanceof EarnedBadge) {
             addEarnedBits((EarnedBadge)badge);
         } else if (badge instanceof InProgressBadge) {
@@ -42,28 +50,9 @@ class BadgeDisplay extends FlowPanel
         }
     }
 
-    protected void buildBasics (Badge badge)
-    {
-        add(MsoyUI.createImage(badge.imageUrl(), "StampImage"));
-
-        String hexCode = Integer.toHexString(badge.badgeCode);
-        String badgeName = _dmsgs.get("badge_" + hexCode, Badge.getLevelName(badge.level));
-        add(MsoyUI.createLabel(badgeName, "StampName"));
-
-        // first look for a specific message for this level
-        String badgeDesc = _dmsgs.xlate("badgeDesc" + badge.level + "_" + hexCode);
-        // TODO: unhack this by adding contains() to MessagesLookup
-        if (badgeDesc.startsWith("Invalid key")) {
-            badgeDesc = _dmsgs.get("badgeDescN_" + hexCode, badge.levelUnits);
-        }
-        add(MsoyUI.createHTML(badgeDesc, "StampDescription"));
-    }
-
     protected void addEarnedBits (EarnedBadge badge)
     {
-        Date earnedDate = new Date(badge.whenEarned);
-        String whenEarned = _msgs.passportFinishedSeries(MsoyUI.formatDate(earnedDate));
-        add(MsoyUI.createLabel(whenEarned, "WhenEarned"));
+        addEarnedDate(new Date(badge.whenEarned));
     }
 
     protected void addInProgressBits (InProgressBadge badge)
