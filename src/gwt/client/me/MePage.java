@@ -33,6 +33,11 @@ public class MePage extends Page
             int defaultId = CShell.creds == null ? 0 : CShell.creds.name.getMemberId();
             setContent(_msgs.titlePassport(), new PassportPanel(args.get(1, defaultId)));
 
+        } else if (action.equals("medals")) {
+            int defaultId = CShell.creds == null ? 0 : CShell.creds.name.getMemberId();
+            setContent(_msgs.titlePassport(),
+                new PassportPanel(args.get(1, defaultId), PassportPanel.Content.MEDALS));
+
         } else if (DeploymentConfig.devDeployment && action.equals("passportimagetest")) {
             setContent(_msgs.titlePassportTest(), new PassportImageTestPanel());
 

@@ -36,8 +36,7 @@ public class MedalsBlurb extends Blurb
         }
         setContent(medals);
 
-        // TODO: add URL linkage to medals view
-        setFooterLink(_msgs.seeAll(), Pages.ME, Args.compose("passport", pdata.name.getMemberId()));
+        setFooterLink(_msgs.seeAll(), Pages.ME, Args.compose("medals", pdata.name.getMemberId()));
     }
 
     protected static class SimpleMedalDisplay extends VerticalPanel

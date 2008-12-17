@@ -38,7 +38,11 @@ import client.util.ServiceUtil;
 
 public class PassportPanel extends FlowPanel
 {
-    public PassportPanel (int memberId)
+    public enum Content {
+        STAMPS, MEDALS;
+    }
+
+    public PassportPanel (int memberId, final Content content)
     {
         setStyleName("passport");
 
@@ -48,13 +52,18 @@ public class PassportPanel extends FlowPanel
                     MsoyUI.error(_msgs.passportPlayerNotFound());
                 } else {
                     _data = data;
-                    init();
+                    init(content);
                 }
             }
         });
     }
 
-    protected void init ()
+    public PassportPanel (int memberId)
+    {
+        this(memberId, Content.STAMPS);
+    }
+
+    protected void init (Content content)
     {
         if (_data.nextBadges != null) {
             add(new NextPanel(_data.nextBadges));
@@ -73,11 +82,17 @@ public class PassportPanel extends FlowPanel
         sectionLinks.add(MsoyUI.createActionLabel(_msgs.passportMedalsLink(), "SectionLink",
             new ClickListener() {
                 public void onClick (Widget sender) {
-                    displayStamps();
+                    displayMedals();
                 }
             }));
 
-        displayBadges();
+        if (content == Content.STAMPS) {
+            displayBadges();
+        } else if (content == Content.MEDALS) {
+            displayMedals();
+        } else {
+            MsoyUI.error(_msgs.passportUnrecognizedContent());
+        }
     }
 
     protected void displayBadges ()
@@ -107,7 +122,7 @@ public class PassportPanel extends FlowPanel
         }
     }
 
-    protected void displayStamps ()
+    protected void displayMedals ()
     {
         if (_contents != null) {
             remove(_contents);
