@@ -6,9 +6,14 @@ package com.threerings.msoy.room.client.editor {
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Shape;
+
 import flash.events.MouseEvent;
+
 import flash.geom.Point;
 
+import com.threerings.util.Log;
+
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.room.client.ClickLocation;
 
 /**
@@ -96,8 +101,11 @@ public class MovementWallHotspot extends Hotspot
         sx -= (_anchor.x - _originalHotspot.x);
         sy -= (_anchor.y - _originalHotspot.y);
 
-        var cloc :ClickLocation = _editor.roomView.layout.pointToFurniLocation(sx, sy);
+        // clamp against the place view
+        var placeBox :PlaceBox = _editor.controller.ctx.getTopPanel().getPlaceContainer();
+        sy = Math.min(sy, placeBox.height + placeBox.y);
 
+        var cloc :ClickLocation = _editor.roomView.layout.pointToFurniLocation(sx, sy);
         if (cloc != null) {
             _editor.updateTargetLocation(cloc.loc);
         }

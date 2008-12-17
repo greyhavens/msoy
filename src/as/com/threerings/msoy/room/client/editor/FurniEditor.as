@@ -23,6 +23,12 @@ public class FurniEditor extends FurniHighlight
         super(controller);
     }
 
+    /** Accessor to the controller. */
+    public function get controller () :RoomEditorController
+    {
+        return _controller;
+    }
+
     /** Accessor to the room view. */
     public function get roomView () :RoomView
     {
