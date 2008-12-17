@@ -78,6 +78,7 @@
     <file name="${extlibs.dir}/gwt-incubator.jar"/>
     <file name="${extlibs.dir}/gwt-widgets.jar"/>
     <file name="${extlibs.dir}/javassist.jar"/>
+    <file name="${extlibs.dir}/jaxb/jaxb-api.jar"/>
     <file name="${extlibs.dir}/jcip-annotations.jar"/>
     <file name="${extlibs.dir}/jetty6/jetty-util.jar"/>
     <file name="${extlibs.dir}/jetty6/jetty.jar"/>
