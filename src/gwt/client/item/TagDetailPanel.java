@@ -10,18 +10,21 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.TagCodes;
@@ -33,6 +36,7 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 import client.shell.CShell;
+import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.ui.PromptPopup;
@@ -70,8 +74,7 @@ public class TagDetailPanel extends VerticalPanel
      */
     public interface FlagService
     {
-        // TODO: add a comment string
-        void addFlag (ItemFlag.Kind kind);
+        void addFlag (ItemFlag.Kind kind, String comment);
     }
 
     public TagDetailPanel (
@@ -115,14 +118,11 @@ public class TagDetailPanel extends VerticalPanel
                 InlineLabel flagLabel = new InlineLabel(_cmsgs.tagFlag());
                 new PopupMenu(flagLabel) {
                     protected void addMenuItems () {
-                        addFlag(_cmsgs.tagMatureFlag(), _cmsgs.tagMaturePrompt(),
-                                updateFlag(ItemFlag.Kind.MATURE));
-                        addFlag(_cmsgs.tagCopyrightFlag(), _cmsgs.tagCopyrightPrompt(),
-                                updateFlag(ItemFlag.Kind.COPYRIGHT));
+                        addCommand(_cmsgs.tagMatureFlag(), ItemFlag.Kind.MATURE);
+                        addCommand(_cmsgs.tagCopyrightFlag(), ItemFlag.Kind.COPYRIGHT);
                     }
-                    protected void addFlag (String label, String prompt, Command action) {
-                        addMenuItem(label, new PromptPopup(prompt, _cmsgs.tagFlagFlag(),
-                                                           _cmsgs.cancel(), action));
+                    protected void addCommand (String label, ItemFlag.Kind kind) {
+                        addMenuItem(label, new FlagCommand(kind));
                     }
                 };
                 addRow.add(flagLabel, HasAlignment.ALIGN_MIDDLE);
@@ -137,16 +137,6 @@ public class TagDetailPanel extends VerticalPanel
         } else {
             gotTags(tags);
         }
-    }
-
-    protected Command updateFlag (final ItemFlag.Kind kind)
-    {
-        return new Command() {
-            public void execute () {
-                _flagger.addFlag(kind);
-                MsoyUI.info(_cmsgs.tagThanks());
-            }
-        };
     }
 
     protected void toggleTagHistory ()
@@ -317,6 +307,44 @@ public class TagDetailPanel extends VerticalPanel
             });
             setText(null);
         }
+    }
+
+    protected class FlagCommand
+        implements Command
+    {
+        public FlagCommand (ItemFlag.Kind kind)
+        {
+            _kind = kind;
+        }
+
+        public void execute ()
+        {
+            BorderedDialog dialog = new BorderedDialog(false) {};
+            dialog.setHeaderTitle(_cmsgs.tagFlagDialogTitle());
+
+            String mature[] = { _cmsgs.tagMaturePrompt1(), _cmsgs.tagMaturePrompt2() };
+            String copyright[] = { _cmsgs.tagCopyrightPrompt1(), _cmsgs.tagCopyrightPrompt2() };
+            String prompts[] = _kind == ItemFlag.Kind.MATURE ? mature : copyright;
+
+            final SmartTable content = new SmartTable(0, 10);
+            content.setWidth("300px");
+            content.setText(0, 0, prompts[0]);
+            content.setText(1, 0, prompts[1]);
+            content.setWidget(2, 0, _comment = MsoyUI.createTextArea(null, 64, 4));
+            dialog.setContents(content);
+            dialog.addButton(new Button(_cmsgs.cancel(), dialog.onCancel()));
+            dialog.addButton(new Button(_cmsgs.tagFlagDialogAccept(), dialog.onAction(
+                new Command() {
+                    public void execute () {
+                        _flagger.addFlag(_kind, _comment.getText());
+                        MsoyUI.info(_cmsgs.tagThanks());
+                    }
+                })));
+            dialog.show();
+        }
+
+        protected ItemFlag.Kind _kind;
+        protected TextArea _comment;
     }
 
     protected TagService _service;
