@@ -114,8 +114,8 @@ public class PriceQuote extends SimpleStreamableObject
     protected Currency _listedCurrency;
     protected int _coins;
     protected int _bars;
-    protected int _coinChange; // we don't stream this to the client
-    protected float _rate; // also not sent to the client
+    protected int _coinChange;
+    protected float _rate;
 
     /** The maximum amount the exchange rate can vary at purchase time. */
     protected static final float MAX_RATE_VARIANCE = .05f;
