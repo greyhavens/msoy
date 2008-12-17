@@ -66,8 +66,10 @@ public class CreateAccountPanel extends FlowPanel
 
         add(WidgetUtil.makeShim(15, 15));
 
+        add(new Image("/images/account/create_bg_top.png"));
         FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
+        add(new Image("/images/account/create_bg_bot.png"));
 
         content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
         PushButton logon = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.lpSubmit(), null);

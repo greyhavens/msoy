@@ -21,10 +21,9 @@
 }
 
 .createAccount .Content {
+  background: url(/images/account/create_bg_mid.png) #287099 no-repeat bottom;
   margin: 0 auto;
-  background: url(/images/account/create_bg.png) no-repeat;
   width: 657px;
-  height: 508px;
 }
 
 .createAccount .logonPanel {
