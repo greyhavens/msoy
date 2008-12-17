@@ -4,17 +4,12 @@
 package client.account;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.CShell;
-import client.shell.Frame;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.util.Link;

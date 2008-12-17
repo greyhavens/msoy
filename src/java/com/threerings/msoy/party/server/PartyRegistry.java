@@ -17,10 +17,8 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.Comparators;
-import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
@@ -193,8 +191,6 @@ public class PartyRegistry
                 super.handleFailure(e);
                 rl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
             }
-
-            protected List<GroupRecord> _groups;
         });
     }
 

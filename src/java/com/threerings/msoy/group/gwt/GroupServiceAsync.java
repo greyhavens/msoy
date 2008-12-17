@@ -137,7 +137,7 @@ public interface GroupServiceAsync
     void awardMedal (int memberId, int medalId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GropuService#getMedal}
+     * The asynchronous version of {@link GroupService#getMedal}
      */
     void getMedal (int medalId, AsyncCallback<Medal> callback);
 }

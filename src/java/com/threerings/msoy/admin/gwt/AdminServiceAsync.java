@@ -73,7 +73,7 @@ public interface AdminServiceAsync
     void updateTest (ABTest test, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService#getFlaggedItems}.
+     * The asynchronous version of {@link AdminService#getItemFlags}.
      */
     void getItemFlags (int start, int count, boolean needCount,
         AsyncCallback<ItemFlagsResult> callback);

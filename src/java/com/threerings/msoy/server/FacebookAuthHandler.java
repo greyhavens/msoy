@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 import com.samskivert.util.StringUtil;

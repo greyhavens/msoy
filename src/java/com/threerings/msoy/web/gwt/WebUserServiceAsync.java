@@ -19,7 +19,7 @@ public interface WebUserServiceAsync
                        AsyncCallback<SessionData> callback);
 
     /**
-     * The asynchronous version of {@link WebUserService#externanLogon}.
+     * The asynchronous version of {@link WebUserService#externalLogon}.
      */
     void externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo, int expireDays,
                         AsyncCallback<SessionData> callback);
