@@ -1316,7 +1316,7 @@ GameOverPanel {
   color: #519cdd;
 }
 
-.friendsListPanel, .partyPanel {
+FriendsListPanel, PartyPanel, PartyBoardPanel {
   paddingTop: 0;
   paddingBottom: 0;
   paddingLeft: 0;

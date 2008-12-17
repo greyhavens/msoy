@@ -52,7 +52,6 @@ public class FriendsListPanel extends FlyingPanel
         super(ctx, "Friends Online");
         _wctx = ctx;
         showCloseButton = true;
-        styleName = "friendsListPanel";
         width = POPUP_WIDTH;
         open();
 

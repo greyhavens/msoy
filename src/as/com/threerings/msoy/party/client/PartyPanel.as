@@ -36,7 +36,6 @@ public class PartyPanel extends FloatingPanel
         super(ctx, partyObj.name);
         _wctx = ctx;
         showCloseButton = true;
-        styleName = "partyPanel";
 
         _partyObj = partyObj;
     }
