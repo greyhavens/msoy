@@ -49,16 +49,13 @@ public class Roster extends List
 
     public function init (players :Array) :void
     {
-        _list.removeAll();
-        for each (var player :PlayerEntry in players) {
-            _list.addItem(player);
-        }
+        _list.source = players;
         _list.refresh();
     }
 
     public function addPlayer (player :PlayerEntry) :void
     {
-        _list.addItem(player);
+        _list.list.addItem(player);
         _list.refresh();
     }
 
@@ -66,7 +63,7 @@ public class Roster extends List
     {
         var idx :int = findKeyIndex(key);
         if (idx != -1) {
-            _list.removeItemAt(idx);
+            _list.list.removeItemAt(idx);
             _list.refresh();
         }
     }
@@ -76,12 +73,11 @@ public class Roster extends List
      */
     public function updatePlayer (player :PlayerEntry) :void
     {
-        trace("Must find: " + player);
         var idx :int = findKeyIndex(player.getKey());
         if (idx == -1) {
-            throw new Error("Player not in list.");
+            throw new Error();
         }
-        _list.setItemAt(player, idx);
+        _list.list.setItemAt(player, idx);
         _list.refresh();
     }
 
@@ -111,14 +107,16 @@ public class Roster extends List
 
     protected function findKeyIndex (key :Object) :int
     {
-        for (var ii :int = 0; ii < _list.length; ii++) {
-            if (Util.equals(key, PlayerEntry(_list.getItemAt(ii)).getKey())) {
+        for (var ii :int = 0; ii < _list.list.length; ii++) {
+            if (Util.equals(key, PlayerEntry(_list.list.getItemAt(ii)).getKey())) {
                 return ii;
             }
         }
         return -1;
     }
 
+    /** The collection for this roster. Note that this is the filtered/sorted view. For
+     * the raw view, we access _list.list. */
     protected var _list :ArrayCollection;
 
     protected var _field :String;
