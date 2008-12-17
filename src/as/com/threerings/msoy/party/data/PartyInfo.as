@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.party.data {
 
-import com.threerings.msoy.data.all.GroupName;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
@@ -28,7 +26,7 @@ public class PartyInfo extends SimpleStreamableObject
     public var leaderId :int;
 
     /** The group sponsoring this party. */
-    public var group :GroupName;
+    public var groupId :int;
 
     /** The status line indicating what this party is doing. */
     public var status :String;
@@ -46,7 +44,7 @@ public class PartyInfo extends SimpleStreamableObject
         id = ins.readInt();
         name = ins.readField(String) as String;
         leaderId = ins.readInt();
-        group = GroupName(ins.readObject());
+        groupId = ins.readInt();
         status = ins.readField(String) as String;
         population = ins.readInt();
         recruitment = ins.readByte();
@@ -54,15 +52,7 @@ public class PartyInfo extends SimpleStreamableObject
 
     override public function writeObject (out :ObjectOutputStream) :void
     {
-        super.writeObject(out);
-
-        out.writeInt(id);
-        out.writeField(name);
-        out.writeInt(leaderId);
-        out.writeObject(group);
-        out.writeField(status);
-        out.writeInt(population);
-        out.writeByte(recruitment);
+        throw new Error();
     }
 }
 }

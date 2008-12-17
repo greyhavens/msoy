@@ -10,7 +10,7 @@ public interface PartyBoardService extends InvocationService
 {
     /**
      * Retrieve a list of parties.
-     * Returns a List<PartyInfo>.
+     * Returns a List<PartyBoardInfo>.
      */
     void getPartyBoard (Client client, String query, ResultListener rl);
 

@@ -19,18 +19,16 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.party.data.PartyInfo;
-
 public class PartyBoardPanel extends FloatingPanel
 {
     public function PartyBoardPanel (ctx :WorldContext)
     {
         super(ctx, Msgs.PARTY.get("t.board"));
-        _wctx = ctx;
         showCloseButton = true;
         setButtonWidth(0);
+        _wctx = ctx;
 
-        var cf :ClassFactory = new ClassFactory(PartyInfoRenderer);
+        var cf :ClassFactory = new ClassFactory(PartyBoardInfoRenderer);
         cf.properties = { wctx: _wctx };
         _partyList = new List();
         _partyList.itemRenderer = cf;

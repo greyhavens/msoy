@@ -10,6 +10,10 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
+/**
+ * Contains a summary of the party information, to be published in room objects
+ * and ultimately exposed to games.
+ */
 public class PartySummary extends SimpleStreamableObject
     implements DSet.Entry
 {

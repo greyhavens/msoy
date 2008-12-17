@@ -4,6 +4,7 @@
 package com.threerings.msoy.party.server;
 
 import java.util.TreeMap;
+import java.util.List;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -16,8 +17,10 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.Comparators;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
@@ -39,6 +42,7 @@ import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberLocator;
 
@@ -53,6 +57,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.data.MemberInfo;
 
 import com.threerings.msoy.party.client.PeerPartyService;
+import com.threerings.msoy.party.data.PartyBoardInfo;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
@@ -135,7 +140,7 @@ public class PartyRegistry
 
     // from PartyBoardProvider
     public void getPartyBoard (
-        ClientObject caller, String query, InvocationService.ResultListener rl)
+        ClientObject caller, String query, final InvocationService.ResultListener rl)
         throws InvocationException
     {
         final MemberObject member = (MemberObject)caller;
@@ -143,20 +148,54 @@ public class PartyRegistry
         // add every party we have access to to a collection sorted by score
         // Note: maybe we use a KeyValue, and create a top-N data structure that only even
         // saves the top-N candidates
-        final TreeMap<PartySort,PartyInfo> myParties = Maps.newTreeMap();
+        final TreeMap<PartySort,PartyInfo> visParties = Maps.newTreeMap();
         _peerMgr.applyToNodes(new Function<NodeObject,Void>() {
             public Void apply (NodeObject node) {
                 for (PartyInfo party : ((MsoyNodeObject) node).parties) {
                     if (party.isVisible(member)) {
-                        myParties.put(computePartySort(party, member), party);
+                        visParties.put(computePartySort(party, member), party);
                     }
                 }
                 return null; // Void
             }
         });
-        // return a list with maximum PARTIES_PER_BOARD parties
-        rl.requestProcessed(
-            Lists.newArrayList(Iterables.limit(myParties.values(), PARTIES_PER_BOARD)));
+
+        final IntMap<MediaDesc> icons = IntMaps.newHashIntMap();
+        final List<PartyBoardInfo> results = Lists.newArrayList(Iterables.transform(
+            Iterables.limit(visParties.values(), PARTIES_PER_BOARD),
+            new Function<PartyInfo,PartyBoardInfo>() {
+                public PartyBoardInfo apply (PartyInfo party) {
+                    icons.put(party.groupId, null);
+                    return new PartyBoardInfo(party);
+                }
+            }));
+
+        _invoker.postUnit(new RepositoryUnit("loadPartyGroup") {
+            public void invokePersist () throws Exception {
+                for (GroupRecord rec : _groupRepo.loadGroups(icons.keySet())) {
+                    icons.put(rec.groupId, rec.toLogo());
+                }
+            }
+
+            public void handleSuccess () {
+                for (PartyBoardInfo party : results) {
+                    party.icon = icons.get(party.info.groupId);
+                    // TODO: leave as null and xlate on client
+                    if (party.icon == null) {
+                        party.icon = Group.getDefaultGroupLogoMedia();
+                    }
+                }
+
+                rl.requestProcessed(results);
+            }
+
+            @Override public void handleFailure (Exception e) {
+                super.handleFailure(e);
+                rl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            }
+
+            protected List<GroupRecord> _groups;
+        });
     }
 
     // from PartyBoardProvider
@@ -181,7 +220,7 @@ public class PartyRegistry
         }
 
         // pass the buck
-        joinParty(null, partyId, member.memberName, member.getGroupRank(info.group.getGroupId()),
+        joinParty(null, partyId, member.memberName, member.getGroupRank(info.groupId),
             new InvocationService.ResultListener() {
                 public void requestFailed (String cause) {
                     rl.requestFailed(cause);
@@ -400,7 +439,7 @@ public class PartyRegistry
     protected PartySort computePartySort (PartyInfo party, MemberObject member)
     {
         // start by giving you a score of 100 * your rank in the group. (0, 100, or 200)
-        int score = 100 * member.getGroupRank(party.group.getGroupId());
+        int score = 100 * member.getGroupRank(party.groupId);
         // give additional score if your friend is leading the party
         if (member.isFriend(party.leaderId)) {
             score += 250;

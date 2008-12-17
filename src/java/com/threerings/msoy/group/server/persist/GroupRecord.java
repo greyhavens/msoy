@@ -313,7 +313,7 @@ public class GroupRecord extends PersistentRecord
     /**
      * Creates a MediaDesc of the group logo
      */
-    public MediaDesc toLogo()
+    public MediaDesc toLogo ()
     {
         if (logoMediaHash == null) {
             return null;

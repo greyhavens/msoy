@@ -8,7 +8,6 @@ import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.GroupName;
 
 /**
  * Summarized party info that is both published to the node objects and returned
@@ -30,7 +29,7 @@ public class PartyInfo extends SimpleStreamableObject
     public int leaderId;
 
     /** The group sponsoring this party. */
-    public GroupName group;
+    public int groupId;
 
     /** The status line indicating what this party is doing. */
     public String status;
@@ -48,13 +47,13 @@ public class PartyInfo extends SimpleStreamableObject
 
     /** Create a PartyInfo. */
     public PartyInfo (
-        int id, String name, int leaderId, GroupName group, String status,
+        int id, String name, int leaderId, int groupId, String status,
         int population, byte recruitment)
     {
         this.id = id;
         this.name = name;
         this.leaderId = leaderId;
-        this.group = group;
+        this.groupId = groupId;
         this.status = status;
         this.population = population;
         this.recruitment = recruitment;
@@ -76,7 +75,7 @@ public class PartyInfo extends SimpleStreamableObject
             return true;
 
         case PartyCodes.RECRUITMENT_GROUP:
-            return member.isGroupMember(group.getGroupId());
+            return member.isGroupMember(groupId);
 
         default:
         case PartyCodes.RECRUITMENT_CLOSED:

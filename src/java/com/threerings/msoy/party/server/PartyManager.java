@@ -492,8 +492,8 @@ public class PartyManager
     protected void updatePartyInfo ()
     {
         _peerMgr.updatePartyInfo(new PartyInfo(
-            _partyObj.id, _partyObj.name, _partyObj.leaderId, _partyObj.group, _partyObj.status,
-            _partyObj.peeps.size(), _partyObj.recruitment));
+            _partyObj.id, _partyObj.name, _partyObj.leaderId, _partyObj.group.getGroupId(),
+            _partyObj.status, _partyObj.peeps.size(), _partyObj.recruitment));
     }
 
     protected void addPartySummary (SceneManager scmgr)
