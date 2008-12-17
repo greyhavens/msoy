@@ -31,6 +31,7 @@ public class PartyBoardPanel extends FloatingPanel
         var cf :ClassFactory = new ClassFactory(PartyBoardInfoRenderer);
         cf.properties = { wctx: _wctx };
         _partyList = new List();
+        _partyList.selectable = false;
         _partyList.itemRenderer = cf;
         _partyList.verticalScrollPolicy = ScrollPolicy.ON;
         _partyList.percentWidth = 100;
