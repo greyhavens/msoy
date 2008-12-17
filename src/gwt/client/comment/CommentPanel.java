@@ -88,6 +88,7 @@ public class CommentPanel extends MessagePanel
         InlinePanel tools = new InlinePanel("Tools");
 
         InlineLabel rating = new InlineLabel("" + _comment.currentRating, false, true, false);
+        rating.addStyleName("Posted");
         tools.add(rating);
 
         if (!_displayed) {
