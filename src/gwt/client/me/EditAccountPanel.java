@@ -54,7 +54,7 @@ public class EditAccountPanel extends FlowPanel
         if (CShell.getMemberId() == 0) {
             SmartTable table = new SmartTable(0, 10);
             table.setText(0, 0, _msgs.editMustLogon(), 1, "Header");
-            table.setWidget(1, 0, new LogonPanel());
+            table.setWidget(1, 0, new LogonPanel(LogonPanel.Mode.HORIZ));
             add(new TongueBox(null, table));
             return;
         }

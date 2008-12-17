@@ -154,7 +154,7 @@ public class FrameHeader extends SmartTable
             getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
             setWidget(0, 1, WidgetUtil.makeShim(10, 10));
             PushButton logon = new PushButton(
-                _cmsgs.headerLogon(), Link.createListener(Pages.ACCOUNT, "logon"));
+                _cmsgs.headerLogon(), Link.createListener(Pages.ACCOUNT, "create"));
             logon.setStyleName("LogonButton");
             logon.addStyleName("Button");
             setWidget(0, 2, logon);

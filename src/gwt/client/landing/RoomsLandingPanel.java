@@ -61,9 +61,7 @@ public class RoomsLandingPanel extends FlowPanel
         final FlowPanel logon = new FlowPanel();
         PushButton logonButton = new PushButton(_msgs.landingLogon());
         logonButton.addStyleName("LogonButton");
-        LogonPanel lpanel = new LogonPanel(false, logonButton);
-        lpanel.setCellSpacing(2); // tighten up!
-        logon.add(lpanel);
+        logon.add(new LogonPanel(LogonPanel.Mode.LANDING, logonButton));
         logon.add(logonButton);
         header.add(logon, 10, 0);
 

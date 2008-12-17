@@ -53,30 +53,6 @@
   cursor: pointer;
 }
 
-.logonPanel .gwt-TextBox,
-.logonPanel .gwt-PasswordTextBox {
-  background: #FFFFFF;
-  border: 1px solid #000000;
-}
-
-.frameHeader .logonPanel {
-  font-size: 10px;
-  background: url(/images/header/logon_bg.png) no-repeat bottom;
-  width: 211px;
-  padding: 0px 5px 5px 5px;
-}
-
-.frameHeader .logonPanel td {
-  vertical-align: middle;
-}
-
-.frameHeader .logonPanel .gwt-TextBox,
-.frameHeader .logonPanel .gwt-PasswordTextBox {
-  font-size: 10px;
-  width: 100px;
-  border: 1px solid #CCCCCC;
-}
-
 .statusPanel {
   padding-right: 40px;
   padding-bottom: 2px;

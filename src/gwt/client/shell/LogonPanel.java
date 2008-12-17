@@ -21,10 +21,12 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.BannedException;
+import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
+import client.ui.DefaultTextListener;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.ServiceUtil;
@@ -34,61 +36,49 @@ import client.util.ServiceUtil;
  */
 public class LogonPanel extends SmartTable
 {
-    /**
-     * Creates a logon panel with an internal submit button.
-     */
-    public LogonPanel ()
+    public enum Mode { LANDING, HORIZ, VERT };
+
+    public LogonPanel (Mode mode)
     {
-        this(new Button(_cmsgs.logonLogon()));
+        this(mode, MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _cmsgs.logonLogon(), null));
     }
 
-    /**
-     * Creates a logon panel with an external submit button and labels
-     */
-    public LogonPanel (ButtonBase logon)
+    public LogonPanel (Mode mode, ButtonBase logon)
     {
-        this(true, logon);
-    }
+        super("logonPanel", 0, 0);
 
-    /**
-     * Creates a logon panel with an external submit button.
-     *
-     * @param logon the button to use for form submit.
-     */
-    public LogonPanel (boolean displayLabels, ButtonBase logon)
-    {
-        super("logonPanel", 0, 10);
+        switch(mode) {
+        case LANDING: setCellSpacing(2); break;
+        case VERT: setCellSpacing(10); break;
+        case HORIZ: setCellPadding(5); break;
+        }
 
-        // create the widgets we'll use in our layout
+        // make our logon button initiate a logon
+        ClickListener onLogon = new ClickListener() {
+            public void onClick (Widget sender) {
+                doLogon();
+            }
+        };
+        logon.addClickListener(onLogon);
+
+        // create the email entry widget
         _email = new TextBox();
-        if (!displayLabels) {
-            String defaultText = (CookieUtil.get("who") != null) ?
-                CookieUtil.get("who") : _cmsgs.logonEmailDefault();
-            _email.setText(defaultText);
-            _email.addFocusListener(new FocusListener() {
-                public void onFocus (Widget sender) {
-                    if (_email.getText().equals(_cmsgs.logonEmailDefault())) {
-                        _email.setText("");
-                    }
-                }
-                public void onLostFocus (Widget sender) {
-                    if (_email.getText().equals("")) {
-                        _email.setText(_cmsgs.logonEmailDefault());
-                    }
-                }
-            });
+        if (CookieUtil.get("who") != null) {
+            _email.setText(CookieUtil.get("who"));
+        } else {
+            DefaultTextListener.configure(_email, _cmsgs.logonEmailDefault());
         }
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _password.setFocus(true);
             }
         }));
+
+        // create the password entry widget
         _password = new PasswordTextBox();
-        _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-            public void onClick (Widget sender) {
-                doLogon();
-            }
-        }));
+        _password.addKeyboardListener(new EnterClickAdapter(onLogon));
+
+        // create the forgot password tip link
         String lbl = _cmsgs.forgotPassword();
         Label forgot = MsoyUI.createActionLabel(lbl, "tipLabel", new ClickListener() {
             public void onClick (Widget widget) {
@@ -98,33 +88,39 @@ public class LogonPanel extends SmartTable
                 CShell.frame.showDialog(forgottenTitle, forgottenDialog);
             }
         });
-        logon.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                doLogon();
+
+        // add the interface for logging in via Facebook connect
+        Widget fbconnect = null;
+        if (DeploymentConfig.devDeployment) {
+            fbconnect = MsoyUI.createActionImage("/images/ui/fbconnect.png", new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO: display a little circular "pending" icon; turn off clickability
+                    CShell.frame.initiateExternalLogon(ExternalAuther.FACEBOOK);
+                }
+            });
+        }
+
+        // now lay everything out
+        switch (mode) {
+        case HORIZ:
+            setWidget(0, 0, _email);
+            setWidget(0, 1, _password);
+            setWidget(0, 2, logon);
+            setWidget(0, 3, forgot);
+            if (fbconnect != null) {
+                setText(1, 0, _cmsgs.logonFacebook(), 2, null);
+                getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
+                setWidget(1, 1, fbconnect, 2, null);
             }
-        });
+            break;
 
-        // now stick them in the right places
-        if (displayLabels) {
-            setText(0, 0, _cmsgs.logonEmail(), 1, "rightLabel");
-        }
-        setWidget(0, 1, _email);
-        setWidget(0, 3, forgot);
-        if (displayLabels) {
-            setText(1, 0, _cmsgs.logonPassword(), 1, "rightLabel");
-        }
-        setWidget(1, 1, _password);
-        setWidget(1, 3, logon);
-    }
-
-    @Override // from Widget
-    protected void onAttach ()
-    {
-        super.onAttach();
-        if (_email.getText().length() == 0) {
-            _email.setFocus(true);
-        } else {
-            _password.setFocus(true);
+        case LANDING:
+        case VERT:
+            setWidget(0, 0, _email);
+            setWidget(0, 1, forgot);
+            setWidget(1, 0, _password);
+            setWidget(1, 1, logon);
+            break;
         }
     }
 
@@ -132,6 +128,10 @@ public class LogonPanel extends SmartTable
     {
         String account = _email.getText(), password = _password.getText();
         if (account.length() <= 0 || password.length() <= 0) {
+            return;
+        }
+        if (account.equals(_cmsgs.logonEmailDefault())) {
+            MsoyUI.errorNear(_cmsgs.logonEmailPlease(), _email);
             return;
         }
         _usersvc.logon(DeploymentConfig.version, account, CShell.frame.md5hex(password),

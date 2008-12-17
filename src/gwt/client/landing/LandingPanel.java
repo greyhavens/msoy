@@ -61,9 +61,7 @@ public class LandingPanel extends SimplePanel
         final FlowPanel logon = new FlowPanel();
         PushButton logonButton = new PushButton(_msgs.landingLogon());
         logonButton.addStyleName("LogonButton");
-        LogonPanel lpanel = new LogonPanel(false, logonButton);
-        lpanel.setCellSpacing(2); // tighten up!
-        logon.add(lpanel);
+        logon.add(new LogonPanel(LogonPanel.Mode.LANDING, logonButton));
         logon.add(logonButton);
         content.add(logon, 590, 0);
 

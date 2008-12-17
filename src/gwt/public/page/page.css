@@ -4,6 +4,16 @@
  * CSS styles used by individual pages.
  */
 
+/** LogonPanel */
+.logonPanel .gwt-TextBox,
+.logonPanel .gwt-PasswordTextBox {
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  font-size: 14px;
+  width: 175px;
+}
+
+/** Session expired popup */
 .sessionExpired .Message {
   margin: 10px 10px 0px 10px;
 }

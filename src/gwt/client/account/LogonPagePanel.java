@@ -31,21 +31,9 @@ public class LogonPagePanel extends FlowPanel
         // add the interface for logging in with Whirled credentials
         add(MsoyUI.createLabel(_msgs.lpLogonHeader(), "Header"));
         PushButton logon = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.lpSubmit(), null);
-        add(new LogonPanel(logon));
-        add(tagButton(logon));
+        add(new LogonPanel(LogonPanel.Mode.HORIZ, logon));
 
-        // add the interface for logging in via Facebook connect
-        if (DeploymentConfig.devDeployment) {
-            add(MsoyUI.createLabel(_msgs.lpFBHeader(), "Header"));
-            add(tagButton(MsoyUI.createActionImage("/images/ui/fbconnect.gif", new ClickListener() {
-                public void onClick (Widget sender) {
-                    // TODO: display a little circular "pending" icon; turn off clickability
-                    CShell.frame.initiateExternalLogon(ExternalAuther.FACEBOOK);
-                }
-            })));
-        }
-
-        // finally add a link to accout creation
+        // add a link to accout creation
         add(MsoyUI.createLabel(_msgs.lpCreateHeader(), "Header"));
         add(tagButton(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.lpCreate(),
                                           Link.createListener(Pages.ACCOUNT, "create"))));

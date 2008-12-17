@@ -27,17 +27,8 @@
   height: 508px;
 }
 
-.createAccount .Logon {
-  float: right;
-  padding: 10px;
-}
-
-.createAccount .Logon .AlreadyMember {
-  padding: 5px 15px 0 0;
-}
-
-.createAccount .Logon .actionLabel {
-  margin-left: 5px;
+.createAccount .logonPanel {
+  margin: 0 0 0 10px;
 }
 
 .createAccount .Intro {
@@ -71,7 +62,6 @@
 
 .createAccount .gwt-TextBox, .createAccount .gwt-PasswordTextBox {
   width: 175px;
-  height: 20px;
 }
 
 .createAccount .Tip {
@@ -99,10 +89,6 @@
 
 .createAccount .dateFields div {
   color: #FFFFFF;
-}
-
-.createAccount .roundBox {
-  width: 340px;
 }
 
 .createAccount .roundBox .tipLabel {

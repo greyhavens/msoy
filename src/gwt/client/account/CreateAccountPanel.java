@@ -6,12 +6,11 @@ package client.account;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusWidget;
@@ -46,6 +45,7 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.EntryVectorCookie;
+import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -65,18 +65,13 @@ public class CreateAccountPanel extends FlowPanel
         setStyleName("createAccount");
 
         add(WidgetUtil.makeShim(15, 15));
+
         FlowPanel content = MsoyUI.createFlowPanel("Content");
         add(content);
 
-        // Logon button floats on the right
-        FloatPanel logonLink = new FloatPanel("Logon");
-        content.add(logonLink);
-        logonLink.add(MsoyUI.createLabel(_msgs.createAlreadyMember(), "AlreadyMember"));
-        PushButton logonButton = MsoyUI.createButton(
-            MsoyUI.SHORT_THIN, _msgs.createLogonLink(),
-            Link.createListener(Pages.ACCOUNT, "logon"));
-        MsoyUI.addTrackingListener(logonButton, "signupLogonButtonClicked", null);
-        logonLink.add(logonButton);
+        content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
+        PushButton logon = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.lpSubmit(), null);
+        content.add(new LogonPanel(LogonPanel.Mode.HORIZ, logon));
 
         content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
         content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
@@ -256,11 +251,6 @@ public class CreateAccountPanel extends FlowPanel
     protected void onLoad ()
     {
         super.onLoad();
-        DeferredCommand.addCommand(new Command() {
-            public void execute () {
-                _email.setFocus(true);
-            }
-        });
         RecaptchaUtil.init("recaptchaDiv");
     }
 
@@ -308,10 +298,6 @@ public class CreateAccountPanel extends FlowPanel
         }
         setStatus(status);
         return false;
-    }
-
-    protected void createAccount ()
-    {
     }
 
     protected void setStatus (String text, Widget ... trackers)
