@@ -318,7 +318,7 @@ public class MoneyLogic
 
             // If there is any change in coins from the purchase, create a transaction for it.
             MoneyTransactionRecord changeTx = null;
-            if (quote.getCoinChange() > 0 && !magicFree) {
+            if (quote.getCoinChange() > 0 && buyCurrency == Currency.BARS && !magicFree) {
                 try {
                     // Don't update accumulated coins column with this.
                     changeTx = _repo.accumulateAndStoreTransaction(buyerId, Currency.COINS, 
