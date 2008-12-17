@@ -316,6 +316,24 @@ public class MoneyLogic
                 item);
             _repo.storeTransaction(buyerTx);
 
+            // If there is any change in coins from the purchase, create a transaction for it.
+            MoneyTransactionRecord changeTx = null;
+            if (quote.getCoinChange() > 0 && !magicFree) {
+                try {
+                    changeTx = _repo.accumulateAndStoreTransaction(buyerId, Currency.COINS, 
+                        quote.getCoinChange(), TransactionType.CHANGE_IN_COINS, 
+                        MessageBundle.tcompose("m.change_received",
+                            itemName, item.type, item.catalogId), item, 
+                        buyerTx.id, buyerId);
+                } catch (MoneyRepository.NoSuchMemberException nsme) {
+                    // Likely a programming error in this case.
+                    log.warning("Invalid original purchaser, change transaction cancelled.",
+                        "buyer", buyerId, "creator", creatorId,
+                        "item", itemName, "catalogIdent", item);
+                    // but, we continue, just having no changeTx
+                }
+            }
+            
             // see what kind of payouts we're going pay- null means don't load, don't care
             CurrencyAmount creatorPayout = magicFree ? null : computeCreatorPayout(quote);
             CurrencyAmount affiliatePayout = magicFree ? null : computeAffiliatePayout(quote);
@@ -379,6 +397,10 @@ public class MoneyLogic
 
             // log this!
             logAction(UserAction.boughtItem(buyerId), buyerTx);
+            if (changeTx != null) {
+                // It's kind of a payout.  Really.
+                logAction(UserAction.receivedPayout(buyerId), changeTx);
+            }
             if (creatorTx != null) {
                 logAction(UserAction.receivedPayout(creatorId), creatorTx);
             }
@@ -391,6 +413,9 @@ public class MoneyLogic
 
             // notify affected members of their money changes
             _nodeActions.moneyUpdated(buyerTx);
+            if (changeTx != null) {
+                _nodeActions.moneyUpdated(changeTx);
+            }
             if (creatorTx != null) {
                 _nodeActions.moneyUpdated(creatorTx);
             }
@@ -409,6 +434,7 @@ public class MoneyLogic
             }
 
             return new BuyResult(magicFree, buyerTx.toMoneyTransaction(),
+                (changeTx == null) ? null : changeTx.toMoneyTransaction(),
                 (creatorTx == null) ? null : creatorTx.toMoneyTransaction(),
                 (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction(),
                 (charityTx == null) ? null : charityTx.toMoneyTransaction());

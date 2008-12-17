@@ -6,6 +6,7 @@ package client.shop;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -57,6 +58,8 @@ public class BuyPanel extends FlowPanel
         _buyBars = new BuyButton(Currency.BARS);
         _barPanel = new FlowPanel();
         _barPanel.add(_buyBars);
+        _changeLabel = new Label();
+        _barPanel.add(_changeLabel);
         Widget link = Link.buyBars(_msgs.listingBuyBars());
         link.setStyleName("GetBars");
         _barPanel.add(link);
@@ -65,6 +68,11 @@ public class BuyPanel extends FlowPanel
         _buyCoins = new BuyButton(Currency.COINS);
         add(_buyCoins);
 
+        // Display exchange rate 
+        _wikiLink = new Anchor();
+        _wikiLink.setHref("http://wiki.whirled.com/Currency");
+        _wikiLink.setTarget("_top");
+        
         updatePrice(_listing.quote);
     }
 
@@ -148,7 +156,17 @@ public class BuyPanel extends FlowPanel
 
         _barPanel.setVisible(quote.getCoins() > 0);
         _buyBars.setAmount(quote.getBars());
+        _changeLabel.setText(quote.getCoinChange() > 0 ? 
+            _msgs.listingCoinChange(Currency.COINS.format(
+            _listing.quote.getCoinChange())) : "");
         _buyCoins.setAmount(quote.getCoins());
+        if (quote.getListedCurrency() == Currency.BARS) {
+            _wikiLink.setText(_msgs.listingExchangeRate(Currency.COINS.format(
+                (int)quote.getExchangeRate())));
+            add(_wikiLink);
+        } else {
+            remove(_wikiLink);
+        }
     }
 
     protected class BuyCallback extends ClickCallback<CatalogService.PurchaseResult>
@@ -230,7 +248,9 @@ public class BuyPanel extends FlowPanel
 
     protected BuyButton _buyBars, _buyCoins;
     protected FlowPanel _barPanel;
-
+    protected Label _changeLabel;
+    protected Anchor _wikiLink;
+    
     protected int _timesBought;
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);

@@ -19,11 +19,12 @@ public class BuyResult
      * personnel and we shouldn't increment the stat of the purchase.
      */
     public BuyResult (
-        boolean magicFreeBuy, MoneyTransaction memberTx,
+        boolean magicFreeBuy, MoneyTransaction memberTx, MoneyTransaction changeTx,
         MoneyTransaction creatorTx, MoneyTransaction affiliateTx, MoneyTransaction charityTx)
     {
         _magicFree = magicFreeBuy;
         _memberTransaction = memberTx;
+        _changeTransaction = changeTx;
         _creatorTransaction = creatorTx;
         _affiliateTransaction = affiliateTx;
         _charityTransaction = charityTx;
@@ -40,6 +41,15 @@ public class BuyResult
     public MoneyTransaction getMemberTransaction ()
     {
         return _memberTransaction;
+    }
+    
+    /**
+     * The transaction for the change in coins when purchasing an item listed in coins with bars.
+     * Null if there was no change.
+     */
+    public MoneyTransaction getChangeTransaction ()
+    {
+        return _changeTransaction;
     }
     
     /**
@@ -78,6 +88,7 @@ public class BuyResult
         // examine each transaction in turn, freely blowing away balance info from an earlier
         // transaction if applicable, since payouts are done in buyer, creator, affiliate order.
         updateBalance(balances, buyerId, _memberTransaction);
+        updateBalance(balances, buyerId, _changeTransaction);
         updateBalance(balances, buyerId, _creatorTransaction);
         updateBalance(balances, buyerId, _affiliateTransaction);
         return balances;
@@ -106,6 +117,7 @@ public class BuyResult
     
     protected boolean _magicFree;
     protected MoneyTransaction _memberTransaction;
+    protected MoneyTransaction _changeTransaction;
     protected MoneyTransaction _creatorTransaction;
     protected MoneyTransaction _affiliateTransaction;
     protected MoneyTransaction _charityTransaction;
