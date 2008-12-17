@@ -122,7 +122,7 @@ public class CommentsPanel extends PagedGrid<Comment>
      */
     protected boolean shouldDisplay (Comment comment)
     {
-        return comment.currentRating >= -2;
+        return comment.currentRating >= -5;
     }
 
     /**
