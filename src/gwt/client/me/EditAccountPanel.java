@@ -26,7 +26,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.CharityInfo;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
@@ -183,59 +182,57 @@ public class EditAccountPanel extends FlowPanel
         add(new TongueBox(_msgs.editPasswordHeader(), table));
         
         // Select charity interface
-        if (DeploymentConfig.devDeployment) {
-            final SmartTable charityTable = new SmartTable(0, 10);
-            charityTable.setText(0, 0, _msgs.charities(), 3, "Tip");
-            
-            final List<RadioButton> charityButtons = new ArrayList<RadioButton>(
-                    accountInfo.charityNames.size() + 1);
-            
-            // Add random charity
-            RadioButton randomCharity = new RadioButton(CHARITY_RADIO_GROUP);
-            charityButtons.add(randomCharity);
-            charityTable.setWidget(1, 0, randomCharity, 1, "rightLabel");
-            charityTable.setText(1, 1, _msgs.defaultCharity(), 2, null);
-            if (accountInfo.charityMemberId == 0) {
-                randomCharity.setChecked(true);
-            }
-            
-            // Add charity info for each charity.
-            int row = 2;
-            Collections.sort(accountInfo.charityNames, MemberName.BY_DISPLAY_NAME);
-            for (MemberName name : accountInfo.charityNames) {
-                CharityInfo charity = accountInfo.charities.get(name.getMemberId());
-                MediaDesc photo = accountInfo.charityPhotos.get(name.getMemberId());
-                
-                RadioButton charityButton = new RadioButton(CHARITY_RADIO_GROUP);
-                if (accountInfo.charityMemberId == name.getMemberId()) {
-                    charityButton.setChecked(true);
-                }
-                charityButtons.add(charityButton);
-                charityTable.setWidget(row, 0, charityButton);
-                charityTable.setWidget(row, 1, MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE));
-                charityTable.getFlexCellFormatter().setRowSpan(row, 1, 2);
-                charityTable.getCellFormatter().setVerticalAlignment(row, 1, HasVerticalAlignment.ALIGN_TOP);
-                charityTable.setText(row++, 2, name.getNormal());
-                charityTable.setText(row++, 1, 
-                    charity.description, 1, "charityDescription");
-            }
-            
-            charityTable.setWidget(row, 1, _upcharity = new Button(_cmsgs.update(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    // The index of the selected radio button in the list will be the index in
-                    // the list of charity names + 1 (the +1 for the random charity).
-                    int memberId = 0;
-                    for (int i = 1; i < charityButtons.size(); i++) {
-                        if (charityButtons.get(i).isChecked()) {
-                            memberId = accountInfo.charityNames.get(i-1).getMemberId();
-                            break;
-                        }
-                    }
-                    updateCharity(memberId);
-                }
-            }));
-            add(new TongueBox(_msgs.charitiesHeader(), charityTable));
+        final SmartTable charityTable = new SmartTable(0, 10);
+        charityTable.setText(0, 0, _msgs.charities(), 3, "Tip");
+        
+        final List<RadioButton> charityButtons = new ArrayList<RadioButton>(
+                accountInfo.charityNames.size() + 1);
+        
+        // Add random charity
+        RadioButton randomCharity = new RadioButton(CHARITY_RADIO_GROUP);
+        charityButtons.add(randomCharity);
+        charityTable.setWidget(1, 0, randomCharity, 1, "rightLabel");
+        charityTable.setText(1, 1, _msgs.defaultCharity(), 2, null);
+        if (accountInfo.charityMemberId == 0) {
+            randomCharity.setChecked(true);
         }
+        
+        // Add charity info for each charity.
+        int row = 2;
+        Collections.sort(accountInfo.charityNames, MemberName.BY_DISPLAY_NAME);
+        for (MemberName name : accountInfo.charityNames) {
+            CharityInfo charity = accountInfo.charities.get(name.getMemberId());
+            MediaDesc photo = accountInfo.charityPhotos.get(name.getMemberId());
+            
+            RadioButton charityButton = new RadioButton(CHARITY_RADIO_GROUP);
+            if (accountInfo.charityMemberId == name.getMemberId()) {
+                charityButton.setChecked(true);
+            }
+            charityButtons.add(charityButton);
+            charityTable.setWidget(row, 0, charityButton);
+            charityTable.setWidget(row, 1, MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE));
+            charityTable.getFlexCellFormatter().setRowSpan(row, 1, 2);
+            charityTable.getCellFormatter().setVerticalAlignment(row, 1, HasVerticalAlignment.ALIGN_TOP);
+            charityTable.setText(row++, 2, name.getNormal());
+            charityTable.setText(row++, 1, 
+                charity.description, 1, "charityDescription");
+        }
+        
+        charityTable.setWidget(row, 1, _upcharity = new Button(_cmsgs.update(), new ClickListener() {
+            public void onClick (Widget sender) {
+                // The index of the selected radio button in the list will be the index in
+                // the list of charity names + 1 (the +1 for the random charity).
+                int memberId = 0;
+                for (int i = 1; i < charityButtons.size(); i++) {
+                    if (charityButtons.get(i).isChecked()) {
+                        memberId = accountInfo.charityNames.get(i-1).getMemberId();
+                        break;
+                    }
+                }
+                updateCharity(memberId);
+            }
+        }));
+        add(new TongueBox(_msgs.charitiesHeader(), charityTable));
     }
 
     protected void updateRealName ()
