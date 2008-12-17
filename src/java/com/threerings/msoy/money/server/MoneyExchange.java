@@ -83,11 +83,18 @@ public class MoneyExchange
             return;
         }
 
-        boolean barsCreated = (purchaseCurrency == Currency.COINS);
+        int bars;
+        int coins;
         // If they coin-bought, then bars were removed from the pool. Otherwise, bars
         // were added to the pool.
-        int bars = quote.getBars() * (barsCreated ? -1 : 1);
-        int coins = quote.getCoins() * (barsCreated ? 1 : -1);
+        if (purchaseCurrency == Currency.COINS) {
+            bars = -1 * quote.getBars();
+            coins = quote.getCoins();
+
+        } else {
+            bars = quote.getBars();
+            coins = -1 * (quote.getCoins() + quote.getCoinChange());
+        }
 
         // record everything about the exchange
         _moneyRepo.recordExchange(bars, coins, quote.getExchangeRate(), txId);
