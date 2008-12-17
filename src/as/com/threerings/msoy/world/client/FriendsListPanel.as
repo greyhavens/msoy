@@ -110,10 +110,7 @@ public class FriendsListPanel extends FlyingPanel
             return;
         }
 
-        var renderer :ClassFactory = new ClassFactory(FriendRenderer);
-        renderer.properties = { mctx: _wctx };
-
-        _friendsList = new Roster(_wctx, MemberObject.FRIENDS, renderer,
+        _friendsList = new Roster(_wctx, MemberObject.FRIENDS, FriendRenderer.createFactory(_wctx),
             PlayerEntry.sortByName, FriendEntry.isOnline);
 
         addChild(_friendsList);

@@ -13,6 +13,8 @@ import mx.controls.Text;
 
 import mx.controls.scrollClasses.ScrollBar;
 
+import mx.core.ClassFactory;
+import mx.core.IFactory;
 import mx.core.ScrollPolicy;
 
 import com.threerings.util.CommandEvent;
@@ -20,6 +22,7 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlayerRenderer;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -27,6 +30,13 @@ import com.threerings.msoy.data.all.PlayerEntry;
 
 public class FriendRenderer extends PlayerRenderer 
 {
+    public static function createFactory (ctx :MsoyContext) :IFactory
+    {
+        var cf :ClassFactory = new ClassFactory(FriendRenderer);
+        cf.properties = { mctx: ctx };
+        return cf;
+    }
+
     public function FriendRenderer () 
     {
         super();

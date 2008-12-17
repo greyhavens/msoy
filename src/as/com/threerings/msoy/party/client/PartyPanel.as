@@ -5,7 +5,6 @@ package com.threerings.msoy.party.client {
 
 import mx.collections.ArrayCollection;
 import mx.controls.TextInput;
-import mx.core.ClassFactory;
 import mx.events.FlexEvent;
 
 import com.threerings.util.Log;
@@ -63,10 +62,7 @@ public class PartyPanel extends FloatingPanel
 
         var isLeader :Boolean = (_partyObj.leaderId == _ctx.getMyName().getMemberId());
 
-        var factory :ClassFactory = new ClassFactory(PeepRenderer);
-        factory.properties = { mctx: _wctx, partyObj: _partyObj };
-
-        _roster = new Roster(_ctx, PartyObject.PEEPS, factory,
+        _roster = new Roster(_ctx, PartyObject.PEEPS, PeepRenderer.createFactory(_wctx, _partyObj),
             PartyPeep.createSortByOrder(_partyObj));
         addChild(_roster);
 
