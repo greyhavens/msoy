@@ -89,7 +89,6 @@ public class PriceQuote extends SimpleStreamableObject
     /**
      * Retrieve the amount of change, in coins, when bar-buying a coin-listed item.
      * If the listedType is BARS, this will always be 0.
-     * Currently, Three Rings eats this change, nom nom nom.
      */
     public int getCoinChange ()
     {
