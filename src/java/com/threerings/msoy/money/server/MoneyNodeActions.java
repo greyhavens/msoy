@@ -23,25 +23,26 @@ class MoneyNodeActions
      * Dispatches a notification that a member's money count has changed to whichever server they
      * are logged into.
      */
-    public void moneyUpdated (final MoneyTransactionRecord tx)
+    public void moneyUpdated (final MoneyTransactionRecord tx, boolean updateAcc)
     {
-        moneyUpdated(tx.memberId, tx.currency, tx.amount);
+        moneyUpdated(tx.memberId, tx.currency, tx.amount, updateAcc);
     }
     
-    public void moneyUpdated (int memberId, Currency currency, int amount) 
+    public void moneyUpdated (int memberId, Currency currency, int amount, boolean updateAcc) 
     {
         if (currency != Currency.BLING) { // avoid spamming the other nodes
-            _peerMan.invokeNodeAction(new MoneyUpdated(memberId, currency, amount));
+            _peerMan.invokeNodeAction(new MoneyUpdated(memberId, currency, amount, updateAcc));
         }
     }
 
     protected static class MoneyUpdated extends MemberNodeAction
     {
-        public MoneyUpdated (int memberId, Currency currency, int amount)
+        public MoneyUpdated (int memberId, Currency currency, int amount, boolean updateAcc)
         {
             super(memberId);
             _currency = currency;
             _amount = amount;
+            _updateAcc = updateAcc;
         }
         
         public MoneyUpdated () { }
@@ -54,7 +55,7 @@ class MoneyNodeActions
                 switch (_currency) {
                 case COINS:
                     memobj.setCoins(memobj.coins + _amount);
-                    if (_amount > 0) {
+                    if (_amount > 0 && _updateAcc) {
                         memobj.setAccCoins(memobj.accCoins + _amount);
                     }
                     break;
@@ -72,6 +73,7 @@ class MoneyNodeActions
 
         protected Currency _currency;
         protected int _amount;
+        protected boolean _updateAcc;
     }
 
     protected final MsoyPeerManager _peerMan;

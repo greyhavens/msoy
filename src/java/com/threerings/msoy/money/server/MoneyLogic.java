@@ -166,7 +166,7 @@ public class MoneyLogic
      */
     public void notifyCoinsEarned (int memberId, int amount)
     {
-        _nodeActions.moneyUpdated(memberId, Currency.COINS, amount);
+        _nodeActions.moneyUpdated(memberId, Currency.COINS, amount, true);
     }
 
     /**
@@ -186,9 +186,9 @@ public class MoneyLogic
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
 
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
-            memberId, Currency.COINS, amount, TransactionType.AWARD, action.description, null);
+            memberId, Currency.COINS, amount, TransactionType.AWARD, action.description, null, true);
         if (notify) {
-            _nodeActions.moneyUpdated(tx);
+            _nodeActions.moneyUpdated(tx, true);
         }
         logAction(action, tx);
 
@@ -210,8 +210,8 @@ public class MoneyLogic
 
         UserAction action = UserAction.boughtBars(memberId, payment);
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(memberId,
-            Currency.BARS, numBars, TransactionType.BARS_BOUGHT, action.description, null);
-        _nodeActions.moneyUpdated(tx);
+            Currency.BARS, numBars, TransactionType.BARS_BOUGHT, action.description, null, true);
+        _nodeActions.moneyUpdated(tx, true);
         logAction(action, tx);
         return tx.toMoneyTransaction();
     }
@@ -232,11 +232,11 @@ public class MoneyLogic
 
         MoneyTransactionRecord tx = (delta > 0)
             ? _repo.accumulateAndStoreTransaction(memberId, currency, delta,
-                TransactionType.SUPPORT_ADJUST, action.description, null)
+                TransactionType.SUPPORT_ADJUST, action.description, null, true)
             : _repo.deductAndStoreTransaction(memberId, currency, -delta,
                 TransactionType.SUPPORT_ADJUST, action.description, null);
 
-        _nodeActions.moneyUpdated(tx);
+        _nodeActions.moneyUpdated(tx, true);
         logAction(action, tx);
     }
 
@@ -320,11 +320,12 @@ public class MoneyLogic
             MoneyTransactionRecord changeTx = null;
             if (quote.getCoinChange() > 0 && !magicFree) {
                 try {
+                    // Don't update accumulated coins column with this.
                     changeTx = _repo.accumulateAndStoreTransaction(buyerId, Currency.COINS, 
                         quote.getCoinChange(), TransactionType.CHANGE_IN_COINS, 
                         MessageBundle.tcompose("m.change_received",
                             itemName, item.type, item.catalogId), item, 
-                        buyerTx.id, buyerId);
+                        buyerTx.id, buyerId, false);
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     // Likely a programming error in this case.
                     log.warning("Invalid original purchaser, change transaction cancelled.",
@@ -347,7 +348,7 @@ public class MoneyLogic
                         TransactionType.CREATOR_PAYOUT,
                         MessageBundle.tcompose("m.item_sold",
                             itemName, item.type, item.catalogId),
-                        item, buyerTx.id, buyerId);
+                        item, buyerTx.id, buyerId, true);
 
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     log.warning("Invalid item creator, payout cancelled.",
@@ -367,7 +368,7 @@ public class MoneyLogic
                         TransactionType.AFFILIATE_PAYOUT,
                         MessageBundle.tcompose("m.item_affiliate",
                             buyerRec.name, buyerRec.memberId),
-                        item, buyerTx.id, buyerId);
+                        item, buyerTx.id, buyerId, true);
 
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     log.warning("Invalid user affiliate, payout cancelled.",
@@ -386,7 +387,7 @@ public class MoneyLogic
                         charityPayout.currency, charityPayout.amount,
                         TransactionType.CHARITY_PAYOUT,
                         MessageBundle.tcompose("m.item_charity", buyerRec.name, buyerRec.memberId),
-                        item, buyerTx.id, buyerId);
+                        item, buyerTx.id, buyerId, true);
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     log.warning("Invalid user charity, payout cancelled.",
                         "buyer", buyerId, "charity", charityId,
@@ -412,18 +413,18 @@ public class MoneyLogic
             }
 
             // notify affected members of their money changes
-            _nodeActions.moneyUpdated(buyerTx);
+            _nodeActions.moneyUpdated(buyerTx, true);
             if (changeTx != null) {
-                _nodeActions.moneyUpdated(changeTx);
+                _nodeActions.moneyUpdated(changeTx, false); // Don't accumulate
             }
             if (creatorTx != null) {
-                _nodeActions.moneyUpdated(creatorTx);
+                _nodeActions.moneyUpdated(creatorTx, true);
             }
             if (affiliateTx != null) {
-                _nodeActions.moneyUpdated(affiliateTx);
+                _nodeActions.moneyUpdated(affiliateTx, true);
             }
             if (charityTx != null) {
-                _nodeActions.moneyUpdated(charityTx);
+                _nodeActions.moneyUpdated(charityTx, true);
             }
 
             // The price no longer needs to be in the cache.
@@ -485,7 +486,7 @@ public class MoneyLogic
                 if (amount > 0) {
                     updates.add(_repo.accumulateAndStoreTransaction(memberId, currency, amount,
                         TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose("m.item_refund",
-                        itemName, item.type, item.catalogId), item));
+                        itemName, item.type, item.catalogId), item, true));
                     continue;
 
                 }
@@ -510,8 +511,10 @@ public class MoneyLogic
 
         for (MoneyTransactionRecord txRec : updates) {
             // TODO: logAction?
-            // notify members
-            _nodeActions.moneyUpdated(txRec);
+            // notify members.  Only update accumulated total if the transaction is not change,
+            // which never previously counted in accumulated total.
+            _nodeActions.moneyUpdated(txRec, 
+                txRec.transactionType != TransactionType.CHANGE_IN_COINS);
         }
 
         return updates.size();
@@ -538,7 +541,7 @@ public class MoneyLogic
         _repo.commitBlingCashOutRequest(memberId, amount);
 
         // if that didn't throw a NotEnoughMoneyException, we're good to go.
-        _nodeActions.moneyUpdated(deductTx);
+        _nodeActions.moneyUpdated(deductTx, true);
         logAction(UserAction.cashedOutBling(memberId), deductTx);
     }
 
@@ -615,12 +618,12 @@ public class MoneyLogic
             memberId, Currency.BLING, blingAmount * 100,
             TransactionType.SPENT_FOR_EXCHANGE, "m.exchanged_for_bars", null);
         // if that didn't throw a NotEnoughMoneyException, we're good to go.
-        _nodeActions.moneyUpdated(deductTx);
+        _nodeActions.moneyUpdated(deductTx, true);
 
         MoneyTransactionRecord accumTx = _repo.accumulateAndStoreTransaction(
             memberId, Currency.BARS, blingAmount,
-            TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null);
-        _nodeActions.moneyUpdated(accumTx);
+            TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null, true);
+        _nodeActions.moneyUpdated(accumTx, true);
 
         logAction(UserAction.exchangedCurrency(memberId), deductTx);
         logAction(UserAction.exchangedCurrency(memberId), accumTx);

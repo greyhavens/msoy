@@ -163,9 +163,9 @@ public class MoneyRepository extends DepotRepository
      */
     public MoneyTransactionRecord accumulateAndStoreTransaction (
         int memberId, Currency currency, int amount,
-        TransactionType type, String description, Object subject)
+        TransactionType type, String description, Object subject, boolean updateAcc)
     {
-        MoneyTransactionRecord tx = accumulate(memberId, currency, amount);
+        MoneyTransactionRecord tx = accumulate(memberId, currency, amount, updateAcc);
         tx.fill(type, description, subject);
         storeTransaction(tx);
         return tx;
@@ -177,9 +177,9 @@ public class MoneyRepository extends DepotRepository
     public MoneyTransactionRecord accumulateAndStoreTransaction (
         int memberId, Currency currency, int amount,
         TransactionType type, String description, Object subject,
-        int referenceTxId, int referenceMemberId)
+        int referenceTxId, int referenceMemberId, boolean updateAcc)
     {
-        MoneyTransactionRecord tx = accumulate(memberId, currency, amount);
+        MoneyTransactionRecord tx = accumulate(memberId, currency, amount, updateAcc);
         tx.fill(type, description, subject);
         tx.referenceTxId = referenceTxId;
         tx.referenceMemberId = referenceMemberId;
@@ -556,16 +556,19 @@ public class MoneyRepository extends DepotRepository
      * Accumulate money, return a partially-populated MoneyTransactionRecord for
      * storing.
      */
-    protected MoneyTransactionRecord accumulate (int memberId, Currency currency, int amount)
+    protected MoneyTransactionRecord accumulate (int memberId, Currency currency, int amount, 
+        boolean updateAcc)
     {
         Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
 
         ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
         ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
-        Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
-            .put(currencyCol.getField(), new Arithmetic.Add(currencyCol, amount))
-            .put(currencyAccCol.getField(), new Arithmetic.Add(currencyAccCol, amount))
-            .build();
+        ImmutableMap.Builder<String, SQLExpression> builder = new ImmutableMap.Builder<String, SQLExpression>()
+            .put(currencyCol.getField(), new Arithmetic.Add(currencyCol, amount));
+        if (updateAcc) {
+            builder.put(currencyAccCol.getField(), new Arithmetic.Add(currencyAccCol, amount));
+        }
+        Map<String, SQLExpression> fieldValues = builder.build();
         Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
 
         int count = updateLiteral(MemberAccountRecord.class, key, key, fieldValues);
