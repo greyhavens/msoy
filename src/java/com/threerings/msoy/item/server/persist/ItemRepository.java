@@ -73,7 +73,6 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 
@@ -1290,18 +1289,6 @@ public abstract class ItemRepository<T extends ItemRecord>
             return itemId < 0;
         }
     };
-
-    protected static ItemFlagRecord convertFromLegacyFlag (ItemRecord item, ItemFlag.Flag flag)
-    {
-        ItemFlagRecord frec = new ItemFlagRecord();
-        frec.comment = "";
-        frec.flag = (byte)flag.ordinal();
-        frec.itemId = item.itemId;
-        frec.itemType = item.getType();
-        frec.memberId = 1; // nicer than special casing 0 everywhere. Mr. Bayne uberflagger :)
-        frec.timestamp = new Timestamp(System.currentTimeMillis());
-        return frec;
-    }
 
     /** The byte type of our item. */
     protected byte _itemType;
