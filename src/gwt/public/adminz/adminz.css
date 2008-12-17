@@ -34,6 +34,7 @@
 /** Review Panel **/
 .reviewPanel {
   padding: 10px;
+  font-size: 12px;
 }
 
 .reviewPanel .Item {
@@ -63,13 +64,12 @@
   vertical-align: top;
 }
 
-.reviewPanel .Table .Comment .CommentText /* Comment */ { 
-  border: 1px black solid;
-  font-size :12px;
+.reviewPanel .Table .Comment .CommentText {
+  border-top: thin dotted gray;
+  padding-top: 3px;
 }
 
-.reviewPanel .Table .Comment .EmptyCommentText /* Comment */ { 
-  font-size :12px;
+.reviewPanel .Table .Comment .EmptyCommentText {
   font-style: italic;
 }
 

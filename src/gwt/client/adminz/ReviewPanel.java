@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -122,12 +123,15 @@ public class ReviewPanel extends FlowPanel
             nameTime.setSpacing(2);
             nameTime.add(Link.memberView(memberName.toString(), item.memberId));
             nameTime.add(MsoyUI.createLabel(" - ", null));
+            nameTime.setStyleName("CommentHeader");
             Label time = MsoyUI.createLabel(MsoyUI.formatDateTime(item.timestamp), "Time");
             time.setWordWrap(false);
             nameTime.add(time);
             add(nameTime);
             if (item.comment.length() > 0) {
-                add(MsoyUI.createLabel(MsoyUI.escapeHTML(item.comment), "CommentText"));
+                HTML comment = MsoyUI.createRestrictedHTML(item.comment, false);
+                comment.setStyleName("CommentText");
+                add(comment);
             } else {
                 add(MsoyUI.createLabel("Empty", "EmptyCommentText"));
             }

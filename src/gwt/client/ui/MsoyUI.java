@@ -236,11 +236,29 @@ public class MsoyUI
                    .replaceAll("\"", "&quot;");
     }
 
-    /** Creates a safe, restricted HTML from user input. */
+    /**
+     * Creates a safe, restricted HTML from user input. URLs specifying a *.whirled.com domain are
+     * automatically turned into links. Html characters are escaped. */
     public static HTML createRestrictedHTML (String html)
     {
+        return createRestrictedHTML(html, true);
+    }
+
+    /** Creates a safe, restricted HTML from user input. URLs are automatically tuend into links,
+     * other text is escaped. Optionally, the URLs that get converted may be limited yo only those
+     * in a whirled.com subdomain. */
+    public static HTML createRestrictedHTML (String html, boolean whirledOnly)
+    {
         html = escapeHTML(html);
-        html = html.replaceAll("(http://(.*?\\.)?whirled.com/([^ ]+))", "<a href=\"$1\">$3</a>");
+        if (whirledOnly) {
+            html = html.replaceAll("(http://(.*?\\.)?whirled.com/([^ ]+))",
+                "<a href=\"$1\">$3</a>");
+
+        } else {
+            // TODO: java.net.IDN
+            html = html.replaceAll("(http://(([-0-9a-zA-Z]+.)+[-0-9a-zA-Z]+(/([^ ]+))?))",
+                "<a href=\"$1\">$2</a>");
+        }
         return createHTML(html, null);
     }
 
