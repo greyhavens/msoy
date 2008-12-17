@@ -60,8 +60,8 @@ public class ProfilePanel extends FlowPanel
     /** The blurbs we'll display on our profile. */
     protected Blurb[] _blurbs = {
         new ProfileBlurb(), new InterestsBlurb(), new FriendsBlurb(), new StampsBlurb(),
-        new GalleriesBlurb(), new TrophiesBlurb(), new RatingsBlurb(), new GroupsBlurb(),
-        new FavoritesBlurb(), new FeedBlurb(), new CommentsBlurb()
+        new MedalsBlurb(), new GalleriesBlurb(), new TrophiesBlurb(), new RatingsBlurb(), 
+        new GroupsBlurb(), new FavoritesBlurb(), new FeedBlurb(), new CommentsBlurb()
     };
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);

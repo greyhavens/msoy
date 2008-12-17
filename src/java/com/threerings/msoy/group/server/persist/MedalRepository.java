@@ -16,6 +16,8 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.SchemaMigration;
+import com.samskivert.depot.clause.Limit;
+import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Conditionals.In;
@@ -87,6 +89,15 @@ public class MedalRepository extends DepotRepository
     public List<EarnedMedalRecord> loadEarnedMedals (int memberId)
     {
         return findAll(EarnedMedalRecord.class, new Where(EarnedMedalRecord.MEMBER_ID_C, memberId));
+    }
+
+    /**
+     * Returns a list of the recently earned EarnedMedalRecords.
+     */
+    public List<EarnedMedalRecord> loadRecentEarnedMedals (int memberId, int limit)
+    {
+        return findAll(EarnedMedalRecord.class, new Where(EarnedMedalRecord.MEMBER_ID_C, memberId),
+            new Limit(0, limit), OrderBy.descending(EarnedMedalRecord.WHEN_EARNED_C));
     }
 
     /**

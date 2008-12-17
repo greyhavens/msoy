@@ -332,6 +332,8 @@ public class MemberRepository extends DepotRepository
      */
     public List<Integer> findMembersByDisplayName (String search, boolean exact, int limit)
     {
+        // TEMP: Take this out when fulltext is working locally.
+        exact = true;
         search = search.toLowerCase();
         SQLOperator op = exact ?
             new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C), search) :
@@ -354,7 +356,11 @@ public class MemberRepository extends DepotRepository
         search = search.toLowerCase();
         Where whereClause = new Where(new And(
             new In(MemberRecord.MEMBER_ID_C, memberIds),
-            new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search)));
+              // TEMP: There's something wrong with my Postgres install that is preventing fulltext
+              // searching from working.
+            new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C), search)));
+              // new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search)));
+
         return Lists.transform(
             findAllKeys(MemberRecord.class, false, whereClause),
             RecordFunctions.<MemberRecord>getIntKey());

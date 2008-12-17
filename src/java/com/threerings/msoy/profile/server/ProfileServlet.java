@@ -23,6 +23,7 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -45,7 +46,11 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.group.server.persist.MedalRecord;
+import com.threerings.msoy.group.server.persist.MedalRepository;
+
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
@@ -77,7 +82,7 @@ public class ProfileServlet extends MsoyServiceServlet
         if (memrec.isGreeter()) {
             return GreeterStatus.GREETER;
 
-        } else if (memrec.isTroublemaker() || memrec.level < MIN_GREETER_LEVEL || 
+        } else if (memrec.isTroublemaker() || memrec.level < MIN_GREETER_LEVEL ||
             numFriends < MIN_GREETER_FRIENDS) {
             return GreeterStatus.DISABLED;
 
@@ -85,7 +90,7 @@ public class ProfileServlet extends MsoyServiceServlet
             return GreeterStatus.NORMAL;
         }
     }
-    
+
     // from interface ProfileService
     public ProfileResult loadProfile (final int memberId)
         throws ServiceException
@@ -123,6 +128,23 @@ public class ProfileServlet extends MsoyServiceServlet
             Lists.transform(
                 _badgeRepo.loadRecentEarnedBadges(tgtrec.memberId, ProfileResult.MAX_STAMPS),
                 EarnedBadgeRecord.TO_BADGE));
+
+        // load medal info
+        result.medals = Lists.newArrayList();
+        Map<Integer, Award> medals = Maps.newHashMap();
+        for (EarnedMedalRecord earnedMedalRec :
+                _medalRepo.loadRecentEarnedMedals(memberId, ProfileResult.MAX_STAMPS)) {
+            Award medal = new Award();
+            medal.whenEarned = earnedMedalRec.whenEarned.getTime();
+            medals.put(earnedMedalRec.medalId, medal);
+            result.medals.add(medal);
+        }
+        for (MedalRecord medalRec : _medalRepo.loadMedals(medals.keySet())) {
+            Award medal = medals.get(medalRec.medalId);
+            medal.name = medalRec.name;
+            medal.description = medalRec.description;
+            medal.icon = medalRec.createIconMedia();
+        }
 
         // load gallery info
         result.galleries = _galleryLogic.loadGalleries(tgtrec.memberId);
@@ -205,7 +227,7 @@ public class ProfileServlet extends MsoyServiceServlet
             memrec.setFlag(MemberRecord.Flag.GREETER, greeter);
             _memberRepo.storeFlags(memrec);
         }
-        
+
         if (statusChanged || nameChanged || photoChanged) {
             // let the world servers know about the info change
             MemberNodeActions.infoChanged(
@@ -384,6 +406,7 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected GalleryLogic _galleryLogic;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected MedalRepository _medalRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected RatingRepository _ratingRepo;

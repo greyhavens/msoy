@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -29,7 +30,7 @@ public interface ProfileService extends RemoteService
 {
     /** The various greeter states. */
     enum GreeterStatus {NORMAL, GREETER, DISABLED};
-    
+
     /** Provides results for {@link #loadProfile}. */
     public static class ProfileResult implements IsSerializable
     {
@@ -65,6 +66,11 @@ public interface ProfileService extends RemoteService
          * This user's recent stamps.
          */
         public List<EarnedBadge> stamps;
+
+        /**
+         * The user's recent medals.
+         */
+        public List<Award> medals;
 
         /**
          * This user's groups.
