@@ -458,9 +458,13 @@ public class MoneyLogic
      * @param item the identity of the catalog listing.
      * @return the number of refund transactions created
      * @see MoneyTransactionExpirer
+     * TODO: return more information about what happened, e.g. how much money was taken from each
+     * payout type and whether the account was depleted
      */
     public int refundAllItemPurchases (CatalogIdent item, String itemName)
     {
+        log.info("Refunding purchases", "item", item, "name", itemName);
+
         // aggregate refunds per member and currency type
         HashMap<Integer, int[]> refunds = Maps.newHashMap();
         for (MoneyTransactionRecord txRec :
@@ -472,40 +476,76 @@ public class MoneyLogic
             currencies[txRec.currency.ordinal()] -= txRec.amount;
         }
 
-        // apply all refunds as a support adjustment and log updates
+        // log all updates for later dispatch
         List<MoneyTransactionRecord> updates = Lists.newArrayList();
+
+        // track how much is in the pool to give back
+        int[] pool = new int[Currency.values().length];
+
+        // make sure BARS is last in the deduction loop
+        Currency[] currencies = {Currency.COINS, Currency.BLING, Currency.BARS};
+
+        // apply all deductions as a support adjustment
         for (Map.Entry<Integer, int[]> refund : refunds.entrySet()) {
             int memberId = refund.getKey();
-            int[] currencies = refund.getValue();
-            for (Currency currency : Currency.values()) {
-                int amount = currencies[currency.ordinal()];
-                if (amount == 0) {
+            int[] values = refund.getValue();
+            for (Currency currency : currencies) {
+                int deduction = -values[currency.ordinal()];
+                if (deduction <= 0) {
                     continue;
-                }
-
-                if (amount > 0) {
-                    updates.add(_repo.accumulateAndStoreTransaction(memberId, currency, amount,
-                        TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose("m.item_refund",
-                        itemName, item.type, item.catalogId), item, true));
-                    continue;
-
                 }
 
                 // loop in case user is spending money right now and we are breaking the bank
-                while (amount < 0) {
+                while (deduction > 0) {
                     try {
-                        updates.add(_repo.deductAndStoreTransaction(memberId, currency, -amount,
+                        updates.add(_repo.deductAndStoreTransaction(memberId, currency, deduction,
                             TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose(
                             "m.item_refunded", itemName, item.type, item.catalogId), item));
-                        amount = 0;
+                        pool[currency.ordinal()] += deduction;
+                        deduction = 0;
 
                     } catch (NotEnoughMoneyException neme) {
-                        // not enough money, take what they've got
-                        log.warning("Could not deduct full amount for refund, reducing",
-                            "item", item, "amount", amount, "available", neme.getMoneyAvailable());
-                        amount = -neme.getMoneyAvailable();
+                        // if they are out of bling, try bars next time through
+                        if (currency == Currency.BLING) {
+                            int blingDeficit = deduction - neme.getMoneyAvailable();
+                            values[Currency.BARS.ordinal()] -= blingDeficit / 100;
+                        }
+
+                        // and bankrupt
+                        deduction = neme.getMoneyAvailable();
                     }
                 }
+            }
+        }
+
+        // convert bling to bars
+        pool[Currency.BARS.ordinal()] += pool[Currency.BLING.ordinal()] / 100;
+        pool[Currency.BLING.ordinal()] = 0;
+
+        log.info("Refund pool", "coins", pool[Currency.COINS.ordinal()], "bars",
+            pool[Currency.BARS.ordinal()]);
+
+        // now distribute the pool
+        for (Map.Entry<Integer, int[]> refund : refunds.entrySet()) {
+            int memberId = refund.getKey();
+            int[] values = refund.getValue();
+            for (Currency currency : currencies) {
+                int refundAmount = values[currency.ordinal()];
+                int availableAmount = pool[currency.ordinal()];
+                if (refundAmount > availableAmount) {
+                    log.info("Issuing reduced refund due to insufficient funds",
+                        "currency", currency, "desiredAmount", refundAmount, "availableAmount",
+                        availableAmount);
+                    refundAmount = availableAmount;
+                }
+
+                if (refundAmount <= 0) {
+                    continue;
+                }
+                updates.add(_repo.accumulateAndStoreTransaction(memberId, currency, refundAmount,
+                    TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose("m.item_refund",
+                    itemName, item.type, item.catalogId), item, false));
+                pool[currency.ordinal()] -= refundAmount;
             }
         }
 
