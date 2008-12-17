@@ -38,18 +38,19 @@ import client.util.ServiceUtil;
  */
 public class CommentsPanel extends PagedGrid<Comment>
 {
-    public CommentsPanel (int entityType, int entityId)
+    public CommentsPanel (int entityType, int entityId, boolean rated)
     {
-        this(entityType, entityId, Comment.COMMENTS_PER_PAGE);
+        this(entityType, entityId, Comment.COMMENTS_PER_PAGE, rated);
     }
 
-    public CommentsPanel (int entityType, int entityId, int commentsPerPage)
+    public CommentsPanel (int entityType, int entityId, int commentsPerPage, boolean rated)
     {
         super(commentsPerPage, 1, NAV_ON_BOTTOM);
         addStyleName("CommentsPanel");
         addStyleName("dottedGrid");
         setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
 
+        _rated = rated;
         _etype = entityType;
         _entityId = entityId;
 
@@ -108,6 +109,11 @@ public class CommentsPanel extends PagedGrid<Comment>
         return MediaDesc.HALF_THUMBNAIL_SIZE;
     }
 
+    protected boolean commentsCanBeRated ()
+    {
+        return _rated;
+    }
+
     /**
      * Returns true if the viewer can delete the supplied comment.
      */
@@ -122,7 +128,7 @@ public class CommentsPanel extends PagedGrid<Comment>
      */
     protected boolean shouldDisplay (Comment comment)
     {
-        return comment.currentRating >= -5;
+        return comment.currentRating >= -4;
     }
 
     /**
@@ -274,6 +280,8 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected int _etype, _entityId;
     protected int _commentCount = -1;
+
+    protected boolean _rated;
 
     protected VerticalPanel _comments;
     protected Button _post;

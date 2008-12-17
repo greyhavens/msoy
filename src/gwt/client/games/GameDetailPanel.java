@@ -151,7 +151,7 @@ public class GameDetailPanel extends SmartTable
         // add comments tab if this is the listed version
         if (detail.item.isCatalogMaster()) {
             addTab(GameDetails.COMMENTS, _msgs.tabComments(),
-                   new CommentsPanel(detail.item.getType(), detail.item.catalogId));
+                   new CommentsPanel(detail.item.getType(), detail.item.catalogId, true));
         }
 
         // add trophies tab, passing in the potentially negative gameId

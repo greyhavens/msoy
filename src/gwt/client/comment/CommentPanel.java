@@ -40,7 +40,12 @@ public class CommentPanel extends MessagePanel
         _comment = comment;
 
         _rated = false;
-        _displayed = _parent.shouldDisplay(_comment);
+        if (_parent.commentsCanBeRated()) {
+            _displayed = _parent.shouldDisplay(_comment);
+        } else {
+            // RAY: Don't flip out. This is just cleaner.
+            _displayed = true;
+        }
 
         addStyleName("commentPanel");
 
@@ -85,6 +90,10 @@ public class CommentPanel extends MessagePanel
     @Override
     protected Panel getTools ()
     {
+        if (!_parent.commentsCanBeRated()) {
+            return null;
+        }
+
         InlinePanel tools = new InlinePanel("Tools");
 
         InlineLabel rating = new InlineLabel("" + _comment.currentRating, false, true, false);

@@ -48,7 +48,7 @@ public class CommentsBlurb extends Blurb
     protected class WallPanel extends CommentsPanel
     {
         public WallPanel (int memberId) {
-            super(Comment.TYPE_PROFILE_WALL, memberId, COMMENTS_PER_PAGE);
+            super(Comment.TYPE_PROFILE_WALL, memberId, COMMENTS_PER_PAGE, false);
             addStyleName("Wall");
             removeStyleName("dottedGrid");
             setVisible(true); // trigger immediate loading of our model
