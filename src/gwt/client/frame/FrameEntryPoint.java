@@ -145,6 +145,7 @@ public class FrameEntryPoint
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
+        _prevToken = _currentToken;
         _currentToken = token;
 
         String pagename = "";
@@ -304,8 +305,10 @@ public class FrameEntryPoint
                 Link.go(Pages.PEOPLE, Args.compose("invites", "newuser"));
                 break;
             }
-        } else if (_page == Pages.LANDING || _page == Pages.ACCOUNT) {
+        } else if (_page == Pages.LANDING || _prevToken.equals("")) {
             Link.go(Pages.WORLD, "places");
+        } else if (_page == Pages.ACCOUNT) {
+            History.back(); // go back to where we were
         } else if (_page != null) {
             setPage(_page); // reloads the current page
         } else {
@@ -318,8 +321,10 @@ public class FrameEntryPoint
     {
         // clear out any current page
         _page = null;
-        // reload the current page
+        // reload the current page (preserving our previous page token)
+        String prevToken = _prevToken;
         onHistoryChanged(_currentToken);
+        _prevToken = prevToken;
         // close the Flash client if it's open
         closeClient(true);
     }
@@ -1027,6 +1032,7 @@ public class FrameEntryPoint
     protected String _pageToken = "";
     protected Pages _page;
     protected String _closeToken;
+    protected String _prevToken = "";
 
     protected FrameHeader _header;
     protected Widget _content;
