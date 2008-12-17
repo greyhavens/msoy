@@ -67,6 +67,8 @@
     <file name="${extlibs.dir}/commons-lang.jar"/>
     <file name="${extlibs.dir}/commons-logging.jar"/>
     <file name="${extlibs.dir}/ehcache.jar"/>
+    <file name="${extlibs.dir}/facebook-java-api.jar"/>
+    <file name="${extlibs.dir}/facebook-java-api-schema.jar"/>
     <file name="${extlibs.dir}/ganymed.jar"/>
     <file name="${extlibs.dir}/getdown.jar"/>
     <file name="${extlibs.dir}/google-collect.jar"/>
@@ -424,6 +426,7 @@
         <filter token="dev_deployment" value="${dev_deployment}"/>
         <filter token="recaptcha_public" value="${recaptcha_token}"/>
         <filter token="billing_url" value="${billing_url}"/>
+        <filter token="facebook_api_key" value="${facebook.api_key}"/>
       </filterset>
     </copy>
   </target>

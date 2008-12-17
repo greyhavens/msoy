@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -60,23 +61,22 @@ public abstract class Page
             // if we're running in standalone page test mode, we do a bunch of stuff
             CShell.init(new PageFrame() {
                 public void setTitle (String title) {
-                    frameCall(Frame.Calls.SET_TITLE, new String[] { title });
+                    frameCall(Frame.Calls.SET_TITLE, title);
                 }
                 public void addNavLink (String label, Pages page, String args, int position) {
-                    frameCall(Frame.Calls.ADD_NAV_LINK,
-                              new String[] { label, ""+page, args, ""+position });
+                    frameCall(Frame.Calls.ADD_NAV_LINK, label, ""+page, args, ""+position);
                 }
                 public void navigateTo (String token) {
-                    frameCall(Frame.Calls.NAVIGATE_TO, new String[] { token });
+                    frameCall(Frame.Calls.NAVIGATE_TO, token);
                 }
                 public void navigateReplace (String token) {
-                    frameCall(Frame.Calls.NAVIGATE_REPLACE, new String[] { token });
+                    frameCall(Frame.Calls.NAVIGATE_REPLACE, token);
                 }
                 public void closeClient () {
-                    frameCall(Frame.Calls.CLOSE_CLIENT, null);
+                    frameCall(Frame.Calls.CLOSE_CLIENT);
                 }
                 public void closeContent () {
-                    frameCall(Frame.Calls.CLOSE_CONTENT, null);
+                    frameCall(Frame.Calls.CLOSE_CONTENT);
                 }
                 public void dispatchEvent (FlashEvent event) {
                     JavaScriptObject args = JavaScriptObject.createArray();
@@ -88,26 +88,28 @@ public abstract class Page
                     frameCall(Frame.Calls.DID_LOGON, fdata.toArray(new String[fdata.size()]));
                 }
                 public String md5hex (String text) {
-                    return frameCall(Frame.Calls.GET_MD5, new String[] { text })[0];
+                    return frameCall(Frame.Calls.GET_MD5, text)[0];
                 }
                 public String checkFlashVersion (int width, int height) {
-                    return frameCall(Frame.Calls.CHECK_FLASH_VERSION,
-                                     new String[] { ""+width, ""+height })[0];
+                    return frameCall(Frame.Calls.CHECK_FLASH_VERSION, ""+width, ""+height)[0];
                 }
                 public Invitation getActiveInvitation () {
                     return Invitation.unflatten(
-                        ArrayUtil.toIterator(frameCall(Frame.Calls.GET_ACTIVE_INVITE, null)));
+                        ArrayUtil.toIterator(frameCall(Frame.Calls.GET_ACTIVE_INVITE)));
+                }
+                public void initiateExternalLogon (ExternalAuther source) {
+                    frameCall(Frame.Calls.DO_EXTERNAL_LOGON, source.toString());
                 }
             });
 
             // obtain our current credentials from the frame
             CShell.creds = WebCreds.unflatten(
-                ArrayUtil.toIterator(frameCall(Frame.Calls.GET_WEB_CREDS, null)));
+                ArrayUtil.toIterator(frameCall(Frame.Calls.GET_WEB_CREDS)));
             CShell.visitor = VisitorInfo.unflatten(
-                ArrayUtil.toIterator(frameCall(Frame.Calls.GET_VISITOR_INFO, null)));
+                ArrayUtil.toIterator(frameCall(Frame.Calls.GET_VISITOR_INFO)));
 
             // and get our current page token from our containing frame
-            setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN, null)[0]);
+            setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN)[0]);
 
         } else {
             // if we're running in standalone page test mode, we do a bunch of stuff
@@ -128,6 +130,12 @@ public abstract class Page
                     History.back();
                     History.newItem(token);
                 }
+                public void closeClient () {
+                    CShell.log("Would close client.");
+                }
+                public void closeContent () {
+                    CShell.log("Would close content.");
+                }
                 public void dispatchEvent (FlashEvent event) {
                     FlashEvents.internalDispatchEvent(event);
                 }
@@ -143,6 +151,9 @@ public abstract class Page
                 }
                 public Invitation getActiveInvitation () {
                     return null; // we're testing, no one invited us
+                }
+                public void initiateExternalLogon (ExternalAuther source) {
+                    CShell.log("Federated logon not available on client.");
                 }
             });
 
@@ -279,7 +290,7 @@ public abstract class Page
     /**
      * Calls up to our containing frame and takes an action and possibly returns a value.
      */
-    protected String[] frameCall (Frame.Calls call, String[] args)
+    protected String[] frameCall (Frame.Calls call, String... args)
     {
         return nativeFrameCall(call.toString(), args);
     }
@@ -326,24 +337,6 @@ public abstract class Page
 
     protected abstract class PageFrame implements Frame
     {
-        public void navigateTo (String token) {
-            if (!token.equals(History.getToken())) {
-                History.newItem(token);
-            }
-        }
-
-        public void navigateReplace (String token) {
-            History.back();
-            History.newItem(token);
-        }
-
-        public void closeClient () {
-            CShell.log("Would close client.");
-        }
-        public void closeContent () {
-            CShell.log("Would close content.");
-        }
-
         public void showDialog (String title, Widget dialog) {
             clearDialog();
             _dialog = new BorderedDialog(false, false, false) {

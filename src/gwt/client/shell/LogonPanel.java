@@ -33,7 +33,6 @@ import client.util.ServiceUtil;
  * Displays a logon user interface.
  */
 public class LogonPanel extends SmartTable
-        implements AsyncCallback<SessionData>
 {
     /**
      * Creates a logon panel with an internal submit button.
@@ -135,26 +134,29 @@ public class LogonPanel extends SmartTable
         if (account.length() <= 0 || password.length() <= 0) {
             return;
         }
-        _usersvc.logon(DeploymentConfig.version, account, CShell.frame.md5hex(password), 1, this);
+        _usersvc.logon(DeploymentConfig.version, account, CShell.frame.md5hex(password),
+                       WebUserService.DEFAULT_SESSION_DAYS, new AsyncCallback<SessionData>() {
+            public void onSuccess (SessionData data) {
+                CShell.frame.dispatchDidLogon(data);
+                didLogon();
+            }
+            public void onFailure (Throwable caught) {
+                CShell.log("Logon failed [account=" + _email.getText() + "]", caught);
+                String message = null;
+                if (caught instanceof BannedException) {
+                    BannedException be = (BannedException)caught;
+                    message = _cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
+                } else {
+                    message = CShell.serverError(caught);
+                }
+                MsoyUI.errorNear(message, _password);
+            }
+        });
     }
 
-    public void onSuccess (SessionData data)
+    protected void didLogon ()
     {
         _password.setText("");
-        CShell.frame.dispatchDidLogon(data);
-    }
-
-    public void onFailure (Throwable caught)
-    {
-        CShell.log("Logon failed [account=" + _email.getText() + "]", caught);
-        String message = null;
-        if (caught instanceof BannedException) {
-            BannedException be = (BannedException)caught;
-            message = _cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
-        } else {
-            message = CShell.serverError(caught);
-        }
-        MsoyUI.errorNear(message, _password);
     }
 
     protected class ForgotPasswordDialog extends SmartTable

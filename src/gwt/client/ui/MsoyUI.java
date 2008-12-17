@@ -32,7 +32,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
@@ -585,9 +584,9 @@ public class MsoyUI
         FlowPanel content = new FlowPanel();
         content.add(MsoyUI.createLabel(message, "Message"));
         content.add(new LogonPanel() {
-            @Override public void onSuccess(SessionData result) {
+            @Override protected void didLogon () {
+                super.didLogon();
                 popup.hide();
-                super.onSuccess(result);
             }
         });
         popup.setWidget(content);

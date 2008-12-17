@@ -87,6 +87,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 
+import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.MemberCard;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -545,6 +546,22 @@ public class MemberRepository extends DepotRepository
     public void deleteMember (MemberRecord member)
     {
         delete(member);
+
+        // delete a whole heap of auxiliary stuffs
+        deleteAll(ExternalMapRecord.class,
+                  new Where(ExternalMapRecord.MEMBER_ID_C, member.memberId));
+        deleteAll(SessionRecord.class,
+                  new Where(SessionRecord.MEMBER_ID_C, member.memberId));
+        deleteAll(MemberExperienceRecord.class,
+                  new Where(MemberExperienceRecord.MEMBER_ID_C, member.memberId));
+        deleteAll(MemberWarningRecord.class,
+                  new Where(MemberWarningRecord.MEMBER_ID_C, member.memberId));
+        deleteAll(AffiliateRecord.class,
+                  new Where(AffiliateRecord.MEMBER_ID_C, member.memberId));
+        deleteAll(InviterRecord.class,
+                  new Where(InviterRecord.MEMBER_ID_C, member.memberId));
+        deleteAll(CharityRecord.class,
+                  new Where(CharityRecord.MEMBER_ID_C, member.memberId));
 
         // TODO: delete a whole bunch of shit (not here, in whatever ends up calling this)
         // - inventory items
@@ -1100,20 +1117,35 @@ public class MemberRepository extends DepotRepository
      * responsible for confirming the authenticity of the external id information) or 0 if no
      * account is associated with that external account.
      */
-    public int lookupExternalAccount (int partnerId, String externalId)
+    public int lookupExternalAccount (ExternalAuther auther, String externalId)
     {
         ExternalMapRecord record = load(
-            ExternalMapRecord.class, ExternalMapRecord.getKey(partnerId, externalId));
+            ExternalMapRecord.class, ExternalMapRecord.getKey(auther.toByte(), externalId));
         return (record == null) ? 0 : record.memberId;
+    }
+
+    /**
+     * Returns the Whirled member ids of any of the supplied external ids that have been mapped to
+     * Whirled accounts.
+     */
+    public List<Integer> lookupExternalAccounts (ExternalAuther auther, List<String> externalIds)
+    {
+        List<Integer> memberIds = Lists.newArrayList();
+        Where where = new Where(new And(new Equals(ExternalMapRecord.PARTNER_ID_C, auther.toByte()),
+                                        new In(ExternalMapRecord.EXTERNAL_ID_C, externalIds)));
+        for (ExternalMapRecord record : findAll(ExternalMapRecord.class, where)) {
+            memberIds.add(record.memberId);
+        }
+        return memberIds;
     }
 
     /**
      * Notes that the specified Whirled account is associated with the specified external account.
      */
-    public void mapExternalAccount (int partnerId, String externalId, int memberId)
+    public void mapExternalAccount (ExternalAuther auther, String externalId, int memberId)
     {
         ExternalMapRecord record = new ExternalMapRecord();
-        record.partnerId = partnerId;
+        record.partnerId = auther.toByte();
         record.externalId = externalId;
         record.memberId = memberId;
         insert(record);

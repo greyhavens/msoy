@@ -42,6 +42,7 @@ import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.profile.gwt.Profile;
 
+import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -147,7 +148,7 @@ public class FacebookServlet extends HttpServlet
         try {
             // if this Facebook account is already mapped to a Whirled account, log them in
             int memberId = _memberRepo.lookupExternalAccount(
-                ExternalMapRecord.FACEBOOK, String.valueOf(fbUserId));
+                ExternalAuther.FACEBOOK, String.valueOf(fbUserId));
             if (memberId != 0) {
                 sessionCreds = _memberRepo.startOrJoinSession(memberId, FB_SESSION_DAYS);
                 return new Tuple<Integer,String>(fbUserId, sessionCreds);
@@ -207,7 +208,7 @@ public class FacebookServlet extends HttpServlet
             mrec = _author.createAccount(email, password, name, true, null, null,
                 null /* TODO: blingAffiliate: "facebook"? */);
             _memberRepo.mapExternalAccount(
-                ExternalMapRecord.FACEBOOK, String.valueOf(fbUserId), mrec.memberId);
+                ExternalAuther.FACEBOOK, String.valueOf(fbUserId), mrec.memberId);
 
             sessionCreds = _memberRepo.startOrJoinSession(mrec.memberId, FB_SESSION_DAYS);
             creds = new Tuple<Integer,String>(fbUserId, sessionCreds);
@@ -236,7 +237,7 @@ public class FacebookServlet extends HttpServlet
             int friendId = 0;
             try {
                 friendId = _memberRepo.lookupExternalAccount(
-                    ExternalMapRecord.FACEBOOK, friendFbId.toString());
+                    ExternalAuther.FACEBOOK, friendFbId.toString());
                 if (friendId == 0) {
                     continue;
                 }

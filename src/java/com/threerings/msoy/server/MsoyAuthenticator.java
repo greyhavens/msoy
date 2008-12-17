@@ -6,7 +6,9 @@ package com.threerings.msoy.server;
 import static com.threerings.msoy.Log.log;
 
 import java.util.Date;
+import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -20,15 +22,6 @@ import com.threerings.presents.net.AuthResponse;
 import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
-
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-
-import com.threerings.msoy.web.gwt.BannedException;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.LurkerName;
@@ -44,6 +37,19 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
+
+import com.threerings.msoy.web.gwt.BannedException;
+import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ExternalCreds;
+import com.threerings.msoy.web.gwt.FacebookCreds;
+import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 /**
  * Handles authentication for the MetaSOY server. We rely on underlying authentication domain
@@ -65,9 +71,6 @@ public class MsoyAuthenticator extends Authenticator
 
         /** Whether or not this account is logging on for the first time. */
         public boolean firstLogon;
-
-        /** A warning message on this account. */
-        public String warning;
     }
 
     /** Provides authentication information for a particular partner. */
@@ -208,40 +211,7 @@ public class MsoyAuthenticator extends Authenticator
         if (!_runtime.server.registrationEnabled && !ignoreRestrict) {
             throw new ServiceException(MsoyAuthCodes.NO_REGISTRATIONS);
         }
-
-        // make sure we're dealing with a lower cased email
-        email = email.toLowerCase();
-
-        Domain domain = null;
-        Account account = null;
-        try {
-            // create and validate the new account
-            domain = getDomain(email);
-            account = domain.createAccount(email, password);
-            account.firstLogon = true;
-            domain.validateAccount(account);
-
-            // create a new member record for the account
-            final MemberRecord mrec = createMember(
-                account, displayName, invite, visitor, affiliate);
-            // clear out our account reference to let the finally block know that all went well and
-            // we need not roll back the domain account creation
-            account = null;
-            return mrec;
-
-        } catch (final RuntimeException e) {
-            log.warning("Error creating member record", "for", email, e);
-            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-
-        } finally {
-            if (account != null) {
-                try {
-                    domain.uncreateAccount(email);
-                } catch (final RuntimeException e) {
-                    log.warning("Failed to rollback account creation", "email", email, e);
-                }
-            }
-        }
+        return createAccount(email, password, displayName, invite, visitor, affiliate, null, null);
     }
 
     /**
@@ -309,30 +279,102 @@ public class MsoyAuthenticator extends Authenticator
         try {
             // make sure we're dealing with a lower cased email
             email = email.toLowerCase();
+
             // validate their account credentials; make sure they're not banned
             final Domain domain = getDomain(email);
             final Account account = domain.authenticateAccount(email, password);
 
-            // load up their member information to get their member id
+            // load up their member information
             MemberRecord mrec = _memberRepo.loadMember(account.accountName);
             if (mrec == null) {
-                // if this is their first logon, insert a skeleton member record
-                mrec = createMember(account, email, null, null, null /* TODO affiliate? */);
-                account.firstLogon = true;
-            } else {
-                account.firstLogon = (mrec.sessions == 0);
+                log.warning("Missing member record for authenticated user", "email", email);
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
+            account.firstLogon = (mrec.sessions == 0);
 
             // validate that they can logon from the domain
             domain.validateAccount(account);
 
             // validate that they can logon locally
-            validateAccount(account, mrec.memberId);
+            checkWarnAndBan(mrec.memberId);
 
             return mrec;
 
         } catch (final RuntimeException e) {
             log.warning("Error authenticating user [who=" + email + "].", e);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Authenticates a web sesssion, verifying the supplied external credentials and loading,
+     * creating (or reusing) a member record.
+     *
+     * @return the user's member record.
+     */
+    public MemberRecord authenticateSession (ExternalCreds creds, VisitorInfo visitor,
+                                             String affiliate)
+        throws ServiceException
+    {
+        try {
+            ExternalAuthHandler handler = _exhandlers.get(creds.getAuthSource());
+            if (handler == null) {
+                log.warning("Asked to auth using unsupported external source", "creds", creds);
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            }
+
+            // make sure the supplied external creds are valid
+            handler.validateCredentials(creds);
+
+            // see if we've already got member information for this user
+            int memberId = _memberRepo.lookupExternalAccount(
+                creds.getAuthSource(), creds.getUserId());
+            if (memberId > 0) {
+                MemberRecord mrec = _memberRepo.loadMember(memberId);
+                if (mrec == null) {
+                    log.warning("Missing member record for which we have an extermal mapping",
+                                "creds", creds, "memberId", memberId);
+                    throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+                }
+                checkWarnAndBan(mrec.memberId);
+                return mrec;
+            }
+
+            // otherwise we need to create their account for the first time which requires getting
+            // information from the external authentication source
+            ExternalAuthHandler.Info info = handler.getInfo(creds);
+
+            // create their account
+            MemberRecord mrec = createAccount(
+                creds.getPlaceholderAddress(), "", info.displayName, null, visitor, null,
+                creds.getAuthSource(), creds.getUserId());
+
+            // store their profile
+            try {
+                info.profile.memberId = mrec.memberId;
+                _profileRepo.storeProfile(info.profile);
+            } catch (Exception e) {
+                log.warning("Failed to store initial profile for autocreated external user",
+                            "creds", creds, "info", info, e);
+            }
+
+            // wire them up to any friends they might have
+            if (info.friendIds != null) {
+                try {
+                    for (int friendId : _memberRepo.lookupExternalAccounts(
+                             creds.getAuthSource(), info.friendIds)) {
+                        _memberRepo.noteFriendship(mrec.memberId, friendId);
+                    }
+                } catch (Exception e) {
+                    log.warning("Failed to connect autocreated external user to friends",
+                                "creds", creds, "friendIds", info.friendIds, e);
+                }
+            }
+
+            return mrec;
+
+        } catch (RuntimeException re) {
+            log.warning("Error authenticating user", "creds", creds, re);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
@@ -461,9 +503,9 @@ public class MsoyAuthenticator extends Authenticator
             member = _memberRepo.loadMember(account.accountName);
             // if this is their first logon, create them a member record
             if (member == null) {
-                member = createMember(
-                    account, account.accountName, null, null, null /* TODO affiliate */);
-                account.firstLogon = true;
+                log.warning("Missing member record for authenticated user",
+                            "email", account.accountName);
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             } else {
                 account.firstLogon = (member.sessions == 0);
             }
@@ -475,8 +517,7 @@ public class MsoyAuthenticator extends Authenticator
         domain.validateAccount(account, creds.ident, newIdent);
 
         // validate the account locally
-        validateAccount(account, member.memberId);
-        rdata.warning = account.warning;
+        rdata.warning = checkWarnAndBan(member.memberId);
 
         // fill in our access control tokens
         account.tokens = member.toTokenRing();
@@ -510,73 +551,127 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
-     * Called to create a starting member record for a first-time logger in.
+     * Does the complicated and failure complex account creation process. Whee!
      */
-    protected MemberRecord createMember (
-        Account account, String displayName, InvitationRecord invite, VisitorInfo visitor,
-        String affiliate)
+    protected MemberRecord createAccount (
+        String email, String password, String displayName, InvitationRecord invite,
+        VisitorInfo visitor, String affiliate, ExternalAuther exAuther, String externalId)
+        throws ServiceException
     {
-        // normalize blank affiliates to null
-        if (StringUtil.isBlank(affiliate)) {
-            affiliate = null;
-        }
+        // make sure we're dealing with a lower cased email
+        email = email.toLowerCase();
 
-        // create their main member record
-        final MemberRecord mrec = new MemberRecord();
-        mrec.accountName = account.accountName;
-        mrec.name = displayName;
-        if (invite != null) {
-            String inviterStr = String.valueOf(invite.inviterId);
-            if (affiliate != null && !affiliate.equals(inviterStr)) {
-                log.warning("New member has both an inviter and an affiliate. Using inviter.",
-                    "email", mrec.accountName, "inviter", inviterStr, "affiliate", affiliate);
+        Domain domain = null;
+        Account account = null;
+        MemberRecord stalerec = null;
+        try {
+            // create and validate the new account
+            domain = getDomain(email);
+            account = domain.createAccount(email, password);
+            account.firstLogon = true;
+            domain.validateAccount(account);
+
+//             // create a new member record for the account
+//             MemberRecord mrec = createMember(
+//                 account.accountName, displayName, invite, visitor, affiliate);
+
+            // normalize blank affiliates to null
+            if (StringUtil.isBlank(affiliate)) {
+                affiliate = null;
             }
-            affiliate = inviterStr; // turn the inviter into an affiliate
+
+            // create their main member record
+            final MemberRecord mrec = new MemberRecord();
+            stalerec = mrec;
+            mrec.accountName = account.accountName;
+            mrec.name = displayName;
+            if (invite != null) {
+                String inviterStr = String.valueOf(invite.inviterId);
+                if (affiliate != null && !affiliate.equals(inviterStr)) {
+                    log.warning("New member has both an inviter and an affiliate. Using inviter.",
+                                "email", mrec.accountName, "inviter", inviterStr,
+                                "affiliate", affiliate);
+                }
+                affiliate = inviterStr; // turn the inviter into an affiliate
+            }
+            if (affiliate != null) {
+                // look up their affiliate's memberId, if any
+                mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(affiliate);
+            }
+            if (visitor != null) {
+                mrec.visitorId = visitor.id;
+            } else {
+                log.warning("Missing visitor id when creating user " + account.accountName);
+            }
+
+            // store their member record in the repository making them a real Whirled citizen
+            _memberRepo.insertMember(mrec);
+
+            // if we're coming from an external authentication source, note that
+            if (exAuther != null) {
+                _memberRepo.mapExternalAccount(exAuther, externalId, mrec.memberId);
+            }
+
+            // create a blank room for them, store it
+            final String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
+            mrec.homeSceneId = _sceneRepo.createBlankRoom(
+                MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true);
+            _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
+
+            // create their money account, granting them some starting flow
+            _moneyLogic.createMoneyAccount(mrec.memberId, CoinAwards.CREATED_ACCOUNT);
+
+            // store their affiliate, if any (may also be the inviter's memberId)
+            if (affiliate != null) {
+                _memberRepo.setAffiliate(mrec.memberId, affiliate);
+            }
+
+            // record to the event log that we created a new account
+            final String iid = (invite == null) ? null : invite.inviteId;
+            final String vid = (visitor == null) ? null : visitor.id;
+            _eventLog.accountCreated(mrec.memberId, iid, mrec.affiliateMemberId, vid);
+
+            // clear out account and stalerec to let the finally block know that all went well and
+            // we need not roll back the domain account and member record creation
+            account = null;
+            stalerec = null;
+
+            return mrec;
+
+        } catch (final RuntimeException e) {
+            log.warning("Error creating member record", "for", email, e);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+
+        } finally {
+            if (account != null) {
+                try {
+                    domain.uncreateAccount(email);
+                } catch (final RuntimeException e) {
+                    log.warning("Failed to rollback account creation", "email", email, e);
+                }
+            }
+            if (stalerec != null) {
+                try {
+                    _memberRepo.deleteMember(stalerec);
+                } catch (RuntimeException e) {
+                    log.warning("Failed to rollback MemberRecord creation", "mrec", stalerec, e);
+                }
+            }
         }
-        if (affiliate != null) {
-            // look up their affiliate's memberId, if any
-            mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(affiliate);
-        }
-        if (visitor != null) {
-            mrec.visitorId = visitor.id;
-        } else {
-            log.warning("Missing visitor id when creating user " + account.accountName);
-        }
-
-        // store their member record in the repository making them a real Whirled citizen
-        _memberRepo.insertMember(mrec);
-
-        // create a blank room for them, store it
-        final String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
-        mrec.homeSceneId = _sceneRepo.createBlankRoom(
-            MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true);
-        _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
-
-        // create their money account, granting them some starting flow
-        _moneyLogic.createMoneyAccount(mrec.memberId, CoinAwards.CREATED_ACCOUNT);
-
-        // store their affiliate, if any (may also be the inviter's memberId)
-        if (affiliate != null) {
-            _memberRepo.setAffiliate(mrec.memberId, affiliate);
-        }
-
-        // record to the event log that we created a new account
-        final String iid = (invite == null) ? null : invite.inviteId;
-        final String vid = (visitor == null) ? null : visitor.id;
-        _eventLog.accountCreated(mrec.memberId, iid, mrec.affiliateMemberId, vid);
-
-        return mrec;
     }
 
     /**
      * Validates an account checking for possible temp bans or warning messages.
+     *
+     * @return any warning message configured for this member or null.
+     * @exception ServiceException thrown if the member is currently banned.
      */
-    protected void validateAccount (final Account account, final int memberId)
+    protected String checkWarnAndBan (final int memberId)
         throws ServiceException
     {
         final MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);
         if (record == null) {
-            return;
+            return null;
         }
 
         if (record.banExpires != null) {
@@ -588,7 +683,28 @@ public class MsoyAuthenticator extends Authenticator
             }
         }
 
-        account.warning = record.warning;
+        return record.warning;
+    }
+
+    /**
+     * Validates the supplied external credentials, usually by computing some signature on the
+     * credential information and comparing that to a supplied signature.
+     *
+     * @exception ServiceException thrown if the supplied credentials are not valid.
+     */
+    protected void validateExternalCreds (ExternalCreds creds)
+        throws ServiceException
+    {
+        switch (creds.getAuthSource()) {
+        case FACEBOOK:
+            FacebookCreds fbcreds = (FacebookCreds)creds;
+            // TODO: validate creds
+            break;
+
+        default:
+            log.warning("Asked to auth using unsupported external source", "creds", creds);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
     }
 
     /**
@@ -610,16 +726,22 @@ public class MsoyAuthenticator extends Authenticator
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
     }
 
+    /** Our external authentication handlers. */
+    protected Map<ExternalAuther, ExternalAuthHandler> _exhandlers = ImmutableMap.of(
+        ExternalAuther.FACEBOOK, FacebookAuthHandler.getInstance()
+    );
+
     // our dependencies
     @Inject protected Domain _defaultDomain;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected RuntimeConfig _runtime;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected ProfileRepository _profileRepo;
     @Inject protected AffiliateMapRepository _affMapRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MoneyLogic _moneyLogic;
 
     /** The number of times we'll try generate a unique ident before failing. */
     protected static final int MAX_TRIES = 100;

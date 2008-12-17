@@ -10,8 +10,11 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.CShell;
+import client.shell.Frame;
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -36,7 +39,8 @@ public class LogonPagePanel extends FlowPanel
             add(MsoyUI.createLabel(_msgs.lpFBHeader(), "Header"));
             add(tagButton(MsoyUI.createActionImage("/images/ui/fbconnect.gif", new ClickListener() {
                 public void onClick (Widget sender) {
-                    startFBConnectSession();
+                    // TODO: display a little circular "pending" icon; turn off clickability
+                    CShell.frame.initiateExternalLogon(ExternalAuther.FACEBOOK);
                 }
             })));
         }
@@ -45,11 +49,6 @@ public class LogonPagePanel extends FlowPanel
         add(MsoyUI.createLabel(_msgs.lpCreateHeader(), "Header"));
         add(tagButton(MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.lpCreate(),
                                           Link.createListener(Pages.ACCOUNT, "create"))));
-    }
-
-    protected void startFBConnectSession ()
-    {
-        // TODO
     }
 
     protected Widget tagButton (Widget widget)

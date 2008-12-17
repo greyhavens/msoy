@@ -5,6 +5,7 @@ package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
  * The asynchronous (client-side) version of {@link WebUserService}.
@@ -16,6 +17,12 @@ public interface WebUserServiceAsync
      */
     void logon (String clientVersion, String username, String password, int expireDays,
                        AsyncCallback<SessionData> callback);
+
+    /**
+     * The asynchronous version of {@link WebUserService#externanLogon}.
+     */
+    void externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo, int expireDays,
+                        AsyncCallback<SessionData> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#register}.

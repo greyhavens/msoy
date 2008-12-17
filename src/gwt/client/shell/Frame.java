@@ -5,6 +5,7 @@ package client.shell;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -35,7 +36,7 @@ public interface Frame
     public static enum Calls {
         SET_TITLE, ADD_NAV_LINK, NAVIGATE_TO, NAVIGATE_REPLACE, CLOSE_CLIENT, CLOSE_CONTENT,
         DID_LOGON, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION, GET_ACTIVE_INVITE,
-        GET_VISITOR_INFO
+        GET_VISITOR_INFO, DO_EXTERNAL_LOGON
     };
 
     /**
@@ -106,4 +107,9 @@ public interface Frame
      * Returns the invitation via which the current user arrived or null.
      */
     Invitation getActiveInvitation ();
+
+    /**
+     * Initiates authentication with the specified external authentication source.
+     */
+    void initiateExternalLogon (ExternalAuther source);
 }

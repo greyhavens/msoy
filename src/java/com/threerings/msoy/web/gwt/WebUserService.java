@@ -5,6 +5,7 @@ package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
  * Defines general user services available to the GWT/AJAX web client.
@@ -14,6 +15,9 @@ public interface WebUserService extends RemoteService
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/usersvc";
 
+    /** The default length of a session. */
+    public static final int DEFAULT_SESSION_DAYS = 3;
+
     /**
      * Requests that the client be logged on as the specified user with the supplied (MD5-encoded)
      * password.
@@ -22,6 +26,14 @@ public interface WebUserService extends RemoteService
      * subsequent remote service calls that require authentication.
      */
     SessionData logon (String clientVersion, String email, String password, int expireDays)
+        throws ServiceException;
+
+    /**
+     * Requests that the client be logged on to the account associated with the supplied external
+     * credentials.
+     */
+    SessionData externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo,
+                               int expireDays)
         throws ServiceException;
 
     /**

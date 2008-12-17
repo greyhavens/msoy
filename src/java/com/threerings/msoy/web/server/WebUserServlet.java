@@ -65,6 +65,7 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.web.gwt.AccountInfo;
 import com.threerings.msoy.web.gwt.CaptchaException;
 import com.threerings.msoy.web.gwt.ConnectConfig;
+import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.LaunchConfig;
 import com.threerings.msoy.web.gwt.RegisterInfo;
 import com.threerings.msoy.web.gwt.ServiceCodes;
@@ -80,14 +81,23 @@ public class WebUserServlet extends MsoyServiceServlet
     implements WebUserService
 {
     // from interface WebUserService
-    public SessionData logon (
-        String clientVersion, String username, String password, int expireDays)
+    public SessionData logon (String clientVersion, String username, String password, int expireDays)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         return startSession(_author.authenticateSession(username, password), expireDays);
+    }
+
+    // from interface WebUserService
+    public SessionData externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo,
+                                      int expireDays)
+        throws ServiceException
+    {
+        checkClientVersion(clientVersion, creds.getPlaceholderAddress());
+        String affiliate = AffiliateCookie.get(getThreadLocalRequest());
+        return startSession(_author.authenticateSession(creds, vinfo, affiliate), expireDays);
     }
 
     // from interface WebUserService
@@ -434,6 +444,7 @@ public class WebUserServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         ProfileRecord prec = _profileRepo.loadProfile(mrec.memberId);
         prec.realName = info.realName;
+        // TODO: add and use ProfileRepository.updateRealName(), the code as is is racey
         _profileRepo.storeProfile(prec);
     }
 
