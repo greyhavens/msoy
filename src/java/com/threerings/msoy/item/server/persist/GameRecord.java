@@ -114,10 +114,6 @@ public class GameRecord extends ItemRecord
     public static final ColumnExp SOURCE_ID_C =
         new ColumnExp(GameRecord.class, SOURCE_ID);
 
-    /** The qualified column identifier for the {@link #flagged} field. */
-    public static final ColumnExp FLAGGED_C =
-        new ColumnExp(GameRecord.class, FLAGGED);
-
     /** The qualified column identifier for the {@link #creatorId} field. */
     public static final ColumnExp CREATOR_ID_C =
         new ColumnExp(GameRecord.class, CREATOR_ID);

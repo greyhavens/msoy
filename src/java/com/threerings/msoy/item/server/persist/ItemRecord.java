@@ -29,7 +29,6 @@ import com.threerings.msoy.item.data.all.Item;
  */
 @Entity(indices={
     @Index(name="locationIndex", fields={ ItemRecord.LOCATION } ),
-    @Index(name="ixFlagged", fields={ ItemRecord.FLAGGED } ),
     @Index(name="ixMature", fields={ ItemRecord.MATURE } ),
     @Index(name="ixOwner", fields={ ItemRecord.OWNER_ID }),
     @Index(name="ixCreator", fields={ ItemRecord.CREATOR_ID })
@@ -44,9 +43,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** The column identifier for the {@link #sourceId} field. */
     public static final String SOURCE_ID = "sourceId";
-
-    /** The column identifier for the {@link #flagged} field. */
-    public static final String FLAGGED = "flagged";
 
     /** The column identifier for the {@link #creatorId} field. */
     public static final String CREATOR_ID = "creatorId";
@@ -103,7 +99,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The identifier for the full text search index on Name, Description */
     public static final String FTS_ND = "ND";
 
-    public static final int BASE_SCHEMA_VERSION = 17;
+    public static final int BASE_SCHEMA_VERSION = 18;
     public static final int BASE_MULTIPLIER = 1000;
 
     /** A function for converting this persistent record into a runtime record. */
@@ -124,11 +120,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      * not persisted to the database, but set when we load a clone. */
     @Computed(required=false)
     public int sourceId = 0;
-
-    /** A bit-mask of flags that we need to know about every digital item without doing further
-     * database lookups or network requests. */
-    // TODO: remove
-    public byte flagged;
 
     /** A bit-mask of runtime attributes about this item. These are not saved in the database
      * anywhere, these are created on-the-fly when looking at metadata not otherwise sent
@@ -236,22 +227,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public boolean isCatalogMaster ()
     {
         return (sourceId == 0) && (catalogId != 0) && (ownerId == 0);
-    }
-
-    /**
-     * Tests whether a given flag is set on this item.
-     */
-    public boolean isFlagSet (byte flag)
-    {
-        return (flagged & flag) != 0;
-    }
-
-    /**
-     * Sets a given flag to on or off.
-     */
-    public void setFlag (byte flag, boolean value)
-    {
-        flagged = (byte) (value ? flagged | flag : flagged ^ ~flag);
     }
 
     /**

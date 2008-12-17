@@ -33,10 +33,6 @@ public class ItemPackRecord extends SubItemRecord
     public static final ColumnExp SOURCE_ID_C =
         new ColumnExp(ItemPackRecord.class, SOURCE_ID);
 
-    /** The qualified column identifier for the {@link #flagged} field. */
-    public static final ColumnExp FLAGGED_C =
-        new ColumnExp(ItemPackRecord.class, FLAGGED);
-
     /** The qualified column identifier for the {@link #creatorId} field. */
     public static final ColumnExp CREATOR_ID_C =
         new ColumnExp(ItemPackRecord.class, CREATOR_ID);

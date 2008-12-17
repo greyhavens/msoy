@@ -27,9 +27,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
-import com.samskivert.util.StringUtil;
 
-import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.SchemaMigration;
@@ -141,21 +139,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         _ctx.registerMigration(getCloneClass(),
             new SchemaMigration.Add(cloneCurrencyMigrationVersion, CloneRecord.CURRENCY, "0"));
 
-        String migrationName = "2008_12_12_flags_" + StringUtil.shortClassName(getItemClass());
-        // migrate each item with a non-zero flagged to a row in the new table
-        registerMigration(new DataMigration(migrationName) {
-            @Override public void invoke () throws DatabaseException {
-                Where flagged = new Where(new GreaterThan(getItemColumn(ItemRecord.FLAGGED), 0));
-                for (T item : findAll(getItemClass(), flagged)) {
-                    if ((item.flagged & 2) != 0) {
-                        _itemFlagRepo.addFlag(convertFromLegacyFlag(item, ItemFlag.Flag.COPYRIGHT));
-                    }
-                    if ((item.flagged & 1) != 0) {
-                        _itemFlagRepo.addFlag(convertFromLegacyFlag(item, ItemFlag.Flag.MATURE));
-                    }
-                }
-            }
-        });
+        // drop the flagged column
+        _ctx.registerMigration(getItemClass(), new SchemaMigration.Drop(18000, "flagged"));
     }
 
     /**
