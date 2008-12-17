@@ -191,16 +191,14 @@ public class MeServlet extends MsoyServiceServlet
         data.medals = Maps.newHashMap();
         data.officialGroups = Lists.newArrayList();
         Map<Integer, Award> medals = Maps.newHashMap();
-        List<Integer> medalIds = Lists.newArrayList();
         for (EarnedMedalRecord earnedMedalRec : _medalRepo.loadEarnedMedals(memberId)) {
             Award medal = new Award();
             medal.whenEarned = earnedMedalRec.whenEarned.getTime();
             medals.put(earnedMedalRec.medalId, medal);
-            medalIds.add(earnedMedalRec.medalId);
         }
         // flesh out the details from the MedalRecord
         Map<Integer, List<Award>> groupMedals = Maps.newHashMap();
-        for (MedalRecord medalRec : _medalRepo.loadMedals(medalIds)) {
+        for (MedalRecord medalRec : _medalRepo.loadMedals(medals.keySet())) {
             Award medal = medals.get(medalRec.medalId);
             medal.name = medalRec.name;
             medal.description = medalRec.description;
