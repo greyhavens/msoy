@@ -76,7 +76,7 @@ public interface ItemService extends RemoteService
     /**
      * Adds a user flag to an item, for subsequent review by support.
      */
-    void addFlag (ItemIdent item, ItemFlag.Flag flag, String comment)
+    void addFlag (ItemIdent item, ItemFlag.Kind kind, String comment)
         throws ServiceException;
 
     /**

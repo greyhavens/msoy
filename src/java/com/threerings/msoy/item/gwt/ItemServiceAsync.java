@@ -55,7 +55,7 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#addFlag}.
      */
-    void addFlag (ItemIdent item, ItemFlag.Flag flag, String comment, AsyncCallback<Void> callback);
+    void addFlag (ItemIdent item, ItemFlag.Kind kind, String comment, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#removeAllFlags}.

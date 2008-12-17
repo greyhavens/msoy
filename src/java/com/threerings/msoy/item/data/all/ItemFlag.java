@@ -14,7 +14,7 @@ public class ItemFlag
     implements IsSerializable
 {
     /** Kinds of flags. */
-    public enum Flag
+    public enum Kind
         implements IsSerializable
     {
         MATURE, COPYRIGHT;
@@ -27,7 +27,7 @@ public class ItemFlag
     public int memberId;
 
     /** Kind of flag. */
-    public Flag flag;
+    public Kind kind;
 
     /** User-entered comment. */
     public String comment;

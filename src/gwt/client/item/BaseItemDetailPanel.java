@@ -133,9 +133,9 @@ public abstract class BaseItemDetailPanel extends SmartTable
                 addTagMenuItems(tag, menu);
             }
         }, new TagDetailPanel.FlagService() {
-            public void addFlag (final ItemFlag.Flag flag) {
+            public void addFlag (final ItemFlag.Kind kind) {
                 ItemIdent ident = new ItemIdent(_item.getType(), _item.getMasterId());
-                _itemsvc.addFlag(ident, flag, "", new NoopAsyncCallback());
+                _itemsvc.addFlag(ident, kind, "", new NoopAsyncCallback());
             }
         }, detail.tags, true));
 

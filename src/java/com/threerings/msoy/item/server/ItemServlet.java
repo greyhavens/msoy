@@ -287,7 +287,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void addFlag (ItemIdent iitem, ItemFlag.Flag flag, String comment)
+    public void addFlag (ItemIdent iitem, ItemFlag.Kind kind, String comment)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -295,13 +295,13 @@ public class ItemServlet extends MsoyServiceServlet
         // TODO: If things get really tight, this could use updatePartial() later.
         ItemRecord item = repo.loadItem(iitem.itemId);
         if (item == null) {
-            log.warning("Missing item for addFlag()", "flag", flag, "");
+            log.warning("Missing item for addFlag()", "flag", kind, "");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         ItemFlagRecord frec = new ItemFlagRecord();
         frec.comment = comment;
-        frec.flag = (byte)flag.ordinal();
+        frec.kind = (byte)kind.ordinal();
         frec.memberId = memrec.memberId;
         frec.itemType = iitem.type;
         frec.itemId = iitem.itemId;

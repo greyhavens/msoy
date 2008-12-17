@@ -65,7 +65,7 @@ public class ReviewItem extends FlowPanel
         // say what flags are set on it
         FlowPanel flaggedAs = new FlowPanel();
         flaggedAs.add(new InlineLabel("Flagged as:"));
-        flaggedAs.add(new InlineLabel(flag.flag.toString(), false, true, false));
+        flaggedAs.add(new InlineLabel(flag.kind.toString(), false, true, false));
         add(flaggedAs);
 
         // transactions link
@@ -95,7 +95,7 @@ public class ReviewItem extends FlowPanel
 //             }
 
         // a button to mark someting as mature
-        if (flag.flag == ItemFlag.Flag.MATURE) {
+        if (flag.kind == ItemFlag.Kind.MATURE) {
             _mark = new Button(_msgs.reviewMark());
             new ClickCallback<Void>(_mark) {
                 @Override protected boolean callService () {

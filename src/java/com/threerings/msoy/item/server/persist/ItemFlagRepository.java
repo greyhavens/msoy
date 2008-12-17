@@ -12,6 +12,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -27,6 +28,10 @@ public class ItemFlagRepository extends DepotRepository
     @Inject public ItemFlagRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // rename the "flag" column
+        _ctx.registerMigration(ItemFlagRecord.class,
+            new SchemaMigration.Rename(3, "flag", ItemFlagRecord.KIND));
     }
 
     public int countItemFlags ()

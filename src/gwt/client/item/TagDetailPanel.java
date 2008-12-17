@@ -71,7 +71,7 @@ public class TagDetailPanel extends VerticalPanel
     public interface FlagService
     {
         // TODO: add a comment string
-        void addFlag (ItemFlag.Flag flag);
+        void addFlag (ItemFlag.Kind kind);
     }
 
     public TagDetailPanel (
@@ -116,9 +116,9 @@ public class TagDetailPanel extends VerticalPanel
                 new PopupMenu(flagLabel) {
                     protected void addMenuItems () {
                         addFlag(_cmsgs.tagMatureFlag(), _cmsgs.tagMaturePrompt(),
-                                updateFlag(ItemFlag.Flag.MATURE));
+                                updateFlag(ItemFlag.Kind.MATURE));
                         addFlag(_cmsgs.tagCopyrightFlag(), _cmsgs.tagCopyrightPrompt(),
-                                updateFlag(ItemFlag.Flag.COPYRIGHT));
+                                updateFlag(ItemFlag.Kind.COPYRIGHT));
                     }
                     protected void addFlag (String label, String prompt, Command action) {
                         addMenuItem(label, new PromptPopup(prompt, _cmsgs.tagFlagFlag(),
@@ -139,11 +139,11 @@ public class TagDetailPanel extends VerticalPanel
         }
     }
 
-    protected Command updateFlag (final ItemFlag.Flag flag)
+    protected Command updateFlag (final ItemFlag.Kind kind)
     {
         return new Command() {
             public void execute () {
-                _flagger.addFlag(flag);
+                _flagger.addFlag(kind);
                 MsoyUI.info(_cmsgs.tagThanks());
             }
         };
