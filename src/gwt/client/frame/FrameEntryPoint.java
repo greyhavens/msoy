@@ -305,7 +305,7 @@ public class FrameEntryPoint
                 Link.go(Pages.PEOPLE, Args.compose("invites", "newuser"));
                 break;
             }
-        } else if (_page == Pages.LANDING || _prevToken.equals("")) {
+        } else if (_page == Pages.LANDING || (_page == Pages.ACCOUNT && _prevToken.equals(""))) {
             Link.go(Pages.WORLD, "places");
         } else if (_page == Pages.ACCOUNT) {
             History.back(); // go back to where we were
