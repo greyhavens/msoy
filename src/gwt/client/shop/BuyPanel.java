@@ -6,7 +6,6 @@ package client.shop;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -15,6 +14,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -69,9 +69,7 @@ public class BuyPanel extends FlowPanel
         add(_buyCoins);
 
         // Display exchange rate 
-        _wikiLink = new Anchor();
-        _wikiLink.setHref("http://wiki.whirled.com/Currency");
-        _wikiLink.setTarget("_top");
+        _wikiLink = MsoyUI.createExternalAnchor("http://wiki.whirled.com/Currency", "");
         
         updatePrice(_listing.quote);
     }
