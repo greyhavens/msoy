@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.util.List;
 
 import com.threerings.util.StreamableArrayIntSet;
+import com.threerings.util.StreamableHashIntMap;
 
 import com.threerings.crowd.server.BodyLocal;
 import com.threerings.stats.data.StatSet;
@@ -56,6 +57,9 @@ public class MemberLocal extends BodyLocal
     /** The memories of the member's avatar. */
     public List<EntityMemoryEntry> memories;
 
+    /** Party invitations. */
+    public StreamableHashIntMap<StreamableArrayIntSet> partyInvites;
+
     /**
      * Adds an EarnedBadge to the member's BadgeSet (or updates the existing badge if the badge
      * level has increased) and dispatches an event indicating that a new badge was awarded.
@@ -86,5 +90,50 @@ public class MemberLocal extends BodyLocal
     public boolean inProgressBadgeUpdated (InProgressBadge badge)
     {
         return inProgressBadges.addOrUpdateBadge(badge);
+    }
+
+    /**
+     * Note that this member has received a party invitation.
+     */
+    public void notePartyInvite (int partyId, int invitingMemberId)
+    {
+        if (partyInvites == null) {
+            partyInvites = new StreamableHashIntMap<StreamableArrayIntSet>();
+        }
+        StreamableArrayIntSet ids = partyInvites.get(partyId);
+        if (ids == null) {
+            ids = new StreamableArrayIntSet(1); // initial capacity: 1
+            partyInvites.put(partyId, ids);
+        }
+        ids.add(invitingMemberId);
+    }
+
+    /**
+     * Clear all the party invitations for a particular party. This is called
+     * when the member actually enters this party.
+     */
+    public void clearPartyInvites (int partyId)
+    {
+        if (partyInvites != null) {
+            partyInvites.remove(partyId);
+            if (partyInvites.isEmpty()) {
+                partyInvites = null;
+            }
+        }
+    }
+
+    /**
+     * Return true if this member has been invited to this party by the specified player.
+     * Does not clear invitations for the specified party if true.
+     */
+    public boolean hasPartyInvite (int partyId, int leaderId)
+    {
+        if (partyInvites != null) {
+            StreamableArrayIntSet ids = partyInvites.get(partyId);
+            if (ids != null) {
+                return ids.contains(leaderId);
+            }
+        }
+        return false;
     }
 }

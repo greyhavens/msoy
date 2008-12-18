@@ -41,13 +41,18 @@ import com.threerings.whirled.data.ScenePlace;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+
+import com.threerings.msoy.notify.data.PartyInviteNotification;
+import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -94,6 +99,18 @@ public class PartyRegistry
                 // nada
             }
         });
+    }
+
+    /**
+     * Called on the server that hosts the passed-in player, not necessarily on the server
+     * hosting the party.
+     */
+    public void issueInvite (MemberObject member, MemberName inviter, int partyId, String partyName)
+    {
+        // record that the member got an invite
+        member.getLocal(MemberLocal.class).notePartyInvite(partyId, inviter.getMemberId());
+        // send it
+        _notifyMan.notify(member, new PartyInviteNotification(inviter, partyId, partyName));
     }
 
     /**
@@ -150,9 +167,11 @@ public class PartyRegistry
         final TreeMap<PartySort,PartyInfo> visParties = Maps.newTreeMap();
         _peerMgr.applyToNodes(new Function<NodeObject,Void>() {
             public Void apply (NodeObject node) {
-                for (PartyInfo party : ((MsoyNodeObject) node).parties) {
-                    if (party.isVisible(member)) {
-                        visParties.put(computePartySort(party, member), party);
+                for (PartyInfo info : ((MsoyNodeObject) node).parties) {
+                    // TODO: We could actually show parties in which you have an invitation,
+                    // and or a leader invite...
+                    if (info.isVisible(member)) {
+                        visParties.put(computePartySort(info, member), info);
                     }
                 }
                 return null; // Void
@@ -163,9 +182,9 @@ public class PartyRegistry
         final List<PartyBoardInfo> results = Lists.newArrayList(Iterables.transform(
             Iterables.limit(visParties.values(), PARTIES_PER_BOARD),
             new Function<PartyInfo,PartyBoardInfo>() {
-                public PartyBoardInfo apply (PartyInfo party) {
-                    icons.put(party.groupId, null);
-                    return new PartyBoardInfo(party);
+                public PartyBoardInfo apply (PartyInfo info) {
+                    icons.put(info.groupId, null);
+                    return new PartyBoardInfo(info);
                 }
             }));
 
@@ -205,14 +224,18 @@ public class PartyRegistry
             throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
         }
 
-        // figure out their rank in the specified party
+        // figure out their rank in the specified party's group
         PartyInfo info = _peerMgr.getPartyInfo(partyId);
         if (info == null) {
             throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
         }
 
+        byte rank = member.getGroupRank(info.groupId);
+        boolean hasLeaderInvite = member.getLocal(MemberLocal.class).hasPartyInvite(
+            partyId, info.leaderId);
+
         // pass the buck
-        joinParty(null, partyId, member.memberName, member.getGroupRank(info.groupId),
+        joinParty(null, partyId, member.memberName, rank, hasLeaderInvite,
             new InvocationService.ResultListener() {
                 public void requestFailed (String cause) {
                     rl.requestFailed(cause);
@@ -228,13 +251,13 @@ public class PartyRegistry
     // from PeerPartyProvider
     public void joinParty (
         ClientObject caller, int partyId, VizMemberName name, byte groupRank,
-        InvocationService.ResultListener rl)
+        boolean hasLeaderInvite, InvocationService.ResultListener rl)
         throws InvocationException
     {
         PartyManager mgr = _parties.get(partyId);
         if (mgr != null) {
             // we can satisfy this request directly!
-            mgr.addPlayer(name, groupRank, rl);
+            mgr.addPlayer(name, groupRank, hasLeaderInvite, rl);
             return;
         }
 
@@ -242,7 +265,7 @@ public class PartyRegistry
         if (tuple == null) {
             throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
         }
-        tuple.right.joinParty(tuple.left, partyId, name, groupRank, rl);
+        tuple.right.joinParty(tuple.left, partyId, name, groupRank, hasLeaderInvite, rl);
     }
 
     // from PeerPartyProvider
@@ -375,7 +398,7 @@ public class PartyRegistry
             mgr.init(pobj);
 
             // This can throw an InvocationException, or will send the response to the user..
-            mgr.addPlayer(member.memberName, groupInfo.rank, rl);
+            mgr.addPlayer(member.memberName, groupInfo.rank, true, rl);
 
         } catch (Exception e) {
             log.warning("Problem creating party", e);
@@ -439,15 +462,15 @@ public class PartyRegistry
      * Compute the score for the specified party, or return null if the user
      * does not have access to it.
      */
-    protected PartySort computePartySort (PartyInfo party, MemberObject member)
+    protected PartySort computePartySort (PartyInfo info, MemberObject member)
     {
         // start by giving you a score of 100 * your rank in the group. (0, 100, or 200)
-        int score = 100 * member.getGroupRank(party.groupId);
+        int score = 100 * member.getGroupRank(info.groupId);
         // give additional score if your friend is leading the party
-        if (member.isFriend(party.leaderId)) {
+        if (member.isFriend(info.leaderId)) {
             score += 250;
         }
-        return new PartySort(score, party.id);
+        return new PartySort(score, info.id);
     }
 
     /**
@@ -517,4 +540,5 @@ public class PartyRegistry
     @Inject protected MemberLocator _locator;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected BodyManager _bodyMan;
+    @Inject protected NotificationManager _notifyMan;
 }

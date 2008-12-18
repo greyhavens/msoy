@@ -39,6 +39,8 @@ import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.notify.server.NotificationManager;
 
+import com.threerings.msoy.party.server.PartyRegistry;
+
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -201,6 +203,20 @@ public class MemberNodeActions
     public static void addExperience (int memberId, byte action, int data)
     {
         _peerMan.invokeNodeAction(new AddExperienceAction(memberId, action, data));
+    }
+
+    public static void inviteToParty (
+        int memberId, MemberObject inviter, int partyId, String partyName)
+    {
+        _peerMan.invokeNodeAction(new PartyInviteAction(memberId, inviter, partyId, partyName));
+    }
+
+    public static void inviteAllFriendsToParty (MemberObject inviter, int partyId, String partyName)
+    {
+        if (inviter.friends.size() == 0) {
+            return;
+        }
+        _peerMan.invokeNodeAction(new AllFriendsPartyInviteAction(inviter, partyId, partyName));
     }
 
     /**
@@ -559,6 +575,51 @@ public class MemberNodeActions
         @Inject protected transient NotificationManager _notifyMan;
     }
 
+    protected static class PartyInviteAction extends MemberNodeAction
+    {
+        public PartyInviteAction () {}
+
+        public PartyInviteAction (
+            int targetId, MemberObject inviter, int partyId, String partyName)
+        {
+            super(targetId);
+            _inviter = inviter.memberName.toMemberName();
+            _partyId = partyId;
+            _partyName = partyName;
+        }
+
+        @Override protected void execute (MemberObject memObj) {
+            _partyReg.issueInvite(memObj, _inviter, _partyId, _partyName);
+        }
+
+        protected MemberName _inviter;
+        protected int _partyId;
+        protected String _partyName;
+        @Inject protected transient PartyRegistry _partyReg;
+    }
+
+    protected static class AllFriendsPartyInviteAction extends AllFriendsAction
+    {
+        public AllFriendsPartyInviteAction () {}
+
+        public AllFriendsPartyInviteAction (MemberObject inviter, int partyId, String partyName)
+        {
+            super(inviter);
+            _inviter = inviter.memberName.toMemberName();
+            _partyId = partyId;
+            _partyName = partyName;
+        }
+
+        @Override protected void execute (MemberObject memObj) {
+            _partyReg.issueInvite(memObj, _inviter, _partyId, _partyName);
+        }
+
+        protected MemberName _inviter;
+        protected int _partyId;
+        protected String _partyName;
+        @Inject protected transient PartyRegistry _partyReg;
+    }
+
     protected static class AddExperienceAction extends MemberNodeAction
     {
         public AddExperienceAction (int memberId, byte action, int data) {
@@ -594,7 +655,8 @@ public class MemberNodeActions
         @Override protected void execute (MemberObject memobj) {
             if (memobj.following == null || memobj.following.getMemberId() != _leaderId) {
                 // oops, no longer following this leader
-                _peerMan.invokeNodeAction(new RemoveFollowerAction(_leaderId, memobj.getMemberId()));
+                _peerMan.invokeNodeAction(
+                    new RemoveFollowerAction(_leaderId, memobj.getMemberId()));
             } else {
                 memobj.postMessage(RoomCodes.FOLLOWEE_MOVED, _sceneId);
             }

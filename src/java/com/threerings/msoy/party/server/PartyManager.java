@@ -34,6 +34,7 @@ import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.peer.data.HostedRoom;
@@ -41,7 +42,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.Notification;
-import com.threerings.msoy.notify.data.PartyInviteNotification;
+//import com.threerings.msoy.notify.data.PartyInviteNotification;
 import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.room.data.RoomObject;
@@ -131,13 +132,15 @@ public class PartyManager
      * Add the specified player to the party. Called from the PartyRegistry, which also
      * takes care of filling-in the partyId in the MemberObject.
      */
-    public void addPlayer (VizMemberName name, byte groupRank, InvocationService.ResultListener rl)
+    public void addPlayer (
+        VizMemberName name, byte groupRank, boolean hasLeaderInvite,
+        InvocationService.ResultListener rl)
         throws InvocationException
     {
         // TODO: now that we don't modify the _partyObj here, we could simplify the PartyRegistry
         // to not register the dobj until the user successfully joins.
 
-        String snub = _partyObj.mayJoin(name, groupRank);
+        String snub = _partyObj.mayJoin(name, groupRank, hasLeaderInvite);
         if (snub != null) {
             throw new InvocationException(snub);
         }
@@ -182,6 +185,9 @@ public class PartyManager
         _userListeners.put(member.getMemberId(), listener);
         member.addListener(listener);
 
+        // clear their invites to this party, if any
+        member.getLocal(MemberLocal.class).clearPartyInvites(_partyObj.id);
+
         // Crap, we used to do this in addPlayer, but they could never actually enter the party
         // and leave it hosed. The downside of doing it this way is that we could approve
         // more than MAX_PLAYERS to join the party...
@@ -213,7 +219,8 @@ public class PartyManager
 
     public void inviteAllFriends (MemberObject inviter)
     {
-        MemberNodeActions.notifyAllFriends(inviter, createInvite(inviter));
+        MemberNodeActions.inviteAllFriendsToParty(inviter, _partyObj.id, _partyObj.name);
+        //MemberNodeActions.notifyAllFriends(inviter, createInvite(inviter));
     }
 
     // from interface PartyProvider
@@ -300,7 +307,8 @@ public class PartyManager
         throws InvocationException
     {
         MemberObject inviter = (MemberObject)caller;
-        MemberNodeActions.sendNotification(memberId, createInvite(inviter));
+        //MemberNodeActions.sendNotification(memberId, createInvite(inviter));
+        MemberNodeActions.inviteToParty(memberId, inviter, _partyObj.id, _partyObj.name);
     }
 
     /**
@@ -377,13 +385,13 @@ public class PartyManager
             ((MemberObject) speaker).partyId == _partyObj.id;
     }
 
-    /**
-     * Create an invitation to this party.
-     */
-    protected Notification createInvite (MemberObject inviter)
-    {
-        return new PartyInviteNotification(inviter.memberName, _partyObj.id, _partyObj.name);
-    }
+//    /**
+//     * Create an invitation to this party.
+//     */
+//    protected Notification createInvite (MemberObject inviter)
+//    {
+//        return new PartyInviteNotification(inviter.memberName, _partyObj.id, _partyObj.name);
+//    }
 
     /**
      * Automatically update the status of the party based on the current scene.

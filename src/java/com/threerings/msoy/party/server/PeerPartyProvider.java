@@ -30,6 +30,6 @@ public interface PeerPartyProvider extends InvocationProvider
     /**
      * Handles a {@link PeerPartyService#joinParty} request.
      */
-    void joinParty (ClientObject caller, int arg1, VizMemberName arg2, byte arg3, InvocationService.ResultListener arg4)
+    void joinParty (ClientObject caller, int arg1, VizMemberName arg2, byte arg3, boolean arg4, InvocationService.ResultListener arg5)
         throws InvocationException;
 }

@@ -50,7 +50,7 @@ public class PeerPartyDispatcher extends InvocationDispatcher<PeerPartyMarshalle
 
         case PeerPartyMarshaller.JOIN_PARTY:
             ((PeerPartyProvider)provider).joinParty(
-                source, ((Integer)args[0]).intValue(), (VizMemberName)args[1], ((Byte)args[2]).byteValue(), (InvocationService.ResultListener)args[3]
+                source, ((Integer)args[0]).intValue(), (VizMemberName)args[1], ((Byte)args[2]).byteValue(), ((Boolean)args[3]).booleanValue(), (InvocationService.ResultListener)args[4]
             );
             return;
 

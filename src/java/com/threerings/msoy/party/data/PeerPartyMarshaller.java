@@ -49,12 +49,12 @@ public class PeerPartyMarshaller extends InvocationMarshaller
     public static final int JOIN_PARTY = 3;
 
     // from interface PeerPartyService
-    public void joinParty (Client arg1, int arg2, VizMemberName arg3, byte arg4, InvocationService.ResultListener arg5)
+    public void joinParty (Client arg1, int arg2, VizMemberName arg3, byte arg4, boolean arg5, InvocationService.ResultListener arg6)
     {
-        InvocationMarshaller.ResultMarshaller listener5 = new InvocationMarshaller.ResultMarshaller();
-        listener5.listener = arg5;
+        InvocationMarshaller.ResultMarshaller listener6 = new InvocationMarshaller.ResultMarshaller();
+        listener6.listener = arg6;
         sendRequest(arg1, JOIN_PARTY, new Object[] {
-            Integer.valueOf(arg2), arg3, Byte.valueOf(arg4), listener5
+            Integer.valueOf(arg2), arg3, Byte.valueOf(arg4), Boolean.valueOf(arg5), listener6
         });
     }
 }
