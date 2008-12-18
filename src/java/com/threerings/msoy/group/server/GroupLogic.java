@@ -64,6 +64,7 @@ public class GroupLogic
             grec.blurb = group.blurb;
             grec.policy = group.policy;
             grec.forumPerms = group.forumPerms;
+            grec.partyPerms = group.partyPerms;
             grec.official = group.official;
             if (group.logo != null) {
                 grec.logoMimeType = group.logo.mimeType;

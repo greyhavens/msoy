@@ -80,6 +80,9 @@ public class Group
     /** This group's forum permissions (see {@link #makePerms}). */
     public byte forumPerms;
 
+    /** This group's party permissions. Either PERM_MEMBER or PERM_MANAGER. */
+    public byte partyPerms;
+
     /** A snapshot of the number of members in this group. */
     public int memberCount;
 
@@ -141,7 +144,7 @@ public class Group
      */
     public MediaDesc getLogo ()
     {
-        return (logo == null) ? getDefaultGroupLogoMedia() : logo;
+        return logo(logo);
     }
 
     /**

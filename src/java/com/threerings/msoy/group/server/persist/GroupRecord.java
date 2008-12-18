@@ -100,34 +100,6 @@ public class GroupRecord extends PersistentRecord
     public static final ColumnExp LOGO_MEDIA_CONSTRAINT_C =
         new ColumnExp(GroupRecord.class, LOGO_MEDIA_CONSTRAINT);
 
-    /** The column identifier for the {@link #backgroundControl} field. */
-    public static final String BACKGROUND_CONTROL = "backgroundControl";
-
-    /** The qualified column identifier for the {@link #backgroundControl} field. */
-    public static final ColumnExp BACKGROUND_CONTROL_C =
-        new ColumnExp(GroupRecord.class, BACKGROUND_CONTROL);
-
-    /** The column identifier for the {@link #backgroundMimeType} field. */
-    public static final String BACKGROUND_MIME_TYPE = "backgroundMimeType";
-
-    /** The qualified column identifier for the {@link #backgroundMimeType} field. */
-    public static final ColumnExp BACKGROUND_MIME_TYPE_C =
-        new ColumnExp(GroupRecord.class, BACKGROUND_MIME_TYPE);
-
-    /** The column identifier for the {@link #backgroundHash} field. */
-    public static final String BACKGROUND_HASH = "backgroundHash";
-
-    /** The qualified column identifier for the {@link #backgroundHash} field. */
-    public static final ColumnExp BACKGROUND_HASH_C =
-        new ColumnExp(GroupRecord.class, BACKGROUND_HASH);
-
-    /** The column identifier for the {@link #backgroundThumbConstraint} field. */
-    public static final String BACKGROUND_THUMB_CONSTRAINT = "backgroundThumbConstraint";
-
-    /** The qualified column identifier for the {@link #backgroundThumbConstraint} field. */
-    public static final ColumnExp BACKGROUND_THUMB_CONSTRAINT_C =
-        new ColumnExp(GroupRecord.class, BACKGROUND_THUMB_CONSTRAINT);
-
     /** The column identifier for the {@link #creatorId} field. */
     public static final String CREATOR_ID = "creatorId";
 
@@ -162,6 +134,13 @@ public class GroupRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #forumPerms} field. */
     public static final ColumnExp FORUM_PERMS_C =
         new ColumnExp(GroupRecord.class, FORUM_PERMS);
+
+    /** The column identifier for the {@link #partyPerms} field. */
+    public static final String PARTY_PERMS = "partyPerms";
+
+    /** The qualified column identifier for the {@link #partyPerms} field. */
+    public static final ColumnExp PARTY_PERMS_C =
+        new ColumnExp(GroupRecord.class, PARTY_PERMS);
 
     /** The column identifier for the {@link #memberCount} field. */
     public static final String MEMBER_COUNT = "memberCount";
@@ -204,7 +183,7 @@ public class GroupRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 21;
+    public static final int SCHEMA_VERSION = 22;
 
     /** Converts a persistent record into a {@link GroupCard}. */
     public static final Function<GroupRecord, GroupCard> TO_CARD =
@@ -245,19 +224,6 @@ public class GroupRecord extends PersistentRecord
     /** The constraint for the logo image. */
     public byte logoMediaConstraint;
 
-    /** Flag to indicate page flow control. TODO: drop this some time. */
-    public int backgroundControl;
-
-    /** The MIME type for the background of the info area. TODO: drop this some time. */
-    public byte backgroundMimeType;
-
-    /** The hash code for the info area background media. TODO: drop this some time. */
-    @Column(nullable=true)
-    public byte[] backgroundHash;
-
-    /** The constraint for the thumbnail of this image. TODO: drop this some time. */
-    public byte backgroundThumbConstraint;
-
     /** The member id of the person who created the group. */
     public int creatorId;
 
@@ -272,6 +238,10 @@ public class GroupRecord extends PersistentRecord
 
     /** This group's forum permissions, see {@link Group#forumPerms}. */
     public byte forumPerms;
+
+    /** This group's party permissions. */
+    @Column(defaultValue="2") // 2 == PERM_MEMBER
+    public byte partyPerms;
 
     /** The number of people that are currently members of this group. */
     public int memberCount;
@@ -304,6 +274,7 @@ public class GroupRecord extends PersistentRecord
         group.creationDate = new java.util.Date(creationDate.getTime());
         group.policy = policy;
         group.forumPerms = forumPerms;
+        group.partyPerms = partyPerms;
         group.memberCount = memberCount;
         group.gameId = gameId;
         group.official = official;
@@ -382,6 +353,9 @@ public class GroupRecord extends PersistentRecord
         }
         if (groupDef.forumPerms != forumPerms) {
             updates.put(FORUM_PERMS, groupDef.forumPerms);
+        }
+        if (groupDef.partyPerms != partyPerms) {
+            updates.put(PARTY_PERMS, groupDef.partyPerms);
         }
         if (groupDef.official != official) {
             updates.put(OFFICIAL, groupDef.official);

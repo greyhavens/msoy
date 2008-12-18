@@ -41,6 +41,16 @@ public class CreatePartyPanel extends FloatingPanel
         setButtonWidth(0);
     }
 
+    /**
+     * Can be called after we're open to re-init the values.
+     */
+    public function init (name :String, groupId :int, inviteAllFriends :Boolean) :void
+    {
+        _name.text = name;
+        _group.selectedData = groupId;
+        _inviteAll.selected = inviteAllFriends;
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();

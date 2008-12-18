@@ -133,11 +133,12 @@ public class PartyDirector extends BasicDirector
             return;
         }
         _detailRequests[partyId] = true;
+        var handleFailure :Function = function (error :String) :void {
+            delete _detailRequests[partyId];
+            _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
+        };
         _pbsvc.getPartyDetail(_wctx.getClient(), partyId,
-            new ResultAdapter(gotPartyDetail, function (error :String) :void {
-                delete _detailRequests[partyId];
-                _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
-            }));
+            new ResultAdapter(gotPartyDetail, handleFailure));
     }
 
     /**
@@ -145,12 +146,20 @@ public class PartyDirector extends BasicDirector
      */
     public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void
     {
-        var success :Function = function (sceneId :int) :void {
+        var handleSuccess :Function = function (sceneId :int) :void {
             visitPartyScene(sceneId);
             Prefs.setPartyGroup(groupId);
         };
+        var handleFailure :Function = function (error :String) :void {
+            _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
+            // re-open...
+            var panel :CreatePartyPanel = new CreatePartyPanel(_wctx);
+            panel.open();
+            panel.init(name, groupId, inviteAllFriends);
+        };
+
         _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends,
-            _wctx.resultListener(success, MsoyCodes.PARTY_MSGS));
+            new ResultAdapter(handleSuccess, handleFailure));
     }
 
     /**

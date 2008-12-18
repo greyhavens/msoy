@@ -73,6 +73,7 @@ public class GroupEdit extends FlexTable
         if (_group.policy == 0) {
             _group.policy = Group.POLICY_PUBLIC;
             _group.forumPerms = Group.makePerms(Group.PERM_MEMBER, Group.PERM_ALL);
+            _group.partyPerms = Group.PERM_MEMBER;
         }
 
         // make sure the group's configured policy is consistent with what's shown in the GUI
@@ -83,17 +84,23 @@ public class GroupEdit extends FlexTable
         _policy.setSelectedIndex(_group.policy - Group.POLICY_PUBLIC);
         addRow(_msgs.editPolicy(), _policy);
 
+        _party = new ListBox();
+        _party.addItem(_msgs.permsMember());
+        _party.addItem(_msgs.permsManager());
+        _party.setSelectedIndex(_group.partyPerms - Group.PERM_MEMBER);
+        addRow(_msgs.partyPerm(), _party);
+
         _thread = new ListBox();
-        _thread.addItem(_msgs.forumPermsAll());
-        _thread.addItem(_msgs.forumPermsMember());
-        _thread.addItem(_msgs.forumPermsManager());
+        _thread.addItem(_msgs.permsAll());
+        _thread.addItem(_msgs.permsMember());
+        _thread.addItem(_msgs.permsManager());
         _thread.setSelectedIndex(_group.getThreadPerm() - Group.PERM_ALL);
         addRow(_msgs.editThread(), _thread);
 
         _post = new ListBox();
-        _post.addItem(_msgs.forumPermsAll());
-        _post.addItem(_msgs.forumPermsMember());
-        _post.addItem(_msgs.forumPermsManager());
+        _post.addItem(_msgs.permsAll());
+        _post.addItem(_msgs.permsMember());
+        _post.addItem(_msgs.permsManager());
         _post.setSelectedIndex(_group.getPostPerm() - Group.PERM_ALL);
         addRow(_msgs.editPost(), _post);
 
@@ -188,6 +195,7 @@ public class GroupEdit extends FlexTable
         _group.logo = _logo.getMedia();
         _group.blurb = _blurb.getText().trim();
         _group.policy = (byte)(_policy.getSelectedIndex()+Group.POLICY_PUBLIC);
+        _group.partyPerms = (byte)(_party.getSelectedIndex() + Group.PERM_MEMBER);
         _group.forumPerms = Group.makePerms(_thread.getSelectedIndex()+Group.PERM_ALL,
                                             _post.getSelectedIndex()+Group.PERM_ALL);
         _group.official = _official != null && _official.isChecked();
@@ -242,7 +250,7 @@ public class GroupEdit extends FlexTable
 
     protected TextBox _name, _blurb, _homepage, _catalogTag;
     protected PhotoChoiceBox _logo;
-    protected ListBox _policy, _thread, _post, _catalogType;
+    protected ListBox _policy, _party, _thread, _post, _catalogType;
     protected LimitedTextArea _charter;
     protected Button _submit;
     protected CheckBox _official;

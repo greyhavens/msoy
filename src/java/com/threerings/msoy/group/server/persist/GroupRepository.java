@@ -22,6 +22,7 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
@@ -92,6 +93,14 @@ public class GroupRepository extends DepotRepository
                 return new GroupTagHistoryRecord();
             }
         };
+
+        // TEMP: drop some old fields
+        String[] oldFields = {
+            "backgroundControl", "backgroundMimeType", "backgroundHash",
+            "backgroundThumbConstraint" };
+        for (String oldField : oldFields) {
+            ctx.registerMigration(GroupRecord.class, new SchemaMigration.Drop(22, oldField));
+        }
     }
 
     /**

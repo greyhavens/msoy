@@ -352,9 +352,12 @@ public class PartyRegistry
         PartyObject pobj = null;
         PartyManager mgr = null;
         try {
-
-            // TODO: validate with that group who can create parties (may just be managers)
-            // TODO: any other party creation restriction checks
+            // validate that they can create the party with this group
+            if ((group.partyPerms == Group.PERM_MANAGER) &&
+                    (groupInfo.rank < GroupMembership.RANK_MANAGER)) {
+                rl.requestFailed(PartyCodes.E_GROUP_MGR_REQUIRED);
+                return;
+            }
 
             // set up the new PartyObject
             pobj = _omgr.registerObject(new PartyObject());
