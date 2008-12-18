@@ -207,3 +207,7 @@
   margin-top: 15px;
   width: 570px;
 }
+
+.nowLoadingWidget {
+  color: white;
+}

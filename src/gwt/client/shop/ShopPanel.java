@@ -5,6 +5,7 @@ package client.shop;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -27,6 +28,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import client.ui.HeaderBox;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
+import client.ui.NowLoadingWidget;
 import client.ui.PriceLabel;
 import client.ui.Stars;
 import client.ui.ThumbBox;
@@ -68,32 +70,40 @@ public class ShopPanel extends HorizontalPanel
                 init(data);
             }
         });
+        _nowLoading = new NowLoadingWidget();
+        _nowLoading.center();
     }
 
-    protected void init (ShopData data)
+    protected void init (final ShopData data)
     {
-        SmartTable boxes = new SmartTable(0, 0);
-        boxes.setWidget(0, 0, createTop("avatar", _msgs.shopTopAvatars(), data.topAvatars));
-        boxes.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
-        boxes.getFlexCellFormatter().setRowSpan(0, 0, 3);
-        boxes.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-        boxes.getFlexCellFormatter().setRowSpan(0, 1, 3);
-        if (data.featuredPet != null) {
-            boxes.setWidget(0, 2, createFeatured("pet", _msgs.shopFeatPet(), data.featuredPet));
-            boxes.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
-        }
-        boxes.setWidget(1, 0, WidgetUtil.makeShim(10, 10));
-        if (data.featuredToy != null) {
-            boxes.setWidget(2, 0, createFeatured("toy", _msgs.shopFeatToy(), data.featuredToy));
-            boxes.getFlexCellFormatter().setVerticalAlignment(2, 2, HasAlignment.ALIGN_TOP);
-        }
-        boxes.setWidget(0, 3, WidgetUtil.makeShim(10, 10));
-        boxes.getFlexCellFormatter().setRowSpan(0, 3, 3);
-        boxes.setWidget(0, 4, createTop("furni", _msgs.shopTopFurniture(), data.topFurniture));
-        boxes.getFlexCellFormatter().setVerticalAlignment(0, 4, HasAlignment.ALIGN_TOP);
-        boxes.getFlexCellFormatter().setRowSpan(0, 4, 3);
+        _nowLoading.finishing();
+        new Timer() {
+            public void run () {
+                SmartTable boxes = new SmartTable(0, 0);
+                boxes.setWidget(0, 0, createTop("avatar", _msgs.shopTopAvatars(), data.topAvatars));
+                boxes.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+                boxes.getFlexCellFormatter().setRowSpan(0, 0, 3);
+                boxes.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
+                boxes.getFlexCellFormatter().setRowSpan(0, 1, 3);
+                if (data.featuredPet != null) {
+                    boxes.setWidget(0, 2, createFeatured("pet", _msgs.shopFeatPet(), data.featuredPet));
+                    boxes.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
+                }
+                boxes.setWidget(1, 0, WidgetUtil.makeShim(10, 10));
+                if (data.featuredToy != null) {
+                    boxes.setWidget(2, 0, createFeatured("toy", _msgs.shopFeatToy(), data.featuredToy));
+                    boxes.getFlexCellFormatter().setVerticalAlignment(2, 2, HasAlignment.ALIGN_TOP);
+                }
+                boxes.setWidget(0, 3, WidgetUtil.makeShim(10, 10));
+                boxes.getFlexCellFormatter().setRowSpan(0, 3, 3);
+                boxes.setWidget(0, 4, createTop("furni", _msgs.shopTopFurniture(), data.topFurniture));
+                boxes.getFlexCellFormatter().setVerticalAlignment(0, 4, HasAlignment.ALIGN_TOP);
+                boxes.getFlexCellFormatter().setRowSpan(0, 4, 3);
 
-        _contents.add(boxes);
+                _contents.add(boxes);
+                _nowLoading.hide();
+            }
+        }.schedule(1);
     }
 
     protected Widget createTop (String icon, String title, ListingCard[] listings)
@@ -150,7 +160,8 @@ public class ShopPanel extends HorizontalPanel
     }
 
     protected FlowPanel _contents;
-
+    protected NowLoadingWidget _nowLoading;
+    
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)

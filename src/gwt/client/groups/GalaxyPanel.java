@@ -6,6 +6,7 @@ package client.groups;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -31,6 +32,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.ui.NowLoadingWidget;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -134,6 +136,8 @@ public class GalaxyPanel extends FlowPanel
                 init(galaxy);
             }
         });
+        _nowLoading = new NowLoadingWidget();
+        _nowLoading.center();
     }
 
     /**
@@ -207,25 +211,33 @@ public class GalaxyPanel extends FlowPanel
      * Called when my groups & tags data is retrieved after this panel is created; populate the
      * page with data.
      */
-    protected void init (GalaxyData data)
+    protected void init (final GalaxyData data)
     {
-        // set up my groups
-        if (!CShell.isGuest() && data.myGroups.size() == 0) {
-            _myGroups.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsNone(), "NoGroups"));
-        } else {
-            for (MyGroupCard group : data.myGroups) {
-                _myGroups.add(createQuickGroupWidget(group));
-            }
-            Widget seeAllLink = Link.create(_msgs.galaxyMyGroupsSeeAll(), Pages.GROUPS,
-                "mygroups");
-            seeAllLink.addStyleName("SeeAll");
-            _myGroups.add(seeAllLink);
-        }
+        _nowLoading.finishing();
+        
+        new Timer() {
+            public void run () {
+                // set up my groups
+                if (!CShell.isGuest() && data.myGroups.size() == 0) {
+                    _myGroups.add(MsoyUI.createLabel(_msgs.galaxyMyGroupsNone(), "NoGroups"));
+                } else {
+                    for (MyGroupCard group : data.myGroups) {
+                        _myGroups.add(createQuickGroupWidget(group));
+                    }
+                    Widget seeAllLink = Link.create(_msgs.galaxyMyGroupsSeeAll(), Pages.GROUPS,
+                        "mygroups");
+                    seeAllLink.addStyleName("SeeAll");
+                    _myGroups.add(seeAllLink);
+                }
 
-        // set up official groups
-        for (GroupCard group : data.officialGroups) {
-            _officialGroups.add(createQuickGroupWidget(group));
-        }
+                // set up official groups
+                for (GroupCard group : data.officialGroups) {
+                    _officialGroups.add(createQuickGroupWidget(group));
+                }
+                
+                _nowLoading.hide();
+            }
+        }.schedule(1);
     }
 
     /**
@@ -295,7 +307,8 @@ public class GalaxyPanel extends FlowPanel
     protected FlowPanel _officialGroups;
     protected ListBox _sortBox;
     protected FlowPanel _categoryLinks;
-
+    protected NowLoadingWidget _nowLoading;
+    
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);

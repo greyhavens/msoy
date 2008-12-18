@@ -1181,3 +1181,18 @@ img, embed, applet, object {
 .contestBox-past a {
   color: #FFFFFF;
 }
+
+/* ------------------------------------
+   NOW LOADING WIDGET
+-------------------------------------*/
+
+.nowLoadingWidget {
+  color: #216CA3;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24pt;
+  font-weight: bold;
+}
+
+.nowLoadingWidget .label {
+  margin-top: 25px;
+} 

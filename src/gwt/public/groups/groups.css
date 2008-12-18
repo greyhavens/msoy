@@ -550,6 +550,10 @@
   padding-right: 20px;
 }
 
+.nowLoadingWidget {
+  color: white;
+}
+
 /* ------------------------------------
    MY GROUPS
 -------------------------------------*/
