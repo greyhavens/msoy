@@ -453,7 +453,7 @@ public class EditAccountPanel extends FlowPanel
         _usersvc.linkExternalAccount(creds, override, new MsoyCallback<Boolean>() {
             public void onSuccess (Boolean succeeded) {
                 if (succeeded) {
-                    MsoyUI.info(_msgs.fbconnectActive());
+                    MsoyUI.info(_msgs.fbconnectSuccess());
                     return;
                 }
                 new PromptPopup(_msgs.fbconnectOverride(), new Command() {
