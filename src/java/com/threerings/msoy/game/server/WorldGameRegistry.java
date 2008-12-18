@@ -247,7 +247,7 @@ public class WorldGameRegistry
      * Forwards a broadcast to the game server, so that it can be sent on all of that server's
      * place (game) objects.
      */
-    public void forwardBroadcast(Name from, String bundle, String msg, boolean attention)
+    public void forwardBroadcast (Name from, String bundle, String msg, boolean attention)
     {
         for (GameServerHandler handler : _handlers) {
             handler.postMessage(WorldServerClient.FORWARD_BROADCAST, from, bundle, msg, attention);
