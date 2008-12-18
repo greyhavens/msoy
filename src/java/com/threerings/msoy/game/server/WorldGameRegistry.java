@@ -537,7 +537,8 @@ public class WorldGameRegistry
     protected void lockGame (final Game game, final WorldGameService.LocationListener listener)
     {
         // otherwise obtain a lock and resolve the game ourselves
-        _peerMan.acquireLock(MsoyPeerManager.getGameLock(game.gameId), new ResultListener<String>() {
+        _peerMan.acquireLock(MsoyPeerManager.getGameLock(game.gameId),
+            new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
                 if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
                     log.info("Got lock, resolving " + game.name + ".");
