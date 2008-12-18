@@ -26,6 +26,7 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -144,8 +145,12 @@ public class PartyDirector extends BasicDirector
      */
     public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void
     {
+        var success :Function = function (sceneId :int) :void {
+            visitPartyScene(sceneId);
+            Prefs.setPartyGroup(groupId);
+        };
         _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends,
-            _wctx.resultListener(visitPartyScene, MsoyCodes.PARTY_MSGS));
+            _wctx.resultListener(success, MsoyCodes.PARTY_MSGS));
     }
 
     /**

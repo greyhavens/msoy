@@ -6,18 +6,21 @@ package com.threerings.msoy.party.client {
 import mx.containers.Grid;
 
 import mx.controls.CheckBox;
-import mx.controls.ComboBox;
 import mx.controls.TextInput;
+
+import mx.core.ClassFactory;
 
 import com.threerings.util.Integer;
 import com.threerings.util.StringUtil;
 
+import com.threerings.flex.CommandComboBox;
 import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -57,18 +60,23 @@ public class CreatePartyPanel extends FloatingPanel
         _name.text = StringUtil.truncate(
             Msgs.PARTY.get("m.default_name", us.memberName.toString()), PartyCodes.MAX_NAME_LENGTH);
 
-        _group = new ComboBox();
+        _group = new CommandComboBox();
+        _group.itemRenderer = new ClassFactory(GroupLabel);
         _group.dataProvider = us.groups.toArray().sort(
             function (one :GroupMembership, two :GroupMembership) :int {
                 // sort groups by your rank, then by name
-                var cmp :int = Integer.compare(one.rank, two.rank);
+                var cmp :int = Integer.compare(two.rank, one.rank); // higher rank sorts first
                 if (cmp == 0) {
                     cmp = MemberName.BY_DISPLAY_NAME(one.group, two.group);
                 }
                 return cmp;
             }).map(function (item :GroupMembership, ... rest) :Object {
-                return { label: item.group.toString(), data: item.group.getGroupId() };
+                return { label: item.group.toString(), data: item.group.getGroupId(),
+                    rank: item.rank };
             });
+        // attempt to select the group they used last time
+        _group.selectedData = Prefs.getPartyGroup();
+        _group.selectedIndex = Math.max(0, _group.selectedIndex); // make sure something's selected
 
         _inviteAll = new CheckBox();
         _inviteAll.selected = true;
@@ -94,7 +102,7 @@ public class CreatePartyPanel extends FloatingPanel
     {
         if (buttonId == OK_BUTTON) {
             WorldContext(_ctx).getPartyDirector().createParty(
-                _name.text, int(_group.selectedItem.data), _inviteAll.selected);
+                _name.text, int(_group.selectedData), _inviteAll.selected);
         }
 
         super.buttonClicked(buttonId);
@@ -102,8 +110,24 @@ public class CreatePartyPanel extends FloatingPanel
 
     protected var _name :TextInput;
 
-    protected var _group :ComboBox;
+    protected var _group :CommandComboBox;
 
     protected var _inviteAll :CheckBox;
 }
+}
+
+import mx.controls.Label;
+
+import com.threerings.msoy.group.data.all.GroupMembership;
+
+/**
+ * Bolds groups in which we're a manager.
+ */
+class GroupLabel extends Label
+{
+    override public function set data (value :Object) :void
+    {
+        super.data = value;
+        setStyle("fontWeight", (value.rank == GroupMembership.RANK_MANAGER) ? "bold" : "normal");
+    }
 }

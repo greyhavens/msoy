@@ -42,6 +42,7 @@ public class Prefs
     public static const LOG_TO_CHAT :String = "logToChat";
     public static const BLEEPED_MEDIA :String = "bleepedMedia";
     public static const GRID_AUTOSHOW :String = "gridAutoshow";
+    public static const PARTY_GROUP :String = "partyGroup";
 
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
@@ -226,6 +227,16 @@ public class Prefs
     public static function setShowingOccupantList (showing :Boolean) :void
     {
         config.setValue(OCCUPANT_LIST, showing);
+    }
+
+    public static function getPartyGroup () :int
+    {
+        return (config.getValue(PARTY_GROUP, 0) as int);
+    }
+
+    public static function setPartyGroup (groupId :int) :void
+    {
+        config.setValue(PARTY_GROUP, groupId);
     }
 
     protected static function checkLoadBlockedMedia () :void
