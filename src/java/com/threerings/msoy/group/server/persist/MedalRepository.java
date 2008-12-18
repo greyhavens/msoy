@@ -127,6 +127,12 @@ public class MedalRepository extends DepotRepository
         insert(earnedMedalRec);
     }
 
+    public boolean deleteEarnedMedal (int memberId, int medalId)
+    {
+        int result = delete(EarnedMedalRecord.class, EarnedMedalRecord.getKey(medalId, memberId));
+        return result > 0;
+    }
+
     @Override
     protected void getManagedRecords(Set<Class<? extends PersistentRecord>> classes)
     {
