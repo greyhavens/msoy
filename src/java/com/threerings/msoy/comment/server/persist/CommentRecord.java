@@ -97,6 +97,7 @@ public class CommentRecord extends PersistentRecord
     public int memberId;
 
     /** The absolute rating of this comment. */
+    @Column(defaultValue="1")
     public int currentRating;
 
     /** The total number of times this comment has been rated. */
