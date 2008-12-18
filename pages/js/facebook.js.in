@@ -9,7 +9,7 @@ window.FB_WithInit = function(callback) {
   });
 };
 window.FB_RequireSession = function() {
-  FB_WIthInit(function() {
+  FB_WithInit(function() {
     FB.Connect.requireSession(function() {
       FB_RequireSessionCallback(FB.Facebook.apiClient.get_session().uid);
       FB_RequireSessionCallback = null;
