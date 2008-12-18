@@ -17,6 +17,8 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.ui.MediaWrapper;
 
+import com.threerings.msoy.group.data.all.Group;
+
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
 
@@ -41,7 +43,8 @@ public class PartyBoardInfoRenderer extends HBox
         var party :PartyBoardInfo = PartyBoardInfo(value);
 
         _picHolder.removeAllChildren();
-        _picHolder.addChild(MediaWrapper.createView(party.icon, MediaDesc.QUARTER_THUMBNAIL_SIZE));
+        _picHolder.addChild(MediaWrapper.createView(
+            Group.logo(party.icon), MediaDesc.QUARTER_THUMBNAIL_SIZE));
 
         _name.text = party.info.name;
         _population.text = String(party.info.population);

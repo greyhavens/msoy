@@ -47,6 +47,7 @@ import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.room.data.RoomObject;
 
 import com.threerings.msoy.party.data.PartyCodes;
+import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
@@ -197,11 +198,12 @@ public class PartyManager
     }
 
     /**
-     * Get the party detail.
+     * Get the party detail, sans the group logo.
      */
-    public PartyPeep[] getPartyDetail ()
+    public PartyDetail getPartyDetail ()
     {
-        return _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]);
+        return new PartyDetail(_lastInfo, 
+            _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
     }
 
     public int getSceneId ()
@@ -491,9 +493,10 @@ public class PartyManager
      */
     protected void updatePartyInfo ()
     {
-        _peerMgr.updatePartyInfo(new PartyInfo(
+        _lastInfo = new PartyInfo(
             _partyObj.id, _partyObj.name, _partyObj.leaderId, _partyObj.group.getGroupId(),
-            _partyObj.status, _partyObj.peeps.size(), _partyObj.recruitment));
+            _partyObj.status, _partyObj.peeps.size(), _partyObj.recruitment);
+        _peerMgr.updatePartyInfo(_lastInfo);
     }
 
     protected void addPartySummary (SceneManager scmgr)
@@ -548,6 +551,8 @@ public class PartyManager
     } // end: class UserListener
 
     protected PartyObject _partyObj;
+
+    protected PartyInfo _lastInfo;
 
     protected IntMap<UserListener> _userListeners = IntMaps.newHashIntMap();
 

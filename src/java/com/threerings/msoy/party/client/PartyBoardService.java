@@ -36,7 +36,7 @@ public interface PartyBoardService extends InvocationService
 
     /**
      * Retrieve detailed information on a party.
-     * Returns a PartyPeep[].
+     * Returns a PartyDetail object.
      */
     void getPartyDetail (Client client, int partyId, ResultListener rl);
 }

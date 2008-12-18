@@ -3,11 +3,14 @@
 
 package com.threerings.msoy.party.client {
 
+import flash.utils.Dictionary;
+
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -27,8 +30,9 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
+import com.threerings.msoy.party.data.PartyCodes;
+import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyMarshaller;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
@@ -122,8 +126,17 @@ public class PartyDirector extends BasicDirector
      */
     public function getPartyDetail (partyId :int) :void
     {
-        trace("Requested party detail: " + partyId);
-        // TODO
+        // suppress requests that are already outstanding
+        if (Boolean(_detailRequests[partyId])) {
+            // suppress
+            return;
+        }
+        _detailRequests[partyId] = true;
+        _pbsvc.getPartyDetail(_wctx.getClient(), partyId,
+            new ResultAdapter(gotPartyDetail, function (error :String) :void {
+                delete _detailRequests[partyId];
+                _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
+            }));
     }
 
     /**
@@ -237,8 +250,8 @@ public class PartyDirector extends BasicDirector
     protected function handleJoinParty (sceneId :int) :void
     {
         log.debug("handleJoinParty", "sceneId", sceneId);
+        closeAllDetailPanels();
         visitPartyScene(sceneId);
-
         /* Note:
         if (onSameServer) {
             visitPartyScene(); // could be a no-op.
@@ -330,6 +343,40 @@ public class PartyDirector extends BasicDirector
         // we might need to warp to the party location
         checkFollowParty();
     }
+    
+    /**
+     * Callback for a getPartyDetail request.
+     */
+    protected function gotPartyDetail (detail :PartyDetail) :void
+    {
+        // stop tracking that we have an outstanding request
+        delete _detailRequests[detail.info.id];
+
+        // close any previous detail panel for this party
+        var panel :PartyDetailPanel = _detailPanels[detail.info.id] as PartyDetailPanel;
+        if (panel != null) {
+            panel.close();
+        }
+
+        // pop open the new one
+        panel = new PartyDetailPanel(_wctx, detail);
+        _detailPanels[detail.info.id] = panel;
+        panel.setCloseCallback(function () :void {
+            delete _detailPanels[detail.info.id];
+        });
+        panel.open();
+    }
+
+    protected function closeAllDetailPanels () :void
+    {
+        var panels :Array = [];
+        for each (var o :Object in _detailPanels) {
+            panels.push(o);
+        }
+        for each (var panel :PartyDetailPanel in panels) {
+            panel.close();
+        }
+    }
 
     /**
      * Called when we've failed to subscribe to a party.
@@ -406,6 +453,9 @@ public class PartyDirector extends BasicDirector
 
     /** True if we should not pop up the party panel when subscribing to a party. */
     protected var _suppressPartyPop :Boolean = false;
+
+    protected var _detailRequests :Dictionary = new Dictionary();
+    protected var _detailPanels :Dictionary = new Dictionary();
 
     protected var _partyListener :ChangeListener;
 }

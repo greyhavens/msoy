@@ -57,6 +57,7 @@ import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.party.client.PeerPartyService;
 import com.threerings.msoy.party.data.PartyBoardInfo;
 import com.threerings.msoy.party.data.PartyCodes;
+import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 
@@ -178,12 +179,7 @@ public class PartyRegistry
             public void handleSuccess () {
                 for (PartyBoardInfo party : results) {
                     party.icon = icons.get(party.info.groupId);
-                    // TODO: leave as null and xlate on client
-                    if (party.icon == null) {
-                        party.icon = Group.getDefaultGroupLogoMedia();
-                    }
                 }
-
                 rl.requestProcessed(results);
             }
 
@@ -296,13 +292,24 @@ public class PartyRegistry
 
     // from PartyBoardProvider & PeerPartyProvider
     public void getPartyDetail (
-        ClientObject caller, int partyId, InvocationService.ResultListener rl)
+        ClientObject caller, int partyId, final InvocationService.ResultListener rl)
         throws InvocationException
     {
         // see if we can handle it locally
         PartyManager mgr = _parties.get(partyId);
         if (mgr != null) {
-            rl.requestProcessed(mgr.getPartyDetail());
+            final PartyDetail detail = mgr.getPartyDetail();
+            _invoker.postUnit(new RepositoryUnit("loadPartyGroup") {
+                public void invokePersist () throws Exception {
+                    GroupRecord rec = _groupRepo.loadGroup(detail.info.groupId);
+                    detail.groupName = rec.name;
+                    detail.icon = rec.toLogo();
+                }
+
+                public void handleSuccess () {
+                    rl.requestProcessed(detail);
+                }
+            });
             return;
         }
 
@@ -355,9 +362,6 @@ public class PartyRegistry
             pobj.name = StringUtil.truncate(name, PartyCodes.MAX_NAME_LENGTH);
             pobj.group = groupInfo.group;
             pobj.icon = group.toLogo();
-            if (pobj.icon == null) {
-                pobj.icon = Group.getDefaultGroupLogoMedia(); // TODO: leave as null, xlate on cli?
-            }
             pobj.leaderId = member.getMemberId();
             if (member.location instanceof ScenePlace) {
                 pobj.sceneId = ((ScenePlace) member.location).sceneId;

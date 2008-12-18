@@ -254,6 +254,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.world.client.WorldController;
 
 import com.threerings.msoy.party.data.PartySummary;
@@ -351,7 +352,8 @@ class PartyIcon extends Sprite
             return;
         }
 
-        _icon = ScalingMediaContainer.createView(summ.icon, MediaDesc.QUARTER_THUMBNAIL_SIZE);
+        _icon = ScalingMediaContainer.createView(
+            Group.logo(summ.icon), MediaDesc.QUARTER_THUMBNAIL_SIZE);
         _icon.x = _icon.maxW / -2; // position with 0 at center
         addChild(_icon);
 

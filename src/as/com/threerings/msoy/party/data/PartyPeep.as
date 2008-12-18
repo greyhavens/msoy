@@ -25,15 +25,16 @@ public class PartyPeep extends PlayerEntry
 
     /**
      * Create a sort function for sorting PartyPeep entries.
+     * @param partyInfo an object that has a leaderId property.
      */
-    public static function createSortByOrder (pobj :PartyObject) :Function
+    public static function createSortByOrder (partyInfo :Object) :Function
     {
         return function (lhs :PartyPeep, rhs :PartyPeep, ... rest) :int {
             // always show the leader on top
-            if (pobj.leaderId == lhs.name.getMemberId()) {
+            if (partyInfo.leaderId == lhs.name.getMemberId()) {
                 return -1;
 
-            } else if (pobj.leaderId == rhs.name.getMemberId()) {
+            } else if (partyInfo.leaderId == rhs.name.getMemberId()) {
                 return 1;
             }
             var cmp :int = Integer.compare(lhs.joinOrder, rhs.joinOrder);
