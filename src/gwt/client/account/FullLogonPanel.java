@@ -32,10 +32,6 @@ public class FullLogonPanel extends LogonPanel
     {
         super(Mode.HORIZ, MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.logonLogon(), null));
 
-        if (!DeploymentConfig.devDeployment) {
-            return; // fbconnect disabled in production for now
-        }
-
         // add the interface for logging in via Facebook connect
         setText(1, 0, _msgs.logonFacebook(), 1, null);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
