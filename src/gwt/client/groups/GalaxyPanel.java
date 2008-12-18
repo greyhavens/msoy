@@ -235,7 +235,7 @@ public class GalaxyPanel extends FlowPanel
     {
         FloatPanel widget = new FloatPanel("Group");
         String goArgs = Args.compose("d", group.name.getGroupId());
-        widget.add(new ThumbBox(group.logo, MediaDesc.QUARTER_THUMBNAIL_SIZE, Pages.GROUPS,
+        widget.add(new ThumbBox(group.getLogo(), MediaDesc.QUARTER_THUMBNAIL_SIZE, Pages.GROUPS,
             goArgs));
         widget.add(Link.create(group.name.toString(), "Name", Pages.GROUPS, goArgs));
         widget.add(Link.create(_msgs.galaxyMyGroupsDiscussions(), "Discussions", Pages.GROUPS,
@@ -252,7 +252,7 @@ public class GalaxyPanel extends FlowPanel
 
         FloatPanel logoAndName = new FloatPanel("LogoAndName");
         String goArgs = Args.compose("d", group.name.getGroupId());
-        logoAndName.add(new ThumbBox(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE, Pages.GROUPS,
+        logoAndName.add(new ThumbBox(group.getLogo(), MediaDesc.HALF_THUMBNAIL_SIZE, Pages.GROUPS,
             goArgs));
         logoAndName.add(Link.create(group.name.toString(), "GroupName", Pages.GROUPS, goArgs));
 

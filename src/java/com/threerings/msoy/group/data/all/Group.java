@@ -90,6 +90,14 @@ public class Group
     public boolean official;
 
     /**
+     * Return the specified MediaDesc, or the group default logo if it's null.
+     */
+    public static MediaDesc logo (MediaDesc desc)
+    {
+        return (desc != null) ? desc : getDefaultGroupLogoMedia();
+    }
+
+    /**
      * Creates a default logo for use with groups that have no logo.
      */
     public static MediaDesc getDefaultGroupLogoMedia ()

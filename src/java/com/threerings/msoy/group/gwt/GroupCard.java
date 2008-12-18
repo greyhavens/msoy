@@ -18,8 +18,8 @@ public class GroupCard
     /** The group's name. */
     public GroupName name;
 
-    /** The groups's logo (or the default). */
-    public MediaDesc logo = Group.getDefaultGroupLogoMedia();
+    /** The groups's logo. Note: Could be null! Use getLogo()! */
+    public MediaDesc logo;
 
     /** This group's brief description. */
     public String blurb;
@@ -41,4 +41,12 @@ public class GroupCard
 
     /** If the group is an official whirled group. */
     public boolean official;
+
+    /**
+     * Get the group's logo.
+     */
+    public MediaDesc getLogo ()
+    {
+        return Group.logo(logo);
+    }
 }

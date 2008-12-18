@@ -118,7 +118,7 @@ public class FeaturedGroupPanel extends FlowPanel
 
             // put the icon in a box with the whirled name beneath it
             Widget image = MediaUtil.createMediaView(
-                card.logo, MediaDesc.HALF_THUMBNAIL_SIZE, groupClick);
+                card.getLogo(), MediaDesc.HALF_THUMBNAIL_SIZE, groupClick);
             FlowPanel iconBox = new FlowPanel();
             iconBox.setStyleName("IconBox");
             iconBox.add(image);

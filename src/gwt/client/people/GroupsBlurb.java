@@ -118,7 +118,7 @@ public class GroupsBlurb extends Blurb
         public GroupWidget (final GroupCard card) {
             setStyleName("Group");
             String args = Args.compose("d", card.name.getGroupId());
-            add(new ThumbBox(card.logo, Pages.GROUPS, args));
+            add(new ThumbBox(card.getLogo(), Pages.GROUPS, args));
             add(Link.create(card.name.toString(), Pages.GROUPS, args));
         }
     }

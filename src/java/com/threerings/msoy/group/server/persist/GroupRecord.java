@@ -311,7 +311,7 @@ public class GroupRecord extends PersistentRecord
     }
 
     /**
-     * Creates a MediaDesc of the group logo
+     * Creates a MediaDesc of the group logo, or returns null if there is none.
      */
     public MediaDesc toLogo ()
     {
@@ -350,9 +350,7 @@ public class GroupRecord extends PersistentRecord
     {
         GroupCard card = new GroupCard();
         card.name = toGroupName();
-        if (logoMediaHash != null) {
-            card.logo = toLogo();
-        }
+        card.logo = toLogo();
         card.blurb = blurb;
         card.homeSceneId = homeSceneId;
         card.memberCount = memberCount;

@@ -135,7 +135,7 @@ public class MyGroups extends AbsolutePanel
                 // logo links to group
                 SimplePanel logoBox = new SimplePanel();
                 logoBox.setStyleName("LogoBox");
-                logoBox.setWidget(new ThumbBox(card.logo, Pages.GROUPS,
+                logoBox.setWidget(new ThumbBox(card.getLogo(), Pages.GROUPS,
                                                Args.compose("d", card.name.getGroupId())));
                 add(logoBox);
 
