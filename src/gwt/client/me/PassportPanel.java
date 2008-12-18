@@ -82,6 +82,7 @@ public class PassportPanel extends FlowPanel
         FlowPanel sectionLinks = new FlowPanel();
         sectionLinks.setStyleName("SectionLinks");
         add(sectionLinks);
+        sectionLinks.add(MsoyUI.createLabel(_msgs.passportSelectionInstructions(), "Instructions"));
         sectionLinks.add(MsoyUI.createActionLabel(_msgs.passportStampsLink(), "SectionLink",
             new ClickListener() {
                 public void onClick (Widget sender) {
