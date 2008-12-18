@@ -46,18 +46,15 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
-     * Loads all applicable feed messages for the specified member.
+     * Loads all applicable personal feed messages for the specified member.
      *
-     * @param sinceMillis a timestamp before which not to load messages or null if all available
-     * messages should be loaded.
+     * @param since an approximate timestamp before which not to load messages.
      */
-    public List<FeedMessageRecord> loadPersonalFeed (int memberId, Collection<Integer> friendIds,
-                                                     Collection<Integer> groupIds, long sinceMillis)
+    public void loadPersonalFeed (int memberId, List<FeedMessageRecord> messages,
+        Collection<Integer> friendIds, long since)
     {
-        // round "since" to the nearest 2^18 milliseconds so that we can cache this query
-        Timestamp since = new Timestamp(sinceMillis & ~0x3FFFFL);
-        List<FeedMessageRecord> messages = Lists.newArrayList();
-        loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, since);
+        // round "since" to the nearest 2^18 milliseconds (~4 hours) for cachability
+        since &= ~0x3FFFFL;
         SQLOperator self = new Conditionals.Equals(SelfFeedMessageRecord.TARGET_ID_C, memberId);
         loadFeedMessages(messages, SelfFeedMessageRecord.class, self, since);
         if (!friendIds.isEmpty()) {
@@ -65,27 +62,39 @@ public class FeedRepository extends DepotRepository
             actors = new Conditionals.In(FriendFeedMessageRecord.ACTOR_ID_C, friendIds);
             loadFeedMessages(messages, FriendFeedMessageRecord.class, actors, since);
         }
+
+        // include actions the member has performed
+        SQLOperator actor = new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, memberId);
+        loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, since);
+    }
+
+    /**
+     * Loads all global and group feed messages for the given groups.
+     *
+     * @param since an approximate timestamp before which not to load messages.
+     */
+    public void loadGroupFeeds (List<FeedMessageRecord> messages,
+        Collection<Integer> groupIds, long since)
+    {
+        // round "since" to the nearest 2^18 milliseconds (~4 hours) for cachability
+        since &= ~0x3FFFFL;
+        loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, since);
         if (!groupIds.isEmpty()) {
             SQLOperator groups = null;
             groups = new Conditionals.In(GroupFeedMessageRecord.GROUP_ID_C, groupIds);
             loadFeedMessages(messages, GroupFeedMessageRecord.class, groups, since);
         }
-
-        // include actions the member has performed
-        SQLOperator actor = new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, memberId);
-        loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, since);
-
-        return messages;
     }
 
     /**
      * Loads all applicable feed messages by the specified member.
      *
-     * @param since a timestamp before which not to load messages of null if all available messages
-     * should be loaded.
+     * @param since an approximate timestamp before which not to load messages.
      */
-    public List <FeedMessageRecord> loadMemberFeed (int memberId, Timestamp since)
+    public List <FeedMessageRecord> loadMemberFeed (int memberId, long since)
     {
+        // round "since" to the nearest 2^16 milliseconds (~1 hour) for cachability
+        since &= ~0xFFFFL;
         List<FeedMessageRecord> messages = Lists.newArrayList();
         SQLOperator actor = new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, memberId);
         loadFeedMessages(messages, FriendFeedMessageRecord.class, actor, since);
@@ -210,16 +219,15 @@ public class FeedRepository extends DepotRepository
      */
     protected void loadFeedMessages (List<FeedMessageRecord> messages,
                                      Class<? extends FeedMessageRecord> pClass,
-                                     SQLOperator main, Timestamp since)
+                                     SQLOperator main, long sinceMillis)
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
         if (main != null) {
             whereBits.add(main);
         }
-        if (since != null) {
-            whereBits.add(new Conditionals.GreaterThanEquals(
-                              new ColumnExp(pClass, FeedMessageRecord.POSTED), since));
-        }
+        Timestamp since = new Timestamp(sinceMillis);
+        whereBits.add(new Conditionals.GreaterThanEquals(new ColumnExp(pClass,
+            FeedMessageRecord.POSTED), since));
         messages.addAll(findAll(pClass, new Where(new Logic.And(whereBits))));
     }
 

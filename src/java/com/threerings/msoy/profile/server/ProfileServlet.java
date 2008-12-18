@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.profile.server;
 
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -298,7 +297,7 @@ public class ProfileServlet extends MsoyServiceServlet
     protected List<FeedMessage> loadFeed (final int profileMemberId, final int cutoffDays)
     {
         // load up the feed records for the target member
-        Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
+        long since = System.currentTimeMillis() - cutoffDays * 24*60*60*1000L;
         return _servletLogic.resolveFeedMessages(_feedRepo.loadMemberFeed(profileMemberId, since));
     }
 

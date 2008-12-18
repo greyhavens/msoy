@@ -295,19 +295,25 @@ public class MeServlet extends MsoyServiceServlet
         MemberRecord mrec, IntSet friendIds, int itemsPerCategory, Category onlyCategory)
         throws ServiceException
     {
-        int feedDays = MAX_FEED_CUTOFF_DAYS;
+        int feedDays = MAX_PERSONAL_FEED_CUTOFF_DAYS;
+
         // if we're loading all categories, adjust the number of days of data we load based on how
         // many friends this member has
         if (onlyCategory == null) {
-            feedDays = Math.max(MIN_FEED_CUTOFF_DAYS, feedDays-friendIds.size()/FRIENDS_PER_DAY);
+            feedDays = Math.max(
+                MIN_PERSONAL_FEED_CUTOFF_DAYS, feedDays - friendIds.size() / FRIENDS_PER_DAY);
         }
 
         // fetch all messages for the member's friends & groups from the past feedDays days
         Set<Integer> groupMemberships = Sets.newHashSet(Iterables.transform(
             _groupRepo.getMemberships(mrec.memberId), GroupMembershipRecord.TO_GROUP_ID));
-        long since = System.currentTimeMillis() - feedDays * 24*60*60*1000L;
-        List<FeedMessageRecord> allRecords = _feedRepo.loadPersonalFeed(
-            mrec.memberId, friendIds, groupMemberships, since);
+        List<FeedMessageRecord> allRecords = Lists.newArrayList();
+        long now = System.currentTimeMillis();
+        _feedRepo.loadPersonalFeed(
+            mrec.memberId, allRecords, friendIds, now - feedDays * 24*60*60*1000L);
+        // TODO: use different cutoffs for different groupMemberships.size()?
+        _feedRepo.loadGroupFeeds(
+            allRecords, groupMemberships, now - GROUP_FEED_CUTOFF_DAYS * 24*60*60*1000L);
 
         // sort all the records by date
         Collections.sort(allRecords, new Comparator<FeedMessageRecord>() {
@@ -439,7 +445,8 @@ public class MeServlet extends MsoyServiceServlet
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int MAX_GREETERS_TO_SHOW = 10;
-    protected static final int MAX_FEED_CUTOFF_DAYS = 7;
-    protected static final int MIN_FEED_CUTOFF_DAYS = 2;
+    protected static final int MAX_PERSONAL_FEED_CUTOFF_DAYS = 7;
+    protected static final int MIN_PERSONAL_FEED_CUTOFF_DAYS = 2;
     protected static final int FRIENDS_PER_DAY = 25;
+    protected static final int GROUP_FEED_CUTOFF_DAYS = 7;
 }
