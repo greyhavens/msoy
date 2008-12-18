@@ -1,0 +1,28 @@
+/* Facebook Connect helper crap (mostly because GWT + Facebook Connect == Fail). */
+window.FB_WithInit = function(callback) {
+  FB_RequireFeatures(["Api", "Connect"], function() {
+    FB.init("@FB_API_KEY@", "/fbconnect.html");
+  });
+  window.FB_WithInit = FB.Bootstrap.ensureInit;
+  FB_WithInit(function() {
+    callback();
+  });
+};
+window.FB_RequireSession = function() {
+  FB_WIthInit(function() {
+    FB.Connect.requireSession(function() {
+      FB_RequireSessionCallback(FB.Facebook.apiClient.get_session().uid);
+      FB_RequireSessionCallback = null;
+    });
+  });
+};
+window.FB_PostStory = function(bundleId, data, targetIds, body, ssize, reqcon) {
+  FB_WithInit(function() {
+    FB.Connect.ShowFeedDialog(bundleId, data, targetIds, body, ssize, reqcon, null);
+  });
+};
+window.FB_Logout = function() {
+  FB_WithInit(function() {
+    FB.Connect.logout(null);
+  });
+};

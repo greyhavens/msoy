@@ -1036,5 +1036,6 @@ public class FrameEntryPoint
         "swfobject", "/js/swfobject.js",
         "md5", "/js/md5.js",
         "googanal", "http://www.google-analytics.com/ga.js",
+        "fbhelper", "/js/facebook.js",
     };
 }
