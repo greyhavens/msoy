@@ -21,6 +21,11 @@ public interface MeService extends RemoteService
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/mesvc";
 
+    /** used to specify the award type for selectProfileAward() */
+    public enum AwardType {
+        BADGE, MEDAL;
+    }
+
     /**
      * Loads the data for the MyWhirled view for the calling user.
      */
@@ -57,5 +62,11 @@ public interface MeService extends RemoteService
      * Deletes the given medal from the given member, off of their passport page.
      */
     void deleteEarnedMedal (int memberId, int medalId)
+        throws ServiceException;
+
+    /**
+     * Select an award to show on the player's profile.
+     */
+    void selectProfileAward (AwardType type, int awardId)
         throws ServiceException;
 }

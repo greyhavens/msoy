@@ -32,6 +32,12 @@ class BadgeDisplay extends AwardDisplay
 {
     public BadgeDisplay (Badge badge)
     {
+        this(badge, null);
+    }
+
+    public BadgeDisplay (Badge badge, ClickListener clicker)
+    {
+        super(clicker);
         addIcon(badge.imageUrl());
         String hexCode = Integer.toHexString(badge.badgeCode);
         addName(_dmsgs.get("badge_" + hexCode, Badge.getLevelName(badge.level)));

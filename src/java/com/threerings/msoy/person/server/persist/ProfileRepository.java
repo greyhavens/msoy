@@ -153,6 +153,16 @@ public class ProfileRepository extends DepotRepository
         updatePartial(ProfileRecord.class, memberId, ProfileRecord.HEADLINE, headline);
     }
 
+    /**
+     * Updates the award shown on the profile.  Only one or none of badgeCode and medalId should
+     * be non-zero.
+     */
+    public void updateProfileAward (int memberId, int badgeCode, int medalId)
+    {
+        updatePartial(ProfileRecord.class, memberId, ProfileRecord.PROFILE_BADGE_CODE, badgeCode,
+            ProfileRecord.PROFILE_MEDAL_ID, medalId);
+    }
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {

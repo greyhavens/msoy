@@ -116,6 +116,20 @@ public class ProfileRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #realName} field. */
     public static final ColumnExp REAL_NAME_C =
         new ColumnExp(ProfileRecord.class, REAL_NAME);
+
+    /** The column identifier for the {@link #profileBadgeCode} field. */
+    public static final String PROFILE_BADGE_CODE = "profileBadgeCode";
+
+    /** The qualified column identifier for the {@link #profileBadgeCode} field. */
+    public static final ColumnExp PROFILE_BADGE_CODE_C =
+        new ColumnExp(ProfileRecord.class, PROFILE_BADGE_CODE);
+
+    /** The column identifier for the {@link #profileMedalId} field. */
+    public static final String PROFILE_MEDAL_ID = "profileMedalId";
+
+    /** The qualified column identifier for the {@link #profileMedalId} field. */
+    public static final ColumnExp PROFILE_MEDAL_ID_C =
+        new ColumnExp(ProfileRecord.class, PROFILE_MEDAL_ID);
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on Real Name */
@@ -123,7 +137,7 @@ public class ProfileRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 8;
+    public static final int SCHEMA_VERSION = 9;
 
     /** The unique id of the member with whom this profile is associated. */
     @Id public int memberId;
@@ -166,6 +180,15 @@ public class ProfileRecord extends PersistentRecord
     /** The user's real name.  Used for searching only. */
     @Column(length=MemberName.MAX_REALNAME_LENGTH)
     public String realName = "";
+
+    /** The user's profile badge.  Only one or none of profileBadgeCode and profileMedalId should
+     * be non-zero. */
+    public int profileBadgeCode;
+
+    /** The user's profile medal.  Only one or none of profileBadgeCode and profileMedalId should
+     * be non-zero. */
+    public int profileMedalId;
+
 
     /**
      * Converts (year, month, day) to a {@link Date}. Month is 0-11, the other values are as a

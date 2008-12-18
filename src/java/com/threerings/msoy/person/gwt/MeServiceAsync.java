@@ -8,6 +8,8 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.badge.data.all.Badge;
+
+import com.threerings.msoy.person.gwt.MeService.AwardType;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.web.gwt.Contest;
 
@@ -45,4 +47,9 @@ public interface MeServiceAsync
      * The asynchronous version of {@link MeService#deleteEarnedMedal}.
      */
     void deleteEarnedMedal (int memberId, int medalId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link MeService#selectProfileAward}.
+     */
+    void selectProfileAward (AwardType type, int awardId, AsyncCallback<Void> callback);
 }

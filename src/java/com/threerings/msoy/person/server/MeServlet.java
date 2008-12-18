@@ -52,6 +52,7 @@ import com.threerings.msoy.person.server.persist.FeedMessageRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.person.util.FeedMessageType.Category;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MemberManager;
@@ -274,6 +275,15 @@ public class MeServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface MeService
+    public void selectProfileAward (AwardType type, int awardId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        _profileRepo.updateProfileAward(mrec.memberId, type == AwardType.BADGE ? awardId : 0,
+            type == AwardType.MEDAL ? awardId : 0);
+    }
+
     /**
      * Pull up a list of news feed events for the current member, grouped by category. Only
      * itemsPerCategory items will be returned, or in the case of aggregation only items from the
@@ -418,6 +428,7 @@ public class MeServlet extends MsoyServiceServlet
     @Inject protected ServletLogic _servletLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MedalRepository _medalRepo;
+    @Inject protected ProfileRepository _profileRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected PromotionRepository _promoRepo;
     @Inject protected ContestRepository _contestRepo;

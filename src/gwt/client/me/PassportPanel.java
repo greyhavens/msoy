@@ -25,6 +25,7 @@ import com.threerings.msoy.badge.gwt.StampCategory;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.PassportData;
+import com.threerings.msoy.person.gwt.MeService.AwardType;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.GroupName;
@@ -126,7 +127,11 @@ public class PassportPanel extends FlowPanel
             }
 
             for (Badge badge : _data.stamps.get(category)) {
-                stamps.add(MsoyUI.createSimplePanel(new BadgeDisplay(badge), "BoxedAward"));
+                AwardSelectionListener clicker =
+                    badge.level == 0 || _memberId != CShell.getMemberId() ? null :
+                    new AwardSelectionListener(AwardType.BADGE, badge.badgeCode);
+                stamps.add(MsoyUI.createSimplePanel(
+                    new BadgeDisplay(badge, clicker), "BoxedAward"));
             }
         }
     }
@@ -158,7 +163,9 @@ public class PassportPanel extends FlowPanel
             FlowPanel medals = new FlowPanel();
             _contents.add(new TongueBox(group.toString(), medals));
             for (final Award award : _data.medals.get(group)) {
-                AwardDisplay display = new AwardDisplay(award);
+                AwardSelectionListener selectionListener = _memberId != CShell.getMemberId() ?
+                    null : new AwardSelectionListener(AwardType.MEDAL, award.awardId);
+                AwardDisplay display = new AwardDisplay(award, selectionListener);
                 if (CShell.isSupport()) {
                     ClickListener clicker = new ClickListener() {
                         public void onClick (Widget sender) {
@@ -175,6 +182,61 @@ public class PassportPanel extends FlowPanel
         }
     }
 
+    protected class AwardSelectionListener
+        implements ClickListener
+    {
+        public AwardSelectionListener (AwardType type, int awardId)
+        {
+            _type = type;
+            _awardId = awardId;
+        }
+
+        public void onClick (Widget sender)
+        {
+            (new SelectionConfirmationPopup(_type, _awardId)).show();
+        }
+
+        protected AwardType _type;
+        protected int _awardId;
+    }
+
+    // TODO: Factor these two confirmation dialogs into a generic confirmation dialog class
+    protected class SelectionConfirmationPopup extends BorderedPopup
+        implements ClickListener
+    {
+        public SelectionConfirmationPopup (AwardType type, int awardId)
+        {
+            super(true);
+            // Hijack the delection confirmation styles.
+            setStyleName("deleteConfirmation");
+            _awardType = type;
+            _awardId = awardId;
+
+            FlowPanel contents = new FlowPanel();
+            contents.add(new Label(_msgs.passportSelectConfirmation()));
+            contents.add(MsoyUI.createButtonPair(new Button(_msgs.passportNo(), this),
+                _yesButton = new Button(_msgs.passportYes(), this)));
+            setWidget(contents);
+        }
+
+        public void onClick (Widget sender)
+        {
+            hide();
+
+            if (sender == _yesButton) {
+                _mesvc.selectProfileAward(_awardType, _awardId, new MsoyCallback<Void>() {
+                    public void onSuccess (Void result) {
+                        MsoyUI.info(_msgs.passportSelectSuccessful());
+                    }
+                });
+            }
+        }
+
+        protected AwardType _awardType;
+        protected int _awardId;
+        protected Button _yesButton;
+    }
+
     protected class DeleteConfirmationPopup extends BorderedPopup
         implements ClickListener
     {
@@ -186,9 +248,8 @@ public class PassportPanel extends FlowPanel
 
             FlowPanel contents = new FlowPanel();
             contents.add(new Label(_msgs.passportDeleteConfirmation(medalName, groupName)));
-            contents.add(MsoyUI.createButtonPair(
-                _noButton = new Button(_msgs.passportDeleteNo(), this),
-                _yesButton = new Button(_msgs.passportDeleteYes(), this)));
+            contents.add(MsoyUI.createButtonPair(new Button(_msgs.passportNo(), this),
+                _yesButton = new Button(_msgs.passportYes(), this)));
             setWidget(contents);
         }
 
@@ -208,7 +269,6 @@ public class PassportPanel extends FlowPanel
 
         protected int _medalId;
         protected Button _yesButton;
-        protected Button _noButton;
     }
 
     protected static class NextPanel extends VerticalPanel

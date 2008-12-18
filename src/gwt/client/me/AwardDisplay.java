@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.msoy.data.all.Award;
@@ -17,15 +18,23 @@ public class AwardDisplay extends FlowPanel
 {
     /**
      * Empty constructor for subclasses that don't actually use Awards
+     *
+     * @param clicker If non-null, will be attached to the name and icon of the award.
      */
-    public AwardDisplay ()
+    public AwardDisplay (ClickListener clicker)
     {
         setStyleName("awardDisplay");
+        _clicker = clicker;
     }
 
     public AwardDisplay (Award award)
     {
-        this();
+        this(award, null);
+    }
+
+    public AwardDisplay (Award award, ClickListener clicker)
+    {
+        this(clicker);
 
         addIcon(award.icon.getMediaPath());
         addName(award.name);
@@ -37,12 +46,12 @@ public class AwardDisplay extends FlowPanel
 
     protected void addIcon (String url)
     {
-        add(MsoyUI.createImage(url, "AwardIcon"));
+        add(MsoyUI.makeActionImage(MsoyUI.createImage(url, "AwardIcon"), null, _clicker));
     }
 
     protected void addName (String name)
     {
-        add(MsoyUI.createLabel(name, "AwardName"));
+        add(MsoyUI.createActionLabel(name, "AwardName", _clicker));
     }
 
     protected void addDescription (String description)
@@ -55,6 +64,8 @@ public class AwardDisplay extends FlowPanel
         String whenEarned = _msgs.passportFinishedSeries(MsoyUI.formatDate(earnedDate));
         add(MsoyUI.createLabel(whenEarned, "WhenEarned"));
     }
+
+    protected ClickListener _clicker;
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
 }
