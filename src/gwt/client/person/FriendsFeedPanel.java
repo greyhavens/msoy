@@ -72,8 +72,7 @@ public class FriendsFeedPanel extends FlowPanel
         }
         categoryPanel.add(showMore);
 
-        categoryPanel.add(MsoyUI.createLabel(_dmsgs.xlate("feedCategory" + category.category),
-            "FeedCategoryHeader"));
+        categoryPanel.add(MsoyUI.createLabel(categoryTitle, "FeedCategoryHeader"));
 
         // combine feed items performed by the same person
         List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages, false);

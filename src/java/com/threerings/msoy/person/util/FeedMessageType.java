@@ -18,12 +18,13 @@ public enum FeedMessageType
     GLOBAL_ANNOUNCEMENT(1),
 
     // friend messages
-    FRIEND_ADDED_FRIEND(100), 
-    FRIEND_UPDATED_ROOM(101, 1, oneDay()), 
-    FRIEND_WON_TROPHY(102, 3, oneDay()), 
+    FRIEND_ADDED_FRIEND(100),
+    FRIEND_UPDATED_ROOM(101, 1, oneDay()),
+    FRIEND_WON_TROPHY(102, 3, oneDay()),
     FRIEND_LISTED_ITEM(103, 3, oneDay()),
-    FRIEND_GAINED_LEVEL(104, 1, oneDay()), 
+    FRIEND_GAINED_LEVEL(104, 1, oneDay()),
     FRIEND_WON_BADGE(105, 3, oneDay()),
+    FRIEND_WON_MEDAL(106, 3, oneDay()),
 
     // group messages
     GROUP_ANNOUNCEMENT(200, 2, oneDay()),
@@ -37,7 +38,7 @@ public enum FeedMessageType
 
     /** Types are grouped together into categories */
     public static enum Category {
-        ANNOUNCEMENTS, COMMENTS, FRIENDINGS, LISTED_ITEMS, TROPHIES, ROOMS, BADGES, LEVELS;
+        ANNOUNCEMENTS, COMMENTS, FRIENDINGS, LISTED_ITEMS, TROPHIES, ROOMS, BADGES, MEDALS, LEVELS;
     }
 
     /**
@@ -71,6 +72,8 @@ public enum FeedMessageType
             return Category.LEVELS;
         case 105: // FRIEND_WON_BADGE
             return Category.BADGES;
+        case 106: // FRIEND_WON_MEDAL
+            return Category.MEDALS;
         case 300: // SELF_ROOM_COMMENT
         case 301: // SELF_ITEM_COMMENT
             return Category.COMMENTS;

@@ -99,6 +99,10 @@ public class FeedMessagePanel extends FocusPanel
         case 105: // FRIEND_WON_BADGE
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonBadge(
                             friendLink, buildString(message))));
+
+        case 106: // FRIEND_WON_MEDAL
+            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonMedal(
+                            friendLink, buildString(message))));
             break;
         }
     }
@@ -212,6 +216,10 @@ public class FeedMessagePanel extends FocusPanel
             int memberId = ((FriendFeedMessage)message).friend.getMemberId();
             return Link.createHtml(badgeName, Pages.ME, Args.compose("passport", memberId));
 
+        case 106: // FRIEND_WON_MEDAL
+            memberId = ((FriendFeedMessage)message).friend.getMemberId();
+            return Link.createHtml(message.data[0], Pages.ME, Args.compose("medals", memberId));
+
         // case 201: // GROUP_UPDATED_ROOM is above
 
         case 300: // SELF_ROOM_COMMENT
@@ -301,11 +309,26 @@ public class FeedMessagePanel extends FocusPanel
         case 105: // FRIEND_WON_BADGE
             int badgeCode = Integer.parseInt(message.data[0]);
             int level = Integer.parseInt(message.data[1]);
+            int memberId = ((FriendFeedMessage)message).friend.getMemberId();
             Image image = new Image(EarnedBadge.getImageUrl(badgeCode, level));
             image.setWidth(MediaDesc.getWidth(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
             image.setHeight(MediaDesc.getHeight(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
-            image.addClickListener(Link.createListener(Pages.ME, "passport"));
+            image.addClickListener(Link.createListener(
+                Pages.ME, Args.compose("passport", memberId)));
             return image;
+
+        case 106: // FRIEND_WON_MEDAL
+            media = MediaDesc.stringToMD(message.data[1]);
+            if (media == null) {
+                return null;
+            }
+            clicker = new ClickListener() {
+                public void onClick (Widget sender) {
+                    Link.go(Pages.ME, Args.compose("medals",
+                        ((FriendFeedMessage)message).friend.getMemberId()));
+                }
+            };
+            return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
 
         case 200: // GROUP_ANNOUNCEMENT
             if (message.data.length < 4) {
@@ -448,6 +471,10 @@ public class FeedMessagePanel extends FocusPanel
                             friendLink, standardCombine(list))));
             break;
 
+        case 106: // FRIEND_WON_MEDAL
+            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonMedals(
+                            friendLink, standardCombine(list))));
+
         default:
             add(new BasicWidget("Unknown left aggregate type: " + message.type));
             break;
@@ -474,6 +501,11 @@ public class FeedMessagePanel extends FocusPanel
 
         case 105: // FRIEND_WON_BADGE
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonBadge(friendLinks,
+                buildString(message))));
+            break;
+
+        case 106: // FRIEND_WON_MEDAL
+            add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonMedal(friendLinks,
                 buildString(message))));
             break;
 

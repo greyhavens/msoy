@@ -16,6 +16,10 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.google.inject.Inject;
 
 import com.samskivert.depot.DuplicateKeyException;
@@ -24,6 +28,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.MemberLogic;
@@ -696,6 +701,11 @@ public class GroupServlet extends MsoyServiceServlet
             // medal made a mistake that our UI allows him to make.
             throw new ServiceException(GroupCodes.E_GROUP_MEMBER_HAS_MEDAL);
         }
+
+        // publish a member message with {medal name, medal image URL} as the data
+        _feedRepo.publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_MEDAL,
+            medalRec.name + "\t" + MediaDesc.mdToString(medalRec.createIconMedia()));
+
     }
 
     // from GroupService
@@ -772,6 +782,7 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MedalRepository _medalRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected FeedRepository _feedRepo;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
