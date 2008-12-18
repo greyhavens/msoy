@@ -474,6 +474,7 @@ public class FeedMessagePanel extends FocusPanel
         case 106: // FRIEND_WON_MEDAL
             add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonMedals(
                             friendLink, standardCombine(list))));
+            break;
 
         default:
             add(new BasicWidget("Unknown left aggregate type: " + message.type));
