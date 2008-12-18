@@ -26,7 +26,7 @@
   <property name="version" value="0"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects" value="facebook,thane"/>
+  <property name="projects" value="thane"/>
   <import file="build/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="${src.dir}/**/*.java"/>
@@ -942,7 +942,7 @@
   </target>
 
   <!-- build the java class files -->
-  <target name="compile" depends="jprepare,facebook,qcompile"
+  <target name="compile" depends="jprepare,qcompile"
     description="Builds java class files."/>
 
   <!-- builds the java class files only, without preparing the build directories etc. -->
@@ -981,11 +981,6 @@
       <arg line="-doc-sources ${asrc.dir}"/>
       <arg line="-output ${deploy.dir}/asdocs"/>
     </java>
-  </target>
-
-  <!-- convenience targets that build specific projects and copy the results -->
-  <target name="facebook">
-    <antcall target="distprojects"><param name="projects" value="facebook"/></antcall>
   </target>
 
   <!-- builds the distribution jar files -->

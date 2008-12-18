@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<!-- declares the libraries needed to build this library -->
-<project name="library-dependencies">
-  <fileset dir="${libs.dir}" id="facebook.libs">
-    <include name="json.jar"/>
-  </fileset>
-</project>
