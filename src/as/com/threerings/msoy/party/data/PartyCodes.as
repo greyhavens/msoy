@@ -11,10 +11,10 @@ public class PartyCodes
     /** Recruitment constant indicating anyone may join the party. */
     public static const RECRUITMENT_OPEN :int = 0;
 
-    /** Recruitment constant indicating nobody but those invited by the leader may join. */
+    /** Recruitment constant indicating that only members of the party's group may join. */
     public static const RECRUITMENT_GROUP :int = 1;
 
-    /** Recruitment constant indicating that only members of the party's group may join. */
+    /** Recruitment constant indicating nobody but those invited by the leader may join. */
     public static const RECRUITMENT_CLOSED :int = 2;
 
     /** Number of recruitment types a party can choose from. Update this when you add a new type. */
