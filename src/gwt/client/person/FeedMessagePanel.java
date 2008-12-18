@@ -99,6 +99,7 @@ public class FeedMessagePanel extends FocusPanel
         case 105: // FRIEND_WON_BADGE
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonBadge(
                             friendLink, buildString(message))));
+            break;
 
         case 106: // FRIEND_WON_MEDAL
             add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonMedal(
