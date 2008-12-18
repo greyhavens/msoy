@@ -262,14 +262,14 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public boolean linkExternalAccount (ExternalCreds creds, String externalId, boolean override)
+    public boolean linkExternalAccount (ExternalCreds creds, boolean override)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
         ExternalAuthHandler handler = _extLogic.getHandler(creds.getAuthSource());
         if (handler == null) {
             log.warning("Requested to link to unknown external account type", "who", mrec.who(),
-                        "creds", creds, "exid", externalId, "override", override);
+                        "creds", creds, "override", override);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -277,13 +277,13 @@ public class WebUserServlet extends MsoyServiceServlet
         handler.validateCredentials(creds);
 
         // determine whether or not this external id is already mapped
-        int memberId = _memberRepo.lookupExternalAccount(creds.getAuthSource(), externalId);
+        int memberId = _memberRepo.lookupExternalAccount(creds.getAuthSource(), creds.getUserId());
         if (memberId != 0 && !override) {
             return false;
         }
 
         // if we made it this far, then wire things on up
-        _memberRepo.mapExternalAccount(creds.getAuthSource(), externalId, mrec.memberId);
+        _memberRepo.mapExternalAccount(creds.getAuthSource(), creds.getUserId(), mrec.memberId);
 
         // look to see if we should map any friends
         ExternalAuthHandler.Info info = null;

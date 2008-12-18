@@ -31,12 +31,14 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
+import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
+import client.ui.PromptPopup;
 import client.ui.TongueBox;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
@@ -271,8 +273,7 @@ public class EditAccountPanel extends FlowPanel
                 // TODO: display a little circular "pending" icon; turn off clickability
                 _fbconnect.requireSession(new MsoyCallback<String>() {
                     public void onSuccess (String uid) {
-                        MsoyUI.info("Got uid " + uid);
-                        // TODO: link 'em up!
+                        connectToFacebook(FBConnect.readCreds(), false);
                     }
                 });
             }
@@ -337,9 +338,9 @@ public class EditAccountPanel extends FlowPanel
     {
         _upcharity.setEnabled(false);
         _usersvc.updateCharity(newCharityId, new MsoyCallback<Void>() {
-                public void onSuccess (Void result) {
-                    MsoyUI.info(_msgs.echarityUpdated());
-                }
+            public void onSuccess (Void result) {
+                MsoyUI.info(_msgs.echarityUpdated());
+            }
         });
     }
 
@@ -443,6 +444,21 @@ public class EditAccountPanel extends FlowPanel
         _pname.setText(pname);
         _pname.setCursorPos(cursor);
         _uppname.setEnabled(pname.length() > 0);
+    }
+
+    protected void connectToFacebook (final FacebookCreds creds, boolean override)
+    {
+        _usersvc.linkExternalAccount(creds, override, new MsoyCallback<Boolean>() {
+            public void onSuccess (Boolean succeeded) {
+                if (!succeeded) {
+                    new PromptPopup(_msgs.fbconnectOverride(), new Command() {
+                        public void execute () {
+                            connectToFacebook(creds, true);
+                        }
+                    }).prompt();
+                }
+            }
+        });
     }
 
     protected static abstract class DeferredKeyAdapter

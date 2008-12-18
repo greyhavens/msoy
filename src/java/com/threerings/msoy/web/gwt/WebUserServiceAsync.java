@@ -38,7 +38,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#linkExternalAccount}.
      */
-    void linkExternalAccount (ExternalCreds creds, String externalId, boolean override,
+    void linkExternalAccount (ExternalCreds creds, boolean override,
                               AsyncCallback<Boolean> callback);
 
     /**

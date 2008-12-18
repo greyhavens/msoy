@@ -59,7 +59,7 @@ public interface WebUserService extends RemoteService
      * @return true if the account was linked, false if the account was not linked because the
      * specified external id is already linked with another Whirled account.
      */
-    boolean linkExternalAccount (ExternalCreds creds, String externalId, boolean override)
+    boolean linkExternalAccount (ExternalCreds creds, boolean override)
         throws ServiceException;
 
     /**
