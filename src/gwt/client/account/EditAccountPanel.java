@@ -464,7 +464,7 @@ public class EditAccountPanel extends FlowPanel
     protected FBConnect _fbconnect = new FBConnect();
 
     protected static final String CHARITY_RADIO_GROUP = "selectCharity";
-    protected static final String FBCON_IMG = "/images/ui/fbconnect.png";
+    protected static final String FBCON_IMG = "/images/account/fbconnect.png";
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);

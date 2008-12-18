@@ -37,14 +37,14 @@ public class FullLogonPanel extends LogonPanel
         }
 
         // add the interface for logging in via Facebook connect
-        setText(1, 0, _msgs.logonFacebook(), 2, null);
+        setText(1, 0, _msgs.logonFacebook(), 1, null);
         getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
-        setWidget(1, 1, MsoyUI.createActionImage("/images/ui/fbconnect.png", new ClickListener() {
+        setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO: display a little circular "pending" icon; turn off clickability
                 initiateFacebookLogon();
             }
-        }), 2, null);
+        }), 1, null);
     }
 
     protected void initiateFacebookLogon ()
@@ -73,4 +73,6 @@ public class FullLogonPanel extends LogonPanel
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+
+    protected static final String FBCON_IMG = "/images/account/fbconnect.png";
 }
