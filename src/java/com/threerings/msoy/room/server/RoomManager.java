@@ -938,13 +938,12 @@ public class RoomManager extends SpotSceneManager
     @Override // from PlaceManager
     protected boolean shouldDeclareEmpty (OccupantInfo leaver)
     {
-        int hoomans = 0;
         for (OccupantInfo info : _plobj.occupantInfo) {
             if (info instanceof MemberInfo || info instanceof ObserverInfo) {
-                hoomans++;
+                return false; // there's a human still here!
             }
         }
-        return (hoomans == 0);
+        return true;
     }
 
     @Override // from PlaceManager
