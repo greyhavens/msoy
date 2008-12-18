@@ -92,7 +92,6 @@
 	<classpathentry kind="lib" path="extlibs/java/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/xmlrpc-client.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/xmlrpc-common.jar"/>
-	<classpathentry kind="lib" path="dist/lib/facebook.jar"/>
 	<classpathentry kind="lib" path="dist/lib/panopticon-client-0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="dist/lib/smack-component-0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="dist/lib/substance-lite.jar"/>
