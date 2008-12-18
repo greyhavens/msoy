@@ -54,10 +54,13 @@ public class NotificationManager
             local.deferredNotifications.addAll(notes);
         } else {
             target.startTransaction();
-            for (Notification note : notes) {
-                target.postMessage(MemberObject.NOTIFICATION, note);
+            try {
+                for (Notification note : notes) {
+                    target.postMessage(MemberObject.NOTIFICATION, note);
+                }
+            } finally {
+                target.commitTransaction();
             }
-            target.commitTransaction();
         }
     }
 
