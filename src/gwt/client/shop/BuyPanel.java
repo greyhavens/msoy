@@ -160,7 +160,7 @@ public class BuyPanel extends FlowPanel
         _buyCoins.setAmount(quote.getCoins());
         if (quote.getListedCurrency() == Currency.BARS) {
             _wikiLink.setText(_msgs.listingExchangeRate(Currency.COINS.format(
-                (int)quote.getExchangeRate())));
+                (int)Math.ceil(quote.getExchangeRate()))));
             add(_wikiLink);
         } else {
             remove(_wikiLink);
