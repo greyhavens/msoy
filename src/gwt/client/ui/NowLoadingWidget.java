@@ -6,10 +6,11 @@ package client.ui;
 import client.shell.ShellMessages;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * Simple widget for displaying a "Now loading" indicator on a page.  It has two states: "loading",
@@ -24,8 +25,9 @@ public class NowLoadingWidget extends PopupPanel
     {
         super(false, false);
         
-        _panel = new HorizontalPanel();
+        _panel = new VerticalPanel();
         _panel.setStyleName("nowLoadingWidget");
+        _panel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
         
         Image icon = new Image("/images/ui/loading_globe_notext.gif");
         _panel.add(icon);
@@ -44,13 +46,14 @@ public class NowLoadingWidget extends PopupPanel
         _label.setText(_smsgs.nowLoading());
     }
     
-    public void finishing ()
+    public void finishing (Timer finishTask)
     {
         _label.setText(_smsgs.loadFinishing());
+        finishTask.schedule(1);
     }
     
     protected static final ShellMessages _smsgs = GWT.create(ShellMessages.class);
     
-    protected final HorizontalPanel _panel;
+    protected final VerticalPanel _panel;
     protected final Label _label;
 }

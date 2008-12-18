@@ -44,10 +44,7 @@ public class MyWhirled extends FlowPanel
 
     protected void init (final MyWhirledData data)
     {
-        _nowLoading.finishing();
-        
-        // Delay this slightly, so it will show the "finishing" text first.
-        new Timer() {
+        _nowLoading.finishing(new Timer() {
             public void run() {
                 RoundBox rbits = new RoundBox(RoundBox.MEDIUM_BLUE);
                 rbits.addStyleName("QuickNav");
@@ -88,7 +85,7 @@ public class MyWhirled extends FlowPanel
                 _nowLoading.hide();
                 add(horiz);
             }
-        }.schedule(1);
+        });
     }
 
     protected Widget makeQuickLink (String label, Pages page, String args)

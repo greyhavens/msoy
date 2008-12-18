@@ -76,8 +76,7 @@ public class ShopPanel extends HorizontalPanel
 
     protected void init (final ShopData data)
     {
-        _nowLoading.finishing();
-        new Timer() {
+        _nowLoading.finishing(new Timer() {
             public void run () {
                 SmartTable boxes = new SmartTable(0, 0);
                 boxes.setWidget(0, 0, createTop("avatar", _msgs.shopTopAvatars(), data.topAvatars));
@@ -103,7 +102,7 @@ public class ShopPanel extends HorizontalPanel
                 _contents.add(boxes);
                 _nowLoading.hide();
             }
-        }.schedule(1);
+        });
     }
 
     protected Widget createTop (String icon, String title, ListingCard[] listings)
