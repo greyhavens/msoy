@@ -30,8 +30,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.ExternalAuther;
-import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.LaunchConfig;
 import com.threerings.msoy.web.gwt.Pages;
@@ -456,36 +454,6 @@ public class FrameEntryPoint
         return _activeInvite;
     }
 
-    // from interface Frame
-    public void initiateExternalLogon (ExternalAuther source)
-    {
-        switch (source) {
-        case FACEBOOK:
-            _fbconnect.requireSession(new MsoyCallback<String>() {
-                public void onSuccess (String uid) {
-                    CShell.log("Got Facebook Connect uid '" + uid + "'.");
-                    FacebookCreds creds = FBConnect.readCreds();
-                    if (creds == null) {
-                        MsoyUI.error("Unable to connect to Facebook. Sorry!"); // TODO
-                        return;
-                    }
-                    _usersvc.externalLogon(
-                        DeploymentConfig.version, creds, CShell.visitor,
-                        WebUserService.DEFAULT_SESSION_DAYS, new MsoyCallback<SessionData>() {
-                        public void onSuccess (SessionData data) {
-                            dispatchDidLogon(data);
-                        }
-                    });
-                }
-            });
-            break;
-
-        default:
-            CShell.log("Asked to initiate external logon to unknown source " + source + ".");
-            break;
-        }
-    }
-
     public static class ExtractedParam
     {
         public String value;
@@ -861,9 +829,6 @@ public class FrameEntryPoint
         case GET_VISITOR_INFO:
             return (CShell.visitor == null) ? null
                 : CShell.visitor.flatten().toArray(new String[0]);
-        case DO_EXTERNAL_LOGON:
-            initiateExternalLogon(Enum.valueOf(ExternalAuther.class, args[0]));
-            return null;
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");
         return null; // not reached
@@ -1049,9 +1014,6 @@ public class FrameEntryPoint
 
     /** Used to talk to Google Analytics. */
     protected Analytics _analytics = new Analytics();
-
-    /** Used to talk to Facebook Connect. */
-    protected FBConnect _fbconnect = new FBConnect();
 
     /** A command to be run when Java reports readiness. */
     protected Command _javaReadyCommand;

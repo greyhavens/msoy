@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -97,9 +96,6 @@ public abstract class Page
                     return Invitation.unflatten(
                         ArrayUtil.toIterator(frameCall(Frame.Calls.GET_ACTIVE_INVITE)));
                 }
-                public void initiateExternalLogon (ExternalAuther source) {
-                    frameCall(Frame.Calls.DO_EXTERNAL_LOGON, source.toString());
-                }
             });
 
             // obtain our current credentials from the frame
@@ -151,9 +147,6 @@ public abstract class Page
                 }
                 public Invitation getActiveInvitation () {
                     return null; // we're testing, no one invited us
-                }
-                public void initiateExternalLogon (ExternalAuther source) {
-                    CShell.log("Federated logon not available on client.");
                 }
             });
 

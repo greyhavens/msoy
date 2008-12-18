@@ -42,7 +42,6 @@ import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
 import client.shell.EntryVectorCookie;
-import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -68,8 +67,7 @@ public class CreateAccountPanel extends FlowPanel
         add(new Image("/images/account/create_bg_bot.png"));
 
         content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
-        PushButton logon = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.lpSubmit(), null);
-        content.add(new LogonPanel(LogonPanel.Mode.HORIZ, logon));
+        content.add(new FullLogonPanel());
 
         content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
         content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));

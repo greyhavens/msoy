@@ -36,6 +36,8 @@ import static com.threerings.msoy.Log.log;
  */
 public class FacebookAuthHandler extends ExternalAuthHandler
 {
+    // trophy bundle: 48939637184
+
     public static ExternalAuthHandler getInstance ()
     {
         return new FacebookAuthHandler();

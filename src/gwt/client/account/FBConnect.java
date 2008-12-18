@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.frame;
+package client.account;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -44,6 +44,7 @@ public class FBConnect
 
     public FBConnect ()
     {
+        // TODO: this ain't gonna work no more
         Session.addObserver(new Session.Observer() {
             public void didLogon (SessionData data) {
                 // nada
@@ -110,13 +111,11 @@ public class FBConnect
             _initialized = true;
             return;
         }
-        CShell.log("Init failed...");
 
         // in which case we have to try again in 500ms (AFAIK there is no cross-browser way to find
         // out when dynamically loaded JavaScript (that you don't control) is ready)
         new Timer() {
             public void run () {
-                CShell.log("Reinitializing FBConnect...");
                 finishInit(onInit);
             }
         }.schedule(500);
@@ -130,7 +129,6 @@ public class FBConnect
             return;
         }
         if (DOM.getElementAttribute(e, "src").length() == 0) {
-            CShell.log("Starting loading " + path);
             DOM.setElementAttribute(e, "src", path);
         }
     }

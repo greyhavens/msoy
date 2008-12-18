@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.me;
+package client.account;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +34,6 @@ import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
 import client.shell.CShell;
-import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
@@ -54,7 +53,7 @@ public class EditAccountPanel extends FlowPanel
         if (CShell.getMemberId() == 0) {
             SmartTable table = new SmartTable(0, 10);
             table.setText(0, 0, _msgs.editMustLogon(), 1, "Header");
-            table.setWidget(1, 0, new LogonPanel(LogonPanel.Mode.HORIZ));
+            table.setWidget(1, 0, new FullLogonPanel());
             add(new TongueBox(null, table));
             return;
         }
@@ -70,12 +69,25 @@ public class EditAccountPanel extends FlowPanel
     {
         _accountInfo = accountInfo;
 
-        // configure or display permaname interface
-        SmartTable table = new SmartTable(0, 10);
+        // add our myriad account configuration sections
+        add(new TongueBox(null, makePermanameSection()));
+        add(new TongueBox(_msgs.editEmailHeader(), makeChangeEmailSection()));
+        add(new TongueBox(_msgs.editEPrefsHeader(), makeEmailPrefsSection()));
+        add(new TongueBox(_msgs.editRealNameHeader(), makeRealNameSection()));
+        add(new TongueBox(_msgs.editPasswordHeader(), makeChangePasswordSection()));
+        add(new TongueBox(_msgs.charitiesHeader(), makeCharitySection()));
+        if (DeploymentConfig.devDeployment) {
+            add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
+        }
+    }
+
+    protected Widget makePermanameSection ()
+    {
+        _perma = new SmartTable(0, 10);
         if (CShell.creds.permaName == null) {
-            table.setText(0, 0, _msgs.editPermaName(), 1, "rightLabel");
+            _perma.setText(0, 0, _msgs.editPermaName(), 1, "rightLabel");
             _pname = MsoyUI.createTextBox("", MemberName.MAXIMUM_PERMANAME_LENGTH, -1);
-            table.setWidget(0, 1, _pname);
+            _perma.setWidget(0, 1, _pname);
             _pname.addKeyboardListener(new DeferredKeyAdapter() {
                 public void execute () {
                     validatePermaName();
@@ -87,17 +99,19 @@ public class EditAccountPanel extends FlowPanel
                 }
             });
             _uppname.setEnabled(false);
-            table.setWidget(0, 2, _uppname);
-            table.setHTML(1, 0, _msgs.editPermaNameTip(), 3, "Tip");
+            _perma.setWidget(0, 2, _uppname);
+            _perma.setHTML(1, 0, _msgs.editPermaNameTip(), 3, "Tip");
 
         } else {
-            table.setText(0, 0, _msgs.editPermaName(), 1, "rightLabel");
-            table.setText(0, 1, CShell.creds.permaName, 1, "PermaName");
+            _perma.setText(0, 0, _msgs.editPermaName(), 1, "rightLabel");
+            _perma.setText(0, 1, CShell.creds.permaName, 1, "PermaName");
         }
-        add(new TongueBox(null, _perma = table));
+        return _perma;
+    }
 
-        // configure email address interface
-        table = new SmartTable(0, 10);
+    protected Widget makeChangeEmailSection ()
+    {
+        SmartTable table = new SmartTable(0, 10);
         table.setText(0, 0, _msgs.editEmail(), 1, "rightLabel");
         table.setWidget(0, 1, _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1));
         _email.setText(CShell.creds.accountName);
@@ -113,10 +127,12 @@ public class EditAccountPanel extends FlowPanel
         });
         _upemail.setEnabled(false);
         table.setWidget(0, 2, _upemail);
-        add(new TongueBox(_msgs.editEmailHeader(), table));
+        return table;
+    }
 
-        // configure email preferences interface
-        table = new SmartTable(0, 10);
+    protected Widget makeEmailPrefsSection ()
+    {
+        SmartTable table = new SmartTable(0, 10);
         table.setText(0, 0, _msgs.editWhirledMailEmail(), 1, "rightLabel");
         _whirledEmail = new CheckBox(_msgs.editWhirledMailEmailTip());
         table.setWidget(0, 1, _whirledEmail, 2, null);
@@ -134,10 +150,12 @@ public class EditAccountPanel extends FlowPanel
             }
         });
         table.setWidget(1, 2, _upeprefs);
-        add(new TongueBox(_msgs.editEPrefsHeader(), table));
+        return table;
+    }
 
-        // configure real name interface
-        table = new SmartTable(0, 10);
+    protected Widget makeRealNameSection ()
+    {
+        SmartTable table = new SmartTable(0, 10);
         table.setText(0, 0, _msgs.editRealName(), 1, "rightLabel");
         table.setWidget(0, 1, _rname = MsoyUI.createTextBox("", MemberName.MAX_REALNAME_LENGTH, -1));
         _rname.setText(_accountInfo.realName);
@@ -154,10 +172,12 @@ public class EditAccountPanel extends FlowPanel
         _uprname.setEnabled(false);
         table.setWidget(0, 2, _uprname);
         table.setHTML(1, 0, _msgs.editRealNameTip(), 3, "Tip");
-        add(new TongueBox(_msgs.editRealNameHeader(), table));
+        return table;
+    }
 
-        // configure password interface
-        table = new SmartTable(0, 10);
+    protected Widget makeChangePasswordSection ()
+    {
+        SmartTable table = new SmartTable(0, 10);
         table.setText(0, 0, _msgs.editPassword(), 1, "rightLabel");
         table.setWidget(0, 1, _password = new PasswordTextBox());
         _password.addKeyboardListener(new DeferredKeyAdapter() {
@@ -180,60 +200,83 @@ public class EditAccountPanel extends FlowPanel
         });
         _uppass.setEnabled(false);
         table.setWidget(1, 2, _uppass);
-        add(new TongueBox(_msgs.editPasswordHeader(), table));
-        
-        // Select charity interface
+        return table;
+    }
+
+    protected Widget makeCharitySection ()
+    {
         final SmartTable charityTable = new SmartTable(0, 10);
-        charityTable.setText(0, 0, _msgs.charities(), 3, "Tip");
-        
-        final List<RadioButton> charityButtons = new ArrayList<RadioButton>(
-                accountInfo.charityNames.size() + 1);
-        
+        charityTable.setText(0, 0, _msgs.charities(), 3, "Info");
+
+        final List<RadioButton> charityButtons =
+            new ArrayList<RadioButton>(_accountInfo.charityNames.size() + 1);
+
         // Add random charity
         RadioButton randomCharity = new RadioButton(CHARITY_RADIO_GROUP);
         charityButtons.add(randomCharity);
         charityTable.setWidget(1, 0, randomCharity, 1, "rightLabel");
         charityTable.setText(1, 1, _msgs.defaultCharity(), 2, null);
-        if (accountInfo.charityMemberId == 0) {
+        if (_accountInfo.charityMemberId == 0) {
             randomCharity.setChecked(true);
         }
-        
+
         // Add charity info for each charity.
         int row = 2;
-        Collections.sort(accountInfo.charityNames, MemberName.BY_DISPLAY_NAME);
-        for (MemberName name : accountInfo.charityNames) {
-            CharityInfo charity = accountInfo.charities.get(name.getMemberId());
-            MediaDesc photo = accountInfo.charityPhotos.get(name.getMemberId());
-            
+        Collections.sort(_accountInfo.charityNames, MemberName.BY_DISPLAY_NAME);
+        for (MemberName name : _accountInfo.charityNames) {
+            CharityInfo charity = _accountInfo.charities.get(name.getMemberId());
+            MediaDesc photo = _accountInfo.charityPhotos.get(name.getMemberId());
+
             RadioButton charityButton = new RadioButton(CHARITY_RADIO_GROUP);
-            if (accountInfo.charityMemberId == name.getMemberId()) {
+            if (_accountInfo.charityMemberId == name.getMemberId()) {
                 charityButton.setChecked(true);
             }
             charityButtons.add(charityButton);
             charityTable.setWidget(row, 0, charityButton);
-            charityTable.setWidget(row, 1, MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE));
+            charityTable.setWidget(
+                row, 1, MediaUtil.createMediaView(photo, MediaDesc.THUMBNAIL_SIZE));
             charityTable.getFlexCellFormatter().setRowSpan(row, 1, 2);
-            charityTable.getCellFormatter().setVerticalAlignment(row, 1, HasVerticalAlignment.ALIGN_TOP);
+            charityTable.getCellFormatter().setVerticalAlignment(
+                row, 1, HasVerticalAlignment.ALIGN_TOP);
             charityTable.setText(row++, 2, name.getNormal());
-            charityTable.setWidget(row++, 1, 
+            charityTable.setWidget(row++, 1,
                 new HTML(charity.description), 1, "charityDescription");
         }
-        
+
         charityTable.setWidget(row, 1, _upcharity = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget sender) {
-                // The index of the selected radio button in the list will be the index in
-                // the list of charity names + 1 (the +1 for the random charity).
+                // The index of the selected radio button in the list will be the index in the list
+                // of charity names + 1 (the +1 for the random charity).
                 int memberId = 0;
                 for (int i = 1; i < charityButtons.size(); i++) {
                     if (charityButtons.get(i).isChecked()) {
-                        memberId = accountInfo.charityNames.get(i-1).getMemberId();
+                        memberId = _accountInfo.charityNames.get(i-1).getMemberId();
                         break;
                     }
                 }
                 updateCharity(memberId);
             }
         }));
-        add(new TongueBox(_msgs.charitiesHeader(), charityTable));
+        return charityTable;
+    }
+
+    protected Widget makeFacebookConnectSection ()
+    {
+        SmartTable table = new SmartTable(0, 10);
+        table.setWidget(0, 0, MsoyUI.createHTML(_msgs.fbconnectWhy(), "Info"), 2, null);
+        table.setText(1, 0, _msgs.fbconnectLink(), 1, "rightLabel");
+        table.setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickListener() {
+            public void onClick (Widget sender) {
+                // TODO: display a little circular "pending" icon; turn off clickability
+                _fbconnect.requireSession(new MsoyCallback<String>() {
+                    public void onSuccess (String uid) {
+                        MsoyUI.info("Got uid " + uid);
+                        // TODO: link 'em up!
+                    }
+                });
+            }
+        }), 1, "FBLink");
+        return table;
     }
 
     protected void updateRealName ()
@@ -288,7 +331,7 @@ public class EditAccountPanel extends FlowPanel
             }
         });
     }
-    
+
     protected void updateCharity (final int newCharityId)
     {
         _upcharity.setEnabled(false);
@@ -416,11 +459,14 @@ public class EditAccountPanel extends FlowPanel
     protected CheckBox _whirledEmail, _announceEmail;
     protected PasswordTextBox _password, _confirm;
     protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname, _upcharity;
-    
+
+    protected FBConnect _fbconnect = new FBConnect();
+
     protected static final String CHARITY_RADIO_GROUP = "selectCharity";
-    
+    protected static final String FBCON_IMG = "/images/ui/fbconnect.png";
+
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final MeMessages _msgs = GWT.create(MeMessages.class);
+    protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

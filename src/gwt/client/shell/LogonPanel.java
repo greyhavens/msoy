@@ -88,17 +88,6 @@ public class LogonPanel extends SmartTable
             }
         });
 
-        // add the interface for logging in via Facebook connect
-        Widget fbconnect = null;
-        if (DeploymentConfig.devDeployment) {
-            fbconnect = MsoyUI.createActionImage("/images/ui/fbconnect.png", new ClickListener() {
-                public void onClick (Widget sender) {
-                    // TODO: display a little circular "pending" icon; turn off clickability
-                    CShell.frame.initiateExternalLogon(ExternalAuther.FACEBOOK);
-                }
-            });
-        }
-
         // now lay everything out
         switch (mode) {
         case HORIZ:
@@ -106,11 +95,6 @@ public class LogonPanel extends SmartTable
             setWidget(0, 1, _password);
             setWidget(0, 2, logon);
             setWidget(0, 3, forgot);
-            if (fbconnect != null) {
-                setText(1, 0, _cmsgs.logonFacebook(), 2, null);
-                getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_RIGHT);
-                setWidget(1, 1, fbconnect, 2, null);
-            }
             break;
 
         case LANDING:

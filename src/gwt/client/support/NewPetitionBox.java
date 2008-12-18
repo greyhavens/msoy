@@ -75,7 +75,7 @@ public class NewPetitionBox extends FlowPanel
 
         } else {
             rowp.add(_curemail = new Label(_ctx.cmsgs.newPetitionEmail(_ctx.ainfo.email)));
-            rowp.add(Link.create(_ctx.cmsgs.newPetitionUpdate(), Pages.ME, "account"));
+            rowp.add(Link.create(_ctx.cmsgs.newPetitionUpdate(), Pages.ACCOUNT, "edit"));
             create.setWidget(row, 0, rowp);
             create.getFlexCellFormatter().setColSpan(row++, 0, 2);
         }

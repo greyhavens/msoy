@@ -36,6 +36,12 @@ public interface WebUserServiceAsync
                           AsyncCallback<SessionData> callback);
 
     /**
+     * The asynchronous version of {@link WebUserService#linkExternalAccount}.
+     */
+    void linkExternalAccount (ExternalCreds creds, String externalId, boolean override,
+                              AsyncCallback<Boolean> callback);
+
+    /**
      * The asynchronous version of {@link WebUserService#getConnectConfig}.
      */
     void getConnectConfig (AsyncCallback<ConnectConfig> callback);

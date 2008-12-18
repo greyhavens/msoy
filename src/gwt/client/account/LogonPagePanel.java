@@ -5,12 +5,10 @@ package client.account;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -25,8 +23,7 @@ public class LogonPagePanel extends FlowPanel
 
         // add the interface for logging in with Whirled credentials
         add(MsoyUI.createLabel(_msgs.lpLogonHeader(), "Header"));
-        PushButton logon = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.lpSubmit(), null);
-        add(new LogonPanel(LogonPanel.Mode.HORIZ, logon));
+        add(new FullLogonPanel());
 
         // add a link to accout creation
         add(MsoyUI.createLabel(_msgs.lpCreateHeader(), "Header"));

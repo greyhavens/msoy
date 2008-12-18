@@ -40,6 +40,8 @@ import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.server.ExternalAuthHandler;
+import com.threerings.msoy.server.ExternalAuthLogic;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyAuthenticator;
@@ -257,6 +259,43 @@ public class WebUserServlet extends MsoyServiceServlet
             log.warning("Failed to refresh session [tok=" + authtok + "].", e);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
+    }
+
+    // from interface WebUserService
+    public boolean linkExternalAccount (ExternalCreds creds, String externalId, boolean override)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        ExternalAuthHandler handler = _extLogic.getHandler(creds.getAuthSource());
+        if (handler == null) {
+            log.warning("Requested to link to unknown external account type", "who", mrec.who(),
+                        "creds", creds, "exid", externalId, "override", override);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        // make sure the credentials are kosher
+        handler.validateCredentials(creds);
+
+        // determine whether or not this external id is already mapped
+        int memberId = _memberRepo.lookupExternalAccount(creds.getAuthSource(), externalId);
+        if (memberId != 0 && !override) {
+            return false;
+        }
+
+        // if we made it this far, then wire things on up
+        _memberRepo.mapExternalAccount(creds.getAuthSource(), externalId, mrec.memberId);
+
+        // look to see if we should map any friends
+        ExternalAuthHandler.Info info = null;
+        try {
+            info = handler.getInfo(creds);
+            _extLogic.wireUpExternalFriends(mrec.memberId, creds.getAuthSource(), info.friendIds);
+        } catch (Exception e) {
+            log.warning("Failed to wire up external friends", "for", mrec.who(), "creds", creds,
+                        "info", info, e);
+        }
+
+        return true;
     }
 
     // from interface WebUserService
@@ -602,6 +641,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected MsoyAuthenticator _author;
     @Inject protected PresentsDObjectMgr _omgr;
+    @Inject protected ExternalAuthLogic _extLogic;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected FriendManager _friendMan;
     @Inject protected NotificationManager _notifyMan;

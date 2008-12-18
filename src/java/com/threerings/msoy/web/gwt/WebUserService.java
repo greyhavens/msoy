@@ -54,6 +54,15 @@ public interface WebUserService extends RemoteService
         throws ServiceException;
 
     /**
+     * Links the requesting user's account to the supplied external authentication source account.
+     *
+     * @return true if the account was linked, false if the account was not linked because the
+     * specified external id is already linked with another Whirled account.
+     */
+    boolean linkExternalAccount (ExternalCreds creds, String externalId, boolean override)
+        throws ServiceException;
+
+    /**
      * Returns the connection information for this server's World services.
      */
     ConnectConfig getConnectConfig ()

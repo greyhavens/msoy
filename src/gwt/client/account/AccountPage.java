@@ -25,8 +25,8 @@ public class AccountPage extends Page
         if (action.equals("create") && CShell.isGuest()) {
             setContent(_msgs.createTitle(), new CreateAccountPanel());
 
-        } else if (action.equals("logon") && CShell.isGuest()) {
-            setContent(_msgs.logonPageTitle(), new LogonPagePanel());
+        } else if (action.equals("edit")) {
+            setContent(_msgs.editTitle(), new EditAccountPanel());
 
         } else if (action.equals("optout")) {
             setContent(new OptOutPanel(args.get(1, ""), args.get(2, 0)));
@@ -34,11 +34,11 @@ public class AccountPage extends Page
         } else if (action.equals("resetpw")) {
             setContent(new ResetPasswordPanel(args));
 
+        } else if (action.equals("logon") || CShell.isGuest()) {
+            setContent(_msgs.logonPageTitle(), new LogonPagePanel());
+
         } else if (action.equals("welcome")) {
             setContent(_msgs.welcomeTitle(), new WelcomePanel());
-
-        } else if (CShell.isGuest()) {
-            setContent(MsoyUI.createLabel(_msgs.indexLogon(), "infoLabel"));
 
         } else {
             Link.go(Pages.ME, "");

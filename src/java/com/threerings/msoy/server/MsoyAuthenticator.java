@@ -6,9 +6,7 @@ package com.threerings.msoy.server;
 import static com.threerings.msoy.Log.log;
 
 import java.util.Date;
-import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -317,7 +315,7 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         try {
-            ExternalAuthHandler handler = _exhandlers.get(creds.getAuthSource());
+            ExternalAuthHandler handler = _extLogic.getHandler(creds.getAuthSource());
             if (handler == null) {
                 log.warning("Asked to auth using unsupported external source", "creds", creds);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
@@ -361,10 +359,8 @@ public class MsoyAuthenticator extends Authenticator
             // wire them up to any friends they might have
             if (info.friendIds != null) {
                 try {
-                    for (int friendId : _memberRepo.lookupExternalAccounts(
-                             creds.getAuthSource(), info.friendIds)) {
-                        _memberRepo.noteFriendship(mrec.memberId, friendId);
-                    }
+                    _extLogic.wireUpExternalFriends(
+                        mrec.memberId, creds.getAuthSource(), info.friendIds);
                 } catch (Exception e) {
                     log.warning("Failed to connect autocreated external user to friends",
                                 "creds", creds, "friendIds", info.friendIds, e);
@@ -726,11 +722,6 @@ public class MsoyAuthenticator extends Authenticator
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
     }
 
-    /** Our external authentication handlers. */
-    protected Map<ExternalAuther, ExternalAuthHandler> _exhandlers = ImmutableMap.of(
-        ExternalAuther.FACEBOOK, FacebookAuthHandler.getInstance()
-    );
-
     // our dependencies
     @Inject protected Domain _defaultDomain;
     @Inject protected ServerMessages _serverMsgs;
@@ -738,6 +729,7 @@ public class MsoyAuthenticator extends Authenticator
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected ExternalAuthLogic _extLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected AffiliateMapRepository _affMapRepo;

@@ -107,6 +107,45 @@
 }
 
 /* ------------------------------------
+   EDIT ACCOUNT
+-------------------------------------*/
+
+.editAccount .Header {
+  font-weight: bold;
+}
+
+.editAccount .rightLabel {
+  width: 140px;
+}
+
+.editAccount .Tip {
+  width: 400px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.editAccount .Info {
+  font-size: 14px;
+}
+
+.editAccount .FBLink img {
+  margin: 0;
+}
+
+.editAccount .PermaName {
+  font-weight: bold;
+}
+
+.editAccount .charityList {
+  width: 300px;
+}
+
+.editAccount .charityDescription {
+  width: 400px;
+  font-size: 12px;
+}
+
+/* ------------------------------------
    LOGON PAGE
 -------------------------------------*/
 

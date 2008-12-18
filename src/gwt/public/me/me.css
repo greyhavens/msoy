@@ -158,33 +158,6 @@
 }
 
 /* ------------------------------------
-   ACCOUNTS PAGE
--------------------------------------*/
-
-.editAccount .Header {
-  font-weight: bold;
-}
-
-.editAccount .Tip {
-  width: 400px;
-  font-size: 12px;
-  text-align: center;
-}
-
-.editAccount .PermaName {
-  font-weight: bold;
-}
-
-.editAccount .charityList {
-  width: 300px;
-}
-
-.editAccount .charityDescription {
-  width: 400px;
-  font-size: 12px;
-}
-
-/* ------------------------------------
    ROOMS PAGE
 -------------------------------------*/
 
