@@ -52,4 +52,10 @@ public interface MeService extends RemoteService
      */
     List<Contest> loadContests ()
         throws ServiceException;
+
+    /**
+     * Deletes the given medal from the given member, off of their passport page.
+     */
+    void deleteEarnedMedal (int memberId, int medalId)
+        throws ServiceException;
 }

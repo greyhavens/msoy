@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -28,7 +29,9 @@ import com.threerings.msoy.person.gwt.PassportData;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.GroupName;
 
+import client.shell.CShell;
 import client.shell.DynamicLookup;
+import client.ui.BorderedPopup;
 import client.ui.HeaderBox;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
@@ -42,11 +45,16 @@ public class PassportPanel extends FlowPanel
         STAMPS, MEDALS;
     }
 
-    public PassportPanel (int memberId, final Content content)
+    public PassportPanel (int memberId, Content content)
     {
         setStyleName("passport");
+        _memberId = memberId;
+        loadAndDisplay(content);
+    }
 
-        _mesvc.loadBadges(memberId, new MsoyCallback<PassportData> () {
+    protected void loadAndDisplay (final Content content)
+    {
+        _mesvc.loadBadges(_memberId, new MsoyCallback<PassportData> () {
             public void onSuccess (PassportData data) {
                 if (data == null) {
                     MsoyUI.error(_msgs.passportPlayerNotFound());
@@ -65,6 +73,7 @@ public class PassportPanel extends FlowPanel
 
     protected void init (Content content)
     {
+        clear();
         if (_data.nextBadges != null) {
             add(new NextPanel(_data.nextBadges));
         }
@@ -145,15 +154,61 @@ public class PassportPanel extends FlowPanel
                 return group1.getNormal().compareTo(group2.getNormal());
             }
         });
-        for (GroupName group : groups) {
+        for (final GroupName group : groups) {
             FlowPanel medals = new FlowPanel();
             _contents.add(new TongueBox(group.toString(), medals));
-            for (Award award : _data.medals.get(group)) {
+            for (final Award award : _data.medals.get(group)) {
                 AwardDisplay display = new AwardDisplay(award);
+                if (CShell.isSupport()) {
+                    ClickListener clicker = new ClickListener() {
+                        public void onClick (Widget sender) {
+                            (new DeleteConfirmationPopup(
+                                award.awardId, award.name, group.toString())).show();
+                        }
+                    };
+                    display.add(MsoyUI.createActionLabel(
+                        _msgs.passportDeleteMedal(), "Delete", clicker));
+                }
                 display.addStyleName("MedalDisplay");
                 medals.add(MsoyUI.createSimplePanel(display, "BoxedAward"));
             }
         }
+    }
+
+    protected class DeleteConfirmationPopup extends BorderedPopup
+        implements ClickListener
+    {
+        public DeleteConfirmationPopup (int medalId, String medalName, String groupName)
+        {
+            super(true);
+            setStyleName("deleteConfirmation");
+            _medalId = medalId;
+
+            FlowPanel contents = new FlowPanel();
+            contents.add(new Label(_msgs.passportDeleteConfirmation(medalName, groupName)));
+            contents.add(MsoyUI.createButtonPair(
+                _noButton = new Button(_msgs.passportDeleteNo(), this),
+                _yesButton = new Button(_msgs.passportDeleteYes(), this)));
+            setWidget(contents);
+        }
+
+        public void onClick (Widget sender)
+        {
+            hide();
+
+            if (sender == _yesButton) {
+                _mesvc.deleteEarnedMedal(_memberId, _medalId, new MsoyCallback<Void>() {
+                    public void onSuccess (Void result) {
+                        MsoyUI.info(_msgs.passportDeleteSuccessful());
+                    }
+                });
+                loadAndDisplay(Content.MEDALS);
+            }
+        }
+
+        protected int _medalId;
+        protected Button _yesButton;
+        protected Button _noButton;
     }
 
     protected static class NextPanel extends VerticalPanel
@@ -229,6 +284,7 @@ public class PassportPanel extends FlowPanel
         protected List<InProgressBadge> _badges;
     }
 
+    protected int _memberId;
     protected PassportData _data;
     protected HeaderBox _contents;
 

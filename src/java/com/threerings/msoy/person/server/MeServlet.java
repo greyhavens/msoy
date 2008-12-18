@@ -63,12 +63,15 @@ import com.threerings.msoy.server.persist.PromotionRecord;
 import com.threerings.msoy.server.persist.PromotionRepository;
 
 import com.threerings.msoy.web.gwt.Contest;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.RPCProfiler;
 import com.threerings.msoy.web.server.ServletLogic;
 
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Implements the {@link MeService}.
@@ -193,6 +196,7 @@ public class MeServlet extends MsoyServiceServlet
         Map<Integer, Award> medals = Maps.newHashMap();
         for (EarnedMedalRecord earnedMedalRec : _medalRepo.loadEarnedMedals(memberId)) {
             Award medal = new Award();
+            medal.awardId = earnedMedalRec.medalId;
             medal.whenEarned = earnedMedalRec.whenEarned.getTime();
             medals.put(earnedMedalRec.medalId, medal);
         }
@@ -249,6 +253,25 @@ public class MeServlet extends MsoyServiceServlet
     {
         return Lists.newArrayList(Lists.transform(_contestRepo.loadContests(),
             ContestRecord.TO_CONTEST));
+    }
+
+    // from interface MeService
+    public void deleteEarnedMedal (int memberId, int medalId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        if (!mrec.isSupport()) {
+            log.warning("Non-support attempted to delete an earned medal", "deleter", mrec.memberId,
+                "memberId", memberId, "medalId", medalId);
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
+        if (!_medalRepo.deleteEarnedMedal(memberId, medalId)) {
+            log.warning("Failed to delete an earned medal", "memberId", memberId, "medalId",
+                medalId);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     /**

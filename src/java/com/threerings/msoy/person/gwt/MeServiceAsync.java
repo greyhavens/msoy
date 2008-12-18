@@ -40,4 +40,9 @@ public interface MeServiceAsync
      * The asynchronous version of {@link MeService#loadContests}.
      */
     void loadContests (AsyncCallback<List<Contest>> callback);
+
+    /**
+     * The asynchronous version of {@link MeService#deleteEarnedMedal}.
+     */
+    void deleteEarnedMedal (int memberId, int medalId, AsyncCallback<Void> callback);
 }

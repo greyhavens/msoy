@@ -13,6 +13,11 @@ public class Award
     implements IsSerializable
 {
     /**
+     * The unique id of this award, if there is one.
+     */
+    public int awardId;
+
+    /**
      * The name of this award
      */
     public String name;
