@@ -1153,6 +1153,19 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns a list of all mappings for the specified account to external authentication sources.
+     */
+    public Map<ExternalAuther, String> loadExternalMappings (int memberId)
+    {
+        Map<ExternalAuther, String> authers = Maps.newHashMap();
+        for (ExternalMapRecord emr : findAll(ExternalMapRecord.class,
+                                             new Where(ExternalMapRecord.MEMBER_ID_C, memberId))) {
+            authers.put(ExternalAuther.fromByte((byte)emr.partnerId), emr.externalId);
+        }
+        return authers;
+    }
+
+    /**
      * Creates a temp ban record for a member, or updates a pre-existing temp ban record.
      */
     public void tempBanMember (int memberId, Timestamp expires, String warning)

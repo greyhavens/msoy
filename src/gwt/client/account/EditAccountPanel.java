@@ -30,6 +30,7 @@ import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.AccountInfo;
+import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
@@ -263,6 +264,10 @@ public class EditAccountPanel extends FlowPanel
     protected Widget makeFacebookConnectSection ()
     {
         SmartTable table = new SmartTable(0, 10);
+        if (_accountInfo.externalAuths.containsKey(ExternalAuther.FACEBOOK)) {
+            table.setText(0, 0, _msgs.fbconnectActive());
+            return table;
+        }
         table.setWidget(0, 0, MsoyUI.createHTML(_msgs.fbconnectWhy(), "Info"), 2, null);
         table.setText(1, 0, _msgs.fbconnectLink(), 1, "rightLabel");
         table.setWidget(1, 1, MsoyUI.createActionImage(FBCON_IMG, new ClickListener() {
@@ -447,13 +452,15 @@ public class EditAccountPanel extends FlowPanel
     {
         _usersvc.linkExternalAccount(creds, override, new MsoyCallback<Boolean>() {
             public void onSuccess (Boolean succeeded) {
-                if (!succeeded) {
-                    new PromptPopup(_msgs.fbconnectOverride(), new Command() {
-                        public void execute () {
-                            connectToFacebook(creds, true);
-                        }
-                    }).prompt();
+                if (succeeded) {
+                    MsoyUI.info(_msgs.fbconnectActive());
+                    return;
                 }
+                new PromptPopup(_msgs.fbconnectOverride(), new Command() {
+                    public void execute () {
+                        connectToFacebook(creds, true);
+                    }
+                }).prompt();
             }
         });
     }

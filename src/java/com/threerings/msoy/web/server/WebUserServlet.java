@@ -458,12 +458,12 @@ public class WebUserServlet extends MsoyServiceServlet
         ainfo.emailWhirledMail = !mrec.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL);
         ainfo.emailAnnouncements = !mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL);
         ainfo.charityMemberId = mrec.charityMemberId;
-        
+
         // Load charities and sort by name.
         List<CharityRecord> charities = _memberRepo.getCharities();
         ainfo.charities = Maps.newHashMap();
         for (CharityRecord charity : charities) {
-            ainfo.charities.put(charity.memberId, new CharityInfo(charity.memberId, charity.core, 
+            ainfo.charities.put(charity.memberId, new CharityInfo(charity.memberId, charity.core,
                 charity.description));
         }
         ainfo.charityNames = Lists.newArrayList(
@@ -472,7 +472,10 @@ public class WebUserServlet extends MsoyServiceServlet
         for (ProfileRecord profileRec : _profileRepo.loadProfiles(ainfo.charities.keySet())) {
             ainfo.charityPhotos.put(profileRec.memberId, profileRec.getPhoto());
         }
-        
+
+        // load up any external authentication source mappings for this account
+        ainfo.externalAuths = _memberRepo.loadExternalMappings(mrec.memberId);
+
         return ainfo;
     }
 
