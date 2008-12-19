@@ -307,6 +307,10 @@ public class PartyManager
         throws InvocationException
     {
         MemberObject inviter = (MemberObject)caller;
+        if (_partyObj.recruitment == PartyCodes.RECRUITMENT_CLOSED &&
+                _partyObj.leaderId != inviter.getMemberId()) {
+            throw new InvocationException(PartyCodes.E_CANT_INVITE_CLOSED);
+        }
         //MemberNodeActions.sendNotification(memberId, createInvite(inviter));
         MemberNodeActions.inviteToParty(memberId, inviter, _partyObj.id, _partyObj.name);
     }
