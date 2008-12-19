@@ -12,8 +12,6 @@ import java.util.Set;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.data.GameData;
@@ -58,9 +56,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** The field name of the <code>propertyService</code> field. */
     public static final String PROPERTY_SERVICE = "propertyService";
-
-    /** The field name of the <code>partyId</code> field. */
-    public static final String PARTY_ID = "partyId";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -81,9 +76,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** Service for setting player properties. */
     public PropertySpaceMarshaller propertyService;
-
-    /** The player's current partyId, or 0 if they're not in a party. */
-    public int partyId;
 
     /**
      * Return true if this user is a guest.
@@ -151,12 +143,6 @@ public class PlayerObject extends WhirledPlayerObject
     public float getHumanity ()
     {
         return humanity / (float)MsoyCodes.MAX_HUMANITY;
-    }
-
-    @Override // from BodyObject
-    public OccupantInfo createOccupantInfo (PlaceObject plobj)
-    {
-        return new PlayerInfo(this);
     }
 
     @Override // from BodyObject
@@ -309,22 +295,6 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(
             PROPERTY_SERVICE, value, ovalue);
         this.propertyService = value;
-    }
-
-    /**
-     * Requests that the <code>partyId</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setPartyId (int value)
-    {
-        int ovalue = this.partyId;
-        requestAttributeChange(
-            PARTY_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.partyId = value;
     }
     // AUTO-GENERATED: METHODS END
 

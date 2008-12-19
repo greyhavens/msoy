@@ -6,12 +6,16 @@ package com.threerings.msoy.game.client {
 import com.threerings.io.TypedArray;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService_ResultListener;
 
 /**
  * An ActionScript version of the Java WorldGameService interface.
  */
 public interface WorldGameService extends InvocationService
 {
+    // from Java interface WorldGameService
+    function identifyParty (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+
     // from Java interface WorldGameService
     function inviteFriends (arg1 :Client, arg2 :int, arg3 :TypedArray /* of int */) :void;
 

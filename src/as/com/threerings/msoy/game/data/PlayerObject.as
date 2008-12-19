@@ -58,16 +58,13 @@ public class PlayerObject extends WhirledPlayerObject
     public var humanity :int;
 
     /** Contains information on player's ownership of game content (populated lazily). */
-    public var gameContent :DSet; /* of */ GameContentOwnership;
+    public var gameContent :DSet; /* GameContentOwnership */
 
     /** Player's tracking information. */
     public var visitorInfo :VisitorInfo;
 
     /** Service for setting properties. */
     public var propertyService :PropertySpaceMarshaller;
-
-    /** The player's current partyId, or 0 if they're not in a party. */
-    public var partyId :int;
 
     // from BodyObject
     override public function getTokens () :TokenRing
@@ -170,7 +167,6 @@ public class PlayerObject extends WhirledPlayerObject
         gameContent = DSet(ins.readObject());
         visitorInfo = VisitorInfo(ins.readObject());
         propertyService = PropertySpaceMarshaller(ins.readObject());
-        partyId = ins.readInt();
     }
 
     /** The raw properties set by the game. */
