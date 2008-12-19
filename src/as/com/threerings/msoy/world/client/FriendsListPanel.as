@@ -119,13 +119,13 @@ public class FriendsListPanel extends FlyingPanel
         var separator :VBox = new VBox();
         separator.percentWidth = 100;
         separator.height = 1;
-        separator.styleName = "friendsListSeparator";
+        separator.styleName = "panelBottomSeparator";
         addChild(separator);
 
         // add the little box at the bottom
         var box :VBox = new VBox();
         box.percentWidth = 100;
-        box.styleName = "friendsListEditorBox";
+        box.styleName = "panelBottom";
         addChild(box);
 
         // Create a display name label and a status editor

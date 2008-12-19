@@ -1339,7 +1339,16 @@ Roster {
   fontSize: 10;
 }
 
-.friendsListEditorBox {
+.panelBottomSeparator {
+  backgroundColor: #2E7399;
+  backgroundAlpha: 1;
+  borderStyle: "solid";
+  borderColor: #408FD9;
+  borderSides: "left right";
+  borderThickness: 2;
+}
+
+.panelBottom {
   backgroundColor: #185B81;
   backgroundAlpha: 0.5;
   borderThickness: 0;
@@ -1348,15 +1357,6 @@ Roster {
   paddingRight: 5;
   paddingTop: 3;
   paddingBottom: 3;
-}
-
-.friendsListSeparator {
-  backgroundColor: #2E7399;
-  backgroundAlpha: 1;
-  borderStyle: "solid";
-  borderColor: #408FD9;
-  borderSides: "left right";
-  borderThickness: 2;
 }
 
 .sexyTextInput, .statusEdit, .statusEditHover, .partyStatus {

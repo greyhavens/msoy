@@ -4,6 +4,9 @@
 package com.threerings.msoy.party.client {
 
 import mx.collections.ArrayCollection;
+import mx.containers.HBox;
+import mx.containers.VBox;
+import mx.controls.Spacer;
 import mx.controls.TextInput;
 import mx.events.FlexEvent;
 
@@ -66,7 +69,15 @@ public class PartyPanel extends FloatingPanel
             PartyPeep.createSortByOrder(_partyObj));
         addChild(_roster);
 
-        addChild(new CommandButton(Msgs.PARTY.get("b.leave"), _wctx.getPartyDirector().leaveParty));
+        var sep :VBox = new VBox();
+        sep.percentWidth = 100;
+        sep.height = 1;
+        sep.styleName = "panelBottomSeparator";
+        addChild(sep);
+
+        var box :VBox = new VBox();
+        box.percentWidth = 100;
+        box.styleName = "panelBottom";
 
         _status = new TextInput();
         _status.styleName = "partyStatus";
@@ -75,7 +86,10 @@ public class PartyPanel extends FloatingPanel
         _status.text = Msgs.PARTY.xlate(_partyObj.status);
         _status.enabled = isLeader;
         _status.addEventListener(FlexEvent.ENTER, commitStatus);
-        addChild(_status);
+        box.addChild(_status);
+
+        var hbox :HBox = new HBox();
+        hbox.percentWidth = 100;
 
         var options :Array = [];
         for (var ii :int = 0; ii < PartyCodes.RECRUITMENT_COUNT; ii++) {
@@ -85,7 +99,16 @@ public class PartyPanel extends FloatingPanel
         _recruit.dataProvider = options;
         _recruit.selectedData = _partyObj.recruitment;
         _recruit.enabled = isLeader;
-        addChild(_recruit);
+        hbox.addChild(_recruit);
+
+        var spacer :Spacer = new Spacer();
+        spacer.percentWidth = 100;
+        hbox.addChild(spacer);
+
+        hbox.addChild(
+            new CommandButton(Msgs.PARTY.get("b.leave"), _wctx.getPartyDirector().leaveParty));
+        box.addChild(hbox);
+        addChild(box);
     }
 
     public function attributeChanged (event :AttributeChangedEvent) :void
