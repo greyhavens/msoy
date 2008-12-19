@@ -49,7 +49,7 @@ public class PeepRenderer extends PlayerRenderer
     {
         super.configureUI();
 
-        var isLeader :Boolean = (this.data != null) && (partyInfo != null) &&
+        var isLeader :Boolean = (this.data != null) &&
             (partyInfo.leaderId == PartyPeep(this.data).name.getMemberId());
         setStyle("backgroundAlpha", isLeader ? .5 : 0);
         setStyle("backgroundColor", isLeader ? 0x000077 : 0x000000);
@@ -68,7 +68,7 @@ public class PeepRenderer extends PlayerRenderer
     protected function handleClick (event :MouseEvent) :void
     {
         if (data != null) {
-            WorldContext(mctx).getPartyDirector().popPeepMenu(PartyPeep(data));
+            WorldContext(mctx).getPartyDirector().popPeepMenu(PartyPeep(data), partyInfo.id);
         }
     }
 

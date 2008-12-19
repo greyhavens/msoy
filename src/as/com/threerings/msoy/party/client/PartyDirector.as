@@ -94,20 +94,22 @@ public class PartyDirector extends BasicDirector
         }
     }
 
-    public function popPeepMenu (peep :PartyPeep) :void
+    public function popPeepMenu (peep :PartyPeep, partyId :int) :void
     {
         var menuItems :Array = [];
 
         _wctx.getMsoyController().addMemberMenuItems(peep.name, menuItems);
 
-        const peepId :int = peep.name.getMemberId();
-        const ourId :int = _wctx.getMyName().getMemberId();
-        if (_partyObj.leaderId == ourId && peepId != ourId) {
-            menuItems.push({ type: "separator" });
-            menuItems.push({ label: Msgs.PARTY.get("b.boot"),
-                             callback: bootMember, arg: peep.name.getMemberId() });
-            menuItems.push({ label: Msgs.PARTY.get("b.assign_leader"),
-                             callback: assignLeader, arg: peep.name.getMemberId() });
+        if (_partyObj != null && partyId == _partyObj.id) {
+            const peepId :int = peep.name.getMemberId();
+            const ourId :int = _wctx.getMyName().getMemberId();
+            if (_partyObj.leaderId == ourId && peepId != ourId) {
+                menuItems.push({ type: "separator" });
+                menuItems.push({ label: Msgs.PARTY.get("b.boot"),
+                                 callback: bootMember, arg: peep.name.getMemberId() });
+                menuItems.push({ label: Msgs.PARTY.get("b.assign_leader"),
+                                 callback: assignLeader, arg: peep.name.getMemberId() });
+            }
         }
 
         CommandMenu.createMenu(menuItems, _wctx.getTopPanel()).popUpAtMouse();
