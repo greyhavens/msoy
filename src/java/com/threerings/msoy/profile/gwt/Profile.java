@@ -5,6 +5,7 @@ package com.threerings.msoy.profile.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.MemberCard;
 
@@ -67,4 +68,7 @@ public class Profile implements IsSerializable
 
     /** The user's permaName */
     public String permaName;
+
+    /** The award to be displayed on this player's profile. */
+    public Award award;
 }

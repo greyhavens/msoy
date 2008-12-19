@@ -170,6 +170,41 @@
   font-size: 14px;
 }
 
+.profile .AwardBox {
+  position: relative;
+  border: 1px solid #bebebc;
+  font-size: 12px;
+  height: 66px;
+  width: 272px;
+}
+
+.profile .AwardBox .Name {
+  position: absolute;
+  font-weight: bold;
+  font-size: 12px;
+  color: #1c4c74;
+  left: 88px;
+  top: 6px;
+}
+
+.profile .AwardBox .Type {
+  position: absolute;
+  left: 88px;
+  top: 24px;
+}
+
+.profile .AwardBox .WhenEarned {
+  position: absolute;
+  left: 88px;
+  top: 42px;
+}
+
+.profile .AwardBox .Icon {
+  position: absolute;
+  left: 3px;
+  top: 3px;
+}
+
 .ratingWidget {
   height: 44px;
 }

@@ -10,6 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.badge.data.all.Badge;
 
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
+
+import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.web.gwt.Contest;
 import com.threerings.msoy.web.gwt.ServiceException;
 
@@ -20,11 +22,6 @@ public interface MeService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/mesvc";
-
-    /** used to specify the award type for selectProfileAward() */
-    public enum AwardType {
-        BADGE, MEDAL;
-    }
 
     /**
      * Loads the data for the MyWhirled view for the calling user.

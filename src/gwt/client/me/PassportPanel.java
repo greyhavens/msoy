@@ -25,10 +25,10 @@ import com.threerings.msoy.badge.gwt.StampCategory;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.PassportData;
-import com.threerings.msoy.person.gwt.MeService.AwardType;
 
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.data.all.Award.AwardType;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;

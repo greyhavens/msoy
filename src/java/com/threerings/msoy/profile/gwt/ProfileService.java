@@ -29,7 +29,7 @@ import com.threerings.msoy.person.gwt.Interest;
 public interface ProfileService extends RemoteService
 {
     /** The various greeter states. */
-    enum GreeterStatus {NORMAL, GREETER, DISABLED};
+    public enum GreeterStatus {NORMAL, GREETER, DISABLED};
 
     /** Provides results for {@link #loadProfile}. */
     public static class ProfileResult implements IsSerializable

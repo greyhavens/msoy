@@ -84,6 +84,11 @@ public class MedalRepository extends DepotRepository
         return findAll(MedalRecord.class, new Where(MedalRecord.GROUP_ID_C, groupId));
     }
 
+    public EarnedMedalRecord loadEarnedMedal (int memberId, int medalId)
+    {
+        return load(EarnedMedalRecord.class, EarnedMedalRecord.getKey(medalId, memberId));
+    }
+
     /**
      * Returns a list of the EarnedMedalRecords that have been earned by the given individual.
      */

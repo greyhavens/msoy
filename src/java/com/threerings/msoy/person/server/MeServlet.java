@@ -33,6 +33,7 @@ import com.threerings.msoy.group.server.persist.MedalRepository;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.Award.AwardType;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.Badge;

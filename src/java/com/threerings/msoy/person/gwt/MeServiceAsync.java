@@ -9,8 +9,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.badge.data.all.Badge;
 
-import com.threerings.msoy.person.gwt.MeService.AwardType;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
+
+import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.web.gwt.Contest;
 
 /**

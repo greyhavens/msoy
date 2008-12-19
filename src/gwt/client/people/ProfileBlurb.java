@@ -21,8 +21,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.Award.AwardType;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -34,6 +37,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.item.ImageChooserPopup;
 import client.item.ShopUtil;
 import client.shell.CShell;
+import client.shell.DynamicLookup;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -73,8 +77,7 @@ public class ProfileBlurb extends Blurb
         boolean isMe = (_name.getMemberId() == CShell.getMemberId());
 
         // create our photo section with various buttons
-        FlowPanel photo = new FlowPanel();
-        photo.setStyleName("Photo");
+        FlowPanel photo = MsoyUI.createFlowPanel("Photo");
         String mepics = Args.compose("pgallery", _name.getMemberId());
         ClickListener onClick = null;
         onClick = Link.createListener(Pages.PEOPLE, mepics);
@@ -113,12 +116,32 @@ public class ProfileBlurb extends Blurb
             info.addText(_msgs.profileGreeterLabel(), 1, "LesserInfo");
         }
 
-        // create the detail section with level, last online, etc.
-        FlowPanel details = new FlowPanel();
-        details.setStyleName("Details");
+        // create our award box
+        if (_pdata.profile.award != null) {
+            Award award = _pdata.profile.award;
+            FlowPanel awardBox = MsoyUI.createFlowPanel("AwardBox");
+            info.addWidget(awardBox, 1, null);
 
-        FlowPanel level = new FlowPanel();
-        level.setStyleName("Level");
+            if (award.type == AwardType.BADGE) {
+                String hexCode = Integer.toHexString(award.awardId);
+                awardBox.add(MsoyUI.createLabel(
+                    _dmsgs.get("badge_" + hexCode, award.name), "Name"));
+                awardBox.add(MsoyUI.createLabel(_msgs.awardBadge(), "Type"));
+
+            } else if (award.type == AwardType.MEDAL) {
+                awardBox.add(MsoyUI.createLabel(award.name, "Name"));
+                awardBox.add(MsoyUI.createLabel(_msgs.awardMedal(), "Type"));
+            }
+
+            awardBox.add(MsoyUI.createImage(award.icon.getMediaPath(), "Icon"));
+            awardBox.add(MsoyUI.createLabel(_msgs.awardEarned(MsoyUI.formatDate(
+                new Date(award.whenEarned))), "WhenEarned"));
+        }
+
+        // create the detail section with level, last online, etc.
+        FlowPanel details = MsoyUI.createFlowPanel("Details");
+
+        FlowPanel level = MsoyUI.createFlowPanel("Level");
         level.add(MsoyUI.createLabel(_msgs.level(), "Label"));
         level.add(MsoyUI.createLabel("" + _profile.level, "Value"));
         details.add(level);
@@ -148,8 +171,7 @@ public class ProfileBlurb extends Blurb
         details.add(dbits);
 
         // create our action buttons
-        FlowPanel buttons = new FlowPanel();
-        buttons.setStyleName("Buttons");
+        FlowPanel buttons = MsoyUI.createFlowPanel("Buttons");
         if (!CShell.isGuest() && !_pdata.isOurFriend && !isMe) {
             addButton(buttons, "/images/profile/addfriend.png", _msgs.inviteFriend(),
                       new FriendInviter(_name, "Profile"));
@@ -246,7 +268,7 @@ public class ProfileBlurb extends Blurb
         econtent.setWidget(row++, 1, panel);
 
         econtent.setText(row, 0, _msgs.status());
-        // seed the status line with a facebook-esque que, if empty
+        // seed the status line with a facebook-esque cue, if empty
         String status = _profile.headline == "" || _profile.headline == null ?
             _msgs.statusQue() : _profile.headline;
         _estatus = MsoyUI.createTextBox(status, Profile.MAX_STATUS_LENGTH, 30);
@@ -341,7 +363,7 @@ public class ProfileBlurb extends Blurb
             _greeter = _egreeter.isChecked() ? GreeterStatus.GREETER : GreeterStatus.NORMAL;
         }
 
-        _profilesvc.updateProfile(name, _greeter == GreeterStatus.GREETER, _profile, 
+        _profilesvc.updateProfile(name, _greeter == GreeterStatus.GREETER, _profile,
             new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     displayProfile();
@@ -374,6 +396,7 @@ public class ProfileBlurb extends Blurb
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
         ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 

@@ -3,7 +3,8 @@
 
 package com.threerings.msoy.badge.data.all;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.StaticMediaDesc;
 
 public class EarnedBadge extends Badge
 {
@@ -32,8 +33,13 @@ public class EarnedBadge extends Badge
 
     public static String getImageUrl (int badgeCode, int level)
     {
-        return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
-            "_" + level + "f" + BADGE_IMAGE_TYPE;
+        return getImageMedia(badgeCode, level).getMediaPath();
+    }
+
+    public static MediaDesc getImageMedia (int badgeCode, int level)
+    {
+        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, "badge",
+            Integer.toHexString(badgeCode) + "_" + level + "f");
     }
 
     @Override // from Badge

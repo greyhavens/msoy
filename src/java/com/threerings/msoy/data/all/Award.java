@@ -12,10 +12,19 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class Award
     implements IsSerializable
 {
+    public enum AwardType {
+        BADGE, MEDAL;
+    }
+
     /**
      * The unique id of this award, if there is one.
      */
     public int awardId;
+
+    /**
+     * The type of this award.
+     */
+    public AwardType type;
 
     /**
      * The name of this award

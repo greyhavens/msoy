@@ -26,6 +26,7 @@ import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
@@ -37,6 +38,8 @@ import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletLogic;
 
+import com.threerings.msoy.badge.data.all.Badge;
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.game.data.all.Trophy;
@@ -301,11 +304,28 @@ public class ProfileServlet extends MsoyServiceServlet
         return _servletLogic.resolveFeedMessages(_feedRepo.loadMemberFeed(profileMemberId, since));
     }
 
-    protected Profile resolveProfileData (final MemberRecord reqrec, final MemberRecord tgtrec)
+    protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)
     {
-        final ProfileRecord prec = _profileRepo.loadProfile(tgtrec.memberId);
-        final int forMemberId = (reqrec == null) ? 0 : reqrec.memberId;
-        final Profile profile = (prec == null) ? new Profile() : prec.toProfile(tgtrec, forMemberId);
+        ProfileRecord prec = _profileRepo.loadProfile(tgtrec.memberId);
+        int forMemberId = (reqrec == null) ? 0 : reqrec.memberId;
+        Profile profile = (prec == null) ? new Profile() : prec.toProfile(tgtrec, forMemberId);
+
+        if (profile.award != null && profile.award.type == AwardType.BADGE) {
+            EarnedBadgeRecord earnedBadgeRec =
+                _badgeRepo.loadEarnedBadge(tgtrec.memberId, profile.award.awardId);
+            profile.award.name = Badge.getLevelName(earnedBadgeRec.level);
+            profile.award.whenEarned = earnedBadgeRec.whenEarned.getTime();
+            profile.award.icon = EarnedBadge.getImageMedia(
+                earnedBadgeRec.badgeCode, earnedBadgeRec.level);
+
+        } else if (profile.award != null && profile.award.type == AwardType.MEDAL) {
+            EarnedMedalRecord earnedMedalRec =
+                _medalRepo.loadEarnedMedal(tgtrec.memberId, profile.award.awardId);
+            MedalRecord medalRec = _medalRepo.loadMedal(profile.award.awardId);
+            profile.award.whenEarned = earnedMedalRec.whenEarned.getTime();
+            profile.award.name = medalRec.name;
+            profile.award.icon = medalRec.createIconMedia();
+        }
 
         // TODO: if they're online right now, show that
 

@@ -18,8 +18,10 @@ import com.samskivert.depot.annotation.FullTextIndex;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.Award.AwardType;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -234,10 +236,14 @@ public class ProfileRecord extends PersistentRecord
         }
         showAge = (profile.age != 0);
         setPhoto(profile.photo);
+        setAward(profile.award);
     }
 
     /**
      * Creates a runtime record from this persistent record.
+     *
+     * The award added by this method will only contain the type and awardId.  Some award types
+     * may require further information before sending the Profile on to the client.
      *
      * @param member the member record of the member that owns this profile.
      * @param forMemberId the member id of the member that will be *seeing* this profile.
@@ -267,6 +273,8 @@ public class ProfileRecord extends PersistentRecord
         profile.memberSince = member.created.getTime();
         profile.lastLogon = (member.lastSession != null) ? member.lastSession.getTime() : 0L;
 
+        profile.award = getAward();
+
         return profile;
     }
 
@@ -290,6 +298,39 @@ public class ProfileRecord extends PersistentRecord
     {
         return (photoHash != null) ?
             new MediaDesc(photoHash, photoMimeType, photoConstraint) : MemberCard.DEFAULT_PHOTO;
+    }
+
+    public void setAward (Award award)
+    {
+        if (award == null) {
+            return;
+        }
+
+        profileBadgeCode = award.type == AwardType.BADGE ? award.awardId : 0;
+        profileMedalId = award.type == AwardType.MEDAL ? award.awardId : 0;
+    }
+
+    /**
+     * Gets the Award for this profile.  If none has been requested, it will return null.  The
+     * Award returned will only have the type and awardId fields filled in.  More information may
+     * be required for some award types.
+     */
+    public Award getAward ()
+    {
+        Award award = null;
+
+        if (profileBadgeCode != 0) {
+            award = new Award();
+            award.type = Award.AwardType.BADGE;
+            award.awardId = profileBadgeCode;
+
+        } else if (profileMedalId != 0) {
+            award = new Award();
+            award.type = Award.AwardType.MEDAL;
+            award.awardId = profileMedalId;
+        }
+
+        return award;
     }
 
     @Override // from Object
