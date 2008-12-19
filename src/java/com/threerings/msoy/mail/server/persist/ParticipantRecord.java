@@ -9,12 +9,15 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
+import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
 /**
  * Links a member to a conversation.
  */
-@Entity
+@Entity(indices={
+    @Index(name="ixParticipant", fields={ ParticipantRecord.PARTICIPANT_ID })
+})
 public class ParticipantRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -42,7 +45,7 @@ public class ParticipantRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The conversation in question. */
     @Id public int conversationId;
