@@ -212,13 +212,9 @@ public class AVRGameBackend extends ControlBackend
     {
         super.populateControlProperties(o);
 
-        // on more than one control
-        o["getPlayerInfo_v1"] = getPlayerInfo_v1;
-
         // GameSubControl
         o["game_getGameData_v1"] = game_getGameData_v1;
         o["game_getPlayerIds_v1"] = game_getPlayerIds_v1;
-        o["game_getPlayerInfos_v1"] = game_getPlayerInfos_v1;
         o["getLevelPacks_v2"] = getLevelPacks_v2;
         o["getItemPacks_v1"] = getItemPacks_v1;
 
@@ -265,12 +261,6 @@ public class AVRGameBackend extends ControlBackend
         o["setMobHotSpot_v1"] = setMobHotSpot_v1;
     }
 
-    // GameSubControl & PlayerSubControl
-    protected function getPlayerInfo_v1 (playerId :int) :Object
-    {
-        return {};
-    }
-
     // GameSubControl
     protected function game_getGameData_v1 (targetId :int) :Object
     {
@@ -285,12 +275,6 @@ public class AVRGameBackend extends ControlBackend
         }
         
         return BackendUtils.getPlayerIds(_gameObj, null, 0);
-    }
-
-    // GameSubControl
-    protected function game_getPlayerInfos_v1 () :Array
-    {
-        return [];
     }
 
     // GameSubControl
@@ -433,11 +417,6 @@ public class AVRGameBackend extends ControlBackend
         // TODO: this should guarantee to only return a non-zero value after the room entry event 
         // has been sent
         return getRoomId();
-    }
-
-    protected function player_getPlayerInfo_v1 (targetId :int) :Object
-    {
-        return {};
     }
 
     // PlayerSubControl
