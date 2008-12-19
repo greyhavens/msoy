@@ -66,6 +66,36 @@ public class NotificationDirector extends BasicDirector
             _notificationDisplay = new NotificationDisplay(ctx));
     }
 
+    /**
+     * Send a generic notification about the currently playing music.
+     */
+    public function notifyMusic (song :String, artist :String) :void
+    {
+        addGenericNotification(MessageBundle.tcompose("m.song", song, artist),
+            Notification.BUTTSCRATCHING);
+    }
+
+    public function addGenericNotification (
+        announcement :String, category :int, sender :MemberName = null) :void
+    {
+        addNotification(new GenericNotification(announcement, category, sender));
+    }
+
+    public function addNotification (notification :Notification) :void
+    {
+        const sender :MemberName = notification.getSender();
+        if (sender != null && _mctx.getMuteDirector().isMuted(sender)) {
+            // we have muted this sender: do not notify.
+            return;
+        }
+
+        // we can't just store the notifications in the array, because some notifications may be
+        // identical (bob invites you to play captions twice within 15 minutes);
+        _currentNotifications.add(_lastId++);
+        _notifications.push(notification);
+        _notificationDisplay.displayNotification(notification);
+    }
+
     // from interface AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
@@ -209,26 +239,6 @@ public class NotificationDirector extends BasicDirector
     protected function notifyNewMail (count :int) :void
     {
         addGenericNotification(MessageBundle.tcompose("m.new_mail", count), Notification.PERSONAL);
-    }
-
-    protected function addGenericNotification (announcement :String, category :int) :void
-    {
-        addNotification(new GenericNotification(announcement, category));
-    }
-
-    protected function addNotification (notification :Notification) :void
-    {
-        const sender :MemberName = notification.getSender();
-        if (sender != null && _mctx.getMuteDirector().isMuted(sender)) {
-            // we have muted this sender: do not notify.
-            return;
-        }
-
-        // we can't just store the notifications in the array, because some notifications may be
-        // identical (bob invites you to play captions twice within 15 minutes);
-        _currentNotifications.add(_lastId++);
-        _notifications.push(notification);
-        _notificationDisplay.displayNotification(notification);
     }
 
     protected function notificationExpired (event :ValueEvent) :void

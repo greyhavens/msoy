@@ -191,6 +191,7 @@ public class WorldController extends MsoyController
         Prefs.config.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
         Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, handleConfigValueSet,
             false, 0, true);
+        _musicPlayer.addEventListener(MediaPlayerCodes.METADATA, handleMusicMetadata);
     }
 
     /**
@@ -1452,6 +1453,14 @@ public class WorldController extends MsoyController
         default: return false;
         case MediaPlayerCodes.STATE_PLAYING: // fall through
         case MediaPlayerCodes.STATE_PAUSED: return true;
+        }
+    }
+
+    protected function handleMusicMetadata (event :ValueEvent) :void
+    {
+        var id3 :Object = event.value;
+        if (id3.artist != null && id3.songName != null) {
+            _wctx.getNotificationDirector().notifyMusic(String(id3.songName), String(id3.artist));
         }
     }
 
