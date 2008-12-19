@@ -826,9 +826,9 @@ public class AVRGameManager extends PlaceManager
     protected void checkScenes ()
     {
         long now = System.currentTimeMillis();
-        Iterator<IntEntry<Scene>> iter = _scenes.intEntrySet().iterator();
+        Iterator<Scene> iter = _scenes.values().iterator();
         while (iter.hasNext()) {
-            Scene scene = iter.next().getValue();
+            Scene scene = iter.next();
             if (scene.shouldFlush(now) && scene.sceneId != 0) {
                 if (_gameAgentObj.scenes.containsKey(scene.sceneId)) {
                     _gameAgentObj.removeFromScenes(scene.sceneId);
