@@ -369,7 +369,11 @@ public class ThaneAVRGameBackend
 
     protected function getAvatarInfo_v1 (roomId :int, playerId :int) :Array
     {
-        var roomObj :RoomObject = _controller.getRoom(getPlayerRoomId(playerId));
+        var roomId :int = getPlayerRoomId(playerId);
+        if (roomId == 0) {
+            throw new UserError("Player not in any room [playerId=" + playerId + "]");
+        }
+        var roomObj :RoomObject = _controller.getRoom(roomId);
         var actorInfo :ActorInfo;
         actorInfo = BackendUtils.resolvePlayerWorldInfo(_gameObj, roomObj, playerId) as ActorInfo;
         var loc :MsoyLocation;
@@ -646,7 +650,7 @@ public class ThaneAVRGameBackend
     {
         var pl :PlayerLocation = _gameObj.playerLocs.get(playerId) as PlayerLocation;
         if (pl == null) {
-            throw new UserError("Player not found [playerId=" + playerId + "]");
+            return 0;
         }
         return pl.sceneId;
     }
