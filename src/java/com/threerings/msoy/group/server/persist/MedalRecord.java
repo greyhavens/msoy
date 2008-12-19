@@ -121,7 +121,8 @@ public class MedalRecord extends PersistentRecord
 
     public MediaDesc createIconMedia()
     {
-        return new MediaDesc(iconHash, iconMimeType);
+        // Images are larger than half-thumbnail, so we can't pretend they're not constrained at all
+        return new MediaDesc(iconHash, iconMimeType, MediaDesc.HALF_HORIZONTALLY_CONSTRAINED);
     }
 
     // AUTO-GENERATED: METHODS START
