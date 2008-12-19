@@ -286,6 +286,10 @@
   width: 196px;
 }
 
+.passport .MedalContents .tongueBox .THeader .Base {
+  cursor: pointer;
+}
+
 /* ------------------------------------
    BADGE DISPLAYS ANYWHERE
 -------------------------------------*/

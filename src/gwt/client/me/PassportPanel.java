@@ -29,6 +29,8 @@ import com.threerings.msoy.person.gwt.PassportData;
 import com.threerings.msoy.data.all.Award;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.Award.AwardType;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;
@@ -37,6 +39,7 @@ import client.ui.HeaderBox;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -144,6 +147,7 @@ public class PassportPanel extends FlowPanel
         }
         _contents = new HeaderBox(null, _msgs.passportMedalsTitle(_data.stampOwner));
         _contents.makeRoundBottom();
+        _contents.addStyleName("MedalContents");
         add(_contents);
 
         List<GroupName> groups = new ArrayList<GroupName>(_data.medals.keySet());
@@ -162,7 +166,11 @@ public class PassportPanel extends FlowPanel
         });
         for (final GroupName group : groups) {
             FlowPanel medals = new FlowPanel();
-            _contents.add(new TongueBox(group.toString(), medals));
+            _contents.add(new TongueBox(null, group.toString(), medals, new ClickListener() {
+                public void onClick (Widget sender) {
+                    Link.go(Pages.GROUPS, Args.compose("d", group.getGroupId()));
+                }
+            }));
             for (final Award award : _data.medals.get(group)) {
                 AwardSelectionListener selectionListener = _memberId != CShell.getMemberId() ?
                     null : new AwardSelectionListener(AwardType.MEDAL, award.awardId);

@@ -8,6 +8,8 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -20,6 +22,7 @@ import client.util.Link;
  * Displays content with a tongue label header and an optional right-aligned footer widget.
  */
 public class TongueBox extends SmartTable
+    implements TableListener
 {
     public TongueBox ()
     {
@@ -50,7 +53,13 @@ public class TongueBox extends SmartTable
 
     public TongueBox (Image icon, String title, Widget content)
     {
+        this(icon, title, content, null);
+    }
+
+    public TongueBox (Image icon, String title, Widget content, ClickListener clicker)
+    {
         this(); // not sure if zero argument constructor is automatically called
+        _clicker = clicker;
         if (title != null || icon != null) {
             setHeader(title, icon);
         }
@@ -69,12 +78,15 @@ public class TongueBox extends SmartTable
         SmartTable header = new SmartTable("THeader", 0, 0);
         if (title != null && icon == null) {
             header.setText(0, 0, title, 1, "Base");
+            header.addTableListener(this);
         } else if (title == null && icon != null) {
             header.setWidget(0, 0, icon, 1, "Base");
+            header.addTableListener(this);
         } else {
             SmartTable base = new SmartTable("BaseContents", 0, 0);
             base.setWidget(0, 0, icon);
             base.setText(0, 1, title, 1, "BaseText");
+            base.addTableListener(this);
             header.setWidget(0, 0, base, 1, "Base");
         }
 
@@ -126,4 +138,13 @@ public class TongueBox extends SmartTable
             clearCell(2, 0);
         }
     }
+
+    public void onCellClicked (SourcesTableEvents sender, int row, int cell)
+    {
+        if (_clicker != null && !"Line".equals(getCellFormatter().getStyleName(row, cell))) {
+            _clicker.onClick(this);
+        }
+    }
+
+    protected ClickListener _clicker;
 }
