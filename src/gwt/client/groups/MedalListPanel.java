@@ -21,6 +21,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.PagedWidget;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -47,7 +48,7 @@ public class MedalListPanel extends FlowPanel
         _groupId = groupId;
         _groupsvc.getAwardedMedals(groupId, new MsoyCallback<MedalsResult>() {
             public void onSuccess (MedalsResult result) {
-                CShell.frame.setTitle(result.groupName.toString());
+                _groupName = result.groupName;
                 _rank = result.rank;
                 displayMedals(result.medals);
             }
@@ -69,7 +70,8 @@ public class MedalListPanel extends FlowPanel
         medalList.addStyleName("MedalList");
         HorizontalPanel title = new HorizontalPanel();
         title.setStyleName("MedalTitle");
-        title.add(new Label(_msgs.medalListHeader()));
+        title.add(MsoyUI.createActionLabel(_groupName.toString(), "GroupName", Link.createListener(
+            Pages.GROUPS, GroupsPage.Nav.DETAIL.composeArgs(_groupName.getGroupId()))));
         if (CShell.isSupport() || _rank == GroupMembership.RANK_MANAGER) {
             title.add(MsoyUI.createActionLabel(
                 _msgs.medalListAddMedal(), "AddMedal", Link.createListener(
@@ -172,6 +174,7 @@ public class MedalListPanel extends FlowPanel
     }
 
     protected int _groupId;
+    protected GroupName _groupName;
     protected byte _rank;
 
     protected static final int MEDALS_COLS = 1;

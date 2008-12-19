@@ -802,6 +802,10 @@
   text-align: right;
 }
 
+.medalListPanel .GroupName {
+  text-decoration: none;
+}
+
 .medalListPanel .MedalList {
   margin: 5px 15px;
   width: 646px;
