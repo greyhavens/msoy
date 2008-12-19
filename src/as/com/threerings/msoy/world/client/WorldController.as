@@ -10,6 +10,7 @@ import flash.system.Capabilities;
 
 import mx.controls.Button;
 
+import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
@@ -189,6 +190,8 @@ public class WorldController extends MsoyController
         _wctx = ctx;
 
         Prefs.config.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
+        Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, handleConfigValueSet,
+            false, 0, true);
     }
 
     /**
@@ -1428,11 +1431,28 @@ public class WorldController extends MsoyController
         if (_musicDesc == null) {
             return; // couldn't possibly concern us..
         }
-        const isPlaying :Boolean = (_musicPlayer.getState() == MediaPlayerCodes.STATE_PLAYING);
         const isBleeped :Boolean = Prefs.isMediaBlocked(_musicDesc.getMediaId());
-        if (isPlaying == isBleeped) {
+        if (isBleeped == musicIsPlayingOrPaused()) {
             // just call play again with the same music, it'll handle it
             handlePlayMusic(_musicDesc, _musicIdent);
+        }
+    }
+
+    protected function handleConfigValueSet (event :ConfigValueSetEvent) :void
+    {
+        // if the volume got turned up and we were not playing music, play it now.
+        if ((event.name == Prefs.VOLUME) && (event.value > 0) && (_musicDesc != null) &&
+               !musicIsPlayingOrPaused()) {
+            handlePlayMusic(_musicDesc, _musicIdent);
+        }
+    }
+
+    protected function musicIsPlayingOrPaused () :Boolean
+    {
+        switch (_musicPlayer.getState()) {
+        default: return false;
+        case MediaPlayerCodes.STATE_PLAYING: // fall through
+        case MediaPlayerCodes.STATE_PAUSED: return true;
         }
     }
 
