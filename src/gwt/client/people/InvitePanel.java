@@ -114,27 +114,34 @@ public class InvitePanel extends VerticalPanel
         // Add a name/e-mail and import webmail section
         SmartTable input = new SmartTable(0, 5);
         int row = 0;
-        input.setText(row++, 0, justRegistered ? 
-            _msgs.justRegInviteManualTitle() : _msgs.inviteManualTitle(), 3, null);
-        input.setWidget(row, 0, _friendName = MsoyUI.createTextBox("", MAX_NAME_LENGTH, 0));
-        DefaultTextListener.configure(_friendName, _msgs.inviteFriendName());
-        _friendEmail = MsoyUI.createTextBox("", MAX_WEBMAIL_LENGTH, 0);
-        _friendEmail.addKeyboardListener(new EnterClickAdapter(addEmail));
-        DefaultTextListener.configure(_friendEmail, _msgs.inviteFriendEmail());
-        input.setWidget(row, 1, _friendEmail, 2, null);
-        input.setWidget(row++, 2, new Button(_msgs.inviteAdd(), addEmail));
+        if (!justRegistered) {
+            input.setText(row++, 0, _msgs.inviteManualTitle(), 3, null);
+            input.setWidget(row, 0, _friendName = MsoyUI.createTextBox("", MAX_NAME_LENGTH, 0));
+            DefaultTextListener.configure(_friendName, _msgs.inviteFriendName());
+            _friendEmail = MsoyUI.createTextBox("", MAX_WEBMAIL_LENGTH, 0);
+            _friendEmail.addKeyboardListener(new EnterClickAdapter(addEmail));
+            DefaultTextListener.configure(_friendEmail, _msgs.inviteFriendEmail());
+            input.setWidget(row, 1, _friendEmail, 2, null);
+            input.setWidget(row++, 2, new Button(_msgs.inviteAdd(), addEmail));
+        }
 
-        input.setText(row, 0, _msgs.inviteGrabber(), 3, null);
-        ClickListener showSupported = new ClickListener() {
-            public void onClick (Widget widget) {
-                BorderedPopup popup = new BorderedPopup(true);
-                popup.setWidget(MsoyUI.createHTML(_msgs.inviteSupportedList(),
-                                                  "importSupportList"));
-                popup.show();
-            }
-        };
-        input.setWidget(row++, 1, MsoyUI.createActionLabel(_msgs.inviteSupported(),
-                                                           "ImportSupportLink", showSupported));
+        Widget showSupported = MsoyUI.createActionLabel(_msgs.inviteSupported(),
+            "ImportSupportLink", new ClickListener() {
+                public void onClick (Widget widget) {
+                    BorderedPopup popup = new BorderedPopup(true);
+                    popup.setWidget(MsoyUI.createHTML(_msgs.inviteSupportedList(),
+                                                      "importSupportList"));
+                    popup.show();
+                }
+            });
+
+        if (justRegistered) {
+            input.setText(row++, 0, _msgs.justRegInviteGrabber(), 4, null);
+            input.setWidget(row++, 0, showSupported, 4, null);
+        } else {
+            input.setText(row, 0, _msgs.inviteGrabber(), 3, null);
+            input.setWidget(row++, 1, showSupported);
+        }
 
         input.setWidget(row, 0, _webAddress = MsoyUI.createTextBox("", MAX_WEBMAIL_LENGTH, 0));
         DefaultTextListener.configure(_webAddress, _msgs.inviteWebAddress());
