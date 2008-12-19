@@ -18,6 +18,10 @@ import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
 
+import com.threerings.msoy.game.data.PlayerInfo;
+
+import com.threerings.msoy.party.data.PartySummary;
+
 /**
  * Holds game state for an AVRGame.
  */
@@ -42,13 +46,15 @@ public class AVRGameObject extends PlaceObject
 
     // AUTO-GENERATED: FIELDS END
 
+    // reference PlayerInfo, it's what our occupantInfo DSet contains.
+    PlayerInfo;
+
     /**
      * Tracks the (scene) location of each player. This data is only updated when the agent
      * has successfully subscribed to the scene's RoomObject and it's safe for clients to make
      * requests.
      */
-    public var playerLocs :DSet = new DSet();
-    PlayerLocation; // no-op reference to force link
+    public var playerLocs :DSet; /* of */ PlayerLocation; // no-op reference to force link
 
     /** The various game data available to this game. */
     public var gameData :TypedArray;
@@ -64,6 +70,9 @@ public class AVRGameObject extends PlaceObject
 
     /** Used to communicate with the AVRGameManager. */
     public var propertiesService :PropertySpaceMarshaller;
+
+    /** Information on the parties presently in this game. */
+    public var parties :DSet; /* of */ PartySummary;
 
      // from PropertySpaceObject
     public function getUserProps () :Object
@@ -99,6 +108,7 @@ public class AVRGameObject extends PlaceObject
         prizeService = PrizeMarshaller(ins.readObject());
         messageService = WhirledGameMessageMarshaller(ins.readObject());
         propertiesService = PropertySpaceMarshaller(ins.readObject());
+        parties = DSet(ins.readObject());
     }
 
     /** The raw properties set by the game. */
