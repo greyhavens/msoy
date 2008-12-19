@@ -6,7 +6,9 @@ package com.threerings.msoy.game.server.persist;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
+import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
+import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
@@ -14,12 +16,14 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.TrophySource;
-
 import java.sql.Timestamp;
 
 /**
  * Contains persistent data on a player's trophy.
  */
+@Entity(indices={
+    @Index(name="ixMember", fields={ TrophyRecord.MEMBER_ID })
+})
 public class TrophyRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -75,7 +79,7 @@ public class TrophyRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /** The game that awarded this trophy. */
     @Id
