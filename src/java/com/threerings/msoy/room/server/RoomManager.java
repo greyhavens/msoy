@@ -779,7 +779,7 @@ public class RoomManager extends SpotSceneManager
         Controllable reference = new ControllableEntity(item);
         EntityControl ctrl = _roomObj.controllers.get(reference);
         if (ctrl == null) {
-            log.info("Assigning control [item=" + item + ", to=" + who.who() + "].");
+            //log.info("Assigning control", "item", item, "to", who.who());
             _roomObj.addToControllers(new EntityControl(reference, who.getOid()));
             return true;
         }
