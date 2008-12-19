@@ -26,8 +26,8 @@ import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 
-import com.threerings.crowd.chat.server.SpeakDispatcher;
-import com.threerings.crowd.chat.server.SpeakHandler;
+//import com.threerings.crowd.chat.server.SpeakDispatcher;
+//import com.threerings.crowd.chat.server.SpeakHandler;
 
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
@@ -60,7 +60,7 @@ import static com.threerings.msoy.Log.log;
  * Manages a particular party while it lives on a single node.
  */
 public class PartyManager
-    implements PartyProvider, SpeakHandler.SpeakerValidator
+    implements /* SpeakHandler.SpeakerValidator, */ PartyProvider
 {
     public void init (PartyObject partyObj)
     {
@@ -69,8 +69,8 @@ public class PartyManager
         _partyObj.startTransaction();
         try {
             _partyObj.setPartyService(_invMgr.registerDispatcher(new PartyDispatcher(this)));
-            _partyObj.setSpeakService(_invMgr.registerDispatcher(
-                new SpeakDispatcher(new SpeakHandler(_partyObj, this))));
+//            _partyObj.setSpeakService(_invMgr.registerDispatcher(
+//                new SpeakDispatcher(new SpeakHandler(_partyObj, this))));
             updateStatus();
         } finally {
             _partyObj.commitTransaction();
@@ -103,7 +103,7 @@ public class PartyManager
         removeFromNode();
 
         _invMgr.clearDispatcher(_partyObj.partyService);
-        _invMgr.clearDispatcher(_partyObj.speakService);
+//        _invMgr.clearDispatcher(_partyObj.speakService);
         // TODO: this won't work if nobody is subscribed
         _partyObj.setDestroyOnLastSubscriberRemoved(true);
 //        _omgr.destroyObject(_partyObj.getOid());
@@ -353,41 +353,12 @@ public class PartyManager
         updatePartyInfo();
     }
 
-//    /**
-//     * React to a player changing location.
-//     */
-//    protected void playerChangedLocation (MemberObject player, Place place)
+//    // from SpeakHandler.SpeakerValidator
+//    public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode)
 //    {
-//        if (place == null) {
-//            // TODO?
-//            log.debug("Player moved to nowhere", "who", player.who());
-//            // ignore for now
-//            return;
-//        }
-//
-//        // see if it's a new scene
-//        if (place instanceof ScenePlace) {
-//            int sceneId = ((ScenePlace)place).sceneId;
-//            if (sceneId == _partyObj.sceneId) {
-//                return;
-//            }
-//            if (_partyObj.leaderId == player.getMemberId()) {
-//                // the leader just moved location.
-//                _partyObj.setSceneId(sceneId);
-//
-//            } else {
-//                // otherwise, they leave the party with a notification that they've done so
-//                log.info("TODO: partier left party scene.");
-//            }
-//        }
+//        return (speaker instanceof MemberObject) &&
+//            ((MemberObject) speaker).partyId == _partyObj.id;
 //    }
-
-    // from SpeakHandler.SpeakerValidator
-    public boolean isValidSpeaker (DObject speakObj, ClientObject speaker, byte mode)
-    {
-        return (speaker instanceof MemberObject) &&
-            ((MemberObject) speaker).partyId == _partyObj.id;
-    }
 
 //    /**
 //     * Create an invitation to this party.

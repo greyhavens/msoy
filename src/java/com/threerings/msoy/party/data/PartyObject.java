@@ -7,8 +7,8 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.crowd.chat.data.SpeakMarshaller;
-import com.threerings.crowd.chat.data.SpeakObject;
+//import com.threerings.crowd.chat.data.SpeakMarshaller;
+//import com.threerings.crowd.chat.data.SpeakObject;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -17,7 +17,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.GroupMembership;
 
 public class PartyObject extends DObject
-    implements SpeakObject, Cloneable
+    implements /*SpeakObject,*/ Cloneable
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>id</code> field. */
@@ -49,9 +49,9 @@ public class PartyObject extends DObject
 
     /** The field name of the <code>partyService</code> field. */
     public static final String PARTY_SERVICE = "partyService";
-
-    /** The field name of the <code>speakService</code> field. */
-    public static final String SPEAK_SERVICE = "speakService";
+//
+//    /** The field name of the <code>speakService</code> field. */
+//    public static final String SPEAK_SERVICE = "speakService";
     // AUTO-GENERATED: FIELDS END
 
     /** This party's guid. */
@@ -84,8 +84,8 @@ public class PartyObject extends DObject
     /** The service for doing things on this party. */
     public PartyMarshaller partyService;
 
-    /** Speaking on this party object. */
-    public SpeakMarshaller speakService;
+//    /** Speaking on this party object. */
+//    public SpeakMarshaller speakService;
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -279,30 +279,30 @@ public class PartyObject extends DObject
         this.partyService = value;
     }
 
-    /**
-     * Requests that the <code>speakService</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setSpeakService (SpeakMarshaller value)
-    {
-        SpeakMarshaller ovalue = this.speakService;
-        requestAttributeChange(
-            SPEAK_SERVICE, value, ovalue);
-        this.speakService = value;
-    }
+//    /**
+//     * Requests that the <code>speakService</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public void setSpeakService (SpeakMarshaller value)
+//    {
+//        SpeakMarshaller ovalue = this.speakService;
+//        requestAttributeChange(
+//            SPEAK_SERVICE, value, ovalue);
+//        this.speakService = value;
+//    }
     // AUTO-GENERATED: METHODS END
 
-    // from SpeakObject
-    public void applyToListeners (ListenerOp op)
-    {
-        for (PartyPeep peep : peeps) {
-            op.apply(peep.name);
-        }
-    }
+//    // from SpeakObject
+//    public void applyToListeners (ListenerOp op)
+//    {
+//        for (PartyPeep peep : peeps) {
+//            op.apply(peep.name);
+//        }
+//    }
 
     /**
      * May the specified player join this party? Note that you may join a party
@@ -342,7 +342,7 @@ public class PartyObject extends DObject
             PartyObject that = (PartyObject)super.clone();
             that.peeps = this.peeps.typedClone();
             that.partyService = null;
-            that.speakService = null;
+//            that.speakService = null;
             return that;
 
         } catch (CloneNotSupportedException cnse) {
