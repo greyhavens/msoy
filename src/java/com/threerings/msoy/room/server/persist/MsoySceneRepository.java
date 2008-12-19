@@ -306,7 +306,7 @@ public class MsoySceneRepository extends DepotRepository
      */
     public SceneRecord loadScene (int sceneId)
     {
-        return load(SceneRecord.class, new Where(SceneRecord.SCENE_ID_C, sceneId));
+        return load(SceneRecord.class, SceneRecord.getKey(sceneId));
     }
 
     /**
