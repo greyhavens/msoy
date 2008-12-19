@@ -47,8 +47,7 @@ public class AVRGameObject extends PlaceObject
      * has successfully subscribed to the scene's RoomObject and it's safe for clients to make
      * requests.
      */
-    public var playerLocs :DSet = new DSet();
-    PlayerLocation; // no-op reference to force link
+    public var playerLocs :DSet; /* of */ PlayerLocation; // no-op reference to force link
 
     /** The various game data available to this game. */
     public var gameData :TypedArray;

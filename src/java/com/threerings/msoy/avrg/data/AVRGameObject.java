@@ -63,7 +63,7 @@ public class AVRGameObject extends PlaceObject
      * has successfully subscribed to the scene's RoomObject and it's safe for clients to make
      * requests.
      */
-    public DSet<PlayerLocation> playerLocs = new DSet<PlayerLocation>();
+    public DSet<PlayerLocation> playerLocs = DSet.newDSet();
 
     /** The various game data available to this game. */
     public GameData[] gameData;

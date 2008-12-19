@@ -58,7 +58,7 @@ public class PlayerObject extends WhirledPlayerObject
     public var humanity :int;
 
     /** Contains information on player's ownership of game content (populated lazily). */
-    public var gameContent :DSet; /* GameContentOwnership */
+    public var gameContent :DSet; /* of */ GameContentOwnership;
 
     /** Player's tracking information. */
     public var visitorInfo :VisitorInfo;
