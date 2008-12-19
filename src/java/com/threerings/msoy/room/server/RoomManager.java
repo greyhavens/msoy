@@ -468,7 +468,6 @@ public class RoomManager extends SpotSceneManager
                     ownerType, ownerId, roomName, portalAction, false);
             }
             public void handleSuccess () {
-//                user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
                 listener.requestProcessed(_newRoomId);
             }
             public void handleFailure (Exception pe) {

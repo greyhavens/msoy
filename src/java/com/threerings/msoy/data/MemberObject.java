@@ -171,12 +171,6 @@ public class MemberObject extends MsoyBodyObject
     /** The names of members following this member. */
     public DSet<MemberName> followers = new DSet<MemberName>();
 
-//    /** The recent scenes we've been through. */
-//    public DSet<SceneBookmarkEntry> recentScenes = new DSet<SceneBookmarkEntry>();
-//
-//    /** The scenes we own. */
-//    public DSet<SceneBookmarkEntry> ownedScenes = new DSet<SceneBookmarkEntry>();
-
     /** The tokens defining the access controls for this user. */
     public MsoyTokenRing tokens;
 
@@ -321,40 +315,6 @@ public class MemberObject extends MsoyBodyObject
             return visitorInfo.id;
         }
     }
-
-//    /**
-//     * Add the specified scene to the recent scene list for this user.
-//     */
-//    public void addToRecentScenes (int sceneId, String name)
-//    {
-//        SceneBookmarkEntry newEntry = new SceneBookmarkEntry(
-//            sceneId, name, System.currentTimeMillis());
-//
-//        SceneBookmarkEntry oldest = null;
-//        for (SceneBookmarkEntry sbe : recentScenes) {
-//            if (sbe.sceneId == sceneId) {
-//                updateRecentScenes(newEntry);
-//                return;
-//            }
-//            if (oldest == null || oldest.lastVisit > sbe.lastVisit) {
-//                oldest = sbe;
-//            }
-//        }
-//
-//        int size = recentScenes.size();
-//        if (size < MAX_RECENT_SCENES) {
-//            addToRecentScenes(newEntry);
-//
-//        } else {
-//            startTransaction();
-//            try {
-//                removeFromRecentScenes(oldest.getKey());
-//                addToRecentScenes(newEntry);
-//            } finally {
-//                commitTransaction();
-//            }
-//        }
-//    }
 
     /**
      * Returns true if this member is accepting communications from the specified member, false

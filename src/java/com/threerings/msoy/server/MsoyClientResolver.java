@@ -198,9 +198,6 @@ public class MsoyClientResolver extends CrowdClientResolver
 //         _memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
 // END TEMP
 
-//        memobj.ownedScenes = new DSet<SceneBookmarkEntry>(
-//            _sceneRepo.getOwnedScenes(member.memberId).iterator());
-
         // fill in this member's raw friends list; the friend manager will update it later
         memobj.friends = new DSet<FriendEntry>(_memberRepo.loadAllFriends(member.memberId));
 

@@ -80,8 +80,6 @@ public class FlashEvents
             return NameChangeEvent.NAME;
         } else if (listener instanceof FriendsListener) {
             return FriendEvent.NAME;
-//        } else if (listener instanceof SceneBookmarkListener) {
-//            return SceneBookmarkEvent.NAME;
         } else if (listener instanceof GotGuestIdListener) {
             return GotGuestIdEvent.NAME;
         } else {
@@ -100,8 +98,6 @@ public class FlashEvents
             return new NameChangeEvent();
         } else if (FriendEvent.NAME.equals(eventName)) {
             return new FriendEvent();
-//        } else if (SceneBookmarkEvent.NAME.equals(eventName)) {
-//            return new SceneBookmarkEvent();
         } else if (GotGuestIdEvent.NAME.equals(eventName)) {
             return new GotGuestIdEvent();
         } else {

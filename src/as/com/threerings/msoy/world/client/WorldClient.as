@@ -383,7 +383,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
-//import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -450,12 +449,6 @@ class StatusUpdater implements AttributeChangeListener, SetListener
             _client.dispatchEventToGWT(
                 FRIEND_EVENT, [FRIEND_ADDED, entry.name.toString(), entry.name.getMemberId()]);
             break;
-
-//        case MemberObject.OWNED_SCENES:
-//            var scene :SceneBookmarkEntry = (event.getEntry() as SceneBookmarkEntry);
-//            _client.dispatchEventToGWT(
-//                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_ADDED, scene.sceneName, scene.sceneId]);
-//            break;
         }
     }
 
@@ -471,12 +464,6 @@ class StatusUpdater implements AttributeChangeListener, SetListener
             var memberId :int = int(event.getKey());
             _client.dispatchEventToGWT(FRIEND_EVENT, [FRIEND_REMOVED, "", memberId]);
             break;
-
-//        case MemberObject.OWNED_SCENES:
-//            var sceneId :int = int(event.getKey());
-//            _client.dispatchEventToGWT(
-//                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_REMOVED, "", sceneId]);
-//            break;
         }
     }
 
@@ -510,10 +497,6 @@ class StatusUpdater implements AttributeChangeListener, SetListener
     protected static const FRIEND_EVENT :String = "friend";
     protected static const FRIEND_ADDED :int = 1;
     protected static const FRIEND_REMOVED :int = 2;
-
-    protected static const SCENEBOOKMARK_EVENT :String = "sceneBookmark";
-    protected static const SCENEBOOKMARK_ADDED :int = 1;
-    protected static const SCENEBOOKMARK_REMOVED :int = 2;
 
     protected var _client :MsoyClient;
 }
