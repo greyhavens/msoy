@@ -550,8 +550,8 @@
   padding-right: 20px;
 }
 
-.nowLoadingWidget {
-  color: white;
+.GroupsList .miniNowLoadingWidget {
+  background-image: url(/images/ui/dot_bluematte.gif);
 }
 
 /* ------------------------------------

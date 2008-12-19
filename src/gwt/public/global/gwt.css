@@ -1192,3 +1192,9 @@ img, embed, applet, object {
   font-size: 18pt;
   font-weight: bold;
 }
+
+.miniNowLoadingWidget {
+  width: 60px;
+  height: 15px;
+  background-image: url(/images/ui/dot_loader.gif);
+}

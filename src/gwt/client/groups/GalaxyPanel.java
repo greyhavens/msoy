@@ -119,6 +119,9 @@ public class GalaxyPanel extends FlowPanel
             protected String getEmptyMessage () {
                 return _msgs.galaxyNoGroups();
             }
+            @Override protected Widget getNowLoadingWidget () {
+                return new MiniNowLoadingWidget();
+            }
 
             @Override protected void addCustomControls (FlexTable controls) {
                 controls.setWidget(

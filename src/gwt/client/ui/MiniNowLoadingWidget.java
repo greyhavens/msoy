@@ -3,7 +3,6 @@
 
 package client.ui;
 
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 /**
@@ -18,6 +17,7 @@ public class MiniNowLoadingWidget extends SimplePanel
 {
     public MiniNowLoadingWidget ()
     {
-        setWidget(new Image("/images/ui/dot_loader.gif"));
+        setStyleName("miniNowLoadingWidget");
+        //setWidget(new Image("/images/ui/dot_loader.gif"));
     }
 }
