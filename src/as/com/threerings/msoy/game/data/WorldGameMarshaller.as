@@ -7,9 +7,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.client.WorldGameService_LocationListener;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.util.Integer;
 
 /**
@@ -22,21 +20,8 @@ import com.threerings.util.Integer;
 public class WorldGameMarshaller extends InvocationMarshaller
     implements WorldGameService
 {
-    /** The method id used to dispatch <code>identifyParty</code> requests. */
-    public static const IDENTIFY_PARTY :int = 1;
-
-    // from interface WorldGameService
-    public function identifyParty (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
-    {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, IDENTIFY_PARTY, [
-            Integer.valueOf(arg2), listener3
-        ]);
-    }
-
     /** The method id used to dispatch <code>inviteFriends</code> requests. */
-    public static const INVITE_FRIENDS :int = 2;
+    public static const INVITE_FRIENDS :int = 1;
 
     // from interface WorldGameService
     public function inviteFriends (arg1 :Client, arg2 :int, arg3 :TypedArray /* of int */) :void
@@ -47,7 +32,7 @@ public class WorldGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>locateGame</code> requests. */
-    public static const LOCATE_GAME :int = 3;
+    public static const LOCATE_GAME :int = 2;
 
     // from interface WorldGameService
     public function locateGame (arg1 :Client, arg2 :int, arg3 :WorldGameService_LocationListener) :void
