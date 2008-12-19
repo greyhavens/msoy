@@ -363,6 +363,9 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Returns the members with the highest levels
+     *
+     * TODO: This appears not to be in use, but if that were to change, please remember to add
+     * TODO: an index on MemberRecord.LEVEL.
      */
     public List<Integer> getLeadingMembers (int limit)
     {
