@@ -69,7 +69,6 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
-// import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.room.client.RoomObjectController;
@@ -803,7 +802,7 @@ public class WorldController extends MsoyController
         if (play) {
             _musicPlayer.load(music.getMediaPath());
         }
-        WorldControlBar(_wctx.getControlBar()).setMusicPlaying(play);
+        WorldControlBar(_wctx.getControlBar()).setMusicPlaying(music != null);
     }
 
     /**
