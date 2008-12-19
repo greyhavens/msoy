@@ -1319,7 +1319,7 @@ public class RoomManager extends SpotSceneManager
                     }
                     set.remove(ctrl);
                     ctrl.load++;
-                    log.info("Assigning control [item=" + ctrlable + ", to=" + ctrl.bodyOid + "].");
+                    //log.info("Assigning control", "item", ctrlable, "to", ctrl.bodyOid);
                     _roomObj.addToControllers(new EntityControl(ctrlable, ctrl.bodyOid));
                     set.add(ctrl);
                     break;
