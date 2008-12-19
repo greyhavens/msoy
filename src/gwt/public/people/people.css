@@ -315,6 +315,10 @@
   color: #FFFFFF;
 }
 
+.invite .FindFriends .Title {
+  font-size: 24px;
+}
+
 .invite .roundBox {
   color: white;
 }

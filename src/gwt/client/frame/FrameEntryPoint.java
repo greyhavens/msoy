@@ -47,7 +47,6 @@ import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.VisitorCookie;
 import client.ui.BorderedDialog;
-import client.ui.MsoyUI;
 import client.util.ArrayUtil;
 import client.util.FlashClients;
 import client.util.FlashVersion;
@@ -298,7 +297,7 @@ public class FrameEntryPoint
                 // go home
                 Link.go(Pages.WORLD, "h");
                 break;
-            case 1: // "B" group
+            case 2: // "B" group
                 // go to a specially configured invites page
                 Link.go(Pages.PEOPLE, Args.compose("invites", "newuser"));
                 break;

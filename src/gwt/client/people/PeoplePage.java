@@ -85,7 +85,7 @@ public class PeoplePage extends Page
             boolean justRegistered = args.get(1, "").equals("newuser");
             boolean linksPage = args.get(1, "").equals("links");
             if (justRegistered) {
-                setContent(_msgs.inviteTitle(), new InvitePanel(justRegistered, true, null));
+                setContent(_msgs.justRegInviteTitle(), new InvitePanel(true, false, null));
 
             } else if (linksPage) {
                 setContent(_msgs.inviteTitle(), new LinkToWhirledPanel());

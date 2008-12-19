@@ -33,7 +33,7 @@ public class SessionData implements IsSerializable
     /** Registered user's visitor info structure. */
     public VisitorInfo visitor;
 
-    /** If we've just created an account, this will be set to >=0 depending on the registration
+    /** If we've just created an account, this will be set to >0 depending on the registration
      * a/b/... group. If < 0, there is no group. */
     public transient int registrationABGroup = -1;
 
@@ -42,9 +42,9 @@ public class SessionData implements IsSerializable
      */
     public boolean justCreated ()
     {
-        return registrationABGroup >= 0;
+        return registrationABGroup > 0;
     }
-    
+
     /**
      * Creates and initializes an instance from supplied {@link #flatten}ed string.
      */

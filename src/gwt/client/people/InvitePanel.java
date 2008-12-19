@@ -77,10 +77,45 @@ public class InvitePanel extends VerticalPanel
             box.add(topOfBox);
         }
 
+        if (justRegistered) {
+            SmartTable table = new SmartTable(5, 0);
+            table.setStyleName("FindFriends");
+            table.setWidth("100%");
+            table.setText(1, 0, _msgs.justRegInviteBanner(), 2, "Title");
+
+            // callback to redirect to #world-h
+            final AsyncCallback<Void> goHome = new AsyncCallback<Void>() {
+                public void onFailure (Throwable caught) {
+                    go();
+                }
+
+                public void onSuccess (Void result) {
+                    go();
+                }
+
+                void go () {
+                    Link.go(Pages.WORLD, "h");
+                }
+            };
+            // add a link that sends an event, and then redirects after the result comes back;
+            // this prevents the (presumed) synchronous redirect from cancelling the rpc
+            // TODO: also send an event if the user navigates away from the page
+            Label skip = MsoyUI.createActionLabel(
+                _msgs.inviteSkipButton(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        sendEvent("skipped", goHome);
+                    }
+                });
+            table.setWidget(1, 1, skip, 1, "skip");
+            box.add(table);
+            box.add(WidgetUtil.makeShim(10, 10));
+        }
+
         // Add a name/e-mail and import webmail section
         SmartTable input = new SmartTable(0, 5);
         int row = 0;
-        input.setText(row++, 0, _msgs.inviteManualTitle(), 3, null);
+        input.setText(row++, 0, justRegistered ? 
+            _msgs.justRegInviteManualTitle() : _msgs.inviteManualTitle(), 3, null);
         input.setWidget(row, 0, _friendName = MsoyUI.createTextBox("", MAX_NAME_LENGTH, 0));
         DefaultTextListener.configure(_friendName, _msgs.inviteFriendName());
         _friendEmail = MsoyUI.createTextBox("", MAX_WEBMAIL_LENGTH, 0);
@@ -174,41 +209,16 @@ public class InvitePanel extends VerticalPanel
         buttons.setWidth("100%");
         buttons.setText(0, 0, _msgs.inviteMessage(), 1, "Tip");
         buttons.setWidget(0, 1, MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.inviteButton(),
-                    new ClickListener() {
-            public void onClick (Widget widget) {
-                if (_emailList.getItems().isEmpty()) {
-                    MsoyUI.info(_msgs.inviteEnterAddresses());
-                } else {
-                    checkAndSend();
-                }
-            }
-        }));
-        if (justRegistered) {
-            // callback to redirect to #world-h
-            final AsyncCallback<Void> goHome = new AsyncCallback<Void>() {
-                public void onFailure (Throwable caught) {
-                    go();
-                }
-
-                public void onSuccess (Void result) {
-                    go();
-                }
-
-                void go () {
-                    Link.go(Pages.WORLD, "h");
-                }
-            };
-            // add a link that sends an event, and then redirects after the result comes back;
-            // this prevents the (presumed) synchronous redirect from cancelling the rpc
-            // TODO: also send an event if the user navigates away from the page
-            Label skip = MsoyUI.createActionLabel(
-                _msgs.inviteSkipButton(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        sendEvent("skipped", goHome);
+            new ClickListener() {
+                public void onClick (Widget widget) {
+                    if (_emailList.getItems().isEmpty()) {
+                        MsoyUI.info(_msgs.inviteEnterAddresses());
+                    } else {
+                        checkAndSend();
                     }
-                });
-            buttons.setWidget(1, 1, skip, 1, "skip");
-        }
+                }
+            }));
+
         box.add(buttons);
         add(box);
 
@@ -327,7 +337,7 @@ public class InvitePanel extends VerticalPanel
         // only send one event per instance of this
         if (_sendEvents) {
             _membersvc.trackTestAction(
-                CShell.visitor, name, "2008 11 force invite on registration", callback);
+                CShell.visitor, name, "2008 12 find friends on registration", callback);
             _sendEvents = false;
         }
     }

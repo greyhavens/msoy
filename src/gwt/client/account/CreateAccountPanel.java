@@ -385,7 +385,7 @@ public class CreateAccountPanel extends FlowPanel
             // for the server to fill in the result.registrationABGroup before sending the result
             // rather than making a separate request.
             _membersvc.getABTestGroup(
-                result.visitor, "2008 11 force invite on registration", true, this);
+                result.visitor, "2008 12 find friends on registration", true, this);
             schedule(feedbackDelayMs);
         }
 
