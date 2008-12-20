@@ -228,7 +228,7 @@ public interface AdminService extends RemoteService
      * zero the server will be rebooted immediately, if it is negative, a pending reboot will be
      * aborted and a new regularly scheduled reboot scheduled.
      */
-    void scheduleReboot (int minutes)
+    void scheduleReboot (int minutes, String message)
         throws ServiceException;
     
     Set<String> getPeerNodeNames ()

@@ -157,5 +157,5 @@ public interface AdminServiceAsync
     /**
      * The asynchronous version of {@link AdminService#scheduleReboot}.
      */
-    void scheduleReboot (int minutes, AsyncCallback<Void> callback);
+    void scheduleReboot (int minutes, String message, AsyncCallback<Void> callback);
 }

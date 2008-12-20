@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -65,10 +66,15 @@ public class DashboardPanel extends SmartTable
 
             FlowPanel reboot = new FlowPanel();
             reboot.add(MsoyUI.createLabel(_msgs.adminReboot(), "Title"));
-            reboot.add(makeReboot(_msgs.rebootNow(), 0));
-            reboot.add(makeReboot(_msgs.rebootInFive(), 5));
-            reboot.add(makeReboot(_msgs.rebootInFifteen(), 15));
-            reboot.add(makeReboot(_msgs.rebootCancel(), -1));
+            reboot.add(MsoyUI.createLabel(_msgs.adminRebootMessage(), null));
+            TextArea message = MsoyUI.createTextArea("", 30, 4);
+            reboot.add(message);
+            reboot.add(makeReboot(_msgs.rebootInTwo(), 2, message));
+            reboot.add(makeReboot(_msgs.rebootInFive(), 5, message));
+            reboot.add(makeReboot(_msgs.rebootInFifteen(), 15, message));
+            reboot.add(makeReboot(_msgs.rebootInThirty(), 30, message));
+            // TODO: support reboot cancellation
+            //reboot.add(makeReboot(_msgs.rebootCancel(), -1));
             setWidget(row, col, reboot);
             getFlexCellFormatter().setVerticalAlignment(row, col++, HasAlignment.ALIGN_TOP);
         }
@@ -102,12 +108,12 @@ public class DashboardPanel extends SmartTable
         return link;
     }
 
-    protected Widget makeReboot (String title, final int minutes)
+    protected Widget makeReboot (String title, final int minutes, final TextArea messageWidget)
     {
         Button reboot = new Button(title);
         new ClickCallback<Void>(reboot) {
             protected boolean callService () {
-                _adminsvc.scheduleReboot(minutes, this);
+                _adminsvc.scheduleReboot(minutes, messageWidget.getText(), this);
                 return true;
             }
             protected boolean gotResult (Void result) {

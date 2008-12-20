@@ -553,13 +553,13 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void scheduleReboot (int minutes)
+    public void scheduleReboot (int minutes, String message)
         throws ServiceException
     {
         MemberRecord mrec = requireAdminUser();
         long time = System.currentTimeMillis() + minutes * 60 * 1000;
         _runtimeConfig.server.setCustomInitiator(mrec.accountName + ":" + mrec.memberId);
-        _runtimeConfig.server.setCustomRebootMsg("");
+        _runtimeConfig.server.setCustomRebootMsg(message);
         _runtimeConfig.server.setNextReboot(time);
     }
 
