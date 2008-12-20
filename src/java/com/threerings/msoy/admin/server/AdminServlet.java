@@ -557,7 +557,10 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAdminUser();
-        _adminMgr.scheduleReboot(minutes, mrec.accountName);
+        long time = System.currentTimeMillis() + minutes * 60 * 1000;
+        _runtimeConfig.server.setCustomInitiator(mrec.accountName + ":" + mrec.memberId);
+        _runtimeConfig.server.setCustomRebootMsg("");
+        _runtimeConfig.server.setNextReboot(time);
     }
 
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
@@ -623,4 +626,5 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected MsoyEventLogger _eventLogger;
     @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected MsoyPeerManager _peerMgr;
+    @Inject protected RuntimeConfig _runtimeConfig;
 }
