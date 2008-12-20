@@ -49,9 +49,6 @@ public class PartyObject extends DObject
 
     /** The field name of the <code>partyService</code> field. */
     public static final String PARTY_SERVICE = "partyService";
-//
-//    /** The field name of the <code>speakService</code> field. */
-//    public static final String SPEAK_SERVICE = "speakService";
     // AUTO-GENERATED: FIELDS END
 
     /** This party's guid. */
@@ -278,22 +275,6 @@ public class PartyObject extends DObject
             PARTY_SERVICE, value, ovalue);
         this.partyService = value;
     }
-
-//    /**
-//     * Requests that the <code>speakService</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public void setSpeakService (SpeakMarshaller value)
-//    {
-//        SpeakMarshaller ovalue = this.speakService;
-//        requestAttributeChange(
-//            SPEAK_SERVICE, value, ovalue);
-//        this.speakService = value;
-//    }
     // AUTO-GENERATED: METHODS END
 
 //    // from SpeakObject
