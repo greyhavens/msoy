@@ -14,6 +14,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Interval;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
@@ -89,7 +90,9 @@ public class MsoyAdminManager
     }
 
     /**
-     * Schedules a reboot for the specified number of minutes in the future.
+     * Schedules a reboot for the specified number of minutes in the future. Note well: to reboot
+     * all peers, DO NOT use this method. You must instead post an event to update
+     * {@link ServerConfigObject#nextReboot}.
      */
     public void scheduleReboot (int minutes, String initiator)
     {
@@ -190,7 +193,10 @@ public class MsoyAdminManager
             DObject o = _omgr.getObject(event.getSourceOid());
             String blame;
             if (o == null) {
-                blame = AUTOMATIC_INITIATOR;
+                blame = _runtime.server.customInitiator;
+                if (StringUtil.isBlank(blame)) {
+                    blame = AUTOMATIC_INITIATOR;
+                }
             } else if (o instanceof MemberObject) {
                 blame = String.valueOf(((MemberObject)o).memberName);
             } else {

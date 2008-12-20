@@ -38,6 +38,9 @@ public class ServerConfigObject extends ConfigObject
 
     /** The field name of the <code>customRebootMsg</code> field. */
     public static final String CUSTOM_REBOOT_MSG = "customRebootMsg";
+
+    /** The field name of the <code>customInitiator</code> field. */
+    public static final String CUSTOM_INITIATOR = "customInitiator";
     // AUTO-GENERATED: FIELDS END
 
     /** Whether or not to allow non-admins to log on. */
@@ -57,6 +60,9 @@ public class ServerConfigObject extends ConfigObject
 
     /** A custom reboot message input by an admin. */
     public String customRebootMsg;
+
+    /** A custom initiator to blame if the attribute is changed by the server (e.g. a servlet). */
+    public String customInitiator;
 
     @Override // documentation inherited
     public JPanel getEditor (PresentsContext ctx, Field field)
@@ -184,6 +190,22 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             CUSTOM_REBOOT_MSG, value, ovalue);
         this.customRebootMsg = value;
+    }
+
+    /**
+     * Requests that the <code>customInitiator</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setCustomInitiator (String value)
+    {
+        String ovalue = this.customInitiator;
+        requestAttributeChange(
+            CUSTOM_INITIATOR, value, ovalue);
+        this.customInitiator = value;
     }
     // AUTO-GENERATED: METHODS END
 }
