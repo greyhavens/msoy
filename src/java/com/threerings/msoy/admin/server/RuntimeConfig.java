@@ -80,9 +80,12 @@ public class RuntimeConfig
                 if (clobj instanceof MemberObject) {
                     return ((MemberObject)clobj).tokens.isAdmin();
                 }
+                // err on the side of safety
+                return false;
             }
-            // err on the side of safety
-            return false;
+
+            // allow any server subscription
+            return true;
         }
 
         public boolean allowDispatch (DObject object, DEvent event) {
