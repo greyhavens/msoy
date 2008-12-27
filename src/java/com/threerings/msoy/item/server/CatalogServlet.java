@@ -198,9 +198,7 @@ public class CatalogServlet extends MsoyServiceServlet
         BuyResult result;
         try {
             result = _moneyLogic.buyItem(
-                mrec, new CatalogIdent(itemType, catalogId),
-                listing.item.creatorId, listing.item.name,
-                listing.currency, listing.cost, currency, authedCost, buyOp);
+                mrec, listing, currency, authedCost, buyOp);
         } catch (NotEnoughMoneyException neme) {
             throw neme.toServiceException();
         } catch (NotSecuredException nse) {

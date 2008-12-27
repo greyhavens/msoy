@@ -359,6 +359,9 @@ public class AdminServlet extends MsoyServiceServlet
     {
         final MemberRecord memrec = requireSupportUser();
 
+        log.info("Deleting item for admin", "who", memrec.accountName, "item", iident,
+            "subject", subject);
+
         final byte type = iident.type;
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         final ItemRecord item = repo.loadOriginalItem(iident.itemId);
@@ -405,7 +408,11 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         // now do the refunds
+        result.refunds = _moneyLogic.refundAllItemPurchases(new ItemIdent(
+            type, item.itemId), item.name);
+
         if (catrec != null) {
+            // TODO: remove after a release or two
             result.refunds = _moneyLogic.refundAllItemPurchases(new CatalogIdent(
                 type, item.catalogId), item.name);
         }

@@ -45,6 +45,8 @@ import com.threerings.msoy.server.persist.UserActionRepository;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
@@ -245,9 +247,7 @@ public class MoneyLogic
      * accounts of an exchange of money -- item fulfillment must be handled separately.
      *
      * @param buyerRec the member record of the buying user.
-     * @param item the identity of the catalog listing.
-     * @param listedCurrency the currency at which the item is listed.
-     * @param listedAmount the amount at which the item is listed.
+     * @param catrec the catalog entry for the item, with the catalog master item loaded
      * @param buyCurrency the currency the buyer is using
      * @param authedAmount the amount the buyer has validated to purchase the item.
      * @throws NotSecuredException iff there is no secured price for the item and the authorized
@@ -255,15 +255,21 @@ public class MoneyLogic
      * @return a BuyResult, or null if the BuyOperation returned false.
      */
     public BuyResult buyItem (
-        final MemberRecord buyerRec, CatalogIdent item, int creatorId, String itemName,
-        Currency listedCurrency, int listedAmount, Currency buyCurrency, int authedAmount,
+        final MemberRecord buyerRec, CatalogRecord catrec, Currency buyCurrency, int authedAmount,
         BuyOperation buyOp)
         throws NotEnoughMoneyException, NotSecuredException
     {
-        Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
         Preconditions.checkArgument(
             buyCurrency == Currency.BARS || buyCurrency == Currency.COINS,
             "buyCurrency is invalid: %s", buyCurrency);
+        Preconditions.checkArgument(catrec.item != null, "catalog master not loaded");
+        CatalogIdent item = new CatalogIdent(catrec.item.getType(), catrec.catalogId);
+        Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
+        Currency listedCurrency = catrec.currency;
+        int listedAmount = catrec.cost;
+        int creatorId = catrec.item.creatorId;
+        String itemName = catrec.item.name;
+        ItemIdent iident = new ItemIdent(catrec.item.getType(), catrec.listedItemId);
 
         int buyerId = buyerRec.memberId;
 
@@ -313,7 +319,7 @@ public class MoneyLogic
                 TransactionType.ITEM_PURCHASE,
                 MessageBundle.tcompose(magicFree ? "m.item_magicfree" : "m.item_bought",
                     itemName, item.type, item.catalogId),
-                item);
+                iident);
             _repo.storeTransaction(buyerTx);
 
             // If there is any change in coins from the purchase, create a transaction for it.
@@ -324,7 +330,7 @@ public class MoneyLogic
                     changeTx = _repo.accumulateAndStoreTransaction(buyerId, Currency.COINS, 
                         quote.getCoinChange(), TransactionType.CHANGE_IN_COINS, 
                         MessageBundle.tcompose("m.change_received",
-                            itemName, item.type, item.catalogId), item, 
+                            itemName, item.type, item.catalogId), iident, 
                         buyerTx.id, buyerId, false);
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     // Likely a programming error in this case.
@@ -348,7 +354,7 @@ public class MoneyLogic
                         TransactionType.CREATOR_PAYOUT,
                         MessageBundle.tcompose("m.item_sold",
                             itemName, item.type, item.catalogId),
-                        item, buyerTx.id, buyerId, true);
+                        iident, buyerTx.id, buyerId, true);
 
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     log.warning("Invalid item creator, payout cancelled.",
@@ -368,7 +374,7 @@ public class MoneyLogic
                         TransactionType.AFFILIATE_PAYOUT,
                         MessageBundle.tcompose("m.item_affiliate",
                             buyerRec.name, buyerRec.memberId),
-                        item, buyerTx.id, buyerId, true);
+                        iident, buyerTx.id, buyerId, true);
 
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     log.warning("Invalid user affiliate, payout cancelled.",
@@ -387,7 +393,7 @@ public class MoneyLogic
                         charityPayout.currency, charityPayout.amount,
                         TransactionType.CHARITY_PAYOUT,
                         MessageBundle.tcompose("m.item_charity", buyerRec.name, buyerRec.memberId),
-                        item, buyerTx.id, buyerId, true);
+                        iident, buyerTx.id, buyerId, true);
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     log.warning("Invalid user charity, payout cancelled.",
                         "buyer", buyerId, "charity", charityId,
@@ -450,21 +456,40 @@ public class MoneyLogic
     }
 
     /**
-     * Refunds all the money spent on an item to purchasers and deducts the bling or coins from
-     * the creator, affiliate and charity. For each applicable transaction, introduces an inverse
-     * transaction. Note that since we purge old transactions periodically, this method can only
-     * affect the ones we still have.
+     * Attempts to refund all the money spent on an item to purchasers and deducts the bling or
+     * coins from the creator, affiliate and charity. For each applicable transaction, introduces
+     * an inverse transaction. Note that since we purge old transactions periodically, this method
+     * can only affect the ones we still have. The algorithm can also fail if the accounts where
+     * the money was originally paid to now have insufficient funds.
      *
-     * @param item the identity of the catalog listing.
+     * @param item the identity of the catalog master.
      * @return the number of refund transactions created
      * @see MoneyTransactionExpirer
      * TODO: return more information about what happened, e.g. how much money was taken from each
      * payout type and whether the account was depleted
      */
+    public int refundAllItemPurchases (ItemIdent item, String itemName)
+    {
+        log.info("Refunding purchases", "itemIdent", item, "name", itemName);
+        return refundAll(item, itemName);
+    }
+
+    @Deprecated
     public int refundAllItemPurchases (CatalogIdent item, String itemName)
     {
-        log.info("Refunding purchases", "item", item, "name", itemName);
+        log.info("Refunding purchases", "catalogIdent", item, "name", itemName);
+        return refundAll(item, itemName);
+    }
 
+    /**
+     * Inverts a list of transactions without creating money.
+     *
+     * @param txList transactions to invert
+     * @param item the subject to use for the refund transactions
+     * @param itemName name to use in refund transaction description
+     */
+    public int refundAll (Object item, String itemName)
+    {
         // aggregate refunds per member and currency type
         HashMap<Integer, int[]> refunds = Maps.newHashMap();
         for (MoneyTransactionRecord txRec :
@@ -482,10 +507,8 @@ public class MoneyLogic
         // track how much is in the pool to give back
         int[] pool = new int[Currency.values().length];
 
-        // make sure BARS is last in the deduction loop
+        // apply all deductions, taking bars if the bling runs out
         Currency[] currencies = {Currency.COINS, Currency.BLING, Currency.BARS};
-
-        // apply all deductions as a support adjustment
         for (Map.Entry<Integer, int[]> refund : refunds.entrySet()) {
             int memberId = refund.getKey();
             int[] values = refund.getValue();
@@ -500,7 +523,7 @@ public class MoneyLogic
                     try {
                         updates.add(_repo.deductAndStoreTransaction(memberId, currency, deduction,
                             TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose(
-                            "m.item_refunded", itemName, item.type, item.catalogId), item));
+                            "m.item_refunded", itemName), item));
                         pool[currency.ordinal()] += deduction;
                         deduction = 0;
 
@@ -544,17 +567,15 @@ public class MoneyLogic
                 }
                 updates.add(_repo.accumulateAndStoreTransaction(memberId, currency, refundAmount,
                     TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose("m.item_refund",
-                    itemName, item.type, item.catalogId), item, false));
+                    itemName), item, false));
                 pool[currency.ordinal()] -= refundAmount;
             }
         }
 
         for (MoneyTransactionRecord txRec : updates) {
             // TODO: logAction?
-            // notify members.  Only update accumulated total if the transaction is not change,
-            // which never previously counted in accumulated total.
-            _nodeActions.moneyUpdated(txRec, 
-                txRec.transactionType != TransactionType.CHANGE_IN_COINS);
+            // notify members
+            _nodeActions.moneyUpdated(txRec, true);
         }
 
         return updates.size();
