@@ -803,11 +803,8 @@ public abstract class ItemEditor extends FlowPanel
     protected void doEasyRemix (String mediaId, MediaDesc prototype, MediaDesc image)
     {
         int popWidth = getOffsetWidth() - 8;
-        int popHeight = Math.max(550,
-            Math.min(getOffsetHeight() - 8, Window.getClientHeight() - 8));
-
+        int popHeight = Math.max(550, Math.min(getOffsetHeight() - 8, Window.getClientHeight() - 8));
         String typename = Item.getTypeName(_item.getType());
-
         String flashVars = "media=" + URL.encodeComponent(prototype.getMediaPath()) +
             "&type=" + URL.encodeComponent(typename) +
             "&name=" + URL.encodeComponent(StringUtil.isBlank(_item.name) ? typename : _item.name) +

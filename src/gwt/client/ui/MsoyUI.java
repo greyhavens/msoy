@@ -10,6 +10,7 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -661,6 +662,18 @@ public class MsoyUI
         TextBoxSelector listener = new TextBoxSelector();
         textBox.addFocusListener(listener);
         textBox.addClickListener(listener);
+    }
+
+    /**
+     * Computes the number of rows to display for a paged grid.
+     *
+     * @param used the number of vertical pixels used by other interface elements on this page.
+     * @param perRow the height of each grid row.
+     * @param minimum the minimum number of rows.
+     */
+    public static int computeRows (int used, int perRow, int minimum)
+    {
+        return Math.max(minimum, (Window.getClientHeight() - used) / perRow);
     }
 
     protected static class TextBoxSelector

@@ -3,7 +3,6 @@
 
 package client.shop;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -12,6 +11,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.item.ListingBox;
+import client.ui.MsoyUI;
 
 /**
  * Displays a paged grid of catalog listings.
@@ -20,7 +20,7 @@ public abstract class ListingGrid extends PagedGrid<ListingCard>
 {
     public ListingGrid (int headerHeight)
     {
-        super(Math.max(2, (Window.getClientHeight()-headerHeight-NAV_BAR_ETC)/BOX_HEIGHT), COLUMNS);
+        super(MsoyUI.computeRows(headerHeight+NAV_BAR_ETC, BOX_HEIGHT, 2), COLUMNS);
         addStyleName("listingGrid");
     }
 

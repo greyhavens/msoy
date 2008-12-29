@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -91,7 +90,7 @@ public class StuffPanel extends FlowPanel
 
         // compute the number of rows of items we can fit on the page
         int used = isCatalogType ? NAVIGATION_HEIGHT + GET_STUFF_HEIGHT : NAVIGATION_HEIGHT;
-        int rows = Math.max(2, (Window.getClientHeight() - used) / ITEM_BOX_HEIGHT);
+        int rows = MsoyUI.computeRows(used, ITEM_BOX_HEIGHT, 2);
 
         // now create our grid of items
         _contents = new PagedGrid<Item>(rows, COLUMNS) {

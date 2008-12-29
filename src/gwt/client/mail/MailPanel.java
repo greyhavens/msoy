@@ -6,7 +6,6 @@ package client.mail;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -42,8 +41,7 @@ public class MailPanel extends FlowPanel
     {
         setStyleName("mail");
 
-        int rows = Math.max(5, (Window.getClientHeight() - FLUFF) / ROW_HEIGHT);
-        ConvosGrid grid = new ConvosGrid(rows);
+        ConvosGrid grid = new ConvosGrid(MsoyUI.computeRows(FLUFF, ROW_HEIGHT, 5));
         add(grid);
         grid.setModel(model, page);
     }

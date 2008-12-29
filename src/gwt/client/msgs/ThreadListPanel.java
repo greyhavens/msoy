@@ -6,7 +6,6 @@ package client.msgs;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -41,7 +40,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
 {
     public ThreadListPanel (ForumPanel parent)
     {
-        super(Math.max(10, (Window.getClientHeight()-USED_HEIGHT)/THREAD_HEIGHT), 1, NAV_ON_BOTTOM);
+        super(MsoyUI.computeRows(USED_HEIGHT, THREAD_HEIGHT, 10), 1, NAV_ON_BOTTOM);
         addStyleName("dottedGrid");
         setWidth("100%");
         _parent = parent;
