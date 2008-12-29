@@ -456,17 +456,7 @@ public class MoneyLogic
     }
 
     /**
-     * Attempts to refund all the money spent on an item to purchasers and deducts the bling or
-     * coins from the creator, affiliate and charity. For each applicable transaction, introduces
-     * an inverse transaction. Note that since we purge old transactions periodically, this method
-     * can only affect the ones we still have. The algorithm can also fail if the accounts where
-     * the money was originally paid to now have insufficient funds.
-     *
-     * @param item the identity of the catalog master.
-     * @return the number of refund transactions created
-     * @see MoneyTransactionExpirer
-     * TODO: return more information about what happened, e.g. how much money was taken from each
-     * payout type and whether the account was depleted
+     * Attempts to refund all money for an item by calling {@link #refundAll(Object, String)}.
      */
     public int refundAllItemPurchases (ItemIdent item, String itemName)
     {
@@ -482,11 +472,17 @@ public class MoneyLogic
     }
 
     /**
-     * Inverts a list of transactions without creating money.
+     * Attempts to refund all the money spent on an item to purchasers and deducts the bling or
+     * coins from the creator, affiliate and charity. For each applicable transaction, introduces
+     * an inverse transaction. Note that since we purge old transactions periodically, this method
+     * can only affect the ones we still have. The algorithm can also fail if the accounts where
+     * the money was originally paid to now have insufficient funds.
      *
-     * @param txList transactions to invert
      * @param item the subject to use for the refund transactions
      * @param itemName name to use in refund transaction description
+     * 
+     * TODO: return more information about what happened, e.g. how much money was taken from each
+     * payout type and whether the account was depleted
      */
     public int refundAll (Object item, String itemName)
     {
