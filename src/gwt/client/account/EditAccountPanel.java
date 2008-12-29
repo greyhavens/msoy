@@ -80,9 +80,7 @@ public class EditAccountPanel extends FlowPanel
         add(new TongueBox(_msgs.editRealNameHeader(), makeRealNameSection()));
         add(new TongueBox(_msgs.editPasswordHeader(), makeChangePasswordSection()));
         add(new TongueBox(_msgs.charitiesHeader(), makeCharitySection()));
-        if (DeploymentConfig.devDeployment) {
-            add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
-        }
+        add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
     }
 
     protected Widget makePermanameSection ()
