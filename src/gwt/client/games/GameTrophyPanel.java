@@ -79,12 +79,6 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
         return true;
     }
 
-    @Override // from PagedGrid
-    protected boolean padToFullPage ()
-    {
-        return true;
-    }
-
     protected class TrophyDetail extends FlexTable
     {
         public TrophyDetail (Trophy trophy) {
