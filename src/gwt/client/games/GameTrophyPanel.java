@@ -33,7 +33,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
 {
     public GameTrophyPanel (int gameId)
     {
-        super(5, 2, NAV_ON_BOTTOM);
+        super(50, 2, NAV_ON_BOTTOM);
         _gameId = gameId;
         addStyleName("gameTrophyPanel");
         addStyleName("dottedGrid");
