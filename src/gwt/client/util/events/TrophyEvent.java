@@ -19,7 +19,7 @@ public class TrophyEvent extends FlashEvent
         public void trophyEarned (TrophyEvent event);
     }
 
-    /** The name of this event type: defined in WorldClient.as. */
+    /** The name of this event type: defined in GameLiaison.as. */
     public static final String NAME = "trophy";
 
     @Override // FlashEvent
@@ -41,11 +41,19 @@ public class TrophyEvent extends FlashEvent
     }
 
     /**
+     * Returns the name of the game in which the trophy was earned.
+     */
+    public String getGame ()
+    {
+        return _game;
+    }
+
+    /**
      * Returns the name of the trophy was earned.
      */
-    public String getName ()
+    public String getTrophy ()
     {
-        return _name;
+        return _trophy;
     }
 
     /**
@@ -68,18 +76,20 @@ public class TrophyEvent extends FlashEvent
     public void fromJSObject (JavaScriptObject args)
     {
         _gameId = JavaScriptUtil.getIntElement(args, 0);
-        _name = JavaScriptUtil.getStringElement(args, 1);
-        _descrip = JavaScriptUtil.getStringElement(args, 2);
-        _mediaURL = JavaScriptUtil.getStringElement(args, 3);
+        _game = JavaScriptUtil.getStringElement(args, 1);
+        _trophy = JavaScriptUtil.getStringElement(args, 2);
+        _descrip = JavaScriptUtil.getStringElement(args, 3);
+        _mediaURL = JavaScriptUtil.getStringElement(args, 4);
     }
 
     @Override // from FlashEvent
     public void toJSObject (JavaScriptObject args)
     {
         JavaScriptUtil.setIntElement(args, 0, _gameId);
-        JavaScriptUtil.setStringElement(args, 1, _name);
-        JavaScriptUtil.setStringElement(args, 2, _descrip);
-        JavaScriptUtil.setStringElement(args, 3, _mediaURL);
+        JavaScriptUtil.setStringElement(args, 1, _game);
+        JavaScriptUtil.setStringElement(args, 2, _trophy);
+        JavaScriptUtil.setStringElement(args, 3, _descrip);
+        JavaScriptUtil.setStringElement(args, 4, _mediaURL);
     }
 
     @Override // from FlashEvent
@@ -91,7 +101,8 @@ public class TrophyEvent extends FlashEvent
     }
 
     protected int _gameId;
-    protected String _name;
+    protected String _game;
+    protected String _trophy;
     protected String _descrip;
     protected String _mediaURL;
 }

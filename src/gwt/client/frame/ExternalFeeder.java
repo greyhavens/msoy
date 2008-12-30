@@ -3,6 +3,10 @@
 
 package client.frame;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
+
 import client.shell.CShell;
 import client.util.events.FlashEvents;
 import client.util.events.TrophyEvent;
@@ -23,18 +27,21 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (TrophyEvent event)
     {
-        CShell.log("Want to publish " + event.getName() + " " + event.getGameId());
+        publishTrophy(event.getGameId(), event.getGame(), event.getTrophy(), event.getDescription(),
+                      event.getMediaURL(), DeploymentConfig.serverURL +
+                      Pages.makeLink(Pages.GAMES, Args.compose("d", event.getGameId(), "t")));
     }
 
-    protected static native void testFBConnect () /*-{
+    protected native void publishTrophy (int gameId, String game, String trophy, String descrip,
+                                         String mediaURL, String trophyURL) /*-{
+        var templateId = 41625542934; // login to facebook to get this magic number!
         var ids = new Array();
-        var data = eval({
-            'trophy':'Stellar',
-            'game':'Dictionary Attack',
-            'descrip':'Score 30 points or higher in 5 games in a row in a single session.',
-            'game_id':'8',
-            'images':[{'src':'http://mediacloud.whirled.com/f3c8aee41c9bc3eb4d371bd0bd0703f5a1d2f309.png','href':'http://www.whirled.com/#games-d_8_t'}],
-        });
-        $wnd.FB_PostStory(41625542934, data, ids, "");
+        var data = new Object();
+        data.game_id = gameId;
+        data.game = game;
+        data.trophy = trophy;
+        data.descrip = descrip;
+        data.images = [ {'src':mediaURL, 'href':trophyURL} ]
+        $wnd.FB_PostStory(templateId, data, ids, "");
     }-*/;
 }

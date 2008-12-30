@@ -44,7 +44,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
-
 import com.threerings.msoy.room.client.RoomObjectView;
 
 /**
@@ -498,9 +497,6 @@ class StatusUpdater implements AttributeChangeListener, SetListener
     protected static const FRIEND_EVENT :String = "friend";
     protected static const FRIEND_ADDED :int = 1;
     protected static const FRIEND_REMOVED :int = 2;
-
-    /** Event dispatched to GWT when we earn a trophy. */
-    protected static const TROPHY_EVENT :String = "trophy";
 
     protected var _client :MsoyClient;
 }

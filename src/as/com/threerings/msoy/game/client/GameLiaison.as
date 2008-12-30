@@ -49,6 +49,7 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.all.Trophy;
 
 /**
  * Handles all the fiddly bits relating to connecting to a separate server to match-make and
@@ -255,7 +256,16 @@ public class GameLiaison
         const name :String = event.getName();
         const args :Array = event.getArgs();
         if (name == MsoyGameCodes.TROPHY_AWARDED || name == MsoyGameCodes.PRIZE_AWARDED) {
+            // display the award via the notification director
             _wctx.getNotificationDirector().displayAward(args[0]);
+
+            // if this was a trophy award, also pass that info on to GWT
+            if (name == MsoyGameCodes.TROPHY_AWARDED) {
+                var trophy :Trophy = (args[0] as Trophy);
+                _wctx.getMsoyClient().dispatchEventToGWT(TROPHY_EVENT, [
+                    trophy.gameId, gameName, trophy.name, trophy.description,
+                    trophy.trophyMedia.getMediaPath() ]);
+            }
 
         } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE) {
             const coins :int = int(args[0]);
@@ -403,5 +413,8 @@ public class GameLiaison
     [Embed(source="../../../../../../../rsrc/media/guest_flow_panel.swf",
            mimeType="application/octet-stream")]
     protected static const GUEST_FLOW_PANEL :Class;
+
+    /** Event dispatched to GWT when we earn a trophy. */
+    protected static const TROPHY_EVENT :String = "trophy";
 }
 }
