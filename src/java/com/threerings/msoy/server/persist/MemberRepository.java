@@ -1152,7 +1152,7 @@ public class MemberRepository extends DepotRepository
         record.partnerId = auther.toByte();
         record.externalId = externalId;
         record.memberId = memberId;
-        insert(record);
+        store(record);
     }
 
     /**
