@@ -156,7 +156,7 @@ public class CShell
             if (error != null) {
                 sb.append(": ").append(error);
             }
-            consoleLog(sb.toString());
+            consoleLog(sb.toString(), error);
         } else {
             GWT.log(sb.toString(), (Throwable)error);
         }
@@ -173,9 +173,13 @@ public class CShell
     /**
      * Records a log message to the JavaScript console.
      */
-    protected static native void consoleLog (String message) /*-{
+    protected static native void consoleLog (String message, Object error) /*-{
         if ($wnd.console) {
-            $wnd.console.log(message);
+            if (error != null) {
+                $wnd.console.info(message, error);
+            } else {
+                $wnd.console.info(message);
+            }
         }
     }-*/;
 
