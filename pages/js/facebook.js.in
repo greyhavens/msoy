@@ -16,9 +16,10 @@ window.FB_RequireSession = function() {
     });
   });
 };
-window.FB_PostStory = function(bundleId, data, targetIds, body, ssize, reqcon) {
+window.FB_PostStory = function(bundleId, data, targetIds, body) {
   FB_WithInit(function() {
-    FB.Connect.ShowFeedDialog(bundleId, data, targetIds, body, ssize, reqcon, null);
+    FB.Connect.showFeedDialog(bundleId, data, targetIds, body, FB.FeedStorySize.shortStory,
+                              FB.RequireConnect.promptConnect, function () { /*noop*/ });
   });
 };
 window.FB_Logout = function() {
