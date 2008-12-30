@@ -97,9 +97,9 @@ public enum Currency
 
         // put commas in, superhackystyle
         String s = String.valueOf(value);
-        int prefix = value < 0 ? 1 : 0;
+        int prefixLength = (value < 0) ? 1 : 0;
         int length = s.length();
-        while (length - prefix > 3) {
+        while (length - prefixLength > 3) {
             length -= 3;
             postfix = "," + s.substring(length) + postfix;
             s = s.substring(0, length);
