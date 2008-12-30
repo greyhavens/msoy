@@ -193,6 +193,9 @@ public class MsoySceneRegistry extends SpotSceneRegistry
             return;
         }
 
+        // remove them from their current room to flush e.g. avatar memories to the memobj
+        _locman.leaveOccupiedPlace(memobj);
+
         // tell the client about the node's hostname and port
         listener.moveRequiresServerSwitch(hostname, new int[] { port });
 
