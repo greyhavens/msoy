@@ -335,6 +335,10 @@ public class MsoySceneRepository extends DepotRepository
         )));
 
         // TODO: Add more sorting options
+        // TODO: This brings the database to its knees. It does a full sequential scan on
+        // TODO: the table and then sorts all 100,000 records. We can maybe fix it by adding
+        // TODO: a hard limit on RATING and LAST_PUBLISHED so we end up sorting only 1,000
+        // TODO: entries instead... maybe.
         long nowSeconds = System.currentTimeMillis() / 1000;
         exprs.add(new Arithmetic.Sub(SceneRecord.RATING_C,
             new Arithmetic.Div(
