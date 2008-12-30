@@ -42,12 +42,12 @@ public class BureauFileAppender extends OOOFileAppender
         appender.summarizeLog(target, summary);
         System.out.print(summary);
     }
-    
+
     public static void setRollObserver (RollObserver rollObs)
     {
         _rollObs = rollObs;
     }
-    
+
     @Override // from OOOFileAppender
     protected void rollOver ()
         throws IOException
@@ -66,7 +66,7 @@ public class BureauFileAppender extends OOOFileAppender
         summarizeLog(target, summary);
         sendSummary(summary.toString());
     }
-    
+
     protected void summarizeLog (File target, StringBuffer summary)
         throws IOException
     {
@@ -96,7 +96,7 @@ public class BureauFileAppender extends OOOFileAppender
             summarizeLog(target, header, bformat, errors, nowStamp, bsummary);
             summaries.put(bureau, bsummary);
         }
-        
+
         // Append all full text portions
         for (String bureau : overallFormat.bureaus) {
             StringBuffer bsummary = summaries.get(bureau);
@@ -114,7 +114,7 @@ public class BureauFileAppender extends OOOFileAppender
             }
             summary.append(overallSummary);
         }
-        
+
         // Append all summary portions
         for (String bureau : overallFormat.bureaus) {
             StringBuffer bsummary = summaries.get(bureau);
@@ -134,18 +134,18 @@ public class BureauFileAppender extends OOOFileAppender
             header.append(StringUtil.join(overallFormat.bureaus.toArray()));
             header.append("\n\n");
             summary.insert(0, header);
-            
+
             // append footer showing how long the summary took to generate
             summary.append("\n(Generation time: ");
             summary.append(StringUtil.intervalToString(System.currentTimeMillis() - nowStamp));
             summary.append(")\n");
         }
-        
+
         // Prune & write out message timestamps
         errors.pruneOldErrors(nowStamp);
         errors.writeTo(_database);
     }
-    
+
     /**
      * Handles all the common bits of bureau log format.
      */
@@ -157,13 +157,13 @@ public class BureauFileAppender extends OOOFileAppender
         {
             _line = line;
         }
-    
+
         // from LineFormat
         public boolean isStray ()
         {
             // Subclasses need to set up _pos to point to after the bureau prefix, e.g. "bureau| "
             _line = _line.substring(_pos);
-    
+
             if  (!isProbablyStandardLogLine(_line)) {
                 return true;
             }
@@ -173,24 +173,24 @@ public class BureauFileAppender extends OOOFileAppender
             if (bidx == -1) {
                 return true;
             }
-    
+
             _level = _line.substring(LEVEL_OFFSET_IN_STANDARD_LOG_LINE, bidx);
             _pos = bidx;
             return false;
         }
-    
+
         // from LineFormat
         public String extractLevel ()
         {
             return _level;
         }
-    
+
         // from LineFormat
         public String extractMessageId ()
         {
             // advance past ": "
             _pos += 2;
-    
+
             // strip off '[' and anything that follows
             int bidx = _line.indexOf('[', _pos);
             if (bidx != -1) {
@@ -199,7 +199,7 @@ public class BureauFileAppender extends OOOFileAppender
                 return _line.substring(_pos);
             }
         }
-    
+
         String _line;
         String _level;
         int _pos;
@@ -213,7 +213,7 @@ public class BureauFileAppender extends OOOFileAppender
     {
         /** Keep track of all bureaus we've seen. */
         public HashSet<String> bureaus =  Sets.newHashSet();
-        
+
         // from LineFormat
         public boolean isImportant ()
         {
@@ -239,14 +239,14 @@ public class BureauFileAppender extends OOOFileAppender
         {
             _prefix = bureau + "| ";
         }
-        
+
         // from LineFormat
         public boolean isImportant ()
         {
             if (!_line.startsWith(_prefix)) {
                 return false;
             }
-            
+
             _pos = _prefix.length();
 
             // Ignore stuff from user code, this will get relayed to the database logs
@@ -260,7 +260,7 @@ public class BureauFileAppender extends OOOFileAppender
 
         String _prefix;
     }
-    
+
     /** Observer to be notified when we do a roll. */
     protected static RollObserver _rollObs;
 }
