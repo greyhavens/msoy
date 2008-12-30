@@ -277,8 +277,9 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     /** The maximum number of thread search results. */
     protected static final int MAX_RESULTS = 20;
 
-    /** The height used by fixed interface elements. */
-    protected static final int USED_HEIGHT = 57;
+    /** The height used by fixed interface elements (including our header and footer and the
+     * FrameHeader). */
+    protected static final int USED_HEIGHT = 123;
 
     /** The height of a thread summary row. */
     protected static final int THREAD_HEIGHT = 34;

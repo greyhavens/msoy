@@ -41,6 +41,7 @@ fi
 
 CLASS=com.threerings.msoy.server.MsoyServer
 JAVA_ARGS="-server -mx$SERVER_MEMORY \
+    -Dnode=msoy1 \
     -Dhostname=$HOSTNAME \
     -Dis_node=true \
     -Dresource_dir=$MSOY_HOME/rsrc \
@@ -85,6 +86,6 @@ EXIT_CODE=$?
 if [ -s $LOGFILE ]; then
     cat $LOGFILE | $MAIL -s "$HOSTNAME: $MSOY_HOME stray log output" $LOG_EMAIL
 fi
-rm -f $LOGFILE
+# rm -f $LOGFILE
 
 exit $EXIT_CODE

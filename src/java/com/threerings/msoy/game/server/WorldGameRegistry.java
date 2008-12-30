@@ -24,10 +24,13 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.server.ClientManager.ClientObserver;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
 
@@ -123,6 +126,17 @@ public class WorldGameRegistry
 
         // listen for peer connections so that we can manage multiply claimed games
         _peerMan.peerObs.add(this);
+
+        // listen for game server connections so that we can be sure our servers launched ok
+        _clmgr.addClientObserver(new ClientObserver() {
+            public void clientSessionDidStart (PresentsSession session) {
+                sessionDidStart(session);
+            }
+
+            public void clientSessionDidEnd (PresentsSession session) {
+                sessionDidEnd(session);
+            }
+        });
     }
 
     /**
@@ -597,6 +611,16 @@ public class WorldGameRegistry
         return true;
     }
 
+    protected void sessionDidStart (PresentsSession session)
+    {
+        
+    }
+
+    protected void sessionDidEnd (PresentsSession session)
+    {
+        
+    }
+
     /** Handles communications with a delegate game server. */
     protected class GameServerHandler
         implements ObjectDeathListener, MsoyReportManager.AuxReporter
@@ -831,6 +855,7 @@ public class WorldGameRegistry
     @Inject protected StatLogic _statLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected ClientManager _clmgr;
 
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;
