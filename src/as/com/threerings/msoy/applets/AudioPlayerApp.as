@@ -7,10 +7,13 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
+import flash.external.ExternalInterface;
+
 import com.threerings.util.ParameterUtil;
 
 import com.threerings.flash.media.Mp3AudioPlayer;
 
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.ui.MsoyAudioDisplay;
 
 [SWF(width="320", height="68")]
@@ -27,10 +30,18 @@ public class AudioPlayerApp extends Sprite
     {
         if ("audio" in params) {
             var player :Mp3AudioPlayer = new Mp3AudioPlayer();
+            player.setVolume(Prefs.getSoundVolume());
             _aud = new MsoyAudioDisplay(player);
             addChild(_aud);
 
             player.load(String(params["audio"]));
+
+            // inform externally that we're playing media
+            try {
+                ExternalInterface.call("gwtMediaPlaybackStarted");
+            } catch (err :Error) {
+                // ignore
+            }
         }
     }
 

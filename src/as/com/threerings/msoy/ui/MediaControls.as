@@ -237,7 +237,6 @@ public class MediaControls extends Sprite
     protected function handleVolumeAdjust (event :MouseEvent) :void
     {
         var volume :Number = 1 - ((_volumeKnob.y - VOLUME_TRACK_OFFSET) / VOLUME_TRACK_HEIGHT);
-        trace("Vollume = " + volume);
         _player.setVolume(volume);
         _volumeBtn.setIcon(calcVolumeIcon(volume));
     }
