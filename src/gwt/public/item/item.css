@@ -96,10 +96,6 @@
   font-size: small;
 }
 
-.itemDetailPanel .gwt-Hyperlink {
-  display: inline;
-}
-
 .itemDetailPanel .LabelLink {
  cursor: pointer;
  text-decoration: underline;
