@@ -27,6 +27,9 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (TrophyEvent event)
     {
+        if (!DeploymentConfig.devDeployment) {
+            return; // disabled for now in production
+        }
         publishTrophy(event.getGameId(), event.getGame(), event.getTrophy(), event.getDescription(),
                       event.getMediaURL(), DeploymentConfig.serverURL +
                       Pages.makeLink(Pages.GAMES, Args.compose("d", event.getGameId(), "t")));
