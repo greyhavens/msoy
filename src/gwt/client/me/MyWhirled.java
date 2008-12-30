@@ -48,12 +48,14 @@ public class MyWhirled extends FlowPanel
             public void run() {
                 RoundBox rbits = new RoundBox(RoundBox.MEDIUM_BLUE);
                 rbits.addStyleName("QuickNav");
-                rbits.add(MsoyUI.createLabel(_msgs.populationDisplay(""+data.whirledPopulation), null));
+                rbits.add(MsoyUI.createLabel(
+                              _msgs.populationDisplay(""+data.whirledPopulation), null));
                 rbits.add(makeQuickLink("My Profile", Pages.PEOPLE, ""+CShell.getMemberId()));
                 rbits.add(makeQuickLink("My Passport", Pages.ME, "passport"));
                 rbits.add(makeQuickLink("Invite Friends", Pages.PEOPLE, "invites"));
 
-                String empty = data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
+                String empty = data.friendCount > 0 ?
+                    _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
                 FriendsFeedPanel feed = new FriendsFeedPanel(empty, data.feed);
                 FlowPanel feedBox = MsoyUI.createFlowPanel("FeedBox");
                 feedBox.add(new Image("/images/me/me_feed_topcorners.png"));
