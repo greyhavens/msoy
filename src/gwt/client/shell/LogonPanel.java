@@ -4,6 +4,8 @@
 package client.shell;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ButtonBase;
@@ -64,6 +66,14 @@ public class LogonPanel extends SmartTable
         _email = new TextBox();
         if (CookieUtil.get("who") != null) {
             _email.setText(CookieUtil.get("who"));
+            // since our email is already filled in, we can focus the password field; note: we
+            // don't focus the email field by default because we rely on the unfocused state
+            // explaining what actually goes into the email field
+            DeferredCommand.addCommand(new Command() {
+                public void execute () {
+                    _password.setFocus(true);
+                }
+            });
         } else {
             DefaultTextListener.configure(_email, _cmsgs.logonEmailDefault());
         }
