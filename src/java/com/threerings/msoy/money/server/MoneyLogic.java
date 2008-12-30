@@ -460,12 +460,14 @@ public class MoneyLogic
      */
     public int refundAllItemPurchases (ItemIdent item, String itemName)
     {
+        log.info("Refunding purchases", "itemIdent", item, "name", itemName);
         return refundAll(item, itemName);
     }
 
     @Deprecated
     public int refundAllItemPurchases (CatalogIdent item, String itemName)
     {
+        log.info("Refunding purchases", "catalogIdent", item, "name", itemName);
         return refundAll(item, itemName);
     }
 
@@ -484,45 +486,15 @@ public class MoneyLogic
      */
     public int refundAll (Object item, String itemName)
     {
-        final int systemPurse = 0;
-        final float systemPct = _runtime.money.oooPercentage / _runtime.money.creatorPercentage;
-        final float xchgRate = _exchange.getRate();
-
-        // this will cause problems for the refund, bail early
-        Preconditions.checkArgument(xchgRate != 0 && xchgRate != Float.POSITIVE_INFINITY);
-
-        log.info("Refunding purchases", "item", item, "type", item.getClass(), "name", itemName,
-            "exchangeRate", xchgRate);
-
-        // aggregate refunds per member and currency type, also resurrecting system payout
+        // aggregate refunds per member and currency type
         HashMap<Integer, int[]> refunds = Maps.newHashMap();
         for (MoneyTransactionRecord txRec :
             _repo.getTransactionsForSubject(item, 0, Integer.MAX_VALUE, false)) {
-
-            // record the earnings or spendings of this user (inverted amount)
             int[] currencies = refunds.get(txRec.memberId);
             if (currencies == null) {
                 refunds.put(txRec.memberId, currencies = new int[Currency.values().length]);
             }
-
-            // merge spent bars as a coin refund, otherwise just add into total
-            if (txRec.amount < 0 && txRec.currency == Currency.BARS) {
-                currencies[Currency.COINS.ordinal()] += Math.floor(-txRec.amount * xchgRate);
-
-            } else {
-                currencies[txRec.currency.ordinal()] -= txRec.amount;
-            }
-
-            // resurrect vanished money too. this will not be docked from any account but will
-            // contribute to the pool
-            if (txRec.transactionType == TransactionType.CREATOR_PAYOUT) {
-                currencies = refunds.get(systemPurse);
-                if (currencies == null) {
-                    refunds.put(systemPurse, currencies = new int[Currency.values().length]);
-                }
-                int sysAmount = (int)Math.ceil(txRec.amount * systemPct);
-                currencies[txRec.currency.ordinal()] -= sysAmount;
-            }
+            currencies[txRec.currency.ordinal()] -= txRec.amount;
         }
 
         // log all updates for later dispatch
@@ -531,19 +503,14 @@ public class MoneyLogic
         // track how much is in the pool to give back
         int[] pool = new int[Currency.values().length];
 
-        // apply all deductions, taking bars if the bling runs out and coins if the bars run out
-        Currency[] currencies = {Currency.BLING, Currency.BARS, Currency.COINS};
+        // apply all deductions, taking bars if the bling runs out
+        Currency[] currencies = {Currency.COINS, Currency.BLING, Currency.BARS};
         for (Map.Entry<Integer, int[]> refund : refunds.entrySet()) {
             int memberId = refund.getKey();
             int[] values = refund.getValue();
             for (Currency currency : currencies) {
                 int deduction = -values[currency.ordinal()];
                 if (deduction <= 0) {
-                    continue;
-                }
-
-                if (memberId == systemPurse) {
-                    pool[currency.ordinal()] += deduction;
                     continue;
                 }
 
@@ -557,67 +524,48 @@ public class MoneyLogic
                         deduction = 0;
 
                     } catch (NotEnoughMoneyException neme) {
-
-                        int deficit = deduction - neme.getMoneyAvailable();
-                        Currency conversion = null;
-                        int result = 0;
-
-                        // if they are out of bling, try bars
+                        // if they are out of bling, try bars next time through
                         if (currency == Currency.BLING) {
-                            conversion = Currency.BARS;
-                            result = (int)Math.ceil(deficit / 100f);
-
-                        // if they are out of bars, try coins
-                        } else if (currency == Currency.BARS) {
-                            conversion = Currency.COINS;
-                            result = (int)Math.ceil(deficit * xchgRate);
+                            int blingDeficit = deduction - neme.getMoneyAvailable();
+                            values[Currency.BARS.ordinal()] -= blingDeficit / 100;
                         }
 
-                        // and bankrupt too
+                        // and bankrupt
                         deduction = neme.getMoneyAvailable();
-
-                        log.info("Account ran out of money during refund deductions phase",
-                            "memberId", memberId, "currency", currency, "deficit", deficit,
-                            "conversion", conversion, "result", result);
                     }
                 }
             }
         }
 
-        log.info("Initial refund pool", "amounts", pool);
+        // convert bling to bars
+        pool[Currency.BARS.ordinal()] += pool[Currency.BLING.ordinal()] / 100;
+        pool[Currency.BLING.ordinal()] = 0;
 
-        // convert everything to coins
-        pool[Currency.BARS.ordinal()] += Math.floor(pool[Currency.BLING.ordinal()] / 100f);
-        pool[Currency.COINS.ordinal()] += Math.floor(pool[Currency.BARS.ordinal()] * xchgRate);
+        log.info("Refund pool", "coins", pool[Currency.COINS.ordinal()], "bars",
+            pool[Currency.BARS.ordinal()]);
 
-        log.info("Converted refund pool", "amounts", pool);
-
-        // now disperse the coins
-        int coinPool = pool[Currency.COINS.ordinal()];
+        // now distribute the pool
         for (Map.Entry<Integer, int[]> refund : refunds.entrySet()) {
             int memberId = refund.getKey();
             int[] values = refund.getValue();
-            int refundAmount = values[Currency.COINS.ordinal()];
-            if (refundAmount > 0 && values[Currency.BARS.ordinal()] != 0 ||
-                values[Currency.BLING.ordinal()] != 0) {
-                log.warning("Issuing coin refund, but bars and bling have non-zero balance",
-                    "refund", values, "memberId", memberId);
-            }
+            for (Currency currency : currencies) {
+                int refundAmount = values[currency.ordinal()];
+                int availableAmount = pool[currency.ordinal()];
+                if (refundAmount > availableAmount) {
+                    log.info("Issuing reduced refund due to insufficient funds",
+                        "currency", currency, "desiredAmount", refundAmount, "availableAmount",
+                        availableAmount);
+                    refundAmount = availableAmount;
+                }
 
-            if (refundAmount > coinPool) {
-                log.info("Issuing reduced refund due to insufficient funds",
-                    "memberId", memberId, "desiredAmount", refundAmount, "coinPool", coinPool);
-                refundAmount = coinPool;
+                if (refundAmount <= 0) {
+                    continue;
+                }
+                updates.add(_repo.accumulateAndStoreTransaction(memberId, currency, refundAmount,
+                    TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose("m.item_refund",
+                    itemName), item, false));
+                pool[currency.ordinal()] -= refundAmount;
             }
-
-            if (refundAmount <= 0) {
-                continue;
-            }
-
-            updates.add(_repo.accumulateAndStoreTransaction(memberId, Currency.COINS, refundAmount,
-                TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose("m.item_refund",
-                itemName), item, false));
-            coinPool -= refundAmount;
         }
 
         for (MoneyTransactionRecord txRec : updates) {

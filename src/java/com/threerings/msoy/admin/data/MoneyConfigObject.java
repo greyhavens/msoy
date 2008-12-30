@@ -59,9 +59,6 @@ public class MoneyConfigObject extends ConfigObject
     /** Percentage of the purchase price that will be awarded to the charity the user has chosen. */
     public float charityPercentage = 0.1f;
     
-    /** Percentage of the purchase price that will vanish into thin air. */
-    public float oooPercentage = 0.3f;
-    
     /** The amount of bling (NOT centibling) to grant daily to game creators. */
     public int blingPoolSize = 403;
 
