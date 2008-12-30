@@ -9,13 +9,13 @@ import client.util.JavaScriptUtil;
 
 public class StatusChangeEvent extends FlashEvent
 {
-    // constants for the different types of status updates we can receive. Defined in MsoyClient.as
+    // constants for the different types of status updates we can receive. Defined in WorldClient.as
     public static final int LEVEL = 1;
     public static final int COINS = 2;
     public static final int BARS = 3;
     public static final int MAIL = 4;
 
-    /** The name of this event type: defined in MsoyClient.as. */
+    /** The name of this event type: defined in WorldClient.as. */
     public static final String NAME = "statusChange";
 
     public StatusChangeEvent ()
