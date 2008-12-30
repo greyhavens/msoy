@@ -33,7 +33,7 @@ public class SubItemEntry extends ItemEntry
         }
 
         int row = getRowCount();
-        String btitle = item.isListedOriginal() ? _msgs.detailSubUplist() : _msgs.detailList();
+        String btitle = item.isListedOriginal() ? _msgs.detailSubUplist() : _msgs.detailSubList();
         _list = new Button(btitle, new ClickListener() {
             public void onClick (Widget sender) {
                 DoListItemPopup.show(item, null, SubItemEntry.this);
@@ -53,7 +53,7 @@ public class SubItemEntry extends ItemEntry
     {
         // if this was a first time listing, change "List..." to "Update listing..."
         if (!updated && item.isListedOriginal()) {
-            _list.setText(_msgs.detailUplist());
+            _list.setText(_msgs.detailSubUplist());
         }
     }
 

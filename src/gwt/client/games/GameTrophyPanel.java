@@ -76,7 +76,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
     @Override // from PagedGrid
     protected boolean displayNavi (int items)
     {
-        return true;
+        return (items > _rows*_cols);
     }
 
     protected class TrophyDetail extends FlexTable

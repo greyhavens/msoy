@@ -85,5 +85,5 @@ public class SubItemPanel extends PagedGrid<Item>
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
 
-    protected static final int ROWS = 2;
+    protected static final int ROWS = 20;
 }
