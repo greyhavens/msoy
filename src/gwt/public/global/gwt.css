@@ -59,6 +59,7 @@ img, embed, applet, object {
 .gwt-Button {
   background-image: url(/images/ui/button_middle.png);
   background-repeat: repeat-x;
+  background-position: center;
   border: 1px solid #404040;
   font-size: 12px;
   vertical-align: middle;
@@ -70,9 +71,8 @@ img, embed, applet, object {
 }
 
 .tinyButton {
-  background-image: url(/images/ui/tiny_button_middle.png);
   font-size: 8px;
-  height: 12px;
+  min-height: 12px;
 }
 
 .orangeButton {
@@ -410,8 +410,11 @@ img, embed, applet, object {
   width: 26px;
 }
 
-.pagedGrid .BareFooter {
+.pagedGrid .BareFooter, .pagedGrid .EndCap {
   border-top: 1px solid #DADADA;
+}
+
+.pagedGrid .BareFooter {
   padding-top: 2px;
 }
 
