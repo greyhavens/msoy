@@ -29,7 +29,7 @@ public class MsoyFileAppender extends OOOFileAppender
     {
         MsoyFileAppender appender = new MsoyFileAppender();
         File target = new File(args[0]);
-        StringBuffer sumbuf = appender.summarizeLogToBuffer(target);
+        StringBuilder sumbuf = appender.summarizeLogToBuffer(target);
         System.out.print(sumbuf);
     }
 
@@ -37,14 +37,14 @@ public class MsoyFileAppender extends OOOFileAppender
     protected void summarizeLog (File target)
         throws IOException
     {
-        StringBuffer sumbuf = summarizeLogToBuffer(target);
+        StringBuilder sumbuf = summarizeLogToBuffer(target);
         sendSummary(sumbuf.toString());
     }
 
-    protected StringBuffer summarizeLogToBuffer (File target)
+    protected StringBuilder summarizeLogToBuffer (File target)
         throws IOException
     {
-        StringBuffer sumbuf = new StringBuffer();
+        StringBuilder sumbuf = new StringBuilder();
         MsoyLineFormat format = new MsoyLineFormat();
         summarizeLog(target, format, sumbuf);
         format.summarizeLongUnits(sumbuf);
@@ -77,7 +77,7 @@ public class MsoyFileAppender extends OOOFileAppender
 
         public String describe (int maxLen) {
             maxLen -= 5; // for ", ..."
-            StringBuffer desc = new StringBuffer(name);
+            StringBuilder desc = new StringBuilder(name);
             if (desc.length() < maxLen) {
                 desc.append(" - ");
                 int ii = 0;
@@ -120,7 +120,7 @@ public class MsoyFileAppender extends OOOFileAppender
             return id;
         }
 
-        public void summarizeLongUnits (StringBuffer sumbuf)
+        public void summarizeLongUnits (StringBuilder sumbuf)
         {
             if (_longUnits.size() == 0) {
                 return;

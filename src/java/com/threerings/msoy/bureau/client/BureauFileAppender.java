@@ -38,7 +38,7 @@ public class BureauFileAppender extends OOOFileAppender
     {
         BureauFileAppender appender = new BureauFileAppender();
         File target = new File(args[0]);
-        StringBuffer summary = new StringBuffer();
+        StringBuilder summary = new StringBuilder();
         appender.summarizeLog(target, summary);
         System.out.print(summary);
     }
@@ -62,19 +62,19 @@ public class BureauFileAppender extends OOOFileAppender
     protected void summarizeLog (File target)
         throws IOException
     {
-        StringBuffer summary = new StringBuffer();
+        StringBuilder summary = new StringBuilder();
         summarizeLog(target, summary);
         sendSummary(summary.toString());
     }
 
-    protected void summarizeLog (File target, StringBuffer summary)
+    protected void summarizeLog (File target, StringBuilder summary)
         throws IOException
     {
         long nowStamp = System.currentTimeMillis();
 
         // First do the overall summary with no full text, collecting bureau names as we go
         BureauMergedFormat overallFormat = new BureauMergedFormat();
-        StringBuffer overallSummary = new StringBuffer();
+        StringBuilder overallSummary = new StringBuilder();
         summarizeLog(
             target, "Filtered messages (all bureaus)", overallFormat, new ErrorDatabase() {
                 @Override public boolean shouldSummarize (long nowStamp, String message) {
@@ -88,10 +88,10 @@ public class BureauFileAppender extends OOOFileAppender
         // Now do each bureau into a separate buffer, inserting a marker between the full text
         // and the summary.
         String marker = "~!@#" + nowStamp + "~!@#";
-        HashMap<String, StringBuffer> summaries = Maps.newHashMap();
+        HashMap<String, StringBuilder> summaries = Maps.newHashMap();
         for (String bureau : overallFormat.bureaus) {
             BureauFilteredFormat bformat = new BureauFilteredFormat(bureau);
-            StringBuffer bsummary = new StringBuffer();
+            StringBuilder bsummary = new StringBuilder();
             String header = marker + "Filtered messages (" + bureau + ")";
             summarizeLog(target, header, bformat, errors, nowStamp, bsummary);
             summaries.put(bureau, bsummary);
@@ -99,7 +99,7 @@ public class BureauFileAppender extends OOOFileAppender
 
         // Append all full text portions
         for (String bureau : overallFormat.bureaus) {
-            StringBuffer bsummary = summaries.get(bureau);
+            StringBuilder bsummary = summaries.get(bureau);
             int mpos = bsummary.indexOf(marker);
             if (mpos <= 0) {
                 continue;
@@ -117,7 +117,7 @@ public class BureauFileAppender extends OOOFileAppender
 
         // Append all summary portions
         for (String bureau : overallFormat.bureaus) {
-            StringBuffer bsummary = summaries.get(bureau);
+            StringBuilder bsummary = summaries.get(bureau);
             int mpos = bsummary.indexOf(marker);
             if (mpos == -1) {
                 continue;
@@ -130,7 +130,7 @@ public class BureauFileAppender extends OOOFileAppender
 
         if (summary.length() > 0) {
             // prepend header showing all the bureaus summarized
-            StringBuffer header = new StringBuffer("Bureaus: ");
+            StringBuilder header = new StringBuilder("Bureaus: ");
             header.append(StringUtil.join(overallFormat.bureaus.toArray()));
             header.append("\n\n");
             summary.insert(0, header);
