@@ -14,13 +14,13 @@ import client.util.JavaScriptUtil;
  */
 public class FriendEvent extends FlashEvent
 {
-    /** The action dispatched when a friend is added: defined in MsoyClient.as. */
+    /** The action dispatched when a friend is added: defined in WorldClient.as. */
     public static final int FRIEND_ADDED = 1;
 
-    /** The action dispatched when a friend is removed: defined in MsoyClient.as. */
+    /** The action dispatched when a friend is removed: defined in WorldClient.as. */
     public static final int FRIEND_REMOVED = 2;
 
-    /** The name of this event type: defined in MsoyClient.as. */
+    /** The name of this event type: defined in WorldClient.as. */
     public static final String NAME = "friend";
 
     @Override // FlashEvent
@@ -38,6 +38,16 @@ public class FriendEvent extends FlashEvent
         _action = action;
         _memberId = friend.getMemberId();
         _displayName = friend.toString();
+    }
+
+    public int getAction ()
+    {
+        return _action;
+    }
+
+    public MemberName getFriend ()
+    {
+        return new MemberName(_displayName, _memberId);
     }
 
     @Override // from FlashEvent
@@ -69,16 +79,6 @@ public class FriendEvent extends FlashEvent
                 break;
             }
         }
-    }
-
-    public int getAction ()
-    {
-        return _action;
-    }
-
-    public MemberName getFriend ()
-    {
-        return new MemberName(_displayName, _memberId);
     }
 
     protected int _action;
