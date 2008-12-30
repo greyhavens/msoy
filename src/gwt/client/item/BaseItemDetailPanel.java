@@ -256,7 +256,10 @@ public abstract class BaseItemDetailPanel extends SmartTable
             panel.@client.item.BaseItemDetailPanel::updateAvatarScale(F)(newScale);
         };
         $wnd.gwtMediaPlayback= function (started) {
-            $wnd.top.document.getElementById("asclient").gwtMediaPlayback(started);
+            var client = $wnd.top.document.getElementById("asclient");
+            if (client) {
+                client.gwtMediaPlayback(started);
+            }
         };
     }-*/;
 
