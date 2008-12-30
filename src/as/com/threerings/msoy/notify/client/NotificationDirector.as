@@ -19,6 +19,7 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
+import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.ui.AwardPanel;
 
 import com.threerings.msoy.client.MemberService;
@@ -94,6 +95,22 @@ public class NotificationDirector extends BasicDirector
         _currentNotifications.add(_lastId++);
         _notifications.push(notification);
         _notificationDisplay.displayNotification(notification);
+    }
+
+    public function getCurrentNotifications () :Array
+    {
+        return _notifications;
+    }
+
+    /**
+     * Display an award in an {@ AwardPanel}.
+     */
+    public function displayAward (award :Object) :void
+    {
+        if (_awardPanel == null) {
+            _awardPanel = new AwardPanel(_mctx);
+        }
+        _awardPanel.displayAward(award);
     }
 
     // from interface AttributeChangeListener
@@ -187,22 +204,6 @@ public class NotificationDirector extends BasicDirector
                 addNotification(notification);
             }
         }
-    }
-
-    public function getCurrentNotifications () :Array
-    {
-        return _notifications;
-    }
-
-    /**
-     * Display an award in a {@ AwardPanel}.
-     */
-    public function displayAward (award :Object) :void
-    {
-        if (_awardPanel == null) {
-            _awardPanel = new AwardPanel(_mctx);
-        }
-        _awardPanel.displayAward(award);
     }
 
     // from BasicDirector
