@@ -31,6 +31,10 @@ public class MediaControls extends Sprite
     public static const WIDTH :int = 320;
 
     public static const HEIGHT :int = UNIT;
+
+    public static const VOLUME_POP_HEIGHT :int = 41;
+    public static const VOLUME_TRACK_OFFSET :int = 3;
+    public static const VOLUME_TRACK_HEIGHT :int = VOLUME_POP_HEIGHT - (2 * VOLUME_TRACK_OFFSET);
     
     public function MediaControls (player :MediaPlayer, commentCallback :Function = null)
     {
@@ -81,8 +85,7 @@ public class MediaControls extends Sprite
         _playBtn = new SimpleIconButton(PLAY_BTN);
         _pauseBtn = new SimpleIconButton(PAUSE_BTN);
         _commentBtn = new SimpleIconButton(COMMENT_BTN);
-        _volumeBtn = new SimpleIconButton(VOLUME_BTN);
-        _muteBtn = new SimpleIconButton(MUTE_BTN);
+        _volumeBtn = new SimpleIconButton(calcVolumeIcon(_player.getVolume()));
         _track = new Sprite();
         _knob = new Sprite();
         var knobThing :DisplayObject = DisplayObject(new KNOB());
@@ -101,8 +104,6 @@ public class MediaControls extends Sprite
         baseX -= UNIT;
         _volumeBtn.x = baseX + (UNIT - _volumeBtn.width) / 2;
         _volumeBtn.y = (UNIT - _volumeBtn.height) / 2;
-        _muteBtn.x = baseX + (UNIT - _muteBtn.width) / 2;
-        _muteBtn.y = (UNIT - _volumeBtn.height) / 2;
         addChild(_volumeBtn);
 
         if (_commentCallback != null) {
@@ -138,7 +139,6 @@ public class MediaControls extends Sprite
 
         _commentBtn.addEventListener(MouseEvent.CLICK, handleComment);
         _volumeBtn.addEventListener(MouseEvent.CLICK, handleVolume);
-        _muteBtn.addEventListener(MouseEvent.CLICK, handleMute);
 
         _track.addEventListener(MouseEvent.CLICK, handleTrackClick);
         _knob.addEventListener(MouseEvent.MOUSE_DOWN, handleKnobDown);
@@ -154,33 +154,108 @@ public class MediaControls extends Sprite
     {   
         event.stopImmediatePropagation();
         _player.play();
-    }   
-        
+    }
+
     protected function handlePause (event :MouseEvent) :void
-    {   
+    {
         event.stopImmediatePropagation();
         _player.pause();
-    }   
-        
+    }
+
     protected function handleComment (event :MouseEvent) :void
-    {   
+    {
         _commentCallback();
     }   
-        
-    protected function handleVolume (event :MouseEvent) :void
-    {   
-        removeChild(_volumeBtn);
-        addChild(_muteBtn);
-        _player.setVolume(0); 
-    }   
 
-    protected function handleMute (event :MouseEvent) :void
+    protected function handleVolume (event :MouseEvent) :void
     {
-        removeChild(_muteBtn);
-        addChild(_volumeBtn);
-        _player.setVolume(1);
-    }   
-        
+        if (_volumePop != null) {
+            popVolumeDown();
+            return;
+        }
+
+        _volumePop = new Sprite();
+        var g :Graphics = _volumePop.graphics;
+        g.beginFill(0x000000, .85);
+        g.drawRect(0, 0, UNIT, VOLUME_POP_HEIGHT);
+        g.endFill();
+        g.lineStyle(1, 0x3db8eb);
+        g.drawRect(0, 0, UNIT, VOLUME_POP_HEIGHT);
+        g.drawRect(UNIT/2 - 1, VOLUME_TRACK_OFFSET, 2, VOLUME_TRACK_HEIGHT);
+
+        _volumeKnob = new Sprite();
+        _volumeKnob.buttonMode = true;
+        _volumeKnob.useHandCursor = true;
+        g = _volumeKnob.graphics;
+        g.beginFill(0xFFFFFF);
+        g.drawRect(UNIT/-2 + 3, -2, UNIT - 6, 4);
+        g.endFill();
+        _volumePop.addChild(_volumeKnob);
+
+        // set to current volume
+        _volumeKnob.x = UNIT/2;
+        _volumeKnob.y = VOLUME_TRACK_OFFSET + ((1 - _player.getVolume()) * VOLUME_TRACK_HEIGHT);
+
+        _volumePop.addEventListener(MouseEvent.MOUSE_DOWN, handleVolumeTrackClick);
+        _volumeKnob.addEventListener(MouseEvent.MOUSE_DOWN, handleVolumeKnobDown);
+        _volumePop.x = _volumeBtn.x;
+        _volumePop.y = _volumeBtn.y - VOLUME_POP_HEIGHT;
+        addChild(_volumePop);
+        addEventListener(MouseEvent.ROLL_OUT, handleVolumeRollout);
+    }
+
+    protected function popVolumeDown () :void
+    {
+        removeEventListener(MouseEvent.ROLL_OUT, handleVolumeRollout);
+        // pop the fucker down
+        removeChild(_volumePop);
+        _volumePop = null;
+        _volumeKnob = null;
+    }
+
+    protected function handleVolumeRollout (event :MouseEvent) :void
+    {
+        handleVolumeKnobUp(event);
+        popVolumeDown();
+    }
+
+    protected function handleVolumeKnobDown (event :MouseEvent) :void
+    {
+        event.stopImmediatePropagation();
+        _volumeKnob.startDrag(true,
+            new Rectangle(UNIT/2, VOLUME_TRACK_OFFSET, 0, VOLUME_TRACK_HEIGHT));
+        addEventListener(MouseEvent.MOUSE_UP, handleVolumeKnobUp);
+        addEventListener(MouseEvent.MOUSE_MOVE, handleVolumeAdjust);
+    }
+
+    protected function handleVolumeTrackClick (event :MouseEvent) :void
+    {
+        _volumeKnob.y = event.localY;
+        handleVolumeAdjust(event);
+    }
+
+    protected function handleVolumeAdjust (event :MouseEvent) :void
+    {
+        var volume :Number = 1 - ((_volumeKnob.y - VOLUME_TRACK_OFFSET) / VOLUME_TRACK_HEIGHT);
+        trace("Vollume = " + volume);
+        _player.setVolume(volume);
+        _volumeBtn.setIcon(calcVolumeIcon(volume));
+    }
+
+    protected function calcVolumeIcon (volume :Number) :Object
+    {
+        // if the level is 0, show icon 0, else smoothly between 1 and 4
+        const icon :int = (volume == 0) ? 0 : (1 + Math.round(volume * 3));
+        return VOLUME_ICONS[icon];
+    }
+
+    protected function handleVolumeKnobUp (event :MouseEvent) :void
+    {
+        _volumeKnob.stopDrag();
+        removeEventListener(MouseEvent.MOUSE_UP, handleVolumeKnobUp);
+        removeEventListener(MouseEvent.MOUSE_MOVE, handleVolumeAdjust);
+    }
+
     protected function handleTrackClick (event :MouseEvent) :void
     {
         event.stopImmediatePropagation();
@@ -357,12 +432,14 @@ public class MediaControls extends Sprite
     protected var _track :Sprite;
     protected var _knob :Sprite;
     protected var _timeField :TextField;
-    protected var _commentBtn :DisplayObject;
-    protected var _volumeBtn :DisplayObject;
-    protected var _muteBtn :DisplayObject;
+    protected var _commentBtn :SimpleIconButton;
+    protected var _volumeBtn :SimpleIconButton;
 
     protected var _duration :Number = NaN;
     protected var _durationString :String = UNKNOWN_TIME;
+
+    protected var _volumeKnob :Sprite;
+    protected var _volumePop :Sprite;
 
     protected var _trackWidth :Number;
 
@@ -390,11 +467,26 @@ public class MediaControls extends Sprite
 
     // TODO: re-use resource in css file, or have that use this. Or something!
     [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_05.png")]
-    protected static const VOLUME_BTN :Class;
+    protected static const VOLUME_4 :Class;
+
+    // TODO: re-use resource in css file, or have that use this. Or something!
+    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_04.png")]
+    protected static const VOLUME_3 :Class;
+
+    // TODO: re-use resource in css file, or have that use this. Or something!
+    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_03.png")]
+    protected static const VOLUME_2 :Class;
+
+    // TODO: re-use resource in css file, or have that use this. Or something!
+    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_02.png")]
+    protected static const VOLUME_1 :Class;
 
     // TODO: re-use resource in css file, or have that use this. Or something!
     [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_01.png")]
-    protected static const MUTE_BTN :Class;
+    protected static const VOLUME_0 :Class;
+
+    protected static const VOLUME_ICONS :Array = [
+        VOLUME_0, VOLUME_1, VOLUME_2, VOLUME_3, VOLUME_4 ];
 
     [Embed(source="../../../../../../rsrc/media/skins/mediaplayer/knob.swf")]
     protected static const KNOB :Class;
