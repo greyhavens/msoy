@@ -60,7 +60,7 @@ public class CommentServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // no authentication required to view comments
-        List<CommentRecord> records = _commentRepo.loadComments(etype, eid, offset, count, true);
+        List<CommentRecord> records = _commentRepo.loadComments(etype, eid, offset, count, false);
 
         // resolve the member cards for all commentors
         IntMap<MemberCard> cards = new HashIntMap<MemberCard>();
