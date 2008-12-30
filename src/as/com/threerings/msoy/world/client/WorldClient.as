@@ -494,9 +494,13 @@ class StatusUpdater implements AttributeChangeListener, SetListener
     protected static const STATUS_CHANGE_BARS :int = 3;
     protected static const STATUS_CHANGE_MAIL :int = 4;
 
+    /** Event dispatched to GWT when we add or remove a friend. */
     protected static const FRIEND_EVENT :String = "friend";
     protected static const FRIEND_ADDED :int = 1;
     protected static const FRIEND_REMOVED :int = 2;
+
+    /** Event dispatched to GWT when we earn a trophy. */
+    protected static const TROPHY_EVENT :String = "trophy";
 
     protected var _client :MsoyClient;
 }

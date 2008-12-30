@@ -1014,6 +1014,10 @@ public class FrameEntryPoint
     /** Used to talk to Google Analytics. */
     protected Analytics _analytics = new Analytics();
 
+    /** Handles publishing info to external feeds. It registers event listeners in its constructor,
+     * so we don't ever need to actually talk to this instance. */
+    protected ExternaFeeder _feeder = new ExternalFeeder();
+
     /** A command to be run when Java reports readiness. */
     protected Command _javaReadyCommand;
 
