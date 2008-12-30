@@ -1481,7 +1481,7 @@ public class WorldController extends MsoyController
                 _musicPlayer.pause();
             }
 
-        } else if (_pausedMusic) {
+        } else if (_musicPausedForGwt) {
             _musicPausedForGwt = false;
             _musicPlayer.play();
         }
