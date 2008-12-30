@@ -893,6 +893,10 @@ img, embed, applet, object {
   font-size: 12px;
 }
 
+.CommentsPanel .emphasized .Scroller {
+  color: green;
+}
+
 .CommentsPanel .messagePanel .MsgInfo {
   padding-top: 1px;
 }

@@ -128,7 +128,15 @@ public class CommentsPanel extends PagedGrid<Comment>
      */
     protected boolean shouldDisplay (Comment comment)
     {
-        return comment.currentRating >= -4;
+        return comment.currentRating >= Comment.RATED_HIDDEN;
+    }
+
+    /**
+     * Returns true if the viewer should be shown the text of the supplied comment.
+     */
+    protected boolean shouldEmphasize (Comment comment)
+    {
+        return comment.currentRating >= Comment.RATED_EMPHASIZED;
     }
 
     /**

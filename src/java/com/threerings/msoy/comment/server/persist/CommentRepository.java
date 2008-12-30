@@ -52,13 +52,15 @@ public class CommentRepository extends DepotRepository
      * @param start the offset into the comments (in reverse time order) to load.
      * @param count the number of comments to load.
      */
-    public List<CommentRecord> loadComments (int entityType, int entityId, int start, int count)
+    public List<CommentRecord> loadComments (
+        int entityType, int entityId, int start, int count, boolean byRating)
     {
         // load up the specified comment set
         return findAll(CommentRecord.class,
                        new Where(CommentRecord.ENTITY_TYPE_C, entityType,
                                  CommentRecord.ENTITY_ID_C, entityId),
-                       OrderBy.descending(CommentRecord.POSTED_C),
+                       byRating ? OrderBy.descending(CommentRecord.CURRENT_RATING_C) :
+                                  OrderBy.descending(CommentRecord.POSTED_C),
                        new Limit(start, count));
     }
 

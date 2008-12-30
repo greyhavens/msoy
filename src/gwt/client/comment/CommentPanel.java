@@ -40,10 +40,11 @@ public class CommentPanel extends MessagePanel
         _comment = comment;
 
         _rated = false;
+
         if (_parent.commentsCanBeRated()) {
             _displayed = _parent.shouldDisplay(_comment);
         } else {
-            // RAY: Don't flip out. This is just cleaner.
+
             _displayed = true;
         }
 
@@ -162,6 +163,12 @@ public class CommentPanel extends MessagePanel
         MemberCard card = new MemberCard();
         card.name = _comment.commentor;
         card.photo = _comment.photo;
+
+        if (_parent.shouldEmphasize(_comment)) {
+            addStyleName("emphasized");
+        } else {
+            removeStyleName("emphasized");
+        }
 
         if (_displayed) {
             setMessage(card, new Date(_comment.posted), _comment.text);
