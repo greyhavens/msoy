@@ -15,7 +15,7 @@ public class ExternalFeeder
     public ExternalFeeder ()
     {
         FlashEvents.addListener(new TrophyEvent.Listener() {
-            public void trophyAwarded (TrophyEvent event) {
+            public void trophyEarned (TrophyEvent event) {
                 publishTrophyToFacebook(event);
             }
         });
@@ -23,7 +23,7 @@ public class ExternalFeeder
 
     protected void publishTrophyToFacebook (TrophyEvent event)
     {
-        CShell.log("Want to publish " + event.getName() + " " + event.getGameId())
+        CShell.log("Want to publish " + event.getName() + " " + event.getGameId());
     }
 
     protected static native void testFBConnect () /*-{
