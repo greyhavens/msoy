@@ -119,11 +119,12 @@ public class GalaxyPanel extends FlowPanel
             protected String getEmptyMessage () {
                 return _msgs.galaxyNoGroups();
             }
-            @Override protected Widget getNowLoadingWidget () {
+            @Override // from PagedWidget
+            protected Widget getNowLoadingWidget () {
                 return new MiniNowLoadingWidget();
             }
-
-            @Override protected void addCustomControls (FlexTable controls) {
+            @Override // from PagedWidget
+            protected void addCustomControls (FlexTable controls) {
                 controls.setWidget(
                     0, 0, new InlineLabel(_msgs.galaxySortBy(), false, false, false));
                 controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
