@@ -24,6 +24,7 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.ui.SearchBox;
@@ -142,6 +143,12 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
                 _refresh.setEnabled(true);
             }
         }
+    }
+
+    @Override // from PagedWidget
+    protected Widget getNowLoadingWidget ()
+    {
+        return new MiniNowLoadingWidget();
     }
 
     protected class ThreadSummaryPanel extends FlexTable

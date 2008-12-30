@@ -17,7 +17,6 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import client.images.msgs.MsgsImages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.ui.NowLoadingWidget;
 import client.ui.SearchBox;
 import client.util.Link;
 
@@ -29,9 +28,6 @@ public class ForumPanel extends TitledListPanel
     public ForumPanel (ForumModels fmodels)
     {
         _fmodels = fmodels;
-
-        _nowLoading = new NowLoadingWidget();
-        _nowLoading.center();
     }
 
     /**
@@ -42,7 +38,6 @@ public class ForumPanel extends TitledListPanel
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayGroupThreads(groupId, _fmodels);
         setContents(createHeader(groupId, _mmsgs.groupThreadListHeader(), threads), threads);
-        _nowLoading.hide();
 
         // set up a callback to configure our page title when we learn this group's name
         _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback<GroupName>() {
@@ -62,7 +57,6 @@ public class ForumPanel extends TitledListPanel
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayUnreadThreads(_fmodels, refresh);
         setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), null), threads);
-        _nowLoading.hide();
     }
 
     public void startNewThread (int groupId)
@@ -70,7 +64,6 @@ public class ForumPanel extends TitledListPanel
         ForumModels.GroupThreads gthreads = _fmodels.getGroupThreads(groupId);
         setContents(_mmsgs.ntpTitle(), new NewThreadPanel(groupId, gthreads.isManager(),
                                                           gthreads.isAnnounce()));
-        _nowLoading.hide();
     }
 
     protected SmartTable createHeader (int groupId, String title, SearchBox.Listener listener)
@@ -125,9 +118,6 @@ public class ForumPanel extends TitledListPanel
 
     /** Title for the page, set to group name after data load */
     protected SimplePanel _title;
-
-    /** A loading indicator. */
-    protected final NowLoadingWidget _nowLoading;
 
     protected static final MsgsImages _images = (MsgsImages)GWT.create(MsgsImages.class);
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
