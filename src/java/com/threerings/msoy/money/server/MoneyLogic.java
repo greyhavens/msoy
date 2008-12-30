@@ -771,7 +771,7 @@ public class MoneyLogic
      * Loads all transactions that were inserted with the given subject.
      */
     public List<MoneyTransaction> getItemTransactions (
-        CatalogIdent item, int from, int count, boolean descending)
+        ItemIdent item, int from, int count, boolean descending)
     {
         List<MoneyTransaction> txList = Lists.newArrayList(Iterables.transform(
             _repo.getTransactionsForSubject(item, from, count, descending),
@@ -783,7 +783,7 @@ public class MoneyLogic
     /**
      * Counts the number of transactions that were inserted with the given subject.
      */
-    public int getItemTransactionCount (CatalogIdent item)
+    public int getItemTransactionCount (ItemIdent item)
     {
         return _repo.getTransactionCountForSubject(item);
     }

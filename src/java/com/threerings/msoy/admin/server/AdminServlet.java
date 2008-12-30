@@ -336,12 +336,11 @@ public class AdminServlet extends MsoyServiceServlet
         if (item.catalogId == 0) {
             throw new ServiceException(ItemCodes.E_ITEM_NOT_LISTED);
         }
-        CatalogIdent cident = new CatalogIdent(iident.type, item.catalogId);
         ItemTransactionResult result = new ItemTransactionResult();
         if (needCount) {
-            result.total = _moneyLogic.getItemTransactionCount(cident);
+            result.total = _moneyLogic.getItemTransactionCount(iident);
         }
-        result.page = _moneyLogic.getItemTransactions(cident, from, count, false);
+        result.page = _moneyLogic.getItemTransactions(iident, from, count, false);
 
         Set<Integer> memberIds = Sets.newHashSet();
         for (MoneyTransaction tx : result.page) {
