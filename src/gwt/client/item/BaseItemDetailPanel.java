@@ -228,7 +228,17 @@ public abstract class BaseItemDetailPanel extends SmartTable
             _itemsvc.scaleAvatar(
                 _item.itemId, ((Avatar) _item).scale, new MsoyCallback.NOOP<Void>());
         }
+
+        // tell the client we're not playing music anymore
+        playbackStopped();
     }
+
+    /**
+     * When we detach, say we're not playing media.
+     */
+    protected static native void playbackStopped () /*-{
+        $wnd.gwtMediaPlayback(false);
+    }-*/;
 
     /**
      * Sends the new avatar scale to the whirled client.
@@ -244,7 +254,10 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected static native void configureCallbacks (BaseItemDetailPanel panel) /*-{
         $wnd.updateAvatarScale = function (newScale) {
             panel.@client.item.BaseItemDetailPanel::updateAvatarScale(F)(newScale);
-        }
+        };
+        $wnd.gwtMediaPlayback= function (started) {
+            $wnd.top.document.getElementById("asclient").gwtMediaPlayback(started);
+        };
     }-*/;
 
     protected Item _item;

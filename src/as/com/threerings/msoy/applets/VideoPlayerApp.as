@@ -114,7 +114,7 @@ public class VideoPlayerApp extends Sprite
 
         // inform externally that we're playing media
         try {
-            ExternalInterface.call("gwtMediaPlaybackStarted");
+            ExternalInterface.call("gwtMediaPlayback", true);
         } catch (err :Error) {
             // ignore
         }

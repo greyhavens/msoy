@@ -192,6 +192,12 @@ public class WorldController extends MsoyController
         Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, handleConfigValueSet,
             false, 0, true);
         _musicPlayer.addEventListener(MediaPlayerCodes.METADATA, handleMusicMetadata);
+
+        try {
+            ExternalInterface.addCallback("gwtMediaPlayback", externalPlayback);
+        } catch (err :Error) {
+            // oh well
+        }
     }
 
     /**
@@ -1464,6 +1470,23 @@ public class WorldController extends MsoyController
         }
     }
 
+    /**
+     * Called when we start or stop playing music in GWT.
+     */
+    protected function externalPlayback (started :Boolean) :void
+    {
+        if (started) {
+            if (_musicPlayer.getState() == MediaPlayerCodes.STATE_PLAYING) {
+                _musicPausedForGwt = true;
+                _musicPlayer.pause();
+            }
+
+        } else if (_pausedMusic) {
+            _musicPausedForGwt = false;
+            _musicPlayer.play();
+        }
+    }
+
     /** Giver of life, context. */
     protected var _wctx :WorldContext;
 
@@ -1475,6 +1498,9 @@ public class WorldController extends MsoyController
 
     /** ItemIdent of the currently playing music. */
     protected var _musicIdent :ItemIdent;
+
+    /** Have we paused the music so that we can play some media in gwt? */
+    protected var _musicPausedForGwt :Boolean;
 
     /** Tracks whether we've done our first-logon movement so that we avoid trying to redo it as we
      * subsequently move between servers (and log off and on in the process). */
