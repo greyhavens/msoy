@@ -57,4 +57,14 @@ public class TrophySource extends SubItem
     {
         return false;
     }
+
+    @Override // from Item
+    public int compareTo (Item other)
+    {
+        if (other instanceof TrophySource) {
+            return sortOrder - ((TrophySource)other).sortOrder;
+        } else {
+            return super.compareTo(other);
+        }
+    }
 }
