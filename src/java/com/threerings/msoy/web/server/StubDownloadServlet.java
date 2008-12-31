@@ -122,13 +122,13 @@ public class StubDownloadServlet extends HttpServlet
      * describing its length.
      */
     protected static byte[] makeStringBytes (String s)
-    {   
+    {
         int len = s.length();
         if (len > 127) {
             // we could probably make this work by using more than 1 byte...
             throw new RuntimeException("Can't currently replace strings that length.");
         }
-        
+
         byte[] result = new byte[len + 1];
         result[0] = (byte) len;
         System.arraycopy(s.getBytes(), 0, result, 1, len);

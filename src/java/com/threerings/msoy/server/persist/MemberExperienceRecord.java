@@ -17,9 +17,9 @@ import com.samskivert.depot.expression.ColumnExp;
 
 /**
  * An experience a member has had in Whirled.  This is used to keep track of the last actions
- * taken by a member.  Only a small number defined by MemberLogic.MAX_EXPERIENCES will be 
+ * taken by a member.  Only a small number defined by MemberLogic.MAX_EXPERIENCES will be
  * maintained for each member.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @Entity(indices={
@@ -66,21 +66,21 @@ public class MemberExperienceRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;
-    
+
     /** Unique ID of this experience. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
-    
+
     /** ID of the member who had the experience. */
     public int memberId;
-    
+
     /** Date/time the experience occurred. */
     public Timestamp dateOccurred;
-    
+
     /** Action the member had, as defined by HomePageItem. */
     public byte action;
-    
+
     /**
      * Data associated with the action, which can be one of the following:
      * <ul>
@@ -92,7 +92,7 @@ public class MemberExperienceRecord extends PersistentRecord
 
     /** For depot */
     public MemberExperienceRecord () { }
-    
+
     /**
      * Constructs a new member experience with the given data.
      */
@@ -103,7 +103,7 @@ public class MemberExperienceRecord extends PersistentRecord
         this.action = action;
         this.data = data;
     }
-    
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link MemberExperienceRecord}

@@ -61,11 +61,11 @@ public class WindowSessionFactory implements SessionFactory
             throws Exception
         {
             super.resolveClientData(clobj);
-            
+
             String bureauId = WindowCredentials.extractBureauId(_username);
             ((WindowClientObject)clobj).bureauId = bureauId;
         }
     }
-    
+
     protected SessionFactory _delegate;
 }

@@ -57,13 +57,13 @@ public class MemberAdminInfo
      * The names of members that this member invited.
      */
     public List<MemberName> invitees;
-    
+
     /** True if this member is a charity. */
     public boolean charity;
-    
+
     /** True if this member is a core charity.  Can only be true if isCharity is also true. */
     public boolean coreCharity;
-    
+
     /** Description of the charity as shown to other members. */
     public String charityDescription;
 }

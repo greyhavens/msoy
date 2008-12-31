@@ -72,7 +72,7 @@ public class WorldWatcherManager
         String host = _peerMgr.getPeerPublicHostName(node);
         int port = _peerMgr.getPeerPort(node);
         log.debug("Remote member entered scene", "loc", loc, "node", node, "watcher", watcher);
-        
+
         if (watcher != null) {
             WatcherSender.memberMoved(watcher, loc.memberId, loc.sceneId, host, port);
         }
@@ -98,7 +98,7 @@ public class WorldWatcherManager
 
         _memberWatchers.put(memberId, caller);
         _watcherMembers.put(caller.getOid(), memberId);
-        
+
         MemberLocation location = _peerMgr.getMemberLocation(memberId);
         if (location == null) {
             log.warning("Watched member has no current location", "memberId", memberId);
@@ -110,7 +110,7 @@ public class WorldWatcherManager
             log.warning("Host not found for scene", "location", location);
             return;
         }
-        
+
         memberEnteredScene(room.left, location);
     }
 
@@ -146,7 +146,7 @@ public class WorldWatcherManager
 
     /** A multimap of caller Oid to memberId that can easily tell us who's watched by whom. */
     protected Multimap<Integer, Integer> _watcherMembers = new HashMultimap<Integer, Integer>();
-    
+
     // Dependencies
     @Inject MsoyPeerManager _peerMgr;
 }

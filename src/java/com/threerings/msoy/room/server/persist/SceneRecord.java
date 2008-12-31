@@ -382,7 +382,7 @@ public class SceneRecord extends PersistentRecord
      */
     public MediaDesc getSnapshot ()
     {
-        return (canonicalImageHash == null) ? null: 
+        return (canonicalImageHash == null) ? null:
             new MediaDesc(canonicalImageHash, canonicalImageType, MediaDesc.NOT_CONSTRAINED);
     }
 
@@ -391,7 +391,7 @@ public class SceneRecord extends PersistentRecord
      */
     public MediaDesc getThumbnail ()
     {
-        return (thumbnailHash == null) ? null: 
+        return (thumbnailHash == null) ? null:
             new MediaDesc(thumbnailHash, thumbnailType, MediaDesc.NOT_CONSTRAINED);
     }
 

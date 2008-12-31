@@ -87,7 +87,7 @@ public interface MailService extends RemoteService
         throws ServiceException;
 
     /**
-     * Marks this conversation as under review and sends a support event. 
+     * Marks this conversation as under review and sends a support event.
      */
     void complainConversation (int convoId, String reason)
         throws ServiceException;

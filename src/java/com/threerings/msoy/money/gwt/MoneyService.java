@@ -32,13 +32,13 @@ public interface MoneyService extends RemoteService
     TransactionPageResult getTransactionHistory (
         int memberId, ReportType report, int from, int count)
         throws ServiceException;
-    
+
     /**
      * Exchanges some amount of bling for bars.
      */
     BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
         throws ServiceException;
-    
+
     /**
      * Request a cashout of some amount of bling.  This will verify the user's password before
      * cashing out bling.
@@ -46,7 +46,7 @@ public interface MoneyService extends RemoteService
     BlingInfo requestCashOutBling (
         int memberId, int blingAmount, String password, CashOutBillingInfo info)
         throws ServiceException;
-    
+
     /**
      * Retrieve all members who are currently waiting for a bling cashout.
      */
@@ -59,13 +59,13 @@ public interface MoneyService extends RemoteService
      */
     void cashOutBling (int memberId, int blingAmount)
         throws ServiceException;
-    
+
     /**
      * Cancels a user's requested cash out.
      */
     void cancelCashOut (int memberId, String reason)
         throws ServiceException;
-    
+
     /**
      * Used by support to deduct coins from a player as a logged transaction.
      */
@@ -77,12 +77,12 @@ public interface MoneyService extends RemoteService
      */
     ExchangeStatusData getExchangeStatus (int start, int count)
         throws ServiceException;
-    
+
     /**
      * Retrieves bling info for all the charities in the system.
      */
     List<CharityBlingInfo> getCharityBlingInfo ();
-    
+
     /**
      * Immediately cashes out the specified member (which must be a charity).  This will
      * automatically fill in blank billing information.

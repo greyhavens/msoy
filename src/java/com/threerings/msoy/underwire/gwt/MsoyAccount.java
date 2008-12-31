@@ -11,7 +11,7 @@ public class MsoyAccount extends Account
     {
         NORMAL, GREETER, TROUBLEMAKER;
     }
-    
+
     /** The social standing of this user. */
     public SocialStatus status;
 }

@@ -33,11 +33,11 @@ public class RoomPropertiesObject extends DObject
 
     /** Service for setting the properties. */
     public PropertySpaceMarshaller propertiesService;
-    
-    /** Service for sending messages to the room occupants (that are also playing the game that 
+
+    /** Service for sending messages to the room occupants (that are also playing the game that
      * these properties belong to). */
     public WhirledGameMessageMarshaller messageService;
-    
+
     // from PropertySpaceObject
     public Map<String, Object> getUserProps ()
     {

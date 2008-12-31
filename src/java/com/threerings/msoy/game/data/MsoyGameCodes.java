@@ -29,7 +29,7 @@ public interface MsoyGameCodes extends GameCodes
 
     /** An error code reported when a game is not found. */
     public static final String E_NO_SUCH_GAME = "e.no_such_game";
-    
-    /** An error code reported when a game's content could not be parsed or has internal errors. */ 
+
+    /** An error code reported when a game's content could not be parsed or has internal errors. */
     public static final String E_BAD_GAME_CONTENT = "e.bad_game_content";
 }

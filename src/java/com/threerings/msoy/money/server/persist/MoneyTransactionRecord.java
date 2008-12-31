@@ -28,7 +28,7 @@ import com.threerings.msoy.money.data.all.TransactionType;
 /**
  * Domain object representing an entry in a member's account history. The account history keeps
  * track of all changes to money in a member's account over time.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @Entity(indices = {
@@ -140,7 +140,7 @@ public class MoneyTransactionRecord extends PersistentRecord
 
     /** Value of {@link #subjectType} when the transaction was regarding a catalog item. */
     public static final int SUBJECT_CATALOG_IDENT = 1;
-    
+
     /** Value of {@link #subjectType} when the transaction was regarding an item. */
     public static final int SUBJECT_ITEM_IDENT = 2;
 
@@ -242,7 +242,7 @@ public class MoneyTransactionRecord extends PersistentRecord
 
     /** The id of the subject of this transaction. */
     public int subjectId;
-    
+
     /** For certain types of transactions, the reference transaction this was in response to. */
     public int referenceTxId;
 
@@ -280,7 +280,7 @@ public class MoneyTransactionRecord extends PersistentRecord
     public MoneyTransactionRecord ()
     {
     }
-    
+
     public MoneyTransaction toMoneyTransaction ()
     {
         return new MoneyTransaction(

@@ -36,7 +36,7 @@ public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
         if (!"false".equals(ctx.formFields.get("makeItem"))) {
             Photo image = new Photo();
             image.name = StringUtil.decode(ctx.formFields.get("name"));
-            
+
             for (int ii = 0; ii < mediaIds.size(); ii++) {
                 String mediaId = mediaIds.get(ii);
                 MediaInfo info = mediaInfos.get(ii);

@@ -204,19 +204,19 @@ public interface AdminService extends RemoteService
      */
     StatsModel getStatsModel (StatsModel.Type type)
         throws ServiceException;
-    
+
     /**
      * Sets charity info for a particular member, upgrading them to charity status if necessary.
      */
     void setCharityInfo (CharityInfo charityInfo)
         throws ServiceException;
-    
+
     /**
      * Removes charity status from the specified member.  If not currently a charity, does nothing.
      */
     void removeCharityStatus (int memberId)
         throws ServiceException;
-        
+
     /**
      * Restarts the Panopticon logging client.
      */
@@ -230,7 +230,7 @@ public interface AdminService extends RemoteService
      */
     void scheduleReboot (int minutes, String message)
         throws ServiceException;
-    
+
     Set<String> getPeerNodeNames ()
         throws ServiceException;
 }

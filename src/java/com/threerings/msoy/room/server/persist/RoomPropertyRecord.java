@@ -52,13 +52,13 @@ public class RoomPropertyRecord extends PersistentRecord
 
     /** The id of the game this property belongs to. */
     @Id public int ownerId;
-    
+
     /** The id of the scene this property applies to. */
     @Id public int sceneId;
-    
+
     /** The unique name of the property. */
     @Id public String name;
-    
+
     /** The serialized property value. */
     @Column(length=4096) public byte[] value;
 
@@ -66,7 +66,7 @@ public class RoomPropertyRecord extends PersistentRecord
     public RoomPropertyRecord ()
     {
     }
-    
+
     /** Creates a new property record with given values. */
     public RoomPropertyRecord (int ownerId, int sceneId, String name, byte[] value)
     {

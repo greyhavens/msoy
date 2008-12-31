@@ -35,7 +35,7 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
 
     /** The maximum length of the user portion of a game log entry. Space is reserved for the
      * cap message. */
-    public static int MAX_USER_LENGTH = 
+    public static int MAX_USER_LENGTH =
         GameTraceLogRecord.getMaximumLogLength() - TRACE_CAP.length();
 
     /**
@@ -59,9 +59,9 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
     {
         Preconditions.checkArgument(minInterval >= 0 && maxInterval >= minInterval,
             "Bad intervals, must have 0 <= min <= max");
-        
+
         _gameId = gameId;
-        
+
         // Convert to ms
         _minInterval = minInterval * 60 * 1000;
         _maxInterval = maxInterval * 60 * 1000;
@@ -78,7 +78,7 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
             return;
 
         }
-        
+
         // Bail if we have previously truncated
         if (!_tracing) {
             return;
@@ -86,14 +86,14 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
 
         // Check if this string will fit in the remaining space
         boolean willFit = _traceBuffer.length() + trace.length() + 1 < MAX_USER_LENGTH;
-        
+
         // If not and we are above our minimum interval, ship it off to the DB
-        if (!willFit && isPeriodic() && 
+        if (!willFit && isPeriodic() &&
             (System.currentTimeMillis() - _lastStoreTime) > _minInterval) {
             storeTrace();
             willFit = true;
         }
-        
+
         // Append the string if it will fit, otherwise append cap and start truncation
         if (willFit) {
             _traceBuffer.append(trace).append("\n");
@@ -120,7 +120,7 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
     public void didStartup (PlaceObject plobj)
     {
         super.didStartup(plobj);
-        
+
         // Setup the fancy scheduling stuff if requested
         if (isPeriodic()) {
             _storeInterval = new Interval(_omgr) {
@@ -155,13 +155,13 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
             _storeInterval.schedule(_minInterval - t);
             return;
         }
-        
+
         // Over the maximum, do the store
         if (t >= _maxInterval) {
             storeTrace();
             return;
         }
-        
+
         // Retry when max. is hit (this may be superceded if the buffer hits the limit before then)
         _storeInterval.schedule(_maxInterval - t);
     }
@@ -183,7 +183,7 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
                 }
             });
         }
-        
+
         // Prepare to receive more input
         _tracing = true;
         _traceBuffer.setLength(0);
@@ -200,13 +200,13 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
     {
         return _minInterval > 0;
     }
-    
+
     /** The id of the game for which we're logging traces. */
     protected int _gameId;
-    
+
     /** Minimum interval to allow to pass before storing a trace. */
     protected int _minInterval;
-    
+
     /** Maximum interval to allow to pass before storing a trace. */
     protected int _maxInterval;
 
@@ -215,8 +215,8 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
 
     /** Task for storing traces. */
     protected Interval _storeInterval;
-    
-    /** Accumulates up to {@link #MAX_USER_LENGTH} bytes of trace data from this game's Agent, 
+
+    /** Accumulates up to {@link #MAX_USER_LENGTH} bytes of trace data from this game's Agent,
      * if any. */
     protected StringBuilder _traceBuffer = new StringBuilder();
 

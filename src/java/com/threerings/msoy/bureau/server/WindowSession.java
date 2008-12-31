@@ -67,7 +67,7 @@ public class WindowSession extends PresentsSession
             }
         }
     }
-    
+
     protected int _activeRooms;
     protected boolean _clearing;
 }

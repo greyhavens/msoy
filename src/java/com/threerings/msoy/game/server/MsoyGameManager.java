@@ -92,7 +92,7 @@ public class MsoyGameManager extends WhirledGameManager
     public void agentReady (ClientObject caller)
     {
         super.agentReady(caller);
-        
+
         MsoyBureauClient client = (MsoyBureauClient)_bureauReg.lookupClient(getBureauId());
         if (client == null) {
             log.warning("Agent ready but no bureau client?", "gameMgr", this);
@@ -141,7 +141,7 @@ public class MsoyGameManager extends WhirledGameManager
 
     /** A delegate that handles agent traces.. */
     protected AgentTraceDelegate _traceDelegate;
-    
+
     /** Tracks whether we added an agent to our parent session. */
     protected boolean _agentAdded;
 }

@@ -12,14 +12,14 @@ public class VizMemberName_CustomFieldSerializer
         MemberName_CustomFieldSerializer.serialize(streamWriter, name);
         streamWriter.writeObject(name.getPhoto());
     }
-    
+
     public static VizMemberName instantiate (SerializationStreamReader streamReader)
         throws SerializationException
     {
         return new VizMemberName(streamReader.readString(), streamReader.readInt(),
             (MediaDesc)streamReader.readObject());
     }
-    
+
     public static void deserialize (SerializationStreamReader streamReader, VizMemberName instance)
     {
     }

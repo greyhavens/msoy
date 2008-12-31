@@ -23,7 +23,7 @@ public class RoomPropertiesEntry
      * the properties.
      */
     public int propsOid;
-    
+
     // from DSet.Entry
     public Comparable<?> getKey ()
     {

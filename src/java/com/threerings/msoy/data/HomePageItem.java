@@ -77,7 +77,7 @@ public class HomePageItem extends SimpleStreamableObject
     {
         return _action;
     }
-    
+
     /**
      * Gets the item data associated with this home page item.
      */
@@ -93,8 +93,8 @@ public class HomePageItem extends SimpleStreamableObject
     {
         return _image;
     }
-    
+
     protected /* final */ byte _action;
     protected /* final */ NavItemData _navItemData;
-    protected /* final */ MediaDesc _image;    
+    protected /* final */ MediaDesc _image;
 }

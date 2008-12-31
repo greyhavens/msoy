@@ -10,7 +10,7 @@ import com.threerings.msoy.money.gwt.InsufficientFundsException;
 
 /**
  * Occurs when a member attempts to use some amount of money they do not have.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class NotEnoughMoneyException extends MoneyException

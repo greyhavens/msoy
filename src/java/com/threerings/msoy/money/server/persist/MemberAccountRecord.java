@@ -17,7 +17,7 @@ import com.threerings.msoy.money.data.all.Currency;
 /**
  * Domain model for the current status of a member's account, including the amount of each money
  * type currently in their account.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @Entity
@@ -117,10 +117,10 @@ public class MemberAccountRecord extends PersistentRecord
 
     /** The amount of bling the user has requested to cash out, or 0 if no cash out. */
     public int cashOutBling;
-    
+
     /** The worth of each bling when the user requested a cash out. */
     public float cashOutBlingWorth;
-    
+
     /**
      * Return the column name for the specified currency.
      */
@@ -149,7 +149,7 @@ public class MemberAccountRecord extends PersistentRecord
 
     /**
      * Creates a new blank record for the given member. All account balances are set to 0.
-     * 
+     *
      * @param memberId ID of the member to create the record for.
      */
     public MemberAccountRecord (int memberId)

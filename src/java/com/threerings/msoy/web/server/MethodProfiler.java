@@ -32,10 +32,10 @@ public class MethodProfiler
             this.averageTime = average;
             this.standardDeviation = stdDev;
         }
-        
+
         /** Number of method calls sampled. */
         public int numSamples;
-        
+
         /** Average time spent in the method. */
         public double averageTime;
 
@@ -233,7 +233,7 @@ public class MethodProfiler
             } catch (InterruptedException ie) {
             }
         }
-        
+
         protected int _methodCount;
         protected String _method;
         protected long _sleep;
@@ -255,7 +255,7 @@ public class MethodProfiler
 
         /**
          * Gets this method's name, prefixed with all parent method names separated by dots.
-         */ 
+         */
         public String fullName ()
         {
             if (caller != null) {
@@ -296,7 +296,7 @@ public class MethodProfiler
         {
             return _size;
         }
-        
+
         protected int _size;
         protected Method[] _methods = {new Method()};
     }

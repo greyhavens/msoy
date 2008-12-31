@@ -151,7 +151,7 @@ public interface MemberService extends InvocationService
      * Requests that any notifications that were deferred on the MemberObject be dispatched now
      */
     void trackVectorAssociation (Client client, String vector);
-    
+
     /**
      * Requests the items to populate the home page grid. The expected response is an arry of
      * {@link HomePageItem}. This should eventually take a parameter so that the top 3 "whirled"

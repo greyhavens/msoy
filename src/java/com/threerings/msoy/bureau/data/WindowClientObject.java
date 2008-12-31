@@ -48,7 +48,7 @@ public class WindowClientObject extends ClientObject
         }
         return ((WindowClientObject)caller).isForGame(gameId);
     }
-    
+
     /**
      * Checks if this window client was established by the bureau for the given game id.
      */
@@ -62,7 +62,7 @@ public class WindowClientObject extends ClientObject
 
         int thisGameId = Integer.parseInt(bureauId.substring(
             BureauTypes.GAME_BUREAU_ID_PREFIX.length()));
-        
+
         return thisGameId == gameId;
     }
 }

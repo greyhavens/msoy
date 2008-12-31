@@ -195,7 +195,7 @@ public class MsoyServer extends MsoyBaseServer
         _partyReg.init();
         _moneyLogic.init(_cacheMgr);
         _tourMan.init();
-        
+
         // Let the bureaus connect to our game server(s)
         _bureauMgr.setGameServerRegistryOid(_gameReg.getServerRegistryObject().getOid());
 

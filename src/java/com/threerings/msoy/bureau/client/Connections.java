@@ -70,7 +70,7 @@ class Connections
         if (_shutdown) {
             return;
         }
-        
+
         _shutdown = true;
         _purge.cancel();
         java.util.List<Entry> entries = new java.util.ArrayList<Entry>();

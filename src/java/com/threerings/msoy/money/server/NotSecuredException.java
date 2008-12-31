@@ -8,7 +8,7 @@ import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
  * Occurs when a member attempts to purchase an item for which they have not secured a price.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class NotSecuredException extends MoneyException

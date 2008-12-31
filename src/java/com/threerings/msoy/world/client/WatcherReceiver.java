@@ -19,7 +19,7 @@ public interface WatcherReceiver extends InvocationReceiver
      * @param port the port number the world server is running on
      */
     void memberMoved (int memberId, int sceneId, String hostname, int port);
-    
+
     /**
      * Notifies the receiver that a member's session with a world server has ended. This may mean
      * the member is in transit to a room on another server or has logged off permanently. There

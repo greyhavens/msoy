@@ -21,22 +21,22 @@ public class BureauLauncherInfo
     {
         /** The id of the bureau. */
         public String bureauId;
-        
+
         /** The time the bureau last launched, 0 if never. */
         public long launchTime;
-        
+
         /** The time the bureau last exited, 0 if never. */
         public long shutdownTime;
-        
+
         /** NUmber of bytes used in log. */
         public int logSpaceUsed;
-    
+
         /** NUmber of bytes left in log allowance. */
         public int logSpaceRemaining;
-        
+
         /** Generic message. */
         public String message;
-        
+
         public String toString ()
         {
             return "BureauInfo(bureauId=" + bureauId + ", launchTime=" + launchTime +
@@ -47,16 +47,16 @@ public class BureauLauncherInfo
 
     /** Name of the machine running the launcher. */
     public String hostname;
-    
+
     /** The past and present bureaus. */
     public BureauInfo[] bureaus;
-    
+
     /** The servers the launcher is connected to. */
     public String[] connections;
-    
+
     /** Changes each time this data is updated. */
     public int version;
-    
+
     public String toString ()
     {
         StringBuffer buff = new StringBuffer();

@@ -22,7 +22,7 @@ public class AVRGameNavItemData extends BasicNavItemData
 
     public int getGroupId ()
     {
-        return _groupId; 
+        return _groupId;
     }
 
     protected int _groupId;

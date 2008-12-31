@@ -58,7 +58,7 @@ public class BureauLauncherDecoder extends InvocationDecoder
 
         case SHUTDOWN_LAUNCHER:
             ((BureauLauncherReceiver)receiver).shutdownLauncher(
-                
+
             );
             return;
 

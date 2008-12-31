@@ -8,7 +8,7 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 /**
  * The result of a purchase, this returns the member, creator, and affiliate transactions.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */
@@ -42,7 +42,7 @@ public class BuyResult
     {
         return _memberTransaction;
     }
-    
+
     /**
      * The transaction for the change in coins when purchasing an item listed in coins with bars.
      * Null if there was no change.
@@ -51,27 +51,27 @@ public class BuyResult
     {
         return _changeTransaction;
     }
-    
+
     /**
      * The transaction that was performed on the creator's account.  Null if the creator was
      * not modified.  Note that the creator account will still be modified if an operation involving
-     * 0 coins was performed. 
+     * 0 coins was performed.
      */
     public MoneyTransaction getCreatorTransaction ()
     {
         return _creatorTransaction;
     }
-    
+
     /**
      * The transaction that was performed on the affiliate's account.  Null if the affiliate
-     * was not modified.  Note that the affiliate account will still be modified if an operation 
+     * was not modified.  Note that the affiliate account will still be modified if an operation
      * involving 0 coins was performed.
      */
     public MoneyTransaction getAffiliateTransaction ()
     {
         return _affiliateTransaction;
     }
-    
+
     /**
      * The transaction that was performed on the charity's account.  Null if no charity was
      * involved.
@@ -114,7 +114,7 @@ public class BuyResult
             break;
         }
     }
-    
+
     protected boolean _magicFree;
     protected MoneyTransaction _memberTransaction;
     protected MoneyTransaction _changeTransaction;

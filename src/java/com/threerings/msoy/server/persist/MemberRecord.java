@@ -308,7 +308,7 @@ public class MemberRecord extends PersistentRecord
     /** The ID of the charity member that this member has selected to receive donations. */
     @Column(defaultValue="0")
     public int charityMemberId = 0;
-    
+
     /** A blank constructor used when loading records from the database. */
     public MemberRecord ()
     {
@@ -391,7 +391,7 @@ public class MemberRecord extends PersistentRecord
     {
         return isSet(Flag.GREETER);
     }
-    
+
     /**
      * Returns true if this member is known to make trouble.
      */
@@ -399,7 +399,7 @@ public class MemberRecord extends PersistentRecord
     {
         return isSet(Flag.TROUBLEMAKER);
     }
-    
+
     /**
      * Returns true if this member has "root" privileges. The first member in the database has
      * these privileges and this status is used to allow all other privileges to be assigned

@@ -97,7 +97,7 @@ public class MoneyRepository extends DepotRepository
     {
         return load(MemberAccountRecord.class, memberId);
     }
-    
+
     /**
      * Retries all member accounts from the given list of member IDs.
      */
@@ -230,7 +230,7 @@ public class MoneyRepository extends DepotRepository
         int memberId, EnumSet<TransactionType> transactionTypes, Currency currency,
         int start, int count, boolean descending)
     {
-        // select * from MemberAccountRecord where type = ? and transactionType in (?) 
+        // select * from MemberAccountRecord where type = ? and transactionType in (?)
         // and memberId=? order by timestamp
         List<QueryClause> clauses = Lists.newArrayList();
         populateSearch(clauses, memberId, transactionTypes, currency);
@@ -343,7 +343,7 @@ public class MoneyRepository extends DepotRepository
             .build();
         updateLiteral(BarPoolRecord.class, BarPoolRecord.KEY, BarPoolRecord.KEY, fieldValues);
     }
-    
+
     public int getExchangeDataCount ()
     {
         return load(CountRecord.class, new FromOverride(ExchangeRecord.class)).count;
@@ -358,7 +358,7 @@ public class MoneyRepository extends DepotRepository
 
     /**
      * Loads the current money configuration record, optionally locking on the record.
-     * 
+     *
      * @param lock If true, the record will be selected using SELECT ... FOR UPDATE to grab
      * a lock on the record.  If another process has already locked this record, this will return
      * null.
@@ -369,7 +369,7 @@ public class MoneyRepository extends DepotRepository
     {
         if (lock) {
             // Update the record, setting locked = true, but only if locked = false currently.
-            int count = updatePartial(MoneyConfigRecord.class, 
+            int count = updatePartial(MoneyConfigRecord.class,
                 new Where(MoneyConfigRecord.LOCKED_C, false),
                 MoneyConfigRecord.getKey(MoneyConfigRecord.RECORD_ID),
                 MoneyConfigRecord.LOCKED, true);
@@ -378,7 +378,7 @@ public class MoneyRepository extends DepotRepository
                 return null;
             }
         }
-        
+
         MoneyConfigRecord confRecord = load(MoneyConfigRecord.class);
         if (confRecord == null) {
             // Create a new money config record with the current date for the last time bling
@@ -393,24 +393,24 @@ public class MoneyRepository extends DepotRepository
         }
         return confRecord;
     }
-    
+
     /**
      * Sets the last time bling was distributed to the given date.  This will also unlock the
      * record; this should only be called if we have the lock on the record and wish to release it.
-     * 
+     *
      * @param lastDistributedBling Date the bling was last distributed.
      */
     public void completeBlingDistribution (Date lastDistributedBling)
     {
-        updatePartial(MoneyConfigRecord.getKey(MoneyConfigRecord.RECORD_ID), 
+        updatePartial(MoneyConfigRecord.getKey(MoneyConfigRecord.RECORD_ID),
             MoneyConfigRecord.LOCKED, false,
             MoneyConfigRecord.LAST_DISTRIBUTED_BLING, lastDistributedBling);
     }
-    
+
     /**
      * Commits a bling cash out request.  This will only update the CashOutRecord -- bling deduction
      * must be handled separately.
-     * 
+     *
      * @param memberId ID of the member to commit.
      * @param actualAmount Actual amount of centibling that was cashed out.
      * @return Number of records updated, either 0 or 1.  Can be zero if the member is not currently
@@ -427,10 +427,10 @@ public class MoneyRepository extends DepotRepository
             BlingCashOutRecord.ACTUAL_CASHED_OUT, actualAmount,
             BlingCashOutRecord.SUCCESSFUL, false);
     }
-        
+
     /**
      * Cancels a request to cash out bling.
-     * 
+     *
      * @param memberId ID of the member whose bling has been cashed out.
      * @param reason The reason the cash out failed.
      * @return The number of records, either 0 or 1.  If 0, there are no active cash outs for the
@@ -450,7 +450,7 @@ public class MoneyRepository extends DepotRepository
 
     /**
      * Creates a new CashOutRecord that indicates the specified member requested a cash out.
-     * 
+     *
      * @param memberId id of the member cashing out.
      * @param blingAmount amount of centibling, to cash out.
      * @param blingWorth worth of each bling at the time the request was made.
@@ -465,10 +465,10 @@ public class MoneyRepository extends DepotRepository
         insert(cashOut);
         return cashOut;
     }
-    
+
     /**
      * Retrieves the current cash out request for the specified user.
-     * 
+     *
      * @param memberId ID of the member to retrieve a cash out record for.
      * @return The current cash out record, or null if the user is not currently cashing out.
      */
@@ -478,7 +478,7 @@ public class MoneyRepository extends DepotRepository
             new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED_C),
             new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID_C, memberId))));
     }
-    
+
     /**
      * Retrieves all cash out records for members that are currently cashing out some amount
      * of their bling.
@@ -511,7 +511,7 @@ public class MoneyRepository extends DepotRepository
         }
         return bpRec;
     }
-    
+
     /** Helper method to setup a query for a transaction history search. */
     protected void populateSearch (
         List<QueryClause> clauses, int memberId,
@@ -556,7 +556,7 @@ public class MoneyRepository extends DepotRepository
      * Accumulate money, return a partially-populated MoneyTransactionRecord for
      * storing.
      */
-    protected MoneyTransactionRecord accumulate (int memberId, Currency currency, int amount, 
+    protected MoneyTransactionRecord accumulate (int memberId, Currency currency, int amount,
         boolean updateAcc)
     {
         Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
@@ -591,12 +591,12 @@ public class MoneyRepository extends DepotRepository
             super(BlingCashOutRecord.class);
             _memberId = memberId;
         }
-        
-        protected boolean testForEviction (Serializable key, BlingCashOutRecord record) 
+
+        protected boolean testForEviction (Serializable key, BlingCashOutRecord record)
         {
             return record.memberId == _memberId && record.timeFinished == null;
         }
-        
+
         protected final int _memberId;
     }
 }

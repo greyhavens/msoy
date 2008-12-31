@@ -79,12 +79,12 @@ public abstract class AbstractUploadServlet extends HttpServlet
             log.warning("File upload choked during file i/o [error=" + ioe + "].");
             internalError(rsp);
             return;
-        
+
         } catch (RuntimeException e) {
             log.warning("File upload choked during persistence [error=" + e + "].");
             internalError(rsp);
             return;
-            
+
         } finally {
             // delete the temporary upload file data.
             // items may be null if extractFileItem throws an exception

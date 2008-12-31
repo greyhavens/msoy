@@ -30,7 +30,7 @@ public class MoneyTransaction
     public MoneyTransaction () { }
 
     public MoneyTransaction (
-        int memberId, Date timestamp, TransactionType transactionType, 
+        int memberId, Date timestamp, TransactionType transactionType,
         Currency currency, int amount, int balance,
         String description) //, Object subject)
     {

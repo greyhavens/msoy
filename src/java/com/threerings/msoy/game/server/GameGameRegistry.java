@@ -541,7 +541,7 @@ public class GameGameRegistry
                     reportFailure(MsoyGameCodes.E_BAD_GAME_CONTENT);
                     return;
                 }
-                
+
                 log.info("Setting up AVRG manager", "game", _content.game);
 
                 List<PlaceManagerDelegate> delegates = Lists.newArrayList();
@@ -957,7 +957,7 @@ public class GameGameRegistry
             log.warning(
                 "No listeners when AVRGame agent failed", "gameId", gameId);
         }
-        
+
         mgr.shutdown();
     }
 

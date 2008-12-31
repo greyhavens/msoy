@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Contains all of the information necessary to display an entry in the bling cash out list.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class CashOutEntry
@@ -18,7 +18,7 @@ public class CashOutEntry
     public /* final */ boolean charity;
     public /* final */ CashOutInfo cashOutInfo;
     public /* final */ String emailAddress;
-    
+
     public CashOutEntry (int memberId, String displayName, CashOutInfo info, String emailAddress,
         boolean charity)
     {
@@ -28,7 +28,7 @@ public class CashOutEntry
         this.emailAddress = emailAddress;
         this.charity = charity;
     }
-    
+
     /** For serialization purposes. */
     public CashOutEntry () { }
 }

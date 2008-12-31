@@ -35,7 +35,7 @@ public class Pet extends Item
     {
         return new DefaultItemMediaDesc(MediaDesc.IMAGE_PNG, PET, "static");
     }
-    
+
     @Override // from Item
     public byte getType ()
     {

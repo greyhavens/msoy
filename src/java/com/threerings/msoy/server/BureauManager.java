@@ -69,7 +69,7 @@ public class BureauManager
     public void init (int listenPort)
     {
         _listenPort = listenPort;
-        
+
         // initialize the bureau registry
         _bureauReg.init();
 
@@ -137,7 +137,7 @@ public class BureauManager
     {
         _gameServerRegistryOid = oid;
     }
-    
+
     /**
      * Sends out a request to all bureau launchers to resend their information.
      */
@@ -160,7 +160,7 @@ public class BureauManager
         }
         return infos;
     }
-    
+
     protected void launcherInitialized (final ClientObject launcher)
     {
         // this launcher is now available to take sender requests
@@ -235,7 +235,7 @@ public class BureauManager
     protected class RemoteBureauLauncher
         implements BureauRegistry.Launcher
     {
-        public void launchBureau (final String bureauId, final String token) 
+        public void launchBureau (final String bureauId, final String token)
             throws LauncherNotConnected {
             final BureauLauncherClientObject launcher = selectLauncher();
             log.info("Launching bureau", "bureauId", bureauId, "who", launcher.who(),
@@ -243,20 +243,20 @@ public class BureauManager
             BureauLauncherSender.launchThane(launcher, bureauId, token);
         }
     }
-    
+
     /** The port that bureaus will connect back to. */
     protected int _listenPort;
 
     /** Currently logged in bureau launchers. */
     protected HashIntMap<BureauLauncherClientObject> _launcherClients =
         new HashIntMap<BureauLauncherClientObject>();
-    
+
     /** Summary information about each bureau launcher. */
     protected HashIntMap<BureauLauncherInfo> _launcherInfo =
         new HashIntMap<BureauLauncherInfo>();
-    
+
     protected int _gameServerRegistryOid;
-    
+
     /** The container for our bureaus (server-side processes for user code). */
     @Inject protected BureauRegistry _bureauReg;
 
@@ -271,7 +271,7 @@ public class BureauManager
 
     /** Handles orderly shutdown of our managers, etc. */
     @Inject protected ShutdownManager _shutmgr;
-    
+
     /** Time to wait for bureaus to connect back. */
     protected static final int BUREAU_TIMEOUT = 30 * 1000;
 }

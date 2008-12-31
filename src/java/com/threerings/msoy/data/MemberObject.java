@@ -219,7 +219,7 @@ public class MemberObject extends MsoyBodyObject
 
     /** The player's current partyId, or 0 if they're not in a party. */
     public int partyId;
-    
+
     /** List of experiences this member has had recently. */
     public DSet<MemberExperience> experiences = new DSet<MemberExperience>();
 

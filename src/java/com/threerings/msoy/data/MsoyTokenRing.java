@@ -55,7 +55,7 @@ public class MsoyTokenRing extends TokenRing
     {
         return holdsAnyToken(ADMIN | MAINTAINER);
     }
-    
+
     /**
      * Convenience function for checking whether this ring confers greeter privileges.
      */

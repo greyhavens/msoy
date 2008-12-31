@@ -56,25 +56,25 @@ import com.threerings.msoy.server.persist.MemberRepository;
  * run-time configuration.  This is scheduled to run at 3:00a every day.  The amount of bling
  * each game creator receives is based on the amount of time players played their game, compared
  * to the total amount of time that players played games that day.
- * 
+ *
  * This class will guarantee that no other thread or process is running the distributor at the
  * same time, though all world servers will attempt to execute this at the same time.  This allows
  * for redundancy in case any one server is down.
- *  
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class BlingPoolDistributor
     implements ShutdownManager.Shutdowner
 {
     @Inject
-    public BlingPoolDistributor (RuntimeConfig runtime, MoneyRepository repo, 
+    public BlingPoolDistributor (RuntimeConfig runtime, MoneyRepository repo,
         MsoyGameRepository mgameRepo, ShutdownManager sm, MemberRepository memberRepo)
     {
         _runtime = runtime;
         _repo = repo;
         _mgameRepo = mgameRepo;
         _memberRepo = memberRepo;
-        
+
         sm.registerShutdowner(this);
 
         try {
@@ -202,24 +202,24 @@ public class BlingPoolDistributor
         for (CharityRecord charity : _memberRepo.getCharities()) {
             charityIds.add(charity.memberId);
         }
-        
+
         // Calculate a total and a map of game ID to the total minutes spent in the game.
         long totalMinutes = 0;
         Map<Integer, Long> minutesPerGame = new HashMap<Integer, Long>();
         for (GamePlayRecord gamePlay : gamePlays) {
             // Ignore if creator is a charity
-            if (gameMap.get(gamePlay.gameId) == null || 
+            if (gameMap.get(gamePlay.gameId) == null ||
                     !charityIds.contains(gameMap.get(gamePlay.gameId).creatorId)) {
                 totalMinutes += gamePlay.playerMins;
                 if (minutesPerGame.get(gamePlay.gameId) == null) {
                     minutesPerGame.put(gamePlay.gameId, (long)gamePlay.playerMins);
                 } else {
-                    minutesPerGame.put(gamePlay.gameId, 
+                    minutesPerGame.put(gamePlay.gameId,
                         minutesPerGame.get(gamePlay.gameId) + gamePlay.playerMins);
                 }
             }
         }
-        
+
         // Assuming we have a non-zero number of minutes games were played this day, grant a
         // portion of the bling pool to each game's creator.
         if (totalMinutes > 0) {
@@ -232,7 +232,7 @@ public class BlingPoolDistributor
 
     /**
      * Awards some amount of bling to the creator of the given game.
-     * 
+     *
      * @param game The game that bling will be awarded for.
      * @param amount The amount of centibling to award.
      */
@@ -289,7 +289,7 @@ public class BlingPoolDistributor
     protected static final String EXECUTE_SCHEDULE = "0 0 3 * * ?";
 
     /** Default group for scheduled jobs and triggers. */
-    protected static final String GROUP = "group1"; 
+    protected static final String GROUP = "group1";
 
     protected static final Logger log = Logger.getLogger(BlingPoolDistributor.class);
 

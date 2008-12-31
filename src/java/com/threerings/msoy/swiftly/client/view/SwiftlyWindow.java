@@ -27,7 +27,7 @@ public interface SwiftlyWindow
     String showSelectPathElementNameDialog (PathElement.Type pathElementType);
 
     /**
-     * Shows a modal, external frame dialog prompting the user to name a 
+     * Shows a modal, external frame dialog prompting the user to name a
      * {@link PathElement.Type#FILE} and select the mime type for this file.
      * @param parentElement the PathElement that will be the parent of the returned PathElement
      * @return the new path element. null if the user clicked cancel

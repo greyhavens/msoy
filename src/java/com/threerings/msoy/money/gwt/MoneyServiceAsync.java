@@ -28,7 +28,7 @@ public interface MoneyServiceAsync
     void getTransactionHistory (
         int memberId, ReportType report, int from, int count,
         AsyncCallback<TransactionPageResult> callback);
-    
+
     /**
      * The asynchronous version of {@link MoneyService#exchangeBlingForBars}.
      */
@@ -41,7 +41,7 @@ public interface MoneyServiceAsync
     void requestCashOutBling (
         int memberId, int blingAmount, String password, CashOutBillingInfo info,
         AsyncCallback<BlingInfo> callback);
-    
+
     /**
      * The asynchronous version of {@link MoneyService#getBlingCashOutRequests}.
      */
@@ -51,12 +51,12 @@ public interface MoneyServiceAsync
      * The asynchronous version of {@link MoneyService#supportAdjust}.
      */
     void supportAdjust (int memberId, Currency currency, int delta, AsyncCallback<Void> callback);
-    
+
     /**
      * The asynchronous version of {@link MoneyService#cashOutBling}.
      */
     void cashOutBling (int memberId, int blingAmount, AsyncCallback<Void> callback);
-    
+
     /**
      * The asynchronous version of {@link MoneyService#cancelCashOut}.
      */
@@ -66,12 +66,12 @@ public interface MoneyServiceAsync
      * The asynchronous version of {@link MoneyService#getExchangeStatus}.
      */
     void getExchangeStatus (int start, int count, AsyncCallback<ExchangeStatusData> callback);
-    
+
     /**
      * The asynchronous version of {@link MoneyService#getCharityBlingInfo()}.
      */
     void getCharityBlingInfo (AsyncCallback<List<CharityBlingInfo>> callback);
-    
+
     /**
      * The asynchronous version of {@link MoneyService#charityCashOutBling(int, int)}.
      */

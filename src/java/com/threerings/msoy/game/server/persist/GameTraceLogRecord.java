@@ -74,7 +74,7 @@ public class GameTraceLogRecord
         }
         return _logLength;
     }
-    
+
     /** The primary key of this log record. */
     @Id
     @GeneratedValue
@@ -114,6 +114,6 @@ public class GameTraceLogRecord
                 new Comparable[] { logId });
     }
     // AUTO-GENERATED: METHODS END
-    
+
     protected static Integer _logLength;
 }

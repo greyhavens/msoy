@@ -9,7 +9,7 @@ public class PartyInviteNotification extends Notification
 {
     /** Suitable for unserialization. */
     public PartyInviteNotification () {}
-    
+
     /** Normal constructor. */
     public PartyInviteNotification (MemberName inviter, int partyId, String partyName)
     {

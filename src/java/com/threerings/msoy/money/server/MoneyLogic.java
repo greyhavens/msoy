@@ -142,10 +142,10 @@ public class MoneyLogic
 
         return _repo.load(memberId).getMemberMoney();
     }
-    
+
     /**
      * Returns the current account balances (coins, bars, and bling) for the given members.
-     * 
+     *
      * @param memberIds IDs of the members to retrieve money for.
      * @return Map of the member ID to the money in their account.
      */
@@ -328,10 +328,10 @@ public class MoneyLogic
             if (quote.getCoinChange() > 0 && buyCurrency == Currency.BARS && !magicFree) {
                 try {
                     // Don't update accumulated coins column with this.
-                    changeTx = _repo.accumulateAndStoreTransaction(buyerId, Currency.COINS, 
-                        quote.getCoinChange(), TransactionType.CHANGE_IN_COINS, 
+                    changeTx = _repo.accumulateAndStoreTransaction(buyerId, Currency.COINS,
+                        quote.getCoinChange(), TransactionType.CHANGE_IN_COINS,
                         MessageBundle.tcompose("m.change_received",
-                            itemName, item.type, item.catalogId), iident, 
+                            itemName, item.type, item.catalogId), iident,
                         buyerTx.id, buyerId, false);
                 } catch (MoneyRepository.NoSuchMemberException nsme) {
                     // Likely a programming error in this case.
@@ -341,12 +341,12 @@ public class MoneyLogic
                     // but, we continue, just having no changeTx
                 }
             }
-            
+
             // see what kind of payouts we're going pay- null means don't load, don't care
             CurrencyAmount creatorPayout = magicFree ? null : computeCreatorPayout(quote);
             CurrencyAmount affiliatePayout = magicFree ? null : computeAffiliatePayout(quote);
             CurrencyAmount charityPayout = magicFree ? null : computeCharityPayout(quote);
-            
+
             MoneyTransactionRecord creatorTx = null;
             if (creatorPayout != null) {
                 try {
@@ -384,7 +384,7 @@ public class MoneyLogic
                     // but, we continue, just having no affiliateTx
                 }
             }
-            
+
             // Determine the ID of the charity that will receive a payout.
             int charityId = getChosenCharity(buyerRec);
             MoneyTransactionRecord charityTx = null;
@@ -474,20 +474,20 @@ public class MoneyLogic
      * Attempts to reverse all the transactions for an item by deducting bling, bars and coins
      * earned by the creator, affiliates and charities, converting the garnished money down to
      * coins and returning them to the purchasers. The primary objective is to not generate money.
-     * 
+     *
      * <p>When deducting, if the deductee is out of money in one currency, then another currency is
      * attempted.</p>
-     * 
+     *
      * <p>The current exchange rate is used throughout. Failure occurs if the exchange rate is
      * degenerate</p>
-     * 
+     *
      * <p>Money absorbed by the system is magically restored, including that which would have gone
      * to an affiliate for a user with no affiliate.</p>
      *
      * @param item the subject to use for the refund transactions
      * @param itemName name to use in refund transaction description
      * @return the number of new transactions introduced
-     * 
+     *
      * TODO: return more information about what happened, e.g. how much money was taken from each
      * payout type and whether the account was depleted
      */
@@ -966,23 +966,23 @@ public class MoneyLogic
     protected CurrencyAmount computeAffiliatePayout (PriceQuote quote)
     {
         CurrencyAmount ca = computePayout(quote, _runtime.money.affiliatePercentage);
-        
+
         // for creators, we pay out "0" so that they get a sales report,
         // but we never do that for affiliates
         return (ca.amount == 0 ? null : ca);
     }
-    
+
     /**
      * Compute the payout that the charity should receive for the given price quote.
      */
     protected CurrencyAmount computeCharityPayout (PriceQuote quote)
     {
         CurrencyAmount ca = computePayout(quote, _runtime.money.charityPercentage);
-        
+
         // Like affiliates, if the payout amount is 0, return null to avoid creating a tx.
         return (ca.amount == 0 ? null : ca);
     }
-    
+
     /**
      * Compute a payout with the given percentage.
      */
@@ -1018,7 +1018,7 @@ public class MoneyLogic
         // record this to panopticon for the greater glory of our future AI overlords
         _eventLog.moneyTransaction(action, tx.currency, tx.amount);
     }
-    
+
     /**
      * Selects the charity that will be used for this purchase.  If the member has chosen a
      * specific charity, it will be used.  Otherwise, a random core charity will be selected.
@@ -1030,7 +1030,7 @@ public class MoneyLogic
         if (member.charityMemberId != 0) {
             return member.charityMemberId;
         }
-        
+
         // Otherwise, we must select a random core charity.  This is a fast query, but it is a DB
         // trip, so perhaps some optimization could be used here.  However, compared to the writes
         // that have to be done at the same time, this is somewhat trivial.
@@ -1102,7 +1102,7 @@ public class MoneyLogic
         }
         return value;
     }
-    
+
     /** A Function that transforms a MemberArroundRecord and CashOutRecord to BlingInfo. */
     protected final Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>
         TO_BLING_INFO =

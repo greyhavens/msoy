@@ -65,7 +65,7 @@ public class MoneyServlet extends MsoyServiceServlet
             report.transactions, report.currency);
         return new TransactionPageResult(total, page, getBlingInfo(memberId));
     }
-    
+
     public BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
         throws ServiceException
     {
@@ -81,8 +81,8 @@ public class MoneyServlet extends MsoyServiceServlet
             throw neme.toServiceException();
         }
     }
-    
-    public BlingInfo requestCashOutBling (int memberId, int blingAmount, String password, 
+
+    public BlingInfo requestCashOutBling (int memberId, int blingAmount, String password,
         CashOutBillingInfo info) throws ServiceException
     {
         // Re-auth the user before allowing them to continue.
@@ -91,7 +91,7 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
         _authenticator.authenticateSession(mrec.accountName, password);
-        
+
         BlingInfo result;
         try {
             result = _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
@@ -115,7 +115,7 @@ public class MoneyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         Map<Integer, CashOutInfo> blingMap = _moneyLogic.getBlingCashOutRequests();
-        
+
         // Get all member names for the members in the map.
         final Map<Integer, MemberRecord> names = Maps.uniqueIndex(
             _memberRepo.loadMembers(blingMap.keySet()), new Function<MemberRecord, Integer>() {
@@ -123,21 +123,21 @@ public class MoneyServlet extends MsoyServiceServlet
                     return record.memberId;
                 }
             });
-        
+
         // Get list of charities
         final List<CharityRecord> charities = _memberRepo.getCharities();
-        
+
         // Transform the list into cash out entries.
-        return Lists.newArrayList(Iterables.transform(blingMap.entrySet(), 
+        return Lists.newArrayList(Iterables.transform(blingMap.entrySet(),
             new Function<Map.Entry<Integer, CashOutInfo>, CashOutEntry>() {
                 public CashOutEntry apply (Entry<Integer, CashOutInfo> entry) {
                     MemberRecord member = names.get(entry.getKey());
-                    return new CashOutEntry(entry.getKey(), member.getName().getNormal(), 
+                    return new CashOutEntry(entry.getKey(), member.getName().getNormal(),
                         entry.getValue(), member.accountName, isCharity(member.memberId, charities));
                 }
         }));
     }
-    
+
     public List<CharityBlingInfo> getCharityBlingInfo ()
     {
         // Get all charity members.
@@ -150,17 +150,17 @@ public class MoneyServlet extends MsoyServiceServlet
         for (MemberRecord member : _memberRepo.loadMembers(memberIds)) {
             memberMap.put(member.memberId, member);
         }
-        
+
         // Get money info for all the members.
         Map<Integer, MemberMoney> monies = _moneyLogic.getMoneyFor(memberIds);
-        
+
         // Create CharityBlingInfo objects from this information.
         List<CharityBlingInfo> charityBlingInfos = new ArrayList<CharityBlingInfo>(charities.size());
         for (CharityRecord charity : charities) {
             MemberRecord member = memberMap.get(charity.memberId);
             MemberMoney money = monies.get(charity.memberId);
-            charityBlingInfos.add(new CharityBlingInfo(charity.memberId, 
-                member.getName().getNormal(), member.accountName, money.bling, 
+            charityBlingInfos.add(new CharityBlingInfo(charity.memberId,
+                member.getName().getNormal(), member.accountName, money.bling,
                 _runtime.money.blingWorth * money.bling / 100, charity.core));
         }
         return charityBlingInfos;
@@ -180,12 +180,12 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
         }
     }
-    
+
     public void cashOutBling (int memberId, int blingAmount)
         throws ServiceException
     {
         requireSupportUser();
-        
+
         try {
             _moneyLogic.cashOutBling(memberId, blingAmount);
         } catch (NotEnoughMoneyException e) {
@@ -193,12 +193,12 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
         }
     }
-    
+
     public void charityCashOutBling (int memberId, int blingAmount)
         throws ServiceException
     {
         requireSupportUser();
-        
+
         // Need to create a cash out request and fulfill it immediately.  Most of the billing
         // info will be blank, since we will have it on file.  This may change in the future.
         CashOutBillingInfo cashOutInfo = new CashOutBillingInfo("", "", "", "", "", "", "", "", "");
@@ -215,7 +215,7 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
         }
     }
-    
+
     public void cancelCashOut (int memberId, String reason)
         throws ServiceException
     {
@@ -224,7 +224,7 @@ public class MoneyServlet extends MsoyServiceServlet
         if (memberId != authedUser.memberId) {
             requireSupportUser();
         }
-        
+
         _moneyLogic.cancelCashOutBling(memberId, reason);
     }
 
@@ -244,7 +244,7 @@ public class MoneyServlet extends MsoyServiceServlet
     {
         return _moneyLogic.getBlingInfo(memberId);
     }
-    
+
     protected boolean isCharity (int memberId, List<CharityRecord> charities)
     {
         for (CharityRecord charity : charities) {
@@ -260,6 +260,6 @@ public class MoneyServlet extends MsoyServiceServlet
     @Inject protected MsoyAuthenticator _authenticator;
     @Inject protected MailSender _mailer;
     @Inject protected RuntimeConfig _runtime;
-    
+
     protected static final String CASHOUT_NOTIFY_EMAIL = "blingcashout@threerings.net";
 }

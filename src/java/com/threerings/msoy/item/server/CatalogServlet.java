@@ -259,14 +259,14 @@ public class CatalogServlet extends MsoyServiceServlet
         purchResult.item = buyOp.getItem();
         purchResult.balances = result.getBuyerBalances();
         purchResult.quote = quote;
-        
+
         // If a charity was selected, set charity info
         if (result.getCharityTransaction() != null) {
             purchResult.charityPercentage = _runtime.money.charityPercentage;
             purchResult.charity = _memberRepo.loadMemberName(
                 result.getCharityTransaction().memberId);
         }
-        
+
         return purchResult;
     }
 
@@ -283,7 +283,7 @@ public class CatalogServlet extends MsoyServiceServlet
                         "item", item, "currency", currency, "cost", cost);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
-        
+
         // Charities cannot list items in bars
         if (currency == Currency.BARS) {
             CharityRecord charityRec = _memberRepo.getCharityRecord(mrec.memberId);

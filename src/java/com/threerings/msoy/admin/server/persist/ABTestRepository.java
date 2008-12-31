@@ -32,7 +32,7 @@ public class ABTestRepository extends DepotRepository
         _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(5, "affiliate"));
         _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(5, "vector"));
         _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(5, "creative"));
-        
+
         // These were once Date and were changed to Timestamp, MySQL treats the 2 types differently
         _ctx.registerMigration(ABTestRecord.class,
             new SchemaMigration.Retype(7, ABTestRecord.STARTED));

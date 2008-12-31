@@ -26,7 +26,7 @@ import com.threerings.messaging.Replier;
 /**
  * Responsible for receiving messages from outside systems (such as billing) and calling
  * the appropriate action in the money service.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MoneyMessageListener
@@ -34,11 +34,11 @@ public class MoneyMessageListener
 {
     /**
      * Constructs a new receiver.  This will not automatically start.
-     * 
+     *
      * @param conn Connection to listen for messages on.
      * @param logic MoneyLogic implementation to call.
      */
-    public MoneyMessageListener (final MessageConnection conn, final MoneyLogic logic, 
+    public MoneyMessageListener (final MessageConnection conn, final MoneyLogic logic,
         final MemberRepository memberRepo, final ShutdownManager sm, final Invoker invoker)
     {
         _conn = conn;
@@ -47,7 +47,7 @@ public class MoneyMessageListener
         _invoker = invoker;
         sm.registerShutdowner(this);
     }
-    
+
     /**
      * Begins listening for incoming messages.
      */
@@ -72,7 +72,7 @@ public class MoneyMessageListener
         if (_barsBoughtListener != null && !_barsBoughtListener.isClosed()) {
             logger.info("Now listening for bars bought messages.");
         }
-        
+
         // Start listening get bars count queue.  Send a reply with the number of bars
         _getBarCountListener = listen("messaging.whirled.getBarCount.address", new MessageListener() {
             public void received (final byte[] message, final Replier replier)
@@ -83,7 +83,7 @@ public class MoneyMessageListener
                     {
                         final GetBarCountMessage gbcm = new GetBarCountMessage(message);
                         final MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
-                        
+
                         try {
                             final MemberMoney money = _logic.getMoneyFor(member.memberId);
                             replier.reply(new IntMessage(money.bars));
@@ -100,7 +100,7 @@ public class MoneyMessageListener
             logger.info("Now listening for get bar count messages.");
         }
     }
-    
+
     /**
      * Closes any listeners when shutting down.
      */
@@ -121,7 +121,7 @@ public class MoneyMessageListener
             }
         }
     }
-    
+
     /**
      * Listens for messages on the destination address in the server configuration specified by
      * configKey.  When messages come in, they will execute the given message listener.
@@ -136,14 +136,14 @@ public class MoneyMessageListener
         }
         return null;
     }
-    
+
     /**
      * Message to retrieve the number of bars for a particular user.
      */
     protected static final class GetBarCountMessage
     {
         public final String accountName;
-        
+
         public GetBarCountMessage (final byte[] bytes)
         {
             final ByteBuffer buf = ByteBuffer.wrap(bytes);
@@ -151,7 +151,7 @@ public class MoneyMessageListener
             buf.get(msgBuf);
             accountName = new String(msgBuf);
         }
-        
+
         @Override
         public String toString ()
         {
@@ -179,7 +179,7 @@ public class MoneyMessageListener
             buf.get(msgBuf);
             payment = new String(msgBuf);
         }
-        
+
         @Override
         public String toString ()
         {
@@ -188,9 +188,9 @@ public class MoneyMessageListener
                 ", payment: " + payment;
         }
     }
-    
+
     protected static final Logger logger = Logger.getLogger(MoneyMessageListener.class);
-    
+
     protected final MessageConnection _conn;
     protected final MoneyLogic _logic;
     protected final MemberRepository _memberRepo;

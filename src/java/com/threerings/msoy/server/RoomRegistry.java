@@ -49,7 +49,7 @@ public class RoomRegistry extends PlaceRegistry
         if (!(caller instanceof WindowClientObject)) {
             throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
         }
-        
+
         PlaceObject plobj = null;
         Iterator<PlaceManager> iter = enumeratePlaceManagers();
         while (iter.hasNext()) {
@@ -67,13 +67,13 @@ public class RoomRegistry extends PlaceRegistry
             plobj = rmgr.getPlaceObject();
             break;
         }
-        
+
         if (plobj == null) {
             resultListener.requestFailed("Place object not found");
-    
+
         } else if (!(plobj instanceof RoomObject)) {
             resultListener.requestFailed("Place is not a room");
-        
+
         } else {
             resultListener.requestProcessed(plobj.getOid());
         }

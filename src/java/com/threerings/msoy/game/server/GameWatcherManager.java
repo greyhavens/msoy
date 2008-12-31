@@ -41,7 +41,7 @@ public class GameWatcherManager
          * Notifies that a member has moved to a new scene and/or logged on.
          */
         void memberMoved (int memberId, int sceneId, String hostname, int port);
-        
+
         /**
          * Notifies that a member has logged off.
          */

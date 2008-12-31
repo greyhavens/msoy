@@ -208,7 +208,7 @@ public class PartyManager
      */
     public PartyDetail getPartyDetail ()
     {
-        return new PartyDetail(_lastInfo, 
+        return new PartyDetail(_lastInfo,
             _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
     }
 

@@ -63,7 +63,7 @@ public class GameInfo
 
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
-    
+
     /** Whether this game takes place in whirled rooms as opposed to being lobbied. */
     public boolean isInWorld;
 

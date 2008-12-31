@@ -22,10 +22,10 @@ import com.threerings.msoy.money.data.all.CashOutInfo;
 /**
  * Represents an attempt to cash out bling.  The request may be pending, fulfilled, or canceled.
  * If pending, it must be fulfilled or canceled by whoever is processing cash out requests.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Entity(indices={ 
+@Entity(indices={
     @Index(name="ixTimeCompleted", fields={ BlingCashOutRecord.TIME_FINISHED }),
     @Index(name="ixMemberId", fields={ BlingCashOutRecord.MEMBER_ID })
 })
@@ -164,75 +164,75 @@ public class BlingCashOutRecord extends PersistentRecord
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
-    
+
     /** ID of the member who requested a cash out. */
     public int memberId;
-    
+
     /** First name of the member. */
     public String firstName;
-    
+
     /** Last name of the member. */
     public String lastName;
-    
+
     /** Member's PayPal email address, to which the money will be sent. */
     public String paypalEmailAddress;
-    
+
     /** Member's phone number. */
     public String phoneNumber;
-    
+
     /** Member's street address. */
     public String streetAddress;
-    
+
     /** Member's city. */
     public String city;
-    
+
     /** Member's state. */
     public String state;
-    
+
     /** Member's postal code. */
     public String postalCode;
-    
+
     /** Member's country. */
     public String country;
-    
+
     /** Date/time when this cash out was requested. */
     public Timestamp timeRequested;
-    
+
     /** Date/time when this cash out was completed, or null if not completed. */
     @Column(nullable=true)
     public Timestamp timeFinished;
-    
+
     /** True of the cash out completed successfully, false otherwise. */
     public boolean successful;
-    
+
     /** Amount of bling (centibling) requested for cash out. */
     public int blingAmount;
-    
+
     /** Worth per bling in USD cents at the time it was cashed out. */
     public int blingWorth;
-    
+
     /** If completed unsuccessfully, indicates the reason this cash out was canceled. */
     @Column(nullable=true)
     public String cancelReason;
-    
+
     /** If completed successfully, the actual amount of bling that was cashed out. */
     @Column(nullable=true)
     public Integer actualCashedOut;
-    
+
     public static final int SCHEMA_VERSION = 2;
 
     public BlingCashOutRecord () { }
-    
+
     /**
      * Constructs a new cash out record in the pending state.
-     * 
+     *
      * @param memberId ID of the member this record is for.
      * @param blingAmount Amount of centibling the user requested to cash out.
      * @param blingWorth Worth of bling in USD
      * @param info The user's billing information, indicating how their request should be
      * fulfilled.
      */
-    public BlingCashOutRecord (int memberId, int blingAmount, int blingWorth, 
+    public BlingCashOutRecord (int memberId, int blingAmount, int blingWorth,
         CashOutBillingInfo info)
     {
         this.memberId = memberId;
@@ -249,18 +249,18 @@ public class BlingCashOutRecord extends PersistentRecord
         this.postalCode = info.postalCode;
         this.country = info.country;
     }
-    
+
     /**
      * Constructs a CashOutInfo from the information in this record.
      */
     public CashOutInfo toInfo ()
     {
-        return new CashOutInfo(blingAmount, blingWorth * blingAmount / 100, 
-            new CashOutBillingInfo(firstName, lastName, paypalEmailAddress, phoneNumber, 
-            streetAddress, city, state, postalCode, country), timeRequested, timeFinished, 
+        return new CashOutInfo(blingAmount, blingWorth * blingAmount / 100,
+            new CashOutBillingInfo(firstName, lastName, paypalEmailAddress, phoneNumber,
+            streetAddress, city, state, postalCode, country), timeRequested, timeFinished,
             successful, actualCashedOut, cancelReason);
     }
-    
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link BlingCashOutRecord}

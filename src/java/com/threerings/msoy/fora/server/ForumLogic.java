@@ -40,7 +40,7 @@ public class ForumLogic
     /**
      * Converts a list of threads to a {@link ForumService.ThreadResult}, looking up the last
      * poster names and filling in other bits.
-     * 
+     *
      * @param needLastReadPost If true, lastReadPostId/Index will be included
      * @param needFirstPost If true, includes {@link ForumMessage} of the original post
      */

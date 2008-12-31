@@ -26,7 +26,7 @@ public class WindowCredentials extends Credentials
         String normal = name.getNormal();
         return normal.startsWith(PREFIX) && normal.endsWith(SUFFIX);
     }
-    
+
     /**
      * Get the bureau id from the given name.
      * @return the bureau id, or null if the name is not from a window
@@ -36,7 +36,7 @@ public class WindowCredentials extends Credentials
         if (!isWindow(name)) {
             return null;
         }
-        
+
         String nameStr = name.toString();
         return nameStr.substring(PREFIX.length(), nameStr.length() - SUFFIX.length());
     }

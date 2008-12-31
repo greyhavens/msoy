@@ -493,7 +493,7 @@ public class GroupRepository extends DepotRepository
         return findAll(GroupRecord.class, new Where(new Equals(GroupRecord.OFFICIAL_C,
             new LiteralExp("true"))));
     }
-    
+
     /**
      * Sets the home scene id for the given group.
      */

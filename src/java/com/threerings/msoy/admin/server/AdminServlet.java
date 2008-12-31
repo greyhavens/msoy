@@ -515,34 +515,34 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAdminCodes.E_INTERNAL_ERROR);
         }
     }
-    
+
     // from interface AdminService
     public void setCharityInfo (CharityInfo charityInfo)
         throws ServiceException
     {
         requireSupportUser();
-        
+
         // Save or delete charity record depending on value of 'charity.
         CharityRecord charityRec = new CharityRecord(charityInfo.memberId, charityInfo.core,
             charityInfo.description);
         _memberRepo.saveCharity(charityRec);
     }
-    
+
     // from interface AdminService
     public void removeCharityStatus (int memberId)
         throws ServiceException
     {
         requireSupportUser();
-        
+
         _memberRepo.deleteCharity(memberId);
     }
-    
+
     // from interface AdminService
     public Set<String> getPeerNodeNames ()
         throws ServiceException
     {
         requireSupportUser();
-        
+
         // Collect the names of all the nodes
         final Set<String> names = Sets.newHashSet();
         _peerMgr.applyToNodes(new Function<NodeObject, Void>() {
@@ -551,7 +551,7 @@ public class AdminServlet extends MsoyServiceServlet
                 return null;
             }
         });
-        
+
         return names;
     }
 
@@ -572,23 +572,23 @@ public class AdminServlet extends MsoyServiceServlet
         final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
         _mailRepo.startConversation(recipientId, senderId, subject, body, null, true);
     }
-    
+
     public void restartPanopticon (Set<String> nodeNames)
         throws ServiceException
     {
         requireAdminUser();
-        
+
         for (String node : nodeNames) {
             _peerMgr.invokeNodeAction(node, new RestartPanopticonAction());
         }
     }
-    
+
     protected static class RestartPanopticonAction extends NodeAction
     {
         public RestartPanopticonAction () {}
-        
-        @Override 
-        protected void execute () 
+
+        @Override
+        protected void execute ()
         {
             // Restart the logger on this node and all game servers attached to this node.
             // Restarting is a blocking operation, so run it on the invoker.
@@ -600,19 +600,19 @@ public class AdminServlet extends MsoyServiceServlet
             });
             _gameReg.resetEventLogger();
         }
-        
-        @Override 
-        public boolean isApplicable (NodeObject nodeobj) 
+
+        @Override
+        public boolean isApplicable (NodeObject nodeobj)
         {
             // This will automatically go to the node we want.
             return true;
         }
-        
+
         @Inject protected transient MsoyEventLogger _nodeLogger;
         @Inject protected transient WorldGameRegistry _gameReg;
         @Inject protected transient @MainInvoker Invoker _invoker;
     }
-    
+
     // our dependencies
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected RootDObjectManager _omgr;

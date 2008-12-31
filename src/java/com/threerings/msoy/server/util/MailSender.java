@@ -95,7 +95,7 @@ public class MailSender
      * @param recip the recipient address.
      * @param sender the sender address.
      * @param template the identifier of the template to use for the body of the mail.
-     * @param params an alternating list of string, object which are key/value pairs for 
+     * @param params an alternating list of string, object which are key/value pairs for
      * substitution into the template.
      */
     public void sendTemplateEmail (String recip, String sender, String template, Object ... params)

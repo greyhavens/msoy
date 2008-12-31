@@ -30,7 +30,7 @@ public class MemberMoney implements IsSerializable
     {
         this.memberId = memberId;
     }
-    
+
     public MemberMoney (
         int memberId, int coins, int bars, int bling,
         long accCoins, long accBars, long accBling)

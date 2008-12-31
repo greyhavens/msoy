@@ -290,7 +290,7 @@ public class PartyObject extends DObject
      * you can't even see on the party board.
      *
      * @return the reason for failure, or null if joinage may proceed.
-     */ 
+     */
     public String mayJoin (MemberName member, byte groupRank, boolean hasLeaderInvite)
     {
         if (peeps.size() >= PartyCodes.MAX_PARTY_SIZE) {

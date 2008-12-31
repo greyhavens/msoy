@@ -27,8 +27,8 @@ class MoneyNodeActions
     {
         moneyUpdated(tx.memberId, tx.currency, tx.amount, updateAcc);
     }
-    
-    public void moneyUpdated (int memberId, Currency currency, int amount, boolean updateAcc) 
+
+    public void moneyUpdated (int memberId, Currency currency, int amount, boolean updateAcc)
     {
         if (currency != Currency.BLING) { // avoid spamming the other nodes
             _peerMan.invokeNodeAction(new MoneyUpdated(memberId, currency, amount, updateAcc));
@@ -44,7 +44,7 @@ class MoneyNodeActions
             _amount = amount;
             _updateAcc = updateAcc;
         }
-        
+
         public MoneyUpdated () { }
 
         @Override

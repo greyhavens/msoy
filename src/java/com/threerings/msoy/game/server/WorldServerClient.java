@@ -71,7 +71,7 @@ public class WorldServerClient
 
     /** A request that we generate a particular report. */
     public static final String GENERATE_REPORT = "generateReport";
-    
+
     /** A request that we reset the event logger. */
     public static final String EVENT_LOGGER_RESET = "eventLoggerReset";
 
@@ -185,8 +185,8 @@ public class WorldServerClient
             _gssvc.updateStat(_client, memberId, new IntSetStatAdder(type, value));
         }
     }
-    
-    public void notifyMemberStartedGame (int memberId, byte action, int gameId) 
+
+    public void notifyMemberStartedGame (int memberId, byte action, int gameId)
     {
         if (_gssvc == null) {
             log.info("Dropping addExperience", "action", action, "gameId", gameId);
@@ -236,7 +236,7 @@ public class WorldServerClient
             byte itemType = (Byte) args[2];
             String ident = (String) args[3];
             _gameReg.gameContentPurchased(playerId, gameId, itemType, ident);
-            
+
         } else if (event.getName().equals(EVENT_LOGGER_RESET)) {
             // Restarting the event logger is a blocking operation, so run on the main invoker.
             _invoker.postUnit(new Unit() {
@@ -245,7 +245,7 @@ public class WorldServerClient
                     return false;
                 }
             });
-            
+
         }
     }
 

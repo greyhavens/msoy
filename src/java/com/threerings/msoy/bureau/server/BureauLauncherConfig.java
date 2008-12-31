@@ -35,13 +35,13 @@ public class BureauLauncherConfig
     /** True if the world/game servers will be restarting when code changes (and therefore
      * probably not calling BureauLauncherSender.shutdown. */
     public static boolean worldServerWillAutoRestart;
-    
+
     /** Number of bytes per bureau log per roll period (usually 1 day). */
     public static int maximumLogSize;
-    
+
     /** Milliseconds between summary printing. */
     public static int summaryIntervalMillis;
-    
+
     /**
      * Returns a provider of JDBC connections.
      */

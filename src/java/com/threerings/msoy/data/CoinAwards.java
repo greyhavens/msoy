@@ -6,7 +6,7 @@ package com.threerings.msoy.data;
 /**
  * Constants indicating the number of coins awarded for performing specific actions in
  * Whirled.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public interface CoinAwards

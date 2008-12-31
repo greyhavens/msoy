@@ -63,7 +63,7 @@ public class PopularPlacesSnapshot
      * Iterates over all the games, lobbies and the scenes in the world, finds out the N most
      * populated ones and sorts all scenes by owner, caching the values. Also builds lists of
      * greeters, sorting by who is online.
-     * 
+     *
      * @param greeterIds the most recently read list of greeter ids from {@link
      * MemberRepository#loadGreeterIds()} (sorted by last online).
      */

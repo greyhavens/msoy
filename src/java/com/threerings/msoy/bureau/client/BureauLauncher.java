@@ -179,7 +179,7 @@ public class BureauLauncher
     public void run ()
     {
         _pollNodes.schedule(0, PEER_POLL_INTERVAL);
-        
+
         // reset our log limit when the file is rolled
         BureauFileAppender.setRollObserver(new BureauFileAppender.RollObserver() {
             public void logRolled(BureauFileAppender instance) {
@@ -261,7 +261,7 @@ public class BureauLauncher
             log.info("Client not found", "hostname", hostname);
         }
     }
-    
+
     // from ShutdownManager.Shutdowner
     public void shutdown ()
     {
@@ -345,7 +345,7 @@ public class BureauLauncher
             log.warning("Could not load nodes", e);
         }
     }
-    
+
     protected void printSummary ()
     {
         int activeCount = 0;
@@ -355,7 +355,7 @@ public class BureauLauncher
             }
         }
 
-        Object[] args = {"totalLaunched", _totalLaunched, "activeCount", activeCount, 
+        Object[] args = {"totalLaunched", _totalLaunched, "activeCount", activeCount,
             "connectionCount", _connections._clients.size()};
         String msg = "Status";
 
@@ -365,7 +365,7 @@ public class BureauLauncher
         // Print summary to merged log
         Logger.getLogger(BureauLogRedirector.class).info(msg, args);
     }
-    
+
     protected void logRolled ()
     {
         log.info("Resetting bureau log limits");
@@ -385,7 +385,7 @@ public class BureauLauncher
         {
             _bureauId = bureauId;
         }
-        
+
         public void launch (String server, int port, String connectionToken)
         {
             // create the system command to execute
@@ -404,7 +404,7 @@ public class BureauLauncher
                 _message = "Unable to launch: " + ioe.getMessage();
                 return;
             }
-            
+
             _launchTime = System.currentTimeMillis();
 
             // truncate any running log and calculate the new limit
@@ -426,19 +426,19 @@ public class BureauLauncher
             log.info("Launched thane", "command", command, "logLimit", limit);
             _message = "Successfully launched";
         }
-        
+
         public boolean isRunning ()
         {
             return _redirector != null && _redirector.isRunning();
         }
-        
+
         public void resetLogLimit ()
         {
             if (_redirector != null) {
                 _redirector.reset(BureauLauncherConfig.maximumLogSize);
             }
         }
-        
+
         public BureauLauncherInfo.BureauInfo getInfo ()
         {
             BureauLauncherInfo.BureauInfo info = new BureauLauncherInfo.BureauInfo();
@@ -455,7 +455,7 @@ public class BureauLauncher
             }
             return info;
         }
-        
+
         protected Process _process;
         protected String _bureauId;
         protected BureauLogRedirector _redirector;
@@ -463,7 +463,7 @@ public class BureauLauncher
         protected long _launchTime;
         protected long _shutdownTime;
     }
-    
+
     /** Presents run queue. */
     @Inject protected Runner _runner;
 
@@ -488,7 +488,7 @@ public class BureauLauncher
 
     /** The current set of bureaus on this launcher. Pruned periodically when printing a summary. */
     protected HashMap<String, Bureau> _bureaus = Maps.newHashMap();
-    
+
     /** The nodes repository. */
     @Inject protected NodeRepository _nodeRepo;
 

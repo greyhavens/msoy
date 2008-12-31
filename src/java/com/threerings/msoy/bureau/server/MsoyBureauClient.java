@@ -28,7 +28,7 @@ public class MsoyBureauClient extends PresentsSession
         _agentCount++;
         setThrottle();
     }
-    
+
     /**
      * Notifies this client that an agent has been removed. Decreases message allowance.
      */
@@ -37,13 +37,13 @@ public class MsoyBureauClient extends PresentsSession
         _agentCount--;
         setThrottle();
     }
-    
+
     public void addAVRGPlayer ()
     {
         _avrgPlayers++;
         setThrottle();
     }
-    
+
     public void removeAVRGPlayer ()
     {
         _avrgPlayers--;
@@ -55,7 +55,7 @@ public class MsoyBureauClient extends PresentsSession
     {
         return new SubProxy();
     }
-    
+
     protected void setThrottle ()
     {
         float rate = 0;
@@ -66,14 +66,14 @@ public class MsoyBureauClient extends PresentsSession
         rate *= Client.DEFAULT_MSGS_PER_SECOND;
         setIncomingMessageThrottle((int)rate);
     }
-    
+
     /**
      * Extends the subscription proxy so that we can detect and block invocation responses.
      */
     protected class SubProxy extends ClientProxy
     {
-        
-        @Override // from ClientProxy 
+
+        @Override // from ClientProxy
         public void eventReceived (DEvent event)
         {
             if (_blockInvocationResponses && event instanceof InvocationResponseEvent) {
@@ -90,16 +90,16 @@ public class MsoyBureauClient extends PresentsSession
         public void objectAvailable (DObject dobj)
         {
             super.objectAvailable(dobj);
-            
+
             // Block responses to flash clients only
             _blockInvocationResponses = (dobj instanceof PlayerObject);
         }
-        
+
         protected boolean _blockInvocationResponses;
     }
-    
+
     protected int _agentCount;
     protected int _avrgPlayers;
-    
+
     protected static final double LOG_BASE = Math.log(2);
 }

@@ -8,11 +8,11 @@ package com.threerings.msoy.web.gwt;
  */
 public class TrackingCookieUtil
 {
-    /** 
-     * Trivially simple string obfuscation scheme, via XOR plus a checksum. 
-     * 
-     * Since GWT JRE library doesn't have any string encoding routines, we roll our own, 
-     * but it's easy because HTTP headers can only contain ASCII values. 
+    /**
+     * Trivially simple string obfuscation scheme, via XOR plus a checksum.
+     *
+     * Since GWT JRE library doesn't have any string encoding routines, we roll our own,
+     * but it's easy because HTTP headers can only contain ASCII values.
      */
     public static byte[] encode (String input)
     {

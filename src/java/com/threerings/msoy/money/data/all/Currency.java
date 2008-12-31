@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Indicates the type of money.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */

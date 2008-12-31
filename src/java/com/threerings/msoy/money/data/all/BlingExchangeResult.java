@@ -20,7 +20,7 @@ public class BlingExchangeResult
         this.blingInfo = blingInfo;
     }
 
-    public BlingExchangeResult () 
+    public BlingExchangeResult ()
     {
         // For Serialization
     }

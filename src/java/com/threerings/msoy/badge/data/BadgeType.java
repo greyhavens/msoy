@@ -323,7 +323,7 @@ public enum BadgeType
      * code as a named constant for use in gwt without pulling in the whole of BadgeType.</li>
      * <li>-genas: outputs the actionscript code for com.threerings.msoy.badge.data.all.BadgeCodes
      * so that badges can be identified by name in the flash client</li><li>-genswitch: outputs
-     * a switch statement containing a case for each constant in BadgeCodes</li></ul>  
+     * a switch statement containing a case for each constant in BadgeCodes</li></ul>
      */
     public static void main (String[] args)
     {

@@ -17,7 +17,7 @@ import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
  * A cache of secured prices that uses a local EHCache to store the escrows.
- * 
+ *
  * @author Ray Greenwell <ray@threerings.net>
  */
 public class PriceQuoteCache
@@ -40,7 +40,7 @@ public class PriceQuoteCache
         }
         _cache = cache;
     }
-    
+
     /**
      * Adds the quote to the cache. Subsequent calls to {@link #getQuote} for this PriceKey will
      * return the quote data, unless the cache is full and the quote is dropped to make room, or
@@ -108,7 +108,7 @@ class PriceKey
         if (!(obj instanceof PriceKey)) {
             return false;
         }
-        PriceKey that = (PriceKey)obj; 
+        PriceKey that = (PriceKey)obj;
         return (_memberId == that._memberId) && _ident.equals(that._ident);
     }
 

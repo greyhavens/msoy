@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Contains billing information for a cash out request made by the user.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class CashOutBillingInfo
@@ -15,31 +15,31 @@ public class CashOutBillingInfo
 {
     /** First name of the member. */
     public /* final */ String firstName;
-    
+
     /** Last name of the member. */
     public /* final */ String lastName;
-    
+
     /** Member's PayPal email address, to which the money will be sent. */
     public /* final */ String paypalEmailAddress;
-    
+
     /** Member's phone number. */
     public /* final */ String phoneNumber;
-    
+
     /** Member's street address. */
     public /* final */ String streetAddress;
-    
+
     /** Member's city. */
     public /* final */ String city;
-    
+
     /** Member's state. */
     public /* final */ String state;
-    
+
     /** Member's postal code. */
     public /* final */ String postalCode;
-    
+
     /** Member's country. */
     public /* final */ String country;
-    
+
     public CashOutBillingInfo (String firstName, String lastName, String paypalEmailAddress,
             String phoneNumber, String streetAddress, String city, String state,
             String postalCode, String country)
@@ -54,7 +54,7 @@ public class CashOutBillingInfo
         this.postalCode = postalCode;
         this.country = country;
     }
-    
+
     /** For serialization purposes. */
     public CashOutBillingInfo () { }
 }

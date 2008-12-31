@@ -27,13 +27,13 @@ public class AVRGameAgentObject extends AgentObject
 
     /** A set of scenes containing (or having recently contained) players of this AVRG. */
     public DSet<SceneInfo> scenes = new DSet<SceneInfo>();
-    
+
     /** ID of the game object. */
     public int gameOid;
-    
+
     /** ID of the game record. */
     public int gameId;
-    
+
     /** Service for agent requests. */
     public AVRGameAgentMarshaller agentService;
 

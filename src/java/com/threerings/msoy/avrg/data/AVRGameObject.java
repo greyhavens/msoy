@@ -73,7 +73,7 @@ public class AVRGameObject extends PlaceObject
 
     /** The service interface for awarding prizes and trophies. */
     public PrizeMarshaller prizeService;
-    
+
     /** Used to send messages. */
     public WhirledGameMessageMarshaller messageService;
 

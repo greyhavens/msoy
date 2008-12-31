@@ -149,9 +149,9 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#removeCharityStatus}.
      */
     void removeCharityStatus (int memberId, AsyncCallback<Void> callback);
-    
+
     void getPeerNodeNames (AsyncCallback<Set<String>> callback);
-    
+
     void restartPanopticon (Set<String> nodeNames, AsyncCallback<Void> callback);
 
     /**

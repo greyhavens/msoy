@@ -12,20 +12,20 @@ public class CashOutInfo
 {
     /** The amount of bling the user has requested to cash out. */
     public int blingAmount;
-    
+
     /** The worth of the bling in USD cents the user has requested to cash out. */
     public int blingWorth;
-    
+
     public CashOutBillingInfo billingInfo;
-    
+
     public Date timeRequested;
-    
+
     public Date timeCompleted;
-    
+
     public boolean successful;
-    
+
     public Integer actualAmountCashedOut;
-    
+
     public String failureReason;
 
     public CashOutInfo (int blingAmount, int blingWorth, CashOutBillingInfo billingInfo,
@@ -41,7 +41,7 @@ public class CashOutInfo
         this.actualAmountCashedOut = actualAmountCashedOut;
         this.failureReason = failureReason;
     }
-    
+
     /** For serialization. */
     public CashOutInfo () { }
 }

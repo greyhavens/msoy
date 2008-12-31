@@ -795,7 +795,7 @@ public class MemberManager
         final boolean onTour = memObj.onTour;
         final int memberId = memObj.getMemberId();
         final short badgesVersion = memObj.getLocal(MemberLocal.class).badgesVersion;
-        
+
         _invoker.postUnit(new PersistingUnit("getHPGridItems", listener, "who", memObj.who()) {
             @Override public void invokePersistent () throws Exception {
                 reportRequestProcessed(_memberLogic.getHomePageGridItems(
@@ -991,10 +991,10 @@ public class MemberManager
 
     /** The most recent summary of popular places in the whirled. */
     protected PopularPlacesSnapshot _ppSnapshot;
-    
+
     /** Interval to update the greeter ids snapshot. */
     protected Interval _greeterIdsInvalidator;
-    
+
     /** Snapshot of all currently configured greeters, sorted by last online. Refreshed
      * periodically. */
     protected List<Integer> _greeterIdsSnapshot;

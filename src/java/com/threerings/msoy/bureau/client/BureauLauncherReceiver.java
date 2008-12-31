@@ -13,7 +13,7 @@ public interface BureauLauncherReceiver extends InvocationReceiver
 
     /** Tells the launcher to log off everything and shut down. */
     void shutdownLauncher ();
-    
+
     /** Requests an update of the launcher info be sent to the client with the target hostname
      * and port. */
     void requestInfo (String target, int port);

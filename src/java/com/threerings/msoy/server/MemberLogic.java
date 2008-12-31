@@ -335,7 +335,7 @@ public class MemberLogic
                     if (Game.detectIsInWorld(game.config)) {
                         if (game.groupId != 0) {
                             games.add(new HomePageItem(
-                                HomePageItem.ACTION_AVR_GAME, 
+                                HomePageItem.ACTION_AVR_GAME,
                                 new AVRGameNavItemData(game.gameId, game.name, game.groupId),
                                 game.getThumbMediaDesc()));
                         }

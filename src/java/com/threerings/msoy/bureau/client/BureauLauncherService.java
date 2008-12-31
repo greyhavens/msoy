@@ -25,7 +25,7 @@ public interface BureauLauncherService extends InvocationService
      * @see ServerRegistryObject
      */
     void getGameServerRegistryOid (Client caller, ResultListener listener);
-    
+
     /**
      * Updates the msoy server with information about a launcher.
      */

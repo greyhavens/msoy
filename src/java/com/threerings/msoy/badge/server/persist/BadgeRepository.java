@@ -36,7 +36,7 @@ public class BadgeRepository extends DepotRepository
             }
         });
     }
-        
+
     /**
      * Stores the supplied badge record in the database.
      *

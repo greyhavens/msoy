@@ -176,7 +176,7 @@ public class StatusServlet extends HttpServlet
         case PANOPTICON:
             collectReportInfo(info, client, nodeobj, MsoyEventLogger.PANOPTICON_REPORT_TYPE);
             break;
-            
+
         case NONE:
             // leave details as null in this case
             break;

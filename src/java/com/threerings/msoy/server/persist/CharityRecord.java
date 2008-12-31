@@ -40,29 +40,29 @@ public class CharityRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;
-    
+
     /** Member ID for this charity. */
     @Id
     public int memberId;
-    
+
     /** Whether or not this charity is a core charity. */
     public boolean core;
 
     /** Description of the charity to display to members. */
     @Column(defaultValue="")
     public String description;
-    
+
     /** For depot */
     public CharityRecord ()
     {
     }
-    
+
     /**
      * Constructs a new charity.
-     * 
+     *
      * @param memberId ID of the member for this charity.
      * @param core True if this is a "core" charity,
-     * @param description Description of the charity that members can see. 
+     * @param description Description of the charity that members can see.
      */
     public CharityRecord (int memberId, boolean core, String description)
     {
@@ -70,7 +70,7 @@ public class CharityRecord extends PersistentRecord
         this.core = core;
         this.description = description;
     }
-    
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link CharityRecord}

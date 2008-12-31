@@ -24,7 +24,7 @@ public class MsoyPolicyServer extends PolicyServer
     {
         init();
     }
-    
+
     public static IoAcceptor init ()
         throws IOException
     {

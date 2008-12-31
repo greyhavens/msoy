@@ -16,7 +16,7 @@ public class BureauLauncherSession extends PresentsSession
     protected void sessionWillStart ()
     {
         super.sessionWillStart();
-        
+
         // Stuff the name of the host into the client object
         BureauLauncherClientObject clobj = (BureauLauncherClientObject)getClientObject();
         clobj.hostname = getInetAddress().getHostName();

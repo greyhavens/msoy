@@ -10,7 +10,7 @@ import com.threerings.parlor.game.server.GameManagerDelegate;
 
 /**
  * Tracks the user's experience playing a game.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class TrackExperienceDelegate extends GameManagerDelegate
@@ -25,7 +25,7 @@ public class TrackExperienceDelegate extends GameManagerDelegate
     {
         final PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
         int memberId = plobj.memberName.getMemberId();
-        
+
         _worldClient.notifyMemberStartedGame(memberId, _content.game.isInWorld() ?
             HomePageItem.ACTION_AVR_GAME : HomePageItem.ACTION_GAME, _content.game.gameId);
     }
