@@ -38,9 +38,6 @@ import com.threerings.msoy.room.data.MsoyScene;
 
 public class SnapshotPanel extends FloatingPanel
 {
-    /** This is the maximum bitmap dimension, a flash limitation. */
-    public static const MAX_BITMAP_DIM :int = 2880; // TODO: this is larger in FP10!
-
     public var galleryImage :Snapshot;
     public var sceneThumbnail :Snapshot;
 
@@ -54,32 +51,9 @@ public class SnapshotPanel extends FloatingPanel
 
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
         _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();
-
-        // for the canonical image, we create a new framer that centers the image within the frame,
-        // introducing black bars if necessary.
-        sceneThumbnail = Snapshot.createThumbnail(ctx, _view,
-            handleEncodingComplete, handleUploadError);
-
-        // TODO: we want the room bounds, not the room *view* bounds....
-        const scene:MsoyScene = _view.getScene();
-        var galWidth :int = scene.getWidth();
-        var galHeight :int = scene.getHeight();
-        var galFramer :Framer;
-        if (galWidth > MAX_BITMAP_DIM || galWidth > MAX_BITMAP_DIM) {
-            const galScale :Number = Math.min(MAX_BITMAP_DIM / galWidth,
-                MAX_BITMAP_DIM / galHeight);
-            galWidth *= galScale;
-            galHeight *= galScale;
-//            galFramer = new CanonicalFramer(_view.getScrollBounds(),
-//                new Rectangle(0, 0, galWidth, galHeight), _view.getScrollOffset());
-            // TODO: sort out real offset?
-            galFramer = new NoopFramer();
-
-        } else {
-            galFramer = new NoopFramer();
-        }
-        galleryImage = new Snapshot(ctx, false, _view, galFramer, galWidth, galHeight,
-            handleEncodingComplete, handleUploadError);
+        sceneThumbnail = Snapshot.createThumbnail(
+            ctx, _view, handleEncodingComplete, handleUploadError);
+        galleryImage = Snapshot.createGallery(ctx, _view, handleEncodingComplete, handleUploadError);
         open();
     }
 

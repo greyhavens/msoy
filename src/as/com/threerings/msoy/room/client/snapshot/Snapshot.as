@@ -50,33 +50,60 @@ public class Snapshot extends EventDispatcher
     public static const THUMBNAIL_WIDTH :int = 350;
     public static const THUMBNAIL_HEIGHT :int = 200;
 
+    /** This is the maximum bitmap dimension, a flash limitation. */
+    public static const MAX_BITMAP_DIM :int = 2880; // TODO: this is larger in FP10!
+
     public var bitmap :BitmapData;
 
     public const log :Log = Log.getLog(this);
 
     /**
-     * Convenience method to create the thumbnail Snapshot.
+     * Creates a snapshotter configured for the thumbnail Snapshot.
      */
     public static function createThumbnail (
-        ctx :WorldContext, view :RoomView, handleComplete :Function, handleError :Function)
-        :Snapshot
+        ctx :WorldContext, view :RoomView, onComplete :Function, onError :Function) :Snapshot
     {
+        // for the canonical image, we create a new framer that centers the image within the frame,
+        // introducing black bars if necessary.
         const frame :Rectangle = new Rectangle(0, 0, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
-        const framer :Framer = new CanonicalFramer(view.getScrollBounds(), frame,
-            view.getScrollOffset());
-        return new Snapshot(ctx, true, view, framer, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT,
-            handleComplete, handleError);
+        const framer :Framer = new CanonicalFramer(
+            view.getScrollBounds(), frame, view.getScrollOffset());
+        return new Snapshot(ctx, true, view, framer, frame.width, frame.height, onComplete, onError);
+    }
+
+    /**
+     * Creates a snapshotter configured for a gallery Snapshot.
+     */
+    public static function createGallery (
+        ctx :WorldContext, view :RoomView, onComplete :Function, onError :Function) :Snapshot
+    {
+        // TODO: we want the room bounds, not the room *view* bounds....
+        var galWidth :int = view.getScene().getWidth();
+        var galHeight :int = view.getScene().getHeight();
+        var galFramer :Framer;
+        if (galWidth > MAX_BITMAP_DIM || galWidth > MAX_BITMAP_DIM) {
+            const galScale :Number = Math.min(MAX_BITMAP_DIM / galWidth, MAX_BITMAP_DIM / galHeight);
+            galWidth *= galScale;
+            galHeight *= galScale;
+//            galFramer = new CanonicalFramer(view.getScrollBounds(),
+//                new Rectangle(0, 0, galWidth, galHeight), view.getScrollOffset());
+            // TODO: sort out real offset?
+            galFramer = new NoopFramer();
+        } else {
+            galFramer = new NoopFramer();
+        }
+        return new Snapshot(ctx, false, view, galFramer, galWidth, galHeight, onComplete, onError);
     }
 
     /**
      * Create a 'Snapshot' of the provided view.  With a frame of the provided size.
      *
-     * @param handleCompleteFn informed when *encoding* is complete.
-     * @param handleErrorFn informed when *uploading* errors.
+     * @param onCompleteFn informed when *encoding* is complete.
+     * @param onErrorFn informed when *uploading* errors.
      */
     public function Snapshot (
         ctx :WorldContext, thumbnail :Boolean, view :RoomView, framer :Framer,
-        width :int, height :int, handleCompleteFn :Function, handleErrorFn :Function)
+        width :int, height :int, onCompleteFn :Function, onErrorFn :Function)
     {
         _ctx = ctx;
         _view = view;
@@ -86,9 +113,9 @@ public class Snapshot extends EventDispatcher
         _framer = framer;
         bitmap = new BitmapData(width, height);
 
-        addEventListener(Event.COMPLETE, handleCompleteFn);
-        addEventListener(IOErrorEvent.IO_ERROR, handleErrorFn);
-        addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleErrorFn);
+        addEventListener(Event.COMPLETE, onCompleteFn);
+        addEventListener(IOErrorEvent.IO_ERROR, onErrorFn);
+        addEventListener(SecurityErrorEvent.SECURITY_ERROR, onErrorFn);
     }
 
     public function get ready () :Boolean
@@ -100,7 +127,7 @@ public class Snapshot extends EventDispatcher
     {
         if (!ready && _encoder == null) {
             _encoder = new BackgroundJPGEncoder(bitmap, 70);
-            _encoder.addEventListener("complete", handleJpegEncoded);
+            _encoder.addEventListener("complete", onJpegEncoded);
             _encoder.start();
         }
     }
@@ -212,13 +239,13 @@ public class Snapshot extends EventDispatcher
 
         _doneFn = doneFn;
         _loader = new URLLoader();
-        _loader.addEventListener(Event.COMPLETE, handleSuccess);
-        _loader.addEventListener(IOErrorEvent.IO_ERROR, handleError);
-        _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
+        _loader.addEventListener(Event.COMPLETE, onSuccess);
+        _loader.addEventListener(IOErrorEvent.IO_ERROR, onError);
+        _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
         _loader.load(request);
     }
 
-    protected function handleJpegEncoded (event :ValueEvent) :void
+    protected function onJpegEncoded (event :ValueEvent) :void
     {
         log.debug("jpeg encoded");
         _data = ByteArray(event.value);
@@ -262,14 +289,14 @@ public class Snapshot extends EventDispatcher
         return output;
     }
 
-    protected function handleError (event :ErrorEvent) :void
+    protected function onError (event :ErrorEvent) :void
     {
         // re-dispatch it
         dispatchEvent(event);
         clearLoader();
     }
 
-    protected function handleSuccess (event :Event) :void
+    protected function onSuccess (event :Event) :void
     {
         var fn :Function = _doneFn;
         var data :String = String(_loader.data);
