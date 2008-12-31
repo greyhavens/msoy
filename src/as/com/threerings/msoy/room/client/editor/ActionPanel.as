@@ -136,7 +136,7 @@ public class ActionPanel extends BasePanel
             GridUtil.addRow(dgrid, _debug);
         }
 
-        addChild(makePanelButtons());
+        addChild(makeApplyButtons());
     }
 
     // @Override from superclass

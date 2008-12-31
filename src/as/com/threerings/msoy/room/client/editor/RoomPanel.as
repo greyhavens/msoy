@@ -111,6 +111,8 @@ public class RoomPanel extends BasePanel
         _buttonbar = new ToggleButtonBar();
         _buttonbar.styleName = "roomEditAccessButtons";
         box.addChild(_buttonbar);
+
+        addChild(makeApplyButtons());
     }
 
     // @Override from superclass

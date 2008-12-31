@@ -43,8 +43,8 @@ public class BasePanel extends VBox
         setChanged(false);
     }
 
-    /** Subclasses can call this function to create a box filled in with panel buttons. */
-    protected function makePanelButtons () :Container
+    /** Creates the apply/cancel buttons which are magically shown and hidden when we're changed. */
+    protected function makeApplyButtons () :Container
     {
         _applyButton = new CommandButton(Msgs.EDITING.get("b.apply_changes"), applyChanges);
         _applyButton.styleName = "roomEditPanelButton";
@@ -54,7 +54,9 @@ public class BasePanel extends VBox
         _cancelButton.height = 20;
 
         _buttons = new HBox();
-        _buttonsEnabled = false;
+        _buttons.addChild(_cancelButton);
+        _buttons.addChild(_applyButton);
+        _buttons.visible = _buttons.includeInLayout = false;
         setChanged(true);
         return _buttons;
     }
@@ -98,15 +100,8 @@ public class BasePanel extends VBox
     /** Enables or disables the "apply" and "cancel" buttons, based on UI changes. */
     protected function setChanged (newValue :Boolean) :void
     {
-        if (_applyButton == null || _cancelButton == null) {
-            return; // not initialized yet!
-        }
-
-        if (newValue != _buttonsEnabled) {
-            var fn :Function = newValue ? _buttons.addChild : _buttons.removeChild;
-            fn(_applyButton);
-            fn(_cancelButton);
-            _buttonsEnabled = newValue;
+        if (_buttons != null && newValue != _buttons.visible) {
+            _buttons.visible = _buttons.includeInLayout = newValue;
         }
     }
 

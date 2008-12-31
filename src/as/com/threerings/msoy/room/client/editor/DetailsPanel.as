@@ -138,14 +138,13 @@ public class DetailsPanel extends BasePanel
         GridUtil.addRow(grid, "", [4, 1]);
 
         // more options below the grid
-
         _noscale = new CheckBox();
         _noscale.label = Msgs.EDITING.get("b.noscale");
         _noscale.toolTip = Msgs.EDITING.get("b.noscale_tip");
         _noscale.addEventListener(Event.CHANGE, applyHandler);
         addChild(_noscale);
 
-        addChild(makePanelButtons());
+        addChild(makeApplyButtons());
     }
 
     // @Override from superclass
