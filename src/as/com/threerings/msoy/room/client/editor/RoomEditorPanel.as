@@ -474,6 +474,9 @@ public class RoomEditorPanel extends FlyingPanel
             Msgs.EDITING.get("l.advanced_editing"), _controller.actionAdvancedEditing));
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
+        // we have no border so we need to manually give our buttons some breathing room
+        _buttonBar.setStyle("paddingRight", 5);
+        _buttonBar.setStyle("paddingBottom", 5);
     }
 
     override protected function getButtonLabel (buttonId :int) :String
