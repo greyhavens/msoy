@@ -91,7 +91,6 @@ public class GrowlStyleNotifier implements PassiveNotifier
             setForeground(Color.black);
             setFont(LABEL_FONT);
             setStyle(LabelStyleConstants.BOLD);
-            setAntiAliased(true);
             addMouseListener(this);
         }
 
