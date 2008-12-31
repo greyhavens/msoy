@@ -34,7 +34,7 @@ public class DetailsPanel extends BasePanel
         var trimmed :Function = function (v :Number) :String {
             return v.toFixed(2);
         };
-        
+
         if (data == null) {
             _all.forEach(function (input :TextInput, ... rest) :void {
                     input.text = "0.0";
@@ -66,7 +66,7 @@ public class DetailsPanel extends BasePanel
 
         // do a manual copy, remembering that FurniData.clone is a shallow copy!
         var data :FurniData = _furniData.clone() as FurniData;
-        data.loc = _furniData.loc.clone() as MsoyLocation; 
+        data.loc = _furniData.loc.clone() as MsoyLocation;
 
         data.loc.x = maybeReplace(_locx, data.loc.x);
         data.loc.y = maybeReplace(_locy, data.loc.y);
@@ -87,7 +87,7 @@ public class DetailsPanel extends BasePanel
     override protected function createChildren () :void
     {
         super.createChildren();
-        
+
         var grid :Grid = new Grid();
         grid.percentWidth = 100;
         grid.styleName = "roomEditDetailsPanelGrid";
@@ -101,7 +101,7 @@ public class DetailsPanel extends BasePanel
         _scales.push(_scalex = new TextInput());
         _scales.push(_scaley = new TextInput());
         _rot = new TextInput();
-        
+
         _all = _locs.concat(_scales);
         _all.push(_rot);
 
@@ -110,13 +110,13 @@ public class DetailsPanel extends BasePanel
                 input.restrict = "0123456789,.+\\-";
                 input.width = 40;
             });
-        
+
         var resetLocation :CommandButton =
             new CommandButton("", _controller.actionResetTarget, [ true, false, false ]);
         resetLocation.styleName = "roomEditResetLocation";
         resetLocation.toolTip = Msgs.EDITING.get("i.reset_location");
         resetLocation.height = 17;
-        
+
         var resetScale :CommandButton =
             new CommandButton("", _controller.actionResetTarget, [ false, true, false ]);
         resetScale.styleName = "roomEditResetScale";
@@ -138,13 +138,13 @@ public class DetailsPanel extends BasePanel
         GridUtil.addRow(grid, "", [4, 1]);
 
         // more options below the grid
-        
+
         _noscale = new CheckBox();
         _noscale.label = Msgs.EDITING.get("b.noscale");
         _noscale.toolTip = Msgs.EDITING.get("b.noscale_tip");
         _noscale.addEventListener(Event.CHANGE, applyHandler);
         addChild(_noscale);
-        
+
         addChild(makePanelButtons());
     }
 
