@@ -25,6 +25,7 @@ import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.web.gwt.ExternalCreds;
 import com.threerings.msoy.web.gwt.FacebookCreds;
+import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.profile.gwt.Profile;
@@ -91,12 +92,12 @@ public class FacebookAuthHandler extends ExternalAuthHandler
             for (Long uid : finfo.getUid()) {
                 info.friendIds.add(uid.toString());
             }
+            return info;
 
         } catch (Exception e) {
             log.warning("Facebook getInfo() failed", "creds", creds, e);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-
-        return info;
     }
 
     protected FacebookJaxbRestClient getFacebookClient (FacebookCreds creds)
