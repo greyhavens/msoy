@@ -65,7 +65,7 @@ public class RoomPanel extends BasePanel
     {
         super.createChildren();
 
-        // container for name
+        // contains the room name and some buttons
         var box :HBox = new HBox();
         box.setStyle("horizontalGap", 4);
         box.percentWidth = 100;
@@ -73,15 +73,8 @@ public class RoomPanel extends BasePanel
 
         _name = new TextInput();
         _name.percentWidth = 100;
-        _name.maxWidth = 200;
         _name.maxChars = MsoySceneModel.MAX_NAME_LENGTH;
         box.addChild(_name);
-
-        // container for other buttons
-        box = new HBox();
-        box.setStyle("horizontalGap", 4);
-        box.percentWidth = 100;
-        addChild(box);
 
         // make this room my/this whirled's home button
         _homeButton = new CommandButton();
@@ -91,7 +84,7 @@ public class RoomPanel extends BasePanel
         var memberObject :MemberObject = _controller.ctx.getMemberObject();
         if (sceneModel.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
             _homeButton.toolTip = Msgs.EDITING.get("b.make_home");
-            _homeButton.enabled = 
+            _homeButton.enabled =
                 sceneModel.ownerId == memberObject.getMemberId() &&
                 sceneModel.sceneId != memberObject.homeSceneId;
 
@@ -103,7 +96,7 @@ public class RoomPanel extends BasePanel
                 var resultHandler :Function = function (result :Object) :void {
                     _homeButton.enabled = (sceneModel.sceneId != (result as int));
                 };
-                var svc :MemberService = 
+                var svc :MemberService =
                     _controller.ctx.getClient().requireService(MemberService) as MemberService;
                 svc.getGroupHomeSceneId(_controller.ctx.getClient(), sceneModel.ownerId,
                     _controller.ctx.resultListener(resultHandler, MsoyCodes.EDITING_MSGS));
@@ -115,15 +108,9 @@ public class RoomPanel extends BasePanel
         }
         box.addChild(_homeButton);
 
-        var spacer :Spacer = new Spacer();
-        spacer.percentWidth = 100;
-        box.addChild(spacer);
-        
         _buttonbar = new ToggleButtonBar();
         _buttonbar.styleName = "roomEditAccessButtons";
         box.addChild(_buttonbar);
-
-        addChild(makePanelButtons());
     }
 
     // @Override from superclass
