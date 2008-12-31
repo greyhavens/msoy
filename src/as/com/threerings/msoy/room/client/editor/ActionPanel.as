@@ -101,7 +101,7 @@ public class ActionPanel extends BasePanel
         _readOnlyActionLabel = new TextInput();
         _readOnlyActionLabel.editable = false;
         _readOnlyActionLabel.enabled = false;
-        _readOnlyActionLabel.width = 120; // not too big
+        _readOnlyActionLabel.percentWidth = 100;
         // hide this one initially
         FlexUtil.setVisible(_readOnlyActionLabel, false);
 

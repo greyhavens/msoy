@@ -329,7 +329,6 @@ public class RoomEditorPanel extends FlyingPanel
 
         // two containers, one for basic/advanced buttons, the other for
         // buttons that show up in all contexts
-
         _switchablePanels = new VBox();
 
         var div :SkinnableImage = new SkinnableImage();
@@ -343,9 +342,7 @@ public class RoomEditorPanel extends FlyingPanel
         _defaultPanel = new HBox();
         _switchablePanels.addChild(_defaultPanel);
 
-
         // now let's populate the basic buttons panel
-
         var leftgrid :Grid = new Grid();
         leftgrid.styleName = "roomEditLeft";
         leftgrid.percentWidth = 100;
@@ -354,11 +351,9 @@ public class RoomEditorPanel extends FlyingPanel
         var makeYFn :Function = function (yoffset :Number) :Function {
             return function () :void { _controller.actionAdjustYPosition(yoffset); };
         };
-
         var makeScaleFn :Function = function (x :Number, y :Number) :Function {
             return function () :void { _controller.actionAdjustScale(x, y); };
         };
-
         var makeRotateFn :Function = function (rotation :Number, snapangle :Number) :Function {
             return function () :void {
                 _controller.actionAdjustRotation(rotation, true, snapangle);
@@ -465,7 +460,6 @@ public class RoomEditorPanel extends FlyingPanel
         addPanel(Msgs.EDITING.get("t.item_action"), _action = new ActionPanel(_controller));
 
         // invader zim says: "it's not stupid, it's advanced!"
-
         box = new VBox();
         box.styleName = "roomEditContents";
         box.percentWidth = 100;
