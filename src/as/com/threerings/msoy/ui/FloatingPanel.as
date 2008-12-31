@@ -193,6 +193,8 @@ public class FloatingPanel extends TitleWindow
             var box :VBox = new VBox();
             box.percentWidth = 100;
             box.setStyle("horizontalAlign", "right");
+            box.setStyle("paddingRight", 5);
+            box.setStyle("paddingBottom", 5);
             box.addChild(_buttonBar);
             addChild(box);
         }
