@@ -333,9 +333,6 @@ public class AdminServlet extends MsoyServiceServlet
         if (item == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-        if (item.catalogId == 0) {
-            throw new ServiceException(ItemCodes.E_ITEM_NOT_LISTED);
-        }
         ItemTransactionResult result = new ItemTransactionResult();
         if (needCount) {
             result.total = _moneyLogic.getItemTransactionCount(iident);
@@ -407,12 +404,12 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         // now do the refunds
-        result.refunds = _moneyLogic.refundAllItemPurchases(new ItemIdent(
+        result.refunds += _moneyLogic.refundAllItemPurchases(new ItemIdent(
             type, item.itemId), item.name);
 
         if (catrec != null) {
             // TODO: remove after a release or two
-            result.refunds = _moneyLogic.refundAllItemPurchases(new CatalogIdent(
+            result.refunds += _moneyLogic.refundAllItemPurchases(new CatalogIdent(
                 type, item.catalogId), item.name);
         }
 
