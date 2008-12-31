@@ -27,6 +27,8 @@ public enum TransactionType
     SUPPORT_ADJUST(12),
     CHARITY_PAYOUT(13),
     CHANGE_IN_COINS(14),
+    REFUND_GIVEN(15),
+    REFUND_DEDUCTED(16),
     ;
 
     // Required by ByteEnum

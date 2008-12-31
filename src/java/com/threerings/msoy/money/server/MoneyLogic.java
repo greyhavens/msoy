@@ -34,6 +34,7 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.messaging.MessageConnection;
+import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
@@ -460,51 +461,113 @@ public class MoneyLogic
      */
     public int refundAllItemPurchases (ItemIdent item, String itemName)
     {
-        log.info("Refunding purchases", "itemIdent", item, "name", itemName);
         return refundAll(item, itemName);
     }
 
     @Deprecated
     public int refundAllItemPurchases (CatalogIdent item, String itemName)
     {
-        log.info("Refunding purchases", "catalogIdent", item, "name", itemName);
         return refundAll(item, itemName);
     }
 
     /**
-     * Attempts to refund all the money spent on an item to purchasers and deducts the bling or
-     * coins from the creator, affiliate and charity. For each applicable transaction, introduces
-     * an inverse transaction. Note that since we purge old transactions periodically, this method
-     * can only affect the ones we still have. The algorithm can also fail if the accounts where
-     * the money was originally paid to now have insufficient funds.
+     * Attempts to reverse all the transactions for an item by deducting bling, bars and coins
+     * earned by the creator, affiliates and charities, converting the garnished money down to
+     * coins and returning them to the purchasers. The primary objective is to not generate money.
+     * 
+     * <p>When deducting, if the deductee is out of money in one currency, then another currency is
+     * attempted.</p>
+     * 
+     * <p>The current exchange rate is used throughout. Failure occurs if the exchange rate is
+     * degenerate</p>
+     * 
+     * <p>Money absorbed by the system is magically restored, including that which would have gone
+     * to an affiliate for a user with no affiliate.</p>
      *
      * @param item the subject to use for the refund transactions
      * @param itemName name to use in refund transaction description
+     * @return the number of new transactions introduced
      * 
      * TODO: return more information about what happened, e.g. how much money was taken from each
      * payout type and whether the account was depleted
      */
     public int refundAll (Object item, String itemName)
     {
-        // aggregate refunds per member and currency type
+        final int systemId = 0;
+        MoneyConfigObject moneyCfg = _runtime.money;
+        final float systemPct = moneyCfg.getSystemPercentage() / moneyCfg.creatorPercentage;
+        final float affiliatePct = moneyCfg.affiliatePercentage / moneyCfg.creatorPercentage;
+        final float xchgRate = _exchange.getRate();
+
+        // this will cause problems for the refund, bail early
+        Preconditions.checkArgument(xchgRate != 0 && xchgRate != Float.POSITIVE_INFINITY);
+
+        log.info("Refunding purchases", "item", item, "type", item.getClass().getSimpleName(),
+            "name", itemName, "exchangeRate", xchgRate);
+
+        // function for using getOrCreate
+        Function<Integer, int[]> initRefund = new Function<Integer, int[]>() {
+            public int[] apply (Integer memberId) {
+                return new int[Currency.values().length];
+            }
+        };
+
+        // aggregate refunds per member and currency type, also resurrecting system and
+        // affiliate payouts
         HashMap<Integer, int[]> refunds = Maps.newHashMap();
+        HashMap<Integer, int[]> vanishedPayouts = Maps.newHashMap();
+        List<Integer> affiliatedTxIds = Lists.newArrayList();
+        int[] systemPurse = getOrCreate(refunds, systemId, initRefund);
         for (MoneyTransactionRecord txRec :
             _repo.getTransactionsForSubject(item, 0, Integer.MAX_VALUE, false)) {
-            int[] currencies = refunds.get(txRec.memberId);
-            if (currencies == null) {
-                refunds.put(txRec.memberId, currencies = new int[Currency.values().length]);
+            int currencyIdx = txRec.currency.ordinal();
+
+            // record the earnings or spendings of this user (inverted amount) and merge spent bars
+            // as a coin refund, otherwise just add into total
+            if (txRec.amount < 0 && txRec.currency == Currency.BARS) {
+                getOrCreate(refunds, txRec.memberId, initRefund)[Currency.COINS.ordinal()] +=
+                    Math.floor(-txRec.amount * xchgRate);
+
+            } else {
+                getOrCreate(refunds, txRec.memberId, initRefund)[currencyIdx] -= txRec.amount;
             }
-            currencies[txRec.currency.ordinal()] -= txRec.amount;
+
+            // resurrect vanished money too. this will not be docked from any account but will
+            // contribute to the pool
+            if (txRec.transactionType == TransactionType.CREATOR_PAYOUT) {
+                systemPurse[currencyIdx] -= Math.ceil(txRec.amount * systemPct);
+
+                getOrCreate(vanishedPayouts, txRec.referenceTxId, initRefund)[currencyIdx] +=
+                    Math.ceil(txRec.amount * affiliatePct);
+
+            } else if (txRec.transactionType == TransactionType.AFFILIATE_PAYOUT) {
+                affiliatedTxIds.add(txRec.referenceTxId);
+            }
         }
+
+        // remove the resurrected affiliate money if it was also paid out
+        for (int txId : affiliatedTxIds)  {
+            vanishedPayouts.remove(txId);
+        }
+
+        // add vanished payouts to the system purse
+        for (int[] values : vanishedPayouts.values()) {
+            for (int ii = values.length - 1; ii >= 0; --ii) {
+                systemPurse[ii] -= values[ii];
+            }
+        }
+
+        log.info("System purse", "values", systemPurse);
 
         // log all updates for later dispatch
         List<MoneyTransactionRecord> updates = Lists.newArrayList();
 
-        // track how much is in the pool to give back
-        int[] pool = new int[Currency.values().length];
+        // track how much we can give back
+        float[] pool = new float[Currency.values().length];
 
-        // apply all deductions, taking bars if the bling runs out
-        Currency[] currencies = {Currency.COINS, Currency.BLING, Currency.BARS};
+        // apply all deductions, taking bars if the bling runs out and coins if the bars run out
+        // and lastly bars if the coins run out
+        Currency[] currencies = {Currency.BLING, Currency.BARS, Currency.COINS, Currency.BARS};
         for (Map.Entry<Integer, int[]> refund : refunds.entrySet()) {
             int memberId = refund.getKey();
             int[] values = refund.getValue();
@@ -514,58 +577,95 @@ public class MoneyLogic
                     continue;
                 }
 
+                values[currency.ordinal()] = 0;
+
+                // no account for these, just dump straight to pool
+                if (memberId == systemId) {
+                    pool[currency.ordinal()] += deduction;
+                    continue;
+                }
+
                 // loop in case user is spending money right now and we are breaking the bank
                 while (deduction > 0) {
                     try {
                         updates.add(_repo.deductAndStoreTransaction(memberId, currency, deduction,
-                            TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose(
+                            TransactionType.REFUND_DEDUCTED, MessageBundle.tcompose(
                             "m.item_refunded", itemName), item));
                         pool[currency.ordinal()] += deduction;
                         deduction = 0;
 
                     } catch (NotEnoughMoneyException neme) {
-                        // if they are out of bling, try bars next time through
+
+                        int deficit = deduction - neme.getMoneyAvailable();
+                        Currency conversion = null;
+                        int result = 0;
+
+                        // if they are out of bling, try bars
                         if (currency == Currency.BLING) {
-                            int blingDeficit = deduction - neme.getMoneyAvailable();
-                            values[Currency.BARS.ordinal()] -= blingDeficit / 100;
+                            conversion = Currency.BARS;
+                            result = (int)Math.ceil(deficit / 100f);
+
+                        // if they are out of bars, try coins
+                        } else if (currency == Currency.BARS) {
+                            conversion = Currency.COINS;
+                            result = (int)Math.ceil(deficit * xchgRate);
+
+                        // if they are out of coins, try bars
+                        } else if (currency == Currency.COINS) {
+                            conversion = Currency.BARS;
+                            result = (int)Math.ceil(deficit / xchgRate);
                         }
 
-                        // and bankrupt
+                        if (conversion != null) {
+                            values[conversion.ordinal()] -= result;
+                        }
+
+                        log.info("Account ran out of money during refund deductions phase",
+                            "memberId", memberId, "currency", currency, "deficit", deficit,
+                            "conversion", conversion, "result", result);
+
+                        // take what we can next time around
                         deduction = neme.getMoneyAvailable();
                     }
                 }
             }
         }
 
-        // convert bling to bars
-        pool[Currency.BARS.ordinal()] += pool[Currency.BLING.ordinal()] / 100;
-        pool[Currency.BLING.ordinal()] = 0;
+        log.info("Initial refund pool", "amounts", pool);
 
-        log.info("Refund pool", "coins", pool[Currency.COINS.ordinal()], "bars",
-            pool[Currency.BARS.ordinal()]);
+        // convert everything to coins
+        pool[Currency.BARS.ordinal()] += pool[Currency.BLING.ordinal()] / 100f;
+        pool[Currency.COINS.ordinal()] += Math.floor(pool[Currency.BARS.ordinal()] * xchgRate);
 
-        // now distribute the pool
+        log.info("Converted refund pool", "amounts", pool);
+
+        // now disperse the coins
+        // TODO: distribute the coins evenly if there are not enough
+        int coinPool = (int)pool[Currency.COINS.ordinal()];
         for (Map.Entry<Integer, int[]> refund : refunds.entrySet()) {
             int memberId = refund.getKey();
             int[] values = refund.getValue();
-            for (Currency currency : currencies) {
-                int refundAmount = values[currency.ordinal()];
-                int availableAmount = pool[currency.ordinal()];
-                if (refundAmount > availableAmount) {
-                    log.info("Issuing reduced refund due to insufficient funds",
-                        "currency", currency, "desiredAmount", refundAmount, "availableAmount",
-                        availableAmount);
-                    refundAmount = availableAmount;
-                }
-
-                if (refundAmount <= 0) {
-                    continue;
-                }
-                updates.add(_repo.accumulateAndStoreTransaction(memberId, currency, refundAmount,
-                    TransactionType.SUPPORT_ADJUST, MessageBundle.tcompose("m.item_refund",
-                    itemName), item, false));
-                pool[currency.ordinal()] -= refundAmount;
+            int refundAmount = values[Currency.COINS.ordinal()];
+            if (refundAmount > 0 && (values[Currency.BARS.ordinal()] != 0 ||
+                values[Currency.BLING.ordinal()] != 0)) {
+                log.warning("Issuing coin refund, but bars and bling have non-zero balance",
+                    "refund", values, "memberId", memberId);
             }
+
+            if (refundAmount > coinPool) {
+                log.info("Issuing reduced refund due to insufficient funds",
+                    "memberId", memberId, "desiredAmount", refundAmount, "coinPool", coinPool);
+                refundAmount = coinPool;
+            }
+
+            if (refundAmount <= 0) {
+                continue;
+            }
+
+            updates.add(_repo.accumulateAndStoreTransaction(memberId, Currency.COINS, refundAmount,
+                TransactionType.REFUND_GIVEN, MessageBundle.tcompose("m.item_refund",
+                itemName), item, false));
+            coinPool -= refundAmount;
         }
 
         for (MoneyTransactionRecord txRec : updates) {
@@ -990,6 +1090,19 @@ public class MoneyLogic
         return newMap;
     }
 
+    /**
+     * Avoids the repetitive pattern of getting an entry from a map and putting a new (blank) one
+     * if it is null.
+     */
+    protected static <K, V> V getOrCreate (Map<K, V> map, K key, Function <K, V> createFunc)
+    {
+        V value = map.get(key);
+        if (value == null) {
+            map.put(key, value = createFunc.apply(key));
+        }
+        return value;
+    }
+    
     /** A Function that transforms a MemberArroundRecord and CashOutRecord to BlingInfo. */
     protected final Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>
         TO_BLING_INFO =

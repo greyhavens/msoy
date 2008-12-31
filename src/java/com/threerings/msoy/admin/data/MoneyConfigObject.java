@@ -58,7 +58,7 @@ public class MoneyConfigObject extends ConfigObject
 
     /** Percentage of the purchase price that will be awarded to the charity the user has chosen. */
     public float charityPercentage = 0.1f;
-    
+
     /** The amount of bling (NOT centibling) to grant daily to game creators. */
     public int blingPoolSize = 403;
 
@@ -73,6 +73,15 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The target bar/coin exchange rate. */
     public float targetExchangeRate = 3000;
+
+    /**
+     * The percentage of the purchase price that disappears, notionally going into the system
+     * purse.
+     */
+    public float getSystemPercentage ()
+    {
+        return 1.0f - creatorPercentage - affiliatePercentage - charityPercentage;
+    }
 
     // AUTO-GENERATED: METHODS START
     /**
