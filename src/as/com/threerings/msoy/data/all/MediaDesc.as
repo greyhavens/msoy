@@ -67,7 +67,7 @@ public class MediaDesc
     public static const APPLICATION_ZIP :int = 42;
 
     /** The MIME type for ActionScript ABC files. */
-    public static const COMPILED_ACTIONSCRIPT_LIBRARY :int = 43; 
+    public static const COMPILED_ACTIONSCRIPT_LIBRARY :int = 43;
 
     /** The MIME type for youtube video. */
     public static const EXTERNAL_YOUTUBE :int = 100;
@@ -338,7 +338,7 @@ public class MediaDesc
         }
     }
 
-    /** 
+    /**
      * Returns the URL that references this media. Tip: if you are ever calling MediaDesc.getPath(),
      * you are probably doing something wrong. getPath() is only for end-level things that are
      * geared towards actually displaying the media. Media should almost always be displayed in

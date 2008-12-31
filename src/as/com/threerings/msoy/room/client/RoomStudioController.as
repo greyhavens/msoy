@@ -45,7 +45,7 @@ public class RoomStudioController extends RoomController
         _flyTarget.visible = false;
         _roomView.addChildAt(_flyTarget, _roomView.numChildren);
         _roomView.addChildAt(_walkTarget, _roomView.numChildren);
-    
+
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);

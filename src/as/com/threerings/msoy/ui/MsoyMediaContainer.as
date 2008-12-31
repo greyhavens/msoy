@@ -139,7 +139,7 @@ public class MsoyMediaContainer extends MediaContainer
             super.setupVideo(url);
         }
     }
-            
+
     override protected function createVideoUI (player :VideoPlayer) :DisplayObject
     {
         return new MsoyVideoDisplay(player);

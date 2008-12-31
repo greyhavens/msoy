@@ -167,15 +167,15 @@ public class RoomView extends Sprite
         var hit :* = _ctrl.getHitSprite(stage.mouseX, stage.mouseY, true);
         if (hit === undefined) {
             return;
-        } 
+        }
         var sprite :MsoySprite = (hit as MsoySprite);
         if (sprite == null) {
             if (_bg == null) {
                 return;
-            } else { 
+            } else {
                 sprite = _bg;
             }
-        } 
+        }
 
         populateSpriteContextMenu(sprite, menuItems);
     }
@@ -447,7 +447,7 @@ public class RoomView extends Sprite
         _backdrop.update(scene.getDecor());
         relayout();
     }
-    
+
     public function getScene () :MsoyScene
     {
         return _scene;
@@ -461,10 +461,10 @@ public class RoomView extends Sprite
         if (! (RoomLayoutFactory.isDecorSupported(_layout, decor))) {
             _layout = RoomLayoutFactory.createLayout(decor, this);
         }
-        
+
         _layout.update(decor);
     }
-    
+
     /**
      * Updates the background sprite, in case background data had changed.
      */
@@ -495,7 +495,7 @@ public class RoomView extends Sprite
             }
         }
     }
-    
+
     override public function set scrollRect (r :Rectangle) :void
     {
         super.scrollRect = r;
@@ -632,7 +632,7 @@ public class RoomView extends Sprite
             }
         });
     }
-    
+
     /**
      * Populate the context menu for a sprite.
      */
@@ -732,7 +732,7 @@ public class RoomView extends Sprite
             return;
         }
         var rect :Rectangle = scrollRect;
-        if (rect == null) { 
+        if (rect == null) {
             return; // return if there's nothing to scroll
         }
 
@@ -1054,7 +1054,7 @@ public class RoomView extends Sprite
 import com.threerings.msoy.room.client.RoomElementSprite
 
 class BackdropOverlay extends RoomElementSprite
-{  
+{
     public function BackdropOverlay ()
     {
         mouseEnabled = false;

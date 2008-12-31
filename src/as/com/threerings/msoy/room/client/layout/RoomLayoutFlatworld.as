@@ -42,7 +42,7 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard
         cloc.loc.z = .5;
         return cloc;
     }
-    
+
     // from interface RoomLayout
     override public function pointToFurniLocation (
         stageX :Number, stageY :Number, anchorPoint :Object = null,

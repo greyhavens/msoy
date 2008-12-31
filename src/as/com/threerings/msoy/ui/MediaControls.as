@@ -35,7 +35,7 @@ public class MediaControls extends Sprite
     public static const VOLUME_POP_HEIGHT :int = 41;
     public static const VOLUME_TRACK_OFFSET :int = 3;
     public static const VOLUME_TRACK_HEIGHT :int = VOLUME_POP_HEIGHT - (2 * VOLUME_TRACK_OFFSET);
-    
+
     public function MediaControls (player :MediaPlayer, commentCallback :Function = null)
     {
         _player = player;
@@ -133,7 +133,7 @@ public class MediaControls extends Sprite
         g.beginFill(0xFFFFFF);
         g.drawRect(0, 11, _trackWidth, UNIT - 22)
         g.endFill();
-        
+
         _playBtn.addEventListener(MouseEvent.CLICK, handlePlay);
         _pauseBtn.addEventListener(MouseEvent.CLICK, handlePause);
 
@@ -151,7 +151,7 @@ public class MediaControls extends Sprite
     }
 
     protected function handlePlay (event :MouseEvent) :void
-    {   
+    {
         event.stopImmediatePropagation();
         _player.play();
     }
@@ -165,7 +165,7 @@ public class MediaControls extends Sprite
     protected function handleComment (event :MouseEvent) :void
     {
         _commentCallback();
-    }   
+    }
 
     protected function handleVolume (event :MouseEvent) :void
     {
@@ -258,27 +258,27 @@ public class MediaControls extends Sprite
     protected function handleTrackClick (event :MouseEvent) :void
     {
         event.stopImmediatePropagation();
-            
+
         // we add the listener on the track, but apparently the localX refers to the thing
         // actually clicked. Mother of pearl.
         var p :Point = new Point(event.stageX, event.stageY);
         p = _track.globalToLocal(p);
 
         adjustSeek(p.x);
-    }       
-            
+    }
+
     protected function handleKnobDown (event :MouseEvent) :void
-    {   
+    {
         event.stopImmediatePropagation();
-        
+
         _dragging = true;
         _knob.startDrag(true, new Rectangle(0, _knob.y, _trackWidth, 0));
         addEventListener(Event.ENTER_FRAME, handleKnobSeekCheck);
         addEventListener(MouseEvent.MOUSE_UP, handleKnobUp);
-    }   
-        
+    }
+
     protected function handleKnobUp (event :MouseEvent) :void
-    {   
+    {
         event.stopImmediatePropagation();
         endDrag();
     }
@@ -291,14 +291,14 @@ public class MediaControls extends Sprite
         removeEventListener(MouseEvent.MOUSE_UP, handleKnobUp);
         handleKnobSeekCheck(null);
     }
-        
+
     protected function handleKnobSeekCheck (event :Event) :void
-    {   
+    {
         adjustSeek(_knob.x);
-    }   
-        
+    }
+
     protected function handlePlayerState (event :ValueEvent) :void
-    {   
+    {
         displayPlayState(int(event.value));
     }
 

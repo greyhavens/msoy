@@ -45,7 +45,7 @@ public class ActionPanel extends BasePanel
             _actionTypeSelection.selectedIndex = 0;
             // also, make sure we disable the panel (the parent already does this for null data,
             // but this subclass also cares about EntranceFurniData instances!)
-            this.enabled = false;            
+            this.enabled = false;
         } else {
             // abandon previous edits
 

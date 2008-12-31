@@ -283,7 +283,7 @@ public class PopupFilePreview extends TitleWindow
     {
         new CameraSnapshotControl(_ctx, this, handleSnapshotTaken);
     }
-    
+
     protected function handleSnapshotTaken (bitmapData :BitmapData) :void
     {
         if (bitmapData == null) {

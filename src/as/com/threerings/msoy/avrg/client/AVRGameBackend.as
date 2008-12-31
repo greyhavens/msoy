@@ -48,7 +48,7 @@ public class AVRGameBackend extends ControlBackend
 {
     public const log :Log = Log.getLog(this);
 
-    /** 
+    /**
      * Magic number for specifying the server agent.
      */
     public static const SERVER_AGENT_ID :int = int.MIN_VALUE;
@@ -140,11 +140,11 @@ public class AVRGameBackend extends ControlBackend
         }
 
         _roomPropsNetAdapter = new BackendNetAdapter(
-            roomProps, RoomPropertiesObject.USER_MESSAGE, 
+            roomProps, RoomPropertiesObject.USER_MESSAGE,
             _props, "room_propertyWasSet_v1", "room_messageReceived_v1");
 
         _avatarAdapter = new BackendAvatarAdapter(
-            _gameObj, _ctrl.getRoom(), _props, "playerMoved_v1", "actorStateSet_v1", 
+            _gameObj, _ctrl.getRoom(), _props, "playerMoved_v1", "actorStateSet_v1",
             "actorAppearanceChanged_v1");
 
         callUserCode("enteredRoom_v1", roomId);
@@ -199,7 +199,7 @@ public class AVRGameBackend extends ControlBackend
         super.setUserProperties(o);
 
         _gameNetAdapter = new BackendNetAdapter(
-            _gameObj, AVRGameObject.USER_MESSAGE, o, "game_propertyWasSet_v1", 
+            _gameObj, AVRGameObject.USER_MESSAGE, o, "game_propertyWasSet_v1",
             "game_messageReceived_v1");
 
         _playerNetAdapter = new BackendNetAdapter(
@@ -273,7 +273,7 @@ public class AVRGameBackend extends ControlBackend
         if (!isPlaying()) {
             return null;
         }
-        
+
         return BackendUtils.getPlayerIds(_gameObj, null, 0);
     }
 
@@ -305,7 +305,7 @@ public class AVRGameBackend extends ControlBackend
     protected function room_getRoomId_v1 (targetId :int /* ignored */) :int
     {
         validateRoomTargetId(targetId);
-        // TODO: this should guarantee to only return a non-zero value after the room entry event 
+        // TODO: this should guarantee to only return a non-zero value after the room entry event
         // has been sent
         return getRoomId();
     }
@@ -317,7 +317,7 @@ public class AVRGameBackend extends ControlBackend
         if (!isPlaying() || _ctrl.getRoom() == null) {
             return null;
         }
-        
+
         return BackendUtils.getPlayerIds(_gameObj, _ctrl.getRoom(), getRoomId());
     }
 
@@ -381,7 +381,7 @@ public class AVRGameBackend extends ControlBackend
 
     // PlayerSubControl
     protected function player_setProperty_v1 (
-        targetId :int, propName :String, value :Object, key :Object, isArray :Boolean, 
+        targetId :int, propName :String, value :Object, key :Object, isArray :Boolean,
         immediate :Boolean) :void
     {
         validatePlayerTargetId(targetId);
@@ -414,7 +414,7 @@ public class AVRGameBackend extends ControlBackend
     protected function player_getRoomId_v1 (targetId :int /* ignored */) :int
     {
         validatePlayerTargetId(targetId);
-        // TODO: this should guarantee to only return a non-zero value after the room entry event 
+        // TODO: this should guarantee to only return a non-zero value after the room entry event
         // has been sent
         return getRoomId();
     }
@@ -654,7 +654,7 @@ public class AVRGameBackend extends ControlBackend
     }
 
     /**
-     * Displays an info message to the player. Default does nothing, so subclasses should 
+     * Displays an info message to the player. Default does nothing, so subclasses should
      * override.
      * TODO: candidate for code sharing with BaseGameBackend?
      */

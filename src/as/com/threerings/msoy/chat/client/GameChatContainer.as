@@ -53,7 +53,7 @@ public class GameChatContainer extends LayeredContainer
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
         addEventListener(Event.REMOVED_FROM_STAGE, handleAddRemove);
     }
-    
+
     public function getChatOverlay () :ChatOverlay
     {
         return _overlay;

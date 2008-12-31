@@ -99,13 +99,13 @@ public class RotatingHotspot extends Hotspot
 
     /** Specifies which corner of the furni we occupy. */
     protected var _corner :Point;
-    
+
     /** Sprite rotation at the beginning of modifications. Only valid during action. */
     protected var _originalRotation :Number;
 
     /** Angle to the original mouse anchor (in trig radians). */
     protected var _anchorAngle :Number;
-    
+
     // Bitmaps galore!
     [Embed(source="../../../../../../../../rsrc/media/skins/button/roomeditor/hotspot_rotate_over_tl.png")]
     public static const HOTSPOT_OVER_TOPLEFT :Class;

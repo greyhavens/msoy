@@ -35,7 +35,7 @@ public class Game extends Item
     /** The game screenshot media. */
     public var shotMedia :MediaDesc;
 
-    /** The server code media. Games may provide server code (in the form of a compiled action 
+    /** The server code media. Games may provide server code (in the form of a compiled action
      *  script library) to be run in a bureau whenever the game launches. */
     public var serverMedia :MediaDesc;
 

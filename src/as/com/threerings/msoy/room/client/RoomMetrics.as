@@ -354,7 +354,7 @@ public class RoomMetrics
         }
         return def;
     }
-    
+
     /** Accessor that converts position from room space to world space. */
     protected function roomToWorld (r :RoomVector) :WorldVector
     {

@@ -52,7 +52,7 @@ public class NotificationDisplay extends HBox
         if (_canvas.numChildren > 0) {
             // should only have one child
             var child :DisplayObject = _canvas.getChildAt(0);
-            Tweener.addTween(child, {x: _canvas.width, time: 0.75, transition: "easeoutquart", 
+            Tweener.addTween(child, {x: _canvas.width, time: 0.75, transition: "easeoutquart",
                 onComplete: function () :void {
                     if (child.parent == _canvas) {
                         _canvas.removeChild(child);
@@ -66,13 +66,13 @@ public class NotificationDisplay extends HBox
 
     public function displayNotification (notification :Notification) :void
     {
-        // TODO: this is here to allow BadgeEarnedNotification to forgo normal notification 
+        // TODO: this is here to allow BadgeEarnedNotification to forgo normal notification
         // display.  It would be great if we required it to display something, and then clicking
         // on the announcement caused it to show the fancy display again.
         if (notification.getAnnouncement() == null) {
-            // again, this is temporary.  We should always have the notification put something in 
-            // the history, and probably defer this custom display until the notification's 
-            // priority has decreed that it get shown in the history display.  Also, all 
+            // again, this is temporary.  We should always have the notification put something in
+            // the history, and probably defer this custom display until the notification's
+            // priority has decreed that it get shown in the history display.  Also, all
             // notifications should be allowed to do custom shit, so this is doubly weird.
             displayCustomNotification(notification);
             return;
@@ -103,12 +103,12 @@ public class NotificationDisplay extends HBox
     override protected function createChildren () :void
     {
         super.createChildren();
-        styleName = "notificationDisplay"; 
+        styleName = "notificationDisplay";
         this.percentWidth = 100;
 
         addChild(_popupBtn = new CommandCheckBox(null, toggleNotificationHistory));
         _popupBtn.styleName = "panelToggle";
-        
+
         addChild(_canvas = new Canvas());
         _canvas.styleName = "notificationCanvas";
         _canvas.percentWidth = 100;
@@ -135,14 +135,14 @@ public class NotificationDisplay extends HBox
         if (_currentlyAnimating || _pendingNotifications.length == 0) {
             return;
         }
-        
+
         _currentlyAnimating = true;
         var notification :UIComponent = createDisplay(
             _pendingNotifications.shift() as Notification);
         notification.x = _canvas.width;
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
-        Tweener.addTween(notification, 
+        Tweener.addTween(notification,
             {x: 0 /*_canvas.width - notification.width*/, time: 0.75, transition: "easeoutquart",
                 onComplete: function () :void {
                     _currentlyAnimating = false;
@@ -170,9 +170,9 @@ public class NotificationDisplay extends HBox
         var text :TextField = new TextField();
         text.multiline = forHistory;
         text.wordWrap = forHistory;
-        // I would rather not make the text selectable, but clicking on links doesn't work if it's 
+        // I would rather not make the text selectable, but clicking on links doesn't work if it's
         // not.  wtf?
-        text.selectable = true; 
+        text.selectable = true;
         text.autoSize = TextFieldAutoSize.LEFT;
         text.antiAliasType = AntiAliasType.ADVANCED;
         const announcement :String = Msgs.NOTIFY.xlate(notification.getAnnouncement());
@@ -234,11 +234,11 @@ public class NotificationDisplay extends HBox
     protected function linkClicked (event :TextEvent) :void
     {
         // TODO: Find a better way to handle this.  The popup'd history display's TextEvents from
-        // clicked links aren't making their way out to the appropriate listeners.  So instead, 
-        // we're listening for them here directly, and dispatching a clone of them on a local 
+        // clicked links aren't making their way out to the appropriate listeners.  So instead,
+        // we're listening for them here directly, and dispatching a clone of them on a local
         // TextField that is on the display list.
 
-        // if a link was clicked in the popup, then we must have a text field currently being 
+        // if a link was clicked in the popup, then we must have a text field currently being
         // displayed...
         if (_canvas.numChildren == 0) {
             log.warning("received a TextEvent.LINK, but canvas is empty");

@@ -413,11 +413,11 @@ public class RoomObjectController extends RoomController
         popActorMenu(avatar, menuItems);
     }
 
-    /** 
+    /**
      * Create the menu item that allows a user to change their own avatar.
-     */     
+     */
     protected function createChangeAvatarMenu (us :MemberObject, canControl :Boolean) :Object
-    {       
+    {
         var avItems :Array = [];
         var avatars :Array = (us.avatarCache != null) ? us.avatarCache.toArray() : [];
         ArrayUtil.sort(avatars);
@@ -442,7 +442,7 @@ public class RoomObjectController extends RoomController
         // return a menu item for changing their avatar
         return { label: Msgs.GENERAL.get("b.change_avatar"), children: avItems,
             enabled: canControl };
-    }       
+    }
 
     /**
      * Handles PET_CLICKED.
@@ -463,7 +463,7 @@ public class RoomObjectController extends RoomController
         var menuItems :Array = [];
 
         menuItems.push({ label: Msgs.GENERAL.get(isMuted ? "b.unmute_pet" : "b.mute_pet"),
-            callback: _wdctx.getMuteDirector().setMuted, arg: [ occInfo.username, !isMuted ] }); 
+            callback: _wdctx.getMuteDirector().setMuted, arg: [ occInfo.username, !isMuted ] });
 
         if (isPetOwner) {
             var isWalking :Boolean = (memObj.walkingId != 0);
@@ -1026,7 +1026,7 @@ public class RoomObjectController extends RoomController
         }
         return stuff;
     }
-    
+
     /** A casted version of _roomView. */
     protected var _roomObjectView :RoomObjectView;
 
@@ -1041,7 +1041,7 @@ public class RoomObjectController extends RoomController
 
     /** Controller for in-room furni editing. */
     protected var _editor :RoomEditorController;
-    
+
     /** Stack that stores the sequence of room updates. */
     protected var _updates :UpdateStack = new UpdateStack(updateRoom);
 

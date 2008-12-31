@@ -143,7 +143,7 @@ public class WorldClient extends MsoyClient
             var member :MemberObject = clobj as MemberObject;
             member.addListener(new AvatarUpdateNotifier(_wctx));
         }
-        
+
         if (!_featuredPlaceView) {
             // listen for coins and bars updates
             _user = (clobj as MemberObject);
@@ -246,7 +246,7 @@ public class WorldClient extends MsoyClient
     /**
      * Exposed to javascript so that it may tell us to use items in the current room, either as
      * background items, or as furni as apporpriate.
-     */ 
+     */
     protected function externalUseItem (itemType :int, itemId :int) :void
     {
         var view :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
@@ -349,12 +349,12 @@ public class WorldClient extends MsoyClient
         } else {
             creds = new MsoyCredentials(null, null);
         }
-        
+
         creds.ident = Prefs.getMachineIdent();
         creds.sessionToken = (token == null) ? params["token"] : token;
         creds.featuredPlaceView = _featuredPlaceView;
         creds.visitorId = getVisitorId();
-        
+
         return creds;
     }
 

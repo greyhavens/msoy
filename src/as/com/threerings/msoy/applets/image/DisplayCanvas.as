@@ -30,7 +30,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.LoaderUtil;
 
-/** 
+/**
  * Dispatched when the size of the image is known.
  */
 [Event(name="SizeKnown", type="com.threerings.util.ValueEvent")]
@@ -85,9 +85,9 @@ public class DisplayCanvas extends Canvas
     {
         clearImage();
         if (image == null) {
-            return; 
+            return;
         }
-        
+
         if (image is String) {
             image = new URLRequest(image as String);
         } else if (image is Class) {
@@ -204,7 +204,7 @@ class ImageHolder extends UIComponent
 {
     public function ImageHolder (toBeHeld :DisplayObject)
     {
-        // you'd think I'd need these, but using them makes the scrollbars not 
+        // you'd think I'd need these, but using them makes the scrollbars not
         // appear if we're bigger than the canvas. Maybe it's actually making the
         // canvas bigger but its parent doesn't add scrollbars.
         // Of course, I shouldn't even have to fucking size the canvas... see the

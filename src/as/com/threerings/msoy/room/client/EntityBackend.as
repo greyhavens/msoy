@@ -227,7 +227,7 @@ public class EntityBackend extends ControlBackend
     }
 
     protected function showPopup_v1 (
-        title :String, panel :DisplayObject, w :Number, h :Number, 
+        title :String, panel :DisplayObject, w :Number, h :Number,
         color :uint = 0xFFFFFF, alpha :Number = 1.0) :Boolean
     {
         if (_sprite == null || !(_sprite.parent is RoomView)) {

@@ -101,7 +101,7 @@ public class MsoyScene extends SceneImpl
     {
         return _msoyModel.entrance;
     }
-    
+
     /**
      * Retrieve the room decor.
      */

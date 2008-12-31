@@ -101,7 +101,7 @@ public /* abstract */ class Badge extends SimpleStreamableObject
     protected static const BADGE_IMAGE_DIR :String = "badge/";
     protected static const BADGE_IMAGE_TYPE :String = ".png";
 
-    /** Standard roman numerals support up to 3999, but it is extremely unlikely that we ever 
+    /** Standard roman numerals support up to 3999, but it is extremely unlikely that we ever
      * have more than 20 or so levels. */
     protected static const ROMAN_TIERS :Array = [ 10, 9, 5, 4, 1 ];
     protected static const ROMAN_NUMERALS :Array = [ "X", "IX", "V", "IV", "I" ];

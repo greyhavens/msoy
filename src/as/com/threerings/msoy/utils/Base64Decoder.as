@@ -43,7 +43,7 @@ public class Base64Decoder
      * buffer. Subsequent calls to this method add on to the internal
      * buffer. After all data have been encoded, call <code>toByteArray()</code>
      * to obtain a decoded <code>flash.utils.ByteArray</code>.
-     * 
+     *
      * @param encoded The Base64 encoded String to decode.
      */
     public function decode(encoded:String):void
@@ -116,9 +116,9 @@ public class Base64Decoder
 
     /**
      * Returns the current buffer as a decoded <code>flash.utils.ByteArray</code>.
-     * Note that calling this method also clears the buffer and resets the 
+     * Note that calling this method also clears the buffer and resets the
      * decoder to its initial state.
-     * 
+     *
      * @return The decoded <code>flash.utils.ByteArray</code>.
      */
     public function toByteArray():ByteArray

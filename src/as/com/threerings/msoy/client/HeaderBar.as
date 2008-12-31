@@ -40,7 +40,7 @@ public class HeaderBar extends HBox
 {
     public static const HEIGHT :int = 17;
 
-    public function HeaderBar (ctx :MsoyContext, chatTabs :ChatTabBar) 
+    public function HeaderBar (ctx :MsoyContext, chatTabs :ChatTabBar)
     {
         _ctx = ctx;
         _tabs = chatTabs;
@@ -150,7 +150,7 @@ public class HeaderBar extends HBox
         heightBtn.toolTip = Msgs.GENERAL.get("i.height");
         heightBtn.styleName = "heightButton";
         _closeBox.addChild(heightBtn);
-        
+
         var closeBtn :CommandButton = new CommandButton(null, MsoyController.CLOSE_PLACE_VIEW);
         closeBtn.styleName = "closeButton";
         _closeBox.addChild(closeBtn);
@@ -259,7 +259,7 @@ import com.threerings.msoy.client.HeaderBar;
 
 class Spacer extends HBox
 {
-    public function Spacer (headerBar :HeaderBar) 
+    public function Spacer (headerBar :HeaderBar)
     {
         _headerBar = headerBar;
 

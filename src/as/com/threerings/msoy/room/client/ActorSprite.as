@@ -76,7 +76,7 @@ public class ActorSprite extends OccupantSprite
         // note our new item ident, our entity id in the room
         setItemIdent((newInfo is ActorInfo) ? (newInfo as ActorInfo).getItemIdent() : null);
 
-        // if the state has changed, dispatch an event 
+        // if the state has changed, dispatch an event
         if (stateChanged) {
             callUserCode("stateSet_v1", getState());
         }

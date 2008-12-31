@@ -1519,7 +1519,7 @@ public class WorldController extends MsoyController
     protected var _recentScenes :Array = [];
 
     /** The maximum number of recent scenes we track. */
-    protected static const MAX_RECENT_SCENES :int = 11; 
+    protected static const MAX_RECENT_SCENES :int = 11;
 
     private static const log :Log = Log.getLog(WorldController);
 }

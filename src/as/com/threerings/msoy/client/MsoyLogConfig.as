@@ -11,7 +11,7 @@ import com.threerings.util.StringUtil;
 public class MsoyLogConfig
 {
     /**
-     * Initializes the log levels. Top level msoy classes should call this to get log level 
+     * Initializes the log levels. Top level msoy classes should call this to get log level
      * configuration goodness.
      */
     public static function init () :void

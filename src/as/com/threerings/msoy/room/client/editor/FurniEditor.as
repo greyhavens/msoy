@@ -96,10 +96,10 @@ public class FurniEditor extends FurniHighlight
         for each (var hotspot :Hotspot in _hotspots) {
             hotspot.setAdvancedMode(advanced);
         }
-        
+
         updateDisplay();
     }
-    
+
     // @Override from FurniHighlight
     override public function start () :void
     {

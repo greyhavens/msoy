@@ -66,7 +66,7 @@ public class MediaWrapper extends Container
         // nothing needed
     }
 
-    override protected function updateDisplayList (unscaledWidth: Number, 
+    override protected function updateDisplayList (unscaledWidth: Number,
         unscaledHeight :Number) :void
     {
         _cont.containerDimensionsUpdated(unscaledWidth, unscaledHeight);

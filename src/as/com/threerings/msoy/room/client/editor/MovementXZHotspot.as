@@ -23,7 +23,7 @@ public class MovementXZHotspot extends Hotspot
 {
     /** The hotspot won't go beyond this depth, even in advanced mode. */
     public static const MAX_DEPTH :int = 10;
-    
+
     public function MovementXZHotspot (editor :FurniEditor)
     {
         super(editor, true);
@@ -42,7 +42,7 @@ public class MovementXZHotspot extends Hotspot
     override protected function startAction (event :MouseEvent) :void
     {
         super.startAction(event);
-        
+
         // make sure we're showing the proper action icon
         switchDisplay(event.shiftKey ? _displayYMouseOver : _displayMouseOver);
     }
@@ -97,7 +97,7 @@ public class MovementXZHotspot extends Hotspot
 
         // see if the user specified an invalid location, or one that's too far away
         if (loc == null || (_advancedMode && loc.z >= MAX_DEPTH)) {
-            return; 
+            return;
         }
 
         // in default mode, clamp to room boundaries
@@ -105,7 +105,7 @@ public class MovementXZHotspot extends Hotspot
             loc.x = MathUtil.clamp(loc.x, 0, 1);
             loc.z = MathUtil.clamp(loc.z, 0, 1);
         }
-        
+
         _editor.updateTargetLocation(loc);
     }
 

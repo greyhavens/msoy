@@ -171,7 +171,7 @@ public class NotificationDirector extends BasicDirector
                     MessageBundle.tcompose("m.friend_name_changed", entry.name, memberId,
                         oldEntry.name),
                     Notification.BUTTSCRATCHING);
-                                        
+
             } else if (entry.status != oldEntry.status) {
                 addGenericNotification(
                     MessageBundle.tcompose("m.friend_status_changed", entry.name, memberId,
@@ -244,7 +244,7 @@ public class NotificationDirector extends BasicDirector
 
     protected function notificationExpired (event :ValueEvent) :void
     {
-        // all we currently need to do is check if this list is empty, and if so, have the 
+        // all we currently need to do is check if this list is empty, and if so, have the
         // display fade it out.
         if (_currentNotifications.size() == 0) {
             _notifications.length = 0;

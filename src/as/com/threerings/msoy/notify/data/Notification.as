@@ -10,7 +10,7 @@ import com.threerings.io.SimpleStreamableObject;
 import com.threerings.msoy.data.all.MemberName;
 
 /**
- * Notification from the server to the client.  Notifications are sent as messages on the 
+ * Notification from the server to the client.  Notifications are sent as messages on the
  * MemberObject.
  */
 public /* abstract */ class Notification extends SimpleStreamableObject
@@ -33,7 +33,7 @@ public /* abstract */ class Notification extends SimpleStreamableObject
     {
         throw new Error("Abstract");
     }
-    
+
     /**
      * Get the category of the notification.
      */

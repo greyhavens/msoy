@@ -13,7 +13,7 @@ public interface Window
     /** Retrieve a service provided by this world server. */
     function requireService (sclass :Class) :InvocationService;
 
-    /** Retrieve the client for use in making service calls on services returned by 
+    /** Retrieve the client for use in making service calls on services returned by
      * <code>requireService</code>. */
     function getClient () :Client;
 

@@ -71,7 +71,7 @@ public class RoomObject extends SpotSceneObject
         }
         return null;
     }
-    
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);

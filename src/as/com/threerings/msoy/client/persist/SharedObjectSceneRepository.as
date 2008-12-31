@@ -31,7 +31,7 @@ public class SharedObjectSceneRepository
         // of all shared objects we have stored, for example keeping an array
         // of scene ids for which shared objects exist. We could then attempt
         // to manage the size of the cache and perhaps auto-delete old
-        // scenes 
+        // scenes
     }
 
     // from SceneRepository

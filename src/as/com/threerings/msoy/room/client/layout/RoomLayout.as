@@ -4,7 +4,7 @@
 package com.threerings.msoy.room.client.layout {
 
 import flash.geom.Point;
-    
+
 import com.threerings.flash.Vector3;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.room.client.ClickLocation;
@@ -36,7 +36,7 @@ public interface RoomLayout {
      * @returns A Point with a screen position in stage coordinate system.
      */
     function locationToPoint (location :MsoyLocation) :Point;
-    
+
     /**
      * Finds a room location for avatar movement, based on a screen position.
      *
@@ -59,7 +59,7 @@ public interface RoomLayout {
     function pointToAvatarLocation (
         stageX :Number, stageY :Number, anchorPoint :Object = null,
         anchorAxis :Vector3 = null, clampToRoom :Boolean = true) :ClickLocation;
-    
+
     /**
      * Finds a room location for furni placement, based on a screen position.
      *
@@ -82,7 +82,7 @@ public interface RoomLayout {
     function pointToFurniLocation (
         stageX :Number, stageY :Number, anchorPoint :Object = null,
         anchorAxis :Vector3 = null, clampToRoom :Boolean = true) :ClickLocation;
-    
+
     /**
      * Finds the projection of mouse coordinates onto a plane in the room, parallel with the
      * front wall, intersecting the room at specified depth. This type of functionality is useful
@@ -98,7 +98,7 @@ public interface RoomLayout {
      *
      */
     function pointToLocationAtDepth (stageX :Number, stageY :Number, depth :Number) :MsoyLocation;
-    
+
     /**
      * Finds the projection of mouse coordinates onto a plane in the room, parallel with the
      * floor, intersecting the room at specified height. This type of functionality is useful
@@ -114,7 +114,7 @@ public interface RoomLayout {
      *
      */
     function pointToLocationAtHeight (stageX :Number, stageY :Number, height :Number) :MsoyLocation;
-    
+
     /**
      * Given a position in room space, this function finds its projection in screen space, and
      * updates the DisplayObject's position and scale appropriately. If the display object
@@ -129,8 +129,8 @@ public interface RoomLayout {
 
     /**
      * Finds a recommended height of the chat overlay, in room units.
-     * 
-     * TODO: depending on what we do with subtitles, this should either be renamed to 
+     *
+     * TODO: depending on what we do with subtitles, this should either be renamed to
      * recommendedSubtitleHeight(), or should be nixed altogether
      */
     function recommendedChatHeight () :Number;

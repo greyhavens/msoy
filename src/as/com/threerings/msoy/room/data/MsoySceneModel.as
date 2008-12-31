@@ -35,9 +35,9 @@ public class MsoySceneModel extends SceneModel
     public static const ACCESS_EVERYONE :int = 0;
 
     /** Access control constant, denotes that only the scene owner and friends
-     *  (or group manager and members, in case of a group scene) can enter this scene. */ 
+     *  (or group manager and members, in case of a group scene) can enter this scene. */
     public static const ACCESS_OWNER_AND_FRIENDS :int = 1;
-    
+
     /** Access control constant, denotes that only the scene owner (or group manager,
      *  in case of a group scene) can enter this scene. */
     public static const ACCESS_OWNER_ONLY :int = 2;
@@ -47,7 +47,7 @@ public class MsoySceneModel extends SceneModel
 
     /** Access control, as one of the ACCESS constants. Limits who can enter the scene. */
     public var accessControl :int;
-    
+
     /** The type of owner that owns this scene. */
     public var ownerType :int;
 
@@ -68,7 +68,7 @@ public class MsoySceneModel extends SceneModel
 
     /** Decor item reference. */
     public var decor :Decor;
-    
+
     /** Audio data representation. */
     public var audioData :AudioData;
 
@@ -148,7 +148,7 @@ public class MsoySceneModel extends SceneModel
         validatePortalInfo();
         return (_portalInfo.get(portalId) as Portal);
     }
-    
+
     /**
      * Support for SpotScene.
      */
@@ -275,7 +275,7 @@ public class MsoySceneModel extends SceneModel
         decor.furniScale = 1;
         return decor;
     }
-    
+
     /** Cached portal info. Not streamed. */
     protected var _portalInfo :HashMap;
 }

@@ -9,7 +9,7 @@ import com.threerings.util.Equalable;
 /**
  * A reference to a client-side executable which can participate in the pseudo-server control
  * mechanism.
- * 
+ *
  * {@see EntityControl}
  */
 public /*abstract*/ class Controllable extends SimpleStreamableObject

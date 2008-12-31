@@ -237,7 +237,7 @@ public class ImageManipulator extends HBox
 
     protected function createUndoControls (bar :VBox) :void
     {
-        bar.addChild(createControlHeader("h.undo")); 
+        bar.addChild(createControlHeader("h.undo"));
 
         var box :HBox = new HBox();
         box.addChild(_undo = new CommandButton(null, _editor.doUndo));

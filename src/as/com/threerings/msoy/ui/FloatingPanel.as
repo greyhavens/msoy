@@ -158,7 +158,7 @@ public class FloatingPanel extends TitleWindow
     {
         return _parent != null;
     }
-    
+
     /**
      * Close this FloatingPanel.
      */
@@ -172,7 +172,7 @@ public class FloatingPanel extends TitleWindow
     }
 
     /**
-     * A convenience function to add a button bar containing the specified button ids or 
+     * A convenience function to add a button bar containing the specified button ids or
      * already instantiated Button objects (CommandButtons, probably). You probably
      * want to call this at the bottom of your createChildren() method. Note that this is just for
      * standard buttons in the button bar. You can certainly add your own buttons elsewhere.

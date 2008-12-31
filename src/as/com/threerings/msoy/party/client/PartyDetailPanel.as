@@ -36,7 +36,7 @@ public class PartyDetailPanel extends FloatingPanel
         super.createChildren();
 
         var topBox :HBox = new HBox();
-        topBox.addChild(MediaWrapper.createView(Group.logo(_detail.icon))); 
+        topBox.addChild(MediaWrapper.createView(Group.logo(_detail.icon)));
 
         var infoBox :VBox = new VBox();
         infoBox.addChild(FlexUtil.createLabel(_detail.groupName));

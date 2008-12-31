@@ -5,7 +5,7 @@ import flash.geom.Matrix;
 /**
  * The framer calculates the transformation necessary to place an image in a frame by providing
  * a _scale factor and offset.
- */ 
+ */
 public interface Framer
 {
     /**

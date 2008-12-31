@@ -49,7 +49,7 @@ public class AudioData
     {
         return itemId != 0;
     }
-    
+
     // documentation inherited from superinterface Equalable
     public function equals (other :Object) :Boolean
     {
@@ -71,7 +71,7 @@ public class AudioData
     {
         var data :AudioData = new AudioData();
         // perform a shallow copy of value attributes
-        data.itemId = itemId;   
+        data.itemId = itemId;
         data.volume = volume;
         data.media = media;
         return data;

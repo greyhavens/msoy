@@ -231,7 +231,7 @@ public class TopPanel extends Canvas
     }
 
     /**
-     * Returns a rectangle in stage coordinates that specifies the main game area.  This is 
+     * Returns a rectangle in stage coordinates that specifies the main game area.  This is
      * basically just the bounds on the client, minus the any margins from control/header bars, etc.
      */
     public function getMainAreaBounds () :Rectangle

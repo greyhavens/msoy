@@ -1,4 +1,4 @@
-// 
+//
 // $Id$
 
 package com.threerings.msoy.avrg.client {
@@ -30,7 +30,7 @@ public class BackendAvatarAdapter
      * Creates a new adapter for a game and room.
      */
     public function BackendAvatarAdapter (
-        gameObj : AVRGameObject, roomObj :RoomObject, funcs :Object, playerMoved :String, 
+        gameObj : AVRGameObject, roomObj :RoomObject, funcs :Object, playerMoved :String,
         actorStateChanged :String, actorAppearanceChanged :String)
     {
         _gameObj = gameObj;
@@ -110,7 +110,7 @@ public class BackendAvatarAdapter
             if (memberId != 0) {
                 var info :MemberInfo = event.getEntry() as MemberInfo;
                 var oldInfo :MemberInfo = event.getOldEntry() as MemberInfo;
-                if (info.status != oldInfo.status || 
+                if (info.status != oldInfo.status ||
                     !Util.equals(info.getMedia(), oldInfo.getMedia())) {
                     // Call later so that sprites are sure to have updated
                     MethodQueue.callLater(function () :void {

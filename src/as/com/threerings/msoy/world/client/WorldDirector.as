@@ -86,7 +86,7 @@ public class WorldDirector extends BasicDirector
         if (location != null) {
             finishGoToMemberLocation(location);
             return;
-        } 
+        }
 
         _msvc.getCurrentMemberLocation(_wctx.getClient(), memberId,
             _wctx.resultListener(finishGoToMemberLocation));

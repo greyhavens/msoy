@@ -89,7 +89,7 @@ public class Base64Sender
     protected function send (s :String) :Boolean
     {
         var arg :String = (s == null) ? "null" : ("'" + s + "'");
-        var js :String = "document.getElementById('" + _targetName + "')." + 
+        var js :String = "document.getElementById('" + _targetName + "')." +
             _funcName + "(" + arg + ")";
         try {
             return Boolean(ExternalInterface.call("eval", js));

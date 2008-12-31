@@ -42,7 +42,7 @@ public class FurniData
         actionData = "<gameId>:<gameName>" */
     public static const ACTION_WORLD_GAME :int = 4;
 
-    /** An actionType indicating that actionData is a special help page to be displayed in a 
+    /** An actionType indicating that actionData is a special help page to be displayed in a
      * special way actionData = "<tabName>:<pageUrl>" TODO: this will change. */
     public static const ACTION_HELP_PAGE :int = 5;
 

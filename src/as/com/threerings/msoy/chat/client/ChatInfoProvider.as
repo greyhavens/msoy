@@ -11,7 +11,7 @@ public interface ChatInfoProvider
 {
     /**
      * Return the position to place bubbles attributed to this speaker.
-     * 
+     *
      * Null may be returned if the speaker is not known.
      */
     function getBubblePosition (speaker :Name) :Point;

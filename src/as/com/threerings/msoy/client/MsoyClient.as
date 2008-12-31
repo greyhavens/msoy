@@ -85,7 +85,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         super(null);
         _stage = stage;
         setVersion(DeploymentConfig.version);
-        
+
         // wire up our JavaScript bridge functions
         try {
             if (ExternalInterface.available) {
@@ -284,7 +284,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         if (_featuredPlaceView || member == null) {
             return;
         }
-        
+
         if (_embedded) {
             var params :Object = MsoyParameters.get();
             var vector :String = params[VisitorInfo.VECTOR_ID];
@@ -393,7 +393,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     {
         throw new Error("abstract");
     }
-    
+
     /**
      * Returns visitor tracking info from the client cookies (GWT) if available.
      */

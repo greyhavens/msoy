@@ -45,7 +45,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
 
     /** Used to communicate with table manager. */
     public var tableService :TableMarshaller;
-    
+
     /** The group to load up behind the lobby if not already in a room. */
     public var groupId :int;
 

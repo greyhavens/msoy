@@ -10,7 +10,7 @@ import com.threerings.msoy.room.client.RoomView;
  * Collection of static classes for testing and creating layout instances.
  */
 public class RoomLayoutFactory {
-    
+
     /**
      * Returns true if the specified layout supports the specified decor type.
      * Single layout can support multiple decor types.
@@ -39,7 +39,7 @@ public class RoomLayoutFactory {
             // this should only happen during room initialization
             return RoomLayoutStandard;
         }
-        
+
         // since we only have two layout classes right now, don't worry about a lookup table :)
         // TODO: lookup table.
         if (decor.type == Decor.FLAT_LAYOUT) {

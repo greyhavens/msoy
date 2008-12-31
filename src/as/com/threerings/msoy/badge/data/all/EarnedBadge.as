@@ -23,7 +23,7 @@ public class EarnedBadge extends Badge
     // from Object
     override public function toString () :String
     {
-        return "EarnedBadge [code=" + badgeCode + ", level=" + level + ", whenEarned=" + 
+        return "EarnedBadge [code=" + badgeCode + ", level=" + level + ", whenEarned=" +
             whenEarned + ", coinValue=" + coinValue + "]";
     }
 

@@ -22,11 +22,11 @@ public class TextUtil
     * that format.
     *
     * @param text The text to parse
-    * @param defaultFormat The format to use for normal text.  If left null, 
+    * @param defaultFormat The format to use for normal text.  If left null,
     *        ChatOverlay.createChatFormat() is used.
-    * @param parseSpecial If true, parsing will look for special links, such as those we use in 
+    * @param parseSpecial If true, parsing will look for special links, such as those we use in
     *                     translation messages.
-    * @param useDefaultColor If true, the color from the defaultFormat will be used for links, 
+    * @param useDefaultColor If true, the color from the defaultFormat will be used for links,
     *                        otherwise links will be displayed in blue.
     */
     public static function parseLinks (
@@ -43,7 +43,7 @@ public class TextUtil
             if (ii % 2 == 0) {
                 // normal text at even-numbered elements...
                 if (parseSpecial) {
-                    var specialBits :Array = 
+                    var specialBits :Array =
                         parseSpecialLinks(String(array[ii]), defaultFormat, useDefaultColor);
                     specialBits.unshift(ii, 1);
                     array.splice.apply(array, specialBits);
@@ -55,7 +55,7 @@ public class TextUtil
 
             } else {
                 // links at the odd indexes
-                array.splice(ii, 0, 
+                array.splice(ii, 0,
                     createLinkFormat(String(array[ii]), defaultFormat, useDefaultColor, true));
             }
         }
@@ -63,7 +63,7 @@ public class TextUtil
         return array;
     }
 
-    /** 
+    /**
      * Populates a TextField with the specified formatted strings.
      *
      * @param txt The text field to format the text onto.
@@ -72,7 +72,7 @@ public class TextUtil
      * @param defaultFmt The format to use when none is provided for a String field.  If left null,
      *        ChatOverlay.createChatFormat() will be used.
      */
-    public static function setText (txt :TextField, texts :Array, 
+    public static function setText (txt :TextField, texts :Array,
         defaultFmt :TextFormat = null) :void
     {
         defaultFmt = defaultFmt || ChatOverlay.createChatFormat();
@@ -116,7 +116,7 @@ public class TextUtil
                 var index :int = int(result.index);
                 array.push(defaultFormat, text.substring(0, index));
                 array.push(
-                    createLinkFormat(String(result[2]), defaultFormat, useDefaultColor, false), 
+                    createLinkFormat(String(result[2]), defaultFormat, useDefaultColor, false),
                     String(result[1]));
 
                 // and advance the text

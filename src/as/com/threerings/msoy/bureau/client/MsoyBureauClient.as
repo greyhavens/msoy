@@ -50,7 +50,7 @@ public class MsoyBureauClient extends WhirledBureauClient
 
     /** Access this client's window director. */
     public function getWindowDirector () :WindowDirector
-    { 
+    {
         ThaneWorldMarshaller; // make sure we link in the marshaller
 
         if (_windowDirector == null) {

@@ -23,7 +23,7 @@ public class RoomCodes
 
     /** Error reported when the entity is denied entrance to a scene. */
     public static const E_ENTRANCE_DENIED :String = "e.entrance_denied";
-    
+
     /** A room layer that is in front of normal furniture and such. */
     public static const FOREGROUND_LAYER :int = 0;
 

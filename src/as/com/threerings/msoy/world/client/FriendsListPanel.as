@@ -90,7 +90,7 @@ public class FriendsListPanel extends FlyingPanel
     override protected function didOpen () :void
     {
         // auto-position ourselves
-        var placeBounds :Rectangle = _wctx.getPlaceViewBounds(); 
+        var placeBounds :Rectangle = _wctx.getPlaceViewBounds();
         height = placeBounds.height - PADDING * 2;
         x = placeBounds.right - width - PADDING;
         y = placeBounds.y + PADDING;
@@ -150,7 +150,7 @@ public class FriendsListPanel extends FlyingPanel
         _statusEdit.addEventListener(FlexEvent.ENTER, commitEdit);
         _statusEdit.addEventListener(KeyboardEvent.KEY_UP, keyUp);
         box.addChild(_statusEdit);
-    
+
         // initialize with currently online friends
         init(me);
     }
@@ -187,7 +187,7 @@ public class FriendsListPanel extends FlyingPanel
     protected function editFocusOut (...ignored) :void
     {
         // quick check
-        if (_statusEdit.text == Msgs.GENERAL.get("l.statusPrompt") || 
+        if (_statusEdit.text == Msgs.GENERAL.get("l.statusPrompt") ||
             _statusEdit.text == "") {
             setStatus("");
         }
@@ -225,7 +225,7 @@ public class FriendsListPanel extends FlyingPanel
 
     protected function setStatus (status :String) :void
     {
-        _statusEdit.text = 
+        _statusEdit.text =
             status == "" || status == null ?  Msgs.GENERAL.get("l.emptyStatus") : status;
     }
 

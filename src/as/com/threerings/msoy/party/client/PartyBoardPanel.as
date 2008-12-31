@@ -55,7 +55,7 @@ public class PartyBoardPanel extends FloatingPanel
 
         addChild(_content);
 
-        addButtons(new CommandButton(Msgs.PARTY.get("b.create"), 
+        addButtons(new CommandButton(Msgs.PARTY.get("b.create"),
             FloatingPanel.createPopper(function () :FloatingPanel {
                 return new CreatePartyPanel(_wctx);
             })));

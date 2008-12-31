@@ -91,7 +91,7 @@ public class TableCreationPanel extends VBox
         gconf.setColumns(1);
         gconf.init(_ctx);
 
-        // add a configuration for the table name (before we give the game 
+        // add a configuration for the table name (before we give the game
         var tableName :TextInput = new TextInput();
         tableName.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName());
         gconf.addControl(FlexUtil.createTipLabel(Msgs.GAME.get("l.table"), Msgs.GAME.get("i.table")),

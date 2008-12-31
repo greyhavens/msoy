@@ -33,7 +33,7 @@ public class DecorSprite extends FurniSprite
     {
         _loadedCallback = fn;
     }
-    
+
     override public function getRoomLayer () :int
     {
         return RoomCodes.DECOR_LAYER;
@@ -99,7 +99,7 @@ public class DecorSprite extends FurniSprite
 
         // sprite location: center and up-front, but shifted by specified offset
         furniData.loc = new MsoyLocation(0.5, 0, 0);
-        
+
         return furniData;
     }
 

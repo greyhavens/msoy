@@ -27,11 +27,11 @@ public class MovementYHotspot extends Hotspot
     override public function updateDisplay (targetWidth :Number, targetHeight :Number) :void
     {
         super.updateDisplay(targetWidth, targetHeight);
-        
+
         this.x = 0;
         this.y = targetHeight / 2;
     }
-    
+
     // @Override from Hotspot
     override protected function updateAction (event :MouseEvent) :void
     {
@@ -62,7 +62,7 @@ public class MovementYHotspot extends Hotspot
         if (! _advancedMode) {
             cloc.loc.y = MathUtil.clamp(cloc.loc.y, 0, 1);
         }
-        
+
         _editor.updateTargetLocation(cloc.loc);
     }
 

@@ -75,18 +75,18 @@ public class ItemTypes
         // We can't use a switch statement because our final variables are not actually constants
         // (they are assigned values at class initialization time).
         if (type == PHOTO) {
-            return "photo"; 
+            return "photo";
         } else if (type == AVATAR) {
             return "avatar";
         } else if (type == GAME) {
             return "game";
         } else if (type == FURNITURE) {
             return "furniture";
-        } else if (type == DOCUMENT) { 
+        } else if (type == DOCUMENT) {
             return "document";
-        } else if (type == PET) { 
+        } else if (type == PET) {
             return "pet";
-        } else if (type == AUDIO) { 
+        } else if (type == AUDIO) {
             return "audio";
         } else if (type == VIDEO) {
             return "video";

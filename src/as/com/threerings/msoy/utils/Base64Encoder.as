@@ -28,7 +28,7 @@ public class Base64Encoder
     /**
      * The character codepoint to be inserted into the encoded output to
      * denote a new line if <code>insertNewLines</code> is true.
-     * 
+     *
      * The default is <code>10</code> to represent the line feed <code>\n</code>.
      */
     public static var newLine:int = 10;
@@ -58,7 +58,7 @@ public class Base64Encoder
      * A Boolean flag to control whether the sequence of characters specified
      * for <code>Base64Encoder.newLine</code> are inserted every 76 characters
      * to wrap the encoded output.
-     * 
+     *
      * The default is true.
      */
     public var insertNewLines:Boolean = true;
@@ -84,7 +84,7 @@ public class Base64Encoder
      * an internal buffer. Subsequent calls to this method add on to the
      * internal buffer. After all data have been encoded, call
      * <code>toString()</code> to obtain a Base64 encoded String.
-     * 
+     *
      * @param data The String to encode.
      * @param offset The character position from which to start encoding.
      * @param length The number of characters to encode from the offset.
@@ -115,11 +115,11 @@ public class Base64Encoder
 
     /**
      * Encodes the UTF-8 bytes of a String in Base64 and adds the result to an
-     * internal buffer. The UTF-8 information does not contain a length prefix. 
+     * internal buffer. The UTF-8 information does not contain a length prefix.
      * Subsequent calls to this method add on to the internal buffer. After all
      * data have been encoded, call <code>toString()</code> to obtain a Base64
      * encoded String.
-     * 
+     *
      * @param data The String to encode.
      */
     public function encodeUTFBytes(data:String):void
@@ -135,7 +135,7 @@ public class Base64Encoder
      * Subsequent calls to this method add on to the internal buffer. After all
      * data have been encoded, call <code>toString()</code> to obtain a
      * Base64 encoded String.
-     * 
+     *
      * @param data The ByteArray to encode.
      * @param offset The index from which to start encoding.
      * @param length The number of bytes to encode from the offset.
@@ -197,9 +197,9 @@ public class Base64Encoder
 
     /**
      * Returns the current buffer as a Base64 encoded String. Note that
-     * calling this method also clears the buffer and resets the 
+     * calling this method also clears the buffer and resets the
      * encoder to its initial state.
-     * 
+     *
      * @return The Base64 encoded String.
      */
     public function toString():String

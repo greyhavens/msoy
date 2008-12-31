@@ -50,7 +50,7 @@ public class PublishPanel extends FloatingPanel
 
         var msg :String = MsoySceneModel(_view.getScene().getSceneModel()).accessControl !=
             MsoySceneModel.ACCESS_EVERYONE ? "m.publish_private" : "m.publish";
-        addChild(FlexUtil.createText(Msgs.EDITING.get(msg), 300)); 
+        addChild(FlexUtil.createText(Msgs.EDITING.get(msg), 300));
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
         getButton(OK_BUTTON).enabled = _snapshot.ready;

@@ -26,7 +26,7 @@ public class GameChatDirector extends ChatDirector
     }
 
     // from ChatDirector
-    override public function requestChat (speakSvc :SpeakService, text :String, 
+    override public function requestChat (speakSvc :SpeakService, text :String,
         record :Boolean) :String
     {
         if (_mctx.getTopPanel().getHeaderBar().getChatTabs().

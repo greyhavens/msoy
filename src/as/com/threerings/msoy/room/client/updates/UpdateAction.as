@@ -19,6 +19,6 @@ public interface UpdateAction
      * Creates a new scene update object, which reverts the effects of this action on the room.
      */
     function makeUndo () :SceneUpdate;
-    
+
 }
 }

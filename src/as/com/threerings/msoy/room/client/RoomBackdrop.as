@@ -57,8 +57,8 @@ public class RoomBackdrop
                 var p :Point = points[ii];
                 g.lineTo(p.x, p.y);
             }
-        }                
-        
+        }
+
         // variable names: [l/r][l/u][f/b] - left/right, lower/upper, front/back
         // Note: you can verify that a line connects two corners along an edge by checking that the
         // two endpoints differ in only one letter.
@@ -88,7 +88,7 @@ public class RoomBackdrop
                 drawLines([_metrics.roomToScreen(0, 0, ii), _metrics.roomToScreen(1, 0, ii)]);
             }
         }
-        
+
         if (fillWalls) {
             // fill in the floor
             g.beginFill(0x995a01);
@@ -104,7 +104,7 @@ public class RoomBackdrop
             g.beginFill(0x97c3e1);
             drawLines([luf, lub, rub, ruf, luf]);
             g.endFill();
-        } 
+        }
 
         // draw the lines defining the walls
         if (drawEdges) {

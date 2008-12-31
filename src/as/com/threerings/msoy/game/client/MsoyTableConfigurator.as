@@ -36,5 +36,5 @@ public class MsoyTableConfigurator extends DefaultFlexTableConfigurator
 
     protected var _title :TextInput;
 }
- 
+
 }

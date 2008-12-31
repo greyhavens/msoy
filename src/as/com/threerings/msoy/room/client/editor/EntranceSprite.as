@@ -42,6 +42,6 @@ public class EntranceSprite extends FurniSprite
     override public function isActionModifiable () :Boolean
     {
         return false;
-    }                  
+    }
 }
 }

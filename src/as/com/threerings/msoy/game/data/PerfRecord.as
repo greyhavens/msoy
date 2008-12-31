@@ -99,7 +99,7 @@ public class PerfRecord
 
     // number of previous scores to count
     protected static const BUCKETS :int = 10;
-    // the maximum time a score will last 
+    // the maximum time a score will last
     protected static const MAX_TIME :int = 30000;
 
     protected var _scores :Array = new Array(BUCKETS);

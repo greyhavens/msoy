@@ -25,7 +25,7 @@ public class BackendNetAdapter
      * @messageReceived the name of the user function to use for dispatching messages
      */
     public function BackendNetAdapter (
-        object :DObject, messageName :String, userFuncs :Object, propertyChanged :String, 
+        object :DObject, messageName :String, userFuncs :Object, propertyChanged :String,
         messageReceived :String) :void
     {
         _object = object;

@@ -1,4 +1,4 @@
-// 
+//
 // $Id$
 
 package com.threerings.msoy.ui {
@@ -13,7 +13,7 @@ import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.all.VizMemberName;
 
-public class MsoyNameLabelCreator 
+public class MsoyNameLabelCreator
     implements NameLabelCreator
 {
     public function MsoyNameLabelCreator (mctx :MsoyContext, forRoom :Boolean = false)
@@ -29,7 +29,7 @@ public class MsoyNameLabelCreator
                 "for VizMemberNames [" + name + "]");
             return null;
         }
-        
+
         return new LabelBox(_mctx, name as VizMemberName, _forRoom);
     }
 
@@ -127,7 +127,7 @@ class LabelBox extends HBox
         _label.text = "" + _name;
         addChild(new FlexWrapper(_label));
     }
-    
+
     protected function handleClick (event :MouseEvent) :void
     {
         var menuItems :Array = [];

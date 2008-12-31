@@ -106,7 +106,7 @@ public class ImageButtonSkin extends UIComponent
     {
         var state :String = currentState;
         if (state == null || _image == null) {
-            return; // not yet set up 
+            return; // not yet set up
         }
 
         state = state.toLowerCase();

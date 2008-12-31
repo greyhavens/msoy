@@ -144,7 +144,7 @@ public class WorldControlBar extends ControlBar
     // from ControlBar
     override protected function addControls () :void
     {
-        super.addControls(); 
+        super.addControls();
 
         addButton(musicBtn, [ UI_ROOM, UI_AVRGAME ], VOLUME_PRIORITY);
         addButton(homePageGridBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);

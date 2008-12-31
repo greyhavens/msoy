@@ -28,7 +28,7 @@ import com.threerings.msoy.client.PlayerRenderer;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.PlayerEntry;
 
-public class FriendRenderer extends PlayerRenderer 
+public class FriendRenderer extends PlayerRenderer
 {
     public static function createFactory (ctx :MsoyContext) :IFactory
     {
@@ -37,7 +37,7 @@ public class FriendRenderer extends PlayerRenderer
         return cf;
     }
 
-    public function FriendRenderer () 
+    public function FriendRenderer ()
     {
         super();
 

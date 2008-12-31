@@ -40,7 +40,7 @@ public class BureauLauncherMarshaller extends InvocationMarshaller
     public function launcherInitialized (arg1 :Client) :void
     {
         sendRequest(arg1, LAUNCHER_INITIALIZED, [
-            
+
         ]);
     }
 

@@ -1,4 +1,4 @@
-// 
+//
 // $Id$
 
 package com.threerings.msoy.game.client {

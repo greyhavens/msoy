@@ -15,7 +15,7 @@ import com.threerings.util.ValueEvent;
 /**
  * Dispatched when a piece of media is bleeped or unbleeped.
  * This is dispatched on the 'config' object.
- * 
+ *
  * @eventType com.threerings.msoy.client.Prefs.BLEEPED_MEDIA;
  * arg: [ mediaId (String), bleeped (Boolean) ]
  * mediaId may be the GLOBAL_BLEEP constant.
@@ -203,7 +203,7 @@ public class Prefs
         config.setValue(CHAT_HISTORY, showing);
     }
 
-    /** 
+    /**
      * Returns whether chat is in sidebar mode.
      */
     public static function getSidebarChat () :Boolean
@@ -216,8 +216,8 @@ public class Prefs
         config.setValue(CHAT_SIDEBAR, sidebar);
     }
 
-    /** 
-     * Returns whether to display the channel occupant list or not. 
+    /**
+     * Returns whether to display the channel occupant list or not.
      */
     public static function getShowingOccupantList () :Boolean
     {

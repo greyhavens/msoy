@@ -42,7 +42,7 @@ public class AVRGameLiaison extends GameLiaison
     {
         super(ctx, gameId);
     }
-    
+
     override public function clientWillLogon (event :ClientEvent) :void
     {
         super.clientWillLogon(event);

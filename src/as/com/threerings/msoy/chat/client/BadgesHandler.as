@@ -23,7 +23,7 @@ public class BadgesHandler extends CommandHandler
 {
     // from CommandHandler
     override public function handleCommand (
-        ctx :CrowdContext, speakSvc :SpeakService, cmd :String, args :String, 
+        ctx :CrowdContext, speakSvc :SpeakService, cmd :String, args :String,
         history :Array) :String
     {
         var mctx :MsoyContext = MsoyContext(ctx);

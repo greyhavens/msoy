@@ -133,7 +133,7 @@ public class AVRGameController extends PlaceController
     {
         return (_config as AVRGameConfig);
     }
-    
+
     public function getAVRGameObject () :AVRGameObject
     {
         return (_plobj as AVRGameObject);
@@ -150,7 +150,7 @@ public class AVRGameController extends PlaceController
     }
 
     /**
-     * Retrieve the room properties for our current rooom. Returns null if they are not yet 
+     * Retrieve the room properties for our current rooom. Returns null if they are not yet
      * available.
      */
     public function getRoomProperties () :RoomPropertiesObject
@@ -321,7 +321,7 @@ public class AVRGameController extends PlaceController
 
         // Dispatch to user when first condition is met
         if (_lastDispatchedSceneId != 0) {
-            log.debug(playerIdStr(), "Left room [sceneId=" + _lastDispatchedSceneId + 
+            log.debug(playerIdStr(), "Left room [sceneId=" + _lastDispatchedSceneId +
                 ", why=" + why + "]");
             _backend.playerLeftRoom(_lastDispatchedSceneId);
             _lastDispatchedSceneId = 0;
@@ -330,7 +330,7 @@ public class AVRGameController extends PlaceController
 
     protected function maybeDispatchEnteredRoom (why :String) :void
     {
-        if (_wctx.getSceneDirector() == null || _wctx.getLocationDirector() == null || 
+        if (_wctx.getSceneDirector() == null || _wctx.getLocationDirector() == null ||
             _gameObj == null || _playerObj == null || _wctx.getSceneDirector().getScene() == null ||
             _backend == null) {
             log.info(
@@ -338,7 +338,7 @@ public class AVRGameController extends PlaceController
                 "sceneDir", _wctx.getSceneDirector() != null,
                 "locDir", _wctx.getLocationDirector() != null,
                 "gameObj", _gameObj != null, "playerObj", _playerObj != null,
-                "scene", _wctx.getSceneDirector() != null && 
+                "scene", _wctx.getSceneDirector() != null &&
                 _wctx.getSceneDirector().getScene() != null, "backend", _backend != null);
             maybeDispatchLeftRoom("entry error");
             return;
@@ -360,7 +360,7 @@ public class AVRGameController extends PlaceController
         var roomOid :int = _roomObj == null ? 0 : _roomObj.getOid();
         var connected :Boolean = _backend.isConnected();
 
-        if (roomProps != null && ploc != null && sceneId == ploc.sceneId && placeId != 0 && 
+        if (roomProps != null && ploc != null && sceneId == ploc.sceneId && placeId != 0 &&
             placeId == roomOid && connected) {
             maybeDispatchLeftRoom("entered"); // no-op if left already
             log.debug(playerIdStr(), "Entered room  [sceneId=" + sceneId + ", why=" + why + "]");
@@ -368,9 +368,9 @@ public class AVRGameController extends PlaceController
             _lastDispatchedSceneId = sceneId;
 
         } else {
-            log.debug(playerIdStr(), 
-                "Would dispatch but... [roomProps=" + roomProps + ", ploc=" + ploc + 
-                ", sceneId=" + sceneId + ", placeId=" + placeId + ", roomOid=" + roomOid + 
+            log.debug(playerIdStr(),
+                "Would dispatch but... [roomProps=" + roomProps + ", ploc=" + ploc +
+                ", sceneId=" + sceneId + ", placeId=" + placeId + ", roomOid=" + roomOid +
                 ", connected=" + connected + ", why=" + why + "]");
         }
     }

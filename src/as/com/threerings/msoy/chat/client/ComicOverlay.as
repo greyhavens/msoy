@@ -38,7 +38,7 @@ import com.threerings.msoy.room.data.MsoyScene;
 /**
  * Implements comic chat in the metasoy client.
  */
-public class ComicOverlay extends ChatOverlay 
+public class ComicOverlay extends ChatOverlay
 {
     /**
      * Construct a comic chat overlay.
@@ -100,18 +100,18 @@ public class ComicOverlay extends ChatOverlay
 
         // display all system messages if they don't have a custom localtype.
         if (type == BROADCAST ||
-            (msg is SystemMessage && (msg.localtype == ChatCodes.PLACE_CHAT_TYPE || 
+            (msg is SystemMessage && (msg.localtype == ChatCodes.PLACE_CHAT_TYPE ||
                                       msg.localtype == ChatCodes.USER_CHAT_TYPE))) {
             displayed = displayBubble(msg, type);
         } else if (_ctx is WorldContext) {
-            var scene :MsoyScene = 
+            var scene :MsoyScene =
                 (_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene;
             if (scene != null && MsoyChatChannel.typeIsForRoom(msg.localtype, scene.getId())) {
                 if (type != IGNORECHAT) {
                     displayed = displayBubble(msg, type);
                 }
             }
-        } 
+        }
 
         return super.displayMessage(msg, alreadyDisplayed) || displayed;
     }
@@ -261,7 +261,7 @@ public class ComicOverlay extends ChatOverlay
         case BROADCAST:
             return createAndAddBubble(msg, type, null, null);
 
-        case PLACE: 
+        case PLACE:
             var umsg :UserMessage = (msg as UserMessage);
             if (_provider == null) {
                 log.warning(
@@ -285,7 +285,7 @@ public class ComicOverlay extends ChatOverlay
     /**
      * Create a chat bubble with the specified type and text.
      *
-     * @param speakerBubblePos if non-null, contains the position of where to put the bubbles for 
+     * @param speakerBubblePos if non-null, contains the position of where to put the bubbles for
      *                         this speaker in screen coordinates
      *
      * @return true if we successfully laid out the bubble
@@ -300,9 +300,9 @@ public class ComicOverlay extends ChatOverlay
 
         var cloud :BubbleCloud = _bubbles.get(speaker);
         if (cloud == null) {
-            var local :Point = 
+            var local :Point =
                 speakerBubblePos == null ? null : _scrollOverlay.globalToLocal(speakerBubblePos);
-            cloud = 
+            cloud =
                 new BubbleCloud(this, MAX_BUBBLES_PER_USER, local, _target.width, _target.height);
             _bubbles.put(speaker, cloud);
         }
@@ -429,7 +429,7 @@ public class ComicOverlay extends ChatOverlay
     {
         var thinkPad :Number = PAD / 2;
         var targetDia :int = 16;
-        // amount of space we need to leave at each end of the lines, so that the corner bubble 
+        // amount of space we need to leave at each end of the lines, so that the corner bubble
         // is about the same size as the rest of the bubbles.
         var endBuf :int = Math.round(Math.sin(45 * Math.PI / 180) * targetDia);
 
@@ -451,7 +451,7 @@ public class ComicOverlay extends ChatOverlay
         for (ii = 0; ii < hBumps; ii++, xx += hDia) {
             g.curveTo(xx + hDia / 2, -thinkPad, xx + hDia, thinkPad);
         }
-        control = findControlPoint(new Point(xx, thinkPad), 
+        control = findControlPoint(new Point(xx, thinkPad),
                                    new Point(w - thinkPad, yy = (thinkPad + endBuf)),
                                    thinkPad * 2);
         g.curveTo(control.x, control.y, w - thinkPad, yy);
@@ -460,7 +460,7 @@ public class ComicOverlay extends ChatOverlay
         for (ii = 0; ii < vBumps; ii++, yy += vDia) {
             g.curveTo(w + thinkPad, yy + vDia / 2, w - thinkPad, yy + vDia);
         }
-        control = findControlPoint(new Point(xx = (w - thinkPad - endBuf), h - thinkPad), 
+        control = findControlPoint(new Point(xx = (w - thinkPad - endBuf), h - thinkPad),
                                    new Point(w - thinkPad, yy),
                                    thinkPad * 2);
         g.curveTo(control.x, control.y, xx, h - thinkPad);
@@ -484,7 +484,7 @@ public class ComicOverlay extends ChatOverlay
         g.curveTo(control.x, control.y, xx, thinkPad);
     }
 
-    protected function findControlPoint (from :Point, to :Point, length :Number) :Point 
+    protected function findControlPoint (from :Point, to :Point, length :Number) :Point
     {
         // find the control point that draws a perpendicular line from the center of the line
         // between the two points, and is length away from that line.
@@ -501,7 +501,7 @@ public class ComicOverlay extends ChatOverlay
         var best :int = target - tolerance;
         for (var ii :int = target - tolerance; ii <= target + 2; ii++) {
             var bestResult :int = length % best;
-            bestResult = 
+            bestResult =
                 bestResult > length - (length % best) ? length - (length % best) : bestResult;
 
             var iiResult :int = length % ii;
@@ -543,7 +543,7 @@ public class ComicOverlay extends ChatOverlay
 
     private const log :Log = Log.getLog(this);
 
-    /** The overlay we place on top of our target that contains all the chat glyphs that can 
+    /** The overlay we place on top of our target that contains all the chat glyphs that can
      * scroll. */
     protected var _scrollOverlay :Sprite = new Sprite();
 
@@ -551,7 +551,7 @@ public class ComicOverlay extends ChatOverlay
      * not scroll with the scene. */
     protected var _staticOverlay :StaticOverlay = new StaticOverlay();
 
-    /** The provider of info about laying out bubbles. */ 
+    /** The provider of info about laying out bubbles. */
     protected var _provider :ChatInfoProvider;
 
     /** A copy of super's _defaultFmt, with a differnent alignment. */
@@ -591,13 +591,13 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 
 /**
  * A class to keep track of the bubbles spoken by a speaker.  When the speaker moves, this class
- * is told the new location so that it can layout its bubbles correctly.  This may get nixed or 
+ * is told the new location so that it can layout its bubbles correctly.  This may get nixed or
  * fancied up on the next pass of bubble layout...
  */
-class BubbleCloud 
+class BubbleCloud
 {
     public function BubbleCloud (overlay :ComicOverlay, maxBubbles :int, pos :Point,
-        viewWidth :Number, viewHeight :Number) 
+        viewWidth :Number, viewHeight :Number)
     {
         _scrollOverlay = overlay;
         _maxBubbles = maxBubbles;
@@ -606,7 +606,7 @@ class BubbleCloud
         _viewHeight = viewHeight;
     }
 
-    public function get bubbles () :Array 
+    public function get bubbles () :Array
     {
         return _bubbles;
     }
@@ -628,9 +628,9 @@ class BubbleCloud
     {
         _pos = pos;
         if (pos == null) {
-            // BubbleClouds with null speaker pos are those not being shown in PLACE (non speak, 
+            // BubbleClouds with null speaker pos are those not being shown in PLACE (non speak,
             // think, emote, etc), and aren't being placed over an ActorSprite.
-            var vpos :Rectangle = new Rectangle(BUBBLE_SPACING, BUBBLE_SPACING, 
+            var vpos :Rectangle = new Rectangle(BUBBLE_SPACING, BUBBLE_SPACING,
                 _viewWidth - BUBBLE_SPACING * 2, _viewHeight - BUBBLE_SPACING * 2);
             var avoidList :Array = [];
             var placeList :Array = [];
@@ -652,7 +652,7 @@ class BubbleCloud
                 avoidList.push(placer);
             }
         } else {
-            var yOffset :Number = pos.y - BUBBLE_SPACING; 
+            var yOffset :Number = pos.y - BUBBLE_SPACING;
             for each (bubble in _bubbles) {
                 var bubBounds :Rectangle = bubble.getBubbleBounds();
                 yOffset -= bubBounds.height;

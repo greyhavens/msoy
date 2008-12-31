@@ -102,8 +102,8 @@ public class Hotspot extends Sprite
     public function updateVisible (visible :Boolean) :void
     {
         this.visible = visible && (_displayInAdvancedOnly ? _advancedMode : true);
-    }        
-    
+    }
+
     /**
      * Called when the user sets or clears advanced editing options.
      */
@@ -111,7 +111,7 @@ public class Hotspot extends Sprite
     {
         _advancedMode = advanced;
     }
-    
+
     /**
      * This function is called when the user presses a mouse button on this hotspot.
      * Subclasses should override it to provide their own functionality,
@@ -313,7 +313,7 @@ public class Hotspot extends Sprite
 
     /** Should we only display in advanced mode? */
     protected var _displayInAdvancedOnly :Boolean;
-    
+
     /**
      * Mouse position at the beginning of the action. Also used to verify whether
      * a modification action is currently taking place (in which case its value is non-null).

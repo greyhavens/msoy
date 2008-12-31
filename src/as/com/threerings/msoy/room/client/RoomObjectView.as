@@ -109,7 +109,7 @@ public class RoomObjectView extends RoomView
 
     /**
      * (Re)set our scene to the one the scene director knows about.
-     */ 
+     */
     public function rereadScene () :void
     {
         setScene(_ctx.getSceneDirector().getScene() as MsoyScene);

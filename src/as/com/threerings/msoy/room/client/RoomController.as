@@ -176,7 +176,7 @@ public class RoomController extends SceneController
             log.info("Dropping message for lack of control [ident=" + ident +
                      ", name=" + name + "].");
             return;
-        }   
+        }
 
         // send the request off to the server
         var data :ByteArray = ObjectMarshaller.validateAndEncode(arg, MAX_ENCODED_MESSAGE_LENGTH);
@@ -202,7 +202,7 @@ public class RoomController extends SceneController
             log.info("Dropping state change for lack of control [ident=" + ident +
                 ", state=" + state + "].");
             return;
-        } 
+        }
 
         setActorState2(ident, actorOid, state);
     }
@@ -212,7 +212,7 @@ public class RoomController extends SceneController
      */
     public function sendPetChatMessage (msg :String, info :ActorInfo) :void
     {
-        if (checkCanRequest(info.getItemIdent(), "PetService")) { 
+        if (checkCanRequest(info.getItemIdent(), "PetService")) {
             sendPetChatMessage2(msg, info);
         }
     }
@@ -225,12 +225,12 @@ public class RoomController extends SceneController
     {
         // TODO: I want to know wtf is requesting to up-mem after it's been shut down...
 //        if (_roomObj == null) {
-//            log.info("Dropping memory update, not in room [ident=" + ident + ", key=" + key + "].");        
+//            log.info("Dropping memory update, not in room [ident=" + ident + ", key=" + key + "].");
 //            return false;
 //        }
-    
+
         // NOTE: there is no need to be "in control" to update memory.
-      
+
         // This will validate that the memory being set isn't greater than the maximum
         // alloted space for all memories, becauses that will surely fail on the server,
         // but the server will do further checks to ensure that this entry can be
@@ -524,7 +524,7 @@ public class RoomController extends SceneController
                 setHitter(hitter);
             }
         }
-        
+
         _walkTarget.visible = showWalkTarget;
         _flyTarget.visible = showFlyTarget;
 
@@ -802,7 +802,7 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Called to show the custom config panel for the specified FurniSprite in 
+     * Called to show the custom config panel for the specified FurniSprite in
      * a pop-up.
      */
     public function showFurniConfigPopup (sprite :FurniSprite) :void

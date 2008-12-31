@@ -28,12 +28,12 @@ import com.threerings.msoy.data.all.PlayerEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
-public class PlayerRenderer extends HBox 
+public class PlayerRenderer extends HBox
 {
     // Initialized by the ClassFactory
     public var mctx :MsoyContext;
 
-    public function PlayerRenderer () 
+    public function PlayerRenderer ()
     {
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;

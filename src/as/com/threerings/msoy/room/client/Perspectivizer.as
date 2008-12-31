@@ -144,7 +144,7 @@ public class Perspectivizer extends Bitmap
             // fill in a vertical strip in the destination
             for (yy = 0; yy < heightHere; yy++) {
                 var dy :int = yy + firstY;
-                var sy :int = int(Math.round(yy / heightHere * hh)); 
+                var sy :int = int(Math.round(yy / heightHere * hh));
 
                 _destPixels.setPixel32(dx, dy, _sourcePixels.getPixel32(sx, sy));
             }

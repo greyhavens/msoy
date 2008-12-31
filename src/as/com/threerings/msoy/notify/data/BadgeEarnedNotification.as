@@ -36,7 +36,7 @@ public class BadgeEarnedNotification extends Notification
         return PERSONAL;
     }
 
-    // from Notification 
+    // from Notification
     override public function getDisplayClass () :String
     {
         return "com.threerings.msoy.badge.ui.BadgeNotificationDisplay";

@@ -14,19 +14,19 @@ import com.threerings.msoy.room.data.MsoyLocation;
 /**
  * Interface for all objects that exist in a scene, and have both scene location in room
  * coordinate space, and screen location that needs to be updated appropriately.
- */ 
+ */
 public interface RoomElement extends Snapshottable
 {
     /**
      * Return the type of layout to do for this element.
-     * 
+     *
      * @return probably RoomCodes.LAYOUT_NORMAL.
      */
     function getLayoutType () :int
 
     /**
      * Return the layer upon which this element should be layed out.
-     * 
+     *
      * @return probably RoomCodes.FURNITURE_LAYER.
      */
     function getRoomLayer () :int;

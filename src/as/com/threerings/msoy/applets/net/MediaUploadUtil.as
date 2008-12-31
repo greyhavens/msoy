@@ -50,7 +50,7 @@ public class MediaUploadUtil
             body.writeUTFBytes("\r\n--" + BOUNDARY + "--\r\n");
 
             request.data = body;
-            
+
         } else {
             var vars :URLVariables = new URLVariables();
             vars.client = "mchooser";

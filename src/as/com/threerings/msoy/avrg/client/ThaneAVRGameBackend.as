@@ -65,7 +65,7 @@ public class ThaneAVRGameBackend
     }
 
     /**
-     * Retrieves the function pointer that will be called with the user properties when the front 
+     * Retrieves the function pointer that will be called with the user properties when the front
      * end connects.
      */
     public function getConnectListener () :Function
@@ -136,7 +136,7 @@ public class ThaneAVRGameBackend
     public function createPlayerNetAdapter (player :PlayerObject) :BackendNetAdapter
     {
         var adapter :BackendNetAdapter = new BackendNetAdapter(
-            player, RoomPropertiesObject.USER_MESSAGE, _userFuncs, "player_propertyWasSet_v1", 
+            player, RoomPropertiesObject.USER_MESSAGE, _userFuncs, "player_propertyWasSet_v1",
             null);
         adapter.setTargetId(player.getMemberId());
         return adapter;
@@ -148,7 +148,7 @@ public class ThaneAVRGameBackend
     public function createAvatarAdapter (room :RoomObject) :BackendAvatarAdapter
     {
         var adapter :BackendAvatarAdapter = new BackendAvatarAdapter(
-            _gameObj, room, _userFuncs, "playerMoved_v1", "actorStateSet_v1", 
+            _gameObj, room, _userFuncs, "playerMoved_v1", "actorStateSet_v1",
             "actorAppearanceChanged_v1");
         return adapter;
     }
@@ -202,8 +202,8 @@ public class ThaneAVRGameBackend
         props.hostProps = ourProps;
 
         _privateMessageAdapter = new BackendNetAdapter(
-            _ctx.getClient().getClientObject(), 
-            WhirledPlayerObject.getMessageName(_gameObj.getOid()), _userFuncs, null, 
+            _ctx.getClient().getClientObject(),
+            WhirledPlayerObject.getMessageName(_gameObj.getOid()), _userFuncs, null,
             "game_messageReceived_v1");
     }
 
@@ -325,7 +325,7 @@ public class ThaneAVRGameBackend
     }
 
     protected function game_setProperty_v1 (
-        targetId :int, name :String, value :Object, key :Object, isArray :Boolean, 
+        targetId :int, name :String, value :Object, key :Object, isArray :Boolean,
         immediate :Boolean) :void
     {
         if (targetId != 0) {
@@ -334,7 +334,7 @@ public class ThaneAVRGameBackend
         BackendUtils.encodeAndSet(
             ensureGameClient(), _gameObj, name, value, key, isArray, immediate);
     }
-    
+
     // -------------------- .getRoom() --------------------
     protected function room_getPlayerIds_v1 (roomId :int) :Array
     {
@@ -423,7 +423,7 @@ public class ThaneAVRGameBackend
     {
         var roomObj :RoomObject = _controller.getRoom(roomId);
         roomObj.roomService.moveMob(
-            ensureRoomClient(roomId), _controller.getGameId(), id, 
+            ensureRoomClient(roomId), _controller.getGameId(), id,
             new MsoyLocation(x, y, z), BackendUtils.loggingConfirmListener(
                 "moveMob", null, _controller.outputToUserCode));
     }
@@ -441,7 +441,7 @@ public class ThaneAVRGameBackend
         roomObj.roomService.sendSpriteSignal(
             ensureRoomClient(roomId), name, ObjectMarshaller.encode(value) as ByteArray);
     }
-    
+
     // -------------------- .getRoom().props --------------------
     protected function room_getGameData_v1 (roomId :int) :Object
     {
@@ -450,7 +450,7 @@ public class ThaneAVRGameBackend
     }
 
     protected function room_setProperty_v1 (
-        roomId :int, name :String, value :Object, key :Object, isArray :Boolean, 
+        roomId :int, name :String, value :Object, key :Object, isArray :Boolean,
         immediate :Boolean) :void
     {
         var roomProps :RoomPropertiesObject = _controller.getRoomProps(roomId);
@@ -482,7 +482,7 @@ public class ThaneAVRGameBackend
 
         _gameObj.prizeService.awardTrophy(
             _ctx.getClient(), ident, targetId,
-            BackendUtils.loggingConfirmListener("awardTrophy", null, 
+            BackendUtils.loggingConfirmListener("awardTrophy", null,
                 _controller.outputToUserCode));
 
         return true;
@@ -493,7 +493,7 @@ public class ThaneAVRGameBackend
         if (!playerOwnsData(GameData.PRIZE_MARKER, ident, targetId)) {
             _gameObj.prizeService.awardPrize(
                 _ctx.getClient(), ident, targetId,
-                BackendUtils.loggingConfirmListener("awardPrize", null, 
+                BackendUtils.loggingConfirmListener("awardPrize", null,
                     _controller.outputToUserCode));
         }
     }
@@ -517,7 +517,7 @@ public class ThaneAVRGameBackend
         payout = Math.max(0, Math.min(payout, 1));
         _gameObj.avrgService.completeTask(
             ensureGameClient(), playerId, taskId, payout,
-            BackendUtils.loggingConfirmListener("completeTask", null, 
+            BackendUtils.loggingConfirmListener("completeTask", null,
                 _controller.outputToUserCode));
     }
 
@@ -621,7 +621,7 @@ public class ThaneAVRGameBackend
     }
 
     protected function player_setProperty_v1 (
-        playerId :int, name :String, value :Object, key :Object, isArray :Boolean, 
+        playerId :int, name :String, value :Object, key :Object, isArray :Boolean,
         immediate :Boolean) :void
     {
         var player :PlayerObject = _controller.getPlayerForUser(playerId);
@@ -651,7 +651,7 @@ public class ThaneAVRGameBackend
             throw new UserError("Player not in any room [playerId=" + playerId + "]");
         }
 
-        // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup 
+        // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup
         // twice
         var roomObj :RoomObject = _controller.getRoom(roomId);
         fn(roomObj, ensureRoomClient(roomId));
@@ -690,7 +690,7 @@ public class ThaneAVRGameBackend
     }
 
     /**
-     * Returns true if a player should be included in getPlayerIds, for use as a callback with 
+     * Returns true if a player should be included in getPlayerIds, for use as a callback with
      * <code>BackendUtils.getPlayerIds</code>.
      * @see BackendUtils.getPlayerIds
      */

@@ -82,7 +82,7 @@ public class PlaceBox extends LayeredContainer
     }
 
     /**
-     * @return true if there are glyphs under the specified point.  If the glyph extends 
+     * @return true if there are glyphs under the specified point.  If the glyph extends
      * InteractiveObject and the glyph sprite has mouseEnabled == false, it is not checked.
      */
     public function overlaysMousePoint (stageX :Number, stageY :Number) :Boolean

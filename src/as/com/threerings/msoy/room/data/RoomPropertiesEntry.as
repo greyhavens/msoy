@@ -23,7 +23,7 @@ public class RoomPropertiesEntry
      * @see RoomPropertiesObject
      */
     public var propsOid :int;
-    
+
     /** @inheritDoc */
     // from DSet_Entry
     public function getKey () :Object

@@ -418,7 +418,7 @@ public class RoomEditorController
         var successMsg :String = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) ?
             "m.group_home_room_changed" : "m.home_room_changed";
         var svc :MemberService = _ctx.getClient().requireService(MemberService) as MemberService;
-        svc.setHomeSceneId(_ctx.getClient(), model.ownerType, model.ownerId, model.sceneId, 
+        svc.setHomeSceneId(_ctx.getClient(), model.ownerType, model.ownerId, model.sceneId,
             _ctx.confirmListener(successMsg, MsoyCodes.EDITING_MSGS));
     }
 

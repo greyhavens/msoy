@@ -36,7 +36,7 @@ public class HistoryList
     {
         _history.length = 0;
         // TODO: clearing the HL is more complicated that just deleting everything.  This will
-        // need to get the current localtype from the ChatTabBar for filtering, and will need to 
+        // need to get the current localtype from the ChatTabBar for filtering, and will need to
         // be able to ignore logoff clears (See ChatDirector.clientDidLogoff)
     }
 

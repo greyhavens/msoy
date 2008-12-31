@@ -44,9 +44,9 @@ import com.threerings.msoy.room.client.RoomView;
 
 /**
  * Represents a particular snapshot
- */ 
+ */
 public class Snapshot extends EventDispatcher
-{    
+{
     public static const THUMBNAIL_WIDTH :int = 350;
     public static const THUMBNAIL_HEIGHT :int = 200;
 
@@ -81,7 +81,7 @@ public class Snapshot extends EventDispatcher
         _ctx = ctx;
         _view = view;
         _thumbnail = thumbnail;
-                
+
         _frame = new Rectangle(0, 0, width, height);
         _framer = framer;
         bitmap = new BitmapData(width, height);
@@ -217,7 +217,7 @@ public class Snapshot extends EventDispatcher
         _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleError);
         _loader.load(request);
     }
-    
+
     protected function handleJpegEncoded (event :ValueEvent) :void
     {
         log.debug("jpeg encoded");
@@ -294,7 +294,7 @@ public class Snapshot extends EventDispatcher
 
     protected var _uploadOperation :Function;
     protected var _args :Array;
-    
+
     protected var _view :RoomView;
     protected var _frame :Rectangle;
     protected var _framer :Framer;

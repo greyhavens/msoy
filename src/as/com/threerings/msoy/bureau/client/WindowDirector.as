@@ -23,7 +23,7 @@ public class WindowDirector
     }
 
     /**
-     * Adds a service group that will be requested by all subsequent windows when they are 
+     * Adds a service group that will be requested by all subsequent windows when they are
      * opened.
      */
     public function addServiceGroup (code :String) :void
@@ -33,8 +33,8 @@ public class WindowDirector
     }
 
     /**
-     * Attempts to logon to a world server. If successful, a {@link Window} object will be 
-     * returned via the supplied listener. This window will be open and ready to serve requests. 
+     * Attempts to logon to a world server. If successful, a {@link Window} object will be
+     * returned via the supplied listener. This window will be open and ready to serve requests.
      * <p>NOTE: Since windows are ref-coutned, it is VERY important that the {@link #closeWindow}
      * function is also called, regardless of whether the agent still requires it.</p>
      */

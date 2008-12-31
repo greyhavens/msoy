@@ -69,7 +69,7 @@ public class LobbyMatchPanel extends VBox
         if (tidx == -1) {
             return;
         }
-            
+
         // update the table, resort and refilter
         _tableList.dataProvider.setItemAt(table, tidx);
         _tableList.dataProvider.refresh();

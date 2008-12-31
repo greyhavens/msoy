@@ -55,7 +55,7 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>bars</code> field. */
     public static const BARS :String = "bars";
-    
+
     /** The field name of the <code>level</code> field. */
     public static const LEVEL :String = "level";
 
@@ -138,7 +138,7 @@ public class MemberObject extends MsoyBodyObject
 
     /** How many bars total this member has. */
     public var bars :int;
-    
+
     /** This user's current level. */
     public var level :int;
 

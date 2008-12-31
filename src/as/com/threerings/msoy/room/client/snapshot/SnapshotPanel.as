@@ -55,7 +55,7 @@ public class SnapshotPanel extends FloatingPanel
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
         _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();
 
-        // for the canonical image, we create a new framer that centers the image within the frame, 
+        // for the canonical image, we create a new framer that centers the image within the frame,
         // introducing black bars if necessary.
         sceneThumbnail = Snapshot.createThumbnail(ctx, _view,
             handleEncodingComplete, handleUploadError);
@@ -83,7 +83,7 @@ public class SnapshotPanel extends FloatingPanel
         open();
     }
 
-    override public function close () :void 
+    override public function close () :void
     {
         // cancel any encoding processes that may be running.
         galleryImage.cancelAll();
@@ -119,8 +119,8 @@ public class SnapshotPanel extends FloatingPanel
 
     override protected function createChildren () :void
     {
-        super.createChildren();        
-        createSnapshotControls();                
+        super.createChildren();
+        createSnapshotControls();
         showCloseButton = true;
     }
 
@@ -149,13 +149,13 @@ public class SnapshotPanel extends FloatingPanel
         addChild(FlexUtil.createLabel(Msgs.WORLD.get("m.snap_save_opts")));
         // only add the button to take the canonical snapshot if it's enabled.
         if (_sceneThumbnailPermitted) {
-            _useAsSceneThumbnail = new CommandCheckBox(Msgs.WORLD.get("b.snap_scene_thumbnail"), 
+            _useAsSceneThumbnail = new CommandCheckBox(Msgs.WORLD.get("b.snap_scene_thumbnail"),
                 enforceUIInterlocks);
             _useAsSceneThumbnail.selected = false;
             addChild(_useAsSceneThumbnail);
         }
         if (!isGuest) {
-            _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"), 
+            _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"),
                 enforceUIInterlocks);
             _takeGalleryImage.selected = true;
             addChild(_takeGalleryImage);
@@ -219,13 +219,13 @@ public class SnapshotPanel extends FloatingPanel
             _showChat.selected = false;
         }
         _showChat.enabled = occs;
-        
+
         sceneThumbnail.updateSnapshot(occs, _showChat.selected, shouldSaveSceneThumbnail);
         galleryImage.updateSnapshot(occs, _showChat.selected,
             shouldSaveGalleryImage || shouldDownloadImage);
         enforceUIInterlocks();
     }
-    
+
     protected function showProgressControls () :void
     {
         removeAllChildren();
@@ -238,9 +238,9 @@ public class SnapshotPanel extends FloatingPanel
         addChild(_progressBar);
         _progressLabel = new Label();
         _progressLabel.text = Msgs.WORLD.get("m.snap_upload");
-        addChild(_progressLabel);   
+        addChild(_progressLabel);
         _cancelUploadButton = new CommandButton(Msgs.WORLD.get("b.snap_cancel"), close);
-        addChild(_cancelUploadButton);        
+        addChild(_cancelUploadButton);
 
         showCloseButton = false;
     }
@@ -290,7 +290,7 @@ public class SnapshotPanel extends FloatingPanel
         _cancelUploadButton.label = Msgs.GENERAL.get("b.ok");
         _cancelUploadButton.enabled = true;
     }
-    
+
     /**
      * Called when uploading is complete.
      */
@@ -352,7 +352,7 @@ public class SnapshotPanel extends FloatingPanel
     protected var _downloadImage :CommandCheckBox;
 
     protected var _cancelUploadButton :CommandButton;
-    protected var _progressLabel :Label;    
+    protected var _progressLabel :Label;
     protected var _progressBar :ProgressBar;
 }
 }

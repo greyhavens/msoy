@@ -95,7 +95,7 @@ public class BackendUtils
      * Performs a standard property set.
      */
     public static function encodeAndSet (
-        client :Client, obj :PropertySpaceObject, name :String, value :Object, key :Object, 
+        client :Client, obj :PropertySpaceObject, name :String, value :Object, key :Object,
         isArray :Boolean, immediate :Boolean) :void
     {
         validatePropertyChange(name, value, isArray, key);
@@ -104,7 +104,7 @@ public class BackendUtils
         var ikey :Integer = (key == null) ? null : new Integer(int(key));
 
         obj.getPropService().setProperty(
-            client, name, encoded, ikey, isArray, false, null, 
+            client, name, encoded, ikey, isArray, false, null,
             loggingConfirmListener("setProperty"));
 
         if (immediate) {
@@ -230,7 +230,7 @@ public class BackendUtils
 
 
     public static function sendMessage (
-        svc :WhirledGameMessageService, client :Client, msgName :String, msgValue :Object, 
+        svc :WhirledGameMessageService, client :Client, msgName :String, msgValue :Object,
         svcName :String) :void
     {
         var encoded :Object = ObjectMarshaller.encode(msgValue, false);
@@ -239,14 +239,14 @@ public class BackendUtils
     }
 
     public static function sendPrivateMessage (
-        svc :WhirledGameMessageService, client :Client, receiverId :int, msgName :String, 
+        svc :WhirledGameMessageService, client :Client, receiverId :int, msgName :String,
         msgValue :Object, svcName :String) :void
     {
         var encoded :Object = ObjectMarshaller.encode(msgValue, false);
         var targets :TypedArray = TypedArray.create(int);
         targets.push(receiverId);
         svc.sendPrivateMessage(
-            client, msgName, encoded, targets, 
+            client, msgName, encoded, targets,
             loggingInvocationListener(svcName + " sendPrivateMessage"));
     }
 
@@ -277,7 +277,7 @@ public class BackendUtils
      * @throws UserError if the player is not in the game or room
      */
     public static function setAvatarLocation (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
         x :Number, y :Number, z: Number, orient :Number) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
@@ -291,7 +291,7 @@ public class BackendUtils
      * @throws UserError if the player is not in the game or room
      */
     public static function playAvatarAction (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
         action :String) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
@@ -306,7 +306,7 @@ public class BackendUtils
      * @throws UserError if the player is not in the game or room
      */
     public static function setAvatarState (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
         state :String) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
@@ -320,7 +320,7 @@ public class BackendUtils
      * @throws UserError if the player is not in the game or room
      */
     public static function setAvatarMoveSpeed (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
         pixelsPerSecond :Number) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
@@ -332,7 +332,7 @@ public class BackendUtils
      * Sets the move speed of an avatar.
      */
     public static function setAvatarOrientation (
-        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int,
         orient :Number) :void
     {
         resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
@@ -341,7 +341,7 @@ public class BackendUtils
     }
 
     /**
-     * Creates a confirm listener that will log failures with a service name and optionally 
+     * Creates a confirm listener that will log failures with a service name and optionally
      * call a function on success.
      */
     public static function loggingConfirmListener (

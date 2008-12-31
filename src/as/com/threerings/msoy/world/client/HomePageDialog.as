@@ -49,7 +49,7 @@ public class HomePageDialog extends FloatingPanel
     {
         super(ctx);
         _wctx = ctx;
-        
+
         // when the close button is pressed, log a tracking event
         addEventListener(CloseEvent.CLOSE, function () :void {
             _wctx.getMsoyClient().trackClientAction("whirledPlacesCloseClicked", null);
@@ -268,7 +268,7 @@ public class HomePageDialog extends FloatingPanel
             log.info("No action for " + item);
             break;
         }
-        
+
         _wctx.getMsoyClient().trackClientAction("whirledPlacesItemClicked", trackingDetails);
     }
 
@@ -312,7 +312,7 @@ public class HomePageDialog extends FloatingPanel
         case BadgeCodes.SHOPPER:
         case BadgeCodes.JUDGE:
         case BadgeCodes.OUTSPOKEN:
-            ctrl.displayPage("shop", "");            
+            ctrl.displayPage("shop", "");
             break;
         }
     }

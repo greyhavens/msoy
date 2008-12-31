@@ -593,7 +593,7 @@ public class MsoySprite extends DataPackMediaContainer
         }
 
         updateMediaAfterRotation();
-        
+
         // we may need to be repositioned
         locationUpdated();
     }
@@ -613,22 +613,22 @@ public class MsoySprite extends DataPackMediaContainer
         if (anchor.x == 0 && anchor.y == 0) {
             return; // if the anchor is already in the upper left, we don't need to shift anything
         }
-       
+
         // convert from Flash's whacked "degrees clockwise" to standard radians counter-clockwise,
         // and rotate the anchor vector by the given angle (caution: y+ points down, not up!)
         var theta :Number = _media.rotation * Math.PI / -180;
         var cos :Number = Math.cos(theta);
         var sin :Number = Math.sin(theta);
-        var newanchor :Point = new Point(        
+        var newanchor :Point = new Point(
             cos * anchor.x + sin * anchor.y, - sin * anchor.x + cos * anchor.y);
 
         // finally, shift the media over so that the new anchor overlaps the old one
         var delta :Point = anchor.subtract(newanchor);
         _media.x += delta.x;
         _media.y += delta.y;
-        
+
     }
-    
+
     override protected function contentDimensionsUpdated () :void
     {
         super.contentDimensionsUpdated();

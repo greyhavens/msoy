@@ -35,7 +35,7 @@ public class MemberMarshaller extends InvocationMarshaller
     public function acknowledgeWarning (arg1 :Client) :void
     {
         sendRequest(arg1, ACKNOWLEDGE_WARNING, [
-            
+
         ]);
     }
 
@@ -70,7 +70,7 @@ public class MemberMarshaller extends InvocationMarshaller
     public function dispatchDeferredNotifications (arg1 :Client) :void
     {
         sendRequest(arg1, DISPATCH_DEFERRED_NOTIFICATIONS, [
-            
+
         ]);
     }
 

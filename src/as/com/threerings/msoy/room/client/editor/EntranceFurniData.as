@@ -9,14 +9,14 @@ import com.threerings.msoy.room.data.FurniData;
 
 /**
  * This class is a version of furni data used by "fake" entrance furnis. It's only used to
- * differentiate entrances from other furnis; it provides no new functionality. 
+ * differentiate entrances from other furnis; it provides no new functionality.
  */
 public class EntranceFurniData extends FurniData
 {
     public static const ENTRANCE_FURNI_ID :int = -1;
     public static const ITEM_IDENT :ItemIdent =
         new ItemIdent(Item.NOT_A_TYPE, ENTRANCE_FURNI_ID);
-    
+
     public function EntranceFurniData ()
     {
         super();

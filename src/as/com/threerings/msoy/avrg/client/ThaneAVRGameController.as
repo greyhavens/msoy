@@ -1,4 +1,4 @@
-// 
+//
 // $Id$
 
 package com.threerings.msoy.avrg.client {
@@ -345,7 +345,7 @@ public class ThaneAVRGameController
         // Get rid of the old SceneBinding
         var binding :SceneBinding = _bindings.get(scene.sceneId);
         if (binding != null) {
-            // this shouldn't happen since scenes should be explicitly removed well before a host 
+            // this shouldn't happen since scenes should be explicitly removed well before a host
             // change
             log.warning("Unexpected host change", "binding", binding);
             removeBinding(binding.sceneId);
@@ -357,7 +357,7 @@ public class ThaneAVRGameController
         _bindings.put(scene.sceneId, binding);
 
         log.debug("Opening window", "scene", scene);
-        var resultListener :com.threerings.util.ResultAdapter = 
+        var resultListener :com.threerings.util.ResultAdapter =
             new com.threerings.util.ResultAdapter(
                 function (wnd :Window) :void {
                     gotWindow(binding, wnd);
@@ -384,7 +384,7 @@ public class ThaneAVRGameController
         binding.window = window;
 
         // locate the room oid
-        var resultListener :com.threerings.presents.client.ResultAdapter = 
+        var resultListener :com.threerings.presents.client.ResultAdapter =
             new com.threerings.presents.client.ResultAdapter(
                 function (roomOid :int) :void {
                     gotRoomOid(binding, roomOid);
@@ -395,7 +395,7 @@ public class ThaneAVRGameController
                         cause);
                 });
 
-        var thaneSvc :ThaneWorldService = 
+        var thaneSvc :ThaneWorldService =
             window.requireService(ThaneWorldService) as ThaneWorldService;
 
         thaneSvc.locateRoom(window.getClient(), binding.sceneId, resultListener);
@@ -408,7 +408,7 @@ public class ThaneAVRGameController
             log.warning("Room oid no longer needed", "binding", binding, "roomOid", oid);
             return;
         }
-        
+
         log.debug("Got room id", "binding", binding, "roomOid", oid);
 
         // subscribe to the room object
@@ -699,7 +699,7 @@ public class ThaneAVRGameController
             return;
         }
 
-        // Join the game if not already. 
+        // Join the game if not already.
         if (!pbind.joined) {
             _backend.playerJoinedGame(playerId);
             pbind.joined = true;
@@ -754,7 +754,7 @@ public class ThaneAVRGameController
 
     /**
      * Finalizes the withdrawal of a player from the game, ensuring the backend is informed of
-     * any pending room exits as well as the player quitting. 
+     * any pending room exits as well as the player quitting.
      */
     protected function playerDidLeaveGame (playerId :int, why :String) :void
     {
@@ -848,7 +848,7 @@ class PlayerBinding
 
     /** The player object, never null. */
     public var pobj :PlayerObject;
-    
+
     /** For dispatching the property changes. */
     public var netAdapter :BackendNetAdapter;
 

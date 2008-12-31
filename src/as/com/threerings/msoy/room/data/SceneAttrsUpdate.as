@@ -24,10 +24,10 @@ public class SceneAttrsUpdate extends SceneUpdate
 
     /** New access control info. */
     public var accessControl :int;
-    
+
     /** Full description of the new decor. */
     public var decor :Decor;
-    
+
     /** Background audio parameters. */
     public var audioData :AudioData;
 

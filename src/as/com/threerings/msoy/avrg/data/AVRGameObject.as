@@ -57,7 +57,7 @@ public class AVRGameObject extends PlaceObject
 
     /** The service interface for awarding prizes and trophies. */
     public var prizeService :PrizeMarshaller;
-    
+
    /** Used to send messages. */
     public var messageService :WhirledGameMessageMarshaller;
 
@@ -69,7 +69,7 @@ public class AVRGameObject extends PlaceObject
     {
         return _props;
     }
-   
+
     // from PropertySpaceObject
     public function getPropService () :PropertySpaceMarshaller
     {

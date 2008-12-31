@@ -1061,7 +1061,7 @@ public class ChatOverlay
 
     protected function handleHistoryWheel (event :MouseEvent) :void
     {
-        if (_targetBounds.contains(event.localX, event.localY)) { 
+        if (_targetBounds.contains(event.localX, event.localY)) {
             _historyBar.scrollPosition =
                 Math.max(_historyBar.minScrollPosition, Math.min(_historyBar.maxScrollPosition,
                 _historyBar.scrollPosition - event.delta*_historyBar.lineScrollSize));

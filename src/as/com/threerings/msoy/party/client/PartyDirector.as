@@ -359,7 +359,7 @@ public class PartyDirector extends BasicDirector
         // we might need to warp to the party location
         checkFollowParty();
     }
-    
+
     /**
      * Callback for a getPartyDetail request.
      */

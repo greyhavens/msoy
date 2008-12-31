@@ -1,7 +1,7 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;    
+import flash.display.DisplayObjectContainer;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 
@@ -66,7 +66,7 @@ public class SliderPopup extends Canvas
         x = r.x - 1;
         y = r.y - height;
         verticalScrollPolicy = horizontalScrollPolicy = ScrollPolicy.OFF;
-        
+
         // Initialize slider
         _slider = new VSlider();
         //_slider.getThumbAt(0).scaleX = 2;

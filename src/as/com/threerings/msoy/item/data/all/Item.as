@@ -26,7 +26,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 public /*abstract*/ class Item
     implements Comparable, Hashable, Streamable, DSet_Entry
 {
-    // New type constants must be added to ItemTypes.as, then reflected here. This is in order to 
+    // New type constants must be added to ItemTypes.as, then reflected here. This is in order to
     // decouple simple static queries from factory functionality which requires compilation of the
     // entire Item hierarchy.
 

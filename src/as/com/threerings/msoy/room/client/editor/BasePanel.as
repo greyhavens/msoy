@@ -35,7 +35,7 @@ public class BasePanel extends VBox
 
         } else {
             this.enabled = true;
-            _furniData = data.clone() as FurniData;  
+            _furniData = data.clone() as FurniData;
         }
 
         // whatever edits were pending, they will be gone by the time the subclass is done
@@ -115,7 +115,7 @@ public class BasePanel extends VBox
     {
         setChanged(true);
     }
-    
+
     /** Event handler for widgets; saves updates, just like clicking the "apply" button. */
     protected function applyHandler (event :Event) :void
     {

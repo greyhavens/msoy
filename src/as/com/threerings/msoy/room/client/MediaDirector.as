@@ -70,7 +70,7 @@ public class MediaDirector extends BasicDirector
             // view-only members have no sprite visualization
             return null;
 
-        // NOTE: if you add a new type here, please also add it to src/thane/Reference.as so that 
+        // NOTE: if you add a new type here, please also add it to src/thane/Reference.as so that
         // server side code for avrg's doesn't break
 
         } else {
@@ -94,7 +94,7 @@ public class MediaDirector extends BasicDirector
     {
         return new DecorSprite(_wctx, decor);
     }
-    
+
     /**
      * Release any references to the specified sprite, if appropriate.
      */

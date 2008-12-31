@@ -11,7 +11,7 @@ import com.threerings.msoy.data.all.NavItemData;
 /**
  * Standard implementation of {@link NavItemData} that uses an integer ID to identify the
  * action the user should take and a string Name that will be displayed directly to the user.
- * 
+ *
  */
 public class BasicNavItemData
     implements NavItemData
@@ -20,17 +20,17 @@ public class BasicNavItemData
     {
         // used for deserialization
     }
-    
+
     public function getId () :int
     {
         return _id;
     }
-    
+
     public function getName () :String
     {
         return _name;
     }
-    
+
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
@@ -43,7 +43,7 @@ public class BasicNavItemData
     {
         throw new Error();
     }
-    
+
     protected var _id :int;
     protected var _name :String;
 }

@@ -85,7 +85,7 @@ public class FurniSprite extends MsoySprite
         // game furnis can't be turned into something else - but everything else can
         return ! (_furni.actionType == FurniData.ACTION_LOBBY_GAME ||
                   _furni.actionType == FurniData.ACTION_WORLD_GAME);
-    }                  
+    }
 
     public function isPerspectable () :Boolean
     {
@@ -188,12 +188,12 @@ public class FurniSprite extends MsoySprite
         return !_furni.isNoScale();
     }
 
-    protected function checkPerspective () :void 
+    protected function checkPerspective () :void
     {
         // PERSPECTIVIZATION DISABLED DURING ROOM LAYOUT REVAMP (ROBERT)
         return; // <- will abort any perspective updates
 
-        
+
         if (_media == null) {
             return;
         }
@@ -221,7 +221,7 @@ public class FurniSprite extends MsoySprite
 //            }
 
             newMedia = new Perspectivizer(m);
-            
+
             // PERSPECTIVIZATION DISABLED DURING ROOM LAYOUT REVAMP (ROBERT)
 
             /*
@@ -265,7 +265,7 @@ public class FurniSprite extends MsoySprite
         super.rotationUpdated();
         updatePerspective();
     }
-    
+
     protected function updatePerspective () :void
     {
         if (!(_media is Perspectivizer) || !(parent is RoomView)) {
@@ -273,14 +273,14 @@ public class FurniSprite extends MsoySprite
         }
 
         // PERSPECTIVIZATION DISABLED DURING ROOM LAYOUT REVAMP (ROBERT)
-        
+
         /*
         var info :PerspInfo =
             RoomView(parent).layout.getPerspInfo(this, _w, _h, loc);
         Perspectivizer(_media).updatePerspInfo(
             info, getMediaScaleX(), getMediaScaleY());
         */
-            
+
 //        if (true) {
 //            // draw the hotspot
 //            graphics.clear();
@@ -303,7 +303,7 @@ public class FurniSprite extends MsoySprite
     {
         return _furni.rotation;
     }
-    
+
     override public function setMediaRotation (rotation :Number) :void
     {
         _furni.rotation = rotation;

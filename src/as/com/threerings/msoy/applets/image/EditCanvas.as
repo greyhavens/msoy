@@ -27,19 +27,19 @@ import mx.controls.scrollClasses.ScrollBar;
 import mx.styles.CSSStyleDeclaration;
 import mx.styles.StyleManager;
 
-import com.adobe.images.JPGEncoder; 
+import com.adobe.images.JPGEncoder;
 import com.adobe.images.PNGEncoder;
 
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.GraphicsUtil;
 
-/** 
+/**
  * Dispatched when a color is selected.
  */
 [Event(name="ColorSelected", type="com.threerings.util.ValueEvent")]
 
-/** 
+/**
  * Dispatched when the undo/redo status has changed.
  */
 [Event(name="UndoRedoChange", type="com.threerings.util.ValueEvent")]
@@ -847,7 +847,7 @@ public class EditCanvas extends DisplayCanvas
         _movePoint = null;
     }
 
-    /** 
+    /**
      * Sets that we've painted on the image.
      */
     protected function setModified () :void

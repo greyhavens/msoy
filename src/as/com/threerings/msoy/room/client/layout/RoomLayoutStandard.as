@@ -355,7 +355,7 @@ public class RoomLayoutStandard implements RoomLayout
     }
 
     /**
-     * Return -1 if the element at the specified index should be in front of 
+     * Return -1 if the element at the specified index should be in front of
      * the comparison element, 1 if behind, or 0 to keep the same relative position.
      */
     protected function compareRoomElement (index :int, cmpElement :RoomElement) :int

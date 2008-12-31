@@ -15,7 +15,7 @@ import com.threerings.flex.CommandButton;
 /**
  * Container whose lower part can be expanded or collapsed.
  * Please note: use setContents() to add a container that will be expanded or collapsed.
- * Only one container can be displayed; adding a new contents container will remove the old one. 
+ * Only one container can be displayed; adding a new contents container will remove the old one.
  */
 public class CollapsingContainer extends VBox
 {
@@ -36,19 +36,19 @@ public class CollapsingContainer extends VBox
             _contents.addChild(child);
         }
     }
-    
+
     // @Override from VBox
     override protected function createChildren () :void
     {
         super.createChildren();
 
         this.styleName = "roomEditCollapsingContainer";
-        
+
         var labelrow :HBox = new HBox();
         labelrow.setStyle("verticalAlign", "middle");
         labelrow.percentWidth = 100;
-        addChild(labelrow); 
-        
+        addChild(labelrow);
+
         var label :Label = new Label();
         label.text = _labeltext;
         labelrow.addChild(label);
@@ -63,7 +63,7 @@ public class CollapsingContainer extends VBox
         expand.width = expand.height = 9;
         expand.setCallback(toggleContents);
         labelrow.addChild(expand);
-        
+
         toggleContents(false);
     }
 

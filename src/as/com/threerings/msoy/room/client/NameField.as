@@ -23,7 +23,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
 public class NameField extends TextField
 {
     /**
-     * @param ignoreStatus If true, keeps the name white, regardless of the status that gets 
+     * @param ignoreStatus If true, keeps the name white, regardless of the status that gets
      *                     passed in.
      */
     public function NameField (ignoreStatus :Boolean = false)
@@ -42,7 +42,7 @@ public class NameField extends TextField
     /**
      * Sets the color we should use when drawing our name label.
      */
-    public function setStatus (status :int, italicize :Boolean = false) :void 
+    public function setStatus (status :int, italicize :Boolean = false) :void
     {
         if (_ignoreStatus) {
             return;

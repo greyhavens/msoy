@@ -17,9 +17,9 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-public class ItemUsedDialog extends FloatingPanel 
+public class ItemUsedDialog extends FloatingPanel
 {
-    public function ItemUsedDialog (ctx :WorldContext, type :String, yesClosure :Function) 
+    public function ItemUsedDialog (ctx :WorldContext, type :String, yesClosure :Function)
     {
         super(ctx, Msgs.EDITING.get("t.item_used"));
         _yesClosure = yesClosure;

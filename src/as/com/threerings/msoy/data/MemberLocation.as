@@ -14,7 +14,7 @@ import com.threerings.presents.dobj.DSet_Entry;
 /**
  * Contains information on the current location of a member.
  */
-public class MemberLocation 
+public class MemberLocation
     implements Streamable, DSet_Entry
 {
     /** The id of the member represented by this location. */

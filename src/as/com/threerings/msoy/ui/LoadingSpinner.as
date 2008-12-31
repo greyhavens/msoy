@@ -60,7 +60,7 @@ public class LoadingSpinner extends Sprite
         // we don't run past it because updateSpinner() won't gotoAndStop
         // to frame it's already on.
         _spinner.stop();
-                        
+
         addChildAt(_spinner, 0);
         updateSpinner();
 

@@ -18,11 +18,11 @@ public class RoomPropertiesObject extends DObject
 
     /** Service for setting the properties. */
     public var propertiesService :PropertySpaceMarshaller;
-    
-    /** Service for sending messages to the room occupants (that are also playing the game that 
+
+    /** Service for sending messages to the room occupants (that are also playing the game that
      * these properties belong to). */
     public var messageService :WhirledGameMessageMarshaller;
-    
+
     // from PropertySpaceObject
     public function getUserProps () :Object
     {

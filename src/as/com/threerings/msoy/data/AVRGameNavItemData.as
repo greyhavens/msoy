@@ -17,7 +17,7 @@ public class AVRGameNavItemData extends BasicNavItemData
 
     public function getGroupId () :int
     {
-        return _groupId; 
+        return _groupId;
     }
 
     // from BasicNavItemData

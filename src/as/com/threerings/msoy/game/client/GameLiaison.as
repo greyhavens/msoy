@@ -281,7 +281,7 @@ public class GameLiaison
             gamePanel.displayGameOverCoinAward(forReal, coins, hasCookie);
         }
     }
-    
+
     protected function getMsoyGamePanel () :MsoyGamePanel
     {
         return (_wctx.getPlaceView() as MsoyGamePanel);
@@ -308,11 +308,11 @@ public class GameLiaison
 
         } else {
             var displayDefaultNote :Function = function () :void {
-                populateGuestFlowEarnage(amount, 
+                populateGuestFlowEarnage(amount,
                     hasCookie ? "l.guest_flowprog_note" : "l.guest_flow_note");
             };
-            
-            // perform an A/B(/C) test on game over upsell text for guests 
+
+            // perform an A/B(/C) test on game over upsell text for guests
             _wctx.getMsoyClient().getABTestGroup(
                 "2008 12 game over upsell 2", true, new ResultAdapter(
                     function (group :int) :void {
@@ -336,15 +336,15 @@ public class GameLiaison
                     }));
         }
     }
-    
+
     /**
-     * Set the contents of the _guestFlowPanel. 
+     * Set the contents of the _guestFlowPanel.
      */
     protected function populateGuestFlowEarnage (amount :int, ifyousignMsg :String) :void
     {
         var field :TextField = (_guestFlowPanel.getChildByName("youearned") as TextField);
         field.text = Msgs.GAME.get("l.guest_flow_title", ""+amount);
-        
+
         field = (_guestFlowPanel.getChildByName("ifyousign") as TextField);
         field.text = Msgs.GAME.get(ifyousignMsg);
 
@@ -395,7 +395,7 @@ public class GameLiaison
 
     /** Automatically dismisses the flow panel. */
     protected var _flowPanelAutoDismiss :Timer;
-    
+
     /** Which one of the rotating flow panel messages will be seen next? */
     protected var _flowPanelNoteNext :int = 0;
 

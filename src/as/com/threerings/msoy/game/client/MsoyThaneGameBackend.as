@@ -14,8 +14,8 @@ public class MsoyThaneGameBackend extends ThaneGameBackend
 {
     /** Creates a new thane game backend. */
     public function MsoyThaneGameBackend (
-        ctx :PresentsContext, 
-        gameObj :WhirledGameObject, 
+        ctx :PresentsContext,
+        gameObj :WhirledGameObject,
         ctrl :MsoyThaneGameController)
     {
         super(ctx, gameObj, ctrl);

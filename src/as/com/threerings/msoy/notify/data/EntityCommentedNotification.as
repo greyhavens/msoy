@@ -26,7 +26,7 @@ public class EntityCommentedNotification extends Notification
         } else {
             return MessageBundle.compose("m.item_commented",
                 MessageBundle.qualify(MsoyCodes.ITEM_MSGS, Item.getTypeKey(_entityType)),
-                MessageBundle.taint(_entityName), MessageBundle.taint(_entityType), 
+                MessageBundle.taint(_entityName), MessageBundle.taint(_entityType),
                 MessageBundle.taint(_entityId));
         }
     }

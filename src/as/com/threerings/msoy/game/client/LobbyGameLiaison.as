@@ -68,7 +68,7 @@ public class LobbyGameLiaison extends GameLiaison
         var cb :ResultAdapter = new ResultAdapter(gotPlayerGameOid,
             function (cause :String) :void {
                 _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-                // some failure cases are innocuous, and should be followed up by a display of the 
+                // some failure cases are innocuous, and should be followed up by a display of the
                 // lobby; if we really are hosed, joinLobby() will cause the liaison to shut down
                 _wctx.getWorldController().restoreSceneURL();
                 joinLobby();
@@ -76,7 +76,7 @@ public class LobbyGameLiaison extends GameLiaison
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
     }
 
-    /** 
+    /**
      * Join the player at their currently pending game table.
      */
     public function joinPlayerTable (playerId :int) :void

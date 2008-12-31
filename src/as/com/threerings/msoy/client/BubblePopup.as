@@ -90,7 +90,7 @@ public class BubblePopup extends Sprite
         text.selectable = false;
         text.autoSize = TextFieldAutoSize.LEFT;
         text.antiAliasType = AntiAliasType.ADVANCED;
-        TextUtil.setText(text, TextUtil.parseLinks(str, format, true, true), format); 
+        TextUtil.setText(text, TextUtil.parseLinks(str, format, true, true), format);
         text.width = WIDTH - PADDING * 2;
         addChild(text);
 
