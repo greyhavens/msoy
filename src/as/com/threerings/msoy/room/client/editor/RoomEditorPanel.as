@@ -84,7 +84,7 @@ public class RoomEditorPanel extends FlyingPanel
     public function updateTargetSelected (target :FurniSprite) :void
     {
         var selected :Boolean = (target != null);
-        
+
         for each (var button :CommandButton in _deleteButtons) {
             button.enabled = (selected && target.isRemovable());
         }
@@ -110,7 +110,7 @@ public class RoomEditorPanel extends FlyingPanel
             } else {
                 swapButtons(_middle, _removeDoorButton, _makeDoorButton);
             }
-        } 
+        }
 
         // For the custom config panel stuff, we need to avoid repeatedly watching
         // the same sprite
@@ -193,7 +193,7 @@ public class RoomEditorPanel extends FlyingPanel
 
     /** Removes a door action from the currently selected furni. */
     protected function removeDoor () :void
-    {        
+    {
         _controller.actionTargetClear();
         swapButtons(_middle, _removeDoorButton, _makeDoorButton);
     }
@@ -218,14 +218,14 @@ public class RoomEditorPanel extends FlyingPanel
             // the old button hasn't been added - ignore...
         }
     }
-    
+
     /** Displays the furniture inventory. */
     protected function displayFurnitureInventory () :void
     {
         CommandEvent.dispatch(this, WorldController.VIEW_STUFF, Item.FURNITURE);
         selectInNameList(null);
     }
-    
+
     /** See if we should display the custom panel button for the specified furni. */
     protected function checkCustomPanel () :void
     {
@@ -247,7 +247,7 @@ public class RoomEditorPanel extends FlyingPanel
         _curTarget.removeEventListener(Event.INIT, handleTargetInit);
         checkCustomPanel();
     }
-        
+
     // from superclasses
     override protected function createChildren () :void
     {
@@ -259,7 +259,7 @@ public class RoomEditorPanel extends FlyingPanel
         {
             var c :VBox = new VBox();
             c.setStyle("horizontalAlign", "center");
-            
+
             var b :CommandButton = new CommandButton(null, fn);
             b.styleName = style;
             b.toolTip = Msgs.EDITING.get("i." + translationBase);
@@ -275,7 +275,7 @@ public class RoomEditorPanel extends FlyingPanel
                 l.text = Msgs.EDITING.get("l." + translationBase);
                 c.addChild(l);
             }
-            
+
             return c;
         }
 
@@ -292,7 +292,7 @@ public class RoomEditorPanel extends FlyingPanel
         addChild(namebar);
 
         // container for item stuffs
-        
+
         var contents :Grid = new Grid();
         contents.styleName = "roomEditContents";
         contents.percentWidth = 100;
@@ -314,7 +314,7 @@ public class RoomEditorPanel extends FlyingPanel
         box.styleName = "roomEditButtonBar";
         box.percentWidth = 100;
         GridUtil.addRow(contents, box, [3, 1]);
-        
+
         _namebox = new CommandComboBox(_controller.findAndSetTarget);
         _namebox.percentWidth = 100;
         _namebox.maxWidth = 300;
@@ -329,7 +329,7 @@ public class RoomEditorPanel extends FlyingPanel
 
         // two containers, one for basic/advanced buttons, the other for
         // buttons that show up in all contexts
-        
+
         _switchablePanels = new VBox();
 
         var div :SkinnableImage = new SkinnableImage();
@@ -339,13 +339,13 @@ public class RoomEditorPanel extends FlyingPanel
         right.styleName = "roomEditRight";
 
         GridUtil.addRow(contents, _switchablePanels, div, right);
-                
+
         _defaultPanel = new HBox();
         _switchablePanels.addChild(_defaultPanel);
 
-        
+
         // now let's populate the basic buttons panel
-        
+
         var leftgrid :Grid = new Grid();
         leftgrid.styleName = "roomEditLeft";
         leftgrid.percentWidth = 100;
@@ -358,7 +358,7 @@ public class RoomEditorPanel extends FlyingPanel
         var makeScaleFn :Function = function (x :Number, y :Number) :Function {
             return function () :void { _controller.actionAdjustScale(x, y); };
         };
-            
+
         var makeRotateFn :Function = function (rotation :Number, snapangle :Number) :Function {
             return function () :void {
                 _controller.actionAdjustRotation(rotation, true, snapangle);
@@ -394,7 +394,7 @@ public class RoomEditorPanel extends FlyingPanel
         div = new SkinnableImage();
         div.styleName = "roomEditDiv";
         _defaultPanel.addChild(div);
-        
+
         // item actions
         _middle = new VBox();
         _middle.styleName = "roomEditRight";
@@ -420,7 +420,7 @@ public class RoomEditorPanel extends FlyingPanel
                                         "add_item", null, true));
         right.addChild(makeActionButton(_controller.actionUndo, "roomEditUndo",
                                         "undo", _undoButtons, true));
-        
+
         // commented out for beta - rz, 3/19/08
         //   the "undo all" functionality requires some way to consolidate all undo updates
         //   into one, so that we don't flood the server with a ton of messages
@@ -443,7 +443,7 @@ public class RoomEditorPanel extends FlyingPanel
 
         updateTargetSelected(null); // disable most buttons
 
-        
+
         // now populate advanced settings panel
 
         _advancedPanels = new VBox();
@@ -462,8 +462,8 @@ public class RoomEditorPanel extends FlyingPanel
         }
 
         addPanel(Msgs.EDITING.get("t.item_prefs"), _details = new DetailsPanel(_controller));
-        addPanel(Msgs.EDITING.get("t.item_action"), _action = new ActionPanel(_controller)); 
-        
+        addPanel(Msgs.EDITING.get("t.item_action"), _action = new ActionPanel(_controller));
+
         // invader zim says: "it's not stupid, it's advanced!"
 
         box = new VBox();
@@ -515,7 +515,7 @@ public class RoomEditorPanel extends FlyingPanel
     protected static const SCALEMULTI :Number = 1.2;
 
     protected var _wctx :WorldContext;
-        
+
     protected var _switchablePanels :Box;
     protected var _undoButtons :Array; // of CommandButton
     protected var _deleteButtons :Array; // of CommandButton
@@ -531,15 +531,15 @@ public class RoomEditorPanel extends FlyingPanel
     protected var _decorLabel :Label;
 
     protected var _curTarget :FurniSprite;
-    
+
     protected var _details :DetailsPanel;
     protected var _action :ActionPanel;
     protected var _middle :VBox;
-    
+
     protected var _defaultPanel :Box;
     protected var _advancedPanels :Box;
     protected var _genericIcons :Box;
-    
+
     protected var _room :RoomPanel;
     protected var _namebox :CommandComboBox;
     protected var _controller :RoomEditorController;
