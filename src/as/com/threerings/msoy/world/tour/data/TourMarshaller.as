@@ -27,7 +27,7 @@ public class TourMarshaller extends InvocationMarshaller
     public function endTour (arg1 :Client) :void
     {
         sendRequest(arg1, END_TOUR, [
-
+            
         ]);
     }
 
