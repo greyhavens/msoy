@@ -44,7 +44,7 @@ public class ItemTransactionsPanel extends VerticalPanel
 
         add(MsoyUI.createLabel(_msgs.reviewItemTransactionsHeader(detail.item.name), null));
 
-        PagedTable<MoneyTransaction> table = new PagedTable<MoneyTransaction>(10) {
+        PagedTable<MoneyTransaction> table = new PagedTable<MoneyTransaction>(20) {
             @Override protected List<Widget> createRow (MoneyTransaction item) {
                 return getRow(item);
             }

@@ -41,6 +41,10 @@
   padding-top: 10px;
 }
 
+.itemTransactions {
+  font-size: 10px;
+}
+
 /*** Item transactions and review panel tables ***/
 .itemTransactions .Table .row1, .reviewPanel .Table .row1 {
   background: #dbeffc;
