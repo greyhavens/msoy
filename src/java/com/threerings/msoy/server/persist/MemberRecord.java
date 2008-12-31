@@ -5,13 +5,19 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.*; // for Depot annotations
+import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.FunctionExp;
+import com.samskivert.depot.expression.SQLExpression;
 
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -25,7 +31,8 @@ import com.threerings.msoy.web.gwt.WebCreds;
 @Entity(indices={
     @Index(name="ixLastSession", fields={ MemberRecord.LAST_SESSION }),
     @Index(name="ixName", fields={ MemberRecord.NAME }),
-    @Index(name="ixAffiliate", fields={ MemberRecord.AFFILIATE_MEMBER_ID })
+    @Index(name="ixAffiliate", fields={ MemberRecord.AFFILIATE_MEMBER_ID }),
+    @Index(name="ixLowerName", complex=true)
     // Note: PERMA_NAME and ACCOUNT_NAME are automatically indexed by their uniqueness constraint
 },
 fullTextIndices={
@@ -241,7 +248,15 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 28;
+    public static final int SCHEMA_VERSION = 29;
+
+    public static List<Tuple<SQLExpression, Order>> ixLowerNameDefinition ()
+    {
+        List<Tuple<SQLExpression, Order>> definition = Lists.newArrayList();
+        definition.add(new Tuple<SQLExpression, Order>(
+                new FunctionExp("LOWER", MemberRecord.NAME_C), Order.ASC));
+        return definition;
+    }
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
