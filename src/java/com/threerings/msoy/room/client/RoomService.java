@@ -38,7 +38,7 @@ public interface RoomService extends InvocationService
      * @param isAction if the message is a "action".
      */
     void sendSpriteMessage (Client client, ItemIdent item, String name, byte[] arg,
-                                   boolean isAction);
+                            boolean isAction);
 
     /**
      * Requests to send a sprite signal.
@@ -92,15 +92,14 @@ public interface RoomService extends InvocationService
      *
      * @see MobInfo
      */
-    void spawnMob (
-        Client caller, int gameId, String mobId, String mobName, Location startLoc,
-        InvocationListener listener);
+    void spawnMob (Client caller, int gameId, String mobId, String mobName, Location startLoc,
+                   InvocationListener listener);
 
     /**
      * Requests a mob be moved to a new location.
      */
-    void moveMob (
-        Client caller, int gameId, String mobId, Location newLoc, InvocationListener listener);
+    void moveMob (Client caller, int gameId, String mobId, Location newLoc,
+                  InvocationListener listener);
 
     /**
      * Requests the removal of a MOB from the current scene location.
@@ -113,4 +112,12 @@ public interface RoomService extends InvocationService
      * Requests to assign this user rating to the room. Returns a {@link RatingResult}.
      */
     void rateRoom (Client caller, byte rating, InvocationListener listener);
+
+    /**
+     * Requests to send a postcard email containing a snapshot of this room.
+     *
+     * @param snapURL the URL of the snapshot or null to send the canonical snapshot.
+     */
+    void sendPostcard (Client caller, String[] recips, String subject, String caption,
+                       String snapURL, ConfirmListener listener);
 }

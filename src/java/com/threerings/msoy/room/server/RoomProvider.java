@@ -65,6 +65,12 @@ public interface RoomProvider extends InvocationProvider
     void requestControl (ClientObject caller, ItemIdent arg1);
 
     /**
+     * Handles a {@link RoomService#sendPostcard} request.
+     */
+    void sendPostcard (ClientObject caller, String[] arg1, String arg2, String arg3, String arg4, InvocationService.ConfirmListener arg5)
+        throws InvocationException;
+
+    /**
      * Handles a {@link RoomService#sendSpriteMessage} request.
      */
     void sendSpriteMessage (ClientObject caller, ItemIdent arg1, String arg2, byte[] arg3, boolean arg4);

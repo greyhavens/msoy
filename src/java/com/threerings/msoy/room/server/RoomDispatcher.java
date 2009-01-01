@@ -87,6 +87,12 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
             );
             return;
 
+        case RoomMarshaller.SEND_POSTCARD:
+            ((RoomProvider)provider).sendPostcard(
+                source, (String[])args[0], (String)args[1], (String)args[2], (String)args[3], (InvocationService.ConfirmListener)args[4]
+            );
+            return;
+
         case RoomMarshaller.SEND_SPRITE_MESSAGE:
             ((RoomProvider)provider).sendSpriteMessage(
                 source, (ItemIdent)args[0], (String)args[1], (byte[])args[2], ((Boolean)args[3]).booleanValue()

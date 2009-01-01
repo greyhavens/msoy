@@ -94,6 +94,7 @@ public class RoomObjectController extends RoomController
     /** Some commands */
     public static const EDIT_DOOR :String = "EditDoor";
     public static const PUBLISH_ROOM :String = "PublishRoom";
+    public static const SEND_POSTCARD :String = "SendPostcard";
 
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void

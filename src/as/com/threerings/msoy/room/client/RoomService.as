@@ -3,10 +3,12 @@
 
 package com.threerings.msoy.room.client {
 
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.whirled.data.SceneUpdate;
@@ -41,6 +43,9 @@ public interface RoomService extends InvocationService
 
     // from Java interface RoomService
     function requestControl (arg1 :Client, arg2 :ItemIdent) :void;
+
+    // from Java interface RoomService
+    function sendPostcard (arg1 :Client, arg2 :TypedArray /* of class java.lang.String */, arg3 :String, arg4 :String, arg5 :String, arg6 :InvocationService_ConfirmListener) :void;
 
     // from Java interface RoomService
     function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void;

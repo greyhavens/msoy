@@ -31,8 +31,8 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.InvocationListener;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AccessController;
@@ -46,6 +46,7 @@ import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
@@ -69,12 +70,14 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
 
@@ -110,6 +113,7 @@ import com.threerings.msoy.room.server.persist.MemoryRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.RoomPropertyRecord;
+import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.data.PropertySetEvent;
@@ -680,8 +684,8 @@ public class RoomManager extends SpotSceneManager
     }
 
     // from RoomProvider
-    public void rateRoom (
-        ClientObject caller, final byte rating, final RoomService.InvocationListener listener)
+    public void rateRoom (ClientObject caller, final byte rating,
+                          final RoomService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
@@ -695,6 +699,46 @@ public class RoomManager extends SpotSceneManager
                 _sceneRepo.getRatingRepository().rate(getScene().getId(),
                     member.getMemberId(), rating);
             }
+        });
+    }
+
+    // from RoomProvider
+    public void sendPostcard (ClientObject caller, final String[] recips, final String subject,
+                              final String caption, final String snapURL,
+                              RoomService.ConfirmListener lner)
+        throws InvocationException
+    {
+        final MemberObject sender = (MemberObject)caller;
+
+        // sanity check
+        if (recips.length > 25) {
+            log.warning("ZOMG, rejecting spammer", "who", sender.who(), "recips", recips);
+            throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
+        }
+
+        // if we have a snap URL, we can send the mail directly
+        if (snapURL != null) {
+            sendPostcardMail(sender, recips, subject, caption, snapURL);
+            lner.requestProcessed();
+            return;
+        }
+
+        // otherwise we need to look up the URL of the canonical scene snapshot
+        _invoker.postUnit(new PersistingUnit(lner) {
+            public void invokePersistent () throws Exception {
+                // if we have no snapshot URL, we want the canonical URL
+                SceneRecord srec = _sceneRepo.loadScene(getScene().getId());
+                _snap = (srec == null) ? null : srec.getSnapshot();
+                if (_snap == null) {
+                    log.warning("Unable to load snapshot", "where", where(), "srec", srec);
+                    throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
+                }
+            }
+            public void handleSuccess () {
+                sendPostcardMail(sender, recips, subject, caption, _snap.getMediaPath());
+                reportRequestProcessed();
+            }
+            protected MediaDesc _snap;
         });
     }
 
@@ -1385,6 +1429,20 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
+    /**
+     * Helper function for {@link #sendPostcard}.
+     */
+    protected void sendPostcardMail (MemberObject sender, String[] recips, String subject,
+                                     String caption, String snapURL)
+    {
+        String memmail = sender.username.toString();
+        for (String recip : recips) {
+            _mailer.sendTemplateEmail(recip, memmail, "postcard", "sender", sender.memberName,
+                                      "sender_email", memmail, "subject", subject,
+                                      "caption", caption, "snap_url", snapURL);
+        }
+    }
+
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>
@@ -1528,6 +1586,7 @@ public class RoomManager extends SpotSceneManager
     };
 
 
+    @Inject protected MailSender _mailer;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ItemManager _itemMan;
     @Inject protected PetManager _petMan;
