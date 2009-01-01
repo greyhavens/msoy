@@ -29,7 +29,6 @@ import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Conditionals.*;
 import com.samskivert.depot.operator.Logic;
 
