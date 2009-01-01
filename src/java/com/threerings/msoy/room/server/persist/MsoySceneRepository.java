@@ -29,6 +29,7 @@ import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Conditionals.*;
 import com.samskivert.depot.operator.Logic;
 
@@ -328,17 +329,21 @@ public class MsoySceneRepository extends DepotRepository
         List<SQLExpression> exprs = Lists.newArrayList();
         List<OrderBy.Order> orders = Lists.newArrayList();
 
-        // only load public, published rooms
+        Timestamp since = new Timestamp(System.currentTimeMillis() - NEWNESS_CUTOFF);
+
+        // only load public, relatively recently published rooms
         clauses.add(new Where(new Logic.And(
-            new Equals(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE),
-            new Logic.Not(new IsNull(SceneRecord.LAST_PUBLISHED_C))
+            new GreaterThan(SceneRecord.LAST_PUBLISHED_C, since),
+            new Equals(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE)
         )));
 
         // TODO: Add more sorting options
-        // TODO: This brings the database to its knees. It does a full sequential scan on
-        // TODO: the table and then sorts all 100,000 records. We can maybe fix it by adding
-        // TODO: a hard limit on RATING and LAST_PUBLISHED so we end up sorting only 1,000
-        // TODO: entries instead... maybe.
+
+        // TODO: Even with the recently added NEWNESS_CUTOFF, this is a slow query because it
+        // TODO: has to sort potentially thousands of lines on the server by an expression
+        // TODO: that as it stands is difficult to put an index on. To scale properly we need to
+        // TODO: reconsider the basic idea, or rip the dynamic configuration factor out, decide
+        // TODO: on a tuning value, and add a function index.
         long nowSeconds = System.currentTimeMillis() / 1000;
         exprs.add(new Arithmetic.Sub(SceneRecord.RATING_C,
             new Arithmetic.Div(
@@ -617,4 +622,7 @@ public class MsoySceneRepository extends DepotRepository
     @Inject protected MemberRepository _memberRepo;
     @Inject protected HotnessConfig _hconfig;
     @Inject protected MemoryRepository _memoryRepo;
+
+    /** Hot & New items can't be new if they're older than two weeks. */
+    protected static final long NEWNESS_CUTOFF = 14 * 24 * 60 * 60 * 1000L;
 }
