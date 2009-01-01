@@ -87,16 +87,22 @@ public abstract class TagRepository extends DepotRepository
 
     /**
      * Join TagNameRecord and TagRecord, group by tag, and count how many targets reference each
-     * such tag.
+     * such tag. The query is relatively expensive and the result is unlikely to change rapidly
+     * in a production environment, so we cache for POPULAR_TAG_EXPIRATION seconds.
      */
     public List<TagPopularityRecord> getPopularTags (int rows)
     {
-        return findAll(TagPopularityRecord.class,
-                       new FromOverride(getTagClass()),
-                       new Limit(0, rows),
-                       new Join(getTagColumn(TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
-                       OrderBy.descending(TagPopularityRecord.COUNT_C),
-                       new GroupBy(TagNameRecord.TAG_ID_C, TagNameRecord.TAG_C));
+        int now = (int) (System.currentTimeMillis() / 1000);
+        if (_popularTags == null || rows > _popularTags.size() || now > _popularTagExpiration) {
+            _popularTags = findAll(TagPopularityRecord.class,
+                new FromOverride(getTagClass()),
+                new Limit(0, rows),
+                new Join(getTagColumn(TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
+                OrderBy.descending(TagPopularityRecord.COUNT_C),
+                new GroupBy(TagNameRecord.TAG_ID_C, TagNameRecord.TAG_C));
+            _popularTagExpiration = now + POPULAR_TAG_EXPIRATION;
+        }
+        return _popularTags.subList(0, rows);
     }
 
     /**
@@ -293,4 +299,9 @@ public abstract class TagRepository extends DepotRepository
 
     protected Class<TagRecord> _tagClass;
     protected Class<TagHistoryRecord> _tagHistoryClass;
+    protected List<TagPopularityRecord> _popularTags;
+    protected int _popularTagExpiration;
+
+    /** How long we cache the results of the popular tags query, in seconds. */
+    protected static int POPULAR_TAG_EXPIRATION = 30 * 60;  // half an hour
 }
