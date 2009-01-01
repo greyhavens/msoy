@@ -70,6 +70,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
@@ -1438,8 +1439,10 @@ public class RoomManager extends SpotSceneManager
         String memmail = sender.username.toString();
         for (String recip : recips) {
             _mailer.sendTemplateEmail(recip, memmail, "postcard", "sender", sender.memberName,
-                                      "sender_email", memmail, "subject", subject,
-                                      "caption", caption, "snap_url", snapURL);
+                                      "sender_email", memmail, "sender_id", sender.getMemberId(),
+                                      "subject", subject, "caption", caption, "snap_url", snapURL,
+                                      "title", getScene().getName(), "scene_id", getScene().getId(),
+                                      "server_url", DeploymentConfig.serverURL);
         }
     }
 
