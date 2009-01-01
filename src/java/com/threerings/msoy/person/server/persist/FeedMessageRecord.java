@@ -6,15 +6,20 @@ package com.threerings.msoy.person.server.persist;
 import java.sql.Timestamp;
 
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
+import com.samskivert.depot.annotation.Index;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
 
 /**
  * Contains information on a feed message.
  */
+@Entity(indices={
+    @Index(name="ixPosted", fields={ FeedMessageRecord.POSTED })
+})
 public abstract class FeedMessageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
