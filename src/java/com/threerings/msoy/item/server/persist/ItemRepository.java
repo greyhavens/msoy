@@ -528,7 +528,8 @@ public abstract class ItemRepository<T extends ItemRecord>
                              getItemClass(), ItemRecord.ITEM_ID));
 
         // see if there's any where bits to turn into an actual where clause
-        addSearchClause(clauses, mature, search, tag, creator, minRating, suiteId);
+        List<SQLOperator> whereBits = Lists.newArrayList();
+        addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, suiteId);
 
         // finally fetch all the catalog records of interest
         return load(CountRecord.class, clauses).count;
@@ -554,6 +555,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         // sort out the primary and secondary order by clauses
         List<SQLExpression> obExprs = Lists.newArrayList();
         List<OrderBy.Order> obOrders = Lists.newArrayList();
+        // and keep track of additional constraints on the query
+        List<SQLOperator> whereBits = Lists.newArrayList();
         switch(sortBy) {
         case CatalogQuery.SORT_BY_LIST_DATE:
             addOrderByListDate(obExprs, obOrders);
@@ -576,7 +579,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             addOrderByRating(obExprs, obOrders);
             break;
         case CatalogQuery.SORT_BY_NEW_AND_HOT:
-            addOrderByNewAndHot(obExprs, obOrders);
+            addOrderByNewAndHot(obExprs, obOrders, whereBits);
             break;
         case CatalogQuery.SORT_BY_FAVORITES:
             addOrderByFavorites(obExprs, obOrders);
@@ -590,7 +593,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                                 obOrders.toArray(new OrderBy.Order[obOrders.size()])));
 
         // see if there's any where bits to turn into an actual where clause
-        addSearchClause(clauses, mature, search, tag, creator, minRating, suiteId);
+        addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, suiteId);
 
         // finally fetch all the catalog records of interest and resolve their item bits
         return resolveCatalogRecords(findAll(getCatalogClass(), clauses));
@@ -1074,11 +1077,10 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Helper function for {@link #countListings} and {@link #loadCatalog}.
      */
-    protected void addSearchClause (List<QueryClause> clauses, boolean mature, String search,
-                                    int tag, int creator, Float minRating, int suiteId)
+    protected void addSearchClause (
+        List<QueryClause> clauses, List<SQLOperator> whereBits, boolean mature, String search,
+        int tag, int creator, Float minRating, int suiteId)
     {
-        List<SQLOperator> whereBits = Lists.newArrayList();
-
         // add our search clauses if we have a search string
         if (search != null && search.length() > 0) {
             whereBits.add(buildSearchClause(search));
@@ -1151,7 +1153,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         orders.add(OrderBy.Order.DESC);
     }
 
-    protected void addOrderByNewAndHot (List<SQLExpression> exprs, List<OrderBy.Order> orders)
+    protected void addOrderByNewAndHot (
+        List<SQLExpression> exprs, List<OrderBy.Order> orders, List<SQLOperator> whereBits)
     {
         long nowSeconds = System.currentTimeMillis() / 1000;
         exprs.add(new Arithmetic.Sub(getItemColumn(ItemRecord.RATING),
@@ -1159,6 +1162,9 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new Arithmetic.Sub(new ValueExp(nowSeconds),
                     new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE))),
                 _hconfig.getDropoffSeconds())));
+        whereBits.add(new GreaterThan(
+            getCatalogColumn(CatalogRecord.LISTED_DATE),
+            new Timestamp(System.currentTimeMillis() - NEWNESS_CUTOFF)));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1311,4 +1317,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /** The minimum number of ratings required to qualify a rating as "solid" */
     protected static final int MIN_SOLID_RATINGS = 20;
+
+    /** Hot & New items can't be new if they're older than two weeks. */
+    protected static final long NEWNESS_CUTOFF = 14 * 24 * 60 * 60 * 1000L;
 }
