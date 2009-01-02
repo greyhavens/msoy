@@ -47,6 +47,7 @@ import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.VisitorCookie;
 import client.ui.BorderedDialog;
+import client.ui.MsoyUI;
 import client.util.ArrayUtil;
 import client.util.FlashClients;
 import client.util.FlashVersion;
@@ -289,6 +290,12 @@ public class FrameEntryPoint
         // will require fixing a whole bunch of shit
         if (FlashClients.clientExists() && data.justCreated()) {
             closeClient(false);
+        }
+
+        // now that we know we're a member, we can add our "open home in minimized mode" icon
+        // (which may get immediately removed if we're going directly into the world)
+        if (_client == null) {
+            addNoClientIcon();
         }
 
         if (data.justCreated()) {
@@ -559,9 +566,8 @@ public class FrameEntryPoint
         default:
             // let the client know it about to be minimized
             WorldClient.setMinimized(true);
-            int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
             if (_client != null) {
-                _client.setWidth(clientWidth + "px");
+                _client.setWidth(computeClientWidth());
                 RootPanel.get(PAGE).setWidgetPosition(_client, CONTENT_WIDTH, NAVI_HEIGHT);
             }
 
@@ -622,8 +628,9 @@ public class FrameEntryPoint
         }
 
         if (_client != null) {
-            RootPanel.get(PAGE).remove(_client);
-            _client = null;
+            _client = removeFromPage(_client);
+            addNoClientIcon();
+
             if (_content != null) {
                 _content.setWidth(CONTENT_WIDTH + "px");
                 _content.setVisible(true);
@@ -651,6 +658,36 @@ public class FrameEntryPoint
         }
     }
 
+    protected void addNoClientIcon ()
+    {
+        if (CShell.isGuest()) {
+            return; // no quick-home link for guests
+        }
+
+        _noclient = MsoyUI.createActionImage("/images/frame/noclient.png", new ClickListener() {
+            public void onClick (Widget sender) {
+                // put the client in in minimized state
+                String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
+                _closeToken = Link.createToken(Pages.WORLD, "h");
+                _bar.setCloseVisible(true);
+                WorldClient.displayFlash(args, new WorldClient.PanelProvider() {
+                    public Panel get () {
+                        _noclient = removeFromPage(_noclient);
+                        Panel client = makeClientPanel();
+                        client.setWidth(computeClientWidth());
+                        RootPanel.get(PAGE).add(client);
+                        RootPanel.get(PAGE).setWidgetPosition(client, CONTENT_WIDTH, NAVI_HEIGHT);
+                        _client = client;
+                        return client;
+                    }
+                });
+            }
+        });
+        RootPanel.get(PAGE).add(_noclient);
+        int xpos = CONTENT_WIDTH + (MIN_CLIENT_WIDTH - NOCLIENT_ICON_WIDTH)/2;
+        RootPanel.get(PAGE).setWidgetPosition(_noclient, xpos, NAVI_HEIGHT + 50);
+    }
+
     protected void displayWorldClient (String args, String closeToken)
     {
         // note the current history token so that we can restore it if needed
@@ -674,22 +711,17 @@ public class FrameEntryPoint
         // finally actually display the client
         WorldClient.displayFlash(args, new WorldClient.PanelProvider() {
             public Panel get () {
-                if (_client != null) {
-                    RootPanel.get(PAGE).remove(_client);
-                    _client = null;
-                }
+                // clear out any existing bits
+                _noclient = removeFromPage(_noclient);
+                _client = removeFromPage(_client);
 
-                if (Window.getClientHeight() < (NAVI_HEIGHT + CLIENT_HEIGHT)) {
-                    _client = new ScrollPanel();
-                } else {
-                    _client = new SimplePanel();
-                }
-                _client.setWidth("100%");
-                _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-                RootPanel.get(PAGE).add(_client);
-                RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
+                Panel client = makeClientPanel();
+                client.setWidth("100%");
+                RootPanel.get(PAGE).add(client);
+                RootPanel.get(PAGE).setWidgetPosition(client, 0, NAVI_HEIGHT);
 
-                return _client;
+                _client = client;
+                return client;
             }
         });
     }
@@ -861,8 +893,7 @@ public class FrameEntryPoint
                         // if we have content, the client is in explicitly sized mode and will need
                         // its width updated manually; if we have no content, it is width 100%
                         if (_content != null) {
-                            int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
-                            _client.setWidth(clientWidth + "px");
+                            _client.setWidth(computeClientWidth());
                         }
                         _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
                     }
@@ -885,8 +916,6 @@ public class FrameEntryPoint
 
     protected void displayJava (LaunchConfig config, int gameOid)
     {
-// TODO: all this information needs to be passed up to the Frame, so maybe the frame should just
-// take care of all of this...
 //         String[] args = new String[] {
 //             "game_id", "" + config.gameId, "game_oid", "" + gameOid,
 //             "server", config.gameServer, "port", "" + config.gamePort,
@@ -914,6 +943,27 @@ public class FrameEntryPoint
     protected String getVisitorId ()
     {
         return CShell.visitor.id;
+    }
+
+    protected Panel makeClientPanel ()
+    {
+        Panel client = (Window.getClientHeight() < (NAVI_HEIGHT + CLIENT_HEIGHT)) ?
+            new ScrollPanel() : new SimplePanel();
+        client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+        return client;
+    }
+
+    protected String computeClientWidth ()
+    {
+        return Math.max(Window.getClientWidth() - CONTENT_WIDTH, MIN_CLIENT_WIDTH) + "px";
+    }
+
+    protected Widget removeFromPage (Widget widget)
+    {
+        if (widget != null) {
+            RootPanel.get(PAGE).remove(widget);
+        }
+        return null;
     }
 
     /**
@@ -1002,7 +1052,7 @@ public class FrameEntryPoint
     protected Widget _content;
     protected TitleBar _bar;
     protected Frame _iframe;
-    protected Panel _client;
+    protected Widget _client, _noclient;
     protected BorderedDialog _dialog;
 
     /** If the user arrived via an invitation, we'll store that here during their session. */
@@ -1030,6 +1080,10 @@ public class FrameEntryPoint
     // constants for our top-level elements
     protected static final String PAGE = "page";
     protected static final String LOADING = "loading";
+
+    // client stuffs
+    protected static final int MIN_CLIENT_WIDTH = 300;
+    protected static final int NOCLIENT_ICON_WIDTH = 21;
 
     /** This vector string represents an email invite */
     protected static final String EMAIL_VECTOR = "emailInvite";
