@@ -40,12 +40,14 @@ public class RoomPostcardPanel extends FloatingPanel
 
         _snapURL = snapURL;
 
-        // TEMP: make a new scene thumbnail; what we really want is to download the one we just
-        // uploaded
-        _snapshot = Snapshot.createThumbnail(
-            ctx, ctx.getPlaceView() as RoomView, function (e :Event) :void {},
-            function (e :ErrorEvent) :void {});
-        _snapshot.updateSnapshot(false, false, false);
+        // if we have no snap URL we're using the canonical scene image, so we fake a snapshot here
+        // to give the user an idea of what will be showing
+        if (_snapURL == null) {
+            _snapshot = Snapshot.createThumbnail(
+                ctx, ctx.getPlaceView() as RoomView, function (e :Event) :void {},
+                function (e :ErrorEvent) :void {});
+            _snapshot.updateSnapshot(false, false, false);
+        }
     }
 
     override protected function createChildren () :void
@@ -63,7 +65,13 @@ public class RoomPostcardPanel extends FloatingPanel
         _cc.label = Msgs.WORLD.get("l.rpc_cc_check");
 
         var preview :Image = new Image();
-        preview.source = new BitmapAsset(_snapshot.bitmap);
+        preview.maxWidth = 600;
+        preview.maxHeight = 200;
+        if (_snapshot != null) {
+            preview.source = new BitmapAsset(_snapshot.bitmap);
+        } else {
+            preview.source = _snapURL;
+        }
         addChild(preview);
 
         addChild(makeRow("l.rpc_caption", _caption = new TextInput()));
@@ -102,7 +110,7 @@ public class RoomPostcardPanel extends FloatingPanel
         lbl.text = Msgs.WORLD.get(label);
         lbl.selectable = false;
         lbl.setStyle("textAlign", "right");
-        lbl.width = 50;
+        lbl.width = 60;
         row.addChild(lbl);
         row.addChild(control);
         control.percentWidth = 100;

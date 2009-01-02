@@ -33,6 +33,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.room.client.RoomPostcardPanel;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoyScene;
 
@@ -91,6 +92,14 @@ public class SnapshotPanel extends FloatingPanel
         return _downloadImage.selected;
     }
 
+    /**
+     * Return true if the user wants to send the snapshot as a postcard.
+     */
+    public function get shouldSendPostcard () :Boolean
+    {
+        return _sendPostcard.selected;
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -134,10 +143,15 @@ public class SnapshotPanel extends FloatingPanel
             _takeGalleryImage.selected = true;
             addChild(_takeGalleryImage);
         }
-        _downloadImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_download"),
-            enforceUIInterlocks);
+        _downloadImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_download"), enforceUIInterlocks);
         _downloadImage.selected = isGuest;
         addChild(_downloadImage);
+        if (!isGuest) {
+            _sendPostcard = new CommandCheckBox(Msgs.WORLD.get("b.snap_postcard"),
+                enforceUIInterlocks);
+            _sendPostcard.selected = isGuest;
+            addChild(_sendPostcard);
+        }
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
 
@@ -176,8 +190,8 @@ public class SnapshotPanel extends FloatingPanel
     {
         const needGallery :Boolean = shouldSaveGalleryImage || shouldDownloadImage;
         const needThumb :Boolean = shouldSaveSceneThumbnail;
-        return (needGallery || needThumb) &&
-            (!needGallery || galleryImage.ready) && (!needThumb || sceneThumbnail.ready);
+        return (needGallery || needThumb) && (!needGallery || galleryImage.ready) &&
+            (!needThumb || sceneThumbnail.ready);
     }
 
     protected function handleEncodingComplete (event :Event) :void
@@ -230,7 +244,6 @@ public class SnapshotPanel extends FloatingPanel
         if (shouldSaveSceneThumbnail) {
             _waiting++;
             sceneThumbnail.upload(false, handleUploadDone);
-
         }
         if (shouldSaveGalleryImage || shouldDownloadImage) {
             _waiting++;
@@ -247,6 +260,11 @@ public class SnapshotPanel extends FloatingPanel
         if (--_waiting == 0) {
             // done at this point so we can close the panel
             close();
+
+            // if we're sending a postcard, show the send postcard panel
+            if (shouldSendPostcard) {
+                new RoomPostcardPanel(_ctx as WorldContext, _postcardURL).open();
+            }
         }
     }
 
@@ -270,6 +288,10 @@ public class SnapshotPanel extends FloatingPanel
      */
     protected function setupDownload (downloadURL :String) :void
     {
+        if (shouldSendPostcard) {
+            _postcardURL = downloadURL;
+        }
+
         if (shouldDownloadImage && (downloadURL != null)) {
             _downloadURL = downloadURL;
 
@@ -317,6 +339,7 @@ public class SnapshotPanel extends FloatingPanel
     protected var _waiting :int;
     protected var _downloadRef :FileReference;
     protected var _downloadURL :String;
+    protected var _postcardURL :String;
 
     // UI Elements
     protected var _showOccs :CommandCheckBox;
@@ -324,6 +347,7 @@ public class SnapshotPanel extends FloatingPanel
     protected var _useAsSceneThumbnail :CommandCheckBox;
     protected var _takeGalleryImage :CommandCheckBox;
     protected var _downloadImage :CommandCheckBox;
+    protected var _sendPostcard :CommandCheckBox;
 
     protected var _cancelUploadButton :CommandButton;
     protected var _progressLabel :Label;
