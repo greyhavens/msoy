@@ -38,7 +38,15 @@ public class RoomPostcardPanel extends FloatingPanel
     {
         super(ctx, Msgs.WORLD.get("t.rpc"));
 
+        // save our snapshot URL if we have one
         _snapURL = snapURL;
+
+        // specify a biggish min width/height so that the centered screen position we compute
+        // before we know our image dimensions isn't too wildly different from what would be
+        // correct; I don't know how to get Image to fire an event once it knows its real
+        // dimensions, maybe someone with more Flex experience can fix
+        minWidth = 500;
+        minHeight = 300;
 
         // if we have no snap URL we're using the canonical scene image, so we fake a snapshot here
         // to give the user an idea of what will be showing
@@ -71,6 +79,10 @@ public class RoomPostcardPanel extends FloatingPanel
             preview.source = new BitmapAsset(_snapshot.bitmap);
         } else {
             preview.source = _snapURL;
+// TODO: is there some event that will be triggered when our image dimensions are known?
+//             preview.addEventListener(FlexEvent.DATA_CHANGE, function (event :FlexEvent) :void {
+//                 PopUpManager.centerPopUp(this);
+//             });
         }
         addChild(preview);
 
