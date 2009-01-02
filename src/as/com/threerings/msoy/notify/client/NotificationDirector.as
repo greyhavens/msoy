@@ -9,6 +9,7 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -65,6 +66,12 @@ public class NotificationDirector extends BasicDirector
 
         ctx.getControlBar().setNotificationDisplay(
             _notificationDisplay = new NotificationDisplay(ctx));
+
+        // clear our display if we lose connection to the server
+        ctx.getClient().addClientObserver(new ClientAdapter(null, null, null, null, null,
+            function () :void {
+                _notificationDisplay.clearDisplay();
+        }, null, null));
     }
 
     /**
