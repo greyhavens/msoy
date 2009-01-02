@@ -42,16 +42,17 @@
   margin: 0 0 20px 10px;
 }
 
-.createAccount .Promo {
-  float: right;
-  margin-right: 25px;
+.createAccount .PromoCell {
+  text-align: center;
+  vertical-align: middle;
 }
 
-.createAccount .Label {
+.createAccount .Label, createAccount td .Label {
   padding: 3px 5px 0 3px;
   width: 150px;
   float: left;
   text-align: right;
+  font-size: 13px;
 }
 
 .createAccount .Box {

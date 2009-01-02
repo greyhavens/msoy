@@ -72,10 +72,19 @@ public class CreateAccountPanel extends FlowPanel
         content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
         content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
 
-        // A/B (/C/D) test banner floats on the right and promotes some part of whirled
-        content.add(_promoPanel = MsoyUI.createSimplePanel(null, "Promo"));
+        // IE doesn't appear to like the float style, so be explicit; use a table with the user's
+        // registration data on the left and the promo on the right
+        SmartTable dataAndPromo = new SmartTable();
+        dataAndPromo.setWidth("100%");
+        FlowPanel data = MsoyUI.createFlowPanel(null);
+        dataAndPromo.setWidget(0, 0, data);
+        content.add(dataAndPromo);
 
-        content.add(new LabeledBox(_msgs.createEmail(),
+        // A/B (/C/D) test banner floats on the right and promotes some part of whirled
+        dataAndPromo.setWidget(0, 1, _promoPanel = MsoyUI.createSimplePanel(null, "Promo"), 1,
+                               "PromoCell");
+
+        data.add(new LabeledBox(_msgs.createEmail(),
                            _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1),
                            _msgs.createEmailTip()));
         _email.addKeyboardListener(_onType);
@@ -85,24 +94,24 @@ public class CreateAccountPanel extends FlowPanel
             _email.setText(invite.inviteeEmail);
         }
 
-        content.add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
+        data.add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
                            _msgs.createRealNameTip()));
         _rname.addKeyboardListener(_onType);
 
-        content.add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
+        data.add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
                            _msgs.createDateOfBirthTip()));
 
-        content.add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
+        data.add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
                            _msgs.createPasswordTip()));
         _password.addKeyboardListener(_onType);
 
-        content.add(new LabeledBox(_msgs.createConfirm(), _confirm = new PasswordTextBox(),
+        data.add(new LabeledBox(_msgs.createConfirm(), _confirm = new PasswordTextBox(),
                            _msgs.createConfirmTip()));
         _confirm.addKeyboardListener(_onType);
 
         _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, -1);
         _name.addKeyboardListener(_onType);
-        content.add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
+        data.add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
 
         // optionally add the recaptcha component
         if (RecaptchaUtil.isEnabled()) {
