@@ -345,27 +345,31 @@ public class MemberObject extends MsoyBodyObject
         location = null;
     }
 
+    public void putAvatarMemoriesIntoRoom (RoomObject roomObj)
+    {
+        MemberLocal local = getLocal(MemberLocal.class);
+
+        // as we arrive at a room, we entrust it with our memories for broadcast to clients
+        if (local.memories != null) {
+            roomObj.startTransaction();
+            try {
+                for (EntityMemoryEntry entry : local.memories) {
+                    roomObj.addToMemories(entry);
+                }
+            } finally {
+                roomObj.commitTransaction();
+            }
+            local.memories = null;
+        }
+    }
+
     @Override // from MsoyBodyObject
     public void willEnterPlace (Place place, PlaceObject plobj)
     {
         super.willEnterPlace(place, plobj);
 
         if (plobj instanceof RoomObject) {
-            RoomObject roomObj = (RoomObject) plobj;
-            MemberLocal local = getLocal(MemberLocal.class);
-
-            // as we arrive at a room, we entrust it with our memories for broadcast to clients
-            if (local.memories != null) {
-                roomObj.startTransaction();
-                try {
-                    for (EntityMemoryEntry entry : local.memories) {
-                        roomObj.addToMemories(entry);
-                    }
-                } finally {
-                    roomObj.commitTransaction();
-                }
-                local.memories = null;
-            }
+            putAvatarMemoriesIntoRoom((RoomObject) plobj);
         }
     }
 

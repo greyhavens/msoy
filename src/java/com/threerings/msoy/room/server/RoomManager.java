@@ -1472,7 +1472,6 @@ public class RoomManager extends SpotSceneManager
                     if (!entry.getItemIdent().equals(oldEntry.getItemIdent())) {
                         updateAvatarIdent(oldEntry, entry);
                         removeAndFlushMemories(oldEntry.getItemIdent());
-                        resolveMemories(Collections.singleton(entry.getItemIdent()), null);
                     }
                 }
             }

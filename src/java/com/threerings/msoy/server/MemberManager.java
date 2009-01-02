@@ -19,6 +19,7 @@ import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
@@ -43,6 +44,7 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.SpeakUtil;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -81,6 +83,9 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.server.persist.MemoryRecord;
+import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.underwire.server.SupportLogic;
@@ -900,8 +905,15 @@ public class MemberManager
             @Override public void invokePersist () throws Exception {
                 _memberRepo.configureAvatarId(user.getMemberId(),
                     (avatar == null) ? 0 : avatar.itemId);
-                if (newScale != 0 && avatar != null && avatar.scale != newScale) {
-                    _itemLogic.getAvatarRepository().updateScale(avatar.itemId, newScale);
+                if (avatar != null) {
+                    if (newScale != 0 && avatar.scale != newScale) {
+                        _itemLogic.getAvatarRepository().updateScale(avatar.itemId, newScale);
+                    }
+
+                    MemberLocal local = user.getLocal(MemberLocal.class);
+                    local.memories = Lists.newArrayList(Iterables.transform(
+                        _memoryRepo.loadMemory(avatar.getType(), avatar.itemId),
+                        MemoryRecord.TO_ENTRY));
                 }
             }
 
@@ -940,6 +952,20 @@ public class MemberManager
                     // now set the new avatar
                     user.setAvatar(avatar);
                     user.actorState = null; // clear out their state
+
+                    // check if this player is already in a room (should be the case)
+                    PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
+                    if (pmgr != null) {
+                        PlaceObject plobj = pmgr.getPlaceObject();
+                        if (plobj instanceof RoomObject) {
+                            // if so, make absolutely sure the avatar memories are in place in the
+                            // room before we update the occupant info (which triggers the avatar
+                            // media change on the client).
+                            user.putAvatarMemoriesIntoRoom((RoomObject)plobj);
+                        }
+                        // if the player wasn't in a room, the avatar memories will just sit in
+                        // MemberLocal storage until they do enter a room, which is proper
+                    }
                     _bodyMan.updateOccupantInfo(user, new MemberInfo.AvatarUpdater(user));
 
                 } finally {
@@ -1025,6 +1051,7 @@ public class MemberManager
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected MemoryRepository _memoryRepo;
 
     /** The required flow for the first few levels is hard-coded */
     protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };
