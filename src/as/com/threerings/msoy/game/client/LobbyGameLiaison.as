@@ -111,7 +111,13 @@ public class LobbyGameLiaison extends GameLiaison
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultAdapter = new ResultAdapter(
-            function (lobbyOid :int) :void {
+            function (lobbyOid :int) :void
+            {
+                // this is only used for testing game loading issues per WRLD-531,
+                // and will be removed after the test is over. -- robert
+                var stageName :String = (lobbyOid == 0) ? "3a" : "3b";
+                _wctx.getMsoyClient().trackClientAction("WRLD-531 game started", stageName);
+
                 if (lobbyOid != 0) {
                     // we failed to start a game (see below) so join the lobby instead
                     gotLobbyOid(lobbyOid);

@@ -4,15 +4,21 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.WebMemberService;
+import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.NoopAsyncCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays a play button that does the right thing in for all of the myriad modalities a game
@@ -58,9 +64,23 @@ public class PlayButton
             play.setStyleName("playButtonLarge");
             break;
         }
+
+        // this is only used for testing game loading issues per WRLD-531, and will
+        // be removed after the test is over. -- robert
+        if (! inWorld) {
+            play.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    _membersvc.trackClientAction(CShell.visitor, "WRLD-531 game started", "stage 1",
+                        new NoopAsyncCallback() { });
+                }
+            });
+        }
+
         play.addClickListener(Link.createListener(Pages.WORLD, args));
         return play;
     }
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

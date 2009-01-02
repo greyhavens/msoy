@@ -369,6 +369,10 @@ public class LobbyController extends Controller
         if (_mctx.getPlaceView() is BlankPlaceView) {
             _mctx.setPlaceView(new NoPlaceView());
         }
+
+        // this is only used for testing game loading issues per WRLD-531, and will be removed
+        // after the test is over. -- robert
+        _mctx.getMsoyClient().trackClientAction("WRLD-531 game started", "stage 2");
     }
 
     /**
@@ -411,6 +415,10 @@ public class LobbyController extends Controller
         // pass group back to the caller now that the lobby has loaded
         _lobbyLoaded(_lobj.groupId);
 
+        // this is only used for testing game loading issues per WRLD-531, and will be removed
+        // after the test is over. -- robert
+        _mctx.getMsoyClient().trackClientAction("WRLD-531 game started", "stage 4");
+        
         // if we have a player table to join, do that now, otherwise
         if (_playerId != 0) {
             joinPlayerTable(_playerId);
