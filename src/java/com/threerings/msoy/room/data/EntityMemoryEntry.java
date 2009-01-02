@@ -66,6 +66,12 @@ public class EntityMemoryEntry
         return (rv != 0) ? rv : key.compareTo(other.key);
     }
 
+    @Override
+    public String toString ()
+    {
+        return "[EntityMemoryEntry key=" + key + "]";
+    }
+
     @Override // from Object
     public boolean equals (Object other)
     {

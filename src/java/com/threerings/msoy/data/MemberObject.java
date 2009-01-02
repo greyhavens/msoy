@@ -354,6 +354,10 @@ public class MemberObject extends MsoyBodyObject
             roomObj.startTransaction();
             try {
                 for (EntityMemoryEntry entry : local.memories) {
+                    if (roomObj.memories.contains(entry)) {
+                        log.warning("Memories already contain entry", "entry", entry);
+                        continue;
+                    }
                     roomObj.addToMemories(entry);
                 }
             } finally {
