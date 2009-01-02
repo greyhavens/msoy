@@ -10,7 +10,6 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.Page;
-import client.ui.MsoyUI;
 import client.util.Link;
 
 /**
