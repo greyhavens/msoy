@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -685,16 +684,13 @@ public class FrameEntryPoint
                 });
             }
         };
-        FlowPanel noclient = new FlowPanel();
+        FlowPanel noclient = MsoyUI.createFlowPanel("noclient");
         noclient.add(MsoyUI.createPushButton(_images.noclient().createImage(),
                                              _images.noclient_hover().createImage(),
                                              _images.noclient_hover().createImage(), goHome));
         noclient.add(MsoyUI.createActionLabel(_cmsgs.goHome(), goHome));
 
-        // we have to put all of this in a table to achieve vertical centering, sigh
-        SmartTable wrapper = new SmartTable("noclient", 0, 0);
-        wrapper.setWidget(0, 0, noclient);
-        _noclient = wrapper;
+        _noclient = noclient;
         _noclient.setWidth(computeClientWidth());
         _noclient.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
         RootPanel.get(PAGE).add(_noclient);
