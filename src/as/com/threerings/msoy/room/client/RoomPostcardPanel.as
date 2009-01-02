@@ -63,6 +63,9 @@ public class RoomPostcardPanel extends FloatingPanel
         super.createChildren();
 
         addChild(makeRow("l.rpc_to", _to = new TextInput()));
+        var totip :Label = new Label();
+        totip.text = Msgs.WORLD.get("t.rpc_to");
+        addChild(makeRow("", totip));
 
         addChild(makeRow("l.rpc_subject", _subject = new TextInput()));
         _subject.text = Msgs.WORLD.get("m.rpc_def_subject");
@@ -84,7 +87,7 @@ public class RoomPostcardPanel extends FloatingPanel
 //                 PopUpManager.centerPopUp(this);
 //             });
         }
-        addChild(preview);
+        addChild(makeRow("", preview));
 
         addChild(makeRow("l.rpc_caption", _caption = new TextInput()));
         _caption.text = Msgs.WORLD.get("m.rpc_def_caption");
@@ -119,7 +122,9 @@ public class RoomPostcardPanel extends FloatingPanel
         row.percentWidth = 100;
         row.setStyle("verticalAlign", "middle");
         var lbl :Label = new Label();
-        lbl.text = Msgs.WORLD.get(label);
+        if (label.length > 0) {
+            lbl.text = Msgs.WORLD.get(label);
+        }
         lbl.selectable = false;
         lbl.setStyle("textAlign", "right");
         lbl.width = 60;
