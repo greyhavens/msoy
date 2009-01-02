@@ -81,6 +81,7 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.profile.gwt.Profile;
+import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomObject;
@@ -909,9 +910,7 @@ public class MemberManager
                     if (newScale != 0 && avatar.scale != newScale) {
                         _itemLogic.getAvatarRepository().updateScale(avatar.itemId, newScale);
                     }
-
-                    MemberLocal local = user.getLocal(MemberLocal.class);
-                    local.memories = Lists.newArrayList(Iterables.transform(
+                    _memories = Lists.newArrayList(Iterables.transform(
                         _memoryRepo.loadMemory(avatar.getType(), avatar.itemId),
                         MemoryRecord.TO_ENTRY));
                 }
@@ -922,6 +921,7 @@ public class MemberManager
                 if (newScale != 0 && avatar != null) {
                     avatar.scale = newScale;
                 }
+
                 _itemMan.updateItemUsage(
                     user.getMemberId(), prev, avatar, new ResultListener.NOOP<Object>() {
                     @Override
@@ -952,6 +952,7 @@ public class MemberManager
                     // now set the new avatar
                     user.setAvatar(avatar);
                     user.actorState = null; // clear out their state
+                    user.getLocal(MemberLocal.class).memories = _memories;
 
                     // check if this player is already in a room (should be the case)
                     PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
@@ -980,8 +981,9 @@ public class MemberManager
                 log.warning(pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
-        });
 
+            protected List<EntityMemoryEntry> _memories;
+        });
     }
 
     protected void calculateLevelsForFlow (final int fromIndex)
