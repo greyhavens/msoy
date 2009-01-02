@@ -1163,11 +1163,11 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new Arithmetic.Sub(new ValueExp(nowSeconds),
                     new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE))),
                 _hconfig.getDropoffSeconds())));
-        if (!DeploymentConfig.devDeployment) {
-            whereBits.add(new GreaterThan(
-                getCatalogColumn(CatalogRecord.LISTED_DATE),
-                new Timestamp(System.currentTimeMillis() - NEWNESS_CUTOFF)));
-        }
+//        if (!DeploymentConfig.devDeployment) {
+//            whereBits.add(new GreaterThan(
+//                getCatalogColumn(CatalogRecord.LISTED_DATE),
+//                new Timestamp(System.currentTimeMillis() - NEWNESS_CUTOFF)));
+//        }
         orders.add(OrderBy.Order.DESC);
     }
 
