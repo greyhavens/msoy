@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -93,9 +94,19 @@ public class GameDetailPanel extends SmartTable
                 }
             };
             shot.add(rating);
+            HorizontalPanel mbits = new HorizontalPanel();
+            mbits.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             if (!CShell.isGuest()) {
-                shot.add(new FavoriteIndicator(game, detail.memberItemInfo));
+                mbits.add(new FavoriteIndicator(game, detail.memberItemInfo));
+                mbits.add(WidgetUtil.makeShim(10, 10));
             }
+            // we can only test the Digg stuff in production, so let's show it only to admins until
+            // we're sure that it works
+            if (CShell.isAdmin()) {
+                mbits.add(MsoyUI.makeDiggButton(Pages.GAMES, Args.compose("d", gameId),
+                                                detail.item.name, detail.item.description));
+            }
+            shot.add(mbits);
         }
         setWidget(0, 0, shot);
         getFlexCellFormatter().setRowSpan(0, 0, 2);

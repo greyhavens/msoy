@@ -8,6 +8,7 @@ import java.util.Date;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -33,6 +34,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
@@ -40,6 +43,7 @@ import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.util.DateUtil;
+import client.util.Link;
 import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
@@ -674,6 +678,20 @@ public class MsoyUI
     public static int computeRows (int used, int perRow, int minimum)
     {
         return Math.max(minimum, (Window.getClientHeight() - used) / perRow);
+    }
+
+    /**
+     * Creates a button that allows a Digg submission for the specified page with the supplied
+     * title and description.
+     */
+    public static Widget makeDiggButton (Pages page, String args, String title, String descrip)
+    {
+        String url = DeploymentConfig.serverURL + '#' + Link.createToken(page, args);
+        String diggURL = "http://digg.com/submit?url=" + URL.encode(url) +
+            "&title=" + URL.encode(title) + "&bodytext=" + URL.encode(descrip) +
+            "&media=news&topic=playable_web_games";
+        return new HTML("<a target='_blank' href='" + diggURL + "'>" +
+                        "<img src='/images/ui/digg.png' border=0></a>");
     }
 
     protected static class TextBoxSelector
