@@ -46,6 +46,7 @@ import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.HotnessConfig;
@@ -332,7 +333,9 @@ public class MsoySceneRepository extends DepotRepository
 
         // only load public, relatively recently published rooms
         clauses.add(new Where(new Logic.And(
-            new GreaterThan(SceneRecord.LAST_PUBLISHED_C, since),
+            DeploymentConfig.devDeployment ?
+                new Logic.Not(new IsNull(SceneRecord.LAST_PUBLISHED_C)) :
+                new GreaterThan(SceneRecord.LAST_PUBLISHED_C, since),
             new Equals(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE)
         )));
 

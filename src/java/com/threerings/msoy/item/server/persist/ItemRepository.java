@@ -72,6 +72,7 @@ import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
@@ -1162,9 +1163,11 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new Arithmetic.Sub(new ValueExp(nowSeconds),
                     new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE))),
                 _hconfig.getDropoffSeconds())));
-        whereBits.add(new GreaterThan(
-            getCatalogColumn(CatalogRecord.LISTED_DATE),
-            new Timestamp(System.currentTimeMillis() - NEWNESS_CUTOFF)));
+        if (!DeploymentConfig.devDeployment) {
+            whereBits.add(new GreaterThan(
+                getCatalogColumn(CatalogRecord.LISTED_DATE),
+                new Timestamp(System.currentTimeMillis() - NEWNESS_CUTOFF)));
+        }
         orders.add(OrderBy.Order.DESC);
     }
 

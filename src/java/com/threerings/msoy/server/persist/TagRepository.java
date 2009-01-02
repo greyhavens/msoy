@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.depot.DepotRepository;
@@ -28,6 +29,7 @@ import com.samskivert.depot.operator.Conditionals.In;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.TagHistory;
 
 /**
@@ -93,14 +95,16 @@ public abstract class TagRepository extends DepotRepository
     public List<TagPopularityRecord> getPopularTags (int rows)
     {
         int now = (int) (System.currentTimeMillis() / 1000);
-        if (_popularTags == null || rows > _popularTags.size() || now > _popularTagExpiration) {
+        if (rows > _popularTags.size() || now >= _popularTagExpiration) {
             _popularTags = findAll(TagPopularityRecord.class,
                 new FromOverride(getTagClass()),
                 new Limit(0, rows),
                 new Join(getTagColumn(TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
                 OrderBy.descending(TagPopularityRecord.COUNT_C),
                 new GroupBy(TagNameRecord.TAG_ID_C, TagNameRecord.TAG_C));
-            _popularTagExpiration = now + POPULAR_TAG_EXPIRATION;
+
+            _popularTagExpiration = DeploymentConfig.devDeployment ?
+                now : now + POPULAR_TAG_EXPIRATION;
         }
         return _popularTags.subList(0, rows);
     }
@@ -299,7 +303,7 @@ public abstract class TagRepository extends DepotRepository
 
     protected Class<TagRecord> _tagClass;
     protected Class<TagHistoryRecord> _tagHistoryClass;
-    protected List<TagPopularityRecord> _popularTags;
+    protected List<TagPopularityRecord> _popularTags = Lists.newArrayList();
     protected int _popularTagExpiration;
 
     /** How long we cache the results of the popular tags query, in seconds. */
