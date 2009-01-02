@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -39,6 +40,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 import com.threerings.msoy.web.gwt.WebUserService;
 import com.threerings.msoy.web.gwt.WebUserServiceAsync;
 
+import client.images.frame.FrameImages;
 import client.shell.BrowserTest;
 import client.shell.CShell;
 import client.shell.EntryVectorCookie;
@@ -664,7 +666,7 @@ public class FrameEntryPoint
             return; // no quick-home link for guests
         }
 
-        _noclient = MsoyUI.createActionImage("/images/frame/noclient.png", new ClickListener() {
+        ClickListener goHome = new ClickListener() {
             public void onClick (Widget sender) {
                 // put the client in in minimized state
                 String args = "memberHome=" + CShell.getMemberId() + "&mini=true";
@@ -682,10 +684,21 @@ public class FrameEntryPoint
                     }
                 });
             }
-        });
+        };
+        FlowPanel noclient = new FlowPanel();
+        noclient.add(MsoyUI.createPushButton(_images.noclient().createImage(),
+                                             _images.noclient_hover().createImage(),
+                                             _images.noclient_hover().createImage(), goHome));
+        noclient.add(MsoyUI.createActionLabel(_cmsgs.goHome(), goHome));
+
+        // we have to put all of this in a table to achieve vertical centering, sigh
+        SmartTable wrapper = new SmartTable("noclient", 0, 0);
+        wrapper.setWidget(0, 0, noclient);
+        _noclient = wrapper;
+        _noclient.setWidth(computeClientWidth());
+        _noclient.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
         RootPanel.get(PAGE).add(_noclient);
-        int xpos = CONTENT_WIDTH + (MIN_CLIENT_WIDTH - NOCLIENT_ICON_WIDTH)/2;
-        RootPanel.get(PAGE).setWidgetPosition(_noclient, xpos, NAVI_HEIGHT + 50);
+        RootPanel.get(PAGE).setWidgetPosition(_noclient, CONTENT_WIDTH, NAVI_HEIGHT);
     }
 
     protected void displayWorldClient (String args, String closeToken)
@@ -889,14 +902,13 @@ public class FrameEntryPoint
                     if (_iframe != null) {
                         _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
                     }
-                    if (_client != null) {
-                        // if we have content, the client is in explicitly sized mode and will need
-                        // its width updated manually; if we have no content, it is width 100%
-                        if (_content != null) {
-                            _client.setWidth(computeClientWidth());
-                        }
-                        _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+                    Widget right = (_client == null) ? _noclient : _client;
+                    // if we have content, the client is in explicitly sized mode and will need its
+                    // width updated manually; if we have no content, it is width 100%
+                    if (_content != null) {
+                        right.setWidth(computeClientWidth());
                     }
+                    right.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
                 }
             };
             Window.addWindowResizeListener(_resizer);
@@ -1072,6 +1084,7 @@ public class FrameEntryPoint
     protected Command _javaReadyCommand;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final FrameImages _images = (FrameImages)GWT.create(FrameImages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
@@ -1081,9 +1094,7 @@ public class FrameEntryPoint
     protected static final String PAGE = "page";
     protected static final String LOADING = "loading";
 
-    // client stuffs
     protected static final int MIN_CLIENT_WIDTH = 300;
-    protected static final int NOCLIENT_ICON_WIDTH = 21;
 
     /** This vector string represents an email invite */
     protected static final String EMAIL_VECTOR = "emailInvite";

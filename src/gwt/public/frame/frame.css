@@ -120,6 +120,13 @@
   padding-left: 5px;
 }
 
+/** No client home icon */
+.noclient {
+  text-align: center;
+  vertical-align: middle;
+  color: #999999;
+}
+
 /* ------------------------------------
    BROWSER TEST DIALOG
 -------------------------------------*/
