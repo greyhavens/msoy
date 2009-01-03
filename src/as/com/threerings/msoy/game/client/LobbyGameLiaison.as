@@ -222,6 +222,11 @@ public class LobbyGameLiaison extends GameLiaison
     public function receivedGameReady (gameOid :int) :Boolean
     {
         _wctx.getWorldController().handleGoGame(_gameId, gameOid);
+
+        // this is only used for testing game loading issues per WRLD-531,
+        // and will be removed after the test is over. -- robert
+        _wctx.getMsoyClient().trackClientAction("WRLD-531 game started", "stage 5");
+
         return true;
     }
 

@@ -23,6 +23,11 @@ public class MsoyGameController extends WhirledGameController
 
         // wire up our occupant reporter (don't report initial occupants)
         _occReporter.willEnterPlace(_ctx, plobj, false);
+
+        // this is only used for testing game loading issues per WRLD-531,
+        // and will be removed after the test is over. -- robert
+        (_pctx as GameContext).getMsoyContext().getMsoyClient().trackClientAction(
+            "WRLD-531 game started", "stage 7");
     }
 
     // from PlaceController
@@ -41,6 +46,17 @@ public class MsoyGameController extends WhirledGameController
         //return (_pctx as GameContext).getMsoyContext().getTokens().isSupport();
     }
 
+    // from WhirledGameController
+    override public function userCodeIsConnected (autoReady :Boolean) :void
+    {
+        super.userCodeIsConnected(autoReady);
+        
+        // this is only used for testing game loading issues per WRLD-531,
+        // and will be removed after the test is over. -- robert
+        (_pctx as GameContext).getMsoyContext().getMsoyClient().trackClientAction(
+            "WRLD-531 game started", "stage 8");
+    }
+                                                                       
     // from BaseGameController
     override protected function createBackend () :BaseGameBackend
     {
