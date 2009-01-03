@@ -540,7 +540,7 @@ TabNavigator, TabBar {
 .controlBarButtonChat, .controlBarButtonEdit, .controlBarButtonZoom, .controlBarButtonComment,
 .controlBarButtonInstructions, .controlBarButtonShare, .controlBarButtonScores,
 .controlBarHoverZone, .controlBarButtonSnapshot, .controlBarFriendButton, .controlBarTalkButton,
-.controlBarIdleButton, .controlBarScaleButton, .controlBarAVRGButton, .tickButton,
+.controlBarIdleButton, .controlBarScaleButton, .controlBarGameButton, .tickButton,
 .controlBarButtonVolume0, .controlBarButtonVolume1, .controlBarButtonVolume2,
 .controlBarButtonVolume3, .controlBarButtonVolume4, .controlBarHomePageGridButton,
 .controlBarButtonMusic, .controlBarPartyButton,
@@ -632,7 +632,7 @@ TabNavigator, TabBar {
   image: Embed(source="../media/skins/controlbar/scale.png");
 }
 
-.controlBarAVRGButton {
+.controlBarGameButton {
   image: Embed(source="../media/skins/controlbar/instructions.png");
 }
 

@@ -68,17 +68,14 @@ public class ControlBar extends HBox
     /** Handles full screening. */
 //    public var fullBtn :CommandButton;
 
-    /** Handles viewing game instructions. */
-    public var instructBtn :CommandButton;
-
     /** Handles commenting on the current scene or game. */
     public var commentBtn :CommandButton;
 
     /** Handles bringing up a share dialog. */
     public var shareBtn :CommandButton;
 
-    /** Indicates AVRG media loading and handles AVRG menu. */
-    public var avrgBtn :CommandButton;
+    /** Indicates game media loading and handles game menu. */
+    public var gameBtn :CommandButton;
 
     /**
      * Construct.
@@ -220,11 +217,8 @@ public class ControlBar extends HBox
             return new ShareDialog(_ctx);
         }, shareBtn));
 
-        instructBtn = createButton("controlBarButtonInstructions", "i.instructions");
-        instructBtn.setCommand(MsoyController.VIEW_GAME_INSTRUCTIONS);
-
-        avrgBtn = createButton("controlBarAVRGButton", "i.avrg");
-        avrgBtn.setCommand(WorldController.POP_AVRG_MENU, avrgBtn);
+        gameBtn = createButton("controlBarGameButton", "i.game");
+        gameBtn.setCommand(WorldController.POP_GAME_MENU, gameBtn);
     }
 
     protected function createButton (style :String, tipKey :String) :CommandButton
@@ -284,10 +278,9 @@ public class ControlBar extends HBox
 //                GLOBAL_PRIORITY);
 //        }
 
-        addButton(instructBtn, [ UI_GAME ]);
         addButton(shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
         addButton(commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
-        addButton(avrgBtn, [ UI_AVRGAME ], PLACE_PRIORITY + 1);
+        addButton(gameBtn, [ UI_GAME, UI_AVRGAME ], PLACE_PRIORITY + 1);
 
         if (_notificationDisplay != null) {
             addControl(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ],

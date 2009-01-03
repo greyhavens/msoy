@@ -65,7 +65,7 @@ public class AVRGamePanel extends UIComponent
         log.info("Leaving AVRG [plobj=" + plobj + "]");
 
         // Clear out our thumbnail from the control bar (so the next game won't have it briefly)
-        getControlBar().avrgBtn.styleName = "controlBarAVRGButton";
+        getControlBar().gameBtn.styleName = "controlBarGameButton";
 
         getControlBar().setInAVRGame(false);
 
@@ -93,7 +93,7 @@ public class AVRGamePanel extends UIComponent
         // Give the control bar button our thumbnail
         var smc :ScalingMediaContainer = new ScalingMediaContainer(22, 22);
         smc.setMediaDesc(cfg.thumbnail);
-        getControlBar().avrgBtn.setStyle("image", smc);
+        getControlBar().gameBtn.setStyle("image", smc);
     }
 
     // from PlaceLayer
@@ -169,7 +169,7 @@ public class AVRGamePanel extends UIComponent
 
     protected function provideLoadingFeedback () :void
     {
-        const avrgBtn :UIComponent = getControlBar().avrgBtn;
+        const gameBtn :UIComponent = getControlBar().gameBtn;
         const PERIOD :Number = 1.5 * 1000;
         const DELAY :Number = 3.0 * 1000;
 
@@ -181,12 +181,12 @@ public class AVRGamePanel extends UIComponent
             var t :Number = getTimer() - start;
             if (t > 0) {
                 var cos :Number = Math.cos(t * 2 * Math.PI / PERIOD);
-                avrgBtn.alpha = 0.7 + 0.3 * cos; // 0.4 .. 1.0
+                gameBtn.alpha = 0.7 + 0.3 * cos; // 0.4 .. 1.0
             }
         }
 
         function complete (evt :Event) :void {
-            avrgBtn.alpha = 1.0;
+            gameBtn.alpha = 1.0;
             clearInterval(intervalId);
             _mediaHolder.removeEventListener(Event.COMPLETE, complete);
         }

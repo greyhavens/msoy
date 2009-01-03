@@ -162,8 +162,8 @@ public class WorldController extends MsoyController
     /** Command to view the passport page. */
     public static const VIEW_PASSPORT :String = "ViewPassport";
 
-    /** Command to display the avrg menu. */
-    public static const POP_AVRG_MENU :String = "PopAVRGMenu";
+    /** Command to display the game menu. */
+    public static const POP_GAME_MENU :String = "PopGameMenu";
 
     /** Command to play music. Arg: null to stop, or [ MediaDesc,  ItemIdent ] */
     public static const PLAY_MUSIC :String = "PlayMusic";
@@ -837,23 +837,25 @@ public class WorldController extends MsoyController
     }
 
     /**
-     * Handles the POP_AVRG_MENU command.
+     * Handles the POP_GAME_MENU command.
      */
-    public function handlePopAVRGMenu (trigger :Button) :void
+    public function handlePopGameMenu (trigger :Button) :void
     {
-        if (_avrGamePanel == null) {
+        if (_wctx.getGameDirector().getGameId() == 0) {
             return;
         }
 
         var menuData :Array = [];
         menuData.push({label: _wctx.getGameDirector().getGameName()});
         menuData.push({type: "separator"});
-        menuData.push(
-            {label: Msgs.GENERAL.get("b.avrgInstructions"), command: VIEW_GAME_INSTRUCTIONS});
-        menuData.push({label: Msgs.GENERAL.get("b.avrgComment"), command: VIEW_GAME_COMMENT_PAGE});
-        menuData.push({label: Msgs.GENERAL.get("b.avrgTrophies"), command: VIEW_GAME_TROPHIES});
-        menuData.push({label: Msgs.GENERAL.get("b.avrgInvite"), enabled: false});
-        menuData.push({label: Msgs.GENERAL.get("b.avrgExit"), command :LEAVE_AVR_GAME});
+        menuData.push({label: Msgs.GENERAL.get("b.gameInstructions"),
+                       command: VIEW_GAME_INSTRUCTIONS});
+        menuData.push({label: Msgs.GENERAL.get("b.gameComment"), command: VIEW_GAME_COMMENT_PAGE});
+        menuData.push({label: Msgs.GENERAL.get("b.gameTrophies"), command: VIEW_GAME_TROPHIES});
+        if (_avrGamePanel != null) {
+            menuData.push({label: Msgs.GENERAL.get("b.gameInvite"), enabled: false});
+            menuData.push({label: Msgs.GENERAL.get("b.gameExit"), command :LEAVE_AVR_GAME});
+        }
 
         var r :Rectangle = trigger.getBounds(trigger.stage);
         var menu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
