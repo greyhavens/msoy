@@ -684,13 +684,13 @@ public class FrameEntryPoint
                 });
             }
         };
-        FlowPanel noclient = MsoyUI.createFlowPanel("noclient");
-        noclient.add(MsoyUI.createPushButton(_images.noclient().createImage(),
-                                             _images.noclient_hover().createImage(),
-                                             _images.noclient_hover().createImage(), goHome));
-        noclient.add(MsoyUI.createActionLabel(_cmsgs.goHome(), goHome));
+        FlowPanel bits = MsoyUI.createFlowPanel("Bits");
+        bits.add(MsoyUI.createPushButton(_images.noclient().createImage(),
+                                         _images.noclient_hover().createImage(),
+                                         _images.noclient_hover().createImage(), goHome));
+        bits.add(MsoyUI.createActionLabel(_cmsgs.goHome(), goHome));
 
-        _noclient = noclient;
+        _noclient = MsoyUI.createSimplePanel(bits, "noclient");
         _noclient.setWidth(computeClientWidth());
         _noclient.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
         RootPanel.get(PAGE).add(_noclient);

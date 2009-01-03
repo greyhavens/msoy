@@ -14,6 +14,6 @@ public interface FrameImages extends ImageBundle
     @Resource("noclient.gif")
     AbstractImagePrototype noclient ();
 
-    @Resource("noclient_hover.gif")
+    @Resource("noclient_hover.png")
     AbstractImagePrototype noclient_hover ();
 }

@@ -120,12 +120,16 @@
   padding-left: 5px;
 }
 
-/** No client home icon */
+/** Home icon shown when we have no client */
 .noclient {
-  text-align: center;
-  vertical-align: middle;
-  color: #999999;
   padding-top: 200px;
+}
+
+.noclient .Bits {
+  display: table;
+  margin: auto;
+  text-align: center;
+  color: #999999;
 }
 
 /* ------------------------------------
