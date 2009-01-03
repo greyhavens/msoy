@@ -616,8 +616,8 @@ public class FrameEntryPoint
             _bar = null;
             RootPanel.get(PAGE).remove(_content);
             _content = null;
-            // reset to the default title since the title provided by the content is no longer valid
-            setTitle(null);
+            // restore the title to the last thing flash asked for
+            setTitle(_closeTitle);
         }
     }
 
@@ -625,6 +625,7 @@ public class FrameEntryPoint
     {
         WorldClient.clientWillClose();
         _closeToken = null;
+        _closeTitle = null;
 
         if (_bar != null) {
             _bar.setCloseVisible(false);
@@ -982,6 +983,7 @@ public class FrameEntryPoint
         if (_content == null) {
             setTitle(title);
         }
+        _closeTitle = title;
     }
 
     /**
@@ -1060,11 +1062,12 @@ public class FrameEntryPoint
         return $wnd.hex_md5(text);
     }-*/;
 
+    protected Pages _page;
     protected String _currentToken = "";
     protected String _pageToken = "";
-    protected Pages _page;
-    protected String _closeToken;
     protected String _prevToken = "";
+    protected String _closeToken;
+    protected String _closeTitle;
 
     protected FrameHeader _header;
     protected Widget _content;
