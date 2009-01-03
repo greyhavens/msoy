@@ -616,6 +616,8 @@ public class FrameEntryPoint
             _bar = null;
             RootPanel.get(PAGE).remove(_content);
             _content = null;
+            // reset to the default title since the title provided by the content is no longer valid
+            setTitle(null);
         }
     }
 
@@ -974,6 +976,14 @@ public class FrameEntryPoint
         return null;
     }
 
+    protected void setTitleFromFlash (String title)
+    {
+        // if we're displaying content currently, don't let flash mess with the title
+        if (_content == null) {
+            setTitle(title);
+        }
+    }
+
     /**
      * Configures top-level functions that can be called by Flash.
      */
@@ -992,7 +1002,7 @@ public class FrameEntryPoint
              return true;
         };
         $wnd.setWindowTitle = function (title) {
-            entry.@client.frame.FrameEntryPoint::setTitle(Ljava/lang/String;)(title);
+            entry.@client.frame.FrameEntryPoint::setTitleFromFlash(Ljava/lang/String;)(title);
         };
         $wnd.displayPage = function (page, args) {
             @client.util.Link::goFromFlash(Ljava/lang/String;Ljava/lang/String;)(page, args);
