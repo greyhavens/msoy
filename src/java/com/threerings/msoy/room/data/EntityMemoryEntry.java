@@ -69,7 +69,7 @@ public class EntityMemoryEntry
     @Override
     public String toString ()
     {
-        return "[EntityMemoryEntry key=" + key + "]";
+        return "[item=" + item + ", key=" + key + ", modified=" + modified + "]";
     }
 
     @Override // from Object
