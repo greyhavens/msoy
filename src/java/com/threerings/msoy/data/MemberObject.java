@@ -345,17 +345,23 @@ public class MemberObject extends MsoyBodyObject
         location = null;
     }
 
+    /**
+     * Called when an player is just about to enter a room, or has just switched from one
+     * avatar to a new one. In either case, MemberLocal.memories is expected to contain the
+     * memories for the avatar; either because it was put there (and possibly serialized in
+     * the case of a peer move) when the player left a previous room, or because we put them
+     * there manually as part of avatar resolution (see {@link MemberManager#finishSetAvatar}).
+     */
     public void putAvatarMemoriesIntoRoom (RoomObject roomObj)
     {
         MemberLocal local = getLocal(MemberLocal.class);
 
-        // as we arrive at a room, we entrust it with our memories for broadcast to clients
         if (local.memories != null) {
             roomObj.startTransaction();
             try {
                 for (EntityMemoryEntry entry : local.memories) {
                     if (roomObj.memories.contains(entry)) {
-                        log.warning("Memories already contain entry", "entry", entry);
+                        log.warning("Memories already contain entry", "who", who(), "entry", entry);
                         continue;
                     }
                     roomObj.addToMemories(entry);
@@ -373,6 +379,7 @@ public class MemberObject extends MsoyBodyObject
         super.willEnterPlace(place, plobj);
 
         if (plobj instanceof RoomObject) {
+            // as we arrive at a room, we entrust it with our memories for broadcast to clients
             putAvatarMemoriesIntoRoom((RoomObject) plobj);
         }
     }
@@ -410,7 +417,7 @@ public class MemberObject extends MsoyBodyObject
                     roomObj.commitTransaction();
                 }
 
-                // and and resubsumed
+                // and resubsumed
                 getLocal(MemberLocal.class).memories = mems;
             }
         }
