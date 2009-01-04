@@ -556,14 +556,19 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void scheduleReboot (int minutes, String message)
+    public void scheduleReboot (int minutes, final String message)
         throws ServiceException
     {
         MemberRecord mrec = requireAdminUser();
-        long time = System.currentTimeMillis() + minutes * 60 * 1000;
-        _runtimeConfig.server.setCustomInitiator(mrec.accountName + ":" + mrec.memberId);
-        _runtimeConfig.server.setCustomRebootMsg(message);
-        _runtimeConfig.server.setNextReboot(time);
+        final long time = System.currentTimeMillis() + minutes * 60 * 1000;
+        final String initiator = mrec.name + " (" + mrec.memberId + ")";
+        _omgr.postRunnable(new Runnable() {
+            public void run () {
+                _runtimeConfig.server.setCustomInitiator(initiator);
+                _runtimeConfig.server.setCustomRebootMsg(message);
+                _runtimeConfig.server.setNextReboot(time);
+            }
+        });
     }
 
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
