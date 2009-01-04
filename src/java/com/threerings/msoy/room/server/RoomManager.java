@@ -144,7 +144,6 @@ public class RoomManager extends SpotSceneManager
                                       Iterable<EntityMemoryEntry> entries)
     {
         final List<MemoryRecord> memrecs = MemoryRecord.extractModified(entries);
-        log.info("Flushing memories to database", "memrecs", memrecs);
         if (memrecs.size() > 0) {
             invoker.postUnit(new WriteOnlyUnit("storeMemories") {
                 public void invokePersist () throws Exception {
@@ -1417,7 +1416,6 @@ public class RoomManager extends SpotSceneManager
                 toRemove.add(entry);
             }
         }
-        log.info("Removing memories from room", "memories", toRemove);
         if (!toRemove.isEmpty()) {
             _roomObj.startTransaction();
             try {

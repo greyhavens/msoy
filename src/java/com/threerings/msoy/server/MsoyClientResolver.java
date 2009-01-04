@@ -217,7 +217,6 @@ public class MsoyClientResolver extends CrowdClientResolver
                 local.memories = Lists.newArrayList(Iterables.transform(
                     _memoryRepo.loadMemory(avatar.getType(), avatar.itemId),
                         MemoryRecord.TO_ENTRY));
-                log.info("Session memories read", "memories", local.memories);
             }
         }
 

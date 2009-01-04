@@ -195,7 +195,6 @@ public class MsoySession extends WhirledSession
                     // save their experiences
                     _memberLogic.saveExperiences(memberId, experiences);
                     // save any modified avatar memories
-                    log.info("Session memories flushed", "memrecs", memrecs);
                     if (memrecs != null) {
                         _memoryRepo.storeMemories(memrecs);
                     }
