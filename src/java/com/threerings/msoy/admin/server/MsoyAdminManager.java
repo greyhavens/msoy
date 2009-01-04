@@ -14,7 +14,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Interval;
-import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
@@ -166,17 +165,20 @@ public class MsoyAdminManager
             _runtime.server.setCustomRebootMsg("");
         }
 
+        @Override
         public void scheduleReboot (long rebootTime, String initiator) {
             super.scheduleReboot(rebootTime, initiator);
             final Date when = new Date(rebootTime);
 
-            // if we are the (production) server that originated this reboot, fire off an email to
-            // the agents if we're in production (this is safe to do on the dobject thread)
-            if (!DeploymentConfig.devDeployment && !AUTOMATIC_INITIATOR.equals(initiator)) {
-                final String body = "A Whirled reboot has been scheduled for " + when +
-                    " by " + initiator + ".\n\nThank you. Please drive through.";
-                _sender.sendEmail(ServerConfig.getAgentsAddress(), ServerConfig.getFromAddress(),
-                                  "Whirled Reboot Scheduled", body);
+            // if we are the server that originated this reboot and it is not automatic,
+            // advise the agents
+            if (!AUTOMATIC_INITIATOR.equals(initiator)) {
+                boolean wasServletReboot = rebootTime == _runtime.server.servletReboot;
+                boolean wasOurNodeServlet = _peerMan.getNodeObject().nodeName.equals(
+                    _runtime.server.servletRebootNode);
+                if (!wasServletReboot || wasOurNodeServlet) {
+                    adviseAgents(when, initiator);
+                }
             }
 
             log.info("Scheduling reboot on " + when + " for " + initiator + ".");
@@ -193,8 +195,10 @@ public class MsoyAdminManager
             DObject o = _omgr.getObject(event.getSourceOid());
             String blame;
             if (o == null) {
-                blame = _runtime.server.customInitiator;
-                if (StringUtil.isBlank(blame)) {
+                if (_runtime.server.nextReboot == _runtime.server.servletReboot) {
+                    blame = _runtime.server.servletRebootInitiator;
+
+                } else {
                     blame = AUTOMATIC_INITIATOR;
                 }
             } else if (o instanceof MemberObject) {
@@ -205,6 +209,23 @@ public class MsoyAdminManager
 
             // schedule a reboot
             scheduleReboot(_runtime.server.nextReboot, blame);
+        }
+
+        /**
+         * Fire off an email to the agents (this is safe to do on the dobject thread). For
+         * development deployments, just log a message instead.
+         */
+        protected void adviseAgents (Date rebootTime, String initiator) {
+            if (DeploymentConfig.devDeployment) {
+                log.info("Suppressing reboot email to agents on dev deployment",
+                    "rebootTime", rebootTime, "initiator", initiator);
+
+            } else {
+                final String body = "A Whirled reboot has been scheduled for " + rebootTime +
+                    " by " + initiator + ".\n\nThank you. Please drive through.";
+                _sender.sendEmail(ServerConfig.getAgentsAddress(), ServerConfig.getFromAddress(),
+                              "Whirled Reboot Scheduled", body);
+            }
         }
 
         protected void broadcast (String message) {
@@ -285,6 +306,4 @@ public class MsoyAdminManager
 
     /** 10 minute delay between logged snapshots, in milliseconds. */
     protected static final long STATS_DELAY = 1000 * 60 * 10;
-
-    protected static final String AUTOMATIC_INITIATOR = "automatic";
 }

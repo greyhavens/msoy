@@ -564,8 +564,14 @@ public class AdminServlet extends MsoyServiceServlet
         final String initiator = mrec.name + " (" + mrec.memberId + ")";
         _omgr.postRunnable(new Runnable() {
             public void run () {
-                _runtimeConfig.server.setCustomInitiator(initiator);
+                // these fields need to be set for the correct logging and email information
+                // to get picked up by our admin manager
+                _runtimeConfig.server.setServletRebootInitiator(initiator);
+                _runtimeConfig.server.setServletReboot(time);
+                _runtimeConfig.server.setServletRebootNode(_peerMgr.getNodeObject().nodeName);
                 _runtimeConfig.server.setCustomRebootMsg(message);
+
+                // this actually triggers the reboot
                 _runtimeConfig.server.setNextReboot(time);
             }
         });
