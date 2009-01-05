@@ -230,15 +230,18 @@ public class LobbyGameLiaison extends GameLiaison
         return true;
     }
 
-    /** @inheritDoc */
     // from GameLiaison
     override public function get gameName () :String
     {
         var config :MsoyGameConfig = gameConfig as MsoyGameConfig;
-        if (config != null) {
-            return config.game.name;
-        }
-        return super.gameName;
+        return (config != null) ? config.game.name : super.gameName;
+    }
+
+    // from GameLiaison
+    override public function get gameGroupId () :int
+    {
+        var config :MsoyGameConfig = gameConfig as MsoyGameConfig;
+        return (config != null) ? config.groupId : super.gameGroupId;
     }
 
     protected function joinLobby () :void
