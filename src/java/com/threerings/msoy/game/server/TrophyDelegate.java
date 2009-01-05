@@ -13,6 +13,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
@@ -74,6 +75,14 @@ public class TrophyDelegate extends PlayManagerDelegate
             return;
         }
 
+        final int gameId = _content.game.gameId;
+
+        // the player's content is not loaded up yet so we can't make this award
+        // TODO: guarantee this operation by starting the game after the content has been resolved
+        if (!plobj.isContentResolved(gameId)) {
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+
         // locate the trophy source record in question
         TrophySource source = null;
         for (TrophySource csource : _content.tsources) {
@@ -88,7 +97,6 @@ public class TrophyDelegate extends PlayManagerDelegate
         }
 
         // if the player already has this trophy, ignore the request
-        final int gameId = _content.game.gameId;
         if (plobj.ownsGameContent(gameId, GameData.TROPHY_DATA, ident)) {
             log.info("Game requested to award already held trophy", "game", where(),
                      "who", plobj.who(), "ident", ident);
@@ -98,11 +106,8 @@ public class TrophyDelegate extends PlayManagerDelegate
         // add the trophy to their runtime set now to avoid repeat-call freakoutery; if we fail to
         // store the trophy to the database, we won't tell them that they earned it and they'll be
         // able to earn it again next time
-        GameContentOwnership gco;
-        gco = new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident);
-        if (!plobj.gameContent.contains(gco)) {
-            plobj.addToGameContent(gco);
-        }
+        plobj.addToGameContent(new GameContentOwnership(
+            gameId, GameData.TROPHY_DATA, source.ident));
 
         // create the persistent record we will shortly store
         TrophyRecord trophy = new TrophyRecord();
