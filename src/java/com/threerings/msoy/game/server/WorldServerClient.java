@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Invoker;
-import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Invoker.Unit;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.BlockingCommunicator;
