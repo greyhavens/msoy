@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.Invoker;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Invoker.Unit;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.BlockingCommunicator;
@@ -76,6 +77,27 @@ public class WorldServerClient
     public static final String EVENT_LOGGER_RESET = "eventLoggerReset";
 
     /**
+     * If the given username is a world server client, return the port number. Otherwise return 0.
+     */
+    public static int extractGameServerPort (String username)
+    {
+        if (!username.startsWith(PeerCreds.PEER_PREFIX)) {
+            return 0;
+        }
+        String restOfName = username.substring(PeerCreds.PEER_PREFIX.length());
+        if (!restOfName.startsWith(NAME_PREFIX)) {
+            return 0;
+        }
+        restOfName = restOfName.substring(NAME_PREFIX.length());
+        try {
+            return Integer.parseInt(restOfName);
+
+        } catch (NumberFormatException nfe) {
+            return 0;
+        }
+    }
+
+    /**
      * Configures our listen and connection ports and connects to our parent world server.
      */
     public void init (int listenPort, int connectPort)
@@ -93,7 +115,7 @@ public class WorldServerClient
                 }
             }
         };
-        _client.setCredentials(new PeerCreds("game:" + _port, ServerConfig.sharedSecret));
+        _client.setCredentials(new PeerCreds(NAME_PREFIX + _port, ServerConfig.sharedSecret));
         _client.setServer("localhost", new int[] { connectPort });
         _client.addServiceGroup(WorldGameRegistry.GAME_SERVER_GROUP);
         _client.addClientObserver(_clientObs);
@@ -280,6 +302,9 @@ public class WorldServerClient
     protected int _port;
     protected Client _client;
     protected GameServerService _gssvc;
+
+    /** Appended to our username after the {@link PeerCreds#PEER_PREFIX}. */ 
+    protected static final String NAME_PREFIX = "game:";
 
     @Inject protected ConnectionManager _conmgr;
     @Inject protected RootDObjectManager _omgr;

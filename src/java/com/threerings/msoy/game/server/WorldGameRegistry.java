@@ -14,6 +14,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.ResultListener;
@@ -24,10 +25,13 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.server.ClientManager.ClientObserver;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
 
@@ -123,6 +127,31 @@ public class WorldGameRegistry
 
         // listen for peer connections so that we can manage multiply claimed games
         _peerMan.peerObs.add(this);
+
+        // listen for game server connections so that we can be sure our servers launched ok
+        _clmgr.addClientObserver(new ClientObserver() {
+            public void clientSessionDidStart (PresentsSession session) {
+                String username = session.getUsername().toString();
+                int port = WorldServerClient.extractGameServerPort(username);
+                if (port != 0) {
+                    GameServerHandler handler = lookupHandler(port, "sessionDidStart");
+                    if (handler != null) {
+                        handler.sessionDidStart(session);
+                    }
+                }
+            }
+
+            public void clientSessionDidEnd (PresentsSession session) {
+                String username = session.getUsername().toString();
+                int port = WorldServerClient.extractGameServerPort(username);
+                if (port != 0) {
+                    GameServerHandler handler = lookupHandler(port, "sessionDidEnd");
+                    if (handler != null) {
+                        handler.sessionDidEnd(session);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -342,16 +371,10 @@ public class WorldGameRegistry
             return;
         }
 
-        for (GameServerHandler handler : _handlers) {
-            if (handler != null && handler.port == port) {
-                handler.setClientObject(caller);
-                _serverRegObj.addToServers(new ServerRegistryObject.ServerInfo(
-                    ServerConfig.serverHost, port));
-                return;
-            }
+        GameServerHandler handler = lookupHandler(port, "sayHello");
+        if (handler != null) {
+            handler.clientDidSayHello(caller);
         }
-
-        log.warning("Got hello from unknown game server", "port", port);
     }
 
     // from interface GameServerProvider
@@ -597,6 +620,17 @@ public class WorldGameRegistry
         return true;
     }
 
+    protected GameServerHandler lookupHandler (int port, String call)
+    {
+        for (GameServerHandler handler : _handlers) {
+            if (handler != null && handler.port == port) {
+                return handler;
+            }
+        }
+        log.warning("Got " + call + " from unknwon game server", "port", port);
+        return null;
+    }
+    
     /** Handles communications with a delegate game server. */
     protected class GameServerHandler
         implements ObjectDeathListener, MsoyReportManager.AuxReporter
@@ -615,9 +649,11 @@ public class WorldGameRegistry
             _reportMan.registerAuxReporter(this);
         }
 
-        public void setClientObject (ClientObject clobj) {
+        public void clientDidSayHello (ClientObject clobj) {
             _clobj = clobj;
             _clobj.addListener(this);
+
+            log.info("Game server said hello", "port", port);
 
             // if we had report requests out to the old server that had not yet come back, they're
             // never coming back, so fail them now
@@ -625,6 +661,9 @@ public class WorldGameRegistry
                 receiver.apply("- Server failed, request again for new server info");
             }
             _rpenders.clear();
+
+            _serverRegObj.addToServers(new ServerRegistryObject.ServerInfo(
+                ServerConfig.serverHost, port));
         }
 
         public void hostGame (Game game) {
@@ -679,20 +718,6 @@ public class WorldGameRegistry
             // note that we no longer hosting this server
             _serverRegObj.removeFromServers(
                 new ServerRegistryObject.ServerInfo(ServerConfig.serverHost, this.port).getKey());
-
-            // if we're not also shutting down, then restart this game server
-            if (!_shutMan.isShuttingDown()) {
-                _invoker.postUnit(new Invoker.Unit() {
-                    public boolean invoke () {
-                        try {
-                            startGameServer();
-                        } catch (Exception e) {
-                            log.warning("Failed to restart failed game server", "port", port, e);
-                        }
-                        return false;
-                    }
-                });
-            }
         }
 
         // from interface MsoyReportManager.AuxReporter
@@ -743,10 +768,45 @@ public class WorldGameRegistry
                 ServerConfig.nodeName + " game:" + this.port + "\n" + report;
         }
 
+        protected void sessionDidStart (final PresentsSession session) {
+            _session = session;
+
+            // end the session if the hello doesn't come after a certain time
+            new Interval(_omgr) {
+                public void expired () {
+                    if (_session == session && _clobj == null) {
+                        log.info("Game server did not ack within " + HELLO_TIMEOUT / 1000f +
+                            " seconds, shutting down", "port", port);
+                        _session.endSession();
+                    }
+                }
+            }.schedule(HELLO_TIMEOUT);
+        }
+
+        protected void sessionDidEnd (PresentsSession session) {
+            _session = null;
+
+            // if we're not also shutting down, then restart this game server
+            if (!_shutMan.isShuttingDown()) {
+                _invoker.postUnit(new Invoker.Unit() {
+                    public boolean invoke () {
+                        try {
+                            startGameServer();
+                        } catch (Exception e) {
+                            log.warning("Failed to restart failed game server", "port", port, e);
+                        }
+                        return false;
+                    }
+                });
+            }
+        }
+
+        protected PresentsSession _session;
         protected ClientObject _clobj;
         protected ArrayIntSet _games = new ArrayIntSet();
         protected Multimap<String, Function<String, Void>> _rpenders =
             Multimaps.newArrayListMultimap();
+        protected static final int HELLO_TIMEOUT = 60 * 1000;
     }
 
     /** Handles dispatching invitations to users wherever they may be. */
@@ -831,6 +891,7 @@ public class WorldGameRegistry
     @Inject protected StatLogic _statLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberLogic _memberLogic;
+    @Inject protected ClientManager _clmgr;
 
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;
