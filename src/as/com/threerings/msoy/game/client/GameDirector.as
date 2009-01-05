@@ -11,6 +11,8 @@ import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.crowd.client.PlaceController;
 
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -50,20 +52,77 @@ public class GameDirector extends BasicDirector
         return (_liaison != null);
     }
 
+    /**
+     * Returns the gameId of the game we're currently connected to, or zero if we're not.
+     */
+    public function getGameId () :int
+    {
+        return (_liaison != null) ? _liaison.gameId : 0;
+    }
+
+    /**
+     * Returns the name of the game we're currently connected to, or null if we're not.
+     */
+    public function getGameName () :String
+    {
+        return (_liaison != null) ? _liaison.gameName : null;
+    }
+
+    /**
+     * Returns the currently active GameContext or null if no game is active.
+     */
     public function getGameContext () :GameContext
     {
         return (_liaison != null) ? _liaison.getGameContext() : null;
     }
 
+    /**
+     * Returns the configuration of the (non-world) game we currently occupy if we're in a game.
+     * Returns null otherwise.
+     */
+    public function getGameConfig () :MsoyGameConfig
+    {
+        if (_liaison != null) {
+            return _liaison.gameConfig as MsoyGameConfig;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the currently active GameController or null if no game is active.
+     */
     public function getGameController () :PlaceController
     {
         var gctx :GameContext = getGameContext();
         return (gctx != null) ? gctx.getLocationDirector().getPlaceController() : null;
     }
 
-    public function getGameGroupId () :int
+    /**
+     * Populates the supplied array with data to create the game control bar menu.
+     *
+     * @return true if the menu was populated, false if we're not in a game.
+     */
+    public function populateGameMenu (menuData :Array) :Boolean
     {
-        return (_liaison != null) ? _liaison.gameGroupId : 0;
+        if (_liaison == null) {
+            return false;
+        }
+
+        menuData.push({label: _liaison.gameName});
+        menuData.push({type: "separator"});
+        menuData.push({label: Msgs.GAME.get("b.gameInstructions"),
+                       command: viewGameInstructions});
+        menuData.push({label: Msgs.GAME.get("b.gameGroup"),
+                       command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
+        menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
+        menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments});
+        menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
+        if (_liaison is AVRGameLiaison) {
+            menuData.push({label: Msgs.GAME.get("b.gameInvite"), enabled: false});
+            menuData.push({label: Msgs.GAME.get("b.gameExit"), command: leaveAVRGame});
+        }
+
+        return true;
     }
 
     /**
@@ -86,6 +145,51 @@ public class GameDirector extends BasicDirector
             _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.SHOW_LOBBY);
             _liaison.start(ghost, gport);
         }
+    }
+
+    /**
+     * Displays the instructions page for the currently active game.
+     */
+    public function viewGameInstructions () :void
+    {
+        _wctx.getMsoyClient().trackClientAction("flashViewGameInstructions", null);
+        _wctx.getWorldController().displayPage("games", "d_" + getGameId() + "_i");
+    }
+
+    /**
+     * Displays the comments page for the currently active game.
+     */
+    public function viewGameComments () :void
+    {
+        _wctx.getMsoyClient().trackClientAction("flashViewGameComments", null);
+        _wctx.getWorldController().displayPage("games", "d_" + getGameId() + "_c");
+    }
+
+    /**
+     * Displays the trophies page for the currently active game.
+     */
+    public function viewGameTrophies () :void
+    {
+        _wctx.getMsoyClient().trackClientAction("flashViewGameTrophies", null);
+        _wctx.getWorldController().displayPage("games", "d_" + getGameId() + "_t");
+    }
+
+    /**
+     * Displays the shop page for the currently active game.
+     */
+    public function viewGameShop (itemType :int = 0, catalogId :int = 0) :void
+    {
+        var args :String;
+        if (catalogId != 0) {
+            args = "l_" + itemType + "_" + catalogId;
+        } else {
+            args = "g_" + getGameId();
+            if (itemType != 0) {
+                args += "_" + itemType;
+            }
+        }
+        _wctx.getMsoyClient().trackClientAction("flashViewGameShop", null);
+        _wctx.getWorldController().displayPage("shop", args);
     }
 
     /**
@@ -244,34 +348,6 @@ public class GameDirector extends BasicDirector
             // go back to our previous location
             _wctx.getMsoyController().handleMoveBack(true);
         }
-    }
-
-    /**
-     * Returns the configuration of the (non-world) game we currently occupy if we're in a game.
-     * Returns null otherwise.
-     */
-    public function getGameConfig () :MsoyGameConfig
-    {
-        if (_liaison != null) {
-            return _liaison.gameConfig as MsoyGameConfig;
-        }
-        return null;
-    }
-
-    /**
-     * Returns the gameId of the game we're currently connected to, or zero if we're not.
-     */
-    public function getGameId () :int
-    {
-        return (_liaison != null) ? _liaison.gameId : 0;
-    }
-
-    /**
-     * Returns the name of the game we're currently connected to, or null if we're not.
-     */
-    public function getGameName () :String
-    {
-        return (_liaison != null) ? _liaison.gameName : null;
     }
 
     /**

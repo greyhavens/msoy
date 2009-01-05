@@ -237,14 +237,10 @@ public class MsoyGamePanel extends WhirledGamePanel
         const menuData :Array = [];
         menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
         menuData.push({ label: Msgs.GAME.get("b.backToLobby"),
-            callback: _gctx.backToWhirled, arg: true });
-        menuData.push({ label: Msgs.GAME.get("b.shop"), command: MsoyController.VIEW_GAME_SHOP,
-            arg: [ cfg.getGameId() ] });
+                        callback: _gctx.backToWhirled, arg: true });
         if (cfg.groupId != Game.NO_GROUP) {
-            menuData.push({ label: Msgs.GENERAL.get("b.group_page"),
-                command: MsoyController.VIEW_GROUP, arg: cfg.groupId });
             menuData.push({ label: Msgs.GAME.get("b.game_whirled"),
-                command: MsoyController.GO_GROUP_HOME, arg: cfg.groupId });
+                            command: MsoyController.GO_GROUP_HOME, arg: cfg.groupId });
         }
         return menuData;
     }

@@ -122,14 +122,13 @@ public class LiaisonGameContext
     // from GameContext
     public function showGameInstructions () :void
     {
-        _wctx.getWorldController().displayPage("games", "d_" + _wctx.getGameDirector().getGameId());
+        _wctx.getGameDirector().viewGameInstructions();
     }
 
     // from GameContext
     public function showGameShop (itemType :int, catalogId :int = 0) :void
     {
-        _wctx.getWorldController().handleViewGameShop(
-            _wctx.getGameDirector().getGameId(), itemType, catalogId);
+        _wctx.getGameDirector().viewGameShop(itemType, catalogId);
     }
 
     // from GameContext

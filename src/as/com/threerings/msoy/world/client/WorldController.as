@@ -108,9 +108,6 @@ public class WorldController extends MsoyController
     /** Command to join an in-world game. */
     public static const JOIN_AVR_GAME :String = "JoinAVRGame";
 
-    /** Command to leave the in-world game. */
-    public static const LEAVE_AVR_GAME :String = "LeaveAVRGame";
-
     /** Command to invite someone to be a friend. */
     public static const INVITE_FRIEND :String = "InviteFriend";
 
@@ -421,27 +418,6 @@ public class WorldController extends MsoyController
             handleViewRoom(sceneId);
             return;
         }
-        const gameId :int = getCurrentGameId();
-        if (gameId != 0) {
-            handleViewGameComments(gameId);
-            return;
-        }
-
-        log.warning("Unable to comment.");
-    }
-
-    /**
-     * Handles the VIEW_GAME_COMMENT_PAGE command.
-     */
-    public function handleViewGameCommentPage () :void
-    {
-        const gameId :int = getCurrentGameId();
-        if (gameId != 0) {
-            handleViewGameComments(gameId);
-            return;
-        }
-
-        log.warning("Unable to comment.");
     }
 
     /**
@@ -520,37 +496,6 @@ public class WorldController extends MsoyController
     }
 
     /**
-     * Handles the VIEW_GAME_COMMENTS command.
-     */
-    public function handleViewGameComments (gameId :int) :void
-    {
-        _wctx.getMsoyClient().trackClientAction("flashViewGameComments", null);
-        displayPage("games", "d_" + gameId + "_c");
-    }
-
-    /**
-     * Handles the VIEW_GAME_TROPHIES command.
-     */
-    public function handleViewGameTrophies () :void
-    {
-        const gameId :int = getCurrentGameId();
-        if (gameId != 0) {
-            _wctx.getMsoyClient().trackClientAction("flashViewGameTrophies", null);
-            displayPage("games", "d_" + gameId + "_t");
-        }
-    }
-
-    /**
-     * Handles the VIEW_GAME_INSTRUCTIONS command.
-     */
-    public function handleViewGameInstructions () :void
-    {
-        _wctx.getMsoyClient().trackClientAction("flashViewGameInstructions", null);
-        const gameId :int = getCurrentGameId();
-        displayPage("games", "d_" + gameId + "_i");
-    }
-
-    /**
      * Handles the VIEW_STUFF command.
      */
     public function handleViewStuff (itemType :int) :void
@@ -564,24 +509,6 @@ public class WorldController extends MsoyController
     public function handleViewShop (itemType :int) :void
     {
         displayPage("shop", ""+itemType);
-    }
-
-    /**
-     * Handles VIEW_GAME_SHOP.
-     */
-    public function handleViewGameShop (gameId :int, itemType :int = 0, catalogId :int = 0) :void
-    {
-        var args :String;
-        if (catalogId != 0) {
-            args = "l_" + itemType + "_" + catalogId;
-
-        } else {
-            args = "g_" + gameId;
-            if (itemType != 0) {
-                args += "_" + itemType;
-            }
-        }
-        displayPage("shop", args);
     }
 
     /**
@@ -703,14 +630,6 @@ public class WorldController extends MsoyController
     public function handleJoinAVRGame (gameId :int) :void
     {
         _wctx.getGameDirector().activateAVRGame(gameId);
-    }
-
-    /**
-     * Handles LEAVE_AVR_GAME.
-     */
-    public function handleLeaveAVRGame () :void
-    {
-        _wctx.getGameDirector().leaveAVRGame();
     }
 
     /**
@@ -841,22 +760,9 @@ public class WorldController extends MsoyController
      */
     public function handlePopGameMenu (trigger :Button) :void
     {
-        if (_wctx.getGameDirector().getGameId() == 0) {
-            return;
-        }
-
         var menuData :Array = [];
-        menuData.push({label: _wctx.getGameDirector().getGameName()});
-        menuData.push({type: "separator"});
-        menuData.push({label: Msgs.GENERAL.get("b.gameInstructions"),
-                       command: VIEW_GAME_INSTRUCTIONS});
-        menuData.push({label: Msgs.GENERAL.get("b.gameGroup"), command: VIEW_GROUP,
-                       arg: _wctx.getGameDirector().getGameGroupId() });
-        menuData.push({label: Msgs.GENERAL.get("b.gameComment"), command: VIEW_GAME_COMMENT_PAGE});
-        menuData.push({label: Msgs.GENERAL.get("b.gameTrophies"), command: VIEW_GAME_TROPHIES});
-        if (_avrGamePanel != null) {
-            menuData.push({label: Msgs.GENERAL.get("b.gameInvite"), enabled: false});
-            menuData.push({label: Msgs.GENERAL.get("b.gameExit"), command :LEAVE_AVR_GAME});
+        if (!_wctx.getGameDirector().populateGameMenu(menuData)) {
+            return;
         }
 
         var r :Rectangle = trigger.getBounds(trigger.stage);
