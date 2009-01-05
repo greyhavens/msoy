@@ -167,6 +167,14 @@ public class GameLiaison
     }
 
     /**
+     * Returns the ID of this game's group.
+     */
+    public function get gameGroupId () :int
+    {
+        return 0;
+    }
+
+    /**
      * Shuts down this liaison, disconnecting from the game server if we have not already.
      */
     public function shutdown () :void
