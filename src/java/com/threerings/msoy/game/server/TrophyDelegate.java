@@ -98,8 +98,11 @@ public class TrophyDelegate extends PlayManagerDelegate
         // add the trophy to their runtime set now to avoid repeat-call freakoutery; if we fail to
         // store the trophy to the database, we won't tell them that they earned it and they'll be
         // able to earn it again next time
-        plobj.addToGameContent(
-            new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
+        GameContentOwnership gco;
+        gco = new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident);
+        if (!plobj.gameContent.contains(gco)) {
+            plobj.addToGameContent(gco);
+        }
 
         // create the persistent record we will shortly store
         TrophyRecord trophy = new TrophyRecord();

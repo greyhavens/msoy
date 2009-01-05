@@ -23,6 +23,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.HashIntMap;
@@ -369,13 +370,18 @@ public class GameGameRegistry
         _invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
             @Override
             public void invokePersistent () throws Exception {
-                // store the trophy in the database
-                _trophyRepo.storeTrophy(trophy);
-                // publish the trophy earning event to the member's feed
-                _feedRepo.publishMemberMessage(
-                    trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
-                    trophy.name + "\t" + trophy.gameId +
-                    "\t" + MediaDesc.mdToString(trec.trophyMedia));
+                try {
+                    // store the trophy in the database
+                    _trophyRepo.storeTrophy(trophy);
+                    // publish the trophy earning event to the member's feed
+                    _feedRepo.publishMemberMessage(
+                        trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
+                        trophy.name + "\t" + trophy.gameId +
+                        "\t" + MediaDesc.mdToString(trec.trophyMedia));
+
+                } catch (DuplicateKeyException dke) {
+                    throw new InvocationException("e.trophy_already_awarded");
+                }
             }
             @Override
             public void handleSuccess () {
