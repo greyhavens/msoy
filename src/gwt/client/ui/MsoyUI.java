@@ -686,7 +686,7 @@ public class MsoyUI
      */
     public static Widget makeDiggButton (Pages page, String args, String title, String descrip)
     {
-        String url = DeploymentConfig.serverURL + '#' + Link.createToken(page, args);
+        String url = DeploymentConfig.serverURL + "go/" + Link.createToken(page, args);
         String diggURL = "http://digg.com/submit?url=" + URL.encode(url) +
             "&title=" + URL.encode(title) + "&bodytext=" + URL.encode(descrip) +
             "&media=news&topic=playable_web_games";
