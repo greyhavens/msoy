@@ -174,10 +174,10 @@ public class SnapshotPanel extends FloatingPanel
      */
     protected function enforceUIInterlocks (... ignored) :void
     {
-        if (shouldSaveSceneThumbnail) {
+        if (needThumb) {
             sceneThumbnail.startEncode();
         }
-        if (shouldSaveGalleryImage || shouldDownloadImage) {
+        if (needGallery) {
             galleryImage.startEncode();
         }
         getButton(OK_BUTTON).enabled = canSave();
@@ -188,15 +188,22 @@ public class SnapshotPanel extends FloatingPanel
      */
     protected function canSave () :Boolean
     {
-        const needGallery :Boolean = shouldSaveGalleryImage || shouldDownloadImage;
-        const needThumb :Boolean = shouldSaveSceneThumbnail;
         return (needGallery || needThumb) && (!needGallery || galleryImage.ready) &&
             (!needThumb || sceneThumbnail.ready);
     }
 
+    protected function get needGallery () :Boolean
+    {
+        return shouldSaveGalleryImage || shouldDownloadImage || shouldSendPostcard;
+    }
+
+    protected function get needThumb () :Boolean
+    {
+        return shouldSaveSceneThumbnail;
+    }
+
     protected function handleEncodingComplete (event :Event) :void
     {
-        trace("encoding complete.");
         enforceUIInterlocks();
     }
 
@@ -208,9 +215,8 @@ public class SnapshotPanel extends FloatingPanel
         }
         _showChat.enabled = occs;
 
-        sceneThumbnail.updateSnapshot(occs, _showChat.selected, shouldSaveSceneThumbnail);
-        galleryImage.updateSnapshot(occs, _showChat.selected,
-            shouldSaveGalleryImage || shouldDownloadImage);
+        sceneThumbnail.updateSnapshot(occs, _showChat.selected, needThumb);
+        galleryImage.updateSnapshot(occs, _showChat.selected, needGallery);
         enforceUIInterlocks();
     }
 
@@ -241,11 +247,11 @@ public class SnapshotPanel extends FloatingPanel
         _waiting = 0;
         showProgressControls();
 
-        if (shouldSaveSceneThumbnail) {
+        if (needThumb) {
             _waiting++;
             sceneThumbnail.upload(false, handleUploadDone);
         }
-        if (shouldSaveGalleryImage || shouldDownloadImage) {
+        if (needGallery) {
             _waiting++;
             galleryImage.upload(shouldSaveGalleryImage, setupDownload);
         }
