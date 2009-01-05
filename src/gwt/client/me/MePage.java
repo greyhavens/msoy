@@ -53,7 +53,7 @@ public class MePage extends Page
             setContent(new MyWhirled());
 
         } else {
-            Link.go(null, ""); // redirect to landing page
+            Link.go(Pages.ACCOUNT, "create"); // redirect to create/logon page
         }
     }
 
