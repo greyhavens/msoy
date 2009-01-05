@@ -158,7 +158,7 @@ public class UploaderApp extends Sprite
             var result :Object = MediaUploadUtil.parseResult(event.data);
             for (var mediaId :String in result) {
                 var data :Object = result[mediaId];
-                ExternalInterface.call("setHash", mediaId, data.hash, data.mimeType,
+                ExternalInterface.call("setHash", mediaId, _fileRef.name, data.hash, data.mimeType,
                     data.constraint, data.width, data.height);
             }
         }

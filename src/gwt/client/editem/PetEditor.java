@@ -45,6 +45,7 @@ public class PetEditor extends ItemEditor
                         return invalidPrimaryMediaMessage();
                     }
                     _item.setFurniMedia(desc);
+                    maybeSetNameFromFilename(name);
                     return null;
                 }
             }), getFurniTitleText());

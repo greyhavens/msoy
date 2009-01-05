@@ -50,6 +50,7 @@ public class AvatarEditor extends ItemEditor
                     }
                     _avatar.avatarMedia = desc;
                     _avatar.scale = 1f;
+                    maybeSetNameFromFilename(name);
                     return null;
                 }
             }), _emsgs.avatarTip());

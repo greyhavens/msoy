@@ -47,13 +47,18 @@ public class FurnitureEditor extends ItemEditor
     }
 
     @Override // from ItemEditor
-    protected void setHash (String id, String mediaHash, int mimeType, int constraint,
-                            int width, int height)
+    protected void setHash (
+        String id, String filename, String mediaHash, int mimeType, int constraint,
+        int width, int height)
     {
-        super.setHash(id, mediaHash, mimeType, constraint, width, height);
-        if (Item.FURNI_MEDIA.equals(id) && MediaDesc.isImage((byte)mimeType)) {
-            _hotSpotX.setText("" + (width/2));
-            _hotSpotY.setText("" + height);
+        super.setHash(id, filename, mediaHash, mimeType, constraint, width, height);
+
+        if (Item.FURNI_MEDIA.equals(id)) {
+            maybeSetNameFromFilename(filename);
+            if ( MediaDesc.isImage((byte)mimeType)) {
+                _hotSpotX.setText("" + (width/2));
+                _hotSpotY.setText("" + height);
+            }
         }
     }
 

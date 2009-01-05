@@ -83,11 +83,12 @@ public class MediaUploadUtil
             }
             var bits :Array = section.split(" ");
             result[bits[0]] = {
-                hash: bits[1],
-                mimeType: parseInt(bits[2]),
-                constraint: parseInt(bits[3]),
-                width: parseInt(bits[4]),
-                height: parseInt(bits[5])
+                filename: bits[1],
+                hash: bits[2],
+                mimeType: parseInt(bits[3]),
+                constraint: parseInt(bits[4]),
+                width: parseInt(bits[5]),
+                height: parseInt(bits[6])
             };
         }
         return result;

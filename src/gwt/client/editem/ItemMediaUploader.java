@@ -22,8 +22,7 @@ import client.util.FlashClients;
 import client.util.MediaUtil;
 
 /**
- * Helper class, used in ItemEditor. TODO: this should be removed and we should switch to the new
- * general purpose MediaUploader in util.
+ * Helper class, used in ItemEditor.
  */
 public class ItemMediaUploader extends FlexTable
 {
@@ -127,11 +126,9 @@ public class ItemMediaUploader extends FlexTable
     /**
      * Set the media as uploaded by the user.
      */
-    public void setUploadedMedia (MediaDesc desc, int width, int height)
+    public void setUploadedMedia (String filename, MediaDesc desc, int width, int height)
     {
-        // TODO: have the media chooser tell us the original file name
-        // String result = _updater.updateMedia(_upload.getFilename(), desc, width, height);
-        String result = _updater.updateMedia("", desc, width, height);
+        String result = _updater.updateMedia(filename, desc, width, height);
         if (result == null) {
             setMedia(desc);
         } else if (result != ItemEditor.MediaUpdater.SUPPRESS_ERROR) {

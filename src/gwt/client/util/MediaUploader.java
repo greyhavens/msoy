@@ -157,7 +157,7 @@ public class MediaUploader extends FormPanel
      * This wires up a sensibly named function that our POST response JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (id, hash, type, constraint, width, height) {
+        $wnd.setHash = function (id, filename, hash, type, constraint, width, height) {
            @client.util.MediaUploader::mediaUploaded(Ljava/lang/String;Ljava/lang/String;IIII)(
                id, hash, type, constraint, width, height);
         };

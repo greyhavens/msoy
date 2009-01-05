@@ -67,6 +67,7 @@ public class VideoEditor extends BulkMediaEditor
                 }
                 _youtubeIdBox.setText("");
                 _video.videoMedia = desc;
+                maybeSetNameFromFilename(name);
                 return null;
             }
         }), _emsgs.videoTip());

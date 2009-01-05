@@ -584,22 +584,16 @@ public abstract class ItemEditor extends FlowPanel
      */
     protected void maybeSetNameFromFilename (String name)
     {
-        if (_name.getText().length() != 0) {
+        if (StringUtil.isBlank(name) || (_name.getText().length() != 0)) {
             return;
         }
 
         // if the name has a path, strip it
-        int idx = name.lastIndexOf("\\"); // windows
-        if (idx != -1) {
-            name = name.substring(idx+1);
-        }
-        idx = name.lastIndexOf("/"); // joonix (and Mac OS X by association)
-        if (idx != -1) {
-            name = name.substring(idx+1);
-        }
+        name = name.substring(name.lastIndexOf("\\") + 1); // windows
+        name = name.substring(name.lastIndexOf("/") + 1); // unix, MacOS
 
         // if the name has a file suffix, strip it
-        idx = name.lastIndexOf(".");
+        int idx = name.lastIndexOf(".");
         switch (name.length() - idx) {
         case 3:
         case 4:
@@ -617,8 +611,9 @@ public abstract class ItemEditor extends FlowPanel
     /**
      * Configures this item editor with the hash value for media that it is about to upload.
      */
-    protected void setHash (String id, String mediaHash, int mimeType, int constraint,
-                            int width, int height)
+    protected void setHash (
+        String id, String filename, String mediaHash, int mimeType, int constraint,
+        int width, int height)
     {
         ItemMediaUploader mu = _uploaders.get(id);
         if (mu == null) {
@@ -630,7 +625,7 @@ public abstract class ItemEditor extends FlowPanel
         cancelRemix();
 
         // set the new media in preview and in the item
-        mu.setUploadedMedia(
+        mu.setUploadedMedia(filename,
             new MediaDesc(mediaHash, (byte)mimeType, (byte)constraint), width, height);
 
         // have the item re-validate that no media ids are duplicated unnecessarily
@@ -663,14 +658,16 @@ public abstract class ItemEditor extends FlowPanel
      * server as a response to our file upload POST request.
      */
     protected static void callBridge (
-        String id, String mediaHash, int mimeType, int constraint, int width, int height)
+        String id, String filename, String mediaHash, int mimeType, int constraint,
+        int width, int height)
     {
         // for some reason the strings that come in from JavaScript are not "real" and if we just
         // pass them straight on through to GWT, freakoutery occurs (of the non-hand-waving
         // variety); so we convert them hackily to GWT strings here
         String fid = "" + id;
+        String ffilename = "" + filename;
         String fhash = "" + mediaHash;
-        _singleton.setHash(fid, fhash, mimeType, constraint, width, height);
+        _singleton.setHash(fid, ffilename, fhash, mimeType, constraint, width, height);
     }
 
     /**
@@ -841,8 +838,8 @@ public abstract class ItemEditor extends FlowPanel
      * This wires up a sensibly named function that our POST response JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (id, hash, type, constraint, width, height) {
-            @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IIII)(id, hash, type, constraint, width, height);
+        $wnd.setHash = function (id, filename, hash, type, constraint, width, height) {
+            @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IIII)(id, filename, hash, type, constraint, width, height);
         };
         $wnd.uploadError = function () {
             @client.editem.ItemEditor::uploadError()();

@@ -199,7 +199,7 @@ public class ItemRemixer extends FlexTable
         $wnd.buyItem = function () {
             @client.remix.ItemRemixer::bridgeBuyItem()();
         };
-        $wnd.setHash = function (id, hash, type, constraint, width, height) {
+        $wnd.setHash = function (id, filename, hash, type, constraint, width, height) {
             @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIII)(
                 id, hash, type, constraint, width, height);
         };

@@ -51,6 +51,7 @@ public class DecorEditor extends ItemEditor
                 _attrsNeedFiguring = true;
                 _item.setFurniMedia(desc);
                 sendDecorUpdateToFlash();
+                maybeSetNameFromFilename(name);
                 return null;
             }
         }), _emsgs.decorTip());

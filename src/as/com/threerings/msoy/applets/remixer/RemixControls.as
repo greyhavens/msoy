@@ -431,7 +431,7 @@ public class RemixControls extends HBox
         if (ExternalInterface.available) {
             for (var mediaId :String in result) {
                 var data :Object = result[mediaId];
-                ExternalInterface.call("setHash", mediaId, data.hash, data.mimeType,
+                ExternalInterface.call("setHash", mediaId, "", data.hash, data.mimeType,
                     data.constraint, data.width, data.height);
             }
         }

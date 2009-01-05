@@ -121,6 +121,7 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         PrintStream out = null;
         try {
             out = new PrintStream(ctx.rsp.getOutputStream());
+            String filename = ctx.file.getName().replace("'", "").replace(" ", "");
             switch (client) {
             case GWT:
                 out.println("<html>");
@@ -129,9 +130,9 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
                 for (int ii = 0; ii < mediaIds.size() && ii < mediaInfos.size(); ii++) {
                     String mediaId = mediaIds.get(ii);
                     MediaInfo info = mediaInfos.get(ii);
-                    script += "parent.setHash('" + mediaId + "', '" + info.hash + "', " +
-                        info.mimeType + ", " + info.constraint + ", " + info.width + ", "
-                        + info.height + ");";
+                    script += "parent.setHash('" + mediaId + "', '" + filename +
+                        "', '" + info.hash + "', " + info.mimeType + ", " + info.constraint +
+                        ", " + info.width + ", " + info.height + ");";
                 }
                 out.println("<body onLoad=\"" + script + "\"></body>");
                 out.println("</html>");
@@ -141,8 +142,9 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
                 for (int ii = 0; ii < mediaIds.size() && ii < mediaInfos.size(); ii++) {
                     String mediaId = mediaIds.get(ii);
                     MediaInfo info = mediaInfos.get(ii);
-                    out.println(mediaId + " " + info.hash + " " + info.mimeType + " "
-                        + info.constraint + " " + info.width + " " + info.height);
+                    out.println(mediaId + " " + filename + " " + info.hash + " " +
+                        info.mimeType + " " + info.constraint + " " +
+                        info.width + " " + info.height);
                 }
                 break;
             }
