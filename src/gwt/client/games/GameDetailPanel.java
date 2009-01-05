@@ -100,12 +100,8 @@ public class GameDetailPanel extends SmartTable
                 mbits.add(new FavoriteIndicator(game, detail.memberItemInfo));
                 mbits.add(WidgetUtil.makeShim(10, 10));
             }
-            // we can only test the Digg stuff in production, so let's show it only to admins until
-            // we're sure that it works
-            if (CShell.isAdmin()) {
-                mbits.add(MsoyUI.makeDiggButton(Pages.GAMES, Args.compose("d", gameId),
-                                                detail.item.name, detail.item.description));
-            }
+            mbits.add(MsoyUI.makeDiggButton(Pages.GAMES, Args.compose("d", gameId),
+                                            detail.item.name, detail.item.description));
             shot.add(mbits);
         }
         setWidget(0, 0, shot);
