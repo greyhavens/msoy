@@ -20,6 +20,7 @@ import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -464,12 +465,16 @@ public class PartyRegistry
      */
     protected PartySort computePartySort (PartyInfo info, MemberObject member)
     {
-        // start by giving you a score of 100 * your rank in the group. (0, 100, or 200)
-        int score = 100 * member.getGroupRank(info.groupId);
-        // give additional score if your friend is leading the party
+        // start by giving every party a random score between 0 and 1
+        float score = RandomUtil.rand.nextFloat();
+        // add your rank in the group. (0, 1, or 2)
+        score += member.getGroupRank(info.groupId);
+        // add 3 if your friend is leading the party. (To make it more important than groups)
         if (member.isFriend(info.leaderId)) {
-            score += 250;
+            score += 3;
         }
+        // now, each party is in a "band" determined by group/friend, and then has a random
+        // position within that band.
         return new PartySort(score, info.id);
     }
 
@@ -504,7 +509,7 @@ public class PartyRegistry
     protected static class PartySort
         implements Comparable<PartySort>
     {
-        public PartySort (int score, int id)
+        public PartySort (float score, int id)
         {
             _score = score;
             _id = id;
@@ -516,7 +521,7 @@ public class PartyRegistry
         public int compareTo (PartySort other)
         {
             // reverse the order, so that higher scores are first
-            int cmp = Comparators.compare(other._score, _score);
+            int cmp = Float.compare(other._score, _score);
             if (cmp == 0) {
                 // but lower partyIds take priority
                 cmp = Comparators.compare(_id, other._id);
@@ -524,7 +529,7 @@ public class PartyRegistry
             return cmp;
         }
 
-        protected int _score;
+        protected float _score;
         protected int _id;
     } // end: class PartySort
 
