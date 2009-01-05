@@ -270,11 +270,8 @@ public class MsoyGamePanel extends WhirledGamePanel
             if (gameOver) {
                 const bar :ControlBar = _gctx.getMsoyContext().getControlBar();
                 bar.addCustomComponent(_rematch);
-                bar.addCustomComponent(_goBtn);
-
             } else {
                 _rematch.parent.removeChild(_rematch);
-                _goBtn.parent.removeChild(_goBtn);
             }
         }
     }
