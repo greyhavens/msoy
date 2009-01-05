@@ -29,6 +29,9 @@ public class MsoyFileAppender extends OOOFileAppender
     {
         MsoyFileAppender appender = new MsoyFileAppender();
         File target = new File(args[0]);
+        if (args.length > 1) {
+            appender._database = args[1];
+        }
         StringBuilder sumbuf = appender.summarizeLogToBuffer(target);
         System.out.print(sumbuf);
     }
