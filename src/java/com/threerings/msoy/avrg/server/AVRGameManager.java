@@ -44,7 +44,6 @@ import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -70,7 +69,6 @@ import com.threerings.msoy.bureau.server.MsoyBureauClient;
 
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.data.PropertySpaceObject;
-import com.whirled.game.data.WhirledGameCodes;
 import com.whirled.game.server.PrizeDispatcher;
 import com.whirled.game.server.PrizeProvider;
 import com.whirled.game.server.PropertySpaceDispatcher;
