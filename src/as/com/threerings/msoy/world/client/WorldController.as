@@ -850,6 +850,8 @@ public class WorldController extends MsoyController
         menuData.push({type: "separator"});
         menuData.push({label: Msgs.GENERAL.get("b.gameInstructions"),
                        command: VIEW_GAME_INSTRUCTIONS});
+        menuData.push({label: Msgs.GENERAL.get("b.gameGroup"), command: VIEW_GROUP,
+                       arg: _wctx.getGameDirector().getGameGroupId() });
         menuData.push({label: Msgs.GENERAL.get("b.gameComment"), command: VIEW_GAME_COMMENT_PAGE});
         menuData.push({label: Msgs.GENERAL.get("b.gameTrophies"), command: VIEW_GAME_TROPHIES});
         if (_avrGamePanel != null) {
