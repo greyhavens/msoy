@@ -61,6 +61,11 @@ public class GameDirector extends BasicDirector
         return (gctx != null) ? gctx.getLocationDirector().getPlaceController() : null;
     }
 
+    public function getGameGroupId () :int
+    {
+        return (_liaison != null) ? _liaison.gameGroupId : 0;
+    }
+
     /**
      * Requests that the lobby for the specified game be joined and displayed.
      */
