@@ -19,7 +19,7 @@ import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.data.all.RatingResult;
 
-import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.ui.Stars;
 import com.threerings.msoy.ui.StarsEvent;
 
@@ -33,7 +33,7 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
 import com.threerings.msoy.room.client.RoomObjectView;
 
-public class TourDialog extends FloatingPanel
+public class TourDialog extends FlyingPanel
 {
     public function TourDialog (ctx :WorldContext, nextRoom :Function)
     {
