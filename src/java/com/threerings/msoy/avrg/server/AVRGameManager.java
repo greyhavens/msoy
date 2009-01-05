@@ -44,6 +44,7 @@ import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -69,6 +70,7 @@ import com.threerings.msoy.bureau.server.MsoyBureauClient;
 
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.data.WhirledGameCodes;
 import com.whirled.game.server.PrizeDispatcher;
 import com.whirled.game.server.PrizeProvider;
 import com.whirled.game.server.PropertySpaceDispatcher;
@@ -310,14 +312,12 @@ public class AVRGameManager extends PlaceManager
         } else if (isAgent(caller)) {
             player = _locator.lookupPlayer(playerId);
             if (player == null) {
-                log.warning("Agent call to completeTask for unknown player", "caller", caller,
-                            "playerId", playerId);
-                return;
+                throw new InvocationException("e.player_not_found");
             }
 
         } else {
             log.warning("Non-agent calling completeTask", "caller", caller, "playerId", playerId);
-            return;
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
 
         _questDelegate.completeTask(player, questId, payoutLevel, listener);
