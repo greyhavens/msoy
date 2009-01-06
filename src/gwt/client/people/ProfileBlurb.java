@@ -310,7 +310,7 @@ public class ProfileBlurb extends Blurb
         econtent.setText(row, 0, _msgs.eawardLabel());
         FlowPanel awardPanel = MsoyUI.createFlowPanel("AwardPanel");
         awardPanel.add(MsoyUI.createInlineImage("/images/profile/awardbox.png"));
-        awardPanel.add(MsoyUI.createHTML(_msgs.eawardTip(), null));
+        awardPanel.add(new Label(_msgs.eawardTip()));
         econtent.setWidget(row++, 1, awardPanel);
 
         Button cancel = new Button(_cmsgs.cancel(), new ClickListener() {
