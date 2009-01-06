@@ -307,6 +307,12 @@ public class ProfileBlurb extends Blurb
             _egreeter.setChecked(_greeter == GreeterStatus.GREETER);
         }
 
+        econtent.setText(row, 0, _msgs.eawardLabel());
+        FlowPanel awardPanel = MsoyUI.createFlowPanel("AwardPanel");
+        awardPanel.add(MsoyUI.createInlineImage("/images/profile/awardbox.png"));
+        awardPanel.add(MsoyUI.createHTML(_msgs.eawardTip(), null));
+        econtent.setWidget(row++, 1, awardPanel);
+
         Button cancel = new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget source) {
                 displayProfile();

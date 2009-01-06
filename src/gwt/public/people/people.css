@@ -205,6 +205,11 @@
   top: 3px;
 }
 
+.profile .AwardPanel img {
+  float: left;
+  margin-right: 10px;
+}
+
 .ratingWidget {
   height: 44px;
 }
