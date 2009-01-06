@@ -106,7 +106,7 @@ public abstract class TagRepository extends DepotRepository
             _popularTagExpiration = DeploymentConfig.devDeployment ?
                 now : now + POPULAR_TAG_EXPIRATION;
         }
-        return _popularTags.subList(0, rows);
+        return _popularTags.subList(0, Math.min(rows, _popularTags.size()));
     }
 
     /**
