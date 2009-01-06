@@ -72,7 +72,6 @@ import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
@@ -1157,17 +1156,11 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByNewAndHot (
         List<SQLExpression> exprs, List<OrderBy.Order> orders, List<SQLOperator> whereBits)
     {
-        long nowSeconds = System.currentTimeMillis() / 1000;
-        exprs.add(new Arithmetic.Sub(getItemColumn(ItemRecord.RATING),
+        exprs.add(new Arithmetic.Add(
+            getItemColumn(ItemRecord.RATING),
             new Arithmetic.Div(
-                new Arithmetic.Sub(new ValueExp(nowSeconds),
-                    new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE))),
+                new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)),
                 _hconfig.getDropoffSeconds())));
-//        if (!DeploymentConfig.devDeployment) {
-//            whereBits.add(new GreaterThan(
-//                getCatalogColumn(CatalogRecord.LISTED_DATE),
-//                new Timestamp(System.currentTimeMillis() - NEWNESS_CUTOFF)));
-//        }
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1320,7 +1313,4 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /** The minimum number of ratings required to qualify a rating as "solid" */
     protected static final int MIN_SOLID_RATINGS = 20;
-
-    /** Hot & New items can't be new if they're older than two weeks. */
-    protected static final long NEWNESS_CUTOFF = 14 * 24 * 60 * 60 * 1000L;
 }

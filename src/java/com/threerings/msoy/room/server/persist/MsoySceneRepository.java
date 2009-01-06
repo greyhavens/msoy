@@ -27,7 +27,6 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
-import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.Conditionals.*;
 import com.samskivert.depot.operator.Logic;
@@ -46,7 +45,6 @@ import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.HotnessConfig;
@@ -329,14 +327,10 @@ public class MsoySceneRepository extends DepotRepository
         List<SQLExpression> exprs = Lists.newArrayList();
         List<OrderBy.Order> orders = Lists.newArrayList();
 
-        Timestamp since = new Timestamp(System.currentTimeMillis() - NEWNESS_CUTOFF);
-
-        // only load public, relatively recently published rooms
+        // only load public, published rooms
         clauses.add(new Where(new Logic.And(
-            DeploymentConfig.devDeployment ?
-                new Logic.Not(new IsNull(SceneRecord.LAST_PUBLISHED_C)) :
-                new GreaterThan(SceneRecord.LAST_PUBLISHED_C, since),
-            new Equals(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE)
+                new Logic.Not(new IsNull(SceneRecord.LAST_PUBLISHED_C)),
+                new Equals(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE)
         )));
 
         // TODO: Add more sorting options
@@ -346,11 +340,9 @@ public class MsoySceneRepository extends DepotRepository
         // TODO: that as it stands is difficult to put an index on. To scale properly we need to
         // TODO: reconsider the basic idea, or rip the dynamic configuration factor out, decide
         // TODO: on a tuning value, and add a function index.
-        long nowSeconds = System.currentTimeMillis() / 1000;
-        exprs.add(new Arithmetic.Sub(SceneRecord.RATING_C,
+        exprs.add(new Arithmetic.Add(SceneRecord.RATING_C,
             new Arithmetic.Div(
-                new Arithmetic.Sub(new ValueExp(nowSeconds),
-                    new EpochSeconds(SceneRecord.LAST_PUBLISHED_C)),
+                new EpochSeconds(SceneRecord.LAST_PUBLISHED_C),
                 _hconfig.getDropoffSeconds())));
         orders.add(OrderBy.Order.DESC);
 
@@ -624,7 +616,4 @@ public class MsoySceneRepository extends DepotRepository
     @Inject protected MemberRepository _memberRepo;
     @Inject protected HotnessConfig _hconfig;
     @Inject protected MemoryRepository _memoryRepo;
-
-    /** Hot & New items can't be new if they're older than two weeks. */
-    protected static final long NEWNESS_CUTOFF = 14 * 24 * 60 * 60 * 1000L;
 }
