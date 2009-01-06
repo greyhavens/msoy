@@ -41,7 +41,6 @@ fi
 
 CLASS=com.threerings.msoy.server.MsoyServer
 JAVA_ARGS="-server -mx$SERVER_MEMORY \
-    -verbose:gc -XX:+PrintGCTimeStamps \
     -Dhostname=$HOSTNAME \
     -Dis_node=true \
     -Dresource_dir=$MSOY_HOME/rsrc \
