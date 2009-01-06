@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.data;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 import com.threerings.crowd.data.OccupantInfo;
@@ -14,7 +10,6 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
