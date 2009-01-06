@@ -523,6 +523,11 @@ public class AVRGameManager extends PlaceManager
         });
     }
 
+    public String toString ()
+    {
+        return this.getClass().getSimpleName() + " (gameId " + getGameId() + ")";
+    }
+
     protected void doJoinGame (int playerId, Map<String, Object> initialProps,
                                AVRService.AVRGameJoinListener listener)
     {
