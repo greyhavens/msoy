@@ -27,17 +27,24 @@ public class WorldChatDirector extends MsoyChatDirector
     }
 
     // from MsoyChatDirector
-    override public function locationDidChange (place :PlaceObject) :void
+    override public function enteredLocation (place :PlaceObject) :void
     {
-        super.locationDidChange(place);
+        super.enteredLocation(place);
 
         // subscribe to the new scene's channel, if we haven't already
         var scene :Scene = (_mctx as WorldContext).getSceneDirector().getScene();
         if (scene != null) {
             _chatTabs.locationDidChange(new RoomName(scene.getName(), scene.getId()));
-        } else {
-            _chatTabs.locationDidChange(null);
         }
+    }
+
+    // from MsoyChatDirector
+    override public function leftLocation (place :PlaceObject) :void
+    {
+        super.leftLocation(place);
+
+        // tell the chat tabs that we're no longer here
+        _chatTabs.locationDidChange(null);
     }
 }
 }

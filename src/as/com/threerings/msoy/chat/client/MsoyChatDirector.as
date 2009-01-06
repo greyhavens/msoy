@@ -227,12 +227,20 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     // from ChatDirector
-    override public function locationDidChange (place :PlaceObject) :void
+    override public function enteredLocation (place :PlaceObject) :void
     {
-        super.locationDidChange(place);
+        super.enteredLocation(place);
 
         // let our occupant list know about our new location
         _roomOccList.setPlaceObject(place);
+    }
+
+    // from ChatDirector
+    override public function leftLocation (place :PlaceObject) :void
+    {
+        super.leftLocation(place);
+        // let our occupant list know that we're nowhere
+        _roomOccList.setPlaceObject(null);
     }
 
     // from ChatDirector
