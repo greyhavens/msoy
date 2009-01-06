@@ -4,9 +4,11 @@
 package com.threerings.msoy.notify.client {
 
 import flash.display.DisplayObject;
+import flash.utils.Timer;
 
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
+import flash.events.TimerEvent;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -45,6 +47,7 @@ public class NotificationDisplay extends HBox
     public function NotificationDisplay (ctx :MsoyContext) :void
     {
         _ctx = ctx;
+        _clearTimer.addEventListener(TimerEvent.TIMER, clearCurrentNotification);
     }
 
     public function clearDisplay () :void
@@ -132,13 +135,17 @@ public class NotificationDisplay extends HBox
 
     protected function checkPendingNotifications () :void
     {
-        if (_currentlyAnimating || _pendingNotifications.length == 0) {
+        if (_currentlyAnimating) {
+            return;
+        }
+        if (_pendingNotifications.length == 0) {
+            _clearTimer.start(); // in 60 seconds we'll clear this notification
             return;
         }
 
+        _clearTimer.stop();
         _currentlyAnimating = true;
-        var notification :UIComponent = createDisplay(
-            _pendingNotifications.shift() as Notification);
+        var notification :UIComponent = createDisplay(_pendingNotifications.shift() as Notification);
         notification.x = _canvas.width;
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
@@ -160,6 +167,13 @@ public class NotificationDisplay extends HBox
 
         var thing :Object = new (ClassUtil.getClassByName(clazz))();
         thing.init(_ctx, notification);
+    }
+
+    protected function clearCurrentNotification (event :TimerEvent = null) :void
+    {
+        // TODO: fancy fade? that would call attention to a 60 second old notification which
+        // doesn't seem like what we want
+        _canvas.removeAllChildren();
     }
 
     protected function createDisplay (
@@ -294,5 +308,6 @@ public class NotificationDisplay extends HBox
     protected var _pendingNotifications :Array = [];
     protected var _currentlyAnimating :Boolean = false;
     protected var _nHistory :NotificationHistoryDisplay;
+    protected var _clearTimer :Timer = new Timer(60*1000, 1);
 }
 }
