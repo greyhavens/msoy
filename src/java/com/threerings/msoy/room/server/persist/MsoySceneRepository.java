@@ -26,6 +26,7 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.EpochSeconds;
+import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.Conditionals.*;
@@ -333,17 +334,7 @@ public class MsoySceneRepository extends DepotRepository
                 new Equals(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE)
         )));
 
-        // TODO: Add more sorting options
-
-        // TODO: Even with the recently added NEWNESS_CUTOFF, this is a slow query because it
-        // TODO: has to sort potentially thousands of lines on the server by an expression
-        // TODO: that as it stands is difficult to put an index on. To scale properly we need to
-        // TODO: reconsider the basic idea, or rip the dynamic configuration factor out, decide
-        // TODO: on a tuning value, and add a function index.
-        exprs.add(new Arithmetic.Add(SceneRecord.RATING_C,
-            new Arithmetic.Div(
-                new EpochSeconds(SceneRecord.LAST_PUBLISHED_C),
-                _hconfig.getDropoffSeconds())));
+        exprs.add(NEW_AND_HOT_ORDER);
         orders.add(OrderBy.Order.DESC);
 
         clauses.add(new OrderBy(exprs.toArray(new SQLExpression[exprs.size()]),
@@ -614,6 +605,13 @@ public class MsoySceneRepository extends DepotRepository
     @Inject protected DecorRepository _decorRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected HotnessConfig _hconfig;
     @Inject protected MemoryRepository _memoryRepo;
+
+    /** The sort order for New & Hot, referenced by {@link SceneRecord}. */
+    protected static final SQLExpression NEW_AND_HOT_ORDER =
+        new Arithmetic.Add(SceneRecord.RATING_C, new Arithmetic.Div(
+            new EpochSeconds(SceneRecord.LAST_PUBLISHED_C),
+            // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
+            // TODO: with parameters. So we trick Depot using a literal expression here. :/
+            new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
 }

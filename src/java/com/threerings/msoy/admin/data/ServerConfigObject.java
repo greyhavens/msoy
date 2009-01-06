@@ -30,9 +30,6 @@ public class ServerConfigObject extends ConfigObject
     /** The field name of the <code>humanityReassessment</code> field. */
     public static final String HUMANITY_REASSESSMENT = "humanityReassessment";
 
-    /** The field name of the <code>newAndHotDropoffDays</code> field. */
-    public static final String NEW_AND_HOT_DROPOFF_DAYS = "newAndHotDropoffDays";
-
     /** The field name of the <code>nextReboot</code> field. */
     public static final String NEXT_REBOOT = "nextReboot";
 
@@ -57,9 +54,6 @@ public class ServerConfigObject extends ConfigObject
 
     /** The number of seconds between reassessments of a member's humanity factor. */
     public int humanityReassessment = 24 * 3600;
-
-    /** The number of days it takes for a hot item to lose 1 virtual star ranking. */
-    public int newAndHotDropoffDays = 7;
 
     /** The time at which the next reboot will occur. */
     public long nextReboot;
@@ -154,22 +148,6 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             HUMANITY_REASSESSMENT, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.humanityReassessment = value;
-    }
-
-    /**
-     * Requests that the <code>newAndHotDropoffDays</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setNewAndHotDropoffDays (int value)
-    {
-        int ovalue = this.newAndHotDropoffDays;
-        requestAttributeChange(
-            NEW_AND_HOT_DROPOFF_DAYS, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.newAndHotDropoffDays = value;
     }
 
     /**

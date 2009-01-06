@@ -1160,7 +1160,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             getItemColumn(ItemRecord.RATING),
             new Arithmetic.Div(
                 new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)),
-                _hconfig.getDropoffSeconds())));
+                HotnessConfig.DROPOFF_SECONDS)));
         orders.add(OrderBy.Order.DESC);
     }
 
@@ -1305,7 +1305,6 @@ public abstract class ItemRepository<T extends ItemRecord>
     @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MoneyExchange _exchange;
-    @Inject protected HotnessConfig _hconfig;
     @Inject protected ItemFlagRepository _itemFlagRepo;
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */

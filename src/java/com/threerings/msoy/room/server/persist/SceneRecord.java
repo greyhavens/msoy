@@ -4,8 +4,11 @@
 package com.threerings.msoy.room.server.persist;
 
 import java.sql.Timestamp;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
@@ -15,7 +18,9 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
+import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.SQLExpression;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
@@ -32,7 +37,8 @@ import com.threerings.msoy.room.gwt.RoomInfo;
 @Entity(indices={
     @Index(name="ixOwnerId", fields={ SceneRecord.OWNER_ID }),
     @Index(name="ixAccessControl", fields={ SceneRecord.ACCESS_CONTROL }),
-    @Index(name="ixLastPublished", fields={ SceneRecord.LAST_PUBLISHED })
+    @Index(name="ixLastPublished", fields={ SceneRecord.LAST_PUBLISHED }),
+    @Index(name="ixNewAndHot", complex=true)
 })
 public class SceneRecord extends PersistentRecord
 {
@@ -221,7 +227,16 @@ public class SceneRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 6;
+    public static final int SCHEMA_VERSION = 7;
+
+    /** Define the sort order for the new & hot queries. */
+    public static List<Tuple<SQLExpression, Order>> ixNewAndHotDefinition ()
+    {
+        List<Tuple<SQLExpression, Order>> definition = Lists.newArrayList();
+        definition.add(new Tuple<SQLExpression, Order>(
+                MsoySceneRepository.NEW_AND_HOT_ORDER, Order.ASC));
+        return definition;
+    }
 
     /** The unique identifier for this scene. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=6)
