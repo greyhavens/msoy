@@ -373,6 +373,13 @@ public class PartyRegistry
         MemberObject member, String name, GroupRecord group, GroupMembership groupInfo,
         boolean inviteAllFriends, InvocationService.ResultListener rl)
     {
+        if (!(member.location instanceof ScenePlace)) {
+            log.warning("Where the heck are they starting a party?", "who", member.who(),
+                "location", member.location);
+            rl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            return;
+        }
+
         PartyObject pobj = null;
         PartyManager mgr = null;
         try {
@@ -390,9 +397,7 @@ public class PartyRegistry
             pobj.group = groupInfo.group;
             pobj.icon = group.toLogo();
             pobj.leaderId = member.getMemberId();
-            if (member.location instanceof ScenePlace) {
-                pobj.sceneId = ((ScenePlace) member.location).sceneId;
-            }
+            pobj.sceneId = ((ScenePlace) member.location).sceneId;
 
             // Create the PartyManager and add the member
             mgr = _injector.getInstance(PartyManager.class);
