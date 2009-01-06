@@ -444,7 +444,7 @@ public class PartyRegistry
             if (mgr != null) {
                 PartyObject pobj = mgr.getPartyObject();
                 if (pobj.leaderId == member.getMemberId()) {
-                    log.info("Dehydrating party", "partyId", pobj.partyId);
+                    log.info("Dehydrating party", "partyId", pobj.id);
                     _parties.remove(member.partyId);
                     member.setLocal(PartyObject.class, (PartyObject)mgr.getPartyObject().clone());
                     mgr.shutdown();
@@ -457,7 +457,7 @@ public class PartyRegistry
     {
         PartyObject pobj = member.getLocal(PartyObject.class);
         if (pobj != null) {
-            log.info("Rehydrating party", "partyId", pobj.partyId);
+            log.info("Rehydrating party", "partyId", pobj.id);
             member.setLocal(PartyObject.class, null);
             _omgr.registerObject(pobj);
             PartyManager mgr = _injector.getInstance(PartyManager.class);
