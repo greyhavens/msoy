@@ -818,10 +818,10 @@ public class WorldController extends MsoyController
         }
         // this will result in another request to move to the scene we're already in, but we'll
         // ignore it because we're already there
-        if (_oldCrustyShit) {
+        if (!_suppressTokenForScene) {
             displayPageGWT("world", "s" + sceneId);
         }
-        _oldCrustyShit = true;
+        _suppressTokenForScene = false;
     }
 
     /**
@@ -863,25 +863,25 @@ public class WorldController extends MsoyController
     {
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
-            _oldCrustyShit = false;
+            _suppressTokenForScene = true;
             handleGoMemberHome(int(params["memberHome"]));
 
         } else if (null != params["groupHome"]) {
-            _oldCrustyShit = false;
+            _suppressTokenForScene = true;
             handleGoGroupHome(int(params["groupHome"]));
 
         } else if (null != params["memberScene"]) {
-            _oldCrustyShit = false;
+            _suppressTokenForScene = true;
             handleVisitMember(int(params["memberScene"]));
 
         } else if (null != params["playerTable"]) {
-            _oldCrustyShit = false;
+            _suppressTokenForScene = true;
             _wctx.getGameDirector().joinPlayerTable(
                 int(params["gameLobby"]), int(params["playerTable"]),
                 String(params["ghost"]), int(params["gport"]));
 
         } else if (null != params["gameLocation"]) {
-            _oldCrustyShit = false;
+            _suppressTokenForScene = true;
             _wctx.getGameDirector().enterGame(int(params["gameLocation"]));
 
         } else if (null != params["noplace"]) {
@@ -1419,8 +1419,8 @@ public class WorldController extends MsoyController
     /** A scene to which to go after we logon. */
     protected var _postLogonScene :int;
 
-    // TODO: remove, but it seems to be doing something
-    protected var _oldCrustyShit :Boolean;
+    /** Set to true when we're displaying a page that has an alias, like "world-m1". */
+    protected var _suppressTokenForScene :Boolean = true; // also, we suppress the first one
 
     /** The current AVRG display, if any. */
     protected var _avrGamePanel :AVRGamePanel;
