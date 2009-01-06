@@ -221,7 +221,7 @@ public class FeedMessagePanel extends FocusPanel
             memberId = ((FriendFeedMessage)message).friend.getMemberId();
             String medalLink =
                 Link.createHtml(message.data[0], Pages.ME, Args.compose("medals", memberId));
-            if (message.data.length < 3) {
+            if (message.data.length < 4) {
                 // legacy medal messages are missing group info.
                 return _pmsgs.medalNoGroup(medalLink);
             }

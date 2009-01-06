@@ -131,10 +131,11 @@ public class FeedMessageAggregator extends FlowPanel
     {
         switch (message.type) {
         case 100: // FRIEND_ADDED_FRIEND
+        case 101: // FRIEND_UPDATED_ROOM
         case 102: // FRIEND_WON_TROPHY
         case 103: // FRIEND_LISTED_ITEM
         case 105: // FRIEND_WON_BADGE
-        case 101: // FRIEND_UPDATED_ROOM
+        case 106: // FRIEND_WON_MEDAL
             // group all these by the friend doing the actions
             return new MessageKey(message.type, ((FriendFeedMessage)message).friend.getMemberId());
         case 104: // FRIEND_GAINED_LEVEL
@@ -160,6 +161,9 @@ public class FeedMessageAggregator extends FlowPanel
         case 105: // FRIEND_WON_BADGE
             // one or more friends earned the same badge; badge id and level is the key
             return new MessageKey(message.type, message.data[0].concat(message.data[1]).hashCode());
+        case 106: // FRIEND_WON_MEDAL
+            // one or more friends earned the same medal; medal name and group id is the key
+            return new MessageKey(message.type, message.data[0].concat(message.data[3]).hashCode());
         case 300: // SELF_ROOM_COMMENT
             // one or more people commented on your room; scene id is the key
             return new MessageKey(message.type, message.data[0]);
