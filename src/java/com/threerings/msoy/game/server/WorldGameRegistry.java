@@ -488,14 +488,19 @@ public class WorldGameRegistry
 
     // from interface GameServerProvider
     @SuppressWarnings("unchecked")
-    public void updateStat (ClientObject caller, int memberId, StatModifier modifier)
+    public void updateStat (ClientObject caller, final int memberId, final StatModifier modifier)
     {
         if (!checkCallerAccess(caller, "updateStat(" + memberId + ", " + modifier + ")")) {
             return;
         }
-        // stat logic will update the stat in the database and send a MemberNodeAction to the
-        // appropriate MemberObject
-        _statLogic.updateStat(memberId, modifier);
+        _invoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                // stat logic will update the stat in the database and send a MemberNodeAction to
+                // the appropriate MemberObject
+                _statLogic.updateStat(memberId, modifier);
+                return false;
+            }
+        });
     }
 
     // from interface ShutdownManager.Shutdowner
@@ -630,7 +635,7 @@ public class WorldGameRegistry
         log.warning("Got " + call + " from unknwon game server", "port", port);
         return null;
     }
-    
+
     /** Handles communications with a delegate game server. */
     protected class GameServerHandler
         implements ObjectDeathListener, MsoyReportManager.AuxReporter
