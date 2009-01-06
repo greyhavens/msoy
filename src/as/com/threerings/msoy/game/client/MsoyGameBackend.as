@@ -136,6 +136,12 @@ public class MsoyGameBackend extends WhirledGameBackend
         (_ctx as GameContext).showGameShop(itemTypeCode, catalogId);
     }
 
+    // from WhirledGameBackend
+    override protected function showTrophies_v1 () :void
+    {
+        (_ctx as GameContext).showTrophies();
+    }
+
     protected function entryAddedOnUserObject (event :EntryAddedEvent) :void
     {
         var name :String = event.getName();

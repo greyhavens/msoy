@@ -40,6 +40,11 @@ public interface GameContext extends ParlorContext
     function showGameShop (itemType :int, catalogId :int = 0) :void;
 
     /**
+     * Requests that we display the trophies awarded by this game.
+     */
+    function showTrophies () :void;
+
+    /**
      * Returns an array of FriendEntry records for this player's online friends.
      */
     function getOnlineFriends () :Array;

@@ -132,6 +132,12 @@ public class LiaisonGameContext
     }
 
     // from GameContext
+    public function showTrophies () :void
+    {
+        _wctx.getGameDirector().viewGameTrophies();
+    }
+
+    // from GameContext
     public function getOnlineFriends () :Array
     {
         return _wctx.getMemberObject().getSortedOnlineFriends();
