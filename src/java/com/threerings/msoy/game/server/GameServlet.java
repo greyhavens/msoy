@@ -585,11 +585,7 @@ public class GameServlet extends MsoyServiceServlet
         }
 
         // sort the trophies in the creator's desired order
-        Collections.sort(trecords, new Comparator<TrophySourceRecord>() {
-                public int compare (TrophySourceRecord t1, TrophySourceRecord t2) {
-                    return t1.sortOrder - t2.sortOrder;
-                }
-            });
+        Collections.sort(trecords, TrophySourceRecord.BY_SORT_ORDER);
 
         // populate the result lists in the correct order
         List<Trophy> results = Lists.newArrayList();

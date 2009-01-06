@@ -101,6 +101,16 @@ public class LobbyManager
     }
 
     /**
+     * Returns the metadata for the lobby managed by this game. This is only available after the
+     * first call to {@link #setGameContent} which the GameGameRegistry does shortly after the
+     * lobby is resolved.
+     */
+    public GameContent getGameContent ()
+    {
+        return _content;
+    }
+
+    /**
      * Called when a lobby is first created and possibly again later to refresh its game metadata.
      */
     public void setGameContent (GameContent content)

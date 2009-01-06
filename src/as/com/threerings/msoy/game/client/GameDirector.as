@@ -16,11 +16,13 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.avrg.client.AVRGameLiaison;
 
+import com.threerings.msoy.game.data.GameGameMarshaller;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -37,6 +39,7 @@ public class GameDirector extends BasicDirector
     // statically reference classes we require
     MsoyGameDefinition;
     WorldGameMarshaller;
+    GameGameMarshaller;
 
     public function GameDirector (ctx :WorldContext)
     {
@@ -112,8 +115,10 @@ public class GameDirector extends BasicDirector
         menuData.push({type: "separator"});
         menuData.push({label: Msgs.GAME.get("b.gameInstructions"),
                        command: viewGameInstructions});
-        menuData.push({label: Msgs.GAME.get("b.gameGroup"),
-                       command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
+        if (_liaison.gameGroupId != Game.NO_GROUP) {
+            menuData.push({label: Msgs.GAME.get("b.gameGroup"),
+                           command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
+        }
         menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
         menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments});
         menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
@@ -170,8 +175,7 @@ public class GameDirector extends BasicDirector
      */
     public function viewGameTrophies () :void
     {
-        _wctx.getMsoyClient().trackClientAction("flashViewGameTrophies", null);
-        _wctx.getWorldController().displayPage("games", "d_" + getGameId() + "_t");
+        TrophyPanel.show(getGameContext(), getGameId());
     }
 
     /**

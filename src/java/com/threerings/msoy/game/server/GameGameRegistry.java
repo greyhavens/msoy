@@ -11,9 +11,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Set;
 
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -116,8 +118,8 @@ import com.threerings.msoy.game.xml.MsoyGameParser;
  */
 @Singleton
 public class GameGameRegistry
-    implements LobbyProvider, AVRProvider, ShutdownManager.Shutdowner,
-    LobbyManager.ShutdownObserver, AVRGameManager.LifecycleObserver
+    implements ShutdownManager.Shutdowner, LobbyManager.ShutdownObserver,
+               AVRGameManager.LifecycleObserver, LobbyProvider, AVRProvider, GameGameProvider
 {
     @Inject public GameGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
@@ -127,6 +129,7 @@ public class GameGameRegistry
         // register game-related bootstrap services
         invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
         invmgr.registerDispatcher(new AVRDispatcher(this), MsoyCodes.WORLD_GROUP);
+        invmgr.registerDispatcher(new GameGameDispatcher(this), MsoyCodes.GAME_GROUP);
     }
 
     /**
@@ -479,6 +482,110 @@ public class GameGameRegistry
                 }
             });
         }
+    }
+
+    // from interface PresentsServer.Shutdowner
+    public void shutdown ()
+    {
+        // shutdown our active lobbies
+        for (LobbyManager lmgr : _lobbies.values().toArray(new LobbyManager[_lobbies.size()])) {
+            lobbyDidShutdown(lmgr.getGame().gameId);
+        }
+
+        for (AVRGameManager amgr : _avrgManagers.values()) {
+            amgr.shutdown(); // this will also call avrGameDidShutdown
+        }
+    }
+
+    // from interface LobbyManager.ShutdownObserver
+    public void lobbyDidShutdown (int gameId)
+    {
+        log.info("Shutting down lobby", "gameId", gameId);
+
+        // destroy our record of that lobby
+        _lobbies.remove(gameId);
+        _loadingLobbies.remove(gameId); // just in case
+
+        // kill the bureau session, if any
+        killBureauSession(gameId);
+
+        // let our world server know we're audi
+        _worldClient.stoppedHostingGame(gameId);
+
+        // flush any modified percentile distributions
+        flushPercentilers(gameId);
+    }
+
+    // from AVRGameManager.LifecycleObserver
+    public void avrGameDidShutdown (AVRGameManager mgr)
+    {
+        final int gameId = mgr.getGameId();
+
+        // destroy our record of that avrg
+        _avrgManagers.remove(gameId);
+        _loadingAVRGames.remove(gameId);
+
+        // kill the bureau session in 30 seconds if the game has not started back up so that the
+        // agent has plenty of time to finish stopping
+        new Interval(_omgr) {
+            @Override public void expired () {
+                if (!_avrgManagers.containsKey(gameId)) {
+                    killBureauSession(gameId);
+                }
+            }
+        }.schedule(30 * 1000);
+
+        // let our world server know we're audi
+        _worldClient.stoppedHostingGame(gameId);
+    }
+
+    // from AVRGameManager.LifecycleObserver
+    public void avrGameReady (AVRGameManager mgr)
+    {
+        int gameId = mgr.getGameId();
+
+        _avrgManagers.put(gameId, mgr);
+
+        ResultListenerList list = _loadingAVRGames.remove(gameId);
+        if (list != null) {
+            list.requestProcessed(mgr);
+        } else {
+            log.warning("No listeners when done activating AVRGame", "gameId", gameId);
+        }
+    }
+
+    // from AVRGameManager.LifecycleObserver
+    public void avrGameAgentFailedToStart (AVRGameManager mgr, Exception error)
+    {
+        int gameId = mgr.getGameId();
+
+        if (_avrgManagers.get(gameId) != null) {
+            log.warning(
+                "Agent failed to start but is already started?", "gameId", gameId);
+        }
+
+        ResultListenerList list = _loadingAVRGames.remove(gameId);
+        if (list != null) {
+            // If the launcher wasn't connected, this is our bad, tell the user to try again later
+            // otherwise, report a generic agent failure message.
+            if (error != null && error instanceof BureauManager.LauncherNotConnected) {
+                list.requestFailed("e.game_server_not_ready");
+            } else {
+                list.requestFailed("e.agent_error");
+            }
+        } else {
+            log.warning(
+                "No listeners when AVRGame agent failed", "gameId", gameId);
+        }
+
+        mgr.shutdown();
+    }
+
+    // from AVRGameManager.LifecycleObserver
+    public void avrGameAgentDestroyed (AVRGameManager mgr)
+    {
+        // we don't like to run AVRGs with no agents, shut 'er down
+        forciblyShutdownAVRG(mgr, "agent destroyed");
     }
 
     // from AVRProvider
@@ -870,108 +977,48 @@ public class GameGameRegistry
         listener.requestProcessed(placeOid);
     }
 
-    // from interface PresentsServer.Shutdowner
-    public void shutdown ()
+    // from interface GameGameProvider
+    public void getTrophies (ClientObject caller, int gameId, InvocationService.ResultListener lner)
+        throws InvocationException
     {
-        // shutdown our active lobbies
-        for (LobbyManager lmgr : _lobbies.values().toArray(new LobbyManager[_lobbies.size()])) {
-            lobbyDidShutdown(lmgr.getGame().gameId);
+        final PlayerObject plobj = (PlayerObject)caller;
+
+        LobbyManager lmgr = _lobbies.get(gameId);
+        if (lmgr == null) {
+            log.warning("Requested trophies for unknown game?", "id", gameId);
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
-        for (AVRGameManager amgr : _avrgManagers.values()) {
-            amgr.shutdown(); // this will also call avrGameDidShutdown
+        GameContent content = lmgr.getGameContent();
+        if (content == null) {
+            log.warning("Requested trophies before lobby manager was fully resolved?", "id", gameId);
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
-    }
 
-    // from interface LobbyManager.ShutdownObserver
-    public void lobbyDidShutdown (int gameId)
-    {
-        log.info("Shutting down lobby", "gameId", gameId);
+        // TODO: load up trophy earned timestamps so that we can fill them in instead of just
+        // knowing if a trophy is earned or not; alas our database free method will be sulllied
 
-        // destroy our record of that lobby
-        _lobbies.remove(gameId);
-        _loadingLobbies.remove(gameId); // just in case
-
-        // kill the bureau session, if any
-        killBureauSession(gameId);
-
-        // let our world server know we're audi
-        _worldClient.stoppedHostingGame(gameId);
-
-        // flush any modified percentile distributions
-        flushPercentilers(gameId);
-    }
-
-    // from AVRGameManager.LifecycleObserver
-    public void avrGameDidShutdown (AVRGameManager mgr)
-    {
-        final int gameId = mgr.getGameId();
-
-        // destroy our record of that avrg
-        _avrgManagers.remove(gameId);
-        _loadingAVRGames.remove(gameId);
-
-        // kill the bureau session in 30 seconds if the game has not started back up so that the
-        // agent has plenty of time to finish stopping
-        new Interval(_omgr) {
-            @Override public void expired () {
-                if (!_avrgManagers.containsKey(gameId)) {
-                    killBureauSession(gameId);
+        final int fGameId = gameId;
+        List<Trophy> trophies = Lists.transform(
+            content.tsources, new Function<TrophySource, Trophy>() {
+                public Trophy apply (TrophySource source) {
+                    Trophy trophy = new Trophy();
+                    trophy.gameId = fGameId;
+                    trophy.trophyMedia = source.getPrimaryMedia();
+                    trophy.name = source.name;
+                    boolean got = plobj.ownsGameContent(fGameId, GameData.TROPHY_DATA, source.ident);
+                    if (!source.secret || got) {
+                        trophy.description = source.description;
+                    }
+                    if (got) {
+                        trophy.whenEarned = System.currentTimeMillis(); // TODO
+                    }
+                    return trophy;
                 }
-            }
-        }.schedule(30 * 1000);
+            });
 
-        // let our world server know we're audi
-        _worldClient.stoppedHostingGame(gameId);
-    }
-
-    // from AVRGameManager.LifecycleObserver
-    public void avrGameReady (AVRGameManager mgr)
-    {
-        int gameId = mgr.getGameId();
-
-        _avrgManagers.put(gameId, mgr);
-
-        ResultListenerList list = _loadingAVRGames.remove(gameId);
-        if (list != null) {
-            list.requestProcessed(mgr);
-        } else {
-            log.warning("No listeners when done activating AVRGame", "gameId", gameId);
-        }
-    }
-
-    // from AVRGameManager.LifecycleObserver
-    public void avrGameAgentFailedToStart (AVRGameManager mgr, Exception error)
-    {
-        int gameId = mgr.getGameId();
-
-        if (_avrgManagers.get(gameId) != null) {
-            log.warning(
-                "Agent failed to start but is already started?", "gameId", gameId);
-        }
-
-        ResultListenerList list = _loadingAVRGames.remove(gameId);
-        if (list != null) {
-            // If the launcher wasn't connected, this is our bad, tell the user to try again later
-            // otherwise, report a generic agent failure message.
-            if (error != null && error instanceof BureauManager.LauncherNotConnected) {
-                list.requestFailed("e.game_server_not_ready");
-            } else {
-                list.requestFailed("e.agent_error");
-            }
-        } else {
-            log.warning(
-                "No listeners when AVRGame agent failed", "gameId", gameId);
-        }
-
-        mgr.shutdown();
-    }
-
-    // from AVRGameManager.LifecycleObserver
-    public void avrGameAgentDestroyed (AVRGameManager mgr)
-    {
-        // we don't like to run AVRGs with no agents, shut 'er down
-        forciblyShutdownAVRG(mgr, "agent destroyed");
+        log.info("Returning " + trophies.size() + " trophies for " + gameId + ".");
+        lner.requestProcessed(trophies.toArray(new Trophy[trophies.size()]));
     }
 
     protected GameContent assembleGameContent (int gameId)
@@ -981,9 +1028,9 @@ public class GameGameRegistry
         GameRecord rec = _mgameRepo.loadGameRecord(gameId, content.detail);
         if (rec != null) {
             content.game = (Game)rec.toItem();
+            int suiteId = content.game.getSuiteId();
             // load up our level and item packs
-            for (LevelPackRecord record :
-                     _lpackRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
+            for (LevelPackRecord record : _lpackRepo.loadOriginalItemsBySuite(suiteId)) {
                 content.lpacks.add((LevelPack)record.toItem());
             }
             for (ItemPackRecord record :
@@ -991,13 +1038,13 @@ public class GameGameRegistry
                 content.ipacks.add((ItemPack)record.toItem());
             }
             // load up our trophy source items
-            for (TrophySourceRecord record :
-                     _tsourceRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
+            Set<TrophySourceRecord> tsrecs = Sets.newTreeSet(TrophySourceRecord.BY_SORT_ORDER);
+            tsrecs.addAll(_tsourceRepo.loadOriginalItemsBySuite(suiteId));
+            for (TrophySourceRecord record : tsrecs) {
                 content.tsources.add((TrophySource)record.toItem());
             }
             // load up our prize items
-            for (PrizeRecord record :
-                     _prizeRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
+            for (PrizeRecord record : _prizeRepo.loadOriginalItemsBySuite(suiteId)) {
                 content.prizes.add((Prize)record.toItem());
             }
         }

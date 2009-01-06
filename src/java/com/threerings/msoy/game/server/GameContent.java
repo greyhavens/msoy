@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
@@ -23,11 +25,11 @@ public class GameContent
 
     public GameDetailRecord detail;
 
-    public ArrayList<LevelPack> lpacks = new ArrayList<LevelPack>();
+    public List<LevelPack> lpacks = Lists.newArrayList();
 
-    public ArrayList<ItemPack> ipacks = new ArrayList<ItemPack>();
+    public List<ItemPack> ipacks = Lists.newArrayList();
 
-    public ArrayList<TrophySource> tsources = new ArrayList<TrophySource>();
+    public List<TrophySource> tsources = Lists.newArrayList();
 
-    public ArrayList<Prize> prizes = new ArrayList<Prize>();
+    public List<Prize> prizes = Lists.newArrayList();
 }

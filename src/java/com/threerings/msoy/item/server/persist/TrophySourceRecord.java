@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.util.Comparator;
+
 import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
@@ -116,6 +118,16 @@ public class TrophySourceRecord extends SubItemRecord
         new ColumnExp(TrophySourceRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
+    /** A comparator that sorts trophy source records by {@link #sortOrder}. */
+    public static final Comparator<TrophySourceRecord> BY_SORT_ORDER =
+        new Comparator<TrophySourceRecord>() {
+        public int compare (TrophySourceRecord t1, TrophySourceRecord t2) {
+            return t1.sortOrder - t2.sortOrder;
+        }
+    };
+
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 2 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     /** The order in which to display this trophy compared to other trophies. */

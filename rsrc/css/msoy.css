@@ -1380,3 +1380,17 @@ Roster {
 Stars {
   horizontalGap: 0;
 }
+
+.trophyPanelTitle {
+  fontSize: 16;
+  fontWeight: bold;
+}
+
+.trophyPanelName {
+  fontSize: 14;
+  fontWeight: bold;
+}
+
+.trophyPanelHidden {
+  fontStyle: italic;
+}
