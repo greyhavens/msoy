@@ -233,8 +233,7 @@ public class SceneRecord extends PersistentRecord
     public static List<Tuple<SQLExpression, Order>> ixNewAndHotDefinition ()
     {
         List<Tuple<SQLExpression, Order>> definition = Lists.newArrayList();
-        definition.add(new Tuple<SQLExpression, Order>(
-                MsoySceneRepository.NEW_AND_HOT_ORDER, Order.ASC));
+        definition.add(MsoySceneRepository.NEW_AND_HOT_ORDER);
         return definition;
     }
 

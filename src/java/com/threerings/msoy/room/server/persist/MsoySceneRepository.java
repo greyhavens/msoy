@@ -35,6 +35,7 @@ import com.samskivert.depot.operator.Logic;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -334,8 +335,8 @@ public class MsoySceneRepository extends DepotRepository
                 new Equals(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE)
         )));
 
-        exprs.add(NEW_AND_HOT_ORDER);
-        orders.add(OrderBy.Order.DESC);
+        exprs.add(NEW_AND_HOT_ORDER.left);
+        orders.add(NEW_AND_HOT_ORDER.right);
 
         clauses.add(new OrderBy(exprs.toArray(new SQLExpression[exprs.size()]),
                                 orders.toArray(new OrderBy.Order[orders.size()])));
@@ -608,10 +609,12 @@ public class MsoySceneRepository extends DepotRepository
     @Inject protected MemoryRepository _memoryRepo;
 
     /** The sort order for New & Hot, referenced by {@link SceneRecord}. */
-    protected static final SQLExpression NEW_AND_HOT_ORDER =
-        new Arithmetic.Add(SceneRecord.RATING_C, new Arithmetic.Div(
-            new EpochSeconds(SceneRecord.LAST_PUBLISHED_C),
-            // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
-            // TODO: with parameters. So we trick Depot using a literal expression here. :/
-            new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
+    protected static final Tuple<SQLExpression, OrderBy.Order> NEW_AND_HOT_ORDER =
+        new Tuple<SQLExpression, OrderBy.Order>(
+                new Arithmetic.Add(SceneRecord.RATING_C, new Arithmetic.Div(
+                    new EpochSeconds(SceneRecord.LAST_PUBLISHED_C),
+                    // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
+                    // TODO: with parameters. So we trick Depot using a literal expression here. :/
+                    new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS))),
+                OrderBy.Order.DESC);
 }
