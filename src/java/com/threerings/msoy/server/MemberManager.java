@@ -57,7 +57,6 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
@@ -962,7 +961,8 @@ public class MemberManager
                             // if so, make absolutely sure the avatar memories are in place in the
                             // room before we update the occupant info (which triggers the avatar
                             // media change on the client).
-                            user.putAvatarMemoriesIntoRoom((RoomObject)plobj);
+                            user.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom(
+                                (RoomObject)plobj);
                         }
                         // if the player wasn't in a room, the avatar memories will just sit in
                         // MemberLocal storage until they do enter a room, which is proper

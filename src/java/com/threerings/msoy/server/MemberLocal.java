@@ -18,8 +18,11 @@ import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.RoomObject;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Contains server-side only information for a member.
@@ -135,5 +138,33 @@ public class MemberLocal extends BodyLocal
             }
         }
         return false;
+    }
+
+    /**
+     * Called when an player is just about to enter a room, or has just switched from one avatar to
+     * a new one. In either case, {@link #memories} is expected to contain the memories for the
+     * avatar; either because it was put there (and possibly serialized in the case of a peer move)
+     * when the player left a previous room, or because we put them there manually as part of
+     * avatar resolution (see {@link MemberManager#finishSetAvatar}).
+     */
+    public void putAvatarMemoriesIntoRoom (RoomObject roomObj)
+    {
+        if (memories == null) {
+            return;
+        }
+        roomObj.startTransaction();
+        try {
+            for (EntityMemoryEntry entry : memories) {
+                if (roomObj.memories.contains(entry)) {
+                    log.warning("WTF? Room already contains memory entry",
+                                "room", roomObj.getOid(), "entry", entry);
+                } else {
+                    roomObj.addToMemories(entry);
+                }
+            }
+        } finally {
+            roomObj.commitTransaction();
+        }
+        memories = null;
     }
 }
