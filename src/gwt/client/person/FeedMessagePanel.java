@@ -219,7 +219,15 @@ public class FeedMessagePanel extends FocusPanel
 
         case 106: // FRIEND_WON_MEDAL
             memberId = ((FriendFeedMessage)message).friend.getMemberId();
-            return Link.createHtml(message.data[0], Pages.ME, Args.compose("medals", memberId));
+            String medalLink =
+                Link.createHtml(message.data[0], Pages.ME, Args.compose("medals", memberId));
+            if (message.data.length < 3) {
+                // legacy medal messages are missing group info.
+                return _pmsgs.medalNoGroup(medalLink);
+            }
+            String groupLink =
+                Link.createHtml(message.data[2], Pages.GROUPS, Args.compose("d", message.data[3]));
+            return _pmsgs.medal(medalLink, groupLink);
 
         // case 201: // GROUP_UPDATED_ROOM is above
 
@@ -473,7 +481,7 @@ public class FeedMessagePanel extends FocusPanel
             break;
 
         case 106: // FRIEND_WON_MEDAL
-            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonMedals(
+            add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonMedal(
                             friendLink, standardCombine(list))));
             break;
 

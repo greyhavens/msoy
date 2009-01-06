@@ -702,10 +702,11 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(GroupCodes.E_GROUP_MEMBER_HAS_MEDAL);
         }
 
-        // publish a member message with {medal name, medal image URL} as the data
+        // publish a member message with {medal name, medal image URL, group name, group id} as the
+        // data
         _feedRepo.publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_MEDAL,
-            medalRec.name + "\t" + MediaDesc.mdToString(medalRec.createIconMedia()));
-
+            medalRec.name + "\t" + MediaDesc.mdToString(medalRec.createIconMedia()) + "\t" +
+            groupRec.name + "\t" + groupRec.groupId);
     }
 
     // from GroupService
