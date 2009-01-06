@@ -702,7 +702,7 @@ public class MsoySprite extends DataPackMediaContainer
     {
         var ctrl :RoomController = getController();
         if (ctrl != null && validateUserData(name, arg)) {
-            ctrl.sendSpriteSignal(name, arg);
+            ctrl.sendSpriteSignal(_ident, name, arg);
         }
     }
 

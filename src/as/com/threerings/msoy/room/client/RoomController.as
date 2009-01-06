@@ -7,10 +7,13 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
 import flash.geom.Point;
 import flash.ui.Keyboard;
+import flash.utils.getTimer; // function
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
+import flash.utils.Timer;
 
 import mx.core.Application;
 import mx.core.IToolTip;
@@ -18,6 +21,7 @@ import mx.core.UIComponent;
 import mx.managers.ISystemManager;
 import mx.managers.ToolTipManager;
 
+import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
 
@@ -26,6 +30,7 @@ import com.threerings.flex.PopUpUtil;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.whirled.client.SceneController;
@@ -84,7 +89,29 @@ public class RoomController extends SceneController
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
         _wdctx = (ctx as WorldContext);
+        _throttleChecker.addEventListener(TimerEvent.TIMER, handleCheckThrottles);
         super.init(ctx, config);
+    }
+
+    // documentation inherited
+    override public function willEnterPlace (plobj :PlaceObject) :void
+    {
+        super.willEnterPlace(plobj);
+
+        _throttleChecker.start();
+    }
+
+    // documentation inherited
+    override public function didLeavePlace (plobj :PlaceObject) :void
+    {
+        super.didLeavePlace(plobj);
+
+        _throttleChecker.stop();
+        // see if this is causing the drop of any messages
+        for each (var throttler :Throttler in _throttlers.values()) {
+            throttler.noteDrop();
+        }
+        _throttlers.clear();
     }
 
     // documentation inherited
@@ -187,10 +214,10 @@ public class RoomController extends SceneController
      * Handles a request by an item in our room to send a "signal" to all the instances of
      * all the entities in the room. This does not require control.
      */
-    public function sendSpriteSignal (name :String, arg :Object) :void
+    public function sendSpriteSignal (ident :ItemIdent, name :String, arg :Object) :void
     {
         var data :ByteArray = ObjectMarshaller.validateAndEncode(arg, MAX_ENCODED_MESSAGE_LENGTH);
-        sendSpriteSignal2(name, data);
+        sendSpriteSignal2(ident, name, data);
     }
 
     /**
@@ -684,7 +711,7 @@ public class RoomController extends SceneController
     /**
      * Once a sprite signal is validated and ready to go, it is sent here.
      */
-    protected function sendSpriteSignal2 (name :String, data :ByteArray) :void
+    protected function sendSpriteSignal2 (ident :ItemIdent, name :String, data :ByteArray) :void
     {
         // see subclasses
     }
@@ -801,6 +828,44 @@ public class RoomController extends SceneController
         return true;
     }
 
+    protected function throttle (ident :ItemIdent, fn :Function, ... args) :void
+    {
+        if (_roomView.getMyAvatar().getItemIdent().equals(ident)) {
+            // our own avatar is never throttled
+            fn.apply(null, args);
+
+        } else {
+            // else, subject to throttling
+            var throttler :Throttler = _throttlers.get(ident) as Throttler;
+            if (throttler == null) {
+                throttler = new Throttler(ident);
+                _throttlers.put(ident, throttler);
+            }
+            throttler.processOp(fn, args);
+        }
+    }
+
+    /**
+     * Check queued messages to see if there are any we should send now.
+     */
+    protected function handleCheckThrottles (... ignored) :void
+    {
+        var now :int = getTimer();
+        for each (var throttler :Throttler in _throttlers.values()) {
+            // make sure it's a valid entity still
+            // (We do this here instead of at the time the sprite is removed because sometimes
+            // things are removed and re-added when simply repositioned. This lets that settle..).
+            if (null == _roomView.getEntity(throttler.ident)) {
+                throttler.noteDrop();
+                _throttlers.remove(throttler.ident);
+
+            } else {
+                // it's in the room, it's cool
+                throttler.checkOps(now);
+            }
+        }
+    }
+
     /**
      * Called to show the custom config panel for the specified FurniSprite in
      * a pop-up.
@@ -840,7 +905,8 @@ public class RoomController extends SceneController
             _entityPopup.close();
         }
 
-        _entityPopup = new EntityPopup(_wdctx, sprite, this, title, panel, w, h, color, alpha, mask);
+        _entityPopup = new EntityPopup(_wdctx, sprite, this, title, panel, w, h, color, alpha,
+            mask);
         _entityPopup.open();
         return true;
     }
@@ -881,6 +947,11 @@ public class RoomController extends SceneController
     /** The room view that we're controlling. */
     protected var _roomView :RoomView;
 
+    /** Contains active throttlers. ItemIdent -> Throttler. */
+    protected var _throttlers :HashMap = new HashMap();
+
+    protected var _throttleChecker :Timer = new Timer(500);
+
     /** If true, normal sprite hovering is disabled. */
     protected var _suppressNormalHovering :Boolean;
 
@@ -908,6 +979,11 @@ public class RoomController extends SceneController
 }
 
 import flash.display.DisplayObject;
+
+import com.threerings.util.Log;
+import com.threerings.util.Throttle;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.room.client.RoomElementSprite;
 import com.threerings.msoy.room.data.RoomCodes;
@@ -939,4 +1015,64 @@ class WalkTarget extends RoomElementSprite
 
     [Embed(source="../../../../../../../rsrc/media/flyable.swf")]
     protected static const FLYTARGET :Class;
+}
+
+/**
+ * Throttles entity communications.
+ */
+class Throttler
+{
+    public static const OPERATIONS :int = 6;
+    public static const PERIOD :int = 1000;
+    public static const MAX_QUEUE :int = 25;
+
+    public static const log :Log = Log.getLog(Throttler);
+
+    /** The ident associated with this Throttler. */
+    public var ident :ItemIdent;
+
+    public function Throttler (ident :ItemIdent)
+    {
+        this.ident = ident;
+    }
+
+    public function processOp (fn :Function, args :Array) :void
+    {
+        if (_throttle.throttleOp()) {
+            if (_queue.length < MAX_QUEUE) {
+                log.info("Queueing entity message", "ident", ident, "queueSize", _queue.length);
+                _queue.push([ fn, args ]);
+
+            } else {
+                log.warning("Dropping entity message", "ident", ident);
+            }
+
+        } else {
+            //log.debug("Message not throttled", "ident", ident);
+            fn.apply(null, args);
+        }
+    }
+
+    public function checkOps (now :int) :void
+    {
+        while (_queue.length > 0) {
+            if (_throttle.throttleOpAt(now)) {
+                break;
+            }
+            var item :Array = _queue.shift() as Array;
+            (item[0] as Function).apply(null, item[1] as Array);
+            //log.debug("Sent queued message", "ident", ident);
+        }
+    }
+
+    public function noteDrop () :void
+    {
+        if (_queue.length > 0) {
+            log.warning("Queued messages dropped", "ident", ident, "queueSize", _queue.length);
+        }
+    }
+
+    protected var _throttle :Throttle = new Throttle(OPERATIONS, PERIOD);
+
+    protected var _queue :Array = [];
 }

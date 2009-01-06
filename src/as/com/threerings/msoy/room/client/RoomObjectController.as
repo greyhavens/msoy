@@ -253,7 +253,7 @@ public class RoomObjectController extends RoomController
         if (!checkCanRequest(ident, "requestMove")) {
             return false;
         }
-        _roomObj.roomService.changeLocation(_wdctx.getClient(), ident, newloc);
+        throttle(ident, _roomObj.roomService.changeLocation, _wdctx.getClient(), ident, newloc);
         return true;
     }
 
@@ -821,28 +821,31 @@ public class RoomObjectController extends RoomController
     override protected function setActorState2 (
         ident :ItemIdent, actorOid :int, state :String) :void
     {
-        _roomObj.roomService.setActorState(_wdctx.getClient(), ident, actorOid, state);
+        throttle(ident, _roomObj.roomService.setActorState,
+            _wdctx.getClient(), ident, actorOid, state);
     }
 
     // documentation inherited
     override protected function sendSpriteMessage2 (
         ident :ItemIdent, name :String, data :ByteArray, isAction :Boolean) :void
     {
-        _roomObj.roomService.sendSpriteMessage(_wdctx.getClient(), ident, name, data, isAction);
+        throttle(ident, _roomObj.roomService.sendSpriteMessage,
+            _wdctx.getClient(), ident, name, data, isAction);
     }
 
     // documentation inherited
-    override protected function sendSpriteSignal2 (name :String, data :ByteArray) :void
+    override protected function sendSpriteSignal2 (
+        ident :ItemIdent, name :String, data :ByteArray) :void
     {
-        _roomObj.roomService.sendSpriteSignal(_wdctx.getClient(), name, data);
+        throttle(ident, _roomObj.roomService.sendSpriteSignal, _wdctx.getClient(), name, data);
     }
 
     // documentation inherited
     override protected function sendPetChatMessage2 (msg :String, info :ActorInfo) :void
     {
         var svc :PetService = (_wdctx.getClient().requireService(PetService) as PetService);
-        svc.sendChat(_wdctx.getClient(), info.bodyOid, _scene.getId(), msg,
-            _wdctx.confirmListener());
+        throttle(info.getItemIdent(), svc.sendChat,
+            _wdctx.getClient(), info.bodyOid, _scene.getId(), msg, _wdctx.confirmListener());
     }
 
     // documentation inherited
@@ -860,8 +863,9 @@ public class RoomObjectController extends RoomController
         };
 
         // ship the update request off to the server
-        _roomObj.roomService.updateMemory(_wdctx.getClient(),
-            new EntityMemoryEntry(ident, key, data), _wdctx.resultListener(resultHandler));
+        throttle(ident, _roomObj.roomService.updateMemory,
+            _wdctx.getClient(), new EntityMemoryEntry(ident, key, data),
+            _wdctx.resultListener(resultHandler));
     }
 
     // documentation inherited

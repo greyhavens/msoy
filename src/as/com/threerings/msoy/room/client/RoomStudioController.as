@@ -173,7 +173,8 @@ public class RoomStudioController extends RoomController
     }
 
     // documentation inherited
-    override protected function sendSpriteSignal2 (name :String, data :ByteArray) :void
+    override protected function sendSpriteSignal2 (
+        ident :ItemIdent, name :String, data :ByteArray) :void
     {
         MethodQueue.callLater(_studioView.dispatchSpriteSignal, [ name, data ]);
     }
