@@ -719,6 +719,7 @@ public class WorldController extends MsoyController
     {
         _musicDesc = music;
         _musicIdent = ident;
+        _musicInfoShown = false;
 
         // TODO: fade out music if no new, unless the current music is bleeped
         _musicPlayer.unload();
@@ -1374,9 +1375,15 @@ public class WorldController extends MsoyController
 
     protected function handleMusicMetadata (event :ValueEvent) :void
     {
+        if (_musicInfoShown) {
+            return;
+        }
         var id3 :Object = event.value;
-        if (id3.artist != null && id3.songName != null) {
-            _wctx.getNotificationDirector().notifyMusic(String(id3.songName), String(id3.artist));
+        var artist :String = String(id3.artist);
+        var songName :String = String(id3.songName);
+        if (!StringUtil.isBlank(artist) && !StringUtil.isBlank(songName)) {
+            _wctx.getNotificationDirector().notifyMusic(songName, artist);
+            _musicInfoShown = true;
         }
     }
 
@@ -1408,6 +1415,9 @@ public class WorldController extends MsoyController
 
     /** ItemIdent of the currently playing music. */
     protected var _musicIdent :ItemIdent;
+
+    /** Have we displayed music info in a notification? */
+    protected var _musicInfoShown :Boolean;
 
     /** Have we paused the music so that we can play some media in gwt? */
     protected var _musicPausedForGwt :Boolean;
