@@ -593,10 +593,12 @@ public abstract class ItemRepository<T extends ItemRecord>
                                 obOrders.toArray(new OrderBy.Order[obOrders.size()])));
 
         // see if there's any where bits to turn into an actual where clause
-        addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, suiteId);
+        boolean significantlyConstrained =
+            addSearchClause(clauses, whereBits, mature, search, tag, creator, minRating, suiteId);
 
         // finally fetch all the catalog records of interest and resolve their item bits
-        return resolveCatalogRecords(findAll(getCatalogClass(), clauses));
+        return resolveCatalogRecords(findAll(getCatalogClass(),
+            significantlyConstrained ? CacheStrategy.KEYS : CacheStrategy.CONTENTS, clauses));
     }
 
     /**
@@ -1075,15 +1077,20 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Helper function for {@link #countListings} and {@link #loadCatalog}.
+     * Helper function for {@link #countListings} and {@link #loadCatalog}. Returns true if
+     * sufficient clauses were added that we can heuristically claim that the query will not
+     * match enormous numbers of rows.
      */
-    protected void addSearchClause (
+    protected boolean addSearchClause (
         List<QueryClause> clauses, List<SQLOperator> whereBits, boolean mature, String search,
         int tag, int creator, Float minRating, int suiteId)
     {
+        boolean significantlyConstrained = false;
+
         // add our search clauses if we have a search string
         if (search != null && search.length() > 0) {
             whereBits.add(buildSearchClause(search));
+            significantlyConstrained = true;
         }
 
         if (tag > 0) {
@@ -1092,10 +1099,12 @@ public abstract class ItemRepository<T extends ItemRecord>
                                  getTagRepository().getTagClass(), TagRecord.TARGET_ID));
             // and add a condition
             whereBits.add(new Equals(getTagColumn(TagRecord.TAG_ID), tag));
+            significantlyConstrained = true;
         }
 
         if (creator > 0) {
             whereBits.add(new Equals(getItemColumn(ItemRecord.CREATOR_ID), creator));
+            significantlyConstrained = true;
         }
 
         if (!mature) {
@@ -1109,12 +1118,14 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         if (suiteId != 0 && isSubItem()) {
             whereBits.add(new Equals(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
+            significantlyConstrained = true;
         }
 
         whereBits.add(new Not(new Equals(getCatalogColumn(CatalogRecord.PRICING),
                                          CatalogListing.PRICING_HIDDEN)));
 
         clauses.add(new Where(new And(whereBits)));
+        return significantlyConstrained;
     }
 
     protected void addOrderByListDate (List<SQLExpression> exprs, List<OrderBy.Order> orders)
