@@ -377,8 +377,8 @@ public class RoomManager extends SpotSceneManager
             // make sure the caller is in the room
             MemberObject who = (MemberObject)caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-                log.warning("Rejecting sprite signal request by non-occupant [who=" + who.who() +
-                            ", name=" + name + "].");
+                log.warning("Rejecting sprite signal request by non-occupant", "who", who.who(),
+                    "name", name);
                 return;
             }
         }
@@ -479,8 +479,8 @@ public class RoomManager extends SpotSceneManager
                 listener.requestProcessed(_newRoomId);
             }
             public void handleFailure (Exception pe) {
-                log.warning("Unable to create a new room [user=" + user.which() +
-                            ", error=" + pe + ", cause=" + pe.getCause() + "].");
+                log.warning("Unable to create a new room", "user", user.which(),
+                    "error", pe, "cause", pe.getCause());
                 listener.requestFailed(RoomCodes.INTERNAL_ERROR);
             }
             protected int _newRoomId;
@@ -528,8 +528,8 @@ public class RoomManager extends SpotSceneManager
             }
         }
         if (totalSize + entry.getSize() > EntityMemoryEntry.MAX_ENCODED_MEMORY_LENGTH) {
-            log.info("Rejecting memory update as too large [otherSize=" + totalSize +
-                     ", newEntrySize=" + entry.getSize() + "].");
+            log.info("Rejecting memory update as too large",
+                "otherSize", totalSize, "newEntrySize", entry.getSize());
             // Let the client know we looked at the memory, but didn't actually store it
             listener.requestProcessed(Boolean.FALSE);
             return;

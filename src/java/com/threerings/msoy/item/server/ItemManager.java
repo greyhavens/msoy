@@ -219,7 +219,7 @@ public class ItemManager
             }
 
             public void requestFailed (Exception cause) {
-                log.warning("Failed to resolve updated avatar. [id=" + avatarId + "]", cause);
+                log.warning("Failed to resolve updated avatar.", "id", avatarId, cause);
             }
         });
     }
@@ -451,8 +451,7 @@ public class ItemManager
         }
 
         if (item.type == Item.AVATAR) {
-            log.warning("Tried to reclaim invalid item type [type=" + item.type +
-                ", id=" + item.itemId + "]");
+            log.warning("Tried to reclaim invalid item type", "who", user.who(), "item", item);
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
@@ -470,14 +469,14 @@ public class ItemManager
                             lner.requestProcessed();
                         }
                         public void sceneFailedToResolve (int sceneId, Exception reason) {
-                            log.warning("Scene failed to resolve. [id=" + sceneId + "]", reason);
+                            log.warning("Scene failed to resolve", "id", sceneId, reason);
                             lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
                         }
                     });
                 } else {
                     // TODO: avatar reclamation will be possible
-                    log.warning("Item to be reclaimed is neither decor nor furni " +
-                                "[type=" + result.getType() + ", id=" + result.itemId + "]");
+                    log.warning("Item to be reclaimed is neither decor nor furni",
+                        "type", result.getType(), "id", result.itemId);
                     lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
                     return;
                 }
