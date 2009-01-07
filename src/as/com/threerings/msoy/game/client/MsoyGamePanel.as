@@ -128,7 +128,7 @@ public class MsoyGamePanel extends WhirledGamePanel
         const gameChatDir :ChatDirector = _gctx.getChatDirector();
 
         mctx.getMsoyController().addGoMenuProvider(populateGoMenu);
-        bar.setInGame(true);
+        bar.setInGame(true, getPlaceLogo());
 
         // if we're embedded and too small to display chat in a sidebar,
         // we go into "gamestub" mode and do an overlay instead.

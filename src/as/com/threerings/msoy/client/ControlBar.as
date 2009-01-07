@@ -26,8 +26,10 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.crowd.chat.client.ChatDirector;
 
 import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.ui.SliderPopup;
 
 import com.threerings.msoy.notify.client.NotificationDisplay;
@@ -152,8 +154,9 @@ public class ControlBar extends HBox
     /**
      * Called to tell us when we're in game mode.
      */
-    public function setInGame (inGame :Boolean) :void
+    public function setInGame (inGame :Boolean, icon :MediaDesc = null) :void
     {
+        setGameButtonStyle(icon);
         _inGame = inGame;
         updateUI();
     }
@@ -161,8 +164,9 @@ public class ControlBar extends HBox
     /**
      * Called to tell us when we're in avr game mode.
      */
-    public function setInAVRGame (inAVRGame :Boolean) :void
+    public function setInAVRGame (inAVRGame :Boolean, icon :MediaDesc = null) :void
     {
+        setGameButtonStyle(icon);
         _inAVRGame = inAVRGame;
         updateUI();
     }
@@ -354,6 +358,17 @@ public class ControlBar extends HBox
             return UI_ROOM;
         } else {
             return UI_BASE;
+        }
+    }
+
+    protected function setGameButtonStyle (icon :MediaDesc) :void
+    {
+        if (icon == null) {
+            gameBtn.styleName = "controlBarGameButton";
+        } else {
+            var smc :ScalingMediaContainer = new ScalingMediaContainer(22, 22);
+            smc.setMediaDesc(icon);
+            gameBtn.setStyle("image", smc);
         }
     }
 
