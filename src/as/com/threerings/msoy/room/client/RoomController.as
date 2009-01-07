@@ -1040,16 +1040,16 @@ class Throttler
     {
         if (_throttle.throttleOp()) {
             if (_queue.length < MAX_QUEUE) {
-                log.info("Queueing entity message", "ident", ident, "queueSize", _queue.length);
                 _queue.push([ fn, args ]);
+                log.info("Queued entity message", "ident", ident, "queueSize", _queue.length);
 
             } else {
                 log.warning("Dropping entity message", "ident", ident);
             }
 
         } else {
-            //log.debug("Message not throttled", "ident", ident);
             fn.apply(null, args);
+            //log.debug("Message not throttled", "ident", ident);
         }
     }
 
