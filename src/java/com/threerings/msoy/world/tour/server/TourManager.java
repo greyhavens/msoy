@@ -76,7 +76,7 @@ public class TourManager
         InvocationService.ResultListener listener)
         throws InvocationException
     {
-        MemberObject memObj = (MemberObject) caller;
+        final MemberObject memObj = (MemberObject) caller;
 
         // put them "on tour" if they're not already
         if (!memObj.onTour) {
@@ -89,7 +89,12 @@ public class TourManager
         listener.requestProcessed(nextRoom);
         // maybe increment the user's TOURED stat
         if (finishedLoadingCurrentRoom && !memObj.isGuest()) {
-            _statLogic.incrementStat(memObj.getMemberId(), StatType.ROOMS_TOURED, 1);
+            _invoker.postUnit(new Invoker.Unit() {
+                public boolean invoke () {
+                    _statLogic.incrementStat(memObj.getMemberId(), StatType.ROOMS_TOURED, 1);
+                    return false;
+                }
+            });
         }
     }
 
