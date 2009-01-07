@@ -397,6 +397,7 @@ public class ItemManager
             public void requestCompleted (final Item result) {
                 final byte type = result.getType();
                 if (type == Item.DECOR || type == Item.PET || result.used == Item.USED_AS_FURNITURE) {
+                // TODO: this is wrong! Respect nodes!
                     _sceneReg.resolveScene(result.location, new SceneRegistry.ResolutionListener() {
                         public void sceneWasResolved (SceneManager scene) {
                             RoomManager room = (RoomManager)scene;
@@ -405,14 +406,7 @@ public class ItemManager
                                 return;
                             }
 
-                            if (type == Item.DECOR) {
-                                room.reclaimDecor(user);
-                            } else if (type == Item.PET) {
-                                // TODO
-                                //room.reclaimPet(ident, user);
-                            } else {
-                                room.reclaimItem(ident, user);
-                            }
+                            room.reclaimItem(ident, user.getMemberId());
 
                             ResultListener<Void> rl = new ResultListener.NOOP<Void>();
                             _invoker.postUnit(new RepositoryListenerUnit<Void>("deleteItem", rl) {
@@ -468,18 +462,11 @@ public class ItemManager
                     lner.requestFailed(ItemCodes.E_ACCESS_DENIED);
                     return;
                 }
-                final byte type = result.getType();
-                if (type == Item.DECOR || type == Item.AUDIO ||
-                    result.used == Item.USED_AS_FURNITURE) {
+                if ((result.used == Item.USED_AS_FURNITURE) || (result.getType() == Item.DECOR) ||
+                        (result.getType() == Item.AUDIO)) {
                     _sceneReg.resolveScene(result.location, new SceneRegistry.ResolutionListener() {
                         public void sceneWasResolved (SceneManager scmgr) {
-                            if (type == Item.DECOR) {
-                                ((RoomManager)scmgr).reclaimDecor(user);
-                            } else if (type == Item.AUDIO) {
-                                ((RoomManager)scmgr).reclaimAudio(user);
-                            } else {
-                                ((RoomManager)scmgr).reclaimItem(item, user);
-                            }
+                            ((RoomManager)scmgr).reclaimItem(item, user.getMemberId());
                             lner.requestProcessed();
                         }
                         public void sceneFailedToResolve (int sceneId, Exception reason) {

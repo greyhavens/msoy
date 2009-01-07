@@ -259,6 +259,20 @@ public class RoomManager extends SpotSceneManager
     }
 
     /**
+     * Checks whether or not the calling user can manage, if so returns the user cast
+     * to a MemberObject, throws an {@link InvocationException} if not.
+     */
+    public MemberObject requireManager (ClientObject caller)
+        throws InvocationException
+    {
+        MemberObject member = (MemberObject) caller;
+        if (!canManage(member)) {
+            throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
+        }
+        return member;
+    }
+
+    /**
      * Checks whether or not the calling user can bring pets into this room. Returns normally if
      * so, throws an {@link InvocationException} if not.
      */
@@ -273,49 +287,43 @@ public class RoomManager extends SpotSceneManager
     /**
      * Reclaims an item from this room.
      */
-    public void reclaimItem (ItemIdent item, MemberObject user)
+    public void reclaimItem (ItemIdent item, int memberId)
     {
-        for (FurniData furni : ((MsoyScene)_scene).getFurni()) {
-            if (item.equals(furni.getItemIdent())) {
-                FurniUpdate.Remove update = new FurniUpdate.Remove();
-                update.data = furni;
-                doRoomUpdate(update, user);
-                break;
+        MsoyScene scene = (MsoyScene)_scene;
+
+        if (item.type == Item.DECOR) {
+            // replace the decor with defaults
+            SceneAttrsUpdate update = new SceneAttrsUpdate();
+            update.init(scene.getId(), scene.getVersion());
+            update.name = scene.getName();
+            update.decor = MsoySceneModel.defaultMsoySceneModelDecor();
+            update.audioData = scene.getAudioData();
+            update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
+            doRoomUpdate(update, memberId, null);
+
+        } else if (item.type == Item.AUDIO) {
+            // clear out the audio
+            AudioData ad = scene.getAudioData();
+            ad.itemId = 0;
+            SceneAttrsUpdate update = new SceneAttrsUpdate();
+            update.init(scene.getId(), scene.getVersion());
+            update.name = scene.getName();
+            update.decor = scene.getDecor();
+            update.audioData = ad;
+            update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
+            doRoomUpdate(update, memberId, null);
+
+        } else {
+            // find the right furni and pull it out
+            for (FurniData furni : scene.getFurni()) {
+                if (item.equals(furni.getItemIdent())) {
+                    FurniUpdate.Remove update = new FurniUpdate.Remove();
+                    update.data = furni;
+                    doRoomUpdate(update, memberId, null);
+                    break;
+                }
             }
         }
-    }
-
-    /**
-     * Reclaims this room's decor.
-     */
-    public void reclaimDecor (MemberObject user)
-    {
-        // replace the decor with defaults
-        MsoyScene scene = (MsoyScene)_scene;
-        SceneAttrsUpdate update = new SceneAttrsUpdate();
-        update.init(scene.getId(), scene.getVersion());
-        update.name = scene.getName();
-        update.decor = MsoySceneModel.defaultMsoySceneModelDecor();
-        update.audioData = scene.getAudioData();
-        update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
-        doRoomUpdate(update, user);
-    }
-
-    /**
-     * Reclaim this room's background audio.
-     */
-    public void reclaimAudio (MemberObject user)
-    {
-        MsoyScene scene = (MsoyScene)_scene;
-        AudioData ad = scene.getAudioData();
-        ad.itemId = 0;
-        SceneAttrsUpdate update = new SceneAttrsUpdate();
-        update.init(scene.getId(), scene.getVersion());
-        update.name = scene.getName();
-        update.decor = scene.getDecor();
-        update.audioData = ad;
-        update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
-        doRoomUpdate(update, user);
     }
 
     public void occupantLeftAVRGame (MemberObject member)
@@ -422,9 +430,7 @@ public class RoomManager extends SpotSceneManager
     public void editRoom (ClientObject caller, RoomService.ResultListener listener)
         throws InvocationException
     {
-        if (!canManage((MemberObject) caller)) {
-            throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
-        }
+        requireManager(caller);
 
         // for now send back a TRUE
         listener.requestProcessed(Boolean.TRUE);
@@ -435,11 +441,8 @@ public class RoomManager extends SpotSceneManager
                             RoomService.InvocationListener listener)
         throws InvocationException
     {
-        final MemberObject user = (MemberObject) caller;
-        if (!canManage(user)) {
-            throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
-        }
-        doRoomUpdate(update, user);
+        MemberObject user = requireManager(caller);
+        doRoomUpdate(update, user.getMemberId(), user);
     }
 
     // from interface RoomProvider
@@ -1220,8 +1223,10 @@ public class RoomManager extends SpotSceneManager
 
     /**
      * Performs the given updates.
+     * @param user may be null if unavailable.
      */
-    protected void doRoomUpdate (final SceneUpdate update, final MemberObject user)
+    protected void doRoomUpdate (
+        final SceneUpdate update, final int memberId, final MemberObject user)
     {
         // TODO: complicated verification of changes, including verifying that the user owns any
         // item they're adding, etc.
@@ -1235,7 +1240,9 @@ public class RoomManager extends SpotSceneManager
 
                 // let the registry know that rooms be gettin' updated (TODO: don't do this on
                 // every fucking update, it's super expensive)
-                ((MsoySceneRegistry)_screg).memberUpdatedRoom(user, (MsoyScene)_scene);
+                if (user != null) {
+                    ((MsoySceneRegistry)_screg).memberUpdatedRoom(user, (MsoyScene)_scene);
+                }
             }
         };
 
@@ -1250,7 +1257,7 @@ public class RoomManager extends SpotSceneManager
             Decor decor = msoyScene.getDecor();
             if (decor != null && decor.itemId != up.decor.itemId) { // modified?
                 _itemMan.updateItemUsage(
-                    Item.DECOR, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
+                    Item.DECOR, Item.USED_AS_BACKGROUND, memberId, _scene.getId(),
                     decor.itemId, up.decor.itemId, new ComplainingListener<Object>(
                         log, "Unable to update decor usage"));
             }
@@ -1259,7 +1266,7 @@ public class RoomManager extends SpotSceneManager
             AudioData audioData = msoyScene.getAudioData();
             if (audioData != null && audioData.itemId != up.audioData.itemId) { // modified?
                 _itemMan.updateItemUsage(
-                    Item.AUDIO, Item.USED_AS_BACKGROUND, user.getMemberId(), _scene.getId(),
+                    Item.AUDIO, Item.USED_AS_BACKGROUND, memberId, _scene.getId(),
                     audioData.itemId, up.audioData.itemId, new ComplainingListener<Object>(
                         log, "Unable to update audio usage"));
             }
@@ -1278,7 +1285,7 @@ public class RoomManager extends SpotSceneManager
             // mark this item as no longer in use
             FurniData data = ((FurniUpdate)update).data;
             _itemMan.updateItemUsage(
-                data.itemType, Item.UNUSED, user.getMemberId(), _scene.getId(),
+                data.itemType, Item.UNUSED, memberId, _scene.getId(),
                 data.itemId, 0, new ComplainingListener<Object>(
                     log, "Unable to clear furni item usage"));
 
@@ -1291,7 +1298,7 @@ public class RoomManager extends SpotSceneManager
             // mark this item as in use
             FurniData data = ((FurniUpdate)update).data;
             _itemMan.updateItemUsage(
-                data.itemType, Item.USED_AS_FURNITURE, user.getMemberId(), _scene.getId(),
+                data.itemType, Item.USED_AS_FURNITURE, memberId, _scene.getId(),
                 0, data.itemId, new ComplainingListener<Object>(
                     log, "Unable to set furni item usage"));
 
