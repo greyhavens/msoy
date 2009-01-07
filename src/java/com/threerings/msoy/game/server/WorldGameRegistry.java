@@ -414,17 +414,12 @@ public class WorldGameRegistry
     }
 
     // from interface GameServerProvider
-    public void reportCoinAward (ClientObject caller, final int memberId, final int deltaCoins)
+    public void reportCoinAward (ClientObject caller, int memberId, int deltaCoins)
     {
         if (!checkCallerAccess(caller, "reportCoinAward(" + memberId + ", " + deltaCoins + ")")) {
             return;
         }
-        _invoker.postUnit(new Invoker.Unit() {
-            public boolean invoke () {
-                _moneyLogic.notifyCoinsEarned(memberId, deltaCoins);
-                return false;
-            }
-        });
+        _moneyLogic.notifyCoinsEarned(memberId, deltaCoins);
     }
 
     // from interface GameServerProvider

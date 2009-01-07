@@ -27,6 +27,7 @@ import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
 
+import com.threerings.presents.annotation.AnyThread;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ShutdownManager;
@@ -167,6 +168,7 @@ public class MoneyLogic
      * @param memberId ID of the member who earned coins.
      * @param amount Number of coins earned.
      */
+    @AnyThread
     public void notifyCoinsEarned (int memberId, int amount)
     {
         _nodeActions.moneyUpdated(memberId, Currency.COINS, amount, true);
