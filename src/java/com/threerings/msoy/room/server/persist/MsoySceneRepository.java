@@ -608,7 +608,7 @@ public class MsoySceneRepository extends DepotRepository
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemoryRepository _memoryRepo;
 
-    /** The sort order for New & Hot, referenced by {@link SceneRecord}. */
+    /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final Tuple<SQLExpression, OrderBy.Order> NEW_AND_HOT_ORDER =
         new Tuple<SQLExpression, OrderBy.Order>(
                 new Arithmetic.Add(SceneRecord.RATING_C, new Arithmetic.Div(
