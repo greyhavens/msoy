@@ -27,7 +27,7 @@ public class MsoyGameController extends WhirledGameController
         // this is only used for testing game loading issues per WRLD-531,
         // and will be removed after the test is over. -- robert
         (_pctx as GameContext).getMsoyContext().getMsoyClient().trackClientAction(
-            "WRLD-531 game started", "stage 7");
+            "WRLD-531-2 game started", "stage 7");
     }
 
     // from PlaceController
@@ -54,7 +54,7 @@ public class MsoyGameController extends WhirledGameController
         // this is only used for testing game loading issues per WRLD-531,
         // and will be removed after the test is over. -- robert
         (_pctx as GameContext).getMsoyContext().getMsoyClient().trackClientAction(
-            "WRLD-531 game started", "stage 8");
+            "WRLD-531-2 game started", "stage 8");
     }
                                                                        
     // from BaseGameController

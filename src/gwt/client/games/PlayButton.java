@@ -16,6 +16,7 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.util.FlashClients;
 import client.util.Link;
 import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
@@ -70,8 +71,10 @@ public class PlayButton
         if (! inWorld) {
             play.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    _membersvc.trackClientAction(CShell.visitor, "WRLD-531 game started", "stage 1",
-                        new NoopAsyncCallback() { });
+                    // is the Flash client loaded and ready?
+                    String stage = "stage 1 " + (FlashClients.clientExists() ? "flash" : "none");
+                    _membersvc.trackClientAction(CShell.visitor, "WRLD-531-2 game started",
+                        stage, new NoopAsyncCallback() { });
                 }
             });
         }

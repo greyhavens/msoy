@@ -115,8 +115,8 @@ public class LobbyGameLiaison extends GameLiaison
             {
                 // this is only used for testing game loading issues per WRLD-531,
                 // and will be removed after the test is over. -- robert
-                var stageName :String = (lobbyOid == 0) ? "3a" : "3b";
-                _wctx.getMsoyClient().trackClientAction("WRLD-531 game started", stageName);
+                var stageName :String = "stage 3 " + ((lobbyOid == 0) ? "game" : "lobby");
+                _wctx.getMsoyClient().trackClientAction("WRLD-531-2 game started", stageName);
 
                 if (lobbyOid != 0) {
                     // we failed to start a game (see below) so join the lobby instead
@@ -225,7 +225,7 @@ public class LobbyGameLiaison extends GameLiaison
 
         // this is only used for testing game loading issues per WRLD-531,
         // and will be removed after the test is over. -- robert
-        _wctx.getMsoyClient().trackClientAction("WRLD-531 game started", "stage 5");
+        _wctx.getMsoyClient().trackClientAction("WRLD-531-2 game started", "stage 5");
 
         return true;
     }
