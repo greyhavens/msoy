@@ -1022,9 +1022,9 @@ class WalkTarget extends RoomElementSprite
  */
 class Throttler
 {
-    public static const OPERATIONS :int = 6;
+    public static const OPERATIONS :int = 5;
     public static const PERIOD :int = 1000;
-    public static const MAX_QUEUE :int = 25;
+    public static const MAX_QUEUE :int = 20;
 
     public static const log :Log = Log.getLog(Throttler);
 
