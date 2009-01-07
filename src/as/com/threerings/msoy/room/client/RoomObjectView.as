@@ -24,10 +24,10 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.crowd.chat.client.ChatDisplay;
+import com.threerings.crowd.chat.client.ChatSnooper;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
-
-import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.flash.MenuUtil;
 
@@ -75,7 +75,7 @@ import com.threerings.msoy.room.data.SceneAttrsUpdate;
  * Extends the base roomview with the ability to view a RoomObject, view chat, and edit.
  */
 public class RoomObjectView extends RoomView
-    implements SetListener, MessageListener, ChatDisplay, ChatInfoProvider
+    implements SetListener, MessageListener, ChatSnooper, ChatDisplay, ChatInfoProvider
 {
     /**
      * Create a roomview.
@@ -339,25 +339,26 @@ public class RoomObjectView extends RoomView
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
-        if (msg is UserMessage && MsoyChatChannel.typeIsForRoom(msg.localtype, _scene.getId())) {
-            var umsg :UserMessage = (msg as UserMessage);
-            var speaker :OccupantSprite = getOccupantByName(umsg.getSpeakerDisplayName());
-            var avatar :MemberSprite = (speaker as MemberSprite);
-            if (avatar != null) {
-                avatar.performAvatarSpoke();
-            }
+        // we don't do this in snoopChat in case the message was filtered into nothing
+        var avatar :MemberSprite = getSpeaker(msg) as MemberSprite;
+        if (avatar != null) {
+            avatar.performAvatarSpoke();
+        }
+        return false; // since we didn't "display" it.
+    }
 
-            if (speaker != null) {
-                // send it to entities as well
-                var ident :String = speaker.getItemIdent().toString();
-                var name :String = umsg.getSpeakerDisplayName().toString();
-                for each (var entity :MsoySprite in _entities.values()) {
-                    entity.processChatMessage(ident, name, umsg.message);
-                }
+    // from ChatSnooper
+    public function snoopChat (msg :ChatMessage) :void
+    {
+        var speaker :OccupantSprite = getSpeaker(msg);
+        if (speaker != null) {
+            // send it to all entities
+            var ident :String = speaker.getItemIdent().toString();
+            var name :String = speaker.getOccupantInfo().username.toString();
+            for each (var entity :MsoySprite in _entities.values()) {
+                entity.processChatMessage(ident, name, msg.message);
             }
         }
-
-        return false; // we never display the messages ourselves
     }
 
     // from RoomView
@@ -382,6 +383,7 @@ public class RoomObjectView extends RoomView
         addAllOccupants();
 
         // we add ourselves as a chat display so that we can trigger speak actions on avatars
+        _ctx.getChatDirector().addChatSnooper(this);
         _ctx.getChatDirector().addChatDisplay(this);
         _ctx.getControlBar().setInRoom(true);
 
@@ -415,6 +417,7 @@ public class RoomObjectView extends RoomView
         _ctx.getControlBar().setInRoom(false);
         // stop listening for avatar speak action triggers
         _ctx.getChatDirector().removeChatDisplay(this);
+        _ctx.getChatDirector().removeChatSnooper(this);
 
         // tell the comic overlay to forget about us
         var comicOverlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
@@ -471,6 +474,17 @@ public class RoomObjectView extends RoomView
         }
 
         super.populateSpriteContextMenu(sprite, menuItems);
+    }
+
+    /**
+     * Return the sprite of the speaker of the specified message.
+     */
+    protected function getSpeaker (msg :ChatMessage) :OccupantSprite
+    {
+        if (msg is UserMessage && MsoyChatChannel.typeIsForRoom(msg.localtype, _scene.getId())) {
+            return getOccupantByName(UserMessage(msg).getSpeakerDisplayName());
+        }
+        return null;
     }
 
     /** Return an array of the MOB sprites associated with the identified game. */
