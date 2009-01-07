@@ -353,15 +353,6 @@ public class FrameEntryPoint
     public void navigateTo (String token)
     {
         if (!token.equals(_currentToken)) {
-            // If we're currently viewing the room detail page and we move to a new room,
-            // load the room detail page for that new room.
-            String roomsPageToken = Pages.makeToken(Pages.ROOMS, "room_");
-            String sceneToken = Pages.makeToken(Pages.WORLD, "s");
-            if (_currentToken != null && _currentToken.startsWith(roomsPageToken) &&
-                    token.startsWith(sceneToken)) {
-                _closeToken = token;
-                token = token.replace(sceneToken, roomsPageToken);
-            }
             History.newItem(token);
         }
     }
