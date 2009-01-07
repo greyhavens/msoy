@@ -31,7 +31,6 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -563,7 +562,7 @@ public class RoomManager extends SpotSceneManager
     // from RoomProvider
     public void spawnMob (
         ClientObject caller, int gameId, String mobId, String mobName, Location startLoc,
-        final InvocationListener listener)
+        final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         if (!WindowClientObject.isForGame(caller, gameId)) {
@@ -598,7 +597,8 @@ public class RoomManager extends SpotSceneManager
 
     // from RoomProvider
     public void moveMob (
-        ClientObject caller, int gameId, String mobId, Location newLoc, InvocationListener listener)
+        ClientObject caller, int gameId, String mobId, Location newLoc,
+        InvocationService.InvocationListener listener)
         throws InvocationException
     {
         if (!WindowClientObject.isForGame(caller, gameId)) {
@@ -619,8 +619,9 @@ public class RoomManager extends SpotSceneManager
     }
 
     // from RoomProvider
-    public void despawnMob (ClientObject caller, int gameId, String mobId,
-                            final InvocationListener listener)
+    public void despawnMob (
+        ClientObject caller, int gameId, String mobId,
+        final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         if (!WindowClientObject.isForGame(caller, gameId)) {

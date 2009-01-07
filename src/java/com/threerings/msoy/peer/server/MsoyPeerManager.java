@@ -21,6 +21,7 @@ import com.threerings.io.Streamable;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -29,6 +30,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.util.ConfirmAdapter;
 
 import com.threerings.presents.peer.client.PeerService;
 import com.threerings.presents.peer.data.ClientInfo;
@@ -38,20 +40,24 @@ import com.threerings.presents.peer.server.PeerNode;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 
 import com.threerings.whirled.data.ScenePlace;
+import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.web.gwt.ConnectConfig;
 
-import com.threerings.msoy.bureau.server.BureauLauncherSession;
-import com.threerings.msoy.bureau.server.WindowSession;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.server.MsoyReportManager;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
+
+import com.threerings.msoy.bureau.server.BureauLauncherSession;
+import com.threerings.msoy.bureau.server.WindowSession;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.party.data.PartyInfo;
+import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
 import com.threerings.msoy.peer.data.HostedGame;
@@ -278,12 +284,20 @@ public class MsoyPeerManager extends CrowdPeerManager
     /**
      * Called by the RoomManager when it is hosting a scene.
      */
-    public void roomDidStartup (int sceneId, String name, int ownerId, byte ownerType,
-        byte accessControl)
+    public void roomDidStartup (
+        int sceneId, String name, int ownerId, byte ownerType, byte accessControl)
     {
         log.info("Hosting scene [id=" + sceneId + ", name=" + name + "].");
         _mnobj.addToHostedScenes(new HostedRoom(sceneId, name, ownerId, ownerType, accessControl));
         // release our lock on this scene now that it is resolved and we are hosting it
+        releaseSceneLock(sceneId);
+    }
+
+    /**
+     * Convenience method to release a scene lock.
+     */
+    public void releaseSceneLock (int sceneId)
+    {
         releaseLock(getSceneLock(sceneId), new ResultListener.NOOP<String>());
     }
 
@@ -417,8 +431,8 @@ public class MsoyPeerManager extends CrowdPeerManager
         // locate the peer in question
         PeerNode node = _peers.get(nodeName);
         if (node == null || node.nodeobj == null) {
-            log.warning("Unable to forward member object to unready peer [peer=" + nodeName +
-                        ", connected=" + (node != null) + ", member=" + memobj.memberName + "].");
+            log.warning("Unable to forward member object to unready peer",
+               "peer", nodeName, "connected", (node != null), "member", memobj.memberName);
             return;
         }
 
@@ -452,6 +466,43 @@ public class MsoyPeerManager extends CrowdPeerManager
         // place this member object in a temporary cache; if the member in question logs on in the
         // next 30 seconds, we'll use this object instead of re-resolving all of their data
         _mobjCache.put(memobj.username, new MemObjCacheEntry(memobj, locals));
+    }
+
+    /**
+     * Requests that we forward the reclaimItem request to the appropriate server.
+     */
+    public void reclaimItem (
+        String nodeName, int sceneId, int memberId, ItemIdent item,
+        final ResultListener<Void> listener)
+    {
+        // locate the peer in question
+        PeerNode node = _peers.get(nodeName);
+        if (node == null || node.nodeobj == null) {
+            // this should never happen.
+            log.warning("Unable to reclaim item on unready peer",
+               "peer", nodeName, "connected", (node != null), "item", item);
+            listener.requestFailed(new Exception());
+            return;
+        }
+        ((MsoyNodeObject)node.nodeobj).msoyPeerService.reclaimItem(
+            node.getClient(), sceneId, memberId, item, new InvocationService.ConfirmListener() {
+                public void requestProcessed () {
+                    listener.requestCompleted(null);
+                }
+                public void requestFailed (String cause) {
+                    listener.requestFailed(new InvocationException(cause));
+                }
+            });
+    }
+
+    // from interface MsoyPeerProvider
+    public void reclaimItem (
+        ClientObject caller, int sceneId, int memberId, ItemIdent item,
+        InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        ((MsoySceneRegistry) _screg).reclaimItem(sceneId, memberId, item,
+            new ConfirmAdapter(listener));
     }
 
     @Override // from PeerManager
@@ -677,6 +728,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     // dependencies
     @Inject protected InvocationManager _invmgr;
     @Inject protected ClientManager _clmgr;
+    @Inject protected SceneRegistry _screg;
     @Inject protected MsoyServer _msoyServer;
     @Inject protected MsoyReportManager _reportMan;
 

@@ -24,6 +24,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.util.ConfirmAdapter;
 import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.crowd.server.BodyManager;
@@ -49,7 +50,7 @@ import com.threerings.msoy.item.server.persist.*;
 import com.threerings.msoy.item.server.ItemLogic.MissingRepositoryException;
 
 import com.threerings.msoy.room.data.MemberInfo;
-import com.threerings.msoy.room.server.RoomManager;
+import com.threerings.msoy.room.server.MsoySceneRegistry;
 
 import com.threerings.msoy.money.data.all.Currency;
 
@@ -456,29 +457,21 @@ public class ItemManager
         }
 
         getItem(item, new ResultListener<Item>() {
-            public void requestCompleted (final Item result) {
+            public void requestCompleted (Item result) {
                 if (result.ownerId != user.getMemberId()) {
                     lner.requestFailed(ItemCodes.E_ACCESS_DENIED);
                     return;
                 }
                 if ((result.used == Item.USED_AS_FURNITURE) || (result.getType() == Item.DECOR) ||
                         (result.getType() == Item.AUDIO)) {
-                    _sceneReg.resolveScene(result.location, new SceneRegistry.ResolutionListener() {
-                        public void sceneWasResolved (SceneManager scmgr) {
-                            ((RoomManager)scmgr).reclaimItem(item, user.getMemberId());
-                            lner.requestProcessed();
-                        }
-                        public void sceneFailedToResolve (int sceneId, Exception reason) {
-                            log.warning("Scene failed to resolve", "id", sceneId, reason);
-                            lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
-                        }
-                    });
+                    ((MsoySceneRegistry)_sceneReg).reclaimItem(
+                        result.location, user.getMemberId(), item, new ConfirmAdapter(lner));
+
                 } else {
                     // TODO: avatar reclamation will be possible
                     log.warning("Item to be reclaimed is neither decor nor furni",
                         "type", result.getType(), "id", result.itemId);
                     lner.requestFailed(InvocationCodes.INTERNAL_ERROR);
-                    return;
                 }
             }
             public void requestFailed (Exception cause) {

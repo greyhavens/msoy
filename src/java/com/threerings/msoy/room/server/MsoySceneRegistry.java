@@ -16,10 +16,14 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
+import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.server.LocationManager;
+
 import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.client.SceneService;
 import com.threerings.whirled.data.SceneCodes;
 import com.threerings.whirled.server.SceneManager;
+import com.threerings.whirled.server.SceneMoveHandler;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.server.SpotSceneRegistry;
 
@@ -33,9 +37,11 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.PetObject;
 import com.threerings.msoy.room.data.RoomCodes;
@@ -49,10 +55,95 @@ import static com.threerings.msoy.Log.log;
 public class MsoySceneRegistry extends SpotSceneRegistry
     implements MsoySceneProvider
 {
+    /**
+     * Extends ResolutionListener with peer-awareness.
+     */
+    public static interface PeerSceneResolutionListener extends ResolutionListener
+    {
+        /**
+         * Called when the scene is already hosted on another node.
+         */
+        public void sceneOnNode (Tuple<String, HostedRoom> nodeInfo);
+    }
+
+    /**
+     * A SceneMoveHandler that can receive the sceneOnNode() callback.
+     */
+    public static abstract class PeerSceneMoveHandler extends SceneMoveHandler
+        implements PeerSceneResolutionListener
+    {
+        public PeerSceneMoveHandler (
+            LocationManager locman, BodyObject body, int sceneVer,
+            SceneService.SceneMoveListener listener)
+        {
+            super(locman, body, sceneVer, listener);
+        }
+    }
+
     @Inject public MsoySceneRegistry (InvocationManager invmgr)
     {
         super(invmgr);
         invmgr.registerDispatcher(new MsoySceneDispatcher(this), SceneCodes.WHIRLED_GROUP);
+    }
+
+//    @Override
+//    public void resolveScene (int sceneId, ResolutionListener listener)
+//    {
+//        throw new RuntimeException("Use resolvePeerScene()");
+//    }
+
+    /**
+     * Resolve a scene, or return the information on the peer on which it's hosted.
+     */
+    public void resolvePeerScene (final int sceneId, final PeerSceneResolutionListener listener)
+    {
+        // check to see if the destination scene is already hosted on a server
+        Tuple<String, HostedRoom> nodeInfo = _peerMan.getSceneHost(sceneId);
+
+        // if it's already hosted...
+        if (nodeInfo != null) {
+            // it's hosted on this server! It should already be resolved...
+            if (_peerMan.getNodeObject().nodeName.equals(nodeInfo.left)) {
+                super.resolveScene(sceneId, listener);
+            } else {
+                listener.sceneOnNode(nodeInfo); // somewhere else, pass the buck
+            }
+            return;
+        }
+
+        // otherwise the scene is not resolved here nor there; so we claim the scene by acquiring a
+        // distributed lock and then resolve it locally
+        _peerMan.acquireLock(MsoyPeerManager.getSceneLock(sceneId), new ResultListener<String>() {
+            public void requestCompleted (String nodeName) {
+                if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
+                    log.debug("Got lock, resolving scene", "sceneId", sceneId);
+                    MsoySceneRegistry.super.resolveScene(sceneId, new ResolutionListener() {
+                        public void sceneWasResolved (SceneManager scmgr) {
+                            listener.sceneWasResolved(scmgr);
+                        }
+                        public void sceneFailedToResolve (int sceneId, Exception reason) {
+                            _peerMan.releaseSceneLock(sceneId);
+                            listener.sceneFailedToResolve(sceneId, reason);
+                        }
+                    });
+
+                } else {
+                    // we didn't get the lock, so let's see what happened by re-checking
+                    Tuple<String, HostedRoom> nodeInfo = _peerMan.getSceneHost(sceneId);
+                    if (nodeName == null || nodeInfo == null || !nodeName.equals(nodeInfo.left)) {
+                        log.warning("Scene resolved on wacked-out node?",
+                            "sceneId", sceneId, "nodeName", nodeName, "nodeInfo", nodeInfo);
+                        listener.sceneFailedToResolve(sceneId, new Exception("Wackedout"));
+                    } else {
+                        listener.sceneOnNode(nodeInfo); // somewhere else
+                    }
+                }
+            }
+            public void requestFailed (Exception cause) {
+                log.warning("Failed to acquire scene resolution lock", "id", sceneId, cause);
+                listener.sceneFailedToResolve(sceneId, cause);
+            }
+        });
     }
 
     /**
@@ -66,12 +157,34 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         _eventLog.roomUpdated(memId, scene.getId(), user.getVisitorId());
     }
 
+    public void reclaimItem (
+        final int sceneId, final int memberId, final ItemIdent item,
+        final ResultListener<Void> listener)
+    {
+        resolvePeerScene(sceneId, new PeerSceneResolutionListener() {
+            public void sceneWasResolved (SceneManager scmgr) {
+                ((RoomManager)scmgr).reclaimItem(item, memberId);
+                listener.requestCompleted(null);
+            }
+
+            public void sceneOnNode (Tuple<String, HostedRoom> nodeInfo) {
+                _peerMan.reclaimItem(nodeInfo.left, sceneId, memberId, item, listener);
+            }
+
+            public void sceneFailedToResolve (int sceneId, Exception reason) {
+                listener.requestFailed(reason);
+            }
+        });
+    }
+
+    // TODO: the other version of moveTo() needs to also become peer-aware
+
     // from interface MsoySceneProvider
     public void moveTo (ClientObject caller, final int sceneId, int version, final int portalId,
                         final MsoyLocation destLoc, final SceneService.SceneMoveListener listener)
         throws InvocationException
     {
-        MsoyBodyObject mover = (MsoyBodyObject)caller;
+        final MsoyBodyObject mover = (MsoyBodyObject)caller;
         final MemberObject memobj = (mover instanceof MemberObject) ? (MemberObject)mover : null;
 
         // if they are departing a scene hosted by this server, move them to the exit; if we fail
@@ -106,10 +219,43 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         }
 
         // this fellow will handle the nitty gritty of our scene switch
-        final MsoySceneMoveHandler handler =
-            new MsoySceneMoveHandler(_locman, _peerMan, mover, version, destLoc, listener) {
+        resolvePeerScene(sceneId, new PeerSceneMoveHandler(_locman, mover, version, listener) {
+            public void sceneOnNode (Tuple<String, HostedRoom> nodeInfo) {
+                if (memobj == null) {
+                    log.warning("Non-member requested move that requires server switch?",
+                        "who", mover.who(), "info", nodeInfo);
+                    listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
+                    return;
+                }
+
+                // first check access control on the remote scene
+                HostedRoom hr = nodeInfo.right;
+                if (memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl)) {
+                    log.debug("Going to remote node", "who", mover.who(),
+                        "where", sceneId + "@" + nodeInfo.left);
+                    sendClientToNode(nodeInfo.left, memobj, listener);
+                } else {
+                    listener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
+                }
+            }
+
             protected void effectSceneMove (SceneManager scmgr) throws InvocationException {
-                super.effectSceneMove(scmgr);
+                // create a fake "from" portal that contains our destination location
+                MsoyPortal from = new MsoyPortal();
+                from.targetPortalId = (short)-1;
+                from.dest = destLoc;
+
+                // let the destination room manager know that we're coming in "from" that portal
+                RoomManager destmgr = (RoomManager)scmgr;
+                destmgr.mapEnteringBody(mover, from);
+
+                try {
+                    super.effectSceneMove(destmgr);
+                } catch (InvocationException ie) {
+                    // if anything goes haywire, clear out our entering status
+                    destmgr.clearEnteringBody(mover);
+                    throw ie;
+                }
 
                 // for members, check for following entities
                 if (memobj != null) {
@@ -120,62 +266,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                                new SceneMoveAdapter());
                     }
                 }
-            }
-        };
-
-        // now check to see if the destination scene is already hosted on a server
-        Tuple<String, HostedRoom> nodeInfo = _peerMan.getSceneHost(sceneId);
-
-        // if it's hosted on this server, then send the client directly to the scene
-        if (nodeInfo != null && _peerMan.getNodeObject().nodeName.equals(nodeInfo.left)) {
-            log.debug("Going directly to resolved local scene", "who" + mover.who(),
-                      "sceneId", sceneId);
-            resolveScene(sceneId, handler);
-            return;
-        }
-
-        // if the mover is not a member, we don't allow server switches, so just fail
-        if (memobj == null) {
-            log.warning("Non-member requested move that requires server switch?",
-                        "who", mover.who(), "info", nodeInfo);
-            throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
-        }
-
-        // if it's hosted on another server; send the client to that server
-        if (nodeInfo != null) {
-            // first check access control on the remote scene
-            HostedRoom hr = nodeInfo.right;
-            if (memobj.canEnterScene(hr.placeId, hr.ownerId, hr.ownerType, hr.accessControl)) {
-                log.debug("Going to remote node", "who", mover.who(),
-                          "where", sceneId + "@" + nodeInfo.left);
-                sendClientToNode(nodeInfo.left, memobj, listener);
-            } else {
-                listener.requestFailed(RoomCodes.E_ENTRANCE_DENIED);
-            }
-            return;
-        }
-
-        // otherwise the scene is not resolved here nor there; so we claim the scene by acquiring a
-        // distributed lock and then resolve it locally
-        _peerMan.acquireLock(MsoyPeerManager.getSceneLock(sceneId), new ResultListener<String>() {
-            public void requestCompleted (String nodeName) {
-                if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
-                    log.debug("Got lock, resolving " + sceneId + ".");
-                    resolveScene(sceneId, handler);
-                } else if (nodeName != null) {
-                    // some other peer got the lock before we could; send them there
-                    log.debug("Didn't get lock, going remote " + sceneId + "@" + nodeName + ".");
-                    sendClientToNode(nodeName, memobj, listener);
-                } else {
-                    log.warning("Scene lock acquired by null? [for=" + memobj.who() +
-                                ", id=" + sceneId + "].");
-                    listener.requestFailed(RoomCodes.INTERNAL_ERROR);
-                }
-            }
-            public void requestFailed (Exception cause) {
-                log.warning("Failed to acquire scene resolution lock", "for", memobj.who(),
-                            "id", sceneId, cause);
-                listener.requestFailed(RoomCodes.INTERNAL_ERROR);
             }
         });
     }
