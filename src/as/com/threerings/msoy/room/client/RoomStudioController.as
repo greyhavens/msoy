@@ -53,6 +53,8 @@ public class RoomStudioController extends RoomController
         _roomView.addEventListener(Event.ENTER_FRAME, checkMouse, false, int.MIN_VALUE);
         setControlledPanel(_studioView);
 
+        _throttleChecker.start();
+
         initScene();
     }
 
@@ -60,7 +62,7 @@ public class RoomStudioController extends RoomController
     override public function requestMove (ident :ItemIdent, newLoc :MsoyLocation) :Boolean
     {
         // move it one frame later
-        MethodQueue.callLater(_studioView.doEntityMove, [ ident, newLoc ]);
+        throttle(ident, MethodQueue.callLater, _studioView.doEntityMove, [ ident, newLoc ]);
         return true;
     }
 
@@ -162,21 +164,22 @@ public class RoomStudioController extends RoomController
     override protected function setActorState2 (
         ident :ItemIdent, actorOid :int, state :String) :void
     {
-        _studioView.setActorState(ident, state);
+        throttle(ident, _studioView.setActorState, ident, state);
     }
 
     // documentation inherited
     override protected function sendSpriteMessage2 (
         ident :ItemIdent, name :String, data :ByteArray, isAction :Boolean) :void
     {
-        MethodQueue.callLater(_studioView.dispatchSpriteMessage, [ ident, name, data, isAction ]);
+        throttle(ident, MethodQueue.callLater,
+            _studioView.dispatchSpriteMessage, [ ident, name, data, isAction ]);
     }
 
     // documentation inherited
     override protected function sendSpriteSignal2 (
         ident :ItemIdent, name :String, data :ByteArray) :void
     {
-        MethodQueue.callLater(_studioView.dispatchSpriteSignal, [ name, data ]);
+        throttle(ident, MethodQueue.callLater, _studioView.dispatchSpriteSignal, [ name, data ]);
     }
 
     // documentation inherited
@@ -187,6 +190,15 @@ public class RoomStudioController extends RoomController
 
     // documentation inherited
     override protected function updateMemory2 (
+        ident :ItemIdent, key :String, data :ByteArray, callback :Function) :void
+    {
+        throttle(ident, updateMemory3, ident, key, data, callback);
+    }
+
+    /**
+     * 3rd step to update memory: after throttling.
+     */
+    protected function updateMemory3 (
         ident :ItemIdent, key :String, data :ByteArray, callback :Function) :void
     {
         var dict :Dictionary = _memories.get(ident) as Dictionary;
