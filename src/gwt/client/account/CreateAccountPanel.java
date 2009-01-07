@@ -418,6 +418,7 @@ public class CreateAccountPanel extends FlowPanel
 
             // let the top-level frame know that we logged on (will trigger a redirect)
             session.registrationABGroup = group;
+            session.justCreated = true;
             CShell.frame.dispatchDidLogon(session);
         }
     }

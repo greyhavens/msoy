@@ -289,7 +289,7 @@ public class FrameEntryPoint
 
         // TODO: preserve their current world location and log them into their new account; this
         // will require fixing a whole bunch of shit
-        if (FlashClients.clientExists() && data.justCreated()) {
+        if (FlashClients.clientExists() && data.justCreated) {
             closeClient(false);
         }
 
@@ -299,7 +299,7 @@ public class FrameEntryPoint
             addNoClientIcon();
         }
 
-        if (data.justCreated()) {
+        if (data.justCreated) {
             switch (data.registrationABGroup) {
             default: // "A" group, normal
                 // go home
@@ -452,7 +452,7 @@ public class FrameEntryPoint
     // from interface Frame
     public String checkFlashVersion (int width, int height)
     {
-    	return FlashVersion.checkFlashVersion(width, height);
+        return FlashVersion.checkFlashVersion(width, height);
     }
 
     // from interface Frame
@@ -740,8 +740,8 @@ public class FrameEntryPoint
 
     protected void displayGame (final String action, int gameId, final int otherId)
     {
-    	// if we are neither logged in nor have an assigned guest id, we need one
-    	boolean assignGuestId = (CShell.getMemberId() == 0);
+        // if we are neither logged in nor have an assigned guest id, we need one
+        boolean assignGuestId = (CShell.getMemberId() == 0);
         // load up the information needed to launch the game
         _usersvc.loadLaunchConfig(gameId, assignGuestId, new MsoyCallback<LaunchConfig>() {
             public void onSuccess (LaunchConfig result) {
@@ -752,7 +752,7 @@ public class FrameEntryPoint
 
     protected void launchGame (final LaunchConfig config, final int otherId, String action)
     {
-    	// if we were assigned a guest id, make it known to everyone
+        // if we were assigned a guest id, make it known to everyone
         if (config.guestId != 0) {
             CShell.frame.dispatchEvent(new GotGuestIdEvent(config.guestId));
         }
