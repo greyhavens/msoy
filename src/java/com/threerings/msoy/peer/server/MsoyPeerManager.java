@@ -287,18 +287,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     public void roomDidStartup (
         int sceneId, String name, int ownerId, byte ownerType, byte accessControl)
     {
-        log.info("Hosting scene [id=" + sceneId + ", name=" + name + "].");
+        log.info("Hosting scene", "id", sceneId, "name", name);
         _mnobj.addToHostedScenes(new HostedRoom(sceneId, name, ownerId, ownerType, accessControl));
-        // release our lock on this scene now that it is resolved and we are hosting it
-        releaseSceneLock(sceneId);
-    }
-
-    /**
-     * Convenience method to release a scene lock.
-     */
-    public void releaseSceneLock (int sceneId)
-    {
-        releaseLock(getSceneLock(sceneId), new ResultListener.NOOP<String>());
     }
 
     /**
@@ -306,7 +296,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void roomDidShutdown (int sceneId)
     {
-        log.info("No longer hosting scene [id=" + sceneId + "].");
+        log.info("No longer hosting scene", "id", sceneId);
         _mnobj.removeFromHostedScenes(sceneId);
     }
 

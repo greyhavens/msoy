@@ -119,11 +119,16 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                     log.debug("Got lock, resolving scene", "sceneId", sceneId);
                     MsoySceneRegistry.super.resolveScene(sceneId, new ResolutionListener() {
                         public void sceneWasResolved (SceneManager scmgr) {
+                            releaseLock();
                             listener.sceneWasResolved(scmgr);
                         }
                         public void sceneFailedToResolve (int sceneId, Exception reason) {
-                            _peerMan.releaseSceneLock(sceneId);
+                            releaseLock();
                             listener.sceneFailedToResolve(sceneId, reason);
+                        }
+                        protected void releaseLock () {
+                            _peerMan.releaseLock(_peerMan.getSceneLock(sceneId), 
+                                new ResultListener.NOOP<String>());
                         }
                     });
 
