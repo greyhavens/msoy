@@ -279,7 +279,7 @@ public class ControlBar extends HBox
 //        }
 
         addButton(shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
-        addButton(commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
+        addButton(commentBtn, [ UI_ROOM, UI_AVRGAME ]);
         addButton(gameBtn, [ UI_GAME, UI_AVRGAME ], PLACE_PRIORITY + 1);
 
         if (_notificationDisplay != null) {
