@@ -157,7 +157,7 @@ public class MsoyChatDirector extends ChatDirector
     {
         _jservice.sendMessage(_mctx.getClient(), target, msg, new ResultAdapter(
             function (result :Object) :void {
-                if (result != null && result is String) {
+                if (result is String) {
                     displaySystem(MsoyCodes.CHAT_MSGS, (result as String), SystemMessage.FEEDBACK,
                                   feedbackLocaltype);
                 }
