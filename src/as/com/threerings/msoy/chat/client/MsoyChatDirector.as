@@ -233,8 +233,9 @@ public class MsoyChatDirector extends ChatDirector
     // from ChatDirector
     override protected function setClientInfo (msg :ChatMessage, localType :String) :void
     {
-        if ((msg is UserMessage && localType == ChatCodes.USER_CHAT_TYPE) ||
-                (msg is TellFeedbackMessage)) {
+        if ((msg.localtype == null) && ( // skip this if msg.localtype is already set
+                (msg is UserMessage && localType == ChatCodes.USER_CHAT_TYPE) ||
+                (msg is TellFeedbackMessage))) {
             // use a more specific localtype
             var member :MemberName = (msg as UserMessage).getSpeakerDisplayName() as MemberName;
             localType = MsoyChatChannel.makeMemberChannel(member).toLocalType();
