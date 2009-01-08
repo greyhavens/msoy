@@ -162,6 +162,9 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         _eventLog.roomUpdated(memId, scene.getId(), user.getVisitorId());
     }
 
+    /**
+     * Reclaim an item out of a scene on behalf of the specified member.
+     */
     public void reclaimItem (
         final int sceneId, final int memberId, final ItemIdent item,
         final ResultListener<Void> listener)
