@@ -20,19 +20,9 @@ import com.threerings.msoy.admin.gwt.AffiliateMapping;
 public class AffiliateMapRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #affiliate} field. */
-    public static final String AFFILIATE = "affiliate";
-
-    /** The qualified column identifier for the {@link #affiliate} field. */
-    public static final ColumnExp AFFILIATE_C =
-        new ColumnExp(AffiliateMapRecord.class, AFFILIATE);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(AffiliateMapRecord.class, MEMBER_ID);
+    public static final Class<AffiliateMapRecord> _R = AffiliateMapRecord.class;
+    public static final ColumnExp AFFILIATE = colexp(_R, "affiliate");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -63,7 +53,7 @@ public class AffiliateMapRecord extends PersistentRecord
     {
         return new Key<AffiliateMapRecord>(
                 AffiliateMapRecord.class,
-                new String[] { AFFILIATE },
+                new ColumnExp[] { AFFILIATE },
                 new Comparable[] { affiliate });
     }
     // AUTO-GENERATED: METHODS END

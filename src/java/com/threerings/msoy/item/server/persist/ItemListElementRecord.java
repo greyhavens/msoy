@@ -23,33 +23,11 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 public class ItemListElementRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #listId} field. */
-    public static final String LIST_ID = "listId";
-
-    /** The qualified column identifier for the {@link #listId} field. */
-    public static final ColumnExp LIST_ID_C =
-        new ColumnExp(ItemListElementRecord.class, LIST_ID);
-
-    /** The column identifier for the {@link #type} field. */
-    public static final String TYPE = "type";
-
-    /** The qualified column identifier for the {@link #type} field. */
-    public static final ColumnExp TYPE_C =
-        new ColumnExp(ItemListElementRecord.class, TYPE);
-
-    /** The column identifier for the {@link #itemId} field. */
-    public static final String ITEM_ID = "itemId";
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(ItemListElementRecord.class, ITEM_ID);
-
-    /** The column identifier for the {@link #sequence} field. */
-    public static final String SEQUENCE = "sequence";
-
-    /** The qualified column identifier for the {@link #sequence} field. */
-    public static final ColumnExp SEQUENCE_C =
-        new ColumnExp(ItemListElementRecord.class, SEQUENCE);
+    public static final Class<ItemListElementRecord> _R = ItemListElementRecord.class;
+    public static final ColumnExp LIST_ID = colexp(_R, "listId");
+    public static final ColumnExp TYPE = colexp(_R, "type");
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp SEQUENCE = colexp(_R, "sequence");
     // AUTO-GENERATED: FIELDS END
 
     /** The schema version of this record. */
@@ -115,7 +93,7 @@ public class ItemListElementRecord extends PersistentRecord
     {
         return new Key<ItemListElementRecord>(
                 ItemListElementRecord.class,
-                new String[] { LIST_ID, TYPE, ITEM_ID },
+                new ColumnExp[] { LIST_ID, TYPE, ITEM_ID },
                 new Comparable[] { listId, type, itemId });
     }
     // AUTO-GENERATED: METHODS END

@@ -4,6 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
@@ -13,18 +14,14 @@ import com.threerings.io.Streamable;
 /**
  * Represents which tags have been added to which targets.
  */
-@Entity(indices={
-  @Index(name="ixTarget", fields={ TagRecord.TARGET_ID })
-})
+@Entity
 public abstract class TagRecord extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #tagId} field. */
-    public static final String TAG_ID = "tagId";
-
-    /** The column identifier for the {@link #targetId} field. */
-    public static final String TARGET_ID = "targetId";
+    public static final Class<TagRecord> _R = TagRecord.class;
+    public static final ColumnExp TAG_ID = colexp(_R, "tagId");
+    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;
@@ -34,6 +31,6 @@ public abstract class TagRecord extends PersistentRecord
     public int tagId;
 
     /** The ID of the tagged target. */
-    @Id
+    @Id @Index(name="ixTarget")
     public int targetId;
 }

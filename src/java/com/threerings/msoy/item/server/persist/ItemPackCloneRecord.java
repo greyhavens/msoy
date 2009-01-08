@@ -14,53 +14,19 @@ import com.threerings.msoy.money.data.all.Currency;
 public class ItemPackCloneRecord extends CloneRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(ItemPackCloneRecord.class, ITEM_ID);
-
-    /** The qualified column identifier for the {@link #originalItemId} field. */
-    public static final ColumnExp ORIGINAL_ITEM_ID_C =
-        new ColumnExp(ItemPackCloneRecord.class, ORIGINAL_ITEM_ID);
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(ItemPackCloneRecord.class, OWNER_ID);
-
-    /** The qualified column identifier for the {@link #purchaseTime} field. */
-    public static final ColumnExp PURCHASE_TIME_C =
-        new ColumnExp(ItemPackCloneRecord.class, PURCHASE_TIME);
-
-    /** The qualified column identifier for the {@link #currency} field. */
-    public static final ColumnExp CURRENCY_C =
-        new ColumnExp(ItemPackCloneRecord.class, CURRENCY);
-
-    /** The qualified column identifier for the {@link #amountPaid} field. */
-    public static final ColumnExp AMOUNT_PAID_C =
-        new ColumnExp(ItemPackCloneRecord.class, AMOUNT_PAID);
-
-    /** The qualified column identifier for the {@link #used} field. */
-    public static final ColumnExp USED_C =
-        new ColumnExp(ItemPackCloneRecord.class, USED);
-
-    /** The qualified column identifier for the {@link #location} field. */
-    public static final ColumnExp LOCATION_C =
-        new ColumnExp(ItemPackCloneRecord.class, LOCATION);
-
-    /** The qualified column identifier for the {@link #lastTouched} field. */
-    public static final ColumnExp LAST_TOUCHED_C =
-        new ColumnExp(ItemPackCloneRecord.class, LAST_TOUCHED);
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(ItemPackCloneRecord.class, NAME);
-
-    /** The qualified column identifier for the {@link #mediaHash} field. */
-    public static final ColumnExp MEDIA_HASH_C =
-        new ColumnExp(ItemPackCloneRecord.class, MEDIA_HASH);
-
-    /** The qualified column identifier for the {@link #mediaStamp} field. */
-    public static final ColumnExp MEDIA_STAMP_C =
-        new ColumnExp(ItemPackCloneRecord.class, MEDIA_STAMP);
+    public static final Class<ItemPackCloneRecord> _R = ItemPackCloneRecord.class;
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp ORIGINAL_ITEM_ID = colexp(_R, "originalItemId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp PURCHASE_TIME = colexp(_R, "purchaseTime");
+    public static final ColumnExp CURRENCY = colexp(_R, "currency");
+    public static final ColumnExp AMOUNT_PAID = colexp(_R, "amountPaid");
+    public static final ColumnExp USED = colexp(_R, "used");
+    public static final ColumnExp LOCATION = colexp(_R, "location");
+    public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp MEDIA_HASH = colexp(_R, "mediaHash");
+    public static final ColumnExp MEDIA_STAMP = colexp(_R, "mediaStamp");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
@@ -82,7 +48,7 @@ public class ItemPackCloneRecord extends CloneRecord
     {
         return new Key<ItemPackCloneRecord>(
                 ItemPackCloneRecord.class,
-                new String[] { ITEM_ID },
+                new ColumnExp[] { ITEM_ID },
                 new Comparable[] { itemId });
     }
     // AUTO-GENERATED: METHODS END

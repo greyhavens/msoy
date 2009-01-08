@@ -44,8 +44,8 @@ public class MemoryRepository extends DepotRepository
     public List<MemoryRecord> loadMemory (byte itemType, int itemId)
     {
         return findAll(MemoryRecord.class,
-                       new Where(MemoryRecord.ITEM_TYPE_C, itemType,
-                                 MemoryRecord.ITEM_ID_C, itemId));
+                       new Where(MemoryRecord.ITEM_TYPE, itemType,
+                                 MemoryRecord.ITEM_ID, itemId));
     }
 
     /**
@@ -55,8 +55,8 @@ public class MemoryRepository extends DepotRepository
     {
         return findAll(
             MemoryRecord.class,
-            new Where(new And(new Equals(MemoryRecord.ITEM_TYPE_C, itemType),
-                              new In(MemoryRecord.class, MemoryRecord.ITEM_ID, itemIds))));
+            new Where(new And(new Equals(MemoryRecord.ITEM_TYPE, itemType),
+                              new In(MemoryRecord.ITEM_ID, itemIds))));
     }
 
     /**
@@ -76,8 +76,8 @@ public class MemoryRepository extends DepotRepository
         And[] eachType = new And[types.size()];
         int index = 0;
         for (IntMap.IntEntry<ArrayIntSet> entry : types.intEntrySet()) {
-            eachType[index++] = new And(new Equals(MemoryRecord.ITEM_TYPE_C, entry.getIntKey()),
-                new In(MemoryRecord.class, MemoryRecord.ITEM_ID, entry.getValue()));
+            eachType[index++] = new And(new Equals(MemoryRecord.ITEM_TYPE, entry.getIntKey()),
+                new In(MemoryRecord.ITEM_ID, entry.getValue()));
         }
 
         return findAll(MemoryRecord.class, new Where(new Or(eachType)));
@@ -115,7 +115,7 @@ public class MemoryRepository extends DepotRepository
     public void deleteMemories (final byte itemType, final int itemId)
     {
         deleteAll(MemoryRecord.class,
-                  new Where(MemoryRecord.ITEM_TYPE_C, itemType, MemoryRecord.ITEM_ID_C, itemId));
+                  new Where(MemoryRecord.ITEM_TYPE, itemType, MemoryRecord.ITEM_ID, itemId));
     }
 
     @Override // from DepotRepository

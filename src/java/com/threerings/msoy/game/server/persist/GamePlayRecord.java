@@ -13,54 +13,17 @@ import com.samskivert.depot.expression.ColumnExp;
 /**
  * Notes information on a played game.
  */
-@Entity(indices={
-    @Index(name="gameIdIndex", fields={ GamePlayRecord.GAME_ID } ),
-    @Index(name="recordedIndex", fields={ GamePlayRecord.RECORDED } )
-})
+@Entity
 public class GamePlayRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(GamePlayRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #recorded} field. */
-    public static final String RECORDED = "recorded";
-
-    /** The qualified column identifier for the {@link #recorded} field. */
-    public static final ColumnExp RECORDED_C =
-        new ColumnExp(GamePlayRecord.class, RECORDED);
-
-    /** The column identifier for the {@link #multiPlayer} field. */
-    public static final String MULTI_PLAYER = "multiPlayer";
-
-    /** The qualified column identifier for the {@link #multiPlayer} field. */
-    public static final ColumnExp MULTI_PLAYER_C =
-        new ColumnExp(GamePlayRecord.class, MULTI_PLAYER);
-
-    /** The column identifier for the {@link #playerGames} field. */
-    public static final String PLAYER_GAMES = "playerGames";
-
-    /** The qualified column identifier for the {@link #playerGames} field. */
-    public static final ColumnExp PLAYER_GAMES_C =
-        new ColumnExp(GamePlayRecord.class, PLAYER_GAMES);
-
-    /** The column identifier for the {@link #playerMins} field. */
-    public static final String PLAYER_MINS = "playerMins";
-
-    /** The qualified column identifier for the {@link #playerMins} field. */
-    public static final ColumnExp PLAYER_MINS_C =
-        new ColumnExp(GamePlayRecord.class, PLAYER_MINS);
-
-    /** The column identifier for the {@link #flowAwarded} field. */
-    public static final String FLOW_AWARDED = "flowAwarded";
-
-    /** The qualified column identifier for the {@link #flowAwarded} field. */
-    public static final ColumnExp FLOW_AWARDED_C =
-        new ColumnExp(GamePlayRecord.class, FLOW_AWARDED);
+    public static final Class<GamePlayRecord> _R = GamePlayRecord.class;
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp RECORDED = colexp(_R, "recorded");
+    public static final ColumnExp MULTI_PLAYER = colexp(_R, "multiPlayer");
+    public static final ColumnExp PLAYER_GAMES = colexp(_R, "playerGames");
+    public static final ColumnExp PLAYER_MINS = colexp(_R, "playerMins");
+    public static final ColumnExp FLOW_AWARDED = colexp(_R, "flowAwarded");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -68,10 +31,10 @@ public class GamePlayRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 3;
 
     /** The game that was played. */
-    public int gameId;
+    @Index public int gameId;
 
     /** The time at which the gameplay was recorded. */
-    public Timestamp recorded;
+    @Index public Timestamp recorded;
 
     /** Whether or not this gameplay session was single or multiplayer. */
     public boolean multiPlayer;

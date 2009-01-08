@@ -21,60 +21,18 @@ import java.sql.Timestamp;
 /**
  * Contains persistent data on a player's trophy.
  */
-@Entity(indices={
-    @Index(name="ixMember", fields={ TrophyRecord.MEMBER_ID })
-})
+@Entity
 public class TrophyRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(TrophyRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(TrophyRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #ident} field. */
-    public static final String IDENT = "ident";
-
-    /** The qualified column identifier for the {@link #ident} field. */
-    public static final ColumnExp IDENT_C =
-        new ColumnExp(TrophyRecord.class, IDENT);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(TrophyRecord.class, NAME);
-
-    /** The column identifier for the {@link #trophyMediaHash} field. */
-    public static final String TROPHY_MEDIA_HASH = "trophyMediaHash";
-
-    /** The qualified column identifier for the {@link #trophyMediaHash} field. */
-    public static final ColumnExp TROPHY_MEDIA_HASH_C =
-        new ColumnExp(TrophyRecord.class, TROPHY_MEDIA_HASH);
-
-    /** The column identifier for the {@link #trophyMimeType} field. */
-    public static final String TROPHY_MIME_TYPE = "trophyMimeType";
-
-    /** The qualified column identifier for the {@link #trophyMimeType} field. */
-    public static final ColumnExp TROPHY_MIME_TYPE_C =
-        new ColumnExp(TrophyRecord.class, TROPHY_MIME_TYPE);
-
-    /** The column identifier for the {@link #whenEarned} field. */
-    public static final String WHEN_EARNED = "whenEarned";
-
-    /** The qualified column identifier for the {@link #whenEarned} field. */
-    public static final ColumnExp WHEN_EARNED_C =
-        new ColumnExp(TrophyRecord.class, WHEN_EARNED);
+    public static final Class<TrophyRecord> _R = TrophyRecord.class;
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp IDENT = colexp(_R, "ident");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp TROPHY_MEDIA_HASH = colexp(_R, "trophyMediaHash");
+    public static final ColumnExp TROPHY_MIME_TYPE = colexp(_R, "trophyMimeType");
+    public static final ColumnExp WHEN_EARNED = colexp(_R, "whenEarned");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -86,7 +44,7 @@ public class TrophyRecord extends PersistentRecord
     public int gameId;
 
     /** The id of the member that holds this trophy. */
-    @Id
+    @Id @Index(name="ixMember")
     public int memberId;
 
     /** The identifier for this trophy, provided by the game. */
@@ -135,7 +93,7 @@ public class TrophyRecord extends PersistentRecord
     {
         return new Key<TrophyRecord>(
                 TrophyRecord.class,
-                new String[] { GAME_ID, MEMBER_ID, IDENT },
+                new ColumnExp[] { GAME_ID, MEMBER_ID, IDENT },
                 new Comparable[] { gameId, memberId, ident });
     }
     // AUTO-GENERATED: METHODS END

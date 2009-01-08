@@ -26,61 +26,15 @@ import com.threerings.msoy.admin.gwt.ABTest;
 public class ABTestRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #abTestId} field. */
-    public static final String AB_TEST_ID = "abTestId";
-
-    /** The qualified column identifier for the {@link #abTestId} field. */
-    public static final ColumnExp AB_TEST_ID_C =
-        new ColumnExp(ABTestRecord.class, AB_TEST_ID);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(ABTestRecord.class, NAME);
-
-    /** The column identifier for the {@link #description} field. */
-    public static final String DESCRIPTION = "description";
-
-    /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(ABTestRecord.class, DESCRIPTION);
-
-    /** The column identifier for the {@link #numGroups} field. */
-    public static final String NUM_GROUPS = "numGroups";
-
-    /** The qualified column identifier for the {@link #numGroups} field. */
-    public static final ColumnExp NUM_GROUPS_C =
-        new ColumnExp(ABTestRecord.class, NUM_GROUPS);
-
-    /** The column identifier for the {@link #onlyNewVisitors} field. */
-    public static final String ONLY_NEW_VISITORS = "onlyNewVisitors";
-
-    /** The qualified column identifier for the {@link #onlyNewVisitors} field. */
-    public static final ColumnExp ONLY_NEW_VISITORS_C =
-        new ColumnExp(ABTestRecord.class, ONLY_NEW_VISITORS);
-
-    /** The column identifier for the {@link #enabled} field. */
-    public static final String ENABLED = "enabled";
-
-    /** The qualified column identifier for the {@link #enabled} field. */
-    public static final ColumnExp ENABLED_C =
-        new ColumnExp(ABTestRecord.class, ENABLED);
-
-    /** The column identifier for the {@link #started} field. */
-    public static final String STARTED = "started";
-
-    /** The qualified column identifier for the {@link #started} field. */
-    public static final ColumnExp STARTED_C =
-        new ColumnExp(ABTestRecord.class, STARTED);
-
-    /** The column identifier for the {@link #ended} field. */
-    public static final String ENDED = "ended";
-
-    /** The qualified column identifier for the {@link #ended} field. */
-    public static final ColumnExp ENDED_C =
-        new ColumnExp(ABTestRecord.class, ENDED);
+    public static final Class<ABTestRecord> _R = ABTestRecord.class;
+    public static final ColumnExp AB_TEST_ID = colexp(_R, "abTestId");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp NUM_GROUPS = colexp(_R, "numGroups");
+    public static final ColumnExp ONLY_NEW_VISITORS = colexp(_R, "onlyNewVisitors");
+    public static final ColumnExp ENABLED = colexp(_R, "enabled");
+    public static final ColumnExp STARTED = colexp(_R, "started");
+    public static final ColumnExp ENDED = colexp(_R, "ended");
     // AUTO-GENERATED: FIELDS END
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
@@ -161,7 +115,7 @@ public class ABTestRecord extends PersistentRecord
     {
         return new Key<ABTestRecord>(
                 ABTestRecord.class,
-                new String[] { AB_TEST_ID },
+                new ColumnExp[] { AB_TEST_ID },
                 new Comparable[] { abTestId });
     }
     // AUTO-GENERATED: METHODS END

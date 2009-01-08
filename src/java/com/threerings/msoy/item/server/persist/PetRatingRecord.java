@@ -12,17 +12,10 @@ import com.threerings.msoy.server.persist.RatingRecord;
 public class PetRatingRecord extends RatingRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The qualified column identifier for the {@link #targetId} field. */
-    public static final ColumnExp TARGET_ID_C =
-        new ColumnExp(PetRatingRecord.class, TARGET_ID);
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(PetRatingRecord.class, MEMBER_ID);
-
-    /** The qualified column identifier for the {@link #rating} field. */
-    public static final ColumnExp RATING_C =
-        new ColumnExp(PetRatingRecord.class, RATING);
+    public static final Class<PetRatingRecord> _R = PetRatingRecord.class;
+    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp RATING = colexp(_R, "rating");
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START
@@ -34,7 +27,7 @@ public class PetRatingRecord extends RatingRecord
     {
         return new Key<PetRatingRecord>(
                 PetRatingRecord.class,
-                new String[] { TARGET_ID, MEMBER_ID },
+                new ColumnExp[] { TARGET_ID, MEMBER_ID },
                 new Comparable[] { targetId, memberId });
     }
     // AUTO-GENERATED: METHODS END

@@ -80,11 +80,29 @@ public abstract class TagRepository extends DepotRepository
     }
 
     /**
+     * Converts a column expression from {@link TagRecord} to one of the appropriate derived type
+     * for the records handled by this repository.
+     */
+    public ColumnExp getTagColumn (ColumnExp col)
+    {
+        return new ColumnExp(getTagClass(), col.name);
+    }
+
+    /**
      * Exports the specific tag history class used by this repository, for joining purposes.
      */
     public Class<TagHistoryRecord> getTagHistoryClass ()
     {
         return _tagHistoryClass;
+    }
+
+    /**
+     * Converts a column expression from {@link TagHistoryRecord} to one of the appropriate derived
+     * type for the records handled by this repository.
+     */
+    public ColumnExp getTagHistoryColumn (ColumnExp col)
+    {
+        return new ColumnExp(getTagHistoryClass(), col.name);
     }
 
     /**
@@ -99,9 +117,9 @@ public abstract class TagRepository extends DepotRepository
             _popularTags = findAll(TagPopularityRecord.class,
                 new FromOverride(getTagClass()),
                 new Limit(0, rows),
-                new Join(getTagColumn(TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
-                OrderBy.descending(TagPopularityRecord.COUNT_C),
-                new GroupBy(TagNameRecord.TAG_ID_C, TagNameRecord.TAG_C));
+                new Join(getTagColumn(TagRecord.TAG_ID), TagNameRecord.TAG_ID),
+                OrderBy.descending(TagPopularityRecord.COUNT),
+                new GroupBy(TagNameRecord.TAG_ID, TagNameRecord.TAG));
 
             _popularTagExpiration = DeploymentConfig.devDeployment ?
                 now : now + POPULAR_TAG_EXPIRATION;
@@ -116,7 +134,7 @@ public abstract class TagRepository extends DepotRepository
     {
         return findAll(TagNameRecord.class,
                        new Where(getTagColumn(TagRecord.TARGET_ID), targetId),
-                       new Join(TagNameRecord.TAG_ID_C, getTagColumn(TagRecord.TAG_ID)));
+                       new Join(TagNameRecord.TAG_ID, getTagColumn(TagRecord.TAG_ID)));
     }
 
     /**
@@ -142,7 +160,7 @@ public abstract class TagRepository extends DepotRepository
      */
     public List<TagNameRecord> getTags (String[] tags)
     {
-        return findAll(TagNameRecord.class, new Where(new In(TagNameRecord.TAG_C, tags)));
+        return findAll(TagNameRecord.class, new Where(new In(TagNameRecord.TAG, tags)));
     }
 
     /**
@@ -150,7 +168,7 @@ public abstract class TagRepository extends DepotRepository
      */
     public TagNameRecord getTag (String tagName)
     {
-        return load(TagNameRecord.class, new Where(TagNameRecord.TAG_C, tagName));
+        return load(TagNameRecord.class, new Where(TagNameRecord.TAG, tagName));
     }
 
     /**
@@ -245,11 +263,11 @@ public abstract class TagRepository extends DepotRepository
                 try {
                     stmt = conn.prepareStatement(
                         " INSERT INTO " + liaison.tableSQL(tagTable) + " (" +
-                        liaison.columnSQL(TagRecord.TARGET_ID) + ", " +
-                        liaison.columnSQL(TagRecord.TAG_ID) + ")" +
-                        "      SELECT ?, " + liaison.columnSQL(TagRecord.TAG_ID) +
+                        liaison.columnSQL(TagRecord.TARGET_ID.name) + ", " +
+                        liaison.columnSQL(TagRecord.TAG_ID.name) + ")" +
+                        "      SELECT ?, " + liaison.columnSQL(TagRecord.TAG_ID.name) +
                         "        FROM " + liaison.tableSQL(tagTable) +
-                        "       WHERE " + liaison.columnSQL(TagRecord.TARGET_ID) + " = ?");
+                        "       WHERE " + liaison.columnSQL(TagRecord.TARGET_ID.name) + " = ?");
                     stmt.setInt(1, toTargetId);
                     stmt.setInt(2, fromTargetId);
                     return stmt.executeUpdate();
@@ -281,16 +299,6 @@ public abstract class TagRepository extends DepotRepository
         // invalidate and delete tag history records for this target
         deleteAll(getTagHistoryClass(),
                   new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId));
-    }
-
-    protected ColumnExp getTagColumn (String cname)
-    {
-        return new ColumnExp(getTagClass(), cname);
-    }
-
-    protected ColumnExp getTagHistoryColumn (String cname)
-    {
-        return new ColumnExp(getTagHistoryClass(), cname);
     }
 
     @Override // from DepotRepository

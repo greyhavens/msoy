@@ -18,53 +18,17 @@ import com.google.common.base.Function;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Medal;
 
-@Entity(indices={
-    @Index(name="gropuIdIdx", fields={ MedalRecord.GROUP_ID })
-})
+@Entity
 public class MedalRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #medalId} field. */
-    public static final String MEDAL_ID = "medalId";
-
-    /** The qualified column identifier for the {@link #medalId} field. */
-    public static final ColumnExp MEDAL_ID_C =
-        new ColumnExp(MedalRecord.class, MEDAL_ID);
-
-    /** The column identifier for the {@link #groupId} field. */
-    public static final String GROUP_ID = "groupId";
-
-    /** The qualified column identifier for the {@link #groupId} field. */
-    public static final ColumnExp GROUP_ID_C =
-        new ColumnExp(MedalRecord.class, GROUP_ID);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(MedalRecord.class, NAME);
-
-    /** The column identifier for the {@link #description} field. */
-    public static final String DESCRIPTION = "description";
-
-    /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(MedalRecord.class, DESCRIPTION);
-
-    /** The column identifier for the {@link #iconHash} field. */
-    public static final String ICON_HASH = "iconHash";
-
-    /** The qualified column identifier for the {@link #iconHash} field. */
-    public static final ColumnExp ICON_HASH_C =
-        new ColumnExp(MedalRecord.class, ICON_HASH);
-
-    /** The column identifier for the {@link #iconMimeType} field. */
-    public static final String ICON_MIME_TYPE = "iconMimeType";
-
-    /** The qualified column identifier for the {@link #iconMimeType} field. */
-    public static final ColumnExp ICON_MIME_TYPE_C =
-        new ColumnExp(MedalRecord.class, ICON_MIME_TYPE);
+    public static final Class<MedalRecord> _R = MedalRecord.class;
+    public static final ColumnExp MEDAL_ID = colexp(_R, "medalId");
+    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp ICON_HASH = colexp(_R, "iconHash");
+    public static final ColumnExp ICON_MIME_TYPE = colexp(_R, "iconMimeType");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -91,6 +55,7 @@ public class MedalRecord extends PersistentRecord
     public int medalId;
 
     /** The group that owns this medal */
+    @Index(name="gropuIdIdx")
     public int groupId;
 
     /** The name of the medal. */
@@ -134,7 +99,7 @@ public class MedalRecord extends PersistentRecord
     {
         return new Key<MedalRecord>(
                 MedalRecord.class,
-                new String[] { MEDAL_ID },
+                new ColumnExp[] { MEDAL_ID },
                 new Comparable[] { medalId });
     }
     // AUTO-GENERATED: METHODS END

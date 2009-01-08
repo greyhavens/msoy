@@ -16,21 +16,11 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 public class GlobalFeedMessageRecord extends FeedMessageRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The qualified column identifier for the {@link #messageId} field. */
-    public static final ColumnExp MESSAGE_ID_C =
-        new ColumnExp(GlobalFeedMessageRecord.class, MESSAGE_ID);
-
-    /** The qualified column identifier for the {@link #type} field. */
-    public static final ColumnExp TYPE_C =
-        new ColumnExp(GlobalFeedMessageRecord.class, TYPE);
-
-    /** The qualified column identifier for the {@link #data} field. */
-    public static final ColumnExp DATA_C =
-        new ColumnExp(GlobalFeedMessageRecord.class, DATA);
-
-    /** The qualified column identifier for the {@link #posted} field. */
-    public static final ColumnExp POSTED_C =
-        new ColumnExp(GlobalFeedMessageRecord.class, POSTED);
+    public static final Class<GlobalFeedMessageRecord> _R = GlobalFeedMessageRecord.class;
+    public static final ColumnExp MESSAGE_ID = colexp(_R, "messageId");
+    public static final ColumnExp TYPE = colexp(_R, "type");
+    public static final ColumnExp DATA = colexp(_R, "data");
+    public static final ColumnExp POSTED = colexp(_R, "posted");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -52,7 +42,7 @@ public class GlobalFeedMessageRecord extends FeedMessageRecord
     {
         return new Key<GlobalFeedMessageRecord>(
                 GlobalFeedMessageRecord.class,
-                new String[] { MESSAGE_ID },
+                new ColumnExp[] { MESSAGE_ID },
                 new Comparable[] { messageId });
     }
     // AUTO-GENERATED: METHODS END

@@ -16,32 +16,14 @@ import com.threerings.msoy.web.gwt.ExternalAuther;
  * Maps our member accounts to external user ids. Used to integrate with external services like
  * Facebook.
  */
-@Entity(indices={
-    @Index(name="ixMemberId", fields={ ExternalMapRecord.MEMBER_ID })
-})
+@Entity
 public class ExternalMapRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #partnerId} field. */
-    public static final String PARTNER_ID = "partnerId";
-
-    /** The qualified column identifier for the {@link #partnerId} field. */
-    public static final ColumnExp PARTNER_ID_C =
-        new ColumnExp(ExternalMapRecord.class, PARTNER_ID);
-
-    /** The column identifier for the {@link #externalId} field. */
-    public static final String EXTERNAL_ID = "externalId";
-
-    /** The qualified column identifier for the {@link #externalId} field. */
-    public static final ColumnExp EXTERNAL_ID_C =
-        new ColumnExp(ExternalMapRecord.class, EXTERNAL_ID);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(ExternalMapRecord.class, MEMBER_ID);
+    public static final Class<ExternalMapRecord> _R = ExternalMapRecord.class;
+    public static final ColumnExp PARTNER_ID = colexp(_R, "partnerId");
+    public static final ColumnExp EXTERNAL_ID = colexp(_R, "externalId");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -56,6 +38,7 @@ public class ExternalMapRecord extends PersistentRecord
     @Id public String externalId;
 
     /** The id of the Whirled account associated with the specified external account. */
+    @Index(name="ixMemberId")
     public int memberId;
 
     // AUTO-GENERATED: METHODS START
@@ -67,7 +50,7 @@ public class ExternalMapRecord extends PersistentRecord
     {
         return new Key<ExternalMapRecord>(
                 ExternalMapRecord.class,
-                new String[] { PARTNER_ID, EXTERNAL_ID },
+                new ColumnExp[] { PARTNER_ID, EXTERNAL_ID },
                 new Comparable[] { partnerId, externalId });
     }
     // AUTO-GENERATED: METHODS END

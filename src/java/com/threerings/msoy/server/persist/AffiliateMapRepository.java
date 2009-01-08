@@ -90,7 +90,7 @@ public class AffiliateMapRepository extends DepotRepository
     public List<AffiliateMapRecord> getMappings (int start, int count)
     {
         return findAll(AffiliateMapRecord.class,
-            OrderBy.ascending(AffiliateMapRecord.AFFILIATE_C), new Limit(start, count));
+            OrderBy.ascending(AffiliateMapRecord.AFFILIATE), new Limit(start, count));
     }
 
     /**

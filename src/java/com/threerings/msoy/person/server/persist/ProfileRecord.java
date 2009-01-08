@@ -30,108 +30,26 @@ import com.threerings.msoy.web.gwt.MemberCard;
  * Contains a member's profile data.
  */
 @Entity(fullTextIndices={
-    @FullTextIndex(name=ProfileRecord.FTS_REAL_NAME, fields={ ProfileRecord.REAL_NAME })
+    @FullTextIndex(name=ProfileRecord.FTS_REAL_NAME, fields={ "realName" })
 })
 public class ProfileRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(ProfileRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #modifications} field. */
-    public static final String MODIFICATIONS = "modifications";
-
-    /** The qualified column identifier for the {@link #modifications} field. */
-    public static final ColumnExp MODIFICATIONS_C =
-        new ColumnExp(ProfileRecord.class, MODIFICATIONS);
-
-    /** The column identifier for the {@link #photoHash} field. */
-    public static final String PHOTO_HASH = "photoHash";
-
-    /** The qualified column identifier for the {@link #photoHash} field. */
-    public static final ColumnExp PHOTO_HASH_C =
-        new ColumnExp(ProfileRecord.class, PHOTO_HASH);
-
-    /** The column identifier for the {@link #photoMimeType} field. */
-    public static final String PHOTO_MIME_TYPE = "photoMimeType";
-
-    /** The qualified column identifier for the {@link #photoMimeType} field. */
-    public static final ColumnExp PHOTO_MIME_TYPE_C =
-        new ColumnExp(ProfileRecord.class, PHOTO_MIME_TYPE);
-
-    /** The column identifier for the {@link #photoConstraint} field. */
-    public static final String PHOTO_CONSTRAINT = "photoConstraint";
-
-    /** The qualified column identifier for the {@link #photoConstraint} field. */
-    public static final ColumnExp PHOTO_CONSTRAINT_C =
-        new ColumnExp(ProfileRecord.class, PHOTO_CONSTRAINT);
-
-    /** The column identifier for the {@link #homePageURL} field. */
-    public static final String HOME_PAGE_URL = "homePageURL";
-
-    /** The qualified column identifier for the {@link #homePageURL} field. */
-    public static final ColumnExp HOME_PAGE_URL_C =
-        new ColumnExp(ProfileRecord.class, HOME_PAGE_URL);
-
-    /** The column identifier for the {@link #headline} field. */
-    public static final String HEADLINE = "headline";
-
-    /** The qualified column identifier for the {@link #headline} field. */
-    public static final ColumnExp HEADLINE_C =
-        new ColumnExp(ProfileRecord.class, HEADLINE);
-
-    /** The column identifier for the {@link #sex} field. */
-    public static final String SEX = "sex";
-
-    /** The qualified column identifier for the {@link #sex} field. */
-    public static final ColumnExp SEX_C =
-        new ColumnExp(ProfileRecord.class, SEX);
-
-    /** The column identifier for the {@link #birthday} field. */
-    public static final String BIRTHDAY = "birthday";
-
-    /** The qualified column identifier for the {@link #birthday} field. */
-    public static final ColumnExp BIRTHDAY_C =
-        new ColumnExp(ProfileRecord.class, BIRTHDAY);
-
-    /** The column identifier for the {@link #showAge} field. */
-    public static final String SHOW_AGE = "showAge";
-
-    /** The qualified column identifier for the {@link #showAge} field. */
-    public static final ColumnExp SHOW_AGE_C =
-        new ColumnExp(ProfileRecord.class, SHOW_AGE);
-
-    /** The column identifier for the {@link #location} field. */
-    public static final String LOCATION = "location";
-
-    /** The qualified column identifier for the {@link #location} field. */
-    public static final ColumnExp LOCATION_C =
-        new ColumnExp(ProfileRecord.class, LOCATION);
-
-    /** The column identifier for the {@link #realName} field. */
-    public static final String REAL_NAME = "realName";
-
-    /** The qualified column identifier for the {@link #realName} field. */
-    public static final ColumnExp REAL_NAME_C =
-        new ColumnExp(ProfileRecord.class, REAL_NAME);
-
-    /** The column identifier for the {@link #profileBadgeCode} field. */
-    public static final String PROFILE_BADGE_CODE = "profileBadgeCode";
-
-    /** The qualified column identifier for the {@link #profileBadgeCode} field. */
-    public static final ColumnExp PROFILE_BADGE_CODE_C =
-        new ColumnExp(ProfileRecord.class, PROFILE_BADGE_CODE);
-
-    /** The column identifier for the {@link #profileMedalId} field. */
-    public static final String PROFILE_MEDAL_ID = "profileMedalId";
-
-    /** The qualified column identifier for the {@link #profileMedalId} field. */
-    public static final ColumnExp PROFILE_MEDAL_ID_C =
-        new ColumnExp(ProfileRecord.class, PROFILE_MEDAL_ID);
+    public static final Class<ProfileRecord> _R = ProfileRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp MODIFICATIONS = colexp(_R, "modifications");
+    public static final ColumnExp PHOTO_HASH = colexp(_R, "photoHash");
+    public static final ColumnExp PHOTO_MIME_TYPE = colexp(_R, "photoMimeType");
+    public static final ColumnExp PHOTO_CONSTRAINT = colexp(_R, "photoConstraint");
+    public static final ColumnExp HOME_PAGE_URL = colexp(_R, "homePageURL");
+    public static final ColumnExp HEADLINE = colexp(_R, "headline");
+    public static final ColumnExp SEX = colexp(_R, "sex");
+    public static final ColumnExp BIRTHDAY = colexp(_R, "birthday");
+    public static final ColumnExp SHOW_AGE = colexp(_R, "showAge");
+    public static final ColumnExp LOCATION = colexp(_R, "location");
+    public static final ColumnExp REAL_NAME = colexp(_R, "realName");
+    public static final ColumnExp PROFILE_BADGE_CODE = colexp(_R, "profileBadgeCode");
+    public static final ColumnExp PROFILE_MEDAL_ID = colexp(_R, "profileMedalId");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on Real Name */
@@ -348,7 +266,7 @@ public class ProfileRecord extends PersistentRecord
     {
         return new Key<ProfileRecord>(
                 ProfileRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

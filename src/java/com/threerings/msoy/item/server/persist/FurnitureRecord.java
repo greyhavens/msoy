@@ -18,102 +18,29 @@ import com.threerings.msoy.item.data.all.Item;
 public class FurnitureRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #action} field. */
-    public static final String ACTION = "action";
-
-    /** The qualified column identifier for the {@link #action} field. */
-    public static final ColumnExp ACTION_C =
-        new ColumnExp(FurnitureRecord.class, ACTION);
-
-    /** The column identifier for the {@link #hotSpotX} field. */
-    public static final String HOT_SPOT_X = "hotSpotX";
-
-    /** The qualified column identifier for the {@link #hotSpotX} field. */
-    public static final ColumnExp HOT_SPOT_X_C =
-        new ColumnExp(FurnitureRecord.class, HOT_SPOT_X);
-
-    /** The column identifier for the {@link #hotSpotY} field. */
-    public static final String HOT_SPOT_Y = "hotSpotY";
-
-    /** The qualified column identifier for the {@link #hotSpotY} field. */
-    public static final ColumnExp HOT_SPOT_Y_C =
-        new ColumnExp(FurnitureRecord.class, HOT_SPOT_Y);
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(FurnitureRecord.class, ITEM_ID);
-
-    /** The qualified column identifier for the {@link #sourceId} field. */
-    public static final ColumnExp SOURCE_ID_C =
-        new ColumnExp(FurnitureRecord.class, SOURCE_ID);
-
-    /** The qualified column identifier for the {@link #creatorId} field. */
-    public static final ColumnExp CREATOR_ID_C =
-        new ColumnExp(FurnitureRecord.class, CREATOR_ID);
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(FurnitureRecord.class, OWNER_ID);
-
-    /** The qualified column identifier for the {@link #catalogId} field. */
-    public static final ColumnExp CATALOG_ID_C =
-        new ColumnExp(FurnitureRecord.class, CATALOG_ID);
-
-    /** The qualified column identifier for the {@link #rating} field. */
-    public static final ColumnExp RATING_C =
-        new ColumnExp(FurnitureRecord.class, RATING);
-
-    /** The qualified column identifier for the {@link #ratingCount} field. */
-    public static final ColumnExp RATING_COUNT_C =
-        new ColumnExp(FurnitureRecord.class, RATING_COUNT);
-
-    /** The qualified column identifier for the {@link #used} field. */
-    public static final ColumnExp USED_C =
-        new ColumnExp(FurnitureRecord.class, USED);
-
-    /** The qualified column identifier for the {@link #location} field. */
-    public static final ColumnExp LOCATION_C =
-        new ColumnExp(FurnitureRecord.class, LOCATION);
-
-    /** The qualified column identifier for the {@link #lastTouched} field. */
-    public static final ColumnExp LAST_TOUCHED_C =
-        new ColumnExp(FurnitureRecord.class, LAST_TOUCHED);
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(FurnitureRecord.class, NAME);
-
-    /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(FurnitureRecord.class, DESCRIPTION);
-
-    /** The qualified column identifier for the {@link #mature} field. */
-    public static final ColumnExp MATURE_C =
-        new ColumnExp(FurnitureRecord.class, MATURE);
-
-    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
-    public static final ColumnExp THUMB_MEDIA_HASH_C =
-        new ColumnExp(FurnitureRecord.class, THUMB_MEDIA_HASH);
-
-    /** The qualified column identifier for the {@link #thumbMimeType} field. */
-    public static final ColumnExp THUMB_MIME_TYPE_C =
-        new ColumnExp(FurnitureRecord.class, THUMB_MIME_TYPE);
-
-    /** The qualified column identifier for the {@link #thumbConstraint} field. */
-    public static final ColumnExp THUMB_CONSTRAINT_C =
-        new ColumnExp(FurnitureRecord.class, THUMB_CONSTRAINT);
-
-    /** The qualified column identifier for the {@link #furniMediaHash} field. */
-    public static final ColumnExp FURNI_MEDIA_HASH_C =
-        new ColumnExp(FurnitureRecord.class, FURNI_MEDIA_HASH);
-
-    /** The qualified column identifier for the {@link #furniMimeType} field. */
-    public static final ColumnExp FURNI_MIME_TYPE_C =
-        new ColumnExp(FurnitureRecord.class, FURNI_MIME_TYPE);
-
-    /** The qualified column identifier for the {@link #furniConstraint} field. */
-    public static final ColumnExp FURNI_CONSTRAINT_C =
-        new ColumnExp(FurnitureRecord.class, FURNI_CONSTRAINT);
+    public static final Class<FurnitureRecord> _R = FurnitureRecord.class;
+    public static final ColumnExp ACTION = colexp(_R, "action");
+    public static final ColumnExp HOT_SPOT_X = colexp(_R, "hotSpotX");
+    public static final ColumnExp HOT_SPOT_Y = colexp(_R, "hotSpotY");
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
+    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp USED = colexp(_R, "used");
+    public static final ColumnExp LOCATION = colexp(_R, "location");
+    public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp MATURE = colexp(_R, "mature");
+    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
+    public static final ColumnExp FURNI_MEDIA_HASH = colexp(_R, "furniMediaHash");
+    public static final ColumnExp FURNI_MIME_TYPE = colexp(_R, "furniMimeType");
+    public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
@@ -164,7 +91,7 @@ public class FurnitureRecord extends ItemRecord
     {
         return new Key<FurnitureRecord>(
                 FurnitureRecord.class,
-                new String[] { ITEM_ID },
+                new ColumnExp[] { ITEM_ID },
                 new Comparable[] { itemId });
     }
     // AUTO-GENERATED: METHODS END

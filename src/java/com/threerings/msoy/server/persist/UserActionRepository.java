@@ -16,6 +16,7 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.util.IntIntMap;
@@ -60,7 +61,7 @@ public class UserActionRepository extends DepotRepository
      */
     public Collection<MemberActionLogRecord> getLogRecords (final int memberId)
     {
-        final Where condition = new Where(MemberActionLogRecord.MEMBER_ID_C, memberId);
+        final Where condition = new Where(MemberActionLogRecord.MEMBER_ID, memberId);
         return findAll(MemberActionLogRecord.class, condition);
     }
 
@@ -88,13 +89,13 @@ public class UserActionRepository extends DepotRepository
             helper.noteRecord(record);
         }
 
-        final Map<String, SQLExpression> fieldMap = Maps.newHashMap();
+        final Map<ColumnExp, SQLExpression> fieldMap = Maps.newHashMap();
 
         // update their action summary counts
         for (final IntIntMap.IntIntEntry entry : actionCounts.entrySet()) {
             fieldMap.put(
                 MemberActionSummaryRecord.COUNT,
-                new Arithmetic.Add(MemberActionSummaryRecord.COUNT_C, entry.getIntValue()));
+                new Arithmetic.Add(MemberActionSummaryRecord.COUNT, entry.getIntValue()));
             final int rows = updateLiteral(
                 MemberActionSummaryRecord.class,
                 MemberActionSummaryRecord.MEMBER_ID, memberId,
@@ -110,7 +111,7 @@ public class UserActionRepository extends DepotRepository
 
         // clear their log tables
         deleteAll(MemberActionLogRecord.class,
-                  new Where(MemberActionLogRecord.MEMBER_ID_C, memberId));
+                  new Where(MemberActionLogRecord.MEMBER_ID, memberId));
 
         // finally compute a new humanity assessment for this member (TODO: load up action summary
         // counts, pass that data in as well)

@@ -4,13 +4,13 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -22,11 +22,12 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Arithmetic;
+import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic;
-import com.samskivert.depot.operator.Conditionals.Equals;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -64,7 +65,7 @@ public class ItemListRepository extends DepotRepository
     public void deleteList (final int listId)
     {
         // delete all of the elements from the list
-        deleteAll(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID_C, listId));
+        deleteAll(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID, listId));
 
         // delete the list info
         delete(ItemListInfoRecord.class, listId);
@@ -79,7 +80,7 @@ public class ItemListRepository extends DepotRepository
     {
         CountRecord size = load(CountRecord.class,
             new FromOverride(ItemListElementRecord.class),
-            new Where(ItemListElementRecord.LIST_ID_C, listId));
+            new Where(ItemListElementRecord.LIST_ID, listId));
 
         return size.count;
     }
@@ -91,10 +92,10 @@ public class ItemListRepository extends DepotRepository
     {
         Where where;
         if (listType == Item.NOT_A_TYPE) {
-            where = new Where(ItemListElementRecord.LIST_ID_C, listId);
+            where = new Where(ItemListElementRecord.LIST_ID, listId);
         } else {
-            where = new Where(ItemListElementRecord.LIST_ID_C, listId,
-                              ItemListElementRecord.TYPE_C, listType);
+            where = new Where(ItemListElementRecord.LIST_ID, listId,
+                              ItemListElementRecord.TYPE, listType);
         }
 
         CountRecord size = load(CountRecord.class,
@@ -116,7 +117,7 @@ public class ItemListRepository extends DepotRepository
     public List<ItemListInfoRecord> loadInfos (int memberId)
     {
         return findAll(ItemListInfoRecord.class,
-                       new Where(ItemListInfoRecord.MEMBER_ID_C, memberId));
+                       new Where(ItemListInfoRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -125,8 +126,8 @@ public class ItemListRepository extends DepotRepository
     public List<ItemListInfoRecord> loadInfos (int memberId, byte type)
     {
         // query by type
-        Where where = new Where(ItemListInfoRecord.MEMBER_ID_C, Integer.valueOf(memberId),
-            ItemListInfoRecord.TYPE_C, Integer.valueOf(type));
+        Where where = new Where(ItemListInfoRecord.MEMBER_ID, Integer.valueOf(memberId),
+            ItemListInfoRecord.TYPE, Integer.valueOf(type));
         return findAll(ItemListInfoRecord.class, where);
     }
 
@@ -136,8 +137,8 @@ public class ItemListRepository extends DepotRepository
     public ItemIdent[] loadList (int listId)
     {
         List<ItemListElementRecord> list = findAll(ItemListElementRecord.class,
-            new Where(ItemListElementRecord.LIST_ID_C, listId),
-            OrderBy.ascending(ItemListElementRecord.SEQUENCE_C));
+            new Where(ItemListElementRecord.LIST_ID, listId),
+            OrderBy.ascending(ItemListElementRecord.SEQUENCE));
         return Lists.transform(list, ItemListElementRecord.TO_IDENT).toArray(
             new ItemIdent[list.size()]);
     }
@@ -153,17 +154,17 @@ public class ItemListRepository extends DepotRepository
     {
         Where where;
         if (query.itemType == Item.NOT_A_TYPE) {
-            where = new Where(ItemListElementRecord.LIST_ID_C, query.listId);
+            where = new Where(ItemListElementRecord.LIST_ID, query.listId);
         } else {
-            where = new Where(ItemListElementRecord.LIST_ID_C, query.listId,
-                ItemListElementRecord.TYPE_C, query.itemType);
+            where = new Where(ItemListElementRecord.LIST_ID, query.listId,
+                ItemListElementRecord.TYPE, query.itemType);
         }
 
         OrderBy orderBy;
         if (query.descending) {
-            orderBy = OrderBy.descending(ItemListElementRecord.SEQUENCE_C);
+            orderBy = OrderBy.descending(ItemListElementRecord.SEQUENCE);
         } else {
-            orderBy = OrderBy.ascending(ItemListElementRecord.SEQUENCE_C);
+            orderBy = OrderBy.ascending(ItemListElementRecord.SEQUENCE);
         }
 
         List<ItemListElementRecord> results;
@@ -284,14 +285,14 @@ public class ItemListRepository extends DepotRepository
      */
     protected void shiftItemsRight (final int listId, final short fromIndex)
     {
-        Equals findList = new Equals(ItemListElementRecord.LIST_ID_C, listId);
+        Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
         Conditionals.GreaterThanEquals after =
-            new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE_C, fromIndex);
+            new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE, fromIndex);
         Logic.And condition = new Logic.And(findList, after);
 
-        Map<String, SQLExpression> shift = new HashMap<String, SQLExpression>();
+        Map<ColumnExp, SQLExpression> shift = Maps.newHashMap();
         shift.put(ItemListElementRecord.SEQUENCE,
-                  new Arithmetic.Add(ItemListElementRecord.SEQUENCE_C, 1));
+                  new Arithmetic.Add(ItemListElementRecord.SEQUENCE, 1));
 
         CacheInvalidator invalidator =
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
@@ -311,13 +312,13 @@ public class ItemListRepository extends DepotRepository
      */
     protected void shiftItemsLeft (final int listId, final short fromIndex)
     {
-        Equals findList = new Equals(ItemListElementRecord.LIST_ID_C, listId);
+        Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
         Conditionals.GreaterThan after =
-            new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
+            new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
         Logic.And condition = new Logic.And(findList, after);
-        Map<String, SQLExpression> shift = new HashMap<String, SQLExpression>();
+        Map<ColumnExp, SQLExpression> shift = Maps.newHashMap();
         shift.put(ItemListElementRecord.SEQUENCE,
-                  new Arithmetic.Sub(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
+                  new Arithmetic.Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
 
         CacheInvalidator invalidator =
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
@@ -341,18 +342,18 @@ public class ItemListRepository extends DepotRepository
     {
         CacheInvalidator invalidator;
         SQLExpression range;
-        Map<String, SQLExpression> shift = new HashMap<String, SQLExpression>();
+        Map<ColumnExp, SQLExpression> shift = Maps.newHashMap();
 
         if (fromIndex < toIndex) {
             // shift all affected items to the left
             Conditionals.GreaterThan min =
-                new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
+                new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE, fromIndex);
             Conditionals.LessThanEquals max =
-                new Conditionals.LessThanEquals(ItemListElementRecord.SEQUENCE_C, toIndex);
+                new Conditionals.LessThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
             range = new Logic.And(min, max);
 
             shift.put(ItemListElementRecord.SEQUENCE,
-                      new Arithmetic.Sub(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
+                      new Arithmetic.Sub(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
 
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
@@ -365,13 +366,13 @@ public class ItemListRepository extends DepotRepository
         } else {
             // shift affected items to the right (increment by one)
             Conditionals.GreaterThanEquals min =
-                new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE_C, toIndex);
+                new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE, toIndex);
             Conditionals.LessThan max =
-                new Conditionals.LessThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
+                new Conditionals.LessThan(ItemListElementRecord.SEQUENCE, fromIndex);
             range = new Logic.And(min, max);
 
             shift.put(ItemListElementRecord.SEQUENCE,
-                      new Arithmetic.Add(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
+                      new Arithmetic.Add(ItemListElementRecord.SEQUENCE, Integer.valueOf(1)));
 
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
@@ -382,7 +383,7 @@ public class ItemListRepository extends DepotRepository
             };
         }
 
-        Equals findList = new Equals(ItemListElementRecord.LIST_ID_C, listId);
+        Equals findList = new Equals(ItemListElementRecord.LIST_ID, listId);
         Logic.And condition = new Logic.And(findList, range);
 
         // update all of the affected items
@@ -394,8 +395,8 @@ public class ItemListRepository extends DepotRepository
      */
     protected ItemListElementRecord loadElement (int listId, ItemIdent item)
     {
-        return load(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID_C, listId,
-            ItemListElementRecord.ITEM_ID_C, item.itemId, ItemListElementRecord.TYPE_C, item.type));
+        return load(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID, listId,
+            ItemListElementRecord.ITEM_ID, item.itemId, ItemListElementRecord.TYPE, item.type));
     }
 
     @Override // from DepotRepository

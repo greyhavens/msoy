@@ -16,33 +16,11 @@ import com.samskivert.depot.expression.ColumnExp;
 public class ReadTrackingRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(ReadTrackingRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #threadId} field. */
-    public static final String THREAD_ID = "threadId";
-
-    /** The qualified column identifier for the {@link #threadId} field. */
-    public static final ColumnExp THREAD_ID_C =
-        new ColumnExp(ReadTrackingRecord.class, THREAD_ID);
-
-    /** The column identifier for the {@link #lastReadPostId} field. */
-    public static final String LAST_READ_POST_ID = "lastReadPostId";
-
-    /** The qualified column identifier for the {@link #lastReadPostId} field. */
-    public static final ColumnExp LAST_READ_POST_ID_C =
-        new ColumnExp(ReadTrackingRecord.class, LAST_READ_POST_ID);
-
-    /** The column identifier for the {@link #lastReadPostIndex} field. */
-    public static final String LAST_READ_POST_INDEX = "lastReadPostIndex";
-
-    /** The qualified column identifier for the {@link #lastReadPostIndex} field. */
-    public static final ColumnExp LAST_READ_POST_INDEX_C =
-        new ColumnExp(ReadTrackingRecord.class, LAST_READ_POST_INDEX);
+    public static final Class<ReadTrackingRecord> _R = ReadTrackingRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp THREAD_ID = colexp(_R, "threadId");
+    public static final ColumnExp LAST_READ_POST_ID = colexp(_R, "lastReadPostId");
+    public static final ColumnExp LAST_READ_POST_INDEX = colexp(_R, "lastReadPostIndex");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -71,7 +49,7 @@ public class ReadTrackingRecord extends PersistentRecord
     {
         return new Key<ReadTrackingRecord>(
                 ReadTrackingRecord.class,
-                new String[] { MEMBER_ID, THREAD_ID },
+                new ColumnExp[] { MEMBER_ID, THREAD_ID },
                 new Comparable[] { memberId, threadId });
     }
     // AUTO-GENERATED: METHODS END

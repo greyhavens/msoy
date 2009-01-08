@@ -28,47 +28,13 @@ import com.threerings.msoy.person.gwt.Gallery;
 public class GalleryInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #galleryId} field. */
-    public static final String GALLERY_ID = "galleryId";
-
-    /** The qualified column identifier for the {@link #galleryId} field. */
-    public static final ColumnExp GALLERY_ID_C =
-        new ColumnExp(GalleryInfoRecord.class, GALLERY_ID);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(GalleryInfoRecord.class, NAME);
-
-    /** The column identifier for the {@link #lastModified} field. */
-    public static final String LAST_MODIFIED = "lastModified";
-
-    /** The qualified column identifier for the {@link #lastModified} field. */
-    public static final ColumnExp LAST_MODIFIED_C =
-        new ColumnExp(GalleryInfoRecord.class, LAST_MODIFIED);
-
-    /** The column identifier for the {@link #thumbMediaHash} field. */
-    public static final String THUMB_MEDIA_HASH = "thumbMediaHash";
-
-    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
-    public static final ColumnExp THUMB_MEDIA_HASH_C =
-        new ColumnExp(GalleryInfoRecord.class, THUMB_MEDIA_HASH);
-
-    /** The column identifier for the {@link #thumbMimeType} field. */
-    public static final String THUMB_MIME_TYPE = "thumbMimeType";
-
-    /** The qualified column identifier for the {@link #thumbMimeType} field. */
-    public static final ColumnExp THUMB_MIME_TYPE_C =
-        new ColumnExp(GalleryInfoRecord.class, THUMB_MIME_TYPE);
-
-    /** The column identifier for the {@link #thumbConstraint} field. */
-    public static final String THUMB_CONSTRAINT = "thumbConstraint";
-
-    /** The qualified column identifier for the {@link #thumbConstraint} field. */
-    public static final ColumnExp THUMB_CONSTRAINT_C =
-        new ColumnExp(GalleryInfoRecord.class, THUMB_CONSTRAINT);
+    public static final Class<GalleryInfoRecord> _R = GalleryInfoRecord.class;
+    public static final ColumnExp GALLERY_ID = colexp(_R, "galleryId");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp LAST_MODIFIED = colexp(_R, "lastModified");
+    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
     // AUTO-GENERATED: FIELDS END
 
     /** Converts persistent records into runtime records. */

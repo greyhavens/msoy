@@ -21,38 +21,16 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 /**
  * Meta-data defining a list of items.
  */
-@Entity(indices={ @Index(name="ixMember", fields={"memberId"}) })
+@Entity
 @TableGenerator(name="listId", pkColumnValue="ITEM_LIST_INFO")
 public class ItemListInfoRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #listId} field. */
-    public static final String LIST_ID = "listId";
-
-    /** The qualified column identifier for the {@link #listId} field. */
-    public static final ColumnExp LIST_ID_C =
-        new ColumnExp(ItemListInfoRecord.class, LIST_ID);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(ItemListInfoRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #type} field. */
-    public static final String TYPE = "type";
-
-    /** The qualified column identifier for the {@link #type} field. */
-    public static final ColumnExp TYPE_C =
-        new ColumnExp(ItemListInfoRecord.class, TYPE);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(ItemListInfoRecord.class, NAME);
+    public static final Class<ItemListInfoRecord> _R = ItemListInfoRecord.class;
+    public static final ColumnExp LIST_ID = colexp(_R, "listId");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp TYPE = colexp(_R, "type");
+    public static final ColumnExp NAME = colexp(_R, "name");
     // AUTO-GENERATED: FIELDS END
 
     /** Our depot schema version. */
@@ -69,6 +47,7 @@ public class ItemListInfoRecord extends PersistentRecord
     @Id @GeneratedValue(generator="listId", strategy=GenerationType.TABLE, allocationSize=1)
     public int listId;
 
+    @Index(name="ixMember")
     public int memberId;
 
     public byte type;
@@ -112,7 +91,7 @@ public class ItemListInfoRecord extends PersistentRecord
     {
         return new Key<ItemListInfoRecord>(
                 ItemListInfoRecord.class,
-                new String[] { LIST_ID },
+                new ColumnExp[] { LIST_ID },
                 new Comparable[] { listId });
     }
     // AUTO-GENERATED: METHODS END

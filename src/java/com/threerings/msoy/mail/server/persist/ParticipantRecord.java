@@ -15,32 +15,14 @@ import com.samskivert.depot.expression.ColumnExp;
 /**
  * Links a member to a conversation.
  */
-@Entity(indices={
-    @Index(name="ixParticipant", fields={ ParticipantRecord.PARTICIPANT_ID })
-})
+@Entity
 public class ParticipantRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #conversationId} field. */
-    public static final String CONVERSATION_ID = "conversationId";
-
-    /** The qualified column identifier for the {@link #conversationId} field. */
-    public static final ColumnExp CONVERSATION_ID_C =
-        new ColumnExp(ParticipantRecord.class, CONVERSATION_ID);
-
-    /** The column identifier for the {@link #participantId} field. */
-    public static final String PARTICIPANT_ID = "participantId";
-
-    /** The qualified column identifier for the {@link #participantId} field. */
-    public static final ColumnExp PARTICIPANT_ID_C =
-        new ColumnExp(ParticipantRecord.class, PARTICIPANT_ID);
-
-    /** The column identifier for the {@link #lastRead} field. */
-    public static final String LAST_READ = "lastRead";
-
-    /** The qualified column identifier for the {@link #lastRead} field. */
-    public static final ColumnExp LAST_READ_C =
-        new ColumnExp(ParticipantRecord.class, LAST_READ);
+    public static final Class<ParticipantRecord> _R = ParticipantRecord.class;
+    public static final ColumnExp CONVERSATION_ID = colexp(_R, "conversationId");
+    public static final ColumnExp PARTICIPANT_ID = colexp(_R, "participantId");
+    public static final ColumnExp LAST_READ = colexp(_R, "lastRead");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -51,7 +33,8 @@ public class ParticipantRecord extends PersistentRecord
     @Id public int conversationId;
 
     /** The id of the member that is participating. */
-    @Id public int participantId;
+    @Id @Index(name="ixParticipant")
+    public int participantId;
 
     /** The timestamp of this participant's most recently read message in this conversation. */
     public Timestamp lastRead;
@@ -65,7 +48,7 @@ public class ParticipantRecord extends PersistentRecord
     {
         return new Key<ParticipantRecord>(
                 ParticipantRecord.class,
-                new String[] { CONVERSATION_ID, PARTICIPANT_ID },
+                new ColumnExp[] { CONVERSATION_ID, PARTICIPANT_ID },
                 new Comparable[] { conversationId, participantId });
     }
     // AUTO-GENERATED: METHODS END

@@ -20,60 +20,18 @@ import com.threerings.msoy.mail.gwt.Conversation;
 /**
  * Contains information on a conversation between two members.
  */
-@Entity(indices={
-    @Index(name="ixLastSent", fields={ ConversationRecord.LAST_SENT })
-})
+@Entity
 public class ConversationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #conversationId} field. */
-    public static final String CONVERSATION_ID = "conversationId";
-
-    /** The qualified column identifier for the {@link #conversationId} field. */
-    public static final ColumnExp CONVERSATION_ID_C =
-        new ColumnExp(ConversationRecord.class, CONVERSATION_ID);
-
-    /** The column identifier for the {@link #initiatorId} field. */
-    public static final String INITIATOR_ID = "initiatorId";
-
-    /** The qualified column identifier for the {@link #initiatorId} field. */
-    public static final ColumnExp INITIATOR_ID_C =
-        new ColumnExp(ConversationRecord.class, INITIATOR_ID);
-
-    /** The column identifier for the {@link #targetId} field. */
-    public static final String TARGET_ID = "targetId";
-
-    /** The qualified column identifier for the {@link #targetId} field. */
-    public static final ColumnExp TARGET_ID_C =
-        new ColumnExp(ConversationRecord.class, TARGET_ID);
-
-    /** The column identifier for the {@link #subject} field. */
-    public static final String SUBJECT = "subject";
-
-    /** The qualified column identifier for the {@link #subject} field. */
-    public static final ColumnExp SUBJECT_C =
-        new ColumnExp(ConversationRecord.class, SUBJECT);
-
-    /** The column identifier for the {@link #lastSent} field. */
-    public static final String LAST_SENT = "lastSent";
-
-    /** The qualified column identifier for the {@link #lastSent} field. */
-    public static final ColumnExp LAST_SENT_C =
-        new ColumnExp(ConversationRecord.class, LAST_SENT);
-
-    /** The column identifier for the {@link #lastAuthorId} field. */
-    public static final String LAST_AUTHOR_ID = "lastAuthorId";
-
-    /** The qualified column identifier for the {@link #lastAuthorId} field. */
-    public static final ColumnExp LAST_AUTHOR_ID_C =
-        new ColumnExp(ConversationRecord.class, LAST_AUTHOR_ID);
-
-    /** The column identifier for the {@link #lastSnippet} field. */
-    public static final String LAST_SNIPPET = "lastSnippet";
-
-    /** The qualified column identifier for the {@link #lastSnippet} field. */
-    public static final ColumnExp LAST_SNIPPET_C =
-        new ColumnExp(ConversationRecord.class, LAST_SNIPPET);
+    public static final Class<ConversationRecord> _R = ConversationRecord.class;
+    public static final ColumnExp CONVERSATION_ID = colexp(_R, "conversationId");
+    public static final ColumnExp INITIATOR_ID = colexp(_R, "initiatorId");
+    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
+    public static final ColumnExp SUBJECT = colexp(_R, "subject");
+    public static final ColumnExp LAST_SENT = colexp(_R, "lastSent");
+    public static final ColumnExp LAST_AUTHOR_ID = colexp(_R, "lastAuthorId");
+    public static final ColumnExp LAST_SNIPPET = colexp(_R, "lastSnippet");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -94,6 +52,7 @@ public class ConversationRecord extends PersistentRecord
     public String subject;
 
     /** The time at which the most recent message was sent in this conversation. */
+    @Index(name="ixLastSent")
     public Timestamp lastSent;
 
     /** The id of the author of the most recent message. */
@@ -134,7 +93,7 @@ public class ConversationRecord extends PersistentRecord
     {
         return new Key<ConversationRecord>(
                 ConversationRecord.class,
-                new String[] { CONVERSATION_ID },
+                new ColumnExp[] { CONVERSATION_ID },
                 new Comparable[] { conversationId });
     }
     // AUTO-GENERATED: METHODS END

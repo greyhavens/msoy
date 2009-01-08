@@ -23,54 +23,14 @@ import com.threerings.msoy.web.gwt.Promotion;
 public class PromotionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #promoId} field. */
-    public static final String PROMO_ID = "promoId";
-
-    /** The qualified column identifier for the {@link #promoId} field. */
-    public static final ColumnExp PROMO_ID_C =
-        new ColumnExp(PromotionRecord.class, PROMO_ID);
-
-    /** The column identifier for the {@link #iconHash} field. */
-    public static final String ICON_HASH = "iconHash";
-
-    /** The qualified column identifier for the {@link #iconHash} field. */
-    public static final ColumnExp ICON_HASH_C =
-        new ColumnExp(PromotionRecord.class, ICON_HASH);
-
-    /** The column identifier for the {@link #iconMimeType} field. */
-    public static final String ICON_MIME_TYPE = "iconMimeType";
-
-    /** The qualified column identifier for the {@link #iconMimeType} field. */
-    public static final ColumnExp ICON_MIME_TYPE_C =
-        new ColumnExp(PromotionRecord.class, ICON_MIME_TYPE);
-
-    /** The column identifier for the {@link #iconConstraint} field. */
-    public static final String ICON_CONSTRAINT = "iconConstraint";
-
-    /** The qualified column identifier for the {@link #iconConstraint} field. */
-    public static final ColumnExp ICON_CONSTRAINT_C =
-        new ColumnExp(PromotionRecord.class, ICON_CONSTRAINT);
-
-    /** The column identifier for the {@link #blurb} field. */
-    public static final String BLURB = "blurb";
-
-    /** The qualified column identifier for the {@link #blurb} field. */
-    public static final ColumnExp BLURB_C =
-        new ColumnExp(PromotionRecord.class, BLURB);
-
-    /** The column identifier for the {@link #starts} field. */
-    public static final String STARTS = "starts";
-
-    /** The qualified column identifier for the {@link #starts} field. */
-    public static final ColumnExp STARTS_C =
-        new ColumnExp(PromotionRecord.class, STARTS);
-
-    /** The column identifier for the {@link #ends} field. */
-    public static final String ENDS = "ends";
-
-    /** The qualified column identifier for the {@link #ends} field. */
-    public static final ColumnExp ENDS_C =
-        new ColumnExp(PromotionRecord.class, ENDS);
+    public static final Class<PromotionRecord> _R = PromotionRecord.class;
+    public static final ColumnExp PROMO_ID = colexp(_R, "promoId");
+    public static final ColumnExp ICON_HASH = colexp(_R, "iconHash");
+    public static final ColumnExp ICON_MIME_TYPE = colexp(_R, "iconMimeType");
+    public static final ColumnExp ICON_CONSTRAINT = colexp(_R, "iconConstraint");
+    public static final ColumnExp BLURB = colexp(_R, "blurb");
+    public static final ColumnExp STARTS = colexp(_R, "starts");
+    public static final ColumnExp ENDS = colexp(_R, "ends");
     // AUTO-GENERATED: FIELDS END
 
     /** Converts persistent records to runtime records. */
@@ -150,7 +110,7 @@ public class PromotionRecord extends PersistentRecord
     {
         return new Key<PromotionRecord>(
                 PromotionRecord.class,
-                new String[] { PROMO_ID },
+                new ColumnExp[] { PROMO_ID },
                 new Comparable[] { promoId });
     }
     // AUTO-GENERATED: METHODS END

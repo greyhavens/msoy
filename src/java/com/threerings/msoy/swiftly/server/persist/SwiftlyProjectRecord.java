@@ -18,65 +18,21 @@ import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 /**
  * Contains the definition of a swiftly project.
  */
-@Entity(uniqueConstraints = {@UniqueConstraint(fieldNames={"ownerId", "projectName"})})
+@Entity(uniqueConstraints={
+    @UniqueConstraint(name="ownerProject", fields={ "ownerId", "projectName" })
+})
 public class SwiftlyProjectRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #projectId} field. */
-    public static final String PROJECT_ID = "projectId";
-
-    /** The qualified column identifier for the {@link #projectId} field. */
-    public static final ColumnExp PROJECT_ID_C =
-        new ColumnExp(SwiftlyProjectRecord.class, PROJECT_ID);
-
-    /** The column identifier for the {@link #ownerId} field. */
-    public static final String OWNER_ID = "ownerId";
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(SwiftlyProjectRecord.class, OWNER_ID);
-
-    /** The column identifier for the {@link #projectType} field. */
-    public static final String PROJECT_TYPE = "projectType";
-
-    /** The qualified column identifier for the {@link #projectType} field. */
-    public static final ColumnExp PROJECT_TYPE_C =
-        new ColumnExp(SwiftlyProjectRecord.class, PROJECT_TYPE);
-
-    /** The column identifier for the {@link #creationDate} field. */
-    public static final String CREATION_DATE = "creationDate";
-
-    /** The qualified column identifier for the {@link #creationDate} field. */
-    public static final ColumnExp CREATION_DATE_C =
-        new ColumnExp(SwiftlyProjectRecord.class, CREATION_DATE);
-
-    /** The column identifier for the {@link #projectName} field. */
-    public static final String PROJECT_NAME = "projectName";
-
-    /** The qualified column identifier for the {@link #projectName} field. */
-    public static final ColumnExp PROJECT_NAME_C =
-        new ColumnExp(SwiftlyProjectRecord.class, PROJECT_NAME);
-
-    /** The column identifier for the {@link #storageId} field. */
-    public static final String STORAGE_ID = "storageId";
-
-    /** The qualified column identifier for the {@link #storageId} field. */
-    public static final ColumnExp STORAGE_ID_C =
-        new ColumnExp(SwiftlyProjectRecord.class, STORAGE_ID);
-
-    /** The column identifier for the {@link #remixable} field. */
-    public static final String REMIXABLE = "remixable";
-
-    /** The qualified column identifier for the {@link #remixable} field. */
-    public static final ColumnExp REMIXABLE_C =
-        new ColumnExp(SwiftlyProjectRecord.class, REMIXABLE);
-
-    /** The column identifier for the {@link #deleted} field. */
-    public static final String DELETED = "deleted";
-
-    /** The qualified column identifier for the {@link #deleted} field. */
-    public static final ColumnExp DELETED_C =
-        new ColumnExp(SwiftlyProjectRecord.class, DELETED);
+    public static final Class<SwiftlyProjectRecord> _R = SwiftlyProjectRecord.class;
+    public static final ColumnExp PROJECT_ID = colexp(_R, "projectId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp PROJECT_TYPE = colexp(_R, "projectType");
+    public static final ColumnExp CREATION_DATE = colexp(_R, "creationDate");
+    public static final ColumnExp PROJECT_NAME = colexp(_R, "projectName");
+    public static final ColumnExp STORAGE_ID = colexp(_R, "storageId");
+    public static final ColumnExp REMIXABLE = colexp(_R, "remixable");
+    public static final ColumnExp DELETED = colexp(_R, "deleted");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 12;
@@ -113,9 +69,9 @@ public class SwiftlyProjectRecord extends PersistentRecord
      * currently.
      */
 
-    public Map<String, Object> findUpdates (SwiftlyProject project)
+    public Map<ColumnExp, Object> findUpdates (SwiftlyProject project)
     {
-        Map<String, Object> updates = Maps.newHashMap();
+        Map<ColumnExp, Object> updates = Maps.newHashMap();
         if (project.projectName != null && !project.projectName.equals(projectName)) {
             updates.put(PROJECT_NAME, project.projectName);
         }
@@ -148,7 +104,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
     {
         return new Key<SwiftlyProjectRecord>(
                 SwiftlyProjectRecord.class,
-                new String[] { PROJECT_ID },
+                new ColumnExp[] { PROJECT_ID },
                 new Comparable[] { projectId });
     }
     // AUTO-GENERATED: METHODS END

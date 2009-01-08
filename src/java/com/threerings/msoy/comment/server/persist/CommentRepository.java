@@ -21,6 +21,7 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.operator.Arithmetic;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
@@ -57,10 +58,10 @@ public class CommentRepository extends DepotRepository
     {
         // load up the specified comment set
         return findAll(CommentRecord.class,
-                       new Where(CommentRecord.ENTITY_TYPE_C, entityType,
-                                 CommentRecord.ENTITY_ID_C, entityId),
-                       byRating ? OrderBy.descending(CommentRecord.CURRENT_RATING_C) :
-                                  OrderBy.descending(CommentRecord.POSTED_C),
+                       new Where(CommentRecord.ENTITY_TYPE, entityType,
+                                 CommentRecord.ENTITY_ID, entityId),
+                       byRating ? OrderBy.descending(CommentRecord.CURRENT_RATING) :
+                                  OrderBy.descending(CommentRecord.POSTED),
                        new Limit(start, count));
     }
 
@@ -70,9 +71,9 @@ public class CommentRepository extends DepotRepository
     public List<CommentRatingRecord> loadRatings (int entityType, int entityId, int memberId)
     {
         return findAll(CommentRatingRecord.class,
-                       new Where(CommentRatingRecord.ENTITY_TYPE_C, entityType,
-                                 CommentRatingRecord.ENTITY_ID_C, entityId,
-                                 CommentRatingRecord.MEMBER_ID_C, memberId));
+                       new Where(CommentRatingRecord.ENTITY_TYPE, entityType,
+                                 CommentRatingRecord.ENTITY_ID, entityId,
+                                 CommentRatingRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -101,8 +102,8 @@ public class CommentRepository extends DepotRepository
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(CommentRecord.class));
-        clauses.add(new Where(CommentRecord.ENTITY_TYPE_C, entityType,
-                              CommentRecord.ENTITY_ID_C, entityId));
+        clauses.add(new Where(CommentRecord.ENTITY_TYPE, entityType,
+                              CommentRecord.ENTITY_ID, entityId));
         return load(CountRecord.class, clauses).count;
     }
 
@@ -168,12 +169,12 @@ public class CommentRepository extends DepotRepository
 
             // then update the sums in the comment
             Key<CommentRecord> comment = CommentRecord.getKey(entityType, entityId, postedStamp);
-            Map<String, SQLExpression> updates = Maps.newHashMap();
+            Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
             updates.put(CommentRecord.CURRENT_RATING,
-                        new Arithmetic.Add(CommentRecord.CURRENT_RATING_C, adjustment));
+                        new Arithmetic.Add(CommentRecord.CURRENT_RATING, adjustment));
             if (record != null) {
                 updates.put(CommentRecord.TOTAL_RATINGS,
-                            new Arithmetic.Add(CommentRecord.TOTAL_RATINGS_C, 1));
+                            new Arithmetic.Add(CommentRecord.TOTAL_RATINGS, 1));
             }
             updateLiteral(CommentRecord.class, comment, comment, updates);
             return adjustment;
@@ -198,9 +199,9 @@ public class CommentRepository extends DepotRepository
 
         // delete all its ratings
         deleteAll(CommentRatingRecord.class,
-                  new Where(CommentRatingRecord.ENTITY_TYPE_C, entityType,
-                            CommentRatingRecord.ENTITY_ID_C, entityId,
-                            CommentRatingRecord.POSTED_C, postedStamp));
+                  new Where(CommentRatingRecord.ENTITY_TYPE, entityType,
+                            CommentRatingRecord.ENTITY_ID, entityId,
+                            CommentRatingRecord.POSTED, postedStamp));
     }
 
     @Override // from DepotRepository

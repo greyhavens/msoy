@@ -16,7 +16,6 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
@@ -35,10 +34,6 @@ public class MedalRepository extends DepotRepository
     @Inject public MedalRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        // New maximum values were imposed on these fields on 2008.12.11
-        ctx.registerMigration(MedalRecord.class, new SchemaMigration.Retype(3, "name"));
-        ctx.registerMigration(MedalRecord.class, new SchemaMigration.Retype(3, "description"));
     }
 
     /**
@@ -71,8 +66,8 @@ public class MedalRepository extends DepotRepository
      */
     public boolean groupContainsMedalName (int groupId, String name)
     {
-        Equals groupIdEquals = new Equals(MedalRecord.GROUP_ID_C, groupId);
-        Equals nameEquals = new Equals(MedalRecord.NAME_C, name);
+        Equals groupIdEquals = new Equals(MedalRecord.GROUP_ID, groupId);
+        Equals nameEquals = new Equals(MedalRecord.NAME, name);
         return load(MedalRecord.class, new Where(new And(groupIdEquals, nameEquals))) != null;
     }
 
@@ -81,7 +76,7 @@ public class MedalRepository extends DepotRepository
      */
     public List<MedalRecord> loadGroupMedals (int groupId)
     {
-        return findAll(MedalRecord.class, new Where(MedalRecord.GROUP_ID_C, groupId));
+        return findAll(MedalRecord.class, new Where(MedalRecord.GROUP_ID, groupId));
     }
 
     public EarnedMedalRecord loadEarnedMedal (int memberId, int medalId)
@@ -94,7 +89,7 @@ public class MedalRepository extends DepotRepository
      */
     public List<EarnedMedalRecord> loadEarnedMedals (int memberId)
     {
-        return findAll(EarnedMedalRecord.class, new Where(EarnedMedalRecord.MEMBER_ID_C, memberId));
+        return findAll(EarnedMedalRecord.class, new Where(EarnedMedalRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -102,8 +97,8 @@ public class MedalRepository extends DepotRepository
      */
     public List<EarnedMedalRecord> loadRecentEarnedMedals (int memberId, int limit)
     {
-        return findAll(EarnedMedalRecord.class, new Where(EarnedMedalRecord.MEMBER_ID_C, memberId),
-            new Limit(0, limit), OrderBy.descending(EarnedMedalRecord.WHEN_EARNED_C));
+        return findAll(EarnedMedalRecord.class, new Where(EarnedMedalRecord.MEMBER_ID, memberId),
+            new Limit(0, limit), OrderBy.descending(EarnedMedalRecord.WHEN_EARNED));
     }
 
     /**
@@ -115,7 +110,7 @@ public class MedalRepository extends DepotRepository
             return Collections.emptyList();
         }
         return findAll(EarnedMedalRecord.class,
-            new Where(new In(EarnedMedalRecord.MEDAL_ID_C, medalIds)));
+            new Where(new In(EarnedMedalRecord.MEDAL_ID, medalIds)));
     }
 
     /**

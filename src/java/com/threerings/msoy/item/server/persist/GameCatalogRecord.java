@@ -12,49 +12,18 @@ import com.samskivert.depot.expression.ColumnExp;
 public class GameCatalogRecord extends CatalogRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The qualified column identifier for the {@link #catalogId} field. */
-    public static final ColumnExp CATALOG_ID_C =
-        new ColumnExp(GameCatalogRecord.class, CATALOG_ID);
-
-    /** The qualified column identifier for the {@link #listedItemId} field. */
-    public static final ColumnExp LISTED_ITEM_ID_C =
-        new ColumnExp(GameCatalogRecord.class, LISTED_ITEM_ID);
-
-    /** The qualified column identifier for the {@link #originalItemId} field. */
-    public static final ColumnExp ORIGINAL_ITEM_ID_C =
-        new ColumnExp(GameCatalogRecord.class, ORIGINAL_ITEM_ID);
-
-    /** The qualified column identifier for the {@link #listedDate} field. */
-    public static final ColumnExp LISTED_DATE_C =
-        new ColumnExp(GameCatalogRecord.class, LISTED_DATE);
-
-    /** The qualified column identifier for the {@link #currency} field. */
-    public static final ColumnExp CURRENCY_C =
-        new ColumnExp(GameCatalogRecord.class, CURRENCY);
-
-    /** The qualified column identifier for the {@link #cost} field. */
-    public static final ColumnExp COST_C =
-        new ColumnExp(GameCatalogRecord.class, COST);
-
-    /** The qualified column identifier for the {@link #pricing} field. */
-    public static final ColumnExp PRICING_C =
-        new ColumnExp(GameCatalogRecord.class, PRICING);
-
-    /** The qualified column identifier for the {@link #salesTarget} field. */
-    public static final ColumnExp SALES_TARGET_C =
-        new ColumnExp(GameCatalogRecord.class, SALES_TARGET);
-
-    /** The qualified column identifier for the {@link #purchases} field. */
-    public static final ColumnExp PURCHASES_C =
-        new ColumnExp(GameCatalogRecord.class, PURCHASES);
-
-    /** The qualified column identifier for the {@link #returns} field. */
-    public static final ColumnExp RETURNS_C =
-        new ColumnExp(GameCatalogRecord.class, RETURNS);
-
-    /** The qualified column identifier for the {@link #favoriteCount} field. */
-    public static final ColumnExp FAVORITE_COUNT_C =
-        new ColumnExp(GameCatalogRecord.class, FAVORITE_COUNT);
+    public static final Class<GameCatalogRecord> _R = GameCatalogRecord.class;
+    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp LISTED_ITEM_ID = colexp(_R, "listedItemId");
+    public static final ColumnExp ORIGINAL_ITEM_ID = colexp(_R, "originalItemId");
+    public static final ColumnExp LISTED_DATE = colexp(_R, "listedDate");
+    public static final ColumnExp CURRENCY = colexp(_R, "currency");
+    public static final ColumnExp COST = colexp(_R, "cost");
+    public static final ColumnExp PRICING = colexp(_R, "pricing");
+    public static final ColumnExp SALES_TARGET = colexp(_R, "salesTarget");
+    public static final ColumnExp PURCHASES = colexp(_R, "purchases");
+    public static final ColumnExp RETURNS = colexp(_R, "returns");
+    public static final ColumnExp FAVORITE_COUNT = colexp(_R, "favoriteCount");
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START
@@ -66,7 +35,7 @@ public class GameCatalogRecord extends CatalogRecord
     {
         return new Key<GameCatalogRecord>(
                 GameCatalogRecord.class,
-                new String[] { CATALOG_ID },
+                new ColumnExp[] { CATALOG_ID },
                 new Comparable[] { catalogId });
     }
     // AUTO-GENERATED: METHODS END

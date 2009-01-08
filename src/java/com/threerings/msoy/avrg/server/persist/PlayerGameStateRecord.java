@@ -17,33 +17,11 @@ import com.samskivert.depot.expression.ColumnExp;
 public class PlayerGameStateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(PlayerGameStateRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(PlayerGameStateRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #datumKey} field. */
-    public static final String DATUM_KEY = "datumKey";
-
-    /** The qualified column identifier for the {@link #datumKey} field. */
-    public static final ColumnExp DATUM_KEY_C =
-        new ColumnExp(PlayerGameStateRecord.class, DATUM_KEY);
-
-    /** The column identifier for the {@link #datumValue} field. */
-    public static final String DATUM_VALUE = "datumValue";
-
-    /** The qualified column identifier for the {@link #datumValue} field. */
-    public static final ColumnExp DATUM_VALUE_C =
-        new ColumnExp(PlayerGameStateRecord.class, DATUM_VALUE);
+    public static final Class<PlayerGameStateRecord> _R = PlayerGameStateRecord.class;
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp DATUM_KEY = colexp(_R, "datumKey");
+    public static final ColumnExp DATUM_VALUE = colexp(_R, "datumValue");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
@@ -89,7 +67,7 @@ public class PlayerGameStateRecord extends PersistentRecord
     {
         return new Key<PlayerGameStateRecord>(
                 PlayerGameStateRecord.class,
-                new String[] { GAME_ID, MEMBER_ID, DATUM_KEY },
+                new ColumnExp[] { GAME_ID, MEMBER_ID, DATUM_KEY },
                 new Comparable[] { gameId, memberId, datumKey });
     }
     // AUTO-GENERATED: METHODS END

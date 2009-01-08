@@ -18,26 +18,10 @@ import com.samskivert.util.StringUtil;
 public class InviterRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(InviterRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #invitesGranted} field. */
-    public static final String INVITES_GRANTED = "invitesGranted";
-
-    /** The qualified column identifier for the {@link #invitesGranted} field. */
-    public static final ColumnExp INVITES_GRANTED_C =
-        new ColumnExp(InviterRecord.class, INVITES_GRANTED);
-
-    /** The column identifier for the {@link #invitesSent} field. */
-    public static final String INVITES_SENT = "invitesSent";
-
-    /** The qualified column identifier for the {@link #invitesSent} field. */
-    public static final ColumnExp INVITES_SENT_C =
-        new ColumnExp(InviterRecord.class, INVITES_SENT);
+    public static final Class<InviterRecord> _R = InviterRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp INVITES_GRANTED = colexp(_R, "invitesGranted");
+    public static final ColumnExp INVITES_SENT = colexp(_R, "invitesSent");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
@@ -74,7 +58,7 @@ public class InviterRecord extends PersistentRecord
     {
         return new Key<InviterRecord>(
                 InviterRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

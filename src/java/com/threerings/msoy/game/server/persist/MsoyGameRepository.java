@@ -67,7 +67,7 @@ public class MsoyGameRepository extends DepotRepository
      */
     public int getGameCount ()
     {
-        Where where = new Where(new Conditionals.NotEquals(GameDetailRecord.LISTED_ITEM_ID_C, 0));
+        Where where = new Where(new Conditionals.NotEquals(GameDetailRecord.LISTED_ITEM_ID, 0));
         return load(CountRecord.class, new FromOverride(GameDetailRecord.class), where).count;
     }
 
@@ -213,8 +213,8 @@ public class MsoyGameRepository extends DepotRepository
         insert(gprec);
 
         // update our games played and flow to next recalc in the detail record
-        SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED_C, playerGames);
-        SQLExpression sub = new Arithmetic.Sub(GameDetailRecord.FLOW_TO_NEXT_RECALC_C, flowAwarded);
+        SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED, playerGames);
+        SQLExpression sub = new Arithmetic.Sub(GameDetailRecord.FLOW_TO_NEXT_RECALC, flowAwarded);
         updateLiteral(GameDetailRecord.class, Math.abs(gprec.gameId),
                       ImmutableMap.of(GameDetailRecord.GAMES_PLAYED, add,
                                       GameDetailRecord.FLOW_TO_NEXT_RECALC, sub,
@@ -232,8 +232,8 @@ public class MsoyGameRepository extends DepotRepository
     {
         // where recorded >= {start} and recorded < {end}
         Where where = new Where(new Logic.And(
-            new Conditionals.GreaterThanEquals(GamePlayRecord.RECORDED_C, new Timestamp(start)),
-            new Conditionals.LessThan(GamePlayRecord.RECORDED_C, new Timestamp(end))
+            new Conditionals.GreaterThanEquals(GamePlayRecord.RECORDED, new Timestamp(start)),
+            new Conditionals.LessThan(GamePlayRecord.RECORDED, new Timestamp(end))
         ));
 
         return findAll(GamePlayRecord.class, where);
@@ -251,7 +251,7 @@ public class MsoyGameRepository extends DepotRepository
         int singlePlayerMins = 0, singlePlayerGames = 0;
         int multiPlayerMins = 0, multiPlayerGames = 0;
         int totalPlayerMins = 0, totalFlowAwarded = 0;
-        Where where = new Where(GamePlayRecord.GAME_ID_C, gameId);
+        Where where = new Where(GamePlayRecord.GAME_ID, gameId);
         for (GamePlayRecord gprec : findAll(GamePlayRecord.class, where)) {
             if (gprec.multiPlayer) {
                 multiPlayerGames += gprec.playerGames;
@@ -290,7 +290,7 @@ public class MsoyGameRepository extends DepotRepository
         // lastly, prune old gameplay records
         final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - THIRTY_DAYS);
         deleteAll(GamePlayRecord.class,
-                  new Where(new Conditionals.LessThan(GamePlayRecord.RECORDED_C, cutoff)));
+                  new Where(new Conditionals.LessThan(GamePlayRecord.RECORDED, cutoff)));
 
         return new int[] { payoutFactor, avgSingleDuration, avgMultiDuration };
     }
@@ -328,7 +328,7 @@ public class MsoyGameRepository extends DepotRepository
     {
         return findAll(
             GameTraceLogEnumerationRecord.class,
-            new Where(GameTraceLogEnumerationRecord.GAME_ID_C, gameId),
+            new Where(GameTraceLogEnumerationRecord.GAME_ID, gameId),
             new FromOverride(GameTraceLogRecord.class));
     }
 
@@ -372,12 +372,12 @@ public class MsoyGameRepository extends DepotRepository
         Timestamp listedCutoffTimestamp = new Timestamp(listedCutoff.getTimeInMillis());
 
         // Create conditionals for distinguishing dev from listed games
-        ColumnExp gameId = GameTraceLogRecord.GAME_ID_C;
+        ColumnExp gameId = GameTraceLogRecord.GAME_ID;
         Conditionals.LessThan isDev = new Conditionals.LessThan(gameId, 0);
         Conditionals.GreaterThan isListed = new Conditionals.GreaterThan(gameId, 0);
 
         // Perform deletion
-        ColumnExp recorded = GameTraceLogRecord.RECORDED_C;
+        ColumnExp recorded = GameTraceLogRecord.RECORDED;
         int rows = deleteAll(GameTraceLogRecord.class, new Where(new Or(
             new And(isDev, new Conditionals.LessThan(recorded, devCutoffTimestamp)),
             new And(isListed, new Conditionals.LessThan(recorded, listedCutoffTimestamp)))));
@@ -394,8 +394,8 @@ public class MsoyGameRepository extends DepotRepository
     {
         delete(GameDetailRecord.class, gameId);
         delete(InstructionsRecord.class, gameId);
-        deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID_C, gameId));
-        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID_C, gameId));
+        deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID, gameId));
+        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID, gameId));
     }
 
     @Override // from DepotRepository

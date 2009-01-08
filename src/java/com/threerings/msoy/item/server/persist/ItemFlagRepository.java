@@ -42,7 +42,7 @@ public class ItemFlagRepository extends DepotRepository
     public List<ItemFlagRecord> loadFlags (int start, int count)
     {
         return findAll(ItemFlagRecord.class, new Limit(start, count),
-            OrderBy.ascending(ItemFlagRecord.TIMESTAMP_C));
+            OrderBy.ascending(ItemFlagRecord.TIMESTAMP));
     }
 
     public void addFlag (ItemFlagRecord itemFlag)
@@ -53,7 +53,7 @@ public class ItemFlagRepository extends DepotRepository
     public void removeItemFlags (byte itemType, int itemId)
     {
         deleteAll(ItemFlagRecord.class, new Where(
-            ItemFlagRecord.ITEM_TYPE_C, itemType, ItemFlagRecord.ITEM_ID_C, itemId));
+            ItemFlagRecord.ITEM_TYPE, itemType, ItemFlagRecord.ITEM_ID, itemId));
     }
 
     @Override

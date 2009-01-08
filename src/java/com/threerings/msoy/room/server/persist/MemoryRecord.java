@@ -26,33 +26,11 @@ import com.threerings.msoy.room.data.EntityMemoryEntry;
 public class MemoryRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #itemType} field. */
-    public static final String ITEM_TYPE = "itemType";
-
-    /** The qualified column identifier for the {@link #itemType} field. */
-    public static final ColumnExp ITEM_TYPE_C =
-        new ColumnExp(MemoryRecord.class, ITEM_TYPE);
-
-    /** The column identifier for the {@link #itemId} field. */
-    public static final String ITEM_ID = "itemId";
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(MemoryRecord.class, ITEM_ID);
-
-    /** The column identifier for the {@link #datumKey} field. */
-    public static final String DATUM_KEY = "datumKey";
-
-    /** The qualified column identifier for the {@link #datumKey} field. */
-    public static final ColumnExp DATUM_KEY_C =
-        new ColumnExp(MemoryRecord.class, DATUM_KEY);
-
-    /** The column identifier for the {@link #datumValue} field. */
-    public static final String DATUM_VALUE = "datumValue";
-
-    /** The qualified column identifier for the {@link #datumValue} field. */
-    public static final ColumnExp DATUM_VALUE_C =
-        new ColumnExp(MemoryRecord.class, DATUM_VALUE);
+    public static final Class<MemoryRecord> _R = MemoryRecord.class;
+    public static final ColumnExp ITEM_TYPE = colexp(_R, "itemType");
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp DATUM_KEY = colexp(_R, "datumKey");
+    public static final ColumnExp DATUM_VALUE = colexp(_R, "datumValue");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
@@ -132,7 +110,7 @@ public class MemoryRecord extends PersistentRecord
     {
         return new Key<MemoryRecord>(
                 MemoryRecord.class,
-                new String[] { ITEM_TYPE, ITEM_ID, DATUM_KEY },
+                new ColumnExp[] { ITEM_TYPE, ITEM_ID, DATUM_KEY },
                 new Comparable[] { itemType, itemId, datumKey });
     }
     // AUTO-GENERATED: METHODS END

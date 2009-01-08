@@ -25,61 +25,15 @@ import com.threerings.msoy.web.gwt.MemberCard;
 public class MemberCardRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberCardRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(MemberCardRecord.class, NAME);
-
-    /** The column identifier for the {@link #lastSession} field. */
-    public static final String LAST_SESSION = "lastSession";
-
-    /** The qualified column identifier for the {@link #lastSession} field. */
-    public static final ColumnExp LAST_SESSION_C =
-        new ColumnExp(MemberCardRecord.class, LAST_SESSION);
-
-    /** The column identifier for the {@link #photoHash} field. */
-    public static final String PHOTO_HASH = "photoHash";
-
-    /** The qualified column identifier for the {@link #photoHash} field. */
-    public static final ColumnExp PHOTO_HASH_C =
-        new ColumnExp(MemberCardRecord.class, PHOTO_HASH);
-
-    /** The column identifier for the {@link #photoMimeType} field. */
-    public static final String PHOTO_MIME_TYPE = "photoMimeType";
-
-    /** The qualified column identifier for the {@link #photoMimeType} field. */
-    public static final ColumnExp PHOTO_MIME_TYPE_C =
-        new ColumnExp(MemberCardRecord.class, PHOTO_MIME_TYPE);
-
-    /** The column identifier for the {@link #photoConstraint} field. */
-    public static final String PHOTO_CONSTRAINT = "photoConstraint";
-
-    /** The qualified column identifier for the {@link #photoConstraint} field. */
-    public static final ColumnExp PHOTO_CONSTRAINT_C =
-        new ColumnExp(MemberCardRecord.class, PHOTO_CONSTRAINT);
-
-    /** The column identifier for the {@link #headline} field. */
-    public static final String HEADLINE = "headline";
-
-    /** The qualified column identifier for the {@link #headline} field. */
-    public static final ColumnExp HEADLINE_C =
-        new ColumnExp(MemberCardRecord.class, HEADLINE);
-
-    /** The column identifier for the {@link #level} field. */
-    public static final String LEVEL = "level";
-
-    /** The qualified column identifier for the {@link #level} field. */
-    public static final ColumnExp LEVEL_C =
-        new ColumnExp(MemberCardRecord.class, LEVEL);
+    public static final Class<MemberCardRecord> _R = MemberCardRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp LAST_SESSION = colexp(_R, "lastSession");
+    public static final ColumnExp PHOTO_HASH = colexp(_R, "photoHash");
+    public static final ColumnExp PHOTO_MIME_TYPE = colexp(_R, "photoMimeType");
+    public static final ColumnExp PHOTO_CONSTRAINT = colexp(_R, "photoConstraint");
+    public static final ColumnExp HEADLINE = colexp(_R, "headline");
+    public static final ColumnExp LEVEL = colexp(_R, "level");
     // AUTO-GENERATED: FIELDS END
 
     /** This member's unique id. */
@@ -148,7 +102,7 @@ public class MemberCardRecord extends PersistentRecord
     {
         return new Key<MemberCardRecord>(
                 MemberCardRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

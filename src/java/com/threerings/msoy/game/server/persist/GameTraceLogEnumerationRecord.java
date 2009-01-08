@@ -14,26 +14,10 @@ public class GameTraceLogEnumerationRecord
     extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #logId} field. */
-    public static final String LOG_ID = "logId";
-
-    /** The qualified column identifier for the {@link #logId} field. */
-    public static final ColumnExp LOG_ID_C =
-        new ColumnExp(GameTraceLogEnumerationRecord.class, LOG_ID);
-
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(GameTraceLogEnumerationRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #recorded} field. */
-    public static final String RECORDED = "recorded";
-
-    /** The qualified column identifier for the {@link #recorded} field. */
-    public static final ColumnExp RECORDED_C =
-        new ColumnExp(GameTraceLogEnumerationRecord.class, RECORDED);
+    public static final Class<GameTraceLogEnumerationRecord> _R = GameTraceLogEnumerationRecord.class;
+    public static final ColumnExp LOG_ID = colexp(_R, "logId");
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp RECORDED = colexp(_R, "recorded");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that

@@ -54,7 +54,7 @@ public class MailRepository extends DepotRepository
     public int loadConversationCount (int participantId)
     {
         return load(CountRecord.class, new FromOverride(ParticipantRecord.class),
-                    new Where(ParticipantRecord.PARTICIPANT_ID_C, participantId)).count;
+                    new Where(ParticipantRecord.PARTICIPANT_ID, participantId)).count;
     }
 
     /**
@@ -63,13 +63,13 @@ public class MailRepository extends DepotRepository
      */
     public int loadUnreadConvoCount (int memberId)
     {
-        SQLExpression isMe = new Conditionals.Equals(ParticipantRecord.PARTICIPANT_ID_C, memberId);
+        SQLExpression isMe = new Conditionals.Equals(ParticipantRecord.PARTICIPANT_ID, memberId);
         SQLExpression isNew = new Conditionals.GreaterThan(
-            ConversationRecord.LAST_SENT_C, ParticipantRecord.LAST_READ_C);
+            ConversationRecord.LAST_SENT, ParticipantRecord.LAST_READ);
         return load(CountRecord.class,
                     new FromOverride(ParticipantRecord.class),
-                    new Join(ParticipantRecord.CONVERSATION_ID_C,
-                             ConversationRecord.CONVERSATION_ID_C),
+                    new Join(ParticipantRecord.CONVERSATION_ID,
+                             ConversationRecord.CONVERSATION_ID),
                     new Where(new Logic.And(isMe, isNew))).count;
     }
 
@@ -81,10 +81,10 @@ public class MailRepository extends DepotRepository
     {
         return findAll(
             ConversationRecord.class,
-            new Join(ConversationRecord.CONVERSATION_ID_C, ParticipantRecord.CONVERSATION_ID_C),
-            new Where(ParticipantRecord.PARTICIPANT_ID_C, participantId),
+            new Join(ConversationRecord.CONVERSATION_ID, ParticipantRecord.CONVERSATION_ID),
+            new Where(ParticipantRecord.PARTICIPANT_ID, participantId),
             new Limit(offset, count),
-            OrderBy.descending(ConversationRecord.LAST_SENT_C));
+            OrderBy.descending(ConversationRecord.LAST_SENT));
     }
 
     /**
@@ -101,8 +101,8 @@ public class MailRepository extends DepotRepository
     public List<ConvMessageRecord> loadMessages (int conversationId)
     {
         return findAll(ConvMessageRecord.class,
-                       new Where(ConvMessageRecord.CONVERSATION_ID_C, conversationId),
-                       OrderBy.ascending(ConvMessageRecord.SENT_C));
+                       new Where(ConvMessageRecord.CONVERSATION_ID, conversationId),
+                       OrderBy.ascending(ConvMessageRecord.SENT));
     }
 
     /**
@@ -254,7 +254,7 @@ public class MailRepository extends DepotRepository
 
         // otherwise actually delete the contents of the conversation
         deleteAll(ConvMessageRecord.class,
-                  new Where(ConvMessageRecord.CONVERSATION_ID_C, conversationId));
+                  new Where(ConvMessageRecord.CONVERSATION_ID, conversationId));
         delete(conrec);
 
         return true;
@@ -275,7 +275,7 @@ public class MailRepository extends DepotRepository
     public List<ConversationComplaintRecord> loadComplaints(int convoId)
     {
         return findAll(ConversationComplaintRecord.class,
-            new Where(ConversationComplaintRecord.CONVERSATION_ID_C, convoId));
+            new Where(ConversationComplaintRecord.CONVERSATION_ID, convoId));
     }
 
     /**

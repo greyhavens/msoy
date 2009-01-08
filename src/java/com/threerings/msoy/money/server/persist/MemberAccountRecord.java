@@ -25,68 +25,16 @@ import com.threerings.msoy.money.data.all.Currency;
 public class MemberAccountRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberAccountRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #coins} field. */
-    public static final String COINS = "coins";
-
-    /** The qualified column identifier for the {@link #coins} field. */
-    public static final ColumnExp COINS_C =
-        new ColumnExp(MemberAccountRecord.class, COINS);
-
-    /** The column identifier for the {@link #bars} field. */
-    public static final String BARS = "bars";
-
-    /** The qualified column identifier for the {@link #bars} field. */
-    public static final ColumnExp BARS_C =
-        new ColumnExp(MemberAccountRecord.class, BARS);
-
-    /** The column identifier for the {@link #bling} field. */
-    public static final String BLING = "bling";
-
-    /** The qualified column identifier for the {@link #bling} field. */
-    public static final ColumnExp BLING_C =
-        new ColumnExp(MemberAccountRecord.class, BLING);
-
-    /** The column identifier for the {@link #accCoins} field. */
-    public static final String ACC_COINS = "accCoins";
-
-    /** The qualified column identifier for the {@link #accCoins} field. */
-    public static final ColumnExp ACC_COINS_C =
-        new ColumnExp(MemberAccountRecord.class, ACC_COINS);
-
-    /** The column identifier for the {@link #accBars} field. */
-    public static final String ACC_BARS = "accBars";
-
-    /** The qualified column identifier for the {@link #accBars} field. */
-    public static final ColumnExp ACC_BARS_C =
-        new ColumnExp(MemberAccountRecord.class, ACC_BARS);
-
-    /** The column identifier for the {@link #accBling} field. */
-    public static final String ACC_BLING = "accBling";
-
-    /** The qualified column identifier for the {@link #accBling} field. */
-    public static final ColumnExp ACC_BLING_C =
-        new ColumnExp(MemberAccountRecord.class, ACC_BLING);
-
-    /** The column identifier for the {@link #cashOutBling} field. */
-    public static final String CASH_OUT_BLING = "cashOutBling";
-
-    /** The qualified column identifier for the {@link #cashOutBling} field. */
-    public static final ColumnExp CASH_OUT_BLING_C =
-        new ColumnExp(MemberAccountRecord.class, CASH_OUT_BLING);
-
-    /** The column identifier for the {@link #cashOutBlingWorth} field. */
-    public static final String CASH_OUT_BLING_WORTH = "cashOutBlingWorth";
-
-    /** The qualified column identifier for the {@link #cashOutBlingWorth} field. */
-    public static final ColumnExp CASH_OUT_BLING_WORTH_C =
-        new ColumnExp(MemberAccountRecord.class, CASH_OUT_BLING_WORTH);
+    public static final Class<MemberAccountRecord> _R = MemberAccountRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp COINS = colexp(_R, "coins");
+    public static final ColumnExp BARS = colexp(_R, "bars");
+    public static final ColumnExp BLING = colexp(_R, "bling");
+    public static final ColumnExp ACC_COINS = colexp(_R, "accCoins");
+    public static final ColumnExp ACC_BARS = colexp(_R, "accBars");
+    public static final ColumnExp ACC_BLING = colexp(_R, "accBling");
+    public static final ColumnExp CASH_OUT_BLING = colexp(_R, "cashOutBling");
+    public static final ColumnExp CASH_OUT_BLING_WORTH = colexp(_R, "cashOutBlingWorth");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 7;
@@ -127,9 +75,9 @@ public class MemberAccountRecord extends PersistentRecord
     public static ColumnExp getColumn (Currency currency)
     {
         switch (currency) {
-        case COINS: return COINS_C;
-        case BARS: return BARS_C;
-        case BLING: return BLING_C;
+        case COINS: return COINS;
+        case BARS: return BARS;
+        case BLING: return BLING;
         default: throw new IllegalArgumentException();
         }
     }
@@ -140,9 +88,9 @@ public class MemberAccountRecord extends PersistentRecord
     public static ColumnExp getAccColumn (Currency currency)
     {
         switch (currency) {
-        case COINS: return ACC_COINS_C;
-        case BARS: return ACC_BARS_C;
-        case BLING: return ACC_BLING_C;
+        case COINS: return ACC_COINS;
+        case BARS: return ACC_BARS;
+        case BLING: return ACC_BLING;
         default: throw new IllegalArgumentException();
         }
     }
@@ -198,7 +146,7 @@ public class MemberAccountRecord extends PersistentRecord
     {
         return new Key<MemberAccountRecord>(
                 MemberAccountRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

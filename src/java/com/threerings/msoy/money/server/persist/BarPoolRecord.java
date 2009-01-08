@@ -15,26 +15,10 @@ import com.samskivert.depot.expression.ColumnExp;
 public class BarPoolRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #id} field. */
-    public static final String ID = "id";
-
-    /** The qualified column identifier for the {@link #id} field. */
-    public static final ColumnExp ID_C =
-        new ColumnExp(BarPoolRecord.class, ID);
-
-    /** The column identifier for the {@link #barPool} field. */
-    public static final String BAR_POOL = "barPool";
-
-    /** The qualified column identifier for the {@link #barPool} field. */
-    public static final ColumnExp BAR_POOL_C =
-        new ColumnExp(BarPoolRecord.class, BAR_POOL);
-
-    /** The column identifier for the {@link #coinBalance} field. */
-    public static final String COIN_BALANCE = "coinBalance";
-
-    /** The qualified column identifier for the {@link #coinBalance} field. */
-    public static final ColumnExp COIN_BALANCE_C =
-        new ColumnExp(BarPoolRecord.class, COIN_BALANCE);
+    public static final Class<BarPoolRecord> _R = BarPoolRecord.class;
+    public static final ColumnExp ID = colexp(_R, "id");
+    public static final ColumnExp BAR_POOL = colexp(_R, "barPool");
+    public static final ColumnExp COIN_BALANCE = colexp(_R, "coinBalance");
     // AUTO-GENERATED: FIELDS END
 
     /** This can be incremented when we change this record. */
@@ -65,7 +49,7 @@ public class BarPoolRecord extends PersistentRecord
     {
         return new Key<BarPoolRecord>(
                 BarPoolRecord.class,
-                new String[] { ID },
+                new ColumnExp[] { ID },
                 new Comparable[] { id });
     }
     // AUTO-GENERATED: METHODS END

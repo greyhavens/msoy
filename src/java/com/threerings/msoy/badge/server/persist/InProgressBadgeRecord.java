@@ -16,33 +16,11 @@ import com.threerings.msoy.badge.data.all.InProgressBadge;
 public class InProgressBadgeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(InProgressBadgeRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #badgeCode} field. */
-    public static final String BADGE_CODE = "badgeCode";
-
-    /** The qualified column identifier for the {@link #badgeCode} field. */
-    public static final ColumnExp BADGE_CODE_C =
-        new ColumnExp(InProgressBadgeRecord.class, BADGE_CODE);
-
-    /** The column identifier for the {@link #nextLevel} field. */
-    public static final String NEXT_LEVEL = "nextLevel";
-
-    /** The qualified column identifier for the {@link #nextLevel} field. */
-    public static final ColumnExp NEXT_LEVEL_C =
-        new ColumnExp(InProgressBadgeRecord.class, NEXT_LEVEL);
-
-    /** The column identifier for the {@link #progress} field. */
-    public static final String PROGRESS = "progress";
-
-    /** The qualified column identifier for the {@link #progress} field. */
-    public static final ColumnExp PROGRESS_C =
-        new ColumnExp(InProgressBadgeRecord.class, PROGRESS);
+    public static final Class<InProgressBadgeRecord> _R = InProgressBadgeRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp BADGE_CODE = colexp(_R, "badgeCode");
+    public static final ColumnExp NEXT_LEVEL = colexp(_R, "nextLevel");
+    public static final ColumnExp PROGRESS = colexp(_R, "progress");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -131,7 +109,7 @@ public class InProgressBadgeRecord extends PersistentRecord
     {
         return new Key<InProgressBadgeRecord>(
                 InProgressBadgeRecord.class,
-                new String[] { MEMBER_ID, BADGE_CODE },
+                new ColumnExp[] { MEMBER_ID, BADGE_CODE },
                 new Comparable[] { memberId, badgeCode });
     }
     // AUTO-GENERATED: METHODS END

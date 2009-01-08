@@ -15,40 +15,16 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
-@Entity(indices={
-    @Index(name="ixGameId", fields={ GameTraceLogRecord.GAME_ID })
-})
+@Entity
 public class GameTraceLogRecord
     extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #logId} field. */
-    public static final String LOG_ID = "logId";
-
-    /** The qualified column identifier for the {@link #logId} field. */
-    public static final ColumnExp LOG_ID_C =
-        new ColumnExp(GameTraceLogRecord.class, LOG_ID);
-
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(GameTraceLogRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #recorded} field. */
-    public static final String RECORDED = "recorded";
-
-    /** The qualified column identifier for the {@link #recorded} field. */
-    public static final ColumnExp RECORDED_C =
-        new ColumnExp(GameTraceLogRecord.class, RECORDED);
-
-    /** The column identifier for the {@link #logData} field. */
-    public static final String LOG_DATA = "logData";
-
-    /** The qualified column identifier for the {@link #logData} field. */
-    public static final ColumnExp LOG_DATA_C =
-        new ColumnExp(GameTraceLogRecord.class, LOG_DATA);
+    public static final Class<GameTraceLogRecord> _R = GameTraceLogRecord.class;
+    public static final ColumnExp LOG_ID = colexp(_R, "logId");
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp RECORDED = colexp(_R, "recorded");
+    public static final ColumnExp LOG_DATA = colexp(_R, "logData");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -63,7 +39,7 @@ public class GameTraceLogRecord
         // Dig out of annotations
         if (_logLength == null) {
             try {
-                Field logData = GameTraceLogRecord.class.getDeclaredField(LOG_DATA);
+                Field logData = GameTraceLogRecord.class.getDeclaredField(LOG_DATA.name);
                 Column column = logData.getAnnotation(Column.class);
                 _logLength = column.length();
 
@@ -81,6 +57,7 @@ public class GameTraceLogRecord
     public int logId;
 
     /** The id of the game whose logs we're recording. */
+    @Index(name="ixGameId")
     public int gameId;
 
     /** The time at which these logs were recorded. */
@@ -110,7 +87,7 @@ public class GameTraceLogRecord
     {
         return new Key<GameTraceLogRecord>(
                 GameTraceLogRecord.class,
-                new String[] { LOG_ID },
+                new ColumnExp[] { LOG_ID },
                 new Comparable[] { logId });
     }
     // AUTO-GENERATED: METHODS END

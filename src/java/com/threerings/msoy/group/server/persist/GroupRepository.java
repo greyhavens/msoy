@@ -137,28 +137,28 @@ public class GroupRepository extends DepotRepository
 
         // if there is a tag, fetch groups with GroupTagRecords for that tag, order by groupId
         } else if (query.tag != null) {
-            return findAll(GroupRecord.class, getGroupWhere(query), new Join(GroupRecord.class,
-                    GroupRecord.GROUP_ID, GroupTagRecord.class, GroupTagRecord.TARGET_ID),
-                new Limit(offset, count));
+            return findAll(GroupRecord.class, getGroupWhere(query),
+                           new Join(GroupRecord.GROUP_ID, GroupTagRecord.TARGET_ID),
+                           new Limit(offset, count));
         }
 
         // if no full text or tag search, return a subset of all records, order by query.sort
         OrderBy orderBy;
         if (query.sort == GroupQuery.SORT_BY_NAME) {
-            orderBy = OrderBy.ascending(GroupRecord.NAME_C);
+            orderBy = OrderBy.ascending(GroupRecord.NAME);
         } else if (query.sort == GroupQuery.SORT_BY_NUM_MEMBERS) {
-            orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT_C);
+            orderBy = OrderBy.descending(GroupRecord.MEMBER_COUNT);
         } else if (query.sort == GroupQuery.SORT_BY_CREATED_DATE) {
-            orderBy = OrderBy.ascending(GroupRecord.CREATION_DATE_C);
+            orderBy = OrderBy.ascending(GroupRecord.CREATION_DATE);
         } else {
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
             long nowSeconds = System.currentTimeMillis() / 1000;
             orderBy = OrderBy.descending(
-                new Arithmetic.Sub(GroupRecord.MEMBER_COUNT_C,
+                new Arithmetic.Sub(GroupRecord.MEMBER_COUNT,
                     new Arithmetic.Div(
                         new Arithmetic.Sub(new ValueExp(nowSeconds),
-                            new EpochSeconds(GroupRecord.CREATION_DATE_C)), membersPerDay))
+                            new EpochSeconds(GroupRecord.CREATION_DATE)), membersPerDay))
                 );
         }
 
@@ -180,9 +180,8 @@ public class GroupRepository extends DepotRepository
         // if there is a tag, return count of GroupTagRecords for that tag
         } else if (query.tag != null) {
             return load(CountRecord.class, new FromOverride(GroupRecord.class),
-                new Join(GroupRecord.class, GroupRecord.GROUP_ID,
-                    GroupTagRecord.class, GroupTagRecord.TARGET_ID),
-                    getGroupWhere(query)).count;
+                        new Join(GroupRecord.GROUP_ID, GroupTagRecord.TARGET_ID),
+                        getGroupWhere(query)).count;
 
         // if no full text or tag search, return count of all public records
         } else {
@@ -204,7 +203,7 @@ public class GroupRepository extends DepotRepository
      */
     public GroupRecord loadGroupByName (String name)
     {
-        return load(GroupRecord.class, new Where(new Equals(GroupRecord.NAME_C, name)));
+        return load(GroupRecord.class, new Where(new Equals(GroupRecord.NAME, name)));
     }
 
     /**
@@ -276,7 +275,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Updates the specified group record with supplied field/value mapping.
      */
-    public void updateGroup (int groupId, Map<String, Object> updates)
+    public void updateGroup (int groupId, Map<ColumnExp, Object> updates)
     {
         int rows = updatePartial(GroupRecord.class, groupId, updates);
         if (rows == 0) {
@@ -426,7 +425,7 @@ public class GroupRepository extends DepotRepository
     {
         return load(CountRecord.class,
                     new FromOverride(GroupMembershipRecord.class),
-                    new Where(GroupMembershipRecord.GROUP_ID_C, groupId)).count;
+                    new Where(GroupMembershipRecord.GROUP_ID, groupId)).count;
     }
 
     /**
@@ -435,7 +434,7 @@ public class GroupRepository extends DepotRepository
     public List<GroupMembershipRecord> getMembers (int groupId)
     {
         return findAll(GroupMembershipRecord.class,
-                       new Where(GroupMembershipRecord.GROUP_ID_C, groupId));
+                       new Where(GroupMembershipRecord.GROUP_ID, groupId));
     }
 
     /**
@@ -455,13 +454,13 @@ public class GroupRepository extends DepotRepository
         Where where;
         if (minRank) {
             where = new Where(new And(
-                new Equals(GroupMembershipRecord.GROUP_ID_C, groupId),
-                new GreaterThanEquals(GroupMembershipRecord.RANK_C, rank)));
+                new Equals(GroupMembershipRecord.GROUP_ID, groupId),
+                new GreaterThanEquals(GroupMembershipRecord.RANK, rank)));
         }
         else {
             where = new Where(new And(
-                new Equals(GroupMembershipRecord.GROUP_ID_C, groupId),
-                new Equals(GroupMembershipRecord.RANK_C, rank)));
+                new Equals(GroupMembershipRecord.GROUP_ID, groupId),
+                new Equals(GroupMembershipRecord.RANK, rank)));
         }
         return findAll(GroupMembershipRecord.class, where);
     }
@@ -472,7 +471,7 @@ public class GroupRepository extends DepotRepository
     public List<GroupMembershipRecord> getMemberships (int memberId)
     {
         return findAll(GroupMembershipRecord.class,
-                       new Where(GroupMembershipRecord.MEMBER_ID_C, memberId));
+                       new Where(GroupMembershipRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -481,8 +480,8 @@ public class GroupRepository extends DepotRepository
     public List<GroupRecord> getFullMemberships (int memberId)
     {
         return findAll(GroupRecord.class,
-                       new Join(GroupRecord.GROUP_ID_C, GroupMembershipRecord.GROUP_ID_C),
-                       new Where(GroupMembershipRecord.MEMBER_ID_C, memberId));
+                       new Join(GroupRecord.GROUP_ID, GroupMembershipRecord.GROUP_ID),
+                       new Where(GroupMembershipRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -490,7 +489,7 @@ public class GroupRepository extends DepotRepository
      */
     public List<GroupRecord> getOfficialGroups ()
     {
-        return findAll(GroupRecord.class, new Where(new Equals(GroupRecord.OFFICIAL_C,
+        return findAll(GroupRecord.class, new Where(new Equals(GroupRecord.OFFICIAL,
             new LiteralExp("true"))));
     }
 
@@ -523,13 +522,13 @@ public class GroupRepository extends DepotRepository
 
     protected void updateMemberCount (int groupId)
     {
-        Map<String, SQLExpression> fieldMap = Maps.newHashMap();
+        Map<ColumnExp, SQLExpression> fieldMap = Maps.newHashMap();
         fieldMap.put(GroupRecord.MEMBER_COUNT,
                      new SelectClause<CountRecord>(
                          CountRecord.class,
-                         new String[] { CountRecord.COUNT },
+                         new String[] { CountRecord.COUNT.name },
                          new FromOverride(GroupMembershipRecord.class),
-                         new Where(GroupMembershipRecord.GROUP_ID_C, groupId)));
+                         new Where(GroupMembershipRecord.GROUP_ID, groupId)));
         updateLiteral(GroupRecord.class, groupId, fieldMap);
     }
 
@@ -538,7 +537,7 @@ public class GroupRepository extends DepotRepository
      */
     protected Where getGroupWhere (GroupQuery query)
     {
-        SQLOperator publicOnly = new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE));
+        SQLOperator publicOnly = new Not(new Equals(GroupRecord.POLICY, Group.POLICY_EXCLUSIVE));
         if (query.search != null) {
             return new Where(new And(publicOnly, new FullTextMatch(GroupRecord.class,
                 GroupRecord.FTS_NBC, query.search)));
@@ -547,8 +546,7 @@ public class GroupRepository extends DepotRepository
             if (tnr == null) {
                 return new Where(new LiteralExp("false"));
             } else {
-                return new Where(new And(publicOnly, new Equals(
-                    new ColumnExp(GroupTagRecord.class, GroupTagRecord.TAG_ID), tnr.tagId)));
+                return new Where(new And(publicOnly, new Equals(GroupTagRecord.TAG_ID, tnr.tagId)));
             }
         } else {
             return new Where(publicOnly);

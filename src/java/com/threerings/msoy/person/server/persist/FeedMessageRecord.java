@@ -6,6 +6,7 @@ package com.threerings.msoy.person.server.persist;
 import java.sql.Timestamp;
 
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
@@ -17,23 +18,15 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 /**
  * Contains information on a feed message.
  */
-@Entity(indices={
-    @Index(name="ixPosted", fields={ FeedMessageRecord.POSTED })
-})
+@Entity
 public abstract class FeedMessageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #messageId} field. */
-    public static final String MESSAGE_ID = "messageId";
-
-    /** The column identifier for the {@link #type} field. */
-    public static final String TYPE = "type";
-
-    /** The column identifier for the {@link #data} field. */
-    public static final String DATA = "data";
-
-    /** The column identifier for the {@link #posted} field. */
-    public static final String POSTED = "posted";
+    public static final Class<FeedMessageRecord> _R = FeedMessageRecord.class;
+    public static final ColumnExp MESSAGE_ID = colexp(_R, "messageId");
+    public static final ColumnExp TYPE = colexp(_R, "type");
+    public static final ColumnExp DATA = colexp(_R, "data");
+    public static final ColumnExp POSTED = colexp(_R, "posted");
     // AUTO-GENERATED: FIELDS END
 
     /** A unique identifier for this message. */
@@ -47,6 +40,7 @@ public abstract class FeedMessageRecord extends PersistentRecord
     public String data;
 
     /** The time at which this message was posted. */
+    @Index(name="ixPosted")
     public Timestamp posted;
 
     /**

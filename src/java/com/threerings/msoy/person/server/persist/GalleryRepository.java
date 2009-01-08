@@ -41,8 +41,8 @@ public class GalleryRepository extends DepotRepository
     public List<GalleryInfoRecord> loadGalleries (int memberId)
     {
         return findAll(GalleryInfoRecord.class,
-            new Where(new Equals(GalleryRecord.OWNER_ID_C, memberId)),
-                      OrderBy.descending(GalleryRecord.LAST_MODIFIED_C));
+            new Where(new Equals(GalleryRecord.OWNER_ID, memberId)),
+                      OrderBy.descending(GalleryRecord.LAST_MODIFIED));
     }
 
     /**
@@ -51,9 +51,9 @@ public class GalleryRepository extends DepotRepository
     public GalleryRecord loadMeGallery (int memberId)
     {
         return load(GalleryRecord.class,
-                    new Where(new And(new Equals(GalleryRecord.OWNER_ID_C, memberId),
+                    new Where(new And(new Equals(GalleryRecord.OWNER_ID, memberId),
                                       // a null gallery name indicates the "Me" gallery
-                                      new IsNull(GalleryRecord.NAME_C))));
+                                      new IsNull(GalleryRecord.NAME))));
     }
 
     /**

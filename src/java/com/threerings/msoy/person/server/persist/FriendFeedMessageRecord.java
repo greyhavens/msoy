@@ -14,34 +14,16 @@ import com.threerings.msoy.person.gwt.FriendFeedMessage;
 /**
  * Contains persistent data on a feed message distributed to a member's friends.
  */
-@Entity(indices={
-    @Index(name="ixActorId", fields={ FriendFeedMessageRecord.ACTOR_ID })
-})
+@Entity
 public class FriendFeedMessageRecord extends FeedMessageRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #actorId} field. */
-    public static final String ACTOR_ID = "actorId";
-
-    /** The qualified column identifier for the {@link #actorId} field. */
-    public static final ColumnExp ACTOR_ID_C =
-        new ColumnExp(FriendFeedMessageRecord.class, ACTOR_ID);
-
-    /** The qualified column identifier for the {@link #messageId} field. */
-    public static final ColumnExp MESSAGE_ID_C =
-        new ColumnExp(FriendFeedMessageRecord.class, MESSAGE_ID);
-
-    /** The qualified column identifier for the {@link #type} field. */
-    public static final ColumnExp TYPE_C =
-        new ColumnExp(FriendFeedMessageRecord.class, TYPE);
-
-    /** The qualified column identifier for the {@link #data} field. */
-    public static final ColumnExp DATA_C =
-        new ColumnExp(FriendFeedMessageRecord.class, DATA);
-
-    /** The qualified column identifier for the {@link #posted} field. */
-    public static final ColumnExp POSTED_C =
-        new ColumnExp(FriendFeedMessageRecord.class, POSTED);
+    public static final Class<FriendFeedMessageRecord> _R = FriendFeedMessageRecord.class;
+    public static final ColumnExp ACTOR_ID = colexp(_R, "actorId");
+    public static final ColumnExp MESSAGE_ID = colexp(_R, "messageId");
+    public static final ColumnExp TYPE = colexp(_R, "type");
+    public static final ColumnExp DATA = colexp(_R, "data");
+    public static final ColumnExp POSTED = colexp(_R, "posted");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -49,6 +31,7 @@ public class FriendFeedMessageRecord extends FeedMessageRecord
     public static final int SCHEMA_VERSION = 2;
 
     /** The member id of the originator of this message. */
+    @Index(name="ixActorId")
     public int actorId;
 
     @Override // from FeedMessageRecord
@@ -66,7 +49,7 @@ public class FriendFeedMessageRecord extends FeedMessageRecord
     {
         return new Key<FriendFeedMessageRecord>(
                 FriendFeedMessageRecord.class,
-                new String[] { MESSAGE_ID },
+                new ColumnExp[] { MESSAGE_ID },
                 new Comparable[] { messageId });
     }
     // AUTO-GENERATED: METHODS END

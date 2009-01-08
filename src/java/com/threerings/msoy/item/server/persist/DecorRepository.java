@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.PersistenceContext;
-import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.annotation.Entity;
 
 import com.threerings.msoy.item.data.all.Decor;
@@ -35,12 +34,6 @@ public class DecorRepository extends ItemRepository<DecorRecord>
     @Inject public DecorRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        ctx.registerMigration(DecorRecord.class,
-            new SchemaMigration.Rename(17004, "scale", "actorScale"));
-        ctx.registerMigration(DecorRecord.class, new SchemaMigration.Drop(17004, "offsetX"));
-        ctx.registerMigration(DecorRecord.class, new SchemaMigration.Drop(17004, "offsetY"));
-        // I should probably copy avatarScale -> furniScale, but I'll just let it get set to 1
     }
 
     @Override

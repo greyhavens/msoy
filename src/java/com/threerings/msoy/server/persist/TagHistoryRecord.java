@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 
 import com.google.common.base.Function;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
 
 import com.threerings.io.Streamable;
@@ -19,20 +20,12 @@ public abstract class TagHistoryRecord extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #targetId} field. */
-    public static final String TARGET_ID = "targetId";
-
-    /** The column identifier for the {@link #tagId} field. */
-    public static final String TAG_ID = "tagId";
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The column identifier for the {@link #action} field. */
-    public static final String ACTION = "action";
-
-    /** The column identifier for the {@link #time} field. */
-    public static final String TIME = "time";
+    public static final Class<TagHistoryRecord> _R = TagHistoryRecord.class;
+    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
+    public static final ColumnExp TAG_ID = colexp(_R, "tagId");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp ACTION = colexp(_R, "action");
+    public static final ColumnExp TIME = colexp(_R, "time");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

@@ -25,82 +25,18 @@ import com.threerings.msoy.fora.gwt.Issue;
 public class IssueRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #issueId} field. */
-    public static final String ISSUE_ID = "issueId";
-
-    /** The qualified column identifier for the {@link #issueId} field. */
-    public static final ColumnExp ISSUE_ID_C =
-        new ColumnExp(IssueRecord.class, ISSUE_ID);
-
-    /** The column identifier for the {@link #creatorId} field. */
-    public static final String CREATOR_ID = "creatorId";
-
-    /** The qualified column identifier for the {@link #creatorId} field. */
-    public static final ColumnExp CREATOR_ID_C =
-        new ColumnExp(IssueRecord.class, CREATOR_ID);
-
-    /** The column identifier for the {@link #ownerId} field. */
-    public static final String OWNER_ID = "ownerId";
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(IssueRecord.class, OWNER_ID);
-
-    /** The column identifier for the {@link #description} field. */
-    public static final String DESCRIPTION = "description";
-
-    /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(IssueRecord.class, DESCRIPTION);
-
-    /** The column identifier for the {@link #state} field. */
-    public static final String STATE = "state";
-
-    /** The qualified column identifier for the {@link #state} field. */
-    public static final ColumnExp STATE_C =
-        new ColumnExp(IssueRecord.class, STATE);
-
-    /** The column identifier for the {@link #priority} field. */
-    public static final String PRIORITY = "priority";
-
-    /** The qualified column identifier for the {@link #priority} field. */
-    public static final ColumnExp PRIORITY_C =
-        new ColumnExp(IssueRecord.class, PRIORITY);
-
-    /** The column identifier for the {@link #type} field. */
-    public static final String TYPE = "type";
-
-    /** The qualified column identifier for the {@link #type} field. */
-    public static final ColumnExp TYPE_C =
-        new ColumnExp(IssueRecord.class, TYPE);
-
-    /** The column identifier for the {@link #category} field. */
-    public static final String CATEGORY = "category";
-
-    /** The qualified column identifier for the {@link #category} field. */
-    public static final ColumnExp CATEGORY_C =
-        new ColumnExp(IssueRecord.class, CATEGORY);
-
-    /** The column identifier for the {@link #createdTime} field. */
-    public static final String CREATED_TIME = "createdTime";
-
-    /** The qualified column identifier for the {@link #createdTime} field. */
-    public static final ColumnExp CREATED_TIME_C =
-        new ColumnExp(IssueRecord.class, CREATED_TIME);
-
-    /** The column identifier for the {@link #closedTime} field. */
-    public static final String CLOSED_TIME = "closedTime";
-
-    /** The qualified column identifier for the {@link #closedTime} field. */
-    public static final ColumnExp CLOSED_TIME_C =
-        new ColumnExp(IssueRecord.class, CLOSED_TIME);
-
-    /** The column identifier for the {@link #closeComment} field. */
-    public static final String CLOSE_COMMENT = "closeComment";
-
-    /** The qualified column identifier for the {@link #closeComment} field. */
-    public static final ColumnExp CLOSE_COMMENT_C =
-        new ColumnExp(IssueRecord.class, CLOSE_COMMENT);
+    public static final Class<IssueRecord> _R = IssueRecord.class;
+    public static final ColumnExp ISSUE_ID = colexp(_R, "issueId");
+    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp STATE = colexp(_R, "state");
+    public static final ColumnExp PRIORITY = colexp(_R, "priority");
+    public static final ColumnExp TYPE = colexp(_R, "type");
+    public static final ColumnExp CATEGORY = colexp(_R, "category");
+    public static final ColumnExp CREATED_TIME = colexp(_R, "createdTime");
+    public static final ColumnExp CLOSED_TIME = colexp(_R, "closedTime");
+    public static final ColumnExp CLOSE_COMMENT = colexp(_R, "closeComment");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -171,7 +107,7 @@ public class IssueRecord extends PersistentRecord
     {
         return new Key<IssueRecord>(
                 IssueRecord.class,
-                new String[] { ISSUE_ID },
+                new ColumnExp[] { ISSUE_ID },
                 new Comparable[] { issueId });
     }
     // AUTO-GENERATED: METHODS END

@@ -7,6 +7,7 @@ import com.google.common.base.Function;
 
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Index;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
@@ -14,17 +15,32 @@ import com.threerings.msoy.item.data.all.SubItem;
 /**
  * Contains additional fields required by sub-items.
  */
-@Entity(indices={
-    @Index(name="ixSuiteId", fields={ SubItemRecord.SUITE_ID })
-})
+@Entity
 public abstract class SubItemRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #suiteId} field. */
-    public static final String SUITE_ID = "suiteId";
-
-    /** The column identifier for the {@link #ident} field. */
-    public static final String IDENT = "ident";
+    public static final Class<SubItemRecord> _R = SubItemRecord.class;
+    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
+    public static final ColumnExp IDENT = colexp(_R, "ident");
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
+    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp USED = colexp(_R, "used");
+    public static final ColumnExp LOCATION = colexp(_R, "location");
+    public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp MATURE = colexp(_R, "mature");
+    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
+    public static final ColumnExp FURNI_MEDIA_HASH = colexp(_R, "furniMediaHash");
+    public static final ColumnExp FURNI_MIME_TYPE = colexp(_R, "furniMimeType");
+    public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
     /** A function that extracts {@link #ident}. */
@@ -35,6 +51,7 @@ public abstract class SubItemRecord extends ItemRecord
     };
 
     /** The identifier of the suite to which this subitem belongs. See {@link SubItem#suiteId}. */
+    @Index(name="ixSuiteId")
     public int suiteId;
 
     /** An identifier for this level pack, used by the game code. */

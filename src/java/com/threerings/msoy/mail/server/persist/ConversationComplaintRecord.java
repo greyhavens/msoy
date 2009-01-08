@@ -16,19 +16,9 @@ import com.samskivert.depot.expression.ColumnExp;
 public class ConversationComplaintRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #conversationId} field. */
-    public static final String CONVERSATION_ID = "conversationId";
-
-    /** The qualified column identifier for the {@link #conversationId} field. */
-    public static final ColumnExp CONVERSATION_ID_C =
-        new ColumnExp(ConversationComplaintRecord.class, CONVERSATION_ID);
-
-    /** The column identifier for the {@link #complainerId} field. */
-    public static final String COMPLAINER_ID = "complainerId";
-
-    /** The qualified column identifier for the {@link #complainerId} field. */
-    public static final ColumnExp COMPLAINER_ID_C =
-        new ColumnExp(ConversationComplaintRecord.class, COMPLAINER_ID);
+    public static final Class<ConversationComplaintRecord> _R = ConversationComplaintRecord.class;
+    public static final ColumnExp CONVERSATION_ID = colexp(_R, "conversationId");
+    public static final ColumnExp COMPLAINER_ID = colexp(_R, "complainerId");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -50,7 +40,7 @@ public class ConversationComplaintRecord extends PersistentRecord
     {
         return new Key<ConversationComplaintRecord>(
                 ConversationComplaintRecord.class,
-                new String[] { CONVERSATION_ID, COMPLAINER_ID },
+                new ColumnExp[] { CONVERSATION_ID, COMPLAINER_ID },
                 new Comparable[] { conversationId, complainerId });
     }
     // AUTO-GENERATED: METHODS END

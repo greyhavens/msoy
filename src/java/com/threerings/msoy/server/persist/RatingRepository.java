@@ -30,14 +30,14 @@ public abstract class RatingRepository extends DepotRepository
     public static class RatingAverageRecord extends PersistentRecord {
         @Computed(fieldDefinition="count(*)")
         public int count;
-        @Computed(fieldDefinition="avg(" + RatingRecord.RATING + ")")
+        @Computed(fieldDefinition="avg(rating)")
         public float average;
     }
 
     /**
      * Creates a tag repository for the supplied tag and tag history record classes.
      */
-    public RatingRepository (PersistenceContext ctx, String rating, String ratingCount)
+    public RatingRepository (PersistenceContext ctx, ColumnExp rating, ColumnExp ratingCount)
     {
         super(ctx);
 
@@ -122,9 +122,9 @@ public abstract class RatingRepository extends DepotRepository
     /** Exports the specific target (item or room) rated by this repository. */
     protected abstract Class<? extends PersistentRecord> getTargetClass ();
 
-    protected ColumnExp getRatingColumn (String cname)
+    protected ColumnExp getRatingColumn (ColumnExp col)
     {
-        return new ColumnExp(getRatingClass(), cname);
+        return new ColumnExp(getRatingClass(), col.name);
     }
 
     @Override // from DepotRepository
@@ -133,5 +133,5 @@ public abstract class RatingRepository extends DepotRepository
         classes.add(getRatingClass());
     }
 
-    protected String _rating, _ratingCount;
+    protected ColumnExp _rating, _ratingCount;
 }

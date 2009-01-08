@@ -18,26 +18,10 @@ import java.sql.Date;
 public class SessionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #token} field. */
-    public static final String TOKEN = "token";
-
-    /** The qualified column identifier for the {@link #token} field. */
-    public static final ColumnExp TOKEN_C =
-        new ColumnExp(SessionRecord.class, TOKEN);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(SessionRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #expires} field. */
-    public static final String EXPIRES = "expires";
-
-    /** The qualified column identifier for the {@link #expires} field. */
-    public static final ColumnExp EXPIRES_C =
-        new ColumnExp(SessionRecord.class, EXPIRES);
+    public static final Class<SessionRecord> _R = SessionRecord.class;
+    public static final ColumnExp TOKEN = colexp(_R, "token");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp EXPIRES = colexp(_R, "expires");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
@@ -75,7 +59,7 @@ public class SessionRecord extends PersistentRecord
     {
         return new Key<SessionRecord>(
                 SessionRecord.class,
-                new String[] { TOKEN },
+                new ColumnExp[] { TOKEN },
                 new Comparable[] { token });
     }
     // AUTO-GENERATED: METHODS END

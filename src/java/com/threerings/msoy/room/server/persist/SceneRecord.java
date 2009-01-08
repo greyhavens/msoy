@@ -35,12 +35,7 @@ import com.threerings.msoy.room.gwt.RoomInfo;
 /**
  * Contains metadata for a scene in the Whirled.
  */
-@Entity(indices={
-    @Index(name="ixOwnerId", fields={ SceneRecord.OWNER_ID }),
-    @Index(name="ixAccessControl", fields={ SceneRecord.ACCESS_CONTROL }),
-    @Index(name="ixLastPublished", fields={ SceneRecord.LAST_PUBLISHED }),
-    @Index(name="ixNewAndHot", complex=true)
-})
+@Entity(indices={ @Index(name="ixNewAndHot") })
 public class SceneRecord extends PersistentRecord
 {
     /** Enumerates our various stock scenes. */
@@ -78,152 +73,28 @@ public class SceneRecord extends PersistentRecord
     };
 
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #sceneId} field. */
-    public static final String SCENE_ID = "sceneId";
-
-    /** The qualified column identifier for the {@link #sceneId} field. */
-    public static final ColumnExp SCENE_ID_C =
-        new ColumnExp(SceneRecord.class, SCENE_ID);
-
-    /** The column identifier for the {@link #accessControl} field. */
-    public static final String ACCESS_CONTROL = "accessControl";
-
-    /** The qualified column identifier for the {@link #accessControl} field. */
-    public static final ColumnExp ACCESS_CONTROL_C =
-        new ColumnExp(SceneRecord.class, ACCESS_CONTROL);
-
-    /** The column identifier for the {@link #ownerType} field. */
-    public static final String OWNER_TYPE = "ownerType";
-
-    /** The qualified column identifier for the {@link #ownerType} field. */
-    public static final ColumnExp OWNER_TYPE_C =
-        new ColumnExp(SceneRecord.class, OWNER_TYPE);
-
-    /** The column identifier for the {@link #ownerId} field. */
-    public static final String OWNER_ID = "ownerId";
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(SceneRecord.class, OWNER_ID);
-
-    /** The column identifier for the {@link #version} field. */
-    public static final String VERSION = "version";
-
-    /** The qualified column identifier for the {@link #version} field. */
-    public static final ColumnExp VERSION_C =
-        new ColumnExp(SceneRecord.class, VERSION);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(SceneRecord.class, NAME);
-
-    /** The column identifier for the {@link #decorId} field. */
-    public static final String DECOR_ID = "decorId";
-
-    /** The qualified column identifier for the {@link #decorId} field. */
-    public static final ColumnExp DECOR_ID_C =
-        new ColumnExp(SceneRecord.class, DECOR_ID);
-
-    /** The column identifier for the {@link #audioId} field. */
-    public static final String AUDIO_ID = "audioId";
-
-    /** The qualified column identifier for the {@link #audioId} field. */
-    public static final ColumnExp AUDIO_ID_C =
-        new ColumnExp(SceneRecord.class, AUDIO_ID);
-
-    /** The column identifier for the {@link #audioMediaHash} field. */
-    public static final String AUDIO_MEDIA_HASH = "audioMediaHash";
-
-    /** The qualified column identifier for the {@link #audioMediaHash} field. */
-    public static final ColumnExp AUDIO_MEDIA_HASH_C =
-        new ColumnExp(SceneRecord.class, AUDIO_MEDIA_HASH);
-
-    /** The column identifier for the {@link #audioMediaType} field. */
-    public static final String AUDIO_MEDIA_TYPE = "audioMediaType";
-
-    /** The qualified column identifier for the {@link #audioMediaType} field. */
-    public static final ColumnExp AUDIO_MEDIA_TYPE_C =
-        new ColumnExp(SceneRecord.class, AUDIO_MEDIA_TYPE);
-
-    /** The column identifier for the {@link #canonicalImageHash} field. */
-    public static final String CANONICAL_IMAGE_HASH = "canonicalImageHash";
-
-    /** The qualified column identifier for the {@link #canonicalImageHash} field. */
-    public static final ColumnExp CANONICAL_IMAGE_HASH_C =
-        new ColumnExp(SceneRecord.class, CANONICAL_IMAGE_HASH);
-
-    /** The column identifier for the {@link #canonicalImageType} field. */
-    public static final String CANONICAL_IMAGE_TYPE = "canonicalImageType";
-
-    /** The qualified column identifier for the {@link #canonicalImageType} field. */
-    public static final ColumnExp CANONICAL_IMAGE_TYPE_C =
-        new ColumnExp(SceneRecord.class, CANONICAL_IMAGE_TYPE);
-
-    /** The column identifier for the {@link #thumbnailHash} field. */
-    public static final String THUMBNAIL_HASH = "thumbnailHash";
-
-    /** The qualified column identifier for the {@link #thumbnailHash} field. */
-    public static final ColumnExp THUMBNAIL_HASH_C =
-        new ColumnExp(SceneRecord.class, THUMBNAIL_HASH);
-
-    /** The column identifier for the {@link #thumbnailType} field. */
-    public static final String THUMBNAIL_TYPE = "thumbnailType";
-
-    /** The qualified column identifier for the {@link #thumbnailType} field. */
-    public static final ColumnExp THUMBNAIL_TYPE_C =
-        new ColumnExp(SceneRecord.class, THUMBNAIL_TYPE);
-
-    /** The column identifier for the {@link #audioVolume} field. */
-    public static final String AUDIO_VOLUME = "audioVolume";
-
-    /** The qualified column identifier for the {@link #audioVolume} field. */
-    public static final ColumnExp AUDIO_VOLUME_C =
-        new ColumnExp(SceneRecord.class, AUDIO_VOLUME);
-
-    /** The column identifier for the {@link #entranceX} field. */
-    public static final String ENTRANCE_X = "entranceX";
-
-    /** The qualified column identifier for the {@link #entranceX} field. */
-    public static final ColumnExp ENTRANCE_X_C =
-        new ColumnExp(SceneRecord.class, ENTRANCE_X);
-
-    /** The column identifier for the {@link #entranceY} field. */
-    public static final String ENTRANCE_Y = "entranceY";
-
-    /** The qualified column identifier for the {@link #entranceY} field. */
-    public static final ColumnExp ENTRANCE_Y_C =
-        new ColumnExp(SceneRecord.class, ENTRANCE_Y);
-
-    /** The column identifier for the {@link #entranceZ} field. */
-    public static final String ENTRANCE_Z = "entranceZ";
-
-    /** The qualified column identifier for the {@link #entranceZ} field. */
-    public static final ColumnExp ENTRANCE_Z_C =
-        new ColumnExp(SceneRecord.class, ENTRANCE_Z);
-
-    /** The column identifier for the {@link #rating} field. */
-    public static final String RATING = "rating";
-
-    /** The qualified column identifier for the {@link #rating} field. */
-    public static final ColumnExp RATING_C =
-        new ColumnExp(SceneRecord.class, RATING);
-
-    /** The column identifier for the {@link #ratingCount} field. */
-    public static final String RATING_COUNT = "ratingCount";
-
-    /** The qualified column identifier for the {@link #ratingCount} field. */
-    public static final ColumnExp RATING_COUNT_C =
-        new ColumnExp(SceneRecord.class, RATING_COUNT);
-
-    /** The column identifier for the {@link #lastPublished} field. */
-    public static final String LAST_PUBLISHED = "lastPublished";
-
-    /** The qualified column identifier for the {@link #lastPublished} field. */
-    public static final ColumnExp LAST_PUBLISHED_C =
-        new ColumnExp(SceneRecord.class, LAST_PUBLISHED);
+    public static final Class<SceneRecord> _R = SceneRecord.class;
+    public static final ColumnExp SCENE_ID = colexp(_R, "sceneId");
+    public static final ColumnExp ACCESS_CONTROL = colexp(_R, "accessControl");
+    public static final ColumnExp OWNER_TYPE = colexp(_R, "ownerType");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp VERSION = colexp(_R, "version");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DECOR_ID = colexp(_R, "decorId");
+    public static final ColumnExp AUDIO_ID = colexp(_R, "audioId");
+    public static final ColumnExp AUDIO_MEDIA_HASH = colexp(_R, "audioMediaHash");
+    public static final ColumnExp AUDIO_MEDIA_TYPE = colexp(_R, "audioMediaType");
+    public static final ColumnExp CANONICAL_IMAGE_HASH = colexp(_R, "canonicalImageHash");
+    public static final ColumnExp CANONICAL_IMAGE_TYPE = colexp(_R, "canonicalImageType");
+    public static final ColumnExp THUMBNAIL_HASH = colexp(_R, "thumbnailHash");
+    public static final ColumnExp THUMBNAIL_TYPE = colexp(_R, "thumbnailType");
+    public static final ColumnExp AUDIO_VOLUME = colexp(_R, "audioVolume");
+    public static final ColumnExp ENTRANCE_X = colexp(_R, "entranceX");
+    public static final ColumnExp ENTRANCE_Y = colexp(_R, "entranceY");
+    public static final ColumnExp ENTRANCE_Z = colexp(_R, "entranceZ");
+    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp LAST_PUBLISHED = colexp(_R, "lastPublished");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -231,13 +102,9 @@ public class SceneRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 7;
 
     /** Define the sort order for the new & hot queries. */
-    public static List<Tuple<SQLExpression, Order>> ixNewAndHotDefinition ()
+    public static Tuple<SQLExpression, Order> ixNewAndHot ()
     {
-        List<Tuple<SQLExpression, Order>> definition = Lists.newArrayList();
-        // we actually order descending, but the database can just read the index backwards
-        definition.add(Tuple.newTuple(
-            MsoySceneRepository.NEW_AND_HOT_ORDER, OrderBy.Order.ASC));
-        return definition;
+        return Tuple.newTuple(MsoySceneRepository.NEW_AND_HOT_ORDER, OrderBy.Order.ASC);
     }
 
     /** The unique identifier for this scene. */
@@ -245,12 +112,14 @@ public class SceneRecord extends PersistentRecord
     public int sceneId; // initialValue=6 accounts for stock scenes
 
     /** Access control information. See {@link MsoySceneModel}. */
+    @Index(name="ixAccessControl")
     public byte accessControl;
 
     /** Whether this scene is owned by a member or a group. See {@link MsoySceneModel}. */
     public byte ownerType;
 
     /** The member id of the owner if this scene. */
+    @Index(name="ixOwnerId")
     public int ownerId;
 
     /** The version of this scene (used to manage scene data modifications). */
@@ -304,7 +173,7 @@ public class SceneRecord extends PersistentRecord
     public int ratingCount;
 
     /** When the room was last published, or null if it was never published. */
-    @Column(nullable=true)
+    @Column(nullable=true) @Index(name="ixLastPublished")
     public Timestamp lastPublished;
 
     /** Used when loading from the database. */
@@ -427,7 +296,7 @@ public class SceneRecord extends PersistentRecord
     {
         return new Key<SceneRecord>(
                 SceneRecord.class,
-                new String[] { SCENE_ID },
+                new ColumnExp[] { SCENE_ID },
                 new Comparable[] { sceneId });
     }
     // AUTO-GENERATED: METHODS END

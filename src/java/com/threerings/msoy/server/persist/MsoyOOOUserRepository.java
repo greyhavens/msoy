@@ -51,7 +51,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     {
         delete(OOOUserRecord.class, userId);
         delete(HistoricalUserRecord.class, userId);
-        deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID_C, userId));
+        deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID, userId));
     }
 
     // from SupportRepository
@@ -64,8 +64,8 @@ public class MsoyOOOUserRepository extends DepotUserRepository
             return null;
         }
         SQLOperator joinCondition = new And(
-                new Equals(MemberRecord.MEMBER_ID_C, memberId),
-                new Equals(OOOUserRecord.EMAIL_C, MemberRecord.ACCOUNT_NAME_C));
+                new Equals(MemberRecord.MEMBER_ID, memberId),
+                new Equals(OOOUserRecord.EMAIL, MemberRecord.ACCOUNT_NAME));
         return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));
     }
 
@@ -73,8 +73,8 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     public User loadUserBySession (String sessionKey)
     {
         SQLOperator joinCondition = new And(
-                new Equals(OOOUserRecord.USER_ID_C, SessionRecord.MEMBER_ID_C),
-                new Equals(SessionRecord.TOKEN_C, sessionKey));
+                new Equals(OOOUserRecord.USER_ID, SessionRecord.MEMBER_ID),
+                new Equals(SessionRecord.TOKEN, sessionKey));
         return toUser(load(OOOUserRecord.class, new Join(SessionRecord.class, joinCondition)));
     }
 
@@ -89,7 +89,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     {
         // see if we have a pre-existing session for this user
         SessionRecord session = load(SessionRecord.class,
-                new Where(SessionRecord.MEMBER_ID_C, user.userId));
+                new Where(SessionRecord.MEMBER_ID, user.userId));
 
         // figure out when to expire the session
         Calendar cal = Calendar.getInstance();

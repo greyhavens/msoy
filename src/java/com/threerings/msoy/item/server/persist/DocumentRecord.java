@@ -18,95 +18,28 @@ import com.threerings.msoy.item.data.all.Item;
 public class DocumentRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #docMediaHash} field. */
-    public static final String DOC_MEDIA_HASH = "docMediaHash";
-
-    /** The qualified column identifier for the {@link #docMediaHash} field. */
-    public static final ColumnExp DOC_MEDIA_HASH_C =
-        new ColumnExp(DocumentRecord.class, DOC_MEDIA_HASH);
-
-    /** The column identifier for the {@link #docMimeType} field. */
-    public static final String DOC_MIME_TYPE = "docMimeType";
-
-    /** The qualified column identifier for the {@link #docMimeType} field. */
-    public static final ColumnExp DOC_MIME_TYPE_C =
-        new ColumnExp(DocumentRecord.class, DOC_MIME_TYPE);
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(DocumentRecord.class, ITEM_ID);
-
-    /** The qualified column identifier for the {@link #sourceId} field. */
-    public static final ColumnExp SOURCE_ID_C =
-        new ColumnExp(DocumentRecord.class, SOURCE_ID);
-
-    /** The qualified column identifier for the {@link #creatorId} field. */
-    public static final ColumnExp CREATOR_ID_C =
-        new ColumnExp(DocumentRecord.class, CREATOR_ID);
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(DocumentRecord.class, OWNER_ID);
-
-    /** The qualified column identifier for the {@link #catalogId} field. */
-    public static final ColumnExp CATALOG_ID_C =
-        new ColumnExp(DocumentRecord.class, CATALOG_ID);
-
-    /** The qualified column identifier for the {@link #rating} field. */
-    public static final ColumnExp RATING_C =
-        new ColumnExp(DocumentRecord.class, RATING);
-
-    /** The qualified column identifier for the {@link #ratingCount} field. */
-    public static final ColumnExp RATING_COUNT_C =
-        new ColumnExp(DocumentRecord.class, RATING_COUNT);
-
-    /** The qualified column identifier for the {@link #used} field. */
-    public static final ColumnExp USED_C =
-        new ColumnExp(DocumentRecord.class, USED);
-
-    /** The qualified column identifier for the {@link #location} field. */
-    public static final ColumnExp LOCATION_C =
-        new ColumnExp(DocumentRecord.class, LOCATION);
-
-    /** The qualified column identifier for the {@link #lastTouched} field. */
-    public static final ColumnExp LAST_TOUCHED_C =
-        new ColumnExp(DocumentRecord.class, LAST_TOUCHED);
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(DocumentRecord.class, NAME);
-
-    /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(DocumentRecord.class, DESCRIPTION);
-
-    /** The qualified column identifier for the {@link #mature} field. */
-    public static final ColumnExp MATURE_C =
-        new ColumnExp(DocumentRecord.class, MATURE);
-
-    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
-    public static final ColumnExp THUMB_MEDIA_HASH_C =
-        new ColumnExp(DocumentRecord.class, THUMB_MEDIA_HASH);
-
-    /** The qualified column identifier for the {@link #thumbMimeType} field. */
-    public static final ColumnExp THUMB_MIME_TYPE_C =
-        new ColumnExp(DocumentRecord.class, THUMB_MIME_TYPE);
-
-    /** The qualified column identifier for the {@link #thumbConstraint} field. */
-    public static final ColumnExp THUMB_CONSTRAINT_C =
-        new ColumnExp(DocumentRecord.class, THUMB_CONSTRAINT);
-
-    /** The qualified column identifier for the {@link #furniMediaHash} field. */
-    public static final ColumnExp FURNI_MEDIA_HASH_C =
-        new ColumnExp(DocumentRecord.class, FURNI_MEDIA_HASH);
-
-    /** The qualified column identifier for the {@link #furniMimeType} field. */
-    public static final ColumnExp FURNI_MIME_TYPE_C =
-        new ColumnExp(DocumentRecord.class, FURNI_MIME_TYPE);
-
-    /** The qualified column identifier for the {@link #furniConstraint} field. */
-    public static final ColumnExp FURNI_CONSTRAINT_C =
-        new ColumnExp(DocumentRecord.class, FURNI_CONSTRAINT);
+    public static final Class<DocumentRecord> _R = DocumentRecord.class;
+    public static final ColumnExp DOC_MEDIA_HASH = colexp(_R, "docMediaHash");
+    public static final ColumnExp DOC_MIME_TYPE = colexp(_R, "docMimeType");
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
+    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp USED = colexp(_R, "used");
+    public static final ColumnExp LOCATION = colexp(_R, "location");
+    public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp MATURE = colexp(_R, "mature");
+    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
+    public static final ColumnExp FURNI_MEDIA_HASH = colexp(_R, "furniMediaHash");
+    public static final ColumnExp FURNI_MIME_TYPE = colexp(_R, "furniMimeType");
+    public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1 +
@@ -172,7 +105,7 @@ public class DocumentRecord extends ItemRecord
     {
         return new Key<DocumentRecord>(
                 DocumentRecord.class,
-                new String[] { ITEM_ID },
+                new ColumnExp[] { ITEM_ID },
                 new Comparable[] { itemId });
     }
     // AUTO-GENERATED: METHODS END

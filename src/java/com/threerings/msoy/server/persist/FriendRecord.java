@@ -11,38 +11,25 @@ import com.samskivert.depot.expression.ColumnExp;
 /**
  * Represents a friendship between two members.
  */
-@Entity(indices={
-    @Index(name="ixInviterId", fields={ FriendRecord.INVITER_ID }),
-    @Index(name="ixInviteeId", fields={ FriendRecord.INVITEE_ID })
-}, uniqueConstraints = {
-    @UniqueConstraint(fieldNames={ FriendRecord.INVITER_ID, FriendRecord.INVITEE_ID })
+@Entity(uniqueConstraints={
+    @UniqueConstraint(name="inviterInvitee", fields={ "inviterId", "inviteeId" })
 })
 public class FriendRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #inviterId} field. */
-    public static final String INVITER_ID = "inviterId";
-
-    /** The qualified column identifier for the {@link #inviterId} field. */
-    public static final ColumnExp INVITER_ID_C =
-        new ColumnExp(FriendRecord.class, INVITER_ID);
-
-    /** The column identifier for the {@link #inviteeId} field. */
-    public static final String INVITEE_ID = "inviteeId";
-
-    /** The qualified column identifier for the {@link #inviteeId} field. */
-    public static final ColumnExp INVITEE_ID_C =
-        new ColumnExp(FriendRecord.class, INVITEE_ID);
+    public static final Class<FriendRecord> _R = FriendRecord.class;
+    public static final ColumnExp INVITER_ID = colexp(_R, "inviterId");
+    public static final ColumnExp INVITEE_ID = colexp(_R, "inviteeId");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;
 
     /** The member id of the inviter. */
-    @Id
+    @Id @Index(name="ixInviterId")
     public int inviterId;
 
     /** The member id of the invitee. */
-    @Id
+    @Id @Index(name="ixInviteeId")
     public int inviteeId;
 
     /**
@@ -62,7 +49,7 @@ public class FriendRecord extends PersistentRecord
     {
         return new Key<FriendRecord>(
                 FriendRecord.class,
-                new String[] { INVITER_ID, INVITEE_ID },
+                new ColumnExp[] { INVITER_ID, INVITEE_ID },
                 new Comparable[] { inviterId, inviteeId });
     }
     // AUTO-GENERATED: METHODS END

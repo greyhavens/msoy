@@ -14,49 +14,17 @@ import com.samskivert.depot.expression.ColumnExp;
  * Nota bene: this class has been deprecated, and will be removed in a future release,
  * after migrating its tracker data to MemberRecord.
  */
-@Entity(indices={
-    @Index(name="ixMemberId", fields={ ReferralRecord.MEMBER_ID }),
-    @Index(name="ixAffiliate", fields={ ReferralRecord.AFFILIATE }),
-    @Index(name="ixVector", fields={ ReferralRecord.VECTOR }),
-    @Index(name="ixCreative", fields={ ReferralRecord.CREATIVE }) })
+@Entity
 // @Deprecated
 public class ReferralRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(ReferralRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #affiliate} field. */
-    public static final String AFFILIATE = "affiliate";
-
-    /** The qualified column identifier for the {@link #affiliate} field. */
-    public static final ColumnExp AFFILIATE_C =
-        new ColumnExp(ReferralRecord.class, AFFILIATE);
-
-    /** The column identifier for the {@link #vector} field. */
-    public static final String VECTOR = "vector";
-
-    /** The qualified column identifier for the {@link #vector} field. */
-    public static final ColumnExp VECTOR_C =
-        new ColumnExp(ReferralRecord.class, VECTOR);
-
-    /** The column identifier for the {@link #creative} field. */
-    public static final String CREATIVE = "creative";
-
-    /** The qualified column identifier for the {@link #creative} field. */
-    public static final ColumnExp CREATIVE_C =
-        new ColumnExp(ReferralRecord.class, CREATIVE);
-
-    /** The column identifier for the {@link #tracker} field. */
-    public static final String TRACKER = "tracker";
-
-    /** The qualified column identifier for the {@link #tracker} field. */
-    public static final ColumnExp TRACKER_C =
-        new ColumnExp(ReferralRecord.class, TRACKER);
+    public static final Class<ReferralRecord> _R = ReferralRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp AFFILIATE = colexp(_R, "affiliate");
+    public static final ColumnExp VECTOR = colexp(_R, "vector");
+    public static final ColumnExp CREATIVE = colexp(_R, "creative");
+    public static final ColumnExp TRACKER = colexp(_R, "tracker");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -64,15 +32,19 @@ public class ReferralRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 2;
 
     /** The member id of the player. */
-    @Id public int memberId;
+    @Id @Index(name="ixMemberId")
+    public int memberId;
 
     /** Identifies the affiliate who referred them to us. */
+    @Index(name="ixAffiliate")
     public String affiliate;
 
     /** Identifies the entry vector type. */
+    @Index(name="ixVector")
     public String vector;
 
     /** Identifies the creative element variant (banner etc). */
+    @Index(name="ixCreative")
     public String creative;
 
     /** Persistent tracking number, used to split players into various test groups. */
@@ -87,7 +59,7 @@ public class ReferralRecord extends PersistentRecord
     {
         return new Key<ReferralRecord>(
                 ReferralRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

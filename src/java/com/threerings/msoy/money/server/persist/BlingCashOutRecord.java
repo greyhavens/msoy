@@ -25,139 +25,30 @@ import com.threerings.msoy.money.data.all.CashOutInfo;
  *
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Entity(indices={
-    @Index(name="ixTimeCompleted", fields={ BlingCashOutRecord.TIME_FINISHED }),
-    @Index(name="ixMemberId", fields={ BlingCashOutRecord.MEMBER_ID })
-})
+@Entity
 @NotThreadSafe
 public class BlingCashOutRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #id} field. */
-    public static final String ID = "id";
-
-    /** The qualified column identifier for the {@link #id} field. */
-    public static final ColumnExp ID_C =
-        new ColumnExp(BlingCashOutRecord.class, ID);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(BlingCashOutRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #firstName} field. */
-    public static final String FIRST_NAME = "firstName";
-
-    /** The qualified column identifier for the {@link #firstName} field. */
-    public static final ColumnExp FIRST_NAME_C =
-        new ColumnExp(BlingCashOutRecord.class, FIRST_NAME);
-
-    /** The column identifier for the {@link #lastName} field. */
-    public static final String LAST_NAME = "lastName";
-
-    /** The qualified column identifier for the {@link #lastName} field. */
-    public static final ColumnExp LAST_NAME_C =
-        new ColumnExp(BlingCashOutRecord.class, LAST_NAME);
-
-    /** The column identifier for the {@link #paypalEmailAddress} field. */
-    public static final String PAYPAL_EMAIL_ADDRESS = "paypalEmailAddress";
-
-    /** The qualified column identifier for the {@link #paypalEmailAddress} field. */
-    public static final ColumnExp PAYPAL_EMAIL_ADDRESS_C =
-        new ColumnExp(BlingCashOutRecord.class, PAYPAL_EMAIL_ADDRESS);
-
-    /** The column identifier for the {@link #phoneNumber} field. */
-    public static final String PHONE_NUMBER = "phoneNumber";
-
-    /** The qualified column identifier for the {@link #phoneNumber} field. */
-    public static final ColumnExp PHONE_NUMBER_C =
-        new ColumnExp(BlingCashOutRecord.class, PHONE_NUMBER);
-
-    /** The column identifier for the {@link #streetAddress} field. */
-    public static final String STREET_ADDRESS = "streetAddress";
-
-    /** The qualified column identifier for the {@link #streetAddress} field. */
-    public static final ColumnExp STREET_ADDRESS_C =
-        new ColumnExp(BlingCashOutRecord.class, STREET_ADDRESS);
-
-    /** The column identifier for the {@link #city} field. */
-    public static final String CITY = "city";
-
-    /** The qualified column identifier for the {@link #city} field. */
-    public static final ColumnExp CITY_C =
-        new ColumnExp(BlingCashOutRecord.class, CITY);
-
-    /** The column identifier for the {@link #state} field. */
-    public static final String STATE = "state";
-
-    /** The qualified column identifier for the {@link #state} field. */
-    public static final ColumnExp STATE_C =
-        new ColumnExp(BlingCashOutRecord.class, STATE);
-
-    /** The column identifier for the {@link #postalCode} field. */
-    public static final String POSTAL_CODE = "postalCode";
-
-    /** The qualified column identifier for the {@link #postalCode} field. */
-    public static final ColumnExp POSTAL_CODE_C =
-        new ColumnExp(BlingCashOutRecord.class, POSTAL_CODE);
-
-    /** The column identifier for the {@link #country} field. */
-    public static final String COUNTRY = "country";
-
-    /** The qualified column identifier for the {@link #country} field. */
-    public static final ColumnExp COUNTRY_C =
-        new ColumnExp(BlingCashOutRecord.class, COUNTRY);
-
-    /** The column identifier for the {@link #timeRequested} field. */
-    public static final String TIME_REQUESTED = "timeRequested";
-
-    /** The qualified column identifier for the {@link #timeRequested} field. */
-    public static final ColumnExp TIME_REQUESTED_C =
-        new ColumnExp(BlingCashOutRecord.class, TIME_REQUESTED);
-
-    /** The column identifier for the {@link #timeFinished} field. */
-    public static final String TIME_FINISHED = "timeFinished";
-
-    /** The qualified column identifier for the {@link #timeFinished} field. */
-    public static final ColumnExp TIME_FINISHED_C =
-        new ColumnExp(BlingCashOutRecord.class, TIME_FINISHED);
-
-    /** The column identifier for the {@link #successful} field. */
-    public static final String SUCCESSFUL = "successful";
-
-    /** The qualified column identifier for the {@link #successful} field. */
-    public static final ColumnExp SUCCESSFUL_C =
-        new ColumnExp(BlingCashOutRecord.class, SUCCESSFUL);
-
-    /** The column identifier for the {@link #blingAmount} field. */
-    public static final String BLING_AMOUNT = "blingAmount";
-
-    /** The qualified column identifier for the {@link #blingAmount} field. */
-    public static final ColumnExp BLING_AMOUNT_C =
-        new ColumnExp(BlingCashOutRecord.class, BLING_AMOUNT);
-
-    /** The column identifier for the {@link #blingWorth} field. */
-    public static final String BLING_WORTH = "blingWorth";
-
-    /** The qualified column identifier for the {@link #blingWorth} field. */
-    public static final ColumnExp BLING_WORTH_C =
-        new ColumnExp(BlingCashOutRecord.class, BLING_WORTH);
-
-    /** The column identifier for the {@link #cancelReason} field. */
-    public static final String CANCEL_REASON = "cancelReason";
-
-    /** The qualified column identifier for the {@link #cancelReason} field. */
-    public static final ColumnExp CANCEL_REASON_C =
-        new ColumnExp(BlingCashOutRecord.class, CANCEL_REASON);
-
-    /** The column identifier for the {@link #actualCashedOut} field. */
-    public static final String ACTUAL_CASHED_OUT = "actualCashedOut";
-
-    /** The qualified column identifier for the {@link #actualCashedOut} field. */
-    public static final ColumnExp ACTUAL_CASHED_OUT_C =
-        new ColumnExp(BlingCashOutRecord.class, ACTUAL_CASHED_OUT);
+    public static final Class<BlingCashOutRecord> _R = BlingCashOutRecord.class;
+    public static final ColumnExp ID = colexp(_R, "id");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp FIRST_NAME = colexp(_R, "firstName");
+    public static final ColumnExp LAST_NAME = colexp(_R, "lastName");
+    public static final ColumnExp PAYPAL_EMAIL_ADDRESS = colexp(_R, "paypalEmailAddress");
+    public static final ColumnExp PHONE_NUMBER = colexp(_R, "phoneNumber");
+    public static final ColumnExp STREET_ADDRESS = colexp(_R, "streetAddress");
+    public static final ColumnExp CITY = colexp(_R, "city");
+    public static final ColumnExp STATE = colexp(_R, "state");
+    public static final ColumnExp POSTAL_CODE = colexp(_R, "postalCode");
+    public static final ColumnExp COUNTRY = colexp(_R, "country");
+    public static final ColumnExp TIME_REQUESTED = colexp(_R, "timeRequested");
+    public static final ColumnExp TIME_FINISHED = colexp(_R, "timeFinished");
+    public static final ColumnExp SUCCESSFUL = colexp(_R, "successful");
+    public static final ColumnExp BLING_AMOUNT = colexp(_R, "blingAmount");
+    public static final ColumnExp BLING_WORTH = colexp(_R, "blingWorth");
+    public static final ColumnExp CANCEL_REASON = colexp(_R, "cancelReason");
+    public static final ColumnExp ACTUAL_CASHED_OUT = colexp(_R, "actualCashedOut");
     // AUTO-GENERATED: FIELDS END
 
     /** Unique ID of the record. */
@@ -166,6 +57,7 @@ public class BlingCashOutRecord extends PersistentRecord
     public int id;
 
     /** ID of the member who requested a cash out. */
+    @Index(name="ixMemberId")
     public int memberId;
 
     /** First name of the member. */
@@ -199,7 +91,7 @@ public class BlingCashOutRecord extends PersistentRecord
     public Timestamp timeRequested;
 
     /** Date/time when this cash out was completed, or null if not completed. */
-    @Column(nullable=true)
+    @Column(nullable=true) @Index(name="ixTimeCompleted")
     public Timestamp timeFinished;
 
     /** True of the cash out completed successfully, false otherwise. */
@@ -270,7 +162,7 @@ public class BlingCashOutRecord extends PersistentRecord
     {
         return new Key<BlingCashOutRecord>(
                 BlingCashOutRecord.class,
-                new String[] { ID },
+                new ColumnExp[] { ID },
                 new Comparable[] { id });
     }
     // AUTO-GENERATED: METHODS END

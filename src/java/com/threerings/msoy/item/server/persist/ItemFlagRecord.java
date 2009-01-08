@@ -23,47 +23,13 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 public class ItemFlagRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(ItemFlagRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #itemType} field. */
-    public static final String ITEM_TYPE = "itemType";
-
-    /** The qualified column identifier for the {@link #itemType} field. */
-    public static final ColumnExp ITEM_TYPE_C =
-        new ColumnExp(ItemFlagRecord.class, ITEM_TYPE);
-
-    /** The column identifier for the {@link #itemId} field. */
-    public static final String ITEM_ID = "itemId";
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(ItemFlagRecord.class, ITEM_ID);
-
-    /** The column identifier for the {@link #kind} field. */
-    public static final String KIND = "kind";
-
-    /** The qualified column identifier for the {@link #kind} field. */
-    public static final ColumnExp KIND_C =
-        new ColumnExp(ItemFlagRecord.class, KIND);
-
-    /** The column identifier for the {@link #timestamp} field. */
-    public static final String TIMESTAMP = "timestamp";
-
-    /** The qualified column identifier for the {@link #timestamp} field. */
-    public static final ColumnExp TIMESTAMP_C =
-        new ColumnExp(ItemFlagRecord.class, TIMESTAMP);
-
-    /** The column identifier for the {@link #comment} field. */
-    public static final String COMMENT = "comment";
-
-    /** The qualified column identifier for the {@link #comment} field. */
-    public static final ColumnExp COMMENT_C =
-        new ColumnExp(ItemFlagRecord.class, COMMENT);
+    public static final Class<ItemFlagRecord> _R = ItemFlagRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp ITEM_TYPE = colexp(_R, "itemType");
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp KIND = colexp(_R, "kind");
+    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
+    public static final ColumnExp COMMENT = colexp(_R, "comment");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;
@@ -106,7 +72,7 @@ public class ItemFlagRecord extends PersistentRecord
     {
         return new Key<ItemFlagRecord>(
                 ItemFlagRecord.class,
-                new String[] { MEMBER_ID, ITEM_TYPE, ITEM_ID, KIND },
+                new ColumnExp[] { MEMBER_ID, ITEM_TYPE, ITEM_ID, KIND },
                 new Comparable[] { memberId, itemType, itemId, kind });
     }
     // AUTO-GENERATED: METHODS END

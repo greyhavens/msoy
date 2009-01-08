@@ -4,7 +4,6 @@
 package com.threerings.msoy.group.server.persist;
 
 import java.util.Map;
-import java.util.HashMap;
 
 import java.sql.Date;
 
@@ -34,148 +33,32 @@ import com.threerings.msoy.group.gwt.GroupExtras;
 /**
  * Contains the details of a group.
  */
-@Entity(indices={
-    @Index(name="ixPolicy", fields={ GroupRecord.POLICY }),
-    @Index(name="ixOfficial", fields={ GroupRecord.OFFICIAL })
-}, fullTextIndices={
-    @FullTextIndex(name=GroupRecord.FTS_NBC, fields={
-        GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })
+@Entity(fullTextIndices={
+    @FullTextIndex(name=GroupRecord.FTS_NBC, fields={ "name", "blurb", "charter" })
 })
 public class GroupRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #groupId} field. */
-    public static final String GROUP_ID = "groupId";
-
-    /** The qualified column identifier for the {@link #groupId} field. */
-    public static final ColumnExp GROUP_ID_C =
-        new ColumnExp(GroupRecord.class, GROUP_ID);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(GroupRecord.class, NAME);
-
-    /** The column identifier for the {@link #homepageUrl} field. */
-    public static final String HOMEPAGE_URL = "homepageUrl";
-
-    /** The qualified column identifier for the {@link #homepageUrl} field. */
-    public static final ColumnExp HOMEPAGE_URL_C =
-        new ColumnExp(GroupRecord.class, HOMEPAGE_URL);
-
-    /** The column identifier for the {@link #blurb} field. */
-    public static final String BLURB = "blurb";
-
-    /** The qualified column identifier for the {@link #blurb} field. */
-    public static final ColumnExp BLURB_C =
-        new ColumnExp(GroupRecord.class, BLURB);
-
-    /** The column identifier for the {@link #charter} field. */
-    public static final String CHARTER = "charter";
-
-    /** The qualified column identifier for the {@link #charter} field. */
-    public static final ColumnExp CHARTER_C =
-        new ColumnExp(GroupRecord.class, CHARTER);
-
-    /** The column identifier for the {@link #logoMediaHash} field. */
-    public static final String LOGO_MEDIA_HASH = "logoMediaHash";
-
-    /** The qualified column identifier for the {@link #logoMediaHash} field. */
-    public static final ColumnExp LOGO_MEDIA_HASH_C =
-        new ColumnExp(GroupRecord.class, LOGO_MEDIA_HASH);
-
-    /** The column identifier for the {@link #logoMimeType} field. */
-    public static final String LOGO_MIME_TYPE = "logoMimeType";
-
-    /** The qualified column identifier for the {@link #logoMimeType} field. */
-    public static final ColumnExp LOGO_MIME_TYPE_C =
-        new ColumnExp(GroupRecord.class, LOGO_MIME_TYPE);
-
-    /** The column identifier for the {@link #logoMediaConstraint} field. */
-    public static final String LOGO_MEDIA_CONSTRAINT = "logoMediaConstraint";
-
-    /** The qualified column identifier for the {@link #logoMediaConstraint} field. */
-    public static final ColumnExp LOGO_MEDIA_CONSTRAINT_C =
-        new ColumnExp(GroupRecord.class, LOGO_MEDIA_CONSTRAINT);
-
-    /** The column identifier for the {@link #creatorId} field. */
-    public static final String CREATOR_ID = "creatorId";
-
-    /** The qualified column identifier for the {@link #creatorId} field. */
-    public static final ColumnExp CREATOR_ID_C =
-        new ColumnExp(GroupRecord.class, CREATOR_ID);
-
-    /** The column identifier for the {@link #homeSceneId} field. */
-    public static final String HOME_SCENE_ID = "homeSceneId";
-
-    /** The qualified column identifier for the {@link #homeSceneId} field. */
-    public static final ColumnExp HOME_SCENE_ID_C =
-        new ColumnExp(GroupRecord.class, HOME_SCENE_ID);
-
-    /** The column identifier for the {@link #creationDate} field. */
-    public static final String CREATION_DATE = "creationDate";
-
-    /** The qualified column identifier for the {@link #creationDate} field. */
-    public static final ColumnExp CREATION_DATE_C =
-        new ColumnExp(GroupRecord.class, CREATION_DATE);
-
-    /** The column identifier for the {@link #policy} field. */
-    public static final String POLICY = "policy";
-
-    /** The qualified column identifier for the {@link #policy} field. */
-    public static final ColumnExp POLICY_C =
-        new ColumnExp(GroupRecord.class, POLICY);
-
-    /** The column identifier for the {@link #forumPerms} field. */
-    public static final String FORUM_PERMS = "forumPerms";
-
-    /** The qualified column identifier for the {@link #forumPerms} field. */
-    public static final ColumnExp FORUM_PERMS_C =
-        new ColumnExp(GroupRecord.class, FORUM_PERMS);
-
-    /** The column identifier for the {@link #partyPerms} field. */
-    public static final String PARTY_PERMS = "partyPerms";
-
-    /** The qualified column identifier for the {@link #partyPerms} field. */
-    public static final ColumnExp PARTY_PERMS_C =
-        new ColumnExp(GroupRecord.class, PARTY_PERMS);
-
-    /** The column identifier for the {@link #memberCount} field. */
-    public static final String MEMBER_COUNT = "memberCount";
-
-    /** The qualified column identifier for the {@link #memberCount} field. */
-    public static final ColumnExp MEMBER_COUNT_C =
-        new ColumnExp(GroupRecord.class, MEMBER_COUNT);
-
-    /** The column identifier for the {@link #catalogItemType} field. */
-    public static final String CATALOG_ITEM_TYPE = "catalogItemType";
-
-    /** The qualified column identifier for the {@link #catalogItemType} field. */
-    public static final ColumnExp CATALOG_ITEM_TYPE_C =
-        new ColumnExp(GroupRecord.class, CATALOG_ITEM_TYPE);
-
-    /** The column identifier for the {@link #catalogTag} field. */
-    public static final String CATALOG_TAG = "catalogTag";
-
-    /** The qualified column identifier for the {@link #catalogTag} field. */
-    public static final ColumnExp CATALOG_TAG_C =
-        new ColumnExp(GroupRecord.class, CATALOG_TAG);
-
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(GroupRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #official} field. */
-    public static final String OFFICIAL = "official";
-
-    /** The qualified column identifier for the {@link #official} field. */
-    public static final ColumnExp OFFICIAL_C =
-        new ColumnExp(GroupRecord.class, OFFICIAL);
+    public static final Class<GroupRecord> _R = GroupRecord.class;
+    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp HOMEPAGE_URL = colexp(_R, "homepageUrl");
+    public static final ColumnExp BLURB = colexp(_R, "blurb");
+    public static final ColumnExp CHARTER = colexp(_R, "charter");
+    public static final ColumnExp LOGO_MEDIA_HASH = colexp(_R, "logoMediaHash");
+    public static final ColumnExp LOGO_MIME_TYPE = colexp(_R, "logoMimeType");
+    public static final ColumnExp LOGO_MEDIA_CONSTRAINT = colexp(_R, "logoMediaConstraint");
+    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp HOME_SCENE_ID = colexp(_R, "homeSceneId");
+    public static final ColumnExp CREATION_DATE = colexp(_R, "creationDate");
+    public static final ColumnExp POLICY = colexp(_R, "policy");
+    public static final ColumnExp FORUM_PERMS = colexp(_R, "forumPerms");
+    public static final ColumnExp PARTY_PERMS = colexp(_R, "partyPerms");
+    public static final ColumnExp MEMBER_COUNT = colexp(_R, "memberCount");
+    public static final ColumnExp CATALOG_ITEM_TYPE = colexp(_R, "catalogItemType");
+    public static final ColumnExp CATALOG_TAG = colexp(_R, "catalogTag");
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp OFFICIAL = colexp(_R, "official");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on Name, Blurb, Charter */
@@ -234,6 +117,7 @@ public class GroupRecord extends PersistentRecord
     public Date creationDate;
 
     /** The group may be public, invite-only or exclusive as per {@link Group}. */
+    @Index(name="ixPolicy")
     public byte policy;
 
     /** This group's forum permissions, see {@link Group#forumPerms}. */
@@ -257,6 +141,7 @@ public class GroupRecord extends PersistentRecord
     public int gameId;
 
     /** If the group is an official whirled group. */
+    @Index(name="ixOfficial")
     public boolean official;
 
     /**
@@ -334,9 +219,9 @@ public class GroupRecord extends PersistentRecord
      * of the entries that are non-null and different from what's in the object currently. Returns
      * null if the group is not found.
      */
-    public Map<String, Object> findUpdates (Group groupDef, GroupExtras extrasDef)
+    public Map<ColumnExp, Object> findUpdates (Group groupDef, GroupExtras extrasDef)
     {
-        HashMap<String, Object> updates = Maps.newHashMap();
+        Map<ColumnExp, Object> updates = Maps.newHashMap();
         if (groupDef.name != null && !groupDef.name.equals(name)) {
             updates.put(NAME, groupDef.name);
         }
@@ -396,7 +281,7 @@ public class GroupRecord extends PersistentRecord
     {
         return new Key<GroupRecord>(
                 GroupRecord.class,
-                new String[] { GROUP_ID },
+                new ColumnExp[] { GROUP_ID },
                 new Comparable[] { groupId });
     }
     // AUTO-GENERATED: METHODS END

@@ -156,7 +156,7 @@ public class MemberRepository extends DepotRepository
                 // now fill in all missing trackers
                 List<MemberRecord> missing = findAll(
                     MemberRecord.class, new Where(
-                        new Conditionals.IsNull(MemberRecord.VISITOR_ID_C)));
+                        new Conditionals.IsNull(MemberRecord.VISITOR_ID)));
 
                 for (MemberRecord member : missing) {
                     // default visitorId will be based on registration time
@@ -183,7 +183,7 @@ public class MemberRepository extends DepotRepository
                 // re-populate the AffiliateRecords using the affiliateMemberId field of
                 // everyone's MemberRecord
                 List<MemberRecord> memRecs = findAll(MemberRecord.class,
-                    new Where(new Conditionals.NotEquals(MemberRecord.AFFILIATE_MEMBER_ID_C, 0)));
+                    new Where(new Conditionals.NotEquals(MemberRecord.AFFILIATE_MEMBER_ID, 0)));
                 for (MemberRecord rec : memRecs) {
                     setAffiliate(rec.memberId, String.valueOf(rec.affiliateMemberId));
                 }
@@ -198,7 +198,7 @@ public class MemberRepository extends DepotRepository
     public MemberRecord loadMember (String accountName)
     {
         return load(MemberRecord.class,
-                    new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()));
+                    new Where(MemberRecord.ACCOUNT_NAME, accountName.toLowerCase()));
     }
 
     /**
@@ -236,7 +236,7 @@ public class MemberRepository extends DepotRepository
         cal.add(Calendar.DATE, -60); // TODO: unmagick
         Date when = new Date(cal.getTimeInMillis());
         return load(CountRecord.class, new FromOverride(MemberRecord.class),
-                    new Where(new GreaterThan(MemberRecord.LAST_SESSION_C, // TODO: DateExp?
+                    new Where(new GreaterThan(MemberRecord.LAST_SESSION, // TODO: DateExp?
                                               new LiteralExp("'" + when + "'")))).count;
     }
 
@@ -246,7 +246,7 @@ public class MemberRepository extends DepotRepository
     public MemberName loadMemberName (int memberId)
     {
         MemberNameRecord name = load(MemberNameRecord.class,
-                                     new Where(MemberRecord.MEMBER_ID_C, memberId));
+                                     new Where(MemberRecord.MEMBER_ID, memberId));
         return (name == null) ? null : name.toMemberName();
     }
 
@@ -282,7 +282,7 @@ public class MemberRepository extends DepotRepository
     public List<Tuple<Integer, String>> loadMemberEmailsForAnnouncement ()
     {
         SQLExpression annFlag = new Arithmetic.BitAnd(
-            MemberRecord.FLAGS_C, MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit());
+            MemberRecord.FLAGS, MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit());
         List<Tuple<Integer, String>> emails = Lists.newArrayList();
         Where where = new Where(new Equals(annFlag, 0));
         for (MemberEmailRecord record : findAll(MemberEmailRecord.class, where)) {
@@ -297,7 +297,7 @@ public class MemberRepository extends DepotRepository
     public MemberName loadMemberName (String username)
     {
         MemberNameRecord record = load(
-            MemberNameRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, username));
+            MemberNameRecord.class, new Where(MemberRecord.ACCOUNT_NAME, username));
         return (record == null ? null : record.toMemberName());
     }
 
@@ -308,8 +308,8 @@ public class MemberRepository extends DepotRepository
     {
         MemberCardRecord mcr = load(
             MemberCardRecord.class, new FromOverride(MemberRecord.class),
-            new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
-            new Where(MemberRecord.MEMBER_ID_C, memberId));
+            new Join(MemberRecord.MEMBER_ID, ProfileRecord.MEMBER_ID),
+            new Where(MemberRecord.MEMBER_ID, memberId));
         return (mcr == null) ? null : mcr.toMemberCard();
     }
 
@@ -323,8 +323,8 @@ public class MemberRepository extends DepotRepository
         }
         return findAll(MemberCardRecord.class,
                        new FromOverride(MemberRecord.class),
-                       new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
-                       new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
+                       new Join(MemberRecord.MEMBER_ID, ProfileRecord.MEMBER_ID),
+                       new Where(new In(MemberRecord.MEMBER_ID, memberIds)));
     }
 
     /**
@@ -334,7 +334,7 @@ public class MemberRepository extends DepotRepository
     {
         search = search.toLowerCase();
         SQLOperator op = exact ?
-            new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C), search) :
+            new Equals(new FunctionExp("LOWER", MemberRecord.NAME), search) :
             new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search);
         return Lists.transform(
             findAllKeys(MemberRecord.class, false, new Where(op), new Limit(0, limit)),
@@ -353,7 +353,7 @@ public class MemberRepository extends DepotRepository
         }
         search = search.toLowerCase();
         Where whereClause = new Where(new And(
-            new In(MemberRecord.MEMBER_ID_C, memberIds),
+            new In(MemberRecord.MEMBER_ID, memberIds),
             new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search)));
 
         return Lists.transform(
@@ -371,7 +371,7 @@ public class MemberRepository extends DepotRepository
     {
         List<Integer> ids = Lists.newArrayList();
         List<MemberRecord> mrecs = findAll(
-            MemberRecord.class, OrderBy.descending(MemberRecord.LEVEL_C), new Limit(0, limit));
+            MemberRecord.class, OrderBy.descending(MemberRecord.LEVEL), new Limit(0, limit));
         for (MemberRecord mrec : mrecs) {
             ids.add(mrec.memberId);
         }
@@ -415,7 +415,7 @@ public class MemberRepository extends DepotRepository
         } catch (DuplicateKeyException dke) {
             // if that fails with a duplicate key, reuse the old record but adjust its expiration
             SessionRecord esess = load(
-                SessionRecord.class, new Where(SessionRecord.MEMBER_ID_C, memberId));
+                SessionRecord.class, new Where(SessionRecord.MEMBER_ID, memberId));
             esess.expires = nsess.expires;
             update(esess, SessionRecord.EXPIRES);
 
@@ -460,7 +460,7 @@ public class MemberRepository extends DepotRepository
     public void clearSession (int memberId)
     {
         SessionRecord record =
-            load(SessionRecord.class, new Where(SessionRecord.MEMBER_ID_C, memberId));
+            load(SessionRecord.class, new Where(SessionRecord.MEMBER_ID, memberId));
         if (record != null) {
             delete(record);
         }
@@ -553,19 +553,19 @@ public class MemberRepository extends DepotRepository
 
         // delete a whole heap of auxiliary stuffs
         deleteAll(ExternalMapRecord.class,
-                  new Where(ExternalMapRecord.MEMBER_ID_C, member.memberId));
+                  new Where(ExternalMapRecord.MEMBER_ID, member.memberId));
         deleteAll(SessionRecord.class,
-                  new Where(SessionRecord.MEMBER_ID_C, member.memberId));
+                  new Where(SessionRecord.MEMBER_ID, member.memberId));
         deleteAll(MemberExperienceRecord.class,
-                  new Where(MemberExperienceRecord.MEMBER_ID_C, member.memberId));
+                  new Where(MemberExperienceRecord.MEMBER_ID, member.memberId));
         deleteAll(MemberWarningRecord.class,
-                  new Where(MemberWarningRecord.MEMBER_ID_C, member.memberId));
+                  new Where(MemberWarningRecord.MEMBER_ID, member.memberId));
         deleteAll(AffiliateRecord.class,
-                  new Where(AffiliateRecord.MEMBER_ID_C, member.memberId));
+                  new Where(AffiliateRecord.MEMBER_ID, member.memberId));
         deleteAll(InviterRecord.class,
-                  new Where(InviterRecord.MEMBER_ID_C, member.memberId));
+                  new Where(InviterRecord.MEMBER_ID, member.memberId));
         deleteAll(CharityRecord.class,
-                  new Where(CharityRecord.MEMBER_ID_C, member.memberId));
+                  new Where(CharityRecord.MEMBER_ID, member.memberId));
 
         // TODO: delete a whole bunch of shit (not here, in whatever ends up calling this)
         // - inventory items
@@ -603,7 +603,7 @@ public class MemberRepository extends DepotRepository
     {
         // TODO: Cache Invalidation
         int mods = updatePartial(
-            MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()),
+            MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME, accountName.toLowerCase()),
             null, MemberRecord.ACCOUNT_NAME, disabledName);
         switch (mods) {
         case 0:
@@ -663,14 +663,14 @@ public class MemberRepository extends DepotRepository
     public List<NeighborFriendRecord> getNeighborhoodFriends (int memberId)
     {
         SQLOperator joinCondition =
-            new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
-                           new Equals(FriendRecord.INVITEE_ID_C, MemberRecord.MEMBER_ID_C)),
-                   new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
-                           new Equals(FriendRecord.INVITER_ID_C, MemberRecord.MEMBER_ID_C)));
+            new Or(new And(new Equals(FriendRecord.INVITER_ID, memberId),
+                           new Equals(FriendRecord.INVITEE_ID, MemberRecord.MEMBER_ID)),
+                   new And(new Equals(FriendRecord.INVITEE_ID, memberId),
+                           new Equals(FriendRecord.INVITER_ID, MemberRecord.MEMBER_ID)));
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
-            OrderBy.descending(MemberRecord.LAST_SESSION_C),
+            OrderBy.descending(MemberRecord.LAST_SESSION),
             new Join(FriendRecord.class, joinCondition));
     }
 
@@ -686,7 +686,7 @@ public class MemberRepository extends DepotRepository
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
-            new Where(new In(MemberRecord.MEMBER_ID_C, idArr)));
+            new Where(new In(MemberRecord.MEMBER_ID, idArr)));
     }
 
     /**
@@ -721,7 +721,7 @@ public class MemberRepository extends DepotRepository
         List<MemberRecord> activeUsers;
         if (lastSession != null) {
             activeUsers = findAll(MemberRecord.class, new Where(
-                new GreaterThanEquals(MemberRecord.LAST_SESSION_C, lastSession)));
+                new GreaterThanEquals(MemberRecord.LAST_SESSION, lastSession)));
         } else {
             activeUsers = findAll(MemberRecord.class);
         }
@@ -795,7 +795,7 @@ public class MemberRepository extends DepotRepository
     public InvitationRecord inviteAvailable (String inviteId)
     {
         InvitationRecord rec = load(
-            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID_C, inviteId));
+            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId));
         return (rec == null || rec.inviteeId != 0) ? null : rec;
     }
 
@@ -817,8 +817,8 @@ public class MemberRepository extends DepotRepository
     {
         return findAll(
             InvitationRecord.class,
-            new Where(InvitationRecord.INVITER_ID_C, memberId,
-                      InvitationRecord.INVITEE_ID_C, 0));
+            new Where(InvitationRecord.INVITER_ID, memberId,
+                      InvitationRecord.INVITEE_ID, 0));
     }
 
     /**
@@ -827,7 +827,7 @@ public class MemberRepository extends DepotRepository
     public InvitationRecord loadInvite (String inviteId, boolean markViewed)
     {
         InvitationRecord invRec = load(
-            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID_C, inviteId));
+            InvitationRecord.class, new Where(InvitationRecord.INVITE_ID, inviteId));
         if (invRec != null && invRec.viewed == null) {
             invRec.viewed = new Timestamp((new java.util.Date()).getTime());
             update(invRec, InvitationRecord.VIEWED);
@@ -842,8 +842,8 @@ public class MemberRepository extends DepotRepository
     {
         // TODO: This does a row scan on email after using ixInviter. Should be OK, but let's check.
         return load(InvitationRecord.class, new Where(
-            InvitationRecord.INVITEE_EMAIL_C, inviteeEmail,
-            InvitationRecord.INVITER_ID_C, inviterId));
+            InvitationRecord.INVITEE_EMAIL, inviteeEmail,
+            InvitationRecord.INVITER_ID, inviterId));
     }
 
     /**
@@ -906,7 +906,7 @@ public class MemberRepository extends DepotRepository
 
         // get all the memberIds that have the specified affiliate in their AffiliateRecord
         List<Key<AffiliateRecord>> affKeys = findAllKeys(AffiliateRecord.class, false,
-            new Where(AffiliateRecord.AFFILIATE_C, affiliate));
+            new Where(AffiliateRecord.AFFILIATE, affiliate));
 
         // then transform the AffiliateRecord keys to MemberRecord keys
         // (we make a new ArrayList so that we only transform each key once, instead
@@ -939,9 +939,9 @@ public class MemberRepository extends DepotRepository
         // TODO: this needs fixing: your affiliate is not necessarily your inviter
         // (I mean, if you have an inviter, they will be your affiliate, and you can't have
         // both, but we can't just look at an affiliate id and know that that's your inviter)
-        Join join = new Join(MemberRecord.MEMBER_ID_C,
-                             InviterRecord.MEMBER_ID_C).setType(Join.Type.LEFT_OUTER);
-        Where where = new Where(MemberRecord.AFFILIATE_MEMBER_ID_C, memberId);
+        Join join = new Join(MemberRecord.MEMBER_ID,
+                             InviterRecord.MEMBER_ID).setType(Join.Type.LEFT_OUTER);
+        Where where = new Where(MemberRecord.AFFILIATE_MEMBER_ID, memberId);
         List<MemberName> names = Lists.newArrayList();
         for (MemberNameRecord name : findAll(MemberNameRecord.class, join, where)) {
             names.add(name.toMemberName());
@@ -959,9 +959,9 @@ public class MemberRepository extends DepotRepository
         // (I mean, if you have an inviter, they will be your affiliate, and you can't have
         // both, but we can't just look at an affiliate id and know that that's your inviter)
         return findAll(MemberInviteStatusRecord.class,
-                       new Join(MemberRecord.MEMBER_ID_C,
-                                InviterRecord.MEMBER_ID_C).setType(Join.Type.LEFT_OUTER),
-                       new Where(MemberRecord.AFFILIATE_MEMBER_ID_C, memberId),
+                       new Join(MemberRecord.MEMBER_ID,
+                                InviterRecord.MEMBER_ID).setType(Join.Type.LEFT_OUTER),
+                       new Where(MemberRecord.AFFILIATE_MEMBER_ID, memberId),
                        new Limit(0, 500));
     }
 
@@ -982,8 +982,8 @@ public class MemberRepository extends DepotRepository
     {
         IntSet memIds = new ArrayIntSet();
         List<Where> clauses = Collections.singletonList(
-            new Where(new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
-                             new Equals(FriendRecord.INVITEE_ID_C, memberId))));
+            new Where(new Or(new Equals(FriendRecord.INVITER_ID, memberId),
+                             new Equals(FriendRecord.INVITEE_ID, memberId))));
         for (FriendRecord record : findAll(FriendRecord.class, clauses)) {
             memIds.add(record.getFriendId(memberId));
         }
@@ -999,7 +999,7 @@ public class MemberRepository extends DepotRepository
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Where(GREETER_FLAG_IS_SET));
-        clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION_C));
+        clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
         return Lists.transform(findAllKeys(MemberRecord.class, false, clauses),
             new Function<Key<MemberRecord>, Integer>() {
                 public Integer apply (Key<MemberRecord> key) {
@@ -1029,18 +1029,18 @@ public class MemberRepository extends DepotRepository
     {
         // load up the ids of this member's friends (ordered from most recently online to least)
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new Where(new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
-                                     new Equals(FriendRecord.INVITEE_ID_C, memberId))));
+        clauses.add(new Where(new Or(new Equals(FriendRecord.INVITER_ID, memberId),
+                                     new Equals(FriendRecord.INVITEE_ID, memberId))));
         SQLExpression condition = new And(
-            new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
-                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITEE_ID_C)),
-                   new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
-                           new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITER_ID_C))));
+            new Or(new And(new Equals(FriendRecord.INVITER_ID, memberId),
+                           new Equals(MemberRecord.MEMBER_ID, FriendRecord.INVITEE_ID)),
+                   new And(new Equals(FriendRecord.INVITEE_ID, memberId),
+                           new Equals(MemberRecord.MEMBER_ID, FriendRecord.INVITER_ID))));
         clauses.add(new Join(MemberRecord.class, condition));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
         }
-        clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION_C));
+        clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
 
         // prepare an ordered map of the friends in question
         Map<Integer, FriendEntry> friends = Maps.newLinkedHashMap();
@@ -1112,8 +1112,8 @@ public class MemberRepository extends DepotRepository
     public void deleteAllFriends (int memberId)
     {
         deleteAll(FriendRecord.class,
-                  new Where(new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
-                                   new Equals(FriendRecord.INVITEE_ID_C, memberId))));
+                  new Where(new Or(new Equals(FriendRecord.INVITER_ID, memberId),
+                                   new Equals(FriendRecord.INVITEE_ID, memberId))));
     }
 
     /**
@@ -1135,8 +1135,8 @@ public class MemberRepository extends DepotRepository
     public List<Integer> lookupExternalAccounts (ExternalAuther auther, List<String> externalIds)
     {
         List<Integer> memberIds = Lists.newArrayList();
-        Where where = new Where(new And(new Equals(ExternalMapRecord.PARTNER_ID_C, auther.toByte()),
-                                        new In(ExternalMapRecord.EXTERNAL_ID_C, externalIds)));
+        Where where = new Where(new And(new Equals(ExternalMapRecord.PARTNER_ID, auther.toByte()),
+                                        new In(ExternalMapRecord.EXTERNAL_ID, externalIds)));
         for (ExternalMapRecord record : findAll(ExternalMapRecord.class, where)) {
             memberIds.add(record.memberId);
         }
@@ -1162,7 +1162,7 @@ public class MemberRepository extends DepotRepository
     {
         Map<ExternalAuther, String> authers = Maps.newHashMap();
         for (ExternalMapRecord emr : findAll(ExternalMapRecord.class,
-                                             new Where(ExternalMapRecord.MEMBER_ID_C, memberId))) {
+                                             new Where(ExternalMapRecord.MEMBER_ID, memberId))) {
             authers.put(ExternalAuther.fromByte((byte)emr.partnerId), emr.externalId);
         }
         return authers;
@@ -1238,7 +1238,7 @@ public class MemberRepository extends DepotRepository
     public void deleteExperiences (int memberId)
     {
         deleteAll(MemberExperienceRecord.class,
-            new Where(MemberExperienceRecord.MEMBER_ID_C, memberId));
+            new Where(MemberExperienceRecord.MEMBER_ID, memberId));
     }
 
     public void saveExperiences (List<MemberExperienceRecord> experiences)
@@ -1252,8 +1252,8 @@ public class MemberRepository extends DepotRepository
     public List<MemberExperienceRecord> getExperiences (int memberId)
     {
         return findAll(MemberExperienceRecord.class,
-            new Where(MemberExperienceRecord.MEMBER_ID_C, memberId),
-            OrderBy.ascending(MemberExperienceRecord.DATE_OCCURRED_C));
+            new Where(MemberExperienceRecord.MEMBER_ID, memberId),
+            OrderBy.ascending(MemberExperienceRecord.DATE_OCCURRED));
     }
 
     /**
@@ -1286,7 +1286,7 @@ public class MemberRepository extends DepotRepository
      */
     public List<CharityRecord> getCoreCharities ()
     {
-        return findAll(CharityRecord.class, new Where(CharityRecord.CORE_C, true));
+        return findAll(CharityRecord.class, new Where(CharityRecord.CORE, true));
     }
 
     /**
@@ -1340,5 +1340,5 @@ public class MemberRepository extends DepotRepository
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
     protected static final NotEquals GREETER_FLAG_IS_SET = new NotEquals(new BitAnd(
-        MemberRecord.FLAGS_C, MemberRecord.Flag.GREETER.getBit()), 0);
+        MemberRecord.FLAGS, MemberRecord.Flag.GREETER.getBit()), 0);
 }

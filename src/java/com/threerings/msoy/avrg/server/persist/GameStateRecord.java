@@ -17,26 +17,10 @@ import com.samskivert.depot.expression.ColumnExp;
 public class GameStateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(GameStateRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #datumKey} field. */
-    public static final String DATUM_KEY = "datumKey";
-
-    /** The qualified column identifier for the {@link #datumKey} field. */
-    public static final ColumnExp DATUM_KEY_C =
-        new ColumnExp(GameStateRecord.class, DATUM_KEY);
-
-    /** The column identifier for the {@link #datumValue} field. */
-    public static final String DATUM_VALUE = "datumValue";
-
-    /** The qualified column identifier for the {@link #datumValue} field. */
-    public static final ColumnExp DATUM_VALUE_C =
-        new ColumnExp(GameStateRecord.class, DATUM_VALUE);
+    public static final Class<GameStateRecord> _R = GameStateRecord.class;
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp DATUM_KEY = colexp(_R, "datumKey");
+    public static final ColumnExp DATUM_VALUE = colexp(_R, "datumValue");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
@@ -78,7 +62,7 @@ public class GameStateRecord extends PersistentRecord
     {
         return new Key<GameStateRecord>(
                 GameStateRecord.class,
-                new String[] { GAME_ID, DATUM_KEY },
+                new ColumnExp[] { GAME_ID, DATUM_KEY },
                 new Comparable[] { gameId, datumKey });
     }
     // AUTO-GENERATED: METHODS END

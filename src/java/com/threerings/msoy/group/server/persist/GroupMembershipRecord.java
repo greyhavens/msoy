@@ -26,39 +26,15 @@ import com.threerings.msoy.group.gwt.GroupMemberCard;
 /**
  * Contains the details of person's membership in a group.
  */
-@Entity(indices={
-    @Index(name="ixGroup", fields={ GroupMembershipRecord.GROUP_ID })
-})
+@Entity
 public class GroupMembershipRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(GroupMembershipRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #groupId} field. */
-    public static final String GROUP_ID = "groupId";
-
-    /** The qualified column identifier for the {@link #groupId} field. */
-    public static final ColumnExp GROUP_ID_C =
-        new ColumnExp(GroupMembershipRecord.class, GROUP_ID);
-
-    /** The column identifier for the {@link #rank} field. */
-    public static final String RANK = "rank";
-
-    /** The qualified column identifier for the {@link #rank} field. */
-    public static final ColumnExp RANK_C =
-        new ColumnExp(GroupMembershipRecord.class, RANK);
-
-    /** The column identifier for the {@link #rankAssigned} field. */
-    public static final String RANK_ASSIGNED = "rankAssigned";
-
-    /** The qualified column identifier for the {@link #rankAssigned} field. */
-    public static final ColumnExp RANK_ASSIGNED_C =
-        new ColumnExp(GroupMembershipRecord.class, RANK_ASSIGNED);
+    public static final Class<GroupMembershipRecord> _R = GroupMembershipRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp RANK = colexp(_R, "rank");
+    public static final ColumnExp RANK_ASSIGNED = colexp(_R, "rankAssigned");
     // AUTO-GENERATED: FIELDS END
 
     /** Converts a persistent record into a {@link GroupCard}. */
@@ -80,11 +56,10 @@ public class GroupMembershipRecord extends PersistentRecord
         };
 
     /** The id of the member in the group membership. */
-    @Id
-    public int memberId;
+    @Id public int memberId;
 
-    @Id
     /** The id of the group in the group membership. */
+    @Id @Index(name="ixGroup")
     public int groupId;
 
     /** The rank of the member in the group, defined in {@link GroupMembership}. */
@@ -133,7 +108,7 @@ public class GroupMembershipRecord extends PersistentRecord
     {
         return new Key<GroupMembershipRecord>(
                 GroupMembershipRecord.class,
-                new String[] { MEMBER_ID, GROUP_ID },
+                new ColumnExp[] { MEMBER_ID, GROUP_ID },
                 new Comparable[] { memberId, groupId });
     }
     // AUTO-GENERATED: METHODS END

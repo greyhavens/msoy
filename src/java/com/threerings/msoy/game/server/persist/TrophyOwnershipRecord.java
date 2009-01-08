@@ -16,12 +16,8 @@ import com.samskivert.depot.expression.ColumnExp;
 public class TrophyOwnershipRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #ident} field. */
-    public static final String IDENT = "ident";
-
-    /** The qualified column identifier for the {@link #ident} field. */
-    public static final ColumnExp IDENT_C =
-        new ColumnExp(TrophyOwnershipRecord.class, IDENT);
+    public static final Class<TrophyOwnershipRecord> _R = TrophyOwnershipRecord.class;
+    public static final ColumnExp IDENT = colexp(_R, "ident");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier of a trophy owned by a player. */

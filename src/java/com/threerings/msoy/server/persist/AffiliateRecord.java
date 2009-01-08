@@ -11,25 +11,13 @@ import com.samskivert.depot.expression.ColumnExp;
 /**
  * Stores affiliate information for the given user.
  */
-@Entity(indices={
-    @Index(name="ixAffiliate", fields={ AffiliateRecord.AFFILIATE })
-})
+@Entity
 public class AffiliateRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(AffiliateRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #affiliate} field. */
-    public static final String AFFILIATE = "affiliate";
-
-    /** The qualified column identifier for the {@link #affiliate} field. */
-    public static final ColumnExp AFFILIATE_C =
-        new ColumnExp(AffiliateRecord.class, AFFILIATE);
+    public static final Class<AffiliateRecord> _R = AffiliateRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp AFFILIATE = colexp(_R, "affiliate");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -39,8 +27,9 @@ public class AffiliateRecord extends PersistentRecord
     /** The member id */
     @Id public int memberId;
 
-    /** The member's affiliate String at registration time. If none, this record
-     * isn't even created. */
+    /** The member's affiliate String at registration time. If none, this record isn't even
+     * created. */
+    @Index(name="ixAffiliate")
     public String affiliate;
 
     // AUTO-GENERATED: METHODS START
@@ -52,7 +41,7 @@ public class AffiliateRecord extends PersistentRecord
     {
         return new Key<AffiliateRecord>(
                 AffiliateRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

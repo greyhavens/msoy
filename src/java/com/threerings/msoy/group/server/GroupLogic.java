@@ -11,6 +11,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.DuplicateKeyException;
+import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -126,7 +127,7 @@ public class GroupLogic
                 log.warning("Cannot update non-existent group", "id", group.groupId);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-            Map<String, Object> updates = grec.findUpdates(group, extras);
+            Map<ColumnExp, Object> updates = grec.findUpdates(group, extras);
             if (updates.size() > 0) {
                 _groupRepo.updateGroup(group.groupId, updates);
             }

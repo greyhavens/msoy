@@ -17,6 +17,7 @@ import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
@@ -26,6 +27,8 @@ import com.samskivert.depot.operator.Logic.And;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
 /**
  * Manages the persistent information associated with a member's projects.
@@ -45,9 +48,9 @@ public class SwiftlyRepository extends DepotRepository
     public List<SwiftlyProjectRecord> findRemixableProjects ()
     {
         return findAll(SwiftlyProjectRecord.class,
-            new Where(new And(new Equals(SwiftlyProjectRecord.REMIXABLE_C, true),
-                new Equals(SwiftlyProjectRecord.DELETED_C, false))),
-                OrderBy.descending(SwiftlyProjectRecord.CREATION_DATE_C));
+            new Where(new And(new Equals(SwiftlyProjectRecord.REMIXABLE, true),
+                new Equals(SwiftlyProjectRecord.DELETED, false))),
+                OrderBy.descending(SwiftlyProjectRecord.CREATION_DATE));
     }
 
     /**
@@ -57,11 +60,11 @@ public class SwiftlyRepository extends DepotRepository
     public List<SwiftlyProjectRecord> findMembersProjects (final int memberId)
     {
         return findAll(SwiftlyProjectRecord.class,
-            new Join(SwiftlyProjectRecord.PROJECT_ID_C, SwiftlyCollaboratorsRecord.PROJECT_ID_C),
+            new Join(SwiftlyProjectRecord.PROJECT_ID, SwiftlyCollaboratorsRecord.PROJECT_ID),
                 new Where(new And(
-                    new Equals(SwiftlyCollaboratorsRecord.MEMBER_ID_C, memberId),
-                    new Equals(SwiftlyProjectRecord.DELETED_C, false))),
-                    OrderBy.descending(SwiftlyProjectRecord.CREATION_DATE_C));
+                    new Equals(SwiftlyCollaboratorsRecord.MEMBER_ID, memberId),
+                    new Equals(SwiftlyProjectRecord.DELETED, false))),
+                    OrderBy.descending(SwiftlyProjectRecord.CREATION_DATE));
     }
 
     /**
@@ -109,7 +112,7 @@ public class SwiftlyRepository extends DepotRepository
     {
         // delete all this project collaborators
         deleteAll(SwiftlyCollaboratorsRecord.class,
-                  new Where(SwiftlyCollaboratorsRecord.PROJECT_ID_C, record.projectId));
+                  new Where(SwiftlyCollaboratorsRecord.PROJECT_ID, record.projectId));
         delete(record);
     }
 
@@ -133,15 +136,22 @@ public class SwiftlyRepository extends DepotRepository
     }
 
     /**
-     * Updates the specified project record with supplied field/value mapping.
+     * Updates the specified project record.
+     *
+     * @return true if updates were found and stored, false if nothing had changed.
      */
-    public void updateProject (int projectId, Map<String, Object> updates)
+    public boolean updateProject (int projectId, SwiftlyProject project, SwiftlyProjectRecord record)
     {
+        Map<ColumnExp, Object> updates = record.findUpdates(project);
+        if (updates.size() == 0) {
+            return false;
+        }
         int rows = updatePartial(SwiftlyProjectRecord.class, projectId, updates);
         if (rows == 0) {
             throw new DatabaseException(
                 "Couldn't find swiftly project for update [id=" + projectId + "]");
         }
+        return true;
     }
 
     /**
@@ -202,10 +212,10 @@ public class SwiftlyRepository extends DepotRepository
             result = findAll(SwiftlySVNStorageRecord.class,
                 new Where(
                     new And(
-                        new Equals(SwiftlySVNStorageRecord.PROTOCOL_C, protocol),
-                        new Equals(SwiftlySVNStorageRecord.HOST_C, host),
-                        new Equals(SwiftlySVNStorageRecord.PORT_C, port),
-                        new Equals(SwiftlySVNStorageRecord.BASE_DIR_C, baseDir)
+                        new Equals(SwiftlySVNStorageRecord.PROTOCOL, protocol),
+                        new Equals(SwiftlySVNStorageRecord.HOST, host),
+                        new Equals(SwiftlySVNStorageRecord.PORT, port),
+                        new Equals(SwiftlySVNStorageRecord.BASE_DIR, baseDir)
                     )
                 )
             );
@@ -223,9 +233,9 @@ public class SwiftlyRepository extends DepotRepository
     public MemberRecord loadProjectOwner (int projectId)
     {
         return load(MemberRecord.class,
-            new Join(MemberRecord.MEMBER_ID_C,
-                     SwiftlyProjectRecord.OWNER_ID_C),
-            new Where(new Equals(SwiftlyProjectRecord.PROJECT_ID_C, projectId)));
+            new Join(MemberRecord.MEMBER_ID,
+                     SwiftlyProjectRecord.OWNER_ID),
+            new Where(new Equals(SwiftlyProjectRecord.PROJECT_ID, projectId)));
     }
 
     /**
@@ -235,9 +245,9 @@ public class SwiftlyRepository extends DepotRepository
     public List<MemberRecord> getCollaborators (int projectId)
     {
         return findAll(MemberRecord.class,
-            new Join(MemberRecord.MEMBER_ID_C,
-                     SwiftlyCollaboratorsRecord.MEMBER_ID_C),
-            new Where(new Equals(SwiftlyCollaboratorsRecord.PROJECT_ID_C, projectId)));
+            new Join(MemberRecord.MEMBER_ID,
+                     SwiftlyCollaboratorsRecord.MEMBER_ID),
+            new Where(new Equals(SwiftlyCollaboratorsRecord.PROJECT_ID, projectId)));
     }
 
     /**
@@ -246,7 +256,7 @@ public class SwiftlyRepository extends DepotRepository
     public List<SwiftlyCollaboratorsRecord> getMemberships (int memberId)
     {
         return findAll(SwiftlyCollaboratorsRecord.class,
-                       new Where(SwiftlyCollaboratorsRecord.MEMBER_ID_C, memberId));
+                       new Where(SwiftlyCollaboratorsRecord.MEMBER_ID, memberId));
     }
 
     /**

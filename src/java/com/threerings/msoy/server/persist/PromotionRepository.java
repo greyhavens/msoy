@@ -40,8 +40,8 @@ public class PromotionRepository extends DepotRepository
         // to make this query cacheable, round our timestamp to the current hour or so
         Timestamp now = new Timestamp(System.currentTimeMillis() & ~0x1FFFFFL);
         return findAll(PromotionRecord.class,
-                       new Where(new And(new GreaterThanEquals(PromotionRecord.STARTS_C, now),
-                                         new LessThanEquals(PromotionRecord.ENDS_C, now))));
+                       new Where(new And(new GreaterThanEquals(PromotionRecord.STARTS, now),
+                                         new LessThanEquals(PromotionRecord.ENDS, now))));
     }
 
     /**

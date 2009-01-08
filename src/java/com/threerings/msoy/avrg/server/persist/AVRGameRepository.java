@@ -30,13 +30,13 @@ public class AVRGameRepository extends DepotRepository
     public List<PlayerGameStateRecord> getPlayerGameState (int gameId, int memberId)
     {
         return findAll(PlayerGameStateRecord.class, new Where(
-            PlayerGameStateRecord.GAME_ID_C, gameId,
-            PlayerGameStateRecord.MEMBER_ID_C, memberId));
+            PlayerGameStateRecord.GAME_ID, gameId,
+            PlayerGameStateRecord.MEMBER_ID, memberId));
     }
 
     public List<GameStateRecord> getGameState (int gameId)
     {
-        return findAll(GameStateRecord.class, new Where(GameStateRecord.GAME_ID_C, gameId));
+        return findAll(GameStateRecord.class, new Where(GameStateRecord.GAME_ID, gameId));
     }
 
     /**

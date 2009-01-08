@@ -498,13 +498,14 @@ public abstract class ItemRepository<T extends ItemRecord>
             tagIds[ii] = tagRecords.get(ii).tagId;
         }
 
-        List<CatalogRecord> records = findAll(getCatalogClass(),
-            new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
-                     getItemClass(), ItemRecord.ITEM_ID),
+        List<CatalogRecord> records = findAll(
+            getCatalogClass(),
+            new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
+                     getItemColumn(ItemRecord.ITEM_ID)),
             new Limit(0, 1),
             OrderBy.random(),
-            new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
-                     getTagRepository().getTagClass(), TagRecord.TARGET_ID),
+            new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
+                     getTagRepository().getTagColumn(TagRecord.TARGET_ID)),
             new Where(new In(getTagColumn(TagRecord.TAG_ID), tagIds)));
 
         if (records.isEmpty()) {
@@ -524,8 +525,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(getCatalogClass()));
-        clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
-                             getItemClass(), ItemRecord.ITEM_ID));
+        clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
+                             getItemColumn(ItemRecord.ITEM_ID)));
 
         // see if there's any where bits to turn into an actual where clause
         List<SQLOperator> whereBits = Lists.newArrayList();
@@ -548,8 +549,8 @@ public abstract class ItemRepository<T extends ItemRecord>
                                   int creator, Float minRating, int suiteId, int offset, int rows)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
-                             getItemClass(), ItemRecord.ITEM_ID));
+        clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
+                             getItemColumn(ItemRecord.ITEM_ID)));
         clauses.add(new Limit(offset, rows));
 
         // sort out the primary and secondary order by clauses
@@ -651,7 +652,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             return; // if the listing has been unlisted, we don't need to nudge it.
         }
 
-        Map<String, SQLExpression> updates = Maps.newHashMap();
+        Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
         if (purchased) {
             updates.put(CatalogRecord.PURCHASES,
                         new Arithmetic.Add(getCatalogColumn(CatalogRecord.PURCHASES), 1));
@@ -931,12 +932,10 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public void incrementFavoriteCount (int catalogId, int increment)
     {
-        Map<String, SQLExpression> fieldsToValues = Maps.newHashMap();
-        Arithmetic.Add add = new Arithmetic.Add(
-            new ColumnExp(getCatalogClass(), CatalogRecord.FAVORITE_COUNT), increment);
-        fieldsToValues.put(CatalogRecord.FAVORITE_COUNT, add);
-
-        if (updateLiteral(getCatalogClass(), catalogId, fieldsToValues) == 0) {
+        Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
+        updates.put(CatalogRecord.FAVORITE_COUNT, new Arithmetic.Add(
+                        getCatalogColumn(CatalogRecord.FAVORITE_COUNT), increment));
+        if (updateLiteral(getCatalogClass(), catalogId, updates) == 0) {
             log.warning("Could not update favorite count on catalog record.",
                         "catalogId", catalogId, "increment", increment);
         }
@@ -960,8 +959,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         List<QueryClause> clauseList = new ArrayList<QueryClause>(clauses.length + 2);
         clauseList.add(where);
         Collections.addAll(clauseList, clauses);
-        clauseList.add(new Join(getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID,
-            getItemClass(), ItemRecord.ITEM_ID));
+        clauseList.add(new Join(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID),
+                                getItemColumn(ItemRecord.ITEM_ID)));
         return resolveClones(findAll(getCloneClass(), clauseList));
     }
 
@@ -1051,7 +1050,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new And(new Equals(getTagColumn(TagRecord.TARGET_ID), itemColumn),
                         new In(getTagColumn(TagRecord.TAG_ID), tagIds)));
             matches.add(new Exists<TagRecord>(new SelectClause<TagRecord>(
-                getTagRepository().getTagClass(), new String[] { TagRecord.TAG_ID }, where)));
+                getTagRepository().getTagClass(), new String[] { TagRecord.TAG_ID.name }, where)));
         }
     }
 
@@ -1096,8 +1095,8 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         if (tag > 0) {
             // join against TagRecord
-            clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
-                                 getTagRepository().getTagClass(), TagRecord.TARGET_ID));
+            clauses.add(new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
+                                 getTagRepository().getTagColumn(TagRecord.TARGET_ID)));
             // and add a condition
             whereBits.add(new Equals(getTagColumn(TagRecord.TAG_ID), tag));
             significantlyConstrained = true;
@@ -1198,29 +1197,29 @@ public abstract class ItemRepository<T extends ItemRecord>
         return Sets.newHashSet(Iterables.filter(itemIds, IS_CLONE_ID));
     }
 
-    protected ColumnExp getItemColumn (String cname)
+    protected ColumnExp getItemColumn (ColumnExp pcol)
     {
-        return new ColumnExp(getItemClass(), cname);
+        return new ColumnExp(getItemClass(), pcol.name);
     }
 
-    protected ColumnExp getCatalogColumn (String cname)
+    protected ColumnExp getCatalogColumn (ColumnExp pcol)
     {
-        return new ColumnExp(getCatalogClass(), cname);
+        return new ColumnExp(getCatalogClass(), pcol.name);
     }
 
-    protected ColumnExp getCloneColumn (String cname)
+    protected ColumnExp getCloneColumn (ColumnExp pcol)
     {
-        return new ColumnExp(getCloneClass(), cname);
+        return new ColumnExp(getCloneClass(), pcol.name);
     }
 
-//    protected ColumnExp getRatingColumn (String cname)
+//    protected ColumnExp getRatingColumn (ColumnExp pcol)
 //    {
-//        return new ColumnExp(getRatingClass(), cname);
+//        return new ColumnExp(getRatingClass(), pcol.name);
 //    }
 
-    protected ColumnExp getTagColumn (String cname)
+    protected ColumnExp getTagColumn (ColumnExp pcol)
     {
-        return new ColumnExp(getTagRepository().getTagClass(), cname);
+        return new ColumnExp(getTagRepository().getTagClass(), pcol.name);
     }
 
     @Override // from DepotRepository

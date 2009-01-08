@@ -4,6 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 
@@ -17,14 +18,10 @@ public abstract class RatingRecord extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #targetId} field. */
-    public static final String TARGET_ID = "targetId";
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The column identifier for the {@link #rating} field. */
-    public static final String RATING = "rating";
+    public static final Class<RatingRecord> _R = RatingRecord.class;
+    public static final ColumnExp TARGET_ID = colexp(_R, "targetId");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp RATING = colexp(_R, "rating");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;

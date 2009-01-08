@@ -17,33 +17,11 @@ import com.samskivert.depot.expression.ColumnExp;
 public class RoomPropertyRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #ownerId} field. */
-    public static final String OWNER_ID = "ownerId";
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(RoomPropertyRecord.class, OWNER_ID);
-
-    /** The column identifier for the {@link #sceneId} field. */
-    public static final String SCENE_ID = "sceneId";
-
-    /** The qualified column identifier for the {@link #sceneId} field. */
-    public static final ColumnExp SCENE_ID_C =
-        new ColumnExp(RoomPropertyRecord.class, SCENE_ID);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(RoomPropertyRecord.class, NAME);
-
-    /** The column identifier for the {@link #value} field. */
-    public static final String VALUE = "value";
-
-    /** The qualified column identifier for the {@link #value} field. */
-    public static final ColumnExp VALUE_C =
-        new ColumnExp(RoomPropertyRecord.class, VALUE);
+    public static final Class<RoomPropertyRecord> _R = RoomPropertyRecord.class;
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp SCENE_ID = colexp(_R, "sceneId");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp VALUE = colexp(_R, "value");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
@@ -85,7 +63,7 @@ public class RoomPropertyRecord extends PersistentRecord
     {
         return new Key<RoomPropertyRecord>(
                 RoomPropertyRecord.class,
-                new String[] { OWNER_ID, SCENE_ID, NAME },
+                new ColumnExp[] { OWNER_ID, SCENE_ID, NAME },
                 new Comparable[] { ownerId, sceneId, name });
     }
     // AUTO-GENERATED: METHODS END

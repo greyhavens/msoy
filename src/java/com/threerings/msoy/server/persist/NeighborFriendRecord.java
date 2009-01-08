@@ -21,61 +21,15 @@ import com.samskivert.util.StringUtil;
 public class NeighborFriendRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(NeighborFriendRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(NeighborFriendRecord.class, NAME);
-
-    /** The column identifier for the {@link #flow} field. */
-    public static final String FLOW = "flow";
-
-    /** The qualified column identifier for the {@link #flow} field. */
-    public static final ColumnExp FLOW_C =
-        new ColumnExp(NeighborFriendRecord.class, FLOW);
-
-    /** The column identifier for the {@link #homeSceneId} field. */
-    public static final String HOME_SCENE_ID = "homeSceneId";
-
-    /** The qualified column identifier for the {@link #homeSceneId} field. */
-    public static final ColumnExp HOME_SCENE_ID_C =
-        new ColumnExp(NeighborFriendRecord.class, HOME_SCENE_ID);
-
-    /** The column identifier for the {@link #created} field. */
-    public static final String CREATED = "created";
-
-    /** The qualified column identifier for the {@link #created} field. */
-    public static final ColumnExp CREATED_C =
-        new ColumnExp(NeighborFriendRecord.class, CREATED);
-
-    /** The column identifier for the {@link #sessions} field. */
-    public static final String SESSIONS = "sessions";
-
-    /** The qualified column identifier for the {@link #sessions} field. */
-    public static final ColumnExp SESSIONS_C =
-        new ColumnExp(NeighborFriendRecord.class, SESSIONS);
-
-    /** The column identifier for the {@link #sessionMinutes} field. */
-    public static final String SESSION_MINUTES = "sessionMinutes";
-
-    /** The qualified column identifier for the {@link #sessionMinutes} field. */
-    public static final ColumnExp SESSION_MINUTES_C =
-        new ColumnExp(NeighborFriendRecord.class, SESSION_MINUTES);
-
-    /** The column identifier for the {@link #lastSession} field. */
-    public static final String LAST_SESSION = "lastSession";
-
-    /** The qualified column identifier for the {@link #lastSession} field. */
-    public static final ColumnExp LAST_SESSION_C =
-        new ColumnExp(NeighborFriendRecord.class, LAST_SESSION);
+    public static final Class<NeighborFriendRecord> _R = NeighborFriendRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp FLOW = colexp(_R, "flow");
+    public static final ColumnExp HOME_SCENE_ID = colexp(_R, "homeSceneId");
+    public static final ColumnExp CREATED = colexp(_R, "created");
+    public static final ColumnExp SESSIONS = colexp(_R, "sessions");
+    public static final ColumnExp SESSION_MINUTES = colexp(_R, "sessionMinutes");
+    public static final ColumnExp LAST_SESSION = colexp(_R, "lastSession");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent
@@ -123,7 +77,7 @@ public class NeighborFriendRecord extends PersistentRecord
     {
         return new Key<NeighborFriendRecord>(
                 NeighborFriendRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

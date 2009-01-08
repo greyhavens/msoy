@@ -22,170 +22,48 @@ import com.threerings.msoy.game.server.GameUtil;
 /**
  * Extends Item with game info.
  */
-@Entity(indices={
-  @Index(name="ixGenre", fields={ GameRecord.GENRE })
-})
+@Entity
 @TableGenerator(name="itemId", pkColumnValue="GAME")
 public class GameRecord extends ItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #genre} field. */
-    public static final String GENRE = "genre";
-
-    /** The qualified column identifier for the {@link #genre} field. */
-    public static final ColumnExp GENRE_C =
-        new ColumnExp(GameRecord.class, GENRE);
-
-    /** The column identifier for the {@link #config} field. */
-    public static final String CONFIG = "config";
-
-    /** The qualified column identifier for the {@link #config} field. */
-    public static final ColumnExp CONFIG_C =
-        new ColumnExp(GameRecord.class, CONFIG);
-
-    /** The column identifier for the {@link #gameMediaHash} field. */
-    public static final String GAME_MEDIA_HASH = "gameMediaHash";
-
-    /** The qualified column identifier for the {@link #gameMediaHash} field. */
-    public static final ColumnExp GAME_MEDIA_HASH_C =
-        new ColumnExp(GameRecord.class, GAME_MEDIA_HASH);
-
-    /** The column identifier for the {@link #gameMimeType} field. */
-    public static final String GAME_MIME_TYPE = "gameMimeType";
-
-    /** The qualified column identifier for the {@link #gameMimeType} field. */
-    public static final ColumnExp GAME_MIME_TYPE_C =
-        new ColumnExp(GameRecord.class, GAME_MIME_TYPE);
-
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(GameRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #shotMediaHash} field. */
-    public static final String SHOT_MEDIA_HASH = "shotMediaHash";
-
-    /** The qualified column identifier for the {@link #shotMediaHash} field. */
-    public static final ColumnExp SHOT_MEDIA_HASH_C =
-        new ColumnExp(GameRecord.class, SHOT_MEDIA_HASH);
-
-    /** The column identifier for the {@link #shotMimeType} field. */
-    public static final String SHOT_MIME_TYPE = "shotMimeType";
-
-    /** The qualified column identifier for the {@link #shotMimeType} field. */
-    public static final ColumnExp SHOT_MIME_TYPE_C =
-        new ColumnExp(GameRecord.class, SHOT_MIME_TYPE);
-
-    /** The column identifier for the {@link #serverMediaHash} field. */
-    public static final String SERVER_MEDIA_HASH = "serverMediaHash";
-
-    /** The qualified column identifier for the {@link #serverMediaHash} field. */
-    public static final ColumnExp SERVER_MEDIA_HASH_C =
-        new ColumnExp(GameRecord.class, SERVER_MEDIA_HASH);
-
-    /** The column identifier for the {@link #serverMimeType} field. */
-    public static final String SERVER_MIME_TYPE = "serverMimeType";
-
-    /** The qualified column identifier for the {@link #serverMimeType} field. */
-    public static final ColumnExp SERVER_MIME_TYPE_C =
-        new ColumnExp(GameRecord.class, SERVER_MIME_TYPE);
-
-    /** The column identifier for the {@link #groupId} field. */
-    public static final String GROUP_ID = "groupId";
-
-    /** The qualified column identifier for the {@link #groupId} field. */
-    public static final ColumnExp GROUP_ID_C =
-        new ColumnExp(GameRecord.class, GROUP_ID);
-
-    /** The column identifier for the {@link #shopTag} field. */
-    public static final String SHOP_TAG = "shopTag";
-
-    /** The qualified column identifier for the {@link #shopTag} field. */
-    public static final ColumnExp SHOP_TAG_C =
-        new ColumnExp(GameRecord.class, SHOP_TAG);
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(GameRecord.class, ITEM_ID);
-
-    /** The qualified column identifier for the {@link #sourceId} field. */
-    public static final ColumnExp SOURCE_ID_C =
-        new ColumnExp(GameRecord.class, SOURCE_ID);
-
-    /** The qualified column identifier for the {@link #creatorId} field. */
-    public static final ColumnExp CREATOR_ID_C =
-        new ColumnExp(GameRecord.class, CREATOR_ID);
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(GameRecord.class, OWNER_ID);
-
-    /** The qualified column identifier for the {@link #catalogId} field. */
-    public static final ColumnExp CATALOG_ID_C =
-        new ColumnExp(GameRecord.class, CATALOG_ID);
-
-    /** The qualified column identifier for the {@link #rating} field. */
-    public static final ColumnExp RATING_C =
-        new ColumnExp(GameRecord.class, RATING);
-
-    /** The qualified column identifier for the {@link #ratingCount} field. */
-    public static final ColumnExp RATING_COUNT_C =
-        new ColumnExp(GameRecord.class, RATING_COUNT);
-
-    /** The qualified column identifier for the {@link #used} field. */
-    public static final ColumnExp USED_C =
-        new ColumnExp(GameRecord.class, USED);
-
-    /** The qualified column identifier for the {@link #location} field. */
-    public static final ColumnExp LOCATION_C =
-        new ColumnExp(GameRecord.class, LOCATION);
-
-    /** The qualified column identifier for the {@link #lastTouched} field. */
-    public static final ColumnExp LAST_TOUCHED_C =
-        new ColumnExp(GameRecord.class, LAST_TOUCHED);
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(GameRecord.class, NAME);
-
-    /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(GameRecord.class, DESCRIPTION);
-
-    /** The qualified column identifier for the {@link #mature} field. */
-    public static final ColumnExp MATURE_C =
-        new ColumnExp(GameRecord.class, MATURE);
-
-    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
-    public static final ColumnExp THUMB_MEDIA_HASH_C =
-        new ColumnExp(GameRecord.class, THUMB_MEDIA_HASH);
-
-    /** The qualified column identifier for the {@link #thumbMimeType} field. */
-    public static final ColumnExp THUMB_MIME_TYPE_C =
-        new ColumnExp(GameRecord.class, THUMB_MIME_TYPE);
-
-    /** The qualified column identifier for the {@link #thumbConstraint} field. */
-    public static final ColumnExp THUMB_CONSTRAINT_C =
-        new ColumnExp(GameRecord.class, THUMB_CONSTRAINT);
-
-    /** The qualified column identifier for the {@link #furniMediaHash} field. */
-    public static final ColumnExp FURNI_MEDIA_HASH_C =
-        new ColumnExp(GameRecord.class, FURNI_MEDIA_HASH);
-
-    /** The qualified column identifier for the {@link #furniMimeType} field. */
-    public static final ColumnExp FURNI_MIME_TYPE_C =
-        new ColumnExp(GameRecord.class, FURNI_MIME_TYPE);
-
-    /** The qualified column identifier for the {@link #furniConstraint} field. */
-    public static final ColumnExp FURNI_CONSTRAINT_C =
-        new ColumnExp(GameRecord.class, FURNI_CONSTRAINT);
+    public static final Class<GameRecord> _R = GameRecord.class;
+    public static final ColumnExp GENRE = colexp(_R, "genre");
+    public static final ColumnExp CONFIG = colexp(_R, "config");
+    public static final ColumnExp GAME_MEDIA_HASH = colexp(_R, "gameMediaHash");
+    public static final ColumnExp GAME_MIME_TYPE = colexp(_R, "gameMimeType");
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp SHOT_MEDIA_HASH = colexp(_R, "shotMediaHash");
+    public static final ColumnExp SHOT_MIME_TYPE = colexp(_R, "shotMimeType");
+    public static final ColumnExp SERVER_MEDIA_HASH = colexp(_R, "serverMediaHash");
+    public static final ColumnExp SERVER_MIME_TYPE = colexp(_R, "serverMimeType");
+    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp SHOP_TAG = colexp(_R, "shopTag");
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
+    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp USED = colexp(_R, "used");
+    public static final ColumnExp LOCATION = colexp(_R, "location");
+    public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp MATURE = colexp(_R, "mature");
+    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
+    public static final ColumnExp FURNI_MEDIA_HASH = colexp(_R, "furniMediaHash");
+    public static final ColumnExp FURNI_MIME_TYPE = colexp(_R, "furniMimeType");
+    public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 17;
 
     /** This game's genre. */
+    @Index
     public byte genre;
 
     /** The XML game configuration. */
@@ -366,7 +244,7 @@ public class GameRecord extends ItemRecord
     {
         return new Key<GameRecord>(
                 GameRecord.class,
-                new String[] { ITEM_ID },
+                new ColumnExp[] { ITEM_ID },
                 new Comparable[] { itemId });
     }
     // AUTO-GENERATED: METHODS END

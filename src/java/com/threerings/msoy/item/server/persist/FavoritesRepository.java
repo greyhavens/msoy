@@ -39,8 +39,8 @@ public class FavoritesRepository extends DepotRepository
     public List<FavoriteItemRecord> loadRecentFavorites (int memberId, int count)
     {
         return findAll(FavoriteItemRecord.class,
-                       new Where(FavoriteItemRecord.MEMBER_ID_C, memberId),
-                       OrderBy.descending(FavoriteItemRecord.NOTED_ON_C),
+                       new Where(FavoriteItemRecord.MEMBER_ID, memberId),
+                       OrderBy.descending(FavoriteItemRecord.NOTED_ON),
                        new Limit(0, count));
     }
 
@@ -53,11 +53,11 @@ public class FavoritesRepository extends DepotRepository
     public List<FavoriteItemRecord> loadFavorites (int memberId, byte itemType)
     {
         Where where = (itemType == Item.NOT_A_TYPE) ?
-            new Where(FavoriteItemRecord.MEMBER_ID_C, memberId) :
-            new Where(FavoriteItemRecord.MEMBER_ID_C, memberId,
-                      FavoriteItemRecord.ITEM_TYPE_C, itemType);
+            new Where(FavoriteItemRecord.MEMBER_ID, memberId) :
+            new Where(FavoriteItemRecord.MEMBER_ID, memberId,
+                      FavoriteItemRecord.ITEM_TYPE, itemType);
         return findAll(FavoriteItemRecord.class, where,
-                       OrderBy.descending(FavoriteItemRecord.NOTED_ON_C));
+                       OrderBy.descending(FavoriteItemRecord.NOTED_ON));
     }
 
     /**

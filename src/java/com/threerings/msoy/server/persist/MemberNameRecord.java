@@ -18,26 +18,10 @@ import com.threerings.msoy.data.all.MemberName;
 public class MemberNameRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberNameRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #accountName} field. */
-    public static final String ACCOUNT_NAME = "accountName";
-
-    /** The qualified column identifier for the {@link #accountName} field. */
-    public static final ColumnExp ACCOUNT_NAME_C =
-        new ColumnExp(MemberNameRecord.class, ACCOUNT_NAME);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(MemberNameRecord.class, NAME);
+    public static final Class<MemberNameRecord> _R = MemberNameRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp ACCOUNT_NAME = colexp(_R, "accountName");
+    public static final ColumnExp NAME = colexp(_R, "name");
     // AUTO-GENERATED: FIELDS END
 
     /** This member's unique id. */
@@ -67,7 +51,7 @@ public class MemberNameRecord extends PersistentRecord
     {
         return new Key<MemberNameRecord>(
                 MemberNameRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

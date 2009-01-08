@@ -18,19 +18,9 @@ import com.threerings.msoy.data.all.GroupName;
 public class GroupNameRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #groupId} field. */
-    public static final String GROUP_ID = "groupId";
-
-    /** The qualified column identifier for the {@link #groupId} field. */
-    public static final ColumnExp GROUP_ID_C =
-        new ColumnExp(GroupNameRecord.class, GROUP_ID);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(GroupNameRecord.class, NAME);
+    public static final Class<GroupNameRecord> _R = GroupNameRecord.class;
+    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp NAME = colexp(_R, "name");
     // AUTO-GENERATED: FIELDS END
 
     /** The group's unique id. */
@@ -56,7 +46,7 @@ public class GroupNameRecord extends PersistentRecord
     {
         return new Key<GroupNameRecord>(
                 GroupNameRecord.class,
-                new String[] { GROUP_ID },
+                new ColumnExp[] { GROUP_ID },
                 new Comparable[] { groupId });
     }
     // AUTO-GENERATED: METHODS END

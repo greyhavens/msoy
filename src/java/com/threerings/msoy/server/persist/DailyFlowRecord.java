@@ -19,26 +19,10 @@ public class DailyFlowRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 1;
 
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #type} field. */
-    public static final String TYPE = "type";
-
-    /** The qualified column identifier for the {@link #type} field. */
-    public static final ColumnExp TYPE_C =
-        new ColumnExp(DailyFlowRecord.class, TYPE);
-
-    /** The column identifier for the {@link #date} field. */
-    public static final String DATE = "date";
-
-    /** The qualified column identifier for the {@link #date} field. */
-    public static final ColumnExp DATE_C =
-        new ColumnExp(DailyFlowRecord.class, DATE);
-
-    /** The column identifier for the {@link #amount} field. */
-    public static final String AMOUNT = "amount";
-
-    /** The qualified column identifier for the {@link #amount} field. */
-    public static final ColumnExp AMOUNT_C =
-        new ColumnExp(DailyFlowRecord.class, AMOUNT);
+    public static final Class<DailyFlowRecord> _R = DailyFlowRecord.class;
+    public static final ColumnExp TYPE = colexp(_R, "type");
+    public static final ColumnExp DATE = colexp(_R, "date");
+    public static final ColumnExp AMOUNT = colexp(_R, "amount");
     // AUTO-GENERATED: FIELDS END
 
     /** The type of grant or expenditure  summarized by this entry. */
@@ -61,7 +45,7 @@ public class DailyFlowRecord extends PersistentRecord
     {
         return new Key<DailyFlowRecord>(
                 DailyFlowRecord.class,
-                new String[] { TYPE, DATE },
+                new ColumnExp[] { TYPE, DATE },
                 new Comparable[] { type, date });
     }
     // AUTO-GENERATED: METHODS END

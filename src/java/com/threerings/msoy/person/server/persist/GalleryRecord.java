@@ -25,72 +25,20 @@ import com.threerings.msoy.person.gwt.Gallery;
  * @author mdb
  * @author mjensen
  */
-@Entity(indices={ @Index(name="ixOwnerId", fields={GalleryRecord.OWNER_ID}) })
+@Entity
 public class GalleryRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #galleryId} field. */
-    public static final String GALLERY_ID = "galleryId";
-
-    /** The qualified column identifier for the {@link #galleryId} field. */
-    public static final ColumnExp GALLERY_ID_C =
-        new ColumnExp(GalleryRecord.class, GALLERY_ID);
-
-    /** The column identifier for the {@link #ownerId} field. */
-    public static final String OWNER_ID = "ownerId";
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(GalleryRecord.class, OWNER_ID);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(GalleryRecord.class, NAME);
-
-    /** The column identifier for the {@link #description} field. */
-    public static final String DESCRIPTION = "description";
-
-    /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(GalleryRecord.class, DESCRIPTION);
-
-    /** The column identifier for the {@link #photoItemIds} field. */
-    public static final String PHOTO_ITEM_IDS = "photoItemIds";
-
-    /** The qualified column identifier for the {@link #photoItemIds} field. */
-    public static final ColumnExp PHOTO_ITEM_IDS_C =
-        new ColumnExp(GalleryRecord.class, PHOTO_ITEM_IDS);
-
-    /** The column identifier for the {@link #lastModified} field. */
-    public static final String LAST_MODIFIED = "lastModified";
-
-    /** The qualified column identifier for the {@link #lastModified} field. */
-    public static final ColumnExp LAST_MODIFIED_C =
-        new ColumnExp(GalleryRecord.class, LAST_MODIFIED);
-
-    /** The column identifier for the {@link #thumbMediaHash} field. */
-    public static final String THUMB_MEDIA_HASH = "thumbMediaHash";
-
-    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
-    public static final ColumnExp THUMB_MEDIA_HASH_C =
-        new ColumnExp(GalleryRecord.class, THUMB_MEDIA_HASH);
-
-    /** The column identifier for the {@link #thumbMimeType} field. */
-    public static final String THUMB_MIME_TYPE = "thumbMimeType";
-
-    /** The qualified column identifier for the {@link #thumbMimeType} field. */
-    public static final ColumnExp THUMB_MIME_TYPE_C =
-        new ColumnExp(GalleryRecord.class, THUMB_MIME_TYPE);
-
-    /** The column identifier for the {@link #thumbConstraint} field. */
-    public static final String THUMB_CONSTRAINT = "thumbConstraint";
-
-    /** The qualified column identifier for the {@link #thumbConstraint} field. */
-    public static final ColumnExp THUMB_CONSTRAINT_C =
-        new ColumnExp(GalleryRecord.class, THUMB_CONSTRAINT);
+    public static final Class<GalleryRecord> _R = GalleryRecord.class;
+    public static final ColumnExp GALLERY_ID = colexp(_R, "galleryId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp PHOTO_ITEM_IDS = colexp(_R, "photoItemIds");
+    public static final ColumnExp LAST_MODIFIED = colexp(_R, "lastModified");
+    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -102,6 +50,7 @@ public class GalleryRecord extends PersistentRecord
     public int galleryId;
 
     /** The member id of the owner of this gallery. */
+    @Index(name="ixOwnerId")
     public int ownerId;
 
     /** The name of this gallery or null if it is the "Photos of Me" gallery. */
@@ -172,7 +121,7 @@ public class GalleryRecord extends PersistentRecord
     {
         return new Key<GalleryRecord>(
                 GalleryRecord.class,
-                new String[] { GALLERY_ID },
+                new ColumnExp[] { GALLERY_ID },
                 new Comparable[] { galleryId });
     }
     // AUTO-GENERATED: METHODS END

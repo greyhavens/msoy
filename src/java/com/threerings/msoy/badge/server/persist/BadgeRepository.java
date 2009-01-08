@@ -32,7 +32,7 @@ public class BadgeRepository extends DepotRepository
             public void invoke () throws DatabaseException
             {
                 deleteAll(InProgressBadgeRecord.class,
-                    new Where(InProgressBadgeRecord.BADGE_CODE_C, 0x78a52e3b));
+                    new Where(InProgressBadgeRecord.BADGE_CODE, 0x78a52e3b));
             }
         });
     }
@@ -60,7 +60,7 @@ public class BadgeRepository extends DepotRepository
      */
     public List<EarnedBadgeRecord> loadEarnedBadges (int memberId)
     {
-        return findAll(EarnedBadgeRecord.class, new Where(EarnedBadgeRecord.MEMBER_ID_C, memberId));
+        return findAll(EarnedBadgeRecord.class, new Where(EarnedBadgeRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -68,8 +68,8 @@ public class BadgeRepository extends DepotRepository
      */
     public List<EarnedBadgeRecord> loadRecentEarnedBadges (int memberId, int limit)
     {
-        return findAll(EarnedBadgeRecord.class, new Where(EarnedBadgeRecord.MEMBER_ID_C, memberId),
-            new Limit(0, limit), OrderBy.descending(EarnedBadgeRecord.WHEN_EARNED_C));
+        return findAll(EarnedBadgeRecord.class, new Where(EarnedBadgeRecord.MEMBER_ID, memberId),
+            new Limit(0, limit), OrderBy.descending(EarnedBadgeRecord.WHEN_EARNED));
     }
 
     /**
@@ -77,7 +77,7 @@ public class BadgeRepository extends DepotRepository
      */
     public List<InProgressBadgeRecord> loadInProgressBadges (int memberId)
     {
-        return findAll(InProgressBadgeRecord.class, new Where(InProgressBadgeRecord.MEMBER_ID_C,
+        return findAll(InProgressBadgeRecord.class, new Where(InProgressBadgeRecord.MEMBER_ID,
             memberId));
     }
 

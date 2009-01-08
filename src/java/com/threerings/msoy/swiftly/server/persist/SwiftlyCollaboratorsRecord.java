@@ -15,26 +15,10 @@ import com.samskivert.depot.expression.ColumnExp;
 public class SwiftlyCollaboratorsRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #projectId} field. */
-    public static final String PROJECT_ID = "projectId";
-
-    /** The qualified column identifier for the {@link #projectId} field. */
-    public static final ColumnExp PROJECT_ID_C =
-        new ColumnExp(SwiftlyCollaboratorsRecord.class, PROJECT_ID);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(SwiftlyCollaboratorsRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #buildResultItemId} field. */
-    public static final String BUILD_RESULT_ITEM_ID = "buildResultItemId";
-
-    /** The qualified column identifier for the {@link #buildResultItemId} field. */
-    public static final ColumnExp BUILD_RESULT_ITEM_ID_C =
-        new ColumnExp(SwiftlyCollaboratorsRecord.class, BUILD_RESULT_ITEM_ID);
+    public static final Class<SwiftlyCollaboratorsRecord> _R = SwiftlyCollaboratorsRecord.class;
+    public static final ColumnExp PROJECT_ID = colexp(_R, "projectId");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp BUILD_RESULT_ITEM_ID = colexp(_R, "buildResultItemId");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;
@@ -57,7 +41,7 @@ public class SwiftlyCollaboratorsRecord extends PersistentRecord
     {
         return new Key<SwiftlyCollaboratorsRecord>(
                 SwiftlyCollaboratorsRecord.class,
-                new String[] { PROJECT_ID, MEMBER_ID },
+                new ColumnExp[] { PROJECT_ID, MEMBER_ID },
                 new Comparable[] { projectId, memberId });
     }
     // AUTO-GENERATED: METHODS END

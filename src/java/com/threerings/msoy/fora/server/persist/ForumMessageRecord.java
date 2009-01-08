@@ -25,70 +25,21 @@ import com.threerings.msoy.fora.gwt.ForumMessage;
 /**
  * Contains information on a single post to a thread.
  */
-@Entity(indices={
-    @Index(name="ixCreated", fields={ ForumMessageRecord.CREATED }),
-    @Index(name="ixIssueId", fields={ ForumMessageRecord.ISSUE_ID })
-}, fullTextIndices={
-    @FullTextIndex(name=ForumMessageRecord.FTS_MESSAGE, fields={ ForumMessageRecord.MESSAGE })
+@Entity(fullTextIndices={
+    @FullTextIndex(name=ForumMessageRecord.FTS_MESSAGE, fields={ "message" })
 })
 public class ForumMessageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #messageId} field. */
-    public static final String MESSAGE_ID = "messageId";
-
-    /** The qualified column identifier for the {@link #messageId} field. */
-    public static final ColumnExp MESSAGE_ID_C =
-        new ColumnExp(ForumMessageRecord.class, MESSAGE_ID);
-
-    /** The column identifier for the {@link #threadId} field. */
-    public static final String THREAD_ID = "threadId";
-
-    /** The qualified column identifier for the {@link #threadId} field. */
-    public static final ColumnExp THREAD_ID_C =
-        new ColumnExp(ForumMessageRecord.class, THREAD_ID);
-
-    /** The column identifier for the {@link #inReplyTo} field. */
-    public static final String IN_REPLY_TO = "inReplyTo";
-
-    /** The qualified column identifier for the {@link #inReplyTo} field. */
-    public static final ColumnExp IN_REPLY_TO_C =
-        new ColumnExp(ForumMessageRecord.class, IN_REPLY_TO);
-
-    /** The column identifier for the {@link #posterId} field. */
-    public static final String POSTER_ID = "posterId";
-
-    /** The qualified column identifier for the {@link #posterId} field. */
-    public static final ColumnExp POSTER_ID_C =
-        new ColumnExp(ForumMessageRecord.class, POSTER_ID);
-
-    /** The column identifier for the {@link #issueId} field. */
-    public static final String ISSUE_ID = "issueId";
-
-    /** The qualified column identifier for the {@link #issueId} field. */
-    public static final ColumnExp ISSUE_ID_C =
-        new ColumnExp(ForumMessageRecord.class, ISSUE_ID);
-
-    /** The column identifier for the {@link #created} field. */
-    public static final String CREATED = "created";
-
-    /** The qualified column identifier for the {@link #created} field. */
-    public static final ColumnExp CREATED_C =
-        new ColumnExp(ForumMessageRecord.class, CREATED);
-
-    /** The column identifier for the {@link #lastEdited} field. */
-    public static final String LAST_EDITED = "lastEdited";
-
-    /** The qualified column identifier for the {@link #lastEdited} field. */
-    public static final ColumnExp LAST_EDITED_C =
-        new ColumnExp(ForumMessageRecord.class, LAST_EDITED);
-
-    /** The column identifier for the {@link #message} field. */
-    public static final String MESSAGE = "message";
-
-    /** The qualified column identifier for the {@link #message} field. */
-    public static final ColumnExp MESSAGE_C =
-        new ColumnExp(ForumMessageRecord.class, MESSAGE);
+    public static final Class<ForumMessageRecord> _R = ForumMessageRecord.class;
+    public static final ColumnExp MESSAGE_ID = colexp(_R, "messageId");
+    public static final ColumnExp THREAD_ID = colexp(_R, "threadId");
+    public static final ColumnExp IN_REPLY_TO = colexp(_R, "inReplyTo");
+    public static final ColumnExp POSTER_ID = colexp(_R, "posterId");
+    public static final ColumnExp ISSUE_ID = colexp(_R, "issueId");
+    public static final ColumnExp CREATED = colexp(_R, "created");
+    public static final ColumnExp LAST_EDITED = colexp(_R, "lastEdited");
+    public static final ColumnExp MESSAGE = colexp(_R, "message");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on {@link #message} */
@@ -112,9 +63,11 @@ public class ForumMessageRecord extends PersistentRecord
     public int posterId;
 
     /** The id of the issue to which this message is asoociated, or zero. */
+    @Index(name="ixIssueId")
     public int issueId;
 
     /** The time at which this message was created. */
+    @Index(name="ixCreated")
     public Timestamp created;
 
     /** The time at which this message was last edited. */
@@ -153,7 +106,7 @@ public class ForumMessageRecord extends PersistentRecord
     {
         return new Key<ForumMessageRecord>(
                 ForumMessageRecord.class,
-                new String[] { MESSAGE_ID },
+                new ColumnExp[] { MESSAGE_ID },
                 new Comparable[] { messageId });
     }
     // AUTO-GENERATED: METHODS END

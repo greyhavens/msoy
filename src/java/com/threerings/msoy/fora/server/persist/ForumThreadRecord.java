@@ -28,78 +28,22 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 /**
  * Contains information on a forum thread.
  */
-@Entity(indices={
-    @Index(name="ixGroupId", fields={ ForumThreadRecord.GROUP_ID }),
-    @Index(name="ixMostRecentPostId", fields={ ForumThreadRecord.MOST_RECENT_POST_ID }),
-    @Index(name="ixSticky", fields={ ForumThreadRecord.STICKY })
-}, fullTextIndices={
-    @FullTextIndex(name=ForumThreadRecord.FTS_SUBJECT, fields={ ForumThreadRecord.SUBJECT })
+@Entity(fullTextIndices={
+    @FullTextIndex(name=ForumThreadRecord.FTS_SUBJECT, fields={ "subject" })
 })
 public class ForumThreadRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #threadId} field. */
-    public static final String THREAD_ID = "threadId";
-
-    /** The qualified column identifier for the {@link #threadId} field. */
-    public static final ColumnExp THREAD_ID_C =
-        new ColumnExp(ForumThreadRecord.class, THREAD_ID);
-
-    /** The column identifier for the {@link #groupId} field. */
-    public static final String GROUP_ID = "groupId";
-
-    /** The qualified column identifier for the {@link #groupId} field. */
-    public static final ColumnExp GROUP_ID_C =
-        new ColumnExp(ForumThreadRecord.class, GROUP_ID);
-
-    /** The column identifier for the {@link #flags} field. */
-    public static final String FLAGS = "flags";
-
-    /** The qualified column identifier for the {@link #flags} field. */
-    public static final ColumnExp FLAGS_C =
-        new ColumnExp(ForumThreadRecord.class, FLAGS);
-
-    /** The column identifier for the {@link #subject} field. */
-    public static final String SUBJECT = "subject";
-
-    /** The qualified column identifier for the {@link #subject} field. */
-    public static final ColumnExp SUBJECT_C =
-        new ColumnExp(ForumThreadRecord.class, SUBJECT);
-
-    /** The column identifier for the {@link #mostRecentPostId} field. */
-    public static final String MOST_RECENT_POST_ID = "mostRecentPostId";
-
-    /** The qualified column identifier for the {@link #mostRecentPostId} field. */
-    public static final ColumnExp MOST_RECENT_POST_ID_C =
-        new ColumnExp(ForumThreadRecord.class, MOST_RECENT_POST_ID);
-
-    /** The column identifier for the {@link #mostRecentPostTime} field. */
-    public static final String MOST_RECENT_POST_TIME = "mostRecentPostTime";
-
-    /** The qualified column identifier for the {@link #mostRecentPostTime} field. */
-    public static final ColumnExp MOST_RECENT_POST_TIME_C =
-        new ColumnExp(ForumThreadRecord.class, MOST_RECENT_POST_TIME);
-
-    /** The column identifier for the {@link #mostRecentPosterId} field. */
-    public static final String MOST_RECENT_POSTER_ID = "mostRecentPosterId";
-
-    /** The qualified column identifier for the {@link #mostRecentPosterId} field. */
-    public static final ColumnExp MOST_RECENT_POSTER_ID_C =
-        new ColumnExp(ForumThreadRecord.class, MOST_RECENT_POSTER_ID);
-
-    /** The column identifier for the {@link #posts} field. */
-    public static final String POSTS = "posts";
-
-    /** The qualified column identifier for the {@link #posts} field. */
-    public static final ColumnExp POSTS_C =
-        new ColumnExp(ForumThreadRecord.class, POSTS);
-
-    /** The column identifier for the {@link #sticky} field. */
-    public static final String STICKY = "sticky";
-
-    /** The qualified column identifier for the {@link #sticky} field. */
-    public static final ColumnExp STICKY_C =
-        new ColumnExp(ForumThreadRecord.class, STICKY);
+    public static final Class<ForumThreadRecord> _R = ForumThreadRecord.class;
+    public static final ColumnExp THREAD_ID = colexp(_R, "threadId");
+    public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
+    public static final ColumnExp FLAGS = colexp(_R, "flags");
+    public static final ColumnExp SUBJECT = colexp(_R, "subject");
+    public static final ColumnExp MOST_RECENT_POST_ID = colexp(_R, "mostRecentPostId");
+    public static final ColumnExp MOST_RECENT_POST_TIME = colexp(_R, "mostRecentPostTime");
+    public static final ColumnExp MOST_RECENT_POSTER_ID = colexp(_R, "mostRecentPosterId");
+    public static final ColumnExp POSTS = colexp(_R, "posts");
+    public static final ColumnExp STICKY = colexp(_R, "sticky");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on {@link #subject} */
@@ -122,6 +66,7 @@ public class ForumThreadRecord extends PersistentRecord
     public int threadId;
 
     /** The id of the group to which this forum thread belongs. */
+    @Index(name="ixGroupId")
     public int groupId;
 
     /** Flags indicating attributes of this thread: {@link ForumThread#FLAG_ANNOUNCEMENT}, etc. */
@@ -132,6 +77,7 @@ public class ForumThreadRecord extends PersistentRecord
     public String subject;
 
     /** The id of the most recent message posted to this thread. */
+    @Index(name="ixMostRecentPostId")
     public int mostRecentPostId;
 
     /** The time at which the most recent message was posted to this thread. */
@@ -144,6 +90,7 @@ public class ForumThreadRecord extends PersistentRecord
     public int posts;
 
     /** Whether or not this thread is sticky. Used for sorting. */
+    @Index(name="ixSticky")
     public boolean sticky;
 
     /**
@@ -176,7 +123,7 @@ public class ForumThreadRecord extends PersistentRecord
     {
         return new Key<ForumThreadRecord>(
                 ForumThreadRecord.class,
-                new String[] { THREAD_ID },
+                new ColumnExp[] { THREAD_ID },
                 new Comparable[] { threadId });
     }
     // AUTO-GENERATED: METHODS END

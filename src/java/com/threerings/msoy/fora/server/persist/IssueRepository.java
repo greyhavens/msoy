@@ -62,24 +62,24 @@ public class IssueRepository extends DepotRepository
                                          int offset, int count)
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
-        ColumnExp sortColumn = IssueRecord.CREATED_TIME_C;
+        ColumnExp sortColumn = IssueRecord.CREATED_TIME;
         if (ownerId > 0) {
-            whereBits.add(new Conditionals.Equals(IssueRecord.OWNER_ID_C, ownerId));
+            whereBits.add(new Conditionals.Equals(IssueRecord.OWNER_ID, ownerId));
         }
         if (types != null) {
-            whereBits.add(new Conditionals.In(IssueRecord.TYPE_C, types));
+            whereBits.add(new Conditionals.In(IssueRecord.TYPE, types));
         }
         if (states != null) {
-            whereBits.add(new Conditionals.In(IssueRecord.STATE_C, states));
+            whereBits.add(new Conditionals.In(IssueRecord.STATE, states));
             if (!states.contains(Issue.STATE_OPEN)) {
-                sortColumn = IssueRecord.CLOSED_TIME_C;
+                sortColumn = IssueRecord.CLOSED_TIME;
             }
         }
         return findAll(IssueRecord.class,
                        new Where(new Logic.And(whereBits)),
                        new Limit(offset, count),
                        new OrderBy(
-                           new SQLExpression[] { IssueRecord.PRIORITY_C, sortColumn },
+                           new SQLExpression[] { IssueRecord.PRIORITY, sortColumn },
                            new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC }));
     }
 
@@ -98,10 +98,10 @@ public class IssueRepository extends DepotRepository
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
         if (types != null) {
-            whereBits.add(new Conditionals.In(IssueRecord.TYPE_C, types));
+            whereBits.add(new Conditionals.In(IssueRecord.TYPE, types));
         }
         if (states != null) {
-            whereBits.add(new Conditionals.In(IssueRecord.STATE_C, states));
+            whereBits.add(new Conditionals.In(IssueRecord.STATE, states));
         }
         return load(CountRecord.class,
                        new FromOverride(IssueRecord.class),

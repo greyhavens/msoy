@@ -20,33 +20,11 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 public class EarnedBadgeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(EarnedBadgeRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #badgeCode} field. */
-    public static final String BADGE_CODE = "badgeCode";
-
-    /** The qualified column identifier for the {@link #badgeCode} field. */
-    public static final ColumnExp BADGE_CODE_C =
-        new ColumnExp(EarnedBadgeRecord.class, BADGE_CODE);
-
-    /** The column identifier for the {@link #level} field. */
-    public static final String LEVEL = "level";
-
-    /** The qualified column identifier for the {@link #level} field. */
-    public static final ColumnExp LEVEL_C =
-        new ColumnExp(EarnedBadgeRecord.class, LEVEL);
-
-    /** The column identifier for the {@link #whenEarned} field. */
-    public static final String WHEN_EARNED = "whenEarned";
-
-    /** The qualified column identifier for the {@link #whenEarned} field. */
-    public static final ColumnExp WHEN_EARNED_C =
-        new ColumnExp(EarnedBadgeRecord.class, WHEN_EARNED);
+    public static final Class<EarnedBadgeRecord> _R = EarnedBadgeRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp BADGE_CODE = colexp(_R, "badgeCode");
+    public static final ColumnExp LEVEL = colexp(_R, "level");
+    public static final ColumnExp WHEN_EARNED = colexp(_R, "whenEarned");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -125,7 +103,7 @@ public class EarnedBadgeRecord extends PersistentRecord
     {
         return new Key<EarnedBadgeRecord>(
                 EarnedBadgeRecord.class,
-                new String[] { MEMBER_ID, BADGE_CODE },
+                new ColumnExp[] { MEMBER_ID, BADGE_CODE },
                 new Comparable[] { memberId, badgeCode });
     }
     // AUTO-GENERATED: METHODS END

@@ -27,68 +27,16 @@ import com.threerings.msoy.game.gwt.GameDetail;
 public class GameDetailRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(GameDetailRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #listedItemId} field. */
-    public static final String LISTED_ITEM_ID = "listedItemId";
-
-    /** The qualified column identifier for the {@link #listedItemId} field. */
-    public static final ColumnExp LISTED_ITEM_ID_C =
-        new ColumnExp(GameDetailRecord.class, LISTED_ITEM_ID);
-
-    /** The column identifier for the {@link #sourceItemId} field. */
-    public static final String SOURCE_ITEM_ID = "sourceItemId";
-
-    /** The qualified column identifier for the {@link #sourceItemId} field. */
-    public static final ColumnExp SOURCE_ITEM_ID_C =
-        new ColumnExp(GameDetailRecord.class, SOURCE_ITEM_ID);
-
-    /** The column identifier for the {@link #gamesPlayed} field. */
-    public static final String GAMES_PLAYED = "gamesPlayed";
-
-    /** The qualified column identifier for the {@link #gamesPlayed} field. */
-    public static final ColumnExp GAMES_PLAYED_C =
-        new ColumnExp(GameDetailRecord.class, GAMES_PLAYED);
-
-    /** The column identifier for the {@link #avgSingleDuration} field. */
-    public static final String AVG_SINGLE_DURATION = "avgSingleDuration";
-
-    /** The qualified column identifier for the {@link #avgSingleDuration} field. */
-    public static final ColumnExp AVG_SINGLE_DURATION_C =
-        new ColumnExp(GameDetailRecord.class, AVG_SINGLE_DURATION);
-
-    /** The column identifier for the {@link #avgMultiDuration} field. */
-    public static final String AVG_MULTI_DURATION = "avgMultiDuration";
-
-    /** The qualified column identifier for the {@link #avgMultiDuration} field. */
-    public static final ColumnExp AVG_MULTI_DURATION_C =
-        new ColumnExp(GameDetailRecord.class, AVG_MULTI_DURATION);
-
-    /** The column identifier for the {@link #payoutFactor} field. */
-    public static final String PAYOUT_FACTOR = "payoutFactor";
-
-    /** The qualified column identifier for the {@link #payoutFactor} field. */
-    public static final ColumnExp PAYOUT_FACTOR_C =
-        new ColumnExp(GameDetailRecord.class, PAYOUT_FACTOR);
-
-    /** The column identifier for the {@link #flowToNextRecalc} field. */
-    public static final String FLOW_TO_NEXT_RECALC = "flowToNextRecalc";
-
-    /** The qualified column identifier for the {@link #flowToNextRecalc} field. */
-    public static final ColumnExp FLOW_TO_NEXT_RECALC_C =
-        new ColumnExp(GameDetailRecord.class, FLOW_TO_NEXT_RECALC);
-
-    /** The column identifier for the {@link #lastPayout} field. */
-    public static final String LAST_PAYOUT = "lastPayout";
-
-    /** The qualified column identifier for the {@link #lastPayout} field. */
-    public static final ColumnExp LAST_PAYOUT_C =
-        new ColumnExp(GameDetailRecord.class, LAST_PAYOUT);
+    public static final Class<GameDetailRecord> _R = GameDetailRecord.class;
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp LISTED_ITEM_ID = colexp(_R, "listedItemId");
+    public static final ColumnExp SOURCE_ITEM_ID = colexp(_R, "sourceItemId");
+    public static final ColumnExp GAMES_PLAYED = colexp(_R, "gamesPlayed");
+    public static final ColumnExp AVG_SINGLE_DURATION = colexp(_R, "avgSingleDuration");
+    public static final ColumnExp AVG_MULTI_DURATION = colexp(_R, "avgMultiDuration");
+    public static final ColumnExp PAYOUT_FACTOR = colexp(_R, "payoutFactor");
+    public static final ColumnExp FLOW_TO_NEXT_RECALC = colexp(_R, "flowToNextRecalc");
+    public static final ColumnExp LAST_PAYOUT = colexp(_R, "lastPayout");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -176,7 +124,7 @@ public class GameDetailRecord extends PersistentRecord
     {
         return new Key<GameDetailRecord>(
                 GameDetailRecord.class,
-                new String[] { GAME_ID },
+                new ColumnExp[] { GAME_ID },
                 new Comparable[] { gameId });
     }
     // AUTO-GENERATED: METHODS END

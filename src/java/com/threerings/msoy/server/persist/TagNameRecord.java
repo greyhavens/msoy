@@ -23,26 +23,14 @@ import com.threerings.msoy.data.all.TagCodes;
 /**
  * Maps a tag's id to the tag itself.
  */
-@Entity(indices={
-    @Index(name="ixTag", fields={ TagNameRecord.TAG })
-})
+@Entity
 public class TagNameRecord extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #tagId} field. */
-    public static final String TAG_ID = "tagId";
-
-    /** The qualified column identifier for the {@link #tagId} field. */
-    public static final ColumnExp TAG_ID_C =
-        new ColumnExp(TagNameRecord.class, TAG_ID);
-
-    /** The column identifier for the {@link #tag} field. */
-    public static final String TAG = "tag";
-
-    /** The qualified column identifier for the {@link #tag} field. */
-    public static final ColumnExp TAG_C =
-        new ColumnExp(TagNameRecord.class, TAG);
+    public static final Class<TagNameRecord> _R = TagNameRecord.class;
+    public static final ColumnExp TAG_ID = colexp(_R, "tagId");
+    public static final ColumnExp TAG = colexp(_R, "tag");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;
@@ -64,6 +52,7 @@ public class TagNameRecord extends PersistentRecord
     public int tagId;
 
     /** The actual tag. */
+    @Index(name="ixTag")
     public String tag;
 
     // AUTO-GENERATED: METHODS START
@@ -75,7 +64,7 @@ public class TagNameRecord extends PersistentRecord
     {
         return new Key<TagNameRecord>(
                 TagNameRecord.class,
-                new String[] { TAG_ID },
+                new ColumnExp[] { TAG_ID },
                 new Comparable[] { tagId });
     }
     // AUTO-GENERATED: METHODS END

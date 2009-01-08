@@ -19,47 +19,13 @@ import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 public class MemberInviteStatusRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberInviteStatusRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #permaName} field. */
-    public static final String PERMA_NAME = "permaName";
-
-    /** The qualified column identifier for the {@link #permaName} field. */
-    public static final ColumnExp PERMA_NAME_C =
-        new ColumnExp(MemberInviteStatusRecord.class, PERMA_NAME);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(MemberInviteStatusRecord.class, NAME);
-
-    /** The column identifier for the {@link #affiliateMemberId} field. */
-    public static final String AFFILIATE_MEMBER_ID = "affiliateMemberId";
-
-    /** The qualified column identifier for the {@link #affiliateMemberId} field. */
-    public static final ColumnExp AFFILIATE_MEMBER_ID_C =
-        new ColumnExp(MemberInviteStatusRecord.class, AFFILIATE_MEMBER_ID);
-
-    /** The column identifier for the {@link #invitesGranted} field. */
-    public static final String INVITES_GRANTED = "invitesGranted";
-
-    /** The qualified column identifier for the {@link #invitesGranted} field. */
-    public static final ColumnExp INVITES_GRANTED_C =
-        new ColumnExp(MemberInviteStatusRecord.class, INVITES_GRANTED);
-
-    /** The column identifier for the {@link #invitesSent} field. */
-    public static final String INVITES_SENT = "invitesSent";
-
-    /** The qualified column identifier for the {@link #invitesSent} field. */
-    public static final ColumnExp INVITES_SENT_C =
-        new ColumnExp(MemberInviteStatusRecord.class, INVITES_SENT);
+    public static final Class<MemberInviteStatusRecord> _R = MemberInviteStatusRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp PERMA_NAME = colexp(_R, "permaName");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp AFFILIATE_MEMBER_ID = colexp(_R, "affiliateMemberId");
+    public static final ColumnExp INVITES_GRANTED = colexp(_R, "invitesGranted");
+    public static final ColumnExp INVITES_SENT = colexp(_R, "invitesSent");
     // AUTO-GENERATED: FIELDS END
 
     /** See {@link MemberRecord#memberId}. */
@@ -104,7 +70,7 @@ public class MemberInviteStatusRecord extends PersistentRecord
     {
         return new Key<MemberInviteStatusRecord>(
                 MemberInviteStatusRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

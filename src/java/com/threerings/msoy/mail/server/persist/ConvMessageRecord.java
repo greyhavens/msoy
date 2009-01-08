@@ -32,47 +32,13 @@ import static com.threerings.msoy.Log.log;
 public class ConvMessageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #conversationId} field. */
-    public static final String CONVERSATION_ID = "conversationId";
-
-    /** The qualified column identifier for the {@link #conversationId} field. */
-    public static final ColumnExp CONVERSATION_ID_C =
-        new ColumnExp(ConvMessageRecord.class, CONVERSATION_ID);
-
-    /** The column identifier for the {@link #sent} field. */
-    public static final String SENT = "sent";
-
-    /** The qualified column identifier for the {@link #sent} field. */
-    public static final ColumnExp SENT_C =
-        new ColumnExp(ConvMessageRecord.class, SENT);
-
-    /** The column identifier for the {@link #authorId} field. */
-    public static final String AUTHOR_ID = "authorId";
-
-    /** The qualified column identifier for the {@link #authorId} field. */
-    public static final ColumnExp AUTHOR_ID_C =
-        new ColumnExp(ConvMessageRecord.class, AUTHOR_ID);
-
-    /** The column identifier for the {@link #body} field. */
-    public static final String BODY = "body";
-
-    /** The qualified column identifier for the {@link #body} field. */
-    public static final ColumnExp BODY_C =
-        new ColumnExp(ConvMessageRecord.class, BODY);
-
-    /** The column identifier for the {@link #payloadType} field. */
-    public static final String PAYLOAD_TYPE = "payloadType";
-
-    /** The qualified column identifier for the {@link #payloadType} field. */
-    public static final ColumnExp PAYLOAD_TYPE_C =
-        new ColumnExp(ConvMessageRecord.class, PAYLOAD_TYPE);
-
-    /** The column identifier for the {@link #payloadState} field. */
-    public static final String PAYLOAD_STATE = "payloadState";
-
-    /** The qualified column identifier for the {@link #payloadState} field. */
-    public static final ColumnExp PAYLOAD_STATE_C =
-        new ColumnExp(ConvMessageRecord.class, PAYLOAD_STATE);
+    public static final Class<ConvMessageRecord> _R = ConvMessageRecord.class;
+    public static final ColumnExp CONVERSATION_ID = colexp(_R, "conversationId");
+    public static final ColumnExp SENT = colexp(_R, "sent");
+    public static final ColumnExp AUTHOR_ID = colexp(_R, "authorId");
+    public static final ColumnExp BODY = colexp(_R, "body");
+    public static final ColumnExp PAYLOAD_TYPE = colexp(_R, "payloadType");
+    public static final ColumnExp PAYLOAD_STATE = colexp(_R, "payloadState");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -153,7 +119,7 @@ public class ConvMessageRecord extends PersistentRecord
     {
         return new Key<ConvMessageRecord>(
                 ConvMessageRecord.class,
-                new String[] { CONVERSATION_ID, SENT },
+                new ColumnExp[] { CONVERSATION_ID, SENT },
                 new Comparable[] { conversationId, sent });
     }
     // AUTO-GENERATED: METHODS END

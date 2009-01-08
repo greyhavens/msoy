@@ -8,7 +8,6 @@ import static com.threerings.msoy.Log.log;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.inject.Inject;
 
@@ -178,9 +177,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
             log.warning("Cannot update non-existent project", "id", project.projectId);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-        Map<String, Object> updates = pRec.findUpdates(project);
-        if (updates.size() > 0) {
-            _swiftlyRepo.updateProject(project.projectId, updates);
+        if (_swiftlyRepo.updateProject(project.projectId, project, pRec)) {
             // inform the room manager, if resolved, that the project has changed
             updateRoomProject(project);
         }

@@ -35,7 +35,7 @@ public class TrophyRepository extends DepotRepository
      */
     public List<TrophyRecord> loadTrophies (int memberId)
     {
-        return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId));
+        return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -43,8 +43,8 @@ public class TrophyRepository extends DepotRepository
      */
     public List<TrophyRecord> loadRecentTrophies (int memberId, int count)
     {
-        return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId),
-                       OrderBy.descending(TrophyRecord.WHEN_EARNED_C),
+        return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID, memberId),
+                       OrderBy.descending(TrophyRecord.WHEN_EARNED),
                        new Limit(0, count));
     }
 
@@ -53,8 +53,8 @@ public class TrophyRepository extends DepotRepository
      */
     public List<TrophyRecord> loadTrophies (int gameId, int memberId)
     {
-        return findAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID_C, gameId,
-                                                     TrophyRecord.MEMBER_ID_C, memberId));
+        return findAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID, gameId,
+                                                     TrophyRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -64,7 +64,7 @@ public class TrophyRepository extends DepotRepository
     public List<String> loadTrophyOwnership (int gameId, int memberId)
     {
         ArrayList<String> idents = new ArrayList<String>();
-        Where where = new Where(TrophyRecord.GAME_ID_C, gameId, TrophyRecord.MEMBER_ID_C, memberId);
+        Where where = new Where(TrophyRecord.GAME_ID, gameId, TrophyRecord.MEMBER_ID, memberId);
         for (TrophyOwnershipRecord orec : findAll(TrophyOwnershipRecord.class, where)) {
             idents.add(orec.ident);
         }
@@ -84,7 +84,7 @@ public class TrophyRepository extends DepotRepository
      */
     public void deleteTrophies (final int memberId)
     {
-        deleteAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId));
+        deleteAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID, memberId));
     }
 
     @Override // from DepotRepository

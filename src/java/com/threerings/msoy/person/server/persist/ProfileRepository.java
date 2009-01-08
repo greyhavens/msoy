@@ -48,11 +48,11 @@ public class ProfileRepository extends DepotRepository
                 // select all the MemberRecords with missing ProfileRecords
                 // only search for memberIds < 400 for efficiency, only these are affected
                 List<MemberRecord> members = findAll(MemberRecord.class,
-                    new Join(MemberRecord.MEMBER_ID_C,
-                        ProfileRecord.MEMBER_ID_C).setType(Join.Type.LEFT_OUTER),
+                    new Join(MemberRecord.MEMBER_ID,
+                        ProfileRecord.MEMBER_ID).setType(Join.Type.LEFT_OUTER),
                     new Where(new And(
-                        new LessThanEquals(MemberRecord.MEMBER_ID_C, 400),
-                        new IsNull(ProfileRecord.MEMBER_ID_C))
+                        new LessThanEquals(MemberRecord.MEMBER_ID, 400),
+                        new IsNull(ProfileRecord.MEMBER_ID))
                     ));
 
                 // create blank ProfileRecords with all defaults
@@ -97,7 +97,7 @@ public class ProfileRepository extends DepotRepository
      */
     public List<InterestRecord> loadInterests (int memberId)
     {
-        return findAll(InterestRecord.class, new Where(InterestRecord.MEMBER_ID_C, memberId));
+        return findAll(InterestRecord.class, new Where(InterestRecord.MEMBER_ID, memberId));
     }
 
     /**

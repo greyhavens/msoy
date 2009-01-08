@@ -6,53 +6,28 @@ package com.threerings.msoy.item.server.persist;
 import java.sql.Timestamp;
 
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.*; // for Depot annotations
 
 import com.threerings.msoy.money.data.all.Currency;
 
-@Entity(indices={
-    @Index(name="ixOwner", fields={ CloneRecord.OWNER_ID }),
-    @Index(name="ixOriginalItem", fields={ CloneRecord.ORIGINAL_ITEM_ID }),
-    @Index(name="ixLocation", fields={ CloneRecord.LOCATION })
-})
+@Entity
 public abstract class CloneRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #itemId} field. */
-    public static final String ITEM_ID = "itemId";
-
-    /** The column identifier for the {@link #originalItemId} field. */
-    public static final String ORIGINAL_ITEM_ID = "originalItemId";
-
-    /** The column identifier for the {@link #ownerId} field. */
-    public static final String OWNER_ID = "ownerId";
-
-    /** The column identifier for the {@link #purchaseTime} field. */
-    public static final String PURCHASE_TIME = "purchaseTime";
-
-    /** The column identifier for the {@link #currency} field. */
-    public static final String CURRENCY = "currency";
-
-    /** The column identifier for the {@link #amountPaid} field. */
-    public static final String AMOUNT_PAID = "amountPaid";
-
-    /** The column identifier for the {@link #used} field. */
-    public static final String USED = "used";
-
-    /** The column identifier for the {@link #location} field. */
-    public static final String LOCATION = "location";
-
-    /** The column identifier for the {@link #lastTouched} field. */
-    public static final String LAST_TOUCHED = "lastTouched";
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The column identifier for the {@link #mediaHash} field. */
-    public static final String MEDIA_HASH = "mediaHash";
-
-    /** The column identifier for the {@link #mediaStamp} field. */
-    public static final String MEDIA_STAMP = "mediaStamp";
+    public static final Class<CloneRecord> _R = CloneRecord.class;
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp ORIGINAL_ITEM_ID = colexp(_R, "originalItemId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp PURCHASE_TIME = colexp(_R, "purchaseTime");
+    public static final ColumnExp CURRENCY = colexp(_R, "currency");
+    public static final ColumnExp AMOUNT_PAID = colexp(_R, "amountPaid");
+    public static final ColumnExp USED = colexp(_R, "used");
+    public static final ColumnExp LOCATION = colexp(_R, "location");
+    public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp MEDIA_HASH = colexp(_R, "mediaHash");
+    public static final ColumnExp MEDIA_STAMP = colexp(_R, "mediaStamp");
     // AUTO-GENERATED: FIELDS END
 
     public static final int BASE_SCHEMA_VERSION = 8;
@@ -66,9 +41,11 @@ public abstract class CloneRecord extends PersistentRecord
     public int itemId;
 
     /** The id of the immutable item from which this was cloned. */
+    @Index(name="ixOriginalItem")
     public int originalItemId;
 
     /** The owner of this clone. */
+    @Index(name="ixOwner")
     public int ownerId;
 
     /** The time at which this clone was purchased from the catalog. */
@@ -84,6 +61,7 @@ public abstract class CloneRecord extends PersistentRecord
     public byte used;
 
     /** Where it's being used. */
+    @Index(name="ixLocation")
     public int location;
 
     /** The timestamp at which this item was last used or modified. */

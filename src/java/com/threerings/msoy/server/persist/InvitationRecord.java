@@ -18,54 +18,17 @@ import com.threerings.msoy.web.gwt.Invitation;
 /**
  * Contains persistent data stored for every member of MetaSOY.
  */
-@Entity(indices={
-        @Index(name="ixInviter", fields={InvitationRecord.INVITER_ID}),
-        @Index(name="ixInvitee", fields={InvitationRecord.INVITEE_ID})
-})
+@Entity
 public class InvitationRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #inviteeEmail} field. */
-    public static final String INVITEE_EMAIL = "inviteeEmail";
-
-    /** The qualified column identifier for the {@link #inviteeEmail} field. */
-    public static final ColumnExp INVITEE_EMAIL_C =
-        new ColumnExp(InvitationRecord.class, INVITEE_EMAIL);
-
-    /** The column identifier for the {@link #inviterId} field. */
-    public static final String INVITER_ID = "inviterId";
-
-    /** The qualified column identifier for the {@link #inviterId} field. */
-    public static final ColumnExp INVITER_ID_C =
-        new ColumnExp(InvitationRecord.class, INVITER_ID);
-
-    /** The column identifier for the {@link #inviteId} field. */
-    public static final String INVITE_ID = "inviteId";
-
-    /** The qualified column identifier for the {@link #inviteId} field. */
-    public static final ColumnExp INVITE_ID_C =
-        new ColumnExp(InvitationRecord.class, INVITE_ID);
-
-    /** The column identifier for the {@link #inviteeId} field. */
-    public static final String INVITEE_ID = "inviteeId";
-
-    /** The qualified column identifier for the {@link #inviteeId} field. */
-    public static final ColumnExp INVITEE_ID_C =
-        new ColumnExp(InvitationRecord.class, INVITEE_ID);
-
-    /** The column identifier for the {@link #issued} field. */
-    public static final String ISSUED = "issued";
-
-    /** The qualified column identifier for the {@link #issued} field. */
-    public static final ColumnExp ISSUED_C =
-        new ColumnExp(InvitationRecord.class, ISSUED);
-
-    /** The column identifier for the {@link #viewed} field. */
-    public static final String VIEWED = "viewed";
-
-    /** The qualified column identifier for the {@link #viewed} field. */
-    public static final ColumnExp VIEWED_C =
-        new ColumnExp(InvitationRecord.class, VIEWED);
+    public static final Class<InvitationRecord> _R = InvitationRecord.class;
+    public static final ColumnExp INVITEE_EMAIL = colexp(_R, "inviteeEmail");
+    public static final ColumnExp INVITER_ID = colexp(_R, "inviterId");
+    public static final ColumnExp INVITE_ID = colexp(_R, "inviteId");
+    public static final ColumnExp INVITEE_ID = colexp(_R, "inviteeId");
+    public static final ColumnExp ISSUED = colexp(_R, "issued");
+    public static final ColumnExp VIEWED = colexp(_R, "viewed");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -76,6 +39,7 @@ public class InvitationRecord extends PersistentRecord
     public String inviteeEmail;
 
     /** The inviter's member Id */
+    @Index(name="ixInviter")
     public int inviterId;
 
     /** A randomly generated string of numbers and characters that is used to uniquely identify
@@ -84,6 +48,7 @@ public class InvitationRecord extends PersistentRecord
     public String inviteId;
 
     /** The memberId that was assigned to the invitee when (if) the invitation was accepted. */
+    @Index(name="ixInvitee")
     public int inviteeId;
 
     /** The time that this invite was sent out */
@@ -138,7 +103,7 @@ public class InvitationRecord extends PersistentRecord
     {
         return new Key<InvitationRecord>(
                 InvitationRecord.class,
-                new String[] { INVITE_ID },
+                new ColumnExp[] { INVITE_ID },
                 new Comparable[] { inviteId });
     }
     // AUTO-GENERATED: METHODS END

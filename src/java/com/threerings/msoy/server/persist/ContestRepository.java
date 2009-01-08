@@ -37,8 +37,8 @@ public class ContestRepository extends DepotRepository
         // to make this query cacheable, round our timestamp to the current hour or so
         Timestamp now = new Timestamp(System.currentTimeMillis() & ~0x1FFFFFL);
         return findAll(ContestRecord.class,
-                       new Where(new And(new GreaterThanEquals(ContestRecord.STARTS_C, now),
-                                         new LessThanEquals(ContestRecord.ENDS_C, now))));
+                       new Where(new And(new GreaterThanEquals(ContestRecord.STARTS, now),
+                                         new LessThanEquals(ContestRecord.ENDS, now))));
     }
 
     /**

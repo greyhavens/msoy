@@ -22,6 +22,7 @@ import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic.*;
@@ -57,20 +58,20 @@ public class ForumRepository extends DepotRepository
     public List<ForumThreadRecord> loadUnreadThreads (int memberId, Set<Integer> groupIds, int max)
     {
         SQLExpression join = new And(
-            new Equals(ForumThreadRecord.THREAD_ID_C, ReadTrackingRecord.THREAD_ID_C),
-            new Equals(ReadTrackingRecord.MEMBER_ID_C, memberId)
+            new Equals(ForumThreadRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
+            new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
         );
         SQLExpression where = new And(
-            new In(ForumThreadRecord.GROUP_ID_C, groupIds),
-            new Or(new IsNull(ReadTrackingRecord.THREAD_ID_C),
-                   new And(new Equals(ReadTrackingRecord.MEMBER_ID_C, memberId),
-                           new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID_C,
-                                           ReadTrackingRecord.LAST_READ_POST_ID_C))));
+            new In(ForumThreadRecord.GROUP_ID, groupIds),
+            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
+                   new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
+                           new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
+                                           ReadTrackingRecord.LAST_READ_POST_ID))));
         return findAll(ForumThreadRecord.class,
                        new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
                        new Where(where),
                        new Limit(0, max),
-                       OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID_C));
+                       OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID));
     }
 
     /**
@@ -79,9 +80,9 @@ public class ForumRepository extends DepotRepository
     public List<ForumThreadRecord> loadRecentThreads (int groupId, int count)
     {
         return findAll(ForumThreadRecord.class,
-                       new Where(ForumThreadRecord.GROUP_ID_C, groupId),
+                       new Where(ForumThreadRecord.GROUP_ID, groupId),
                        new Limit(0, count),
-                       OrderBy.descending(ForumThreadRecord.THREAD_ID_C));
+                       OrderBy.descending(ForumThreadRecord.THREAD_ID));
     }
 
     /**
@@ -91,7 +92,7 @@ public class ForumRepository extends DepotRepository
     {
         return load(CountRecord.class,
                     new FromOverride(ForumThreadRecord.class),
-                    new Where(ForumThreadRecord.GROUP_ID_C, groupId)).count;
+                    new Where(ForumThreadRecord.GROUP_ID, groupId)).count;
     }
 
     /**
@@ -102,8 +103,8 @@ public class ForumRepository extends DepotRepository
         return load(CountRecord.class,
             new FromOverride(ForumThreadRecord.class, ForumMessageRecord.class),
             new Where(new And(
-                new Equals(ForumThreadRecord.GROUP_ID_C, groupId),
-                new Equals(ForumThreadRecord.THREAD_ID_C, ForumMessageRecord.THREAD_ID_C)))
+                new Equals(ForumThreadRecord.GROUP_ID, groupId),
+                new Equals(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID)))
             ).count;
     }
 
@@ -114,11 +115,11 @@ public class ForumRepository extends DepotRepository
     public List<ForumThreadRecord> loadThreads (int groupId, int offset, int count)
     {
         return findAll(ForumThreadRecord.class,
-                       new Where(ForumThreadRecord.GROUP_ID_C, groupId),
+                       new Where(ForumThreadRecord.GROUP_ID, groupId),
                        new Limit(offset, count),
                        new OrderBy(
-                           new SQLExpression[] { ForumThreadRecord.STICKY_C,
-                                                 ForumThreadRecord.MOST_RECENT_POST_ID_C },
+                           new SQLExpression[] { ForumThreadRecord.STICKY,
+                                                 ForumThreadRecord.MOST_RECENT_POST_ID },
                            new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.DESC }));
     }
 
@@ -128,13 +129,13 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumThreadRecord> findThreads (int groupId, String search, int limit)
     {
-        And where = new And(new Equals(ForumThreadRecord.GROUP_ID_C, groupId),
+        And where = new And(new Equals(ForumThreadRecord.GROUP_ID, groupId),
                             new Or(new FullTextMatch(ForumThreadRecord.class,
                                                      ForumThreadRecord.FTS_SUBJECT, search),
                                    new FullTextMatch(ForumMessageRecord.class,
                                                      ForumMessageRecord.FTS_MESSAGE, search)));
         return findAll(ForumThreadRecord.class,
-                       new Join(ForumThreadRecord.THREAD_ID_C, ForumMessageRecord.THREAD_ID_C),
+                       new Join(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID),
                        new Where(where), new Limit(0, limit));
     }
 
@@ -145,9 +146,9 @@ public class ForumRepository extends DepotRepository
     public List<ForumMessageRecord> loadMessages (int threadId, int offset, int count)
     {
         return findAll(ForumMessageRecord.class,
-                       new Where(ForumMessageRecord.THREAD_ID_C, threadId),
+                       new Where(ForumMessageRecord.THREAD_ID, threadId),
                        new Limit(offset, count),
-                       OrderBy.ascending(ForumMessageRecord.CREATED_C));
+                       OrderBy.ascending(ForumMessageRecord.CREATED));
     }
 
     /**
@@ -155,7 +156,7 @@ public class ForumRepository extends DepotRepository
      */
     public List<ForumMessageRecord> findMessages (int threadId, String search, int limit)
     {
-        And where = new And(new Equals(ForumMessageRecord.THREAD_ID_C, threadId),
+        And where = new And(new Equals(ForumMessageRecord.THREAD_ID, threadId),
                             new FullTextMatch(ForumMessageRecord.class,
                                               ForumMessageRecord.FTS_MESSAGE, search));
         return findAll(ForumMessageRecord.class, new Where(where), new Limit(0, limit));
@@ -233,8 +234,8 @@ public class ForumRepository extends DepotRepository
                       ForumThreadRecord.MOST_RECENT_POST_TIME, fmr.created,
                       ForumThreadRecord.MOST_RECENT_POSTER_ID, posterId);
 
-        Map<String, SQLExpression> updates = Maps.newHashMap();
-        updates.put(ForumThreadRecord.POSTS, new Add(ForumThreadRecord.POSTS_C, 1));
+        Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
+        updates.put(ForumThreadRecord.POSTS, new Add(ForumThreadRecord.POSTS, 1));
         updateLiteral(ForumThreadRecord.class, thread.threadId, updates);
 
         // update thread object to match its persistent record
@@ -260,7 +261,7 @@ public class ForumRepository extends DepotRepository
     public List<ForumMessageRecord> loadIssueMessages (int issueId)
     {
         return findAll(ForumMessageRecord.class,
-                       new Where(ForumMessageRecord.ISSUE_ID_C, issueId));
+                       new Where(ForumMessageRecord.ISSUE_ID, issueId));
     }
 
     /**
@@ -308,15 +309,15 @@ public class ForumRepository extends DepotRepository
         }
 
         // otherwise decrement the post count
-        Map<String, SQLExpression> updates = Maps.newHashMap();
-        updates.put(ForumThreadRecord.POSTS, new Sub(ForumThreadRecord.POSTS_C, 1));
+        Map<ColumnExp, SQLExpression> updates = Maps.newHashMap();
+        updates.put(ForumThreadRecord.POSTS, new Sub(ForumThreadRecord.POSTS, 1));
         // and update the last post/poster/etc. if we just deleted the last post
         if (ftr.mostRecentPostId == fmr.messageId) {
             List<ForumMessageRecord> lastMsg = findAll(
                 ForumMessageRecord.class,
-                new Where(ForumMessageRecord.THREAD_ID_C, ftr.threadId),
+                new Where(ForumMessageRecord.THREAD_ID, ftr.threadId),
                 new Limit(0, 1),
-                OrderBy.descending(ForumMessageRecord.CREATED_C));
+                OrderBy.descending(ForumMessageRecord.CREATED));
             if (lastMsg.size() > 0) {
                 ForumMessageRecord last = lastMsg.get(0);
                 updates.put(ForumThreadRecord.MOST_RECENT_POST_ID, new ValueExp(last.messageId));
@@ -333,8 +334,8 @@ public class ForumRepository extends DepotRepository
     public List<ReadTrackingRecord> loadLastReadPostInfo (int memberId, Set<Integer> threadIds)
     {
         return findAll(ReadTrackingRecord.class,
-                       new Where(new And(new Equals(ReadTrackingRecord.MEMBER_ID_C, memberId),
-                                         new In(ReadTrackingRecord.THREAD_ID_C, threadIds))));
+                       new Where(new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
+                                         new In(ReadTrackingRecord.THREAD_ID, threadIds))));
     }
 
     /**

@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import com.google.common.base.Function;
 
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Column;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
@@ -27,73 +28,32 @@ import com.threerings.msoy.item.data.all.Item;
 /**
  * The base class for all digital items in the MSOY system.
  */
-@Entity(indices={
-    @Index(name="locationIndex", fields={ ItemRecord.LOCATION } ),
-    @Index(name="ixMature", fields={ ItemRecord.MATURE } ),
-    @Index(name="ixOwner", fields={ ItemRecord.OWNER_ID }),
-    @Index(name="ixCreator", fields={ ItemRecord.CREATOR_ID })
-}, fullTextIndices={
-    @FullTextIndex(name=ItemRecord.FTS_ND, fields={ ItemRecord.NAME, ItemRecord.DESCRIPTION })
+@Entity(fullTextIndices={
+    @FullTextIndex(name=ItemRecord.FTS_ND, fields={ "name", "description" })
 })
 public abstract class ItemRecord extends PersistentRecord implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #itemId} field. */
-    public static final String ITEM_ID = "itemId";
-
-    /** The column identifier for the {@link #sourceId} field. */
-    public static final String SOURCE_ID = "sourceId";
-
-    /** The column identifier for the {@link #creatorId} field. */
-    public static final String CREATOR_ID = "creatorId";
-
-    /** The column identifier for the {@link #ownerId} field. */
-    public static final String OWNER_ID = "ownerId";
-
-    /** The column identifier for the {@link #catalogId} field. */
-    public static final String CATALOG_ID = "catalogId";
-
-    /** The column identifier for the {@link #rating} field. */
-    public static final String RATING = "rating";
-
-    /** The column identifier for the {@link #ratingCount} field. */
-    public static final String RATING_COUNT = "ratingCount";
-
-    /** The column identifier for the {@link #used} field. */
-    public static final String USED = "used";
-
-    /** The column identifier for the {@link #location} field. */
-    public static final String LOCATION = "location";
-
-    /** The column identifier for the {@link #lastTouched} field. */
-    public static final String LAST_TOUCHED = "lastTouched";
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The column identifier for the {@link #description} field. */
-    public static final String DESCRIPTION = "description";
-
-    /** The column identifier for the {@link #mature} field. */
-    public static final String MATURE = "mature";
-
-    /** The column identifier for the {@link #thumbMediaHash} field. */
-    public static final String THUMB_MEDIA_HASH = "thumbMediaHash";
-
-    /** The column identifier for the {@link #thumbMimeType} field. */
-    public static final String THUMB_MIME_TYPE = "thumbMimeType";
-
-    /** The column identifier for the {@link #thumbConstraint} field. */
-    public static final String THUMB_CONSTRAINT = "thumbConstraint";
-
-    /** The column identifier for the {@link #furniMediaHash} field. */
-    public static final String FURNI_MEDIA_HASH = "furniMediaHash";
-
-    /** The column identifier for the {@link #furniMimeType} field. */
-    public static final String FURNI_MIME_TYPE = "furniMimeType";
-
-    /** The column identifier for the {@link #furniConstraint} field. */
-    public static final String FURNI_CONSTRAINT = "furniConstraint";
+    public static final Class<ItemRecord> _R = ItemRecord.class;
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
+    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp USED = colexp(_R, "used");
+    public static final ColumnExp LOCATION = colexp(_R, "location");
+    public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp MATURE = colexp(_R, "mature");
+    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
+    public static final ColumnExp FURNI_MEDIA_HASH = colexp(_R, "furniMediaHash");
+    public static final ColumnExp FURNI_MIME_TYPE = colexp(_R, "furniMimeType");
+    public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on Name, Description */
@@ -128,10 +88,12 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public byte attrs;
 
     /** The member id of the member that created this item. */
+    @Index(name="ixCreator")
     public int creatorId;
 
     /** The member id of the member that owns this item, or 0 if it's not in any inventory;
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
+    @Index(name="ixOwner")
     public int ownerId;
 
     /** The catalog listing associated with this item. Set to 0 if this item is not listed. If
@@ -154,6 +116,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public byte used;
 
     /** Where it's being used. */
+    @Index(name="locationIndex")
     public int location;
 
     /** The timestamp at which this item was last touched. */
@@ -167,6 +130,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public String description;
 
     /** Whether or not this item represents mature content. */
+    @Index(name="ixMature")
     public boolean mature;
 
     /** A hash code identifying the media used to display this item's thumbnail representation. */

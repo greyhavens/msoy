@@ -15,26 +15,10 @@ import com.samskivert.depot.expression.ColumnExp;
 public class MemberActionSummaryRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberActionSummaryRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #actionId} field. */
-    public static final String ACTION_ID = "actionId";
-
-    /** The qualified column identifier for the {@link #actionId} field. */
-    public static final ColumnExp ACTION_ID_C =
-        new ColumnExp(MemberActionSummaryRecord.class, ACTION_ID);
-
-    /** The column identifier for the {@link #count} field. */
-    public static final String COUNT = "count";
-
-    /** The qualified column identifier for the {@link #count} field. */
-    public static final ColumnExp COUNT_C =
-        new ColumnExp(MemberActionSummaryRecord.class, COUNT);
+    public static final Class<MemberActionSummaryRecord> _R = MemberActionSummaryRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp ACTION_ID = colexp(_R, "actionId");
+    public static final ColumnExp COUNT = colexp(_R, "count");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;
@@ -72,7 +56,7 @@ public class MemberActionSummaryRecord extends PersistentRecord
     {
         return new Key<MemberActionSummaryRecord>(
                 MemberActionSummaryRecord.class,
-                new String[] { MEMBER_ID, ACTION_ID },
+                new ColumnExp[] { MEMBER_ID, ACTION_ID },
                 new Comparable[] { memberId, actionId });
     }
     // AUTO-GENERATED: METHODS END

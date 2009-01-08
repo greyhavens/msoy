@@ -19,19 +19,9 @@ import com.threerings.msoy.game.gwt.GameDetail;
 public class InstructionsRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #gameId} field. */
-    public static final String GAME_ID = "gameId";
-
-    /** The qualified column identifier for the {@link #gameId} field. */
-    public static final ColumnExp GAME_ID_C =
-        new ColumnExp(InstructionsRecord.class, GAME_ID);
-
-    /** The column identifier for the {@link #instructions} field. */
-    public static final String INSTRUCTIONS = "instructions";
-
-    /** The qualified column identifier for the {@link #instructions} field. */
-    public static final ColumnExp INSTRUCTIONS_C =
-        new ColumnExp(InstructionsRecord.class, INSTRUCTIONS);
+    public static final Class<InstructionsRecord> _R = InstructionsRecord.class;
+    public static final ColumnExp GAME_ID = colexp(_R, "gameId");
+    public static final ColumnExp INSTRUCTIONS = colexp(_R, "instructions");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -54,7 +44,7 @@ public class InstructionsRecord extends PersistentRecord
     {
         return new Key<InstructionsRecord>(
                 InstructionsRecord.class,
-                new String[] { GAME_ID },
+                new ColumnExp[] { GAME_ID },
                 new Comparable[] { gameId });
     }
     // AUTO-GENERATED: METHODS END

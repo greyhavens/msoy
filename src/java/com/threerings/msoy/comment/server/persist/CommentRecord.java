@@ -21,60 +21,18 @@ import com.threerings.msoy.comment.gwt.Comment;
 /**
  * Contains a comment made on an entity of some sort (item, profile, room, etc.).
  */
-@Entity(indices={
-    @Index(name="ixMemberId", fields={ CommentRecord.MEMBER_ID })
-})
+@Entity
 public class CommentRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #entityType} field. */
-    public static final String ENTITY_TYPE = "entityType";
-
-    /** The qualified column identifier for the {@link #entityType} field. */
-    public static final ColumnExp ENTITY_TYPE_C =
-        new ColumnExp(CommentRecord.class, ENTITY_TYPE);
-
-    /** The column identifier for the {@link #entityId} field. */
-    public static final String ENTITY_ID = "entityId";
-
-    /** The qualified column identifier for the {@link #entityId} field. */
-    public static final ColumnExp ENTITY_ID_C =
-        new ColumnExp(CommentRecord.class, ENTITY_ID);
-
-    /** The column identifier for the {@link #posted} field. */
-    public static final String POSTED = "posted";
-
-    /** The qualified column identifier for the {@link #posted} field. */
-    public static final ColumnExp POSTED_C =
-        new ColumnExp(CommentRecord.class, POSTED);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(CommentRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #currentRating} field. */
-    public static final String CURRENT_RATING = "currentRating";
-
-    /** The qualified column identifier for the {@link #currentRating} field. */
-    public static final ColumnExp CURRENT_RATING_C =
-        new ColumnExp(CommentRecord.class, CURRENT_RATING);
-
-    /** The column identifier for the {@link #totalRatings} field. */
-    public static final String TOTAL_RATINGS = "totalRatings";
-
-    /** The qualified column identifier for the {@link #totalRatings} field. */
-    public static final ColumnExp TOTAL_RATINGS_C =
-        new ColumnExp(CommentRecord.class, TOTAL_RATINGS);
-
-    /** The column identifier for the {@link #text} field. */
-    public static final String TEXT = "text";
-
-    /** The qualified column identifier for the {@link #text} field. */
-    public static final ColumnExp TEXT_C =
-        new ColumnExp(CommentRecord.class, TEXT);
+    public static final Class<CommentRecord> _R = CommentRecord.class;
+    public static final ColumnExp ENTITY_TYPE = colexp(_R, "entityType");
+    public static final ColumnExp ENTITY_ID = colexp(_R, "entityId");
+    public static final ColumnExp POSTED = colexp(_R, "posted");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp CURRENT_RATING = colexp(_R, "currentRating");
+    public static final ColumnExp TOTAL_RATINGS = colexp(_R, "totalRatings");
+    public static final ColumnExp TEXT = colexp(_R, "text");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -94,6 +52,7 @@ public class CommentRecord extends PersistentRecord
     public Timestamp posted;
 
     /** The id of the member that made this comment. */
+    @Index
     public int memberId;
 
     /** The absolute rating of this comment. */
@@ -138,7 +97,7 @@ public class CommentRecord extends PersistentRecord
     {
         return new Key<CommentRecord>(
                 CommentRecord.class,
-                new String[] { ENTITY_TYPE, ENTITY_ID, POSTED },
+                new ColumnExp[] { ENTITY_TYPE, ENTITY_ID, POSTED },
                 new Comparable[] { entityType, entityId, posted });
     }
     // AUTO-GENERATED: METHODS END

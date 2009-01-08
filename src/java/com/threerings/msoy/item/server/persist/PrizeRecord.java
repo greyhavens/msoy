@@ -17,103 +17,30 @@ import com.threerings.msoy.item.data.all.Prize;
 public class PrizeRecord extends SubItemRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #targetType} field. */
-    public static final String TARGET_TYPE = "targetType";
-
-    /** The qualified column identifier for the {@link #targetType} field. */
-    public static final ColumnExp TARGET_TYPE_C =
-        new ColumnExp(PrizeRecord.class, TARGET_TYPE);
-
-    /** The column identifier for the {@link #targetCatalogId} field. */
-    public static final String TARGET_CATALOG_ID = "targetCatalogId";
-
-    /** The qualified column identifier for the {@link #targetCatalogId} field. */
-    public static final ColumnExp TARGET_CATALOG_ID_C =
-        new ColumnExp(PrizeRecord.class, TARGET_CATALOG_ID);
-
-    /** The qualified column identifier for the {@link #suiteId} field. */
-    public static final ColumnExp SUITE_ID_C =
-        new ColumnExp(PrizeRecord.class, SUITE_ID);
-
-    /** The qualified column identifier for the {@link #ident} field. */
-    public static final ColumnExp IDENT_C =
-        new ColumnExp(PrizeRecord.class, IDENT);
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(PrizeRecord.class, ITEM_ID);
-
-    /** The qualified column identifier for the {@link #sourceId} field. */
-    public static final ColumnExp SOURCE_ID_C =
-        new ColumnExp(PrizeRecord.class, SOURCE_ID);
-
-    /** The qualified column identifier for the {@link #creatorId} field. */
-    public static final ColumnExp CREATOR_ID_C =
-        new ColumnExp(PrizeRecord.class, CREATOR_ID);
-
-    /** The qualified column identifier for the {@link #ownerId} field. */
-    public static final ColumnExp OWNER_ID_C =
-        new ColumnExp(PrizeRecord.class, OWNER_ID);
-
-    /** The qualified column identifier for the {@link #catalogId} field. */
-    public static final ColumnExp CATALOG_ID_C =
-        new ColumnExp(PrizeRecord.class, CATALOG_ID);
-
-    /** The qualified column identifier for the {@link #rating} field. */
-    public static final ColumnExp RATING_C =
-        new ColumnExp(PrizeRecord.class, RATING);
-
-    /** The qualified column identifier for the {@link #ratingCount} field. */
-    public static final ColumnExp RATING_COUNT_C =
-        new ColumnExp(PrizeRecord.class, RATING_COUNT);
-
-    /** The qualified column identifier for the {@link #used} field. */
-    public static final ColumnExp USED_C =
-        new ColumnExp(PrizeRecord.class, USED);
-
-    /** The qualified column identifier for the {@link #location} field. */
-    public static final ColumnExp LOCATION_C =
-        new ColumnExp(PrizeRecord.class, LOCATION);
-
-    /** The qualified column identifier for the {@link #lastTouched} field. */
-    public static final ColumnExp LAST_TOUCHED_C =
-        new ColumnExp(PrizeRecord.class, LAST_TOUCHED);
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(PrizeRecord.class, NAME);
-
-    /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(PrizeRecord.class, DESCRIPTION);
-
-    /** The qualified column identifier for the {@link #mature} field. */
-    public static final ColumnExp MATURE_C =
-        new ColumnExp(PrizeRecord.class, MATURE);
-
-    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
-    public static final ColumnExp THUMB_MEDIA_HASH_C =
-        new ColumnExp(PrizeRecord.class, THUMB_MEDIA_HASH);
-
-    /** The qualified column identifier for the {@link #thumbMimeType} field. */
-    public static final ColumnExp THUMB_MIME_TYPE_C =
-        new ColumnExp(PrizeRecord.class, THUMB_MIME_TYPE);
-
-    /** The qualified column identifier for the {@link #thumbConstraint} field. */
-    public static final ColumnExp THUMB_CONSTRAINT_C =
-        new ColumnExp(PrizeRecord.class, THUMB_CONSTRAINT);
-
-    /** The qualified column identifier for the {@link #furniMediaHash} field. */
-    public static final ColumnExp FURNI_MEDIA_HASH_C =
-        new ColumnExp(PrizeRecord.class, FURNI_MEDIA_HASH);
-
-    /** The qualified column identifier for the {@link #furniMimeType} field. */
-    public static final ColumnExp FURNI_MIME_TYPE_C =
-        new ColumnExp(PrizeRecord.class, FURNI_MIME_TYPE);
-
-    /** The qualified column identifier for the {@link #furniConstraint} field. */
-    public static final ColumnExp FURNI_CONSTRAINT_C =
-        new ColumnExp(PrizeRecord.class, FURNI_CONSTRAINT);
+    public static final Class<PrizeRecord> _R = PrizeRecord.class;
+    public static final ColumnExp TARGET_TYPE = colexp(_R, "targetType");
+    public static final ColumnExp TARGET_CATALOG_ID = colexp(_R, "targetCatalogId");
+    public static final ColumnExp SUITE_ID = colexp(_R, "suiteId");
+    public static final ColumnExp IDENT = colexp(_R, "ident");
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp SOURCE_ID = colexp(_R, "sourceId");
+    public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
+    public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
+    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp USED = colexp(_R, "used");
+    public static final ColumnExp LOCATION = colexp(_R, "location");
+    public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
+    public static final ColumnExp MATURE = colexp(_R, "mature");
+    public static final ColumnExp THUMB_MEDIA_HASH = colexp(_R, "thumbMediaHash");
+    public static final ColumnExp THUMB_MIME_TYPE = colexp(_R, "thumbMimeType");
+    public static final ColumnExp THUMB_CONSTRAINT = colexp(_R, "thumbConstraint");
+    public static final ColumnExp FURNI_MEDIA_HASH = colexp(_R, "furniMediaHash");
+    public static final ColumnExp FURNI_MIME_TYPE = colexp(_R, "furniMimeType");
+    public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
@@ -158,7 +85,7 @@ public class PrizeRecord extends SubItemRecord
     {
         return new Key<PrizeRecord>(
                 PrizeRecord.class,
-                new String[] { ITEM_ID },
+                new ColumnExp[] { ITEM_ID },
                 new Comparable[] { itemId });
     }
     // AUTO-GENERATED: METHODS END

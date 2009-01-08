@@ -18,33 +18,11 @@ import com.samskivert.depot.expression.ColumnExp;
 public class FavoriteItemRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(FavoriteItemRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #itemType} field. */
-    public static final String ITEM_TYPE = "itemType";
-
-    /** The qualified column identifier for the {@link #itemType} field. */
-    public static final ColumnExp ITEM_TYPE_C =
-        new ColumnExp(FavoriteItemRecord.class, ITEM_TYPE);
-
-    /** The column identifier for the {@link #catalogId} field. */
-    public static final String CATALOG_ID = "catalogId";
-
-    /** The qualified column identifier for the {@link #catalogId} field. */
-    public static final ColumnExp CATALOG_ID_C =
-        new ColumnExp(FavoriteItemRecord.class, CATALOG_ID);
-
-    /** The column identifier for the {@link #notedOn} field. */
-    public static final String NOTED_ON = "notedOn";
-
-    /** The qualified column identifier for the {@link #notedOn} field. */
-    public static final ColumnExp NOTED_ON_C =
-        new ColumnExp(FavoriteItemRecord.class, NOTED_ON);
+    public static final Class<FavoriteItemRecord> _R = FavoriteItemRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp ITEM_TYPE = colexp(_R, "itemType");
+    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp NOTED_ON = colexp(_R, "notedOn");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;
@@ -70,7 +48,7 @@ public class FavoriteItemRecord extends PersistentRecord
     {
         return new Key<FavoriteItemRecord>(
                 FavoriteItemRecord.class,
-                new String[] { MEMBER_ID, ITEM_TYPE, CATALOG_ID },
+                new ColumnExp[] { MEMBER_ID, ITEM_TYPE, CATALOG_ID },
                 new Comparable[] { memberId, itemType, catalogId });
     }
     // AUTO-GENERATED: METHODS END

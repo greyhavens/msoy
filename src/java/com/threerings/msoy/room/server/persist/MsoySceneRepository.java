@@ -100,7 +100,7 @@ public class MsoySceneRepository extends DepotRepository
                     "http://www.whirled.com/#landing-designcontest||Enter the contest!" };
 
                 updatePartial(SceneFurniRecord.class, new Where(
-                    SceneFurniRecord.ACTION_DATA_C,
+                    SceneFurniRecord.ACTION_DATA,
                         "http://www.whirled.com/#me-dacontesti||Enter the contest!"),
                     null, // don't need a CacheInvalidator
                     newValues);
@@ -110,7 +110,7 @@ public class MsoySceneRepository extends DepotRepository
         // Remove broken "Decorate Tutorial" furnis from 20,000 old home rooms
         registerMigration(new DataMigration("2008_10_27_remove_decorate_tutorial_furnis") {
             @Override public void invoke () throws DatabaseException {
-                deleteAll(SceneFurniRecord.class, new Where(SceneFurniRecord.ITEM_ID_C, 383));
+                deleteAll(SceneFurniRecord.class, new Where(SceneFurniRecord.ITEM_ID, 383));
             }
         });
 
@@ -119,7 +119,7 @@ public class MsoySceneRepository extends DepotRepository
             @Override public void invoke () throws DatabaseException {
                 // all actions with actionType 5 must go; will affect several "drink me" items
                 List<Key<SceneFurniRecord>> furniIds = findAllKeys(SceneFurniRecord.class, true,
-                    new Where(SceneFurniRecord.ACTION_TYPE_C, 5));
+                    new Where(SceneFurniRecord.ACTION_TYPE, 5));
 
                 // update each one, clearing actionType and actionData
                 Object[] newValues = { "actionType", 0, "actionData", null };
@@ -148,8 +148,8 @@ public class MsoySceneRepository extends DepotRepository
     public int getRoomCount (int memberId)
     {
         Where where = new Where(
-            new Logic.And(new Equals(SceneRecord.OWNER_TYPE_C, MsoySceneModel.OWNER_TYPE_MEMBER),
-                          new Equals(SceneRecord.OWNER_ID_C, memberId)));
+            new Logic.And(new Equals(SceneRecord.OWNER_TYPE, MsoySceneModel.OWNER_TYPE_MEMBER),
+                          new Equals(SceneRecord.OWNER_ID, memberId)));
         return load(CountRecord.class, new FromOverride(SceneRecord.class), where).count;
     }
 
@@ -158,8 +158,8 @@ public class MsoySceneRepository extends DepotRepository
      */
     public List<SceneRecord> getOwnedScenes (byte ownerType, int memberId)
     {
-        Where where = new Where(new Logic.And(new Equals(SceneRecord.OWNER_TYPE_C, ownerType),
-                                              new Equals(SceneRecord.OWNER_ID_C, memberId)));
+        Where where = new Where(new Logic.And(new Equals(SceneRecord.OWNER_TYPE, ownerType),
+                                              new Equals(SceneRecord.OWNER_ID, memberId)));
         return findAll(SceneRecord.class, where);
     }
 
@@ -257,7 +257,7 @@ public class MsoySceneRepository extends DepotRepository
 
         // load up all of our furni data
         List<FurniData> flist = Lists.newArrayList();
-        Where where = new Where(SceneFurniRecord.SCENE_ID_C, sceneId);
+        Where where = new Where(SceneFurniRecord.SCENE_ID, sceneId);
         for (SceneFurniRecord furni : findAll(SceneFurniRecord.class, where)) {
             flist.add(furni.toFurniData());
         }
@@ -331,8 +331,8 @@ public class MsoySceneRepository extends DepotRepository
 
         // only load public, published rooms
         clauses.add(new Where(new Logic.And(
-                new Logic.Not(new IsNull(SceneRecord.LAST_PUBLISHED_C)),
-                new Equals(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE)
+                new Logic.Not(new IsNull(SceneRecord.LAST_PUBLISHED)),
+                new Equals(SceneRecord.ACCESS_CONTROL, MsoySceneModel.ACCESS_EVERYONE)
         )));
 
         exprs.add(NEW_AND_HOT_ORDER);
@@ -478,7 +478,7 @@ public class MsoySceneRepository extends DepotRepository
         insert(record);
 
         // now load up furni from the stock scene
-        Where where = new Where(SceneFurniRecord.SCENE_ID_C, stock.getSceneId());
+        Where where = new Where(SceneFurniRecord.SCENE_ID, stock.getSceneId());
         for (SceneFurniRecord furni : findAll(SceneFurniRecord.class, where)) {
             furni.sceneId = record.sceneId;
             // if the scene has a portal pointing to the default public space; rewrite it to point
@@ -504,8 +504,8 @@ public class MsoySceneRepository extends DepotRepository
     public List<RoomPropertyRecord> loadProperties (int ownerId, int sceneId)
     {
         return findAll(RoomPropertyRecord.class, new Where(
-            RoomPropertyRecord.OWNER_ID_C, ownerId,
-            RoomPropertyRecord.SCENE_ID_C, sceneId));
+            RoomPropertyRecord.OWNER_ID, ownerId,
+            RoomPropertyRecord.SCENE_ID, sceneId));
     }
 
     /** Saves a room property, deleting if the value is null. */
@@ -610,8 +610,8 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
-        new Arithmetic.Add(SceneRecord.RATING_C, new Arithmetic.Div(
-            new EpochSeconds(SceneRecord.LAST_PUBLISHED_C),
+        new Arithmetic.Add(SceneRecord.RATING, new Arithmetic.Div(
+            new EpochSeconds(SceneRecord.LAST_PUBLISHED),
             // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
             // TODO: with parameters. So we trick Depot using a literal expression here. :/
             new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));

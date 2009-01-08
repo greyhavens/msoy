@@ -19,26 +19,10 @@ import com.samskivert.depot.expression.ColumnExp;
 public class MemberWarningRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberWarningRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #warning} field. */
-    public static final String WARNING = "warning";
-
-    /** The qualified column identifier for the {@link #warning} field. */
-    public static final ColumnExp WARNING_C =
-        new ColumnExp(MemberWarningRecord.class, WARNING);
-
-    /** The column identifier for the {@link #banExpires} field. */
-    public static final String BAN_EXPIRES = "banExpires";
-
-    /** The qualified column identifier for the {@link #banExpires} field. */
-    public static final ColumnExp BAN_EXPIRES_C =
-        new ColumnExp(MemberWarningRecord.class, BAN_EXPIRES);
+    public static final Class<MemberWarningRecord> _R = MemberWarningRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp WARNING = colexp(_R, "warning");
+    public static final ColumnExp BAN_EXPIRES = colexp(_R, "banExpires");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -65,7 +49,7 @@ public class MemberWarningRecord extends PersistentRecord
     {
         return new Key<MemberWarningRecord>(
                 MemberWarningRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

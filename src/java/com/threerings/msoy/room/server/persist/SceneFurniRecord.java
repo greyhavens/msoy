@@ -20,124 +20,24 @@ import com.threerings.msoy.room.data.MsoyLocation;
 public class SceneFurniRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #sceneId} field. */
-    public static final String SCENE_ID = "sceneId";
-
-    /** The qualified column identifier for the {@link #sceneId} field. */
-    public static final ColumnExp SCENE_ID_C =
-        new ColumnExp(SceneFurniRecord.class, SCENE_ID);
-
-    /** The column identifier for the {@link #furniId} field. */
-    public static final String FURNI_ID = "furniId";
-
-    /** The qualified column identifier for the {@link #furniId} field. */
-    public static final ColumnExp FURNI_ID_C =
-        new ColumnExp(SceneFurniRecord.class, FURNI_ID);
-
-    /** The column identifier for the {@link #itemType} field. */
-    public static final String ITEM_TYPE = "itemType";
-
-    /** The qualified column identifier for the {@link #itemType} field. */
-    public static final ColumnExp ITEM_TYPE_C =
-        new ColumnExp(SceneFurniRecord.class, ITEM_TYPE);
-
-    /** The column identifier for the {@link #itemId} field. */
-    public static final String ITEM_ID = "itemId";
-
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(SceneFurniRecord.class, ITEM_ID);
-
-    /** The column identifier for the {@link #mediaHash} field. */
-    public static final String MEDIA_HASH = "mediaHash";
-
-    /** The qualified column identifier for the {@link #mediaHash} field. */
-    public static final ColumnExp MEDIA_HASH_C =
-        new ColumnExp(SceneFurniRecord.class, MEDIA_HASH);
-
-    /** The column identifier for the {@link #mediaType} field. */
-    public static final String MEDIA_TYPE = "mediaType";
-
-    /** The qualified column identifier for the {@link #mediaType} field. */
-    public static final ColumnExp MEDIA_TYPE_C =
-        new ColumnExp(SceneFurniRecord.class, MEDIA_TYPE);
-
-    /** The column identifier for the {@link #x} field. */
-    public static final String X = "x";
-
-    /** The qualified column identifier for the {@link #x} field. */
-    public static final ColumnExp X_C =
-        new ColumnExp(SceneFurniRecord.class, X);
-
-    /** The column identifier for the {@link #y} field. */
-    public static final String Y = "y";
-
-    /** The qualified column identifier for the {@link #y} field. */
-    public static final ColumnExp Y_C =
-        new ColumnExp(SceneFurniRecord.class, Y);
-
-    /** The column identifier for the {@link #z} field. */
-    public static final String Z = "z";
-
-    /** The qualified column identifier for the {@link #z} field. */
-    public static final ColumnExp Z_C =
-        new ColumnExp(SceneFurniRecord.class, Z);
-
-    /** The column identifier for the {@link #layoutInfo} field. */
-    public static final String LAYOUT_INFO = "layoutInfo";
-
-    /** The qualified column identifier for the {@link #layoutInfo} field. */
-    public static final ColumnExp LAYOUT_INFO_C =
-        new ColumnExp(SceneFurniRecord.class, LAYOUT_INFO);
-
-    /** The column identifier for the {@link #scaleX} field. */
-    public static final String SCALE_X = "scaleX";
-
-    /** The qualified column identifier for the {@link #scaleX} field. */
-    public static final ColumnExp SCALE_X_C =
-        new ColumnExp(SceneFurniRecord.class, SCALE_X);
-
-    /** The column identifier for the {@link #scaleY} field. */
-    public static final String SCALE_Y = "scaleY";
-
-    /** The qualified column identifier for the {@link #scaleY} field. */
-    public static final ColumnExp SCALE_Y_C =
-        new ColumnExp(SceneFurniRecord.class, SCALE_Y);
-
-    /** The column identifier for the {@link #rotation} field. */
-    public static final String ROTATION = "rotation";
-
-    /** The qualified column identifier for the {@link #rotation} field. */
-    public static final ColumnExp ROTATION_C =
-        new ColumnExp(SceneFurniRecord.class, ROTATION);
-
-    /** The column identifier for the {@link #hotSpotX} field. */
-    public static final String HOT_SPOT_X = "hotSpotX";
-
-    /** The qualified column identifier for the {@link #hotSpotX} field. */
-    public static final ColumnExp HOT_SPOT_X_C =
-        new ColumnExp(SceneFurniRecord.class, HOT_SPOT_X);
-
-    /** The column identifier for the {@link #hotSpotY} field. */
-    public static final String HOT_SPOT_Y = "hotSpotY";
-
-    /** The qualified column identifier for the {@link #hotSpotY} field. */
-    public static final ColumnExp HOT_SPOT_Y_C =
-        new ColumnExp(SceneFurniRecord.class, HOT_SPOT_Y);
-
-    /** The column identifier for the {@link #actionType} field. */
-    public static final String ACTION_TYPE = "actionType";
-
-    /** The qualified column identifier for the {@link #actionType} field. */
-    public static final ColumnExp ACTION_TYPE_C =
-        new ColumnExp(SceneFurniRecord.class, ACTION_TYPE);
-
-    /** The column identifier for the {@link #actionData} field. */
-    public static final String ACTION_DATA = "actionData";
-
-    /** The qualified column identifier for the {@link #actionData} field. */
-    public static final ColumnExp ACTION_DATA_C =
-        new ColumnExp(SceneFurniRecord.class, ACTION_DATA);
+    public static final Class<SceneFurniRecord> _R = SceneFurniRecord.class;
+    public static final ColumnExp SCENE_ID = colexp(_R, "sceneId");
+    public static final ColumnExp FURNI_ID = colexp(_R, "furniId");
+    public static final ColumnExp ITEM_TYPE = colexp(_R, "itemType");
+    public static final ColumnExp ITEM_ID = colexp(_R, "itemId");
+    public static final ColumnExp MEDIA_HASH = colexp(_R, "mediaHash");
+    public static final ColumnExp MEDIA_TYPE = colexp(_R, "mediaType");
+    public static final ColumnExp X = colexp(_R, "x");
+    public static final ColumnExp Y = colexp(_R, "y");
+    public static final ColumnExp Z = colexp(_R, "z");
+    public static final ColumnExp LAYOUT_INFO = colexp(_R, "layoutInfo");
+    public static final ColumnExp SCALE_X = colexp(_R, "scaleX");
+    public static final ColumnExp SCALE_Y = colexp(_R, "scaleY");
+    public static final ColumnExp ROTATION = colexp(_R, "rotation");
+    public static final ColumnExp HOT_SPOT_X = colexp(_R, "hotSpotX");
+    public static final ColumnExp HOT_SPOT_Y = colexp(_R, "hotSpotY");
+    public static final ColumnExp ACTION_TYPE = colexp(_R, "actionType");
+    public static final ColumnExp ACTION_DATA = colexp(_R, "actionData");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -256,7 +156,7 @@ public class SceneFurniRecord extends PersistentRecord
     {
         return new Key<SceneFurniRecord>(
                 SceneFurniRecord.class,
-                new String[] { SCENE_ID, FURNI_ID },
+                new ColumnExp[] { SCENE_ID, FURNI_ID },
                 new Comparable[] { sceneId, furniId });
     }
     // AUTO-GENERATED: METHODS END

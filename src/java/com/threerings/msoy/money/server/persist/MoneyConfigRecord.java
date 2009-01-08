@@ -25,26 +25,10 @@ import com.samskivert.depot.expression.ColumnExp;
 public class MoneyConfigRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #lastDistributedBling} field. */
-    public static final String LAST_DISTRIBUTED_BLING = "lastDistributedBling";
-
-    /** The qualified column identifier for the {@link #lastDistributedBling} field. */
-    public static final ColumnExp LAST_DISTRIBUTED_BLING_C =
-        new ColumnExp(MoneyConfigRecord.class, LAST_DISTRIBUTED_BLING);
-
-    /** The column identifier for the {@link #id} field. */
-    public static final String ID = "id";
-
-    /** The qualified column identifier for the {@link #id} field. */
-    public static final ColumnExp ID_C =
-        new ColumnExp(MoneyConfigRecord.class, ID);
-
-    /** The column identifier for the {@link #locked} field. */
-    public static final String LOCKED = "locked";
-
-    /** The qualified column identifier for the {@link #locked} field. */
-    public static final ColumnExp LOCKED_C =
-        new ColumnExp(MoneyConfigRecord.class, LOCKED);
+    public static final Class<MoneyConfigRecord> _R = MoneyConfigRecord.class;
+    public static final ColumnExp LAST_DISTRIBUTED_BLING = colexp(_R, "lastDistributedBling");
+    public static final ColumnExp ID = colexp(_R, "id");
+    public static final ColumnExp LOCKED = colexp(_R, "locked");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;
@@ -85,7 +69,7 @@ public class MoneyConfigRecord extends PersistentRecord
     {
         return new Key<MoneyConfigRecord>(
                 MoneyConfigRecord.class,
-                new String[] { ID },
+                new ColumnExp[] { ID },
                 new Comparable[] { id });
     }
     // AUTO-GENERATED: METHODS END

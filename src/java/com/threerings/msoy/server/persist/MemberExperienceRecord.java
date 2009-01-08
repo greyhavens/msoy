@@ -22,47 +22,16 @@ import com.samskivert.depot.expression.ColumnExp;
  *
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Entity(indices={
-    @Index(name="ixMemberId", fields={ MemberExperienceRecord.MEMBER_ID }),
-    @Index(name="ixDateOccurred", fields={ MemberExperienceRecord.DATE_OCCURRED })
-})
+@Entity
 public class MemberExperienceRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #id} field. */
-    public static final String ID = "id";
-
-    /** The qualified column identifier for the {@link #id} field. */
-    public static final ColumnExp ID_C =
-        new ColumnExp(MemberExperienceRecord.class, ID);
-
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberExperienceRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #dateOccurred} field. */
-    public static final String DATE_OCCURRED = "dateOccurred";
-
-    /** The qualified column identifier for the {@link #dateOccurred} field. */
-    public static final ColumnExp DATE_OCCURRED_C =
-        new ColumnExp(MemberExperienceRecord.class, DATE_OCCURRED);
-
-    /** The column identifier for the {@link #action} field. */
-    public static final String ACTION = "action";
-
-    /** The qualified column identifier for the {@link #action} field. */
-    public static final ColumnExp ACTION_C =
-        new ColumnExp(MemberExperienceRecord.class, ACTION);
-
-    /** The column identifier for the {@link #data} field. */
-    public static final String DATA = "data";
-
-    /** The qualified column identifier for the {@link #data} field. */
-    public static final ColumnExp DATA_C =
-        new ColumnExp(MemberExperienceRecord.class, DATA);
+    public static final Class<MemberExperienceRecord> _R = MemberExperienceRecord.class;
+    public static final ColumnExp ID = colexp(_R, "id");
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp DATE_OCCURRED = colexp(_R, "dateOccurred");
+    public static final ColumnExp ACTION = colexp(_R, "action");
+    public static final ColumnExp DATA = colexp(_R, "data");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;
@@ -73,9 +42,11 @@ public class MemberExperienceRecord extends PersistentRecord
     public int id;
 
     /** ID of the member who had the experience. */
+    @Index(name="ixMemberId")
     public int memberId;
 
     /** Date/time the experience occurred. */
+    @Index(name="ixDateOccurred")
     public Timestamp dateOccurred;
 
     /** Action the member had, as defined by HomePageItem. */
@@ -113,7 +84,7 @@ public class MemberExperienceRecord extends PersistentRecord
     {
         return new Key<MemberExperienceRecord>(
                 MemberExperienceRecord.class,
-                new String[] { ID },
+                new ColumnExp[] { ID },
                 new Comparable[] { id });
     }
     // AUTO-GENERATED: METHODS END

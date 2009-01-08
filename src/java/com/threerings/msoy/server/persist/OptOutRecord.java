@@ -17,12 +17,8 @@ import com.samskivert.util.StringUtil;
 public class OptOutRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #email} field. */
-    public static final String EMAIL = "email";
-
-    /** The qualified column identifier for the {@link #email} field. */
-    public static final ColumnExp EMAIL_C =
-        new ColumnExp(OptOutRecord.class, EMAIL);
+    public static final Class<OptOutRecord> _R = OptOutRecord.class;
+    public static final ColumnExp EMAIL = colexp(_R, "email");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;
@@ -59,7 +55,7 @@ public class OptOutRecord extends PersistentRecord
     {
         return new Key<OptOutRecord>(
                 OptOutRecord.class,
-                new String[] { EMAIL },
+                new ColumnExp[] { EMAIL },
                 new Comparable[] { email });
     }
     // AUTO-GENERATED: METHODS END

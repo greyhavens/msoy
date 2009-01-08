@@ -73,9 +73,9 @@ public class GameRepository extends ItemRepository<GameRecord>
     {
         IntIntMap counts = new IntIntMap();
         for (GenreCountRecord gcr : findAll(
-                 GenreCountRecord.class, new Join(getItemClass(), ItemRecord.ITEM_ID,
-                                                  getCatalogClass(), CatalogRecord.LISTED_ITEM_ID),
-                 new GroupBy(getItemColumn(GameRecord.GENRE)))) {
+                 GenreCountRecord.class,
+                 new Join(GameRecord.ITEM_ID, GameCatalogRecord.LISTED_ITEM_ID),
+                 new GroupBy(GameRecord.GENRE))) {
             counts.put(gcr.genre, gcr.count);
         }
         return counts;
@@ -102,8 +102,7 @@ public class GameRepository extends ItemRepository<GameRecord>
     public List<GameRecord> loadGenre (byte genre, int limit, String search)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new Join(getItemClass(), ItemRecord.ITEM_ID,
-                             getCatalogClass(), CatalogRecord.LISTED_ITEM_ID));
+        clauses.add(new Join(GameRecord.ITEM_ID, GameCatalogRecord.LISTED_ITEM_ID));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
         }
@@ -118,7 +117,7 @@ public class GameRepository extends ItemRepository<GameRecord>
         // build the where clause with genre and/or search string
         List<SQLOperator> whereBits = Lists.newArrayList();
         if (genre >= 0) {
-            whereBits.add(new Conditionals.Equals(GameRecord.GENRE_C, genre));
+            whereBits.add(new Conditionals.Equals(GameRecord.GENRE, genre));
         }
         if (search != null && search.length() > 0) {
             whereBits.add(buildSearchClause(search));

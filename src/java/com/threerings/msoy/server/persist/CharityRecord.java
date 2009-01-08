@@ -11,32 +11,14 @@ import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
 import com.samskivert.depot.expression.ColumnExp;
 
-@Entity(indices = {
-    @Index(name="ixCore", fields = { CharityRecord.CORE })
-})
+@Entity
 public class CharityRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(CharityRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #core} field. */
-    public static final String CORE = "core";
-
-    /** The qualified column identifier for the {@link #core} field. */
-    public static final ColumnExp CORE_C =
-        new ColumnExp(CharityRecord.class, CORE);
-
-    /** The column identifier for the {@link #description} field. */
-    public static final String DESCRIPTION = "description";
-
-    /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(CharityRecord.class, DESCRIPTION);
+    public static final Class<CharityRecord> _R = CharityRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp CORE = colexp(_R, "core");
+    public static final ColumnExp DESCRIPTION = colexp(_R, "description");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 2;
@@ -46,6 +28,7 @@ public class CharityRecord extends PersistentRecord
     public int memberId;
 
     /** Whether or not this charity is a core charity. */
+    @Index(name="ixCore")
     public boolean core;
 
     /** Description of the charity to display to members. */
@@ -80,7 +63,7 @@ public class CharityRecord extends PersistentRecord
     {
         return new Key<CharityRecord>(
                 CharityRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

@@ -9,6 +9,7 @@ import java.util.Date;
 import com.google.common.base.Function;
 
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
@@ -30,49 +31,23 @@ import com.threerings.msoy.money.data.all.Currency;
 /**
  * Represents a catalog listing of an item.
  */
-@Entity(indices={
-    @Index(name="listedItemIndex", fields={ CatalogRecord.LISTED_ITEM_ID } ),
-    @Index(name="listDateIndex", fields={ CatalogRecord.LISTED_DATE } ),
-    @Index(name="purchasesIndex", fields={ CatalogRecord.PURCHASES } ),
-    @Index(name="faveCountIndex", fields={ CatalogRecord.FAVORITE_COUNT } ),
-    @Index(name="pricingIndex", fields={ CatalogRecord.PRICING } )
-})
+@Entity
 public abstract class CatalogRecord extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #catalogId} field. */
-    public static final String CATALOG_ID = "catalogId";
-
-    /** The column identifier for the {@link #listedItemId} field. */
-    public static final String LISTED_ITEM_ID = "listedItemId";
-
-    /** The column identifier for the {@link #originalItemId} field. */
-    public static final String ORIGINAL_ITEM_ID = "originalItemId";
-
-    /** The column identifier for the {@link #listedDate} field. */
-    public static final String LISTED_DATE = "listedDate";
-
-    /** The column identifier for the {@link #currency} field. */
-    public static final String CURRENCY = "currency";
-
-    /** The column identifier for the {@link #cost} field. */
-    public static final String COST = "cost";
-
-    /** The column identifier for the {@link #pricing} field. */
-    public static final String PRICING = "pricing";
-
-    /** The column identifier for the {@link #salesTarget} field. */
-    public static final String SALES_TARGET = "salesTarget";
-
-    /** The column identifier for the {@link #purchases} field. */
-    public static final String PURCHASES = "purchases";
-
-    /** The column identifier for the {@link #returns} field. */
-    public static final String RETURNS = "returns";
-
-    /** The column identifier for the {@link #favoriteCount} field. */
-    public static final String FAVORITE_COUNT = "favoriteCount";
+    public static final Class<CatalogRecord> _R = CatalogRecord.class;
+    public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
+    public static final ColumnExp LISTED_ITEM_ID = colexp(_R, "listedItemId");
+    public static final ColumnExp ORIGINAL_ITEM_ID = colexp(_R, "originalItemId");
+    public static final ColumnExp LISTED_DATE = colexp(_R, "listedDate");
+    public static final ColumnExp CURRENCY = colexp(_R, "currency");
+    public static final ColumnExp COST = colexp(_R, "cost");
+    public static final ColumnExp PRICING = colexp(_R, "pricing");
+    public static final ColumnExp SALES_TARGET = colexp(_R, "salesTarget");
+    public static final ColumnExp PURCHASES = colexp(_R, "purchases");
+    public static final ColumnExp RETURNS = colexp(_R, "returns");
+    public static final ColumnExp FAVORITE_COUNT = colexp(_R, "favoriteCount");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 12;
@@ -91,12 +66,14 @@ public abstract class CatalogRecord extends PersistentRecord
     public int catalogId;
 
     /** The id of the listed item. */
+    @Index(name="listedItemIndex")
     public int listedItemId;
 
     /** The id of the original item used to create this listing. */
     public int originalItemId;
 
     /** The time this item was listed in the catalog. */
+    @Index(name="listDateIndex")
     public Timestamp listedDate;
 
     /** The type of currency this item is listed for. */
@@ -106,18 +83,21 @@ public abstract class CatalogRecord extends PersistentRecord
     public int cost;
 
     /** The pricing of this item; See {@link CatalogListing#pricing}. */
+    @Index(name="pricingIndex")
     public int pricing;
 
     /** The number of unit sales after which to adjust the price or delist this item. */
     public int salesTarget;
 
     /** The number of times this item has been purchased. */
+    @Index(name="purchasesIndex")
     public int purchases;
 
     /** The number of times this item has been returned. */
     public int returns;
 
     /** The number of people who consider the listed item a favorite. */
+    @Index(name="faveCountIndex")
     public int favoriteCount;
 
     /** A reference to the listed item. This value is not persisted. */

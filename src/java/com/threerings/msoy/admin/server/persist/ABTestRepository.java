@@ -45,7 +45,7 @@ public class ABTestRepository extends DepotRepository
      */
     public List<ABTestRecord> loadTests ()
     {
-        return findAll(ABTestRecord.class, OrderBy.descending(ABTestRecord.AB_TEST_ID_C));
+        return findAll(ABTestRecord.class, OrderBy.descending(ABTestRecord.AB_TEST_ID));
     }
 
     /**
@@ -53,7 +53,7 @@ public class ABTestRepository extends DepotRepository
      */
     public List<ABTestRecord> loadRunningTests ()
     {
-        return findAll(ABTestRecord.class, new Where(ABTestRecord.ENABLED_C, true));
+        return findAll(ABTestRecord.class, new Where(ABTestRecord.ENABLED, true));
     }
 
     /**
@@ -61,7 +61,7 @@ public class ABTestRepository extends DepotRepository
      */
     public ABTestRecord loadTestByName (String name)
     {
-        return load(ABTestRecord.class, new Where(ABTestRecord.NAME_C, name));
+        return load(ABTestRecord.class, new Where(ABTestRecord.NAME, name));
     }
 
     /**

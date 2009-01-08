@@ -5,9 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.*; // for Depot annotations
@@ -28,16 +26,8 @@ import com.threerings.msoy.web.gwt.WebCreds;
 /**
  * Contains persistent data stored for every member of MetaSOY.
  */
-@Entity(indices={
-    @Index(name="ixLastSession", fields={ MemberRecord.LAST_SESSION }),
-    @Index(name="ixName", fields={ MemberRecord.NAME }),
-    @Index(name="ixAffiliate", fields={ MemberRecord.AFFILIATE_MEMBER_ID }),
-    @Index(name="ixLowerName", complex=true)
-    // Note: PERMA_NAME and ACCOUNT_NAME are automatically indexed by their uniqueness constraint
-},
-fullTextIndices={
-    @FullTextIndex(name=MemberRecord.FTS_NAME, fields={ MemberRecord.NAME })
-})
+@Entity(indices={ @Index(name="ixLowerName") },
+        fullTextIndices={ @FullTextIndex(name=MemberRecord.FTS_NAME, fields={ "name" }) })
 public class MemberRecord extends PersistentRecord
 {
     /** Flags used in the {@link #flags} field. */
@@ -109,138 +99,26 @@ public class MemberRecord extends PersistentRecord
     }
 
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #memberId} field. */
-    public static final String MEMBER_ID = "memberId";
-
-    /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberRecord.class, MEMBER_ID);
-
-    /** The column identifier for the {@link #accountName} field. */
-    public static final String ACCOUNT_NAME = "accountName";
-
-    /** The qualified column identifier for the {@link #accountName} field. */
-    public static final ColumnExp ACCOUNT_NAME_C =
-        new ColumnExp(MemberRecord.class, ACCOUNT_NAME);
-
-    /** The column identifier for the {@link #name} field. */
-    public static final String NAME = "name";
-
-    /** The qualified column identifier for the {@link #name} field. */
-    public static final ColumnExp NAME_C =
-        new ColumnExp(MemberRecord.class, NAME);
-
-    /** The column identifier for the {@link #permaName} field. */
-    public static final String PERMA_NAME = "permaName";
-
-    /** The qualified column identifier for the {@link #permaName} field. */
-    public static final ColumnExp PERMA_NAME_C =
-        new ColumnExp(MemberRecord.class, PERMA_NAME);
-
-    /** The column identifier for the {@link #homeSceneId} field. */
-    public static final String HOME_SCENE_ID = "homeSceneId";
-
-    /** The qualified column identifier for the {@link #homeSceneId} field. */
-    public static final ColumnExp HOME_SCENE_ID_C =
-        new ColumnExp(MemberRecord.class, HOME_SCENE_ID);
-
-    /** The column identifier for the {@link #avatarId} field. */
-    public static final String AVATAR_ID = "avatarId";
-
-    /** The qualified column identifier for the {@link #avatarId} field. */
-    public static final ColumnExp AVATAR_ID_C =
-        new ColumnExp(MemberRecord.class, AVATAR_ID);
-
-    /** The column identifier for the {@link #created} field. */
-    public static final String CREATED = "created";
-
-    /** The qualified column identifier for the {@link #created} field. */
-    public static final ColumnExp CREATED_C =
-        new ColumnExp(MemberRecord.class, CREATED);
-
-    /** The column identifier for the {@link #sessions} field. */
-    public static final String SESSIONS = "sessions";
-
-    /** The qualified column identifier for the {@link #sessions} field. */
-    public static final ColumnExp SESSIONS_C =
-        new ColumnExp(MemberRecord.class, SESSIONS);
-
-    /** The column identifier for the {@link #sessionMinutes} field. */
-    public static final String SESSION_MINUTES = "sessionMinutes";
-
-    /** The qualified column identifier for the {@link #sessionMinutes} field. */
-    public static final ColumnExp SESSION_MINUTES_C =
-        new ColumnExp(MemberRecord.class, SESSION_MINUTES);
-
-    /** The column identifier for the {@link #lastSession} field. */
-    public static final String LAST_SESSION = "lastSession";
-
-    /** The qualified column identifier for the {@link #lastSession} field. */
-    public static final ColumnExp LAST_SESSION_C =
-        new ColumnExp(MemberRecord.class, LAST_SESSION);
-
-    /** The column identifier for the {@link #humanity} field. */
-    public static final String HUMANITY = "humanity";
-
-    /** The qualified column identifier for the {@link #humanity} field. */
-    public static final ColumnExp HUMANITY_C =
-        new ColumnExp(MemberRecord.class, HUMANITY);
-
-    /** The column identifier for the {@link #lastHumanityAssessment} field. */
-    public static final String LAST_HUMANITY_ASSESSMENT = "lastHumanityAssessment";
-
-    /** The qualified column identifier for the {@link #lastHumanityAssessment} field. */
-    public static final ColumnExp LAST_HUMANITY_ASSESSMENT_C =
-        new ColumnExp(MemberRecord.class, LAST_HUMANITY_ASSESSMENT);
-
-    /** The column identifier for the {@link #experiences} field. */
-    public static final String EXPERIENCES = "experiences";
-
-    /** The qualified column identifier for the {@link #experiences} field. */
-    public static final ColumnExp EXPERIENCES_C =
-        new ColumnExp(MemberRecord.class, EXPERIENCES);
-
-    /** The column identifier for the {@link #flags} field. */
-    public static final String FLAGS = "flags";
-
-    /** The qualified column identifier for the {@link #flags} field. */
-    public static final ColumnExp FLAGS_C =
-        new ColumnExp(MemberRecord.class, FLAGS);
-
-    /** The column identifier for the {@link #affiliateMemberId} field. */
-    public static final String AFFILIATE_MEMBER_ID = "affiliateMemberId";
-
-    /** The qualified column identifier for the {@link #affiliateMemberId} field. */
-    public static final ColumnExp AFFILIATE_MEMBER_ID_C =
-        new ColumnExp(MemberRecord.class, AFFILIATE_MEMBER_ID);
-
-    /** The column identifier for the {@link #level} field. */
-    public static final String LEVEL = "level";
-
-    /** The qualified column identifier for the {@link #level} field. */
-    public static final ColumnExp LEVEL_C =
-        new ColumnExp(MemberRecord.class, LEVEL);
-
-    /** The column identifier for the {@link #badgesVersion} field. */
-    public static final String BADGES_VERSION = "badgesVersion";
-
-    /** The qualified column identifier for the {@link #badgesVersion} field. */
-    public static final ColumnExp BADGES_VERSION_C =
-        new ColumnExp(MemberRecord.class, BADGES_VERSION);
-
-    /** The column identifier for the {@link #visitorId} field. */
-    public static final String VISITOR_ID = "visitorId";
-
-    /** The qualified column identifier for the {@link #visitorId} field. */
-    public static final ColumnExp VISITOR_ID_C =
-        new ColumnExp(MemberRecord.class, VISITOR_ID);
-
-    /** The column identifier for the {@link #charityMemberId} field. */
-    public static final String CHARITY_MEMBER_ID = "charityMemberId";
-
-    /** The qualified column identifier for the {@link #charityMemberId} field. */
-    public static final ColumnExp CHARITY_MEMBER_ID_C =
-        new ColumnExp(MemberRecord.class, CHARITY_MEMBER_ID);
+    public static final Class<MemberRecord> _R = MemberRecord.class;
+    public static final ColumnExp MEMBER_ID = colexp(_R, "memberId");
+    public static final ColumnExp ACCOUNT_NAME = colexp(_R, "accountName");
+    public static final ColumnExp NAME = colexp(_R, "name");
+    public static final ColumnExp PERMA_NAME = colexp(_R, "permaName");
+    public static final ColumnExp HOME_SCENE_ID = colexp(_R, "homeSceneId");
+    public static final ColumnExp AVATAR_ID = colexp(_R, "avatarId");
+    public static final ColumnExp CREATED = colexp(_R, "created");
+    public static final ColumnExp SESSIONS = colexp(_R, "sessions");
+    public static final ColumnExp SESSION_MINUTES = colexp(_R, "sessionMinutes");
+    public static final ColumnExp LAST_SESSION = colexp(_R, "lastSession");
+    public static final ColumnExp HUMANITY = colexp(_R, "humanity");
+    public static final ColumnExp LAST_HUMANITY_ASSESSMENT = colexp(_R, "lastHumanityAssessment");
+    public static final ColumnExp EXPERIENCES = colexp(_R, "experiences");
+    public static final ColumnExp FLAGS = colexp(_R, "flags");
+    public static final ColumnExp AFFILIATE_MEMBER_ID = colexp(_R, "affiliateMemberId");
+    public static final ColumnExp LEVEL = colexp(_R, "level");
+    public static final ColumnExp BADGES_VERSION = colexp(_R, "badgesVersion");
+    public static final ColumnExp VISITOR_ID = colexp(_R, "visitorId");
+    public static final ColumnExp CHARITY_MEMBER_ID = colexp(_R, "charityMemberId");
     // AUTO-GENERATED: FIELDS END
 
     /** The identifer for the full text index on the display name. */
@@ -250,12 +128,11 @@ public class MemberRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 29;
 
-    public static List<Tuple<SQLExpression, Order>> ixLowerNameDefinition ()
+    /** Defnies the index on {@link #name} converted to lower case. */
+    public static Tuple<SQLExpression, Order> ixLowerName ()
     {
-        List<Tuple<SQLExpression, Order>> definition = Lists.newArrayList();
-        definition.add(new Tuple<SQLExpression, Order>(
-                new FunctionExp("LOWER", MemberRecord.NAME_C), Order.ASC));
-        return definition;
+        return new Tuple<SQLExpression, Order>(
+            new FunctionExp("LOWER", MemberRecord.NAME), Order.ASC);
     }
 
     /** This member's unique id. */
@@ -263,14 +140,15 @@ public class MemberRecord extends PersistentRecord
     public int memberId;
 
     /** The authentication account associated with this member. */
-    @Column(unique=true)
+    @Column(unique=true) // note: this implies @Index
     public String accountName;
 
     /** This member's display name. Is shown in the Whirled, can be changed any time. */
+    @Index(name="ixName")
     public String name;
 
     /** This member's permanent name. Must be URL-safe; used to logon to wiki and forums. */
-    @Column(nullable=true, unique=true)
+    @Column(nullable=true, unique=true) // note: this implies @Index
     public String permaName;
 
     /** The home scene for this member. */
@@ -289,6 +167,7 @@ public class MemberRecord extends PersistentRecord
     public int sessionMinutes;
 
     /** The time at which the player ended their last session. */
+    @Index(name="ixLastSession") 
     public Timestamp lastSession;
 
     /** This member's current humanity rating, between 0 and {@link MsoyCodes#MAX_HUMANITY}. */
@@ -304,7 +183,7 @@ public class MemberRecord extends PersistentRecord
     public int flags;
 
     /** The memberId of this user's affiliate, or 0 if none. */
-    @Column(defaultValue="0")
+    @Column(defaultValue="0") @Index(name="ixAffiliate")
     public int affiliateMemberId;
 
     /** The currently reported level of this user. */
@@ -487,7 +366,7 @@ public class MemberRecord extends PersistentRecord
     {
         return new Key<MemberRecord>(
                 MemberRecord.class,
-                new String[] { MEMBER_ID },
+                new ColumnExp[] { MEMBER_ID },
                 new Comparable[] { memberId });
     }
     // AUTO-GENERATED: METHODS END

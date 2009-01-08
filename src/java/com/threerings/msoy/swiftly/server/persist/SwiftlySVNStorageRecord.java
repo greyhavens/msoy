@@ -21,44 +21,18 @@ import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
  * greater than 1000 bytes. Quick math:
  *    VARCHAR(255) * (UTF-8 4 bytes) == 1020
  */
-@Entity(uniqueConstraints = {@UniqueConstraint(fieldNames={"protocol", "host", "port", "baseDir"})})
+@Entity(uniqueConstraints={
+    @UniqueConstraint(name="phpb", fields={"protocol", "host", "port", "baseDir"})
+})
 public class SwiftlySVNStorageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #storageId} field. */
-    public static final String STORAGE_ID = "storageId";
-
-    /** The qualified column identifier for the {@link #storageId} field. */
-    public static final ColumnExp STORAGE_ID_C =
-        new ColumnExp(SwiftlySVNStorageRecord.class, STORAGE_ID);
-
-    /** The column identifier for the {@link #protocol} field. */
-    public static final String PROTOCOL = "protocol";
-
-    /** The qualified column identifier for the {@link #protocol} field. */
-    public static final ColumnExp PROTOCOL_C =
-        new ColumnExp(SwiftlySVNStorageRecord.class, PROTOCOL);
-
-    /** The column identifier for the {@link #host} field. */
-    public static final String HOST = "host";
-
-    /** The qualified column identifier for the {@link #host} field. */
-    public static final ColumnExp HOST_C =
-        new ColumnExp(SwiftlySVNStorageRecord.class, HOST);
-
-    /** The column identifier for the {@link #port} field. */
-    public static final String PORT = "port";
-
-    /** The qualified column identifier for the {@link #port} field. */
-    public static final ColumnExp PORT_C =
-        new ColumnExp(SwiftlySVNStorageRecord.class, PORT);
-
-    /** The column identifier for the {@link #baseDir} field. */
-    public static final String BASE_DIR = "baseDir";
-
-    /** The qualified column identifier for the {@link #baseDir} field. */
-    public static final ColumnExp BASE_DIR_C =
-        new ColumnExp(SwiftlySVNStorageRecord.class, BASE_DIR);
+    public static final Class<SwiftlySVNStorageRecord> _R = SwiftlySVNStorageRecord.class;
+    public static final ColumnExp STORAGE_ID = colexp(_R, "storageId");
+    public static final ColumnExp PROTOCOL = colexp(_R, "protocol");
+    public static final ColumnExp HOST = colexp(_R, "host");
+    public static final ColumnExp PORT = colexp(_R, "port");
+    public static final ColumnExp BASE_DIR = colexp(_R, "baseDir");
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 4;
@@ -113,7 +87,7 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
     {
         return new Key<SwiftlySVNStorageRecord>(
                 SwiftlySVNStorageRecord.class,
-                new String[] { STORAGE_ID },
+                new ColumnExp[] { STORAGE_ID },
                 new Comparable[] { storageId });
     }
     // AUTO-GENERATED: METHODS END

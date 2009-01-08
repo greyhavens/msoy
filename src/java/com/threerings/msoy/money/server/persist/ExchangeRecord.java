@@ -21,52 +21,17 @@ import com.threerings.msoy.money.data.all.ExchangeData;
 /**
  * Records money exchanges.
  */
-@Entity(indices = {
-    @Index(name = "ixTimestamp", fields = { ExchangeRecord.TIMESTAMP }) })
+@Entity
 public class ExchangeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
-    /** The column identifier for the {@link #id} field. */
-    public static final String ID = "id";
-
-    /** The qualified column identifier for the {@link #id} field. */
-    public static final ColumnExp ID_C =
-        new ColumnExp(ExchangeRecord.class, ID);
-
-    /** The column identifier for the {@link #timestamp} field. */
-    public static final String TIMESTAMP = "timestamp";
-
-    /** The qualified column identifier for the {@link #timestamp} field. */
-    public static final ColumnExp TIMESTAMP_C =
-        new ColumnExp(ExchangeRecord.class, TIMESTAMP);
-
-    /** The column identifier for the {@link #bars} field. */
-    public static final String BARS = "bars";
-
-    /** The qualified column identifier for the {@link #bars} field. */
-    public static final ColumnExp BARS_C =
-        new ColumnExp(ExchangeRecord.class, BARS);
-
-    /** The column identifier for the {@link #coins} field. */
-    public static final String COINS = "coins";
-
-    /** The qualified column identifier for the {@link #coins} field. */
-    public static final ColumnExp COINS_C =
-        new ColumnExp(ExchangeRecord.class, COINS);
-
-    /** The column identifier for the {@link #rate} field. */
-    public static final String RATE = "rate";
-
-    /** The qualified column identifier for the {@link #rate} field. */
-    public static final ColumnExp RATE_C =
-        new ColumnExp(ExchangeRecord.class, RATE);
-
-    /** The column identifier for the {@link #referenceTxId} field. */
-    public static final String REFERENCE_TX_ID = "referenceTxId";
-
-    /** The qualified column identifier for the {@link #referenceTxId} field. */
-    public static final ColumnExp REFERENCE_TX_ID_C =
-        new ColumnExp(ExchangeRecord.class, REFERENCE_TX_ID);
+    public static final Class<ExchangeRecord> _R = ExchangeRecord.class;
+    public static final ColumnExp ID = colexp(_R, "id");
+    public static final ColumnExp TIMESTAMP = colexp(_R, "timestamp");
+    public static final ColumnExp BARS = colexp(_R, "bars");
+    public static final ColumnExp COINS = colexp(_R, "coins");
+    public static final ColumnExp RATE = colexp(_R, "rate");
+    public static final ColumnExp REFERENCE_TX_ID = colexp(_R, "referenceTxId");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment when you change fields. */
@@ -78,6 +43,7 @@ public class ExchangeRecord extends PersistentRecord
     public int id;
 
     /** The time at which the exchange was performed. */
+    @Index(name="ixTimestamp")
     public Timestamp timestamp;
 
     /** The number of bars created or destroyed. */
@@ -137,7 +103,7 @@ public class ExchangeRecord extends PersistentRecord
     {
         return new Key<ExchangeRecord>(
                 ExchangeRecord.class,
-                new String[] { ID },
+                new ColumnExp[] { ID },
                 new Comparable[] { id });
     }
     // AUTO-GENERATED: METHODS END
