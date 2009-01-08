@@ -16,6 +16,7 @@ import flash.system.Capabilities;
 import flash.text.TextField;
 import flash.ui.Keyboard;
 import flash.utils.Timer;
+import flash.utils.getTimer;
 
 import mx.controls.Button;
 import mx.events.MenuEvent;
@@ -137,11 +138,16 @@ public class MsoyController extends Controller
         var stage :Stage = mctx.getStage();
         stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
 
+        // create a timer for tracking whether we've gone idle
         _idleTimer = new Timer(ChatCodes.DEFAULT_IDLE_TIME, 1);
         _idleTimer.addEventListener(TimerEvent.TIMER, function (... ignored) :void {
             setIdle(true)
         });
         restartIdleTimer();
+
+        // create a timer that checks whether we should be logged out for being too idle
+        _byebyeTimer = new Timer(1000);
+        _byebyeTimer.addEventListener(TimerEvent.TIMER, checkIdleTooLong);
 
         // listen for location changes
         _mctx.getLocationDirector().addLocationObserver(
@@ -448,7 +454,7 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
-      // nada
+        _byebyeTimer.start();
     }
 
     // from ClientObserver
@@ -460,6 +466,7 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientDidLogoff (event :ClientEvent) :void
     {
+        _byebyeTimer.stop();
         _topPanel.setPlaceView(new DisconnectedPanel(_mctx, _logoffMessage));
         _logoffMessage = null;
     }
@@ -618,6 +625,9 @@ public class MsoyController extends Controller
      */
     protected function setIdle (nowIdle :Boolean) :void
     {
+        // note the time at which we became idle (regardless of whether we're away)
+        _idleStamp = nowIdle ? getTimer() : 0;
+
         // we can only update our idle status if we're not away.
         if (!_away && nowIdle != _idle) {
             _idle = nowIdle;
@@ -674,6 +684,22 @@ public class MsoyController extends Controller
             enabled: canMoveBack() });
     }
 
+    /**
+     * Checks whether or not we've been idle too long. Logs us off if so.
+     */
+    protected function checkIdleTooLong (... ignored) :void
+    {
+        // if we're not logged on, not a guest or not idle, we've got nothing to do
+        if (!_mctx.getClient().isLoggedOn() || !_mctx.getMyName().isGuest() || _idleStamp == 0) {
+            return;
+        }
+        var idleMillis :int = getTimer() - _idleStamp;
+        if (idleMillis > MAX_GUEST_IDLE_TIME) {
+            _logoffMessage = "m.idle_logoff";
+            _mctx.getClient().logoff(false);
+        }
+    }
+
     /** Provides access to client-side directors and services. */
     protected var _mctx :MsoyContext;
 
@@ -692,6 +718,12 @@ public class MsoyController extends Controller
     /** A timer to watch our idleness. */
     protected var _idleTimer :Timer;
 
+    /** The time at which we became idle. */
+    protected var _idleStamp :int;
+
+    /** A timer to log us out if we've been idle too long. */
+    protected var _byebyeTimer :Timer;
+
     /** The "go" menu, while it's up. */
     protected var _goMenu :CommandMenu;
 
@@ -700,6 +732,9 @@ public class MsoyController extends Controller
 
     /** The URL prefix for 'command' URLs, that post CommendEvents. */
     protected static const COMMAND_URL :String = "command://";
+
+    /** The duration after which we log off idle guests. */
+    protected static const MAX_GUEST_IDLE_TIME :int = 4*60*1000;
 
     private static const log :Log = Log.getLog(MsoyController);
 }
