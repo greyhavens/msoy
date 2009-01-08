@@ -14,10 +14,6 @@ import mx.events.SliderEvent;
 
 import com.threerings.util.Util;
 
-import com.threerings.flex.CommandButton;
-
-import com.threerings.msoy.client.Msgs;
-
 /** Background skin to be loaded from the style sheet. */
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 
@@ -78,6 +74,8 @@ public class SliderPopup extends Canvas
         _slider.value = startValue;
 
         BindingUtils.bindSetter(bindTo, _slider, "value");
+        BindingUtils.bindSetter(sliderValueChanged, _slider, "value");
+        _adjusted = false; // reset this to false because binding the setter calls once immediately
 
         addChild(_slider);
 
@@ -86,7 +84,6 @@ public class SliderPopup extends Canvas
         _slider.addEventListener(SliderEvent.THUMB_RELEASE, thumbReleaseHandler, false, 0, true);
 
         var but :TickButton = new TickButton(_slider);
-        but.setCallback(tickButtonClicked);
         but.x = 4;
         but.y = 90;
         addChild(but);
@@ -124,7 +121,7 @@ public class SliderPopup extends Canvas
         }
     }
 
-    protected function tickButtonClicked () :void
+    protected function sliderValueChanged (val :Number) :void
     {
         _adjusted = true;
     }
@@ -153,7 +150,6 @@ public class SliderPopup extends Canvas
 
     protected function thumbReleaseHandler (event :SliderEvent): void
     {
-        _adjusted = true;
         if (_cursorOffCanvas) {
             destroy();
         }
