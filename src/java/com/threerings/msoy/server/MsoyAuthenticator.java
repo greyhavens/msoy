@@ -56,7 +56,7 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
  * email address).
  */
 @Singleton
-public class WorldAuthenticator extends Authenticator
+public class MsoyAuthenticator extends Authenticator
 {
     /** Used to coordinate with authentication domains. */
     public static class Account

@@ -44,7 +44,7 @@ import com.threerings.msoy.server.ExternalAuthHandler;
 import com.threerings.msoy.server.ExternalAuthLogic;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.WorldAuthenticator;
+import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.StatLogic;
@@ -642,7 +642,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected ServerMessages _serverMsgs;
-    @Inject protected WorldAuthenticator _author;
+    @Inject protected MsoyAuthenticator _author;
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected ExternalAuthLogic _extLogic;
     @Inject protected MsoyPeerManager _peerMan;
