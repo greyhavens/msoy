@@ -48,7 +48,6 @@ import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
@@ -406,12 +405,6 @@ public class AdminServlet extends MsoyServiceServlet
         // now do the refunds
         result.refunds += _moneyLogic.refundAllItemPurchases(new ItemIdent(
             type, item.itemId), item.name);
-
-        if (catrec != null) {
-            // TODO: remove after a release or two
-            result.refunds += _moneyLogic.refundAllItemPurchases(new CatalogIdent(
-                type, item.catalogId), item.name);
-        }
 
         return result;
     }

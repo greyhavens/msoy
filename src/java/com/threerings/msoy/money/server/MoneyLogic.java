@@ -466,12 +466,6 @@ public class MoneyLogic
         return refundAll(item, itemName);
     }
 
-    @Deprecated
-    public int refundAllItemPurchases (CatalogIdent item, String itemName)
-    {
-        return refundAll(item, itemName);
-    }
-
     /**
      * Attempts to reverse all the transactions for an item by deducting bling, bars and coins
      * earned by the creator, affiliates and charities, converting the garnished money down to
