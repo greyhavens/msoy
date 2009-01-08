@@ -25,7 +25,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 /**
  * Resolves an MSOY Game client's runtime data.
  */
-public class MsoyGameClientResolver extends CrowdClientResolver
+public class GameClientResolver extends CrowdClientResolver
 {
     @Override // from PresentsClientResolver
     public ClientObject createClientObject ()
@@ -72,7 +72,7 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         playerObj.humanity = member.humanity;
 
         // for players, resolve this here from the database.
-        // guests will get resolution later on, in MsoyGameSession.sessionWillStart()
+        // guests will get resolution later on, in GameSession.sessionWillStart()
         playerObj.visitorInfo = new VisitorInfo(member.visitorId, true);
     }
 

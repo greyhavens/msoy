@@ -15,7 +15,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 /**
  * Used to authenticate with an MSOY Game server.
  */
-public class MsoyGameCredentials extends Credentials
+public class GameCredentials extends Credentials
 {
     /** A session token that identifies this user. */
     public var sessionToken :String;
@@ -23,7 +23,7 @@ public class MsoyGameCredentials extends Credentials
     /** The unique tracking id for this client, if one is assigned */
     public var visitorId :String;
 
-    public function MsoyGameCredentials (name :Name = null)
+    public function GameCredentials (name :Name = null)
     {
         super(name);
     }

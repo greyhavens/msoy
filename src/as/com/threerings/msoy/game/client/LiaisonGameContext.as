@@ -3,21 +3,26 @@
 
 package com.threerings.msoy.game.client {
 
+import com.threerings.presents.client.Client;
+import com.threerings.presents.dobj.DObjectManager;
+
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatFilter;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
+
+import com.threerings.parlor.client.ParlorDirector;
+
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.data.MsoyGameCredentials;
-import com.threerings.msoy.game.data.PlayerObject;
+
 import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.parlor.client.ParlorDirector;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.dobj.DObjectManager;
+
+import com.threerings.msoy.game.data.GameCredentials;
+import com.threerings.msoy.game.data.PlayerObject;
 
 /**
  * Provides context for games running in the World client via a liaison.
@@ -37,7 +42,7 @@ public class LiaisonGameContext
         if (_wctx.getMemberObject() != null && _wctx.getMemberObject().isGuest()) {
             name = _wctx.getMemberObject().memberName;
         }
-        var gcreds :MsoyGameCredentials = new MsoyGameCredentials(name);
+        var gcreds :GameCredentials = new GameCredentials(name);
         gcreds.sessionToken = wcreds.sessionToken;
         gcreds.visitorId = wcreds.visitorId;
         _client = new Client(gcreds);

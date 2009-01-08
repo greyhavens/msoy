@@ -45,7 +45,7 @@ import com.whirled.util.WhirledContext;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.game.data.MsoyGameCredentials;
+import com.threerings.msoy.game.data.GameCredentials;
 
 import static com.threerings.msoy.Log.log;
 
@@ -115,7 +115,7 @@ public class GameClient
             return;
         }
 
-        MsoyGameCredentials creds = new MsoyGameCredentials();
+        GameCredentials creds = new GameCredentials();
         creds.sessionToken = authtoken;
         _ctx.getClient().setCredentials(creds);
         _ctx.getClient().setVersion(DeploymentConfig.version);

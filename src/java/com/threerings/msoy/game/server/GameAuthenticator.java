@@ -25,7 +25,7 @@ import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.threerings.msoy.game.data.MsoyGameCredentials;
+import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -34,14 +34,14 @@ import static com.threerings.msoy.Log.log;
  * Handles authentication on an MSOY Game server.
  */
 @Singleton
-public class MsoyGameAuthenticator extends Authenticator
+public class GameAuthenticator extends Authenticator
 {
     // from abstract Authenticator
     protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
     {
         AuthRequest req = conn.getAuthRequest();
         AuthResponseData rdata = rsp.getData();
-        MsoyGameCredentials creds = null;
+        GameCredentials creds = null;
 
         try {
             // make sure they've got the correct version
@@ -56,7 +56,7 @@ public class MsoyGameAuthenticator extends Authenticator
 
             // make sure they've sent valid credentials
             try {
-                creds = (MsoyGameCredentials) req.getCredentials();
+                creds = (GameCredentials) req.getCredentials();
             } catch (ClassCastException cce) {
                 log.warning("Invalid creds " + req.getCredentials() + ".", cce);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);

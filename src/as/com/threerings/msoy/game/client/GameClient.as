@@ -19,7 +19,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 
-import com.threerings.msoy.game.data.MsoyGameCredentials;
+import com.threerings.msoy.game.data.GameCredentials;
 
 /**
  * A simple client that displays a lobby and plays games.
@@ -64,7 +64,7 @@ public class GameClient extends MsoyClient
     override protected function createStartupCreds (token :String) :Credentials
     {
         var params :Object = MsoyParameters.get();
-        var creds :MsoyGameCredentials = new MsoyGameCredentials();
+        var creds :GameCredentials = new GameCredentials();
         creds.sessionToken = (token == null) ? params["token"] : token;
         creds.visitorId = getVisitorId();
         return creds;

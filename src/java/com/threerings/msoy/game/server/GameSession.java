@@ -10,7 +10,7 @@ import com.threerings.crowd.server.CrowdSession;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.VisitorInfo;
 
-import com.threerings.msoy.game.data.MsoyGameCredentials;
+import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyObjectAccess;
@@ -20,7 +20,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Manages the server side of a client connection for the MSOY Game server.
  */
-public class MsoyGameSession extends CrowdSession
+public class GameSession extends CrowdSession
 {
     @Override // from PresentsSession
     protected void sessionWillStart ()
@@ -33,7 +33,7 @@ public class MsoyGameSession extends CrowdSession
         // configure their access control tokens
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
-        MsoyGameCredentials credentials = (MsoyGameCredentials) getCredentials();
+        GameCredentials credentials = (GameCredentials) getCredentials();
 
         // if this is a guest account, they didn't get a VisitorInfo through the resolver.
         // so let's pull one from their flash credentials, or manufacture a brand new one.

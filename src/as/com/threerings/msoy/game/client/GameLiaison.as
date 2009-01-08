@@ -46,8 +46,8 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
 
@@ -113,8 +113,8 @@ public class GameLiaison
                 var guestName :MemberName = new MemberName("Guest" + (-guestId), guestId);
 
                 // start connecting to the game server first
-                var gcreds :MsoyGameCredentials  =
-                    (_gctx.getClient().getCredentials() as MsoyGameCredentials);
+                var gcreds :GameCredentials  =
+                    (_gctx.getClient().getCredentials() as GameCredentials);
                 gcreds.sessionToken = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
                 if (gcreds.getUsername() == null) {
                     gcreds.setUsername(new MemberName("Guest" + (-guestId), guestId));

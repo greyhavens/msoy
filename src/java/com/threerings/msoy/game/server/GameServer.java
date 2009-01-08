@@ -52,7 +52,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * A server that does nothing but host games.
  */
-public class MsoyGameServer extends MsoyBaseServer
+public class GameServer extends MsoyBaseServer
 {
     /** Configures dependencies needed by the world server. */
     public static class Module extends MsoyBaseServer.Module
@@ -60,8 +60,8 @@ public class MsoyGameServer extends MsoyBaseServer
         @Override protected void configure () {
             super.configure();
             // presents dependencies
-            bind(Authenticator.class).to(MsoyGameAuthenticator.class);
-            bind(PresentsServer.class).to(MsoyGameServer.class);
+            bind(Authenticator.class).to(GameAuthenticator.class);
+            bind(PresentsServer.class).to(GameServer.class);
             bind(ReportManager.class).toInstance(new ReportManager() {
                 @Override public void init (RunQueue rqueue) {
                     // disable state of the server report logging by not calling super
@@ -83,7 +83,7 @@ public class MsoyGameServer extends MsoyBaseServer
     public static void main (String[] args)
     {
         if (args.length < 2) {
-            System.err.println("Usage: MsoyGameServer listenPort connectPort");
+            System.err.println("Usage: GameServer listenPort connectPort");
             System.exit(-1);
         }
 
@@ -93,7 +93,7 @@ public class MsoyGameServer extends MsoyBaseServer
         }
 
         Injector injector = Guice.createInjector(new Module());
-        MsoyGameServer server = injector.getInstance(MsoyGameServer.class);
+        GameServer server = injector.getInstance(GameServer.class);
         try {
             server._listenPort = Integer.parseInt(args[0]);
             server._connectPort = Integer.parseInt(args[1]);
@@ -152,10 +152,10 @@ public class MsoyGameServer extends MsoyBaseServer
         // set up the right client factory
         _clmgr.setSessionFactory(new SessionFactory() {
             public Class<? extends PresentsSession> getSessionClass (AuthRequest areq) {
-                return MsoyGameSession.class;
+                return GameSession.class;
             }
             public Class<? extends ClientResolver> getClientResolverClass (Name username) {
-                return MsoyGameClientResolver.class;
+                return GameClientResolver.class;
             }
         });
     }
