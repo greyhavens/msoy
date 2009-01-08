@@ -4,6 +4,7 @@
 package com.threerings.msoy.party.data {
 
 import com.threerings.msoy.party.client.PartyBoardService;
+import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -83,6 +84,19 @@ public class PartyBoardMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(arg1, LOCATE_MY_PARTY, [
             listener2
+        ]);
+    }
+
+    /** The method id used to dispatch <code>locateParty</code> requests. */
+    public static const LOCATE_PARTY :int = 6;
+
+    // from interface PartyBoardService
+    public function locateParty (arg1 :Client, arg2 :int, arg3 :PartyBoardService_JoinListener) :void
+    {
+        var listener3 :PartyBoardMarshaller_JoinMarshaller = new PartyBoardMarshaller_JoinMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, LOCATE_PARTY, [
+            Integer.valueOf(arg2), listener3
         ]);
     }
 }

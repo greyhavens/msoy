@@ -60,6 +60,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.room.data.MemberInfo;
 
+import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.client.PeerPartyService;
 import com.threerings.msoy.party.data.PartyBoardInfo;
 import com.threerings.msoy.party.data.PartyCodes;
@@ -75,7 +76,6 @@ public class PartyRegistry
 {
     @Inject public PartyRegistry (InvocationManager invmgr)
     {
-        _invmgr = invmgr;
         invmgr.registerDispatcher(new PartyBoardDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
 
@@ -103,6 +103,14 @@ public class PartyRegistry
     }
 
     /**
+     * Returns the manager for the specified party or null.
+     */
+    public PartyManager getPartyManager (int partyId)
+    {
+        return _parties.get(partyId);
+    }
+
+    /**
      * Called on the server that hosts the passed-in player, not necessarily on the server
      * hosting the party.
      */
@@ -125,6 +133,26 @@ public class PartyRegistry
                 mgr.playerWillMove(member, sceneId);
             }
         }
+    }
+
+    /**
+     * Called here and by PartyManager to update a member's party id.
+     */
+    public void updatePartyId (MemberObject member, final int newPartyId)
+    {
+        member.setPartyId(newPartyId);
+        _bodyMan.updateOccupantInfo(member, new MemberInfo.Updater<MemberInfo>() {
+            public boolean update (MemberInfo info) {
+                return info.updatePartyId(newPartyId);
+            }
+        });
+    }
+
+    // from PartyBoardProvider
+    public void locateParty (ClientObject caller, int partyId, PartyBoardService.JoinListener jl)
+        throws InvocationException
+    {
+        // TODO
     }
 
     // from PartyBoardProvider
@@ -345,19 +373,6 @@ public class PartyRegistry
     }
 
     /**
-     * Called here and by PartyManager to update a member's party id.
-     */
-    public void updatePartyId (MemberObject member, final int newPartyId)
-    {
-        member.setPartyId(newPartyId);
-        _bodyMan.updateOccupantInfo(member, new MemberInfo.Updater<MemberInfo>() {
-            public boolean update (MemberInfo info) {
-                return info.updatePartyId(newPartyId);
-            }
-        });
-    }
-
-    /**
      * Called by a PartyManager when it's removed.
      */
     void partyWasRemoved (int partyId)
@@ -544,7 +559,7 @@ public class PartyRegistry
 
     protected static final int PARTIES_PER_BOARD = 16;
 
-    protected InvocationManager _invmgr;
+    @Inject protected InvocationManager _invmgr;
     @Inject protected Injector _injector;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected RootDObjectManager _omgr;

@@ -460,11 +460,8 @@ public class PartyDirector extends BasicDirector
     }
 
     protected var _wctx :WorldContext;
-
     protected var _pbsvc :PartyBoardService;
-
     protected var _partyObj :PartyObject;
-
     protected var _safeSubscriber :SafeSubscriber;
 
     /** True if we should not pop up the party panel when subscribing to a party. */

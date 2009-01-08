@@ -26,5 +26,8 @@ public interface PartyBoardService extends InvocationService
 
     // from Java interface PartyBoardService
     function locateMyParty (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
+
+    // from Java interface PartyBoardService
+    function locateParty (arg1 :Client, arg2 :int, arg3 :PartyBoardService_JoinListener) :void;
 }
 }

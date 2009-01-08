@@ -13,11 +13,14 @@ public class MsoyCodes extends InvocationCodes
     /** Defines our member invocation services group. */
     public static const MEMBER_GROUP :String = "msoy.member";
 
+    /** Defines our world invocation services group. */
+    public static const WORLD_GROUP :String = "msoy.world";
+
     /** Defines our game invocation services group. */
     public static const GAME_GROUP :String = "msoy.game";
 
-    /** Defines our world invocation services group. */
-    public static const WORLD_GROUP :String = "msoy.world";
+    /** Defines our party invocation services group. */
+    public static const PARTY_GROUP :String = "msoy.party";
 
     /** Identifies our general message bundle. */
     public static const GENERAL_MSGS :String = "general";

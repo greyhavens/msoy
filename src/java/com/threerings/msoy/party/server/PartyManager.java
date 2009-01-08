@@ -62,6 +62,23 @@ import static com.threerings.msoy.Log.log;
 public class PartyManager
     implements /* SpeakHandler.SpeakerValidator, */ PartyProvider
 {
+    /**
+     * Returns our party distributed object.
+     */
+    public PartyObject getPartyObject ()
+    {
+        return _partyObj;
+    }
+
+    /**
+     * Get the party detail, sans the group logo.
+     */
+    public PartyDetail getPartyDetail ()
+    {
+        return new PartyDetail(_lastInfo,
+            _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
+    }
+
     public void init (PartyObject partyObj)
     {
         _partyObj = partyObj;
@@ -196,20 +213,6 @@ public class PartyManager
             _partyObj.addToPeeps(new PartyPeep(member.memberName, nextJoinOrder()));
         }
         updatePartyInfo();
-    }
-
-    public PartyObject getPartyObject ()
-    {
-        return _partyObj;
-    }
-
-    /**
-     * Get the party detail, sans the group logo.
-     */
-    public PartyDetail getPartyDetail ()
-    {
-        return new PartyDetail(_lastInfo,
-            _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
     }
 
     public int getSceneId ()

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.party.server;
 
+import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -62,6 +63,12 @@ public class PartyBoardDispatcher extends InvocationDispatcher<PartyBoardMarshal
         case PartyBoardMarshaller.LOCATE_MY_PARTY:
             ((PartyBoardProvider)provider).locateMyParty(
                 source, (InvocationService.ResultListener)args[0]
+            );
+            return;
+
+        case PartyBoardMarshaller.LOCATE_PARTY:
+            ((PartyBoardProvider)provider).locateParty(
+                source, ((Integer)args[0]).intValue(), (PartyBoardService.JoinListener)args[1]
             );
             return;
 

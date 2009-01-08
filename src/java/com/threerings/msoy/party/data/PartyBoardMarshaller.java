@@ -7,6 +7,7 @@ import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.dobj.InvocationResponseEvent;
 
 /**
  * Provides the implementation of the {@link PartyBoardService} interface
@@ -18,6 +19,41 @@ import com.threerings.presents.data.InvocationMarshaller;
 public class PartyBoardMarshaller extends InvocationMarshaller
     implements PartyBoardService
 {
+    /**
+     * Marshalls results to implementations of {@link PartyBoardService.JoinListener}.
+     */
+    public static class JoinMarshaller extends ListenerMarshaller
+        implements JoinListener
+    {
+        /** The method id used to dispatch {@link #foundParty}
+         * responses. */
+        public static final int FOUND_PARTY = 1;
+
+        // from interface JoinMarshaller
+        public void foundParty (String arg1, int arg2)
+        {
+            _invId = null;
+            omgr.postEvent(new InvocationResponseEvent(
+                               callerOid, requestId, FOUND_PARTY,
+                               new Object[] { arg1, Integer.valueOf(arg2) }, transport));
+        }
+
+        @Override // from InvocationMarshaller
+        public void dispatchResponse (int methodId, Object[] args)
+        {
+            switch (methodId) {
+            case FOUND_PARTY:
+                ((JoinListener)listener).foundParty(
+                    (String)args[0], ((Integer)args[1]).intValue());
+                return;
+
+            default:
+                super.dispatchResponse(methodId, args);
+                return;
+            }
+        }
+    }
+
     /** The method id used to dispatch {@link #createParty} requests. */
     public static final int CREATE_PARTY = 1;
 
@@ -80,6 +116,19 @@ public class PartyBoardMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(arg1, LOCATE_MY_PARTY, new Object[] {
             listener2
+        });
+    }
+
+    /** The method id used to dispatch {@link #locateParty} requests. */
+    public static final int LOCATE_PARTY = 6;
+
+    // from interface PartyBoardService
+    public void locateParty (Client arg1, int arg2, PartyBoardService.JoinListener arg3)
+    {
+        PartyBoardMarshaller.JoinMarshaller listener3 = new PartyBoardMarshaller.JoinMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, LOCATE_PARTY, new Object[] {
+            Integer.valueOf(arg2), listener3
         });
     }
 }
