@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -43,9 +44,8 @@ public class MemoryRepository extends DepotRepository
      */
     public List<MemoryRecord> loadMemory (byte itemType, int itemId)
     {
-        return findAll(MemoryRecord.class,
-                       new Where(MemoryRecord.ITEM_TYPE, itemType,
-                                 MemoryRecord.ITEM_ID, itemId));
+        return findAll(MemoryRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
+            new Where(MemoryRecord.ITEM_TYPE, itemType, MemoryRecord.ITEM_ID, itemId)));
     }
 
     /**
@@ -53,10 +53,9 @@ public class MemoryRepository extends DepotRepository
      */
     public List<MemoryRecord> loadMemories (byte itemType, Collection<Integer> itemIds)
     {
-        return findAll(
-            MemoryRecord.class,
+        return findAll(MemoryRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
             new Where(new And(new Equals(MemoryRecord.ITEM_TYPE, itemType),
-                              new In(MemoryRecord.ITEM_ID, itemIds))));
+                              new In(MemoryRecord.ITEM_ID, itemIds)))));
     }
 
     /**
@@ -80,7 +79,8 @@ public class MemoryRepository extends DepotRepository
                 new In(MemoryRecord.ITEM_ID, entry.getValue()));
         }
 
-        return findAll(MemoryRecord.class, new Where(new Or(eachType)));
+        return findAll(MemoryRecord.class, CacheStrategy.RECORDS,
+                       Lists.newArrayList(new Where(new Or(eachType))));
     }
 
     /**

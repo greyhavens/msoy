@@ -35,7 +35,6 @@ import com.samskivert.depot.operator.Logic;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -255,10 +254,12 @@ public class MsoySceneRepository extends DepotRepository
             break;
         }
 
-        // load up all of our furni data
+        // load up all of our furni data, specifically using a safe caching strategy
+        List<SceneFurniRecord> records = findAll(
+            SceneFurniRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
+                new Where(SceneFurniRecord.SCENE_ID, sceneId)));
         List<FurniData> flist = Lists.newArrayList();
-        Where where = new Where(SceneFurniRecord.SCENE_ID, sceneId);
-        for (SceneFurniRecord furni : findAll(SceneFurniRecord.class, where)) {
+        for (SceneFurniRecord furni : records) {
             flist.add(furni.toFurniData());
         }
         model.furnis = flist.toArray(new FurniData[flist.size()]);

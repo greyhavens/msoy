@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -67,11 +68,13 @@ public class ForumRepository extends DepotRepository
                    new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
                            new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
                                            ReadTrackingRecord.LAST_READ_POST_ID))));
-        return findAll(ForumThreadRecord.class,
-                       new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
-                       new Where(where),
-                       new Limit(0, max),
-                       OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID));
+
+        // consult the cache for records, but not for the keyset
+        return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
+            new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
+            new Where(where),
+            new Limit(0, max),
+            OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID)));
     }
 
     /**
