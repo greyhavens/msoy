@@ -253,7 +253,7 @@ public class LobbyGameLiaison extends GameLiaison
 
     override public function clientDidLogoff (event :ClientEvent) :void
     {
-        super.clientDidLogoff();
+        super.clientDidLogoff(event);
         _goingToGroupHome = false;
     }
 
