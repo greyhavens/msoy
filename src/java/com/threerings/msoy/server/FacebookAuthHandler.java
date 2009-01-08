@@ -48,7 +48,7 @@ public class FacebookAuthHandler extends ExternalAuthHandler
     public void validateCredentials (ExternalCreds creds)
         throws ServiceException
     {
-        FacebookCreds fbcreds = (FacebookCreds)creds;
+        // FacebookCreds fbcreds = (FacebookCreds)creds;
         // TODO: validate creds
     }
 

@@ -39,7 +39,7 @@ import com.threerings.msoy.server.persist.MemberWarningRecord;
 import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ExternalCreds;
-import com.threerings.msoy.web.gwt.FacebookCreds;
+// import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
@@ -693,7 +693,7 @@ public class MsoyAuthenticator extends Authenticator
     {
         switch (creds.getAuthSource()) {
         case FACEBOOK:
-            FacebookCreds fbcreds = (FacebookCreds)creds;
+            // FacebookCreds fbcreds = (FacebookCreds)creds;
             // TODO: validate creds
             break;
 

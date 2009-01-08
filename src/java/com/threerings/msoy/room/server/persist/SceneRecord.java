@@ -4,9 +4,7 @@
 package com.threerings.msoy.room.server.persist;
 
 import java.sql.Timestamp;
-import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 

@@ -127,7 +127,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
                             listener.sceneFailedToResolve(sceneId, reason);
                         }
                         protected void releaseLock () {
-                            _peerMan.releaseLock(_peerMan.getSceneLock(sceneId), 
+                            _peerMan.releaseLock(MsoyPeerManager.getSceneLock(sceneId), 
                                 new ResultListener.NOOP<String>());
                         }
                     });

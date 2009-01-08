@@ -7,7 +7,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.CShell;
 import client.util.events.FlashEvents;
 import client.util.events.TrophyEvent;
 

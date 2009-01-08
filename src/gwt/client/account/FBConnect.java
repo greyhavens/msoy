@@ -11,7 +11,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.SessionData;
 
-import client.shell.CShell;
 import client.shell.Session;
 
 /**

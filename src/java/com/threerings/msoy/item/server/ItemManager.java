@@ -28,7 +28,6 @@ import com.threerings.presents.util.ConfirmAdapter;
 import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.crowd.server.BodyManager;
-import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
