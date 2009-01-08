@@ -141,7 +141,8 @@ public class LobbyGameLiaison extends GameLiaison
     {
         // TODO: check that we're not already where we're about to go
         if (groupId > 0 && _wctx.getWorldController().getCurrentSceneId() == 0) {
-        	_wctx.getWorldController().handleGoGroupHome(groupId);
+            _goingToGroupHome = true;
+            _wctx.getWorldController().handleGoGroupHome(groupId);
         }
     }
 
@@ -154,13 +155,19 @@ public class LobbyGameLiaison extends GameLiaison
     {
         // note our game oid and enter the game location
         _gameOid = gameOid;
-        if (!_gctx.getLocationDirector().moveTo(gameOid)) {
-            return false;
-        }
 
         // shut our lobby down now that we're entering the game
         if (_lobby != null) {
             _lobby.shutdown();
+        }
+
+        // if we've already started going to the group home, wait until we get there
+        if (_goingToGroupHome) {
+            return true;
+        }
+
+        if (!_gctx.getLocationDirector().moveTo(gameOid)) {
+            return false;
         }
 
         // also leave our current world location
@@ -244,6 +251,12 @@ public class LobbyGameLiaison extends GameLiaison
         return (config != null) ? config.groupId : super.gameGroupId;
     }
 
+    override public function clientDidLogoff (event :ClientEvent) :void
+    {
+        super.clientDidLogoff();
+        _goingToGroupHome = false;
+    }
+
     protected function joinLobby () :void
     {
 //        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
@@ -272,7 +285,12 @@ public class LobbyGameLiaison extends GameLiaison
             return;
         }
 
-        if (place != null) {
+        if (_goingToGroupHome) {
+            // assume this is a result of our handleGoGroupHome
+            _goingToGroupHome = false;
+            enterGame(_gameOid);
+            
+        } else if (place != null) {
             // we've left our game and returned to the world, so we want to shutdown
             shutdown();
         }
@@ -344,6 +362,9 @@ public class LobbyGameLiaison extends GameLiaison
 
     /** The oid of our game object, once we've been told it. */
     protected var _gameOid :int;
+
+    /** Whether we are waiting on the scene/location directors to get us to the game hall. */
+    protected var _goingToGroupHome :Boolean;
 
     /** True if we're shutting down. */
     protected var _shuttingDown :Boolean;
