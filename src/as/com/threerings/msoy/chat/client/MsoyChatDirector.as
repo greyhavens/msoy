@@ -214,19 +214,6 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     // from ChatDirector
-    override public function dispatchMessage (message :ChatMessage, localtype :String) :void
-    {
-        if ((message is UserMessage && localtype == ChatCodes.USER_CHAT_TYPE) ||
-            message is TellFeedbackMessage) {
-            // use a more specific localtype
-            var member :MemberName = (message as UserMessage).getSpeakerDisplayName() as MemberName;
-            localtype = MsoyChatChannel.makeMemberChannel(member).toLocalType();
-        }
-
-        super.dispatchMessage(message, localtype);
-    }
-
-    // from ChatDirector
     override public function enteredLocation (place :PlaceObject) :void
     {
         super.enteredLocation(place);
@@ -241,6 +228,18 @@ public class MsoyChatDirector extends ChatDirector
         super.leftLocation(place);
         // let our occupant list know that we're nowhere
         _roomOccList.setPlaceObject(null);
+    }
+
+    // from ChatDirector
+    override protected function setClientInfo (msg :ChatMessage, localType :String) :void
+    {
+        if ((msg is UserMessage && localType == ChatCodes.USER_CHAT_TYPE) ||
+                (msg is TellFeedbackMessage)) {
+            // use a more specific localtype
+            var member :MemberName = (msg as UserMessage).getSpeakerDisplayName() as MemberName;
+            localType = MsoyChatChannel.makeMemberChannel(member).toLocalType();
+        }
+        super.setClientInfo(msg, localType);
     }
 
     // from ChatDirector
