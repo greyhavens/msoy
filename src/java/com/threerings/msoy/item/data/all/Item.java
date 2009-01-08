@@ -182,7 +182,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public static Class<? extends Item> getClassForType (byte itemType)
     {
-        return _mapping.get(new Byte(itemType));
+        return _mapping.get(itemType);
     }
 
     /**
@@ -528,7 +528,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
             _reverseMapping = new HashMap<Class<? extends Item>, Byte>();
         }
 
-        Byte otype = new Byte(type);
+        Byte otype = type;
         _mapping.put(otype, iclass);
         _reverseMapping.put(iclass, otype);
 

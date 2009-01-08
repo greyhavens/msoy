@@ -44,6 +44,6 @@ public class GroupMembership
     // from DSet.Entry
     public Comparable<?> getKey ()
     {
-        return new Integer(group.getGroupId()); // TODO: use boxing when GWT supports it
+        return group.getGroupId();
     }
 }

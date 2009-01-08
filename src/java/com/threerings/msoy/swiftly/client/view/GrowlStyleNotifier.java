@@ -135,7 +135,7 @@ public class GrowlStyleNotifier implements PassiveNotifier
     private static final int LABEL_WIDTH = 250;
 
     /** Use a unique value for the JLayeredPane layer to avoid conflicts with other windows. */
-    private static final Integer NOTIFICATION_LAYER = new Integer(23);
+    private static final Integer NOTIFICATION_LAYER = 23;
 
     /** The spacing between the labels */
     private static final int LABEL_SPACE = 4;

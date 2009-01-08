@@ -175,7 +175,7 @@ public class MemberName extends Name
     // from DSet.Entry
     public Comparable<?> getKey ()
     {
-        return new Integer(_memberId); // TODO: make this not suck when GWT learns not to suck
+        return _memberId;
     }
 
     @Override // from Name

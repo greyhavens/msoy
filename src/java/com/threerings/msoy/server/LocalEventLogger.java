@@ -76,7 +76,7 @@ public class LocalEventLogger extends LoopingThread
 
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             ObjectOutputStream oout = new ObjectOutputStream(bout);
-            oout.writeObject(new Integer(VERSION_ID));
+            oout.writeObject(Integer.valueOf(VERSION_ID));
             oout.writeObject(encoded.toByteArray());
             oout.close();
             ByteBuffer data = ByteBuffer.wrap(bout.toByteArray());

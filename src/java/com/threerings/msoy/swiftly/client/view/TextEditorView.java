@@ -111,7 +111,7 @@ public class TextEditorView extends JEditorPane
         support.setUseDefaultUndoManager(false);
         support.setPrintMarginWidth(PRINT_MARGIN_WIDTH);
         support.highlightCurrent(false);
-        getDocument().putProperty(SyntaxDocument.tabSizeAttribute, new Integer(4));
+        getDocument().putProperty(SyntaxDocument.tabSizeAttribute, 4);
         // TODO: use the SyntaxSupport anti alias font business
 
         // initialize the SyntaxDocument

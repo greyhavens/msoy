@@ -713,8 +713,7 @@ public class MemberManager
         final MemberObject memObj = (MemberObject) caller;
         _invoker.postUnit(new PersistingUnit("getABTestGroup", listener) {
             @Override public void invokePersistent () throws Exception {
-                _testGroup = new Integer(_memberLogic.getABTestGroup(testName,
-                    memObj.visitorInfo, logEvent));
+                _testGroup = _memberLogic.getABTestGroup(testName, memObj.visitorInfo, logEvent);
             }
             @Override public void handleSuccess () {
                 ((InvocationService.ResultListener)_listener).requestProcessed(_testGroup);
