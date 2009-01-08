@@ -129,9 +129,8 @@ public class QuestDelegate extends PlaceManagerDelegate
 
         Player player = _players.get(plobj.getOid());
         if (player == null) {
-            log.warning("Asked to complete task for untracked player?", "oid", plobj.getOid(),
-                        "memberId", plobj.getMemberId());
-            return;
+            // cannot award players who are not currently in the game
+            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
         }
 
         // payout factor depends on accumulated play time -- if we've yet to accumulate enough data
