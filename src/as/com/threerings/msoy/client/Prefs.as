@@ -49,6 +49,15 @@ public class Prefs
 
     public static const GLOBAL_BLEEP :String = "_bleep_";
 
+    /**
+     * Effect the global sound volume.
+     */
+    public static function useSoundVolume () :void
+    {
+        // set up the global sound transform
+        SoundMixer.soundTransform = new SoundTransform(getSoundVolume());
+    }
+
     public static function getUsername () :String
     {
         return (config.getValue(USERNAME, "") as String);
@@ -249,15 +258,6 @@ public class Prefs
         }
     }
 
-    /**
-     * Effect the global sound volume.
-     */
-    protected static function useSoundVolume () :void
-    {
-        // set up the global sound transform
-        SoundMixer.soundTransform = new SoundTransform(getSoundVolume());
-    }
-
     /** A set of media ids that are bleeped (the keys of the dictionary). */
     protected static var _bleepedMedia :Dictionary;
     protected static var _globalBleep :Boolean;
@@ -273,9 +273,6 @@ public class Prefs
         if (lastBuild != DeploymentConfig.buildTime) {
             config.setValue("lastBuild", DeploymentConfig.buildTime);
         }
-
-        // STARTUP prefs: things that need setting when we initialize
-        useSoundVolume();
     }
 
     staticInit();

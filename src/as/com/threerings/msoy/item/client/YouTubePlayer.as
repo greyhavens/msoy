@@ -75,7 +75,10 @@ public class YouTubePlayer extends EventDispatcher
         _stubId = String.fromCharCode.apply(null, chars);
 
         _lc = new LocalConnection();
+        _lcReady = false;
+        _lc.addEventListener(StatusEvent.STATUS, handleConnStatus);
         _lc.client = {
+            setReady: handleSetReady,
             stateChanged: handleStateChanged,
             duration: handleGotDuration,
             position: handleGotPosition
@@ -173,11 +176,19 @@ public class YouTubePlayer extends EventDispatcher
         if (_lc != null) {
             send("doUnload");
             MethodQueue.callLater(MethodQueue.callLater, [ LoaderUtil.unload, [ _loader ] ]);
+            _lc.removeEventListener(StatusEvent.STATUS, handleConnStatus);
             _lc = null;
             _stubId = null;
             _loader = new Loader();
         }
         _videoId = null;
+    }
+
+    protected function handleConnStatus (event :StatusEvent) :void
+    {
+        if (event.level != "status") {
+            log.debug("localConnection status", "level", event.level, "code", event.code);
+        }
     }
 
     protected function handleError (evt :ErrorEvent) :void
@@ -187,12 +198,17 @@ public class YouTubePlayer extends EventDispatcher
 
     protected function send (method :String, ... args) :void
     {
-        if (_lc == null) {
-            log.warning("No lc!");
+        if (_lc == null || !_lcReady) {
+            log.warning("No lc or not ready; dropping msg", "method", method, "args", args);
             return;
         }
         args.unshift("_" + _stubId, method);
         _lc.send.apply(null, args);
+    }
+
+    protected function handleSetReady (... args) :void
+    {
+        _lcReady = true;
     }
 
     /**
@@ -205,6 +221,7 @@ public class YouTubePlayer extends EventDispatcher
         }
         _ytState = state;
 
+        setVolume(_volume);
         switch (_ytState) {
         case -1: // unstarted
             send("loadVideo", _videoId);
@@ -233,6 +250,8 @@ public class YouTubePlayer extends EventDispatcher
     protected var _stubId :String;
 
     protected var _lc :LocalConnection;
+
+    protected var _lcReady :Boolean;
 
     /** The current state of the youtube chromeless player. */
     protected var _ytState :int;

@@ -98,11 +98,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
         _creds = createStartupCreds(null);
 
+        // configure our starting global sound transform
         if (_featuredPlaceView) {
-            // mute all sound in featured place view.
-            var mute :SoundTransform = new SoundTransform();
-            mute.volume = 0;
-            SoundMixer.soundTransform = mute;
+            SoundMixer.soundTransform = new SoundTransform(0); // muted
+        } else {
+            Prefs.useSoundVolume();
         }
 
         _ctx = createContext();
