@@ -35,13 +35,13 @@ import com.threerings.msoy.room.client.RoomObjectView;
 
 public class TourDialog extends FlyingPanel
 {
-    public function TourDialog (ctx :WorldContext, nextRoom :Function)
+    public function TourDialog (ctx :WorldContext)
     {
         super(ctx, Msgs.WORLD.get("t.tour"));
         showCloseButton = true;
 
         var nextBtn :CommandButton = new CommandButton(null);
-        nextBtn.setCallback(nextRoom, nextBtn);
+        nextBtn.setCallback(ctx.getTourDirector().nextRoom, nextBtn);
         nextBtn.styleName = "tourNext";
 
         var commentBtn :CommandButton = new CommandButton(null, MsoyController.VIEW_COMMENT_PAGE);

@@ -65,7 +65,10 @@ public class TourDirector extends BasicDirector
 
     public function endTour () :void
     {
-        if (isOnTour()) {
+        if (_tourDialog != null) {
+            closeTourDialog(); // will end up calling back to endTour()
+
+        } else if (isOnTour()) {
             _tsvc.endTour(_ctx.getClient());
         }
     }
@@ -90,21 +93,35 @@ public class TourDirector extends BasicDirector
     {
         if (isOnTour()) {
             if (_tourDialog == null) {
-                _tourDialog = new TourDialog(_wctx, nextRoom);
-                Command.bind(_tourDialog, CloseEvent.CLOSE, endTour);
+                _tourDialog = new TourDialog(_wctx);
+                _tourDialog.setCloseCallback(dialogWasClosed);
                 _tourDialog.open();
             }
-//            if (_tourDialog.parent == null) {
-//                _wctx.getControlBar().addCustomComponent(_tourDialog);
-//            }
+        } else {
+            // TEMP: debugging TODO
+            if (_tourDialog != null) {
+                log.warning("Did we fall out of the tour?", new Error());
+            }
+            // END: TEMP
 
-        } else if (_tourDialog != null) {
-//            if (_tourDialog.parent != null) {
-//                _tourDialog.parent.removeChild(_tourDialog);
-//            }
-            _tourDialog.close();
-            _tourDialog = null;
+            // TEMP more: for now, let's just not close it: leave it up until the user kills it
+            //closeTourDialog();
+            // END
+            // if we keep this off, we can refactor/cleanup a bit...
         }
+    }
+
+    protected function closeTourDialog () :void
+    {
+        if (_tourDialog != null) {
+            _tourDialog.close();
+        }
+    }
+
+    protected function dialogWasClosed () :void
+    {
+        _tourDialog = null;
+        endTour();
     }
 
     // from BasicDirector
