@@ -18,6 +18,7 @@ import com.samskivert.depot.annotation.GeneratedValue;
 import com.samskivert.depot.annotation.GenerationType;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.annotation.Index;
+import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.OrderBy.Order;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
@@ -233,7 +234,9 @@ public class SceneRecord extends PersistentRecord
     public static List<Tuple<SQLExpression, Order>> ixNewAndHotDefinition ()
     {
         List<Tuple<SQLExpression, Order>> definition = Lists.newArrayList();
-        definition.add(MsoySceneRepository.NEW_AND_HOT_ORDER);
+        // we actually order descending, but the database can just read the index backwards
+        definition.add(Tuple.newTuple(
+            MsoySceneRepository.NEW_AND_HOT_ORDER, OrderBy.Order.ASC));
         return definition;
     }
 

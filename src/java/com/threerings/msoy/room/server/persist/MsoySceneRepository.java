@@ -335,8 +335,8 @@ public class MsoySceneRepository extends DepotRepository
                 new Equals(SceneRecord.ACCESS_CONTROL_C, MsoySceneModel.ACCESS_EVERYONE)
         )));
 
-        exprs.add(NEW_AND_HOT_ORDER.left);
-        orders.add(NEW_AND_HOT_ORDER.right);
+        exprs.add(NEW_AND_HOT_ORDER);
+        orders.add(OrderBy.Order.DESC);
 
         clauses.add(new OrderBy(exprs.toArray(new SQLExpression[exprs.size()]),
                                 orders.toArray(new OrderBy.Order[orders.size()])));
@@ -609,12 +609,10 @@ public class MsoySceneRepository extends DepotRepository
     @Inject protected MemoryRepository _memoryRepo;
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
-    protected static final Tuple<SQLExpression, OrderBy.Order> NEW_AND_HOT_ORDER =
-        new Tuple<SQLExpression, OrderBy.Order>(
-                new Arithmetic.Add(SceneRecord.RATING_C, new Arithmetic.Div(
-                    new EpochSeconds(SceneRecord.LAST_PUBLISHED_C),
-                    // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
-                    // TODO: with parameters. So we trick Depot using a literal expression here. :/
-                    new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS))),
-                OrderBy.Order.DESC);
+    protected static final SQLExpression NEW_AND_HOT_ORDER =
+        new Arithmetic.Add(SceneRecord.RATING_C, new Arithmetic.Div(
+            new EpochSeconds(SceneRecord.LAST_PUBLISHED_C),
+            // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
+            // TODO: with parameters. So we trick Depot using a literal expression here. :/
+            new LiteralExp("" + HotnessConfig.DROPOFF_SECONDS)));
 }
