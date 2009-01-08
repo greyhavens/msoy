@@ -200,7 +200,7 @@ public class MemberLogic
         }
 
         // generate the group number based on trackingID + testName
-        final int seed = Math.abs(new String(info.id + testName).hashCode());
+        final int seed = Math.abs((info.id + testName).hashCode());
         final int group = (seed % test.numGroups) + 1;
 
         // optionally log an event to say the group was assigned
