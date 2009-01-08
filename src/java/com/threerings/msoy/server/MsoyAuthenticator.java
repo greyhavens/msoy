@@ -76,7 +76,7 @@ public class MsoyAuthenticator extends Authenticator
     {
         /** A string that can be passed to the Domain to bypass password checking. Pass this actual
          * instance. */
-        public static final String PASSWORD_BYPASS = new String("pwBypass");
+        public static final String PASSWORD_BYPASS = "pwBypass";
 
         /**
          * Creates a new account for this authentication domain.
