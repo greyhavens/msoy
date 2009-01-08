@@ -83,7 +83,7 @@ public class MsoySession extends WhirledSession
         _memobj.setAccessController(MsoyObjectAccess.USER);
         _memobj.addListener(_idleTracker);
 
-        MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account)_authdata;
+        WorldAuthenticator.Account acct = (WorldAuthenticator.Account)_authdata;
         MsoyCredentials credentials = (MsoyCredentials)getCredentials();
 
         // if this is a guest account, they didn't get a VisitorInfo through the resolver.

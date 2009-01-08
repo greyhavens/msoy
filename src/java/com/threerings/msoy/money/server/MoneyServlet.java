@@ -33,7 +33,7 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 import com.threerings.msoy.money.gwt.MoneyService;
-import com.threerings.msoy.server.MsoyAuthenticator;
+import com.threerings.msoy.server.WorldAuthenticator;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -257,7 +257,7 @@ public class MoneyServlet extends MsoyServiceServlet
 
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected MsoyAuthenticator _authenticator;
+    @Inject protected WorldAuthenticator _authenticator;
     @Inject protected MailSender _mailer;
     @Inject protected RuntimeConfig _runtime;
 

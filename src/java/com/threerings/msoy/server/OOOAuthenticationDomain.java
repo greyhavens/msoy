@@ -28,10 +28,10 @@ import static com.threerings.msoy.Log.log;
  * Implements account authentication against the OOO global user database.
  */
 public class OOOAuthenticationDomain
-    implements MsoyAuthenticator.Domain
+    implements WorldAuthenticator.Domain
 {
-    // from interface MsoyAuthenticator.Domain
-    public MsoyAuthenticator.Account createAccount (String accountName, String password)
+    // from interface WorldAuthenticator.Domain
+    public WorldAuthenticator.Account createAccount (String accountName, String password)
         throws ServiceException
     {
         // make sure this account is not already in use
@@ -62,7 +62,7 @@ public class OOOAuthenticationDomain
         return account;
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface WorldAuthenticator.Domain
     public void uncreateAccount (String accountName)
     {
         OOOUser user = _authrep.loadUserByEmail(accountName, false);
@@ -71,7 +71,7 @@ public class OOOAuthenticationDomain
         }
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface WorldAuthenticator.Domain
     public void updateAccount (String accountName, String newAccountName, String newPermaName,
                                String newPassword)
         throws ServiceException
@@ -113,8 +113,8 @@ public class OOOAuthenticationDomain
         }
     }
 
-    // from interface MsoyAuthenticator.Domain
-    public MsoyAuthenticator.Account authenticateAccount (String accountName, String password)
+    // from interface WorldAuthenticator.Domain
+    public WorldAuthenticator.Account authenticateAccount (String accountName, String password)
         throws ServiceException
     {
         // load up their user account record
@@ -135,9 +135,9 @@ public class OOOAuthenticationDomain
         return account;
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface WorldAuthenticator.Domain
     public void validateAccount (
-            MsoyAuthenticator.Account account, String machIdent, boolean newIdent)
+            WorldAuthenticator.Account account, String machIdent, boolean newIdent)
         throws ServiceException
     {
         OOOAccount oooacc = (OOOAccount)account;
@@ -145,7 +145,7 @@ public class OOOAuthenticationDomain
 
         // if they gave us an invalid machIdent, ban them
         if (!newIdent && !StringUtil.isBlank(machIdent) &&
-                !MsoyAuthenticator.isValidIdent(machIdent)) {
+                !WorldAuthenticator.isValidIdent(machIdent)) {
             if (_authrep.ban(OOOUser.METASOY_SITE_ID, user.username)) {
                 _supportLogic.reportAutoBan(user, "AUTO-BAN: supplied invalid machIdent");
             }
@@ -184,8 +184,8 @@ public class OOOAuthenticationDomain
         // you're all clear kid...
     }
 
-    // from interface MsoyAuthenticator.Domain
-    public void validateAccount (MsoyAuthenticator.Account account)
+    // from interface WorldAuthenticator.Domain
+    public void validateAccount (WorldAuthenticator.Account account)
         throws ServiceException
     {
         OOOAccount oooacc = (OOOAccount)account;
@@ -195,7 +195,7 @@ public class OOOAuthenticationDomain
         // TODO: do we care about other badness like DEADBEAT?
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface WorldAuthenticator.Domain
     public String generatePasswordResetCode (String accountName)
         throws ServiceException
     {
@@ -203,20 +203,20 @@ public class OOOAuthenticationDomain
         return (user == null) ? null : StringUtil.md5hex(user.username + user.password);
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface WorldAuthenticator.Domain
     public boolean validatePasswordResetCode (String accountName, String code)
         throws ServiceException
     {
         return code.equals(generatePasswordResetCode(accountName));
     }
 
-    // from interface MsoyAuthenticator.Domain
+    // from interface WorldAuthenticator.Domain
     public boolean isUniqueIdent (String machIdent)
     {
         return _authrep.getMachineIdentCount(machIdent) == 0;
     }
 
-    protected static class OOOAccount extends MsoyAuthenticator.Account
+    protected static class OOOAccount extends WorldAuthenticator.Account
     {
         public OOOUser user;
     }

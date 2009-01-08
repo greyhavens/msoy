@@ -92,7 +92,7 @@ public class MsoyServer extends MsoyBaseServer
         @Override protected void configure () {
             super.configure();
             // presents dependencies
-            bind(Authenticator.class).to(MsoyAuthenticator.class);
+            bind(Authenticator.class).to(WorldAuthenticator.class);
             bind(PresentsServer.class).to(MsoyServer.class);
             bind(PeerManager.class).to(MsoyPeerManager.class);
             bind(ReportManager.class).to(MsoyReportManager.class);
@@ -108,7 +108,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(SceneRegistry.class).to(MsoySceneRegistry.class);
             bind(SceneRegistry.ConfigFactory.class).to(MsoySceneFactory.class);
             // msoy auth dependencies
-            bind(MsoyAuthenticator.Domain.class).to(OOOAuthenticationDomain.class);
+            bind(WorldAuthenticator.Domain.class).to(OOOAuthenticationDomain.class);
             // Messaging dependencies
             bind(MessageConnection.class).toInstance(createAMQPConnection());
         }

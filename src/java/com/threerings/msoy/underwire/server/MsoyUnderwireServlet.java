@@ -29,7 +29,7 @@ import com.threerings.underwire.web.data.Account;
 import com.threerings.underwire.web.server.UnderwireServlet;
 
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyAuthenticator;
+import com.threerings.msoy.server.WorldAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
@@ -225,7 +225,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Inject protected PersistenceContext _perCtx;
     @Inject protected MsoyGameActionHandler _actionHandler;
     @Inject protected MsoyGameInfoProvider _infoprov;
-    @Inject protected MsoyAuthenticator _author;
+    @Inject protected WorldAuthenticator _author;
     @Inject protected MsoyOOOUserRepository _authRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyUnderwireRepository _underRepo;

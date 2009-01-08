@@ -21,7 +21,7 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyAuthenticator;
+import com.threerings.msoy.server.WorldAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -73,7 +73,7 @@ public class MsoyGameAuthenticator extends Authenticator
                 // if they didn't supply a username, generate one from their guest member id.
                 Name credsName = creds.getUsername();
                 creds.setUsername(new MemberName(credsName != null ? credsName.toString() :
-                                                 MsoyAuthenticator.generateGuestName(memberId),
+                                                 WorldAuthenticator.generateGuestName(memberId),
                                                  memberId));
 
             } else {
