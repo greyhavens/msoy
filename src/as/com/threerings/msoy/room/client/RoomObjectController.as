@@ -18,8 +18,6 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.presents.client.ResultAdapter;
-
 import com.threerings.presents.dobj.ChangeListener;
 import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageEvent;
@@ -350,14 +348,12 @@ public class RoomObjectController extends RoomController
     {
         _roomObj.roomService.publishRoom(_wdctx.getClient(), _wdctx.listener());
         // TODO: remove when A/B test is finished
-        _wdctx.getMsoyClient().getABTestGroup("2008 12 share hint", true, new ResultAdapter(
-            function (group :int) :void {
+        _wdctx.getMsoyClient().getABTestGroup("2008 12 share hint", true,
+            _wdctx.resultListener(function (group :int) :void {
                 // group 1: no help, group 2: help
                 if (group == 2) {
                     WorldControlBar(_wdctx.getControlBar()).showShareButtonBubble();
                 }
-            },
-            function (cause :String) :void {
             }));
     }
 
