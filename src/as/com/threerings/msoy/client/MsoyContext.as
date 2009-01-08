@@ -7,6 +7,8 @@ import flash.display.Stage;
 
 import flash.geom.Rectangle;
 
+import mx.core.UIComponent;
+
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
@@ -154,7 +156,7 @@ public /*abstract*/ class MsoyContext
         bundle :String = MsoyCodes.GENERAL_MSGS, errWrap :String = null, ... logArgs)
         :InvocationService_InvocationListener
     {
-        return new InvocationAdapter(chatErrHandler(bundle, errWrap, logArgs));
+        return new InvocationAdapter(chatErrHandler(bundle, errWrap, null, logArgs));
     }
 
     /**
@@ -162,34 +164,55 @@ public /*abstract*/ class MsoyContext
      *
      * @param confirm if a String, a message that will be reported on success. If a function,
      *        it will be run on success.
+     * @param component if non-null, a component that will be disabled, and re-enabled when
+     *        the response arrives from the server (success or failure).
      * @see listener() for a description of the rest of the arguments.
      */
     public function confirmListener (
         confirm :* = null, bundle :String = MsoyCodes.GENERAL_MSGS, errWrap :String = null,
-        ... logArgs)
+        component :UIComponent = null, ... logArgs)
         :InvocationService_ConfirmListener
     {
-        var success :Function = confirm as Function; // turns to null if not
-        if (confirm is String) {
-            success = function () :void {
+        var success :Function = function () :void {
+            if (component != null) {
+                component.enabled = true;
+            }
+            if (confirm is Function) {
+                (confirm as Function)();
+            } else if (confirm is String) {
                 displayFeedback(bundle, String(confirm));
-            };
+            }
+        };
+        if (component != null) {
+            component.enabled = false;
         }
-        return new ConfirmAdapter(success, chatErrHandler(bundle, errWrap, logArgs));
+        return new ConfirmAdapter(success, chatErrHandler(bundle, errWrap, component, logArgs));
     }
 
     /**
      * Create a ResultListener that will automatically log and report errors to chat.
      *
      * @param gotResult a function that will be passed a single result argument from the server.
+     * @param component if non-null, a component that will be disabled, and re-enabled when
+     *        the response arrives from the server (success or failure).
      * @see listener() for a description of the rest of the arguments.
      */
     public function resultListener (
         gotResult :Function, bundle :String = MsoyCodes.GENERAL_MSGS, errWrap :String = null,
-        ... logArgs)
+        component :UIComponent = null, ... logArgs)
         :InvocationService_ResultListener
     {
-        return new ResultAdapter(gotResult, chatErrHandler(bundle, errWrap, logArgs));
+        var success :Function;
+        if (component == null) {
+            success = gotResult;
+        } else {
+            component.enabled = false;
+            success = function (result :Object) :void {
+                component.enabled = true;
+                gotResult(result);
+            };
+        }
+        return new ResultAdapter(success, chatErrHandler(bundle, errWrap, component, logArgs));
     }
 
     /**
@@ -323,9 +346,13 @@ public /*abstract*/ class MsoyContext
     /**
      * Create an error handling function for use with InvocationService listener adapters.
      */
-    protected function chatErrHandler (bundle :String, errWrap :String, logArgs :Array) :Function
+    protected function chatErrHandler (
+        bundle :String, errWrap :String, component :UIComponent, logArgs :Array) :Function
     {
         return function (cause :String) :void {
+            if (component != null) {
+                component.enabled = true;
+            }
             var args :Array = logArgs.concat("cause", cause); // make a copy, we're reentrant
             if (args.length % 2 == 0) {
                 args.unshift("Reporting failure");

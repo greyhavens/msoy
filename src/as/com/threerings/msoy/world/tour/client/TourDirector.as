@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.tour.client {
 
+import mx.core.UIComponent;
+
 import mx.events.CloseEvent;
 
 import com.threerings.util.Command;
@@ -53,12 +55,12 @@ public class TourDirector extends BasicDirector
         }
     }
 
-    public function nextRoom () :void
+    public function nextRoom (button :UIComponent = null) :void
     {
         const roomView :RoomObjectView = _wctx.getPlaceView() as RoomObjectView;
         const loadingDone :Boolean = (roomView != null) && roomView.loadingDone();
         _tsvc.nextRoom(_ctx.getClient(), loadingDone,
-            _wctx.resultListener(handleNextRoomResult, MsoyCodes.WORLD_MSGS));
+            _wctx.resultListener(handleNextRoomResult, MsoyCodes.WORLD_MSGS, null, button));
     }
 
     public function endTour () :void

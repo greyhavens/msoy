@@ -642,7 +642,7 @@ public class RoomObjectController extends RoomController
                 (new ItemUsedDialog(_wdctx, Msgs.ITEM.get(msg), function () :void {
                     isvc.reclaimItem(_wdctx.getClient(), ident,
                         _wdctx.confirmListener(useNewItem, MsoyCodes.EDITING_MSGS,
-                            "e.failed_to_remove", "Failed to reclaim item", "item", ident));
+                            "e.failed_to_remove", null, "Failed to reclaim item", "item", ident));
                 })).open(true);
             } else {
                 useNewItem();

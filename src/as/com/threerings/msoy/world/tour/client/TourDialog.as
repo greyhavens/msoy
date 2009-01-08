@@ -40,7 +40,8 @@ public class TourDialog extends FlyingPanel
         super(ctx, Msgs.WORLD.get("t.tour"));
         showCloseButton = true;
 
-        var nextBtn :CommandButton = new CommandButton(null, nextRoom);
+        var nextBtn :CommandButton = new CommandButton(null);
+        nextBtn.setCallback(nextRoom, nextBtn);
         nextBtn.styleName = "tourNext";
 
         var commentBtn :CommandButton = new CommandButton(null, MsoyController.VIEW_COMMENT_PAGE);
