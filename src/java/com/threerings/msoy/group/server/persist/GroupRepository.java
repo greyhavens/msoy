@@ -28,7 +28,6 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
-import com.samskivert.depot.clause.SelectClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
@@ -522,14 +521,7 @@ public class GroupRepository extends DepotRepository
 
     protected void updateMemberCount (int groupId)
     {
-        Map<ColumnExp, SQLExpression> fieldMap = Maps.newHashMap();
-        fieldMap.put(GroupRecord.MEMBER_COUNT,
-                     new SelectClause<CountRecord>(
-                         CountRecord.class,
-                         new String[] { CountRecord.COUNT.name },
-                         new FromOverride(GroupMembershipRecord.class),
-                         new Where(GroupMembershipRecord.GROUP_ID, groupId)));
-        updateLiteral(GroupRecord.class, groupId, fieldMap);
+        updatePartial(GroupRecord.class, groupId, GroupRecord.MEMBER_COUNT, countMembers(groupId));
     }
 
     /**
