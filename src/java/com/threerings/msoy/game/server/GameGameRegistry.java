@@ -275,6 +275,7 @@ public class GameGameRegistry
                 public void handleSuccess () {
                     // and then update the lobby with the content
                     lmgr.setGameContent(_content);
+                    _gameContent.put(gameId, _content);
                     log.info("Reloaded lobbied game configuration [id=" + gameId + "]");
                 }
 
@@ -504,6 +505,7 @@ public class GameGameRegistry
         // destroy our record of that lobby
         _lobbies.remove(gameId);
         _loadingLobbies.remove(gameId); // just in case
+        _gameContent.remove(gameId);
 
         // kill the bureau session, if any
         killBureauSession(gameId);
@@ -523,6 +525,7 @@ public class GameGameRegistry
         // destroy our record of that avrg
         _avrgManagers.remove(gameId);
         _loadingAVRGames.remove(gameId);
+        _gameContent.remove(gameId);
 
         // kill the bureau session in 30 seconds if the game has not started back up so that the
         // agent has plenty of time to finish stopping
@@ -708,6 +711,7 @@ public class GameGameRegistry
                 AVRGameManager mgr;
                 try {
                     mgr = (AVRGameManager)_placeReg.createPlace(config, delegates);
+                    _gameContent.put(gameId, _content);
 
                 } catch (Exception e) {
                     log.warning("Failed to create AVRGameObject", "gameId", gameId, e);
@@ -825,6 +829,7 @@ public class GameGameRegistry
                 LobbyManager lmgr = _injector.getInstance(LobbyManager.class);
                 lmgr.init(_invmgr, GameGameRegistry.this);
                 lmgr.setGameContent(_content);
+                _gameContent.put(gameId, _content);
                 _lobbies.put(gameId, lmgr);
 
                 ResultListenerList list = _loadingLobbies.remove(gameId);
@@ -982,15 +987,10 @@ public class GameGameRegistry
     {
         final PlayerObject plobj = (PlayerObject)caller;
 
-        LobbyManager lmgr = _lobbies.get(gameId);
-        if (lmgr == null) {
-            log.warning("Requested trophies for unknown game?", "id", gameId);
-            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
-        GameContent content = lmgr.getGameContent();
+        GameContent content = _gameContent.get(gameId);
         if (content == null) {
-            log.warning("Requested trophies before lobby manager was fully resolved?", "id", gameId);
+            log.warning("Requested trophies before manager was fully resolved?", "id", gameId,
+                "lmgr", _lobbies.get(gameId), "amgr", _avrgManagers.get(gameId));
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
@@ -1186,6 +1186,9 @@ public class GameGameRegistry
 
     /** We use this to inject dependencies into managers we create. */
     protected Injector _injector;
+
+    /** Content objects for all games (lobbied or avrg). */
+    protected IntMap<GameContent> _gameContent = new HashIntMap<GameContent>();
 
     // various and sundry dependent services
     @Inject protected @MainInvoker Invoker _invoker;
