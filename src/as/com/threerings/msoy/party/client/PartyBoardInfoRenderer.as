@@ -59,13 +59,23 @@ public class PartyBoardInfoRenderer extends HBox
 
     override protected function createChildren () :void
     {
+        super.createChildren();
+
+        // some things are fixed-width
+        _population.width = 20;
+        // _picHolder and _join will be the same for every row, no size-forcing needed
+
+        // have these two soak up the remaining available width
+//        _name.percentWidth = 50;
+//        _status.percentWidth = 50;
+        // GODDAMN YOU FLEX AND YOUR CHIMPASS LAYOUT
+        _name.width = 150;
+        _status.width = 110;
+
         addChild(_picHolder);
         addChild(_name);
-        _name.width = 150;
         addChild(_population);
-        _population.width = 20;
         addChild(_status);
-        _status.width = 110;
         addChild(_join);
     }
 

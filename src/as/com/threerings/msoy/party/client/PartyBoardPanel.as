@@ -42,8 +42,8 @@ public class PartyBoardPanel extends FloatingPanel
         loading.percentHeight = 100;
 
         _content = new VBox();
-        _content.width = 400; // TODO: tweak
-        _content.height = 400; // TODO: tweak
+        _content.width = 400;
+        _content.height = 400;
         _content.addChild(loading);
 
         getPartyBoard();
