@@ -28,6 +28,7 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
+import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.Conditionals.*;
 import com.samskivert.depot.operator.Logic;
@@ -131,6 +132,24 @@ public class MsoySceneRepository extends DepotRepository
 
         _ctx.registerMigration(SceneRecord.class,
             new SchemaMigration.Rename(6, "lastUpdated", SceneRecord.LAST_PUBLISHED));
+        _ctx.registerMigration(SceneRecord.class,
+            new SchemaMigration.Retype(8, SceneRecord.AUDIO_MEDIA_HASH));
+
+        // remove pointless bytes!
+        registerMigration(new DataMigration("2009_01_09_clearAudioHashes") {
+            @Override public void invoke () throws DatabaseException {
+                // It seems like there should be a better way to do this, but the fucking
+                // CacheInvalidator can chew on my balls.
+                List<Key<SceneRecord>> scenes = findAllKeys(SceneRecord.class, true,
+                    new Where(new Equals(SceneRecord.AUDIO_MEDIA_HASH,
+                        new ValueExp(new byte[] {0,0,0,7}))));
+
+                // update each one, clearing actionType and actionData
+                for (Key<SceneRecord> sceneId : scenes) {
+                    updatePartial(sceneId, SceneRecord.AUDIO_MEDIA_HASH, null);
+                }
+            }
+        });
     }
 
     /**
@@ -408,15 +427,16 @@ public class MsoySceneRepository extends DepotRepository
 
         } else if (update instanceof SceneAttrsUpdate) {
             SceneAttrsUpdate scup = (SceneAttrsUpdate)update;
+            boolean hasAudio = (scup.audioData != null);
             updatePartial(
                 SceneRecord.class, update.getSceneId(),
                 SceneRecord.NAME, scup.name,
                 SceneRecord.ACCESS_CONTROL, scup.accessControl,
                 SceneRecord.DECOR_ID, scup.decor.itemId,
-                SceneRecord.AUDIO_ID, scup.audioData.itemId,
-                SceneRecord.AUDIO_MEDIA_HASH, SceneUtil.flattenMediaDesc(scup.audioData.media),
-                SceneRecord.AUDIO_MEDIA_TYPE, scup.audioData.media.mimeType,
-                SceneRecord.AUDIO_VOLUME, scup.audioData.volume,
+                SceneRecord.AUDIO_ID, hasAudio ? scup.audioData.itemId : 0,
+                SceneRecord.AUDIO_MEDIA_HASH,
+                    hasAudio ? SceneUtil.flattenMediaDesc(scup.audioData.media) : null,
+                SceneRecord.AUDIO_MEDIA_TYPE, hasAudio ? scup.audioData.media.mimeType : 0,
                 SceneRecord.ENTRANCE_X, scup.entrance.x,
                 SceneRecord.ENTRANCE_Y, scup.entrance.y,
                 SceneRecord.ENTRANCE_Z, scup.entrance.z);

@@ -75,7 +75,6 @@ public class MsoySceneModel extends SceneModel
     /** Constructor. */
     public function MsoySceneModel ()
     {
-        audioData = new AudioData();
     }
 
     /**
@@ -211,7 +210,7 @@ public class MsoySceneModel extends SceneModel
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = (entrance.clone() as MsoyLocation);
         model.decor = decor;
-        model.audioData = (audioData == null) ? null : (audioData.clone() as AudioData);
+        model.audioData = audioData;
         return model;
     }
 

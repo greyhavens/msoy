@@ -598,7 +598,7 @@ public class RoomObjectView extends RoomView
     protected function updateBackgroundAudio () :void
     {
         var audiodata :AudioData = _scene.getAudioData();
-        if (audiodata != null && audiodata.isInitialized()) {
+        if (audiodata != null) {
             _ctx.getWorldController().handlePlayMusic(audiodata.media,
                 new ItemIdent(Item.AUDIO, audiodata.itemId));
         } else {

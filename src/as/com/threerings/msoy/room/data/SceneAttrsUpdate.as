@@ -42,7 +42,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         mmodel.name = name;
         mmodel.accessControl = accessControl;
         mmodel.decor = decor;
-        mmodel.audioData = (audioData.clone() as AudioData);
+        mmodel.audioData = audioData;
         mmodel.entrance = entrance;
     }
 

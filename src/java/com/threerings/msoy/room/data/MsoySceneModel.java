@@ -76,7 +76,6 @@ public class MsoySceneModel extends SceneModel
     /** Constructor. */
     public MsoySceneModel ()
     {
-        audioData = new AudioData();
     }
 
     /**
@@ -231,8 +230,7 @@ public class MsoySceneModel extends SceneModel
         MsoySceneModel model = (MsoySceneModel) super.clone();
         model.furnis = furnis.clone();
         model.entrance = (MsoyLocation) entrance.clone();
-        // decor and ownerName are ok to just copy by reference
-        model.audioData = (audioData == null) ? null : (AudioData) audioData.clone();
+        // decor, audioData and ownerName are ok to just copy by reference
         model.invalidatePortalInfo();
         return model;
     }

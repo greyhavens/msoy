@@ -97,7 +97,7 @@ public class SceneRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 7;
+    public static final int SCHEMA_VERSION = 8;
 
     /** Define the sort order for the new & hot queries. */
     public static Tuple<SQLExpression, Order> ixNewAndHot ()
@@ -133,6 +133,7 @@ public class SceneRecord extends PersistentRecord
     public int audioId;
 
     /** The hash of this scene's background music. */
+    @Column(nullable=true)
     public byte[] audioMediaHash;
 
     /** The mime type of this scene's background music. */
@@ -194,10 +195,12 @@ public class SceneRecord extends PersistentRecord
         name = model.name;
         decorId = model.decor.itemId;
 
-        audioId = model.audioData.itemId;
-        audioMediaHash = SceneUtil.flattenMediaDesc(model.audioData.media);
-        audioMediaType = model.audioData.media.mimeType;
-        audioVolume = model.audioData.volume;
+        if (model.audioData != null) {
+            audioId = model.audioData.itemId;
+            audioMediaHash = SceneUtil.flattenMediaDesc(model.audioData.media);
+            audioMediaType = model.audioData.media.mimeType;
+        }
+        audioVolume = 1f; // TODO: this is not used anywhere yet
 
         entranceX = model.entrance.x;
         entranceY = model.entrance.y;
@@ -221,12 +224,10 @@ public class SceneRecord extends PersistentRecord
         model.decor = new Decor();
         model.decor.itemId = decorId;
 
-        AudioData a = model.audioData;
-        a.itemId = audioId;
-        if (a.itemId != 0) { // only clobber media if the audio item exists
-            a.media = SceneUtil.createMediaDesc(audioMediaHash, audioMediaType);
+        if (audioId != 0) {
+            model.audioData = new AudioData(audioId, 
+                SceneUtil.createMediaDesc(audioMediaHash, audioMediaType));
         }
-        a.volume = audioVolume;
 
         model.entrance = new MsoyLocation(entranceX, entranceY, entranceZ, 180);
 

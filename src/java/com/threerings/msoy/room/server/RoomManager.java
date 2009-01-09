@@ -302,13 +302,11 @@ public class RoomManager extends SpotSceneManager
 
         } else if (item.type == Item.AUDIO) {
             // clear out the audio
-            AudioData ad = scene.getAudioData();
-            ad.itemId = 0;
             SceneAttrsUpdate update = new SceneAttrsUpdate();
             update.init(scene.getId(), scene.getVersion());
             update.name = scene.getName();
             update.decor = scene.getDecor();
-            update.audioData = ad;
+            update.audioData = null;
             update.entrance = ((MsoySceneModel)scene.getSceneModel()).entrance;
             doRoomUpdate(update, memberId, null);
 
@@ -1265,11 +1263,13 @@ public class RoomManager extends SpotSceneManager
 
             // same with background audio - mark new one as used, unmark old one
             AudioData audioData = msoyScene.getAudioData();
-            if (audioData != null && audioData.itemId != up.audioData.itemId) { // modified?
+            int curAudioId = (audioData == null) ? 0 : audioData.itemId;
+            int newAudioId = (up.audioData == null) ? 0 : up.audioData.itemId;
+            if (curAudioId != newAudioId) {
                 _itemMan.updateItemUsage(
                     Item.AUDIO, Item.USED_AS_BACKGROUND, memberId, _scene.getId(),
-                    audioData.itemId, up.audioData.itemId, new ComplainingListener<Object>(
-                        log, "Unable to update audio usage"));
+                    curAudioId, newAudioId,
+                    new ComplainingListener<Object>(log, "Unable to update audio usage"));
             }
 
             // if the name or access controls were modified, we need to update our HostedPlace

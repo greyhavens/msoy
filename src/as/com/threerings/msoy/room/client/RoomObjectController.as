@@ -603,11 +603,10 @@ public class RoomObjectController extends RoomController
                     applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
 
                 } else if (item.getType() == Item.AUDIO) {
-                    newScene = _scene.clone() as MsoyScene;
-                    var ad :AudioData = (newScene.getSceneModel() as MsoySceneModel).audioData;
                     var audio :Audio = item as Audio;
-                    ad.itemId = audio.itemId;
-                    ad.media = audio.audioMedia;
+                    newScene = _scene.clone() as MsoyScene;
+                    (newScene.getSceneModel() as MsoySceneModel).audioData =
+                        new AudioData(audio.itemId, audio.audioMedia);
                     applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
 
                 } else {
@@ -676,7 +675,7 @@ public class RoomObjectController extends RoomController
                 applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
 
             } else if (itemType == Item.AUDIO) {
-                (newScene.getSceneModel() as MsoySceneModel).audioData.itemId = 0;
+                (newScene.getSceneModel() as MsoySceneModel).audioData = null;
                 applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
             }
 
@@ -972,8 +971,8 @@ public class RoomObjectController extends RoomController
                         Item.DECOR, oldId, Item.UNUSED, 0);
                 }
             }
-            newId = attrsUpdate.audioData.itemId;
-            oldId = _scene.getAudioData().itemId;
+            newId = (attrsUpdate.audioData == null) ? 0 : attrsUpdate.audioData.itemId;
+            oldId = (_scene.getAudioData() == null) ? 0 : _scene.getAudioData().itemId;
             if (newId != oldId) {
                 if (newId != 0) {
                     _wdctx.getWorldClient().itemUsageChangedToGWT(
