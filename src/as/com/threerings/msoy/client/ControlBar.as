@@ -57,7 +57,6 @@ public class ControlBar extends HBox
     public static const UI_GAME :String = "Game UI";
     public static const UI_AVRGAME :String = "AVR Game UI";
     public static const UI_VIEWER :String = "Room Entity Viewer UI";
-    public static const UI_NONE :String = ""; // when you're logged off.
 
     public static const ALL_UI_GROUPS :Array = [
         UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ];
