@@ -29,7 +29,7 @@ else
     exit 255
 fi
 
-CLASS=com.threerings.msoy.game.server.MsoyGameServer
+CLASS=com.threerings.msoy.game.server.GameServer
 JAVA_ARGS="-server \
     -Djava.awt.headless=true \
     -Dhostname=$HOSTNAME \
