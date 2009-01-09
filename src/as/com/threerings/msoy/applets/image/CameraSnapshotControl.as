@@ -67,18 +67,24 @@ public class CameraSnapshotControl extends TitleWindow
         box.addChild(bar);
 
         PopUpManager.addPopUp(this, parent, true);
-        updateCameraSize(_sizes.selectedData as Array);
+        checkCameraSize();
     }
 
     protected function handleCameraChange (name :String) :void
     {
         _snapper.setCameraName(name);
-        updateCameraSize(_sizes.selectedData as Array);
+        checkCameraSize();
     }
 
-    protected function updateCameraSize (size :Array) :void
+    protected function checkCameraSize () :void
     {
-        _snapper.setMode(int(size[0]), int(size[1]), 15);
+        var size :Array = _sizes.selectedData as Array;
+        updateCameraSize(int(size[0]), int(size[1]));
+    }
+
+    protected function updateCameraSize (width :int, height :int) :void
+    {
+        _snapper.setMode(width, height, 15);
         _wrapper.width = _snapper.width;
         _wrapper.height = _snapper.height;
         PopUpManager.centerPopUp(this);
