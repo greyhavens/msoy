@@ -175,7 +175,7 @@ public class GameDirector extends BasicDirector
      */
     public function viewGameTrophies () :void
     {
-        TrophyPanel.show(getGameContext(), getGameId());
+        TrophyPanel.show(getGameContext(), getGameId(), getGameName());
     }
 
     /**

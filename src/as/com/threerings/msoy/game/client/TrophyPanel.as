@@ -20,7 +20,6 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
-import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.TrophySource;
 
@@ -30,39 +29,37 @@ import com.threerings.msoy.item.data.all.TrophySource;
  */
 public class TrophyPanel extends FloatingPanel
 {
-    public static function show (ctx :GameContext, gameId :int) :void
+    public static function show (ctx :GameContext, gameId :int, gameName :String) :void
     {
         (ctx.getClient().requireService(GameGameService) as GameGameService).getTrophies(
             ctx.getClient(), gameId, ctx.getMsoyContext().resultListener(
                 function (trophies :TypedArray) :void {
-                    new TrophyPanel(ctx, trophies).open();
+                    new TrophyPanel(ctx, trophies, gameName).open();
                 }, MsoyCodes.GAME_MSGS));
     }
 
-    public function TrophyPanel (ctx :GameContext, trophies :Array)
+    public function TrophyPanel (ctx :GameContext, trophies :Array, gameName :String)
     {
         super(ctx.getMsoyContext(), Msgs.GAME.get("t.trophy"));
         _gctx = ctx;
         _trophies = trophies;
+        _gameName = gameName;
     }
 
     override protected function createChildren () :void
     {
         super.createChildren();
 
-        var gconfig :MsoyGameConfig =
-            (_gctx.getLocationDirector().getPlaceController().getPlaceConfig() as MsoyGameConfig);
-
         if (_trophies.length == 0) {
             var none :Label = new Label();
-            none.text = Msgs.GAME.get("m.tp_title_none", gconfig.game.name);
+            none.text = Msgs.GAME.get("m.tp_title_none", _gameName);
             addChild(none);
             addButtons(CANCEL_BUTTON);
             return;
         }
 
         var title :Label = new Label();
-        title.text = Msgs.GAME.get("m.tp_title", gconfig.game.name);
+        title.text = Msgs.GAME.get("m.tp_title", _gameName);
         title.styleName = "trophyPanelTitle";
         addChild(title);
 
@@ -118,5 +115,6 @@ public class TrophyPanel extends FloatingPanel
 
     protected var _gctx :GameContext;
     protected var _trophies :Array /*of Trophy*/;
+    protected var _gameName :String;
 }
 }
