@@ -58,6 +58,12 @@ public class PlayerObject extends WhirledPlayerObject
     public static final String PROPERTY_SERVICE = "propertyService";
     // AUTO-GENERATED: FIELDS END
 
+    /** Ident for {@link GameData#RESOLUTION_MARKER} content during resolution. */
+    public static final String RESOLVING = "resolving";
+
+    /** Ident for {@link GameData#RESOLUTION_MARKER} content after resolution. */
+    public static final String RESOLVED = "resolved";
+
     /** The name and id information for this user. */
     public VizMemberName memberName;
 
@@ -98,7 +104,16 @@ public class PlayerObject extends WhirledPlayerObject
      */
     public boolean isContentResolved (int gameId)
     {
-        return ownsGameContent(gameId, GameData.RESOLVED_MARKER, "");
+        return ownsGameContent(gameId, GameData.RESOLUTION_MARKER, RESOLVED);
+    }
+
+    /**
+     * Returns true if content is being resolved for the specified game, false if it is ready or
+     * resolution is not yet initiated.
+     */
+    public boolean isContentResolving (int gameId)
+    {
+        return ownsGameContent(gameId, GameData.RESOLUTION_MARKER, RESOLVING);
     }
 
     /**

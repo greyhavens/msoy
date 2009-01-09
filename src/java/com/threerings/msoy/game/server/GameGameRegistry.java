@@ -183,13 +183,14 @@ public class GameGameRegistry
      */
     public void resolveOwnedContent (final Game game, final PlayerObject plobj)
     {
-        // if we've already resolved content for this player, we are done
-        if (plobj.isContentResolved(game.gameId)) {
+        // if we've already resolved or started resolving content for this player, we are done
+        if (plobj.isContentResolved(game.gameId) || plobj.isContentResolving(game.gameId)) {
             return;
         }
 
-        // add our "already resolved" marker and then start resolving
-        plobj.addToGameContent(new GameContentOwnership(game.gameId, GameData.RESOLVED_MARKER, ""));
+        // add our "currently resolving" marker and then start resolving
+        plobj.addToGameContent(new GameContentOwnership(
+            game.gameId, GameData.RESOLUTION_MARKER, PlayerObject.RESOLVING));
         _invoker.postUnit(new RepositoryUnit("resolveOwnedContent") {
             @Override public void invokePersist () throws Exception {
                 int memberId = plobj.getMemberId(), suiteId = game.getSuiteId();
@@ -228,6 +229,11 @@ public class GameGameRegistry
                     addContent(GameData.ITEM_DATA, _ipacks);
                     addContent(GameData.TROPHY_DATA, _trophies);
                 } finally {
+                    // transition from "resolving" to "resolved"
+                    plobj.addToGameContent(new GameContentOwnership(
+                        game.gameId, GameData.RESOLUTION_MARKER, PlayerObject.RESOLVED));
+                    plobj.removeFromGameContent(new GameContentOwnership(
+                        game.gameId, GameData.RESOLUTION_MARKER, PlayerObject.RESOLVING));
                     plobj.commitTransaction();
                 }
             }
