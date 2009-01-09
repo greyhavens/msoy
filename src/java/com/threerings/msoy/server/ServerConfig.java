@@ -255,7 +255,7 @@ public class ServerConfig
      * Returns the configuration of the AMQP messaging server.  If no messaging server is
      * configured, this will return null.
      */
-    public static AMQPMessageConfig geAMQPMessageConfig ()
+    public static AMQPMessageConfig getAMQPMessageConfig ()
     {
         String addresses = config.getValue("messaging.server.addresses", "");
         if ("".equals(addresses)) {

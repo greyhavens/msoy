@@ -364,7 +364,7 @@ public class MsoyServer extends MsoyBaseServer
     protected static MessageConnection createAMQPConnection ()
     {
         final DelayedMessageConnection delayedConn = new DelayedMessageConnection();
-        final AMQPMessageConfig config = ServerConfig.geAMQPMessageConfig();
+        final AMQPMessageConfig config = ServerConfig.getAMQPMessageConfig();
         if (config == null) {
             log.info("No AMQP messaging server configured.");
         } else {
