@@ -32,6 +32,7 @@ import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.client.updates.SceneUpdateAction;
 
+import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate_Add;
 import com.threerings.msoy.room.data.FurniUpdate_Change;
@@ -102,7 +103,7 @@ public class RoomEditorController
 
         // clear out the names cache, and ping the server
         _names = new HashMap();
-        queryServerForNames(this.scene.getFurni());
+        queryServerForNames(this.scene.getFurni(), this.scene.getAudioData());
 
         // make the fake entrance
         _entranceSprite = new EntranceSprite(_ctx, scene.getEntrance());
@@ -146,11 +147,13 @@ public class RoomEditorController
             _entranceSprite.getFurniData().loc.set(up.entrance);
             _entranceSprite.update(_entranceSprite.getFurniData());
             _panel.setDecor(up.decor);
+            queryServerForNames(null, up.audioData);
+            updateNameDisplay();
 
             refreshTarget();
 
         } else if (update is FurniUpdate_Add) {
-            queryServerForNames([ (update as FurniUpdate_Add).data ]);
+            queryServerForNames([ (update as FurniUpdate_Add).data ], null);
             updateNameDisplay();
 
         } else if (update is FurniUpdate_Change) {
@@ -460,15 +463,23 @@ public class RoomEditorController
      * Helper function, returns an array of ItemIdents of pieces of furniture from the specified
      * /furnis/ array, whose names are not stored in the cache.
      */
-    protected function findNamelessFurnis (furnis :Array) :TypedArray /* of ItemIdent */
+    protected function findNamelessFurnis (
+        furnis :Array, music :AudioData) :TypedArray /* of ItemIdent */
     {
         var idents :TypedArray = TypedArray.create(ItemIdent);
+        var ident :ItemIdent;
         for each (var data :FurniData in furnis) {
-            var ident :ItemIdent = data.getItemIdent();
+            ident = data.getItemIdent();
             if (! _names.containsKey(ident)) {          // only query for new items
                 if (data.itemType != Item.NOT_A_TYPE) { // skip freebie doors and other fake items
                     idents.push(ident);
                 }
+            }
+        }
+        if (music != null) {
+            ident = new ItemIdent(Item.AUDIO, music.itemId);
+            if (!_names.containsKey(ident)) {
+                idents.push(ident);
             }
         }
         return idents;
@@ -477,14 +488,15 @@ public class RoomEditorController
     /**
      * Given a list of furnis, retrieves names of furnis we don't yet know about.
      */
-    protected function queryServerForNames (furnis :Array /* of FurniData */) :void
+    protected function queryServerForNames (
+        furnis :Array /* of FurniData */, music :AudioData) :void
     {
-        if (furnis == null) {
+        if (furnis == null && music == null) {
             return; // nothing to do
         }
 
         // find which furni names we're missing
-        var idents :TypedArray = findNamelessFurnis(furnis);
+        var idents :TypedArray = findNamelessFurnis(furnis, music);
 
         if (idents.length == 0) {
             return; // no names are missing - we're done!
@@ -555,6 +567,11 @@ public class RoomEditorController
         defs.sortOn("label", Array.CASEINSENSITIVE);
 
         _panel.updateNameList(defs);
+        var music :AudioData = this.scene.getAudioData();
+        var entry :Object = (music == null) ? null :
+            _names.get(new ItemIdent(Item.AUDIO, music.itemId));
+        _panel.updateMusicName((music != null), (entry == null) ? null : String(entry.label));
+
         selectTargetName();
     }
 

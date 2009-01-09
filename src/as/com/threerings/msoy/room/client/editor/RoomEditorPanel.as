@@ -141,7 +141,13 @@ public class RoomEditorPanel extends FlyingPanel
 
     public function setDecor (decor :Decor) :void
     {
-        _decorLabel.text = decor.name || Msgs.EDITING.get("m.none");
+        _decorLabel.text = Msgs.EDITING.get("m.decor", decor.name || Msgs.EDITING.get("m.none"));
+    }
+
+    public function updateMusicName (hasMusic :Boolean, name :String) :void
+    {
+        _musicLabel.text = Msgs.EDITING.get("m.music",
+            name || (hasMusic ? "..." : Msgs.EDITING.get("m.none")));
     }
 
     public function setHomeButtonEnabled (enabled :Boolean) :void
@@ -301,12 +307,20 @@ public class RoomEditorPanel extends FlyingPanel
         // decor name
         var decorBox :Box = new HBox();
         decorBox.percentWidth = 100;
-        decorBox.addChild(FlexUtil.createLabel(Msgs.EDITING.get("l.decor")));
         decorBox.addChild(_decorLabel = FlexUtil.createLabel(""));
-        _decorLabel.width = 100; // force to be 100 pixels, since flex sucks.
+        _decorLabel.width = 200;
         decorBox.addChild(new CommandButton(
             Msgs.EDITING.get("b.change"), WorldController.VIEW_STUFF, Item.DECOR));
         GridUtil.addRow(contents, decorBox, [3, 1]);
+
+        // music name
+        var musicBox :Box = new HBox();
+        musicBox.percentWidth = 100;
+        musicBox.addChild(_musicLabel = FlexUtil.createLabel(""));
+        _musicLabel.width = 200;
+        musicBox.addChild(new CommandButton(
+            Msgs.EDITING.get("b.change"), WorldController.VIEW_STUFF, Item.AUDIO));
+        GridUtil.addRow(contents, musicBox, [3, 1]);
 
         // item name combo box
 
@@ -526,6 +540,7 @@ public class RoomEditorPanel extends FlyingPanel
     protected var _customConfigButton :UIComponent;
 
     protected var _decorLabel :Label;
+    protected var _musicLabel :Label;
 
     protected var _curTarget :FurniSprite;
 
