@@ -141,6 +141,16 @@ public class WorldControlBar extends ControlBar
         }, partyBtn));
     }
 
+    override protected function checkControls (... ignored) :void
+    {
+        const isLoggedOn :Boolean = _ctx.getClient().isLoggedOn();
+        homePageGridBtn.enabled = isLoggedOn;
+        friendsBtn.enabled = isLoggedOn;
+        partyBtn.enabled = isLoggedOn;
+
+        super.checkControls();
+    }
+
     // from ControlBar
     override protected function addControls () :void
     {

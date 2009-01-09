@@ -57,6 +57,7 @@ public class ControlBar extends HBox
     public static const UI_GAME :String = "Game UI";
     public static const UI_AVRGAME :String = "AVR Game UI";
     public static const UI_VIEWER :String = "Room Entity Viewer UI";
+    public static const UI_NONE :String = ""; // when you're logged off.
 
     public static const ALL_UI_GROUPS :Array = [
         UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ];
@@ -97,7 +98,8 @@ public class ControlBar extends HBox
         percentWidth = 100;
 
         _ctx.getClient().addClientObserver(
-            new ClientAdapter(checkControls, checkControls, null, null, null, null, checkControls));
+            new ClientAdapter(null, checkControls, checkControls, null, checkControls, null, null,
+                checkControls));
 
         _buttons = new ButtonPalette(top);
 
@@ -203,6 +205,9 @@ public class ControlBar extends HBox
      */
     protected function createControls () :void
     {
+        _chatControl = new ChatControl(_ctx, Msgs.GENERAL.get("b.chat_send"));
+        _chatControl.chatInput.height = HEIGHT - 8;
+
         chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
         chatOptsBtn.setCommand(WorldController.POP_CHANNEL_MENU, chatOptsBtn);
 
@@ -238,6 +243,10 @@ public class ControlBar extends HBox
      */
     protected function checkControls (... ignored) :void
     {
+        const isLoggedOn :Boolean = _ctx.getClient().isLoggedOn();
+        chatOptsBtn.enabled = isLoggedOn;
+        _chatControl.enabled = isLoggedOn;
+
         const memName :MemberName = _ctx.getMyName();
         const isMember :Boolean = (memName != null) && !memName.isGuest();
         if (numChildren > 0 && (isMember == _isMember)) {
@@ -270,8 +279,6 @@ public class ControlBar extends HBox
     {
         // add our standard control bar features
         addControl(chatOptsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
-        _chatControl = new ChatControl(_ctx, Msgs.GENERAL.get("b.chat_send"));
-        _chatControl.chatInput.height = HEIGHT - 8;
         addControl(_chatControl, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
         addControl(_buttons, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], BUTTON_SECTION);
 

@@ -53,12 +53,11 @@ public class FriendsListPanel extends FlyingPanel
         _wctx = ctx;
         showCloseButton = true;
         width = POPUP_WIDTH;
-        open();
 
         _cliObs = new ClientAdapter(null, clientDidLogon);
         _wctx.getClient().addClientObserver(_cliObs);
 
-        // TODO: automatically pop-down when you enter a game ??? (Used to work, but do we want it?)
+        open();
     }
 
     override public function close () :void
