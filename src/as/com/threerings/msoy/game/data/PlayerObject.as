@@ -48,6 +48,12 @@ public class PlayerObject extends WhirledPlayerObject
     public static const VISITOR_INFO :String = "visitorInfo";
     // AUTO-GENERATED: FIELDS END
 
+    /** Ident for <code>GameData.RESOLUTION_MARKER</code> content during resolution. */
+    public static const RESOLVING :String = "resolving";
+
+    /** Ident for <code>GameData.RESOLUTION_MARKER</code> content after resolution. */
+    public static const RESOLVED :String = "resolved";
+
     /** The name and id information for this user. */
     public var memberName :VizMemberName;
 
@@ -115,7 +121,7 @@ public class PlayerObject extends WhirledPlayerObject
      */
     public function isContentResolved (gameId :int) :Boolean
     {
-        return ownsGameContent(gameId, GameData.RESOLVED_MARKER, "");
+        return ownsGameContent(gameId, GameData.RESOLUTION_MARKER, RESOLVED);
     }
 
     /**
