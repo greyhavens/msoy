@@ -200,8 +200,6 @@ public class MsoyController extends Controller
     public function createPageLink (page :String, forUs :Boolean) :String
     {
         const memName :MemberName = _mctx.getMyName();
-        // TEMP logging
-        log.info("createPageLink", "memName", memName, "params", MsoyParameters.get());
         const isGuest :Boolean = memName.isGuest();
         var affiliate :String = null;
         if (forUs && isGuest) {
@@ -216,8 +214,7 @@ public class MsoyController extends Controller
             return url + "#" + page; // just a straight page visit
 
         } else {
-            // TODO: uri encoding needed?
-            return url + "welcome/" + StringUtil.trim(affiliate) + "/" + page;
+            return url + "welcome/" + encodeURIComponent(StringUtil.trim(affiliate)) + "/" + page;
         }
     }
 
@@ -671,8 +668,7 @@ public class MsoyController extends Controller
                 ChatControl.grabFocus();
             }
         } catch (err :Error) {
-            // TODO: leave this in for now
-            trace(err.getStackTrace());
+            log.warning("Couldn't focus chat", err);
         }
     }
 

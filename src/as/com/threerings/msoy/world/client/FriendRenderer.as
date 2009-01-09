@@ -48,7 +48,7 @@ public class FriendRenderer extends PlayerRenderer
     {
         var friend :FriendEntry = FriendEntry(this.data);
 
-        var name :Label = FlexUtil.createLabel(friend.name.toString(), "friendLabel");
+        var name :Label = FlexUtil.createLabel(friend.name.toString(), "playerLabel");
         name.width = content.width;
         content.addChild(name);
 

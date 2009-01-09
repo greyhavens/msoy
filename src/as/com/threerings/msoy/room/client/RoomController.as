@@ -250,12 +250,6 @@ public class RoomController extends SceneController
     public function updateMemory (
         ident :ItemIdent, key :String, value: Object, callback :Function) :void
     {
-        // TODO: I want to know wtf is requesting to up-mem after it's been shut down...
-//        if (_roomObj == null) {
-//            log.info("Dropping memory update, not in room [ident=" + ident + ", key=" + key + "].");
-//            return false;
-//        }
-
         // NOTE: there is no need to be "in control" to update memory.
 
         // This will validate that the memory being set isn't greater than the maximum

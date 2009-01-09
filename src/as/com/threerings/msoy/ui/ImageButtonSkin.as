@@ -41,13 +41,6 @@ public class ImageButtonSkin extends UIComponent
         }
     }
 
-// TODO: needed?
-//    override public function set styleName (value :Object) :void
-//    {
-//        super.styleName = value;
-//        readImageFromStyle();
-//    }
-
     override public function stylesInitialized () :void
     {
         super.stylesInitialized();

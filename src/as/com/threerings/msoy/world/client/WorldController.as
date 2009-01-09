@@ -1054,11 +1054,8 @@ public class WorldController extends MsoyController
                         callback: _mctx.getMuteDirector().setMuted, arg: [ member, true ] });
             }
             if (!isGuest) {
-                // TODO: do we need this embedded check?
-                if (!_wctx.getMsoyClient().isEmbedded()) {
-                    menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
-                                     command: VIEW_MEMBER, arg: memId });
-                }
+                menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
+                                 command: VIEW_MEMBER, arg: memId });
                 menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
                                  command: GO_MEMBER_HOME, arg: memId });
                 if (!us.isGuest() && !us.friends.containsKey(memId)) {

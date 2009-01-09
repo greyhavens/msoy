@@ -104,7 +104,7 @@ public class FriendsListPanel extends FlyingPanel
         if (_wctx.getMemberObject().isGuest()) {
             var joinBtn :CommandButton = new CommandButton(null, MsoyController.SHOW_SIGN_UP);
             joinBtn.styleName = "joinNowButton";
-            addChild(FlexUtil.createWideText(Msgs.GENERAL.get("m.guest_friends"), "friendLabel"));
+            addChild(FlexUtil.createWideText(Msgs.GENERAL.get("m.guest_friends"), "playerLabel"));
             addChild(joinBtn);
             return;
         }
@@ -130,7 +130,7 @@ public class FriendsListPanel extends FlyingPanel
         // Create a display name label and a status editor
         var me :MemberObject = _wctx.getMemberObject();
         _nameLabel = new Label();
-        _nameLabel.styleName = "friendLabel";
+        _nameLabel.styleName = "playerLabel";
         _nameLabel.setStyle("fontWeight", "bold");
         _nameLabel.text = me.memberName.toString();
         box.addChild(_nameLabel);

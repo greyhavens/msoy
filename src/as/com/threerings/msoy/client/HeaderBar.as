@@ -72,9 +72,8 @@ public class HeaderBar extends HBox
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
 
-        // TODO: hard-coded shite should not be here
         if (!(_ctx.getPlaceView() is RoomView)) {
-            _tabs.locationName = loc; // Msgs.CHAT.get("l.game_channel");
+            _tabs.locationName = loc;
         }
     }
 

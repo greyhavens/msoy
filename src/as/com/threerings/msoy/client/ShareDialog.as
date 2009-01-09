@@ -238,7 +238,6 @@ public class ShareDialog extends FloatingPanel
         checks.percentWidth = 100;
         box.addChild(checks);
 
-        // TODO: review once we figure some shit out
         // the small scenes cannot host non-rooms, at least for now
         if (!_inGame) {
             for (var ii :int = 0; ii < EMBED_SIZES.length; ii++) {

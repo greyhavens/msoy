@@ -59,8 +59,7 @@ public class PeepRenderer extends PlayerRenderer
     {
         var peep :PartyPeep = PartyPeep(this.data);
 
-        // TODO: add peepLabel style
-        var name :Label = FlexUtil.createLabel(peep.name.toString(), "friendLabel");
+        var name :Label = FlexUtil.createLabel(peep.name.toString(), "playerLabel");
         name.width = content.width;
         content.addChild(name);
     }

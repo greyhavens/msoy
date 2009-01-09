@@ -198,7 +198,6 @@ public class ImageManipulator extends HBox
 
         bar.addChild(box);
 
-        // TODO: this will maybe change to a different UI
         _zoomSlider = addSlider(bar, "l.zoom", .25, 4, 1, _editor.setZoom,
             [ .25, .5, 1, 2, 4, 8 ]);
 

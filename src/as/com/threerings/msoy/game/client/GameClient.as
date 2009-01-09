@@ -35,7 +35,6 @@ public class GameClient extends MsoyClient
     {
         super(stage);
 
-        // TODO: should we do things differently for games
         stage.quality = StageQuality.MEDIUM;
 
         // make sure we're running a sufficiently new version of Flash

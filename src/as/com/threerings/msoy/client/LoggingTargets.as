@@ -8,7 +8,6 @@ import flash.external.ExternalInterface;
 import com.threerings.util.Log;
 import com.threerings.util.LogTarget;
 
-// TODO: stop listening at the end?
 public class LoggingTargets
 {
     public static function configureLogging (ctx :MsoyContext) :void
@@ -47,7 +46,6 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.client.MsoyContext;
 
-// TODO: stop listening at the end?
 class ChatTarget
     implements LogTarget
 {

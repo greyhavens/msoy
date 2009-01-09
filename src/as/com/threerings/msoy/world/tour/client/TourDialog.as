@@ -56,9 +56,6 @@ public class TourDialog extends FlyingPanel
             _myStars.setRating(_myRating);
         });
 
-//        var logo :Image = new Image();
-//        logo.source = "/images/room/home_page_tour.png";
-
         var hbox :HBox = new HBox();
         hbox.addChild(FlexUtil.createLabel(Msgs.WORLD.get("l.tour_rate")));
         hbox.addChild(_myStars);

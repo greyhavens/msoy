@@ -646,11 +646,8 @@ public class AVRGameBackend extends ControlBackend
     // TODO: not used?
     protected function getPlayerName_v1 (playerId :int) :String
     {
-        var occInfo :OccupantInfo = _ctrl.getRoom().getOccupantInfo(new MemberName("", playerId));
-        if (occInfo != null && occInfo is MemberInfo && occInfo.username != null) {
-            return occInfo.username.toString();
-        }
-        return null;
+        var memInfo :MemberInfo = _ctrl.getRoom().getMemberInfo(playerId);
+        return (memInfo == null) ? null : memInfo.username.toString();
     }
 
     /**

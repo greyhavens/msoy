@@ -423,13 +423,12 @@ public class RoomView extends Sprite
     // documentation inherited from interface PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
-        // TODO
+        // nada
     }
 
     // documentation inherited from interface PlaceView
     public function didLeavePlace (plobj :PlaceObject) :void
     {
-        // TODO?
         removeAll(_furni);
         setBackground(null);
         _scene = null;

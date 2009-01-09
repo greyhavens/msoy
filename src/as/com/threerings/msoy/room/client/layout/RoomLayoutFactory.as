@@ -40,8 +40,6 @@ public class RoomLayoutFactory {
             return RoomLayoutStandard;
         }
 
-        // since we only have two layout classes right now, don't worry about a lookup table :)
-        // TODO: lookup table.
         if (decor.type == Decor.FLAT_LAYOUT) {
             return RoomLayoutFlatworld;
 
