@@ -141,6 +141,7 @@ public class LobbyGameLiaison extends GameLiaison
     {
         // TODO: check that we're not already where we're about to go
         if (groupId > 0 && _wctx.getWorldController().getCurrentSceneId() == 0) {
+            log.info("Lobby loaded, going to group home");
             _goingToGroupHome = true;
             _wctx.getWorldController().handleGoGroupHome(groupId);
         }
@@ -163,9 +164,11 @@ public class LobbyGameLiaison extends GameLiaison
 
         // if we've already started going to the group home, wait until we get there
         if (_goingToGroupHome) {
+            log.info("Waiting to arrive at group home before entering game");
             return true;
         }
 
+        log.info("Entering game");
         if (!_gctx.getLocationDirector().moveTo(gameOid)) {
             return false;
         }
@@ -280,18 +283,20 @@ public class LobbyGameLiaison extends GameLiaison
 
     protected function worldLocationDidChange (place :PlaceObject) :void
     {
-        // don't do anything if we are not yet in a game
-        if (_gameOid == 0) {
-            return;
-        }
-
-        if (_goingToGroupHome) {
-            // assume this is a result of our handleGoGroupHome
+        if (_goingToGroupHome && _gameOid != 0) {
+            // we've arrived at the game's home room and the game is ready; go!
+            log.info("Arrived at group home, entering game again");
             _goingToGroupHome = false;
             enterGame(_gameOid);
-            
-        } else if (place != null) {
+
+        } else if (_goingToGroupHome) {
+            // we've arrived at the game's home room and the lobby is still waiting
+            log.info("Arrived at group home, resuming normal lobby operation");
+            _goingToGroupHome = false;
+
+        } else if (_gameOid != 0 && place != null) {
             // we've left our game and returned to the world, so we want to shutdown
+            log.info("Moved to a whirled room, shutting down game");
             shutdown();
         }
     }
