@@ -4,7 +4,9 @@
 package com.threerings.msoy.money.server.persist;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.EnumSet;
@@ -28,6 +30,7 @@ import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.SchemaMigration;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
@@ -39,10 +42,12 @@ import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.jdbc.DatabaseLiaison;
 
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.msoy.server.persist.RatingRecord;
 
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
@@ -78,6 +83,19 @@ public class MoneyRepository extends DepotRepository
     public MoneyRepository (final PersistenceContext ctx)
     {
         super(ctx);
+
+        _ctx.registerMigration(MoneyTransactionRecord.class, new SchemaMigration(6) {
+            protected int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
+                String ixName = _tableName + "_ixCurrency";
+                if (liaison.tableContainsIndex(conn, _tableName, ixName)) {
+                    log.info("Dropping index " + ixName + " using liaison: " + liaison);
+                    liaison.dropIndex(conn, _tableName, ixName);
+                    return 1;
+                }
+                log.warning(_tableName + " does not contain index " + ixName + " for dropping.");
+                return 0;
+            }
+        });
     }
 
     /**

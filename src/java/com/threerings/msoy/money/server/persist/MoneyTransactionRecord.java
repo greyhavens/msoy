@@ -31,7 +31,7 @@ import com.threerings.msoy.money.data.all.TransactionType;
  *
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Entity(indices={ @Index(name="ixSubject") })
+@Entity(indices={ @Index(name="ixSubject"), @Index(name="ixCurrencyTimestamp") })
 public class MoneyTransactionRecord extends PersistentRecord
 {
     /** Stores the data for the subject of a transaction. */
@@ -89,7 +89,7 @@ public class MoneyTransactionRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this if you change this object's schema. */
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /** Value of {@link #subjectType} when there is no subject. */
     public static final int SUBJECT_NONE = 0;
@@ -124,6 +124,14 @@ public class MoneyTransactionRecord extends PersistentRecord
         return new ColumnExp[] { SUBJECT_TYPE, SUBJECT_ID_TYPE, SUBJECT_ID };
     }
 
+    /**
+     * Defines the currency/timestamp multikey index.
+     */
+    public static ColumnExp[] ixCurrencyTimestamp ()
+    {
+        return new ColumnExp[] { CURRENCY, TIMESTAMP };
+    }
+
     /** ID of this record. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -142,7 +150,6 @@ public class MoneyTransactionRecord extends PersistentRecord
     public TransactionType transactionType;
 
     /** Type of money modified. */
-    @Index(name="ixCurrency")
     public Currency currency;
 
     /** Amount debited/credited. */
