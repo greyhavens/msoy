@@ -643,12 +643,12 @@ public class AVRGameBackend extends ControlBackend
         }
     }
 
-    // TODO: not used?
-    protected function getPlayerName_v1 (playerId :int) :String
-    {
-        var memInfo :MemberInfo = _ctrl.getRoom().getMemberInfo(playerId);
-        return (memInfo == null) ? null : memInfo.username.toString();
-    }
+//    // TODO: not used?
+//    protected function getPlayerName_v1 (playerId :int) :String
+//    {
+//        var memInfo :MemberInfo = _ctrl.getRoom().getMemberInfo(playerId);
+//        return (memInfo == null) ? null : memInfo.username.toString();
+//    }
 
     /**
      * Displays an info message to the player. Default does nothing, so subclasses should
