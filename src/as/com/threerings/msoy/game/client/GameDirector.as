@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import mx.styles.StyleManager;
+
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.BasicDirector;
@@ -113,14 +115,15 @@ public class GameDirector extends BasicDirector
 
         menuData.push({label: _liaison.gameName});
         menuData.push({type: "separator"});
-        menuData.push({label: Msgs.GAME.get("b.gameInstructions"),
-                       command: viewGameInstructions});
+        menuData.push({label: Msgs.GAME.get("b.gameInstructions"), command: viewGameInstructions,
+            icon: StyleManager.getStyleDeclaration(".controlBarGameButton").getStyle("image")});
         if (_liaison.gameGroupId != Game.NO_GROUP) {
             menuData.push({label: Msgs.GAME.get("b.gameGroup"),
                            command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
         }
         menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
-        menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments});
+        menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments,
+            icon: StyleManager.getStyleDeclaration(".controlBarButtonComment").getStyle("image")});
         menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
         if (_liaison is AVRGameLiaison) {
             menuData.push({label: Msgs.GAME.get("b.gameInvite"), enabled: false});
