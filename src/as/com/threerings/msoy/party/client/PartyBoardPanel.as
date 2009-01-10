@@ -11,11 +11,13 @@ import mx.controls.List;
 import mx.controls.Text;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
@@ -44,7 +46,7 @@ public class PartyBoardPanel extends FloatingPanel
 
         _content = new VBox();
         _content.width = 400;
-        _content.height = 380;
+        _content.height = 370;
         _content.addChild(loading);
 
         getPartyBoard();
@@ -65,10 +67,13 @@ public class PartyBoardPanel extends FloatingPanel
         sep.styleName = "panelBottomSeparator";
         addChild(sep);
 
-        var text :Text = FlexUtil.createWideText(null);
-        text.htmlText = Msgs.PARTY.get("m.about");
-        text.selectable = true; // for the link to fucking work
+        var text :Text = FlexUtil.createWideText(Msgs.PARTY.get("m.about"));
+        text.setStyle("fontSize", 12);
         top.addChild(text);
+        var link :CommandLinkButton = new CommandLinkButton(
+            Msgs.PARTY.get("b.wiki"), MsoyController.VIEW_URL, Msgs.PARTY.get("u.wiki"));
+        link.styleName = "underLink";
+        top.addChild(link);
 
         addChild(_content);
 

@@ -59,7 +59,7 @@ public class ShareDialog extends FloatingPanel
             const affLink :CommandLinkButton = new CommandLinkButton(
                 Msgs.GENERAL.get("b.sharing"), MsoyController.VIEW_URL,
                 Msgs.GENERAL.get("u.affiliates"));
-            affLink.styleName = "shareLink";
+            affLink.styleName = "underLink";
             addChild(affLink);
         }
 
