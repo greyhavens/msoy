@@ -38,7 +38,6 @@ import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyPortal;
@@ -212,9 +211,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
 
         // if this is a member with followers, tell them all to make the same scene move
         if (memobj != null) {
-            // inform the party registry
-            _partyReg.playerWillMove(memobj, sceneId);
-
             // iterate over a copy of the DSet, as we may modify it via the MemberNodeActions
             for (MemberName follower : Lists.newArrayList(memobj.followers)) {
                 // this will notify the follower to change scenes and if the follower cannot be
@@ -306,7 +302,6 @@ public class MsoySceneRegistry extends SpotSceneRegistry
     @Inject protected MemberLocator _locator;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected PetManager _petMan;
-    @Inject protected PartyRegistry _partyReg;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected FeedRepository _feedRepo;
 }

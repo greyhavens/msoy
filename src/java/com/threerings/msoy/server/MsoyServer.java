@@ -308,6 +308,9 @@ public class MsoyServer extends MsoyBaseServer
         // to be distinguished and connected
         _conmgr.addChainedAuthenticator(new WindowAuthenticator(ServerConfig.windowSharedSecret));
         _clmgr.setSessionFactory(new WindowSessionFactory(_clmgr.getSessionFactory()));
+
+        // wire up the party authenticator and session factory
+        _partyReg.configSessionFactory(_conmgr, _clmgr);
     }
 
     @Override // from PresentsServer

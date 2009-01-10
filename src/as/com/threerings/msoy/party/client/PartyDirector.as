@@ -9,6 +9,7 @@ import com.threerings.util.Log;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ResultAdapter;
 
@@ -31,7 +32,9 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
+import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyMarshaller;
@@ -45,6 +48,7 @@ import com.threerings.msoy.world.client.WorldControlBar;
  * Manages party stuff on the client.
  */
 public class PartyDirector extends BasicDirector
+    implements PartyBoardService_JoinListener
 {
     // reference the PartyBoardMarshaller class
     PartyBoardMarshaller;
@@ -148,20 +152,20 @@ public class PartyDirector extends BasicDirector
      */
     public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void
     {
-        var handleSuccess :Function = function (sceneId :int) :void {
-            visitPartyScene(sceneId);
-            Prefs.setPartyGroup(groupId);
-        };
-        var handleFailure :Function = function (error :String) :void {
-            _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
-            // re-open...
-            var panel :CreatePartyPanel = new CreatePartyPanel(_wctx);
-            panel.open();
-            panel.init(name, groupId, inviteAllFriends);
-        };
+//         var handleSuccess :Function = function (sceneId :int) :void {
+//             visitPartyScene(sceneId);
+//             Prefs.setPartyGroup(groupId);
+//         };
+//         var handleFailure :Function = function (error :String) :void {
+//             _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
+//             // re-open...
+//             var panel :CreatePartyPanel = new CreatePartyPanel(_wctx);
+//             panel.open();
+//             panel.init(name, groupId, inviteAllFriends);
+//         };
 
-        _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends,
-            new ResultAdapter(handleSuccess, handleFailure));
+        // TODO: make the locator listener an adapter
+        _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends, this);
     }
 
     /**
@@ -169,8 +173,8 @@ public class PartyDirector extends BasicDirector
      */
     public function joinParty (id :int) :void
     {
-        _pbsvc.joinParty(_wctx.getClient(), id,
-            _wctx.resultListener(handleJoinParty, MsoyCodes.PARTY_MSGS));
+        // first we have to find out what node is hosting the party in question
+        _pbsvc.locateParty(_wctx.getClient(), id, this);
     }
 
     /**
@@ -221,29 +225,45 @@ public class PartyDirector extends BasicDirector
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
-    override public function clientDidLogoff (event :ClientEvent) :void
+    // from PartyBoardService_JoinListener
+    public function foundParty (partyId :int, hostname :String, port :int) :void
     {
-        super.clientDidLogoff(event);
-
-        // if they're in a party and have the popup down, make a note to not pop it
-        // up on the new node
-        _suppressPartyPop = (_partyObj != null) && !getButton().selected;
-        unsubscribeParty();
+        // create a new party session and connect to our party host node
+        _pctx = new PartyContextImpl(_wctx);
+        _pctx.getClient().addClientObserver(new ClientAdapter(
+            null, partyDidLogon, null, partyDidLogoff, partyLogonFailed, partyConnectFailed));
+        _pctx.connect(partyId, hostname, port);
     }
 
-    protected function checkPartyId () :void
+    // from PartyBoardService_JoinListener
+    public function requestFailed (cause :String) :void
     {
-        const partyId :int = _wctx.getMemberObject().partyId;
-        log.debug("checking partyId: " + partyId + "  " + _partyObj);
-        if (partyId == 0 || (_partyObj != null && _partyObj.id != partyId)) {
-            unsubscribeParty();
-        }
-        if (partyId != 0 && (_partyObj == null)) {
-            log.debug("requested locateMyParty");
-            _pbsvc.locateMyParty(_ctx.getClient(),
-                _wctx.resultListener(handleLocateParty, MsoyCodes.PARTY_MSGS));
-        }
+        _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, cause);
     }
+
+//     override public function clientDidLogoff (event :ClientEvent) :void
+//     {
+//         super.clientDidLogoff(event);
+
+//         // if they're in a party and have the popup down, make a note to not pop it
+//         // up on the new node
+//         _suppressPartyPop = (_partyObj != null) && !getButton().selected;
+//         unsubscribeParty();
+//     }
+
+//     protected function checkPartyId () :void
+//     {
+//         const partyId :int = _wctx.getMemberObject().partyId;
+//         log.debug("checking partyId: " + partyId + "  " + _partyObj);
+//         if (partyId == 0 || (_partyObj != null && _partyObj.id != partyId)) {
+//             unsubscribeParty();
+//         }
+//         if (partyId != 0 && (_partyObj == null)) {
+//             log.debug("requested locateMyParty");
+//             _pbsvc.locateMyParty(_ctx.getClient(),
+//                 _wctx.resultListener(handleLocateParty, MsoyCodes.PARTY_MSGS));
+//         }
+//     }
 
     protected function checkFollowParty () :void
     {
@@ -260,45 +280,45 @@ public class PartyDirector extends BasicDirector
         }
     }
 
-    /**
-     * Handles the response from a joinParty() request.
-     */
-    protected function handleJoinParty (sceneId :int) :void
-    {
-        log.debug("handleJoinParty", "sceneId", sceneId);
-        closeAllDetailPanels();
-        visitPartyScene(sceneId);
-        /* Note:
-        if (onSameServer) {
-            visitPartyScene(); // could be a no-op.
-            // then, reacting to partyId being set:
-            locateMyParty(); // returns oid, you subscribe
+//     /**
+//      * Handles the response from a joinParty() request.
+//      */
+//     protected function handleJoinParty (sceneId :int) :void
+//     {
+//         log.debug("handleJoinParty", "sceneId", sceneId);
+//         closeAllDetailPanels();
+//         visitPartyScene(sceneId);
+//         /* Note:
+//         if (onSameServer) {
+//             visitPartyScene(); // could be a no-op.
+//             // then, reacting to partyId being set:
+//             locateMyParty(); // returns oid, you subscribe
 
-        } else {
-            visitPartyScene(); // you request a new server
-            // then, reacting to partyId being set:
-            locateMyParty(); // you get told the sceneId *again*, moveTo is suppressed
-            // when you arrive on the new server
-            locateMyParty(); // get told the new oid
-            // if the party has since moved to another scene, you'll hear about it on the partyObj
-        }
-        */
-    }
+//         } else {
+//             visitPartyScene(); // you request a new server
+//             // then, reacting to partyId being set:
+//             locateMyParty(); // you get told the sceneId *again*, moveTo is suppressed
+//             // when you arrive on the new server
+//             locateMyParty(); // get told the new oid
+//             // if the party has since moved to another scene, you'll hear about it on the partyObj
+//         }
+//         */
+//     }
 
-    /**
-     * Handles the response from a locateMyParty() request.
-     */
-    protected function handleLocateParty (result :Object) :void
-    {
-        // we get either an int[] or an Integer back.
-        if (result is Array) {
-            log.debug("handleLocateParty", "oid", result[0]);
-            subscribeParty(int(result[0]));
-        } else {
-            log.debug("handleLocateParty", "sceneId", result);
-            visitPartyScene(int(result));
-        }
-    }
+//     /**
+//      * Handles the response from a locateMyParty() request.
+//      */
+//     protected function handleLocateParty (result :Object) :void
+//     {
+//         // we get either an int[] or an Integer back.
+//         if (result is Array) {
+//             log.debug("handleLocateParty", "oid", result[0]);
+//             subscribeParty(int(result[0]));
+//         } else {
+//             log.debug("handleLocateParty", "sceneId", result);
+//             visitPartyScene(int(result));
+//         }
+//     }
 
     /**
      * Handles the response from a leaveParty() request.
@@ -314,13 +334,35 @@ public class PartyDirector extends BasicDirector
         }
     }
 
+    protected function partyDidLogon (event :ClientEvent) :void
+    {
+        trace("ZOMG! Logged on");
+        var pbd :PartyBootstrapData = (event.getClient().getBootstrapData() as PartyBootstrapData);
+        subscribeParty(pbd.partyOid);
+    }
+
+    protected function partyDidLogoff (event :ClientEvent) :void
+    {
+        trace("ZOMG! Logged off");
+    }
+
+    protected function partyLogonFailed (event :ClientEvent) :void
+    {
+        trace("ZOMG! Logon failed");
+    }
+
+    protected function partyConnectFailed (event :ClientEvent) :void
+    {
+        trace("ZOMG! Connect failed");
+    }
+
     protected function subscribeParty (oid :int) :void
     {
         unsubscribeParty(); // TODO: maybe noop if we're asked to subscribe to the same oid?
 
         _safeSubscriber = new SafeSubscriber(oid,
             new SubscriberAdapter(gotPartyObject, subscribeFailed));
-        _safeSubscriber.subscribe(_ctx.getDObjectManager());
+        _safeSubscriber.subscribe(_pctx.getDObjectManager());
     }
 
     protected function unsubscribeParty () :void
@@ -328,7 +370,7 @@ public class PartyDirector extends BasicDirector
         if (_safeSubscriber == null) {
             return;
         }
-        _safeSubscriber.unsubscribe(_ctx.getDObjectManager());
+        _safeSubscriber.unsubscribe(_pctx.getDObjectManager());
         _safeSubscriber = null;
         _partyObj.removeListener(_partyListener);
         _partyListener = null;
@@ -415,25 +457,25 @@ public class PartyDirector extends BasicDirector
         }
     }
 
-    /**
-     * Handles changes on the client object.
-     */
-    protected function userAttrChanged (event :AttributeChangedEvent) :void
-    {
-        switch (event.getName()) {
-        case MemberObject.PARTY_ID:
-            checkPartyId();
-        }
-    }
+//     /**
+//      * Handles changes on the client object.
+//      */
+//     protected function userAttrChanged (event :AttributeChangedEvent) :void
+//     {
+//         switch (event.getName()) {
+//         case MemberObject.PARTY_ID:
+//             checkPartyId();
+//         }
+//     }
 
-    // from BasicDirector
-    override protected function clientObjectUpdated (client :Client) :void
-    {
-        super.clientObjectUpdated(client);
+//     // from BasicDirector
+//     override protected function clientObjectUpdated (client :Client) :void
+//     {
+//         super.clientObjectUpdated(client);
 
-        client.getClientObject().addListener(new AttributeChangeAdapter(userAttrChanged));
-        checkPartyId();
-    }
+//         client.getClientObject().addListener(new AttributeChangeAdapter(userAttrChanged));
+//         checkPartyId();
+//     }
 
     // from BasicDirector
     override protected function registerServices (client :Client) :void
@@ -461,6 +503,8 @@ public class PartyDirector extends BasicDirector
 
     protected var _wctx :WorldContext;
     protected var _pbsvc :PartyBoardService;
+
+    protected var _pctx :PartyContextImpl;
     protected var _partyObj :PartyObject;
     protected var _safeSubscriber :SafeSubscriber;
 

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.party.server;
 
-import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.party.data.PeerPartyMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -39,18 +38,6 @@ public class PeerPartyDispatcher extends InvocationDispatcher<PeerPartyMarshalle
         case PeerPartyMarshaller.GET_PARTY_DETAIL:
             ((PeerPartyProvider)provider).getPartyDetail(
                 source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
-            );
-            return;
-
-        case PeerPartyMarshaller.GET_PARTY_SCENE:
-            ((PeerPartyProvider)provider).getPartyScene(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
-            );
-            return;
-
-        case PeerPartyMarshaller.JOIN_PARTY:
-            ((PeerPartyProvider)provider).joinParty(
-                source, ((Integer)args[0]).intValue(), (VizMemberName)args[1], ((Byte)args[2]).byteValue(), ((Boolean)args[3]).booleanValue(), (InvocationService.ResultListener)args[4]
             );
             return;
 

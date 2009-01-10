@@ -61,7 +61,7 @@ import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.data.all.ContactEntry;
@@ -1091,10 +1091,10 @@ public class WorldController extends MsoyController
                         (new LogonPanel(_wctx)).open();
                     }});
             } else {
-                var creds :MsoyCredentials = new MsoyCredentials(null, null);
+                var creds :WorldCredentials = new WorldCredentials(null, null);
                 creds.ident = "";
                 menuItems.push({ label: Msgs.GENERAL.get("b.logout"),
-                    command: MsoyController.LOGON, arg: creds });
+                                 command: MsoyController.LOGON, arg: creds });
             }
         }
     }

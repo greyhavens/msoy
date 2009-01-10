@@ -25,4 +25,7 @@ public interface PartyService extends InvocationService
 
     /** Invites a specific player to this party. */
     void inviteMember (Client client, int memberId, InvocationListener il);
+
+    /** Called by the leader to move the party to a new scene. */
+    void moveParty (Client client, int sceneId, InvocationListener il);
 }

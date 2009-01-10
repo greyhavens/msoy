@@ -59,6 +59,12 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
             );
             return;
 
+        case PartyMarshaller.MOVE_PARTY:
+            ((PartyProvider)provider).moveParty(
+                source, ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         case PartyMarshaller.UPDATE_RECRUITMENT:
             ((PartyProvider)provider).updateRecruitment(
                 source, ((Byte)args[0]).byteValue(), (InvocationService.InvocationListener)args[1]

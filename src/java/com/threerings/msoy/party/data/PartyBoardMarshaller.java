@@ -30,12 +30,12 @@ public class PartyBoardMarshaller extends InvocationMarshaller
         public static final int FOUND_PARTY = 1;
 
         // from interface JoinMarshaller
-        public void foundParty (String arg1, int arg2)
+        public void foundParty (int arg1, String arg2, int arg3)
         {
             _invId = null;
             omgr.postEvent(new InvocationResponseEvent(
                                callerOid, requestId, FOUND_PARTY,
-                               new Object[] { arg1, Integer.valueOf(arg2) }, transport));
+                               new Object[] { Integer.valueOf(arg1), arg2, Integer.valueOf(arg3) }, transport));
         }
 
         @Override // from InvocationMarshaller
@@ -44,7 +44,7 @@ public class PartyBoardMarshaller extends InvocationMarshaller
             switch (methodId) {
             case FOUND_PARTY:
                 ((JoinListener)listener).foundParty(
-                    (String)args[0], ((Integer)args[1]).intValue());
+                    ((Integer)args[0]).intValue(), (String)args[1], ((Integer)args[2]).intValue());
                 return;
 
             default:
@@ -58,9 +58,9 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static final int CREATE_PARTY = 1;
 
     // from interface PartyBoardService
-    public void createParty (Client arg1, String arg2, int arg3, boolean arg4, InvocationService.ResultListener arg5)
+    public void createParty (Client arg1, String arg2, int arg3, boolean arg4, PartyBoardService.JoinListener arg5)
     {
-        InvocationMarshaller.ResultMarshaller listener5 = new InvocationMarshaller.ResultMarshaller();
+        PartyBoardMarshaller.JoinMarshaller listener5 = new PartyBoardMarshaller.JoinMarshaller();
         listener5.listener = arg5;
         sendRequest(arg1, CREATE_PARTY, new Object[] {
             arg2, Integer.valueOf(arg3), Boolean.valueOf(arg4), listener5
@@ -93,34 +93,8 @@ public class PartyBoardMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #joinParty} requests. */
-    public static final int JOIN_PARTY = 4;
-
-    // from interface PartyBoardService
-    public void joinParty (Client arg1, int arg2, InvocationService.ResultListener arg3)
-    {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, JOIN_PARTY, new Object[] {
-            Integer.valueOf(arg2), listener3
-        });
-    }
-
-    /** The method id used to dispatch {@link #locateMyParty} requests. */
-    public static final int LOCATE_MY_PARTY = 5;
-
-    // from interface PartyBoardService
-    public void locateMyParty (Client arg1, InvocationService.ResultListener arg2)
-    {
-        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, LOCATE_MY_PARTY, new Object[] {
-            listener2
-        });
-    }
-
     /** The method id used to dispatch {@link #locateParty} requests. */
-    public static final int LOCATE_PARTY = 6;
+    public static final int LOCATE_PARTY = 4;
 
     // from interface PartyBoardService
     public void locateParty (Client arg1, int arg2, PartyBoardService.JoinListener arg3)

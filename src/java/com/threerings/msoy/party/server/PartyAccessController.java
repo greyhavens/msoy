@@ -9,9 +9,9 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.Subscriber;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyObjectAccess;
 
+import com.threerings.msoy.party.data.PartierObject;
 import com.threerings.msoy.party.data.PartyObject;
 
 public class PartyAccessController implements AccessController
@@ -26,11 +26,11 @@ public class PartyAccessController implements AccessController
     {
         // if the subscriber is a client, ensure that they are in this party
         if (sub instanceof ProxySubscriber) {
-            MemberObject mobj = (MemberObject) ((ProxySubscriber) sub).getClientObject();
+            PartierObject pobj = (PartierObject) ((ProxySubscriber) sub).getClientObject();
             PartyObject partyObj = (PartyObject)object;
-            boolean canSubscribe = (mobj.partyId == partyObj.id);
+            boolean canSubscribe = (pobj.partyId == partyObj.id);
             if (canSubscribe) {
-                _mgr.clientSubscribed(mobj);
+                _mgr.clientSubscribed(pobj);
             }
             return canSubscribe;
         }

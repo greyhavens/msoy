@@ -28,7 +28,7 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
-import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.WorldCredentials;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -171,7 +171,7 @@ public class LogonPanel extends FloatingPanel
         observer = new ClientAdapter(null, didLogon, null, null, failed, failed);
         _ctx.getClient().addClientObserver(observer);
 
-        var creds :MsoyCredentials = new MsoyCredentials(
+        var creds :WorldCredentials = new WorldCredentials(
             new Name(_email.text), MD5.hash(_password.text));
         CommandEvent.dispatch(this, MsoyController.LOGON, creds);
     }

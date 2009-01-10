@@ -26,16 +26,20 @@ import com.samskivert.servlet.user.Password;
 import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.OneLineLogFormatter;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.util.Name;
+
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ClientObserver;
+
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
+
 import com.threerings.msoy.swiftly.client.controller.PassiveNotifier;
 import com.threerings.msoy.swiftly.client.view.GrowlStyleNotifier;
 import com.threerings.msoy.swiftly.client.view.SwiftlyWindowView;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientObserver;
-import com.threerings.util.IdentUtil;
-import com.threerings.util.Name;
+import com.threerings.msoy.swiftly.data.SwiftlyCredentials;
 
 public class SwiftlyApplet extends JApplet
     implements ClientObserver, SwiftlyApplication
@@ -68,22 +72,8 @@ public class SwiftlyApplet extends JApplet
         _ctx.getClient().setServer(server, new int[] { port });
 
         // create our credentials and logon
-        MsoyCredentials creds = new MsoyCredentials();
+        SwiftlyCredentials creds = new SwiftlyCredentials();
         creds.sessionToken = getParameter("authtoken");
-        if (StringUtil.isBlank(creds.sessionToken)) {
-            // attempt to use a username and password instead
-            creds = new MsoyCredentials(new Name(getParameter("username")),
-                Password.makeFromClear(getParameter("password")));
-        }
-        try {
-            creds.ident = IdentUtil.getMachineIdentifier();
-        } catch (SecurityException se) {
-            // no problem, we will have no ident
-        }
-        // if we got a real ident from the client, mark it as such
-        if (creds.ident != null && !creds.ident.matches("S[A-Za-z0-9/+]{32}")) {
-            creds.ident = "C" + creds.ident;
-        }
         _ctx.getClient().setCredentials(creds);
         _ctx.getClient().setVersion(DeploymentConfig.version);
         _ctx.getClient().logon();

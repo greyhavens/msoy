@@ -70,8 +70,21 @@ public class PartyMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #moveParty} requests. */
+    public static final int MOVE_PARTY = 5;
+
+    // from interface PartyService
+    public void moveParty (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, MOVE_PARTY, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #updateRecruitment} requests. */
-    public static final int UPDATE_RECRUITMENT = 5;
+    public static final int UPDATE_RECRUITMENT = 6;
 
     // from interface PartyService
     public void updateRecruitment (Client arg1, byte arg2, InvocationService.InvocationListener arg3)
@@ -84,7 +97,7 @@ public class PartyMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateStatus} requests. */
-    public static final int UPDATE_STATUS = 6;
+    public static final int UPDATE_STATUS = 7;
 
     // from interface PartyService
     public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)

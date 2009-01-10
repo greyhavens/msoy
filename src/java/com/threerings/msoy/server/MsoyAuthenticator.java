@@ -25,8 +25,8 @@ import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
-import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -387,7 +387,7 @@ public class MsoyAuthenticator extends Authenticator
     {
         final AuthRequest req = conn.getAuthRequest();
         final MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
-        MsoyCredentials creds = null;
+        WorldCredentials creds = null;
 
         try {
             // make sure they've got the correct version
@@ -403,7 +403,7 @@ public class MsoyAuthenticator extends Authenticator
 
             // make sure they've sent valid credentials
             try {
-                creds = (MsoyCredentials) req.getCredentials();
+                creds = (WorldCredentials) req.getCredentials();
             } catch (final ClassCastException cce) {
                 log.warning("Invalid creds " + req.getCredentials() + ".", cce);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
@@ -414,9 +414,9 @@ public class MsoyAuthenticator extends Authenticator
             }
 
             if (creds.sessionToken != null) {
-                if (MsoyCredentials.isGuestSessionToken(creds.sessionToken)) {
+                if (WorldCredentials.isGuestSessionToken(creds.sessionToken)) {
                     authenticateGuest(conn, creds, rdata,
-                                      MsoyCredentials.getGuestMemberId(creds.sessionToken));
+                                      WorldCredentials.getGuestMemberId(creds.sessionToken));
 
                 } else {
                     final MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
@@ -444,7 +444,7 @@ public class MsoyAuthenticator extends Authenticator
         }
     }
 
-    protected void authenticateGuest (final AuthingConnection conn, final MsoyCredentials creds,
+    protected void authenticateGuest (final AuthingConnection conn, final WorldCredentials creds,
                                       final MsoyAuthResponseData rdata, final int memberId)
         throws ServiceException
     {
@@ -462,12 +462,12 @@ public class MsoyAuthenticator extends Authenticator
                 generateGuestName(memberId) : creds.getUsername().toString();
             creds.setUsername(new MemberName(name, memberId));
         }
-        rdata.sessionToken = MsoyCredentials.makeGuestSessionToken(memberId);
+        rdata.sessionToken = WorldCredentials.makeGuestSessionToken(memberId);
         rdata.code = MsoyAuthResponseData.SUCCESS;
         _eventLog.userLoggedIn(memberId, creds.visitorId, false, System.currentTimeMillis());
     }
 
-    protected Account authenticateMember (MsoyCredentials creds, MsoyAuthResponseData rdata,
+    protected Account authenticateMember (WorldCredentials creds, MsoyAuthResponseData rdata,
                                           MemberRecord member, String accountName, String password)
         throws ServiceException
     {

@@ -38,7 +38,7 @@ import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
-import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
@@ -126,7 +126,7 @@ public class WorldClient extends MsoyClient
             // fill our session token into our credentials so that we can log in more efficiently
             // on a reconnect, so that we can log into game servers and so that guests can preserve
             // some sense of identity during the course of their session
-            (getCredentials() as MsoyCredentials).sessionToken = rdata.sessionToken;
+            (getCredentials() as WorldCredentials).sessionToken = rdata.sessionToken;
         }
 
         log.info("Client logged on [built=" + DeploymentConfig.buildTime +
@@ -197,7 +197,7 @@ public class WorldClient extends MsoyClient
         log.info("Logging off via external request [backAsGuest=" + backAsGuest + "].");
 
         if (backAsGuest) {
-            var creds :MsoyCredentials = new MsoyCredentials(null, null);
+            var creds :WorldCredentials = new WorldCredentials(null, null);
             creds.ident = "";
             _wctx.getMsoyController().handleLogon(creds);
         } else {
@@ -342,16 +342,16 @@ public class WorldClient extends MsoyClient
     override protected function createStartupCreds (token :String) :Credentials
     {
         var params :Object = MsoyParameters.get();
-        var creds :MsoyCredentials;
+        var creds :WorldCredentials;
         if ((params["pass"] != null) && (params["user"] != null)) {
-            creds = new MsoyCredentials(new Name(String(params["user"])),
-                                        MD5.hash(String(params["pass"])));
+            creds = new WorldCredentials(
+                new Name(String(params["user"])), MD5.hash(String(params["pass"])));
         } else {
-            creds = new MsoyCredentials(null, null);
+            creds = new WorldCredentials(null, null);
         }
 
-        creds.ident = Prefs.getMachineIdent();
         creds.sessionToken = (token == null) ? params["token"] : token;
+        creds.ident = Prefs.getMachineIdent();
         creds.featuredPlaceView = _featuredPlaceView;
         creds.visitorId = getVisitorId();
 

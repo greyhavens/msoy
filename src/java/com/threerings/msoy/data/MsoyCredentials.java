@@ -3,32 +3,21 @@
 
 package com.threerings.msoy.data;
 
-import com.samskivert.servlet.user.Password;
-
 import com.threerings.util.ActionScript;
 import com.threerings.util.Name;
 
-import com.threerings.presents.net.UsernamePasswordCreds;
+import com.threerings.presents.net.Credentials;
 
 /**
  * Contains extra information used during authentication with the game server.
  */
-public class MsoyCredentials extends UsernamePasswordCreds
+public class MsoyCredentials extends Credentials
 {
     /** A string prepended to session tokens that represent guest sessions. */
     public static final String GUEST_SESSION_PREFIX = "G";
 
     /** A session token that identifies a user without requiring username or password. */
     public String sessionToken;
-
-    /** The machine identifier of the client, if one is known. */
-    public String ident;
-
-    /** Indicates whether this client is set up as a featured place view. */
-    public boolean featuredPlaceView;
-
-    /** The unique tracking id for this client, if one is assigned */
-    public String visitorId;
 
     /**
      * Returns true if the supplied (non-null) session token is a guest session token.
@@ -56,13 +45,12 @@ public class MsoyCredentials extends UsernamePasswordCreds
     }
 
     /**
-     * Creates credentials with the specified username and password.  {@link #ident} should be set
-     * before logging in unless the client does not know its machine identifier in which case it
-     * should be left null.
+     * Creates credentials with the specified username. {@link #sessionToken} should be set before
+     * logging in.
      */
-    public MsoyCredentials (Name username, Password password)
+    public MsoyCredentials (Name username)
     {
-        super(username, password.getEncrypted());
+        super(username);
     }
 
     /**
@@ -72,13 +60,10 @@ public class MsoyCredentials extends UsernamePasswordCreds
     {
     }
 
-    @Override // documentation inherited
-    @ActionScript(name="toStringBuf")
+    @Override @ActionScript(name="toStringBuf")
     protected void toString (StringBuilder buf)
     {
         super.toString(buf);
-        buf.append(", ident=").append(ident);
-        buf.append(", featuredPlaceView=").append(featuredPlaceView);
-        buf.append(", visitorId=").append(visitorId);
+        buf.append(", token=").append(sessionToken);
     }
 }

@@ -763,7 +763,7 @@ public class RoomManager extends SpotSceneManager
 
         if (body instanceof MemberObject) {
             // as we arrive at a room, we entrust it with our memories for broadcast to clients
-            body.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom(_roomObj);
+            body.getLocal(MemberLocal.class).willEnter((MemberObject)body, _roomObj);
         }
 
         super.bodyWillEnter(body);
@@ -773,30 +773,7 @@ public class RoomManager extends SpotSceneManager
     public void bodyWillLeave (BodyObject body)
     {
         if (body instanceof MemberObject) {
-            MemberObject memobj = (MemberObject)body;
-            List<EntityMemoryEntry> mems = null;
-            if (memobj.avatar != null) {
-                // any memories we deposited in the room for safe-keeping must be enumerated
-                mems = Lists.newArrayList();
-                ItemIdent avatar = memobj.avatar.getIdent();
-                for (EntityMemoryEntry entry : _roomObj.memories) {
-                    if (avatar.equals(entry.item)) {
-                        mems.add(entry);
-                    }
-                }
-                if (mems.size() > 0) {
-                    // and removed from the room
-                    _roomObj.startTransaction();
-                    try {
-                        for (EntityMemoryEntry entry : mems) {
-                            _roomObj.removeFromMemories(entry.getKey());
-                        }
-                    } finally {
-                        _roomObj.commitTransaction();
-                    }
-                }
-            }
-            memobj.getLocal(MemberLocal.class).memories = mems;
+            body.getLocal(MemberLocal.class).willLeave((MemberObject)body, _roomObj);
         }
 
         super.bodyWillLeave(body);

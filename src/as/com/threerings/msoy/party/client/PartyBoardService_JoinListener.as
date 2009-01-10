@@ -12,6 +12,6 @@ public interface PartyBoardService_JoinListener
     extends InvocationService_InvocationListener
 {
     // from Java PartyBoardService_JoinListener
-    function foundParty (arg1 :String, arg2 :int) :void
+    function foundParty (arg1 :int, arg2 :String, arg3 :int) :void
 }
 }

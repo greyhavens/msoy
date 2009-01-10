@@ -6,17 +6,15 @@ package com.threerings.msoy.data {
 import com.threerings.util.Name;
 import com.threerings.util.StringBuilder;
 
-import com.threerings.presents.net.UsernamePasswordCreds;
+import com.threerings.presents.net.Credentials;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.msoy.data.all.VisitorInfo;
-
 /**
- * Contains extra information used during authentication with the game server.
+ * Contains information needed to authenticate with the MSOY server.
  */
-public class MsoyCredentials extends UsernamePasswordCreds
+public class MsoyCredentials extends Credentials
 {
     /** A string prepended to session tokens that represent guest sessions. */
     public static const GUEST_SESSION_PREFIX :String = "G";
@@ -24,23 +22,12 @@ public class MsoyCredentials extends UsernamePasswordCreds
     /** A session token that identifies a user without requiring username or password. */
     public var sessionToken :String;
 
-    /** The machine identifier of the client, if one is known. */
-    public var ident :String;
-
-    /** Indicates whether this client is set up as a featured place view. */
-    public var featuredPlaceView :Boolean;
-
-    /** The unique tracking id for this client, if one is assigned */
-    public var visitorId :String;
-
     /**
-     * Creates credentials with the specified username and password.
-     * {@link #ident} should be set before logging in unless the client does
-     * not know its machine identifier in which case it should be left null.
+     * Creates credentials with the specified username.
      */
-    public function MsoyCredentials (username :Name, password :String)
+    public function MsoyCredentials (username :Name)
     {
-        super(username, password);
+        super(username);
     }
 
     // from interface Streamable
@@ -48,9 +35,6 @@ public class MsoyCredentials extends UsernamePasswordCreds
     {
         super.readObject(ins);
         sessionToken = (ins.readField(String) as String);
-        ident = (ins.readField(String) as String);
-        featuredPlaceView = ins.readBoolean();
-        visitorId = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -58,19 +42,13 @@ public class MsoyCredentials extends UsernamePasswordCreds
     {
         super.writeObject(out);
         out.writeField(sessionToken);
-        out.writeField(ident);
-        out.writeBoolean(featuredPlaceView);
-        out.writeField(visitorId);
     }
 
     // documentation inherited
     override protected function toStringBuf (buf :StringBuilder) :void
     {
         super.toStringBuf(buf);
-        buf.append(", ident=").append(ident);
         buf.append(", token=").append(sessionToken);
-        buf.append(", featuredPlaceView=").append(featuredPlaceView);
-        buf.append(", visitorId=").append(visitorId);
     }
 }
 }

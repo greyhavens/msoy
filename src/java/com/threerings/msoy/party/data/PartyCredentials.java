@@ -3,16 +3,13 @@
 
 package com.threerings.msoy.party.data;
 
-import com.threerings.presents.net.Credentials;
+import com.threerings.msoy.data.MsoyCredentials;
 
 /**
- * Used to authenticate with the (logical) party server.
+ * Used to authenticate a party session.
  */
-public class PartyCredentials extends Credentials
+public class PartyCredentials extends MsoyCredentials
 {
-    /** A session token that identifies this user. */
-    public String sessionToken;
-
     /** The party that the authenticating user wishes to join. */
     public int partyId;
 }

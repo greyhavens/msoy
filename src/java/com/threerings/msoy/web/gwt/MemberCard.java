@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.StaticMediaDesc;
+import com.threerings.msoy.data.all.VizMemberName;
 
 /**
  * Contains a member's name, profile picture and other bits.
@@ -70,10 +70,7 @@ public class MemberCard
     }
 
     /** The default profile photo. */
-    public static final MediaDesc DEFAULT_PHOTO =
-        new StaticMediaDesc(MediaDesc.IMAGE_PNG, "photo", "profile_photo",
-                            // we know that we're 50x60
-                            MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+    public static final MediaDesc DEFAULT_PHOTO = VizMemberName.DEFAULT_PHOTO;
 
     /**
      * Compares two status records based on potential user interset. People in rooms are first (and

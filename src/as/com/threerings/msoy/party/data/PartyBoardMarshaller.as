@@ -26,9 +26,9 @@ public class PartyBoardMarshaller extends InvocationMarshaller
     public static const CREATE_PARTY :int = 1;
 
     // from interface PartyBoardService
-    public function createParty (arg1 :Client, arg2 :String, arg3 :int, arg4 :Boolean, arg5 :InvocationService_ResultListener) :void
+    public function createParty (arg1 :Client, arg2 :String, arg3 :int, arg4 :Boolean, arg5 :PartyBoardService_JoinListener) :void
     {
-        var listener5 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        var listener5 :PartyBoardMarshaller_JoinMarshaller = new PartyBoardMarshaller_JoinMarshaller();
         listener5.listener = arg5;
         sendRequest(arg1, CREATE_PARTY, [
             arg2, Integer.valueOf(arg3), langBoolean.valueOf(arg4), listener5
@@ -61,34 +61,8 @@ public class PartyBoardMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>joinParty</code> requests. */
-    public static const JOIN_PARTY :int = 4;
-
-    // from interface PartyBoardService
-    public function joinParty (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
-    {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, JOIN_PARTY, [
-            Integer.valueOf(arg2), listener3
-        ]);
-    }
-
-    /** The method id used to dispatch <code>locateMyParty</code> requests. */
-    public static const LOCATE_MY_PARTY :int = 5;
-
-    // from interface PartyBoardService
-    public function locateMyParty (arg1 :Client, arg2 :InvocationService_ResultListener) :void
-    {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener2.listener = arg2;
-        sendRequest(arg1, LOCATE_MY_PARTY, [
-            listener2
-        ]);
-    }
-
     /** The method id used to dispatch <code>locateParty</code> requests. */
-    public static const LOCATE_PARTY :int = 6;
+    public static const LOCATE_PARTY :int = 4;
 
     // from interface PartyBoardService
     public function locateParty (arg1 :Client, arg2 :int, arg3 :PartyBoardService_JoinListener) :void

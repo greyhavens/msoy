@@ -14,20 +14,21 @@ import com.threerings.msoy.data.all.VizMemberName;
  */
 public class PartierObject extends BodyObject
 {
+    PartyAuthName // filled into username
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
     public static const MEMBER_NAME :String = "memberName";
+
+    /** The field name of the <code>partyId</code> field. */
+    public static const PARTY_ID :String = "partyId";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
     public var memberName :VizMemberName;
 
-    // from BodyObject
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-        memberName = VizMemberName(ins.readObject());
-    }
+    /** The party to which this partier is party. */
+    public var partyId :int;
 
     /**
      * Returns this member's unique id.
@@ -43,6 +44,14 @@ public class PartierObject extends BodyObject
     public function isGuest () :Boolean
     {
         return memberName.isGuest();
+    }
+
+    // from BodyObject
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        memberName = VizMemberName(ins.readObject());
+        partyId = ins.readInt();
     }
 }
 }

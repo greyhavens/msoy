@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.party.server;
 
-import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.party.client.PeerPartyService;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -19,17 +18,5 @@ public interface PeerPartyProvider extends InvocationProvider
      * Handles a {@link PeerPartyService#getPartyDetail} request.
      */
     void getPartyDetail (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link PeerPartyService#getPartyScene} request.
-     */
-    void getPartyScene (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link PeerPartyService#joinParty} request.
-     */
-    void joinParty (ClientObject caller, int arg1, VizMemberName arg2, byte arg3, boolean arg4, InvocationService.ResultListener arg5)
         throws InvocationException;
 }

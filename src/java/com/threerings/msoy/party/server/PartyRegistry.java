@@ -29,14 +29,14 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.peer.data.NodeObject;
-
 import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.server.ClientManager;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.net.ConnectionManager;
+import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.crowd.server.BodyManager;
-
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
@@ -44,8 +44,10 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
+import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -62,8 +64,10 @@ import com.threerings.msoy.room.data.MemberInfo;
 
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.client.PeerPartyService;
+import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.party.data.PartyBoardInfo;
 import com.threerings.msoy.party.data.PartyCodes;
+import com.threerings.msoy.party.data.PartyCredentials;
 import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
@@ -86,20 +90,18 @@ public class PartyRegistry
     {
         ((MsoyNodeObject) _peerMgr.getNodeObject()).setPeerPartyService(
             _invmgr.registerDispatcher(new PeerPartyDispatcher(this)));
+    }
 
-        _peerMgr.memberFwdObs.add(new MsoyPeerManager.MemberForwardObserver() {
-            public void memberWillBeSent (String nodeName, MemberObject member) {
-                playerLeavingNode(member);
-            }
-        });
-        _locator.addObserver(new MemberLocator.Observer() {
-            public void memberLoggedOn (MemberObject member) {
-                playerArrivingNode(member);
-            }
-            public void memberLoggedOff (MemberObject member) {
-                // nada
-            }
-        });
+    /**
+     * Called during server initialization to give us a chance to wire up our authenticator and
+     * session factory.
+     */
+    public void configSessionFactory (ConnectionManager conmgr, ClientManager clmgr)
+    {
+        conmgr.addChainedAuthenticator(_injector.getInstance(PartyAuthenticator.class));
+        clmgr.setSessionFactory(new AuxSessionFactory(
+            clmgr.getSessionFactory(), PartyCredentials.class, PartyAuthName.class,
+            PartySession.class, PartyClientResolver.class));
     }
 
     /**
@@ -116,71 +118,75 @@ public class PartyRegistry
      */
     public void issueInvite (MemberObject member, MemberName inviter, int partyId, String partyName)
     {
-        // record that the member got an invite
-        member.getLocal(MemberLocal.class).notePartyInvite(partyId, inviter.getMemberId());
-        // send it
+//         // record that the member got an invite
+//         member.getLocal(MemberLocal.class).notePartyInvite(partyId, inviter.getMemberId());
         _notifyMan.notify(member, new PartyInviteNotification(inviter, partyId, partyName));
     }
 
+//     /**
+//      * Called by the MsoySceneRegistry when a player changes scenes.
+//      */
+//     public void playerWillMove (MemberObject member, int sceneId)
+//     {
+//         if (member.partyId != 0) {
+//             PartyManager mgr = _parties.get(member.partyId);
+//             if (mgr != null) {
+//                 mgr.playerWillMove(member, sceneId);
+//             }
+//         }
+//     }
+
+//     /**
+//      * Called here and by PartyManager to update a member's party id.
+//      */
+//     public void updatePartyId (MemberObject member, final int newPartyId)
+//     {
+//         member.setPartyId(newPartyId);
+//         _bodyMan.updateOccupantInfo(member, new MemberInfo.Updater<MemberInfo>() {
+//             public boolean update (MemberInfo info) {
+//                 return info.updatePartyId(newPartyId);
+//             }
+//         });
+//     }
+
     /**
-     * Called by the MsoySceneRegistry when a player changes scenes.
+     * Returns the group id of the specified party or 0 if the party does not exist.
      */
-    public void playerWillMove (MemberObject member, int sceneId)
+    public int getPartyGroupId (int partyId)
     {
-        if (member.partyId != 0) {
-            PartyManager mgr = _parties.get(member.partyId);
-            if (mgr != null) {
-                mgr.playerWillMove(member, sceneId);
-            }
-        }
+        PartyManager mgr = _parties.get(partyId);
+        return (mgr == null) ? 0 : mgr.getPartyObject().group.getGroupId();
     }
 
     /**
-     * Called here and by PartyManager to update a member's party id.
+     * Requests that the supplied member pre-join the specified party. If the method returns
+     * normally, the player will have been added to the specified party.
+     *
+     * @throws InvocationException if the party cannot be joined for some reason.
      */
-    public void updatePartyId (MemberObject member, final int newPartyId)
+    public void preJoinParty (MemberName name, int partyId, byte rank)
+        throws InvocationException
     {
-        member.setPartyId(newPartyId);
-        _bodyMan.updateOccupantInfo(member, new MemberInfo.Updater<MemberInfo>() {
-            public boolean update (MemberInfo info) {
-                return info.updatePartyId(newPartyId);
+        PartyManager mgr = _parties.get(partyId);
+        if (mgr == null) {
+            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
+        }
+        mgr.addPlayer(name, rank);
+    }
+
+    // from PartyBoardProvider
+    public void locateParty (ClientObject co, final int partyId, PartyBoardService.JoinListener jl)
+        throws InvocationException
+    {
+        String pnode = _peerMgr.lookupNodeDatum(new Function<NodeObject, String>() {
+            public String apply (NodeObject nobj) {
+                return ((MsoyNodeObject)nobj).parties.containsKey(partyId) ? nobj.nodeName : null;
             }
         });
-    }
-
-    // from PartyBoardProvider
-    public void locateParty (ClientObject caller, int partyId, PartyBoardService.JoinListener jl)
-        throws InvocationException
-    {
-        // TODO
-    }
-
-    // from PartyBoardProvider
-    public void locateMyParty (ClientObject caller, InvocationService.ResultListener rl)
-        throws InvocationException
-    {
-        MemberObject member = (MemberObject)caller;
-
-        if (member.partyId == 0) {
-            // TODO: throw no error, or just ignore it on the client
-            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        if (pnode == null) {
+            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
         }
-
-        // see if we have the party here
-        PartyManager mgr = _parties.get(member.partyId);
-        if (mgr != null) {
-            rl.requestProcessed(new int[] { mgr.getPartyObject().getOid() });
-            return;
-        }
-
-        Tuple<Client,PeerPartyService> tuple = locatePeerService(member.partyId);
-        if (tuple == null) {
-            log.warning("Member in party that cannot be found",
-                "member", member.who(), "partyId", member.partyId);
-            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
-        tuple.right.getPartyScene(tuple.left, member.partyId, rl);
+        jl.foundParty(partyId, _peerMgr.getPeerPublicHostName(pnode), _peerMgr.getPeerPort(pnode));
     }
 
     // from PartyBoardProvider
@@ -239,82 +245,9 @@ public class PartyRegistry
     }
 
     // from PartyBoardProvider
-    public void joinParty (
-        ClientObject caller, final int partyId, final InvocationService.ResultListener rl)
-        throws InvocationException
-    {
-        final MemberObject member = (MemberObject)caller;
-
-        // reject them if they're already in a party
-        if (member.partyId != 0) {
-            if (member.partyId == partyId) {
-                throw new InvocationException(PartyCodes.E_ALREADY_IN_PARTY);
-            }
-            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
-        }
-
-        // figure out their rank in the specified party's group
-        PartyInfo info = _peerMgr.getPartyInfo(partyId);
-        if (info == null) {
-            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
-        }
-
-        byte rank = member.getGroupRank(info.groupId);
-        boolean hasLeaderInvite = member.getLocal(MemberLocal.class).hasPartyInvite(
-            partyId, info.leaderId);
-
-        // pass the buck
-        joinParty(null, partyId, member.memberName, rank, hasLeaderInvite,
-            new InvocationService.ResultListener() {
-                public void requestFailed (String cause) {
-                    rl.requestFailed(cause);
-                }
-
-                public void requestProcessed (Object result) {
-                    rl.requestProcessed(result); // send along the sceneId first
-                    updatePartyId(member, partyId); // set the partyId
-                }
-            });
-    }
-
-    // from PeerPartyProvider
-    public void joinParty (
-        ClientObject caller, int partyId, VizMemberName name, byte groupRank,
-        boolean hasLeaderInvite, InvocationService.ResultListener rl)
-        throws InvocationException
-    {
-        PartyManager mgr = _parties.get(partyId);
-        if (mgr != null) {
-            // we can satisfy this request directly!
-            mgr.addPlayer(name, groupRank, hasLeaderInvite, rl);
-            return;
-        }
-
-        Tuple<Client,PeerPartyService> tuple = locatePeerService(partyId);
-        if (tuple == null) {
-            throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
-        }
-        tuple.right.joinParty(tuple.left, partyId, name, groupRank, hasLeaderInvite, rl);
-    }
-
-    // from PeerPartyProvider
-    public void getPartyScene (
-        ClientObject caller, int partyId, InvocationService.ResultListener rl)
-        throws InvocationException
-    {
-        // this will only be run on the appropriate node
-        PartyManager mgr = _parties.get(partyId);
-        if (mgr == null) {
-            log.warning("Party not found on node, should be present", "partyId", partyId);
-            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-        rl.requestProcessed(mgr.getPartyObject().sceneId);
-    }
-
-    // from PartyBoardProvider
     public void createParty (
         ClientObject caller, final String name, final int groupId, final boolean inviteAllFriends,
-        final InvocationService.ResultListener rl)
+        final PartyBoardService.JoinListener jl)
         throws InvocationException
     {
         final MemberObject member = (MemberObject)caller;
@@ -333,11 +266,9 @@ public class PartyRegistry
             public void invokePersist () throws Exception {
                 _group = _groupRepo.loadGroup(groupId);
             }
-
             public void handleSuccess () {
-                finishCreateParty(member, name, _group, groupInfo, inviteAllFriends, rl);
+                finishCreateParty(member, name, _group, groupInfo, inviteAllFriends, jl);
             }
-
             protected GroupRecord _group;
         });
     }
@@ -384,14 +315,14 @@ public class PartyRegistry
     /**
      * Finish creating a new party.
      */
-    protected void finishCreateParty (
-        MemberObject member, String name, GroupRecord group, GroupMembership groupInfo,
-        boolean inviteAllFriends, InvocationService.ResultListener rl)
+    protected void finishCreateParty (MemberObject member, String name, GroupRecord group,
+                                      GroupMembership groupInfo, boolean inviteAllFriends,
+                                      PartyBoardService.JoinListener jl)
     {
         if (!(member.location instanceof ScenePlace)) {
             log.warning("Where the heck are they starting a party?", "who", member.who(),
                 "location", member.location);
-            rl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+            jl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
             return;
         }
 
@@ -401,7 +332,7 @@ public class PartyRegistry
             // validate that they can create the party with this group
             if ((group.partyPerms == Group.PERM_MANAGER) &&
                     (groupInfo.rank < GroupMembership.RANK_MANAGER)) {
-                rl.requestFailed(PartyCodes.E_GROUP_MGR_REQUIRED);
+                jl.requestFailed(PartyCodes.E_GROUP_MGR_REQUIRED);
                 return;
             }
 
@@ -414,19 +345,20 @@ public class PartyRegistry
             pobj.leaderId = member.getMemberId();
             pobj.sceneId = ((ScenePlace) member.location).sceneId;
 
-            // Create the PartyManager and add the member
+            // create the PartyManager and add the member
             mgr = _injector.getInstance(PartyManager.class);
-            mgr.init(pobj);
+            mgr.init(pobj, member.getMemberId());
+            mgr.addPlayer(member.memberName, groupInfo.rank);
 
-            // This can throw an InvocationException, or will send the response to the user..
-            mgr.addPlayer(member.memberName, groupInfo.rank, true, rl);
+            // we're hosting this party so we send them to this same node
+            jl.foundParty(pobj.id, ServerConfig.serverHost, ServerConfig.serverPorts[0]);
 
         } catch (Exception e) {
             log.warning("Problem creating party", e);
             if (e instanceof InvocationException) {
-                rl.requestFailed(e.getMessage());
+                jl.requestFailed(e.getMessage());
             } else {
-                rl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+                jl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
             }
 
             // kill the party object we created
@@ -442,44 +374,44 @@ public class PartyRegistry
         // And now do any final party registration and setup
         // register the party
         _parties.put(pobj.id, mgr);
-        // set the partyId
-        updatePartyId(member, pobj.id);
+//         // set the partyId
+//         updatePartyId(member, pobj.id);
         if (inviteAllFriends) {
             mgr.inviteAllFriends(member);
         }
     }
 
-    /**
-     * Called prior to a member leaving a node.
-     */
-    protected void playerLeavingNode (MemberObject member)
-    {
-        if (member.partyId != 0) {
-            PartyManager mgr = _parties.get(member.partyId);
-            if (mgr != null) {
-                PartyObject pobj = mgr.getPartyObject();
-                if (pobj.leaderId == member.getMemberId()) {
-                    log.info("Dehydrating party", "partyId", pobj.id);
-                    _parties.remove(member.partyId);
-                    member.setLocal(PartyObject.class, (PartyObject)mgr.getPartyObject().clone());
-                    mgr.shutdown();
-                }
-            }
-        }
-    }
+//     /**
+//      * Called prior to a member leaving a node.
+//      */
+//     protected void playerLeavingNode (MemberObject member)
+//     {
+//         if (member.partyId != 0) {
+//             PartyManager mgr = _parties.get(member.partyId);
+//             if (mgr != null) {
+//                 PartyObject pobj = mgr.getPartyObject();
+//                 if (pobj.leaderId == member.getMemberId()) {
+//                     log.info("Dehydrating party", "partyId", pobj.id);
+//                     _parties.remove(member.partyId);
+//                     member.setLocal(PartyObject.class, (PartyObject)mgr.getPartyObject().clone());
+//                     mgr.shutdown();
+//                 }
+//             }
+//         }
+//     }
 
-    protected void playerArrivingNode (MemberObject member)
-    {
-        PartyObject pobj = member.getLocal(PartyObject.class);
-        if (pobj != null) {
-            log.info("Rehydrating party", "partyId", pobj.id);
-            member.setLocal(PartyObject.class, null);
-            _omgr.registerObject(pobj);
-            PartyManager mgr = _injector.getInstance(PartyManager.class);
-            mgr.init(pobj);
-            _parties.put(pobj.id, mgr);
-        }
-    }
+//     protected void playerArrivingNode (MemberObject member)
+//     {
+//         PartyObject pobj = member.getLocal(PartyObject.class);
+//         if (pobj != null) {
+//             log.info("Rehydrating party", "partyId", pobj.id);
+//             member.setLocal(PartyObject.class, null);
+//             _omgr.registerObject(pobj);
+//             PartyManager mgr = _injector.getInstance(PartyManager.class);
+//             mgr.init(pobj);
+//             _parties.put(pobj.id, mgr);
+//         }
+//     }
 
     /**
      * Compute the score for the specified party, or return null if the user
@@ -564,7 +496,6 @@ public class PartyRegistry
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected MsoyPeerManager _peerMgr;
-    @Inject protected MemberLocator _locator;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected BodyManager _bodyMan;
     @Inject protected NotificationManager _notifyMan;

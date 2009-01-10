@@ -21,7 +21,7 @@ public class PartyBoardMarshaller_JoinMarshaller
         switch (methodId) {
         case FOUND_PARTY:
             (listener as PartyBoardService_JoinListener).foundParty(
-                (args[0] as String), (args[1] as int));
+                (args[0] as int), (args[1] as String), (args[2] as int));
             return;
 
         default:

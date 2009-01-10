@@ -5,12 +5,15 @@ package com.threerings.msoy.server;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import com.threerings.util.StreamableArrayIntSet;
 import com.threerings.util.StreamableHashIntMap;
 
 import com.threerings.crowd.server.BodyLocal;
 import com.threerings.stats.data.StatSet;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -18,7 +21,9 @@ import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.RoomObject;
 
@@ -60,8 +65,8 @@ public class MemberLocal extends BodyLocal
     /** The memories of the member's avatar. */
     public List<EntityMemoryEntry> memories;
 
-    /** Party invitations. */
-    public StreamableHashIntMap<StreamableArrayIntSet> partyInvites;
+    /** Info on the party this member is currently rocking (or null if they're dull). */
+    public PartySummary party;
 
     /**
      * Adds an EarnedBadge to the member's BadgeSet (or updates the existing badge if the badge
@@ -96,56 +101,11 @@ public class MemberLocal extends BodyLocal
     }
 
     /**
-     * Note that this member has received a party invitation.
-     */
-    public void notePartyInvite (int partyId, int invitingMemberId)
-    {
-        if (partyInvites == null) {
-            partyInvites = new StreamableHashIntMap<StreamableArrayIntSet>();
-        }
-        StreamableArrayIntSet ids = partyInvites.get(partyId);
-        if (ids == null) {
-            ids = new StreamableArrayIntSet(1); // initial capacity: 1
-            partyInvites.put(partyId, ids);
-        }
-        ids.add(invitingMemberId);
-    }
-
-    /**
-     * Clear all the party invitations for a particular party. This is called
-     * when the member actually enters this party.
-     */
-    public void clearPartyInvites (int partyId)
-    {
-        if (partyInvites != null) {
-            partyInvites.remove(partyId);
-            if (partyInvites.isEmpty()) {
-                partyInvites = null;
-            }
-        }
-    }
-
-    /**
-     * Return true if this member has been invited to this party by the specified player.
-     * Does not clear invitations for the specified party if true.
-     */
-    public boolean hasPartyInvite (int partyId, int leaderId)
-    {
-        if (partyInvites != null) {
-            StreamableArrayIntSet ids = partyInvites.get(partyId);
-            if (ids != null) {
-                return ids.contains(leaderId);
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Called when an player is just about to enter a room, or has just switched from one avatar to
-     * a new one. In either case, {@link #memories} is expected to contain the memories for the
-     * avatar; either because it was put there (and possibly serialized in the case of a peer move)
-     * when the player left a previous room, or because we put them there manually as part of
-     * avatar resolution (see {@link MemberManager#finishSetAvatar}).
+     * Called when a player has just switched from one avatar to a new one or by {@link #willEnter}
+     * below. In either case, {@link #memories} is expected to contain the memories for the avatar;
+     * either because it was put there (and possibly serialized in the case of a peer move) when
+     * the player left a previous room, or because we put them there manually as part of avatar
+     * resolution (see {@link MemberManager#finishSetAvatar}).
      */
     public void putAvatarMemoriesIntoRoom (RoomObject roomObj)
     {
@@ -166,5 +126,76 @@ public class MemberLocal extends BodyLocal
             roomObj.commitTransaction();
         }
         memories = null;
+    }
+
+    /**
+     * Called when we depart a room to remove our avatar memories from the room and store them in
+     * this local storage.
+     */
+    public void takeAvatarMemoriesFromRoom (MemberObject memobj, RoomObject roomObj)
+    {
+        List<EntityMemoryEntry> mems = null;
+        if (memobj.avatar != null) {
+            // any memories we deposited in the room for safe-keeping must be enumerated
+            mems = Lists.newArrayList();
+            ItemIdent avatar = memobj.avatar.getIdent();
+            for (EntityMemoryEntry entry : roomObj.memories) {
+                if (avatar.equals(entry.item)) {
+                    mems.add(entry);
+                }
+            }
+            if (mems.size() > 0) {
+                // and removed from the room
+                roomObj.startTransaction();
+                try {
+                    for (EntityMemoryEntry entry : mems) {
+                        roomObj.removeFromMemories(entry.getKey());
+                    }
+                } finally {
+                    roomObj.commitTransaction();
+                }
+            }
+        }
+        memobj.getLocal(MemberLocal.class).memories = mems;
+    }
+
+    /**
+     * Called by the {@link RoomManager} when we're about to enter a room.
+     */
+    public void willEnter (MemberObject memobj, RoomObject roomObj)
+    {
+        roomObj.startTransaction();
+        try {
+            // add our avatar memories to this room
+            putAvatarMemoriesIntoRoom(roomObj);
+
+            // if we're in a party, maybe put our party summary in the room as well
+            if (party != null && !roomObj.parties.containsKey(party.id)) {
+                roomObj.addToParties(party);
+            }
+
+        } finally {
+            roomObj.commitTransaction();
+        }
+    }
+
+    /**
+     * Called by the {@link RoomManager} when we're about to leave a room.
+     */
+    public void willLeave (MemberObject memobj, RoomObject roomObj)
+    {
+        roomObj.startTransaction();
+        try {
+            // remove our avatar memories from this room
+            takeAvatarMemoriesFromRoom(memobj, roomObj);
+
+            // if we're in a party and the last member to leave this room, clean up our bits
+            if (party != null && !roomObj.parties.containsKey(party.id)) {
+                roomObj.addToParties(party);
+            }
+
+        } finally {
+            roomObj.commitTransaction();
+        }
     }
 }

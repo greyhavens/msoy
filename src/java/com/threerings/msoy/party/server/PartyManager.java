@@ -5,6 +5,7 @@ package com.threerings.msoy.party.server;
 
 import com.google.inject.Inject;
 
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -32,7 +33,7 @@ import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberNodeActions;
 
@@ -46,6 +47,7 @@ import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.room.data.RoomObject;
 
+import com.threerings.msoy.party.data.PartierObject;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyInfo;
@@ -78,7 +80,7 @@ public class PartyManager
             _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
     }
 
-    public void init (PartyObject partyObj)
+    public void init (PartyObject partyObj, int creatorId)
     {
         _partyObj = partyObj;
         _partyObj.setAccessController(new PartyAccessController(this));
@@ -95,14 +97,17 @@ public class PartyManager
         // on init, we should always be able to find the SceneManager and update the Summary
         addPartySummary(_screg.getSceneManager(partyObj.sceneId));
 
-        // prevent fuckups after a node move: wait 2 minutes and clean out any non-present peeps
-        _nodeMoveCleaner = new Interval(_omgr) {
-            public void expired () {
-                cleanAbsentPeeps();
-                _nodeMoveCleaner = null;
-            }
-        };
-        _nodeMoveCleaner.schedule(2 * 60 * 1000); // once
+        // "invited" the creator
+        _invitedIds.add(creatorId);
+
+//         // prevent fuckups after a node move: wait 2 minutes and clean out any non-present peeps
+//         _nodeMoveCleaner = new Interval(_omgr) {
+//             public void expired () {
+//                 cleanAbsentPeeps();
+//                 _nodeMoveCleaner = null;
+//             }
+//         };
+//         _nodeMoveCleaner.schedule(2 * 60 * 1000); // once
     }
 
     public void endParty ()
@@ -124,10 +129,10 @@ public class PartyManager
         _partyObj.setDestroyOnLastSubscriberRemoved(true);
 //        _omgr.destroyObject(_partyObj.getOid());
 
-        for (UserListener listener : _userListeners.values()) {
-            listener.memObj.removeListener(listener);
-        }
-        _userListeners.clear();
+//         for (UserListener listener : _userListeners.values()) {
+//             listener.memObj.removeListener(listener);
+//         }
+//         _userListeners.clear();
     }
 
     /**
@@ -138,31 +143,29 @@ public class PartyManager
         _peerMgr.removePartyInfo(_partyObj.id);
         _partyReg.partyWasRemoved(_partyObj.id);
 
-        if (_nodeMoveCleaner != null) {
-            _nodeMoveCleaner.cancel();
-            _nodeMoveCleaner = null;
-        }
+//         if (_nodeMoveCleaner != null) {
+//             _nodeMoveCleaner.cancel();
+//             _nodeMoveCleaner = null;
+//         }
     }
 
     /**
-     * Add the specified player to the party. Called from the PartyRegistry, which also
-     * takes care of filling-in the partyId in the MemberObject.
+     * Add the specified player to the party. Called from the PartyRegistry, which also takes care
+     * of filling-in the partyId in the MemberObject. If the method returns normally, the player
+     * will have been added to the party.
+     *
+     * @throws InvocationException if the player is not allowed into the party for some reason.
      */
-    public void addPlayer (
-        VizMemberName name, byte groupRank, boolean hasLeaderInvite,
-        InvocationService.ResultListener rl)
+    public void addPlayer (MemberName name, byte groupRank)
         throws InvocationException
     {
         // TODO: now that we don't modify the _partyObj here, we could simplify the PartyRegistry
         // to not register the dobj until the user successfully joins.
 
-        String snub = _partyObj.mayJoin(name, groupRank, hasLeaderInvite);
+        String snub = _partyObj.mayJoin(name, groupRank, _invitedIds.contains(name.getMemberId()));
         if (snub != null) {
             throw new InvocationException(snub);
         }
-
-        // inform them of the sceneId so that they can move there.
-        rl.requestProcessed(_partyObj.sceneId);
     }
 
     /**
@@ -194,22 +197,27 @@ public class PartyManager
     /**
      * Called from the access controller when subscription is approved for the specified member.
      */
-    public void clientSubscribed (MemberObject member)
+    public void clientSubscribed (final PartierObject partier)
     {
-        // start listening for them to die
-        UserListener listener = new UserListener(member);
-        _userListeners.put(member.getMemberId(), listener);
-        member.addListener(listener);
+        // listen for them to die
+        partier.addListener(new ObjectDeathListener() {
+            public void objectDestroyed (ObjectDestroyedEvent event) {
+                removePlayer(partier.getMemberId());
+            }
+        });
 
         // clear their invites to this party, if any
-        member.getLocal(MemberLocal.class).clearPartyInvites(_partyObj.id);
+        _invitedIds.remove(partier.getMemberId());
+
+        // TODO: update member's party id via a node action
+        // updatePartyId(member, partyId);
 
         // Crap, we used to do this in addPlayer, but they could never actually enter the party
         // and leave it hosed. The downside of doing it this way is that we could approve
         // more than MAX_PLAYERS to join the party...
         // The user may already be in the party if they arrived from another node.
-        if (!_partyObj.peeps.containsKey(member.getMemberId())) {
-            _partyObj.addToPeeps(new PartyPeep(member.memberName, nextJoinOrder()));
+        if (!_partyObj.peeps.containsKey(partier.getMemberId())) {
+            _partyObj.addToPeeps(new PartyPeep(partier.memberName, nextJoinOrder()));
         }
         updatePartyInfo();
     }
@@ -251,6 +259,13 @@ public class PartyManager
         MemberObject member = (MemberObject)caller;
         removePlayer(member.getMemberId());
         listener.requestProcessed();
+    }
+
+    // from interface PartyProvider
+    public void moveParty (ClientObject caller, int sceneId, InvocationService.InvocationListener il)
+        throws InvocationException
+    {
+        // TODO
     }
 
     // from interface PartyProvider
@@ -313,6 +328,9 @@ public class PartyManager
                 _partyObj.leaderId != inviter.getMemberId()) {
             throw new InvocationException(PartyCodes.E_CANT_INVITE_CLOSED);
         }
+        // add them to the invited set
+        _invitedIds.add(memberId);
+        // send them a notification
         //MemberNodeActions.sendNotification(memberId, createInvite(inviter));
         MemberNodeActions.inviteToParty(memberId, inviter, _partyObj.id, _partyObj.name);
     }
@@ -327,13 +345,13 @@ public class PartyManager
             return; // silently cope
         }
 
-        // remove the listener
-        UserListener listener = _userListeners.remove(memberId);
-        if (listener != null && listener.memObj.isActive()) {
-            listener.memObj.removeListener(listener);
-            // clear the party id
-            _partyReg.updatePartyId(listener.memObj, 0);
-        }
+//         // remove the listener
+//         UserListener listener = _userListeners.remove(memberId);
+//         if (listener != null && listener.memObj.isActive()) {
+//             listener.memObj.removeListener(listener);
+//             // clear the party id
+//             _partyReg.updatePartyId(listener.memObj, 0);
+//         }
 
         // if they're the last one, just kill the party
         if (_partyObj.peeps.size() == 1) {
@@ -459,19 +477,19 @@ public class PartyManager
         return newLeader;
     }
 
-    /**
-     * Clean out any people who are not yet subscribed to the party object.
-     */
-    protected void cleanAbsentPeeps ()
-    {
-        // make a copy to prevent co-mod
-        for (PartyPeep peep : _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()])) {
-            if (!_userListeners.containsKey(peep.name.getMemberId())) {
-                removePlayer(peep.name.getMemberId());
-            }
-        }
-        // that should be enough...
-    }
+//     /**
+//      * Clean out any people who are not yet subscribed to the party object.
+//      */
+//     protected void cleanAbsentPeeps ()
+//     {
+//         // make a copy to prevent co-mod
+//         for (PartyPeep peep : _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()])) {
+//             if (!_userListeners.containsKey(peep.name.getMemberId())) {
+//                 removePlayer(peep.name.getMemberId());
+//             }
+//         }
+//         // that should be enough...
+//     }
 
     /**
      * Update the partyInfo we have currently published in the node object.
@@ -507,41 +525,10 @@ public class PartyManager
         }
     }
 
-    /**
-     * A listener is created for each participant in the party.
-     */
-    protected class UserListener
-        implements AttributeChangeListener, ObjectDeathListener
-    {
-        public MemberObject memObj;
-
-        public UserListener (MemberObject memObj)
-        {
-            this.memObj = memObj;
-        }
-
-        // from AttributeChangeListener
-        public void attributeChanged (AttributeChangedEvent event)
-        {
-//            if (MemberObject.LOCATION.equals(event.getName())) {
-//                playerChangedLocation(memObj, (Place) event.getValue());
-//            }
-        }
-
-        // from ObjectDeathListener
-        public void objectDestroyed (ObjectDestroyedEvent event)
-        {
-            removePlayer(memObj.getMemberId());
-        }
-    } // end: class UserListener
-
     protected PartyObject _partyObj;
-
     protected PartyInfo _lastInfo;
-
-    protected IntMap<UserListener> _userListeners = IntMaps.newHashIntMap();
-
-    protected Interval _nodeMoveCleaner;
+//     protected Interval _nodeMoveCleaner;
+    protected ArrayIntSet _invitedIds = new ArrayIntSet();
 
     @Inject protected PartyRegistry _partyReg;
     @Inject protected RootDObjectManager _omgr;

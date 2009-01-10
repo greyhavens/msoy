@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.party.data;
 
-import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.party.client.PeerPartyService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -29,32 +28,6 @@ public class PeerPartyMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, GET_PARTY_DETAIL, new Object[] {
             Integer.valueOf(arg2), listener3
-        });
-    }
-
-    /** The method id used to dispatch {@link #getPartyScene} requests. */
-    public static final int GET_PARTY_SCENE = 2;
-
-    // from interface PeerPartyService
-    public void getPartyScene (Client arg1, int arg2, InvocationService.ResultListener arg3)
-    {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_PARTY_SCENE, new Object[] {
-            Integer.valueOf(arg2), listener3
-        });
-    }
-
-    /** The method id used to dispatch {@link #joinParty} requests. */
-    public static final int JOIN_PARTY = 3;
-
-    // from interface PeerPartyService
-    public void joinParty (Client arg1, int arg2, VizMemberName arg3, byte arg4, boolean arg5, InvocationService.ResultListener arg6)
-    {
-        InvocationMarshaller.ResultMarshaller listener6 = new InvocationMarshaller.ResultMarshaller();
-        listener6.listener = arg6;
-        sendRequest(arg1, JOIN_PARTY, new Object[] {
-            Integer.valueOf(arg2), arg3, Byte.valueOf(arg4), Boolean.valueOf(arg5), listener6
         });
     }
 }

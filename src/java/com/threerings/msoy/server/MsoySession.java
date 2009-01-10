@@ -34,9 +34,9 @@ import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
-import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -84,7 +84,7 @@ public class MsoySession extends WhirledSession
         _memobj.addListener(_idleTracker);
 
         MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account)_authdata;
-        MsoyCredentials credentials = (MsoyCredentials)getCredentials();
+        WorldCredentials credentials = (WorldCredentials)getCredentials();
 
         // if this is a guest account, they didn't get a VisitorInfo through the resolver.
         // so let's pull one from their flash credentials, or manufacture a brand new one.
@@ -168,7 +168,7 @@ public class MsoySession extends WhirledSession
 
         // if this this was a player or guest (but not a lurker), log their stats
         if (!(_memobj.username instanceof LurkerName)) {
-            String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
+            String sessTok = ((WorldCredentials)getCredentials()).sessionToken;
             local.metrics.save(_memobj);
             _eventLog.logPlayerMetrics(_memobj, sessTok);
         }
