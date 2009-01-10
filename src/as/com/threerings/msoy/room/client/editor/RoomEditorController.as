@@ -112,10 +112,11 @@ public class RoomEditorController
         var id :ItemIdent = _entranceSprite.getFurniData().getItemIdent();
         _names.put(id, { label: Msgs.EDITING.get("l.entrance"), data: id });
 
-        _panel.setDecor((scene.getSceneModel() as MsoySceneModel).decor);
+        _panel.setDecor(scene.getDecor());
 
         // hide advanced ui
         actionAdvancedEditing(false);
+        updateNameDisplay();
     }
 
     /**
@@ -544,12 +545,7 @@ public class RoomEditorController
         }
 
         // update display name
-        if (_names.containsKey(ident)) {
-            _panel.selectInNameList(_names.get(ident));
-        } else {
-            _panel.selectInNameList(null);
-            log.debug("Furni name not found! [id=" + ident + "].");
-        }
+        _panel.selectInNameList(_names.get(ident));
     }
 
     /** Called when the list of objects in the room had changed, it updates the panel. */
