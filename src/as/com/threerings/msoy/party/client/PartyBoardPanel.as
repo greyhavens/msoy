@@ -67,6 +67,7 @@ public class PartyBoardPanel extends FloatingPanel
 
         var text :Text = FlexUtil.createWideText(null);
         text.htmlText = Msgs.PARTY.get("m.about");
+        text.selectable = true; // for the link to fucking work
         top.addChild(text);
 
         addChild(_content);
