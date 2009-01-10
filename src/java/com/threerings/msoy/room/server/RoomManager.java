@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -63,6 +65,16 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
+import com.whirled.bureau.data.BureauTypes;
+
+import com.whirled.game.data.PropertySetEvent;
+import com.whirled.game.data.PropertySpaceObject.PropertySetException;
+import com.whirled.game.server.PropertySpaceDispatcher;
+import com.whirled.game.server.PropertySpaceHandler;
+import com.whirled.game.server.PropertySpaceHelper;
+import com.whirled.game.server.WhirledGameMessageDispatcher;
+import com.whirled.game.server.WhirledGameMessageHandler;
+
 import com.threerings.msoy.data.HomePageItem;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
@@ -71,7 +83,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
@@ -80,6 +91,8 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
+import com.threerings.msoy.party.data.PartySummary;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
@@ -114,15 +127,6 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.RoomPropertyRecord;
 import com.threerings.msoy.room.server.persist.SceneRecord;
-
-import com.whirled.bureau.data.BureauTypes;
-import com.whirled.game.data.PropertySetEvent;
-import com.whirled.game.data.PropertySpaceObject.PropertySetException;
-import com.whirled.game.server.PropertySpaceDispatcher;
-import com.whirled.game.server.PropertySpaceHandler;
-import com.whirled.game.server.PropertySpaceHelper;
-import com.whirled.game.server.WhirledGameMessageDispatcher;
-import com.whirled.game.server.WhirledGameMessageHandler;
 
 import static com.threerings.msoy.Log.log;
 
@@ -185,6 +189,48 @@ public class RoomManager extends SpotSceneManager
                 return true;
             }
         });
+    }
+
+    /**
+     * Called when a member joins a party while they're in our room.
+     */
+    public void memberJoinedParty (MemberObject memobj, final PartySummary party)
+    {
+        // add the party summary to the room, if necessary
+        if (!_roomObj.parties.containsKey(party.id)) {
+            _roomObj.addToParties(party);
+        }
+
+        // now we can update their occupant info (it requires that the party summary be set)
+        updateOccupantInfo(memobj.getOid(), new MemberInfo.Updater<MemberInfo>() {
+            public boolean update (MemberInfo info) {
+                return info.updatePartyId(party.id);
+            }
+        });
+    }
+
+    /**
+     * Called when a member leaves a party while they're in our room.
+     */
+    public void memberLeftParty (MemberObject memobj, final int partyId)
+    {
+        // update their occupant info
+        updateOccupantInfo(memobj.getOid(), new MemberInfo.Updater<MemberInfo>() {
+            public boolean update (MemberInfo info) {
+                return info.updatePartyId(0);
+            }
+        });
+
+        // remove the party summary if no one remains in this party
+        Predicate<OccupantInfo> havePartiers = new Predicate<OccupantInfo>() {
+            public boolean apply (OccupantInfo info) {
+                return (info instanceof MemberInfo) && ((MemberInfo)info).getPartyId() == partyId;
+            }
+        };
+        if (_roomObj.parties.containsKey(partyId) &&
+            !Iterables.any(_occInfo.values(), havePartiers)) {
+            _roomObj.removeFromParties(partyId);
+        }
     }
 
     @Override

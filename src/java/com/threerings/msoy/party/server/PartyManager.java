@@ -335,7 +335,7 @@ public class PartyManager
     {
         PartySummary summary = added ?
             new PartySummary(_partyObj.id, _partyObj.name, _partyObj.group, _partyObj.icon) : null;
-        // TODO: send a node action that updates this member's partyId and summary
+        MemberNodeActions.updateParty(memberId, summary);
     }
 
 //    // from SpeakHandler.SpeakerValidator

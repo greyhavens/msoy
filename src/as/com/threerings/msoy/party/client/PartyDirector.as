@@ -249,22 +249,8 @@ public class PartyDirector extends BasicDirector
         // if they're in a party and have the popup down, make a note to not pop it
         // up on the new node
         _suppressPartyPop = (_partyObj != null) && !getButton().selected;
-        unsubscribeParty();
+        clearParty();
     }
-
-//     protected function checkPartyId () :void
-//     {
-//         const partyId :int = _wctx.getMemberObject().partyId;
-//         log.debug("checking partyId: " + partyId + "  " + _partyObj);
-//         if (partyId == 0 || (_partyObj != null && _partyObj.id != partyId)) {
-//             unsubscribeParty();
-//         }
-//         if (partyId != 0 && (_partyObj == null)) {
-//             log.debug("requested locateMyParty");
-//             _pbsvc.locateMyParty(_ctx.getClient(),
-//                 _wctx.resultListener(handleLocateParty, MsoyCodes.PARTY_MSGS));
-//         }
-//     }
 
     protected function checkFollowParty () :void
     {
@@ -281,52 +267,12 @@ public class PartyDirector extends BasicDirector
         }
     }
 
-//     /**
-//      * Handles the response from a joinParty() request.
-//      */
-//     protected function handleJoinParty (sceneId :int) :void
-//     {
-//         log.debug("handleJoinParty", "sceneId", sceneId);
-//         closeAllDetailPanels();
-//         visitPartyScene(sceneId);
-//         /* Note:
-//         if (onSameServer) {
-//             visitPartyScene(); // could be a no-op.
-//             // then, reacting to partyId being set:
-//             locateMyParty(); // returns oid, you subscribe
-
-//         } else {
-//             visitPartyScene(); // you request a new server
-//             // then, reacting to partyId being set:
-//             locateMyParty(); // you get told the sceneId *again*, moveTo is suppressed
-//             // when you arrive on the new server
-//             locateMyParty(); // get told the new oid
-//             // if the party has since moved to another scene, you'll hear about it on the partyObj
-//         }
-//         */
-//     }
-
-//     /**
-//      * Handles the response from a locateMyParty() request.
-//      */
-//     protected function handleLocateParty (result :Object) :void
-//     {
-//         // we get either an int[] or an Integer back.
-//         if (result is Array) {
-//             log.debug("handleLocateParty", "oid", result[0]);
-//             subscribeParty(int(result[0]));
-//         } else {
-//             log.debug("handleLocateParty", "sceneId", result);
-//             visitPartyScene(int(result));
-//         }
-//     }
-
     /**
      * Handles the response from a leaveParty() request.
      */
     protected function handleLeaveParty () :void
     {
-        unsubscribeParty();
+        clearParty();
 
         // TODO: have the party popup pop itself down, or something
         var btn :CommandButton = getButton();
@@ -338,7 +284,9 @@ public class PartyDirector extends BasicDirector
     protected function partyDidLogon (event :ClientEvent) :void
     {
         var pbd :PartyBootstrapData = (event.getClient().getBootstrapData() as PartyBootstrapData);
-        subscribeParty(pbd.partyOid);
+        _safeSubscriber = new SafeSubscriber(pbd.partyOid,
+            new SubscriberAdapter(gotPartyObject, subscribeFailed));
+        _safeSubscriber.subscribe(_pctx.getDObjectManager());
     }
 
     protected function partyDidLogoff (event :ClientEvent) :void
@@ -348,35 +296,38 @@ public class PartyDirector extends BasicDirector
 
     protected function partyLogonFailed (event :ClientEvent) :void
     {
-        trace("ZOMG! Logon failed");
+        log.warning("Failed to logon to party server", "cause", event.getCause());
+
+        // TODO: report via world chat that we failed to connect and hence failed to join the party
     }
 
     protected function partyConnectFailed (event :ClientEvent) :void
     {
-        trace("ZOMG! Connect failed");
-    }
+        log.warning("Lost connection to party server", event.getCause());
 
-    protected function subscribeParty (oid :int) :void
-    {
-        unsubscribeParty(); // TODO: maybe noop if we're asked to subscribe to the same oid?
-
-        _safeSubscriber = new SafeSubscriber(oid,
-            new SubscriberAdapter(gotPartyObject, subscribeFailed));
-        _safeSubscriber.subscribe(_pctx.getDObjectManager());
-    }
-
-    protected function unsubscribeParty () :void
-    {
-        if (_safeSubscriber == null) {
-            return;
-        }
-        _safeSubscriber.unsubscribe(_pctx.getDObjectManager());
+        // we need to clear out our party stuff manually since everything was dropped
         _safeSubscriber = null;
-        _partyObj.removeListener(_partyListener);
-        _partyListener = null;
         _partyObj = null;
-        _pctx.getClient().logoff(false);
         _pctx = null;
+
+        // TODO: report via world chat that we lost our party connection
+    }
+
+    protected function clearParty () :void
+    {
+        if (_safeSubscriber != null) {
+            _safeSubscriber.unsubscribe(_pctx.getDObjectManager());
+            _safeSubscriber = null;
+        }
+        if (_partyObj != null) {
+            _partyObj.removeListener(_partyListener);
+            _partyListener = null;
+            _partyObj = null;
+        }
+        if (_pctx != null) {
+            _pctx.getClient().logoff(false);
+            _pctx = null;
+        }
     }
 
     /**
@@ -458,26 +409,6 @@ public class PartyDirector extends BasicDirector
             break;
         }
     }
-
-//     /**
-//      * Handles changes on the client object.
-//      */
-//     protected function userAttrChanged (event :AttributeChangedEvent) :void
-//     {
-//         switch (event.getName()) {
-//         case MemberObject.PARTY_ID:
-//             checkPartyId();
-//         }
-//     }
-
-//     // from BasicDirector
-//     override protected function clientObjectUpdated (client :Client) :void
-//     {
-//         super.clientObjectUpdated(client);
-
-//         client.getClientObject().addListener(new AttributeChangeAdapter(userAttrChanged));
-//         checkPartyId();
-//     }
 
     // from BasicDirector
     override protected function registerServices (client :Client) :void

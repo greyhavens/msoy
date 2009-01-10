@@ -39,6 +39,7 @@ import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.notify.server.NotificationManager;
 
+import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.party.server.PartyRegistry;
 
 import com.threerings.msoy.peer.data.MsoyNodeObject;
@@ -205,12 +206,27 @@ public class MemberNodeActions
         _peerMan.invokeNodeAction(new AddExperienceAction(memberId, action, data));
     }
 
-    public static void inviteToParty (
-        int memberId, MemberObject inviter, int partyId, String partyName)
+    /**
+     * Informs the specified member that they are in the specified party (or not in a party any
+     * longer if <code>party</code> is null.
+     */
+    public static void updateParty (int memberId, PartySummary party)
+    {
+        _peerMan.invokeNodeAction(new UpdatePartyAction(memberId, party));
+    }
+
+    /**
+     * Sends an invite to the specified member to the specified party.
+     */
+    public static void inviteToParty (int memberId, MemberObject inviter, int partyId,
+                                      String partyName)
     {
         _peerMan.invokeNodeAction(new PartyInviteAction(memberId, inviter, partyId, partyName));
     }
 
+    /**
+     * Sends an invite to all friends of the supplied inviter to the specified party.
+     */
     public static void inviteAllFriendsToParty (MemberObject inviter, int partyId, String partyName)
     {
         if (inviter.friends.size() == 0) {
@@ -685,6 +701,25 @@ public class MemberNodeActions
         }
 
         protected int _followerId;
+    }
+
+    protected static class UpdatePartyAction extends MemberNodeAction
+    {
+        public UpdatePartyAction () {}
+
+        public UpdatePartyAction (int memberId, PartySummary party)
+        {
+            super(memberId);
+            _party = party;
+        }
+
+        @Override protected void execute (MemberObject memObj) {
+            _partyReg.updateMemberParty(memObj, _party);
+        }
+
+        @Inject protected transient PartyRegistry _partyReg;
+
+        protected PartySummary _party;
     }
 
     protected static MsoyPeerManager _peerMan;

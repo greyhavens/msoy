@@ -26,6 +26,7 @@ import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.server.RoomManager;
 
 import static com.threerings.msoy.Log.log;
 
@@ -160,6 +161,20 @@ public class MemberLocal extends BodyLocal
     }
 
     /**
+     * Called when we enter or leave a party.
+     */
+    public void updateParty (MemberObject memobj, PartySummary party)
+    {
+        if (party == null) {
+            memobj.setPartyId(0);
+            this.party = null;
+        } else {
+            memobj.setPartyId(party.id);
+            this.party = party;
+        }
+    }
+
+    /**
      * Called by the {@link RoomManager} when we're about to enter a room.
      */
     public void willEnter (MemberObject memobj, RoomObject roomObj)
@@ -171,6 +186,7 @@ public class MemberLocal extends BodyLocal
 
             // if we're in a party, maybe put our party summary in the room as well
             if (party != null && !roomObj.parties.containsKey(party.id)) {
+                log.info("Adding party summary", "roomId", roomObj.getOid(), "party", party);
                 roomObj.addToParties(party);
             }
 
@@ -191,7 +207,9 @@ public class MemberLocal extends BodyLocal
 
             // if we're in a party and the last member to leave this room, clean up our bits
             if (party != null && !roomObj.parties.containsKey(party.id)) {
-                roomObj.addToParties(party);
+                log.info("Clearing party summary", "roomId", roomObj.getOid(), "party", party);
+                roomObj.removeFromParties(party.id);
+                party = null;
             }
 
         } finally {

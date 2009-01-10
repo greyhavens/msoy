@@ -161,6 +161,7 @@ public class MemberInfo extends ActorInfo
     {
         super.toString(buf);
         buf.append(", scale=").append(_scale).append(", game=").append(_game);
+        buf.append(", party=").append(_partyId);
     }
 
     protected float _scale;

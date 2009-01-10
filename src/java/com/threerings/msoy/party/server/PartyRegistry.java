@@ -37,6 +37,8 @@ import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.crowd.server.BodyManager;
+import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.whirled.data.ScenePlace;
 
 import com.threerings.msoy.data.MemberObject;
@@ -61,6 +63,7 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.room.data.MemberInfo;
+import com.threerings.msoy.room.server.RoomManager;
 
 import com.threerings.msoy.party.client.PartyBoardService;
 import com.threerings.msoy.party.client.PeerPartyService;
@@ -71,6 +74,7 @@ import com.threerings.msoy.party.data.PartyCredentials;
 import com.threerings.msoy.party.data.PartyDetail;
 import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
+import com.threerings.msoy.party.data.PartySummary;
 
 import static com.threerings.msoy.Log.log;
 
@@ -121,31 +125,24 @@ public class PartyRegistry
         _notifyMan.notify(member, new PartyInviteNotification(inviter, partyId, partyName));
     }
 
-//     /**
-//      * Called by the MsoySceneRegistry when a player changes scenes.
-//      */
-//     public void playerWillMove (MemberObject member, int sceneId)
-//     {
-//         if (member.partyId != 0) {
-//             PartyManager mgr = _parties.get(member.partyId);
-//             if (mgr != null) {
-//                 mgr.playerWillMove(member, sceneId);
-//             }
-//         }
-//     }
-
-//     /**
-//      * Called here and by PartyManager to update a member's party id.
-//      */
-//     public void updatePartyId (MemberObject member, final int newPartyId)
-//     {
-//         member.setPartyId(newPartyId);
-//         _bodyMan.updateOccupantInfo(member, new MemberInfo.Updater<MemberInfo>() {
-//             public boolean update (MemberInfo info) {
-//                 return info.updatePartyId(newPartyId);
-//             }
-//         });
-//     }
+    /**
+     * Called when the specified member has joined or left a party. This is called on the node on
+     * which the member has a world session.
+     */
+    public void updateMemberParty (MemberObject memobj, PartySummary party)
+    {
+        // if the member is in a room, update their party info in the room
+        PlaceManager placeMan = _placeReg.getPlaceManager(memobj.getPlaceOid());
+        if (placeMan instanceof RoomManager) {
+            if (party == null) {
+                ((RoomManager)placeMan).memberLeftParty(memobj, memobj.partyId);
+            } else {
+                ((RoomManager)placeMan).memberJoinedParty(memobj, party);
+            }
+        }
+        // also update the member's local bits
+        memobj.getLocal(MemberLocal.class).updateParty(memobj, party);
+    }
 
     /**
      * Returns the group id of the specified party or 0 if the party does not exist.
@@ -317,13 +314,6 @@ public class PartyRegistry
                                       GroupMembership groupInfo, boolean inviteAllFriends,
                                       PartyBoardService.JoinListener jl)
     {
-        if (!(member.location instanceof ScenePlace)) {
-            log.warning("Where the heck are they starting a party?", "who", member.who(),
-                "location", member.location);
-            jl.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
-            return;
-        }
-
         PartyObject pobj = null;
         PartyManager mgr = null;
         try {
@@ -341,7 +331,9 @@ public class PartyRegistry
             pobj.group = groupInfo.group;
             pobj.icon = group.toLogo();
             pobj.leaderId = member.getMemberId();
-            pobj.sceneId = ((ScenePlace) member.location).sceneId;
+            if (member.location instanceof ScenePlace) {
+                pobj.sceneId = ((ScenePlace) member.location).sceneId;
+            }
 
             // create the PartyManager and add the member
             mgr = _injector.getInstance(PartyManager.class);
@@ -369,47 +361,13 @@ public class PartyRegistry
             return;
         }
 
-        // And now do any final party registration and setup
-        // register the party
+        // if we made it here, then register the party
         _parties.put(pobj.id, mgr);
-//         // set the partyId
-//         updatePartyId(member, pobj.id);
+
         if (inviteAllFriends) {
             mgr.inviteAllFriends(member);
         }
     }
-
-//     /**
-//      * Called prior to a member leaving a node.
-//      */
-//     protected void playerLeavingNode (MemberObject member)
-//     {
-//         if (member.partyId != 0) {
-//             PartyManager mgr = _parties.get(member.partyId);
-//             if (mgr != null) {
-//                 PartyObject pobj = mgr.getPartyObject();
-//                 if (pobj.leaderId == member.getMemberId()) {
-//                     log.info("Dehydrating party", "partyId", pobj.id);
-//                     _parties.remove(member.partyId);
-//                     member.setLocal(PartyObject.class, (PartyObject)mgr.getPartyObject().clone());
-//                     mgr.shutdown();
-//                 }
-//             }
-//         }
-//     }
-
-//     protected void playerArrivingNode (MemberObject member)
-//     {
-//         PartyObject pobj = member.getLocal(PartyObject.class);
-//         if (pobj != null) {
-//             log.info("Rehydrating party", "partyId", pobj.id);
-//             member.setLocal(PartyObject.class, null);
-//             _omgr.registerObject(pobj);
-//             PartyManager mgr = _injector.getInstance(PartyManager.class);
-//             mgr.init(pobj);
-//             _parties.put(pobj.id, mgr);
-//         }
-//     }
 
     /**
      * Compute the score for the specified party, or return null if the user
@@ -489,12 +447,13 @@ public class PartyRegistry
 
     protected static final int PARTIES_PER_BOARD = 16;
 
-    @Inject protected InvocationManager _invmgr;
     @Inject protected Injector _injector;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected RootDObjectManager _omgr;
-    @Inject protected MsoyPeerManager _peerMgr;
-    @Inject protected GroupRepository _groupRepo;
+    @Inject protected PlaceRegistry _placeReg;
+    @Inject protected InvocationManager _invmgr;
     @Inject protected BodyManager _bodyMan;
     @Inject protected NotificationManager _notifyMan;
+    @Inject protected MsoyPeerManager _peerMgr;
+    @Inject protected GroupRepository _groupRepo;
 }
