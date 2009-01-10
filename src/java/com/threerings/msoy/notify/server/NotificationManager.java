@@ -31,9 +31,16 @@ public class NotificationManager
 {
     /**
      * Sends a notification to the specified member.
+     * @return true if the notification was sent or queued, or false if the notification
+     * was discarded because the recipient is unavailable to the sender.
      */
-    public void notify (MemberObject target, Notification note)
+    public boolean notify (MemberObject target, Notification note)
     {
+        // suppress notifications from people we're unavailable to
+        if (!isSendable(target, note)) {
+            return false;
+        }
+
         // if they have not yet reported in with a call to dispatchDeferredNotifications then we
         // need to queue this notification up rather than dispatch it directly
         final MemberLocal local = target.getLocal(MemberLocal.class);
@@ -42,6 +49,7 @@ public class NotificationManager
         } else {
             target.postMessage(MemberObject.NOTIFICATION, note);
         }
+        return true;
     }
 
     /**
@@ -56,12 +64,24 @@ public class NotificationManager
             target.startTransaction();
             try {
                 for (Notification note : notes) {
-                    target.postMessage(MemberObject.NOTIFICATION, note);
+                    if (isSendable(target, note)) {
+                        target.postMessage(MemberObject.NOTIFICATION, note);
+                    }
                 }
             } finally {
                 target.commitTransaction();
             }
         }
+    }
+
+    /**
+     * Return true if the specified notification is sendable to the recipient.
+     * A note is unsenable if the target is unavailable to the sender.
+     */
+    public boolean isSendable (MemberObject target, Notification note)
+    {
+        MemberName sender = note.getSender();
+        return (sender == null) || target.isAvailableTo(sender.getMemberId());
     }
 
     /**
@@ -88,22 +108,18 @@ public class NotificationManager
     /**
      * Notifies the target player that they've been invited to play a game.
      */
-    public void notifyGameInvite (MemberObject target, MemberName inviter,
+    public boolean notifyGameInvite (MemberObject target, MemberName inviter,
                                   String game, int gameId)
     {
-        if (target.isAvailableTo(inviter.getMemberId())) {
-            notify(target, new GameInviteNotification(inviter, game, gameId));
-        }
+        return notify(target, new GameInviteNotification(inviter, game, gameId));
     }
 
     /**
      * Notifies the target player that they've been invited to follow someone.
      */
-    public void notifyFollowInvite (MemberObject target, MemberName inviter)
+    public boolean notifyFollowInvite (MemberObject target, MemberName inviter)
     {
-        if (target.isAvailableTo(inviter.getMemberId())) {
-            notify(target, new FollowInviteNotification(inviter));
-        }
+        return notify(target, new FollowInviteNotification(inviter));
     }
 
     /**
@@ -118,8 +134,8 @@ public class NotificationManager
             local.deferredNotifications = null;
             notify(memobj, notes);
         } else {
-            log.warning("Client requested deferred notifications, but they've already been " +
-                        "dispatched [who=" + memobj.who() + "].");
+            log.warning("Client requested deferred notifications, but they've already been sent",
+                "who", memobj.who());
         }
     }
 }

@@ -348,13 +348,11 @@ public class MemberManager
             throw new InvocationException("e.follow_not_in_room");
         }
 
-        // make sure the target is accepting invitations from the requester
-        if (!target.isAvailableTo(user.getMemberId())) {
+        // issue the follow invitation to the target
+        if (!_notifyMan.notifyFollowInvite(target, user.memberName)) {
+            // the target is not accepting invitations from the requester
             throw new InvocationException("e.follow_not_available");
         }
-
-        // issue the follow invitation to the target
-        _notifyMan.notifyFollowInvite(target, user.memberName);
     }
 
     // from interface MemberProvider

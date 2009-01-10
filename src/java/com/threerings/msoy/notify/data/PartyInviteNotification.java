@@ -24,6 +24,12 @@ public class PartyInviteNotification extends Notification
         return null; // implemented on the client
     }
 
+    @Override
+    public MemberName getSender ()
+    {
+        return _inviter;
+    }
+
     protected MemberName _inviter;
     protected int _partyId;
     protected String _partyName;
