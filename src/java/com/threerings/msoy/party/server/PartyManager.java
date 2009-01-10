@@ -29,9 +29,6 @@ import com.threerings.presents.dobj.RootDObjectManager;
 //import com.threerings.crowd.chat.server.SpeakDispatcher;
 //import com.threerings.crowd.chat.server.SpeakHandler;
 
-import com.threerings.whirled.server.SceneManager;
-import com.threerings.whirled.server.SceneRegistry;
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocal;
@@ -76,8 +73,8 @@ public class PartyManager
      */
     public PartyDetail getPartyDetail ()
     {
-        return new PartyDetail(_lastInfo,
-            _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
+        return new PartyDetail(
+            _lastInfo, _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()]));
     }
 
     public void init (PartyObject partyObj, int creatorId)
@@ -94,26 +91,8 @@ public class PartyManager
             _partyObj.commitTransaction();
         }
 
-        // on init, we should always be able to find the SceneManager and update the Summary
-        addPartySummary(_screg.getSceneManager(partyObj.sceneId));
-
-        // "invited" the creator
+        // "invite" the creator
         _invitedIds.add(creatorId);
-
-//         // prevent fuckups after a node move: wait 2 minutes and clean out any non-present peeps
-//         _nodeMoveCleaner = new Interval(_omgr) {
-//             public void expired () {
-//                 cleanAbsentPeeps();
-//                 _nodeMoveCleaner = null;
-//             }
-//         };
-//         _nodeMoveCleaner.schedule(2 * 60 * 1000); // once
-    }
-
-    public void endParty ()
-    {
-        removePartySummary();
-        shutdown();
     }
 
     /**
@@ -121,18 +100,17 @@ public class PartyManager
      */
     public void shutdown ()
     {
-        removeFromNode();
-
-        _invMgr.clearDispatcher(_partyObj.partyService);
-//        _invMgr.clearDispatcher(_partyObj.speakService);
-        // TODO: this won't work if nobody is subscribed
-        _partyObj.setDestroyOnLastSubscriberRemoved(true);
-//        _omgr.destroyObject(_partyObj.getOid());
-
-//         for (UserListener listener : _userListeners.values()) {
-//             listener.memObj.removeListener(listener);
-//         }
-//         _userListeners.clear();
+        if (_partyObj != null) {
+            removeFromNode();
+            // clear the party info from all remaining players' member objects
+            for (PartyPeep peep : _partyObj.peeps) {
+                updatePartySummary(peep.name.getMemberId(), false);
+            }
+            _invMgr.clearDispatcher(_partyObj.partyService);
+            // _invMgr.clearDispatcher(_partyObj.speakService);
+            _omgr.destroyObject(_partyObj.getOid());
+            _partyObj = null;
+        }
     }
 
     /**
@@ -142,11 +120,6 @@ public class PartyManager
     {
         _peerMgr.removePartyInfo(_partyObj.id);
         _partyReg.partyWasRemoved(_partyObj.id);
-
-//         if (_nodeMoveCleaner != null) {
-//             _nodeMoveCleaner.cancel();
-//             _nodeMoveCleaner = null;
-//         }
     }
 
     /**
@@ -169,32 +142,6 @@ public class PartyManager
     }
 
     /**
-     * Called via the PartyRegistry (from MsoySceneRegistry) to inform us that a player
-     * is moving scenes.
-     */
-    public void playerWillMove (MemberObject member, int sceneId)
-    {
-        int memberId = member.getMemberId();
-        if (memberId == _partyObj.leaderId) {
-            // the leader will move- inform the party immediately because this object may soon die
-            // if it needs to be squirted across nodes
-            _partyObj.startTransaction();
-            try {
-                updateSceneId(sceneId);
-                updateStatus();
-            } finally {
-                _partyObj.commitTransaction();
-            }
-
-        } else if (_partyObj.peeps.containsKey(memberId) && (sceneId != _partyObj.sceneId)) {
-            // otherwise, they leave the party with a notification that they've done so
-            removePlayer(memberId);
-            _notifyMgr.notify(member, new GenericNotification(
-                MessageBundle.tcompose("m.party_left", _partyObj.id), Notification.INVITE));
-        }
-    }
-
-    /**
      * Called from the access controller when subscription is approved for the specified member.
      */
     public void clientSubscribed (final PartierObject partier)
@@ -209,8 +156,8 @@ public class PartyManager
         // clear their invites to this party, if any
         _invitedIds.remove(partier.getMemberId());
 
-        // TODO: update member's party id via a node action
-        // updatePartyId(member, partyId);
+        // update member's party info via a node action
+        updatePartySummary(partier.getMemberId(), true);
 
         // Crap, we used to do this in addPlayer, but they could never actually enter the party
         // and leave it hosed. The downside of doing it this way is that we could approve
@@ -265,7 +212,24 @@ public class PartyManager
     public void moveParty (ClientObject caller, int sceneId, InvocationService.InvocationListener il)
         throws InvocationException
     {
-        // TODO
+        // only the leader can move the party
+        PartierObject partier = (PartierObject)caller;
+        if (partier.getMemberId() != _partyObj.leaderId) {
+            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+        }
+
+        if (_partyObj.sceneId == sceneId) {
+            return; // NOOP!
+        }
+
+        // update the party's location
+        _partyObj.startTransaction();
+        try {
+            _partyObj.setSceneId(sceneId);
+            updateStatus();
+        } finally {
+            _partyObj.commitTransaction();
+        }
     }
 
     // from interface PartyProvider
@@ -340,29 +304,23 @@ public class PartyManager
      */
     protected void removePlayer (int memberId)
     {
-        // make sure they're actually in
-        if (!_partyObj.peeps.containsKey(memberId)) {
-            return; // silently cope
+        // make sure we're still alive and they're actually in
+        if (_partyObj == null || !_partyObj.peeps.containsKey(memberId)) {
+            return;
         }
-
-//         // remove the listener
-//         UserListener listener = _userListeners.remove(memberId);
-//         if (listener != null && listener.memObj.isActive()) {
-//             listener.memObj.removeListener(listener);
-//             // clear the party id
-//             _partyReg.updatePartyId(listener.memObj, 0);
-//         }
 
         // if they're the last one, just kill the party
         if (_partyObj.peeps.size() == 1) {
-            endParty();
+            shutdown();
             return;
         }
+
+        // clear the party info from this player's member object
+        updatePartySummary(memberId, false);
 
         _partyObj.startTransaction();
         try {
             _partyObj.removeFromPeeps(memberId);
-
             // maybe reassign the leader
             if (_partyObj.leaderId == memberId) {
                 _partyObj.setLeaderId(nextLeader());
@@ -371,6 +329,13 @@ public class PartyManager
             _partyObj.commitTransaction();
         }
         updatePartyInfo();
+    }
+
+    protected void updatePartySummary (int memberId, boolean added)
+    {
+        PartySummary summary = added ?
+            new PartySummary(_partyObj.id, _partyObj.name, _partyObj.group, _partyObj.icon) : null;
+        // TODO: send a node action that updates this member's partyId and summary
     }
 
 //    // from SpeakHandler.SpeakerValidator
@@ -396,44 +361,6 @@ public class PartyManager
         Tuple<String, HostedRoom> room = _peerMgr.getSceneHost(_partyObj.sceneId);
         if (room != null) {
             setStatus(MessageBundle.tcompose("m.status_room", room.right.name));
-        }
-    }
-
-    protected void updateSceneId (final int sceneId)
-    {
-        if (_partyObj.sceneId  == sceneId) {
-            return;
-        }
-
-        // remove the old
-        removePartySummary();
-        // update the sceneId
-        _partyObj.setSceneId(sceneId);
-
-        // then, set up the new summary
-        SceneManager newmgr = _screg.getSceneManager(sceneId);
-        if (newmgr != null) {
-            addPartySummary(newmgr);
-
-        } else {
-            Tuple<String, HostedRoom> room = _peerMgr.getSceneHost(sceneId);
-            if (room == null) {
-                // if the room is not in the list, we must be about to resolve it here....
-                _screg.resolveScene(sceneId, new SceneRegistry.ResolutionListener() {
-                    public void sceneWasResolved (SceneManager scmgr) {
-                        // make sure it's still the right scene
-                        if (_partyObj.sceneId == sceneId) {
-                            addPartySummary(scmgr);
-                        }
-                    }
-
-                    public void sceneFailedToResolve (int sceneId, Exception reason) {
-                        log.warning("Could not resolve scene for PartySummary", reason);
-                    }
-                });
-
-            }
-            // else: the room is resolving elsewhere, and we'll be there soon...
         }
     }
 
@@ -477,20 +404,6 @@ public class PartyManager
         return newLeader;
     }
 
-//     /**
-//      * Clean out any people who are not yet subscribed to the party object.
-//      */
-//     protected void cleanAbsentPeeps ()
-//     {
-//         // make a copy to prevent co-mod
-//         for (PartyPeep peep : _partyObj.peeps.toArray(new PartyPeep[_partyObj.peeps.size()])) {
-//             if (!_userListeners.containsKey(peep.name.getMemberId())) {
-//                 removePlayer(peep.name.getMemberId());
-//             }
-//         }
-//         // that should be enough...
-//     }
-
     /**
      * Update the partyInfo we have currently published in the node object.
      */
@@ -502,32 +415,8 @@ public class PartyManager
         _peerMgr.updatePartyInfo(_lastInfo);
     }
 
-    protected void addPartySummary (SceneManager scmgr)
-    {
-        RoomObject roomObj = (RoomObject) scmgr.getPlaceObject();
-        PartySummary summary = new PartySummary(
-            _partyObj.id, _partyObj.name, _partyObj.group, _partyObj.icon);
-
-        if (roomObj.parties.containsKey(summary.getKey())) {
-            log.warning("Actually, I don't think this should happen");
-            roomObj.updateParties(summary);
-
-        } else {
-            roomObj.addToParties(summary);
-        }
-    }
-
-    protected void removePartySummary ()
-    {
-        RoomObject roomObj = (RoomObject)_screg.getSceneManager(_partyObj.sceneId).getPlaceObject();
-        if (roomObj.parties.containsKey(_partyObj.id)) {
-            roomObj.removeFromParties(_partyObj.id);
-        }
-    }
-
     protected PartyObject _partyObj;
     protected PartyInfo _lastInfo;
-//     protected Interval _nodeMoveCleaner;
     protected ArrayIntSet _invitedIds = new ArrayIntSet();
 
     @Inject protected PartyRegistry _partyReg;
@@ -535,5 +424,4 @@ public class PartyManager
     @Inject protected InvocationManager _invMgr;
     @Inject protected MsoyPeerManager _peerMgr;
     @Inject protected NotificationManager _notifyMgr;
-    @Inject protected SceneRegistry _screg;
 }

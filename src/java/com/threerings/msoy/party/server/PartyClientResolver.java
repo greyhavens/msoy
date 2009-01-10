@@ -17,6 +17,7 @@ import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.party.data.PartierObject;
+import com.threerings.msoy.party.data.PartyAuthName;
 
 /**
  * Handles the resolution of partier client information.
@@ -35,20 +36,28 @@ public class PartyClientResolver extends ClientResolver
     {
         super.resolveClientData(clobj);
 
-        PartierObject partObj = (PartierObject) clobj;
+        PartierObject partObj = (PartierObject)clobj;
+        PartyAuthName authName = (PartyAuthName)_username;
+        VizMemberName name;
 
-        // load up their member information using on their authentication (account) name
-        MemberRecord member = _memberRepo.loadMember(_username.toString());
+        if (authName.isGuest()) {
+            name = new VizMemberName(
+                authName.toString(), authName.getMemberId(), VizMemberName.DEFAULT_PHOTO);
 
-        // we need their profile photo as well
-        ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
-        MediaDesc photo = (precord == null) ? VizMemberName.DEFAULT_PHOTO : precord.getPhoto();
+        } else {
+            // load up their member information using on their authentication (account) name
+            MemberRecord member = _memberRepo.loadMember(_username.toString());
+            // we need their profile photo as well
+            ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
+            MediaDesc photo = (precord == null) ? VizMemberName.DEFAULT_PHOTO : precord.getPhoto();
+            name = new VizMemberName(member.name, member.memberId, photo);
+        }
 
         // NOTE: we avoid using the dobject setters here because we know the object is not out in
         // the wild and there's no point in generating a crapload of events during user
         // initialization when we know that no one is listening
 
-        partObj.memberName = new VizMemberName(member.name, member.memberId, photo);
+        partObj.memberName = name;
     }
 
     @Inject protected MemberRepository _memberRepo;

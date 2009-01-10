@@ -118,8 +118,6 @@ public class PartyRegistry
      */
     public void issueInvite (MemberObject member, MemberName inviter, int partyId, String partyName)
     {
-//         // record that the member got an invite
-//         member.getLocal(MemberLocal.class).notePartyInvite(partyId, inviter.getMemberId());
         _notifyMan.notify(member, new PartyInviteNotification(inviter, partyId, partyName));
     }
 

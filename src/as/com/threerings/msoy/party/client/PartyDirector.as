@@ -241,15 +241,16 @@ public class PartyDirector extends BasicDirector
         _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, cause);
     }
 
-//     override public function clientDidLogoff (event :ClientEvent) :void
-//     {
-//         super.clientDidLogoff(event);
+    // from BasicDirector
+    override public function clientDidLogoff (event :ClientEvent) :void
+    {
+        super.clientDidLogoff(event);
 
-//         // if they're in a party and have the popup down, make a note to not pop it
-//         // up on the new node
-//         _suppressPartyPop = (_partyObj != null) && !getButton().selected;
-//         unsubscribeParty();
-//     }
+        // if they're in a party and have the popup down, make a note to not pop it
+        // up on the new node
+        _suppressPartyPop = (_partyObj != null) && !getButton().selected;
+        unsubscribeParty();
+    }
 
 //     protected function checkPartyId () :void
 //     {
@@ -336,7 +337,6 @@ public class PartyDirector extends BasicDirector
 
     protected function partyDidLogon (event :ClientEvent) :void
     {
-        trace("ZOMG! Logged on");
         var pbd :PartyBootstrapData = (event.getClient().getBootstrapData() as PartyBootstrapData);
         subscribeParty(pbd.partyOid);
     }
@@ -375,6 +375,8 @@ public class PartyDirector extends BasicDirector
         _partyObj.removeListener(_partyListener);
         _partyListener = null;
         _partyObj = null;
+        _pctx.getClient().logoff(false);
+        _pctx = null;
     }
 
     /**
