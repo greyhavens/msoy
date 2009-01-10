@@ -308,11 +308,11 @@ public class PartyObject extends DObject
             if (groupRank > GroupMembership.RANK_NON_MEMBER) {
                 return null;
             }
-            return InvocationCodes.E_ACCESS_DENIED;
+            return PartyCodes.E_PARTY_CLOSED;
 
         default:
         case PartyCodes.RECRUITMENT_CLOSED:
-            return InvocationCodes.E_ACCESS_DENIED;
+            return PartyCodes.E_PARTY_CLOSED;
         }
     }
 

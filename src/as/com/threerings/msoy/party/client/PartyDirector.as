@@ -6,6 +6,7 @@ package com.threerings.msoy.party.client {
 import flash.utils.Dictionary;
 
 import com.threerings.util.Log;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandMenu;
@@ -136,10 +137,8 @@ public class PartyDirector extends BasicDirector
      */
     public function getPartyDetail (partyId :int) :void
     {
-        // suppress requests that are already outstanding
         if (Boolean(_detailRequests[partyId])) {
-            // suppress
-            return;
+            return; // suppress requests that are already outstanding
         }
         _detailRequests[partyId] = true;
         var handleFailure :Function = function (error :String) :void {
@@ -166,8 +165,6 @@ public class PartyDirector extends BasicDirector
             panel.open();
             panel.init(name, groupId, inviteAllFriends);
         };
-
-        // TODO: make the locator listener an adapter
         _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends,
             new JoinAdapter(handleSuccess, handleFailure));
     }
@@ -189,14 +186,12 @@ public class PartyDirector extends BasicDirector
      */
     public function leaveParty () :void
     {
-        // TODO: we might possibly need to be able to leave a party prior to receiving
-        // our subscription response.
-        if (_partyObj == null) {
-            // we have no party to leave
-            return;
+        // if we have our party object already, tell them we're leaving
+        if (_partyObj != null) {
+            _partyObj.partyService.leaveParty(_wctx.getClient(),
+                _wctx.confirmListener(handleLeaveParty, MsoyCodes.PARTY_MSGS));
         }
-        _partyObj.partyService.leaveParty(_wctx.getClient(),
-            _wctx.confirmListener(handleLeaveParty, MsoyCodes.PARTY_MSGS));
+        clearParty(); // and always shut everything down
     }
 
     public function assignLeader (memberId :int) :void
@@ -284,8 +279,7 @@ public class PartyDirector extends BasicDirector
     protected function partyLogonFailed (event :ClientEvent) :void
     {
         log.warning("Failed to logon to party server", "cause", event.getCause());
-
-        // TODO: report via world chat that we failed to connect and hence failed to join the party
+        _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, event.getCause().message);
     }
 
     protected function partyConnectFailed (event :ClientEvent) :void
@@ -297,7 +291,9 @@ public class PartyDirector extends BasicDirector
         _partyObj = null;
         _pctx = null;
 
-        // TODO: report via world chat that we lost our party connection
+        // report via world chat that we lost our party connection
+        var msg :String = MessageBundle.tcompose("e.lost_party", event.getCause().message);
+        _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, msg);
     }
 
     protected function connectParty (partyId :int, hostname :String, port :int) :void
@@ -391,7 +387,7 @@ public class PartyDirector extends BasicDirector
     protected function subscribeFailed (oid :int, cause :ObjectAccessError) :void
     {
         log.warning("Party subscription failed", "cause", cause);
-        // TODO
+        clearParty();
     }
 
     /**

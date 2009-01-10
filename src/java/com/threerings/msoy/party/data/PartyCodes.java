@@ -26,6 +26,7 @@ public class PartyCodes
     /** Error codes. */
     public static final String E_NO_SUCH_PARTY = "e.no_such_party";
     public static final String E_PARTY_FULL = "e.party_full";
+    public static final String E_PARTY_CLOSED = "e.party_closed";
     public static final String E_ALREADY_IN_PARTY = "e.already_in_party";
     public static final String E_GROUP_MGR_REQUIRED = "e.group_mgr_req";
     public static final String E_CANT_INVITE_CLOSED = "e.cant_invite_closed";
