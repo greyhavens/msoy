@@ -274,6 +274,9 @@ public class QuestDelegate extends PlaceManagerDelegate
         }
 
         public int getPlayTime (int now) {
+            if (_paused) {
+                return 0;
+            }
             return now - _beganStamp;
         }
 
@@ -285,14 +288,43 @@ public class QuestDelegate extends PlaceManagerDelegate
             _beganStamp = now;
         }
 
+        /**
+         * Stop accruing time until further notice.
+         * TODO: wire this up to the MemberObject's status change (we don't have that on the
+         * game server).
+         */
+        public void pauseAccrual () {
+            if (!_paused) {
+                log.info("Pausing AVRG attention time accrual", "player", playerObject.who());
+                int now = now();
+                timeAccrued += getPlayTime(now);
+                _paused = true;
+            }
+        }
+
+        /**
+         * Resume accruing time.
+         * TODO: wire this up to the MemberObject's status change (we don't have that on the
+         * game server).
+         */
+        public void resumeAccrual () {
+            if (_paused) {
+                log.info("Resuming AVRG attention time accrual", "player", playerObject.who());
+                _beganStamp = now();
+                _paused = false;
+            }
+        }
+
         public void reset () {
             coinsAccrued = 0;
             tasksCompleted = 0;
             timeAccrued = 0;
             _beganStamp = now();
+            _paused = false;
         }
 
         protected int _beganStamp;
+        protected boolean _paused;
     }
 
     /** The gameId of this particular AVRG. */
