@@ -111,11 +111,11 @@ public class StatusServlet extends HttpServlet
         info.put(nodeobj.nodeName, collectInfo(details, null, nodeobj));
 
         // collect info on our peers
-        _peerMan.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
-            public Void apply (Tuple<Client, NodeObject> args) {
+        _peerMan.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Boolean>() {
+            public Boolean apply (Tuple<Client, NodeObject> args) {
                 info.put(args.right.nodeName,
                          collectInfo(details, args.left, (MsoyNodeObject)args.right));
-                return null;
+                return true;
             }
         });
 

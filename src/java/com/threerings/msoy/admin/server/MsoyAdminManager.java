@@ -130,12 +130,12 @@ public class MsoyAdminManager
     {
         final StatCollector.Merger merger = _collectors.get(type).createMerger();
         // first queue up requests from all other servers
-        _peerMan.invokeOnNodes(new Function<Tuple<Client, NodeObject>, Void>() {
-            public Void apply (Tuple<Client, NodeObject> args) {
-                merger.pendingNodes++;
+        merger.pendingNodes = _peerMan.invokeOnNodes(
+            new Function<Tuple<Client, NodeObject>, Boolean>() {
+            public Boolean apply (Tuple<Client, NodeObject> args) {
                 ((MsoyNodeObject)args.right).peerAdminService.compileStatistics(
                     args.left, type, merger.makeListener(args.right.nodeName));
-                return null;
+                return true;
             }
         });
         try { // then get our info (which will complete immediately if there are no other servers)

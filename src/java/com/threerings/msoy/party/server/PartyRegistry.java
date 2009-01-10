@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -269,8 +270,8 @@ public class PartyRegistry
     }
 
     // from PartyBoardProvider & PeerPartyProvider
-    public void getPartyDetail (
-        ClientObject caller, int partyId, final InvocationService.ResultListener rl)
+    public void getPartyDetail (ClientObject caller, final int partyId,
+                                final InvocationService.ResultListener rl)
         throws InvocationException
     {
         // see if we can handle it locally
@@ -291,11 +292,20 @@ public class PartyRegistry
             return;
         }
 
-        Tuple<Client,PeerPartyService> tuple = locatePeerService(partyId);
-        if (tuple == null) {
+        // otherwise ship it off to the node that handles it
+        int sent = _peerMgr.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Boolean>() {
+            public Boolean apply (Tuple<Client,NodeObject> clinode) {
+                MsoyNodeObject mnode = (MsoyNodeObject)clinode.right;
+                if (!mnode.parties.containsKey(partyId)) {
+                    return false;
+                }
+                mnode.peerPartyService.getPartyDetail(clinode.left, partyId, rl);
+                return true;
+            }
+        });
+        if (sent == 0) {
             throw new InvocationException(PartyCodes.E_NO_SUCH_PARTY);
         }
-        tuple.right.getPartyDetail(tuple.left, partyId, rl);
     }
 
     /**
@@ -386,32 +396,6 @@ public class PartyRegistry
         // now, each party is in a "band" determined by group/friend, and then has a random
         // position within that band.
         return new PartySort(score, info.id);
-    }
-
-    /**
-     * Find and return the PeerPartyService for the specified partyId.
-     */
-    protected Tuple<Client,PeerPartyService> locatePeerService (int partyId)
-    {
-        final Integer partyKey = partyId;
-        final Object[] result = new Object[1];
-
-        _peerMgr.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
-            public Void apply (Tuple<Client,NodeObject> clinode) {
-                if (result[0] == null) {
-                    MsoyNodeObject mnode = (MsoyNodeObject)clinode.right;
-                    if (mnode.parties.containsKey(partyKey)) {
-                        result[0] = new Tuple<Client,PeerPartyService>(
-                            clinode.left, mnode.peerPartyService);
-                    }
-                }
-                return null; // Void
-            }
-        });
-
-        @SuppressWarnings("unchecked") // fucking A
-        Tuple<Client,PeerPartyService> retval = (Tuple<Client,PeerPartyService>)result[0];
-        return retval;
     }
 
     /** Holds compared order between parties without having to recompute it for
