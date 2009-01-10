@@ -146,7 +146,10 @@ public class AwardDelegate extends RatingDelegate
 
             int[] nratings = new int[_playerIds.length];
             for (int ii = 0; ii < nratings.length; ii ++) {
-                nratings[ii] = computeRating(ii);
+                // don't bother computing ratings for guests
+                if (_playerIds[ii] == 0) {
+                    nratings[ii] = computeRating(ii);
+                }
             }
 
             // and write them back to their rating records
