@@ -281,11 +281,6 @@ public class PartyDirector extends BasicDirector
         _safeSubscriber.subscribe(_pctx.getDObjectManager());
     }
 
-    protected function partyDidLogoff (event :ClientEvent) :void
-    {
-        trace("ZOMG! Logged off");
-    }
-
     protected function partyLogonFailed (event :ClientEvent) :void
     {
         log.warning("Failed to logon to party server", "cause", event.getCause());
@@ -310,7 +305,7 @@ public class PartyDirector extends BasicDirector
         // create a new party session and connect to our party host node
         _pctx = new PartyContextImpl(_wctx);
         _pctx.getClient().addClientObserver(new ClientAdapter(
-            null, partyDidLogon, null, partyDidLogoff, partyLogonFailed, partyConnectFailed));
+            null, partyDidLogon, null, null, partyLogonFailed, partyConnectFailed));
         _pctx.connect(partyId, hostname, port);
     }
 
