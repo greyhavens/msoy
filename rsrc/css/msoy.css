@@ -521,6 +521,16 @@ TabNavigator, TabBar {
   backgroundAlphaOpen: .85;
 }
 
+/* Normally our floating panels have 10px of border, but if they don't you might
+   want to set _buttonBar.styleName = "buttonPadding"; */
+.buttonPadding {
+  paddingBottom: 10;
+  paddingTop: 10;
+  paddingLeft: 10;
+  paddingRight: 10;
+  horizontalAlign: "right";
+}
+
 .currencyLabel {
   color: white;
   fontSize: 12;
