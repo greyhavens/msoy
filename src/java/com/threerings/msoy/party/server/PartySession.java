@@ -27,9 +27,28 @@ public class PartySession extends PresentsSession
         super.sessionWillStart();
 
         // set up our partier object
-        _pobj = (PartierObject) _clobj;
-        _pobj.setAccessController(MsoyObjectAccess.USER);
-        _pobj.setPartyId(((PartyCredentials)_areq.getCredentials()).partyId);
+        _partierObj = (PartierObject) _clobj;
+        _partierObj.setAccessController(MsoyObjectAccess.USER);
+        _partierObj.setPartyId(((PartyCredentials)_areq.getCredentials()).partyId);
+    }
+
+    @Override // from PresentsSession
+    protected void sessionConnectionClosed ()
+    {
+        super.sessionConnectionClosed();
+
+        if (_partierObj != null) {
+            safeEndSession(); // no need to keep disconnected party sessions around
+        }
+    }
+
+    @Override // from PresentsSession
+    protected void sessionDidEnd ()
+    {
+        super.sessionDidEnd();
+
+        // clear out our partier object
+        _partierObj = null;
     }
 
     @Override // from PresentsSession
@@ -54,7 +73,7 @@ public class PartySession extends PresentsSession
         }
     }
 
-    protected PartierObject _pobj;
+    protected PartierObject _partierObj;
 
     @Inject protected PartyRegistry _partyReg;
 }
