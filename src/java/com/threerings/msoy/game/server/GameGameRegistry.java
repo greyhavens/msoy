@@ -1066,7 +1066,7 @@ public class GameGameRegistry
                 if (tiler == null || !tiler.isModified()) {
                     continue;
                 }
-                log.info("Marking percentiler as needing a flush");
+                log.info("Marking percentiler as needing a flush", "key", key);
                 toFlush.put(key, tiler);
             }
         }
@@ -1078,11 +1078,12 @@ public class GameGameRegistry
                         TilerKey key = entry.getKey();
                         int gameId = key.multiplayer ? key.gameId : -key.gameId;
                         try {
-                            log.info("Actually updating percentiler", "gameMode", key.gameMode);
+                            log.info("Actually updating percentiler", "key", key);
                             _ratingRepo.updatePercentile(gameId, key.gameMode, entry.getValue());
+
                         } catch (Exception e) {
-                            log.warning("Failed to update score distribution", "gameId", gameId,
-                                        "gameMode", key.gameMode, "tiler", entry.getValue(), e);
+                            log.warning("Failed to update score distribution", "key", key,
+                                        "tiler", entry.getValue(), e);
                         }
                     }
                     return false;
@@ -1172,6 +1173,12 @@ public class GameGameRegistry
             TilerKey okey = (TilerKey)other;
             return gameId == okey.gameId && multiplayer == okey.multiplayer &&
                 gameMode == okey.gameMode;
+        }
+
+        public String toString ()
+        {
+            return "TilerKey " +
+                "(gameId=" + gameId + ", mp=" + multiplayer + ", mode=" + gameMode + ")";
         }
     }
 
