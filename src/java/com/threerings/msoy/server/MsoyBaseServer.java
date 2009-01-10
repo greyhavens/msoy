@@ -57,7 +57,8 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // initialize our persistence context
         ConnectionProvider conprov = ServerConfig.createConnectionProvider();
-        _perCtx.init("msoy", conprov, new EHCacheAdapter(_cacheMgr));
+        _perCtx.init("msoy", conprov, new EHCacheAdapter(
+            ServerConfig.getEHCacheConfig(), _cacheMgr));
 
         // initialize our depot repositories; running all of our schema and data migrations
         _perCtx.initializeRepositories(true);
