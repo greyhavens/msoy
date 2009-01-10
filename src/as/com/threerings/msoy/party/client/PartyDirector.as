@@ -7,6 +7,9 @@ import flash.utils.Dictionary;
 
 import com.threerings.util.Log;
 
+import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandMenu;
+
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
@@ -21,8 +24,8 @@ import com.threerings.presents.dobj.SubscriberAdapter;
 
 import com.threerings.presents.util.SafeSubscriber;
 
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.CommandMenu;
+import com.threerings.crowd.client.LocationAdapter;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -32,7 +35,6 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
 import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCodes;
@@ -48,7 +50,6 @@ import com.threerings.msoy.world.client.WorldControlBar;
  * Manages party stuff on the client.
  */
 public class PartyDirector extends BasicDirector
-    implements PartyBoardService_JoinListener
 {
     // reference the PartyBoardMarshaller class
     PartyBoardMarshaller;
@@ -59,6 +60,8 @@ public class PartyDirector extends BasicDirector
     {
         super(ctx);
         _wctx = ctx;
+        _wctx.getLocationDirector().addLocationObserver(
+            new LocationAdapter(null, locationDidChange, null));
     }
 
     /**
@@ -152,20 +155,21 @@ public class PartyDirector extends BasicDirector
      */
     public function createParty (name :String, groupId :int, inviteAllFriends :Boolean) :void
     {
-//         var handleSuccess :Function = function (sceneId :int) :void {
-//             visitPartyScene(sceneId);
-//             Prefs.setPartyGroup(groupId);
-//         };
-//         var handleFailure :Function = function (error :String) :void {
-//             _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
-//             // re-open...
-//             var panel :CreatePartyPanel = new CreatePartyPanel(_wctx);
-//             panel.open();
-//             panel.init(name, groupId, inviteAllFriends);
-//         };
+        var handleSuccess :Function = function (partyId :int, host :String, port :int) :void {
+            connectParty(partyId, host, port);
+            Prefs.setPartyGroup(groupId);
+        };
+        var handleFailure :Function = function (error :String) :void {
+            _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, error);
+            // re-open...
+            var panel :CreatePartyPanel = new CreatePartyPanel(_wctx);
+            panel.open();
+            panel.init(name, groupId, inviteAllFriends);
+        };
 
         // TODO: make the locator listener an adapter
-        _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends, this);
+        _pbsvc.createParty(_wctx.getClient(), name, groupId, inviteAllFriends,
+            new JoinAdapter(handleSuccess, handleFailure));
     }
 
     /**
@@ -174,7 +178,10 @@ public class PartyDirector extends BasicDirector
     public function joinParty (id :int) :void
     {
         // first we have to find out what node is hosting the party in question
-        _pbsvc.locateParty(_wctx.getClient(), id, this);
+        _pbsvc.locateParty(_wctx.getClient(), id,
+            new JoinAdapter(connectParty, function (cause :String) :void {
+                _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, cause);
+            }));
     }
 
     /**
@@ -225,22 +232,6 @@ public class PartyDirector extends BasicDirector
             _wctx.listener(MsoyCodes.PARTY_MSGS));
     }
 
-    // from PartyBoardService_JoinListener
-    public function foundParty (partyId :int, hostname :String, port :int) :void
-    {
-        // create a new party session and connect to our party host node
-        _pctx = new PartyContextImpl(_wctx);
-        _pctx.getClient().addClientObserver(new ClientAdapter(
-            null, partyDidLogon, null, partyDidLogoff, partyLogonFailed, partyConnectFailed));
-        _pctx.connect(partyId, hostname, port);
-    }
-
-    // from PartyBoardService_JoinListener
-    public function requestFailed (cause :String) :void
-    {
-        _wctx.displayFeedback(MsoyCodes.PARTY_MSGS, cause);
-    }
-
     // from BasicDirector
     override public function clientDidLogoff (event :ClientEvent) :void
     {
@@ -254,6 +245,7 @@ public class PartyDirector extends BasicDirector
 
     protected function checkFollowParty () :void
     {
+        /* TODO: if (_partyObj.partyFollowsLeader) */
         visitPartyScene(_partyObj.sceneId);
     }
 
@@ -311,6 +303,15 @@ public class PartyDirector extends BasicDirector
         _pctx = null;
 
         // TODO: report via world chat that we lost our party connection
+    }
+
+    protected function connectParty (partyId :int, hostname :String, port :int) :void
+    {
+        // create a new party session and connect to our party host node
+        _pctx = new PartyContextImpl(_wctx);
+        _pctx.getClient().addClientObserver(new ClientAdapter(
+            null, partyDidLogon, null, partyDidLogoff, partyLogonFailed, partyConnectFailed));
+        _pctx.connect(partyId, hostname, port);
     }
 
     protected function clearParty () :void
@@ -399,6 +400,21 @@ public class PartyDirector extends BasicDirector
     }
 
     /**
+     * Called when our world location changes.
+     */
+    protected function locationDidChange (place :PlaceObject) :void
+    {
+        // if we're the leader of the party, change the party's location when we move
+        if (_partyObj != null && _partyObj.leaderId == _wctx.getMyName().getMemberId()) {
+            var sceneId :int = _wctx.getSceneDirector().getScene().getId();
+            if (sceneId != _partyObj.sceneId) {
+                _partyObj.partyService.moveParty(
+                    _pctx.getClient(), sceneId, _wctx.listener(MsoyCodes.PARTY_MSGS));
+            }
+        }
+    }
+
+    /**
      * Handles changes on the party object.
      */
     protected function partyAttrChanged (event :AttributeChangedEvent) :void
@@ -449,4 +465,24 @@ public class PartyDirector extends BasicDirector
 
     protected var _partyListener :ChangeListener;
 }
+}
+
+import com.threerings.presents.client.InvocationAdapter;
+import com.threerings.msoy.party.client.PartyBoardService_JoinListener;
+
+class JoinAdapter extends InvocationAdapter
+    implements PartyBoardService_JoinListener
+{
+    public function JoinAdapter (foundFunc :Function, failedFunc :Function)
+    {
+        super(failedFunc);
+        _foundFunc = foundFunc;
+    }
+
+    public function foundParty (partyId :int, hostname :String, port :int) :void
+    {
+        _foundFunc(partyId, hostname, port);
+    }
+
+    protected var _foundFunc :Function;
 }

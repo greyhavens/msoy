@@ -186,7 +186,6 @@ public class MemberLocal extends BodyLocal
 
             // if we're in a party, maybe put our party summary in the room as well
             if (party != null && !roomObj.parties.containsKey(party.id)) {
-                log.info("Adding party summary", "roomId", roomObj.getOid(), "party", party);
                 roomObj.addToParties(party);
             }
 
@@ -207,7 +206,6 @@ public class MemberLocal extends BodyLocal
 
             // if we're in a party and the last member to leave this room, clean up our bits
             if (party != null && !roomObj.parties.containsKey(party.id)) {
-                log.info("Clearing party summary", "roomId", roomObj.getOid(), "party", party);
                 roomObj.removeFromParties(party.id);
                 party = null;
             }
