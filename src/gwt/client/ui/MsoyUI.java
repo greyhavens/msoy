@@ -226,9 +226,7 @@ public class MsoyUI
     public static Label createCustomActionLabel (String text, String style, ClickListener listener)
     {
         Label label = createLabel(text, style);
-        if (listener != null) {
-            label.addClickListener(listener);
-        }
+        maybeAddClickListener(label, listener);
         return label;
     }
 
@@ -336,9 +334,7 @@ public class MsoyUI
     public static PushButton createButton (String size, String label, ClickListener listener)
     {
         PushButton button = new PushButton(label);
-        if (listener != null) {
-            button.addClickListener(listener);
-        }
+        maybeAddClickListener(button, listener);
         button.setStyleName(size + "OrangeButton");
         button.addStyleName("orangeButton");
         return button;
@@ -349,7 +345,8 @@ public class MsoyUI
      */
     public static Button createTinyButton (String label, ClickListener listener)
     {
-        Button button = new Button(label, listener);
+        Button button = new Button(label);
+        maybeAddClickListener(button, listener);
         button.addStyleName("tinyButton");
         return button;
     }
@@ -362,9 +359,7 @@ public class MsoyUI
         PushButton button = new PushButton();
         button.setStyleName(style);
         button.addStyleName("actionLabel");
-        if (listener != null) {
-            button.addClickListener(listener);
-        }
+        maybeAddClickListener(button, listener);
         return button;
     }
 
@@ -386,13 +381,13 @@ public class MsoyUI
         Button prev = new Button(_cmsgs.prev());
         prev.setStyleName("Button");
         prev.addStyleName("PrevButton");
-        prev.addClickListener(onPrev);
+        maybeAddClickListener(prev, onPrev);
         panel.add(prev);
         panel.add(WidgetUtil.makeShim(5, 5));
         Button next = new Button(_cmsgs.next());
         next.setStyleName("Button");
         next.addStyleName("NextButton");
-        next.addClickListener(onNext);
+        maybeAddClickListener(next, onNext);
         panel.add(next);
         return panel;
     }
@@ -404,7 +399,7 @@ public class MsoyUI
     public static Button createCrUpdateButton (boolean creating, ClickListener listener)
     {
         Button button = new Button(creating ? _cmsgs.create() : _cmsgs.update());
-        button.addClickListener(listener);
+        maybeAddClickListener(button, listener);
         return button;
     }
 
@@ -508,6 +503,7 @@ public class MsoyUI
     {
         target.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
+                CShell.log("Sending tracking action " + action + " " + details);
                 _membersvc.trackClientAction(
                     CShell.visitor, action, details != null ? details : "", new NoopAsyncCallback());
             }
@@ -587,7 +583,8 @@ public class MsoyUI
         panel.add(new Label(message));
         panel.add(WidgetUtil.makeShim(20, 10));
         if (actionLabel != null) {
-            Button button = new Button(actionLabel, action);
+            Button button = new Button(actionLabel);
+            maybeAddClickListener(button, action);
             button.addClickListener(hider);
             panel.add(button);
             panel.add(WidgetUtil.makeShim(5, 10));
@@ -668,6 +665,16 @@ public class MsoyUI
         textBox.addClickListener(listener);
     }
 
+    /**
+     * Adds the supplied click listener to the supplied target iff the listener is non-null.
+     */
+    public static void maybeAddClickListener (SourcesClickEvents target, ClickListener listener)
+    {
+        if (listener != null) {
+            target.addClickListener(listener);
+        }
+    }
+    
     /**
      * Computes the number of rows to display for a paged grid.
      *
