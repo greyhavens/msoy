@@ -147,7 +147,7 @@ public class AwardDelegate extends RatingDelegate
             int[] nratings = new int[_playerIds.length];
             for (int ii = 0; ii < nratings.length; ii ++) {
                 // don't bother computing ratings for guests
-                if (_playerIds[ii] == 0) {
+                if (_playerIds[ii] != 0) {
                     nratings[ii] = computeRating(ii);
                 }
             }
