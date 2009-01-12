@@ -47,6 +47,12 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
             );
             return;
 
+        case AVRGameMarshaller.SET_IDLE:
+            ((AVRGameProvider)provider).setIdle(
+                source, ((Boolean)args[0]).booleanValue(), (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
         case AVRGameMarshaller.SET_OFFLINE_PLAYER_PROPERTY:
             ((AVRGameProvider)provider).setOfflinePlayerProperty(
                 source, ((Integer)args[0]).intValue(), (String)args[1], args[2], (Integer)args[3], ((Boolean)args[4]).booleanValue(), (InvocationService.ConfirmListener)args[5]

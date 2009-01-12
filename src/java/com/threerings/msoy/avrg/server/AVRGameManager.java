@@ -298,6 +298,13 @@ public class AVRGameManager extends PlaceManager
         _trophyDelegate.awardPrize(caller, ident, playerId, listener);
     }
 
+    public void setIdle (ClientObject caller, boolean nowIdle,
+                         InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        _questDelegate.setIdle(caller, nowIdle, listener);
+    }
+
     // from AVRGameProvider
     public void completeTask (ClientObject caller, final int playerId, final String questId,
                               final float payoutLevel, InvocationService.ConfirmListener listener)

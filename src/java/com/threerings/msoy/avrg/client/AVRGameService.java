@@ -22,6 +22,11 @@ public interface AVRGameService extends InvocationService
     void completeTask (Client caller, int playerId, String questId, float payoutLevel,
                        ConfirmListener listener);
 
+    /**
+     * Notifies the game server that the player has gone idle or returned to activity.
+     */
+    void setIdle (Client caller, boolean nowIdle, ConfirmListener listener);
+
     void loadOfflinePlayer (Client caller, int playerId, ResultListener listener);
 
     void setOfflinePlayerProperty (Client caller, int playerId, String propName, Object data,

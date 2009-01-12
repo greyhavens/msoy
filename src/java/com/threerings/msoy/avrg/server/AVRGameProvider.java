@@ -27,6 +27,12 @@ public interface AVRGameProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link AVRGameService#setIdle} request.
+     */
+    void setIdle (ClientObject caller, boolean arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
+
+    /**
      * Handles a {@link AVRGameService#setOfflinePlayerProperty} request.
      */
     void setOfflinePlayerProperty (ClientObject caller, int arg1, String arg2, Object arg3, Integer arg4, boolean arg5, InvocationService.ConfirmListener arg6)

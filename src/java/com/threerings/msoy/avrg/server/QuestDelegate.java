@@ -13,13 +13,14 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
 
+import com.threerings.parlor.server.PlayManagerDelegate;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
@@ -39,7 +40,7 @@ import com.threerings.msoy.server.MsoyEventLogger;
  * Handles the completeTask service call, including awarding coins.
  * TODO: This may or may not be included in a refactor involving AwardDelegate
  */
-public class QuestDelegate extends PlaceManagerDelegate
+public class QuestDelegate extends PlayManagerDelegate
 {
     /**
      * Creates a Whirled game manager delegate with the supplied game content.
@@ -108,6 +109,24 @@ public class QuestDelegate extends PlaceManagerDelegate
             return;
         }
         payoutPlayer(player, false);
+    }
+
+    public void setIdle (ClientObject caller, boolean nowIdle,
+                         InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        verifyIsPlayer(caller);
+
+        Player player = (caller != null) ? _players.get(caller.getOid()) : null;
+        if (player == null) {
+            throw new InvocationException(InvocationCodes.E_ACCESS_DENIED);
+        }
+
+        if (nowIdle) {
+            player.pauseAccrual();
+        } else {
+            player.resumeAccrual();
+        }
     }
 
     /**
@@ -290,28 +309,31 @@ public class QuestDelegate extends PlaceManagerDelegate
 
         /**
          * Stop accruing time until further notice.
-         * TODO: wire this up to the MemberObject's status change (we don't have that on the
-         * game server).
          */
         public void pauseAccrual () {
             if (!_paused) {
-                log.info("Pausing AVRG attention time accrual", "player", playerObject.who());
-                int now = now();
-                timeAccrued += getPlayTime(now);
+                log.info("Pausing AVRG attention time accrual", "player", playerObject.who(),
+                         "game", _gameId);
+                timeAccrued += getPlayTime(now());
                 _paused = true;
+            } else {
+                log.warning("Attempting to pause already-paused AVRG", "player", playerObject.who(),
+                            "game", _gameId);
             }
         }
 
         /**
          * Resume accruing time.
-         * TODO: wire this up to the MemberObject's status change (we don't have that on the
-         * game server).
          */
         public void resumeAccrual () {
             if (_paused) {
-                log.info("Resuming AVRG attention time accrual", "player", playerObject.who());
+                log.info("Resuming AVRG attention time accrual", "player", playerObject.who(),
+                         "game", _gameId);
                 _beganStamp = now();
                 _paused = false;
+            } else {
+                log.warning("Attempting to resume already-running AVRG", "player",
+                            playerObject.who(), "game", _gameId);
             }
         }
 
