@@ -298,6 +298,10 @@ public class AVRGameManager extends PlaceManager
         _trophyDelegate.awardPrize(caller, ident, playerId, listener);
     }
 
+    /**
+     * Called by the client to report its idleness state changing. We do not accumulate
+     * play time for idle players.
+     */
     public void setIdle (ClientObject caller, boolean nowIdle,
                          InvocationService.ConfirmListener listener)
         throws InvocationException

@@ -111,6 +111,10 @@ public class QuestDelegate extends PlayManagerDelegate
         payoutPlayer(player, false);
     }
 
+    /**
+     * Called by the client to report its idleness state changing. We do not accumulate
+     * play time for idle players.
+     */
     public void setIdle (ClientObject caller, boolean nowIdle,
                          InvocationService.ConfirmListener listener)
         throws InvocationException
