@@ -248,7 +248,10 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> loadOriginalItemsBySuite (int suiteId)
     {
-        return findAll(getItemClass(), new Where(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
+        // TODO: This shouldn't need a conservative cache strategy, just debugging
+        // TODO: by process of elimination.
+        return findAll(getItemClass(), CacheStrategy.NONE, Lists.newArrayList(
+                           new Where(getItemColumn(SubItemRecord.SUITE_ID), suiteId)));
     }
 
     /**
