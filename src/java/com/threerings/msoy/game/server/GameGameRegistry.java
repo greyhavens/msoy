@@ -1042,12 +1042,17 @@ public class GameGameRegistry
                      _ipackRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
                 content.ipacks.add((ItemPack)record.toItem());
             }
+
             // load up our trophy source items
             Set<TrophySourceRecord> tsrecs = Sets.newTreeSet(TrophySourceRecord.BY_SORT_ORDER);
             tsrecs.addAll(_tsourceRepo.loadOriginalItemsBySuite(suiteId));
+            List<String> debugIdents = Lists.newArrayList();
             for (TrophySourceRecord record : tsrecs) {
                 content.tsources.add((TrophySource)record.toItem());
+                debugIdents.add(record.ident);
             }
+            log.info("Loaded trophy sources for game", "game", gameId, "trophies", debugIdents);
+
             // load up our prize items
             for (PrizeRecord record : _prizeRepo.loadOriginalItemsBySuite(suiteId)) {
                 content.prizes.add((Prize)record.toItem());
