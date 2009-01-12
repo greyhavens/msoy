@@ -50,8 +50,21 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch <code>setIdle</code> requests. */
+    public static const SET_IDLE :int = 3;
+
+    // from interface AVRGameService
+    public function setIdle (arg1 :Client, arg2 :Boolean, arg3 :InvocationService_ConfirmListener) :void
+    {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, SET_IDLE, [
+            langBoolean.valueOf(arg2), listener3
+        ]);
+    }
+
     /** The method id used to dispatch <code>setOfflinePlayerProperty</code> requests. */
-    public static const SET_OFFLINE_PLAYER_PROPERTY :int = 3;
+    public static const SET_OFFLINE_PLAYER_PROPERTY :int = 4;
 
     // from interface AVRGameService
     public function setOfflinePlayerProperty (arg1 :Client, arg2 :int, arg3 :String, arg4 :Object, arg5 :Integer, arg6 :Boolean, arg7 :InvocationService_ConfirmListener) :void

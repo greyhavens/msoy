@@ -1219,6 +1219,16 @@ public class WorldController extends MsoyController
         }
     }
 
+    override protected function setIdle (nowIdle :Boolean) :void
+    {
+        if (nowIdle != _idle) {
+            // let AVRGs know about our idleness changes
+            _wctx.getGameDirector().setIdle(nowIdle);
+        }
+
+        super.setIdle(nowIdle);
+    }
+
     /**
      * Indicate on the menu item whether or not we have the specified chat channel open
      * or not.

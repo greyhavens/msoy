@@ -22,6 +22,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
+import com.threerings.msoy.avrg.client.AVRGameController;
 import com.threerings.msoy.avrg.client.AVRGameLiaison;
 
 import com.threerings.msoy.game.data.GameGameMarshaller;
@@ -260,6 +261,17 @@ public class GameDirector extends BasicDirector
         }
         displayLobby(gameId, ghost, gport);
         LobbyGameLiaison(_liaison).joinPlayerTable(memberId);
+    }
+
+    /** Forwards idleness status updates to any AVRG we may be playing. */
+    public function setIdle (nowIdle :Boolean) :void
+    {
+        if (_liaison != null && _liaison is AVRGameLiaison) {
+            var ctrl :AVRGameController = AVRGameLiaison(_liaison).getAVRGameController();
+            if (ctrl != null) {
+                ctrl.setIdle(nowIdle);
+            }
+        }
     }
 
     /**

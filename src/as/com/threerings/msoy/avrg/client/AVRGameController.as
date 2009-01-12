@@ -170,6 +170,14 @@ public class AVRGameController extends PlaceController
         maybeDispatchEnteredRoom("backend connected");
     }
 
+    public function setIdle (nowIdle :Boolean) :void
+    {
+        if (_gameObj != null) {
+            _gameObj.avrgService.setIdle(_gctx.getClient(), nowIdle,
+                BackendUtils.loggingConfirmListener("setIdle"));
+        }
+    }
+
     // both initializeWorldContext() and willEnterPlace() contribute data that is vital to
     // the creation of the backend, and we cannot know which order they will execute in, so
     // we call this method in both; it will be executed when both have done their job.
