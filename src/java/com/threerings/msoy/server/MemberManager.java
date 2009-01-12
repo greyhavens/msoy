@@ -959,7 +959,7 @@ public class MemberManager
                             // room before we update the occupant info (which triggers the avatar
                             // media change on the client).
                             user.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom(
-                                (RoomObject)plobj);
+                                (RoomObject)plobj, false);
                         }
                         // if the player wasn't in a room, the avatar memories will just sit in
                         // MemberLocal storage until they do enter a room, which is proper
