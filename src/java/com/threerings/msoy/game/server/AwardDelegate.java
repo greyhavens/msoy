@@ -40,6 +40,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.GameGameRegistry.MetricType;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -271,8 +272,8 @@ public class AwardDelegate extends RatingDelegate
         }
 
         // record that games were played and potentially update our payout factor
-        _gameReg.updateGameMetrics(
-            _content.detail, isMultiplayer(), totalMinutes, _totalTrackedGames, _totalAwardedFlow);
+        _gameReg.updateGameMetrics(_content.detail, isMultiplayer() ? MetricType.MULTI_PLAYER :
+            MetricType.SINGLE_PLAYER, totalMinutes, _totalTrackedGames, _totalAwardedFlow);
     }
 
     @Override // from PlaceManagerDelegate

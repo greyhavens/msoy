@@ -14,6 +14,9 @@ public class MoneyConfigObject extends ConfigObject
     /** The field name of the <code>hourlyGameFlowRate</code> field. */
     public static final String HOURLY_GAME_FLOW_RATE = "hourlyGameFlowRate";
 
+    /** The field name of the <code>hourlyAVRGameFlowRate</code> field. */
+    public static final String HOURLY_AVRGAME_FLOW_RATE = "hourlyAVRGameFlowRate";
+
     /** The field name of the <code>payoutFactorReassessment</code> field. */
     public static final String PAYOUT_FACTOR_REASSESSMENT = "payoutFactorReassessment";
 
@@ -44,6 +47,9 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The amount of flow per hour that a game can award a player. */
     public int hourlyGameFlowRate = 3000;
+
+    /** The amount of flow per hour that an avr game can award a player. */
+    public int hourlyAVRGameFlowRate = 3000;
 
     /** The number of player minutes between reassessments of a game's payout factor. */
     public int payoutFactorReassessment = 240;
@@ -98,6 +104,22 @@ public class MoneyConfigObject extends ConfigObject
         requestAttributeChange(
             HOURLY_GAME_FLOW_RATE, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.hourlyGameFlowRate = value;
+    }
+
+    /**
+     * Requests that the <code>hourlyAVRGameFlowRate</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setHourlyAVRGameFlowRate (int value)
+    {
+        int ovalue = this.hourlyAVRGameFlowRate;
+        requestAttributeChange(
+            HOURLY_AVRGAME_FLOW_RATE, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.hourlyAVRGameFlowRate = value;
     }
 
     /**

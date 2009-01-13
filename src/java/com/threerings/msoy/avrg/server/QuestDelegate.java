@@ -33,6 +33,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameContent;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.WorldServerClient;
+import com.threerings.msoy.game.server.GameGameRegistry.MetricType;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 
@@ -161,7 +162,7 @@ public class QuestDelegate extends PlayManagerDelegate
 
         // payout factor depends on accumulated play time -- if we've yet to accumulate enough data
         // for a calculation, guesstimate 5 mins
-        int flowPerHour = _runtime.money.hourlyGameFlowRate;
+        int flowPerHour = _runtime.money.hourlyAVRGameFlowRate;
         int payoutFactor = (_content.detail.payoutFactor == 0) ?
             ((5 * flowPerHour) / 60) : _content.detail.payoutFactor;
 
@@ -241,7 +242,8 @@ public class QuestDelegate extends PlayManagerDelegate
         // if we actually awarded coins or accrued time, update our game metrics
         if (totalAward > 0 || totalSecs > 0) {
             final int totalMins = Math.round(totalSecs / 60f);
-            _gameReg.updateGameMetrics(_content.detail, true, totalMins, totalTasks, totalAward);
+            _gameReg.updateGameMetrics(
+                _content.detail, MetricType.AVRG, totalMins, totalTasks, totalAward);
         }
     }
 
@@ -278,8 +280,8 @@ public class QuestDelegate extends PlayManagerDelegate
 
         // note time played and coins awarded for coin payout factor calculation purposes
         if (playerMins > 0 || player.coinsAccrued > 0) {
-            _gameReg.updateGameMetrics(
-                _content.detail, true, playerMins, player.tasksCompleted, player.coinsAccrued);
+            _gameReg.updateGameMetrics(_content.detail, MetricType.AVRG, playerMins,
+                player.tasksCompleted, player.coinsAccrued);
         }
 
         // reset their accumulated coins and whatnot

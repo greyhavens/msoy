@@ -120,6 +120,17 @@ public class GameGameRegistry
     implements ShutdownManager.Shutdowner, LobbyManager.ShutdownObserver,
                AVRGameManager.LifecycleObserver, LobbyProvider, AVRProvider, GameGameProvider
 {
+    /**
+     * When updating metrics, there are these 3 modes.
+     * @see GameGameRegistry#updateGameMetrics()
+     */
+    public enum MetricType
+    {
+        SINGLE_PLAYER,
+        MULTI_PLAYER,
+        AVRG
+    }
+
     @Inject public GameGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
         // register to hear when the server is shutdown
@@ -419,9 +430,11 @@ public class GameGameRegistry
      * Notes that some number of games were played, player minutes accumulated and coins paid out
      * for the supplied game. The appropriate records are stored in the database to faciliate
      * payout factor recalculation, recalculation is performed if the time to do so has arrived and
-     * the supplied detail record is updated with the new information.
+     * the supplied detail record is updated with the new information. Separate data is kept for
+     * single player and multiplayer game plays. AVR games are always stored as multiplayer, but
+     * use a different payout rate.
      */
-    public void updateGameMetrics (final GameDetailRecord detail, final boolean isMultiplayer,
+    public void updateGameMetrics (final GameDetailRecord detail, MetricType type,
                                    int minutesPlayed, final int gamesPlayed, final int coinsAwarded)
     {
         // update our in-memory record to reflect this gameplay
@@ -429,7 +442,10 @@ public class GameGameRegistry
         detail.gamesPlayed += gamesPlayed;
 
         // determine whether or not it's time to recalculate this game's payout factor
-        final int hourlyRate = _runtime.money.hourlyGameFlowRate;
+        final int hourlyRate = type == MetricType.AVRG ? 
+            _runtime.money.hourlyAVRGameFlowRate :
+            _runtime.money.hourlyGameFlowRate;
+        final boolean isMultiplayer = type != MetricType.SINGLE_PLAYER;
         final int newFlowToNextRecalc;
         if (detail.flowToNextRecalc <= 0) {
             newFlowToNextRecalc = _runtime.money.payoutFactorReassessment * hourlyRate +
