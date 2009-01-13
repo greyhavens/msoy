@@ -24,6 +24,7 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.Interator;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
@@ -1049,9 +1050,9 @@ public class RoomManager extends SpotSceneManager
         // purge any body oids that left more than a few seconds ago
         int now = (int)(System.currentTimeMillis() / 1000);
         int limit = now - LEFT_BODY_PURGE_SECS;
-        for (Iterator<IntIntMap.IntIntEntry> ii = _left.entrySet().iterator(); ii.hasNext(); ) {
-            if (ii.next().getValue() < limit) {
-                ii.remove();
+        for (Interator vals = _left.values(); vals.hasNext(); ) {
+            if (vals.nextInt() < limit) {
+                vals.remove();
             }
         }
 
