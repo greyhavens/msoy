@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
@@ -45,7 +46,7 @@ public class StatusPanel extends SmartTable
 {
     public StatusPanel ()
     {
-        super("statusPanel", 0, 0);
+        super("statusPanel", 0, 3);
 
         Session.addObserver(this);
 
@@ -101,30 +102,37 @@ public class StatusPanel extends SmartTable
         _creds = data.creds;
         CookieUtil.set("/", Session.SESSION_DAYS, "who", _creds.accountName);
 
-        // configure our levels
-        int idx = 0;
-        setWidget(0, idx, Link.memberView(_creds.name));
-        getFlexCellFormatter().setHorizontalAlignment(0, idx++, HasAlignment.ALIGN_RIGHT);
-        setWidget(0, idx++, _levels);
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow, 0));
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold, 0));
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
+        // name at the top left
+        SmartTable top = new SmartTable(0, 0);
+        top.setWidth("100%");
+        top.setWidget(0, 0, Link.memberView(_creds.name));
 
-        // configure our 'new mail' indicator
-        setWidget(0, idx++, _mail);
-        CShell.frame.dispatchEvent(
-            new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
-
-        // add a logoff link
-        setWidget(0, idx++, MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
+        // logoff, help at the top right
+        InlinePanel links = new InlinePanel(null);
+        links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
             public void onClick (Widget sender) {
                 Session.didLogoff(Session.LogoffCondition.LOGOFF_REQUESTED);
             }
         }));
+        links.add(new HTML("|"));
+        links.add(Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
+        top.setWidget(0, 1, links);
+        top.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
 
-        // Link to the help section
-        setWidget(0, idx++, new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;"));
-        setWidget(0, idx++, Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
+        setWidget(0, 0, top);
+        getFlexCellFormatter().setColSpan(0, 0, 2);
+
+        // coins, bars, level on bottom
+        int idx = 0;
+        setWidget(1, idx++, _levels);
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow, 0));
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold, 0));
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
+
+        // configure our 'new mail' indicator on bottom
+        setWidget(1, idx++, _mail);
+        CShell.frame.dispatchEvent(
+            new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
     }
 
     // from interface Session.Observer
@@ -184,7 +192,7 @@ public class StatusPanel extends SmartTable
                 _cmsgs.levelTip(), Link.createListener(Pages.ME, "passport")), 1, "Icon");
             setText(0, _levelIdx = idx++, "0");
 
-            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+            getFlexCellFormatter().setWidth(0, idx++, "12px"); // gap!
         }
 
         public void setLevel (int level) {
