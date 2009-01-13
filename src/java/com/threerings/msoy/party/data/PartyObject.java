@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.party.data;
 
-import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
 

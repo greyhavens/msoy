@@ -8,20 +8,13 @@ import java.util.concurrent.Callable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.util.ServiceWaiter;
-import com.samskivert.util.StringUtil;
 
-import com.threerings.util.Name;
-
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.net.AuthResponse;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.msoy.data.AuthName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxAuthenticator;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.group.server.persist.GroupRepository;

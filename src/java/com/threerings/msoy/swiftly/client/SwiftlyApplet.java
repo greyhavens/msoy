@@ -22,17 +22,12 @@ import javax.swing.plaf.basic.BasicBorders;
 
 import org.jvnet.substance.skin.SubstanceBusinessBlackSteelLookAndFeel;
 
-import com.samskivert.servlet.user.Password;
 import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.OneLineLogFormatter;
-import com.samskivert.util.StringUtil;
-
-import com.threerings.util.Name;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientObserver;
 
-import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.swiftly.client.controller.PassiveNotifier;

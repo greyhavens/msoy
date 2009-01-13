@@ -6,9 +6,6 @@ package com.threerings.msoy.party.server;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.Interval;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
@@ -20,8 +17,6 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
-import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -31,18 +26,13 @@ import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberNodeActions;
 
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.notify.data.GenericNotification;
-import com.threerings.msoy.notify.data.Notification;
 //import com.threerings.msoy.notify.data.PartyInviteNotification;
 import com.threerings.msoy.notify.server.NotificationManager;
-
-import com.threerings.msoy.room.data.RoomObject;
 
 import com.threerings.msoy.party.data.PartierObject;
 import com.threerings.msoy.party.data.PartyCodes;
@@ -51,8 +41,6 @@ import com.threerings.msoy.party.data.PartyInfo;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 import com.threerings.msoy.party.data.PartySummary;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages a particular party while it lives on a single node.

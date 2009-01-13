@@ -7,7 +7,6 @@ import java.util.TreeMap;
 import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -46,10 +45,8 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.MemberLocal;
-import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.group.data.all.Group;
@@ -63,11 +60,9 @@ import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.server.RoomManager;
 
 import com.threerings.msoy.party.client.PartyBoardService;
-import com.threerings.msoy.party.client.PeerPartyService;
 import com.threerings.msoy.party.data.PartyAuthName;
 import com.threerings.msoy.party.data.PartyBoardInfo;
 import com.threerings.msoy.party.data.PartyCodes;
