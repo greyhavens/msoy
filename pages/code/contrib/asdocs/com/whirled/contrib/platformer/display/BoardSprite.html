@@ -138,14 +138,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#ensureCentered()">ensureCentered</a>(rd:<a href="../piece/RectDynamic.html">RectDynamic</a>):void</div>
+<a class="signatureLink" href="#ensureCentered()">ensureCentered</a>(rd:<a href="../piece/RectDynamic.html">RectDynamic</a>, yBuffer:Boolean = true):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#ensureVisible()">ensureVisible</a>(actor:<a href="../piece/Actor.html">Actor</a>, yshift:Number = 0):void</div>
+<a class="signatureLink" href="#ensureVisible()">ensureVisible</a>(actor:<a href="../piece/Actor.html">Actor</a>, xshift:Number = 0, yshift:Number = 0):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
@@ -521,10 +521,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function ensureCentered(rd:<a href="../piece/RectDynamic.html">RectDynamic</a>):void</code><span class="label">Parameters</span>
+<code>public function ensureCentered(rd:<a href="../piece/RectDynamic.html">RectDynamic</a>, yBuffer:Boolean = true):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">rd</span>:<a href="../piece/RectDynamic.html">RectDynamic</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">yBuffer</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -535,10 +541,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function ensureVisible(actor:<a href="../piece/Actor.html">Actor</a>, yshift:Number = 0):void</code><span class="label">Parameters</span>
+<code>public function ensureVisible(actor:<a href="../piece/Actor.html">Actor</a>, xshift:Number = 0, yshift:Number = 0):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">actor</span>:<a href="../piece/Actor.html">Actor</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">xshift</span>:Number</code> (default = <code>0</code>)<code></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>

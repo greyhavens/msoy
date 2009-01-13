@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="PlatformerController,com.whirled.contrib.platformer.PlatformerController,addGameListeners,createBoard,createGameController,createMessageManager,createPieceFactory,endGame,handleGameEnded,handleGameStarted,removeGameListeners,run,shutdown" name="keywords">
+<meta content="PlatformerController,com.whirled.contrib.platformer.PlatformerController,addGameListeners,addOccupantListeners,createBoard,createGameController,createMessageManager,createPersistenceManager,createPieceFactory,endGame,handleGameEnded,handleGameStarted,handleOccupantLeft,removeGameListeners,removeOccupantListeners,run,shutdown" name="keywords">
 <title>com.whirled.contrib.platformer.PlatformerController</title>
 </head>
 <body>
@@ -93,6 +93,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#addOccupantListeners()">addOccupantListeners</a>():void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PlatformerController</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#createBoard()">createBoard</a>():<a href="board/Board.html">Board</a>
 </div>
 <div class="summaryTableDescription"></div>
@@ -110,6 +117,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#createMessageManager()">createMessageManager</a>():<a href="net/MessageManager.html">MessageManager</a>
+</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PlatformerController</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#createPersistenceManager()">createPersistenceManager</a>():<a href="persist/PersistenceManager.html">PersistenceManager</a>
 </div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PlatformerController</td>
@@ -139,7 +154,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#handleOccupantLeft()">handleOccupantLeft</a>(event:OccupantChangedEvent):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PlatformerController</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#removeGameListeners()">removeGameListeners</a>():void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PlatformerController</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeOccupantListeners()">removeOccupantListeners</a>():void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PlatformerController</td>
 </tr>
@@ -183,6 +212,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected function addGameListeners():void</code>
+</div>
+<a name="addOccupantListeners()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addOccupantListeners</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function addOccupantListeners():void</code>
 </div>
 <a name="createBoard()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -229,6 +267,22 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code><a href="net/MessageManager.html">MessageManager</a></code></td>
+</tr>
+</table>
+</div>
+<a name="createPersistenceManager()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">createPersistenceManager</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function createPersistenceManager():<a href="persist/PersistenceManager.html">PersistenceManager</a></code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="persist/PersistenceManager.html">PersistenceManager</a></code></td>
 </tr>
 </table>
 </div>
@@ -285,6 +339,20 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="handleOccupantLeft()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">handleOccupantLeft</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function handleOccupantLeft(event:OccupantChangedEvent):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:OccupantChangedEvent</code></td>
+</tr>
+</table>
+</div>
 <a name="removeGameListeners()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -293,6 +361,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected function removeGameListeners():void</code>
+</div>
+<a name="removeOccupantListeners()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeOccupantListeners</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function removeOccupantListeners():void</code>
 </div>
 <a name="run()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

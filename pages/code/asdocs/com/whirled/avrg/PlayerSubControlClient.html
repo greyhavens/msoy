@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="PlayerSubControlClient,com.whirled.avrg.PlayerSubControlClient,getPlayerId" name="keywords">
+<meta content="PlayerSubControlClient,com.whirled.avrg.PlayerSubControlClient,getAvatarMasterItemId,getPlayerId" name="keywords">
 <title>com.whirled.avrg.PlayerSubControlClient</title>
 </head>
 <body>
@@ -124,6 +124,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Execute the specified function as a batch of commands that will be sent to the server
      together.</div>
 </td><td class="summaryTableOwnerCol"><a href="../AbstractSubControl.html">AbstractSubControl</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getAvatarMasterItemId()">getAvatarMasterItemId</a>():int</div>
+<div class="summaryTableDescription">
+     Returns the master item id of the avatar being worn by the player, or zero for
+     guests (ghosts) or people wearing the default tofu.</div>
+</td><td class="summaryTableOwnerCol">PlayerSubControlClient</td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="PlayerSubControlBase.html#getPartyId()">getPartyId</a>():int</div>
+<div class="summaryTableDescription">
+     Get the party id of this player.</div>
+</td><td class="summaryTableOwnerCol"><a href="PlayerSubControlBase.html">PlayerSubControlBase</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -285,10 +302,30 @@ showHideInherited();
 <div class="MainContent">
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="getAvatarMasterItemId()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getAvatarMasterItemId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getAvatarMasterItemId():int</code><p>
+     Returns the master item id of the avatar being worn by the player, or zero for
+     guests (ghosts) or people wearing the default tofu. The master id will be the
+     same for all purchased copies of a particular catalog avatar and will be a
+     unique value for every original (non-catalog purchased) avatar item.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
 <a name="getPlayerId()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">getPlayerId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">getPlayerId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">

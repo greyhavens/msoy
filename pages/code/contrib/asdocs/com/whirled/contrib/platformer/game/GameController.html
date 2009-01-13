@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="GameController,com.whirled.contrib.platformer.game.GameController,MAX_TICK,_actorMap,_board,_collider,_controllers,_defaultActorClass,_defaultDynamicClass,_defaultShotClass,_dynamicMap,_events,_pause,_rdelta,_shotMap,colliderTicks,forceX,forceY,ticked,addActorClass,addController,addDynamicClass,addShotClass,genCollider,getBoard,getCollider,getController,handleActorAdded,handleDynamicAdded,handleDynamicRemoved,handlePieceLoaded,handleShotAdded,initDynamicClasses,isPaused,removeDynamic,removeDynamicController,run,sendUpdates,setBound,setPause,shutdown,tick,tickController,updateDisplay" name="keywords">
+<meta content="GameController,com.whirled.contrib.platformer.game.GameController,MAX_TICK,_actorMap,_board,_collider,_controllers,_defaultActorClass,_defaultDynamicClass,_defaultShotClass,_dynamicMap,_events,_pause,_rdelta,_shotMap,colliderTicks,forceX,forceY,ticked,addActorClass,addController,addDynamicClass,addGameEvent,addShotClass,genCollider,getBoard,getCollider,getController,handleActorAdded,handleDynamicAdded,handleDynamicRemoved,handlePieceLoaded,handleShotAdded,initDynamicClasses,isPaused,removeDynamic,removeDynamicController,run,sendUpdates,setBound,setPause,shutdown,tick,tickController,updateDisplay" name="keywords">
 <title>com.whirled.contrib.platformer.game.GameController</title>
 </head>
 <body>
@@ -145,6 +145,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#addController()">addController</a>(controller:Object):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">GameController</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addGameEvent()">addGameEvent</a>(ge:<a href="GameEvent.html">GameEvent</a>):Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">GameController</td>
 </tr>
@@ -579,6 +586,27 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">isDefault</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="addGameEvent()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addGameEvent</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addGameEvent(ge:<a href="GameEvent.html">GameEvent</a>):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ge</span>:<a href="GameEvent.html">GameEvent</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="LocalSubControl,com.whirled.game.LocalSubControl,addEventListener,clearScores,feedback,filter,getHeadShot,getSize,removeEventListener,setFrameRate,setMappedScores,setOccupantsLabel,setPlayerScores,setShowReplay,setStageQuality,showGameShop" name="keywords">
+<meta content="LocalSubControl,com.whirled.game.LocalSubControl,addEventListener,clearScores,feedback,filter,getHeadShot,getSize,removeEventListener,setFrameRate,setMappedScores,setOccupantsLabel,setPlayerScores,setShowReplay,setStageQuality,showGameShop,showTrophies" name="keywords">
 <title>com.whirled.game.LocalSubControl</title>
 </head>
 <body>
@@ -197,8 +197,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#showGameShop()">showGameShop</a>(itemType:String, catalogId:int = 0):void</div>
 <div class="summaryTableDescription">
-     Instructs the game client to open the appropriate location in the game's shop
-     </div>
+     Opens the web page for this game's shop.</div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#showTrophies()">showTrophies</a>():void</div>
+<div class="summaryTableDescription">
+     Opens a popup displaying the trophies awarded by this game.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 </table>
@@ -576,21 +583,35 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function showGameShop(itemType:String, catalogId:int = 0):void</code><p>
-     Instructs the game client to open the appropriate location in the game's shop
-     </p><span class="label">Parameters</span>
+     Opens the web page for this game's shop. The game will be shrunk to sidebar width while the
+     game shop is showing.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">itemType</span>:String</code> &mdash; string constants are defined on GameControl 
+<td width="20px"></td><td><code><span class="label">itemType</span>:String</code> &mdash; the type of item to select by default. Valid constants are defined in
+     GameControl.
      </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">catalogId</span>:int</code> (default = <code>0</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">catalogId</span>:int</code> (default = <code>0</code>)<code></code> &mdash; the catalog id of a specific item to show or 0 to display the overview page
+     of all items of the specified type.
+     </td>
 </tr>
 </table>
 </div>
+<a name="showTrophies()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">showTrophies</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function showTrophies():void</code><p>
+     Opens a popup displaying the trophies awarded by this game.
+     </p></div>
 <div class="detailSectionHeader">Event detail</div>
 <a name="event:keyDown"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

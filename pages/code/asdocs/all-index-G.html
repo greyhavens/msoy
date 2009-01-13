@@ -204,6 +204,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Gets all available information on the avatar of a player with the given id.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlClient.html#getAvatarMasterItemId()">getAvatarMasterItemId</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlClient.html">PlayerSubControlClient</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the master item id of the avatar being worn by the player, or zero for
+     guests (ghosts) or people wearing the default tofu.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/BaseDataPack.html#getBoolean()">getBoolean</a>(name) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/BaseDataPack.html">BaseDataPack</a></td>
 </tr>
 <tr>
@@ -446,11 +454,32 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Get a File, as an XML object.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html#getGroupId()">getGroupId</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html">PartySubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the group id of this party.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html#getGroupName()">getGroupName</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html">PartySubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the name of the group hosting this party.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html#getHeadShot()">getHeadShot</a>(occupantId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/LocalSubControl.html">LocalSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Return the headshot for the given occupant in the form of a DisplayObject.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html#getId()">getId</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html">PartySubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the party id.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ParameterUtil.html#getInfoParameters()">getInfoParameters</a>(loaderInfo, callback) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ParameterUtil.html">ParameterUtil</a></td>
@@ -736,6 +765,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      or -1 if we're not a player.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html#getName()">getName</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html">PartySubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the name of this party.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Name.html#getNormal()">getNormal</a>() &mdash; Method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/Name.html">Name</a></td>
 </tr>
 <tr>
@@ -789,6 +825,27 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 <tr>
 <td width="20"></td><td>
      Get the parameters.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html#getPartyControl()">getPartyControl</a>(partyId) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html">GameSubControlBase</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the party control for the specified party, or null if there is no such party.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlBase.html#getPartyId()">getPartyId</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlBase.html">PlayerSubControlBase</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the party id of this player.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html#getPartyIds()">getPartyIds</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameSubControlBase.html">GameSubControlBase</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Return the ids of all parties presently in this game.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html#getPerp()">getPerp</a>(ccw) &mdash; Method in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html">Vector2</a></td>
@@ -845,6 +902,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 <tr>
 <td width="20"></td><td>
      Returns an array of the ids of all players who have joined and not yet quit the game.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html#getPlayerIds()">getPlayerIds</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PartySubControl.html">PartySubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Get the player ids in this party.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlBase.html#getPlayerIds()">getPlayerIds</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlBase.html">RoomSubControlBase</a></td>
