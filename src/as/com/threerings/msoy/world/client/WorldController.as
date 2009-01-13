@@ -1221,12 +1221,14 @@ public class WorldController extends MsoyController
 
     override protected function setIdle (nowIdle :Boolean) :void
     {
-        if (nowIdle != _idle) {
-            // let AVRGs know about our idleness changes
-            _wctx.getGameDirector().setIdle(nowIdle);
-        }
-
+        // our superclass may or may not honor the request to set idle
+        const wasIdle :Boolean = _idle;
         super.setIdle(nowIdle);
+        // ...so only change avrg idleness when we go idle for real..
+        if (wasIdle != _idle) {
+            // let AVRGs know about our idleness changes
+            _wctx.getGameDirector().setIdle(_idle);
+        }
     }
 
     /**
