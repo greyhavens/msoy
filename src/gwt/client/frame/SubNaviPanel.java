@@ -61,6 +61,7 @@ public class SubNaviPanel extends FlowPanel
             addLink(null, "Games", Pages.GAMES, "");
             if (!CShell.isGuest()) {
                 addLink(null, "My Trophies", Pages.GAMES, Args.compose("t", memberId));
+                addLink(null, "My Favorites", Pages.SHOP, Args.compose("f", memberId, 4));
             }
             addLink(null, "New Games", Pages.GAMES, Args.compose("g", -1, 1));
             break;
