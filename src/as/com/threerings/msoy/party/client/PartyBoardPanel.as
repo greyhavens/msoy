@@ -5,7 +5,9 @@ package com.threerings.msoy.party.client {
 
 import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
+import mx.containers.HBox;
 import mx.containers.VBox;
+import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.List;
 import mx.controls.Text;
@@ -46,7 +48,7 @@ public class PartyBoardPanel extends FloatingPanel
 
         _content = new VBox();
         _content.width = 400;
-        _content.height = 370;
+        _content.height = 360;
         _content.addChild(loading);
 
         getPartyBoard();
@@ -56,7 +58,7 @@ public class PartyBoardPanel extends FloatingPanel
     {
         super.createChildren();
 
-        var top :VBox = new VBox();
+        var top :HBox = new HBox();
         top.percentWidth = 100;
         top.styleName = "panelBottom";
         addChild(top);
@@ -67,21 +69,30 @@ public class PartyBoardPanel extends FloatingPanel
         sep.styleName = "panelBottomSeparator";
         addChild(sep);
 
-        var text :Text = FlexUtil.createWideText(Msgs.PARTY.get("m.about"));
+        var img :Image = new Image();
+        img.source = PARTY_HEADER;
+        top.addChild(img);
+        top.setStyle("paddingLeft", 10);
+        top.setStyle("paddingTop", 10);
+
+        var text :Text = FlexUtil.createWideText(null);
+        text.selectable = true;
+        text.htmlText = Msgs.PARTY.get("m.about");
         text.setStyle("fontSize", 12);
         top.addChild(text);
-        var link :CommandLinkButton = new CommandLinkButton(
-            Msgs.PARTY.get("b.wiki"), MsoyController.VIEW_URL, Msgs.PARTY.get("u.wiki"));
-        link.styleName = "underLink";
-        top.addChild(link);
 
         addChild(_content);
 
-        addButtons(new CommandButton(Msgs.PARTY.get("b.create"),
+        var btn :CommandButton = new CommandButton(Msgs.PARTY.get("b.create"),
             FloatingPanel.createPopper(function () :FloatingPanel {
                 return new CreatePartyPanel(_wctx);
-            })));
+            }));
+        //btn.styleName = "orangeButton";
+        addButtons(btn);
         _buttonBar.styleName = "buttonPadding"; // pad out the buttons since we have no border
+        _buttonBar.setStyle("buttonStyleName", "orangeButton"); // oh you're kidding me
+        // TODO: if we need to add more buttons, and want to undo orangeness, we will
+        // have to put these buttons into an hbox or something
     }
 
     protected function getPartyBoard (query :String = null) :void
@@ -113,5 +124,8 @@ public class PartyBoardPanel extends FloatingPanel
 
     /** Contains either the loading Label or party List. */
     protected var _content :VBox;
+
+    [Embed(source="../../../../../../../rsrc/media/skins/party/board_header.png")]
+    protected static const PARTY_HEADER :Class;
 }
 }
