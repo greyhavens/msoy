@@ -1050,7 +1050,7 @@ public class RoomManager extends SpotSceneManager
         int now = (int)(System.currentTimeMillis() / 1000);
         int limit = now - LEFT_BODY_PURGE_SECS;
         for (Iterator<IntIntMap.IntIntEntry> ii = _left.entrySet().iterator(); ii.hasNext(); ) {
-            if (ii.next().getValue() > limit) {
+            if (ii.next().getValue() < limit) {
                 ii.remove();
             }
         }
@@ -1541,7 +1541,7 @@ public class RoomManager extends SpotSceneManager
         int now = (int)(System.currentTimeMillis() / 1000);
         return "" + (now - when) + " seconds ago";
     }
-    
+
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>
