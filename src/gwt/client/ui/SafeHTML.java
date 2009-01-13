@@ -29,7 +29,14 @@ public class SafeHTML extends HTML
                 continue;
             }
             anchor.setAttribute("href", fixLink(anchor.getAttribute("href")));
-            if (isWhirledLink(anchor.getAttribute("href"))) {
+
+            // set target if there is none, and style text links that open in a new window
+            if (anchor.getAttribute("target").length() > 0) {
+                if (anchor.getAttribute("target").equals("_blank")
+                    && anchor.getInnerHTML().indexOf("<img") == -1) {
+                    anchor.setClassName("external");
+                }
+            } else if (isWhirledLink(anchor.getAttribute("href"))) {
                 anchor.setAttribute("target", "_top");
             } else {
                 anchor.setAttribute("target", "_blank");
