@@ -30,6 +30,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.images.msgs.MsgsImages;
 import client.shell.CShell;
 import client.ui.ComplainPopup;
+import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.util.ClickCallback;
@@ -336,6 +337,12 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         }
 
         protected ForumMessage _message;
+    }
+
+    @Override// from PagedWidget
+    protected Widget getNowLoadingWidget ()
+    {
+        return new MiniNowLoadingWidget();
     }
 
     /** The thread panel in which we're hosted. */

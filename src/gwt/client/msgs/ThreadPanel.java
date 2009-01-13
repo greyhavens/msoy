@@ -29,6 +29,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MessagePanel;
+import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.util.ClickCallback;
@@ -111,9 +112,13 @@ public class ThreadPanel extends TitledListPanel
     // from interface SearchBox.Listener
     public void search (String query)
     {
+        // replace search box with loading animation while fetching
+        _theader.setWidget(0, 3, new MiniNowLoadingWidget(), 1, "Search");
+
         _forumsvc.findMessages(_threadId, query, MAX_RESULTS,
                                new MsoyCallback<List<ForumMessage>>() {
             public void onSuccess (List<ForumMessage> messages) {
+                _theader.setWidget(0, 3, _search, 1, "Search");
                 _mpanel.setModel(new SimpleDataModel<ForumMessage>(messages), 0);
             }
         });
