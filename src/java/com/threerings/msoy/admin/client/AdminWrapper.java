@@ -13,7 +13,7 @@ import com.threerings.util.MessageManager;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObjectManager;
 
-import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
@@ -44,7 +44,7 @@ public class AdminWrapper
     public void start (String authToken)
     {
         // create our credentials and logon
-        MsoyCredentials creds = new MsoyCredentials();
+        WorldCredentials creds = new WorldCredentials();
         creds.sessionToken = authToken;
         _client.setCredentials(creds);
         _client.setVersion(DeploymentConfig.version);
