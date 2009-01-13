@@ -131,6 +131,9 @@ public class QuestDelegate extends PlayManagerDelegate
         } else {
             player.resumeAccrual();
         }
+
+        // let the client know all went well
+        listener.requestProcessed();
     }
 
     /**
