@@ -8,13 +8,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
@@ -25,11 +27,12 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
+import client.shell.DynamicLookup;
 import client.ui.HeaderBox;
-import client.ui.Marquee;
 import client.ui.MsoyUI;
 import client.ui.NowLoadingWidget;
 import client.ui.PriceLabel;
+import client.ui.SearchBox;
 import client.ui.Stars;
 import client.ui.ThumbBox;
 
@@ -44,25 +47,54 @@ import client.item.SideBar;
 /**
  * Displays the main catalog landing page.
  */
-public class ShopPanel extends HorizontalPanel
+public class ShopPanel extends FlowPanel
 {
     public ShopPanel ()
     {
         setStyleName("shopPanel");
-        setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
-        add(new SideBar(new CatalogQueryLinker(new CatalogQuery()), false, null));
-        add(_contents = new FlowPanel());
-        _contents.setStyleName("TopContents");
+        _nowLoading = new NowLoadingWidget();
+        _nowLoading.center();
 
-        SmartTable header = new SmartTable(0, 0);
-        header.setWidget(0, 0, new Image("/images/shop/shop_bag.png"), 1, "Bag");
-        header.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        header.setWidget(0, 1, new Marquee(null, _msgs.shopMarquee()), 1, "Marquee");
-        header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
-        header.setText(1, 0, _msgs.shopIntro(), 1, "Intro");
-        _contents.add(header);
-        _contents.add(WidgetUtil.makeShim(10, 10));
+        // prepare the search box
+        HorizontalPanel search = new HorizontalPanel();
+        search.setStyleName("Search");
+        search.setSpacing(5);
+        search.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        search.add(MsoyUI.createLabel("Search", "SearchTitle"));
+        final ListBox searchTypes = new ListBox();
+        for (byte searchType : Item.STUFF_TYPES) {
+            searchTypes.addItem(_dmsgs.xlate("pItemType" + searchType), searchType + "");
+        }
+        search.add(searchTypes);
+        SearchBox searchBox = new SearchBox(new SearchBox.Listener() {
+            public void search (String query) {
+                String type = searchTypes.getValue(searchTypes.getSelectedIndex());
+                Link.go(Pages.SHOP, Args.compose(type, CatalogQuery.SORT_BY_NEW_AND_HOT, "s"
+                    + query));
+            }
+            public void clearSearch () {
+                String type = searchTypes.getValue(searchTypes.getSelectedIndex());
+                Link.go(Pages.SHOP, type);
+            }
+        });
+        search.add(searchBox);
+        search.add(MsoyUI.createImageButton("GoButton", searchBox.makeSearchListener()));
+
+        // display static header and search across the top
+        add(MsoyUI.createLabel(_msgs.shopMarquee(), "ShopTitle"));
+        add(search);
+
+        // display categories on the left, content on the right
+        HorizontalPanel row = new HorizontalPanel();
+        row.setVerticalAlignment(HorizontalPanel.ALIGN_TOP);
+        SideBar sidebar = new SideBar(new CatalogQueryLinker(new CatalogQuery()), false, null);
+        sidebar.add(MsoyUI.createImage("/images/shop/shop_bag.png", "Bag"));
+        row.add(sidebar);
+        row.add(_contents = MsoyUI.createFlowPanel("TopContents"));
+        _contents.add(MsoyUI.createHTML(_msgs.shopIntro(), "Intro"));
+        add(row);
+        add(WidgetUtil.makeShim(15, 15));
 
         // now load up our shop data
         _catalogsvc.loadShopData(new MsoyCallback<ShopData>() {
@@ -70,8 +102,6 @@ public class ShopPanel extends HorizontalPanel
                 init(data);
             }
         });
-        _nowLoading = new NowLoadingWidget();
-        _nowLoading.center();
     }
 
     protected void init (final ShopData data)
@@ -160,7 +190,8 @@ public class ShopPanel extends HorizontalPanel
 
     protected FlowPanel _contents;
     protected NowLoadingWidget _nowLoading;
-    
+
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
