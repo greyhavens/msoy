@@ -135,7 +135,8 @@ public class GroupRepository extends DepotRepository
         // if there is a tag, fetch groups with GroupTagRecords for that tag, order by groupId
         } else if (query.tag != null) {
             return findAll(GroupRecord.class, getGroupWhere(query),
-                           new Join(GroupRecord.GROUP_ID, GroupTagRecord.TARGET_ID),
+                           new Join(GroupRecord.GROUP_ID,
+                               _tagRepo.getTagColumn(TagRecord.TARGET_ID)),
                            new Limit(offset, count));
         }
 
@@ -177,7 +178,7 @@ public class GroupRepository extends DepotRepository
         // if there is a tag, return count of GroupTagRecords for that tag
         } else if (query.tag != null) {
             return load(CountRecord.class, new FromOverride(GroupRecord.class),
-                        new Join(GroupRecord.GROUP_ID, GroupTagRecord.TARGET_ID),
+                        new Join(GroupRecord.GROUP_ID, _tagRepo.getTagColumn(TagRecord.TARGET_ID)),
                         getGroupWhere(query)).count;
 
         // if no full text or tag search, return count of all public records
@@ -536,7 +537,8 @@ public class GroupRepository extends DepotRepository
             if (tnr == null) {
                 return new Where(new LiteralExp("false"));
             } else {
-                return new Where(new And(publicOnly, new Equals(GroupTagRecord.TAG_ID, tnr.tagId)));
+                return new Where(new And(publicOnly, new Equals(
+                    _tagRepo.getTagColumn(TagRecord.TAG_ID), tnr.tagId)));
             }
         } else {
             return new Where(publicOnly);
