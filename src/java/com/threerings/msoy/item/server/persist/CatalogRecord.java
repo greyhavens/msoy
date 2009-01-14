@@ -133,14 +133,16 @@ public abstract class CatalogRecord extends PersistentRecord
     public ListingCard toListingCard ()
     {
         ListingCard card = new ListingCard();
-        card.itemType = item.getType();
+        if (item != null) {
+            card.itemType = item.getType();
+            card.name = item.name;
+            card.thumbMedia = item.getThumbMediaDesc();
+            card.creator = new MemberName(null, item.creatorId); // name filled in by caller
+            card.descrip = item.description;
+            card.remixable = item.isRemixable();
+            card.rating = item.rating;
+        }
         card.catalogId = catalogId;
-        card.name = item.name;
-        card.thumbMedia = item.getThumbMediaDesc();
-        card.creator = new MemberName(null, item.creatorId); // name filled in by caller
-        card.descrip = item.description;
-        card.remixable = item.isRemixable();
-        card.rating = item.rating;
         card.currency = currency;
         card.cost = cost;
         return card;
