@@ -310,6 +310,7 @@ public class MailSender
     /** Used by {@link #isPlaceholderAddress}. */
     protected static final Pattern[] PLACEHOLDER_PATTERNS = {
         Pattern.compile("[0-9]+@facebook.com"),
+        PermaguestUtil.EMAIL_PATTERN
     };
 
     protected static final Pattern CID_REGEX = Pattern.compile("cid\\:(\\S+\\....)");

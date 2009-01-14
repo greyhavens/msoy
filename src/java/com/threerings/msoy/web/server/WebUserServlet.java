@@ -52,6 +52,7 @@ import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.server.util.PermaguestUtil;
 
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.mail.server.MailLogic;
@@ -131,6 +132,11 @@ public class WebUserServlet extends MsoyServiceServlet
         // make sure the email is valid and not too long (this is also validated on the client)
         if (!MailUtil.isValidAddress(info.email) ||
             info.email.length() > MemberName.MAX_EMAIL_LENGTH) {
+            throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
+        }
+
+        // having registered users with permaguest emails would be a pain, so prevent it
+        if (PermaguestUtil.isPermaguestEmail(info.email)) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         }
 

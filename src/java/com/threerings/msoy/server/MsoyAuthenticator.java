@@ -36,6 +36,8 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
 
+import com.threerings.msoy.server.util.PermaguestUtil;
+
 import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ExternalCreds;
@@ -430,6 +432,15 @@ public class MsoyAuthenticator extends Authenticator
             } else if (creds.getUsername() != null) {
                 final String aname = creds.getUsername().toString().toLowerCase();
                 rsp.authdata = authenticateMember(creds, rdata, null, aname, creds.getPassword());
+
+            } else if (PermaguestUtil.ENABLED && !creds.featuredPlaceView) {
+                String username = PermaguestUtil.createUsername(conn.getInetAddress().toString());
+                String password = "";
+                createAccount(username, password, PermaguestUtil.DISPLAY_NAME, null, null, null,
+                    null, null);
+                log.info("Created permaguest account", "username", username);
+                creds.setUsername(new Name(username));
+                rsp.authdata = authenticateMember(creds, rdata, null, username, password);
 
             } else {
                 // if this is not just a "featured whirled" client; assign this guest a member id
