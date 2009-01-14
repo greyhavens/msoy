@@ -22,13 +22,11 @@ import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
-import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.MsoyNameLabelCreator;
-
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
 
 import com.threerings.msoy.client.ControlBar;
+import com.threerings.msoy.client.GameLoadingDisplay;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
@@ -39,6 +37,10 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 import com.threerings.msoy.item.data.all.Game;
+
+import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.MsoyNameLabelCreator;
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 /**
  * Coordinates the view for MSOY games.
@@ -102,6 +104,14 @@ public class MsoyGamePanel extends WhirledGamePanel
         return (_ctrl.getPlaceConfig() as MsoyGameConfig).game.getThumbnailMedia();
     }
 
+    /** Returns the descriptor of a piece of media to be displayed while the game is loading. */ 
+    public function getLoadingLogo () :MediaDesc
+    {
+        var game :Game = (_ctrl.getPlaceConfig() as MsoyGameConfig).game;
+        return (game.getRawFurniMedia() != null) ? game.getRawFurniMedia() 
+            : game.getThumbnailMedia(); 
+    }
+    
     /**
      * Shuttle the specified values to the GameOverPanel, if it exists.
      */
@@ -118,8 +128,9 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from WhirledGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
-        _spinner = new PlaceLoadingDisplay(
-            _gctx.getMsoyContext().getTopPanel().getPlaceContainer());
+        _spinner = new GameLoadingDisplay(
+            _gctx.getMsoyContext().getTopPanel().getPlaceContainer(),
+            ScalingMediaContainer.createView(getLoadingLogo(), MediaDesc.PREVIEW_SIZE));
 
         super.willEnterPlace(plobj);
 
