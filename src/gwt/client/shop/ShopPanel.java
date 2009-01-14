@@ -61,7 +61,7 @@ public class ShopPanel extends FlowPanel
         search.setStyleName("Search");
         search.setSpacing(5);
         search.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        search.add(MsoyUI.createLabel("Search", "SearchTitle"));
+        search.add(MsoyUI.createLabel(_msgs.shopSearch(), "SearchTitle"));
         final ListBox searchTypes = new ListBox();
         for (byte searchType : Item.STUFF_TYPES) {
             searchTypes.addItem(_dmsgs.xlate("pItemType" + searchType), searchType + "");
