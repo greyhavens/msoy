@@ -646,3 +646,99 @@
   height: 265px;
   background: url(/images/landing/contests/designcon_header.png) no-repeat top center;
 }
+
+/* ------------------------------------
+   SPLIT LANDING PAGE DESIGN
+-------------------------------------*/
+
+.splitLandingPanel .Header {
+  width: 100%;
+  height: 215px;
+  background: transparent url(/images/landing/split_header_bg.png) no-repeat 210px top;
+}
+
+.splitLandingPanel .logonPanel .tipLabel {
+  color: #58AED7;
+}
+
+.splitLandingPanel .IntroBlurb,
+.splitLandingPanel .CreateBlurb {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  color: #FFFFFF;
+  text-align: center;
+  width: 700px;
+  margin: 0 100px;
+}
+.splitLandingPanel .IntroBlurb a,
+.splitLandingPanel .CreateBlurb a {
+  color: #F8AD55;
+}
+
+.splitLandingPanel .Columns {
+  width: 100%;
+  height: 334px;
+  margin: 20px 0;
+}
+
+.splitLandingPanel .Games,
+.splitLandingPanel .Rooms {
+  width: 400px;
+  height: 334px;
+  background: url(/images/landing/split_column_bg.png) no-repeat;
+  margin-left: 30px;
+}
+
+.splitLandingPanel .Title {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  color: #FFFFFF;
+  width: 400px;
+  height: 45px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.splitLandingPanel .Featured {
+  height: 150px;
+  width: 400px;
+}
+
+.splitLandingPanel .Featured .Name {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+.splitLandingPanel .Featured .Description {
+  font-size: 14px;
+  color: #083B51;
+  width: 170px;
+  height: 100px;
+}
+
+.splitLandingPanel .OtherItems {
+  width: 400px;
+  height: 75px;
+}
+
+.splitLandingPanel .OtherItem {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  margin-left: 20px;
+  margin-bottom: 10px;
+  width: 170px;
+  height: 23px;
+  padding-top: 3px;
+  text-align: center;
+  background-color: #BFEDFF;
+  border-bottom: solid #50A3CC 1px;
+  border-right: solid #50A3CC 1px;
+}
+
+.splitLandingPanel .Blurb {
+  width: 350px;
+  margin: 0 25px;
+  text-align: center;
+}
+

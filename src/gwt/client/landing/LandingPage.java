@@ -4,6 +4,8 @@
 package client.landing;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.gwt.LandingServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
@@ -11,6 +13,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
+import client.shell.CShell;
 import client.shell.Page;
 import client.util.Link;
 import client.util.ServiceUtil;
@@ -26,6 +29,7 @@ public class LandingPage extends Page
     public static String GAME_CONTEST = "gamecontest";
     public static String DESIGN_CONTEST = "designcontest";
     public static String LANDING_COMBINED = "combined";
+    public static String LANDING_SPLIT = "split";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -56,9 +60,46 @@ public class LandingPage extends Page
         } else if (action.equals(LANDING_COMBINED)) {
             setContent(_msgs.landingTitle(), new LandingPanel());
 
-        // A/B/C test between combined, game-centric and room-centric landing pages
+        // split games/rooms combined (new) landing page
+        } else if (action.equals(LANDING_SPLIT)) {
+            setContent(_msgs.landingTitle(), new SplitLandingPanel());
+
+        // A/B test between old combination and a new split landing page
         } else {
-            setContent(_msgs.landingTitle(), new LandingPanel());
+            runABTest();
+        }
+    }
+
+    /**
+     * Runs AB test defined on the landing page.
+     */
+    protected void runABTest ()
+    {
+        // list of redirects, based on the user's test group.
+        final String[] testpages = new String[] {
+            // since groups are 1-indexed, we use "group 0" to mean the default value.
+            LANDING_COMBINED,
+            // our test groups
+            LANDING_COMBINED, LANDING_SPLIT };
+
+        _membersvc.getABTestGroup(CShell.visitor, "2009 01 landing split", true,
+            new AsyncCallback<Integer>() {
+                public void onSuccess (Integer group) {
+                    gotTestGroup(testpages, group);
+                }
+
+                public void onFailure (Throwable cause) {
+                    gotTestGroup(testpages, -1);
+                }
+            });
+    }
+
+    protected void gotTestGroup (String[] testpages, int group)
+    {
+        if (group > 0 && group < testpages.length) {
+            Link.go(Pages.LANDING, testpages[group]);
+        } else {
+            Link.go(Pages.LANDING, testpages[0]);
         }
     }
 
