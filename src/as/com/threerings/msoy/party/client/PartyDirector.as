@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.party.client {
 
+import flash.events.Event;
+import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 
 import com.threerings.util.Log;
@@ -20,7 +22,9 @@ import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.ChangeListener;
+import com.threerings.presents.dobj.NamedEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
+import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.dobj.SubscriberAdapter;
 
 import com.threerings.presents.util.SafeSubscriber;
@@ -47,6 +51,9 @@ import com.threerings.msoy.party.data.PartyPeep;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
 
+// TEMP
+[Event(name="partyChanged", type="flash.events.Event")]
+
 /**
  * Manages party stuff on the client.
  */
@@ -57,12 +64,27 @@ public class PartyDirector extends BasicDirector
 
     public const log :Log = Log.getLog(this);
 
+    // TEMP!!!
+    public var events :EventDispatcher = new EventDispatcher();
+
     public function PartyDirector (ctx :WorldContext)
     {
         super(ctx);
         _wctx = ctx;
         _wctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, locationDidChange, null));
+    }
+
+    // TEMP, for Tim
+    public function getPartyObject () :PartyObject
+    {
+        return _partyObj;
+    }
+
+    // TEMP, for Tim
+    protected function partyChanged () :void
+    {
+        events.dispatchEvent(new Event("partyChanged"));
     }
 
     /**
@@ -313,8 +335,11 @@ public class PartyDirector extends BasicDirector
         }
         if (_partyObj != null) {
             _partyObj.removeListener(_partyListener);
+            _partyObj.removeListener(_partyListener2);
             _partyListener = null;
+            _partyListener2 = null;
             _partyObj = null;
+            partyChanged();
         }
         if (_pctx != null) {
             _pctx.getClient().logoff(false);
@@ -329,6 +354,7 @@ public class PartyDirector extends BasicDirector
     {
         _partyObj = obj;
         _partyListener = new AttributeChangeAdapter(partyAttrChanged);
+        _partyListener2 = new SetAdapter(partySetChanged, partySetChanged, partySetChanged);
         _partyObj.addListener(_partyListener);
 
         // if the party popup is up, change to the new popup...
@@ -345,6 +371,8 @@ public class PartyDirector extends BasicDirector
 
         // we might need to warp to the party location
         checkFollowParty();
+
+        partyChanged();
     }
 
     /**
@@ -414,7 +442,19 @@ public class PartyDirector extends BasicDirector
         case PartyObject.SCENE_ID:
             checkFollowParty();
             break;
+
+            // TEMP
+        case PartyObject.LEADER_ID:
+            partyChanged();
+            break;
         }
+    }
+
+    // TEMP
+    protected function partySetChanged (event :NamedEvent) :void
+    {
+        // ignore the event, the PEEPS changed
+        partyChanged();
     }
 
     // from BasicDirector
@@ -455,6 +495,7 @@ public class PartyDirector extends BasicDirector
     protected var _detailPanels :Dictionary = new Dictionary();
 
     protected var _partyListener :ChangeListener;
+    protected var _partyListener2 :ChangeListener; // TEMP
 }
 }
 

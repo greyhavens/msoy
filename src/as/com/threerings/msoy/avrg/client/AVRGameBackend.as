@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.client {
 
 import flash.display.DisplayObject;
+import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
@@ -42,6 +43,9 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 
+import com.threerings.msoy.party.data.PartyObject;
+import com.threerings.msoy.party.data.PartyPeep;
+
 import com.threerings.msoy.avrg.data.AVRGameObject;
 
 public class AVRGameBackend extends ControlBackend
@@ -62,6 +66,8 @@ public class AVRGameBackend extends ControlBackend
         _gameObj = gameObj;
 
         _playerObj = _gctx.getPlayerObject();
+
+        _wctx.getPartyDirector().events.addEventListener("partyChanged", handlePartyChanged);
     }
 
     // from ControlBackend
@@ -78,6 +84,8 @@ public class AVRGameBackend extends ControlBackend
         if (_roomPropsNetAdapter != null) {
             _roomPropsNetAdapter.release();
         }
+
+        _wctx.getPartyDirector().events.removeEventListener("partyChanged", handlePartyChanged);
 
         super.shutdown();
     }
@@ -259,6 +267,9 @@ public class AVRGameBackend extends ControlBackend
         // TODO: MobControl helpers
         o["setMobDecoration_v1"] = setMobDecoration_v1;
         o["setMobHotSpot_v1"] = setMobHotSpot_v1;
+
+        // TEMP
+        o["getPartyInfo_temp"] = getPartyInfo_temp;
     }
 
     // GameSubControl
@@ -783,6 +794,26 @@ public class AVRGameBackend extends ControlBackend
     protected function getMemberId () :int
     {
         return _wctx.getMemberObject().getMemberId();
+    }
+
+    protected function getPartyInfo_temp () :Object
+    {
+        var pobj :PartyObject = _wctx.getPartyDirector().getPartyObject();
+        if (pobj == null) {
+            return null;
+        }
+
+        var peeps :Array = pobj.peeps.toArray().map(function (peep :PartyPeep, ... rest) :int {
+            return peep.name.getMemberId();
+        });
+
+        return { id: pobj.id, name: pobj.name, leaderId: pobj.leaderId, players: peeps };
+    }
+
+    // TEMP
+    protected function handlePartyChanged (event :Event) :void
+    {
+        callUserCode("partyChanged_temp");
     }
 
     protected var _wctx :WorldContext;
