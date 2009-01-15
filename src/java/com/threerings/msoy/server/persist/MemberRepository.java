@@ -397,7 +397,7 @@ public class MemberRepository extends DepotRepository
      * mapping). The member is assumed to have provided valid credentials and we will allow anyone
      * who presents the returned session token access as the specified member. If an existing
      * session is reused, its expiration date will be adjusted as if the session was newly created
-     * as of now (using the supplied <code>persist</code> setting).
+     * as of now (using the supplied <code>expireDays</code> setting).
      */
     public String startOrJoinSession (int memberId, int expireDays)
     {
