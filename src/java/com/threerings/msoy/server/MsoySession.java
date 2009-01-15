@@ -16,6 +16,7 @@ import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.BootstrapData;
+import com.threerings.presents.server.net.AuthingConnection;
 import com.threerings.presents.server.net.Connection;
 
 import com.threerings.crowd.data.OccupantInfo;
@@ -33,6 +34,7 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.StatType;
@@ -72,6 +74,21 @@ public class MsoySession extends WhirledSession
     protected BootstrapData createBootstrapData ()
     {
         return new MsoyBootstrapData();
+    }
+
+    @Override
+    protected void populateBootstrapData (BootstrapData data)
+    {
+        super.populateBootstrapData(data);
+
+        Connection conn = getConnection();
+        if (conn != null && conn instanceof AuthingConnection) {
+            ((MsoyBootstrapData)data).sessionToken = ((MsoyAuthResponseData)
+                (((AuthingConnection)conn).getAuthResponse().getData())).sessionToken;
+        } else {
+            log.warning("Unable to set session token in bootstrap data", "conn", conn,
+                "class", conn.getClass());
+        }
     }
 
     @Override // from PresentsSession

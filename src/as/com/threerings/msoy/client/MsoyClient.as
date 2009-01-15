@@ -15,6 +15,7 @@ import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
 import com.threerings.util.Log;
+import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MenuUtil;
@@ -25,6 +26,7 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 
 import com.threerings.presents.dobj.DObjectManager;
 
+import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.net.Credentials;
 import com.threerings.presents.net.BootstrapData;
 
@@ -73,6 +75,12 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      * @eventType clientEmbedded
      */
     public static const EMBEDDED_STATE_KNOWN :String = "clientEmbedded";
+
+    /**
+     * Whether we have turned on the permaguest feature.
+     */
+    public static const PERMAGUESTS_ENABLED :Boolean = DeploymentConfig.devDeployment;
+
 
     // statically reference classes we require
     MsoyBootstrapData;
@@ -129,6 +137,24 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
     }
 
+    override public function logoff (abortable :Boolean) :Boolean
+    {
+        log.info("Logoff requested");
+        return super.logoff(abortable);
+    }
+
+    override public function logon () :Boolean
+    {
+        log.info("Logon requested");
+        return super.logon();
+    }
+
+    override public function setAuthResponseData (data :AuthResponseData) :void
+    {
+        super.setAuthResponseData(data);
+        log.info("Got auth response", "data", StringUtil.simpleToString(data));
+    }
+
     // from Client
     override public function gotBootstrap (data :BootstrapData, omgr :DObjectManager) :void
     {
@@ -139,6 +165,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         if (rdata.warning != null) {
             new WarningDialog(_ctx, rdata.warning);
         }
+
+        log.info("Got bootstrap", "data", StringUtil.simpleToString(data));
     }
 
     /**

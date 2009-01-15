@@ -50,7 +50,8 @@ JAVA_ARGS="-server -mx$SERVER_MEMORY \
     -Dlog4j.configuration=log4j.properties \
     -Djava.util.logging.config.file=$MSOY_HOME/dist/logging.properties \
     -Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger \
-    -Dehcache.disk.store.dir=world"
+    -Dehcache.disk.store.dir=world \
+    -Dskip_check_referrer=true"
 
 # If we're running on dev1, add some JMX configuration
 if [ "$PROCID" = "dev1" ]; then

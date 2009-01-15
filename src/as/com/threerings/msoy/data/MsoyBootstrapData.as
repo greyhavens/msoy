@@ -13,7 +13,8 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class MsoyBootstrapData extends BootstrapData
 {
-    // nada, at the moment
+    /** The token generated during authentication. */
+    public var sessionToken :String;
 
     public function MsoyBootstrapData ()
     {
@@ -23,12 +24,13 @@ public class MsoyBootstrapData extends BootstrapData
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
+        sessionToken = ins.readField(String) as String;
     }
 
     // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
-        super.writeObject(out);
+        throw new Error("Client may not writeObject");
     }
 }
 }
