@@ -4,18 +4,16 @@
  * CSS styles for the Catalog interfaces.
  */
 
-.shopPanel, .catalogPanel {
+/* ------------------------------------
+   MAIN SHOP PAGE
+-------------------------------------*/
+
+.shopPanel {
   width: 100%;
   min-height: 100%;
   background: #61abd0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-}
-
-.listingGrid {
-  background: white;
-  width: 100%;
-  margin-top: 5px;
 }
 
 .shopPanel .ShopTitle {
@@ -120,6 +118,24 @@
   margin: 15px 15px 0px 0px;
 }
 
+/* ------------------------------------
+   SHOP CATEGORY PAGE
+-------------------------------------*/
+
+.catalogPanel {
+  width: 100%;
+  height: 100%;
+  background: #61abd0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+.listingGrid {
+  background: white;
+  width: 100%;
+  margin-top: 5px;
+}
+
 .catalogPanel .sideBar .tagCloud {
   margin-left: 5px;
 }
@@ -146,6 +162,10 @@
 .buyRemixPanel {
   width: 300px;
   padding: 15px;
+}
+
+.catalogPanel .pagedGrid .miniNowLoadingWidget {
+  background-image: url(/images/ui/dot_bluematte.gif);
 }
 
 .catalogPanel .pagedGrid, .favoritesPanel .pagedGrid { 
