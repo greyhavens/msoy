@@ -19,7 +19,6 @@ import com.adobe.crypto.MD5;
 
 import com.threerings.util.Log;
 import com.threerings.util.Name;
-import com.threerings.util.StringUtil;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObjectManager;
@@ -355,8 +354,6 @@ public class WorldClient extends MsoyClient
         creds.ident = Prefs.getMachineIdent();
         creds.featuredPlaceView = _featuredPlaceView;
         creds.visitorId = getVisitorId();
-
-        log.info("Created startup creds", "params", StringUtil.toString(params), "creds", creds);
 
         return creds;
     }

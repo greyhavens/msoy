@@ -799,11 +799,11 @@
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="${build.optimize}" deprecation="on" target="1.5">
       <classpath refid="classpath"/>
-      <include name="**/GroupRepository.java"/>
+      <include name="**/*Record.java"/>
     </javac>
     <!-- now update the source files -->
     <grecord classpathref="classpath">
-      <fileset dir="${src.dir}" includes="**/GroupRepository.java"/>
+      <fileset dir="${src.dir}" includes="**/*Record.java"/>
     </grecord>
   </target>
 

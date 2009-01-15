@@ -57,7 +57,7 @@ public class StatusPanel extends SmartTable
                     _levels.setLevel(event.getValue());
                     // if our level changed, display some fancy graphics
                     if (isIncrease(event)) {
-                        //_levels.showLevelUpPopup();
+                        _levels.showLevelUpPopup();
                     }
                     break;
 
@@ -65,7 +65,7 @@ public class StatusPanel extends SmartTable
                     _levels.setCoins(event.getValue());
                     // if we earned flow, display some fancy graphics
                     if (isIncrease(event)) {
-                        //_levels.showEarnedCoinsPopup();
+                        _levels.showEarnedCoinsPopup();
                     }
                     break;
 

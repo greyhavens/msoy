@@ -8,7 +8,6 @@ import flash.display.DisplayObject;
 import flash.net.URLVariables;
 
 import com.threerings.util.ParameterUtil;
-import com.threerings.util.Log;
 
 /**
  * A small utility class for handling parameters in whirled.
@@ -28,7 +27,6 @@ public class MsoyParameters
      */
     public static function init (disp :DisplayObject, thenRun :Function) :void
     {
-        Log.getLog(MsoyParameters).info("Initializing parameters", "disp", disp, new Error());
         var d :DisplayObject = disp;
         while (d != null) {
             try {

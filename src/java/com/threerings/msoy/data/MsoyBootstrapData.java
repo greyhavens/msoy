@@ -10,6 +10,5 @@ import com.threerings.presents.net.BootstrapData;
  */
 public class MsoyBootstrapData extends BootstrapData
 {
-    /** The token generated during authentication. */
-    public String sessionToken;
+    // nada, at the moment
 }

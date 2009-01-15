@@ -436,8 +436,8 @@ public class MsoyAuthenticator extends Authenticator
             } else if (PermaguestUtil.ENABLED && !creds.featuredPlaceView) {
                 String username = PermaguestUtil.createUsername(conn.getInetAddress().toString());
                 String password = "";
-                createAccount(username, password, PermaguestUtil.DISPLAY_NAME, null,
-                    new VisitorInfo(creds.visitorId, false), null, null, null);
+                createAccount(username, password, PermaguestUtil.DISPLAY_NAME, null, null, null,
+                    null, null);
                 log.info("Created permaguest account", "username", username);
                 creds.setUsername(new Name(username));
                 rsp.authdata = authenticateMember(creds, rdata, null, username, password);
@@ -516,10 +516,8 @@ public class MsoyAuthenticator extends Authenticator
             } else {
                 account.firstLogon = (member.sessions == 0);
             }
+            rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId, 1);
         }
-
-        // always set the session token
-        rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId, 1);
 
         // check to see whether this account has been banned or if this is a first time user
         // logging in from a tainted machine
