@@ -257,7 +257,7 @@ public class GameEditor extends ItemEditor
                     return _emsgs.errInvalidShot(""+swidth, ""+sheight);
                 }
                 if (width != swidth || height != sheight) {
-                    fuploader[0].openImageEditor(desc);
+                    fuploader[0].openImageEditor(desc, false);
                     return SUPPRESS_ERROR;
                 }
                 _game.shotMedia = desc;

@@ -637,6 +637,14 @@ public abstract class ItemEditor extends FlowPanel
         }
     }
 
+    protected void takeSnapshot (String ids)
+    {
+        ItemMediaUploader mu = _uploaders.get(ids.split(";")[0]);
+        if (mu != null) {
+            mu.openImageEditor(null, true);
+        }
+    }
+
     /**
      * Called to re-set the displayed furni media to the MediaDesc returned by the item.
      */
@@ -694,6 +702,12 @@ public abstract class ItemEditor extends FlowPanel
             _remixPopup.removeFromParent();
             _remixPopup = null;
         }
+    }
+
+    protected static void takeSnapshotBridge (String ids)
+    {
+        String fids = "" + ids;
+        _singleton.takeSnapshot(ids);
     }
 
     /**
@@ -849,6 +863,9 @@ public abstract class ItemEditor extends FlowPanel
         };
         $wnd.cancelRemix = function () {
             @client.editem.ItemEditor::cancelRemix()();
+        };
+        $wnd.takeSnapshot = function (ids) {
+            @client.editem.ItemEditor::takeSnapshotBridge(Ljava/lang/String;)(ids);
         };
     }-*/;
 

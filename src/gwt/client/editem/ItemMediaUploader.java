@@ -107,11 +107,16 @@ public class ItemMediaUploader extends FlexTable
 
         ClickListener listener = new ClickListener() {
             public void onClick (Widget sender) {
-                openImageEditor((sender == createBtn) ? null : desc);
+                openImageEditor((sender == createBtn) ? null : desc, false);
             }
         };
         createBtn.addClickListener(listener);
-        setWidget(2, 0, createBtn);
+
+        HorizontalPanel hpan = new HorizontalPanel();
+        hpan.add(createBtn);
+        hpan.add(FlashClients.createCameraButton(_mediaIds));
+        hpan.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
+        setWidget(2, 0, hpan);
 
         if (desc != null && desc.isImage()) {
             Button editBtn = new Button(_emsgs.editImage());
@@ -147,7 +152,7 @@ public class ItemMediaUploader extends FlexTable
     /**
      * Force open the image editor.
      */
-    public void openImageEditor (MediaDesc desc)
+    public void openImageEditor (MediaDesc desc, boolean takeSnapshot)
     {
         int popWidth = _itemEditor.getOffsetWidth() - 8;
         int popHeight = Math.max(Frame.CLIENT_HEIGHT,
@@ -166,7 +171,7 @@ public class ItemMediaUploader extends FlexTable
         }
         _editorPopup = new BorderedPopup(false, true);
         _editorPopup.setWidget(FlashClients.createImageEditor(
-            popWidth, popHeight, _mediaIds, url, maxWidth, maxHeight, maxRequired));
+            popWidth, popHeight, _mediaIds, takeSnapshot, url, maxWidth, maxHeight, maxRequired));
         _editorPopup.show();
     }
 

@@ -23,7 +23,7 @@ import client.shell.Frame;
 public class FlashClients
 {
     /**
-     * Create an audio player.
+     * Create a tiny applet for uploading media.
      */
     public static HTML createUploader (String mediaIds, String filetypes)
     {
@@ -32,6 +32,17 @@ public class FlashClients
             "&filetypes=" + URL.encodeComponent(filetypes);
         return WidgetUtil.createTransparentFlashContainer("uploader",
             "/clients/" + DeploymentConfig.version + "/uploader.swf", 200, 40, flashVars);
+    }
+
+    /**
+     * Create a tiny applet that simply detects if the user has a camera and shows
+     * a button if so.
+     */
+    public static HTML createCameraButton (String mediaIds)
+    {
+        String flashVars = "mediaIds=" + URL.encodeComponent(mediaIds);
+        return WidgetUtil.createTransparentFlashContainer("camerabutton",
+            "/clients/" + DeploymentConfig.version + "/camerabutton.swf", 160, 19, flashVars);
     }
 
     /**
@@ -66,11 +77,14 @@ public class FlashClients
      * @param maxRequired whether the maxes are  maximums, or a _required_ size.
      */
     public static HTML createImageEditor (
-        int width, int height, String mediaIds, String currentURL,
+        int width, int height, String mediaIds, boolean takeSnapshot, String currentURL,
         int maxWidth, int maxHeight, boolean maxRequired)
     {
         String flashVars = "auth=" + URL.encodeComponent(CShell.getAuthToken()) +
             "&mediaIds=" + URL.encodeComponent(mediaIds);
+        if (takeSnapshot) {
+            flashVars += "&takeSnapshot=true";
+        }
         if (currentURL != null) {
             flashVars += "&url=" + URL.encodeComponent(currentURL);
         }

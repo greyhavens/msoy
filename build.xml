@@ -688,6 +688,13 @@
     </antcall>
   </target>
 
+  <target name="camerabutton" depends="asprepare">
+    <antcall target="ascompile">
+      <param name="aspath" value="applets/CameraButtonApp.as"/>
+      <param name="swfname" value="camerabutton"/>
+    </antcall>
+  </target>
+
   <!-- builds our media uploader -->
   <target name="uploader" depends="asprepare">
     <antcall target="ascompile">
@@ -1014,7 +1021,7 @@
   <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a
        the API shuffle is done, and the tutorial code has been refactored -->
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,embedstub,videoplayer,audioplayer,remixer,imageeditor,uploader,asclient,asgclient"
+  <target name="flashapps" depends="asprepare,mediastub,embedstub,videoplayer,audioplayer,remixer,imageeditor,camerabutton,uploader,asclient,asgclient"
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 

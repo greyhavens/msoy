@@ -64,29 +64,13 @@ public class ImageControls
             downloader.addEventListener(Event.COMPLETE, handleDownloadComplete);
             downloader.startDownload(url, _ctx.changeFilename(url, "image"));
 
+        } else if (null != params["takeSnapshot"]) {
+            new CameraSnapshotControl(_ctx, _ctx.getApplication(), handleCameraDone);
+
         } else {
-            var options :ImageControlOptions = new ImageControlOptions(_ctx);
-            options.addEventListener(Event.COMPLETE, handleOptionChoice);
-            options.open();
-        }
-    }
-
-    protected function handleOptionChoice (event :ValueEvent) :void
-    {
-        switch (event.value) {
-        case ImageControlOptions.CANCEL:
-            close();
-            break;
-
-        case ImageControlOptions.NEW:
             var newImage :NewImageDialog = new NewImageDialog(_ctx, _size);
             newImage.addEventListener(Event.COMPLETE, handleNewImage);
             newImage.addEventListener(Event.CANCEL, close);
-            break;
-
-        case ImageControlOptions.CAMERA:
-            new CameraSnapshotControl(_ctx, _ctx.getApplication(), handleCameraDone);
-            break;
         }
     }
 
