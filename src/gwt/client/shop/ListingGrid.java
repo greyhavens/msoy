@@ -11,6 +11,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.item.ListingBox;
+import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 
 /**
@@ -34,6 +35,12 @@ public abstract class ListingGrid extends PagedGrid<ListingCard>
     protected boolean displayNavi (int items)
     {
         return true;
+    }
+
+    @Override// from PagedWidget
+    protected Widget getNowLoadingWidget ()
+    {
+        return new MiniNowLoadingWidget();
     }
 
     /** The number of columns of items to display. */
