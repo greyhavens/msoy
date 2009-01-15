@@ -268,6 +268,10 @@ public class MailSender
                     message.setText(body, "UTF-8", "html");
                     MailUtil.deliverMail(new String[] { recip.right }, _sender, _subject, message);
 
+                } catch (com.sun.mail.smtp.SMTPAddressFailedException badAddress) {
+                    // TODO: why does javax.mail refuse some domain names?
+                    log.info("Could not spam address", "address", recip.right);
+
                 } catch (Exception e) {
                     log.warning("Failed to send spam email", "recip", recip, "sender", _sender,
                                 "subject", _subject, e);
