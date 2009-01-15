@@ -7,9 +7,12 @@ import flash.events.Event;
 
 import mx.controls.CheckBox;
 import mx.controls.ColorPicker;
+import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.Label;
 import mx.controls.Spacer;
+
+import mx.events.ListEvent;
 
 import mx.validators.NumberValidator;
 import mx.validators.Validator;
@@ -41,6 +44,20 @@ public class DataEditor extends FieldEditor
         return setupString(entry);
     }
 
+    protected function setupChoice (entry :Object) :Array
+    {
+        var box :ComboBox = new ComboBox();
+        box.dataProvider = entry.choices;
+        box.selectedItem = entry.value;
+        box.addEventListener(ListEvent.CHANGE, function (... ignored) :void {
+            if (box.selectedIndex != -1) {
+                updateValue(box.selectedItem);
+            }
+        });
+
+        return [ box, new Spacer(), box ];
+    }
+
     protected function setupBoolean (entry :Object) :Array
     {
         var tog :CheckBox = new CheckBox();
@@ -61,7 +78,12 @@ public class DataEditor extends FieldEditor
         return setupPopper(entry, createFn);
     }
 
-    protected function setupNumber (entry :Object) :Array
+    protected function setupint (entry :Object) :Array
+    {
+        return setupNumber(entry, true);
+    }
+
+    protected function setupNumber (entry :Object, isInt :Boolean = false) :Array
     {
         var min :Number = Number(entry.min);
         var max :Number = Number(entry.max);
@@ -75,6 +97,9 @@ public class DataEditor extends FieldEditor
             hslider.addEventListener(Event.CHANGE, function (... ignored) :void {
                 updateValue(hslider.value);
             });
+            if (isInt) {
+                hslider.snapInterval = 1;
+            }
 
             return [ hslider, new Spacer(), hslider ];
 
@@ -82,6 +107,9 @@ public class DataEditor extends FieldEditor
             var val :NumberValidator = new NumberValidator();
             val.minValue = min;
             val.maxValue = max;
+            if (isInt) {
+                val.domain = "int";
+            }
             return setupString(entry, val);
         }
     }
