@@ -986,6 +986,12 @@ public class FrameEntryPoint
         _closeTitle = title;
     }
 
+    protected void setPermaguestInfo (String name, String token)
+    {
+        // the server has created a permaguest account for us via flash, store the cookies
+        CShell.log("Got permaguest info from flash", "name", name, "token", token);
+    }
+
     /**
      * Configures top-level functions that can be called by Flash.
      */
@@ -1023,6 +1029,9 @@ public class FrameEntryPoint
         }
         $wnd.howdyPardner = function () {
             entry.@client.frame.FrameEntryPoint::javaReady()();
+        }
+        $wnd.setPermaguestInfo = function (name, token) {
+            entry.@client.frame.FrameEntryPoint::setPermaguestInfo(Ljava/lang/String;Ljava/lang/String;)(name, token);
         }
     }-*/;
 

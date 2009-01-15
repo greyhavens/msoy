@@ -20,6 +20,7 @@ import com.adobe.crypto.MD5;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 
+import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.net.BootstrapData;
@@ -33,6 +34,7 @@ import com.threerings.msoy.client.EmbedHeader;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyParameters;
+import com.threerings.msoy.client.PermaguestUtil;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
@@ -123,10 +125,14 @@ public class WorldClient extends MsoyClient
         }
         if (rdata.sessionToken != null) {
             Prefs.setSessionToken(rdata.sessionToken);
+
+            // record whether or not we used a token to login
+            _usedToken = WorldCredentials(getCredentials()).sessionToken != null;
+
             // fill our session token into our credentials so that we can log in more efficiently
             // on a reconnect, so that we can log into game servers and so that guests can preserve
             // some sense of identity during the course of their session
-            (getCredentials() as WorldCredentials).sessionToken = rdata.sessionToken;
+            WorldCredentials(getCredentials()).sessionToken = rdata.sessionToken;
         }
 
         log.info("Client logged on [built=" + DeploymentConfig.buildTime +
@@ -171,6 +177,36 @@ public class WorldClient extends MsoyClient
         var co :MemberObject = _wctx.getMemberObject();
         if (co == null || co.getMemberId() != memberId) {
             _wctx.getMsoyController().handleLogon(createStartupCreds(token));
+        }
+    }
+
+    /** @inheritDoc */
+    // from MsoyClient
+    override protected function clientDidLogon (event :ClientEvent) :void
+    {
+        super.clientDidLogon(event);
+
+        var member :MemberObject = _clobj as MemberObject;
+        if (member == null || _embedded) {
+            return;
+        }
+
+        // set or reset our permaguest stuff
+        var username :String = member.username.toString();
+        if (PermaguestUtil.isPermaguestEmail(username)) {
+            log.info("You are a permaguest", "name", username);
+            Prefs.setPermaguestUsername(username);
+
+            var serverToken :String =
+                _authData != null ? MsoyAuthResponseData(_authData).sessionToken : null;
+
+            if (!_usedToken && serverToken != null) {
+                // the server has created an account for us, yippee! let gwt know
+                if (ExternalInterface.available) {
+                    log.info("Setting permaguest token to GWT", "token", serverToken);
+                    ExternalInterface.call("setPermaguestInfo", username, serverToken);
+                }
+            }
         }
     }
 
@@ -360,6 +396,7 @@ public class WorldClient extends MsoyClient
 
     protected var _wctx :WorldContext;
     protected var _user :MemberObject;
+    protected var _usedToken :Boolean;
 
     private static const log :Log = Log.getLog(WorldClient);
 }

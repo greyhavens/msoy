@@ -43,6 +43,7 @@ public class Prefs
     public static const BLEEPED_MEDIA :String = "bleepedMedia";
     public static const GRID_AUTOSHOW :String = "gridAutoshow";
     public static const PARTY_GROUP :String = "partyGroup";
+    public static const PERMAGUEST_USERNAME :String = "permaguestUsername";
 
     public static const CHAT_FONT_SIZE_MIN :int = 10;
     public static const CHAT_FONT_SIZE_MAX :int = 24;
@@ -66,6 +67,16 @@ public class Prefs
     public static function setUsername (username :String) :void
     {
         config.setValue(USERNAME, username);
+    }
+
+    public static function getPermaguestUsername () :String
+    {
+        return (config.getValue(PERMAGUEST_USERNAME, "") as String);
+    }
+
+    public static function setPermaguestUsername (username :String) :void
+    {
+        config.setValue(PERMAGUEST_USERNAME, username);
     }
 
     public static function getSessionToken () :String
