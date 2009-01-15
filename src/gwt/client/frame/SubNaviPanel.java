@@ -42,7 +42,7 @@ public class SubNaviPanel extends FlowPanel
             } else {
                 addLink(null, "Me", Pages.ME, "");
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
-                addLink(null, "Rooms", Pages.PEOPLE, Args.compose("rooms", memberId), false);
+                addLink(null, "My Rooms", Pages.PEOPLE, Args.compose("rooms", memberId));
                 addLink(null, "Friends", Pages.PEOPLE, "");
                 addLink(null, "Account", Pages.ACCOUNT, "edit");
                 if (CShell.isSupport()) {
@@ -70,7 +70,7 @@ public class SubNaviPanel extends FlowPanel
             addLink(null, "Rooms", Pages.ROOMS, "");
             if (!CShell.isGuest()) {
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
-                addLink(null, "My Rooms", Pages.PEOPLE, Args.compose("rooms", memberId), false);
+                addLink(null, "My Rooms", Pages.PEOPLE, Args.compose("rooms", memberId));
             }
             break;
 

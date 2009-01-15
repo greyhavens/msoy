@@ -53,6 +53,7 @@ public class MyWhirled extends FlowPanel
                 rbits.add(makeQuickLink("My Profile", Pages.PEOPLE, ""+CShell.getMemberId()));
                 rbits.add(makeQuickLink("My Passport", Pages.ME, "passport"));
                 rbits.add(makeQuickLink("Invite Friends", Pages.PEOPLE, "invites"));
+                rbits.add(makeQuickLink("Contests", Pages.ME, "contests"));
 
                 String empty = data.friendCount > 0 ?
                     _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
@@ -97,7 +98,7 @@ public class MyWhirled extends FlowPanel
     }
 
     protected final NowLoadingWidget _nowLoading;
-    
+
     protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
     protected static final MeServiceAsync _mesvc = (MeServiceAsync)
