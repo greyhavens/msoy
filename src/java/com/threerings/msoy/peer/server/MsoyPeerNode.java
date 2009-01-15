@@ -30,7 +30,6 @@ import com.threerings.msoy.server.ServerConfig;
  * Handles Whirled-specific peer bits.
  */
 public class MsoyPeerNode extends PeerNode
-    implements SetListener<DSet.Entry>
 {
     @Override // from PeerNode
     public void init (PeerManager peermgr, PresentsDObjectMgr omgr, ConnectionManager conmgr,
@@ -61,37 +60,6 @@ public class MsoyPeerNode extends PeerNode
         super.clientDidLogoff(client);
     }
 
-    // from interface SetListener
-    public void entryAdded (EntryAddedEvent<DSet.Entry> event)
-    {
-        if (event.getName().equals(MsoyNodeObject.MEMBER_LOCS)) {
-            ((MsoyPeerManager)_peermgr).memberEnteredScene(
-                getNodeName(), (MemberLocation)event.getEntry());
-        }
-        if (event.getName().equals(NodeObject.CLIENTS)) {
-            ((MsoyPeerManager)_peermgr).memberLoggedOn(
-                getNodeName(), (MsoyClientInfo)event.getEntry());
-        }
-    }
-
-    // from interface SetListener
-    public void entryUpdated (EntryUpdatedEvent<DSet.Entry> event)
-    {
-        if (event.getName().equals(MsoyNodeObject.MEMBER_LOCS)) {
-            ((MsoyPeerManager)_peermgr).memberEnteredScene(
-                getNodeName(), (MemberLocation)event.getEntry());
-        }
-    }
-
-    // from interface SetListener
-    public void entryRemoved (EntryRemovedEvent<DSet.Entry> event)
-    {
-        if (event.getName().equals(NodeObject.CLIENTS)) {
-            ((MsoyPeerManager)_peermgr).memberLoggedOff(
-                getNodeName(), (MsoyClientInfo)event.getOldEntry());
-        }
-    }
-
     /**
      * Return the HTTP port this Whirled node is listening on.
      */
@@ -109,6 +77,58 @@ public class MsoyPeerNode extends PeerNode
             return super.createCommunicator(client);
         }
     }
+
+    @Override // from PeerNode
+    protected NodeObjectListener createListener ()
+    {
+        return new MsoyNodeObjectListener();
+    }
+
+    /**
+     * Extends the base NodeListener with Msoy-specific bits.
+     */
+    protected class MsoyNodeObjectListener extends NodeObjectListener
+    {
+        @Override
+        public void entryAdded (EntryAddedEvent<DSet.Entry> event)
+        {
+            super.entryAdded(event);
+
+            String name = event.getName();
+            if (MsoyNodeObject.MEMBER_LOCS.equals(name)) {
+                ((MsoyPeerManager)_peermgr).memberEnteredScene(
+                    getNodeName(), (MemberLocation)event.getEntry());
+
+            } else if (NodeObject.CLIENTS.equals(name)) {
+                ((MsoyPeerManager)_peermgr).memberLoggedOn(
+                    getNodeName(), (MsoyClientInfo)event.getEntry());
+            }
+        }
+
+        @Override
+        public void entryUpdated (EntryUpdatedEvent<DSet.Entry> event)
+        {
+            super.entryUpdated(event);
+
+            String name = event.getName();
+            if (MsoyNodeObject.MEMBER_LOCS.equals(name)) {
+                ((MsoyPeerManager)_peermgr).memberEnteredScene(
+                    getNodeName(), (MemberLocation)event.getEntry());
+            }
+        }
+
+        @Override
+        public void entryRemoved (EntryRemovedEvent<DSet.Entry> event)
+        {
+            super.entryRemoved(event);
+
+            String name = event.getName();
+            if (NodeObject.CLIENTS.equals(name)) {
+                ((MsoyPeerManager)_peermgr).memberLoggedOff(
+                    getNodeName(), (MsoyClientInfo)event.getOldEntry());
+            }
+        }
+    } // END: class MsoyNodeObjectListener
 
     /** The HTTP port this Whirled node is listening on.  */
     protected int _httpPort;
