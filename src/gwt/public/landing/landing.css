@@ -38,7 +38,7 @@
 }
 
 .BlueLandingPage h3 {
-  font-size: 13px;
+  font-size: 17px;
   font-weight: bold;
   font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
   margin: 25px 0 10px 0;
@@ -632,6 +632,16 @@
 -------------------------------------*/
 
 .gameContestPanel .Header {
+  width: 882px;
+  height: 241px;
+  background: url(/images/landing/contests/gamecon_header_bg.png) no-repeat;
+}
+
+/* ------------------------------------
+   DEVELOPER INTRO LANDING PAGE
+-------------------------------------*/
+
+.developerIntroPanel .Header {
   width: 882px;
   height: 241px;
   background: url(/images/landing/contests/gamecon_header_bg.png) no-repeat;

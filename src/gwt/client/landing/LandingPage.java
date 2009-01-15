@@ -28,6 +28,7 @@ public class LandingPage extends Page
     public static String DEVIANT_CONTEST_WINNERS = "dawinners";
     public static String GAME_CONTEST = "gamecontest";
     public static String DESIGN_CONTEST = "designcontest";
+    public static String DEVELOPER_INTRO = "devintro";
     public static String LANDING_COMBINED = "combined";
     public static String LANDING_SPLIT = "split";
 
@@ -55,6 +56,10 @@ public class LandingPage extends Page
         // landing page for design your whirled contest
         } else if (action.equals(DESIGN_CONTEST)) {
             setContent(_msgs.titleDesignContest(), new DesignContestPanel());
+
+        // landing page with an introduction to Whirled for developers
+        } else if (action.equals(DEVELOPER_INTRO)) {
+            setContent(_msgs.landingTitle(), new DeveloperIntroPanel());
 
         // combined (old) landing page
         } else if (action.equals(LANDING_COMBINED)) {
