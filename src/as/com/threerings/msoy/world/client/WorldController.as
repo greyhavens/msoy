@@ -40,6 +40,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.avrg.client.AVRGamePanel;
+import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
@@ -1227,7 +1228,10 @@ public class WorldController extends MsoyController
         // ...so only change avrg idleness when we go idle for real..
         if (wasIdle != _idle) {
             // let AVRGs know about our idleness changes
-            _wctx.getGameDirector().setIdle(_idle);
+            var gd :GameDirector = _wctx.getGameDirector();
+            if (gd != null) { // studio has no GameDirector
+                gd.setIdle(_idle);
+            }
         }
     }
 
