@@ -20,7 +20,9 @@ public class PetBackend extends ActorBackend
      */
     protected function sendChatMessage_v1 (msg :String) :void
     {
-        (_sprite as PetSprite).sendChatMessage(msg);
+        if (_sprite != null) {
+            (_sprite as PetSprite).sendChatMessage(msg);
+        }
     }
 
     /**

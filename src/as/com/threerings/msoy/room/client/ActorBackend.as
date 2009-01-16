@@ -34,7 +34,9 @@ public class ActorBackend extends EntityBackend
      */
     protected function setMoveSpeed_v1 (pixelsPerSecond :Number) :void
     {
-        (_sprite as ActorSprite).setMoveSpeedFromUser(pixelsPerSecond);
+        if (_sprite != null) {
+            (_sprite as ActorSprite).setMoveSpeedFromUser(pixelsPerSecond);
+        }
     }
 
     /**
@@ -42,7 +44,9 @@ public class ActorBackend extends EntityBackend
      */
     protected function setLocation_v1 (x :Number, y :Number, z: Number, orient :Number) :void
     {
-        (_sprite as ActorSprite).setLocationFromUser(x, y, z, orient);
+        if (_sprite != null) {
+            (_sprite as ActorSprite).setLocationFromUser(x, y, z, orient);
+        }
     }
 
     /**
@@ -50,7 +54,9 @@ public class ActorBackend extends EntityBackend
      */
     protected function setOrientation_v1 (orient :Number) :void
     {
-        (_sprite as ActorSprite).setOrientationFromUser(orient);
+        if (_sprite != null) {
+            (_sprite as ActorSprite).setOrientationFromUser(orient);
+        }
     }
 
     /**
@@ -58,8 +64,10 @@ public class ActorBackend extends EntityBackend
      */
     protected function setState_v1 (state :String) :void
     {
-        validateKeyName(state);
-        (_sprite as ActorSprite).setState(state);
+        if (_sprite != null) {
+            validateKeyName(state);
+            (_sprite as ActorSprite).setState(state);
+        }
     }
 
     /**
@@ -67,7 +75,7 @@ public class ActorBackend extends EntityBackend
      */
     protected function getState_v1 () :String
     {
-        return (_sprite as ActorSprite).getState();
+        return (_sprite == null) ? null : (_sprite as ActorSprite).getState();
     }
 }
 }
