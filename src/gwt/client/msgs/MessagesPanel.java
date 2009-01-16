@@ -148,7 +148,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     @Override // from PagedGrid
     protected Widget createWidget (ForumMessage message)
     {
-        ThreadMessagePanel panel = new ThreadMessagePanel(_tmodel.getThread(), message);
+        ThreadMessagePanel panel = new ThreadMessagePanel(_tmodel.getThread(), message,
+            _tmodel.isManager());
         if (message.messageId == _scrollToId) {
             _scrollToId = 0;
             _scrollToPanel = panel;
@@ -203,8 +204,9 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
     protected class ThreadMessagePanel extends SimpleMessagePanel
     {
-        public ThreadMessagePanel (ForumThread thread, ForumMessage message)
+        public ThreadMessagePanel (ForumThread thread, ForumMessage message, boolean isManager)
         {
+            _isManager = isManager;
             _thread = thread;
             setMessage(message);
         }
@@ -282,8 +284,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                     }));
             }
 
-            // TODO: if whirled manager, also allow forum moderation
-            if (CShell.getMemberId() == _message.poster.name.getMemberId() || CShell.isSupport()) {
+            if (_isManager || CShell.getMemberId() == _message.poster.name.getMemberId()
+                || CShell.isSupport()) {
                 toolBar.add(makeInfoImage(_images.delete_post(),
                                                 _mmsgs.inlineDelete(),
                                                 new PromptPopup(_mmsgs.confirmDelete(),
@@ -320,6 +322,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
         protected ForumThread _thread;
         protected ForumMessage _message;
+        protected boolean _isManager;
     }
 
     protected class ForumMessageComplainPopup extends ComplainPopup
