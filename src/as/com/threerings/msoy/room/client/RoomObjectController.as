@@ -191,7 +191,7 @@ public class RoomObjectController extends RoomController
                     }
 
                     var ident :ItemIdent = avatar.getItemIdent();
-                    if (ident != null && ident.type >= 0) { // -1 is used for the default avatar, etc
+                    if (ident != null && ident.type >= 0) { // -1 is the default avatar, etc
                         flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
                                          command: MsoyController.VIEW_ITEM, arg: ident });
                     }
