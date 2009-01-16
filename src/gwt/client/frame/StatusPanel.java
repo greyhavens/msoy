@@ -109,6 +109,7 @@ public class StatusPanel extends SmartTable
 
         // logoff, help at the top right
         InlinePanel links = new InlinePanel(null);
+        links.add(new HTML("&nbsp;&nbsp;"));
         links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
             public void onClick (Widget sender) {
                 Session.didLogoff(Session.LogoffCondition.LOGOFF_REQUESTED);
@@ -116,6 +117,8 @@ public class StatusPanel extends SmartTable
         }));
         links.add(new HTML("|"));
         links.add(Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
+        links.add(new HTML("|"));
+        links.add(Link.create(_cmsgs.statusInviteFriends(), Pages.ME, "invites"));
         top.setWidget(0, 1, links);
         top.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
 
