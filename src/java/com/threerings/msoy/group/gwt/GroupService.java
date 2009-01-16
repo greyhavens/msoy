@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
@@ -21,7 +22,10 @@ import com.threerings.msoy.web.gwt.TagHistory;
  */
 public interface GroupService extends RemoteService
 {
-    /** Delivers the response to {@link #getGroupMembers}. */
+    /**
+     * Delivers the response to {@link #getGroupMembers}.
+     * TODO: Make this a {@link PagedResult}.
+     */
     public static class MembersResult implements IsSerializable
     {
         /** The group's name and id. */
@@ -155,6 +159,7 @@ public interface GroupService extends RemoteService
 
     /**
      * Returns a list of all the members for the specified group.
+     * @TODO Paging
      */
     MembersResult getGroupMembers (int groupId)
         throws ServiceException;

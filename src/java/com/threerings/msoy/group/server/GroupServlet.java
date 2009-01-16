@@ -297,11 +297,10 @@ public class GroupServlet extends MsoyServiceServlet
             return; // no harm no foul
         }
 
-        // if we're not removing ourselves, make sure we're a manager and outrank the target
+        // if we're not removing ourselves, make sure we're support or outrank the target
         if (mrec.memberId != memberId) {
             Tuple<Byte, Long> gminfo = _groupRepo.getMembership(groupId, mrec.memberId);
-            if (gminfo.left != GroupMembership.RANK_MANAGER ||
-                (tgtinfo.left == GroupMembership.RANK_MANAGER && tgtinfo.right < gminfo.right)) {
+            if (!mrec.isSupport() && !mayChangeOtherMember(gminfo, tgtinfo)) {
                 log.warning("Rejecting remove from group request", "who", mrec.who(),
                             "gid", groupId, "mid", memberId, "reqinfo", gminfo, "tgtinfo", tgtinfo);
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
@@ -363,8 +362,10 @@ public class GroupServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
 
-        if (!mrec.isSupport() &&
-            _groupRepo.getRank(groupId, mrec.memberId) != GroupMembership.RANK_MANAGER) {
+        Tuple<Byte, Long> gminfo = _groupRepo.getMembership(groupId, mrec.memberId);
+        Tuple<Byte, Long> tgtinfo = _groupRepo.getMembership(groupId, memberId);
+
+        if (!mrec.isSupport() && !mayChangeOtherMember(gminfo, tgtinfo)) {
             log.warning("in updateMemberRank, invalid permissions");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -735,7 +736,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     /**
-     * Load GroupMemberCard for members of this group
+     * Load GroupMemberCard for members of this group.
      * @param minRank Only include members with at least this rank
      * @param sortByRank If true, sort by rank then last online, if false by last online
      * @param limit The maximum number of members to return, or <= 0 for no limit
@@ -757,7 +758,7 @@ public class GroupServlet extends MsoyServiceServlet
             for (GroupMemberCard gmc : mlist) {
                 stale.remove(gmc.name.getMemberId());
             }
-            log.warning("Gropu has stale members", "groupId", groupId, "ids", stale);
+            log.warning("Group has stale members", "groupId", groupId, "ids", stale);
         }
         if (sortByRank) {
             Collections.sort(mlist, MemberHelper.SORT_BY_RANK);
@@ -775,6 +776,17 @@ public class GroupServlet extends MsoyServiceServlet
         else {
             return mlist;
         }
+    }
+
+    /**
+     * Checks if the membership info of an actor is sufficient to perform rank changes or remove
+     * another member.
+     */
+    protected boolean mayChangeOtherMember (Tuple<Byte, Long> actor, Tuple<Byte, Long> target)
+    {
+        // managers can change non managers and other managers who were promoted later
+        byte mgr = GroupMembership.RANK_MANAGER;
+        return actor.left == mgr && (target.left != mgr || actor.right < target.right);
     }
 
     // our dependencies
