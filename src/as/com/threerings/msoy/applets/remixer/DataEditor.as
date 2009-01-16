@@ -28,9 +28,8 @@ public class DataEditor extends FieldEditor
     public function DataEditor (ctx :RemixContext, name :String)
     {
         var entry :Object = ctx.pack.getDataEntry(name);
-        super(ctx, name, entry);
-
         _value = entry.value;
+        super(ctx, name, entry);
     }
 
     override protected function getUI (entry :Object) :Array
@@ -93,7 +92,15 @@ public class DataEditor extends FieldEditor
             var hslider :HSlider = new HSlider();
             hslider.minimum = min;
             hslider.maximum = max;
-            hslider.value = Number(entry.value);
+            var value :Number = Number(entry.value);
+            if (isNaN(value)) {
+                value = min;
+            } else if (value > max || value < min) {
+                // set it to the closer one... (breaks if things are too close to MAX_VALUE)
+                value = (Math.abs(max - value) < Math.abs(min - value)) ? max : min;
+            }
+            _value = value;
+            hslider.value = value;
             hslider.addEventListener(Event.CHANGE, function (... ignored) :void {
                 updateValue(hslider.value);
             });
