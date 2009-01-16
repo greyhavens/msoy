@@ -8,29 +8,16 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.MethodQueue;
-import com.threerings.util.StringUtil;
-
-import com.whirled.game.data.GameData;
-import com.whirled.game.data.LevelData;
-import com.whirled.game.data.WhirledPlayerObject;
-
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.data.OccupantInfo;
-
-import com.threerings.whirled.data.Scene;
-
+import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.client.ControlBackend;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.PlayerObject;
-
-import com.threerings.msoy.world.client.WorldContext;
-
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.party.data.PartyObject;
+import com.threerings.msoy.party.data.PartyPeep;
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MobSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
@@ -38,15 +25,16 @@ import com.threerings.msoy.room.client.RoomController;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
-
-import com.threerings.msoy.party.data.PartyObject;
-import com.threerings.msoy.party.data.PartyPeep;
-
-import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.util.Log;
+import com.threerings.util.MessageBundle;
+import com.threerings.util.MethodQueue;
+import com.threerings.util.StringUtil;
+import com.threerings.whirled.data.Scene;
+import com.whirled.game.data.WhirledPlayerObject;
 
 public class AVRGameBackend extends ControlBackend
 {
@@ -260,6 +248,8 @@ public class AVRGameBackend extends ControlBackend
         o["stageToRoom_v1"] = stageToRoom_v1;
         o["roomToStage_v1"] = roomToStage_v1;
         o["locationToRoom_v1"] = locationToRoom_v1;
+        o["roomToLocationAtDepth_v1"] = roomToLocationAtDepth_v1;
+        o["roomToLocationAtHeight_v1"] = roomToLocationAtHeight_v1;
 
         // AgentSubControl
         o["agent_sendMessage_v1"] = agent_sendMessage_v1;
@@ -614,6 +604,34 @@ public class AVRGameBackend extends ControlBackend
         var view :RoomView = _wctx.getPlaceView() as RoomView;
         if (view != null) {
             return view.layout.locationToPoint(new MsoyLocation(x, y, z));
+        }
+
+        return null;
+    }
+
+    // LocalSubControl
+    protected function roomToLocationAtDepth_v1 (p :Point, depth :Number) :Array
+    {
+        var view :RoomView = _wctx.getPlaceView() as RoomView;
+        if (view != null) {
+            var msoyLoc :MsoyLocation = view.layout.pointToLocationAtDepth(p.x, p.y, depth);
+            if (msoyLoc != null) {
+                return [ msoyLoc.x, msoyLoc.y, msoyLoc.z ];
+            }
+        }
+
+        return null;
+    }
+
+    // LocalSubControl
+    protected function roomToLocationAtHeight_v1 (p :Point, height :Number) :Array
+    {
+        var view :RoomView = _wctx.getPlaceView() as RoomView;
+        if (view != null) {
+            var msoyLoc :MsoyLocation = view.layout.pointToLocationAtHeight(p.x, p.y, height);
+            if (msoyLoc != null) {
+                return [ msoyLoc.x, msoyLoc.y, msoyLoc.z ];
+            }
         }
 
         return null;
