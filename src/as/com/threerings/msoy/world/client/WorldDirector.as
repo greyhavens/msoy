@@ -28,6 +28,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.PermaguestUtil;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -167,7 +168,14 @@ public class WorldDirector extends BasicDirector
             fn();
 
         } else if (place is RoomObject && !_wctx.getGameDirector().isGaming()) {
-            maybeDisplayAvatarIntro();
+            var member :MemberObject = _wctx.getMemberObject();
+            if (PermaguestUtil.isPermaguestEmail(member.username.toString()) &&
+                member.memberName.toString() == PermaguestUtil.DISPLAY_NAME) {
+                new GuestNameDialog(_wctx).open();
+
+            } else {
+                maybeDisplayAvatarIntro();
+            }
         }
     }
 
