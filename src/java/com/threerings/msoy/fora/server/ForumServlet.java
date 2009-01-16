@@ -540,7 +540,7 @@ public class ForumServlet extends MsoyServiceServlet
         StringBuffer expbuf = new StringBuffer();
         Matcher m = _urlPattern.matcher(message);
         while (m.find()) {
-            m.appendReplacement(expbuf, convertToken(m.group(2), m.group()));
+            m.appendReplacement(expbuf, convertToken(m.group(3), m.group()));
         }
         m.appendTail(expbuf);
         message = expbuf.toString();
@@ -644,7 +644,8 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     protected Pattern _urlPattern = Pattern.compile(
-        "(" + Pattern.quote(ServerConfig.getServerURL()) + "#)([-a-z0-9_]+)(<br/>)?");
+        "(" + Pattern.quote(ServerConfig.getServerURL()) +
+        ")(welcome/[0-9]+/|#)([-a-z0-9_]+)(<br/>)?");
 
     // dependencies
     @Inject protected MsoyEventLogger _eventLog;
