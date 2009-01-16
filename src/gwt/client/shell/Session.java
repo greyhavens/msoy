@@ -74,34 +74,7 @@ public class Session
      */
     public static void validate ()
     {
-        // if we have no creds token, we are definitely not logged in
-        String token = CookieUtil.get(WebCreds.credsCookie());
-        if (token == null) {
-            // defer execution of didLogoff so that the caller sees the same behavior in both
-            // situations: immediate return of this method and a call to didLogon or didLogoff at
-            // some later time after the current call stack has completed
-            DeferredCommand.addCommand(new Command() {
-                public void execute () {
-                    didLogoff(LogoffCondition.NO_CREDENTIALS);
-                }
-            });
-            return;
-        }
-
-        // if we do have a creds token, we need to check with the server to see if it has expired
-        AsyncCallback<SessionData> onValidate = new AsyncCallback<SessionData>() {
-            public void onSuccess (SessionData data) {
-                if (data == null) {
-                    didLogoff(LogoffCondition.LOGON_ATTEMPT_FAILED);
-                } else {
-                    didLogon(data);
-                }
-            }
-            public void onFailure (Throwable t) {
-                didLogoff(LogoffCondition.LOGON_ATTEMPT_FAILED);
-            }
-        };
-        _usersvc.validateSession(DeploymentConfig.version, token, 1, onValidate);
+        validate(false);
     }
 
     /**
@@ -111,7 +84,7 @@ public class Session
     public static void didLogon (SessionData data)
     {
         // store our session information in a cookie
-        CookieUtil.set("/", SESSION_DAYS, WebCreds.credsCookie(), data.creds.token);
+        setSessionCookie(data.creds.token);
 
         // fill in our global creds info
         CShell.creds = data.creds;
@@ -173,6 +146,54 @@ public class Session
                 CShell.log("Observer choked in didLogoff [observer=" + observer + "]", e);
             }
         }
+    }
+
+    /**
+     * Assigns our session token to the value obtained from the server by flash and re-validates it
+     * without disturbing the current state of the flash client.
+     */
+    public static void conveyLoginFromFlash (String token)
+    {
+        setSessionCookie(token);
+        validate(true);
+    }
+
+    protected static void setSessionCookie (String token)
+    {
+        CookieUtil.set("/", SESSION_DAYS, WebCreds.credsCookie(), token);
+    }
+
+    protected static void validate (final boolean originatedInFlash)
+    {
+        // if we have no creds token, we are definitely not logged in
+        String token = CookieUtil.get(WebCreds.credsCookie());
+        if (token == null) {
+            // defer execution of didLogoff so that the caller sees the same behavior in both
+            // situations: immediate return of this method and a call to didLogon or didLogoff at
+            // some later time after the current call stack has completed
+            DeferredCommand.addCommand(new Command() {
+                public void execute () {
+                    didLogoff(LogoffCondition.NO_CREDENTIALS);
+                }
+            });
+            return;
+        }
+
+        // if we do have a creds token, we need to check with the server to see if it has expired
+        AsyncCallback<SessionData> onValidate = new AsyncCallback<SessionData>() {
+            public void onSuccess (SessionData data) {
+                if (data == null) {
+                    didLogoff(LogoffCondition.LOGON_ATTEMPT_FAILED);
+                } else {
+                    data.originatedInFlash = originatedInFlash;
+                    didLogon(data);
+                }
+            }
+            public void onFailure (Throwable t) {
+                didLogoff(LogoffCondition.LOGON_ATTEMPT_FAILED);
+            }
+        };
+        _usersvc.validateSession(DeploymentConfig.version, token, 1, onValidate);
     }
 
     protected static List<Observer> _observers = new ArrayList<Observer>();

@@ -285,7 +285,10 @@ public class FrameEntryPoint
     // from interface Session.Observer
     public void didLogon (SessionData data)
     {
-        WorldClient.didLogon(data.creds);
+        // update the world client to relogin, unless that is where we logged in from
+        if (!data.originatedInFlash) {
+            WorldClient.didLogon(data.creds);
+        }
 
         // TODO: preserve their current world location and log them into their new account; this
         // will require fixing a whole bunch of shit
@@ -990,6 +993,7 @@ public class FrameEntryPoint
     {
         // the server has created a permaguest account for us via flash, store the cookies
         CShell.log("Got permaguest info from flash", "name", name, "token", token);
+        Session.conveyLoginFromFlash(token);
     }
 
     /**
