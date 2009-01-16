@@ -141,6 +141,10 @@ public class FeedMessagePanel extends FocusPanel
             String itemText = _pmsgs.selfItemComment(profileLink(message), buildString(message));
             add(new ThumbnailWidget(buildMedia(message), itemText));
             break;
+        case 302: // SELF_FORUM_REPLY
+            String replyText = _pmsgs.selfForumReply(profileLink(message), buildString(message));
+            add(new BasicWidget(replyText));
+            break;
         }
     }
 
@@ -238,6 +242,10 @@ public class FeedMessagePanel extends FocusPanel
         case 301: // SELF_ITEM_COMMENT
             return Link.createHtml(message.data[2], Pages.SHOP, Args.compose("l",
                 message.data[0], message.data[1]));
+
+        case 302: // SELF_FORUM_REPLY
+            return Link.createHtml(message.data[1], Pages.GROUPS, Args.compose("t",
+                message.data[0]));
         }
 
         return null;

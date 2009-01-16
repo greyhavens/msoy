@@ -347,7 +347,8 @@ public class ForumServlet extends MsoyServiceServlet
             throw new ServiceException(ForumCodes.E_INVALID_THREAD);
         }
         checkAccess(mrec, ftr.groupId, Group.ACCESS_POST, ftr.flags);
-
+        int previousPosterId = ftr.mostRecentPosterId;
+        
         // sanitize this message's HTML, expand Whirled URLs and do length checking
         message = processMessage(message);
 
@@ -360,6 +361,12 @@ public class ForumServlet extends MsoyServiceServlet
 
         // mark this thread as read by the poster
         _forumRepo.noteLastReadPostId(mrec.memberId, ftr.threadId, fmr.messageId, ftr.posts+1);
+
+        // add a feed item for the previous poster that their post has been replied to
+        if (previousPosterId != mrec.memberId) {
+            _feedRepo.publishSelfMessage(previousPosterId, mrec.memberId,
+                FeedMessageType.SELF_FORUM_REPLY, ftr.threadId + "\t" + ftr.subject);
+        }
 
         // and create and return the runtime record for the post
         return fmr.toForumMessage(getCardsMap(fmr.posterId));

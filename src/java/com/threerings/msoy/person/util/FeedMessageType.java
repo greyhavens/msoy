@@ -33,12 +33,14 @@ public enum FeedMessageType
     // self messages
     SELF_ROOM_COMMENT(300),
     SELF_ITEM_COMMENT(301),
+    SELF_FORUM_REPLY(302),
 
     UNUSED(999);
 
     /** Types are grouped together into categories */
     public static enum Category {
-        ANNOUNCEMENTS, COMMENTS, FRIENDINGS, LISTED_ITEMS, TROPHIES, ROOMS, BADGES, MEDALS, LEVELS;
+        ANNOUNCEMENTS, COMMENTS, FRIENDINGS, LISTED_ITEMS, FORUMS, TROPHIES, ROOMS, BADGES,
+        MEDALS, LEVELS;
     }
 
     /**
@@ -77,6 +79,8 @@ public enum FeedMessageType
         case 300: // SELF_ROOM_COMMENT
         case 301: // SELF_ITEM_COMMENT
             return Category.COMMENTS;
+        case 302: // SELF_FORUM_REPLY
+            return Category.FORUMS;
         default:
             return null;
         }
