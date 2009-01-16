@@ -259,6 +259,13 @@ public class FrameEntryPoint
         if (!info.isAuthoritative && HttpReferrerCookie.available()) {
             String ref = HttpReferrerCookie.get();
             _membersvc.trackHttpReferrerAssociation(info, ref, new NoopAsyncCallback());
+
+            // used for WRLD-465 - TODO: remove after the test is over
+            if (HttpReferrerCookie.available()) {
+                _membersvc.debugLog("referrer for id " + info.id, "#" + _currentToken,
+                    HttpReferrerCookie.get(), new NoopAsyncCallback());
+            }
+
             HttpReferrerCookie.disable();
         }
 
