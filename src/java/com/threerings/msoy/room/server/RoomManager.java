@@ -397,9 +397,11 @@ public class RoomManager extends SpotSceneManager
         if (caller instanceof MemberObject) {
             MemberObject who = (MemberObject)caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-                log.warning("Rejecting sprite message request by non-occupant", "where", where(),
-                    "who", who.who(), "left", whenLeft(who.getOid()), "item", item,
-                    "name", name);
+                if (!isRecentOccupant(who.getOid())) {
+                    log.warning("Rejecting sprite message request by non-occupant",
+                        "where", where(), "who", who.who(), "left", whenLeft(who.getOid()),
+                        "item", item, "name", name);
+                }
                 return;
             }
         }
@@ -424,8 +426,11 @@ public class RoomManager extends SpotSceneManager
             // make sure the caller is in the room
             MemberObject who = (MemberObject)caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-                log.warning("Rejecting sprite signal request by non-occupant", "where", where(),
-                    "who", who.who(), "left", whenLeft(who.getOid()), "name", name);
+                if (!isRecentOccupant(who.getOid())) {
+                    log.warning("Rejecting sprite signal request by non-occupant",
+                        "where", where(), "who", who.who(), "left", whenLeft(who.getOid()),
+                        "name", name);
+                }
                 return;
             }
         }
@@ -440,9 +445,11 @@ public class RoomManager extends SpotSceneManager
         if (caller instanceof MemberObject) {
             MemberObject who = (MemberObject) caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-                log.warning("Rejecting actor state request by non-occupant", "where", where(),
-                    "who", who.who(), "left", whenLeft(who.getOid()), "item", item,
-                    "state", state);
+                if (!isRecentOccupant(who.getOid())) {
+                    log.warning("Rejecting actor state request by non-occupant", "where", where(),
+                        "who", who.who(), "left", whenLeft(who.getOid()), "item", item,
+                        "state", state);
+                }
                 return;
             }
         }
@@ -1543,6 +1550,13 @@ public class RoomManager extends SpotSceneManager
         return "" + (now - when) + " seconds ago";
     }
 
+    protected boolean isRecentOccupant (int bodyOid)
+    {
+        int whenLeft = _left.get(bodyOid);
+        int now = (int)(System.currentTimeMillis() / 1000);
+        return whenLeft > 0 && (now - whenLeft) < LEFT_BODY_PURGE_SECS; 
+    }
+
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>
@@ -1662,7 +1676,7 @@ public class RoomManager extends SpotSceneManager
     protected static final int ACTOR_RENDERING_LIMIT = 20;
 
     /** Time to keep left body oids in {@link #_left}. */
-    protected static final int LEFT_BODY_PURGE_SECS = 5;
+    protected static final int LEFT_BODY_PURGE_SECS = 15;
 
     /**
      * We allow access as in {@link CrowdObjectAccess#PLACE} but also give full subscription
