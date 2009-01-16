@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.SimpleButton;
@@ -235,6 +236,8 @@ public class WorldDirector extends BasicDirector
             go.addEventListener(MouseEvent.CLICK, fadeOut);
 
             _avatarIntro.alpha = 0;
+            // make the text get the alpha setting too (contrary to flash documentation)
+            _avatarIntro.blendMode = BlendMode.LAYER;
             _wctx.getTopPanel().getPlaceContainer().addOverlay(
                 _avatarIntro, PlaceBox.LAYER_TRANSIENT);
             Tweener.addTween(_avatarIntro, { alpha: 1, time: .75, transition: "linear" });
