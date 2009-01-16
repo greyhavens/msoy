@@ -84,6 +84,21 @@ public class MediaDesc
     /** Identifies that a preview sized image is desired. */
     public static const PREVIEW_SIZE :int = 3;
 
+    /** The "thumbnail" size for scene snapshots. */
+    public static const SNAPSHOT_THUMB_SIZE :int = 4;
+
+    /** The full size for canonical scene snapshots. */
+    public static const SNAPSHOT_FULL_SIZE :int = 5;
+
+    /** The full size for game screenshots. */
+    public static const GAME_SHOT_SIZE :int = 6;
+
+    /** The smallest size of room snapshots. */
+    public static const SNAPSHOT_TINY_SIZE :int = 7;
+
+    /** Identifies the game splash logo size. */
+    public static const GAME_SPLASH_SIZE :int = 8;
+
     /** The thumbnail image width.  */
     public static const THUMBNAIL_WIDTH :int = 80;
 
@@ -96,6 +111,11 @@ public class MediaDesc
         THUMBNAIL_WIDTH/2, THUMBNAIL_HEIGHT/2, // half thumbnail size
         THUMBNAIL_WIDTH,   THUMBNAIL_HEIGHT,   // thumbnail size
         THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
+        175, 100, // scene snapshot thumb size
+        350, 200, // full scene snapshot image size
+        175, 125, // game screenshots
+         40,  23, // tiny snapshots, same width as half thumbnail
+        350, 250, // game splash image, quarter of the game window
     ];
 
     /** A constant used to indicate that an image does not exceed half thumbnail size in either

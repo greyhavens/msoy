@@ -87,6 +87,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The smallest size of room snapshots. */
     public static final int SNAPSHOT_TINY_SIZE = 7;
 
+    /** Identifies the game splash logo size. */
+    public static final int GAME_SPLASH_SIZE = 8;
+
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;
 
@@ -638,11 +641,12 @@ public class MediaDesc implements Streamable, IsSerializable
     protected static final int[] DIMENSIONS = {
         THUMBNAIL_WIDTH/4, THUMBNAIL_HEIGHT/4, // quarter thumbnail size
         THUMBNAIL_WIDTH/2, THUMBNAIL_HEIGHT/2, // half thumbnail size
-        THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
+        THUMBNAIL_WIDTH,   THUMBNAIL_HEIGHT,   // thumbnail size
         THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
         175, 100, // scene snapshot thumb size
         350, 200, // full scene snapshot image size
         175, 125, // game screenshots
-        40, 23, // tiny snapshots, same width as half thumbnail
+         40,  23, // tiny snapshots, same width as half thumbnail
+        350, 250, // game splash image, quarter of the game window
     };
 }

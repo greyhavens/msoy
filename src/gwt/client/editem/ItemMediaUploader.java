@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
+import client.shell.CShell;
 import client.shell.Frame;
 import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
@@ -29,6 +30,7 @@ public class ItemMediaUploader extends FlexTable
     public static final int MODE_NORMAL = 0;
     public static final int MODE_THUMB = 1;
     public static final int MODE_GAME_SHOT = 2;
+    public static final int MODE_GAME_SPLASH = 3;
 
     /**
      * @param mediaIds a semicolon-delimited list of types for the uploader to create, e.g.
@@ -90,6 +92,8 @@ public class ItemMediaUploader extends FlexTable
                 width *= 2;
                 height *= 2;
             }
+            CShell.log("*** setMedia", "desc", desc, "width", width, "height", height); // TODO RZ
+
             setWidget(0, 0, MediaUtil.createMediaView(desc, width, height, null));
 
         } else {
@@ -161,14 +165,24 @@ public class ItemMediaUploader extends FlexTable
         int maxWidth = -1;
         int maxHeight = -1;
         boolean maxRequired = false;
-        if (_mode == MODE_THUMB) {
-            maxWidth = MediaDesc.THUMBNAIL_WIDTH;
-            maxHeight = MediaDesc.THUMBNAIL_HEIGHT;
-        } else if (_mode == MODE_GAME_SHOT) {
+
+        switch (_mode) {
+        case MODE_THUMB:
+            maxWidth = MediaDesc.getWidth(MediaDesc.THUMBNAIL_SIZE);
+            maxHeight = MediaDesc.getHeight(MediaDesc.THUMBNAIL_SIZE);
+            break;
+        case MODE_GAME_SHOT:
             maxWidth = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
             maxHeight = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
             maxRequired = true;
+            break;
+        case MODE_GAME_SPLASH:
+            maxWidth = MediaDesc.getWidth(MediaDesc.GAME_SPLASH_SIZE);
+            maxHeight = MediaDesc.getHeight(MediaDesc.GAME_SPLASH_SIZE);
+            maxRequired = true;
+            break;
         }
+
         _editorPopup = new BorderedPopup(false, true);
         _editorPopup.setWidget(FlashClients.createImageEditor(
             popWidth, popHeight, _mediaIds, takeSnapshot, url, maxWidth, maxHeight, maxRequired));

@@ -35,6 +35,9 @@ public class Game extends Item
     /** The game screenshot media. */
     public var shotMedia :MediaDesc;
 
+    /** The game splash screen media for the loader. */
+    public var splashMedia :MediaDesc;
+
     /** The server code media. Games may provide server code (in the form of a compiled action
      *  script library) to be run in a bureau whenever the game launches. */
     public var serverMedia :MediaDesc;
@@ -68,6 +71,7 @@ public class Game extends Item
         gameMedia = MediaDesc(ins.readObject());
         gameId = ins.readInt();
         shotMedia = MediaDesc(ins.readObject());
+        splashMedia = MediaDesc(ins.readObject());
         serverMedia = MediaDesc(ins.readObject());
         groupId = (ins.readInt());
         shopTag = (ins.readField(String) as String);
@@ -82,6 +86,7 @@ public class Game extends Item
         out.writeObject(gameMedia);
         out.writeInt(gameId);
         out.writeObject(shotMedia);
+        out.writeObject(splashMedia);
         out.writeObject(serverMedia);
         out.writeInt(groupId);
         out.writeField(shopTag);

@@ -46,6 +46,9 @@ public class Game extends Item
     /** Identifies our lobby background table media. */
     public static final String TABLE_MEDIA = "table";
 
+    /** Identifies the game splash media. */
+    public static final String SPLASH_MEDIA = "splash";
+
     /** Identifies our server code media. */
     public static final String SERVER_CODE_MEDIA = "scode";
 
@@ -70,6 +73,9 @@ public class Game extends Item
 
     /** The game screenshot media. */
     public MediaDesc shotMedia;
+
+    /** The game splash screen media for the loader. */
+    public MediaDesc splashMedia;
 
     /**
      *  The server code media. Games may provide server code (in the form of a compiled action

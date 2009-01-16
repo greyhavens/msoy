@@ -48,6 +48,7 @@ public class GameEditor extends ItemEditor
         _game = (Game)item;
         setUploaderMedia(Item.MAIN_MEDIA, _game.gameMedia);
         setUploaderMedia(Item.AUX_MEDIA, _game.shotMedia);
+        setUploaderMedia(Game.SPLASH_MEDIA, _game.splashMedia);
         setUploaderMedia(Game.SERVER_CODE_MEDIA, _game.serverMedia);
 
         // fetch the list of whirleds this player is a manager of which don't have a game
@@ -115,7 +116,7 @@ public class GameEditor extends ItemEditor
         if (xml.getElementsByTagName("avrg").getLength() > 0) {
             _gameType.setSelectedIndex(GameType.AVRG.ordinal());
         }
-        
+
         // disable min, max and watchable for non-seated games
         if (_gameType.getSelectedIndex() != GameType.SEATED.ordinal()) {
             _minPlayers.setEnabled(false);
@@ -246,27 +247,25 @@ public class GameEditor extends ItemEditor
 
         addTab(_emsgs.gameTabMedia());
 
-        // add a tab for uploading the game screenshot
-        final int swidth = MediaDesc.getWidth(MediaDesc.GAME_SHOT_SIZE);
-        final int sheight = MediaDesc.getHeight(MediaDesc.GAME_SHOT_SIZE);
-        final ItemMediaUploader[] fuploader = new ItemMediaUploader[1]; // filthy hack
-        ItemMediaUploader shotter = createAuxUploader(TYPE_IMAGE, ItemMediaUploader.MODE_GAME_SHOT,
-            new MediaUpdater() {
-            public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (!desc.isImage()) {
-                    return _emsgs.errInvalidShot(""+swidth, ""+sheight);
-                }
-                if (width != swidth || height != sheight) {
-                    fuploader[0].openImageEditor(desc, false);
-                    return SUPPRESS_ERROR;
-                }
-                _game.shotMedia = desc;
-                return null;
-            }
-        });
-        fuploader[0] = shotter;
-        shotter.setHint(_emsgs.gameShotHint(""+swidth, ""+sheight));
-        addRow(_emsgs.gameShotTab(), shotter, _emsgs.gameShotTitle());
+        // add a tab for uploading the game screenshot and splash bitmap
+
+        ItemMediaUploader shotter = addImageUploader(
+            Item.AUX_MEDIA, MediaDesc.GAME_SHOT_SIZE, ItemMediaUploader.MODE_GAME_SHOT,
+            new MediaSetter() {
+                public void set (MediaDesc media) {
+                    _game.shotMedia = media;
+                };
+            });
+        addRow(_emsgs.gameShotLabel(), shotter, _emsgs.gameShotTip());
+
+        ItemMediaUploader splasher = addImageUploader(
+            Game.SPLASH_MEDIA, MediaDesc.GAME_SPLASH_SIZE, ItemMediaUploader.MODE_GAME_SPLASH,
+            new MediaSetter() {
+                public void set (MediaDesc media) {
+                    _game.splashMedia = media;
+                };
+            });
+        addRow(_emsgs.gameSplashLabel(), splasher, _emsgs.gameSplashTip());
 
         super.addExtras();
 
@@ -281,6 +280,34 @@ public class GameEditor extends ItemEditor
         addSpacer();
         addRow(_emsgs.gameShopTag(), _shopTag = new TextBox());
         addTip(_emsgs.gameShopTagTip());
+    }
+
+    /** Adds and configures an image uploader widget. */
+    protected ItemMediaUploader addImageUploader (
+        String mediaIds, int mediaSize, int uploaderMode, final MediaSetter setterFn)
+    {
+        final int mediawidth = MediaDesc.getWidth(mediaSize);
+        final int mediaheight = MediaDesc.getHeight(mediaSize);
+        final ItemMediaUploader[] fuploader = new ItemMediaUploader[1]; // filthy hack
+        ItemMediaUploader uploader = createUploader(
+            mediaIds, TYPE_IMAGE, uploaderMode, new MediaUpdater() {
+                public String updateMedia (String name, MediaDesc desc, int width, int height) {
+                    if (!desc.isImage()) {
+                        return _emsgs.errInvalidShot(""+mediawidth, ""+mediaheight);
+                    }
+                    if (width != mediawidth || height != mediaheight) {
+                        fuploader[0].openImageEditor(desc, false);
+                        return SUPPRESS_ERROR;
+                    }
+                    setterFn.set(desc);
+                    return null;
+                }
+            });
+        fuploader[0] = uploader;
+
+        uploader.setHint(_emsgs.gameImageHint(""+mediawidth, ""+mediaheight));
+
+        return uploader;
     }
 
     /**
@@ -393,7 +420,7 @@ public class GameEditor extends ItemEditor
         }
 
         _game.config = xml.toString();
-        
+
         if (gameType == GameType.AVRG && _game.serverMedia == null) {
             throw new Exception(_emsgs.errServerMediaRequired());
         }
@@ -429,12 +456,12 @@ public class GameEditor extends ItemEditor
         PARTY("gameType2", GameEditor.PARTY),
         //SEATED_CONT("gameType1", SEATED_CONTINUOUS),
         AVRG("gameType3", null);
-        
+
         GameType (String lookup, String matchType) {
             _lookup = lookup;
             _matchType = matchType;
         }
-        
+
         public String getText () {
             return _dmsgs.xlate(_lookup);
         }
@@ -446,7 +473,13 @@ public class GameEditor extends ItemEditor
         protected String _lookup;
         protected String _matchType;
     };
-    
+
+    /** Interface for functions that set various game media. */
+    // my kingdom for function pointers! :)
+    protected interface MediaSetter {
+        public void set (MediaDesc media);
+    }
+
     protected Game _game;
 
     protected ListBox _genre;

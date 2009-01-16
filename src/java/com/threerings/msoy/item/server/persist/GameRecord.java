@@ -35,6 +35,8 @@ public class GameRecord extends ItemRecord
     public static final ColumnExp GAME_ID = colexp(_R, "gameId");
     public static final ColumnExp SHOT_MEDIA_HASH = colexp(_R, "shotMediaHash");
     public static final ColumnExp SHOT_MIME_TYPE = colexp(_R, "shotMimeType");
+    public static final ColumnExp SPLASH_MEDIA_HASH = colexp(_R, "splashMediaHash");
+    public static final ColumnExp SPLASH_MIME_TYPE = colexp(_R, "splashMimeType");
     public static final ColumnExp SERVER_MEDIA_HASH = colexp(_R, "serverMediaHash");
     public static final ColumnExp SERVER_MIME_TYPE = colexp(_R, "serverMimeType");
     public static final ColumnExp GROUP_ID = colexp(_R, "groupId");
@@ -60,7 +62,7 @@ public class GameRecord extends ItemRecord
     public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 17;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 18;
 
     /** This game's genre. */
     @Index
@@ -86,6 +88,13 @@ public class GameRecord extends ItemRecord
 
     /** The MIME type of the {@link #shotMediaHash} media. */
     public byte shotMimeType;
+
+    /** A hash code identifying the splash media. */
+    @Column(nullable=true)
+    public byte[] splashMediaHash;
+
+    /** The MIME type of the {@link #splashMediaHash} media. */
+    public byte splashMimeType;
 
     /** A hash code identifying the server code media. */
     @Column(nullable=true)
@@ -191,6 +200,10 @@ public class GameRecord extends ItemRecord
             shotMediaHash = game.shotMedia.hash;
             shotMimeType = game.shotMedia.mimeType;
         }
+        if (game.splashMedia != null) {
+            splashMediaHash = game.splashMedia.hash;
+            splashMimeType = game.splashMedia.mimeType;
+        }
         if (game.serverMedia != null) {
             serverMediaHash = game.serverMedia.hash;
             serverMimeType = game.serverMedia.mimeType;
@@ -223,16 +236,18 @@ public class GameRecord extends ItemRecord
         Game object = new Game();
         object.genre = genre;
         object.config = config;
-        object.gameMedia = (gameMediaHash == null) ? null :
-            new MediaDesc(gameMediaHash, gameMimeType);
+        object.gameMedia = makeMediaDesc(gameMediaHash, gameMimeType);
         object.gameId = gameId;
-        object.shotMedia = (shotMediaHash == null) ? null :
-            new MediaDesc(shotMediaHash, shotMimeType);
-        object.serverMedia = (serverMediaHash == null) ? null :
-            new MediaDesc(serverMediaHash, serverMimeType);
+        object.shotMedia = makeMediaDesc(shotMediaHash, shotMimeType);
+        object.splashMedia = makeMediaDesc(splashMediaHash, splashMimeType);
+        object.serverMedia = makeMediaDesc(serverMediaHash, serverMimeType);
         object.groupId = groupId;
         object.shopTag = shopTag;
         return object;
+    }
+
+    protected MediaDesc makeMediaDesc (byte [] mediaHash, byte mimeType) {
+        return (mediaHash == null) ? null : new MediaDesc(mediaHash, mimeType);
     }
 
     // AUTO-GENERATED: METHODS START
