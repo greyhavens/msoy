@@ -396,11 +396,11 @@ public class RoomManager extends SpotSceneManager
         if (caller instanceof MemberObject) {
             MemberObject who = (MemberObject)caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-                if (!isRecentOccupant(who.getOid())) {
-                    log.warning("Rejecting sprite message request by non-occupant",
-                        "where", where(), "who", who.who(), "left", whenLeft(who.getOid()),
-                        "item", item, "name", name);
-                }
+//                if (!isRecentOccupant(who.getOid())) {
+//                    log.warning("Rejecting sprite message request by non-occupant",
+//                        "where", where(), "who", who.who(), "left", whenLeft(who.getOid()),
+//                        "item", item, "name", name);
+//                }
                 return;
             }
         }
@@ -425,11 +425,11 @@ public class RoomManager extends SpotSceneManager
             // make sure the caller is in the room
             MemberObject who = (MemberObject)caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-                if (!isRecentOccupant(who.getOid())) {
-                    log.warning("Rejecting sprite signal request by non-occupant",
-                        "where", where(), "who", who.who(), "left", whenLeft(who.getOid()),
-                        "name", name);
-                }
+//                if (!isRecentOccupant(who.getOid())) {
+//                    log.warning("Rejecting sprite signal request by non-occupant",
+//                        "where", where(), "who", who.who(), "left", whenLeft(who.getOid()),
+//                        "name", name);
+//                }
                 return;
             }
         }
@@ -444,11 +444,11 @@ public class RoomManager extends SpotSceneManager
         if (caller instanceof MemberObject) {
             MemberObject who = (MemberObject) caller;
             if (!_roomObj.occupants.contains(who.getOid())) {
-                if (!isRecentOccupant(who.getOid())) {
-                    log.warning("Rejecting actor state request by non-occupant", "where", where(),
-                        "who", who.who(), "left", whenLeft(who.getOid()), "item", item,
-                        "state", state);
-                }
+//                if (!isRecentOccupant(who.getOid())) {
+//                    log.warning("Rejecting actor state request by non-occupant", "where", where(),
+//                        "who", who.who(), "left", whenLeft(who.getOid()), "item", item,
+//                        "state", state);
+//                }
                 return;
             }
         }
@@ -457,9 +457,9 @@ public class RoomManager extends SpotSceneManager
         MsoyBodyObject actor;
         if (caller.getOid() != actorOid) {
             if (!_roomObj.occupants.contains(actorOid)) {
-                log.warning("Rejecting actor state request for non-occupant", "where", where(),
-                    "who", caller.who(), "left", whenLeft(actorOid), "item", item,
-                    "state", state);
+//                log.warning("Rejecting actor state request for non-occupant", "where", where(),
+//                    "who", caller.who(), "left", whenLeft(actorOid), "item", item,
+//                    "state", state);
                 return;
             }
             actor = (MsoyBodyObject) _omgr.getObject(actorOid);
@@ -1053,17 +1053,17 @@ public class RoomManager extends SpotSceneManager
             }
         }
 
-        // purge any body oids that left more than a few seconds ago
-        int now = (int)(System.currentTimeMillis() / 1000);
-        int limit = now - LEFT_BODY_PURGE_SECS;
-        for (Interator vals = _left.values(); vals.hasNext(); ) {
-            if (vals.nextInt() < limit) {
-                vals.remove();
-            }
-        }
-
-        // mark this oid as having just left
-        _left.put(bodyOid, now);
+//        // purge any body oids that left more than a few seconds ago
+//        int now = (int)(System.currentTimeMillis() / 1000);
+//        int limit = now - LEFT_BODY_PURGE_SECS;
+//        for (Interator vals = _left.values(); vals.hasNext(); ) {
+//            if (vals.nextInt() < limit) {
+//                vals.remove();
+//            }
+//        }
+//
+//        // mark this oid as having just left
+//        _left.put(bodyOid, now);
     }
 
     @Override // from PlaceManager
@@ -1539,22 +1539,22 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
-    protected String whenLeft (int bodyOid)
-    {
-        if (!_left.contains(bodyOid)) {
-            return "unknown";
-        }
-        int when = _left.get(bodyOid);
-        int now = (int)(System.currentTimeMillis() / 1000);
-        return "" + (now - when) + " seconds ago";
-    }
-
-    protected boolean isRecentOccupant (int bodyOid)
-    {
-        int whenLeft = _left.get(bodyOid);
-        int now = (int)(System.currentTimeMillis() / 1000);
-        return whenLeft > 0 && (now - whenLeft) < LEFT_BODY_PURGE_SECS; 
-    }
+//    protected String whenLeft (int bodyOid)
+//    {
+//        if (!_left.contains(bodyOid)) {
+//            return "unknown";
+//        }
+//        int when = _left.get(bodyOid);
+//        int now = (int)(System.currentTimeMillis() / 1000);
+//        return "" + (now - when) + " seconds ago";
+//    }
+//
+//    protected boolean isRecentOccupant (int bodyOid)
+//    {
+//        int whenLeft = _left.get(bodyOid);
+//        int now = (int)(System.currentTimeMillis() / 1000);
+//        return whenLeft > 0 && (now - whenLeft) < LEFT_BODY_PURGE_SECS; 
+//    }
 
     /** Listens to the room. */
     protected class RoomListener
@@ -1668,8 +1668,8 @@ public class RoomManager extends SpotSceneManager
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent, Integer> _avatarIdents = Maps.newHashMap();
 
-    /** Map of body oids that have left the room to the time they left (in seconds). */
-    protected IntIntMap _left = new IntIntMap();
+//    /** Map of body oids that have left the room to the time they left (in seconds). */
+//    protected IntIntMap _left = new IntIntMap();
     
     /** After this level of occupancy is reached, actors are made static. */
     protected static final int ACTOR_RENDERING_LIMIT = 20;
