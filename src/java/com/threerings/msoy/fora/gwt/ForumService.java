@@ -74,6 +74,12 @@ public interface ForumService extends RemoteService
         throws ServiceException;
 
     /**
+     * Searches the subjects and messages in all unread threads
+     */
+    List<ForumThread> findUnreadThreads (String search, int limit)
+        throws ServiceException;
+
+    /**
      * Loads the specified range of messages for the specified thread.
      */
     MessageResult loadMessages (int threadId, int lastReadPostId, int offset, int count,

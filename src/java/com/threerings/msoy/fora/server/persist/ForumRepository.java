@@ -143,6 +143,36 @@ public class ForumRepository extends DepotRepository
     }
 
     /**
+     * Finds all unread threads in a list of groups that match the specified search in their
+     * subject or for which one or more of their messages matches the supplied search.
+     */
+    public List<ForumThreadRecord> findUnreadThreads (int memberId, Set<Integer> groupIds,
+        String search, int limit)
+    {
+        SQLExpression cacheJoinAnd = new And(
+            new Equals(ForumThreadRecord.THREAD_ID, ReadTrackingRecord.THREAD_ID),
+            new Equals(ReadTrackingRecord.MEMBER_ID, memberId)
+        );
+        SQLExpression where = new And(
+            new In(ForumThreadRecord.GROUP_ID, groupIds),
+            new Or(new FullTextMatch(ForumThreadRecord.class,
+                    ForumThreadRecord.FTS_SUBJECT, search),
+                new FullTextMatch(ForumMessageRecord.class,
+                    ForumMessageRecord.FTS_MESSAGE, search)),
+            new Or(new IsNull(ReadTrackingRecord.THREAD_ID),
+                   new And(new Equals(ReadTrackingRecord.MEMBER_ID, memberId),
+                           new GreaterThan(ForumThreadRecord.MOST_RECENT_POST_ID,
+                                           ReadTrackingRecord.LAST_READ_POST_ID))));
+
+        // consult the cache for records, but not for the keyset
+        return findAll(ForumThreadRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
+            new Join(ForumThreadRecord.THREAD_ID, ForumMessageRecord.THREAD_ID),
+            new Join(ReadTrackingRecord.class, cacheJoinAnd).setType(Join.Type.LEFT_OUTER),
+            new Where(where),
+            new Limit(0, limit)));
+    }
+
+    /**
      * Loads the specified range of forum messages for the specified thread. Ordered by posting
      * date.
      */

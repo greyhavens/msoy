@@ -30,6 +30,11 @@ public interface ForumServiceAsync
                       AsyncCallback<List<ForumThread>> callback);
 
     /**
+     * The asynchronous version of {@link ForumService#findUnreadThreads}.
+     */
+    void findUnreadThreads (String query, int limit, AsyncCallback<List<ForumThread>> callback);
+
+    /**
      * The asynchronous version of {@link ForumService#loadMessages}.
      */
     void loadMessages (int threadId, int lastReadPostId, int offset, int count,

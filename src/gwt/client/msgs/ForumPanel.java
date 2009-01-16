@@ -56,7 +56,7 @@ public class ForumPanel extends TitledListPanel
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayUnreadThreads(_fmodels, refresh);
-        setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), null), threads);
+        setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), threads), threads);
     }
 
     public void startNewThread (int groupId)

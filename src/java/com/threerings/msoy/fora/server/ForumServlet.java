@@ -163,6 +163,30 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
+    public List<ForumThread> findUnreadThreads (String search, int limit)
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser();
+
+        // load up said member's group memberships
+        Map<Integer, GroupName> groups = Maps.newHashMap();
+        for (GroupCard card : _groupRepo.getMemberGroups(mrec.memberId, true)) {
+            groups.put(card.name.getGroupId(), card.name);
+        }
+
+        // find the thread records
+        List<ForumThreadRecord> thrrecs;
+        if (groups.size() == 0) {
+            thrrecs = Collections.emptyList();
+        } else {
+            thrrecs = _forumRepo.findUnreadThreads(mrec.memberId, groups.keySet(), search, limit);
+        }
+
+        // turn ForumThreadRecords into ForumThreads by combining with group information
+        return _forumLogic.resolveThreads(mrec, thrrecs, groups, true, false);
+    }
+
+    // from interface ForumService
     public MessageResult loadMessages (int threadId, int lastReadPostId, int offset, int count,
                                        boolean needTotalCount)
         throws ServiceException
@@ -348,7 +372,7 @@ public class ForumServlet extends MsoyServiceServlet
         }
         checkAccess(mrec, ftr.groupId, Group.ACCESS_POST, ftr.flags);
         int previousPosterId = ftr.mostRecentPosterId;
-        
+
         // sanitize this message's HTML, expand Whirled URLs and do length checking
         message = processMessage(message);
 

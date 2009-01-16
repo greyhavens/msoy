@@ -64,17 +64,30 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     // from interface SearchBox.Listener
     public void search (String search)
     {
-        _forumsvc.findThreads(_groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
-            public void onSuccess (List<ForumThread> threads) {
-                setModel(new SimpleDataModel<ForumThread>(threads), 0);
-            }
-        });
+        if (_groupId == 0) {
+            _forumsvc.findUnreadThreads(search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
+                public void onSuccess (List<ForumThread> threads) {
+                    setModel(new SimpleDataModel<ForumThread>(threads), 0);
+                }
+            });
+        }
+        else {
+            _forumsvc.findThreads(_groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
+                public void onSuccess (List<ForumThread> threads) {
+                    setModel(new SimpleDataModel<ForumThread>(threads), 0);
+                }
+            });
+        }
     }
 
     // from interface SearchBox.Listener
     public void clearSearch ()
     {
-        setModel(_fmodels.getGroupThreads(_groupId), 0);
+        if (_groupId == 0) {
+            setModel(_fmodels.getUnreadThreads(true), 0);
+        } else {
+            setModel(_fmodels.getGroupThreads(_groupId), 0);
+        }
     }
 
     @Override // from PagedGrid
