@@ -289,7 +289,10 @@ public class FloatingPanel extends TitleWindow
     protected function buttonClicked (buttonId :int) :void
     {
         switch (buttonId) {
-        case OK_BUTTON: // fall through to cancel
+        case OK_BUTTON:
+            okButtonClicked();
+            // fall through to cancel
+
         case CANCEL_BUTTON:
             close();
             break;
@@ -297,6 +300,15 @@ public class FloatingPanel extends TitleWindow
         default:
             throw new ArgumentError("No button action [buttonId=" + buttonId + "]");
         }
+    }
+
+    /**
+     * Called when the ok button is clicked.
+     * No need to call super.
+     */
+    protected function okButtonClicked () :void
+    {
+        // super need not be called, we will never do anything here
     }
 
     override protected function createChildren () :void
