@@ -14,6 +14,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemFlag_Kind;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -31,8 +32,9 @@ public class FlagItemDialog extends FloatingPanel
     {
         super.createChildren();
 
-        addChild(FlexUtil.createLabel("TODO: item name or something : " + _ident));
-        addChild(FlexUtil.createWideText(Msgs.ITEM.get("m.flag")));
+//        addChild(FlexUtil.createLabel("TODO: item name or something : " + _ident));
+        addChild(FlexUtil.createWideText(
+            Msgs.ITEM.get("m.flag", Msgs.ITEM.get(Item.getTypeKey(_ident.type)))));
 
         _kind = new CommandComboBox();
         _kind.dataProvider = ItemFlag_Kind.values();
