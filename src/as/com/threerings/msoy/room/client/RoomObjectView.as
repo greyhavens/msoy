@@ -462,8 +462,8 @@ public class RoomObjectView extends RoomView
             if (ident.type > Item.NOT_A_TYPE) { // -1 is used for the default avatar, etc.
                 menuItems.push(MenuUtil.createControllerMenuItem(
                     Msgs.GENERAL.get("b.view_item", kind), MsoyController.VIEW_ITEM, ident));
-                menuItems.push(MenuUtil.createControllerMenuItem(
-                    Msgs.GENERAL.get("b.flag_item", kind), MsoyController.FLAG_ITEM, ident));
+//                menuItems.push(MenuUtil.createControllerMenuItem(
+//                    Msgs.GENERAL.get("b.flag_item", kind), MsoyController.FLAG_ITEM, ident));
             }
 
             if (sprite.isBlockable()) {
