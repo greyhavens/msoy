@@ -578,21 +578,16 @@ public class ItemLogic
     /**
      * Add a flag for the specified item, or return an error reason.
      */
-    public String addFlag (int memberId, ItemIdent ident, ItemFlag.Kind kind, String comment)
+    public void addFlag (int memberId, ItemIdent ident, ItemFlag.Kind kind, String comment)
+        throws ServiceException
     {
-        // TODO: change this to use a ResultListener
-        ItemRepository<ItemRecord> repo;
-        try {
-            repo = getRepositoryFor(ident.type);
-        } catch (MissingRepositoryException mre) {
-            return mre.getMessage(); // TODO
-        }
+        ItemRepository<ItemRecord> repo = getRepository(ident.type);
 
         // TODO: If things get really tight, this could use updatePartial() later.
         ItemRecord item = repo.loadItem(ident.itemId);
         if (item == null) {
             log.warning("Missing item for addFlag()", "flag", kind, "");
-            return ServiceCodes.E_INTERNAL_ERROR;
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
         ItemFlagRecord frec = new ItemFlagRecord();
@@ -604,10 +599,9 @@ public class ItemLogic
         frec.timestamp = new Timestamp(System.currentTimeMillis());
         try {
             _itemFlagRepo.addFlag(frec);
-            return null;
 
         } catch (DuplicateKeyException dke) {
-            return ItemCodes.E_ITEM_ALREADY_FLAGGED;
+            throw new ServiceException(ItemCodes.E_ITEM_ALREADY_FLAGGED);
         }
     }
 

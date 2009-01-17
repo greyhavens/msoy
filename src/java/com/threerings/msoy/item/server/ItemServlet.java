@@ -288,10 +288,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        String error = _itemLogic.addFlag(memrec.memberId, iitem, kind, comment);
-        if (error != null) {
-            throw new ServiceException(error);
-        }
+        _itemLogic.addFlag(memrec.memberId, iitem, kind, comment);
     }
 
     // from ItemService

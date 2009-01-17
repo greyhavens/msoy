@@ -132,9 +132,9 @@ public class ItemManager
                     throw new InvocationException(MsoyCodes.ITEM_MSGS, ItemCodes.E_NO_SUCH_ITEM);
                 }
                 if (listing.item.creatorId != prize.creatorId) {
-                    throw new InvocationException(
-                        MsoyCodes.GAME_MSGS,
-                        MessageBundle.tcompose(MsoyGameCodes.E_PRIZE_CREATOR_MISMATCH, prize.ident));
+                    throw new InvocationException(MsoyCodes.GAME_MSGS,
+                        MessageBundle.tcompose(
+                            MsoyGameCodes.E_PRIZE_CREATOR_MISMATCH, prize.ident));
                 }
                 log.info("Awarding prize " + listing + " to " + memberId + ".");
                 Item item = repo.insertClone(listing.item, memberId, Currency.COINS, 0).toItem();
