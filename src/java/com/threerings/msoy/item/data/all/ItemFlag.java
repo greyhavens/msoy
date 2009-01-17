@@ -17,7 +17,7 @@ public class ItemFlag
     public enum Kind
         implements IsSerializable
     {
-        MATURE, COPYRIGHT;
+        MATURE, COPYRIGHT, STOLEN;
     }
 
     /** Item flagged. */

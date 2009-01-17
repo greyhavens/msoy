@@ -194,8 +194,10 @@ public class RoomObjectController extends RoomController
                     if (ident != null && ident.type >= 0) { // -1 is the default avatar, etc
                         flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
                                          command: MsoyController.VIEW_ITEM, arg: ident });
-//                        flagItems.push({ label: Msgs.GENERAL.get("b.flag_item", kind),
-//                                         command: MsoyController.FLAG_ITEM, arg: ident });
+                        if (!us.isGuest()) {
+                            flagItems.push({ label: Msgs.GENERAL.get("b.flag_item", kind),
+                                             command: MsoyController.FLAG_ITEM, arg: ident });
+                        }
                     }
 
                     if (flagItems.length > 0) {

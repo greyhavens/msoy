@@ -12,6 +12,7 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -32,11 +33,11 @@ public class FlagItemDialog extends FloatingPanel
     {
         super.createChildren();
 
-//        addChild(FlexUtil.createLabel("TODO: item name or something : " + _ident));
         addChild(FlexUtil.createWideText(
             Msgs.ITEM.get("m.flag", Msgs.ITEM.get(Item.getTypeKey(_ident.type)))));
 
-        _kind = new CommandComboBox();
+        _kind = new CommandComboBox(checkKindSelected);
+        _kind.prompt = Msgs.ITEM.get("p.flag_kind");
         _kind.dataProvider = ItemFlag_Kind.values();
 
         _comment = new TextArea();
@@ -44,19 +45,24 @@ public class FlagItemDialog extends FloatingPanel
         _comment.maxChars = 2047;
 
         var grid :Grid = new Grid();
-
         GridUtil.addRow(grid, Msgs.ITEM.get("l.flag_kind"), _kind);
         GridUtil.addRow(grid, Msgs.ITEM.get("l.flag_comment"), _comment);
         addChild(grid);
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
+        checkKindSelected();
+    }
+
+    protected function checkKindSelected (... ignored) :void
+    {
+        getButton(OK_BUTTON).enabled = (-1 != _kind.selectedIndex);
     }
 
     override protected function okButtonClicked () :void
     {
         var isvc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
         isvc.addFlag(_ctx.getClient(), _ident, ItemFlag_Kind(_kind.selectedItem), _comment.text,
-            _ctx.confirmListener());
+            _ctx.confirmListener("m.flag_reported", MsoyCodes.ITEM_MSGS));
     }
 
     protected var _ident :ItemIdent;

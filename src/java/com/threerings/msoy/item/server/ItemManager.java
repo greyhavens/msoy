@@ -35,6 +35,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.util.ServiceUnit;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -386,12 +387,19 @@ public class ItemManager
 
     // from ItemProvider
     public void addFlag (
-        ClientObject caller, ItemIdent ident, ItemFlag.Kind kind, String command,
+        ClientObject caller, final ItemIdent ident, final ItemFlag.Kind kind, final String comment,
         InvocationService.ConfirmListener cl)
         throws InvocationException
     {
-        // TODO
-        cl.requestProcessed();
+        final MemberObject user = (MemberObject) caller;
+
+        _invoker.postUnit(new ServiceUnit("addFlag", cl) {
+            @Override public void invokePersistent ()
+                throws Exception
+            {
+                _itemLogic.addFlag(user.getMemberId(), ident, kind, comment);
+            }
+        });
     }
 
     // from ItemProvider
