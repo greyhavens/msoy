@@ -9,6 +9,7 @@ public final class ItemFlag_Kind extends Enum
 {
     public static const MATURE :ItemFlag_Kind = new ItemFlag_Kind("MATURE");
     public static const COPYRIGHT :ItemFlag_Kind = new ItemFlag_Kind("COPYRIGHT");
+    public static const STOLEN :ItemFlag_Kind = new ItemFlag_Kind("STOLEN");
     finishedEnumerating(ItemFlag_Kind);
 
     /** @private */
