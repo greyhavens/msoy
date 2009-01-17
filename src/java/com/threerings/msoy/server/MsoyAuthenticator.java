@@ -516,10 +516,9 @@ public class MsoyAuthenticator extends Authenticator
             } else {
                 account.firstLogon = (member.sessions == 0);
             }
-        }
 
-        // always set the session token
-        rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId, 1);
+            rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId, 1);
+        }
 
         // check to see whether this account has been banned or if this is a first time user
         // logging in from a tainted machine
