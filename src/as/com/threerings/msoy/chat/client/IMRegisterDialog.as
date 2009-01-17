@@ -47,13 +47,10 @@ public class IMRegisterDialog extends FloatingPanel
         addButtons(OK_BUTTON, CANCEL_BUTTON);
     }
 
-    override protected function buttonClicked (buttonId :int) :void
+    override protected function okButtonClicked () :void
     {
-        super.buttonClicked(buttonId);
-        if (buttonId == OK_BUTTON) {
-            (_ctx.getChatDirector() as MsoyChatDirector).registerIM(
-                _gateway, _username.text, _password.text);
-        }
+        (_ctx.getChatDirector() as MsoyChatDirector).registerIM(
+            _gateway, _username.text, _password.text);
     }
 
     protected var _username :TextInput;

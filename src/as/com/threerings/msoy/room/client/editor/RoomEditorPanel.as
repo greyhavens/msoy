@@ -502,13 +502,9 @@ public class RoomEditorPanel extends FlyingPanel
         }
     }
 
-    override protected function buttonClicked (buttonId :int) :void
+    override protected function okButtonClicked () :void
     {
-        super.buttonClicked(buttonId);
-
-        if (buttonId == OK_BUTTON) {
-            new PublishPanel(_wctx, _controller.roomView);
-        }
+        new PublishPanel(_wctx, _controller.roomView);
     }
 
     // @Override from FloatingPanel

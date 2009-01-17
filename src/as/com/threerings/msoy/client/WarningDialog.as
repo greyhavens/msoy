@@ -59,14 +59,11 @@ public class WarningDialog extends FloatingPanel
         addButtons(OK_BUTTON);
     }
 
-    override protected function buttonClicked (buttonId :int) :void
+    override protected function okButtonClicked () :void
     {
-        if (buttonId == OK_BUTTON) {
-            var msvc :MemberService =
-                _ctx.getClient().requireService(MemberService) as MemberService;
-            msvc.acknowledgeWarning(_ctx.getClient());
-        }
-        super.buttonClicked(buttonId);
+        var msvc :MemberService =
+            _ctx.getClient().requireService(MemberService) as MemberService;
+        msvc.acknowledgeWarning(_ctx.getClient());
     }
 
     protected var _wText :Text;

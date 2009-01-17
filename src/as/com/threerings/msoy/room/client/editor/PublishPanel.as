@@ -69,14 +69,10 @@ public class PublishPanel extends FloatingPanel
         }
     }
 
-    override protected function buttonClicked (buttonId :int) :void
+    override protected function okButtonClicked () :void
     {
-        if (buttonId == OK_BUTTON) {
-            _snapshot.upload(false, onUploadComplete);
-            CommandEvent.dispatch(_view, RoomObjectController.PUBLISH_ROOM);
-        }
-
-        super.buttonClicked(buttonId);
+        _snapshot.upload(false, onUploadComplete);
+        CommandEvent.dispatch(_view, RoomObjectController.PUBLISH_ROOM);
     }
 
     protected function onSnapshotReady (event :Event) :void

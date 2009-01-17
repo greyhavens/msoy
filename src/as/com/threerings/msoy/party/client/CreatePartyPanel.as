@@ -108,14 +108,10 @@ public class CreatePartyPanel extends FloatingPanel
         }
     }
 
-    override protected function buttonClicked (buttonId :int) :void
+    override protected function okButtonClicked () :void
     {
-        if (buttonId == OK_BUTTON) {
-            WorldContext(_ctx).getPartyDirector().createParty(
-                _name.text, int(_group.selectedData), _inviteAll.selected);
-        }
-
-        super.buttonClicked(buttonId);
+        WorldContext(_ctx).getPartyDirector().createParty(
+            _name.text, int(_group.selectedData), _inviteAll.selected);
     }
 
     protected var _name :TextInput;

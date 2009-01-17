@@ -23,12 +23,9 @@ public class UrlDialog extends FloatingPanel
         open(true);
     }
 
-    override protected function buttonClicked (buttonId :int) :void
+    override protected function okButtonClicked () :void
     {
-        super.buttonClicked(buttonId);
-        if (buttonId == OK_BUTTON) {
-            _callback(_url.text, _tip.text);
-        }
+        _callback(_url.text, _tip.text);
     }
 
     override protected function createChildren () :void

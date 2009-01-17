@@ -34,12 +34,9 @@ public class ItemUsedDialog extends FloatingPanel
         }
     }
 
-    override protected function buttonClicked (buttonId :int) :void
+    override protected function okButtonClicked () :void
     {
-        if (buttonId == OK_BUTTON) {
-            _yesClosure();
-        }
-        super.buttonClicked(buttonId);
+        _yesClosure();
     }
 
     protected var _yesClosure :Function;
