@@ -408,7 +408,7 @@ public class GameGameRegistry
                 _worldClient.reportTrophyAward(trophy.memberId, gameName, trec);
                 _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);
                 _worldClient.incrementStat(trophy.memberId, StatType.TROPHIES_EARNED, 1);
-                ((InvocationService.ResultListener)_listener).requestProcessed(trec);
+                reportRequestProcessed(trec);
             }
             @Override
             protected String getFailureMessage () {

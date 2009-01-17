@@ -252,7 +252,7 @@ public class MemberManager
                 }
             }
             @Override public void handleSuccess () {
-                ((InvocationService.ResultListener)_listener).requestProcessed(autoFriended);
+                reportRequestProcessed(autoFriended);
                 if (autoFriended) {
                     trackClientAction(caller, "autoFriendedFlashClient", null);
                 }
@@ -301,7 +301,7 @@ public class MemberManager
                 if (_homeId == null) {
                     handleFailure(new InvocationException("m.no_such_user"));
                 } else {
-                    ((InvocationService.ResultListener)_listener).requestProcessed(_homeId);
+                    reportRequestProcessed(_homeId);
                 }
             }
             protected Integer _homeId;
@@ -473,7 +473,8 @@ public class MemberManager
             }
             @Override public void handleSuccess () {
                 user.updateDisplayName(name);
-                _bodyMan.updateOccupantInfo(user, new MemberInfo.NameUpdater(user.getVisibleName()));
+                _bodyMan.updateOccupantInfo(user,
+                    new MemberInfo.NameUpdater(user.getVisibleName()));
             }
         });
     }
@@ -565,7 +566,7 @@ public class MemberManager
                 if (ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                     member.setHomeSceneId(sceneId);
                 }
-                reportRequestProcessed();
+                super.handleSuccess();
             }
         });
     }
@@ -714,7 +715,7 @@ public class MemberManager
                 _testGroup = _memberLogic.getABTestGroup(testName, memObj.visitorInfo, logEvent);
             }
             @Override public void handleSuccess () {
-                ((InvocationService.ResultListener)_listener).requestProcessed(_testGroup);
+                reportRequestProcessed(_testGroup);
             }
             protected Integer _testGroup;
         });
@@ -800,9 +801,15 @@ public class MemberManager
 
         _invoker.postUnit(new PersistingUnit("getHPGridItems", listener, "who", memObj.who()) {
             @Override public void invokePersistent () throws Exception {
-                reportRequestProcessed(_memberLogic.getHomePageGridItems(
-                    memberId, experiences, onTour, badgesVersion));
+                _result = _memberLogic.getHomePageGridItems(
+                    memberId, experiences, onTour, badgesVersion);
             }
+
+            @Override public void handleSuccess () {
+                reportRequestProcessed(_result);
+            }
+
+            protected Object _result;
         });
     }
 

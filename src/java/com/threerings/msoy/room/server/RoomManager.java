@@ -797,7 +797,7 @@ public class RoomManager extends SpotSceneManager
             }
             public void handleSuccess () {
                 sendPostcardMail(sender, recips, subject, caption, _snap.getMediaPath());
-                reportRequestProcessed();
+                super.handleSuccess();
             }
             protected MediaDesc _snap;
         });
