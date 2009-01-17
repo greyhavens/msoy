@@ -261,14 +261,16 @@ public class GameEditor extends ItemEditor
         super.addExtras();
 
         // splash screen goes below the standard extras
-        ItemMediaUploader splasher = addImageUploader(
-            Game.SPLASH_MEDIA, MediaDesc.GAME_SPLASH_SIZE, ItemMediaUploader.MODE_GAME_SPLASH,
-            new MediaSetter() {
-                public void set (MediaDesc media) {
-                    _game.splashMedia = media;
-                };
-            });
-        addRow(_emsgs.gameSplashLabel(), splasher, _emsgs.gameSplashTip());
+        if (CShell.creds.isSupport()) {
+            ItemMediaUploader splasher = addImageUploader(
+                Game.SPLASH_MEDIA, MediaDesc.GAME_SPLASH_SIZE, ItemMediaUploader.MODE_GAME_SPLASH,
+                new MediaSetter() {
+                    public void set (MediaDesc media) {
+                        _game.splashMedia = media;
+                    };
+                });
+            addRow(_emsgs.gameSplashLabel(), splasher, _emsgs.gameSplashTip());
+        }
 
         addTab(_emsgs.gameTabExtras());
 
