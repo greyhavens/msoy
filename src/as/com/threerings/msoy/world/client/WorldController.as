@@ -34,6 +34,7 @@ import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.item.client.FlagItemDialog;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.Item;
@@ -375,6 +376,14 @@ public class WorldController extends MsoyController
         };
         var isvc :ItemService = _wctx.getClient().requireService(ItemService) as ItemService;
         isvc.getCatalogId(_wctx.getClient(), ident, _wctx.resultListener(resultHandler));
+    }
+
+    /**
+     * Handles the FLAG_ITEM command.
+     */
+    public function handleFlagItem (ident :ItemIdent) :void
+    {
+        new FlagItemDialog(_wctx, ident);
     }
 
     /**

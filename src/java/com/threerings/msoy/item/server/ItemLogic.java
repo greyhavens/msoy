@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server;
 
+import java.sql.Timestamp;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +19,8 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
@@ -50,6 +54,7 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
@@ -68,6 +73,8 @@ import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemFlagRecord;
+import com.threerings.msoy.item.server.persist.ItemFlagRepository;
 import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
 import com.threerings.msoy.item.server.persist.ItemListRepository;
 import com.threerings.msoy.item.server.persist.ItemPackRepository;
@@ -569,6 +576,42 @@ public class ItemLogic
     }
 
     /**
+     * Add a flag for the specified item, or return an error reason.
+     */
+    public String addFlag (int memberId, ItemIdent ident, ItemFlag.Kind kind, String comment)
+    {
+        // TODO: change this to use a ResultListener
+        ItemRepository<ItemRecord> repo;
+        try {
+            repo = getRepositoryFor(ident.type);
+        } catch (MissingRepositoryException mre) {
+            return mre.getMessage(); // TODO
+        }
+
+        // TODO: If things get really tight, this could use updatePartial() later.
+        ItemRecord item = repo.loadItem(ident.itemId);
+        if (item == null) {
+            log.warning("Missing item for addFlag()", "flag", kind, "");
+            return ServiceCodes.E_INTERNAL_ERROR;
+        }
+
+        ItemFlagRecord frec = new ItemFlagRecord();
+        frec.comment = comment;
+        frec.kind = (byte)kind.ordinal();
+        frec.memberId = memberId;
+        frec.itemType = ident.type;
+        frec.itemId = ident.itemId;
+        frec.timestamp = new Timestamp(System.currentTimeMillis());
+        try {
+            _itemFlagRepo.addFlag(frec);
+            return null;
+
+        } catch (DuplicateKeyException dke) {
+            return ItemCodes.E_ITEM_ALREADY_FLAGGED;
+        }
+    }
+
+    /**
      * Loads up the item lists for the specified member.
      */
     public List<ItemListInfo> getItemLists (int memberId)
@@ -912,6 +955,7 @@ public class ItemLogic
     @Inject protected GameLogic _gameLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemListRepository _listRepo;
+    @Inject protected ItemFlagRepository _itemFlagRepo;
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
 

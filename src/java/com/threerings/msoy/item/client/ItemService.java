@@ -6,6 +6,7 @@ package com.threerings.msoy.item.client;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
@@ -45,4 +46,11 @@ public interface ItemService extends InvocationService
      * Cause this item to be removed from the user's inventory.
      */
     void deleteItem (Client client, ItemIdent item, ConfirmListener listener);
+
+    /**
+     * Adds a user flag to an item, for subsequent review by support.
+     */
+    void addFlag (
+        Client client, ItemIdent item, ItemFlag.Kind kind, String comment,
+        ConfirmListener listener);
 }

@@ -378,7 +378,7 @@ public class RoomController extends SceneController
             menu.setBounds(_wdctx.getPlaceViewBounds());
             menu.popUpAtMouse();
 
-//            var menu :RadialMenu = new RadialMenu(100);
+//            var menu :RadialMenu = new RadialMenu();
 //            menu.dataProvider = menuItems;
 //            menu.popUp(UberClient.getApplication());
         }

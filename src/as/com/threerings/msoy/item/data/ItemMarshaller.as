@@ -5,6 +5,7 @@ package com.threerings.msoy.item.data {
 
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.item.client.ItemService;
+import com.threerings.msoy.item.data.all.ItemFlag_Kind;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -23,8 +24,21 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public class ItemMarshaller extends InvocationMarshaller
     implements ItemService
 {
+    /** The method id used to dispatch <code>addFlag</code> requests. */
+    public static const ADD_FLAG :int = 1;
+
+    // from interface ItemService
+    public function addFlag (arg1 :Client, arg2 :ItemIdent, arg3 :ItemFlag_Kind, arg4 :String, arg5 :InvocationService_ConfirmListener) :void
+    {
+        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, ADD_FLAG, [
+            arg2, arg3, arg4, listener5
+        ]);
+    }
+
     /** The method id used to dispatch <code>deleteItem</code> requests. */
-    public static const DELETE_ITEM :int = 1;
+    public static const DELETE_ITEM :int = 2;
 
     // from interface ItemService
     public function deleteItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void
@@ -37,7 +51,7 @@ public class ItemMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getCatalogId</code> requests. */
-    public static const GET_CATALOG_ID :int = 2;
+    public static const GET_CATALOG_ID :int = 3;
 
     // from interface ItemService
     public function getCatalogId (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void
@@ -50,7 +64,7 @@ public class ItemMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getItemNames</code> requests. */
-    public static const GET_ITEM_NAMES :int = 3;
+    public static const GET_ITEM_NAMES :int = 4;
 
     // from interface ItemService
     public function getItemNames (arg1 :Client, arg2 :TypedArray /* of class com.threerings.msoy.item.data.all.ItemIdent */, arg3 :InvocationService_ResultListener) :void
@@ -63,7 +77,7 @@ public class ItemMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>peepItem</code> requests. */
-    public static const PEEP_ITEM :int = 4;
+    public static const PEEP_ITEM :int = 5;
 
     // from interface ItemService
     public function peepItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ResultListener) :void
@@ -76,7 +90,7 @@ public class ItemMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>reclaimItem</code> requests. */
-    public static const RECLAIM_ITEM :int = 5;
+    public static const RECLAIM_ITEM :int = 6;
 
     // from interface ItemService
     public function reclaimItem (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void

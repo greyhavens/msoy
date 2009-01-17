@@ -38,6 +38,7 @@ import com.threerings.msoy.server.ServerMessages;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Prize;
 
@@ -381,6 +382,16 @@ public class ItemManager
                 }
             }
         });
+    }
+
+    // from ItemProvider
+    public void addFlag (
+        ClientObject caller, ItemIdent ident, ItemFlag.Kind kind, String command,
+        InvocationService.ConfirmListener cl)
+        throws InvocationException
+    {
+        // TODO
+        cl.requestProcessed();
     }
 
     // from ItemProvider

@@ -92,6 +92,9 @@ public class MsoyController extends Controller
     /** Command to view an item, arg is an ItemIdent. */
     public static const VIEW_ITEM :String = "ViewItem";
 
+    /** Command to flag an item, arg is an ItemIdent. */
+    public static const FLAG_ITEM :String = "FlagItem";
+
     /** Command to view all games */
     public static const VIEW_GAMES :String = "ViewGames";
 

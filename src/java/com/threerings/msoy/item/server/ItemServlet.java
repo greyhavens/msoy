@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server;
 
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -12,7 +11,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Tuple;
 
@@ -34,7 +32,6 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.ItemFlagRecord;
 import com.threerings.msoy.item.server.persist.ItemFlagRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
@@ -291,26 +288,9 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iitem.type);
-        // TODO: If things get really tight, this could use updatePartial() later.
-        ItemRecord item = repo.loadItem(iitem.itemId);
-        if (item == null) {
-            log.warning("Missing item for addFlag()", "flag", kind, "");
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        ItemFlagRecord frec = new ItemFlagRecord();
-        frec.comment = comment;
-        frec.kind = (byte)kind.ordinal();
-        frec.memberId = memrec.memberId;
-        frec.itemType = iitem.type;
-        frec.itemId = iitem.itemId;
-        frec.timestamp = new Timestamp(System.currentTimeMillis());
-        try {
-            _itemFlagRepo.addFlag(frec);
-
-        } catch (DuplicateKeyException dke) {
-            throw new ServiceException(ItemCodes.E_ITEM_ALREADY_FLAGGED);
+        String error = _itemLogic.addFlag(memrec.memberId, iitem, kind, comment);
+        if (error != null) {
+            throw new ServiceException(error);
         }
     }
 

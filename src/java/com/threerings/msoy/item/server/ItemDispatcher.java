@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.server;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
+import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -36,6 +37,12 @@ public class ItemDispatcher extends InvocationDispatcher<ItemMarshaller>
         throws InvocationException
     {
         switch (methodId) {
+        case ItemMarshaller.ADD_FLAG:
+            ((ItemProvider)provider).addFlag(
+                source, (ItemIdent)args[0], (ItemFlag.Kind)args[1], (String)args[2], (InvocationService.ConfirmListener)args[3]
+            );
+            return;
+
         case ItemMarshaller.DELETE_ITEM:
             ((ItemProvider)provider).deleteItem(
                 source, (ItemIdent)args[0], (InvocationService.ConfirmListener)args[1]
