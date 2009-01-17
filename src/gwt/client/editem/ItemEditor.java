@@ -707,7 +707,7 @@ public abstract class ItemEditor extends FlowPanel
     protected static void takeSnapshotBridge (String ids)
     {
         String fids = "" + ids;
-        _singleton.takeSnapshot(ids);
+        _singleton.takeSnapshot(fids);
     }
 
     /**
