@@ -258,6 +258,9 @@ public class GameEditor extends ItemEditor
             });
         addRow(_emsgs.gameShotLabel(), shotter, _emsgs.gameShotTip());
 
+        super.addExtras();
+
+        // splash screen goes below the standard extras
         ItemMediaUploader splasher = addImageUploader(
             Game.SPLASH_MEDIA, MediaDesc.GAME_SPLASH_SIZE, ItemMediaUploader.MODE_GAME_SPLASH,
             new MediaSetter() {
@@ -266,8 +269,6 @@ public class GameEditor extends ItemEditor
                 };
             });
         addRow(_emsgs.gameSplashLabel(), splasher, _emsgs.gameSplashTip());
-
-        super.addExtras();
 
         addTab(_emsgs.gameTabExtras());
 
