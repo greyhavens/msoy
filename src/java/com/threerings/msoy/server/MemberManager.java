@@ -432,7 +432,7 @@ public class MemberManager
 
         if (avatarItemId == 0) {
             // a request to return to the default avatar
-            finishSetAvatar(user, null, newScale, listener);
+            finishSetAvatar(user, null, newScale, null, listener);
             return;
         }
 
@@ -444,6 +444,12 @@ public class MemberManager
                 if (user.getMemberId() != avatar.ownerId) { // ensure that they own it
                     final String errmsg = "Not user's avatar [ownerId=" + avatar.ownerId + "]";
                     requestFailed(new Exception(errmsg));
+
+                } else if (!user.isActive()) {
+                    // TODO: remove this, it's not very interesting
+                    log.info("User logged out during getItem", "avatar", ident,
+                        "user", user.which());
+
                 } else {
                     finishSetAvatar(user, avatar, newScale, listener);
                 }
@@ -897,8 +903,8 @@ public class MemberManager
     }
 
     /**
-     * Finish configuring the user's avatar.
-     *
+     * Loads the avatar memories and then sets the avatar if successful (and the user is still
+     * logged in).
      * @param avatar may be null to revert to the default member avatar.
      */
     protected void finishSetAvatar (
@@ -907,12 +913,7 @@ public class MemberManager
     {
         _invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
             @Override public void invokePersist () throws Exception {
-                _memberRepo.configureAvatarId(user.getMemberId(),
-                    (avatar == null) ? 0 : avatar.itemId);
                 if (avatar != null) {
-                    if (newScale != 0 && avatar.scale != newScale) {
-                        _itemLogic.getAvatarRepository().updateScale(avatar.itemId, newScale);
-                    }
                     _memories = Lists.newArrayList(Iterables.transform(
                         _memoryRepo.loadMemory(avatar.getType(), avatar.itemId),
                         MemoryRecord.TO_ENTRY));
@@ -920,73 +921,114 @@ public class MemberManager
             }
 
             @Override public void handleSuccess () {
-                final Avatar prev = user.avatar;
-                if (newScale != 0 && avatar != null) {
-                    avatar.scale = newScale;
+                // if the user is still logged in, update their avatar in the database
+                if (user.isActive()) {
+                    finishSetAvatar(user, avatar, newScale, _memories, listener);
+
+                } else {
+                    // TODO: remove this, it's not very interesting
+                    log.info("User logged out during loadMemory", "avatar", avatar,
+                        "user", user.which());
                 }
-
-                _itemMan.updateItemUsage(
-                    user.getMemberId(), prev, avatar, new ResultListener.NOOP<Object>() {
-                    @Override
-                    public void requestFailed (final Exception cause) {
-                        log.warning("Unable to update usage from an avatar change.");
-                    }
-                });
-
-                // now we need to make sure that the two avatars have a reasonable touched time
-                user.startTransaction();
-                try {
-                    // unset the current avatar to avoid busy-work in avatarUpdatedOnPeer, but
-                    // we'll set the new avatar at the bottom...
-                    user.avatar = null;
-
-                    // NOTE: we are not updating the used/location fields of the cached avatars,
-                    // I don't think it's necessary, but it'd be a simple matter here...
-                    final long now = System.currentTimeMillis();
-                    if (prev != null) {
-                        prev.lastTouched = now;
-                        _itemMan.avatarUpdatedOnPeer(user, prev);
-                    }
-                    if (avatar != null) {
-                        avatar.lastTouched = now + 1; // the new one should be more recently touched
-                        _itemMan.avatarUpdatedOnPeer(user, avatar);
-                    }
-
-                    // now set the new avatar
-                    user.setAvatar(avatar);
-                    user.actorState = null; // clear out their state
-                    user.getLocal(MemberLocal.class).memories = _memories;
-
-                    // check if this player is already in a room (should be the case)
-                    PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
-                    if (pmgr != null) {
-                        PlaceObject plobj = pmgr.getPlaceObject();
-                        if (plobj instanceof RoomObject) {
-                            // if so, make absolutely sure the avatar memories are in place in the
-                            // room before we update the occupant info (which triggers the avatar
-                            // media change on the client).
-                            user.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom(
-                                (RoomObject)plobj, false);
-                        }
-                        // if the player wasn't in a room, the avatar memories will just sit in
-                        // MemberLocal storage until they do enter a room, which is proper
-                    }
-                    _bodyMan.updateOccupantInfo(user, new MemberInfo.AvatarUpdater(user));
-
-                } finally {
-                    user.commitTransaction();
-                }
-                listener.requestProcessed();
             }
 
             @Override public void handleFailure (final Exception pe) {
-                log.warning("Unable to set avatar [user=" + user.which() +
-                            ", avatar='" + avatar + "', " + "error=" + pe + "].");
-                log.warning(pe);
+                log.warning("Unable to load memories", "user", user.which(), "avatar", avatar,
+                    "error", pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
 
             protected List<EntityMemoryEntry> _memories;
+        });
+    }
+
+    /**
+     * Updates the runtime information for an avatar change then finally commits the change to the
+     * database.
+     */
+    protected void finishSetAvatar (
+        final MemberObject user, final Avatar avatar, final float newScale,
+        List<EntityMemoryEntry> memories, final InvocationService.ConfirmListener listener)
+    {
+        final Avatar prev = user.avatar;
+        if (newScale != 0 && avatar != null) {
+            avatar.scale = newScale;
+        }
+
+        // now we need to make sure that the two avatars have a reasonable touched time
+        user.startTransaction();
+        try {
+            // unset the current avatar to avoid busy-work in avatarUpdatedOnPeer, but
+            // we'll set the new avatar at the bottom...
+            user.avatar = null;
+
+            // NOTE: we are not updating the used/location fields of the cached avatars,
+            // I don't think it's necessary, but it'd be a simple matter here...
+            final long now = System.currentTimeMillis();
+            if (prev != null) {
+                prev.lastTouched = now;
+                _itemMan.avatarUpdatedOnPeer(user, prev);
+            }
+            if (avatar != null) {
+                avatar.lastTouched = now + 1; // the new one should be more recently touched
+                _itemMan.avatarUpdatedOnPeer(user, avatar);
+            }
+
+            // now set the new avatar
+            user.setAvatar(avatar);
+            user.actorState = null; // clear out their state
+            user.getLocal(MemberLocal.class).memories = memories;
+
+            // check if this player is already in a room (should be the case)
+            PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
+            if (pmgr != null) {
+                PlaceObject plobj = pmgr.getPlaceObject();
+                if (plobj instanceof RoomObject) {
+                    // if so, make absolutely sure the avatar memories are in place in the
+                    // room before we update the occupant info (which triggers the avatar
+                    // media change on the client).
+                    user.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom(
+                        (RoomObject)plobj, false);
+                }
+                // if the player wasn't in a room, the avatar memories will just sit in
+                // MemberLocal storage until they do enter a room, which is proper
+            }
+            _bodyMan.updateOccupantInfo(user, new MemberInfo.AvatarUpdater(user));
+
+        } finally {
+            user.commitTransaction();
+        }
+        listener.requestProcessed();
+
+        // this just fires off an invoker unit, we don't need the result, log it
+        _itemMan.updateItemUsage(
+            user.getMemberId(), prev, avatar, new ResultListener.NOOP<Object>() {
+            @Override
+            public void requestFailed (final Exception cause) {
+                log.warning("Unable to update usage from an avatar change.");
+            }
+        });
+
+        // now fire off a unit to update the avatar information in the database
+        _invoker.postUnit(new RepositoryUnit("setAvatarPt3") {
+            @Override public void invokePersist () throws Exception {
+                if (avatar != null) {
+                    if (newScale != 0 && avatar.scale != newScale) {
+                        _itemLogic.getAvatarRepository().updateScale(avatar.itemId, newScale);
+                    }
+                }
+                _memberRepo.configureAvatarId(user.getMemberId(),
+                    (avatar == null) ? 0 : avatar.itemId);
+            }
+
+            @Override public void handleSuccess () {
+                // yay!
+            }
+
+            @Override public void handleFailure (final Exception pe) {
+                log.warning("Unable to set avatar", "user", user.which(), "avatar", avatar,
+                    "error", pe);
+            }
         });
     }
 
