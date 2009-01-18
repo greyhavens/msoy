@@ -71,10 +71,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         // see if we have a member object forwarded from our peer
         _fwddata = _peerMan.getForwardedMemberObject(_username);
         if (_fwddata == null) {
-            log.info("Started unforwarded session", "who", _username);
             return new MemberObject();
         } else {
-            log.info("Started forwarded session", "who", _username);
             return _fwddata.left;
         }
     }
@@ -119,6 +117,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // if our member object was forwarded from another server, it will already be fully ready
         // to go so we can avoid the expensive resolution process
         if (memobj.memberName != null) {
+            log.info("Resolved forwarded session", "clobj", clobj.who());
             return;
         }
 
@@ -142,6 +141,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         } else {
             resolveMember(memobj);
         }
+
+        log.info("Resolved unforwarded session", "clobj", clobj.who());
     }
 
     /**
