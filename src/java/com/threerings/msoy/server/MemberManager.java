@@ -68,6 +68,7 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -438,27 +439,60 @@ public class MemberManager
 
         // otherwise, make sure it exists and we own it
         final ItemIdent ident = new ItemIdent(Item.AVATAR, avatarItemId);
-        _itemMan.getItem(ident, new ResultListener<Item>() {
-            public void requestCompleted (final Item item) {
-                final Avatar avatar = (Avatar) item;
-                if (user.getMemberId() != avatar.ownerId) { // ensure that they own it
-                    final String errmsg = "Not user's avatar [ownerId=" + avatar.ownerId + "]";
-                    requestFailed(new Exception(errmsg));
 
-                } else if (!user.isActive()) {
-                    // TODO: remove this, it's not very interesting
-                    log.info("User logged out during getItem", "avatar", ident,
+        _invoker.postUnit(new RepositoryUnit("setAvatar") {
+            @Override public void invokePersist () throws Exception {
+                _avatar = (Avatar)_itemMan.loadItem(ident);
+                if (_avatar == null) {
+                    _failure = ItemCodes.E_NO_SUCH_ITEM;
+                    return;
+                }
+
+                if (!user.isActive()) {
+                    // TODO: remove this logging, it's not very interesting
+                    log.info("User logged out during getItem", "avatar", _avatar,
                         "user", user.which());
+                    _failure = InvocationCodes.INTERNAL_ERROR;
+                    return;
+                }
+
+                if (user.getMemberId() != _avatar.ownerId) { // ensure that they own it
+                    log.warning("Not user's avatar", "user", user.which(),
+                        "ownerId", _avatar.ownerId,  _avatar.ownerId);
+                    _failure = InvocationCodes.INTERNAL_ERROR;
+                    return;
+                }
+
+                _memories = Lists.newArrayList(Iterables.transform(
+                    _memoryRepo.loadMemory(_avatar.getType(), _avatar.itemId),
+                    MemoryRecord.TO_ENTRY));
+            }
+
+            @Override public void handleSuccess () {
+                if (_failure == null && !user.isActive()) {
+                    // TODO: remove this logging, it's not very interesting
+                    log.info("User logged out during loadMemory", "avatar", _avatar,
+                        "user", user.which());
+                    _failure = InvocationCodes.INTERNAL_ERROR;
+                }
+
+                if (_failure != null) {
+                    listener.requestFailed(_failure);
 
                 } else {
-                    finishSetAvatar(user, avatar, newScale, listener);
+                    finishSetAvatar(user, _avatar, newScale, _memories, listener);
                 }
             }
-            public void requestFailed (final Exception cause) {
-                log.warning("Unable to setAvatar [for=" + user.getMemberId() +
-                        ", avatar=" + ident + "].", cause);
+
+            @Override public void handleFailure (final Exception pe) {
+                log.warning(
+                    "Unable to resolve avatar", "user", user.which(), "avatar", _avatar, pe);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
+
+            protected List<EntityMemoryEntry> _memories;
+            protected Avatar _avatar;
+            protected String _failure;
         });
     }
 
@@ -903,46 +937,6 @@ public class MemberManager
     }
 
     /**
-     * Loads the avatar memories and then sets the avatar if successful (and the user is still
-     * logged in).
-     * @param avatar may be null to revert to the default member avatar.
-     */
-    protected void finishSetAvatar (
-        final MemberObject user, final Avatar avatar, final float newScale,
-        final InvocationService.ConfirmListener listener)
-    {
-        _invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
-            @Override public void invokePersist () throws Exception {
-                if (avatar != null) {
-                    _memories = Lists.newArrayList(Iterables.transform(
-                        _memoryRepo.loadMemory(avatar.getType(), avatar.itemId),
-                        MemoryRecord.TO_ENTRY));
-                }
-            }
-
-            @Override public void handleSuccess () {
-                // if the user is still logged in, update their avatar in the database
-                if (user.isActive()) {
-                    finishSetAvatar(user, avatar, newScale, _memories, listener);
-
-                } else {
-                    // TODO: remove this, it's not very interesting
-                    log.info("User logged out during loadMemory", "avatar", avatar,
-                        "user", user.which());
-                }
-            }
-
-            @Override public void handleFailure (final Exception pe) {
-                log.warning("Unable to load memories", "user", user.which(), "avatar", avatar,
-                    "error", pe);
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            }
-
-            protected List<EntityMemoryEntry> _memories;
-        });
-    }
-
-    /**
      * Updates the runtime information for an avatar change then finally commits the change to the
      * database.
      */
@@ -1010,7 +1004,7 @@ public class MemberManager
         });
 
         // now fire off a unit to update the avatar information in the database
-        _invoker.postUnit(new RepositoryUnit("setAvatarPt3") {
+        _invoker.postUnit(new RepositoryUnit("updateAvatar") {
             @Override public void invokePersist () throws Exception {
                 if (avatar != null) {
                     if (newScale != 0 && avatar.scale != newScale) {
