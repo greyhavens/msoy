@@ -9,11 +9,12 @@ import com.google.gwt.user.client.Element;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
@@ -46,7 +47,7 @@ public class StatusPanel extends SmartTable
 {
     public StatusPanel ()
     {
-        super("statusPanel", 0, 3);
+        super("statusPanel", 0, 0);
 
         Session.addObserver(this);
 
@@ -102,40 +103,41 @@ public class StatusPanel extends SmartTable
         _creds = data.creds;
         CookieUtil.set("/", Session.SESSION_DAYS, "who", _creds.accountName);
 
-        // name at the top left
-        SmartTable top = new SmartTable(0, 0);
-        top.setWidth("100%");
-        top.setWidget(0, 0, Link.memberView(_creds.name));
-
-        // logoff, help at the top right
-        InlinePanel links = new InlinePanel(null);
-        links.add(new HTML("&nbsp;&nbsp;"));
+        // mail, name, help, sign out in a box at top
+        HorizontalPanel links = new HorizontalPanel();
+        links.add(_mail);
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL,
+            data.newMailCount, 0));
+        links.add(MsoyUI.createLabel("|", "Spacer"));
+        links.add(Link.memberView(_creds.name));
+        links.add(MsoyUI.createLabel("|", "Spacer"));
+        links.add(Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
+        links.add(MsoyUI.createLabel("|", "Spacer"));
         links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
             public void onClick (Widget sender) {
                 Session.didLogoff(Session.LogoffCondition.LOGOFF_REQUESTED);
             }
         }));
-        links.add(new HTML("|"));
-        links.add(Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
-        links.add(new HTML("|"));
-        links.add(Link.create(_cmsgs.statusInviteFriends(), Pages.ME, "invites"));
-        top.setWidget(0, 1, links);
-        top.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
 
-        setWidget(0, 0, top);
-        getFlexCellFormatter().setColSpan(0, 0, 2);
+        // white top box aligned to right of window
+        HorizontalPanel topBox = new HorizontalPanel();
+        topBox.add(new Image("/images/header/status_bg_left.png"));
+        topBox.add(MsoyUI.createSimplePanel(links, "TopBoxLinks"));
+        topBox.add(new Image("/images/header/status_bg_right.png"));
+        setWidget(0, 0, topBox);
+        getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_RIGHT);
+        getFlexCellFormatter().setColSpan(0, 0, 3);
 
-        // coins, bars, level on bottom
-        int idx = 0;
-        setWidget(1, idx++, _levels);
+        // coins, bars, level on bottom left
+        setWidget(1, 0, _levels);
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
 
-        // configure our 'new mail' indicator on bottom
-        setWidget(1, idx++, _mail);
-        CShell.frame.dispatchEvent(
-            new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
+        // friends = coins blurb on bottom right
+        setWidget(1, 3, WidgetUtil.makeShim(10, 10));
+        setWidget(1, 2, Link.createImage("/images/header/status_friends_coins.png",
+            _cmsgs.statusFriendsCoins(), Pages.PEOPLE, "invites"));
     }
 
     // from interface Session.Observer
@@ -150,83 +152,83 @@ public class StatusPanel extends SmartTable
         return (oldLevel != 0 && oldLevel < event.getValue());
     }
 
-    protected static class MailDisplay extends SmartTable
+    protected static class MailDisplay extends HorizontalPanel
     {
         public MailDisplay () {
-            super("Mail", 0, 0);
-
-            int idx = 0;
-            setWidget(0, idx++, MsoyUI.createActionImage(
-                          "/images/header/symbol_mail.png",
-                          Link.createListener(Pages.MAIL, "")), 1, "Icon");
-            _mailIx = idx; // the next cell will hold our count
+            addStyleName("Mail");
+            add(_mailImage = MsoyUI.createActionImage("/images/header/symbol_mail.png",
+                Link.createListener(Pages.MAIL, "")));
+            add(_mailLabel = MsoyUI.createActionLabel("0", Link.createListener(Pages.MAIL, "")));
             setCount(0);
         }
 
-        public void setCount (int count)
-        {
-            setText(0, _mailIx, String.valueOf(count));
-            setVisible(true);
-            getWidget(0, _mailIx-1).setTitle(count > 0 ? _cmsgs.newMailTip() : _cmsgs.mailTip());
+        public void setCount (int count) {
+            _mailLabel.setText(String.valueOf(count));
+            _mailImage.setTitle(count > 0 ? _cmsgs.newMailTip() : _cmsgs.mailTip());
         }
 
-        protected int _mailIx;
+        protected Image _mailImage;
+        protected Label _mailLabel;
     }
 
     protected static class LevelsDisplay extends SmartTable
     {
         public LevelsDisplay () {
-            super(0, 0);
+            super("Levels", 0, 0);
 
             int idx = 0;
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
             ClickListener onClick = NaviUtil.onViewTransactions(ReportType.COINS);
             setWidget(0, idx++, MsoyUI.createActionImage(Currency.COINS.getLargeIcon(),
                 _cmsgs.coinsTip(), onClick), 1, "Icon");
-            setText(0, _coinsIdx = idx++, "0");
+            setWidget(0, idx++, _coinsLabel = MsoyUI.createActionLabel("0", onClick));
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
             setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getLargeIcon(),
                 _cmsgs.barsTip(), NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
-            setText(0, _barsIdx = idx++, "0");
+            setWidget(0, idx++, _barsLabel = MsoyUI.createActionLabel("0",
+                NaviUtil.onViewTransactions(ReportType.BARS)));
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
             setWidget(0, idx++, MsoyUI.createActionImage("/images/header/symbol_level.png",
                 _cmsgs.levelTip(), Link.createListener(Pages.ME, "passport")), 1, "Icon");
-            setText(0, _levelIdx = idx++, "0");
+            setWidget(0, idx++, _levelLabel = MsoyUI.createActionLabel("0",
+                Link.createListener(Pages.ME, "passport")));
 
             getFlexCellFormatter().setWidth(0, idx++, "12px"); // gap!
         }
 
-        public void setLevel (int level) {
-            setText(0, _levelIdx, String.valueOf(level));
-        }
-
         public void setCoins (int coins) {
-            setText(0, _coinsIdx, Currency.COINS.format(coins));
+            _coinsLabel.setText(Currency.COINS.format(coins));
         }
 
         public void setBars (int bars) {
-            setText(0, _barsIdx, Currency.BARS.format(bars));
+            _barsLabel.setText(Currency.BARS.format(bars));
         }
 
-        public void showLevelUpPopup () {
-            showPopup("/media/static/levelbling.swf", _levelIdx);
+        public void setLevel (int level) {
+            _levelLabel.setText(String.valueOf(level));
         }
 
         public void showEarnedCoinsPopup () {
-            showPopup("/media/static/levelbling.swf", _coinsIdx);
+            showPopup("/media/static/levelbling.swf", _coinsLabel);
         }
 
-        protected void showPopup (String path, int idx) {
+        public void showLevelUpPopup () {
+            showPopup("/media/static/levelbling.swf", _levelLabel);
+        }
+
+        protected void showPopup (String path, Widget underWidget) {
             PopupPanel bling = new PopupPanel(true);
             bling.add(WidgetUtil.createTransparentFlashContainer("levelBling", path, 60, 60, null));
-            Element cell = getFlexCellFormatter().getElement(0, idx);
-            bling.setPopupPosition(DOM.getAbsoluteLeft(cell) - 30, DOM.getAbsoluteTop(cell) - 23);
+            Element elem = underWidget.getElement();
+            bling.setPopupPosition(DOM.getAbsoluteLeft(elem) - 30, DOM.getAbsoluteTop(elem) - 23);
             bling.show();
         }
 
-        protected int _coinsIdx, _barsIdx, _levelIdx;
+        protected Label _coinsLabel;
+        protected Label _barsLabel;
+        protected Label _levelLabel;
     }
 
     protected WebCreds _creds;

@@ -4,7 +4,10 @@
  * CSS styles used by our top-level frame and header.
  */
 
-/** Our header styles. */
+/* ------------------------------------
+   HEADER
+-------------------------------------*/
+
 .frameHeader {
   color: #EAEFF1;
   background: #000000;
@@ -53,33 +56,62 @@
   cursor: pointer;
 }
 
+/* ------------------------------------
+   HEADER STATUS PANEL
+-------------------------------------*/
+
 .statusPanel {
   padding-right: 40px;
-  padding-bottom: 2px;
+}
+
+.statusPanel .TopBoxLinks {
+  background: url(/images/header/status_bg_middle.png) repeat-x top;
+  color: #979797;
+  height: 26px;
+  padding: 5px 5px 0 5px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.statusPanel .TopBoxLinks a {
+  color: #979797;
+}
+
+.statusPanel .TopBoxLinks .Mail img {
+  margin-right: 3px;
+}
+
+.statusPanel .TopBoxLinks .Spacer {
+  color: #dddddd;
+  margin: 0 5px;
+}
+
+.statusPanel .Levels {
   color: #AAB5B9;
   font-family: Helvetica, sans-serif;
   font-size: 11px;
   font-weight: bold;
 }
 
-.statusPanel .Icon {
+.statusPanel .Levels .Icon {
   padding-right: 3px;
 }
 
-.statusPanel .Mail {
-  padding-right: 25px;
+.statusPanel .Levels .actionLabel {
+  text-decoration: none;
+}
+.statusPanel .Levels .actionLabel:hover {
+  text-decoration: underline;
 }
 
-.statusPanel a {
-  color: #AAB5B9;
-}
+/* ------------------------------------
+   PAGE STYLES
+-------------------------------------*/
 
 .pageIFrame {
   border: none;
   background: #FFFFFF;
 }
 
-/** Page title styles */
 .pageTitle {
   background: #000000 url(/images/header/titlebar.png) no-repeat bottom left;
 }
