@@ -56,20 +56,23 @@ public class RSSServlet extends HttpServlet
         }
 
         try {
-            // Make sure the group discussion is readable by non-members
+            // load the group
             Group group = getGroup(groupId);
             if (group == null) {
                 rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
+
+            // Make sure the group discussion is readable by non-members
             if (!group.checkAccess(GroupMembership.RANK_NON_MEMBER, Group.ACCESS_READ, 0)) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
 
+            // use cached feed if number of threads hasn't changed
             int numThreads = _forumRepo.loadThreadCount(groupId);
-
             String rss = loadCachedRSS(groupId, numThreads);
+
             if (rss == null) {
                 List<ForumThreadRecord> threads =
                     _forumRepo.loadRecentThreads(group.groupId, THREAD_COUNT);
@@ -133,6 +136,9 @@ public class RSSServlet extends HttpServlet
         for (int ii = 0, nn = threads.size(); ii < nn; ii++) {
             ForumThreadRecord thread = threads.get(ii);
             ForumMessageRecord message = messages.get(ii);
+            if (message == null) {
+                continue;
+            }
             rss.append("<item>");
             rss.append("<title>").append(thread.subject).append("</title>");
             rss.append("<link>").append(url);
