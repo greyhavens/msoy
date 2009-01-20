@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import static com.threerings.msoy.Log.log;
 
+import java.security.MessageDigest;
 import java.util.Date;
 
 import com.google.inject.Inject;
@@ -36,8 +37,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
 
-import com.threerings.msoy.server.util.PermaguestUtil;
-
 import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ExternalCreds;
@@ -60,6 +59,10 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 @Singleton
 public class MsoyAuthenticator extends Authenticator
 {
+    /** Whether we create accounts for guests. */
+    public static final boolean PERMAGUESTS_ENABLED = DeploymentConfig.devDeployment &&
+        "true".equals(System.getProperty("permaguests", null));
+
     /** Used to coordinate with authentication domains. */
     public static class Account
     {
@@ -434,10 +437,10 @@ public class MsoyAuthenticator extends Authenticator
                 rsp.authdata = authenticateMember(
                     creds, rdata, null, true, aname, creds.getPassword());
 
-            } else if (PermaguestUtil.ENABLED && !creds.featuredPlaceView) {
+            } else if (PERMAGUESTS_ENABLED && !creds.featuredPlaceView) {
 
                 // create a new account a unique placeholder email and empty password
-                String username = PermaguestUtil.createUsername(conn.getInetAddress().toString());
+                String username = createPermaguestAccountName(conn.getInetAddress().toString());
                 String password = "";
                 MemberRecord newMember = createAccount(username, password,
                     "Temporary", null, new VisitorInfo(creds.visitorId, false),
@@ -451,7 +454,7 @@ public class MsoyAuthenticator extends Authenticator
 
                 // give them a rubbish name so they will want to save their account
                 _memberRepo.configureDisplayName(
-                    newMember.memberId, PermaguestUtil.generateDisplayName(newMember.memberId));
+                    newMember.memberId, generatePermaguestDisplayName(newMember.memberId));
 
             } else {
                 // if this is not just a "featured whirled" client; assign this guest a member id
@@ -748,6 +751,40 @@ public class MsoyAuthenticator extends Authenticator
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
     }
 
+    /**
+     * Generates a generic display name for permaguests.
+     */
+    public static String generatePermaguestDisplayName (int memberId)
+    {
+        return PERMAGUEST_DISPLAY_PREFIX + " " + memberId;
+    }
+
+    /**
+     * Creates a username to give permanence to unregistered users.
+     */
+    public static String createPermaguestAccountName (String ipAddress)
+    {
+        // generate some unique stuff
+        String hashSource = "" + System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random();
+
+        // hash it
+        byte[] digest;
+        try {
+            digest = MessageDigest.getInstance("MD5").digest(hashSource.getBytes());
+
+        } catch (java.security.NoSuchAlgorithmException nsae) {
+            throw new RuntimeException("MD5 not found!?");
+        }
+
+        if (digest.length != 16) {
+            throw new RuntimeException("Odd MD5 digest: " + StringUtil.hexlate(digest));
+        }
+
+        // convert to an email address
+        return MemberName.PERMAGUEST_EMAIL_PREFIX + StringUtil.hexlate(digest) +
+            MemberName.PERMAGUEST_EMAIL_SUFFIX;
+    }
+
     // our dependencies
     @Inject protected Domain _defaultDomain;
     @Inject protected ServerMessages _serverMsgs;
@@ -766,4 +803,7 @@ public class MsoyAuthenticator extends Authenticator
 
     /** The number of milliseconds in an hour. */
     protected static final long ONE_HOUR = 60 * 60 * 1000L;
+
+    /** Prefix of permaguest display names. They have to create an account to get a real one. */ 
+    protected static final String PERMAGUEST_DISPLAY_PREFIX = "Guest";
 }

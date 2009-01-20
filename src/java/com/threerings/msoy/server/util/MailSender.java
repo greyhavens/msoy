@@ -35,6 +35,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.mail.server.SpamUtil;
 import com.threerings.presents.server.ShutdownManager;
 
@@ -314,7 +315,7 @@ public class MailSender
     /** Used by {@link #isPlaceholderAddress}. */
     protected static final Pattern[] PLACEHOLDER_PATTERNS = {
         Pattern.compile("[0-9]+@facebook.com"),
-        PermaguestUtil.EMAIL_PATTERN
+        Pattern.compile(MemberName.PERMAGUEST_EMAIL_PATTERN)
     };
 
     protected static final Pattern CID_REGEX = Pattern.compile("cid\\:(\\S+\\....)");

@@ -34,7 +34,6 @@ import com.threerings.msoy.client.EmbedHeader;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyParameters;
-import com.threerings.msoy.client.PermaguestUtil;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
@@ -194,7 +193,7 @@ public class WorldClient extends MsoyClient
         // set or reset our permaguest stuff
         var username :String = member.username.toString();
         var memname :String = member.memberName.toString();
-        if (PermaguestUtil.isPermaguestEmail(username)) {
+        if (username.isPermaguest()) {
             log.info("You are a permaguest", "name", username, "mname", memname);
             Prefs.setPermaguestUsername(username);
 

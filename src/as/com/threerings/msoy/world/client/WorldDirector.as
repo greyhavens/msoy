@@ -28,7 +28,6 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.PermaguestUtil;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;

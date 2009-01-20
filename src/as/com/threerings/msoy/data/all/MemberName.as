@@ -11,6 +11,8 @@ import com.threerings.util.Name;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+
 /**
  * Extends Name with persistent member information.
  */
@@ -34,6 +36,16 @@ public class MemberName extends Name
     /** The maximum allowable length of a permaname. */
     public static const MAXIMUM_PERMANAME_LENGTH :int = 12;
 
+    /** Prefix used when generating email addresses for permaguests. */
+    public static const PERMAGUEST_EMAIL_PREFIX :String = "anon";
+
+    /** Suffix used when generating email addresses for permaguests. */
+    public static const PERMAGUEST_EMAIL_SUFFIX :String = "@" + DeploymentConfig.serverHost;
+
+    /** Regulsr expression used to check if an email address is one assigned to a permaguest. */
+    public static const PERMAGUEST_EMAIL_PATTERN :RegExp =
+        new RegExp(PERMAGUEST_EMAIL_PREFIX + "[0-9a-f]{32}" + PERMAGUEST_EMAIL_SUFFIX);
+
     /**
      * Returns true if the supplied member id represents an anonymous viewer.
      */
@@ -48,6 +60,14 @@ public class MemberName extends Name
     public static function isGuest (memberId :int) :Boolean
     {
         return memberId <= 0;
+    }
+
+    /**
+     * Checks if a username (email) matches <code>PERMAGUEST_EMAIL_PATTERN</code>.
+     */
+    public static boolean isPermaguest (email :String) :Boolean
+    {
+        return address.match(PERMAGUEST_EMAIL_PATTERN) != null;
     }
 
     /**
@@ -73,6 +93,14 @@ public class MemberName extends Name
     public function isGuest () :Boolean
     {
         return MemberName.isGuest(_memberId);
+    }
+
+    /**
+     * Returns true if this name represents a guest with an account.
+     */
+    public function isPermaguest () :Boolean
+    {
+        return MemberName.isPermaguest(toString());
     }
 
     /**
