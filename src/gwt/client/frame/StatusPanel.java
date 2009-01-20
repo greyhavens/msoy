@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -84,7 +85,7 @@ public class StatusPanel extends SmartTable
         FlashEvents.addListener(new NameChangeListener() {
             public void nameChanged (NameChangeEvent event) {
                 _creds.name = new MemberName(event.getName(), _creds.name.getMemberId());
-                setWidget(0, 0, Link.memberView(_creds.name));
+                _namePanel.setWidget(Link.memberView(_creds.name));
             }
         });
     }
@@ -109,7 +110,8 @@ public class StatusPanel extends SmartTable
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL,
             data.newMailCount, 0));
         links.add(MsoyUI.createLabel("|", "Spacer"));
-        links.add(Link.memberView(_creds.name));
+        _namePanel.setWidget(Link.memberView(_creds.name));
+        links.add(_namePanel);
         links.add(MsoyUI.createLabel("|", "Spacer"));
         links.add(Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
         links.add(MsoyUI.createLabel("|", "Spacer"));
@@ -235,6 +237,7 @@ public class StatusPanel extends SmartTable
 
     protected LevelsDisplay _levels = new LevelsDisplay();
     protected MailDisplay _mail = new MailDisplay();
+    protected SimplePanel _namePanel = new SimplePanel();
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }
