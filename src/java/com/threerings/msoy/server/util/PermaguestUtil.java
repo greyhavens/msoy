@@ -25,9 +25,6 @@ public class PermaguestUtil
     /** Suffix used when generating email addresses for permaguests. */
     public static final String EMAIL_SUFFIX = "@" + ServerConfig.serverHost;
 
-    /** Initial name displayed for permaguests. */ 
-    public static final String DISPLAY_NAME = "Guest";
-
     /** Pattern used to check if an email address is one assigned to a permaguest. */
     public static final Pattern EMAIL_PATTERN =
         Pattern.compile(EMAIL_PREFIX + "[0-9a-f]{32}" + EMAIL_SUFFIX);
@@ -39,6 +36,11 @@ public class PermaguestUtil
     public static boolean isPermaguestEmail (String address)
     {
         return EMAIL_PATTERN.matcher(address).matches();
+    }
+
+    public static String generateDisplayName (int memberId)
+    {
+        return DISPLAY_PREFIX + " " + memberId;
     }
 
     /**
@@ -66,4 +68,6 @@ public class PermaguestUtil
         return EMAIL_PREFIX + StringUtil.hexlate(digest) + EMAIL_SUFFIX;
     }
 
+    /** Prefix of permaguest display names. They have to create an account to get a real one. */ 
+    protected static final String DISPLAY_PREFIX = "Guest";
 }

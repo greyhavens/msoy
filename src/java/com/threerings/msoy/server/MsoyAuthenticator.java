@@ -426,23 +426,32 @@ public class MsoyAuthenticator extends Authenticator
                         throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
                     }
                     rsp.authdata = authenticateMember(
-                        creds, rdata, member, member.accountName, Domain.PASSWORD_BYPASS);
+                        creds, rdata, member, false, member.accountName, Domain.PASSWORD_BYPASS);
                 }
 
             } else if (creds.getUsername() != null) {
                 final String aname = creds.getUsername().toString().toLowerCase();
-                rsp.authdata = authenticateMember(creds, rdata, null, aname, creds.getPassword());
+                rsp.authdata = authenticateMember(
+                    creds, rdata, null, true, aname, creds.getPassword());
 
             } else if (PermaguestUtil.ENABLED && !creds.featuredPlaceView) {
+
+                // create a new account a unique placeholder email and empty password
                 String username = PermaguestUtil.createUsername(conn.getInetAddress().toString());
                 String password = "";
                 MemberRecord newMember = createAccount(username, password,
-                    PermaguestUtil.DISPLAY_NAME, null, new VisitorInfo(creds.visitorId, false),
+                    "Temporary", null, new VisitorInfo(creds.visitorId, false),
                     null, null, null);
                 log.info("Created permaguest account", "username", username);
+
+                // now authenticate just to make sure everything is in order and get the token
                 creds.setUsername(new Name(username));
-                rsp.authdata = authenticateMember(creds, rdata, newMember, username, password);
-                rdata.sessionToken = _memberRepo.startOrJoinSession(newMember.memberId, 1);
+                rsp.authdata = authenticateMember(
+                    creds, rdata, newMember, true, username, password);
+
+                // give them a rubbish name so they will want to save their account
+                _memberRepo.configureDisplayName(
+                    newMember.memberId, PermaguestUtil.generateDisplayName(newMember.memberId));
 
             } else {
                 // if this is not just a "featured whirled" client; assign this guest a member id
@@ -481,7 +490,8 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     protected Account authenticateMember (WorldCredentials creds, MsoyAuthResponseData rdata,
-                                          MemberRecord member, String accountName, String password)
+                                          MemberRecord member, boolean needSessionToken,
+                                          String accountName, String password)
         throws ServiceException
     {
         // obtain the authentication domain appropriate to their account name
@@ -518,7 +528,9 @@ public class MsoyAuthenticator extends Authenticator
             } else {
                 account.firstLogon = (member.sessions == 0);
             }
+        }
 
+        if (needSessionToken) {
             rdata.sessionToken = _memberRepo.startOrJoinSession(member.memberId, 1);
         }
 
