@@ -498,7 +498,7 @@ public class MemberManager
 
     // from interface MemberProvider
     public void setDisplayName (final ClientObject caller, final String name,
-                                final InvocationService.InvocationListener listener)
+                                final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -515,6 +515,7 @@ public class MemberManager
                 user.updateDisplayName(name);
                 _bodyMan.updateOccupantInfo(user,
                     new MemberInfo.NameUpdater(user.getVisibleName()));
+                super.handleSuccess();
             }
         });
     }

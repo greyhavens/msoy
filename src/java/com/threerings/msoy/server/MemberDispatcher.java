@@ -151,7 +151,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.SET_DISPLAY_NAME:
             ((MemberProvider)provider).setDisplayName(
-                source, (String)args[0], (InvocationService.InvocationListener)args[1]
+                source, (String)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 

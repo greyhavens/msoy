@@ -32,6 +32,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Invitation;
 import com.threerings.msoy.web.gwt.LaunchConfig;
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebMemberService;
@@ -59,6 +60,7 @@ import client.util.ServiceUtil;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
 import client.util.events.GotGuestIdEvent;
+import client.util.events.NameChangeEvent;
 
 /**
  * Handles the outer shell of the Whirled web application. Loads pages into an iframe and also
@@ -1003,6 +1005,20 @@ public class FrameEntryPoint
         Session.conveyLoginFromFlash(token);
     }
 
+    protected void refreshDisplayName ()
+    {
+        _membersvc.getMemberCard(CShell.getMemberId(), new AsyncCallback<MemberCard>() {
+            public void onFailure (Throwable caught) {
+            }
+
+            public void onSuccess (MemberCard result) {
+                if (result != null) {
+                    dispatchEvent(new NameChangeEvent(result.name.toString()));
+                }
+            }
+        });
+    }
+
     /**
      * Configures top-level functions that can be called by Flash.
      */
@@ -1043,6 +1059,9 @@ public class FrameEntryPoint
         }
         $wnd.setPermaguestInfo = function (name, token) {
             entry.@client.frame.FrameEntryPoint::setPermaguestInfo(Ljava/lang/String;Ljava/lang/String;)(name, token);
+        }
+        $wnd.refreshDisplayName = function () {
+            entry.@client.frame.FrameEntryPoint::refreshDisplayName()();
         }
     }-*/;
 

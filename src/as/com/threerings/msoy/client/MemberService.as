@@ -73,7 +73,7 @@ public interface MemberService extends InvocationService
     function setAway (arg1 :Client, arg2 :Boolean, arg3 :String) :void;
 
     // from Java interface MemberService
-    function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
+    function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void;

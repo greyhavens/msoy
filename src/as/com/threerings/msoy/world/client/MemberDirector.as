@@ -5,6 +5,7 @@ package com.threerings.msoy.world.client {
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.util.Log;
 
@@ -43,7 +44,8 @@ public class MemberDirector extends BasicDirector
      */
     public function setDisplayName (newName :String) :void
     {
-        _msvc.setDisplayName(_wctx.getClient(), newName, _wctx.listener());
+        _msvc.setDisplayName(_wctx.getClient(), newName, _wctx.confirmListener(
+            _wctx.getWorldController().refreshDisplayName));
     }
 
     protected function handleInviteResult (automatic :Boolean) : void

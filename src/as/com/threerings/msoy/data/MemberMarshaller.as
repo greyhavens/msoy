@@ -271,9 +271,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_DISPLAY_NAME :int = 20;
 
     // from interface MemberService
-    public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
+    public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, SET_DISPLAY_NAME, [
             arg2, listener3

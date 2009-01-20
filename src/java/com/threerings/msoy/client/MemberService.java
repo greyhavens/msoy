@@ -75,7 +75,7 @@ public interface MemberService extends InvocationService
     /**
      * Set the display name for this user.
      */
-    void setDisplayName (Client client, String name, InvocationListener listener);
+    void setDisplayName (Client client, String name, ConfirmListener listener);
 
     /**
      * Get the display name for the indicated user.

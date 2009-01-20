@@ -1229,6 +1229,16 @@ public class WorldController extends MsoyController
         }
     }
 
+    /**
+     * Inform our parent web page that our display name has changed.
+     */
+    public function refreshDisplayName () :void
+    {
+        if (ExternalInterface.available) {
+            ExternalInterface.call("refreshDisplayName");
+        }
+    }
+
     override protected function setIdle (nowIdle :Boolean) :void
     {
         // our superclass may or may not honor the request to set idle

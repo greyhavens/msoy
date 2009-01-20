@@ -257,9 +257,9 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int SET_DISPLAY_NAME = 20;
 
     // from interface MemberService
-    public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)
+    public void setDisplayName (Client arg1, String arg2, InvocationService.ConfirmListener arg3)
     {
-        ListenerMarshaller listener3 = new ListenerMarshaller();
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, SET_DISPLAY_NAME, new Object[] {
             arg2, listener3

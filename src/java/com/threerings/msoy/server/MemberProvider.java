@@ -127,7 +127,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#setDisplayName} request.
      */
-    void setDisplayName (ClientObject caller, String arg1, InvocationService.InvocationListener arg2)
+    void setDisplayName (ClientObject caller, String arg1, InvocationService.ConfirmListener arg2)
         throws InvocationException;
 
     /**
