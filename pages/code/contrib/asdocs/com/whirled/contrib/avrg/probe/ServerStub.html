@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="ServerStub,com.whirled.contrib.avrg.probe.ServerStub,ACTIVATE,DEACTIVATE,_ctrl,_module,handleGameMessage" name="keywords">
+<meta content="ServerStub,com.whirled.contrib.avrg.probe.ServerStub,ACKNOWLEDGED,ACTIVATE,DEACTIVATE,_ctrl,_module,handleGameMessage" name="keywords">
 <title>com.whirled.contrib.avrg.probe.ServerStub</title>
 </head>
 <body>
@@ -41,7 +41,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <p></p>
  Class to quietly listen for the <code>ClientPanel</code> to notify that it is time to
  instantiate a full <code>ServerModule</code> and later shut it down on request. This allows
- the server side of the prove to lie in waiting for the client to be invoked via hidden
+ the server side of the probe to lie in waiting for the client to be invoked via hidden
  keystrokes or whatever. It is not necessary if the containing application wants to have
  an active <code>ServerModule</code> at all times.
  <p></p>
@@ -95,6 +95,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ACKNOWLEDGED">ACKNOWLEDGED</a> : String = "serverStub.acknowledged"<div class="summaryTableDescription">[static] Message sent to acknowledge the activation or deactivation.</div>
+</td><td class="summaryTableOwnerCol">ServerStub</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ACTIVATE">ACTIVATE</a> : String = "serverStub.activate"<div class="summaryTableDescription">[static] Message sent to activate our module.</div>
@@ -165,10 +169,18 @@ showHideInherited();
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
+<a name="ACKNOWLEDGED"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ACKNOWLEDGED</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ACKNOWLEDGED:String = "serverStub.acknowledged"</code><p> Message sent to acknowledge the activation or deactivation. </p></div>
 <a name="ACTIVATE"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">ACTIVATE</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">ACTIVATE</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">

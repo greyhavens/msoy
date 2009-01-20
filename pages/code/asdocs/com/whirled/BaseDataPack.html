@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="BaseDataPack,com.whirled.BaseDataPack,extractStringValue,getArray,getBoolean,getColor,getData,getFile,getFileAsString,getFileAsXML,getNumber,getPoint,getRectangle,getString,isComplete,parseValueFromString" name="keywords">
+<meta content="BaseDataPack,com.whirled.BaseDataPack,extractStringValue,getArray,getBoolean,getColor,getData,getFile,getFileAsString,getFileAsXML,getInt,getNumber,getPoint,getRectangle,getString,isComplete,parseValueFromString" name="keywords">
 <title>com.whirled.BaseDataPack</title>
 </head>
 <body>
@@ -93,9 +93,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getData()">getData</a>(name:String):*</div>
+<a class="signatureLink" href="#getData()">getData</a>(name:String, formatType:String = null):*</div>
 <div class="summaryTableDescription">
-     Get some data.</div>
+     Get some data, optionally formatted as a different type than that specified in the data xml.</div>
 </td><td class="summaryTableOwnerCol">BaseDataPack</td>
 </tr>
 <tr class="">
@@ -120,6 +120,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getFileAsXML()">getFileAsXML</a>(name:String):XML</div>
 <div class="summaryTableDescription">
      Get a File, as an XML object.</div>
+</td><td class="summaryTableOwnerCol">BaseDataPack</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getInt()">getInt</a>(name:String):int</div>
+<div class="summaryTableDescription">
+     Convenience function to access some data as an int.</div>
 </td><td class="summaryTableOwnerCol">BaseDataPack</td>
 </tr>
 <tr class="">
@@ -338,12 +346,18 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getData(name:String):*</code><p>
-     Get some data.
+<code>public function getData(name:String, formatType:String = null):*</code><p>
+     Get some data, optionally formatted as a different type than that specified in the data xml.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">formatType</span>:String</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 <p></p>
@@ -420,6 +434,29 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>XML</code></td>
+</tr>
+</table>
+</div>
+<a name="getInt()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getInt</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getInt(name:String):int</code><p>
+     Convenience function to access some data as an int.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
 </div>

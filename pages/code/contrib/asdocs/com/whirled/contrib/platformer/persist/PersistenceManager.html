@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="PersistenceManager,com.whirled.contrib.platformer.persist.PersistenceManager,_cookieManager,_loaded,_trophyProperties,loaded,getProperty,loadingComplete" name="keywords">
+<meta content="PersistenceManager,com.whirled.contrib.platformer.persist.PersistenceManager,_cookieManager,_eventMgr,_loaded,_trophyProperties,loaded,getProperty,loadingComplete,whenLoaded" name="keywords">
 <title>com.whirled.contrib.platformer.persist.PersistenceManager</title>
 </head>
 <body>
@@ -72,6 +72,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">PersistenceManager</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_eventMgr">_eventMgr</a> : <a href="../../../contrib/EventHandlerManager.html">EventHandlerManager</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PersistenceManager</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_loaded">_loaded</a> : Boolean = false<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PersistenceManager</td>
 </tr>
@@ -91,7 +96,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#PersistenceManager()">PersistenceManager</a>(gameCtrl:GameControl, properties:Array)</div>
+<a class="signatureLink" href="#PersistenceManager()">PersistenceManager</a>(gameCtrl:GameControl, properties:Array, debugLogging:Boolean = false)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PersistenceManager</td>
 </tr>
@@ -101,6 +106,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getProperty()">getProperty</a>(name:String):<a href="../persist/PersistentProperty.html">PersistentProperty</a>
 </div>
 <div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PersistenceManager</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#whenLoaded()">whenLoaded</a>(callback:Function):void</div>
+<div class="summaryTableDescription">
+     Call the given function when this manager is loaded.</div>
 </td><td class="summaryTableOwnerCol">PersistenceManager</td>
 </tr>
 </table>
@@ -136,6 +149,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _cookieManager:<a href="../persist/CookieManager.html">CookieManager</a></code>
+</div>
+<a name="_eventMgr"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_eventMgr</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _eventMgr:<a href="../../../contrib/EventHandlerManager.html">EventHandlerManager</a></code>
 </div>
 <a name="_loaded"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -176,7 +198,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function PersistenceManager(gameCtrl:GameControl, properties:Array)</code><span class="label">Parameters</span>
+<code>public function PersistenceManager(gameCtrl:GameControl, properties:Array, debugLogging:Boolean = false)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">gameCtrl</span>:GameControl</code></td>
@@ -186,6 +208,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">properties</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">debugLogging</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -223,6 +251,23 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code>... <span class="label">ignored</span></code></td>
+</tr>
+</table>
+</div>
+<a name="whenLoaded()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">whenLoaded</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function whenLoaded(callback:Function):void</code><p>
+     Call the given function when this manager is loaded.  If this manager is already loaded,
+     the given function will be called immediately.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
 </tr>
 </table>
 </div>

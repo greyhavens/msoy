@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="DisplayUtil,com.threerings.flash.DisplayUtil,applyToHierarchy,centerRectInRect,createPointSorter,dumpHierarchy,findInHierarchy,fitRectInRect,positionBounds,positionRect,sortDisplayChildren" name="keywords">
+<meta content="DisplayUtil,com.threerings.flash.DisplayUtil,applyToHierarchy,centerRectInRect,createPointSorter,dumpHierarchy,findInHierarchy,fitRectInRect,positionBounds,positionBoundsRelative,positionRect,sortDisplayChildren" name="keywords">
 <title>com.threerings.flash.DisplayUtil</title>
 </head>
 <body>
@@ -114,6 +114,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">[static]
      Sets the top-left pixel of a DisplayObject to the given location, taking the
      object's bounds into account.</div>
+</td><td class="summaryTableOwnerCol">DisplayUtil</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#positionBoundsRelative()">positionBoundsRelative</a>(disp:DisplayObject, relativeTo:DisplayObject, x:Number, y:Number):void</div>
+<div class="summaryTableDescription">[static]
+     Sets the top-left pixel of a DisplayObject to the given location, relative to another
+     DisplayObject's coordinate space.</div>
 </td><td class="summaryTableOwnerCol">DisplayUtil</td>
 </tr>
 <tr class="">
@@ -344,6 +353,41 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">disp</span>:DisplayObject</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">x</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">y</span>:Number</code></td>
+</tr>
+</table>
+</div>
+<a name="positionBoundsRelative()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">positionBoundsRelative</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function positionBoundsRelative(disp:DisplayObject, relativeTo:DisplayObject, x:Number, y:Number):void</code><p>
+     Sets the top-left pixel of a DisplayObject to the given location, relative to another
+     DisplayObject's coordinate space.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">disp</span>:DisplayObject</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">relativeTo</span>:DisplayObject</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
