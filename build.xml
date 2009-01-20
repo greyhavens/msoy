@@ -427,6 +427,7 @@
         <filter token="build_time" value="${build_time}"/>
         <filter token="build_version" value="${version}"/>
         <filter token="server_url" value="${server_url}"/>
+        <filter token="server_host" value="${server_host}"/>
         <filter token="media_url" value="${media_url}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
         <filter token="dev_deployment" value="${dev_deployment}"/>
