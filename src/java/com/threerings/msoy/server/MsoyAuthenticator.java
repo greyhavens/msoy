@@ -436,11 +436,13 @@ public class MsoyAuthenticator extends Authenticator
             } else if (PermaguestUtil.ENABLED && !creds.featuredPlaceView) {
                 String username = PermaguestUtil.createUsername(conn.getInetAddress().toString());
                 String password = "";
-                createAccount(username, password, PermaguestUtil.DISPLAY_NAME, null,
-                    new VisitorInfo(creds.visitorId, false), null, null, null);
+                MemberRecord newMember = createAccount(username, password,
+                    PermaguestUtil.DISPLAY_NAME, null, new VisitorInfo(creds.visitorId, false),
+                    null, null, null);
                 log.info("Created permaguest account", "username", username);
                 creds.setUsername(new Name(username));
-                rsp.authdata = authenticateMember(creds, rdata, null, username, password);
+                rsp.authdata = authenticateMember(creds, rdata, newMember, username, password);
+                rdata.sessionToken = _memberRepo.startOrJoinSession(newMember.memberId, 1);
 
             } else {
                 // if this is not just a "featured whirled" client; assign this guest a member id
