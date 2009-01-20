@@ -14,9 +14,6 @@ public class PermaguestUtil
     /** Suffix used when generating email addresses for permaguests. */
     public static const EMAIL_SUFFIX :String = "@" + DeploymentConfig.serverHost;
 
-    /** Initial name displayed for permaguests. */ 
-    public static const DISPLAY_NAME :String = "Guest";
-
     /** Pattern used to check if an email address is one assigned to a permaguest. */
     public static const EMAIL_PATTERN :RegExp =
         new RegExp(EMAIL_PREFIX + "[0-9a-f]{32}" + EMAIL_SUFFIX, "");

@@ -168,14 +168,7 @@ public class WorldDirector extends BasicDirector
             fn();
 
         } else if (place is RoomObject && !_wctx.getGameDirector().isGaming()) {
-            var member :MemberObject = _wctx.getMemberObject();
-            if (PermaguestUtil.isPermaguestEmail(member.username.toString()) &&
-                member.memberName.toString() == PermaguestUtil.DISPLAY_NAME) {
-                new GuestNameDialog(_wctx).open();
-
-            } else {
-                maybeDisplayAvatarIntro();
-            }
+            maybeDisplayAvatarIntro();
         }
     }
 
