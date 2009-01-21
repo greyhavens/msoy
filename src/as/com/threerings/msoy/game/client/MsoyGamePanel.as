@@ -105,11 +105,12 @@ public class MsoyGamePanel extends WhirledGamePanel
     }
 
     /** Returns the descriptor of a piece of media to be displayed while the game is loading. */ 
-    public function getLoadingSplash () :MediaDesc
+    public function getLoadingMedia () :MediaDesc
     {
-        // see if the creator uploaded something; otherwise just use the thumbnail
+        // if there's a furni, use it, otherwise use a thumbnail
         var game :Game = (_ctrl.getPlaceConfig() as MsoyGameConfig).game;
-        return (game.splashMedia != null) ? game.splashMedia : game.getThumbnailMedia(); 
+        return (game.getRawFurniMedia() != null) ? 
+            game.getRawFurniMedia() : game.getThumbnailMedia(); 
     }
     
     /**
@@ -130,7 +131,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     {
         _spinner = new GameLoadingDisplay(
             _gctx.getMsoyContext().getTopPanel().getPlaceContainer(),
-            ScalingMediaContainer.createView(getLoadingSplash(), MediaDesc.PREVIEW_SIZE));
+            ScalingMediaContainer.createView(getLoadingMedia(), MediaDesc.PREVIEW_SIZE));
 
         super.willEnterPlace(plobj);
 
