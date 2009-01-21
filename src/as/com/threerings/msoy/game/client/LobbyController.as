@@ -12,32 +12,33 @@ import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 
-import com.threerings.presents.dobj.Subscriber;
-import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.ObjectAccessError;
-import com.threerings.presents.util.SafeSubscriber;
-
 import com.threerings.parlor.client.SeatednessObserver;
 import com.threerings.parlor.client.TableDirector;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.game.data.GameConfig;
 
+import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.ObjectAccessError;
+import com.threerings.presents.dobj.Subscriber;
+import com.threerings.presents.util.SafeSubscriber;
+
 import com.threerings.msoy.client.BlankPlaceView;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.NoPlaceView;
-
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
+
+import com.threerings.msoy.ui.ScalingMediaContainer;
+import com.threerings.msoy.item.data.all.Game;
 
 public class LobbyController extends Controller
     implements Subscriber, SeatednessObserver
@@ -405,6 +406,9 @@ public class LobbyController extends Controller
         _tableDir.setTableObject(obj);
         _tableDir.addSeatednessObserver(this);
 
+        // replace the current view with the game's splash screen
+        setGameView(_lobj.game);
+		
         // set up our starting panel mode
         _panel.setMode(getStartMode());
 
@@ -443,6 +447,25 @@ public class LobbyController extends Controller
             return;
         }
         _panel.setMode(nowSeated ? MODE_SEATED : MODE_MATCH);
+    }
+
+    /**
+     * Once the lobby object has been located, this function pulls out the splash media,
+     * and creates a new place view to display it.
+     */
+    protected function setGameView (game :Game) :void
+    {
+        var media :MediaDesc = game.splashMedia;
+        if (media == null) {
+            // if splash media is not available, try furni, and finally a thumbnail
+            media = game.getRawFurniMedia() != null ? 
+                game.getRawFurniMedia() : game.getThumbnailMedia();
+        }
+
+        var splash :ScalingMediaContainer = 
+            ScalingMediaContainer.createView(media, MediaDesc.GAME_SPLASH_SIZE);
+
+        _mctx.setPlaceView(new LobbyPlaceView(splash));
     }
 
     /**

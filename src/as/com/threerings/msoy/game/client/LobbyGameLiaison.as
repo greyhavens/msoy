@@ -139,12 +139,7 @@ public class LobbyGameLiaison extends GameLiaison
      */
     public function lobbyLoaded (groupId :int) :void
     {
-        // TODO: check that we're not already where we're about to go
-        if (groupId > 0 && _wctx.getWorldController().getCurrentSceneId() == 0) {
-            log.info("Lobby loaded, going to group home");
-            _goingToGroupHome = true;
-            _wctx.getWorldController().handleGoGroupHome(groupId);
-        }
+        // TODO: display loader?
     }
 
     /**
@@ -162,21 +157,9 @@ public class LobbyGameLiaison extends GameLiaison
             _lobby.shutdown();
         }
 
-        // if we've already started going to the group home, wait until we get there
-        if (_goingToGroupHome) {
-            log.info("Waiting to arrive at group home before entering game");
-            return true;
-        }
-
         log.info("Entering game");
         if (!_gctx.getLocationDirector().moveTo(gameOid)) {
             return false;
-        }
-
-        // also leave our current world location
-        if (!_wctx.getLocationDirector().leavePlace()) {
-            log.warning("Uh oh, unable to leave room before entering game " +
-                        "[movePending=" + _wctx.getLocationDirector().movePending() + "].");
         }
 
         return true;
@@ -209,6 +192,13 @@ public class LobbyGameLiaison extends GameLiaison
     override public function clientDidLogon (event :ClientEvent) :void
     {
         super.clientDidLogon(event);
+
+        // are we logged on? leave our current world location
+        if (!_wctx.getLocationDirector().leavePlace()) {
+            log.warning("Uh oh, unable to leave room after logging on to the game server " +
+                        "[movePending=" + _wctx.getLocationDirector().movePending() + "].");
+        }
+
         switch (_mode) {
         case LobbyCodes.JOIN_PLAYER:
             joinPlayer(_playerIdGame);
@@ -257,7 +247,6 @@ public class LobbyGameLiaison extends GameLiaison
     override public function clientDidLogoff (event :ClientEvent) :void
     {
         super.clientDidLogoff(event);
-        _goingToGroupHome = false;
     }
 
     protected function joinLobby () :void
@@ -283,18 +272,7 @@ public class LobbyGameLiaison extends GameLiaison
 
     protected function worldLocationDidChange (place :PlaceObject) :void
     {
-        if (_goingToGroupHome && _gameOid != 0) {
-            // we've arrived at the game's home room and the game is ready; go!
-            log.info("Arrived at group home, entering game again");
-            _goingToGroupHome = false;
-            enterGame(_gameOid);
-
-        } else if (_goingToGroupHome) {
-            // we've arrived at the game's home room and the lobby is still waiting
-            log.info("Arrived at group home, resuming normal lobby operation");
-            _goingToGroupHome = false;
-
-        } else if (_gameOid != 0 && place != null) {
+        if (_gameOid != 0 && place != null) {
             // we've left our game and returned to the world, so we want to shutdown
             log.info("Moved to a whirled room, shutting down game");
             shutdown();
@@ -367,9 +345,6 @@ public class LobbyGameLiaison extends GameLiaison
 
     /** The oid of our game object, once we've been told it. */
     protected var _gameOid :int;
-
-    /** Whether we are waiting on the scene/location directors to get us to the game hall. */
-    protected var _goingToGroupHome :Boolean;
 
     /** True if we're shutting down. */
     protected var _shuttingDown :Boolean;
