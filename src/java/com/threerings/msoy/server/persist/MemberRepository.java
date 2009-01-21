@@ -51,6 +51,7 @@ import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
+import com.samskivert.depot.expression.ValueExp;
 
 import com.samskivert.depot.operator.Arithmetic.BitAnd;
 
@@ -236,8 +237,8 @@ public class MemberRepository extends DepotRepository
         cal.add(Calendar.DATE, -60); // TODO: unmagick
         Date when = new Date(cal.getTimeInMillis());
         return load(CountRecord.class, new FromOverride(MemberRecord.class),
-                    new Where(new GreaterThan(MemberRecord.LAST_SESSION, // TODO: DateExp?
-                                              new LiteralExp("'" + when + "'")))).count;
+                    new Where(new GreaterThan(
+                        MemberRecord.LAST_SESSION, new ValueExp(when)))).count;
     }
 
     /**
