@@ -768,7 +768,7 @@ public class MemberManager
     {
         final MemberObject memObj = (MemberObject) caller;
         if (memObj.visitorInfo == null) {
-            log.warning("Failed to log client action with null referral", "caller", caller.who(),
+            log.warning("Failed to log client action with null visitorInfo", "caller", caller.who(),
                         "actionName", actionName);
             return;
         }
