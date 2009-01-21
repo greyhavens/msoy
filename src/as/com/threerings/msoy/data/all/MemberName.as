@@ -11,7 +11,7 @@ import com.threerings.util.Name;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.client.DeploymentConfig;
 
 /**
  * Extends Name with persistent member information.
@@ -65,9 +65,9 @@ public class MemberName extends Name
     /**
      * Checks if a username (email) matches <code>PERMAGUEST_EMAIL_PATTERN</code>.
      */
-    public static boolean isPermaguest (email :String) :Boolean
+    public static function isPermaguest (email :String) :Boolean
     {
-        return address.match(PERMAGUEST_EMAIL_PATTERN) != null;
+        return email.match(PERMAGUEST_EMAIL_PATTERN) != null;
     }
 
     /**

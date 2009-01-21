@@ -193,7 +193,7 @@ public class WorldClient extends MsoyClient
         // set or reset our permaguest stuff
         var username :String = member.username.toString();
         var memname :String = member.memberName.toString();
-        if (username.isPermaguest()) {
+        if (MemberName.isPermaguest(username)) {
             log.info("You are a permaguest", "name", username, "mname", memname);
             Prefs.setPermaguestUsername(username);
 
