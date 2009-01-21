@@ -115,7 +115,7 @@ public class MediaDesc
         350, 200, // full scene snapshot image size
         175, 125, // game screenshots
          40,  23, // tiny snapshots, same width as half thumbnail
-        350, 250, // game splash image, quarter of the game window
+        700, 500, // game splash image, same as the min game window
     ];
 
     /** A constant used to indicate that an image does not exceed half thumbnail size in either
