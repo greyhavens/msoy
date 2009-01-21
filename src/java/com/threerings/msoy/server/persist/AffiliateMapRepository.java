@@ -18,7 +18,7 @@ import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.expression.LiteralExp;
+import com.samskivert.depot.expression.ValueExp;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -38,7 +38,7 @@ public class AffiliateMapRepository extends DepotRepository
         registerMigration(new DataMigration("2008_09_25_clearAffiliateMappings") {
             public void invoke () throws DatabaseException
             {
-                deleteAll(AffiliateMapRecord.class, new Where(new LiteralExp("true")));
+                deleteAll(AffiliateMapRecord.class, new Where(new ValueExp(true)));
             }
         });
     }
