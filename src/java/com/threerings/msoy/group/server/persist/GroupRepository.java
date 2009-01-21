@@ -30,7 +30,6 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
-import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.Conditionals.Equals;
@@ -151,13 +150,10 @@ public class GroupRepository extends DepotRepository
         } else {
             // SORT_BY_NEW_AND_POPULAR: subtract 2 members per day the group has been around
             long membersPerDay = (24 * 60 * 60) / 2;
-            long nowSeconds = System.currentTimeMillis() / 1000;
             orderBy = OrderBy.descending(
-                new Arithmetic.Sub(GroupRecord.MEMBER_COUNT,
+                new Arithmetic.Add(GroupRecord.MEMBER_COUNT,
                     new Arithmetic.Div(
-                        new Arithmetic.Sub(new ValueExp(nowSeconds),
-                            new EpochSeconds(GroupRecord.CREATION_DATE)), membersPerDay))
-                );
+                        new EpochSeconds(GroupRecord.CREATION_DATE), membersPerDay)));
         }
 
         return findAll(
@@ -487,8 +483,7 @@ public class GroupRepository extends DepotRepository
      */
     public List<GroupRecord> getOfficialGroups ()
     {
-        return findAll(GroupRecord.class, new Where(new Equals(GroupRecord.OFFICIAL,
-            new LiteralExp("true"))));
+        return findAll(GroupRecord.class, new Where(GroupRecord.OFFICIAL, true));
     }
 
     /**
@@ -535,7 +530,7 @@ public class GroupRepository extends DepotRepository
         } else if (query.tag != null) {
             TagNameRecord tnr = _tagRepo.getTag(query.tag);
             if (tnr == null) {
-                return new Where(new LiteralExp("false"));
+                return new Where(new ValueExp(false));
             } else {
                 return new Where(new And(publicOnly, new Equals(
                     _tagRepo.getTagColumn(TagRecord.TAG_ID), tnr.tagId)));
