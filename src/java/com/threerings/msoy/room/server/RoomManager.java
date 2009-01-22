@@ -23,8 +23,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Comparators;
 import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.Interator;
-import com.samskivert.util.IntIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.StringUtil;
@@ -1553,7 +1551,7 @@ public class RoomManager extends SpotSceneManager
 //    {
 //        int whenLeft = _left.get(bodyOid);
 //        int now = (int)(System.currentTimeMillis() / 1000);
-//        return whenLeft > 0 && (now - whenLeft) < LEFT_BODY_PURGE_SECS; 
+//        return whenLeft > 0 && (now - whenLeft) < LEFT_BODY_PURGE_SECS;
 //    }
 
     /** Listens to the room. */
@@ -1670,7 +1668,7 @@ public class RoomManager extends SpotSceneManager
 
 //    /** Map of body oids that have left the room to the time they left (in seconds). */
 //    protected IntIntMap _left = new IntIntMap();
-    
+
     /** After this level of occupancy is reached, actors are made static. */
     protected static final int ACTOR_RENDERING_LIMIT = 20;
 

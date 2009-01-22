@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import com.threerings.util.StreamableArrayIntSet;
-import com.threerings.util.StreamableHashIntMap;
 
 import com.threerings.crowd.server.BodyLocal;
 import com.threerings.stats.data.StatSet;

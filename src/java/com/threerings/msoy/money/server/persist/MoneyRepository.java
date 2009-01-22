@@ -47,7 +47,6 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
-import com.threerings.msoy.server.persist.RatingRecord;
 
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;

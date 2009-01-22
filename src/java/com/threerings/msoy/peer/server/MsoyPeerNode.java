@@ -9,7 +9,6 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.SetListener;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.server.net.ServerCommunicator;
