@@ -151,8 +151,11 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveMember (final MemberObject memobj)
         throws Exception
     {
+        enforceConnected();
+
         // load up their member information using on their authentication (account) name
         final MemberRecord member = _memberRepo.loadMember(_username.toString());
+        enforceConnected();
         final MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
 
         // NOTE: we avoid using the dobject setters here because we know the object is not out in
@@ -160,6 +163,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // initialization when we know that no one is listening
 
         // we need their profile photo to create the member name
+        enforceConnected();
         final ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
         memobj.memberName = new VizMemberName(
             member.name, member.memberId,
@@ -177,14 +181,17 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // load up this member's persistent stats
         MemberLocal local = memobj.getLocal(MemberLocal.class);
+        enforceConnected();
         final List<Stat> stats = _statRepo.loadStats(member.memberId);
         local.stats = new ServerStatSet(stats.iterator(), _badgeMan, memobj);
 
         // and their badges
         local.badgesVersion = member.badgesVersion;
+        enforceConnected();
         local.badges = new EarnedBadgeSet(
             Iterables.transform(_badgeRepo.loadEarnedBadges(member.memberId),
                                 EarnedBadgeRecord.TO_BADGE));
+        enforceConnected();
         local.inProgressBadges = new InProgressBadgeSet(
             Iterables.transform(_badgeRepo.loadInProgressBadges(member.memberId),
                                 InProgressBadgeRecord.TO_BADGE));
@@ -200,21 +207,26 @@ public class MsoyClientResolver extends CrowdClientResolver
 // END TEMP
 
         // fill in this member's raw friends list; the friend manager will update it later
+        enforceConnected();
         memobj.friends = new DSet<FriendEntry>(_memberRepo.loadAllFriends(member.memberId));
 
         // load up this member's group memberships
+        enforceConnected();
         memobj.groups = new DSet<GroupMembership>(
             // we don't pass in member name here because we don't need it on the client
             _groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
 
         // load up this member's current new mail count
+        enforceConnected();
         memobj.newMailCount = _mailRepo.loadUnreadConvoCount(member.memberId);
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {
+            enforceConnected();
             final AvatarRecord avatar = _itemLogic.getAvatarRepository().loadItem(member.avatarId);
             if (avatar != null) {
                 memobj.avatar = (Avatar)avatar.toItem();
+                enforceConnected();
                 local.memories = Lists.newArrayList(Iterables.transform(
                     _memoryRepo.loadMemory(avatar.getType(), avatar.itemId),
                         MemoryRecord.TO_ENTRY));
@@ -226,6 +238,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         memobj.visitorInfo = new VisitorInfo(member.visitorId, true);
 
         // Load up the member's experiences
+        enforceConnected();
         memobj.experiences = new DSet<MemberExperience>(
                 _memberLogic.getExperiences(member.memberId));
     }
@@ -249,9 +262,7 @@ public class MsoyClientResolver extends CrowdClientResolver
                     user.setAvatarCache(new DSet<Avatar>(avatars));
                 }
                 public void requestFailed (final Exception cause) {
-                    log.warning("Failed to load member's avatar cache [who=" + user.who() +
-                                ", error=" + cause + "].");
-                    cause.printStackTrace();
+                    log.warning("Failed to load member's avatar cache", "who", user.who(), cause);
                 }
             });
         }
