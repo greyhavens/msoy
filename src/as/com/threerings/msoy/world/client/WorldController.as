@@ -1241,15 +1241,34 @@ public class WorldController extends MsoyController
 
     override protected function setIdle (nowIdle :Boolean) :void
     {
-        // our superclass may or may not honor the request to set idle
-        const wasIdle :Boolean = _idle;
+        const wasGameIdle :Boolean = (_idle || _away);
+
         super.setIdle(nowIdle);
-        // ...so only change avrg idleness when we go idle for real..
-        if (wasIdle != _idle) {
+
+        // only change game idleness when it truly changes
+        if (wasGameIdle != (_idle || _away)) {
             // let AVRGs know about our idleness changes
             var gd :GameDirector = _wctx.getGameDirector();
             if (gd != null) { // studio has no GameDirector
-                gd.setIdle(_idle);
+                // game idleness = whirled idle or whirled away
+                gd.setIdle(_idle || _away);
+            }
+        }
+    }
+
+    override public function setAway (nowAway :Boolean, message :String = null) :void
+    {
+        const wasGameIdle :Boolean = (_idle || _away);
+
+        super.setAway(nowAway, message);
+
+        // only change game idleness when it truly changes
+        if (wasGameIdle != (_idle || _away)) {
+            // let AVRGs know about our idleness changes
+            var gd :GameDirector = _wctx.getGameDirector();
+            if (gd != null) { // studio has no GameDirector
+                // game idleness = whirled idle or whirled away
+                gd.setIdle(_idle || _away);
             }
         }
     }
