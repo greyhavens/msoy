@@ -39,6 +39,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.client.MsoyPlaceView;
 
 public class LobbyController extends Controller
     implements Subscriber, SeatednessObserver
@@ -76,7 +77,8 @@ public class LobbyController extends Controller
 
 
     public function LobbyController (
-        gctx :GameContext, mode :int, onClear :Function, playNow :Function, lobbyLoaded :Function)
+        gctx :GameContext, mode :int, onClear :Function, playNow :Function, lobbyLoaded :Function,
+        displaySplash :Boolean)
     {
         _gctx = gctx;
         _mctx = gctx.getMsoyContext();
@@ -84,6 +86,7 @@ public class LobbyController extends Controller
         _onClear = onClear;
         _playNow = playNow;
         _lobbyLoaded = lobbyLoaded;
+        _displaySplash = displaySplash;
 
         // create our lobby panel
         _panel = new LobbyPanel(_gctx, this);
@@ -455,6 +458,10 @@ public class LobbyController extends Controller
      */
     protected function setGameView (game :Game) :void
     {
+        if (! _displaySplash) {
+            return; 
+        }
+        
         var media :MediaDesc = game.splashMedia;
         if (media == null) {
             // if splash media is not available, try furni, and finally a thumbnail
@@ -519,6 +526,9 @@ public class LobbyController extends Controller
 
     /** Whether or not the user clicked the close box to close this lobby. */
     protected var _closedByUser :Boolean;
+    
+    /** Should the lobby be displayed on top of a custom splash view? */
+    protected var _displaySplash :Boolean;
 
     /** The player whose pending table we'd like to join. */
     protected var _playerId :int = 0;

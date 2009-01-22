@@ -49,7 +49,7 @@ public class LobbyGameLiaison extends GameLiaison
         _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
 
         // create our lobby controller which will display a "locating game..." interface
-        _lobby = new LobbyController(_gctx, _mode, lobbyCleared, playNow, lobbyLoaded);
+        _lobby = new LobbyController(_gctx, _mode, lobbyCleared, playNow, lobbyLoaded, true);
     }
 
     /**
@@ -97,7 +97,7 @@ public class LobbyGameLiaison extends GameLiaison
     {
         if (_lobby == null) {
             _lobby = new LobbyController(
-                _gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared, playNow, lobbyLoaded);
+                _gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared, playNow, lobbyLoaded, false);
             joinLobby();
         } // otherwise it's already showing
     }
