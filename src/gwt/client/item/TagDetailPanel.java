@@ -120,6 +120,7 @@ public class TagDetailPanel extends VerticalPanel
                     protected void addMenuItems () {
                         addCommand(_cmsgs.tagMatureFlag(), ItemFlag.Kind.MATURE);
                         addCommand(_cmsgs.tagCopyrightFlag(), ItemFlag.Kind.COPYRIGHT);
+                        addCommand(_cmsgs.tagStolenFlag(), ItemFlag.Kind.STOLEN);
                     }
                     protected void addCommand (String label, ItemFlag.Kind kind) {
                         addMenuItem(label, new FlagCommand(kind));
@@ -322,9 +323,22 @@ public class TagDetailPanel extends VerticalPanel
             BorderedDialog dialog = new BorderedDialog(false) {};
             dialog.setHeaderTitle(_cmsgs.tagFlagDialogTitle());
 
-            String mature[] = { _cmsgs.tagMaturePrompt1(), _cmsgs.tagMaturePrompt2() };
-            String copyright[] = { _cmsgs.tagCopyrightPrompt1(), _cmsgs.tagCopyrightPrompt2() };
-            String prompts[] = _kind == ItemFlag.Kind.MATURE ? mature : copyright;
+            String[] prompts;
+            switch (_kind) {
+            default:
+            case MATURE:
+                prompts = new String[] { _cmsgs.tagMaturePrompt1(), _cmsgs.tagMaturePrompt2() };
+                break;
+
+            case COPYRIGHT:
+                prompts = new String[] {
+                    _cmsgs.tagCopyrightPrompt1(), _cmsgs.tagCopyrightPrompt2() };
+                break;
+
+            case STOLEN:
+                prompts = new String[] { _cmsgs.tagStolenPrompt1(), _cmsgs.tagStolenPrompt2() };
+                break;
+            }
 
             final SmartTable content = new SmartTable(0, 10);
             content.setWidth("300px");
