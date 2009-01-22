@@ -127,11 +127,8 @@ public class StatusPanel extends SmartTable
         HorizontalPanel topBox = new HorizontalPanel();
 
         // friends = coins blurb on top left
-
         topBox.add(MsoyUI.createImageButton("InviteFriends", Link.createListener(Pages.PEOPLE,
             "invites")));
-        // topBox.add(Link.createImage("/images/header/status_invite_friends.png",
-        // _cmsgs.statusFriendsCoins(), Pages.PEOPLE, "invites"));
         topBox.add(WidgetUtil.makeShim(10, 10));
 
         topBox.add(new Image("/images/header/status_bg_left.png"));
@@ -191,11 +188,6 @@ public class StatusPanel extends SmartTable
             FocusPanel coinsFocus = new FocusPanel(coins);
             coinsFocus.addClickListener(NaviUtil.onViewTransactions(ReportType.COINS));
             setWidget(0, idx++, coinsFocus);
-            //getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            //ClickListener onClick = NaviUtil.onViewTransactions(ReportType.COINS);
-            //setWidget(0, idx++, MsoyUI.createActionImage(Currency.COINS.getSmallIcon(),
-            //    _cmsgs.coinsTip(), onClick), 1, "Icon");
-            //setWidget(0, idx++, _coinsLabel = MsoyUI.createActionLabel("0", onClick));
 
             FloatPanel bars = new FloatPanel("Bars");
             bars.add(new Image(Currency.BARS.getSmallIcon()));
@@ -203,12 +195,6 @@ public class StatusPanel extends SmartTable
             FocusPanel barsFocus = new FocusPanel(bars);
             barsFocus.addClickListener(NaviUtil.onViewTransactions(ReportType.BARS));
             setWidget(0, idx++, barsFocus);
-
-//            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-//            setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getSmallIcon(),
-//                _cmsgs.barsTip(), NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
-//            setWidget(0, idx++, _barsLabel = MsoyUI.createActionLabel("0",
-//                NaviUtil.onViewTransactions(ReportType.BARS)));
             setWidget(0, idx++, MsoyUI.createActionLabel(_cmsgs.statusBuyBars(), "BuyBars",
                 NaviUtil.onBuyBars()));
 
@@ -218,12 +204,6 @@ public class StatusPanel extends SmartTable
             FocusPanel levelFocus = new FocusPanel(level);
             levelFocus.addClickListener(Link.createListener(Pages.ME, "passport"));
             setWidget(0, idx++, levelFocus);
-
-//            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-//            setWidget(0, idx++, MsoyUI.createActionImage("/images/header/symbol_level.png",
-//                _cmsgs.levelTip(), Link.createListener(Pages.ME, "passport")), 1, "Icon");
-//            setWidget(0, idx++, _levelLabel = MsoyUI.createActionLabel("0",
-//                Link.createListener(Pages.ME, "passport")));
 
             getFlexCellFormatter().setWidth(0, idx++, "12px"); // gap!
         }
