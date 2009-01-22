@@ -176,7 +176,7 @@ public class MsoyServer extends MsoyBaseServer
         // Due to a circular dependency, this instance cannot be injected into MsoyChatProvider.
         // This is also temporary to support broadcasts in games.  When you maintain a subscription
         // to a PlaceObject on the WorldServer while in games, MsoyChatProvider's overridden
-        // broadcast method becomes unneccessary
+        // broadcast method becomes unnecessary
         ((MsoyChatProvider) _chatprov).init(_gameReg);
 
         // start up our peer manager
@@ -199,7 +199,7 @@ public class MsoyServer extends MsoyBaseServer
         // Let the bureaus connect to our game server(s)
         _bureauMgr.setGameServerRegistryOid(_gameReg.getServerRegistryObject().getOid());
 
-        // TEMP: give a peer manager refernce to MemberNodeActions
+        // TEMP: give a peer manager reference to MemberNodeActions
         MemberNodeActions.init(_peerMan);
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
@@ -346,7 +346,7 @@ public class MsoyServer extends MsoyBaseServer
                 }
             });
 
-            // we've scheduled a reboot, so we can stop this inteval
+            // we've scheduled a reboot, so we can stop this interval
             cancel();
         }
 
