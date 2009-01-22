@@ -8,6 +8,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -16,6 +17,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
@@ -123,6 +125,15 @@ public class StatusPanel extends SmartTable
 
         // white top box aligned to right of window
         HorizontalPanel topBox = new HorizontalPanel();
+
+        // friends = coins blurb on top left
+
+        topBox.add(MsoyUI.createImageButton("InviteFriends", Link.createListener(Pages.PEOPLE,
+            "invites")));
+        // topBox.add(Link.createImage("/images/header/status_invite_friends.png",
+        // _cmsgs.statusFriendsCoins(), Pages.PEOPLE, "invites"));
+        topBox.add(WidgetUtil.makeShim(10, 10));
+
         topBox.add(new Image("/images/header/status_bg_left.png"));
         topBox.add(MsoyUI.createSimplePanel(links, "TopBoxLinks"));
         topBox.add(new Image("/images/header/status_bg_right.png"));
@@ -135,11 +146,6 @@ public class StatusPanel extends SmartTable
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
-
-        // friends = coins blurb on bottom right
-        setWidget(1, 3, WidgetUtil.makeShim(10, 10));
-        setWidget(1, 2, Link.createImage("/images/header/status_friends_coins.png",
-            _cmsgs.statusFriendsCoins(), Pages.PEOPLE, "invites"));
     }
 
     // from interface Session.Observer
@@ -160,12 +166,12 @@ public class StatusPanel extends SmartTable
             addStyleName("Mail");
             add(_mailImage = MsoyUI.createActionImage("/images/header/symbol_mail.png",
                 Link.createListener(Pages.MAIL, "")));
-            add(_mailLabel = MsoyUI.createActionLabel("0", Link.createListener(Pages.MAIL, "")));
+            add(_mailLabel = MsoyUI.createActionLabel("(0)", Link.createListener(Pages.MAIL, "")));
             setCount(0);
         }
 
         public void setCount (int count) {
-            _mailLabel.setText(String.valueOf(count));
+            _mailLabel.setText("(" + String.valueOf(count) + ")");
             _mailImage.setTitle(count > 0 ? _cmsgs.newMailTip() : _cmsgs.mailTip());
         }
 
@@ -179,23 +185,45 @@ public class StatusPanel extends SmartTable
             super("Levels", 0, 0);
 
             int idx = 0;
-            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            ClickListener onClick = NaviUtil.onViewTransactions(ReportType.COINS);
-            setWidget(0, idx++, MsoyUI.createActionImage(Currency.COINS.getLargeIcon(),
-                _cmsgs.coinsTip(), onClick), 1, "Icon");
-            setWidget(0, idx++, _coinsLabel = MsoyUI.createActionLabel("0", onClick));
+            FloatPanel coins = new FloatPanel("Coins");
+            coins.add(new Image(Currency.COINS.getSmallIcon()));
+            coins.add(_coinsLabel = new Label("0"));
+            FocusPanel coinsFocus = new FocusPanel(coins);
+            coinsFocus.addClickListener(NaviUtil.onViewTransactions(ReportType.COINS));
+            setWidget(0, idx++, coinsFocus);
+            //getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+            //ClickListener onClick = NaviUtil.onViewTransactions(ReportType.COINS);
+            //setWidget(0, idx++, MsoyUI.createActionImage(Currency.COINS.getSmallIcon(),
+            //    _cmsgs.coinsTip(), onClick), 1, "Icon");
+            //setWidget(0, idx++, _coinsLabel = MsoyUI.createActionLabel("0", onClick));
 
-            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getLargeIcon(),
-                _cmsgs.barsTip(), NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
-            setWidget(0, idx++, _barsLabel = MsoyUI.createActionLabel("0",
-                NaviUtil.onViewTransactions(ReportType.BARS)));
+            FloatPanel bars = new FloatPanel("Bars");
+            bars.add(new Image(Currency.BARS.getSmallIcon()));
+            bars.add(_barsLabel = new Label("0"));
+            FocusPanel barsFocus = new FocusPanel(bars);
+            barsFocus.addClickListener(NaviUtil.onViewTransactions(ReportType.BARS));
+            setWidget(0, idx++, barsFocus);
 
-            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            setWidget(0, idx++, MsoyUI.createActionImage("/images/header/symbol_level.png",
-                _cmsgs.levelTip(), Link.createListener(Pages.ME, "passport")), 1, "Icon");
-            setWidget(0, idx++, _levelLabel = MsoyUI.createActionLabel("0",
-                Link.createListener(Pages.ME, "passport")));
+//            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+//            setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getSmallIcon(),
+//                _cmsgs.barsTip(), NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
+//            setWidget(0, idx++, _barsLabel = MsoyUI.createActionLabel("0",
+//                NaviUtil.onViewTransactions(ReportType.BARS)));
+            setWidget(0, idx++, MsoyUI.createActionLabel(_cmsgs.statusBuyBars(), "BuyBars",
+                NaviUtil.onBuyBars()));
+
+            FloatPanel level = new FloatPanel("Level");
+            level.add(new Image("/images/header/symbol_level.png"));
+            level.add(_levelLabel = new Label("0"));
+            FocusPanel levelFocus = new FocusPanel(level);
+            levelFocus.addClickListener(Link.createListener(Pages.ME, "passport"));
+            setWidget(0, idx++, levelFocus);
+
+//            getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+//            setWidget(0, idx++, MsoyUI.createActionImage("/images/header/symbol_level.png",
+//                _cmsgs.levelTip(), Link.createListener(Pages.ME, "passport")), 1, "Icon");
+//            setWidget(0, idx++, _levelLabel = MsoyUI.createActionLabel("0",
+//                Link.createListener(Pages.ME, "passport")));
 
             getFlexCellFormatter().setWidth(0, idx++, "12px"); // gap!
         }
@@ -237,7 +265,7 @@ public class StatusPanel extends SmartTable
 
     protected LevelsDisplay _levels = new LevelsDisplay();
     protected MailDisplay _mail = new MailDisplay();
-    protected SimplePanel _namePanel = new SimplePanel();
+    protected SimplePanel _namePanel = MsoyUI.createSimplePanel(null, "Name");
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

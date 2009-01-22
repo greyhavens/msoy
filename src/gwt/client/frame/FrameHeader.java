@@ -72,7 +72,7 @@ public class FrameHeader extends SmartTable
     public void didLogon (SessionData data)
     {
         getFlexCellFormatter().setHorizontalAlignment(0, _statusCol, HasAlignment.ALIGN_RIGHT);
-        getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_BOTTOM);
+        getFlexCellFormatter().setVerticalAlignment(0, _statusCol, HasAlignment.ALIGN_TOP);
         setWidget(0, _statusCol, _status, 1, "Right");
     }
 

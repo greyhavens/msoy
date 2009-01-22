@@ -64,24 +64,41 @@
   padding-right: 40px;
 }
 
+.statusPanel .InviteFriends {
+  width: 89px;
+  height: 21px;
+  background-image: url(/images/header/status_invite_friends.png);
+}
+
+.statusPanel .InviteFriends-up-hovering,
+.statusPanel .InviteFriends-down-hovering {
+  background-image: url(/images/header/status_invite_friends_over.png);
+}
+
 .statusPanel .TopBoxLinks {
   background: url(/images/header/status_bg_middle.png) repeat-x top;
-  color: #979797;
-  height: 26px;
-  padding: 5px 5px 0 5px;
+  color: #a8cbe8;
+  height: 23px; /* plus padding = 27 */
+  padding: 4px 5px 0 5px;
   font-size: 12px;
   white-space: nowrap;
+  margin-bottom: 4px;
 }
 .statusPanel .TopBoxLinks a {
-  color: #979797;
+  color: #a8cbe8;
 }
 
 .statusPanel .TopBoxLinks .Mail img {
   margin-right: 3px;
 }
 
+.statusPanel .Name,
+.statusPanel .Name a {
+  color: #bddbf4;
+}
+
 .statusPanel .TopBoxLinks .Spacer {
-  color: #dddddd;
+  color: #4378a6;
   margin: 0 5px;
 }
 
@@ -90,17 +107,32 @@
   font-family: Helvetica, sans-serif;
   font-size: 11px;
   font-weight: bold;
+  margin-left: 110px;
 }
 
-.statusPanel .Levels .Icon {
-  padding-right: 3px;
+.statusPanel .Levels .Coins,
+.statusPanel .Levels .Bars,
+.statusPanel .Levels .Level {
+  margin-left: 15px;
+  cursor: pointer;
 }
 
-.statusPanel .Levels .actionLabel {
-  text-decoration: none;
+.statusPanel .Levels .gwt-Label {
+  margin-left: 3px;
+  padding-top: 2px;
 }
-.statusPanel .Levels .actionLabel:hover {
+
+.statusPanel .Levels .Coins:hover,
+.statusPanel .Levels .Bars:hover,
+.statusPanel .Levels .Level:hover {
   text-decoration: underline;
+}
+
+.statusPanel .Levels div.BuyBars {
+  font-size: 10px;
+  color: #f3a613;
+  padding-left: 5px;
+  font-weight: normal;
 }
 
 /* ------------------------------------
