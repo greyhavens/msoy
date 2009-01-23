@@ -20,6 +20,8 @@ import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import static com.threerings.msoy.Log.log;
+
 @Singleton @BlockingThread
 public class BadgeRepository extends DepotRepository
 {
@@ -52,6 +54,8 @@ public class BadgeRepository extends DepotRepository
      */
     public void storeInProgressBadge (InProgressBadgeRecord badge)
     {
+        // this is temporary, to get a sense of just how often this happens
+        log.info("Storing in-progress badge", "badge", badge);
         store(badge);
     }
 
@@ -104,6 +108,8 @@ public class BadgeRepository extends DepotRepository
      */
     public boolean deleteInProgressBadge (int memberId, int badgeCode)
     {
+        // this is temporary, to get a sense of just how often this happens
+        log.info("Deleting in-progress badge", "memberId", memberId, "badgeCode", badgeCode);
         return (delete(InProgressBadgeRecord.class, InProgressBadgeRecord.getKey(memberId,
             badgeCode)) > 0);
     }
