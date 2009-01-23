@@ -16,6 +16,7 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.whirled.game.client.HeadShot;
 import com.whirled.game.client.WhirledGameBackend;
+import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.data.all.VizMemberName;
@@ -24,7 +25,6 @@ import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.data.all.ItemTypes;
 
-import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.PlayerObject;

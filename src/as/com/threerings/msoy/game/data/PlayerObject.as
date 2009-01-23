@@ -6,12 +6,9 @@ package com.threerings.msoy.game.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.util.Name;
 
-import com.threerings.presents.dobj.DSet;
-
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.client.PropertySpaceHelper;
-import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
@@ -48,12 +45,6 @@ public class PlayerObject extends WhirledPlayerObject
     public static const VISITOR_INFO :String = "visitorInfo";
     // AUTO-GENERATED: FIELDS END
 
-    /** Ident for <code>GameData.RESOLUTION_MARKER</code> content during resolution. */
-    public static const RESOLVING :String = "resolving";
-
-    /** Ident for <code>GameData.RESOLUTION_MARKER</code> content after resolution. */
-    public static const RESOLVED :String = "resolved";
-
     /** The name and id information for this user. */
     public var memberName :VizMemberName;
 
@@ -62,9 +53,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
-
-    /** Contains information on player's ownership of game content (populated lazily). */
-    public var gameContent :DSet; /* of */ GameContentOwnership;
 
     /** Player's tracking information. */
     public var visitorInfo :VisitorInfo;
@@ -116,28 +104,6 @@ public class PlayerObject extends WhirledPlayerObject
         return humanity / 255;
     }
 
-    /**
-     * Returns true if content is resolved for the specified game, false if it is not yet ready.
-     */
-    public function isContentResolved (gameId :int) :Boolean
-    {
-        return ownsGameContent(gameId, GameData.RESOLUTION_MARKER, RESOLVED);
-    }
-
-    /**
-     * Returns true if this player owns the specified piece of game content. <em>Note:</em> the
-     * content must have previously been resolved, which happens when the player enters the game in
-     * question.
-     */
-    public function ownsGameContent (gameId :int, type :int, ident :String) :Boolean
-    {
-        var key :GameContentOwnership = new GameContentOwnership();
-        key.gameId = gameId;
-        key.type = type;
-        key.ident = ident;
-        return gameContent.containsKey(key);
-    }
-
     // from PropertySpaceObject
     public function getUserProps () :Object
     {
@@ -170,7 +136,6 @@ public class PlayerObject extends WhirledPlayerObject
         memberName = VizMemberName(ins.readObject());
         tokens = MsoyTokenRing(ins.readObject());
         humanity = ins.readInt();
-        gameContent = DSet(ins.readObject());
         visitorInfo = VisitorInfo(ins.readObject());
         propertyService = PropertySpaceMarshaller(ins.readObject());
     }

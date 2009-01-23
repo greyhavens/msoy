@@ -21,6 +21,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.server.PlayManagerDelegate;
 
+import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.GameDataObject;
 import com.whirled.game.data.ItemData;
@@ -36,7 +37,6 @@ import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 
-import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;

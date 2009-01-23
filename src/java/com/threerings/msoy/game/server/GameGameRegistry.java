@@ -59,6 +59,7 @@ import com.threerings.parlor.rating.util.Percentiler;
 import com.threerings.bureau.server.BureauRegistry;
 
 import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.server.PropertySpaceDelegate;
 
@@ -97,7 +98,6 @@ import com.threerings.msoy.avrg.server.QuestDelegate;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 
-import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameCodes;

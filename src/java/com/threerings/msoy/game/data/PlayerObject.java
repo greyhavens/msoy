@@ -9,12 +9,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
 import com.threerings.crowd.data.TokenRing;
 
-import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
@@ -48,21 +46,12 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
 
-    /** The field name of the <code>gameContent</code> field. */
-    public static final String GAME_CONTENT = "gameContent";
-
     /** The field name of the <code>visitorInfo</code> field. */
     public static final String VISITOR_INFO = "visitorInfo";
 
     /** The field name of the <code>propertyService</code> field. */
     public static final String PROPERTY_SERVICE = "propertyService";
     // AUTO-GENERATED: FIELDS END
-
-    /** Ident for {@link GameData#RESOLUTION_MARKER} content during resolution. */
-    public static final String RESOLVING = "resolving";
-
-    /** Ident for {@link GameData#RESOLUTION_MARKER} content after resolution. */
-    public static final String RESOLVED = "resolved";
 
     /** The name and id information for this user. */
     public VizMemberName memberName;
@@ -73,9 +62,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** Our current assessment of how likely to be human this member is, in [0, {@link
      * MsoyCodes#MAX_HUMANITY}]. */
     public int humanity;
-
-    /** Contains information on player's ownership of game content (populated lazily). */
-    public DSet<GameContentOwnership> gameContent = new DSet<GameContentOwnership>();
 
     /** Player's referral information. */
     public VisitorInfo visitorInfo;
@@ -97,37 +83,6 @@ public class PlayerObject extends WhirledPlayerObject
     public MediaDesc getHeadShotMedia ()
     {
         return memberName.getPhoto();
-    }
-
-    /**
-     * Returns true if content is resolved for the specified game, false if it is not yet ready.
-     */
-    public boolean isContentResolved (int gameId)
-    {
-        return ownsGameContent(gameId, GameData.RESOLUTION_MARKER, RESOLVED);
-    }
-
-    /**
-     * Returns true if content is being resolved for the specified game, false if it is ready or
-     * resolution is not yet initiated.
-     */
-    public boolean isContentResolving (int gameId)
-    {
-        return ownsGameContent(gameId, GameData.RESOLUTION_MARKER, RESOLVING);
-    }
-
-    /**
-     * Returns true if this player owns the specified piece of game content. <em>Note:</em> the
-     * content must have previously been resolved, which happens when the player enters the game in
-     * question.
-     */
-    public boolean ownsGameContent (int gameId, byte type, String ident)
-    {
-        GameContentOwnership key = new GameContentOwnership();
-        key.gameId = gameId;
-        key.type = type;
-        key.ident = ident;
-        return gameContent.containsKey(key);
     }
 
     /**
@@ -231,53 +186,6 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(
             HUMANITY, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.humanity = value;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>gameContent</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToGameContent (GameContentOwnership elem)
-    {
-        requestEntryAdd(GAME_CONTENT, gameContent, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>gameContent</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromGameContent (Comparable<?> key)
-    {
-        requestEntryRemove(GAME_CONTENT, gameContent, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>gameContent</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateGameContent (GameContentOwnership elem)
-    {
-        requestEntryUpdate(GAME_CONTENT, gameContent, elem);
-    }
-
-    /**
-     * Requests that the <code>gameContent</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setGameContent (DSet<GameContentOwnership> value)
-    {
-        requestAttributeChange(GAME_CONTENT, value, this.gameContent);
-        DSet<GameContentOwnership> clone = (value == null) ? null : value.typedClone();
-        this.gameContent = clone;
     }
 
     /**
