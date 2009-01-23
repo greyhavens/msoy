@@ -946,12 +946,13 @@ BasePanel {
   backgroundAlpha: 0;
 }
 
-.chatInput {
+ChatInput {
   color: #000000;
   themeColor: #3db8eb;
   fontFamily: "Arial";
   fontSize: 12;
   borderStyle: "none";
+  prompt: Embed(source="../media/skins/controlbar/typetochat.png");
 }
 
 .chatTargetButton {
