@@ -34,7 +34,7 @@ public class MemberExperienceRecord extends PersistentRecord
     public static final ColumnExp DATA = colexp(_R, "data");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** Unique ID of this experience. */
     @Id
@@ -46,7 +46,6 @@ public class MemberExperienceRecord extends PersistentRecord
     public int memberId;
 
     /** Date/time the experience occurred. */
-    @Index(name="ixDateOccurred")
     public Timestamp dateOccurred;
 
     /** Action the member had, as defined by HomePageItem. */

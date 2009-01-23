@@ -190,6 +190,10 @@ public class MemberRepository extends DepotRepository
                 }
             }
         });
+
+        // drop this superfluous index
+        ctx.registerMigration(MemberExperienceRecord.class,
+            new SchemaMigration.DropIndex(2, "ixDateOccurred"));
     }
 
     /**
