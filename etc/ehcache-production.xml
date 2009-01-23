@@ -412,7 +412,7 @@
             />
 
     <cache name="depotRecord"
-           maxElementsInMemory="50000"
+           maxElementsInMemory="150000"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
@@ -427,7 +427,7 @@
     </cache>
 
     <cache name="depotKeyset"
-           maxElementsInMemory="10000"
+           maxElementsInMemory="50000"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
@@ -442,7 +442,7 @@
     </cache>
 
     <cache name="depotResult"
-           maxElementsInMemory="1000"
+           maxElementsInMemory="10000"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
