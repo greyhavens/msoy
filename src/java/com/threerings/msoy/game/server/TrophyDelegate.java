@@ -119,18 +119,6 @@ public class TrophyDelegate extends PlayManagerDelegate
         trophy.trophyMimeType = source.getThumbnailMedia().mimeType;
         trophy.whenEarned = new Timestamp(System.currentTimeMillis());
 
-        // if this is an in-development game, we do not award trophies persistently; but we will
-        // stick it into the player's runtime record so that the game developer can see that the
-        // trophy was awarded; note also that we do load the trophies earned from the catalog
-        // version, so a developer will not constantly re-receive trophies once they have released
-        // them and earned them permanently from the catalog version of their game
-        if (_content.game.isDevelopmentVersion()) {
-            log.info("Awarding transient trophy to developer", "game", where(),
-                     "who", plobj.who(), "ident", ident);
-            plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
-            return;
-        }
-
         // otherwise, award them the trophy, then add it to their runtime collection
         _gameReg.awardTrophy(_content.game.name, trophy, source.description,
                              new InvocationService.ResultListener() {

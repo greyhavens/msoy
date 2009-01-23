@@ -16,6 +16,9 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.Conditionals.Equals;
+import com.samskivert.depot.operator.Conditionals.GreaterThan;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -31,11 +34,13 @@ public class TrophyRepository extends DepotRepository
     }
 
     /**
-     * Loads all of the specified member's trophies.
+     * Loads all of the specified member's trophies for non-development games.
      */
     public List<TrophyRecord> loadTrophies (int memberId)
     {
-        return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID, memberId));
+        return findAll(TrophyRecord.class, new Where(new And(
+            new Equals(TrophyRecord.MEMBER_ID, memberId),
+            new GreaterThan(TrophyRecord.GAME_ID, 0))));
     }
 
     /**
@@ -43,7 +48,10 @@ public class TrophyRepository extends DepotRepository
      */
     public List<TrophyRecord> loadRecentTrophies (int memberId, int count)
     {
-        return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID, memberId),
+        Where whereClause = new Where(new And(
+            new Equals(TrophyRecord.MEMBER_ID, memberId),
+            new GreaterThan(TrophyRecord.GAME_ID, 0)));
+        return findAll(TrophyRecord.class, whereClause,
                        OrderBy.descending(TrophyRecord.WHEN_EARNED),
                        new Limit(0, count));
     }

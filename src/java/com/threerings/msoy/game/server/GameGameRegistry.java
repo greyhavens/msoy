@@ -393,11 +393,14 @@ public class GameGameRegistry
                 try {
                     // store the trophy in the database
                     _trophyRepo.storeTrophy(trophy);
-                    // publish the trophy earning event to the member's feed
-                    _feedRepo.publishMemberMessage(
-                        trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
-                        trophy.name + "\t" + trophy.gameId +
-                        "\t" + MediaDesc.mdToString(trec.trophyMedia));
+
+                    if (!Game.isDevelopmentVersion(trophy.gameId)) {
+                        // publish the trophy earning event to the member's feed
+                        _feedRepo.publishMemberMessage(
+                            trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
+                            trophy.name + "\t" + trophy.gameId +
+                            "\t" + MediaDesc.mdToString(trec.trophyMedia));
+                    }
 
                 } catch (DuplicateKeyException dke) {
                     throw new InvocationException("e.trophy_already_awarded");
@@ -405,9 +408,13 @@ public class GameGameRegistry
             }
             @Override
             public void handleSuccess () {
-                _worldClient.reportTrophyAward(trophy.memberId, gameName, trec);
-                _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);
-                _worldClient.incrementStat(trophy.memberId, StatType.TROPHIES_EARNED, 1);
+                // none of the reporting mechanisms below should be followed through for
+                // persisted in-development game trophies.
+                if (!Game.isDevelopmentVersion(trophy.gameId)) {
+                    _worldClient.reportTrophyAward(trophy.memberId, gameName, trec);
+                    _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);
+                    _worldClient.incrementStat(trophy.memberId, StatType.TROPHIES_EARNED, 1);
+                }
                 reportRequestProcessed(trec);
             }
             @Override
@@ -442,7 +449,7 @@ public class GameGameRegistry
         detail.gamesPlayed += gamesPlayed;
 
         // determine whether or not it's time to recalculate this game's payout factor
-        final int hourlyRate = type == MetricType.AVRG ? 
+        final int hourlyRate = type == MetricType.AVRG ?
             _runtime.money.hourlyAVRGameFlowRate :
             _runtime.money.hourlyGameFlowRate;
         final boolean isMultiplayer = type != MetricType.SINGLE_PLAYER;
