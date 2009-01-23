@@ -36,22 +36,24 @@ public class RadialMenu extends Canvas
 
     public function set dataProvider (array :Array) :void
     {
-        var inc :Number = Math.PI / 3;
-        var radians :Number = -Math.PI/2; // + (inc/2);
+        var inc :Number = Math.PI / 6;
 
         _items = [];
 
-        for (var ii :int = 0; ii < 6; ii++) {
-            var item :RadialItem = new RadialItem(this, array);
+        var theta :Number = -Math.PI/2; // + (inc/2); // start of first circle
+        for (var ii :int = 0; ii < 12; ii++) {
+            var big :Boolean = (0 == (ii % 3));
+            var item :RadialItem = new RadialItem(this, array, big);
             _items.push(item);
 
             var fw :FlexWrapper = new FlexWrapper(item);
             addChild(fw);
 
             // we just need the global mouse coordinates, even if we're down
-            fw.x = Application(Application.application).mouseX + (RADIUS * 2 * Math.cos(radians));
-            fw.y = Application(Application.application).mouseY + (RADIUS * 2 * Math.sin(radians));
-            radians += inc;
+            var r :Number = RADIUS * (big ? 4 : 3);
+            fw.x = Application(Application.application).mouseX + (r * Math.cos(theta));
+            fw.y = Application(Application.application).mouseY + (r * Math.sin(theta));
+            theta += inc;
         }
     }
 
@@ -109,10 +111,11 @@ import com.threerings.msoy.ui.RadialMenu;
 
 class RadialItem extends Sprite
 {
-    public function RadialItem (menu :RadialMenu, subitems :Array)
+    public function RadialItem (menu :RadialMenu, subitems :Array, big :Boolean)
     {
         _menu = menu;
         _subitems = subitems;
+        _big = big;
 
         addEventListener(MouseEvent.ROLL_OVER, handleRoll);
         addEventListener(MouseEvent.ROLL_OUT, handleRoll);
@@ -166,11 +169,12 @@ class RadialItem extends Sprite
         g.lineStyle(1, 0);
         g.beginFill(0x0077cc);
 
+        var r :Number = _big ? RadialMenu.RADIUS : RadialMenu.RADIUS/2;
+
         if (_submenu != null) {
-            g.drawRoundRect(-RadialMenu.RADIUS, -RadialMenu.RADIUS, RadialMenu.RADIUS * 5,
-                RadialMenu.RADIUS * 2, RadialMenu.RADIUS * 2, RadialMenu.RADIUS * 2);
+            g.drawRoundRect(-r, -r, r * 5, r * 2, r * 2, r * 2);
         } else {
-            g.drawCircle(0, 0, RadialMenu.RADIUS);
+            g.drawCircle(0, 0, r);
         }
 
         g.endFill();
@@ -181,4 +185,6 @@ class RadialItem extends Sprite
     protected var _subitems :Array;
 
     protected var _submenu :CommandMenu;
+
+    protected var _big :Boolean;
 }
