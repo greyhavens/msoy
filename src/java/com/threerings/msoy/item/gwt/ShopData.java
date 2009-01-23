@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.gwt;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
@@ -15,10 +17,10 @@ public class ShopData
     public static final int TOP_ITEM_COUNT = 5;
 
     /** The top-rated avatars. */
-    public ListingCard[] topAvatars;
+    public List<ListingCard> topAvatars;
 
     /** The top-rated furniture. */
-    public ListingCard[] topFurniture;
+    public List<ListingCard> topFurniture;
 
     /** A featured pet. */
     public ListingCard featuredPet;

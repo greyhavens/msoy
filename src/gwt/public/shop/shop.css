@@ -178,11 +178,11 @@
 }
 
 .catalogPanel .pagedGrid .Header .TopLeft, .favoritesPanel .pagedGrid .Header .TopLeft {
-  background: #1D5884 url(/images/ui/grid_header_left.png) no-repeat left;
+  background: #0D496D url(/images/ui/grid_header_left.png) no-repeat left;
 }
 
 .catalogPanel .pagedGrid .Header .TopRight, .favoritesPanel .pagedGrid .Header .TopRight {
-  background: #1D5884 url(/images/ui/grid_header_right.png) no-repeat right;
+  background: #0D496D url(/images/ui/grid_header_right.png) no-repeat right;
 }
 
 .listingDetailPanel .shortThickOrangeButton {
@@ -255,12 +255,16 @@
 }
 
 .favoritesPanel {
-  background: #61A9CF url(/images/shop/background.png) repeat-x;
+  height: 100%;
 }
 
 .favoritesPanel .pagedGrid {
   margin-top: 15px;
   width: 570px;
+}
+
+.favoritesPanel .pagedGrid .miniNowLoadingWidget {
+  background-image: url(/images/ui/dot_bluematte.gif);
 }
 
 .nowLoadingWidget {

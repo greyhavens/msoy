@@ -252,7 +252,17 @@ public class ServerConfig
     }
 
     /**
-     * Returns the configuration of the AMQP messaging server.  If no messaging server is
+     * Returns one or more member ids whose favorited items should be displayed on the main shop
+     * page. Defaults to first ten member ids (existant or not) if none is configured.
+     */
+    public static int[] getShopFavoriteMemberIds ()
+    {
+        int[] defaultMemberIds = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        return config.getValue("shop_favorites_member_ids", defaultMemberIds);
+    }
+
+    /**
+     * Returns the configuration of the AMQP messaging server. If no messaging server is
      * configured, this will return null.
      */
     public static AMQPMessageConfig getAMQPMessageConfig ()

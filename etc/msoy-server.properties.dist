@@ -117,6 +117,11 @@ agents_address = "Whirled Agents" <msoy-agents@threerings.net>
 # default_game_group_id = 0
 
 #
+# Configures the member or members used for staff favorites
+
+# shop_favorites_member_ids = 1
+
+#
 # Defines the directory into which uploaded media will be stored (in addition
 # to S3, if that is enabled) and the URL from which media will be downloaded.
 # These URLs (but not the dir) *must* end in a slash.

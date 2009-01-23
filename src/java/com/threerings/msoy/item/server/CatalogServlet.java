@@ -12,6 +12,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
@@ -22,6 +23,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -75,28 +77,40 @@ public class CatalogServlet extends MsoyServiceServlet
     public ShopData loadShopData ()
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser();
         ShopData data = new ShopData();
 
-        // load up our top and featured items
-        data.topAvatars = loadTopItems(mrec, Item.AVATAR);
-        data.topFurniture = loadTopItems(mrec, Item.FURNITURE);
-        ListingCard[] pets = loadTopItems(mrec, Item.PET);
-        data.featuredPet = (pets.length > 0) ? RandomUtil.pickRandom(pets) : null;
-        ListingCard[] toys = loadTopItems(mrec, Item.TOY);
-        data.featuredToy = (toys.length > 0) ? RandomUtil.pickRandom(toys) : null;
+        // these members are our official 'favoriters' (no favoriting mature items!)
+        ArrayIntSet memberIds = new ArrayIntSet(ServerConfig.getShopFavoriteMemberIds());
+
+        // choose random TOP_ITEM_COUNT of TOP_ITEM_COUNT*2 recent favorite avatars & furni
+        List<ListingCard> avatars = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
+            memberIds, ShopData.TOP_ITEM_COUNT * 2, Item.AVATAR));
+        data.topAvatars = (avatars.size() <= ShopData.TOP_ITEM_COUNT) ? avatars
+            : CollectionUtil.selectRandomSubset(avatars, ShopData.TOP_ITEM_COUNT);
+        List<ListingCard> furniture = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
+            memberIds, ShopData.TOP_ITEM_COUNT * 2, Item.FURNITURE));
+        data.topFurniture = (furniture.size() <= ShopData.TOP_ITEM_COUNT) ? furniture
+            : CollectionUtil.selectRandomSubset(furniture, ShopData.TOP_ITEM_COUNT);
+
+        // choose random 1 of 5 recent favorite pets & toys
+        List<ListingCard> pets = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
+            memberIds, ShopData.TOP_ITEM_COUNT, Item.PET));
+        data.featuredPet = (pets.size() > 0) ? RandomUtil.pickRandom(pets) : null;
+        List<ListingCard> toys = _itemLogic.resolveFavorites(_faveRepo.loadRecentFavorites(
+            memberIds, ShopData.TOP_ITEM_COUNT, Item.TOY));
+        data.featuredToy = (toys.size() > 0) ? RandomUtil.pickRandom(toys) : null;
 
         // resolve the creator names for these listings
-        List<ListingCard> list = Lists.newArrayList();
-        CollectionUtil.addAll(list, data.topAvatars);
-        CollectionUtil.addAll(list, data.topFurniture);
+        List<ListingCard> allCards = Lists.newArrayList();
+        allCards.addAll(data.topAvatars);
+        allCards.addAll(data.topFurniture);
         if (data.featuredPet != null) {
-            list.add(data.featuredPet);
+            allCards.add(data.featuredPet);
         }
         if (data.featuredToy != null) {
-            list.add(data.featuredToy);
+            allCards.add(data.featuredToy);
         }
-        _itemLogic.resolveCardNames(list);
+        _itemLogic.resolveCardNames(allCards);
 
         return data;
     }

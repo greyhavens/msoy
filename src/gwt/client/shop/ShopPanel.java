@@ -3,6 +3,8 @@
 
 package client.shop;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Timer;
@@ -135,11 +137,11 @@ public class ShopPanel extends FlowPanel
         });
     }
 
-    protected Widget createTop (String icon, String title, ListingCard[] listings)
+    protected Widget createTop (String icon, String title, List<ListingCard> listings)
     {
         HeaderBox box = new HeaderBox("/images/shop/icon_" + icon + ".png", title);
-        for (int ii = 0; ii < listings.length; ii++) {
-            box.add(new TopListingBox(ii+1, listings[ii]));
+        for (int ii = 0; ii < listings.size(); ii++) {
+            box.add(new TopListingBox(ii + 1, listings.get(ii)));
         }
         return box.makeRoundBottom();
     }
