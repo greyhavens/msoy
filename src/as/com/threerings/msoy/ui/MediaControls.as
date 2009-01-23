@@ -26,6 +26,20 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.flash.media.MediaPlayer;
 import com.threerings.flash.media.MediaPlayerCodes;
 
+// NOTE:
+// One feature that was possibly desired was showing the media load progress.
+// This, in theory, shouldn't be hard, but in practice it was enough of a mess that
+// the feature was shelved.
+// - mp3 files: super straightfoward, a PROGRESS listener can be used.
+// - flv files: a timer can be set up to check the progress. However, it seems that the
+//              playhead percentage can exceed the loaded percentage, and that is
+//              very strange and disconcerting. I was going to smooth this out somehow, but....
+// - youtube  : here's where it all breaks down. We again have to poll for progress,
+//              but if the user seeks to position the player may decide to download
+//              a fresh chunk of data, starting the loadedBytes over at 0, and even
+//              after reaching the end never having all the bytes. There is no
+//              data given about where the "gap" is.
+// So: yeah, feature disabled.
 public class MediaControls extends Sprite
 {
     public static const WIDTH :int = 320;
