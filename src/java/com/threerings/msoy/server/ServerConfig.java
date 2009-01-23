@@ -14,7 +14,6 @@ import javax.sql.DataSource;
 
 import com.google.common.collect.Lists;
 
-import com.samskivert.depot.EHCacheConfig;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.DataSourceConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
@@ -270,24 +269,6 @@ public class ServerConfig
             config.getValue("messaging.server.realm", ""),
             config.getValue("messaging.server.heartbeat", 0),
             config.getValue("messaging.server.maxListenerThreads", 5));
-    }
-
-    /**
-     * Returns the configuration of the EHCache adapter.
-     */
-    public static EHCacheConfig getEHCacheConfig ()
-    {
-        return new EHCacheConfig(
-            config.getValue("depot.cache.elementsInMemory", 1000),
-            config.getValue("depot.cache.overflowToDisk", false),
-            config.getValue("depot.cache.timeToLiveSeconds", 600),
-            config.getValue("depot.cache.timeToIdleSeconds", 20),
-            config.getValue("depot.cache.distributed", true),
-            config.getValue("depot.cache.sendNewRecordsToPeers", false),
-            config.getValue("depot.cache.sendUpdatedRecordsToPeers", false),
-            config.getValue("depot.cache.invalidateUpdatedRecordsToPeers", true),
-            config.getValue("depot.cache.invalidateRemovedRecordsOnPeers", true),
-            config.getValue("depot.cache.replicationInterval", 500));
     }
 
     /** The pattern via which we obtain our node id from our name. */

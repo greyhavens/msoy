@@ -201,19 +201,3 @@ local_bureaus = true
 #
 # URL Whirled should send the user to when they need to go to billing
 billing_url = https://billing.dev.whirled.com/billing/
-
-#
-# Configuration parameters for EHCache, our database cache
-
-# depot.cache.elementsInMemory = 1000
-# depot.cache.overflowToDisk = false
-# depot.cache.timeToLiveSeconds = 600
-# depot.cache.timeToIdleSeconds = 20
-# depot.cache.distributed = true
-
-# these are only relevant for distributed caches
-# depot.cache.sendNewRecordsToPeers = false
-# depot.cache.sendUpdatedRecordsToPeers = false
-# depot.cache.invalidateUpdatedRecordsOnPeers = true
-# depot.cache.invalidateRemovedRecordsOnPeers = true
-# depot.cache.replicationInterval = 500
