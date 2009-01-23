@@ -19,4 +19,10 @@ public interface GameGameProvider extends InvocationProvider
      */
     void getTrophies (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
+
+    /**
+     * Handles a {@link GameGameService#removeDevelopmentTrophies} request.
+     */
+    void removeDevelopmentTrophies (ClientObject caller, int arg1, InvocationService.ConfirmListener arg2)
+        throws InvocationException;
 }

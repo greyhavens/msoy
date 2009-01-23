@@ -48,6 +48,15 @@ public class Game extends Item
     /** The tag used to identify items in this game's shop. */
     public var shopTag :String;
 
+    /**
+     * Returns true if the specified game is a developer's in-progress original game rather than
+     * one listed in the catalog.
+     */
+    public static function isDevelopmentVersion (gameId :int) :Boolean
+    {
+        return (gameId < 0);
+    }
+
     override public function getType () :int
     {
         return GAME;

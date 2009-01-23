@@ -1024,7 +1024,7 @@ public class GameGameRegistry
         }
 
         // TODO: load up trophy earned timestamps so that we can fill them in instead of just
-        // knowing if a trophy is earned or not; alas our database free method will be sulllied
+        // knowing if a trophy is earned or not; alas our database free method will be sullied
 
         final int fGameId = gameId;
         List<Trophy> trophies = Lists.transform(
@@ -1047,6 +1047,45 @@ public class GameGameRegistry
 
         log.info("Returning " + trophies.size() + " trophies for " + gameId + ".");
         lner.requestProcessed(trophies.toArray(new Trophy[trophies.size()]));
+    }
+
+    // from interface GameGameProvider
+    public void removeDevelopmentTrophies (ClientObject caller, final int gameId,
+                                           InvocationService.ConfirmListener lner)
+        throws InvocationException
+    {
+        final PlayerObject plobj = (PlayerObject)caller;
+        if (plobj.getMemberName().isGuest()) {
+            log.warning("Requested to remove development trophies from a guest", "gameId", gameId);
+            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+        }
+
+        _invoker.postUnit(new PersistingUnit("removeDevelopmentTrophies", lner) {
+            @Override public void invokePersistent() throws Exception {
+                _trophies = _trophyRepo.loadTrophies(gameId, plobj.getMemberId());
+                _trophyRepo.removeDevelopmentTrophies(gameId, plobj.getMemberId());
+            }
+
+            @Override public void handleSuccess() {
+                plobj.startTransaction();
+                try {
+                    for (TrophyRecord trec : _trophies) {
+                        plobj.removeFromGameContent(new GameContentOwnership(
+                            gameId, GameData.TROPHY_DATA, trec.ident));
+                    }
+                } finally {
+                    plobj.commitTransaction();
+                }
+                reportRequestProcessed();
+            }
+
+            @Override protected String getFailureMessage () {
+                return "Failed to remove in-development trophies [game=" + gameId +
+                    ", who=" + plobj.who() + "].";
+            }
+
+            protected List<TrophyRecord> _trophies;
+        });
     }
 
     protected GameContent assembleGameContent (int gameId)

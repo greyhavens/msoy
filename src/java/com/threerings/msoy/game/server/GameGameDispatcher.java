@@ -41,6 +41,12 @@ public class GameGameDispatcher extends InvocationDispatcher<GameGameMarshaller>
             );
             return;
 
+        case GameGameMarshaller.REMOVE_DEVELOPMENT_TROPHIES:
+            ((GameGameProvider)provider).removeDevelopmentTrophies(
+                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

@@ -16,4 +16,9 @@ public interface GameGameService extends InvocationService
      * the caller earned those trophies, if they've earned them.
      */
     void getTrophies (Client client, int gameId, ResultListener listener);
+
+    /**
+     * Removes the trophies for this player from this in-development game.
+     */
+    void removeDevelopmentTrophies (Client client, int gameId, ConfirmListener listener);
 }

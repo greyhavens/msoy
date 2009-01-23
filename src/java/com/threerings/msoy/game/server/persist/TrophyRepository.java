@@ -22,6 +22,10 @@ import com.samskivert.depot.operator.Conditionals.GreaterThan;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.item.data.all.Game;
+
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages the trophy persistent storage.
  */
@@ -77,6 +81,22 @@ public class TrophyRepository extends DepotRepository
             idents.add(orec.ident);
         }
         return idents;
+    }
+
+    /**
+     * Removes all of the in-development trophies for the given game and player.
+     */
+    public void removeDevelopmentTrophies (int gameId, int memberId)
+    {
+        if (!Game.isDevelopmentVersion(gameId)) {
+            log.warning("Attempted to remove trophies for a non-development game", "gameId",
+                gameId, "memberId", memberId);
+            return;
+        }
+
+        deleteAll(TrophyRecord.class, new Where(new And(
+            new Equals(TrophyRecord.MEMBER_ID, memberId),
+            new Equals(TrophyRecord.GAME_ID, gameId))));
     }
 
     /**

@@ -130,6 +130,10 @@ public class GameDirector extends BasicDirector
             menuData.push({label: Msgs.GAME.get("b.gameInvite"), enabled: false});
             menuData.push({label: Msgs.GAME.get("b.gameExit"), command: leaveAVRGame});
         }
+        if (Game.isDevelopmentVersion(_liaison.gameId) && !_wctx.getMyName().isGuest() &&
+            !(_liaison is AVRGameLiaison)) {
+            menuData.push({label: Msgs.GAME.get("b.gameRemoveTrophies"), command: removeTrophies});
+        }
 
         return true;
     }
@@ -180,6 +184,24 @@ public class GameDirector extends BasicDirector
     public function viewGameTrophies () :void
     {
         TrophyPanel.show(getGameContext(), getGameId(), getGameName());
+    }
+
+    /**
+     * Removes the trophies that this player has earned in an in-development game copy.
+     */
+    public function removeTrophies () :void
+    {
+        if (!Game.isDevelopmentVersion(_liaison.gameId)) {
+            log.warning("Asked to remove copies from a non-development game", "gameId", 
+                _liaison.gameId);
+            return;
+        }
+
+        var svc :GameGameService = 
+            getGameContext().getClient().requireService(GameGameService) as GameGameService;
+        svc.removeDevelopmentTrophies(getGameContext().getClient(), _liaison.gameId, 
+            getGameContext().getMsoyContext().confirmListener(
+            "m.trophies_removed", MsoyCodes.GAME_MSGS));
     }
 
     /**

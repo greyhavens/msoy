@@ -30,4 +30,17 @@ public class GameGameMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), listener3
         });
     }
+
+    /** The method id used to dispatch {@link #removeDevelopmentTrophies} requests. */
+    public static final int REMOVE_DEVELOPMENT_TROPHIES = 2;
+
+    // from interface GameGameService
+    public void removeDevelopmentTrophies (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, REMOVE_DEVELOPMENT_TROPHIES, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
 }

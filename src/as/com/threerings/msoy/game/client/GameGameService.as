@@ -5,6 +5,7 @@ package com.threerings.msoy.game.client {
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 
 /**
@@ -14,5 +15,8 @@ public interface GameGameService extends InvocationService
 {
     // from Java interface GameGameService
     function getTrophies (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+
+    // from Java interface GameGameService
+    function removeDevelopmentTrophies (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 }
 }
