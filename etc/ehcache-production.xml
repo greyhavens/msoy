@@ -411,6 +411,51 @@
             memoryStoreEvictionPolicy="LRU"
             />
 
+    <cache name="depotRecord"
+           maxElementsInMemory="100000"
+           overflowToDisk="false"
+           maxElementsOnDisk="0"
+           eternal="false"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LFU">
+        <cacheEventListenerFactory
+                class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+                properties="replicateAsynchronously=true, replicatePuts=false,
+                            replicateUpdates=false, replicateUpdatesViaCopy=false,
+                            replicateRemovals=true"/>
+    </cache>
+
+    <cache name="depotKeyset"
+           maxElementsInMemory="100000"
+           overflowToDisk="false"
+           maxElementsOnDisk="0"
+           eternal="false"
+           timeToIdleSeconds="30"
+           timeToLiveSeconds="60"
+           memoryStoreEvictionPolicy="LFU">
+        <cacheEventListenerFactory
+                class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+                properties="replicateAsynchronously=true, replicatePuts=false,
+                            replicateUpdates=false, replicateUpdatesViaCopy=false,
+                            replicateRemovals=true"/>
+    </cache>
+
+    <cache name="depotResult"
+           maxElementsInMemory="100000"
+           overflowToDisk="false"
+           maxElementsOnDisk="0"
+           eternal="false"
+           timeToIdleSeconds="30"
+           timeToLiveSeconds="60"
+           memoryStoreEvictionPolicy="LFU">
+        <cacheEventListenerFactory
+                class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+                properties="replicateAsynchronously=true, replicatePuts=false,
+                            replicateUpdates=false, replicateUpdatesViaCopy=false,
+                            replicateRemovals=true"/>
+    </cache>
+
     <!--
     Sample caches. Following are some example caches. Remove these before use.
     -->

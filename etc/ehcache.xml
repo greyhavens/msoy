@@ -304,6 +304,36 @@
             memoryStoreEvictionPolicy="LRU"
             />
 
+    <cache name="depotRecord"
+           maxElementsInMemory="100000"
+           overflowToDisk="false"
+           maxElementsOnDisk="0"
+           eternal="false"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LFU">
+    </cache>
+
+    <cache name="depotKeyset"
+           maxElementsInMemory="100000"
+           overflowToDisk="false"
+           maxElementsOnDisk="0"
+           eternal="false"
+           timeToIdleSeconds="30"
+           timeToLiveSeconds="60"
+           memoryStoreEvictionPolicy="LFU">
+    </cache>
+
+    <cache name="depotResult"
+           maxElementsInMemory="100000"
+           overflowToDisk="false"
+           maxElementsOnDisk="0"
+           eternal="false"
+           timeToIdleSeconds="30"
+           timeToLiveSeconds="60"
+           memoryStoreEvictionPolicy="LFU">
+    </cache>
+
     <!--
     Sample caches. Following are some example caches. Remove these before use.
     -->
