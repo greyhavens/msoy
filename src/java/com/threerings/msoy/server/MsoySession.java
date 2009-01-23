@@ -193,7 +193,7 @@ public class MsoySession extends WhirledSession
                     _memberRepo.noteSessionEnded(
                         memberId, activeMins, _runtime.server.humanityReassessment);
                     // save their experiences
-                    _memberLogic.saveExperiences(memberId, experiences);
+                    //_memberLogic.saveExperiences(memberId, experiences);
                     // save any modified avatar memories
                     if (memrecs != null) {
                         _memoryRepo.storeMemories(memrecs);

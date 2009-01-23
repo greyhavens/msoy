@@ -47,7 +47,7 @@ public class WorldControlBar extends ControlBar
     public var friendsBtn :CommandButton;
 
     /** Brings up the recent places grid. */
-    public var homePageGridBtn :CommandButton;
+    //public var homePageGridBtn :CommandButton;
 
    /** Handles the two party-related popups. */
     public var partyBtn :CommandButton;
@@ -128,11 +128,11 @@ public class WorldControlBar extends ControlBar
             return new FriendsListPanel(_wctx);
         }, friendsBtn));
 
-        homePageGridBtn = createButton("controlBarHomePageGridButton", "i.homePageGrid");
-        homePageGridBtn.toggle = true;
-        homePageGridBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
-            return new HomePageDialog(_wctx);
-        }, homePageGridBtn));
+        //homePageGridBtn = createButton("controlBarHomePageGridButton", "i.homePageGrid");
+        //homePageGridBtn.toggle = true;
+        //homePageGridBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+        //    return new HomePageDialog(_wctx);
+        //}, homePageGridBtn));
 
         partyBtn = createButton("controlBarPartyButton", "i.party");
         partyBtn.toggle = true;
@@ -144,7 +144,7 @@ public class WorldControlBar extends ControlBar
     override protected function checkControls (... ignored) :void
     {
         const isLoggedOn :Boolean = _ctx.getClient().isLoggedOn();
-        homePageGridBtn.enabled = isLoggedOn;
+        //homePageGridBtn.enabled = isLoggedOn;
         friendsBtn.enabled = isLoggedOn;
         partyBtn.enabled = isLoggedOn;
 
@@ -157,7 +157,7 @@ public class WorldControlBar extends ControlBar
         super.addControls();
 
         addButton(musicBtn, [ UI_ROOM, UI_AVRGAME ], VOLUME_PRIORITY);
-        addButton(homePageGridBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
+        //addButton(homePageGridBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
         addButton(friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
 
         addButton(hotZoneBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);

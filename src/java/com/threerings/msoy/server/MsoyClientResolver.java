@@ -251,10 +251,10 @@ public class MsoyClientResolver extends CrowdClientResolver
         memobj.visitorInfo = new VisitorInfo(member.visitorId, true);
 
         // Load up the member's experiences
-        resolutionStamps.add(System.currentTimeMillis() - startStamp);
-        enforceConnected();
-        memobj.experiences = new DSet<MemberExperience>(
-                _memberLogic.getExperiences(member.memberId));
+        //resolutionStamps.add(System.currentTimeMillis() - startStamp);
+        //enforceConnected();
+        //memobj.experiences = new DSet<MemberExperience>(
+        //        _memberLogic.getExperiences(member.memberId));
         
         log.info("Client resolution complete", "memberId", member.memberId,
             "timing", resolutionStamps);
