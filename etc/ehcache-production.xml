@@ -399,7 +399,7 @@
     The defaultCache has an implicit name "default" which is a reserved cache name.
     -->
     <defaultCache
-            maxElementsInMemory="100"
+            maxElementsInMemory="10000"
             eternal="false"
             timeToIdleSeconds="120"
             timeToLiveSeconds="120"
@@ -412,13 +412,13 @@
             />
 
     <cache name="depotRecord"
-           maxElementsInMemory="1500"
+           maxElementsInMemory="15000"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
            timeToIdleSeconds="300"
            timeToLiveSeconds="600"
-           memoryStoreEvictionPolicy="LFU">
+           memoryStoreEvictionPolicy="LRU">
         <cacheEventListenerFactory
                 class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
                 properties="replicateAsynchronously=true, replicatePuts=false,
@@ -427,13 +427,13 @@
     </cache>
 
     <cache name="depotKeyset"
-           maxElementsInMemory="500"
+           maxElementsInMemory="5000"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
            timeToIdleSeconds="30"
            timeToLiveSeconds="60"
-           memoryStoreEvictionPolicy="LFU">
+           memoryStoreEvictionPolicy="LRU">
         <cacheEventListenerFactory
                 class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
                 properties="replicateAsynchronously=true, replicatePuts=false,
@@ -442,13 +442,13 @@
     </cache>
 
     <cache name="depotResult"
-           maxElementsInMemory="10000"
+           maxElementsInMemory="1000"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
            timeToIdleSeconds="30"
            timeToLiveSeconds="60"
-           memoryStoreEvictionPolicy="LFU">
+           memoryStoreEvictionPolicy="LRU">
         <cacheEventListenerFactory
                 class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
                 properties="replicateAsynchronously=true, replicatePuts=false,

@@ -305,33 +305,33 @@
             />
 
     <cache name="depotRecord"
-           maxElementsInMemory="100000"
+           maxElementsInMemory="200"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
            timeToIdleSeconds="300"
            timeToLiveSeconds="600"
-           memoryStoreEvictionPolicy="LFU">
+           memoryStoreEvictionPolicy="LRU">
     </cache>
 
     <cache name="depotKeyset"
-           maxElementsInMemory="100000"
+           maxElementsInMemory="50"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
            timeToIdleSeconds="30"
            timeToLiveSeconds="60"
-           memoryStoreEvictionPolicy="LFU">
+           memoryStoreEvictionPolicy="LRU">
     </cache>
 
     <cache name="depotResult"
-           maxElementsInMemory="100000"
+           maxElementsInMemory="50"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
            timeToIdleSeconds="30"
            timeToLiveSeconds="60"
-           memoryStoreEvictionPolicy="LFU">
+           memoryStoreEvictionPolicy="LRU">
     </cache>
 
     <!--
