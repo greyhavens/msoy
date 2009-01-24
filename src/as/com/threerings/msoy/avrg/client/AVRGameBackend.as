@@ -250,6 +250,7 @@ public class AVRGameBackend extends ControlBackend
         o["locationToRoom_v1"] = locationToRoom_v1;
         o["roomToLocationAtDepth_v1"] = roomToLocationAtDepth_v1;
         o["roomToLocationAtHeight_v1"] = roomToLocationAtHeight_v1;
+        o["getRoomBounds_vRay"] = getRoomBounds_vRay; // Added: Ray Jan 23, 2009.
 
         // AgentSubControl
         o["agent_sendMessage_v1"] = agent_sendMessage_v1;
@@ -637,6 +638,13 @@ public class AVRGameBackend extends ControlBackend
         }
 
         return null;
+    }
+
+    // LocalSubControl
+    protected function getRoomBounds_vRay () :Array
+    {
+        var view :RoomView = _wctx.getPlaceView() as RoomView;
+        return (view != null) ? view.getRoomBounds() : null;
     }
 
     // AgentSubControl

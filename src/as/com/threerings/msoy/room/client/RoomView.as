@@ -246,6 +246,15 @@ public class RoomView extends Sprite
         }
     }
 
+    /**
+     * Get the w/h/d of the current room.
+     */
+    public function getRoomBounds () :Array
+    {
+        return [ _layout.metrics.sceneWidth, _layout.metrics.sceneHeight,
+           _layout.metrics.sceneDepth ];
+    }
+
     public function getMemories (ident :ItemIdent) :Object
     {
         return {};

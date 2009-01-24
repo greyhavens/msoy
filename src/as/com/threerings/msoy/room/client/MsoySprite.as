@@ -181,11 +181,7 @@ public class MsoySprite extends DataPackMediaContainer
      */
     public function getRoomBounds () :Array
     {
-        if (!(parent is RoomView)) {
-            return null;
-        }
-        var metrics :RoomMetrics = RoomView(parent).layout.metrics;
-        return [ metrics.sceneWidth, metrics.sceneHeight, metrics.sceneDepth];
+        return (parent is RoomView) ? RoomView(parent).getRoomBounds() : null;
     }
 
     /**
