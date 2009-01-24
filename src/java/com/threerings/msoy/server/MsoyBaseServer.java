@@ -11,7 +11,7 @@ import com.google.inject.Injector;
 import net.sf.ehcache.CacheManager;
 
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.depot.EHCacheAdapter;
+import com.samskivert.depot.OldEHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
 
 import com.threerings.presents.server.ReportManager;
@@ -57,7 +57,7 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // initialize our persistence context
         ConnectionProvider conprov = ServerConfig.createConnectionProvider();
-        _perCtx.init("msoy", conprov, new EHCacheAdapter(_cacheMgr));
+        _perCtx.init("msoy", conprov, new OldEHCacheAdapter(_cacheMgr));
 
         // initialize our depot repositories; running all of our schema and data migrations
         _perCtx.initializeRepositories(true);
