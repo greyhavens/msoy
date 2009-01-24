@@ -187,17 +187,26 @@ public class MsoySession extends WhirledSession
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
             _invoker.postUnit(new WriteOnlyUnit("sessionDidEnd:" + _memobj.memberName) {
                 @Override public void invokePersist () throws Exception {
+                    long startStamp = System.currentTimeMillis();
+                    List<Long> resolutionStamps = Lists.newArrayList();
+
                     // write out any modified stats
                     _statRepo.writeModified(memberId, stats.toArray(new Stat[stats.size()]));
+                    resolutionStamps.add(System.currentTimeMillis() - startStamp);
+
                     // increment their session and minutes online counters
                     _memberRepo.noteSessionEnded(
                         memberId, activeMins, _runtime.server.humanityReassessment);
+                    resolutionStamps.add(System.currentTimeMillis() - startStamp);
+
                     // save their experiences
                     //_memberLogic.saveExperiences(memberId, experiences);
                     // save any modified avatar memories
                     if (memrecs != null) {
                         _memoryRepo.storeMemories(memrecs);
+                        resolutionStamps.add(System.currentTimeMillis() - startStamp);
                     }
+                    log.info("Session persisted", "memberId", memberId, "timing", resolutionStamps);
                 }
             });
         }
