@@ -399,7 +399,7 @@
     The defaultCache has an implicit name "default" which is a reserved cache name.
     -->
     <defaultCache
-            maxElementsInMemory="10000"
+            maxElementsInMemory="100"
             eternal="false"
             timeToIdleSeconds="120"
             timeToLiveSeconds="120"
@@ -412,7 +412,7 @@
             />
 
     <cache name="depotRecord"
-           maxElementsInMemory="150000"
+           maxElementsInMemory="1500"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
@@ -427,7 +427,7 @@
     </cache>
 
     <cache name="depotKeyset"
-           maxElementsInMemory="50000"
+           maxElementsInMemory="500"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
