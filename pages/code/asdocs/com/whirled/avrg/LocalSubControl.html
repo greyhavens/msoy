@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getPaintableArea,getPartyInfo,locationToPaintable,locationToRoom,paintableToRoom,partyChanged_temp,roomToLocationAtDepth,roomToLocationAtHeight,roomToPaintable,setHitPointTester,setMobSpriteExporter" name="keywords">
+<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getPaintableArea,getPartyInfo,getRoomBounds,locationToPaintable,locationToRoom,paintableToRoom,partyChanged_temp,roomToLocationAtDepth,roomToLocationAtHeight,roomToPaintable,setHitPointTester,setMobSpriteExporter" name="keywords">
 <title>com.whirled.avrg.LocalSubControl</title>
 </head>
 <body>
@@ -122,6 +122,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getPartyInfo()">getPartyInfo</a>():Object</div>
 <div class="summaryTableDescription">
      TEMPORARY.</div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getRoomBounds()">getRoomBounds</a>():Array</div>
+<div class="summaryTableDescription">
+     Get the room bounds in "room pixels".</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -393,6 +401,27 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="getRoomBounds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getRoomBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getRoomBounds():Array</code><p>
+     Get the room bounds in "room pixels".
+     This will be a 3-element array corresponding to [ width, height, depth ].
+     These values are otreal pixels. Rather, if an avatar is 100 pixels wide
+     and a room is 700 pixels wide, then the avatar should be able to span 7 across, whether
+     it's in the front of the room or the rear.
+          TODO: This is not yet here. It's </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
 </tr>
 </table>
 </div>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="ResourceManager,com.whirled.contrib.simplegame.resource.ResourceManager,_completeCallback,_errorCallback,_loading,_pendingResources,_resourceClasses,_resources,g_instance,log,instance,isLoading,cancelLoad,createResource,getResource,isResourceLoaded,loadQueuedResources,onSingleResourceError,onSingleResourceLoaded,queueResourceLoad,registerResourceType,shutdown,unload,unloadAll" name="keywords">
+<meta content="ResourceManager,com.whirled.contrib.simplegame.resource.ResourceManager,_completeCallback,_ctx,_errorCallback,_loading,_pendingResources,_resourceClasses,_resources,log,isLoading,cancelLoad,createResource,getResource,isResourceLoaded,loadQueuedResources,onSingleResourceError,onSingleResourceLoaded,queueResourceLoad,registerResourceType,shutdown,unload,unloadAll" name="keywords">
 <title>com.whirled.contrib.simplegame.resource.ResourceManager</title>
 </head>
 <body>
@@ -51,11 +51,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#instance">instance</a> : <a href="../resource/ResourceManager.html">ResourceManager</a>
-<div class="summaryTableDescription">[static][read-only]</div>
-</td><td class="summaryTableOwnerCol">ResourceManager</td>
-</tr>
-<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isLoading">isLoading</a> : Boolean<div class="summaryTableDescription">[read-only]</div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
@@ -73,12 +68,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_errorCallback">_errorCallback</a> : Function<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_ctx">_ctx</a> : <a href="../../simplegame/SGContext.html">SGContext</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#g_instance">g_instance</a> : <a href="../resource/ResourceManager.html">ResourceManager</a>
-<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_errorCallback">_errorCallback</a> : Function<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
 <tr class="">
@@ -113,7 +108,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#ResourceManager()">ResourceManager</a>()</div>
+<a class="signatureLink" href="#ResourceManager()">ResourceManager</a>(ctx:<a href="../SGContext.html">SGContext</a>)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ResourceManager</td>
 </tr>
@@ -230,6 +225,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _completeCallback:Function</code>
 </div>
+<a name="_ctx"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_ctx</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _ctx:<a href="../../simplegame/SGContext.html">SGContext</a></code>
+</div>
 <a name="_errorCallback"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -238,27 +242,6 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _errorCallback:Function</code>
-</div>
-<a name="g_instance"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">g_instance</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected static var g_instance:<a href="../resource/ResourceManager.html">ResourceManager</a></code>
-</div>
-<a name="instance"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">instance</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>instance:<a href="../resource/ResourceManager.html">ResourceManager</a></code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
-<br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;public static function get instance():<a href="../resource/ResourceManager.html">ResourceManager</a></code>
-<br>
 </div>
 <a name="isLoading"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -326,7 +309,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function ResourceManager()</code>
+<code>public function ResourceManager(ctx:<a href="../SGContext.html">SGContext</a>)</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ctx</span>:<a href="../SGContext.html">SGContext</a></code></td>
+</tr>
+</table>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>

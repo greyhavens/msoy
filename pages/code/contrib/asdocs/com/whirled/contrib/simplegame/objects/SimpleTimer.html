@@ -62,6 +62,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="hideInheritedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../SimObject.html#_ctx">_ctx</a> : <a href="../../simplegame/SGContext.html">SGContext</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
+</tr>
+<tr class="hideInheritedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../SimObject.html#ctx">ctx</a> : <a href="../../simplegame/SGContext.html">SGContext</a>
+<div class="summaryTableDescription">
+     Returns the SGContext associated with this SimObject.</div>
+</td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
+</tr>
+<tr class="hideInheritedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../SimObject.html#db">db</a> : <a href="../../simplegame/ObjectDB.html">ObjectDB</a>
 <div class="summaryTableDescription">
      Returns the ObjectDB that this object is contained in.</div>
@@ -211,7 +222,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getTimeLeft()">getTimeLeft</a>(timerName:String):Number</div>
+<a class="signatureLink" href="#getTimeLeft()">getTimeLeft</a>(mainLoop:<a href="../MainLoop.html">MainLoop</a>, timerName:String):Number</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SimpleTimer</td>
 </tr>
@@ -440,8 +451,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getTimeLeft(timerName:String):Number</code><span class="label">Parameters</span>
+<code>public static function getTimeLeft(mainLoop:<a href="../MainLoop.html">MainLoop</a>, timerName:String):Number</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">mainLoop</span>:<a href="../MainLoop.html">MainLoop</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">timerName</span>:String</code></td>
 </tr>

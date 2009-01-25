@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="SwfResource,com.whirled.contrib.simplegame.resource.SwfResource,_completeCallback,_errorCallback,_loadParams,_loaded,_loader,_mcCache,_resourceName,displayRoot,resourceName,getBitmapData,getCache,getClass,getFunction,getSwfDisplayRoot,getSymbol,hasSymbol,instantiateButton,instantiateMovieClip,load,onError,onInit,releaseMovieClip,unload,get" name="keywords">
+<meta content="SwfResource,com.whirled.contrib.simplegame.resource.SwfResource,_completeCallback,_errorCallback,_loadParams,_loaded,_loader,_mcCache,_resourceName,displayRoot,resourceName,getBitmapData,getCache,getClass,getFunction,getSwf,getSwfDisplayRoot,getSymbol,hasSymbol,instantiateButton,instantiateMovieClip,load,onError,onInit,releaseMovieClip,unload" name="keywords">
 <title>com.whirled.contrib.simplegame.resource.SwfResource</title>
 </head>
 <body>
@@ -117,15 +117,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#get()">get</a>(resourceName:String):<a href="../resource/SwfResource.html">SwfResource</a>
-</div>
-<div class="summaryTableDescription">[static]</div>
-</td><td class="summaryTableOwnerCol">SwfResource</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#getBitmapData()">getBitmapData</a>(resourceName:String, className:String, width:int, height:int):BitmapData</div>
+<a class="signatureLink" href="#getBitmapData()">getBitmapData</a>(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String, className:String, width:int, height:int):BitmapData</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
@@ -139,7 +131,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getSwfDisplayRoot()">getSwfDisplayRoot</a>(resourceName:String):DisplayObject</div>
+<a class="signatureLink" href="#getSwf()">getSwf</a>(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String):<a href="../resource/SwfResource.html">SwfResource</a>
+</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">SwfResource</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getSwfDisplayRoot()">getSwfDisplayRoot</a>(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String):DisplayObject</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
@@ -160,14 +160,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#instantiateButton()">instantiateButton</a>(resourceName:String, className:String):SimpleButton</div>
+<a class="signatureLink" href="#instantiateButton()">instantiateButton</a>(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String, className:String):SimpleButton</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#instantiateMovieClip()">instantiateMovieClip</a>(resourceName:String, className:String, disableMouseInteraction:Boolean = false, fromCache:Boolean = false):MovieClip</div>
+<a class="signatureLink" href="#instantiateMovieClip()">instantiateMovieClip</a>(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String, className:String, disableMouseInteraction:Boolean = false, fromCache:Boolean = false):MovieClip</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
@@ -211,7 +211,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getClass()">getClass</a>(resourceName:String, className:String):Class</div>
+<a class="signatureLink" href="#getClass()">getClass</a>(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String, className:String):Class</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SwfResource</td>
 </tr>
@@ -349,36 +349,21 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="get()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">get</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public static function get(resourceName:String):<a href="../resource/SwfResource.html">SwfResource</a></code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">resourceName</span>:String</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code><a href="../resource/SwfResource.html">SwfResource</a></code></td>
-</tr>
-</table>
-</div>
 <a name="getBitmapData()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">getBitmapData</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">getBitmapData</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getBitmapData(resourceName:String, className:String, width:int, height:int):BitmapData</code><span class="label">Parameters</span>
+<code>public static function getBitmapData(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String, className:String, width:int, height:int):BitmapData</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rsrcs</span>:<a href="ResourceManager.html">ResourceManager</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">resourceName</span>:String</code></td>
 </tr>
@@ -437,8 +422,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static function getClass(resourceName:String, className:String):Class</code><span class="label">Parameters</span>
+<code>protected static function getClass(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String, className:String):Class</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rsrcs</span>:<a href="ResourceManager.html">ResourceManager</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">resourceName</span>:String</code></td>
 </tr>
@@ -478,6 +469,33 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getSwf()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getSwf</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getSwf(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String):<a href="../resource/SwfResource.html">SwfResource</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rsrcs</span>:<a href="ResourceManager.html">ResourceManager</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">resourceName</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../resource/SwfResource.html">SwfResource</a></code></td>
+</tr>
+</table>
+</div>
 <a name="getSwfDisplayRoot()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -485,8 +503,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getSwfDisplayRoot(resourceName:String):DisplayObject</code><span class="label">Parameters</span>
+<code>public static function getSwfDisplayRoot(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String):DisplayObject</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rsrcs</span>:<a href="ResourceManager.html">ResourceManager</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">resourceName</span>:String</code></td>
 </tr>
@@ -548,8 +572,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function instantiateButton(resourceName:String, className:String):SimpleButton</code><span class="label">Parameters</span>
+<code>public static function instantiateButton(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String, className:String):SimpleButton</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rsrcs</span>:<a href="ResourceManager.html">ResourceManager</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">resourceName</span>:String</code></td>
 </tr>
@@ -575,8 +605,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function instantiateMovieClip(resourceName:String, className:String, disableMouseInteraction:Boolean = false, fromCache:Boolean = false):MovieClip</code><span class="label">Parameters</span>
+<code>public static function instantiateMovieClip(rsrcs:<a href="ResourceManager.html">ResourceManager</a>, resourceName:String, className:String, disableMouseInteraction:Boolean = false, fromCache:Boolean = false):MovieClip</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">rsrcs</span>:<a href="ResourceManager.html">ResourceManager</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">resourceName</span>:String</code></td>
 </tr>

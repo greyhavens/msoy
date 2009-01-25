@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="SimpleActorBounds,com.whirled.contrib.platformer.board.SimpleActorBounds,ACTOR_BOUND,DEBUG,MIN_ATTACH_DIST,fcCalls,lines,mlines,collidedWith,crossers,didCross,findColliders,genMovementBounds,getBottomLine,getBoundLines,getMovementBoundLines,inYBounds,isContained,isStuck,log,move,simpleCollide,simpleCollideLines,translate,updateBounds" name="keywords">
+<meta content="SimpleActorBounds,com.whirled.contrib.platformer.board.SimpleActorBounds,ACTOR_BOUND,DEBUG,MIN_ATTACH_DIST,_lines,_mlines,fcCalls,collidedWith,crossers,didCross,findColliders,genMovementBounds,getBottomLine,getBoundLines,getMovementBoundLines,inYBounds,isContained,isStuck,log,move,simpleCollide,simpleCollideLines,translate,updateBounds" name="keywords">
 <title>com.whirled.contrib.platformer.board.SimpleActorBounds</title>
 </head>
 <body>
@@ -85,14 +85,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#fcCalls">fcCalls</a> : int = 0<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">SimpleActorBounds</td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#lines">lines</a> : Array<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">SimpleActorBounds</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#mlines">mlines</a> : Array = null<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">SimpleActorBounds</td>
-</tr>
 </table>
 </div>
 <a name="protectedPropertySummary"></a>
@@ -106,7 +98,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a onclick="javascript:setInheritedVisible(true,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Properties</a>
 </div>
 </div>
-<table id="summaryTableProtectedProperty" class="summaryTable hideInheritedProtectedProperty" cellpadding="3" cellspacing="0">
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
@@ -114,6 +106,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="DynamicBounds.html#_collider">_collider</a> : <a href="../board/Collider.html">Collider</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="DynamicBounds.html">DynamicBounds</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_lines">_lines</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">SimpleActorBounds</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mlines">_mlines</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">SimpleActorBounds</td>
 </tr>
 </table>
 </div>
@@ -389,23 +389,23 @@ showHideInherited();
 <div class="detailBody">
 <code>public static var fcCalls:int = 0</code>
 </div>
-<a name="lines"></a>
+<a name="_lines"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">lines</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_lines</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public var lines:Array</code>
+<code>protected var _lines:Array</code>
 </div>
-<a name="mlines"></a>
+<a name="_mlines"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">mlines</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_mlines</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public var mlines:Array = null</code>
+<code>protected var _mlines:Array</code>
 </div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>

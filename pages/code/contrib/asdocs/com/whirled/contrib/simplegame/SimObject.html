@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="SimObject,com.whirled.contrib.simplegame.SimObject,_anonymousTasks,_events,_namedTasks,_parentDB,_ref,_updatingTasks,db,isLiveObject,objectName,ref,addNamedTask,addTask,addedToDB,addedToDBInternal,destroySelf,destroyed,destroyedInternal,getObjectGroup,hasTasks,hasTasksNamed,receiveMessage,receiveMessageInternal,registerListener,registerOneShotCallback,removeAllTasks,removeNamedTasks,removedFromDB,removedFromDBInternal,unregisterListener,update,updateInternal" name="keywords">
+<meta content="SimObject,com.whirled.contrib.simplegame.SimObject,_anonymousTasks,_ctx,_events,_namedTasks,_parentDB,_ref,_updatingTasks,ctx,db,isLiveObject,objectName,ref,addNamedTask,addTask,addedToDB,addedToDBInternal,destroySelf,destroyed,destroyedInternal,getObjectGroup,hasTasks,hasTasksNamed,receiveMessage,receiveMessageInternal,registerListener,registerOneShotCallback,removeAllTasks,removeNamedTasks,removedFromDB,removedFromDBInternal,unregisterListener,update,updateInternal" name="keywords">
 <title>com.whirled.contrib.simplegame.SimObject</title>
 </head>
 <body>
@@ -55,6 +55,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_ctx">_ctx</a> : <a href="../simplegame/SGContext.html">SGContext</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">SimObject</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ctx">ctx</a> : <a href="../simplegame/SGContext.html">SGContext</a>
+<div class="summaryTableDescription">[read-only]
+     Returns the SGContext associated with this SimObject.</div>
+</td><td class="summaryTableOwnerCol">SimObject</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#db">db</a> : <a href="../simplegame/ObjectDB.html">ObjectDB</a>
@@ -310,6 +321,29 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _anonymousTasks:<a href="tasks/ParallelTask.html">ParallelTask</a></code>
 </div>
+<a name="_ctx"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_ctx</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var _ctx:<a href="../simplegame/SGContext.html">SGContext</a></code>
+</div>
+<a name="ctx"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ctx</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>ctx:<a href="../simplegame/SGContext.html">SGContext</a></code>&nbsp;&nbsp;[read-only]<p>
+     Returns the SGContext associated with this SimObject.
+     </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get ctx():<a href="../simplegame/SGContext.html">SGContext</a></code>
+<br>
+</div>
 <a name="db"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -520,7 +554,8 @@ showHideInherited();
          switch (groupNum) {
          case 0: return "Group0";
          case 1: return "Group1";
-         default: return super.getObjectGroup(groupNum - 2); // 2 is the number of groups this class defines
+         // 2 is the number of groups this class defines
+         default: return super.getObjectGroup(groupNum - 2);
          }
      }
      </p><span class="label">Parameters</span>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="BaseDataPack,com.whirled.BaseDataPack,extractStringValue,getArray,getBoolean,getColor,getData,getFile,getFileAsString,getFileAsXML,getInt,getNumber,getPoint,getRectangle,getString,isComplete,parseValueFromString" name="keywords">
+<meta content="BaseDataPack,com.whirled.BaseDataPack,extractStringValue,getArray,getBoolean,getColor,getData,getDatum,getFile,getFileAsString,getFileAsXML,getInt,getNumber,getPoint,getRectangle,getString,isComplete,parseValueFromString" name="keywords">
 <title>com.whirled.BaseDataPack</title>
 </head>
 <body>
@@ -191,6 +191,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#getDatum()">getDatum</a>(list:XMLList, name:String):XML</div>
+<div class="summaryTableDescription">
+     Fucking hell.</div>
+</td><td class="summaryTableOwnerCol">BaseDataPack</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#parseValueFromString()">parseValueFromString</a>(string:String, type:String):Object</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BaseDataPack</td>
@@ -365,6 +373,37 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>*</code></td>
+</tr>
+</table>
+</div>
+<a name="getDatum()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getDatum</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function getDatum(list:XMLList, name:String):XML</code><p>
+     Fucking hell.
+          var datum :XML = getDatum(_metadata..data, value);
+     This should be:
+     var datum :XML = _metadata..data.(</p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">list</span>:XMLList</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>XML</code></td>
 </tr>
 </table>
 </div>

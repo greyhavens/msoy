@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="ObjectDB,com.whirled.contrib.simplegame.ObjectDB,_events,_groupedObjects,_listHead,_namedObjects,_objectCount,_objectsPendingRemoval,objectCount,addObject,beginUpdate,broadcastMessage,destroyObject,destroyObjectNamed,destroyObjectsInGroup,endUpdate,finalizeObjectRemoval,getObjectNamed,getObjectRefsInGroup,getObjectsInGroup,registerListener,registerOneShotCallback,sendMessageTo,sendMessageToGroup,sendMessageToNamedObject,shutdown,unregisterListener,update" name="keywords">
+<meta content="ObjectDB,com.whirled.contrib.simplegame.ObjectDB,_ctx,_events,_groupedObjects,_listHead,_namedObjects,_objectCount,_objectsPendingRemoval,ctx,objectCount,addObject,beginUpdate,broadcastMessage,destroyObject,destroyObjectNamed,destroyObjectsInGroup,endUpdate,finalizeObjectRemoval,getObjectNamed,getObjectRefsInGroup,getObjectsInGroup,registerListener,registerOneShotCallback,sendMessageTo,sendMessageToGroup,sendMessageToNamedObject,shutdown,unregisterListener,update" name="keywords">
 <title>com.whirled.contrib.simplegame.ObjectDB</title>
 </head>
 <body>
@@ -38,6 +38,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class ObjectDB</td>
 </tr>
 <tr>
+<td class="classHeaderTableLabel">Implements</td><td><a href="Updatable.html">Updatable</a></td>
+</tr>
+<tr>
 <td class="classHeaderTableLabel">Subclasses</td><td><a href="../simplegame/AppMode.html">AppMode</a></td>
 </tr>
 </table>
@@ -54,7 +57,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#objectCount">objectCount</a> : uint<div class="summaryTableDescription">[read-only]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_ctx">_ctx</a> : <a href="../simplegame/SGContext.html">SGContext</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ctx">ctx</a> : <a href="../simplegame/SGContext.html">SGContext</a>
+<div class="summaryTableDescription">[read-only] Returns the SGContext associated with this ObjectDB.</div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#objectCount">objectCount</a> : uint<div class="summaryTableDescription">[read-only] Returns the number of live SimObjects in this ObjectDB.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 </table>
@@ -261,10 +274,31 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="_ctx"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_ctx</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var _ctx:<a href="../simplegame/SGContext.html">SGContext</a></code>
+</div>
+<a name="ctx"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ctx</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>ctx:<a href="../simplegame/SGContext.html">SGContext</a></code>&nbsp;&nbsp;[read-only]<p> Returns the SGContext associated with this ObjectDB. </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get ctx():<a href="../simplegame/SGContext.html">SGContext</a></code>
+<br>
+</div>
 <a name="_events"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_events</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_events</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -311,7 +345,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>objectCount:uint</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>objectCount:uint</code>&nbsp;&nbsp;[read-only]<p> Returns the number of live SimObjects in this ObjectDB. </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get objectCount():uint</code>
 <br>
