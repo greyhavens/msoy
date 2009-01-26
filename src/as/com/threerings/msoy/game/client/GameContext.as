@@ -35,6 +35,11 @@ public interface GameContext extends ParlorContext
     function showGameInstructions () :void;
 
     /**
+     * Requests that we display the game's lobby. 
+     */
+    function showGameLobby (multiplayer :Boolean) :void;
+    
+    /**
      * Requests that we open the appropriate area of the game's shop.
      */
     function showGameShop (itemType :int, catalogId :int = 0) :void;

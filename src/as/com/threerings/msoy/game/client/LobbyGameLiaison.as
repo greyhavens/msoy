@@ -90,14 +90,13 @@ public class LobbyGameLiaison extends GameLiaison
     }
 
     /**
-     * Displays the lobby for the game for which we liaise. If the lobby is already showing, this
-     * is a NOOP.
+     * Displays the lobby for the game for which we liaise, on top of the existing view. 
+     * If the lobby is already showing, this is a NOOP.
      */
-    public function showLobby () :void
+    public function showLobby (mode :int = LobbyCodes.SHOW_LOBBY_ANY) :void
     {
         if (_lobby == null) {
-            _lobby = new LobbyController(
-                _gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared, playNow, lobbyLoaded, false);
+            _lobby = new LobbyController(_gctx, mode, lobbyCleared, playNow, lobbyLoaded, false);
             joinLobby();
         } // otherwise it's already showing
     }
@@ -202,17 +201,18 @@ public class LobbyGameLiaison extends GameLiaison
         switch (_mode) {
         case LobbyCodes.JOIN_PLAYER:
             joinPlayer(_playerIdGame);
-            _mode = LobbyCodes.SHOW_LOBBY; // in case we end up back here after the game
+            _mode = LobbyCodes.SHOW_LOBBY_ANY; // in case we end up back here after the game
             break;
 
         case LobbyCodes.PLAY_NOW_SINGLE:
         case LobbyCodes.PLAY_NOW_ANYONE:
             playNow(_mode);
-            _mode = LobbyCodes.SHOW_LOBBY; // in case we end up back here after the game
+            _mode = LobbyCodes.SHOW_LOBBY_ANY; // in case we end up back here after the game
             break;
 
         default:
-        case LobbyCodes.SHOW_LOBBY:
+        case LobbyCodes.SHOW_LOBBY_ANY:
+        case LobbyCodes.SHOW_LOBBY_MULTIPLAYER:
             joinLobby();
             break;
         }

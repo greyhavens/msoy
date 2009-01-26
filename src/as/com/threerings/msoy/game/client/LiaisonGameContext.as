@@ -124,6 +124,12 @@ public class LiaisonGameContext
         _wctx.getGameDirector().backToWhirled(showLobby);
     }
 
+    // from GameContext 
+    public function showGameLobby (multiplayer :Boolean) :void
+    {
+        _wctx.getGameDirector().displayCurrentGameLobby(multiplayer);
+    }
+    
     // from GameContext
     public function showGameInstructions () :void
     {

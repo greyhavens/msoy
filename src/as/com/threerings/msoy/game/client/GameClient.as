@@ -134,19 +134,25 @@ class GameContextImpl extends MsoyContext
     // from GameContext
     public function showGameInstructions () :void
     {
-    	return; // TODO
+        return; // TODO
+    }
+
+    // from GameContext
+    public function showGameLobby (multiplayer :Boolean) :void
+    {
+        return; // TODO
     }
 
     // from GameContext
     public function showGameShop (itemType :int, catalogId :int = 0) :void
     {
-    	return; // TODO
+        return; // TODO
     }
 
     // from GameContext
     public function showTrophies () :void
     {
-    	return; // TODO
+        return; // TODO
     }
 
     // from GameContext

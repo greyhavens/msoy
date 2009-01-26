@@ -19,5 +19,5 @@ public interface LobbyCodes extends InvocationCodes
     public static final int PLAY_NOW_ANYONE = 1;
 
     /** Indicates that we should start a single player game if that's the only option. */
-    public static final int PLAY_NOW_IF_SINGLE = 4;
+    public static final int PLAY_NOW_IF_SINGLE = 2;
 }

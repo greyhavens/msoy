@@ -155,11 +155,34 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison == null) {
             // create our new liaison, which will resolve the lobby and do all the business
-            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.SHOW_LOBBY);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.SHOW_LOBBY_ANY);
             _liaison.start(ghost, gport);
         }
     }
-
+    
+    /**
+     * Requests that the lobby for the current game be displayed. Returns true
+     * when successful, or false if there is no existing game or existing lobby 
+     * (eg. the game is an AVRG) or other problems were encountered.
+     * 
+     * @param multiplayer When true, and the game supports multiplayer, it will
+     * only show multiplayer table options (create table or join existing ones).
+     * Otherwise it will show a generic lobby.
+     */
+    public function displayCurrentGameLobby (multiplayer :Boolean) :Boolean
+    {
+        log.info("Display current game's lobby", "gameId", getGameId());
+        if (_liaison is LobbyGameLiaison) {
+            const type :int = multiplayer ? 
+                LobbyCodes.SHOW_LOBBY_MULTIPLAYER : LobbyCodes.SHOW_LOBBY_ANY;
+                
+            LobbyGameLiaison(_liaison).showLobby(type);
+            return true;
+        }
+        
+        return false;
+    }
+    
     /**
      * Displays the instructions page for the currently active game.
      */

@@ -63,7 +63,7 @@ public class GameController extends MsoyController
     protected function gotLobbyOid (lobbyOid :int) :void
     {
         // this will create a panel and add it to the side panel on the top level
-        var ctrl :LobbyController = new LobbyController(_gctx, LobbyCodes.SHOW_LOBBY,
+        var ctrl :LobbyController = new LobbyController(_gctx, LobbyCodes.SHOW_LOBBY_ANY,
             lobbyCleared, playNow, lobbyLoaded, true);
         ctrl.enterLobby(lobbyOid);
     }

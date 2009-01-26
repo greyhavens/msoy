@@ -40,6 +40,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.client.MsoyPlaceView;
+import com.whirled.game.data.MatchConfig;
 
 public class LobbyController extends Controller
     implements Subscriber, SeatednessObserver
@@ -382,9 +383,16 @@ public class LobbyController extends Controller
      */
     public function getStartMode (noCreate :Boolean = false) :int
     {
+        const match :MatchConfig = _lobj.gameDef.match;
+        const partyGame :Boolean = (match.getMatchType() == GameConfig.PARTY);
+        const multiplayerSupported :Boolean = (match.getMaximumPlayers() > 1);
+        const multiplayerRequired :Boolean = (match.getMinimumPlayers() > 1);
+         
+        const lobbyMultiRequested :Boolean = 
+            (multiplayerSupported && _mode == LobbyCodes.SHOW_LOBBY_MULTIPLAYER); 
+         
         // if we are a party game or multiplayer only...
-        if (_lobj.gameDef.match.getMatchType() == GameConfig.PARTY ||
-            (_lobj.gameDef.match.getMinimumPlayers() > 1)) {
+        if (partyGame || multiplayerRequired || lobbyMultiRequested) {
             // either go to the matchmaking panel or right into create if there is nothing to show
             // on the matchmaking panel
             return (haveActionableTables() || noCreate) ? MODE_MATCH : MODE_CREATE;
@@ -411,7 +419,7 @@ public class LobbyController extends Controller
 
         // replace the current view with the game's splash screen
         setGameView(_lobj.game);
-		
+        
         // set up our starting panel mode
         _panel.setMode(getStartMode());
 

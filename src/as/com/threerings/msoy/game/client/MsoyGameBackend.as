@@ -103,6 +103,12 @@ public class MsoyGameBackend extends WhirledGameBackend
     }
 
     // from WhirledGameBackend
+    override protected function showGameLobby_v1 (multiplayer :Boolean) :void
+    {
+        (_ctx as GameContext).showGameLobby(multiplayer);
+    }    
+    
+    // from WhirledGameBackend
     override protected function showGameShop_v1 (itemType :String, catalogId :int = 0) :void
     {
         // hide the integer item codes from the sdk
