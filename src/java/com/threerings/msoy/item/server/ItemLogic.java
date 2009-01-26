@@ -595,7 +595,8 @@ public class ItemLogic
         frec.kind = (byte)kind.ordinal();
         frec.memberId = memberId;
         frec.itemType = ident.type;
-        frec.itemId = ident.itemId;
+        // if we're being asked to flag a clone, instead make it refer to the original
+        frec.itemId = (item.sourceId == 0) ? item.itemId : item.sourceId;
         frec.timestamp = new Timestamp(System.currentTimeMillis());
         try {
             _itemFlagRepo.addFlag(frec);
