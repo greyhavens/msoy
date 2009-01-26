@@ -28,7 +28,6 @@ import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.persist.CommentRecord;
 import com.threerings.msoy.comment.server.persist.CommentRepository;
-import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
@@ -156,13 +155,6 @@ public class CommentServlet extends MsoyServiceServlet
             } catch (DatabaseException de) {
                 log.warning("Unable to load comment target item", "type", etype, "id", eid, de);
             }
-        }
-
-        // if this is a comment on an item, update the commenter's stat
-        if (etype <= Comment.TYPE_ITEM_MAX && etype >= Comment.TYPE_ITEM_MIN &&
-            ownerId != mrec.memberId) {
-            // update the member's ITEM_COMMENTS stat
-            _statLogic.incrementStat(mrec.memberId, StatType.ITEM_COMMENTS, 1);
         }
 
         // notify the item creator that a comment was made

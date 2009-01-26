@@ -187,6 +187,14 @@ public class MeServlet extends MsoyServiceServlet
             Sets.union(Sets.newHashSet(Lists.transform(_badgeRepo.loadEarnedBadges(memberId),
                                                        new InProgressFilter(data.nextBadges))),
                        Sets.newHashSet(data.nextBadges));
+
+        // filter out the OUTSPOKEN badge for display
+        badgeUnion = Iterables.filter(badgeUnion, new Predicate<Badge>() {
+            public boolean apply (Badge badge) {
+                return BadgeType.getType(badge.badgeCode) != BadgeType.OUTSPOKEN;
+            }
+        });
+            
         for (StampCategory category : StampCategory.values()) {
             data.stamps.put(category, Lists.newArrayList(
                                 Iterables.filter(badgeUnion, new FilterByCategory(category))));
