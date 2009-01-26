@@ -50,7 +50,7 @@ public abstract class CatalogRecord extends PersistentRecord
     public static final ColumnExp FAVORITE_COUNT = colexp(_R, "favoriteCount");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 12;
+    public static final int SCHEMA_VERSION = 13;
 
     /** Converts this record to a runtime record. See {@link #toListingCard} for caveats.  */
     public static final Function<CatalogRecord,ListingCard> TO_CARD =
@@ -83,7 +83,6 @@ public abstract class CatalogRecord extends PersistentRecord
     public int cost;
 
     /** The pricing of this item; See {@link CatalogListing#pricing}. */
-    @Index(name="pricingIndex")
     public int pricing;
 
     /** The number of unit sales after which to adjust the price or delist this item. */

@@ -140,6 +140,10 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // drop the flagged column
         _ctx.registerMigration(getItemClass(), new SchemaMigration.Drop(18000, "flagged"));
+        
+        // drop useless index
+        _ctx.registerMigration(getCatalogClass(),
+            new SchemaMigration.DropIndex(13, "pricingIndex"));
     }
 
     /**
