@@ -11,6 +11,7 @@ import com.google.inject.Injector;
 import net.sf.ehcache.CacheManager;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.util.Invoker;
 import com.samskivert.depot.OldEHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
 
@@ -22,6 +23,7 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
 
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.server.persist.BatchInvoker;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
@@ -39,6 +41,9 @@ public abstract class MsoyBaseServer extends WhirledServer
             // server is ready to do database operations; not initializing it now ensures that no
             // one sneaks any database manipulations into the dependency resolution phase)
             bind(PersistenceContext.class).toInstance(new PersistenceContext());
+
+            // bind the auth invoker
+            bind(Invoker.class).annotatedWith(BatchInvoker.class).to(MsoyBatchInvoker.class);
         }
     }
 
@@ -54,6 +59,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         _eventLog.init(getIdent());
 
         super.init(injector);
+        
+        // start the batch invoker thread
+        _batchInvoker.start();
 
         // initialize our persistence context
         ConnectionProvider conprov = ServerConfig.createConnectionProvider();
@@ -95,6 +103,9 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // and shutdown our event logger now that everything else is done shutting down
         _eventLog.shutdown();
+        
+        // have our batch invoker shut down once its queued-up units are done with
+        _batchInvoker.shutdown();
     }
 
     /**
@@ -127,6 +138,9 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Manages our bureau launchers. */
     @Inject protected BureauManager _bureauMgr;
 
+    /** The batch invoker thread. */
+    @Inject protected MsoyBatchInvoker _batchInvoker;
+    
     /** This is needed to ensure that the StatType enum's static initializer runs before anything
      * else in the server that might rely on stats runs. */
     protected static final StatType STAT_TRIGGER = StatType.UNUSED;

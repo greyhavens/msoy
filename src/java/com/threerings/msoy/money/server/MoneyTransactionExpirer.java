@@ -27,13 +27,13 @@ public class MoneyTransactionExpirer
      * Starts the expirer.  By default, it will use a single-threaded scheduled executor,
      * and check once every hour for coins history records that are at least 10 days old.
      */
-    public MoneyTransactionExpirer (MoneyRepository repo, Invoker invoker, ShutdownManager sm)
+    public MoneyTransactionExpirer (MoneyRepository repo, Invoker batchInvoker, ShutdownManager sm)
     {
         _repo = repo;
 
         sm.registerShutdowner(this);
 
-        _interval = new Interval(invoker) {
+        _interval = new Interval(batchInvoker) {
             @Override public void expired () {
                 doPurge();
             }

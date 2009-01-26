@@ -40,6 +40,7 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -104,14 +105,15 @@ public class MoneyLogic
     public MoneyLogic (
         RuntimeConfig runtime, MoneyRepository repo, UserActionRepository userActionRepo,
         MsoyEventLogger eventLog, MessageConnection conn, MemberRepository memberRepo,
-        ShutdownManager sm, @MainInvoker Invoker invoker, MoneyNodeActions nodeActions,
-        BlingPoolDistributor blingDistributor, MoneyExchange exchange)
+        ShutdownManager sm, @MainInvoker Invoker invoker, @BatchInvoker Invoker batchInvoker,
+        MoneyNodeActions nodeActions, BlingPoolDistributor blingDistributor,
+        MoneyExchange exchange)
     {
         _runtime = runtime;
         _repo = repo;
         _userActionRepo = userActionRepo;
         _eventLog = eventLog;
-        _expirer = new MoneyTransactionExpirer(repo, invoker, sm);
+        _expirer = new MoneyTransactionExpirer(repo, batchInvoker, sm);
         _msgReceiver = new MoneyMessageListener(conn, this, memberRepo, sm, invoker);
         _nodeActions = nodeActions;
         _exchange = exchange;

@@ -69,6 +69,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.BatchInvoker;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
@@ -464,7 +465,7 @@ public class GameGameRegistry
 
         // record this gameplay for future game metrics tracking and blah blah
         final int gameId = detail.gameId, playerMins = Math.max(minutesPlayed, 1);
-        _invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
+        _batchInvoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
             @Override public void invokePersist () throws Exception {
                 // note that game were played
                 _mgameRepo.noteGamePlayed(
@@ -1272,6 +1273,7 @@ public class GameGameRegistry
 
     // various and sundry dependent services
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected InvocationManager _invmgr;
     @Inject protected GameWatcherManager _watchmgr;
