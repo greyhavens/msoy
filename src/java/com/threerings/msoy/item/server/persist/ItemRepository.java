@@ -144,6 +144,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         // drop useless index
         _ctx.registerMigration(getCatalogClass(),
             new SchemaMigration.DropIndex(13, "pricingIndex"));
+        
+        // drop another useless index
+        _ctx.registerMigration(getItemClass(),
+            new SchemaMigration.DropIndex(19 * ItemRecord.BASE_MULTIPLIER, "ixMature"));
     }
 
     /**
