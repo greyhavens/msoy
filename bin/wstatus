@@ -1,0 +1,9 @@
+#!/usr/bin/python
+
+## Executable wrapper for main() in ../src/python/msoy/status.py
+
+import os.path, sys
+sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), "../src/python"))
+
+import msoy.status
+msoy.status.main(sys.argv[1:])
