@@ -42,7 +42,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             // one sneaks any database manipulations into the dependency resolution phase)
             bind(PersistenceContext.class).toInstance(new PersistenceContext());
 
-            // bind the auth invoker
+            // bind the batch invoker
             bind(Invoker.class).annotatedWith(BatchInvoker.class).to(MsoyBatchInvoker.class);
         }
     }
