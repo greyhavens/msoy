@@ -359,7 +359,16 @@ public class AdminServlet extends MsoyServiceServlet
 
         final byte type = iident.type;
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
-        final ItemRecord item = repo.loadOriginalItem(iident.itemId);
+        // TEMP: the next line should be uncommented
+        //final ItemRecord item = repo.loadOriginalItem(iident.itemId);
+        // TEMP: while we clear out non-original items, we need the following lines instead
+        ItemRecord ite = repo.loadItem(iident.itemId);
+        if (ite.sourceId != 0) {
+            ite = repo.loadItem(ite.sourceId);
+        }
+        final ItemRecord item = ite;
+        // END: TEMP
+
         final IntSet owners = new ArrayIntSet();
 
         ItemDeletionResult result = new ItemDeletionResult();
