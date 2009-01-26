@@ -31,7 +31,7 @@ import com.threerings.msoy.room.server.persist.MemoryRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import com.threerings.msoy.data.LurkerName;
-import com.threerings.msoy.data.MemberExperience;
+//import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -179,7 +179,7 @@ public class MsoySession extends WhirledSession
                 (local.sessionSeconds + _connectTime - _idleTracker.getIdleTime()) / 60f);
             final int memberId = _memobj.getMemberId();
             final StatSet stats = local.stats;
-            final List<MemberExperience> experiences = Lists.newArrayList(_memobj.experiences);
+            //final List<MemberExperience> experiences = Lists.newArrayList(_memobj.experiences);
             final List<MemoryRecord> memrecs = local.memories != null ?
                 MemoryRecord.extractModified(local.memories) : null;
 
