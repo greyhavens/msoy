@@ -243,6 +243,11 @@ public class InvitePanel extends VerticalPanel
         });
     }
 
+    public void setMessage (String text)
+    {
+        _customMessage.setText(text);
+    }
+
     protected void addEmail ()
     {
         if ("".equals(_friendEmail.getText())) {

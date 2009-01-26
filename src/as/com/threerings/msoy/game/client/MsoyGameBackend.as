@@ -141,7 +141,25 @@ public class MsoyGameBackend extends WhirledGameBackend
         }
         (_ctx as GameContext).showGameShop(itemTypeCode, catalogId);
     }
+    
+    // from WhirledGameBackend
+    override protected function showSharePage_v1 (defmsg :String, token :String = "") :void
+    {
+    	(_ctx as GameContext).showSharePage(defmsg, token);
+    }
 
+    // from WhirledGameBackend
+    override protected function getShareToken_v1 () :String
+    {
+    	return (_ctx as GameContext).getShareToken();
+    }
+    
+    // from WhirledGameBackend
+    override protected function getShareMemberId_v1 () :int
+    {
+    	return (_ctx as GameContext).getShareMemberId();
+    }
+    
     // from WhirledGameBackend
     override protected function showTrophies_v1 () :void
     {

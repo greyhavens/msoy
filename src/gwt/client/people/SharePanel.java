@@ -9,6 +9,7 @@ import client.ui.RoundBox;
 import client.util.Link;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -24,6 +25,17 @@ import com.threerings.msoy.web.gwt.Pages;
 public class SharePanel extends VerticalPanel
 {
     public SharePanel ()
+    {
+        this(getAffiliateLandingUrl(Pages.LANDING));
+    }
+
+    public SharePanel (String gameId, String defaultMessage, String gameToken, String type)
+    {
+        this(createGameURL(gameId, gameToken, type));
+        _invitePanel.setMessage(decodeMsg(defaultMessage));
+    }
+
+    public SharePanel (String url)
     {
         setStyleName("share");
         setSpacing(10);
@@ -41,7 +53,7 @@ public class SharePanel extends VerticalPanel
         linkToWhirled.setWidget(0, 0, Link.createImage("/images/people/link_to_whirled.png", null,
             Pages.PEOPLE, Args.compose("invites", "links")));
         TextBox embedText = new TextBox();
-        embedText.setText(getAffiliateLandingUrl(Pages.LANDING));
+        embedText.setText(url);
         embedText.setMaxLength(100);
         embedText.setWidth("100%");
         MsoyUI.selectAllOnFocus(embedText);
@@ -68,11 +80,11 @@ public class SharePanel extends VerticalPanel
         email.setStyleName("SubHeader");
         email.setWidget(0, 0, new Image("/images/people/send_email.png"));
         email.setWidget(0, 1, MsoyUI.createHTML(_msgs.shareSendEmail(), "SubHeaderText"));
-        InvitePanel invitePanel = new InvitePanel(false, false, email);
-        invitePanel.setSpacing(0);
-        add(invitePanel);
+        _invitePanel = new InvitePanel(false, false, email);
+        _invitePanel.setSpacing(0);
+        add(_invitePanel);
     }
-    
+
     public static String getAffiliateLandingUrl (Pages page, Object ...args)
     {
         String path = DeploymentConfig.serverURL + "welcome/" + CShell.creds.getMemberId();
@@ -82,5 +94,38 @@ public class SharePanel extends VerticalPanel
         return path;
     }
 
+    protected static String decodeMsg (String src)
+    {
+        src = URL.decode(src);
+        int index = 0;
+        StringBuilder sb = new StringBuilder();
+        while (index < src.length() - 1) {
+            char c = src.charAt(index);
+            if (c == '\\') {
+                if (index == src.length() - 1 || src.charAt(index + 1) == '\\') {
+                    sb.append('\\');
+                    index++;
+                } else if (src.charAt(index + 1) == '-') {
+                    sb.append('_');
+                    index++;
+                }
+            } else {
+                sb.append(c);
+            }
+            index++;
+        }
+        return sb.toString();
+    }
+
+    protected static String createGameURL (String gameId, String gameToken, String type)
+    {
+        boolean isAVRG = type.startsWith("avrg");
+        return DeploymentConfig.serverURL + "#world-" + (isAVRG ?
+            "s" + type.substring(4) + "_world_" : "") + "game_t_" + gameId + "_" +
+            CShell.creds.getMemberId() + "_" + gameToken;
+    }
+
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
+
+    protected final InvitePanel _invitePanel;
 }

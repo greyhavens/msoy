@@ -637,9 +637,10 @@ public class WorldController extends MsoyController
     /**
      * Handles JOIN_AVR_GAME.
      */
-    public function handleJoinAVRGame (gameId :int) :void
+    public function handleJoinAVRGame (gameId :int, token :String = "", 
+        shareMemberId :int = 0) :void
     {
-        _wctx.getGameDirector().activateAVRGame(gameId);
+        _wctx.getGameDirector().activateAVRGame(gameId, token == null ? "" : token, shareMemberId);
     }
 
     /**
@@ -905,10 +906,13 @@ public class WorldController extends MsoyController
 
         } else if (null != params["playNow"]) {
             _wctx.getGameDirector().playNow(int(params["playNow"]), params["gameMode"] as String,
-                                            String(params["ghost"]), int(params["gport"]));
+                                            String(params["ghost"]), int(params["gport"]),
+                                            params["shareToken"] as String, 
+                                            int(params["shareMemberId"]));
 
         } else if (null != params["worldGame"]) {
-            handleJoinAVRGame(int(params["worldGame"]));
+            handleJoinAVRGame(int(params["worldGame"]), params["shareToken"] as String,
+                int(params["shareMemberId"]));
 
         } else if ("true" == params["tour"]) {
             _wctx.getTourDirector().startTour();
@@ -942,7 +946,8 @@ public class WorldController extends MsoyController
             try {
                 var redirect :String = params["page"];
                 if (redirect != null && ExternalInterface.available) {
-                    ExternalInterface.call("displayPage", redirect, "");
+                	var args :String = params["args"] == null ? "" : params["args"];
+                    ExternalInterface.call("displayPage", redirect, args);
                 }
             } catch (error :Error) {
                 // nothing we can do here...

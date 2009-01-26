@@ -84,12 +84,15 @@ public class PeoplePage extends Page
         } else if (action.equals("invites")) { // !guest
             boolean justRegistered = args.get(1, "").equals("newuser");
             boolean linksPage = args.get(1, "").equals("links");
+            boolean sharePage = args.get(1, "").equals("share");
             if (justRegistered) {
                 setContent(_msgs.justRegInviteTitle(), new InvitePanel(true, false, null));
 
             } else if (linksPage) {
                 setContent(_msgs.inviteTitle(), new LinkToWhirledPanel());
-
+            } else if (sharePage) {
+                setContent(_msgs.inviteTitle(), new SharePanel(args.get(2, ""), args.get(3, ""),
+                    args.get(4, ""), args.get(5, "")));
             } else {
                 setContent(_msgs.inviteTitle(), new SharePanel());
             }

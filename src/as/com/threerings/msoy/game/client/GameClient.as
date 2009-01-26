@@ -150,6 +150,12 @@ class GameContextImpl extends MsoyContext
     }
 
     // from GameContext
+    public function showSharePage (defmsg :String, token :String = "", roomId :int = 0) :void
+    {
+        return; // TODO
+    }
+
+    // from GameContext
     public function showTrophies () :void
     {
         return; // TODO
@@ -159,6 +165,16 @@ class GameContextImpl extends MsoyContext
     public function getOnlineFriends () :Array
     {
         return []; // TODO
+    }
+    
+    public function getShareToken () :String
+    {
+    	return null;   // TODO
+    }
+    
+    public function getShareMemberId () :int
+    {
+    	return 0;      // TODO
     }
 
     // from MsoyContext

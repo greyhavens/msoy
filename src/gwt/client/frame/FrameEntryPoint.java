@@ -541,14 +541,16 @@ public class FrameEntryPoint
                     displayWorldClient("sceneId=" + sceneId, null);
                 } else {
                     // if we have sNN-extra-args we want the close button to use just "sNN"
+                    String passArgs = args.getArgCount() >= 2 ?
+                        Args.compose((Object[])args.splice(2)) : null;
                     displayWorldClient(
-                        "sceneId=" + sceneId + "&page=" + Args.compose((Object[])args.splice(1)),
-                        Pages.WORLD.getPath() + "-s" + sceneId);
+                        "sceneId=" + sceneId + "&page=" + args.get(1, "") + (passArgs == null ? "" :
+                        "&args=" + passArgs), Pages.WORLD.getPath() + "-s" + sceneId);
                 }
 
             } else if (action.equals("game")) {
                 // display a game lobby or enter a game (action_gameId_otherId)
-                displayGame(args.get(1, ""), args.get(2, 0), args.get(3, -1));
+                displayGame(args.get(1, ""), args.get(2, 0), args.get(3, -1), args.get(4, ""));
 
             } else if (action.equals("tour")) {
                 displayWorldClient("tour=true", null);
@@ -750,19 +752,21 @@ public class FrameEntryPoint
         });
     }
 
-    protected void displayGame (final String action, int gameId, final int otherId)
+    protected void displayGame (final String action, int gameId, final int otherId,
+        final String token)
     {
         // if we are neither logged in nor have an assigned guest id, we need one
         boolean assignGuestId = (CShell.getMemberId() == 0);
         // load up the information needed to launch the game
         _usersvc.loadLaunchConfig(gameId, assignGuestId, new MsoyCallback<LaunchConfig>() {
             public void onSuccess (LaunchConfig result) {
-                launchGame(result, otherId, action);
+                launchGame(result, otherId, action, token);
             }
         });
     }
 
-    protected void launchGame (final LaunchConfig config, final int otherId, String action)
+    protected void launchGame (final LaunchConfig config, final int otherId, String action,
+        String token)
     {
         // if we were assigned a guest id, make it known to everyone
         if (config.guestId != 0) {
@@ -772,23 +776,32 @@ public class FrameEntryPoint
         // configure our world client with a default host and port in case we're first to the party
         WorldClient.setDefaultServer(config.groupServer, config.groupPort);
 
+        String args;
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
-            displayWorldClient("worldGame=" + config.gameId, null);
+            args = "worldGame=" + config.gameId;
+            // Add the token, if provided
+            if (!"".equals(token) && token != null) {
+                args += "&shareToken=" + token + "&shareMemberId=" + otherId;
+            }
+            displayWorldClient(args, null);
             break;
 
         case LaunchConfig.FLASH_LOBBIED:
             String hostPort = "&ghost=" + config.gameServer + "&gport=" + config.gamePort;
-            String args;
             if (action.equals("l")) {
                 args = "gameLobby=" + config.gameId;
                 if (otherId != 0) {
                     args += "&playerTable=" + otherId;
                 }
             } else if (action.equals("g")) {
-                args = "gameLocation=" + otherId;
-            } else if (action.equals("m") || action.equals("s")) {
-                args = "playNow=" + config.gameId + "&mode=" + action;
+                args = "gameLocation=" + otherId + (token == null ? "" : "&shareToken=" + token);
+            } else if (action.equals("m") || action.equals("s") || action.equals("t")) {
+                args = "playNow=" + config.gameId + "&gameMode=" + action;
+                // Add the token, if provided
+                if (!"".equals(token) && token != null) {
+                    args += "&shareToken=" + token + "&shareMemberId=" + otherId;
+                }
             } else {
                 args = "gameLobby=" + config.gameId;
             }

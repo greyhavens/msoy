@@ -17,6 +17,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.utils.Base64Encoder;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
@@ -244,6 +245,18 @@ public class GameDirector extends BasicDirector
         _wctx.getMsoyClient().trackClientAction("flashViewGameShop", null);
         _wctx.getWorldController().displayPage("shop", args);
     }
+    
+    public function viewSharePage (defmsg :String, token :String = "", roomId :int = 0) :void
+    {
+    	// The default message and token can by anything.  We will parse the underscores specially,
+    	// so encode them before adding them as arguments to the invites page.
+    	var encoder :Base64Encoder = new Base64Encoder();
+    	encoder.encodeUTFBytes(token);
+    	var encodedToken :String = encoder.toString();
+    	var args :String = "invites_share_" + getGameId() + "_" + encodeShareString(defmsg) + "_" + 
+    	   encodedToken + (_liaison is AVRGameLiaison ? "_avrg" + roomId : "_game");
+    	_wctx.getWorldController().displayPage("people", args);
+    }
 
     /**
      * Requests that we immediately start playing the specified game id.
@@ -251,7 +264,8 @@ public class GameDirector extends BasicDirector
      * @param mode one of either 's' for single player, 'f' for friends-only quick game, or 'm' for
      * anyone quick game.
      */
-    public function playNow (gameId :int, modeStr: String, ghost :String, gport :int) :void
+    public function playNow (gameId :int, modeStr: String, ghost :String, gport :int, 
+        token :String, shareMemberId :int) :void
     {
         var mode :int = LobbyCodes.PLAY_NOW_SINGLE;
         if (modeStr == "m") {
@@ -267,7 +281,7 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison == null) {
             // create our new liaison, which will head on into the game once we're logged on
-            _liaison = new LobbyGameLiaison(_wctx, gameId, mode);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, mode, 0, token, shareMemberId);
             _liaison.start(ghost, gport);
         }
     }
@@ -352,7 +366,7 @@ public class GameDirector extends BasicDirector
      * Activates the specified AVR game, connecting to the appropriate game server and clearing any
      * existing game server connection.
      */
-    public function activateAVRGame (gameId :int) :void
+    public function activateAVRGame (gameId :int, token :String = "", shareMemberId :int = 0) :void
     {
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison) {
@@ -371,7 +385,7 @@ public class GameDirector extends BasicDirector
 
         displayFeedback("m.locating_game");
 
-        _liaison = new AVRGameLiaison(_wctx, gameId);
+        _liaison = new AVRGameLiaison(_wctx, gameId, token, shareMemberId);
         _liaison.start();
     }
 
@@ -440,6 +454,21 @@ public class GameDirector extends BasicDirector
         if (!_wctx.getClient().isSwitchingServers() && _liaison != null) {
             _liaison.shutdown();
         }
+    }
+    
+    protected function encodeShareString (src :String) :String
+    {
+        var output :String = "";
+        for (var i: int = 0; i < src.length; i++) {
+            if (src.charAt(i) == '_') {
+                output += "\\-";
+            } else if (src.charAt(i) == '\\') {
+                output += "\\\\";
+            } else {
+                output += src.charAt(i);
+            }
+        }
+        return escape(output);
     }
 
     /**

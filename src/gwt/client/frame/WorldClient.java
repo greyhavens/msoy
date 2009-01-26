@@ -148,7 +148,7 @@ public class WorldClient extends Widget
         parent.clear();
         FlashClients.embedWorldClient(parent, flashArgs);
     }
-    
+
     /**
      * Tells the World client to go to a particular location.
      */

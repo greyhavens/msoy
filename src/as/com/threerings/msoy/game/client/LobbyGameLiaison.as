@@ -28,13 +28,14 @@ public class LobbyGameLiaison extends GameLiaison
 {
     public static const log :Log = Log.getLog(LobbyGameLiaison);
 
-    public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :int, playerId :int = 0)
+    public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :int, playerId :int = 0,
+        token :String = "", shareMemberId :int = 0)
     {
         super(ctx, gameId);
 
         _mode = mode;
         _playerIdGame = playerId;
-
+        
         log.info("Started game liaison [gameId=" + _gameId + ", mode=" + _mode + "].");
 
         // listen for our game to be ready so that we can display it
@@ -45,6 +46,10 @@ public class LobbyGameLiaison extends GameLiaison
         _gctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, gameLocationDidChange, null));
 
+        // Set the token on the game context, so it can get passed to the game.
+        (_gctx as LiaisonGameContext).setShareToken(token);
+        (_gctx as LiaisonGameContext).setShareMemberId(shareMemberId);
+        
         // listen for changes in world location so that we can shutdown if we move
         _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
 
@@ -126,7 +131,7 @@ public class LobbyGameLiaison extends GameLiaison
                 _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
                 shutdown();
             });
-
+        
         // the playNow() call will resolve the lobby on the game server, then attempt to start a
         // game for us; if it succeeds, it sends back a zero result and we need take no further
         // action; if it fails, it sends back the lobby OID so we can join the lobby
