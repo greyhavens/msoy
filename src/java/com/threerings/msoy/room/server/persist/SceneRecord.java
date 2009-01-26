@@ -97,7 +97,7 @@ public class SceneRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 8;
+    public static final int SCHEMA_VERSION = 9;
 
     /** Define the sort order for the new & hot queries. */
     public static Tuple<SQLExpression, Order> ixNewAndHot ()
@@ -110,7 +110,6 @@ public class SceneRecord extends PersistentRecord
     public int sceneId; // initialValue=6 accounts for stock scenes
 
     /** Access control information. See {@link MsoySceneModel}. */
-    @Index(name="ixAccessControl")
     public byte accessControl;
 
     /** Whether this scene is owned by a member or a group. See {@link MsoySceneModel}. */

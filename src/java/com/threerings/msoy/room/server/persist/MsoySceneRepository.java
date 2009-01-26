@@ -150,6 +150,10 @@ public class MsoySceneRepository extends DepotRepository
                 }
             }
         });
+        
+        // drop useless index
+        _ctx.registerMigration(
+            SceneRecord.class, new SchemaMigration.DropIndex(9, "ixAccessControl"));
     }
 
     /**
