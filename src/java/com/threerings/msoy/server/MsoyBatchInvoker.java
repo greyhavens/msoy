@@ -21,7 +21,7 @@ import static com.threerings.msoy.Log.log;
  * 
  * Do keep in mind that this queue runs on its own thread and so any data structures it shares
  * with @MainInvoker code must be accessed in a thread-safe manner. Also units moved here give
- * up all FIFO guarantees vis-ˆ-vis units on the main invoker -- beware race conditions.
+ * up all FIFO guarantees vis-a-vis units on the main invoker -- beware race conditions.
  * 
  * When the server is shutting down, the batch invoker is one of the first things to go, after
  * which it shuttles further units posted onto it to the main invoker, which contains the more
@@ -41,7 +41,7 @@ public class MsoyBatchInvoker extends ReportingInvoker
     public void postUnit (Unit unit)
     {
         // when the batch invoker has been shut down, shuffle units to the main invoker
-        if (!isRunning()) {
+        if (_shutdownPending || !isRunning()) {
             log.info("Shuttling unit to main invoker", "unit", unit);
             _mainInvoker.postUnit(unit);
             return;
@@ -54,14 +54,17 @@ public class MsoyBatchInvoker extends ReportingInvoker
     {
         log.info("Batch invoker got shutdown request.");
         super.shutdown();
+        _shutdownPending = true;
     }
-    
+
     @Override
     public void didShutdown ()
     {
         log.info("Batch invoker shut down.");
         super.didShutdown();
     }
-    
+
+    protected boolean _shutdownPending;
+
     @Inject protected @MainInvoker Invoker _mainInvoker;
 }
