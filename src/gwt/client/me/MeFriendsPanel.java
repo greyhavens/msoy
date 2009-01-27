@@ -107,7 +107,8 @@ public class MeFriendsPanel extends FlowPanel
             if (card.status instanceof MemberCard.InScene) {
                 int sceneId = ((MemberCard.InScene)card.status).sceneId;
                 FlowPanel room = getPlacePanel(
-                    rooms, sceneId, ((MemberCard.InScene)card.status).sceneName);
+                    rooms, sceneId,
+                    ((MemberCard.InScene)card.status).sceneName, false);
                 Widget member = makeMemberWidget(card, size, Pages.WORLD, "s"+sceneId);
                 member.addStyleName("MemberRoom");
                 room.add(member);
@@ -115,7 +116,8 @@ public class MeFriendsPanel extends FlowPanel
             } else if (card.status instanceof MemberCard.InAVRGame) {
                 int sceneId = ((MemberCard.InAVRGame)card.status).sceneId;
                 FlowPanel room = getPlacePanel(
-                    rooms, sceneId, ((MemberCard.InAVRGame)card.status).gameName);
+                    rooms, sceneId,
+                    ((MemberCard.InAVRGame)card.status).gameName, true);
                 Widget member = makeMemberWidget(card, size, Pages.WORLD, "s"+sceneId);
                 member.addStyleName("MemberGame");
                 room.add(member);
@@ -123,7 +125,8 @@ public class MeFriendsPanel extends FlowPanel
             } else if (card.status instanceof MemberCard.InGame) {
                 int gameId = ((MemberCard.InGame)card.status).gameId;
                 FlowPanel game = getPlacePanel(
-                    games, gameId, ((MemberCard.InGame)card.status).gameName);
+                    games, gameId,
+                    ((MemberCard.InGame)card.status).gameName, true);
                 Widget member =
                     makeMemberWidget(card, size, Pages.WORLD, Args.compose("game", "l", ""+gameId));
                 member.addStyleName("MemberGame");
@@ -142,12 +145,14 @@ public class MeFriendsPanel extends FlowPanel
     }
 
     protected FlowPanel getPlacePanel (
-        Map<Integer, FlowPanel> places, int placeId, String placeName)
+        Map<Integer, FlowPanel> places, int placeId,
+        String placeName, boolean isGame)
     {
         FlowPanel place = places.get(placeId);
         if (place == null) {
             places.put(placeId, place = new FlowPanel());
-            place.add(MsoyUI.createLabel(placeName, "PlaceName"));
+            place.add(MsoyUI.createLabel(isGame ? _msgs.friendPlaying(placeName)
+                : _msgs.friendIn(placeName), "PlaceName"));
         }
         return place;
     }
