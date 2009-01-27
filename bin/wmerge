@@ -18,7 +18,7 @@ def resolveLog (server, user, remoteFile, force):
     base = os.path.basename(remoteFile)
     local = os.path.join(tmp, "%s.%s" % (server.privateAddress(), base))
     if force or not os.path.exists(local):
-        listing = procutil.capture(["ssh", server.privateAddress(), "-C", "'ls %s'" % remoteFile])
+        listing = procutil.capture(["ssh", server.privateAddress(), "ls", remoteFile])
         if listing.exitCode() != 0:
             print >> sys.stderr, "File %s not found on %s using ssh, skipping" % (
                 remoteFile, server.privateAddress())
