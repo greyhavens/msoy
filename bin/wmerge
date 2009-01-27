@@ -1,0 +1,89 @@
+#!/usr/bin/python
+
+## Executable for mergin log files
+
+import os.path, sys
+sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), "../src/python"))
+
+import msoy.servers, util.process as procutil, util.log as logutil
+import sys, os.path, optparse
+
+tmp = '/tmp'
+
+def resolveLog (server, user, remoteFile, force):
+    '''Downloads the specified log file from the specified server and returns the local path.
+    If force is set, the files is always downloaded, overwriting the local file if any. Otherwise,
+    the file is only downloaded if the local file does not exist.'''
+
+    base = os.path.basename(remoteFile)
+    local = os.path.join(tmp, "%s.%s" % (server.privateAddress(), base))
+    if force or not os.path.exists(local):
+        print >> sys.stderr, "Retrieving %s to %s" % (remoteFile, local)
+        result = procutil.capture(["rsync", "%s@%s:%s" % (user, server.privateAddress(), remoteFile), local])
+        if result.exitCode() != 0: raise procutil.ProgramError(result)
+    else:
+        print >> sys.stderr, "Using previously retrieved file %s" % local
+    return local
+
+def retrieveLogs (servers, user, stem, date, force):
+    '''Retrieves the same log file from each given server.'''
+
+    if date == None: date = ""
+    else: date = ".%s" % date
+    files = []
+    for server in servers:
+        local = resolveLog(server, user, os.path.join(
+            msoy.servers.msoylogs, "%s.log%s" % (stem, date)), force)
+        files.append(local)
+    return files
+
+description = '''Downloads and merges whirled log files from all whirled servers. Only downloads
+files once unless forced (see below). By default, includes only world server logs, but may include
+any combination of world, game or bureau logs. Merged output contains a short prefix on each line
+indicating the original source. The merged file is written to the console.'''
+
+parser = optparse.OptionParser(description=description)
+parser.add_option("-d", "--date", dest="date", metavar="YYYY-MM-DD",
+    help="Merges the rolled logs for a given date", default=None)
+parser.add_option("-s", "--servers", dest="servers", metavar="[g][w][b]",
+    default="w", help="Servers to include in the merge, w=world, g=game, b=bureau")
+parser.add_option("-f", "--force", dest="force", action="store_true",
+    default=False, help="Always download files, even if local copies exist")
+
+(opts, args) = parser.parse_args()
+
+try:
+    user = os.environ['USER']
+    logs = []
+    tags = []
+
+    def appendLogs (servers):
+        for server in servers:
+            for stem in server.logstems():
+                logs.extend(retrieveLogs([server], user, stem, opts.date, opts.force))
+                tags.append(server.brief())
+
+    if opts.servers.find("w") >= 0:
+        appendLogs(msoy.servers.world)
+
+    if opts.servers.find("g") >= 0:
+        appendLogs(msoy.servers.game)
+
+    if opts.servers.find("b") >= 0:
+        appendLogs(msoy.servers.bureau)
+
+    print >> sys.stderr, "Merging logs"
+
+    opened = []
+    try:
+        for log in logs: opened.append(open(log))
+        logutil.mergeLogs(opened, tags, sys.stdout)
+
+    finally:
+        for file in opened: file.close()
+
+except procutil.ProgramError, err:
+    err.dump(sys.stderr)
+
+except KeyboardInterrupt:
+    pass
