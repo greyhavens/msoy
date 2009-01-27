@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  $Id$
+-->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.applets {
 
 import flash.display.BitmapData;
