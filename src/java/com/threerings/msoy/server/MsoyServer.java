@@ -37,7 +37,6 @@ import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.SessionFactory;
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.crowd.chat.server.ChatProvider;
@@ -84,7 +83,6 @@ import com.threerings.msoy.world.tour.server.TourManager;
  */
 @Singleton
 public class MsoyServer extends MsoyBaseServer
-    implements ShutdownManager.Shutdowner
 {
     /** Configures dependencies needed by the world server. */
     public static class Module extends MsoyBaseServer.Module
@@ -138,9 +136,11 @@ public class MsoyServer extends MsoyBaseServer
         }
     }
 
-    // from interface ShutdownManager.Shutdowner
+    @Override
     public void shutdown ()
     {
+        super.shutdown();
+        
         // shut down our http server
         try {
             _httpServer.stop();
@@ -166,9 +166,6 @@ public class MsoyServer extends MsoyBaseServer
         throws Exception
     {
         super.init(injector);
-
-        // we need to know when we're shutting down
-        _shutmgr.registerShutdowner(this);
 
         // initialize our HTTP server
         _httpServer.init(new File(ServerConfig.serverRoot, "log"));
