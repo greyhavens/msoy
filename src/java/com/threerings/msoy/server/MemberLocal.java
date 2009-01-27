@@ -112,11 +112,10 @@ public class MemberLocal extends BodyLocal
      */
     public void putAvatarMemoriesIntoRoom (RoomObject roomObj, boolean fromEnter)
     {
-        if (memories == null) {
-            return;
+        if (memories != null) {
+            roomObj.putMemories(memories, "source", fromEnter ? "willEnter" : "setAvatar");
+            memories = null;
         }
-        roomObj.putMemories(memories, "source", fromEnter ? "willEnter" : "setAvatar");
-        memories = null;
     }
 
     /**
