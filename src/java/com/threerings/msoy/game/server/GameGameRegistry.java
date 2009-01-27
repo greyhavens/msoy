@@ -484,6 +484,10 @@ public class GameGameRegistry
                     detail.avgMultiDuration = _newData[2];
                 }
             }
+            @Override // from Invoker.Unit
+            public long getLongThreshold () {
+                return 10 * 1000;
+            }
             protected int[] _newData;
         });
     }

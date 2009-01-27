@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
+import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
@@ -31,13 +32,25 @@ public class MoneyTransactionExpirer
      * Starts the expirer.  By default, it will use a single-threaded scheduled executor,
      * and check once every hour for coins history records that are at least 10 days old.
      */
-    @Inject public MoneyTransactionExpirer (@BatchInvoker Invoker batchInvoker, ShutdownManager sm)
+    @Inject public MoneyTransactionExpirer (
+        PresentsDObjectMgr omgr, final @BatchInvoker Invoker batchInvoker, ShutdownManager sm)
     {
         sm.registerShutdowner(this);
 
-        _interval = new Interval(batchInvoker) {
-            @Override public void expired () {
+        final Invoker.Unit unit = new Invoker.Unit () {
+            public boolean invoke () {
                 doPurge();
+                return false;
+            }
+
+            @Override public long getLongThreshold () {
+                return 10 * 1000;
+            }
+        };
+
+        _interval = new Interval(omgr) {
+            @Override public void expired () {
+                batchInvoker.postUnit(unit);
             }
         };
     }
