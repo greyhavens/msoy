@@ -59,7 +59,7 @@ public class MemoriesRecord extends PersistentRecord
     @Id public int itemId;
 
     /** A serialized representation of all the memory data. */
-    @Column(length=5120) // 4k + overhead... does this work?
+    @Column(length=8192) // 4k + extra. See Ray for explanation.
     public byte[] data;
 
     /**
