@@ -37,7 +37,7 @@ public class MoneyTransactionExpirer
     {
         sm.registerShutdowner(this);
 
-        final Invoker.Unit unit = new Invoker.Unit () {
+        final Invoker.Unit purger = new Invoker.Unit("MoneyTransactionExpirer") {
             public boolean invoke () {
                 doPurge();
                 return false;
@@ -47,10 +47,10 @@ public class MoneyTransactionExpirer
                 return 10 * 1000;
             }
         };
-
-        _interval = new Interval(omgr) {
+        // Note: this Interval doesn't post to the omgr: it doesn't need to.
+        _interval = new Interval() {
             @Override public void expired () {
-                batchInvoker.postUnit(unit);
+                batchInvoker.postUnit(purger);
             }
         };
     }
