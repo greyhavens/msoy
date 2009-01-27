@@ -45,26 +45,8 @@ public class PetObject extends MsoyBodyObject
         super.willEnterPlace(place, plobj);
 
         if (plobj instanceof RoomObject && memories != null) {
-            RoomObject roomObj = (RoomObject)plobj;
-
-            // add our memories to the room
-            try {
-                roomObj.startTransaction();
-                int duplicateKeys = 0;
-                for (EntityMemoryEntry entry : memories) {
-                    if (roomObj.memories.contains(entry)) {
-                        duplicateKeys++;
-                    } else {
-                        roomObj.addToMemories(entry);
-                    }
-                }
-                if (duplicateKeys > 0) {
-                    log.info("Ignored duplicate memories for pet",
-                        "count", duplicateKeys, "pet", pet);
-                }
-            } finally {
-                roomObj.commitTransaction();
-            }
+            ((RoomObject) plobj).putMemories(memories, "pet", pet);
+            memories = null;
         }
     }
 
@@ -74,31 +56,7 @@ public class PetObject extends MsoyBodyObject
         super.didLeavePlace(plobj);
 
         if (plobj instanceof RoomObject) {
-            RoomObject roomObj = (RoomObject)plobj;
-
-            // collect up our memory entries from our previous room
-            ItemIdent petId = pet.getIdent();
-            memories = null;
-            for (EntityMemoryEntry entry : roomObj.memories) {
-                if (entry.item.equals(petId)) {
-                    if (memories == null) {
-                        memories = Lists.newArrayList();
-                    }
-                    memories.add(entry);
-                }
-            }
-
-            if (memories != null) {
-                // now remove those from the room
-                try {
-                    roomObj.startTransaction();
-                    for (EntityMemoryEntry entry : memories) {
-                        roomObj.removeFromMemories(entry.getRemoveKey());
-                    }
-                } finally {
-                    roomObj.commitTransaction();
-                }
-            }
+            memories = ((RoomObject) plobj).takeMemories(pet.getIdent());
         }
     }
 

@@ -3,11 +3,18 @@
 
 package com.threerings.msoy.room.data;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.party.data.PartySummary;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Room stuff.
@@ -251,4 +258,60 @@ public class RoomObject extends SpotSceneObject
         this.parties = clone;
     }
     // AUTO-GENERATED: METHODS END
+
+    /**
+     * Put all the specified memories into this room.
+     * If there are duplicate entries, a warning is logged, with any log args you specify
+     * added to the end of the logging.
+     */
+    public void putMemories (Iterable<EntityMemoryEntry> mems, Object... logArgs)
+    {
+        startTransaction();
+        try {
+            for (EntityMemoryEntry mem : mems) {
+                if (memories.contains(mem)) {
+                    Object[] args = new Object[logArgs.length + 4];
+                    System.arraycopy(logArgs, 0, args, 4, logArgs.length);
+                    args[0] = "room";
+                    args[1] = getOid();
+                    args[2] = "memory";
+                    args[3] = mem;
+                    log.warning("WTF? Room already contains memory entry", args);
+                } else {
+                    addToMemories(mem);
+                }
+            }
+        } finally {
+            commitTransaction();
+        }
+    }
+
+    /**
+     * Extract memories from the room that match the specified item, return a List of the
+     * memories extracted, or null if none.
+     */
+    public List<EntityMemoryEntry> takeMemories (ItemIdent ident)
+    {
+        List<EntityMemoryEntry> list = null;
+        for (EntityMemoryEntry entry : memories) {
+            if (entry.item.equals(ident)) {
+                if (list == null) {
+                    list = Lists.newArrayList();
+                }
+                list.add(entry);
+            }
+        }
+
+        if (list != null) {
+            startTransaction();
+            try {
+                for (EntityMemoryEntry entry : list) {
+                    removeFromMemories(entry.getRemoveKey());
+                }
+            } finally {
+                commitTransaction();
+            }
+        }
+        return list;
+    }
 }

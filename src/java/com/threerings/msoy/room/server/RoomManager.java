@@ -1491,9 +1491,7 @@ public class RoomManager extends SpotSceneManager
         _roomObj.startTransaction();
         try {
             for (MemoriesRecord mrec : memories) {
-                for (EntityMemoryEntry entry : mrec.toEntries()) {
-                    _roomObj.addToMemories(entry);
-                }
+                _roomObj.putMemories(mrec.toEntries());
             }
         } finally {
             _roomObj.commitTransaction();
@@ -1502,24 +1500,10 @@ public class RoomManager extends SpotSceneManager
 
     protected void removeAndFlushMemories (ItemIdent item)
     {
-        // clear out any memories that were loaded for this item
-        List<EntityMemoryEntry> toRemove = Lists.newArrayList();
-        for (EntityMemoryEntry entry : _roomObj.memories) {
-            if (item.equals(entry.item)) {
-                toRemove.add(entry);
-            }
-        }
-        if (!toRemove.isEmpty()) {
-            _roomObj.startTransaction();
-            try {
-                for (EntityMemoryEntry entry : toRemove) {
-                    _roomObj.removeFromMemories(entry.getRemoveKey());
-                }
-            } finally {
-                _roomObj.commitTransaction();
-            }
+        List<EntityMemoryEntry> removed = _roomObj.takeMemories(item);
+        if (removed != null) {
             // persist any of the old memories that were modified
-            flushMemories(_invoker, _memoryRepo, toRemove);
+            flushMemories(_invoker, _memoryRepo, removed);
         }
     }
 

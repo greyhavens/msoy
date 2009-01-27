@@ -115,20 +115,7 @@ public class MemberLocal extends BodyLocal
         if (memories == null) {
             return;
         }
-        roomObj.startTransaction();
-        try {
-            for (EntityMemoryEntry entry : memories) {
-                if (roomObj.memories.contains(entry)) {
-                    log.warning("WTF? Room already contains memory entry",
-                                "room", roomObj.getOid(), "entry", entry,
-                                "source", fromEnter ? "willEnter" : "setAvatar");
-                } else {
-                    roomObj.addToMemories(entry);
-                }
-            }
-        } finally {
-            roomObj.commitTransaction();
-        }
+        roomObj.putMemories(memories, "source", fromEnter ? "willEnter" : "setAvatar");
         memories = null;
     }
 
@@ -138,29 +125,8 @@ public class MemberLocal extends BodyLocal
      */
     public void takeAvatarMemoriesFromRoom (MemberObject memobj, RoomObject roomObj)
     {
-        List<EntityMemoryEntry> mems = null;
-        if (memobj.avatar != null) {
-            // any memories we deposited in the room for safe-keeping must be enumerated
-            mems = Lists.newArrayList();
-            ItemIdent avatar = memobj.avatar.getIdent();
-            for (EntityMemoryEntry entry : roomObj.memories) {
-                if (avatar.equals(entry.item)) {
-                    mems.add(entry);
-                }
-            }
-            if (mems.size() > 0) {
-                // and removed from the room
-                roomObj.startTransaction();
-                try {
-                    for (EntityMemoryEntry entry : mems) {
-                        roomObj.removeFromMemories(entry.getKey());
-                    }
-                } finally {
-                    roomObj.commitTransaction();
-                }
-            }
-        }
-        memobj.getLocal(MemberLocal.class).memories = mems;
+        memobj.getLocal(MemberLocal.class).memories = (memobj.avatar == null) ? null
+            : roomObj.takeMemories(memobj.avatar.getIdent());
     }
 
     /**
