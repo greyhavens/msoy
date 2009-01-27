@@ -91,8 +91,7 @@ public class MemoryRepository extends DepotRepository
      */
     public MemoriesRecord loadMemory (byte itemType, int itemId)
     {
-        return load(MemoriesRecord.class, CacheStrategy.BEST,
-            MemoriesRecord.getKey(itemType, itemId));
+        return load(MemoriesRecord.class, MemoriesRecord.getKey(itemType, itemId));
     }
 
     /**
