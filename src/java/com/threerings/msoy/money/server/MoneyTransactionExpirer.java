@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.money.server;
 
+import com.google.inject.Inject;
+
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.Logger;
 
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
@@ -13,6 +14,9 @@ import com.threerings.presents.server.ShutdownManager.Shutdowner;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
+import com.threerings.msoy.server.persist.BatchInvoker;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages expiration of {@link MoneyTransactionRecord}s.  Coin records should
@@ -27,10 +31,8 @@ public class MoneyTransactionExpirer
      * Starts the expirer.  By default, it will use a single-threaded scheduled executor,
      * and check once every hour for coins history records that are at least 10 days old.
      */
-    public MoneyTransactionExpirer (MoneyRepository repo, Invoker batchInvoker, ShutdownManager sm)
+    @Inject public MoneyTransactionExpirer (@BatchInvoker Invoker batchInvoker, ShutdownManager sm)
     {
-        _repo = repo;
-
         sm.registerShutdowner(this);
 
         _interval = new Interval(batchInvoker) {
@@ -38,6 +40,10 @@ public class MoneyTransactionExpirer
                 doPurge();
             }
         };
+    }
+
+    public void start ()
+    {
         _interval.schedule(PURGE_INTERVAL, true);
     }
 
@@ -62,11 +68,10 @@ public class MoneyTransactionExpirer
         }
     }
 
-    protected static final Logger log = Logger.getLogger(MoneyTransactionExpirer.class);
-
-    protected MoneyRepository _repo;
-
     protected Interval _interval;
+
+    // dependencies
+    @Inject protected MoneyRepository _repo;
 
     protected static final long DAY = 24L * 60 * 60 * 1000L; // the length of 99.4% of days
     protected static final long COIN_MAX_AGE = 10L * DAY; // 10 days

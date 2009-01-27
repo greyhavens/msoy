@@ -6,6 +6,11 @@ package com.threerings.msoy.money.server;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import com.google.inject.Inject;
+
+import com.samskivert.util.Invoker;
+
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
@@ -14,14 +19,14 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import com.samskivert.util.Invoker;
-import com.samskivert.util.Logger;
 import com.threerings.messaging.ConnectedListener;
 import com.threerings.messaging.DestinationAddress;
 import com.threerings.messaging.IntMessage;
 import com.threerings.messaging.MessageConnection;
 import com.threerings.messaging.MessageListener;
 import com.threerings.messaging.Replier;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Responsible for receiving messages from outside systems (such as billing) and calling
@@ -38,13 +43,8 @@ public class MoneyMessageListener
      * @param conn Connection to listen for messages on.
      * @param logic MoneyLogic implementation to call.
      */
-    public MoneyMessageListener (final MessageConnection conn, final MoneyLogic logic,
-        final MemberRepository memberRepo, final ShutdownManager sm, final Invoker invoker)
+    @Inject public MoneyMessageListener (ShutdownManager sm)
     {
-        _conn = conn;
-        _memberRepo = memberRepo;
-        _logic = logic;
-        _invoker = invoker;
         sm.registerShutdowner(this);
     }
 
@@ -70,7 +70,7 @@ public class MoneyMessageListener
             }
         });
         if (_barsBoughtListener != null && !_barsBoughtListener.isClosed()) {
-            logger.info("Now listening for bars bought messages.");
+            log.info("Now listening for bars bought messages.");
         }
 
         // Start listening get bars count queue.  Send a reply with the number of bars
@@ -97,7 +97,7 @@ public class MoneyMessageListener
             }
         });
         if (_barsBoughtListener != null && !_getBarCountListener.isClosed()) {
-            logger.info("Now listening for get bar count messages.");
+            log.info("Now listening for get bar count messages.");
         }
     }
 
@@ -110,14 +110,14 @@ public class MoneyMessageListener
             try {
                 _barsBoughtListener.close();
             } catch (final IOException ioe) {
-                logger.warning("Could not close bars bought listener.", ioe);
+                log.warning("Could not close bars bought listener.", ioe);
             }
         }
         if (_getBarCountListener != null) {
             try {
                 _getBarCountListener.close();
             } catch (final IOException ioe) {
-                logger.warning("Could not close get bar count listener.", ioe);
+                log.warning("Could not close get bar count listener.", ioe);
             }
         }
     }
@@ -189,12 +189,12 @@ public class MoneyMessageListener
         }
     }
 
-    protected static final Logger logger = Logger.getLogger(MoneyMessageListener.class);
-
-    protected final MessageConnection _conn;
-    protected final MoneyLogic _logic;
-    protected final MemberRepository _memberRepo;
-    protected final Invoker _invoker;
     protected ConnectedListener _barsBoughtListener;
     protected ConnectedListener _getBarCountListener;
+
+    // dependencies
+    @Inject protected MoneyLogic _logic;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject @MainInvoker protected Invoker _invoker;
+    @Inject protected MessageConnection _conn;
 }

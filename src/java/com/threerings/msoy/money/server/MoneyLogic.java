@@ -21,7 +21,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.IntMap;
-import com.samskivert.util.Invoker;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.Tuple;
 
@@ -29,18 +28,14 @@ import net.sf.ehcache.CacheManager;
 
 import com.threerings.presents.annotation.AnyThread;
 import com.threerings.presents.annotation.BlockingThread;
-import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.util.MessageBundle;
 
-import com.threerings.messaging.MessageConnection;
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -101,24 +96,17 @@ public class MoneyLogic
         boolean create (boolean magicFree, Currency currency, int amountPaid);
     }
 
-    @Inject
-    public MoneyLogic (
-        RuntimeConfig runtime, MoneyRepository repo, UserActionRepository userActionRepo,
-        MsoyEventLogger eventLog, MessageConnection conn, MemberRepository memberRepo,
-        ShutdownManager sm, @MainInvoker Invoker invoker, @BatchInvoker Invoker batchInvoker,
-        MoneyNodeActions nodeActions, BlingPoolDistributor blingDistributor,
-        MoneyExchange exchange)
+    /**
+     * Initializes the money service by starting up required services, such as an expiration
+     * monitor and queue listeners. This method is idempotent.
+     */
+    public void init (CacheManager cacheMgr)
     {
-        _runtime = runtime;
-        _repo = repo;
-        _userActionRepo = userActionRepo;
-        _eventLog = eventLog;
-        _expirer = new MoneyTransactionExpirer(repo, batchInvoker, sm);
-        _msgReceiver = new MoneyMessageListener(conn, this, memberRepo, sm, invoker);
-        _nodeActions = nodeActions;
-        _exchange = exchange;
-        _blingDistributor = blingDistributor;
-        _memberRepo = memberRepo;
+        _priceCache.init(cacheMgr);
+        _exchange.init();
+        _msgReceiver.start();
+        _blingDistributor.start();
+        _expirer.start();
     }
 
     /**
@@ -930,18 +918,6 @@ public class MoneyLogic
     }
 
     /**
-     * Initializes the money service by starting up required services, such as an expiration
-     * monitor and queue listeners. This method is idempotent.
-     */
-    public void init (CacheManager cacheMgr)
-    {
-        _priceCache.init(cacheMgr);
-        _exchange.init();
-        _msgReceiver.start();
-        _blingDistributor.start();
-    }
-
-    /**
      * Is this CatalogIdent valid?
      */
     protected static boolean isValid (CatalogIdent ident)
@@ -1120,15 +1096,17 @@ public class MoneyLogic
             }
         };
 
-    protected final RuntimeConfig _runtime;
-    protected final MoneyExchange _exchange;
-    protected final MoneyTransactionExpirer _expirer;
-    protected final MsoyEventLogger _eventLog;
-    protected final UserActionRepository _userActionRepo;
-    protected final MoneyRepository _repo;
-    protected final PriceQuoteCache _priceCache = new PriceQuoteCache();
-    protected final MoneyMessageListener _msgReceiver;
-    protected final MoneyNodeActions _nodeActions;
-    protected final BlingPoolDistributor _blingDistributor;
-    protected final MemberRepository _memberRepo;
+    protected PriceQuoteCache _priceCache = new PriceQuoteCache();
+
+    // dependencies
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected MoneyExchange _exchange;
+    @Inject protected MoneyTransactionExpirer _expirer;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected UserActionRepository _userActionRepo;
+    @Inject protected MoneyRepository _repo;
+    @Inject protected MoneyMessageListener _msgReceiver;
+    @Inject protected MoneyNodeActions _nodeActions;
+    @Inject protected BlingPoolDistributor _blingDistributor;
+    @Inject protected MemberRepository _memberRepo;
 }

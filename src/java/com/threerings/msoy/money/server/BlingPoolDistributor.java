@@ -27,7 +27,6 @@ import org.quartz.spi.TriggerFiredBundle;
 import com.google.inject.Inject;
 
 import com.samskivert.util.CalendarUtil;
-import com.samskivert.util.Logger;
 
 import com.threerings.util.MessageBundle;
 
@@ -49,6 +48,8 @@ import com.threerings.msoy.money.server.persist.MoneyConfigRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Responsible for distributing bling to creators of games that players have played on a daily
@@ -291,11 +292,11 @@ public class BlingPoolDistributor
     /** Default group for scheduled jobs and triggers. */
     protected static final String GROUP = "group1";
 
-    protected static final Logger log = Logger.getLogger(BlingPoolDistributor.class);
+    protected Scheduler _scheduler;
 
-    protected final RuntimeConfig _runtime;
-    protected final MoneyRepository _repo;
-    protected final MsoyGameRepository _mgameRepo;
-    protected final Scheduler _scheduler;
-    protected final MemberRepository _memberRepo;
+    // dependencies
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected MoneyRepository _repo;
+    @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected MemberRepository _memberRepo;
 }
