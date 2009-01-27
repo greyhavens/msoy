@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import com.samskivert.util.ArrayUtil;
+
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -270,13 +272,8 @@ public class RoomObject extends SpotSceneObject
         try {
             for (EntityMemoryEntry mem : mems) {
                 if (memories.contains(mem)) {
-                    Object[] args = new Object[logArgs.length + 4];
-                    System.arraycopy(logArgs, 0, args, 4, logArgs.length);
-                    args[0] = "room";
-                    args[1] = getOid();
-                    args[2] = "memory";
-                    args[3] = mem;
-                    log.warning("WTF? Room already contains memory entry", args);
+                    log.warning("WTF? Room already contains memory entry", ArrayUtil.concatenate(
+                        new Object[] {"room", getOid(), "memory", mem}, logArgs));
                 } else {
                     addToMemories(mem);
                 }
