@@ -166,6 +166,9 @@ public class MemoryRepository extends DepotRepository
         }
     }
 
+    /**
+     * Stores all supplied memory records.
+     */
     public void storeMemories (Collection<MemoriesRecord> records)
     {
         for (MemoriesRecord record : records) {
@@ -187,6 +190,9 @@ public class MemoryRepository extends DepotRepository
         }
     }
 
+    /**
+     * Stores the memories for a particular entity in the repository.
+     */
     public void storeMemories (MemoriesRecord record)
     {
         if (record.data == null) {
@@ -206,6 +212,9 @@ public class MemoryRepository extends DepotRepository
                   new Where(MemoryRecord.ITEM_TYPE, itemType, MemoryRecord.ITEM_ID, itemId));
     }
 
+    /**
+     * Deletes all memories for the specified item.
+     */
     public void deleteMemories (byte itemType, int itemId)
     {
         delete(MemoriesRecord.class, MemoriesRecord.getKey(itemType, itemId));
