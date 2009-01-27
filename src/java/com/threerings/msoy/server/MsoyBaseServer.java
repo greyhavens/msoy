@@ -61,12 +61,18 @@ public abstract class MsoyBaseServer extends WhirledServer
         _eventLog.init(getIdent());
 
         super.init(injector);
-        
+
         // we need to know when we're shutting down
         _shutmgr.registerShutdowner(this);
 
         // start the batch invoker thread
         _batchInvoker.start();
+
+        // increase the highest bucket for invoker profiling and decrease resolution for
+        // batch invoker
+        _invoker.setProfilingParameters(50, 40);
+        _authInvoker.setProfilingParameters(50, 40);
+        _batchInvoker.setProfilingParameters(500, 30);
 
         // initialize our persistence context
         ConnectionProvider conprov = ServerConfig.createConnectionProvider();
