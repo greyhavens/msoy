@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -63,7 +64,7 @@ public class MemberLocal extends BodyLocal
     public StreamableArrayIntSet touredRooms;
 
     /** The memories of the member's avatar. */
-    public List<EntityMemoryEntry> memories;
+    public Collection<EntityMemoryEntry> memories;
 
     /** Info on the party this member is currently rocking (or null if they're dull). */
     public PartySummary party;

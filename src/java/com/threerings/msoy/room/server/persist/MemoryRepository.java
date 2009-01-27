@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DatabaseException;
+import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
@@ -28,6 +32,8 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages "smart" digital item memory.
  */
@@ -37,21 +43,62 @@ public class MemoryRepository extends DepotRepository
     @Inject public MemoryRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        registerMigration(new DataMigration("2009_01_26_convertMemories") {
+            @Override public void invoke () throws DatabaseException {
+                log.info("Memory migrate: starting");
+                List<Key<MemoryRecord>> oldKeys = findAllKeys(MemoryRecord.class, true);
+                log.info("Memory migrate: found keys", "memories", oldKeys.size());
+                // grind through these keys and build a set of itemIds
+                Set<ItemIdent> ids = Sets.newHashSet();
+                for (Key<MemoryRecord> key : oldKeys) {
+                    ids.add(new ItemIdent(
+                        ((Number)key.getValues()[0]).byteValue(),
+                        ((Number)key.getValues()[1]).intValue()));
+                }
+                oldKeys = null; // allow for GC
+                // now load all memories for each entity and turn them into a MemoriesRecord
+                log.info("Memory migrate: identified entities", "entities", ids.size());
+                int count = 0;
+                for (ItemIdent id : ids) {
+                    if (++count % 1000 == 0) {
+                        log.info("Memory migrate: still going...");
+                    }
+                    List<MemoryRecord> recs = loadMemoryOld(id.type, id.itemId);
+                    List<com.threerings.msoy.room.data.EntityMemoryEntry> entries =
+                        Lists.newArrayListWithExpectedSize(recs.size());
+                    for (MemoryRecord rec : recs) {
+                        entries.add(rec.toEntry());
+                    }
+                    storeMemories(new MemoriesRecord(entries));
+                }
+                log.info("Memory migrate: done!");
+            }
+        });
     }
 
     /**
      * Loads the memory for the specified item.
      */
-    public List<MemoryRecord> loadMemory (byte itemType, int itemId)
+    public List<MemoryRecord> loadMemoryOld (byte itemType, int itemId)
     {
         return findAll(MemoryRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
             new Where(MemoryRecord.ITEM_TYPE, itemType, MemoryRecord.ITEM_ID, itemId)));
     }
 
     /**
+     * Loads the memory for the specified item.
+     */
+    public MemoriesRecord loadMemory (byte itemType, int itemId)
+    {
+        return load(MemoriesRecord.class, CacheStrategy.BEST,
+            MemoriesRecord.getKey(itemType, itemId));
+    }
+
+    /**
      * Loads up the all memory records for all items with the specified type and ids.
      */
-    public List<MemoryRecord> loadMemories (byte itemType, Collection<Integer> itemIds)
+    public List<MemoryRecord> loadMemoriesOld (byte itemType, Collection<Integer> itemIds)
     {
         return findAll(MemoryRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
             new Where(new And(new Equals(MemoryRecord.ITEM_TYPE, itemType),
@@ -61,7 +108,19 @@ public class MemoryRepository extends DepotRepository
     /**
      * Loads up the all memory records for all items with the specified type and ids.
      */
-    public List<MemoryRecord> loadMemories (Collection<ItemIdent> idents)
+    public List<MemoriesRecord> loadMemories (byte itemType, Collection<Integer> itemIds)
+    {
+        List<Key<MemoriesRecord>> keys = Lists.newArrayList();
+        for (int itemId : itemIds) {
+            keys.add(MemoriesRecord.getKey(itemType, itemId));
+        }
+        return loadAll(keys);
+    }
+
+    /**
+     * Loads up the all memory records for all items with the specified type and ids.
+     */
+    public List<MemoryRecord> loadMemoriesOld (Collection<ItemIdent> idents)
     {
         HashIntMap<ArrayIntSet> types = new HashIntMap<ArrayIntSet>();
         for (ItemIdent ident : idents) {
@@ -84,21 +143,40 @@ public class MemoryRepository extends DepotRepository
     }
 
     /**
+     * Loads up the all memory records for all items with the specified type and ids.
+     */
+    public List<MemoriesRecord> loadMemories (Collection<ItemIdent> idents)
+    {
+        List<Key<MemoriesRecord>> keys = Lists.newArrayList();
+        for (ItemIdent ident : idents) {
+            keys.add(MemoriesRecord.getKey(ident.type, ident.itemId));
+        }
+        return loadAll(keys);
+    }
+
+    /**
      * Stores all supplied memory records.
      */
-    public void storeMemories (Collection<MemoryRecord> records)
+    public void storeMemoriesOld (Collection<MemoryRecord> records)
     {
         // TODO: if one storeMemory() fails, should we catch that error, keep going, then
         // consolidate the errors and throw a single error?
         for (MemoryRecord record : records) {
-            storeMemory(record);
+            storeMemoryOld(record);
+        }
+    }
+
+    public void storeMemories (Collection<MemoriesRecord> records)
+    {
+        for (MemoriesRecord record : records) {
+            storeMemories(record);
         }
     }
 
     /**
      * Stores a particular memory record in the repository.
      */
-    public void storeMemory (MemoryRecord record)
+    public void storeMemoryOld (MemoryRecord record)
     {
         // delete, update, or insert...
         if (record.datumValue == null) {
@@ -109,18 +187,34 @@ public class MemoryRepository extends DepotRepository
         }
     }
 
+    public void storeMemories (MemoriesRecord record)
+    {
+        if (record.data == null) {
+            delete(record);
+
+        } else if (update(record) == 0) {
+            insert(record);
+        }
+    }
+
     /**
      * Deletes all memories for the specified item.
      */
-    public void deleteMemories (final byte itemType, final int itemId)
+    public void deleteMemoriesOld (final byte itemType, final int itemId)
     {
         deleteAll(MemoryRecord.class,
                   new Where(MemoryRecord.ITEM_TYPE, itemType, MemoryRecord.ITEM_ID, itemId));
+    }
+
+    public void deleteMemories (byte itemType, int itemId)
+    {
+        delete(MemoriesRecord.class, MemoriesRecord.getKey(itemType, itemId));
     }
 
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(MemoryRecord.class);
+        classes.add(MemoriesRecord.class);
     }
 }

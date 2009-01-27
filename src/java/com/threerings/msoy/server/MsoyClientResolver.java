@@ -57,7 +57,7 @@ import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.room.server.persist.MemoryRecord;
+import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 /**
@@ -240,9 +240,8 @@ public class MsoyClientResolver extends CrowdClientResolver
             if (avatar != null) {
                 memobj.avatar = (Avatar)avatar.toItem();
                 enforceConnected();
-                local.memories = Lists.newArrayList(Iterables.transform(
-                    _memoryRepo.loadMemory(avatar.getType(), avatar.itemId),
-                        MemoryRecord.TO_ENTRY));
+                MemoriesRecord memrec = _memoryRepo.loadMemory(avatar.getType(), avatar.itemId);
+                local.memories = (memrec == null) ? null : memrec.toEntries();
             }
         }
 

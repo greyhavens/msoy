@@ -27,7 +27,7 @@ import com.threerings.stats.server.persist.StatRepository;
 import com.threerings.whirled.server.WhirledSession;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.room.server.persist.MemoryRecord;
+import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import com.threerings.msoy.data.LurkerName;
@@ -180,8 +180,8 @@ public class MsoySession extends WhirledSession
             final int memberId = _memobj.getMemberId();
             final StatSet stats = local.stats;
             //final List<MemberExperience> experiences = Lists.newArrayList(_memobj.experiences);
-            final List<MemoryRecord> memrecs = local.memories != null ?
-                MemoryRecord.extractModified(local.memories) : null;
+            final List<MemoriesRecord> memrecs = local.memories != null ?
+                MemoriesRecord.extractModified(local.memories) : null;
 
             log.info("Session ended [id=" + memberId + ", amins=" + activeMins + "].");
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);

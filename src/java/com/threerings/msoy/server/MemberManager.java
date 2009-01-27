@@ -85,7 +85,7 @@ import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.server.persist.MemoryRecord;
+import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
@@ -463,9 +463,9 @@ public class MemberManager
                     return;
                 }
 
-                _memories = Lists.newArrayList(Iterables.transform(
-                    _memoryRepo.loadMemory(_avatar.getType(), _avatar.itemId),
-                    MemoryRecord.TO_ENTRY));
+
+                MemoriesRecord memrec = _memoryRepo.loadMemory(_avatar.getType(), _avatar.itemId);
+                _memories = (memrec == null) ? null : memrec.toEntries();
             }
 
             @Override public void handleSuccess () {

@@ -45,7 +45,7 @@ import com.threerings.msoy.room.data.PetCodes;
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.PetObject;
 import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.server.persist.MemoryRecord;
+import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -122,12 +122,8 @@ public class PetManager
 
                 // next load up their memories
                 if (mids.size() > 0) {
-                    for (MemoryRecord memrec : _memoryRepo.loadMemories(Pet.PET, mids)) {
-                        List<EntityMemoryEntry> mems = _memories.get(memrec.itemId);
-                        if (mems == null) {
-                            _memories.put(memrec.itemId, mems = Lists.newArrayList());
-                        }
-                        mems.add(memrec.toEntry());
+                    for (MemoriesRecord memrec : _memoryRepo.loadMemories(Pet.PET, mids)) {
+                        _memories.put(memrec.itemId, memrec.toEntries());
                     }
                 }
             }
@@ -197,8 +193,9 @@ public class PetManager
                 _pet = (Pet)petrec.toItem();
 
                 // load up its memory
-                for (MemoryRecord memrec : _memoryRepo.loadMemory(Pet.PET, petId)) {
-                    _memory.add(memrec.toEntry());
+                MemoriesRecord memrec = _memoryRepo.loadMemory(Pet.PET, petId);
+                if (memrec != null) {
+                    _memory = memrec.toEntries();
                 }
             }
 
@@ -212,7 +209,7 @@ public class PetManager
             }
 
             protected Pet _pet;
-            protected List<EntityMemoryEntry> _memory = Lists.newArrayList();
+            protected List<EntityMemoryEntry> _memory;
         });
     }
 

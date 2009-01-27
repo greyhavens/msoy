@@ -78,21 +78,26 @@ public class PetObject extends MsoyBodyObject
 
             // collect up our memory entries from our previous room
             ItemIdent petId = pet.getIdent();
-            memories = Lists.newArrayList();
+            memories = null;
             for (EntityMemoryEntry entry : roomObj.memories) {
                 if (entry.item.equals(petId)) {
+                    if (memories == null) {
+                        memories = Lists.newArrayList();
+                    }
                     memories.add(entry);
                 }
             }
 
-            // now remove those from the room
-            try {
-                roomObj.startTransaction();
-                for (EntityMemoryEntry entry : memories) {
-                    roomObj.removeFromMemories(entry.getRemoveKey());
+            if (memories != null) {
+                // now remove those from the room
+                try {
+                    roomObj.startTransaction();
+                    for (EntityMemoryEntry entry : memories) {
+                        roomObj.removeFromMemories(entry.getRemoveKey());
+                    }
+                } finally {
+                    roomObj.commitTransaction();
                 }
-            } finally {
-                roomObj.commitTransaction();
             }
         }
     }

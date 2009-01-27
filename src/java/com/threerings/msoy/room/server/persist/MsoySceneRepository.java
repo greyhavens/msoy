@@ -320,8 +320,6 @@ public class MsoySceneRepository extends DepotRepository
         RoomExtras extras = new RoomExtras();
         if (memoryIds.size() > 0) {
             extras.memories = _memoryRepo.loadMemories(memoryIds);
-        } else {
-            extras.memories = null;
         }
         return extras;
     }

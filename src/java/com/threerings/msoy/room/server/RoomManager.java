@@ -122,7 +122,7 @@ import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.server.RoomExtras;
-import com.threerings.msoy.room.server.persist.MemoryRecord;
+import com.threerings.msoy.room.server.persist.MemoriesRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.RoomPropertyRecord;
@@ -146,7 +146,7 @@ public class RoomManager extends SpotSceneManager
     public static void flushMemories (Invoker invoker, final MemoryRepository memoryRepo,
                                       Iterable<EntityMemoryEntry> entries)
     {
-        final List<MemoryRecord> memrecs = MemoryRecord.extractModified(entries);
+        final List<MemoriesRecord> memrecs = MemoriesRecord.extractModified(entries);
         if (memrecs.size() > 0) {
             invoker.postUnit(new WriteOnlyUnit("storeMemories") {
                 public void invokePersist () throws Exception {
@@ -1482,16 +1482,18 @@ public class RoomManager extends SpotSceneManager
                     onSuccess.run();
                 }
             }
-            protected Collection<MemoryRecord> _mems;
+            protected Collection<MemoriesRecord> _mems;
         });
     }
 
-    protected void addMemoriesToRoom (Collection<MemoryRecord> memories)
+    protected void addMemoriesToRoom (Collection<MemoriesRecord> memories)
     {
         _roomObj.startTransaction();
         try {
-            for (MemoryRecord mrec : memories) {
-                _roomObj.addToMemories(mrec.toEntry());
+            for (MemoriesRecord mrec : memories) {
+                for (EntityMemoryEntry entry : mrec.toEntries()) {
+                    _roomObj.addToMemories(entry);
+                }
             }
         } finally {
             _roomObj.commitTransaction();
