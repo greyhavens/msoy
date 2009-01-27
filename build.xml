@@ -1217,7 +1217,6 @@
 
     <!-- create some runtime directories (all servers) -->
     <mkdir dir="${approot.server.code}/log/lighttpd"/>
-    <mkdir dir="${approot.server.code}/logs"/>
     <mkdir dir="${approot.server.code}/run"/>
 
     <!-- create our production security.policy files (msoy only) -->
@@ -1241,7 +1240,14 @@
       </fileset>
       <fileset dir="data" includes="whirled_sdk*.zip"/>
     </copy>
+
+    <!-- set up our buildresults -->
     <mkdir dir="${approot.server}/pages/buildresults"/>
+
+    <!-- copy svn info into svninfo.txt -->
+    <exec executable="svn" output="${approot.server}/pages/buildresults/svninfo.txt">
+        <arg line="info"/>
+    </exec>
 
     <!-- create our msoy server startup script (msoy only) -->
     <mkdir dir="${approot.server}/etc/rc.d"/>
@@ -1288,7 +1294,6 @@
         <permissions>
           <permission user="root" group="${msoy.group}" mode="775" recursive="false">
             <path>log/</path>
-            <path>logs/</path>
             <path>run/</path>
           </permission>
           <permission mode="555" recursive="true">
