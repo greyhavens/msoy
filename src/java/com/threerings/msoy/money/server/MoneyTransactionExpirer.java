@@ -8,7 +8,6 @@ import com.google.inject.Inject;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
-import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
