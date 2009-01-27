@@ -33,7 +33,7 @@ public class MoneyTransactionExpirer
      * and check once every hour for coins history records that are at least 10 days old.
      */
     @Inject public MoneyTransactionExpirer (
-        PresentsDObjectMgr omgr, final @BatchInvoker Invoker batchInvoker, ShutdownManager sm)
+        final @BatchInvoker Invoker batchInvoker, ShutdownManager sm)
     {
         sm.registerShutdowner(this);
 
