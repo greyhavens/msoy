@@ -23,6 +23,7 @@ import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -62,9 +63,11 @@ public class MemberInfoPanel extends SmartTable
         int row;
         setWidget(0, 0, Link.memberView(info.name), 2, "Name");
         setWidget(1, 0, Link.transactionsView("Transaction history", info.name.getMemberId()));
-        setWidget(2, 0, new Anchor(BillingURLs.getUserStatusPage(info.accountName, info.permaName), 
+        setWidget(2, 0, new Anchor(BillingURLs.getUserStatusPage(info.accountName, info.permaName),
             "Billing Transactions", "_blank"));
-        
+        setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF, Args.compose(Item.AVATAR,
+            info.name.getMemberId())));
+
         row = addText("Account name:", 1, "Label");
         setText(row, 1, info.accountName);
 
@@ -144,20 +147,20 @@ public class MemberInfoPanel extends SmartTable
         charity.setChecked(info.charity);
         row = addWidget(charity, 1, "Label");
         setText(row, 1, "Make this member a charity");
-        
+
         final CheckBox coreCharity = new CheckBox("This charity can be selected randomly when a member " +
         		"making a purchase has not already selected a charity.");
         coreCharity.setChecked(info.coreCharity);
         coreCharity.setEnabled(charity.isChecked());
         setWidget(++row, 1, coreCharity);
-        
+
         row = addText("Charity Description:", 1, "Label");
         final TextArea charityDescription = new TextArea();
         charityDescription.setText(info.charityDescription);
         charityDescription.setEnabled(charity.isChecked());
         charityDescription.setStylePrimaryName("CharityDescription");
         setWidget(row, 1, charityDescription);
-        
+
         charity.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 if (charity.isChecked()) {
@@ -171,7 +174,7 @@ public class MemberInfoPanel extends SmartTable
                 }
             }
         });
-        
+
         setWidget(++row, 1, new Button("Update Charity Info",  new ClickListener() {
             public void onClick (Widget sender) {
                 final boolean isCharity = charity.isChecked();
@@ -197,14 +200,14 @@ public class MemberInfoPanel extends SmartTable
                 };
                 if (isCharity) {
                     _adminsvc.setCharityInfo(new CharityInfo(info.name.getMemberId(), isCoreCharity,
-                        charityDescription.getText()), callback);    
+                        charityDescription.getText()), callback);
                 } else {
                     _adminsvc.removeCharityStatus(info.name.getMemberId(), callback);
                 }
             }
         }));
     }
-    
+
     protected Widget infoLink (MemberName name)
     {
         return Link.create("" + name, Pages.ADMINZ, Args.compose("info", name.getMemberId()));

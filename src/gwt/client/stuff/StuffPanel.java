@@ -26,6 +26,7 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.SideBar;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
@@ -43,11 +44,12 @@ public class StuffPanel extends FlowPanel
     /** The number of columns of items to display. */
     public static final int COLUMNS = 4;
 
-    public StuffPanel (InventoryModels models, byte type)
+    public StuffPanel (InventoryModels models, int memberId, byte type)
     {
         setStyleName("itemPanel");
 
         _models = models;
+        _memberId = memberId;
         _type = type;
         boolean isCatalogType = isCatalogItem(type);
 
@@ -68,10 +70,10 @@ public class StuffPanel extends FlowPanel
         _searchBox = new SearchBox(new SearchBox.Listener() {
             public void search (String query) {
                 String type = searchTypes.getValue(searchTypes.getSelectedIndex());
-                Link.go(Pages.STUFF, Args.compose(type, 0, query));
+                Link.go(Pages.STUFF, Args.compose(type, _memberId, 0, query));
             }
             public void clearSearch () {
-                Link.go(Pages.STUFF, Args.compose(_type, 0));
+                Link.go(Pages.STUFF, Args.compose(_type, _memberId, 0));
             }
         });
         _search.add(_searchBox);
@@ -96,7 +98,7 @@ public class StuffPanel extends FlowPanel
         _contents = new PagedGrid<Item>(rows, COLUMNS) {
             @Override protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
-                Link.go(Pages.STUFF, ((InventoryModels.Stuff)_model).makeArgs(page));
+                Link.go(Pages.STUFF, ((InventoryModels.Stuff)_model).makeArgs(_memberId, page));
             }
             @Override protected Widget createWidget (Item item) {
                 return new ItemEntry(item);
@@ -122,6 +124,11 @@ public class StuffPanel extends FlowPanel
         if (isCatalogType) {
             createUploadInterface();
         }
+    }
+
+    public int getMemberId ()
+    {
+        return _memberId;
     }
 
     /**
@@ -180,7 +187,9 @@ public class StuffPanel extends FlowPanel
         if (!_contents.isAttached()) {
             clear();
             String title = (_type == Item.NOT_A_TYPE) ? _msgs.stuffTitleMain() :
-                _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type));
+                (_memberId == CShell.getMemberId()) ?
+                    _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type)) :
+                        _msgs.stuffTitlePlayer(_dmsgs.xlate("pItemType" + _type));
             add(MsoyUI.createLabel(title, "TypeTitle"));
             add(_search);
             HorizontalPanel row = new HorizontalPanel();
@@ -190,7 +199,7 @@ public class StuffPanel extends FlowPanel
                     return itemType == _type;
                 }
                 public Widget createLink (String name, byte itemType) {
-                    return Link.create(name, Pages.STUFF, ""+itemType);
+                    return Link.create(name, Pages.STUFF, Args.compose(itemType, _memberId));
                 }
             }, Item.STUFF_TYPES, null));
             row.add(_contents);
@@ -204,14 +213,14 @@ public class StuffPanel extends FlowPanel
         final Predicate<Item> pred = FILTERS.get(_filters.getSelectedIndex());
 
         // maybe we're changing our predicate or changing page on an already loaded model
-        SimpleDataModel<Item> model = _models.getModel(_type, query);
+        SimpleDataModel<Item> model = _models.getModel(_memberId, _type, query);
         if (model != null) {
             _contents.setModel(model.filter(pred), page);
             return;
         }
 
         // otherwise we have to load
-        _models.loadModel(_type, query, new MsoyCallback<DataModel<Item>>() {
+        _models.loadModel(_memberId, _type, query, new MsoyCallback<DataModel<Item>>() {
             public void onSuccess (DataModel<Item> result) {
                 SimpleDataModel<Item> model = (SimpleDataModel<Item>)result;
                 _contents.setModel(model.filter(pred), page);
@@ -220,6 +229,7 @@ public class StuffPanel extends FlowPanel
     }
 
     protected InventoryModels _models;
+    protected int _memberId;
     protected byte _type;
     protected int _mostRecentPage;
 

@@ -80,7 +80,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 continue;
             }
             addTabBelow(_dmsgs.xlate("pItemType" + types[ii].getType()),
-                        new SubItemPanel(_models, types[ii].getType(), _item), false);
+                new SubItemPanel(_models, _item.ownerId, types[ii].getType(), _item), false);
         }
     }
 
@@ -128,7 +128,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             SubItem sitem = (SubItem)_item;
             Link.go(Pages.STUFF, Args.compose("d", sitem.getSuiteMasterType(), sitem.suiteId));
         } else {
-            Link.go(Pages.STUFF, ""+_item.getType());
+            Link.go(Pages.STUFF, Args.compose(_item.getType(), _item.ownerId));
         }
     }
 

@@ -61,6 +61,7 @@ public class StuffPage extends Page
 
         String arg0 = args.get(0, "");
         byte type = Item.NOT_A_TYPE;
+        int memberId = CShell.getMemberId();
 
         // if we're displaying an item's detail, do that
         if ("d".equals(arg0)) {
@@ -128,18 +129,20 @@ public class StuffPage extends Page
             });
             setContent(remixer);
 
+        // otherwise we're viewing some player's inventory
         } else {
-            // otherwise we're viewing our inventory
             type = (byte)args.get(0, Item.AVATAR);
-            StuffPanel panel = getStuffPanel(type);
-            panel.setArgs(args.get(1, -1), args.get(2, ""));
+            memberId = args.get(1, CShell.getMemberId());
+            StuffPanel panel = getStuffPanel(memberId, type);
+            panel.setArgs(args.get(2, -1), args.get(3, ""));
             String title = _msgs.stuffTitleMain();
             setContent(title, panel);
         }
 
         // add a sub-navi link for our active item type
         if (type != Item.NOT_A_TYPE) {
-            CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.STUFF, ""+type, 1);
+            CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.STUFF, Args.compose(
+                type, memberId), 1);
         }
     }
 
@@ -150,7 +153,8 @@ public class StuffPage extends Page
                 if (item != null) {
                     _models.itemUpdated(item);
                     String args = BULK_TYPES.contains(item.getType()) ?
-                        (""+item.getType()) : Args.compose("d", item.getType(), item.itemId);
+                        Args.compose(item.getType(), item.ownerId) :
+                        Args.compose("d", item.getType(), item.itemId);
                     Link.go(Pages.STUFF, args);
                 } else {
                     History.back();
@@ -191,11 +195,14 @@ public class StuffPage extends Page
         _stuffsvc.loadItem(new ItemIdent(type, itemId), callback);
     }
 
-    protected StuffPanel getStuffPanel (byte itemType)
+    /**
+     * Return the StuffPanel for this member+itemType. Only store one StuffPanel per itemType.
+     */
+    protected StuffPanel getStuffPanel (int memberId, byte itemType)
     {
         StuffPanel panel = _stuffPanels.get(itemType);
-        if (panel == null) {
-            _stuffPanels.put(itemType, panel = new StuffPanel(_models, itemType));
+        if (panel == null || panel.getMemberId() != memberId) {
+            _stuffPanels.put(itemType, panel = new StuffPanel(_models, memberId, itemType));
         }
         return panel;
     }

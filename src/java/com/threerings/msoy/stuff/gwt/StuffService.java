@@ -89,7 +89,7 @@ public interface StuffService extends RemoteService
      * Loads all items in a player's inventory of the specified type and optionally restricted to
      * items whose name/description/tags match a specified string.
      */
-    List<Item> loadInventory (byte type, String query)
+    List<Item> loadInventory (int memberId, byte type, String query)
         throws ServiceException;
 
     /**
@@ -97,7 +97,7 @@ public interface StuffService extends RemoteService
      * Support+ will also get all original subitems for an original parent so that their inventory
      * display looks like the inventory display of the parent item creator.
      */
-    List<Item> loadSubInventory (byte type, int suiteId)
+    List<Item> loadSubInventory (int memberId, byte type, int suiteId)
         throws ServiceException;
 
     /**

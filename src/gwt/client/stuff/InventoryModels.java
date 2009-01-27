@@ -55,8 +55,10 @@ public class InventoryModels
                 suiteId == (item instanceof SubItem ? ((SubItem)item).suiteId : 0);
         }
 
-        public String makeArgs (int page) {
-            return (query == null) ? Args.compose(type, page) : Args.compose(type, page, query);
+        public String makeArgs (int memberId, int page)
+        {
+            return (query == null) ? Args.compose(type, memberId, page) :
+                Args.compose(type, memberId, page, query);
         }
 
         public String toString () {
@@ -97,26 +99,28 @@ public class InventoryModels
     /**
      * Looks up the data model with the specified parameters. Returns null if we have none.
      */
-    public SimpleDataModel<Item> getModel (byte type, String query)
+    public SimpleDataModel<Item> getModel (int memberId, byte type, String query)
     {
-        return _models.get(new Key(type, 0, query));
+        return _models.get(new Key(memberId, type, 0, query));
     }
 
     /**
      * Loads a data model for items of the specified type and matching the optionally supplied
      * query.
      */
-    public void loadModel (byte type, String query, AsyncCallback<DataModel<Item>> cb)
+    public void loadModel (int memberId, byte type, String query,
+        AsyncCallback<DataModel<Item>> cb)
     {
-        loadModel(new Key(type, 0, query), cb);
+        loadModel(new Key(memberId, type, 0, query), cb);
     }
 
     /**
      * Loads a data model for sub-items of the specified type with the specified parent.
      */
-    public void loadSubModel (byte type, int suiteId, AsyncCallback<DataModel<Item>> cb)
+    public void loadSubModel (int memberId, byte type, int suiteId,
+        AsyncCallback<DataModel<Item>> cb)
     {
-        loadModel(new Key(type, suiteId, null), cb);
+        loadModel(new Key(memberId, type, suiteId, null), cb);
     }
 
     /**
@@ -201,18 +205,21 @@ public class InventoryModels
             }
         };
         if (key.suiteId != 0) {
-            _stuffsvc.loadSubInventory(key.type, key.suiteId, callback);
+            _stuffsvc.loadSubInventory(key.memberId, key.type, key.suiteId, callback);
         } else {
-            _stuffsvc.loadInventory(key.type, key.query, callback);
+            _stuffsvc.loadInventory(key.memberId, key.type, key.query, callback);
         }
     }
 
     protected static class Key {
+        public final int memberId;
         public final byte type;
         public final int suiteId;
         public final String query;
 
-        public Key (byte type, int suiteId, String query) {
+        public Key (int memberId, byte type, int suiteId, String query)
+        {
+            this.memberId = memberId;
             this.type = type;
             this.suiteId = suiteId;
             this.query = (query != null && query.length() == 0) ? null : query;

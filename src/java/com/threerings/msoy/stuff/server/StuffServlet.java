@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.StatLogic;
@@ -188,10 +189,13 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public List<Item> loadInventory (byte type, String query)
+    public List<Item> loadInventory (int memberId, byte type, String query)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
+        if (memrec.memberId != memberId && !memrec.isSupport()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
 
         // make sure they supplied a valid item type
         if (Item.getClassForType(type) == null) {
@@ -204,10 +208,10 @@ public class StuffServlet extends MsoyServiceServlet
         List<Item> items = Lists.newArrayList();
         Function<ItemRecord, Item> toItem = new ItemRecord.ToItem<Item>();
         if (StringUtil.isBlank(query)) {
-            items.addAll(Lists.transform(repo.loadOriginalItems(memrec.memberId, 0), toItem));
-            items.addAll(Lists.transform(repo.loadClonedItems(memrec.memberId, 0), toItem));
+            items.addAll(Lists.transform(repo.loadOriginalItems(memberId, 0), toItem));
+            items.addAll(Lists.transform(repo.loadClonedItems(memberId, 0), toItem));
         } else {
-            items.addAll(Lists.transform(repo.findItems(memrec.memberId, query), toItem));
+            items.addAll(Lists.transform(repo.findItems(memberId, query), toItem));
         }
         Collections.sort(items);
 
@@ -215,10 +219,13 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public List<Item> loadSubInventory (byte type, int suiteId)
+    public List<Item> loadSubInventory (int memberId, byte type, int suiteId)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
+        if (memrec.memberId != memberId && !memrec.isSupport()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
 
         // make sure they supplied a valid item type
         if (Item.getClassForType(type) == null) {
@@ -231,9 +238,9 @@ public class StuffServlet extends MsoyServiceServlet
         List<Item> items = Lists.newArrayList();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         Function<ItemRecord, Item> toItem = new ItemRecord.ToItem<Item>();
-        items.addAll(Lists.transform(repo.loadOriginalItems(memrec.memberId, suiteId), toItem));
+        items.addAll(Lists.transform(repo.loadOriginalItems(memberId, suiteId), toItem));
         boolean hasOriginals = (items.size() > 0);
-        items.addAll(Lists.transform(repo.loadClonedItems(memrec.memberId, suiteId), toItem));
+        items.addAll(Lists.transform(repo.loadClonedItems(memberId, suiteId), toItem));
 
         // if we found no originals owned by the caller and the suite id references an original
         // item and the caller is support+ then we want to do some jiggery pokery to load up the
