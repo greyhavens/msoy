@@ -31,7 +31,6 @@ public class EntityPopup extends FloatingPanel
         _ctrl = ctrl;
         _entitySprite = entitySprite;
 
-        styleName = "entityPopup";
         showCloseButton = true;
         // TODO: a nice pop-up effect when this thing comes up. ZoomEffect.
 

@@ -147,7 +147,7 @@ List {
   backgroundColor: #000000;
 }
 
-.entityPopup {
+EntityPopup {
   titleBackgroundSkin: Embed(source="../media/skins/window/entity_title.png",
           scaleGridTop="8", scaleGridBottom="14",
           scaleGridLeft="8", scaleGridRight="28");
@@ -666,11 +666,19 @@ TabNavigator, TabBar {
   image: url("/images/rooms/tour_next.png");
 }
 
-.roomEditPanel {
-  paddingBottom: 0;
+/* Zero-padding popups */
+FriendsListPanel, PartyPanel, PartyBoardPanel, PartyDetailPanel, .roomEditPanel, EntityPopup {
   paddingTop: 0;
+  paddingBottom: 0;
   paddingLeft: 0;
   paddingRight: 0;
+}
+
+FriendsListPanel, PartyPanel, PartyBoardPanel, PartyDetailPanel {
+  verticalGap: 0;
+}
+
+.roomEditPanel {
   horizontalGap: 0;
   verticalGap: 1;
 } 
@@ -1325,14 +1333,6 @@ GameOverPanel {
 .gameOverMessage {
   fontSize: 12;
   color: #519cdd;
-}
-
-FriendsListPanel, PartyPanel, PartyBoardPanel, PartyDetailPanel {
-  paddingTop: 0;
-  paddingBottom: 0;
-  paddingLeft: 0;
-  paddingRight: 0;
-  verticalGap: 0;
 }
 
 Roster {
