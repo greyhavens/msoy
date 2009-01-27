@@ -406,29 +406,35 @@ public class MemberRepository extends DepotRepository
      */
     public String startOrJoinSession (int memberId, int expireDays)
     {
-        // create a new session record for this member
-        SessionRecord nsess = new SessionRecord();
+        // calculate a new expiration time
         Calendar cal = Calendar.getInstance();
         long now = cal.getTimeInMillis();
         cal.add(Calendar.DATE, expireDays);
-        nsess.expires = new Date(cal.getTimeInMillis());
-        nsess.memberId = memberId;
-        nsess.token = StringUtil.md5hex("" + memberId + now + Math.random());
+        Date expires = new Date(cal.getTimeInMillis());
 
-        try {
-            insert(nsess);
-        } catch (DuplicateKeyException dke) {
-            // if that fails with a duplicate key, reuse the old record but adjust its expiration
-            SessionRecord esess = load(
-                SessionRecord.class, new Where(SessionRecord.MEMBER_ID, memberId));
-            esess.expires = nsess.expires;
-            update(esess, SessionRecord.EXPIRES);
+        // update an existing session
+        SessionRecord session = updateExistingSession(memberId, expires);
 
-            // then, use the existing record
-            nsess = esess;
+        if (session == null) {
+            // if that didn't work create a new one
+            session = new SessionRecord();
+            session.memberId = memberId;
+            session.token = StringUtil.md5hex("" + memberId + now + Math.random());
+            session.expires = expires;
+
+            // record it
+            try {
+                insert(session);
+
+            } catch (DuplicateKeyException dke) {
+                // quick on the draw?
+                log.warning("Duplicate session key on insert immediately after load",
+                    "memberId", memberId);
+                session = updateExistingSession(memberId, expires);
+            }
         }
 
-        return nsess.token;
+        return session.token;
     }
 
     /**
@@ -1321,6 +1327,23 @@ public class MemberRepository extends DepotRepository
                 INVITE_ID_CHARACTERS.length()));
         }
         return rand;
+    }
+
+    /**
+     * Update the expiration time of an existing session. Returns the loaded session or
+     * null if none previously existed.
+     */
+    protected SessionRecord updateExistingSession (int memberId, Date expires)
+    {
+        SessionRecord session = load(
+            SessionRecord.class, new Where(SessionRecord.MEMBER_ID, memberId));
+
+        if (session != null) {
+            session.expires = expires;
+            update(session, SessionRecord.EXPIRES);
+        }
+
+        return session;
     }
 
     @Override // from DepotRepository
