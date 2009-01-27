@@ -923,7 +923,12 @@ public class GameGameRegistry
                 switch (mode) {
                 case LobbyCodes.PLAY_NOW_IF_SINGLE:
                     MsoyMatchConfig match = (MsoyMatchConfig) mgr.getLobbyObject().gameDef.match;
-                    if (match.getMatchType() == GameConfig.PARTY || match.getMaximumPlayers() > 1) {
+
+                    boolean partyGame = (match.getMatchType() == GameConfig.PARTY);
+                    boolean multiplayer = match.getMaximumPlayers() > 1;
+                    boolean forceSingle = match.autoSingle;
+
+                    if (partyGame || (multiplayer && !forceSingle)) {
                         gameCreated = false;
                         break;
                     }

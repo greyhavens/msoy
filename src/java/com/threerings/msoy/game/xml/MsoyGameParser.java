@@ -74,6 +74,12 @@ public class MsoyGameParser extends WhirledGameParser
                     ((MsoyMatchConfig)digester.peek()).unwatchable = true;
                 }
             });
+            digester.addRule("game/match/auto1p", new Rule() {
+                public void begin (String namespace, String name, Attributes attrs)
+                    throws Exception {
+                    ((MsoyMatchConfig)digester.peek()).autoSingle = true;
+                }
+            });
         }
         super.addMatchParsingRules(digester, type);
         ((MsoyMatchConfig)digester.peek()).type = mtype;

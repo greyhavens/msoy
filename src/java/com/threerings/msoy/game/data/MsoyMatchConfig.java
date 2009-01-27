@@ -16,6 +16,9 @@ public class MsoyMatchConfig extends TableMatchConfig
     /** Whether this game is watchable or not. defaults to watchable */
     public boolean unwatchable = false;
 
+    /** Whether this game should automatically start in single-player mode, if possible. */
+    public boolean autoSingle = false;
+
     @Override // from MatchConfig
     public int getMatchType ()
     {

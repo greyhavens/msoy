@@ -19,6 +19,9 @@ public class MsoyMatchConfig extends TableMatchConfig
     /** Whether this game is watchable or not. */
     public var unwatchable :Boolean = false;
 
+    /** Whether this game should automatically start in single-player mode, if possible. */
+    public var autoSingle :Boolean = false;
+
     public function MsoyMatchConfig ()
     {
     }
@@ -35,6 +38,7 @@ public class MsoyMatchConfig extends TableMatchConfig
         super.readObject(ins);
         type = ins.readInt();
         unwatchable = ins.readBoolean();
+        autoSingle = ins.readBoolean();
     }
 
     // from interface Streamable
@@ -43,6 +47,7 @@ public class MsoyMatchConfig extends TableMatchConfig
         super.writeObject(out);
         out.writeInt(type);
         out.writeBoolean(unwatchable);
+        out.writeBoolean(autoSingle);
     }
 }
 }

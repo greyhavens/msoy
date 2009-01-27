@@ -92,12 +92,15 @@ public class GameEditor extends ItemEditor
             // <match> - right now it merely refers to which type of table game we're playing
             while (option != null) {
                 if (option.getNodeType() == Node.ELEMENT_NODE) {
-                    if ("min_seats".equals(option.getNodeName())) {
+                    final String name = option.getNodeName();
+                    if ("min_seats".equals(name)) {
                         _minPlayers.setText(option.getFirstChild().toString());
-                    } else if ("max_seats".equals(option.getNodeName())) {
+                    } else if ("max_seats".equals(name)) {
                         _maxPlayers.setText(option.getFirstChild().toString());
-                    } else if ("unwatchable".equals(option.getNodeName())) {
+                    } else if ("unwatchable".equals(name)) {
                         _watchable.setChecked(false);
+                    } else if ("auto1p".equals(name)) {
+                        _autoSingle.setChecked(true);
                     }
                 }
                 option = option.getNextSibling();
@@ -117,11 +120,12 @@ public class GameEditor extends ItemEditor
             _gameType.setSelectedIndex(GameType.AVRG.ordinal());
         }
 
-        // disable min, max and watchable for non-seated games
+        // disable min, max, watchable, auto 1p for non-seated games
         if (_gameType.getSelectedIndex() != GameType.SEATED.ordinal()) {
             _minPlayers.setEnabled(false);
             _maxPlayers.setEnabled(false);
             _watchable.setEnabled(false);
+            _autoSingle.setEnabled(false);
         }
 
         NodeList params = xml.getElementsByTagName("params");
@@ -170,6 +174,13 @@ public class GameEditor extends ItemEditor
 
         addTab(_emsgs.gameTabConfig());
 
+        final Binder autoSingleUpdateFn = new Binder() {
+            @Override public void textUpdated (String newText) {
+                boolean singlePlayer = "1".equals(newText);
+                _autoSingle.setEnabled(_minPlayers.isEnabled() && singlePlayer);
+            }
+        };
+
         addRow(_emsgs.gameGameType(), bind(_gameType = new ListBox(), new Binder() {
             @Override public void valueChanged () {
                 boolean isSeated = (_gameType.getSelectedIndex() == GameType.SEATED.ordinal());
@@ -184,30 +195,38 @@ public class GameEditor extends ItemEditor
                     _maxPlayers.setText("99");
                     _oldWatch = _watchable.isChecked();
                     _watchable.setChecked(true);
+                    _oldAutoSingle = _autoSingle.isChecked();
+                    _autoSingle.setChecked(true);
                 } else {
                     _minPlayers.setText(_oldMin);
                     _maxPlayers.setText(_oldMax);
                     _watchable.setChecked(_oldWatch);
+                    _autoSingle.setChecked(_oldAutoSingle);
                 }
                 // TODO: it would be nicer to just hide these
                 _minPlayers.setEnabled(isSeated);
                 _maxPlayers.setEnabled(isSeated);
                 _watchable.setEnabled(isSeated);
+
+                // force a check box refresh
+                autoSingleUpdateFn.textUpdated(_minPlayers.getText());
             }
             protected String _oldMin = "1", _oldMax = "1";
-            protected boolean _oldWatch;
+            protected boolean _oldWatch, _oldAutoSingle;
         }));
 
         for (GameType gtype : GameType.values()) {
             _gameType.addItem(gtype.getText());
         }
 
-        addRow(_emsgs.gameMinPlayers(), _minPlayers = new NumberTextBox(false, 5));
+        _minPlayers = new NumberTextBox(false, 5);
         _minPlayers.setText("1");
+        addRow(_emsgs.gameMinPlayers(), bind(_minPlayers, autoSingleUpdateFn));
         addRow(_emsgs.gameMaxPlayers(), _maxPlayers = new NumberTextBox(false, 5));
         _maxPlayers.setText("1");
         addRow(_emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
+        addRow(_emsgs.gameAutoSingle(), _autoSingle = new CheckBox());
 
         addRow(_emsgs.gameDefinition(), _extras = new TextArea());
         _extras.setCharacterWidth(55);
@@ -369,6 +388,10 @@ public class GameEditor extends ItemEditor
             match.appendChild(xml.createElement("unwatchable"));
         }
 
+        if (_autoSingle.isChecked()) {
+            match.appendChild(xml.createElement("auto1p"));
+        }
+
         Object[] bits = { "serverclass", _serverClass };
         for (int ii = 0; ii < bits.length; ii += 2) {
             String text = ((TextBox)bits[ii+1]).getText();
@@ -487,6 +510,7 @@ public class GameEditor extends ItemEditor
     protected NumberTextBox _minPlayers, _maxPlayers;
     protected ListBox _gameType;
     protected CheckBox _watchable;
+    protected CheckBox _autoSingle;
     protected TextBox _serverClass;
     protected TextArea _extras;
     protected ListBox _whirled;
