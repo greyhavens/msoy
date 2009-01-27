@@ -18,9 +18,15 @@ def resolveLog (server, user, remoteFile, force):
     base = os.path.basename(remoteFile)
     local = os.path.join(tmp, "%s.%s" % (server.privateAddress(), base))
     if force or not os.path.exists(local):
-        print >> sys.stderr, "Retrieving %s to %s" % (remoteFile, local)
-        result = procutil.capture(["rsync", "%s@%s:%s" % (user, server.privateAddress(), remoteFile), local])
-        if result.exitCode() != 0: raise procutil.ProgramError(result)
+        listing = procutil.capture(["ssh", server.privateAddress(), "-C", "'ls %s'" % remoteFile])
+        if listing.exitCode() != 0:
+            print >> sys.stderr, "File %s not found on %s using ssh, skipping" % (
+                remoteFile, server.privateAddress())
+            return None
+        else:
+            print >> sys.stderr, "Retrieving %s to %s" % (remoteFile, local)
+            result = procutil.capture(["rsync", "%s@%s:%s" % (user, server.privateAddress(), remoteFile), local])
+            if result.exitCode() != 0: raise procutil.ProgramError(result)
     else:
         print >> sys.stderr, "Using previously retrieved file %s" % local
     return local
@@ -34,7 +40,7 @@ def retrieveLogs (servers, user, stem, date, force):
     for server in servers:
         local = resolveLog(server, user, os.path.join(
             msoy.servers.msoylogs, "%s.log%s" % (stem, date)), force)
-        files.append(local)
+        if local != None: files.append(local)
     return files
 
 description = '''Downloads and merges whirled log files from all whirled servers. Only downloads
@@ -60,8 +66,9 @@ try:
     def appendLogs (servers):
         for server in servers:
             for stem in server.logstems():
-                logs.extend(retrieveLogs([server], user, stem, opts.date, opts.force))
-                tags.append(server.brief())
+                for localFile in retrieveLogs([server], user, stem, opts.date, opts.force):
+                    logs.append(localFile)
+                    tags.append(server.brief())
 
     if opts.servers.find("w") >= 0:
         appendLogs(msoy.servers.world)
@@ -72,7 +79,7 @@ try:
     if opts.servers.find("b") >= 0:
         appendLogs(msoy.servers.bureau)
 
-    print >> sys.stderr, "Merging logs"
+    print >> sys.stderr, "Merging %d logs" % len(logs)
 
     opened = []
     try:
