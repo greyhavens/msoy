@@ -47,7 +47,7 @@ public class GameLoadingDisplay extends PlaceLoadingDisplay
         _logo.y = (_box.height - _logo.maxH) / 2;
 
         // tell the logo to slowly fade in
-        Tweener.addTween(_logo, { alpha: 1, time: 2, delay: 1, transition: "easeincubic" });
+        Tweener.addTween(_logo, { alpha: 1, time: 1, delay: 1, transition: "easeincubic" });
     }
     
     /** 

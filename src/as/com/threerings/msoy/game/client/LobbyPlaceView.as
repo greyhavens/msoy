@@ -32,7 +32,7 @@ public class LobbyPlaceView extends Canvas
 
         // slowly fade in the spash screen underneath the lobby
         wrapper.alpha = 0;
-        Tweener.addTween(wrapper, { alpha: 1, time: 3, transition: "easeincubic" });
+        Tweener.addTween(wrapper, { alpha: 1, time: 1, transition: "easeincubic" });
     }
 
     // from interface PlaceView
