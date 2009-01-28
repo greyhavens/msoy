@@ -12,6 +12,8 @@ import net.sf.ehcache.CacheManager;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Invoker;
+import com.samskivert.depot.CacheAdapter;
+import com.samskivert.depot.EHCacheAdapter;
 import com.samskivert.depot.OldEHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
 
@@ -27,6 +29,8 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.server.persist.BatchInvoker;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the set of services that are shared between the Game and World servers.
@@ -76,7 +80,13 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // initialize our persistence context
         ConnectionProvider conprov = ServerConfig.createConnectionProvider();
-        _perCtx.init("msoy", conprov, new OldEHCacheAdapter(_cacheMgr));
+
+        boolean cacheFallback =
+            "true".equals(ServerConfig.config.getValue("ehcache_fallback", "true"));
+                
+        log.info("Initializing Depot...", "fallback", cacheFallback);
+        _perCtx.init("msoy", conprov, cacheFallback ?
+                     new OldEHCacheAdapter(_cacheMgr) : new EHCacheAdapter(_cacheMgr));
 
         // initialize our depot repositories; running all of our schema and data migrations
         _perCtx.initializeRepositories(true);
