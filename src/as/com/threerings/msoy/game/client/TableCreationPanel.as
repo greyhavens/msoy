@@ -94,8 +94,9 @@ public class TableCreationPanel extends VBox
         // add a configuration for the table name (before we give the game
         var tableName :TextInput = new TextInput();
         tableName.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName());
-        gconf.addControl(FlexUtil.createTipLabel(Msgs.GAME.get("l.table"), Msgs.GAME.get("i.table")),
-                         tableName);
+        gconf.addControl(
+            FlexUtil.createLabel(Msgs.GAME.get("l.table"), null, Msgs.GAME.get("i.table")),
+            tableName);
 
         var plparam :RangeParameter = new RangeParameter();
         plparam.name = Msgs.GAME.get("l.players");
