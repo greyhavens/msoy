@@ -9,7 +9,6 @@ import client.ui.RoundBox;
 import client.util.Link;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -96,10 +95,9 @@ public class SharePanel extends VerticalPanel
 
     protected static String decodeMsg (String src)
     {
-        src = URL.decode(src);
         int index = 0;
         StringBuilder sb = new StringBuilder();
-        while (index < src.length() - 1) {
+        while (index < src.length()) {
             char c = src.charAt(index);
             if (c == '\\') {
                 if (index == src.length() - 1 || src.charAt(index + 1) == '\\') {
@@ -120,8 +118,8 @@ public class SharePanel extends VerticalPanel
     protected static String createGameURL (String gameId, String gameToken, String type)
     {
         boolean isAVRG = type.startsWith("avrg");
-        return DeploymentConfig.serverURL + "#world-" + (isAVRG ?
-            "s" + type.substring(4) + "_world_" : "") + "game_t_" + gameId + "_" +
+        return DeploymentConfig.serverURL + "welcome/" + CShell.creds.getMemberId() + "/world-" +
+            (isAVRG ? "s" + type.substring(4) + "_world_" : "") + "game_t_" + gameId + "_" +
             CShell.creds.getMemberId() + "_" + gameToken;
     }
 
