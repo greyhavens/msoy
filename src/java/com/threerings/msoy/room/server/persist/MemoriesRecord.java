@@ -68,6 +68,10 @@ public class MemoriesRecord extends PersistentRecord
      */
     public static List<MemoriesRecord> extractModified (Iterable<EntityMemoryEntry> memories)
     {
+        List<MemoriesRecord> mems = Lists.newArrayList();
+        if (memories == null) {
+            return mems;
+        }
         // TODO: I may change the runtime representation of memories if we keep this
         ListMultimap<ItemIdent, EntityMemoryEntry> map = Multimaps.newArrayListMultimap();
         Set<ItemIdent> modified = Sets.newHashSet();
@@ -78,7 +82,6 @@ public class MemoriesRecord extends PersistentRecord
             }
         }
 
-        List<MemoriesRecord> mems = Lists.newArrayList();
         for (ItemIdent key : modified) {
             mems.add(new MemoriesRecord(map.get(key)));
         }
