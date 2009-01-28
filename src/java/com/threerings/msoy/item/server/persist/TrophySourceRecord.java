@@ -9,6 +9,8 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.annotation.TableGenerator;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.samskivert.util.Comparators;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.TrophySource;
 
@@ -49,10 +51,13 @@ public class TrophySourceRecord extends SubItemRecord
     public static final Comparator<TrophySourceRecord> BY_SORT_ORDER =
         new Comparator<TrophySourceRecord>() {
         public int compare (TrophySourceRecord t1, TrophySourceRecord t2) {
-            if (t1.sortOrder != t2.sortOrder) {
-                return t1.sortOrder - t2.sortOrder;
+            int cmp = Comparators.compare(t1.sortOrder, t2.sortOrder);
+            if (cmp == 0) {
+                // we end up storing these in a tree map, cmping at 0 will cause that to
+                // think the two elents are equal.
+                cmp = Comparators.compare(t1.itemId, t2.itemId);
             }
-            return t1.itemId - t2.itemId;
+            return cmp;
         }
     };
 
