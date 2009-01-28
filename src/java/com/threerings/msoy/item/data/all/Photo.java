@@ -29,7 +29,7 @@ public class Photo extends Item
     @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (photoMedia != null);
+        return super.isConsistent() && (photoMedia != null) && (photoMedia.isImage());
     }
 
     @Override // from Item

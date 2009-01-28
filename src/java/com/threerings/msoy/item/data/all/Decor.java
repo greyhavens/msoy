@@ -63,7 +63,7 @@ public class Decor extends Item
     @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() &&
+        return super.isConsistent() && (_furniMedia.hasFlashVisual() || _furniMedia.isRemixed()) &&
             nonBlank(name, MAX_NAME_LENGTH) &&
             type < TYPE_COUNT && width > 0 && height > 0 && depth > 0 &&
             horizon <= 1.0f && horizon >= 0.0f && actorScale > 0 && furniScale > 0;
