@@ -570,7 +570,9 @@ public class MsoySprite extends DataPackMediaContainer
 
     protected function rotationUpdated () :void
     {
-        _media.rotation = getMediaRotation();
+        if (_media != null) {
+            _media.rotation = getMediaRotation();
+        }
         updateMediaPosition();
     }
 
@@ -622,7 +624,6 @@ public class MsoySprite extends DataPackMediaContainer
         var delta :Point = anchor.subtract(newanchor);
         _media.x += delta.x;
         _media.y += delta.y;
-
     }
 
     override protected function contentDimensionsUpdated () :void
