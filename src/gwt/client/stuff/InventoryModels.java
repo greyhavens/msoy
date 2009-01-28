@@ -226,13 +226,13 @@ public class InventoryModels
         }
 
         public int hashCode() {
-            return type ^ suiteId ^ (query == null ? 0 : query.hashCode());
+            return memberId ^ type ^ suiteId ^ (query == null ? 0 : query.hashCode());
         }
 
         public boolean equals (Object other) {
             Key okey = (Key)other;
-            return type == okey.type && (suiteId == okey.suiteId) &&
-                ((query != null && query.equals(okey.query)) || query == okey.query);
+            return memberId == okey.memberId && type == okey.type && (suiteId == okey.suiteId)
+                && ((query != null && query.equals(okey.query)) || query == okey.query);
         }
     }
 
