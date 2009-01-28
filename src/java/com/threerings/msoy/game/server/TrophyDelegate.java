@@ -80,6 +80,8 @@ public class TrophyDelegate extends PlayManagerDelegate
         // the player's content is not loaded up yet so we can't make this award
         // TODO: guarantee this operation by starting the game after the content has been resolved
         if (!plobj.isContentResolved(gameId)) {
+            log.warning("Content not resolved on player", "playerId", playerId, "trophy", ident,
+                "gameId", _content.game.gameId);
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
