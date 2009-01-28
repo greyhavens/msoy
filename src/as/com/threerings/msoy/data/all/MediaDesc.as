@@ -69,6 +69,9 @@ public class MediaDesc
     /** The MIME type for ActionScript ABC files. */
     public static const COMPILED_ACTIONSCRIPT_LIBRARY :int = 43;
 
+    /** The MIME type for ZIP files that have been marked "no remix". */
+    public static const APPLICATION_ZIP_NOREMIX :int = 44;
+
     /** The MIME type for youtube video. */
     public static const EXTERNAL_YOUTUBE :int = 100;
 
@@ -256,6 +259,7 @@ public class MediaDesc
 //        case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         case APPLICATION_JAVA_ARCHIVE: return ".jar";
+        case APPLICATION_ZIP_NOREMIX: // fall through to ZIP
         case APPLICATION_ZIP: return ".zip";
         case EXTERNAL_YOUTUBE: return ".e00";
         default: return ".dat";
@@ -283,6 +287,7 @@ public class MediaDesc
         case APPLICATION_SHOCKWAVE_FLASH: return "application/x-shockwave-flash";
         case APPLICATION_JAVA_ARCHIVE: return "application/java-archive";
         case APPLICATION_ZIP: return "application/zip";
+        case APPLICATION_ZIP_NOREMIX: return "application/zip-noremix";
         case EXTERNAL_YOUTUBE: return "external/youtube";
         default: return "application/octet-stream";
         }
@@ -370,6 +375,21 @@ public class MediaDesc
             return null;
         }
         return DeploymentConfig.mediaURL + hashToString(hash) + mimeTypeToSuffix(mimeType);
+    }
+
+    /**
+     * Is this a zip of some sort?
+     */
+    public function isRemixed () :Boolean
+    {
+        switch (mimeType) {
+        case APPLICATION_ZIP:
+        case APPLICATION_ZIP_NOREMIX:
+            return true;
+
+        default:
+            return false;
+        }
     }
 
     /**
@@ -503,21 +523,6 @@ public class MediaDesc
     public function getMediaId () :String
     {
         return hashToString(hash);
-    }
-
-    /**
-     * @return true if the media is clickable.
-     */
-    public function isInteractive () :Boolean
-    {
-        // TODO: this may need to be more complicated in the future
-        switch (mimeType) {
-        case APPLICATION_SHOCKWAVE_FLASH:
-            return true;
-
-        default:
-            return false;
-        }
     }
 }
 }

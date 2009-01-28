@@ -152,7 +152,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (original) {
             if (canEditAndList) {
                 buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailEdit(),
-                                                NaviUtil.onEditItem(_item.getType(), _item.itemId)));
+                    NaviUtil.onEditItem(_item.getType(), _item.itemId)));
             }
         } else {
             // add a button for renaming

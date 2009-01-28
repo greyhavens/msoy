@@ -381,11 +381,11 @@ public abstract class ItemEditor extends FlowPanel
     {
         if (_type == Item.AVATAR || _type == Item.PET || _type == Item.TOY) {
             // these must be swfs or remixable
-            return desc.isSWF() || desc.isRemixable();
+            return desc.isSWF() || desc.isRemixed();
 
         } else if (_type == Item.FURNITURE || _type == Item.DECOR) {
             // these can be swfs, images, or remixable
-            return desc.hasFlashVisual() || desc.isRemixable();
+            return desc.hasFlashVisual() || desc.isRemixed();
 
         } else if (_type == Item.PHOTO) {
             // images must be images... wow
@@ -814,7 +814,8 @@ public abstract class ItemEditor extends FlowPanel
     protected void doEasyRemix (String mediaId, MediaDesc prototype, MediaDesc image)
     {
         int popWidth = getOffsetWidth() - 8;
-        int popHeight = Math.max(550, Math.min(getOffsetHeight() - 8, Window.getClientHeight() - 8));
+        int popHeight = Math.max(550,
+            Math.min(getOffsetHeight() - 8, Window.getClientHeight() - 8));
         String typename = Item.getTypeName(_item.getType());
         String flashVars = "media=" + URL.encodeComponent(prototype.getMediaPath()) +
             "&type=" + URL.encodeComponent(typename) +
@@ -823,6 +824,7 @@ public abstract class ItemEditor extends FlowPanel
             "&mediaId="+ URL.encodeComponent(mediaId) +
             "&auth=" + URL.encodeComponent(CShell.getAuthToken()) +
             "&noPickPhoto=true" + // suppress picking a photo from inventory, here
+            "&forceMimeType=" + MediaDesc.APPLICATION_ZIP_NOREMIX +
             "&inject-image=" + URL.encodeComponent(image.getMediaPath());
         if (_item.getType() != Item.AVATAR) {
             flashVars += "&username=Tester";

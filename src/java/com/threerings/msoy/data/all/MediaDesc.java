@@ -60,6 +60,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The MIME type for Action Script ABC files. */
     public static final byte COMPILED_ACTIONSCRIPT_LIBRARY = 43;
 
+    /** The MIME type for ZIP files that have been marked "no remix". */
+    public static final byte APPLICATION_ZIP_NOREMIX = 44;
+
     /** The MIME type for youtube video. */
     public static final byte EXTERNAL_YOUTUBE = 100;
 
@@ -308,6 +311,7 @@ public class MediaDesc implements Streamable, IsSerializable
 //        case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         case APPLICATION_JAVA_ARCHIVE: return ".jar";
+        case APPLICATION_ZIP_NOREMIX: // fall through to ZIP
         case APPLICATION_ZIP: return ".zip";
         case COMPILED_ACTIONSCRIPT_LIBRARY: return ".abc";
         case EXTERNAL_YOUTUBE: return ".e00";
@@ -336,6 +340,7 @@ public class MediaDesc implements Streamable, IsSerializable
         case APPLICATION_SHOCKWAVE_FLASH: return "application/x-shockwave-flash";
         case APPLICATION_JAVA_ARCHIVE: return "application/java-archive";
         case APPLICATION_ZIP: return "application/zip";
+        case APPLICATION_ZIP_NOREMIX: return "application/zip-noremix";
         case COMPILED_ACTIONSCRIPT_LIBRARY: return "application/x-actionscript-bytecode";
         case EXTERNAL_YOUTUBE: return "external/youtube";
         default: return "application/octet-stream";
@@ -351,6 +356,21 @@ public class MediaDesc implements Streamable, IsSerializable
         case IMAGE_PNG:
         case IMAGE_JPEG:
         case IMAGE_GIF:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if the supplied mimeType represents a zip, basically.
+     */
+    public static boolean isRemixed (byte mimeType)
+    {
+        switch (mimeType) {
+        case APPLICATION_ZIP:
+        case APPLICATION_ZIP_NOREMIX:
             return true;
 
         default:
@@ -516,6 +536,14 @@ public class MediaDesc implements Streamable, IsSerializable
         default:
             return false;
         }
+    }
+
+    /**
+     * Is this a zip of some sort?
+     */
+    public boolean isRemixed ()
+    {
+        return isRemixed(mimeType);
     }
 
     /**

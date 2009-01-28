@@ -429,9 +429,13 @@ public class RemixControls extends HBox
         uploader.close();
 
         if (ExternalInterface.available) {
+            var forcedType :int = int(_params["forceMimeType"]);
+
             for (var mediaId :String in result) {
                 var data :Object = result[mediaId];
-                ExternalInterface.call("setHash", mediaId, "", data.hash, data.mimeType,
+                var mimeType :int = (forcedType == MediaDesc.INVALID_MIME_TYPE) ? data.mimeType
+                                                                                : forcedType;
+                ExternalInterface.call("setHash", mediaId, "", data.hash, mimeType,
                     data.constraint, data.width, data.height);
             }
         }
