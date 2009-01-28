@@ -68,7 +68,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // only add owner buttons for owners and support
-        if (_item.ownerId == CShell.getMemberId() || CShell.isSupport()) {
+        if (userOwnsItem() || CShell.isSupport()) {
             addOwnerButtons();
         }
 
@@ -121,6 +121,23 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         return (_item.ownerId == CShell.getMemberId());
     }
 
+    /**
+     * Returns true if the user created this specific item.
+     */
+    protected boolean userCreatedItem ()
+    {
+        return (_item.creatorId == CShell.getMemberId());
+    }
+
+    @Override // BaseItemDetailPanel
+    protected boolean isRemixable ()
+    {
+        // for us to be able to save the remix, it needs to be....
+        return super.isRemixable() &&
+            // a clone            OR created by us     OR we rule
+            ((_item.sourceId != 0) || userCreatedItem() || CShell.isSupport());
+    }
+
     @Override // BaseItemDetailPanel
     protected void onUpClicked ()
     {
@@ -135,10 +152,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     protected void addOwnerButtons ()
     {
         // figure out a few pieces of common info
-        int memberId = CShell.getMemberId();
         boolean original = (_item.sourceId == 0);
         boolean listedOriginal = _item.isListedOriginal();
-        boolean canEditAndList = memberId == _item.creatorId || CShell.isSupport();
+        boolean canEditAndList = userCreatedItem() || CShell.isSupport();
         boolean remixable = isRemixable();
         boolean used = (_item.used != Item.UNUSED);
 
@@ -171,7 +187,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // add an activator for this item (and tuck it up next to the in-use message if we have one)
-        if (_item.ownerId == memberId && FlashClients.clientExists()) {
+        if (userOwnsItem() && FlashClients.clientExists()) {
             if (!used) {
                 // if we don't already have a usage message, add a not-in-use message because that
                 // nicely explains the button we're about to add
