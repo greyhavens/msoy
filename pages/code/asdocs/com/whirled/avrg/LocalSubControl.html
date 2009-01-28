@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getPaintableArea,getPartyInfo,getRoomBounds,locationToPaintable,locationToRoom,paintableToRoom,partyChanged_temp,roomToLocationAtDepth,roomToLocationAtHeight,roomToPaintable,setHitPointTester,setMobSpriteExporter" name="keywords">
+<meta content="LocalSubControl,com.whirled.avrg.LocalSubControl,hitPointTester,mobSpriteExporter,feedback,getPaintableArea,getPartyInfo,getRoomBounds,getShareMemberId,getShareToken,locationToPaintable,locationToRoom,paintableToRoom,partyChanged_temp,roomToLocationAtDepth,roomToLocationAtHeight,roomToPaintable,setHitPointTester,setMobSpriteExporter,showSharePage" name="keywords">
 <title>com.whirled.avrg.LocalSubControl</title>
 </head>
 <body>
@@ -132,6 +132,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Get the room bounds in "room pixels".</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getShareMemberId()">getShareMemberId</a>():int</div>
+<div class="summaryTableDescription">
+     Retrieves the ID of the member who shared this game to the current player.</div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getShareToken()">getShareToken</a>():String</div>
+<div class="summaryTableDescription">
+     Retrieves the share token that was passed to the game.</div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
+</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -213,6 +229,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Sets the function that will manufacture <code>DisplayObject</code> instances on the client
      when mobs are spawned by the server agent.</div>
+</td><td class="summaryTableOwnerCol">LocalSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#showSharePage()">showSharePage</a>(defmsg:String, token:String = ""):void</div>
+<div class="summaryTableDescription">
+     Instructs the game client to open the Share Game page, allowing the player to invite friends
+     to play this game.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 </table>
@@ -422,6 +447,43 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="getShareMemberId()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getShareMemberId</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getShareMemberId():int</code><p>
+     Retrieves the ID of the member who shared this game to the current player.  Returns 0 if the
+     player did not start the game via a shared link.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="getShareToken()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getShareToken</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getShareToken():String</code><p>
+     Retrieves the share token that was passed to the game.  If the player entered into the game
+     via a URL that contained a token (provided by the game via showSharePage), this will return
+     that token, otherwise null.
+     </p><p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
 </tr>
 </table>
 </div>
@@ -675,6 +737,34 @@ showHideInherited();
 <br>
 <a href="http://wiki.whirled.com/Mobs" target="mm_external">http://wiki.whirled.com/Mobs</a>
 </div>
+</div>
+<a name="showSharePage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">showSharePage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function showSharePage(defmsg:String, token:String = ""):void</code><p>
+     Instructs the game client to open the Share Game page, allowing the player to invite friends
+     to play this game.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">defmsg</span>:String</code> &mdash; Default message that will be included along with the game's URL when sent
+     to the player's friends.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">token</span>:String</code> (default = "<code></code>")<code></code> &mdash; Optional token that will be included on the URL and eventually passed back to
+     the game when an invited friend goes to the URL.  This allows the game to start in
+     a different state than usual.
+     </td>
+</tr>
+</table>
 </div>
 <div class="detailSectionHeader">Event detail</div>
 <a name="event:partyChanged"></a>

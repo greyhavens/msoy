@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="PieceSpriteFactory,com.whirled.contrib.platformer.display.PieceSpriteFactory,_clipCache,_contentDomain,_defaultDynamicSprite,_defaultPieceSprite,_duplicate,_instanceMap,_spriteMap,addDynamicClass,addPieceClass,blockShape,getDynamicSprite,getPieceSprite,init,initClasses,initZip,instantiateClip,instantiateDClip,instantiatePClip,loadCacheClip,returnCacheClip" name="keywords">
+<meta content="PieceSpriteFactory,com.whirled.contrib.platformer.display.PieceSpriteFactory,_clipCache,_contentDomain,_defaultDynamicSprite,_defaultPieceSprite,_duplicate,_instanceMap,_spriteMap,addDynamicClass,addPieceClass,blockShape,getDynamicSprite,getPieceSprite,init,initClasses,initZip,instantiateClip,instantiateDClip,instantiatePClip,loadCache,loadCacheDisp,loadCacheWrapper,pushCache,returnCacheWrapper" name="keywords">
 <title>com.whirled.contrib.platformer.display.PieceSpriteFactory</title>
 </head>
 <body>
@@ -170,7 +170,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#loadCacheClip()">loadCacheClip</a>(name:String):<a href="../display/CacheWrapper.html">CacheWrapper</a>
+<a class="signatureLink" href="#loadCache()">loadCache</a>(name:String):Object</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#loadCacheDisp()">loadCacheDisp</a>(name:String):DisplayObject</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#loadCacheWrapper()">loadCacheWrapper</a>(name:String):<a href="../display/CacheWrapper.html">CacheWrapper</a>
 </div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
@@ -178,7 +192,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#returnCacheClip()">returnCacheClip</a>(cw:<a href="CacheWrapper.html">CacheWrapper</a>):void</div>
+<a class="signatureLink" href="#pushCache()">pushCache</a>(name:String, o:Object):void</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#returnCacheWrapper()">returnCacheWrapper</a>(cw:<a href="CacheWrapper.html">CacheWrapper</a>):void</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
 </tr>
@@ -518,14 +539,56 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="loadCacheClip()"></a>
+<a name="loadCache()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">loadCacheClip</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">loadCache</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function loadCacheClip(name:String):<a href="../display/CacheWrapper.html">CacheWrapper</a></code><span class="label">Parameters</span>
+<code>public static function loadCache(name:String):Object</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="loadCacheDisp()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">loadCacheDisp</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function loadCacheDisp(name:String):DisplayObject</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>DisplayObject</code></td>
+</tr>
+</table>
+</div>
+<a name="loadCacheWrapper()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">loadCacheWrapper</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function loadCacheWrapper(name:String):<a href="../display/CacheWrapper.html">CacheWrapper</a></code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
@@ -539,14 +602,34 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="returnCacheClip()"></a>
+<a name="pushCache()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">returnCacheClip</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">pushCache</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function returnCacheClip(cw:<a href="CacheWrapper.html">CacheWrapper</a>):void</code><span class="label">Parameters</span>
+<code>public static function pushCache(name:String, o:Object):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">o</span>:Object</code></td>
+</tr>
+</table>
+</div>
+<a name="returnCacheWrapper()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">returnCacheWrapper</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function returnCacheWrapper(cw:<a href="CacheWrapper.html">CacheWrapper</a>):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">cw</span>:<a href="CacheWrapper.html">CacheWrapper</a></code></td>

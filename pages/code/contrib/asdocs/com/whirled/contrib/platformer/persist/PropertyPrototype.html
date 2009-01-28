@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="PropertyPrototype,com.whirled.contrib.platformer.persist.PropertyPrototype,_defaultValue,_name,_type,defaultValue,name,type" name="keywords">
+<meta content="PropertyPrototype,com.whirled.contrib.platformer.persist.PropertyPrototype,_defaultValue,_name,_playerId,_type,defaultValue,name,playerId,type" name="keywords">
 <title>com.whirled.contrib.platformer.persist.PropertyPrototype</title>
 </head>
 <body>
@@ -59,6 +59,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">PropertyPrototype</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#playerId">playerId</a> : int<div class="summaryTableDescription">[read-only]</div>
+</td><td class="summaryTableOwnerCol">PropertyPrototype</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#type">type</a> : <a href="../persist/PropertyType.html">PropertyType</a>
 <div class="summaryTableDescription">[read-only]</div>
 </td><td class="summaryTableOwnerCol">PropertyPrototype</td>
@@ -81,6 +85,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">PropertyPrototype</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_playerId">_playerId</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PropertyPrototype</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_type">_type</a> : <a href="../persist/PropertyType.html">PropertyType</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PropertyPrototype</td>
@@ -97,7 +105,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#PropertyPrototype()">PropertyPrototype</a>(name:String, type:<a href="PropertyType.html">PropertyType</a>, defaultValue:Object = null)</div>
+<a class="signatureLink" href="#PropertyPrototype()">PropertyPrototype</a>(name:String, type:<a href="PropertyType.html">PropertyType</a>, defaultValue:Object = null, playerId:int = 0)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PropertyPrototype</td>
 </tr>
@@ -152,6 +160,27 @@ showHideInherited();
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get name():String</code>
 <br>
 </div>
+<a name="_playerId"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_playerId</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _playerId:int</code>
+</div>
+<a name="playerId"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">playerId</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>playerId:int</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get playerId():int</code>
+<br>
+</div>
 <a name="_type"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -182,7 +211,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function PropertyPrototype(name:String, type:<a href="PropertyType.html">PropertyType</a>, defaultValue:Object = null)</code><span class="label">Parameters</span>
+<code>public function PropertyPrototype(name:String, type:<a href="PropertyType.html">PropertyType</a>, defaultValue:Object = null, playerId:int = 0)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
@@ -198,6 +227,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">defaultValue</span>:Object</code> (default = <code>null</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> (default = <code>0</code>)<code></code></td>
 </tr>
 </table>
 </div>
