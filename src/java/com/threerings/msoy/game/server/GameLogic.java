@@ -169,7 +169,7 @@ public class GameLogic
         for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
             GameDetailRecord detail = _mgameRepo.loadGameDetail(card.placeId);
             GameRecord game = _mgameRepo.loadGameRecord(card.placeId, detail);
-            if (game != null && game.rating >= 4 && detail.gamesPlayed > 0) {
+            if (game != null && game.getRating() >= 4 && detail.gamesPlayed > 0) {
                 featured.add(toFeaturedGameInfo(game, detail, card.population));
                 have.add(game.gameId);
             }
@@ -181,7 +181,7 @@ public class GameLogic
         // pad the featured games with ones nobody is playing
         if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
             for (GameRecord game : _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
-                if (!have.contains(game.gameId) && game.rating >= 4) {
+                if (!have.contains(game.gameId) && game.getRating() >= 4) {
                     GameDetailRecord detail = _mgameRepo.loadGameDetail(game.gameId);
                     if (detail.gamesPlayed > 0) {
                         featured.add(toFeaturedGameInfo(game, detail, 0));

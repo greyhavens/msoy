@@ -65,7 +65,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         if (_item.isRatable()) {
             HorizontalPanel row = new HorizontalPanel();
             Rating rating = new Rating(
-                _item.rating, _item.ratingCount, _detail.memberItemInfo.memberRating, true) {
+                _item.getRating(), _item.ratingCount, _detail.memberItemInfo.memberRating, true) {
                 @Override protected void handleRate (
                     byte newRating , MsoyCallback<RatingResult> callback) {
                     _itemsvc.rateItem(_item.getIdent(), newRating, callback);

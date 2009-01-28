@@ -19,7 +19,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
@@ -147,11 +146,11 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         // record this player's rating and obtain the new summarized rating
-        Tuple<RatingRepository.RatingAverageRecord, Boolean> result =
+        Tuple<RatingResult, Boolean> result =
             repo.getRatingRepository().rate(originalId, memrec.memberId, rating);
 
-        float newAverage = result.left.average;
-        int newCount = result.left.count;
+        float newAverage = result.left.getRating();
+        int newCount = result.left.ratingSum;
         // The average without counting this rating
         float oldAverage = (newCount > 1) ? (newCount*newAverage - rating)/(newCount - 1) : 0;
         boolean newSolid = (newCount == MIN_SOLID_RATINGS && newAverage >= 4) ||
@@ -162,7 +161,7 @@ public class ItemServlet extends MsoyServiceServlet
             _statLogic.addToSetStat(item.creatorId, StatType.SOLID_4_STAR_RATINGS, originalId);
         }
 
-        return new RatingResult(newAverage, newCount);
+        return result.left;
     }
 
     // from interface ItemService

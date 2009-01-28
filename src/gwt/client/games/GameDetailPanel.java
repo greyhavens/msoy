@@ -87,7 +87,7 @@ public class GameDetailPanel extends SmartTable
         if (detail.item.isCatalogMaster()) {
             shot.add(WidgetUtil.makeShim(5, 5));
             Rating rating = new Rating(
-                game.rating, game.ratingCount, detail.memberItemInfo.memberRating, false) {
+                game.getRating(), game.ratingCount, detail.memberItemInfo.memberRating, false) {
                 @Override protected void handleRate (
                     byte newRating , MsoyCallback<RatingResult> callback) {
                     _itemsvc.rateItem(game.getIdent(), newRating, callback);

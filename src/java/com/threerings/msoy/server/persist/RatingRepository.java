@@ -14,10 +14,12 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
 import com.samskivert.depot.annotation.Entity;
+import com.samskivert.depot.clause.FieldDefinition;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**
@@ -27,21 +29,21 @@ import com.threerings.presents.annotation.BlockingThread;
 public abstract class RatingRepository extends DepotRepository
 {
     @Entity @Computed
-    public static class RatingAverageRecord extends PersistentRecord {
-        @Computed(fieldDefinition="count(*)")
-        public int count;
-        @Computed(fieldDefinition="avg(rating)")
-        public float average;
+    public static class RatingExtractionRecord extends PersistentRecord {
+        public int ratingCount;
+        public int ratingSum;
     }
-
+    
     /**
      * Creates a tag repository for the supplied tag and tag history record classes.
      */
-    public RatingRepository (PersistenceContext ctx, ColumnExp rating, ColumnExp ratingCount)
+    public RatingRepository (PersistenceContext ctx, ColumnExp id,
+        ColumnExp ratingSum, ColumnExp ratingCount)
     {
         super(ctx);
 
-        _rating = rating;
+        _id = id;
+        _ratingSum = ratingSum;
         _ratingCount = ratingCount;
     }
 
@@ -53,31 +55,69 @@ public abstract class RatingRepository extends DepotRepository
     }
 
     // TODO: Doc me
-    public Tuple<RatingAverageRecord, Boolean> rate (int targetId, int memberId, byte rating)
+    public Tuple<RatingResult, Boolean> rate (int targetId, int memberId, byte rating)
     {
         // Clamp the rating within bounds
         rating = (byte)Math.max(1, Math.min(rating, 5));
+        int deltaSum;
+        boolean newRating;
+        
+        RatingExtractionRecord targetRec = load(RatingExtractionRecord.class,
+            new FromOverride(getTargetClass()),
+            new Where(_id, targetId),
+            new FieldDefinition("ratingCount", _ratingCount),
+            new FieldDefinition("ratingSum", _ratingSum));
 
-        RatingRecord record;
-        try {
-            record = getRatingClass().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (targetRec == null) {
+            throw new IllegalArgumentException(
+                "Asked to rate a non-existent record [targetId=" + targetId + "]");
         }
-        record.targetId = targetId;
-        record.memberId = memberId;
-        record.rating = rating;
-        boolean firstTime = store(record);
 
-        RatingAverageRecord newRating = createAverageRecord(targetId);
+        RatingRecord ratingRec = load(getRatingClass(),
+            getRatingColumn(RatingRecord.TARGET_ID), targetId,
+            getRatingColumn(RatingRecord.MEMBER_ID), memberId);
 
-        // and then smack the new value into the item using yummy depot code
-        updatePartial(
-            getTargetClass(), targetId, _rating, newRating.average, _ratingCount, newRating.count);
+        if (ratingRec != null) {
+            deltaSum = rating - ratingRec.rating;
+            newRating = false;
+            if (deltaSum != 0) {
+                ratingRec.rating = rating;
+                update(ratingRec);
+            }
+            
+        } else {
+            try {
+                ratingRec = getRatingClass().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            deltaSum = rating;
+            newRating = true;
 
-        return new Tuple<RatingAverageRecord, Boolean>(newRating, firstTime);
+            ratingRec.targetId = targetId;
+            ratingRec.memberId = memberId;
+            ratingRec.rating = rating;
+            insert(ratingRec);
+        }
+
+        if (deltaSum != 0) {
+            targetRec.ratingSum += deltaSum;
+            if (newRating) {
+                targetRec.ratingCount ++;
+                updatePartial(getTargetClass(), targetId,
+                    _ratingSum, targetRec.ratingSum,
+                    _ratingCount, targetRec.ratingCount);
+            } else {
+                updatePartial(getTargetClass(), targetId, _ratingSum, targetRec.ratingSum);
+            }
+        }
+        
+        RatingResult result = new RatingResult(targetRec.ratingSum, targetRec.ratingCount);
+        return Tuple.newTuple(result, newRating);
     }
 
+    
+    
     // TODO: Doc me
     public void deleteRatings (int targetId)
     {
@@ -108,14 +148,6 @@ public abstract class RatingRepository extends DepotRepository
         return (record == null) ? (byte)0 : record.rating;
     }
 
-    public RatingAverageRecord createAverageRecord (int targetId)
-    {
-        RatingAverageRecord record = load(RatingAverageRecord.class,
-            new FromOverride(getRatingClass()),
-            new Where(getRatingColumn(RatingRecord.TARGET_ID), targetId));
-        return record;
-    }
-
     /** Exports the specific rating class used by this repository. */
     protected abstract Class<RatingRecord> getRatingClass ();
 
@@ -133,5 +165,5 @@ public abstract class RatingRepository extends DepotRepository
         classes.add(getRatingClass());
     }
 
-    protected ColumnExp _rating, _ratingCount;
+    protected ColumnExp _id, _ratingSum, _ratingCount;
 }

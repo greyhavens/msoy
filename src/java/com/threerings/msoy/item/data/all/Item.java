@@ -133,8 +133,8 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      * original item of a purchased clone. Use isListedOriginal() to check. */
     public int catalogId;
 
-    /** The current rating of this item, either 0 or between 1 and 5. */
-    public float rating;
+    /** The current sum of all ratings that have been applied to this item. */
+    public int ratingSum;
 
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
@@ -343,6 +343,14 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     public boolean isRatable ()
     {
         return (sourceId != 0) || (sourceId == 0 && ownerId == 0);
+    }
+    
+    /** 
+     * Calculate this item's average rating from the sum and count.
+     */
+    public float getRating ()
+    {
+        return (ratingCount > 0) ? (float) ratingSum / ratingCount : 0f;
     }
 
     /**

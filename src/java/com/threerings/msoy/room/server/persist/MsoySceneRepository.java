@@ -26,6 +26,7 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.EpochSeconds;
+import com.samskivert.depot.expression.FunctionExp;
 import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
@@ -82,7 +83,8 @@ public class MsoySceneRepository extends DepotRepository
     {
         super(ctx);
 
-        _ratingRepo = new RatingRepository(ctx, SceneRecord.RATING, SceneRecord.RATING_COUNT) {
+        _ratingRepo = new RatingRepository(
+            ctx, SceneRecord.SCENE_ID, SceneRecord.RATING_SUM, SceneRecord.RATING_COUNT) {
             @Override
             protected Class<? extends PersistentRecord> getTargetClass () {
                 return SceneRecord.class;
@@ -154,6 +156,18 @@ public class MsoySceneRepository extends DepotRepository
         // drop useless index
         _ctx.registerMigration(
             SceneRecord.class, new SchemaMigration.DropIndex(9, "ixAccessControl"));
+        
+        // drop old expression index, make way for the new
+        _ctx.registerMigration(
+            SceneRecord.class, new SchemaMigration.DropIndex(10, "ixNewAndHot"));
+
+        registerMigration(new DataMigration("2009_01_27_sceneRatings") {
+            @Override public void invoke () throws DatabaseException {
+                updatePartial(SceneRecord.class, new Where(new ValueExp(true)), null,
+                    SceneRecord.RATING_SUM, new Arithmetic.Mul(
+                        SceneRecord.RATING_COUNT, SceneRecord.RATING));
+            }
+        });
     }
 
     /**
@@ -613,6 +627,15 @@ public class MsoySceneRepository extends DepotRepository
         _accumulator.init(this);
     }
 
+    protected static SQLExpression getRatingExpression ()
+    {
+        // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
+        // TODO: with parameters. So we trick Depot using a literal expression here. :/
+        return new Arithmetic.Div(
+            SceneRecord.RATING_SUM,
+            new FunctionExp("GREATEST", SceneRecord.RATING_COUNT, new LiteralExp("1")));
+    }
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
@@ -633,7 +656,7 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Order for New & Hot. If you change this, also migrate the {@link SceneRecord} index. */
     protected static final SQLExpression NEW_AND_HOT_ORDER =
-        new Arithmetic.Add(SceneRecord.RATING, new Arithmetic.Div(
+        new Arithmetic.Add(getRatingExpression(), new Arithmetic.Div(
             new EpochSeconds(SceneRecord.LAST_PUBLISHED),
             // TODO: PostgreSQL flips out when you CREATE INDEX using a prepared statement
             // TODO: with parameters. So we trick Depot using a literal expression here. :/

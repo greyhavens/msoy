@@ -81,7 +81,7 @@ public class TrophyDelegate extends PlayManagerDelegate
         // TODO: guarantee this operation by starting the game after the content has been resolved
         if (!plobj.isContentResolved(gameId)) {
             log.warning("Content not resolved on player", "playerId", playerId, "trophy", ident,
-                "gameId", _content.game.gameId);
+                "gameId", gameId, "resolving", plobj.isContentResolving(gameId));
             throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
         }
 
@@ -94,6 +94,8 @@ public class TrophyDelegate extends PlayManagerDelegate
             }
         }
         if (source == null) {
+            log.warning("Cannot find trophy source", "playerId", playerId, "trophy", ident,
+                "gameId", gameId, "trophies", _content.tsources);
             throw new InvocationException(
                 MsoyCodes.GAME_MSGS, MessageBundle.tcompose(MsoyGameCodes.E_UNKNOWN_TROPHY, ident));
         }

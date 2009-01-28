@@ -93,7 +93,7 @@ public abstract class Rating extends FlexTable
         _playerStars.setRating(_memberRating = newRating);
         handleRate(newRating, new MsoyCallback<RatingResult>() {
             public void onSuccess (RatingResult result) {
-                _averageStars.setRating(result.rating);
+                _averageStars.setRating(result.getRating());
                 setRatingCount(result.ratingCount);
             }
         });

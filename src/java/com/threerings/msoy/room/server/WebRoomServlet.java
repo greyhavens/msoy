@@ -11,12 +11,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-import com.samskivert.util.Tuple;
-
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -76,10 +73,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
         MemberRecord mrec = requireAuthedUser();
 
-        Tuple<RatingRepository.RatingAverageRecord, Boolean> result =
-            _sceneRepo.getRatingRepository().rate(sceneId, mrec.memberId, rating);
-
-        return new RatingResult(result.left.average, result.left.count);
+        return _sceneRepo.getRatingRepository().rate(sceneId, mrec.memberId, rating).left;
     }
 
     // from interface WebRoomService

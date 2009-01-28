@@ -40,8 +40,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final ColumnExp CREATOR_ID = colexp(_R, "creatorId");
     public static final ColumnExp OWNER_ID = colexp(_R, "ownerId");
     public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
-    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp RATING_SUM = colexp(_R, "ratingSum");
     public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp RATING = colexp(_R, "rating");
     public static final ColumnExp USED = colexp(_R, "used");
     public static final ColumnExp LOCATION = colexp(_R, "location");
     public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
@@ -59,7 +60,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The identifier for the full text search index on Name, Description */
     public static final String FTS_ND = "ND";
 
-    public static final int BASE_SCHEMA_VERSION = 19;
+    public static final int BASE_SCHEMA_VERSION = 20;
     public static final int BASE_MULTIPLIER = 1000;
 
     /** A function for converting this persistent record into a runtime record. */
@@ -106,11 +107,14 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      */
     public int catalogId;
 
-    /** The current rating of this item, from 1 to 5. */
-    public float rating;
+    /** The current sum of all ratings that have been applied to this item. */
+    public int ratingSum;
 
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
+
+    /** TODO: Delete when migrations have run. */
+    public float rating;
 
     /** How this item is being used (see {@link Item#USED_AS_FURNITURE}). */
     public byte used;
@@ -209,7 +213,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
             // we're going to replace the old catalog listing item
             itemId = oldListing.itemId;
             // inherit the average rating from the old item
-            rating = oldListing.rating;
+            ratingSum = oldListing.ratingSum;
             ratingCount = oldListing.ratingCount;
             // if the old listing was mature or the new item is mature we want the new listing to
             // be mature as well; there's no going back without listing anew
@@ -271,7 +275,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.sourceId = sourceId;
         item.ownerId = ownerId;
         item.catalogId = catalogId;
-        item.rating = rating;
+        item.ratingSum = ratingSum;
         item.ratingCount = ratingCount;
         item.used = used;
         item.location = location;
@@ -371,6 +375,14 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     protected void setPrimaryMedia (byte[] hash)
     {
         furniMediaHash = hash;
+    }
+
+    /** 
+     * Calculate this item's average rating from the sum and count.
+     */
+    public float getRating ()
+    {
+        return (ratingCount > 0) ? (float) ratingSum / ratingCount : 0f;
     }
 
     /**

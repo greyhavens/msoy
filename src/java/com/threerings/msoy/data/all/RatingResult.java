@@ -13,16 +13,21 @@ import com.threerings.io.Streamable;
 public class RatingResult
     implements Streamable, IsSerializable
 {
-    /** The target's current rating. */
-    public float rating;
+    /** The sum of all ratings this target has received. */
+    public int ratingSum;
 
     /** The number of players who have rated the target. */
     public int ratingCount;
 
-    public RatingResult (float rating, int ratingCount)
+    public RatingResult (int ratingSum, int ratingCount)
     {
-        this.rating = rating;
+        this.ratingSum = ratingSum;
         this.ratingCount = ratingCount;
+    }
+    
+    public float getRating ()
+    {
+        return ratingCount > 0 ? ratingSum / ratingCount : 3;
     }
 
     /** Keeps GWT hap-hap-happy. */

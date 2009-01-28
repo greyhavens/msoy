@@ -449,7 +449,7 @@ public class GameServlet extends MsoyServiceServlet
             List<GameInfo> ggames = Lists.newArrayList();
             for (GameRecord grec : games.values()) {
                 // games rated less than 3 don't get on the main page
-                if (grec.genre == gcode && grec.rating >= MIN_ARCADE_RATING) {
+                if (grec.genre == gcode && grec.getRating() >= MIN_ARCADE_RATING) {
                     GameInfo info = grec.toGameInfo();
                     info.playersOnline = getGamePop(pps, grec.gameId);
                     ggames.add(info);

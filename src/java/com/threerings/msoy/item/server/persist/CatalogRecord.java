@@ -139,7 +139,7 @@ public abstract class CatalogRecord extends PersistentRecord
             card.creator = new MemberName(null, item.creatorId); // name filled in by caller
             card.descrip = item.description;
             card.remixable = item.isRemixable();
-            card.rating = item.rating;
+            card.rating = item.getRating();
         }
         card.catalogId = catalogId;
         card.currency = currency;

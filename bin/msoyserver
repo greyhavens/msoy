@@ -10,7 +10,17 @@ MSOY_HOME=`cd $MSOY_HOME/.. ; pwd`
 NODE="msoy1"
 HOSTNAME=`hostname`
 
-JAVA_ARGS="-Djava.awt.headless=true \
+# Override settings with those from MSOY_HOME/dist/msoy-server.conf
+if [ -f $MSOY_HOME/dist/msoy-server.conf ]; then
+    . $MSOY_HOME/dist/msoy-server.conf
+else
+    echo "Can't load $MSOY_HOME/dist/msoy-server.conf; can't run server."
+    exit 255
+fi
+
+JAVA_ARGS="-server -mx$SERVER_MEMORY \
+           -Djava.awt.headless=true \
+           -Dcom.samskivert.depot.cache_debug=false \
            -Djava.security.manager \
            -Djava.security.policy=$MSOY_HOME/dist/security.policy \
            -Dlog4j.configuration=log4j.properties \

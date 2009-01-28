@@ -33,7 +33,7 @@ import com.threerings.msoy.room.gwt.RoomInfo;
 /**
  * Contains metadata for a scene in the Whirled.
  */
-@Entity(indices={ @Index(name="ixNewAndHot") })
+@Entity(indices={ @Index(name="ixNewAndHot_v2") })
 public class SceneRecord extends PersistentRecord
 {
     /** Enumerates our various stock scenes. */
@@ -90,17 +90,18 @@ public class SceneRecord extends PersistentRecord
     public static final ColumnExp ENTRANCE_X = colexp(_R, "entranceX");
     public static final ColumnExp ENTRANCE_Y = colexp(_R, "entranceY");
     public static final ColumnExp ENTRANCE_Z = colexp(_R, "entranceZ");
-    public static final ColumnExp RATING = colexp(_R, "rating");
+    public static final ColumnExp RATING_SUM = colexp(_R, "ratingSum");
     public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
+    public static final ColumnExp RATING = colexp(_R, "rating");
     public static final ColumnExp LAST_PUBLISHED = colexp(_R, "lastPublished");
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 9;
+    public static final int SCHEMA_VERSION = 10;
 
     /** Define the sort order for the new & hot queries. */
-    public static Tuple<SQLExpression, Order> ixNewAndHot ()
+    public static Tuple<SQLExpression, Order> ixNewAndHot_v2 ()
     {
         return Tuple.newTuple(MsoySceneRepository.NEW_AND_HOT_ORDER, OrderBy.Order.ASC);
     }
@@ -164,11 +165,14 @@ public class SceneRecord extends PersistentRecord
     /** The default entry point for this scene. Z coordinate. */
     public float entranceZ;
 
-    /** The current rating of this room, from 1 to 5. */
-    public float rating;
+    /** The current sum of all ratings that have been applied to this room. */
+    public int ratingSum;
 
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
+
+    /** TODO: Delete when migrations have run. */
+    public float rating;
 
     /** When the room was last published, or null if it was never published. */
     @Column(nullable=true) @Index(name="ixLastPublished")
@@ -242,7 +246,7 @@ public class SceneRecord extends PersistentRecord
         RoomInfo info = new RoomInfo();
         info.sceneId = sceneId;
         info.name = name;
-        info.rating = rating;
+        info.rating = getRating();
         info.thumbnail = getThumbnail();
         return info;
     }
@@ -277,6 +281,14 @@ public class SceneRecord extends PersistentRecord
     {
         return (thumbnailHash == null) ? null:
             new MediaDesc(thumbnailHash, thumbnailType, MediaDesc.NOT_CONSTRAINED);
+    }
+
+    /** 
+     * Calculate this item's average rating from the sum and count.
+     */
+    public float getRating ()
+    {
+        return (ratingCount > 0) ? (float) ratingSum / ratingCount : 0f;
     }
 
     @Override // from Object

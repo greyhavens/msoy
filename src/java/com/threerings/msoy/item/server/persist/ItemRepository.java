@@ -28,6 +28,7 @@ import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
 
+import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.SchemaMigration;
@@ -71,6 +72,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -108,7 +110,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
         };
 
-        _ratingRepo = new RatingRepository(ctx, ItemRecord.RATING, ItemRecord.RATING_COUNT) {
+        _ratingRepo = new RatingRepository(ctx, getItemColumn(ItemRecord.ITEM_ID),
+            getItemColumn(ItemRecord.RATING_SUM), getItemColumn(ItemRecord.RATING_COUNT)) {
             @Override
             protected Class<? extends PersistentRecord> getTargetClass () {
                 return ItemRepository.this.getItemClass();
@@ -151,11 +154,21 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Configures this repository with its item type and the memory repository.
+     * Configures this repository with its item type
      */
     public void init (byte itemType)
     {
         _itemType = itemType;
+        
+        registerMigration(new DataMigration("2009_01_28_item" + _itemType + "_ratings") {
+            @Override public void invoke () throws DatabaseException {
+                updatePartial(getItemClass(), new Where(new ValueExp(true)), null,
+                    getItemColumn(ItemRecord.RATING_SUM),
+                    new Arithmetic.Mul(
+                        getItemColumn(ItemRecord.RATING_COUNT),
+                        getItemColumn(ItemRecord.RATING)));
+            }
+        });
     }
 
     /**
@@ -1124,7 +1137,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         if (minRating != null) {
-            whereBits.add(new GreaterThanEquals(getItemColumn(ItemRecord.RATING), minRating));
+            whereBits.add(new GreaterThanEquals(getRatingExpression(), minRating));
         }
 
         if (suiteId != 0 && isSubItem()) {
@@ -1147,10 +1160,10 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     protected void addOrderByRating (List<SQLExpression> exprs, List<OrderBy.Order> orders)
     {
-        exprs.add(getItemColumn(ItemRecord.RATING));
+        exprs.add(getRatingExpression());
         orders.add(OrderBy.Order.DESC);
     }
-
+    
     protected void addOrderByPrice (List<SQLExpression> exprs, List<OrderBy.Order> orders,
                                     OrderBy.Order order)
     {
@@ -1179,7 +1192,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         List<SQLExpression> exprs, List<OrderBy.Order> orders, List<SQLOperator> whereBits)
     {
         exprs.add(new Arithmetic.Add(
-            getItemColumn(ItemRecord.RATING),
+            getRatingExpression(),
             new Arithmetic.Div(
                 new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE)),
                 HotnessConfig.DROPOFF_SECONDS)));
@@ -1232,6 +1245,13 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         return new ColumnExp(getTagRepository().getTagClass(), pcol.name);
     }
+
+    protected SQLExpression getRatingExpression ()
+{
+    return new Arithmetic.Div(
+        getItemColumn(ItemRecord.RATING_SUM),
+        new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT), new ValueExp(1)));
+}
 
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
