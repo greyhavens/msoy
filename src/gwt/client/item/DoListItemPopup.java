@@ -263,7 +263,7 @@ public class DoListItemPopup extends VerticalPanel
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 
-    protected static final int DEFAULT_COIN_COST = 100;
+    protected static final int DEFAULT_COIN_COST = 1000;
     protected static final int DEFAULT_SALES_TARGET = 500;
 
     protected static final Currency[] LISTABLE_CURRENCIES = { Currency.COINS, Currency.BARS };
