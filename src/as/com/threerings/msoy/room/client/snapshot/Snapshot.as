@@ -68,7 +68,8 @@ public class Snapshot extends EventDispatcher
         const frame :Rectangle = new Rectangle(0, 0, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
         const framer :Framer = new CanonicalFramer(
             view.getScrollBounds(), frame, view.getScrollOffset());
-        return new Snapshot(ctx, true, view, framer, frame.width, frame.height, onComplete, onError);
+        return new Snapshot(
+            ctx, true, view, framer, frame.width, frame.height, onComplete, onError);
     }
 
     /**
@@ -82,7 +83,8 @@ public class Snapshot extends EventDispatcher
         var galHeight :int = view.getScene().getHeight();
         var galFramer :Framer;
         if (galWidth > MAX_BITMAP_DIM || galWidth > MAX_BITMAP_DIM) {
-            const galScale :Number = Math.min(MAX_BITMAP_DIM / galWidth, MAX_BITMAP_DIM / galHeight);
+            const galScale :Number = Math.min(
+                MAX_BITMAP_DIM / galWidth, MAX_BITMAP_DIM / galHeight);
             galWidth *= galScale;
             galHeight *= galScale;
 //            galFramer = new CanonicalFramer(view.getScrollBounds(),

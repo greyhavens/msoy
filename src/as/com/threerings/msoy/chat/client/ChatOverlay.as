@@ -473,7 +473,8 @@ public class ChatOverlay
         }
     }
 
-    protected function setHistoryEnabled (historyEnabled :Boolean, forceClear :Boolean = false) :void
+    protected function setHistoryEnabled (
+        historyEnabled :Boolean, forceClear :Boolean = false) :void
     {
         if (!(_target is PlaceBox)) {
             // always show history on a non-PlaceBox

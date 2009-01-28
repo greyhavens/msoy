@@ -18,8 +18,8 @@ public class RoomPropertiesEntry
     public var ownerId :int;
 
     /**
-     * Object id of the <code>RoomPropertiesObject</code> if a client is interested in subscribing to
-     * the properties.
+     * Object id of the <code>RoomPropertiesObject</code> if a client is interested in
+     * subscribing to the properties.
      * @see RoomPropertiesObject
      */
     public var propsOid :int;

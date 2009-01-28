@@ -35,7 +35,8 @@ public class ScalingHotspot extends Hotspot
     override protected function startAction (event :MouseEvent) :void
     {
         super.startAction(event);
-        _originalScale = new Point(_editor.target.getMediaScaleX(), _editor.target.getMediaScaleY());
+        _originalScale = new Point(
+            _editor.target.getMediaScaleX(), _editor.target.getMediaScaleY());
     }
 
     // @Override from Hotspot

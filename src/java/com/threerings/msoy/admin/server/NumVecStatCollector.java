@@ -39,7 +39,8 @@ public abstract class NumVecStatCollector extends StatCollector
             }
 
             protected StatsModel finalizeModel () {
-                for (Map.Entry<String, Collection<List<Number>>> entry : _infos.asMap().entrySet()) {
+                for (Map.Entry<String, Collection<List<Number>>> entry :
+                        _infos.asMap().entrySet()) {
                     finalizeRow(_model, entry.getKey(), entry.getValue());
                 }
                 return _model;

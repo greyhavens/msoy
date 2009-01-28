@@ -21,7 +21,8 @@ public class HackHandler extends CommandHandler
     }
 
     override public function handleCommand (
-        ctx :CrowdContext, speakSvc :SpeakService, cmd :String, args :String, history :Array) :String
+        ctx :CrowdContext, speakSvc :SpeakService, cmd :String, args :String, history :Array)
+        :String
     {
         _onTrigger(args);
         return ChatCodes.SUCCESS;

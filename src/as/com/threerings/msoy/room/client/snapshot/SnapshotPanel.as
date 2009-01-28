@@ -54,7 +54,8 @@ public class SnapshotPanel extends FloatingPanel
         _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();
         sceneThumbnail = Snapshot.createThumbnail(
             ctx, _view, handleEncodingComplete, handleUploadError);
-        galleryImage = Snapshot.createGallery(ctx, _view, handleEncodingComplete, handleUploadError);
+        galleryImage = Snapshot.createGallery(
+            ctx, _view, handleEncodingComplete, handleUploadError);
         open();
     }
 
@@ -143,7 +144,8 @@ public class SnapshotPanel extends FloatingPanel
             _takeGalleryImage.selected = true;
             addChild(_takeGalleryImage);
         }
-        _downloadImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_download"), enforceUIInterlocks);
+        _downloadImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_download"),
+            enforceUIInterlocks);
         _downloadImage.selected = isGuest;
         addChild(_downloadImage);
         if (!isGuest) {

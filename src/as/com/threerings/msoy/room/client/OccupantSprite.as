@@ -617,8 +617,8 @@ public class OccupantSprite extends MsoySprite
     {
         var hotSpot :Point = getMediaHotSpot();
         // note: may overflow the media area..
-        _label.x = Math.abs(getMediaScaleX() * _locScale /* * _fxScaleX*/) * hotSpot.x / _extras.scaleX -
-            (_label.width/2);
+        _label.x = Math.abs(getMediaScaleX() * _locScale /* * _fxScaleX*/) *
+            hotSpot.x / _extras.scaleX - (_label.width/2);
         // if we have a configured _height use that in relation to the hot spot y position,
         // otherwise assume our label goes above our bounding box
         var baseY :Number = isNaN(_height) ? 0 :

@@ -366,7 +366,8 @@ public class GameLiaison
         signUp.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             _wctx.getWorldController().handleShowSignUp();
             clearGuestFlow();
-            _wctx.getMsoyClient().trackClientAction("2008 12 game over upsell 2 signup click", null);
+            _wctx.getMsoyClient().trackClientAction(
+                "2008 12 game over upsell 2 signup click", null);
         });
 
         // slide the panel onto the screen, and wait for a click
