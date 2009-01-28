@@ -27,7 +27,8 @@ class Connections
 
     /**
      * Creates a new set of clients that will be created using the given launcher.
-     * The run queue of the launcher will also be used to perform maintenance jobs on the collection.
+     * The run queue of the launcher will also be used to perform maintenance jobs
+     * on the collection.
      */
     public Connections (BureauLauncher launcher)
     {
