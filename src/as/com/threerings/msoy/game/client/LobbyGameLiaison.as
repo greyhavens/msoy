@@ -19,6 +19,7 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.crowd.client.LocationDirector;
 
 /**
  * Handles the lobby-specific aspects of the game server connection.
@@ -51,10 +52,12 @@ public class LobbyGameLiaison extends GameLiaison
         (_gctx as LiaisonGameContext).setShareMemberId(shareMemberId);
         
         // listen for changes in world location so that we can shutdown if we move
-        _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
+        var loc :LocationDirector = _wctx.getLocationDirector();
+        loc.addLocationObserver(_worldLocObs);
 
         // create our lobby controller which will display a "locating game..." interface
-        _lobby = new LobbyController(_gctx, _mode, lobbyCleared, playNow, lobbyLoaded, true);
+        var inRoom :Boolean = (loc.getPlaceObject() != null) || loc.movePending();
+        _lobby = new LobbyController(_gctx, _mode, lobbyCleared, playNow, lobbyLoaded, !inRoom);
     }
 
     /**
@@ -165,6 +168,12 @@ public class LobbyGameLiaison extends GameLiaison
         if (!_gctx.getLocationDirector().moveTo(gameOid)) {
             return false;
         }
+        
+        // also leave our current world location
+        if (!_wctx.getLocationDirector().leavePlace()) {
+            log.warning("Uh oh, unable to leave room before entering game " +
+                        "[movePending=" + _wctx.getLocationDirector().movePending() + "].");
+        }
 
         return true;
     }
@@ -183,6 +192,7 @@ public class LobbyGameLiaison extends GameLiaison
     override public function shutdown () :void
     {
         _shuttingDown = true;
+        
         // any shutdown of the liaison kills the lobby, so check if there is one open
         if (_lobby != null) {
             _lobby.forceShutdown();
@@ -196,12 +206,6 @@ public class LobbyGameLiaison extends GameLiaison
     override public function clientDidLogon (event :ClientEvent) :void
     {
         super.clientDidLogon(event);
-
-        // are we logged on? leave our current world location
-        if (!_wctx.getLocationDirector().leavePlace()) {
-            log.warning("Uh oh, unable to leave room after logging on to the game server " +
-                        "[movePending=" + _wctx.getLocationDirector().movePending() + "].");
-        }
 
         switch (_mode) {
         case LobbyCodes.JOIN_PLAYER:
