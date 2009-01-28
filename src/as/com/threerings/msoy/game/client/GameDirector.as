@@ -468,7 +468,7 @@ public class GameDirector extends BasicDirector
                 output += src.charAt(i);
             }
         }
-        return escape(output);
+        return output;
     }
 
     /**
