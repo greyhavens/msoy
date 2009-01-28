@@ -301,7 +301,7 @@ public class ItemManager
                 _bodyMan.updateOccupantInfo(memObj, new MemberInfo.AvatarUpdater(memObj));
             }
             ItemIdent ident = new ItemIdent(Item.AVATAR, avatarId);
-            if (memObj.avatarCache.containsKey(ident)) {
+            if (memObj.avatarCache != null && memObj.avatarCache.containsKey(ident)) {
                 memObj.removeFromAvatarCache(ident);
             }
         } finally {
