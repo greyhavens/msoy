@@ -11,6 +11,7 @@ import flash.geom.Rectangle;
 
 import mx.binding.utils.BindingUtils;
 
+import mx.controls.Text;
 import mx.controls.VSlider;
 import mx.containers.Grid;
 import mx.core.UIComponent;
@@ -49,7 +50,6 @@ public class DecorEditPanel extends FlyingPanel
         super(ctx, Msgs.STUDIO.get("t.backdrop_props"));
         _studioView = studioView;
         _decor = studioView.getScene().getDecor();
-        showCloseButton = true;
         open();
     }
 
@@ -181,6 +181,9 @@ public class DecorEditPanel extends FlyingPanel
     {
         super.createChildren();
 
+        _noMedia = FlexUtil.createText(Msgs.STUDIO.get("m.no_media"), 150);
+        addChild(_noMedia);
+
         _roomType = new CommandComboBox(saveChanges);
         var types :Array = [];
         for (var ii :int = 0; ii < TYPE_COUNT; ii++) {
@@ -244,6 +247,7 @@ public class DecorEditPanel extends FlyingPanel
         GridUtil.addRow(_grid, typeP);
         GridUtil.addRow(_grid, slideP);
         addChild(_grid);
+        FlexUtil.setVisible(_grid, false);
 
         // now bind everything up so that these widgets change things
         _suppressSaves = true;
@@ -316,9 +320,15 @@ public class DecorEditPanel extends FlyingPanel
      */
     protected function handleSizeKnown (event :ValueEvent) :void
     {
+        if (_noMedia.visible) {
+            // set things up to actually edit this decor now
+            FlexUtil.setVisible(_noMedia, false);
+            FlexUtil.setVisible(_grid, true);
+            showCloseButton = true;
+        }
+
         const w :int = int(event.value[0]);
         const h :int = int(event.value[1]);
-
         updateParameters(Decor.IMAGE_OVERLAY, false, w, h, h, .5, 1, 1);
         updateDecorOnPage();
     }
@@ -344,6 +354,7 @@ public class DecorEditPanel extends FlyingPanel
     protected const ROOM_KEYS :Array =
         [ "m.room_normal", "m.room_no_walls", "m.room_flat", "m.room_topdown" ];
 
+    protected var _noMedia :Text;
     protected var _roomType :CommandComboBox;
     protected var _actorScale :VSlider;
     protected var _furniScale :VSlider;
