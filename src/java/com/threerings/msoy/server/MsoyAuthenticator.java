@@ -221,7 +221,8 @@ public class MsoyAuthenticator extends Authenticator
      * Updates any of the supplied authentication information for the supplied account. Any of the
      * new values may be null to indicate that they are not to be updated.
      */
-    public void updateAccount (String oldEmail, String newEmail, String newPermaName, String newPass)
+    public void updateAccount (
+        String oldEmail, String newEmail, String newPermaName, String newPass)
         throws ServiceException
     {
         try {
@@ -424,7 +425,8 @@ public class MsoyAuthenticator extends Authenticator
                                       WorldCredentials.getGuestMemberId(creds.sessionToken));
 
                 } else {
-                    final MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
+                    final MemberRecord member =
+                        _memberRepo.loadMemberForSession(creds.sessionToken);
                     if (member == null) {
                         throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
                     }
