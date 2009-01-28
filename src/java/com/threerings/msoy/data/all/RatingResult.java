@@ -27,7 +27,7 @@ public class RatingResult
     
     public float getRating ()
     {
-        return ratingCount > 0 ? ratingSum / ratingCount : 3;
+        return (ratingCount > 0) ? ratingSum / ratingCount : 0;
     }
 
     /** Keeps GWT hap-hap-happy. */
