@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>msoy_as</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.adobe.flexbuilder.project.flexbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.adobe.flexbuilder.project.flexnature</nature>
+		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] whirled-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/ooo-libs/whirled/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] narya-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/ooo-libs/narya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] i18n</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/msoy/rsrc/en_US/i18n</locationURI>
+		</link>
+		<link>
+			<name>[source path] nenya-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/whirled/libraries/nenya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] vilya-src-as</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/ooo-libs/vilya/src/as</locationURI>
+		</link>
+		<link>
+			<name>[source path] player</name>
+			<type>2</type>
+			<locationURI>EXPORT_ROOT/ooo-libs/narya/src/player</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>
