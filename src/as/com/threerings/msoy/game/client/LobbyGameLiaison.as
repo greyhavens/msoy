@@ -9,6 +9,7 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.client.LocationAdapter;
+import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.client.GameReadyObserver;
@@ -19,7 +20,6 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.crowd.client.LocationDirector;
 
 /**
  * Handles the lobby-specific aspects of the game server connection.
