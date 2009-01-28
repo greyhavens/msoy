@@ -466,7 +466,8 @@ public class EditCanvas extends DisplayCanvas
 
     protected function dispatchWorkingAreaSelection () :void
     {
-        dispatchEvent(new ValueEvent(SELECTION_CHANGE, [ _workingArea.width, _workingArea.height ]));
+        dispatchEvent(
+            new ValueEvent(SELECTION_CHANGE, [ _workingArea.width, _workingArea.height ]));
     }
 
     /**
