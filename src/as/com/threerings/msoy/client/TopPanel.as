@@ -449,6 +449,6 @@ public class TopPanel extends Canvas
     protected var _comicOverlay :ComicOverlay;
 
     /** The minimum flash player version required by whirled. */
-    protected static const MIN_FLASH_VERSION :Array = [ 9, 0, 115, 0 ];
+    protected static const MIN_FLASH_VERSION :Array = [ 10, 0, 12, 36 ];
 }
 }
