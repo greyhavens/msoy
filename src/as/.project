@@ -29,12 +29,12 @@
 		<link>
 			<name>[source path] i18n</name>
 			<type>2</type>
-			<locationURI>EXPORT_ROOT/msoy/rsrc/en_US/i18n</locationURI>
+			<locationURI>EXPORT_ROOT/msoy/rsrc/en_US/i1%38n</locationURI>
 		</link>
 		<link>
 			<name>[source path] nenya-src-as</name>
 			<type>2</type>
-			<locationURI>EXPORT_ROOT/whirled/libraries/nenya/src/as</locationURI>
+			<locationURI>EXPORT_ROOT/ooo-libs/nenya/src/as</locationURI>
 		</link>
 		<link>
 			<name>[source path] vilya-src-as</name>
