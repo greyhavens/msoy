@@ -29,7 +29,9 @@ public class GameLoadingDisplay extends PlaceLoadingDisplay
     public function GameLoadingDisplay (box :PlaceBox, logo :ScalingMediaContainer)
     {
         super(box);
-        addChild(_logo = logo);
+        
+        // add our loading image behind everything else
+        addChildAt(_logo = logo, 0);
         _logo.alpha = 0;
     }
 
@@ -46,8 +48,8 @@ public class GameLoadingDisplay extends PlaceLoadingDisplay
         _logo.x = (_box.width - _logo.maxW) / 2;
         _logo.y = (_box.height - _logo.maxH) / 2;
 
-        // tell the logo to slowly fade in
-        Tweener.addTween(_logo, { alpha: 1, time: 1, delay: 1, transition: "easeincubic" });
+        // tell the logo to fade in
+        Tweener.addTween(_logo, { alpha: 1, time: 1, delay: 1, transition: "easeinsine" });
     }
     
     /** 
@@ -57,9 +59,7 @@ public class GameLoadingDisplay extends PlaceLoadingDisplay
     override protected function doTransitionOut () :void
     {
         // note: do not call super; we leave the spinner as is
-         
-        // just fade the logo out   
-        Tweener.addTween(_logo, { alpha: 0, time: 1, transition: "easeoutcubic" }); 
+        Tweener.removeTweens(_spinner, "x", "y");
     }
 
     protected var _logo :ScalingMediaContainer;
