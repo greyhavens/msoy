@@ -213,7 +213,9 @@ public class RoomStudioController extends RoomController
         }
 
         MethodQueue.callLater(_studioView.dispatchMemoryChanged, [ ident, key, data ]);
-        MethodQueue.callLater(callback, [ true ]);
+        if (callback != null) {
+            MethodQueue.callLater(callback, [ true ]);
+        }
     }
 
     protected var _studioView :RoomStudioView;
