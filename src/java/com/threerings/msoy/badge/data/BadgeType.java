@@ -353,6 +353,16 @@ public enum BadgeType
             }
             System.out.println("}\n}");
 
+        } else if (args.length > 0 && args[0].equals("-genpy")) {
+            System.out.println("");
+            System.out.println("## AUTO GENERATED from " + BadgeType.class.getName());
+            System.out.println("codes = {");
+            for (BadgeType type : values()) {
+                System.out.println(
+                    "    " + type.getCode() + ": '" + type.name() + "',");
+            }
+            System.out.println("}");
+
         } else if (args.length > 0 && args[0].equals("-genswitch")) {
             System.out.print("switch (badgeCode) {");
             for (BadgeType type : values()) {
