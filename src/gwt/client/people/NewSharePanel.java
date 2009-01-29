@@ -21,13 +21,16 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -50,18 +53,22 @@ public class NewSharePanel extends FlowPanel
     {
         setStylePrimaryName("sharePanel");
 
-        Label testLabel = new Label("Test");
+        // TODO: Add this in once we support this feature.
+        /*Label testLabel = new Label("Test");
         RollupBox postGame = new RollupBox("Post this game to...", "postGameRollup", testLabel);
-        add(postGame);
+        add(postGame);*/
 
-        RollupBox emailBox = new RollupBox("Email Whirled to Your Friends", "emailRollup", new InviteEmailPanel());
+        RollupBox emailBox = new RollupBox("Email Whirled to Your Friends", "emailRollup",
+            new InviteEmailPanel());
         emailBox.setOpen(true);
         add(emailBox);
 
-        RollupBox imageLinksBox = new RollupBox("Image Links to this Game", "imageLinksRollup", new Label("Image links."));
+        RollupBox imageLinksBox = new RollupBox("Image Links to this Game", "imageLinksRollup",
+            new ImageLinkPanel());
         add(imageLinksBox);
 
-        RollupBox findFriendsBox = new RollupBox("Find Friends Already on Whirled", "findFriendsRollup", new Label("Find friends."));
+        RollupBox findFriendsBox = new RollupBox("Find Friends Already on Whirled",
+            "findFriendsRollup", new FindFriendsPanel());
         add(findFriendsBox);
 
         add(new ShareURLBox(gameId, gameToken, gameType));
@@ -76,6 +83,108 @@ public class NewSharePanel extends FlowPanel
     protected void showGame (final GameDetail detail)
     {
         add(new GameInfoPanel(detail));
+    }
+
+    protected static class FindFriendsPanel extends VerticalPanel
+    {
+        public FindFriendsPanel ()
+        {
+            setStylePrimaryName("findFriendsPanel");
+
+            // Search by name panel
+            add(MsoyUI.createLabel("Search by real name, email address, or Whirled name.",
+                "importContacts-field"));
+            HorizontalPanel searchBar = new HorizontalPanel();
+            searchBar.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+            TextBox search = new TextBox();
+            search.setStylePrimaryName("findFriendsPanel-searchBox");
+            searchBar.add(search);
+            searchBar.add(MsoyUI.createButton("shortThin", "search", new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
+                    Window.alert("search");
+                }
+            }));
+            add(searchBar);
+            add(MsoyUI.createLabel("We can search your contacts to see which of your friends " +
+            		"are already on Whirled.", "importContacts-field"));
+            ImportContactsPanel importContacts = new ImportContactsPanel();
+            importContacts.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
+                    Window.alert("search webmail");
+                }
+            });
+            add(importContacts);
+        }
+    }
+
+    protected static class ImageLinkPanel extends VerticalPanel
+    {
+        public ImageLinkPanel ()
+        {
+            setStylePrimaryName("imageLinkPanel");
+            add(MsoyUI.createHTML("<a href='#people-invites_links'>Click here</a> " +
+                "for tons of cool images you can use to link to Whirled.com on your MySpace, " +
+                "blog, or website!  <a href='http://wiki.whirled.com/Affiliate'>Earn " +
+                "money</a> whenever someone joins Whirled by clicking on your image.", null));
+            FlowPanel panel = new FlowPanel();
+            Image icons = new Image();
+            icons.setStylePrimaryName("imageLinkPanel-icons");
+            panel.add(icons);
+            Widget moreLink = Link.create("more", Pages.PEOPLE, "invites_links");
+            moreLink.setStylePrimaryName("imageLinkPanel-more");
+            panel.add(moreLink);
+            add(panel);
+        }
+    }
+
+    protected static class ImportContactsPanel extends SmartTable
+        implements SourcesClickEvents
+    {
+        public ImportContactsPanel ()
+        {
+            setText(0, 0, "Your email", 1, "importContacts-field");
+            TextBox emailText = new TextBox();
+            emailText.setStylePrimaryName("importContacts-textBox");
+            setWidget(0, 1, emailText);
+            setText(0, 2, "@", 1, "importContacts-field");
+            ListBox webmailList = new ListBox();
+            webmailList.setStylePrimaryName("importContacts-webmailList");
+            webmailList.addItem("MSN Hotmail", "hotmail.com");
+            webmailList.addItem("Gmail", "gmail.com");
+            webmailList.addItem("AOL", "aol.com");
+            webmailList.addItem("Lycos", "lycos.com");
+            webmailList.addItem("RediffMail", "rediffmail.com");
+            webmailList.addItem(".Mac", "mac.com");
+            webmailList.addItem("mail.com", "mail.com");
+            webmailList.addItem("FastMail.FM", "fastmail.fm");
+            webmailList.addItem("Web.de", "web.de");
+            webmailList.addItem("MyNet.com", "mynet.com");
+            setWidget(0, 3, webmailList);
+            setText(1, 0, "Password", 1, "importContacts-field");
+            TextBox passwordText = new TextBox();
+            passwordText.setStylePrimaryName("importContacts-textBox");
+            setWidget(1, 1, passwordText);
+            setText(2, 0, "We will never spam your friends, and we will only email " +
+                    "with your permission.", 2, "importContacts-note");
+            _sendWebmail = MsoyUI.createButton("shortThin", "continue", null);
+            setWidget(2, 2, _sendWebmail);
+            getFlexCellFormatter().setHorizontalAlignment(3, 2,
+                HasHorizontalAlignment.ALIGN_RIGHT);
+        }
+
+        public void addClickListener (ClickListener listener)
+        {
+            _sendWebmail.addClickListener(listener);
+        }
+
+        public void removeClickListener (ClickListener listener)
+        {
+            _sendWebmail.removeClickListener(listener);
+        }
+
+        protected final PushButton _sendWebmail;
     }
 
     protected static class InviteEmailPanel extends SmartTable
@@ -97,7 +206,7 @@ public class NewSharePanel extends FlowPanel
                 }
             });
             sidePanel.add(link);
-            Label label = new Label("from Yahoo, Hotmail, Gmail, MSN, AOL, Lycon, .mac, and more!");
+            Label label = new Label("from Yahoo, Hotmail, Gmail, MSN, AOL, Lycos, .mac, and more!");
             label.setStylePrimaryName("sideLabel");
             sidePanel.add(label);
             SimplePanel image = new SimplePanel();
@@ -144,42 +253,19 @@ public class NewSharePanel extends FlowPanel
             tabs.add(emailPanel, "E-mail");
 
             // All your friends tab
-            SmartTable allPanel = new SmartTable("allTab", 0, 0);
-            allPanel.setText(0, 0, "We can import your contacts from your email.", 4,
-                "allTab-field");
-            allPanel.setText(1, 0, "Your email", 1, "allTab-field");
-            TextBox emailText = new TextBox();
-            emailText.setStylePrimaryName("allTab-textBox");
-            allPanel.setWidget(1, 1, emailText);
-            allPanel.setText(1, 2, "@", 1, "allTab-field");
-            ListBox webmailList = new ListBox();
-            webmailList.setStylePrimaryName("allTab-webmailList");
-            webmailList.addItem("MSN Hotmail", "hotmail.com");
-            webmailList.addItem("Gmail", "gmail.com");
-            webmailList.addItem("AOL", "aol.com");
-            webmailList.addItem("Lycos", "lycos.com");
-            webmailList.addItem("RediffMail", "rediffmail.com");
-            webmailList.addItem(".Mac", "mac.com");
-            webmailList.addItem("mail.com", "mail.com");
-            webmailList.addItem("FastMail.FM", "fastmail.fm");
-            webmailList.addItem("Web.de", "web.de");
-            webmailList.addItem("MyNet.com", "mynet.com");
-            allPanel.setWidget(1, 3, webmailList);
-            allPanel.setText(2, 0, "Password", 1, "allTab-field");
-            TextBox passwordText = new TextBox();
-            passwordText.setStylePrimaryName("allTab-textBox");
-            allPanel.setWidget(2, 1, passwordText);
-            allPanel.setText(3, 0, "We will never spam your friends, and we will only email " +
-            		"with your permission.", 2, "allTab-note");
-            PushButton sendWebmail = MsoyUI.createButton("shortThin", "send", new ClickListener() {
+            VerticalPanel allPanel = new VerticalPanel();
+            allPanel.setStylePrimaryName("allTab");
+            Label description = new Label("We can import your contacts from your email.");
+            description.setStylePrimaryName("importContacts-field");
+            allPanel.add(description);
+            ImportContactsPanel importContacts = new ImportContactsPanel();
+            importContacts.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    // TODO
+                    // TODO:
                     Window.alert("send webmail");
                 }
             });
-            allPanel.setWidget(3, 2, sendWebmail);
-            allPanel.getFlexCellFormatter().setHorizontalAlignment(3, 2,
-                HasHorizontalAlignment.ALIGN_RIGHT);
+            allPanel.add(new ImportContactsPanel());
             tabs.add(allPanel, "All Your Friends");
 
             tabs.selectTab(0);

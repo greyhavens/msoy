@@ -725,33 +725,65 @@
 
 .inviteEmailPanel .allTab {
 	font-size: 13px;
+    padding: 0px 5px 0px 5px;
 }
 
-.inviteEmailPanel .allTab-field {
+.importContacts-field {
 	font-size: 13px;
 }
 
-.inviteEmailPanel .allTab-textBox {
-	width: 200px;
+.importContacts-textBox {
+	width: 180px;
 	border: 1px solid #cccccc;
 	padding: 5px;
     font-family:Arial,Helvetica,sans-serif;
     font-size: 13px;
-    margin-left: 20px;
+    margin: 10px 0px 10px 20px;
 }
 
-.inviteEmailPanel .allTab-webmailList {
+.importContacts-webmailList {
 	width: 125px;
 	border: 1px solid #cccccc;
 	padding: 5px;
 	font-size: 13px;
 }
 
-.inviteEmailPanel .allTab-note {
+.importContacts-note {
     color: #a3a3a3;
     font-size: 11px;
 }
 
-.inviteEmailPanel .allTab {
-    padding: 0px 5px 0px 5px;
+.imageLinkPanel {
+	font-size: 12px;
+}
+
+.imageLinkPanel td {
+	text-align: center;
+	padding: 4px;
+}
+
+.imageLinkPanel-icons {
+	width: 495px;
+	height: 47px;
+	background: url(/images/people/invite/imagelinks_examples.png) no-repeat;
+	display: inline-table;
+	margin-right: 20px;
+}
+
+.findFriendsPanel {
+	padding: 8px;
+}
+
+.findFriendsPanel-searchBox {
+	width: 400px;
+    border: 1px solid #cccccc;
+    padding: 5px;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size: 13px;
+    margin: 10px 20px 10px 0px;
+}
+
+.findFriendsPanel .importContacts-textBox {
+	width: 250px;
+	margin: 0px 20px 0px 0px;
 }
