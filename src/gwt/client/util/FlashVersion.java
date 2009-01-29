@@ -13,7 +13,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 public class FlashVersion
 {
     /** Our required minimum flash client version. */
-    public static final int[] MIN_FLASH_VERSION = { 10, 0, 12, 36 };
+    public static final int[] MIN_FLASH_VERSION = { 9, 0, 115, 0 };
 
     /**
      * Configure the WidgetUtil to use the appropriate flash player version.

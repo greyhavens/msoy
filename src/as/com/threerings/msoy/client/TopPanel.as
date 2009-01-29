@@ -4,6 +4,7 @@
 package com.threerings.msoy.client {
 
 import flash.display.Loader;
+import flash.display.Stage;
 import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.net.URLRequest;
@@ -142,7 +143,7 @@ public class TopPanel extends Canvas
                     panel.setMessage(MessageBundle.tcompose(
                         "m.min_flash_version", bits.join(","), MIN_FLASH_VERSION.join(",")), true);
                     setPlaceView(panel);
-
+//
 //                    var l :Loader = new Loader();
 //                    var url :URLRequest = new URLRequest(DeploymentConfig.serverURL +
 //                        "expressinstall/expressInstall.swf");
@@ -154,7 +155,12 @@ public class TopPanel extends Canvas
 //                    trace("url.data: " + url.data);
 //                    l.load(url, new LoaderContext(false, ApplicationDomain.currentDomain,
 //                        SecurityDomain.currentDomain));
-//                    stage.addChild(l);
+//
+//                    var st :Stage = this.stage;
+//                    while (st.numChildren > 0) {
+//                        st.removeChildAt(0);
+//                    }
+//                    st.addChild(l);
                     return false;
                 }
                 // else, the versions are the same for this field, proceed to the next...
@@ -469,6 +475,6 @@ public class TopPanel extends Canvas
     protected var _comicOverlay :ComicOverlay;
 
     /** The minimum flash player version required by whirled. */
-    protected static const MIN_FLASH_VERSION :Array = [ 10, 0, 12, 36 ];
+    protected static const MIN_FLASH_VERSION :Array = [ 9, 0, 115, 0 ];
 }
 }
