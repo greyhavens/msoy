@@ -412,7 +412,7 @@
             />
 
     <cache name="depotRecord"
-           maxElementsInMemory="75000"
+           maxElementsInMemory="200000"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
