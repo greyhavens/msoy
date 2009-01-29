@@ -26,9 +26,8 @@ class Connections
     protected static long CLIENT_RENEW_INTERVAL = 15 * 1000;
 
     /**
-     * Creates a new set of clients that will be created using the given launcher.
-     * The run queue of the launcher will also be used to perform maintenance jobs
-     * on the collection.
+     * Creates a new set of clients that will be created using the given launcher. The run queue of
+     * the launcher will also be used to perform maintenance jobs on the collection.
      */
     public Connections (BureauLauncher launcher)
     {
@@ -44,9 +43,9 @@ class Connections
     }
 
     /**
-     * Add a new connection to the given server. Logon is automatically attempted. If logon
-     * fails, the server is blacklisted for a given amount of time such that calls to
-     * <code>add</code> the server again will be ignored.
+     * Add a new connection to the given server. Logon is automatically attempted. If logon fails,
+     * the server is blacklisted for a given amount of time such that calls to <code>add</code> the
+     * server again will be ignored.
      * @see #CLIENT_RENEW_TIME
      */
     public void add (String host, int port)
@@ -215,8 +214,8 @@ class Connections
         }
 
         /**
-         * Sets the current state to the given value and sets the last update time to the
-         * current time.
+         * Sets the current state to the given value and sets the last update time to the current
+         * time.
          */
         public void setState (State state)
         {
