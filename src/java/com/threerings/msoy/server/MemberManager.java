@@ -19,7 +19,6 @@ import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;

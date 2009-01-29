@@ -37,21 +37,6 @@ import static com.threerings.msoy.Log.log;
 public class BadgeManager
 {
     /**
-     * Awards a badge of the specified type to the user if they don't already have it.
-     */
-    public void awardBadge (MemberObject user, BadgeType badgeType, int level)
-    {
-        if (!user.getLocal(MemberLocal.class).badges.containsBadge(badgeType)) {
-            List<EarnedBadge> badgeList = Lists.newArrayList();
-            long now = System.currentTimeMillis();
-            String levelUnits = badgeType.getRequiredUnitsString(level);
-            int coinValue = badgeType.getCoinValue(level);
-            badgeList.add(new EarnedBadge(badgeType.getCode(), level, levelUnits, coinValue, now));
-            awardBadges(user, badgeList);
-        }
-    }
-
-    /**
      * For each Badge type, awards the Badge to the user if the Badge's award conditions
      * have been met.
      */
@@ -70,29 +55,32 @@ public class BadgeManager
         List<InProgressBadge> deadBadges = Lists.newArrayList();
         for (BadgeType badgeType : BadgeType.values()) {
             BadgeProgress progress = badgeType.getProgress(local.stats);
-            if (progress.highestLevel >= 0) {
-                EarnedBadge earnedBadge = local.badges.getBadge(badgeType);
-                int currentLevel = earnedBadge == null ? -1 : earnedBadge.level;
-                for (int level = currentLevel + 1; level <= progress.highestLevel; level++) {
-                    // award an EarnedBadge for each level that was earned in this update.
-                    newBadges.add(new EarnedBadge(badgeType.getCode(), level,
-                                                  badgeType.getRequiredUnitsString(level),
-                                                  badgeType.getCoinValue(level), whenEarned));
-                }
-
-                if (progress.highestLevel >= badgeType.getNumLevels()-1) {
-                    // If we've reached the highest badge level, delete the existing InProgressBadge
-                    // for this badge type
-                    InProgressBadge inProgressBadge = local.inProgressBadges.getBadge(badgeType);
-                    if (inProgressBadge != null) {
-                        deadBadges.add(inProgressBadge);
-                    }
-                }
+            if (progress.highestLevel < 0) {
+                // skip badges with no progress
+                // TODO: retroactive unawarding?
+                continue;
             }
 
-            if (progress.highestLevel >= 0 && progress.highestLevel < badgeType.getNumLevels()-1) {
-                // If we haven't reached the highest badge level for this badge, we should have a
-                // corresponding InProgressBadge for it.
+            EarnedBadge earnedBadge = local.badges.getBadge(badgeType);
+            int currentLevel = earnedBadge == null ? -1 : earnedBadge.level;
+
+            // award an EarnedBadge for each level that was earned in this update.
+            for (int level = currentLevel + 1; level <= progress.highestLevel; level++) {
+                newBadges.add(new EarnedBadge(badgeType.getCode(), level,
+                                              badgeType.getRequiredUnitsString(level),
+                                              badgeType.getCoinValue(level), whenEarned));
+            }
+
+            if (progress.highestLevel >= badgeType.getNumLevels()-1) {
+                // If we've reached the highest badge level, delete the existing InProgressBadge
+                // for this badge type
+                InProgressBadge inProgressBadge = local.inProgressBadges.getBadge(badgeType);
+                if (inProgressBadge != null) {
+                    deadBadges.add(inProgressBadge);
+                }
+
+            } else {
+                // ... otherwise make sure we have an InProgressBadge for it.
                 InProgressBadge inProgressBadge = local.inProgressBadges.getBadge(badgeType);
 
                 float quantizedProgress = InProgressBadgeRecord.quantizeProgress(
@@ -100,6 +88,7 @@ public class BadgeManager
 
                 if (inProgressBadge == null || progress.highestLevel >= inProgressBadge.level ||
                         (progress.highestLevel == inProgressBadge.level - 1 &&
+                            // TODO: fp epsilon?
                                 quantizedProgress > inProgressBadge.progress)) {
                     int nextLevel = progress.highestLevel + 1;
                     inProgressBadges.add(new InProgressBadge(badgeType.getCode(),
