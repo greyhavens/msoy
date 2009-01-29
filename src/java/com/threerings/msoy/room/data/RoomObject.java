@@ -274,6 +274,8 @@ public class RoomObject extends SpotSceneObject
                 if (memories.contains(mem)) {
                     log.warning("WTF? Room already contains memory entry", ArrayUtil.concatenate(
                         new Object[] {"room", getOid(), "memory", mem}, logArgs));
+                    updateMemories(mem);
+
                 } else {
                     addToMemories(mem);
                 }
