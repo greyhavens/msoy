@@ -470,17 +470,7 @@ public class LobbyController extends Controller
             return; 
         }
         
-        var media :MediaDesc = game.splashMedia;
-        if (media == null) {
-            // if splash media is not available, try furni, and finally a thumbnail
-            media = game.getRawFurniMedia() != null ? 
-                game.getRawFurniMedia() : game.getThumbnailMedia();
-        }
-
-        var splash :ScalingMediaContainer = 
-            ScalingMediaContainer.createView(media, MediaDesc.GAME_SPLASH_SIZE);
-
-        _mctx.setPlaceView(new LobbyPlaceView(splash));
+        _mctx.setPlaceView(new LobbyPlaceView(game));
     }
 
     /**
