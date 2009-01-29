@@ -3,9 +3,15 @@
 
 package com.threerings.msoy.client {
 
+import flash.display.Loader;
 import flash.events.Event;
 import flash.geom.Rectangle;
+import flash.net.URLRequest;
+import flash.net.URLVariables;
+import flash.system.ApplicationDomain;
 import flash.system.Capabilities;
+import flash.system.LoaderContext;
+import flash.system.SecurityDomain;
 
 import mx.core.Application;
 import mx.core.ScrollPolicy;
@@ -17,6 +23,7 @@ import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Log;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.client.LocationObserver;
@@ -135,14 +142,27 @@ public class TopPanel extends Canvas
                     panel.setMessage(MessageBundle.tcompose(
                         "m.min_flash_version", bits.join(","), MIN_FLASH_VERSION.join(",")), true);
                     setPlaceView(panel);
+
+//                    var l :Loader = new Loader();
+//                    var url :URLRequest = new URLRequest(DeploymentConfig.serverURL +
+//                        "expressinstall/expressInstall.swf");
+//                    var vars :URLVariables = new URLVariables();
+//                    vars["MMredirectURL"] = DeploymentConfig.serverURL;
+//                    vars["MMplayerType"] = "PlugIn";
+//                    vars["MMdoctitle"] = "Think of what";
+//                    url.data = vars;
+//                    trace("url.data: " + url.data);
+//                    l.load(url, new LoaderContext(false, ApplicationDomain.currentDomain,
+//                        SecurityDomain.currentDomain));
+//                    stage.addChild(l);
                     return false;
                 }
                 // else, the versions are the same for this field, proceed to the next...
             }
 
         } catch (error :Error) {
-            trace("Choked checking version [version=" + Capabilities.version +
-                  ", error=" + error + ".");
+            Log.getLog(this).warning("Choked checking version",
+                "version", Capabilities.version, error);
             // ah well, whatever, let 'em in and hope for the best
         }
         return true;
