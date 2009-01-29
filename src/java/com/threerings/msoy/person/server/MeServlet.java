@@ -163,9 +163,14 @@ public class MeServlet extends MsoyServiceServlet
 
         if (mrec.memberId == memberId) {
             data.stampOwner = mrec.name;
-            // for now, we just ship along every badge relevant to this player.
-            data.nextBadges = _badgeLogic.getInProgressBadges(
-                mrec.memberId, mrec.badgesVersion, true);
+            // for now, we just ship along every badge relevant to this player except OUTSPOKEN
+            data.nextBadges = Lists.newArrayList(Iterables.filter(
+                    _badgeLogic.getInProgressBadges(mrec.memberId, mrec.badgesVersion, true),
+                    new Predicate<InProgressBadge>() {
+                        public boolean apply (InProgressBadge badge) {
+                            return BadgeType.getType(badge.badgeCode) != BadgeType.OUTSPOKEN;
+                        }
+                    }));
 
         } else {
             MemberName stampOwner = _memberRepo.loadMemberName(memberId);
