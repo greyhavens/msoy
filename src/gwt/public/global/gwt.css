@@ -1205,3 +1205,44 @@ img, embed, applet, object {
   height: 15px;
   background-image: url(/images/ui/dot_loader.gif);
 }
+
+/* ------------------------------------
+   ROLLUP BOX
+-------------------------------------*/
+
+.rollupBox {
+	width: 670px;
+	border: 1px solid #cdcdcd;
+	background-color: #fafafa;
+	padding: 3px;
+	margin-bottom: 7px;
+}
+
+.rollupBox-header {
+	height: 26px;
+    cursor: pointer;
+}
+
+.rollupBox-arrow {
+	width: 20px;
+	height: 20px;
+	padding-right: 8px;
+	background: url(/images/ui/rollup-arrow-closed.png) no-repeat 7px 4px; 
+	margin-top: 4px;
+}
+
+.rollupBox-arrow-open {
+	background: url(/images/ui/rollup-arrow-open.png) no-repeat 4px 6px; 
+}
+
+.rollupBox-title {
+	font-size: 13px;
+	font-weight: lighter;
+	color: #236ec1;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.rollupBox-title-open {
+	font-weight: bold;
+}

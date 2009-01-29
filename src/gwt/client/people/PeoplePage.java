@@ -5,6 +5,7 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
@@ -99,6 +100,9 @@ public class PeoplePage extends Page
 
         } else if (action.equals("friendly")) { // !guest
             setContent(_msgs.greetersTitle(), new GreeterPanel());
+
+        } else if (action.equals("invitetest") && DeploymentConfig.devDeployment) {
+            setContent(_msgs.inviteTitle(), new NewSharePanel(-13, "ABEXGhi283--", "game"));
 
         } else { // !guest
             setContent(new FriendsPanel(CShell.getMemberId()));

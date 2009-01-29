@@ -473,3 +473,285 @@
   height: 1px;
   border: none;
 }
+
+/* ------------------------------------
+   NEW SHARE PAGE
+-------------------------------------*/
+
+.sharePanel {
+	width: 675px;
+	padding: 5px;
+}
+
+.shareGameInfo .thumbnail {
+	margin-left: 20px;
+	margin-right: 5px;
+}
+
+.shareGameInfo .name {
+	color: #256591;
+	font-size: 14px;
+	font-weight: bold;
+	padding-right: 5px;
+}
+
+.shareGameInfo .creator {
+    color: #256591;
+    font-size: 13px;
+}
+
+.shareGameInfo .genre {
+	color: #56a7dc;
+	font-size: 11px;
+}
+
+.shareGameInfo .description {
+    color: #9f9f9f;
+    font-size: 11px;
+}
+
+.shareURLBox {
+	width: 307px;
+	color: #2668b4;
+}
+
+.shareURLBox-closed {
+    background: url(/images/people/invite/blue_optionsclosed.png) no-repeat;
+    height: 116px;
+}
+
+.shareURLBox-open {
+    background: url(/images/people/invite/blue_optionsopen.png) no-repeat;
+    height: 196px;
+}
+
+.shareURLBox .urlPanel {
+	padding: 6px;
+	border-spacing: 0px;
+}
+
+.shareURLBox .optionsPanel {
+	width: 290px;
+	border-spacing: 0px;
+	cursor: default;
+}
+
+.shareURLBox-optionsLink a {
+	font-size: 11px;
+	color: #4188b4;
+	cursor: pointer;
+}
+
+.shareURLBox .optionsPanel .sizeBox {
+	border: 1px solid black;
+	background-color: #cceaff;
+}
+
+.shareURLBox .optionsPanel .sizeLabel {
+    color: #2975b3;
+    font-size: 11px;
+}
+
+.shareURLBox .optionsPanel .sizeBox-selected {
+    border: 1px solid black;
+    background-color: white;
+}
+
+.shareURLBox .optionsPanel .sizePanel-mouseOver {
+	padding: 2px;
+	border: 1px solid #1f689b;
+	height: 70px;
+}
+
+.shareURLBox .optionsPanel .sizePanel {
+    padding: 3px;
+    height: 70px;
+}
+
+.shareURLBox .optionsPanel input {
+	border: 0px;
+}
+
+.shareURLBox .optionsPanel .smallBox {
+    width: 41px;
+	height: 25px;
+}
+
+.shareURLBox .optionsPanel .mediumBox {
+    width: 36px;
+    height: 40px;
+}
+
+.shareURLBox .optionsPanel .largeBox {
+	width: 66px;
+	height: 55px;
+}
+
+.shareURLBox .optionsPanel .fullBox {
+	width: 101px;
+	height: 55px;
+}
+
+.shareURLBox td {
+    font-size: 13px;
+    vertical-align: top;
+}
+
+.shareURLBox-urlIcon {
+	background: url(/images/people/invite/IM_icon.png) no-repeat;
+	width: 32px;
+	height: 19px;
+}
+
+.shareURLBox-embedIcon {
+	background: url(/images/people/invite/embed_icon.png) no-repeat;
+    width: 32px;
+    height: 17px;
+}
+
+.shareURLBox .gwt-TextBox {
+	border: 1px solid #4186ad;
+	width: 255px;
+	padding: 3px;
+	color: #848484;
+	margin-bottom: 2px;
+}
+
+.emailRollup .rollupBox-title {
+	background: url(/images/people/invite/mail_icon.png) no-repeat 0px 3px;
+	padding-left: 33px;
+}
+
+.postGameRollup .rollupBox-title {
+    background: url(/images/people/invite/post_icon.png) no-repeat;
+    padding-left: 33px;
+}
+
+.imageLinksRollup .rollupBox-title {
+    background: url(/images/people/invite/image_links_icon.jpg) no-repeat;
+    padding-left: 33px;
+}
+
+.findFriendsRollup .rollupBox-title {
+    background: url(/images/people/invite/find_friends_icon.png) no-repeat 0px 2px;
+    padding-left: 33px;
+}
+
+.inviteEmailPanel .gwt-TabPanel {
+	width: 459px;
+}
+
+.inviteEmailPanel .gwt-TabBarItem {
+	background-color: #e8e8e8;
+	border: 1px solid #cdcdcd;
+	font-size: 12px;
+	padding: 4px 20px 2px 20px;
+	cursor: default;
+}
+
+.inviteEmailPanel .gwt-TabBarItem-selected {
+	background-color: #fafafa;
+	border-bottom: none;
+	font-size: 12px;
+	color: #636363;
+	padding-bottom: 3px;
+}
+
+.inviteEmailPanel .gwt-TabBarFirst {
+	border-bottom: 1px solid #cdcdcd;
+}
+
+.inviteEmailPanel .gwt-TabBarRest {
+    border-bottom: 1px solid #cdcdcd;
+}
+
+.inviteEmailPanel .gwt-TabPanelBottom {
+	border-left: 1px solid #cdcdcd;
+	border-right: 1px solid #cdcdcd;
+	border-bottom: 1px solid #cdcdcd;
+	height: 194px;
+}
+
+.inviteEmailPanel .description {
+	text-align: center;
+	font-size: 12px;
+	padding-bottom: 15px;
+}
+
+.inviteEmailPanel .sideLink a {
+	color: #2670b7;
+    font-size: 13px;
+    font-weight: bold;
+    background: url(/images/people/invite/light_blue_arrow.png) no-repeat center right;
+    padding-right: 12px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.inviteEmailPanel .sideLabel {
+	font-size: 12px;
+	padding: 5px 5px 5px 20px;
+}
+
+.inviteEmailPanel .importImage {
+	background: url(/images/people/invite/all_mails.png) no-repeat 20px 0px;
+	width: 186px;
+	height: 130px;
+}
+
+.inviteEmailPanel .emailTab {
+	padding: 0px 5px 0px 5px;
+}
+
+.inviteEmailPanel .emailTab-field {
+	color: #2356bf;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.inviteEmailPanel .emailTab-description {
+	color: #a3a3a3;
+	font-size: 11px;
+}
+
+.inviteEmailPanel .emailTab-input {
+	width: 435px;
+	height: 50px;
+	border: 1px solid #cccccc;
+	padding: 5px;
+	font-family:Arial,Helvetica,sans-serif;
+	font-size: 13px;
+}
+
+.inviteEmailPanel .allTab {
+	font-size: 13px;
+}
+
+.inviteEmailPanel .allTab-field {
+	font-size: 13px;
+}
+
+.inviteEmailPanel .allTab-textBox {
+	width: 200px;
+	border: 1px solid #cccccc;
+	padding: 5px;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size: 13px;
+    margin-left: 20px;
+}
+
+.inviteEmailPanel .allTab-webmailList {
+	width: 125px;
+	border: 1px solid #cccccc;
+	padding: 5px;
+	font-size: 13px;
+}
+
+.inviteEmailPanel .allTab-note {
+    color: #a3a3a3;
+    font-size: 11px;
+}
+
+.inviteEmailPanel .allTab {
+    padding: 0px 5px 0px 5px;
+}

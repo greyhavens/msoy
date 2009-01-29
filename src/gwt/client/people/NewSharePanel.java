@@ -1,0 +1,428 @@
+//
+// $Id$
+
+package client.people;
+
+import client.shell.CShell;
+import client.shell.DynamicLookup;
+import client.shell.ShellMessages;
+import client.ui.CreatorLabel;
+import client.ui.MsoyUI;
+import client.ui.RollupBox;
+import client.ui.ThumbBox;
+import client.util.Link;
+import client.util.MsoyCallback;
+import client.util.ServiceUtil;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusListener;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
+
+public class NewSharePanel extends FlowPanel
+{
+    public NewSharePanel (int gameId, String gameToken, String gameType)
+    {
+        setStylePrimaryName("sharePanel");
+
+        Label testLabel = new Label("Test");
+        RollupBox postGame = new RollupBox("Post this game to...", "postGameRollup", testLabel);
+        add(postGame);
+
+        RollupBox emailBox = new RollupBox("Email Whirled to Your Friends", "emailRollup", new InviteEmailPanel());
+        emailBox.setOpen(true);
+        add(emailBox);
+
+        RollupBox imageLinksBox = new RollupBox("Image Links to this Game", "imageLinksRollup", new Label("Image links."));
+        add(imageLinksBox);
+
+        RollupBox findFriendsBox = new RollupBox("Find Friends Already on Whirled", "findFriendsRollup", new Label("Find friends."));
+        add(findFriendsBox);
+
+        add(new ShareURLBox(gameId, gameToken, gameType));
+
+        _gamesvc.loadGameDetail(gameId, new MsoyCallback<GameDetail>() {
+            public void onSuccess (GameDetail result) {
+                showGame(result);
+            }
+        });
+    }
+
+    protected void showGame (final GameDetail detail)
+    {
+        add(new GameInfoPanel(detail));
+    }
+
+    protected static class InviteEmailPanel extends SmartTable
+    {
+        public InviteEmailPanel ()
+        {
+            setStylePrimaryName("inviteEmailPanel");
+            setText(0, 0, "Invite a friend by email and get 1000 coins when they join!", 1, "description");
+
+            // Side panel
+            VerticalPanel sidePanel = new VerticalPanel();
+            Hyperlink link = new Hyperlink();
+            link.setStylePrimaryName("sideLink");
+            link.setText("Import Email Addresses");
+            link.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
+                    Window.alert("Import email addresses.");
+                }
+            });
+            sidePanel.add(link);
+            Label label = new Label("from Yahoo, Hotmail, Gmail, MSN, AOL, Lycon, .mac, and more!");
+            label.setStylePrimaryName("sideLabel");
+            sidePanel.add(label);
+            SimplePanel image = new SimplePanel();
+            image.setStylePrimaryName("importImage");
+            sidePanel.add(image);
+            link = new Hyperlink();
+            link.setStylePrimaryName("sideLink");
+            link.setText("View All Invitees");
+            link.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
+                    Window.alert("View all invitees");
+                }
+            });
+            sidePanel.add(link);
+            label = new Label("See everyone you've ever invited to Whirled.");
+            label.setStylePrimaryName("sideLabel");
+            sidePanel.add(label);
+            setWidget(0, 1, sidePanel);
+            getFlexCellFormatter().setRowSpan(0, 1, 2);
+
+            // Email tab
+            TabPanel tabs = new TabPanel();
+            SmartTable emailPanel = new SmartTable("emailTab", 0, 0);
+            emailPanel.setText(0, 0, "To", 1, "emailTab-field");
+            emailPanel.setText(0, 1, "(use commas to separate emails)", 1, "emailTab-description");
+            TextArea toLine = new TextArea();
+            toLine.setStylePrimaryName("emailTab-input");
+            emailPanel.setWidget(1, 0, toLine, 2, null);
+            emailPanel.setText(2, 0, "Message", 1, "emailTab-field");
+            emailPanel.setText(2, 1, "(optional)", 1, "emailTab-description");
+            TextArea messageLine = new TextArea();
+            messageLine.setStylePrimaryName("emailTab-input");
+            emailPanel.setWidget(3, 0, messageLine, 2, null);
+            PushButton send = MsoyUI.createButton("shortThin", "send", new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
+                    Window.alert("send");
+                }
+            });
+            emailPanel.setWidget(4, 0, send, 2, null);
+            emailPanel.getFlexCellFormatter().setHorizontalAlignment(4, 0,
+                HasHorizontalAlignment.ALIGN_RIGHT);
+            tabs.add(emailPanel, "E-mail");
+
+            // All your friends tab
+            SmartTable allPanel = new SmartTable("allTab", 0, 0);
+            allPanel.setText(0, 0, "We can import your contacts from your email.", 4,
+                "allTab-field");
+            allPanel.setText(1, 0, "Your email", 1, "allTab-field");
+            TextBox emailText = new TextBox();
+            emailText.setStylePrimaryName("allTab-textBox");
+            allPanel.setWidget(1, 1, emailText);
+            allPanel.setText(1, 2, "@", 1, "allTab-field");
+            ListBox webmailList = new ListBox();
+            webmailList.setStylePrimaryName("allTab-webmailList");
+            webmailList.addItem("MSN Hotmail", "hotmail.com");
+            webmailList.addItem("Gmail", "gmail.com");
+            webmailList.addItem("AOL", "aol.com");
+            webmailList.addItem("Lycos", "lycos.com");
+            webmailList.addItem("RediffMail", "rediffmail.com");
+            webmailList.addItem(".Mac", "mac.com");
+            webmailList.addItem("mail.com", "mail.com");
+            webmailList.addItem("FastMail.FM", "fastmail.fm");
+            webmailList.addItem("Web.de", "web.de");
+            webmailList.addItem("MyNet.com", "mynet.com");
+            allPanel.setWidget(1, 3, webmailList);
+            allPanel.setText(2, 0, "Password", 1, "allTab-field");
+            TextBox passwordText = new TextBox();
+            passwordText.setStylePrimaryName("allTab-textBox");
+            allPanel.setWidget(2, 1, passwordText);
+            allPanel.setText(3, 0, "We will never spam your friends, and we will only email " +
+            		"with your permission.", 2, "allTab-note");
+            PushButton sendWebmail = MsoyUI.createButton("shortThin", "send", new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
+                    Window.alert("send webmail");
+                }
+            });
+            allPanel.setWidget(3, 2, sendWebmail);
+            allPanel.getFlexCellFormatter().setHorizontalAlignment(3, 2,
+                HasHorizontalAlignment.ALIGN_RIGHT);
+            tabs.add(allPanel, "All Your Friends");
+
+            tabs.selectTab(0);
+            setWidget(1, 0, tabs);
+        }
+    }
+
+    protected static class SizePanel extends FocusPanel
+    {
+        public SizePanel (String size, String sizeStyle)
+        {
+            setStylePrimaryName("sizePanel");
+            VerticalPanel panel = new VerticalPanel();
+            panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+            Label sizeLabel = new Label(size);
+            sizeLabel.setStylePrimaryName("sizeLabel");
+            panel.add(sizeLabel);
+            _box = new SimplePanel();
+            _box.setStylePrimaryName("sizeBox");
+            _box.addStyleName(sizeStyle + "Box");
+            panel.add(_box);
+            add(panel);
+
+            addMouseListener(new MouseListenerAdapter() {
+                @Override public void onMouseEnter (Widget sender) {
+                    setStylePrimaryName("sizePanel-mouseOver");
+                }
+                @Override public void onMouseLeave (Widget sender) {
+                    setStylePrimaryName("sizePanel");
+                }
+            });
+        }
+
+        public void setSelected (boolean selected)
+        {
+            if (selected) {
+                _box.setStylePrimaryName("sizeBox-selected");
+            } else {
+                _box.setStylePrimaryName("sizeBox");
+            }
+        }
+
+        protected final SimplePanel _box;
+    }
+
+    protected static class ShareURLBox extends SimplePanel
+    {
+        public ShareURLBox (final int gameId, String gameToken, String type)
+        {
+            String url = createGameURL(gameId, gameToken, type);
+            setStylePrimaryName("shareURLBox");
+            addStyleName("shareURLBox-closed");
+            SmartTable table = new SmartTable();
+            table.setStylePrimaryName("urlPanel");
+            table.setText(0, 0, "Your Game URL", 2, null);
+            SimplePanel icon = new SimplePanel();
+            icon.setStylePrimaryName("shareURLBox-urlIcon");
+            table.setWidget(1, 0, icon);
+            final TextBox urlText = new TextBox();
+            urlText.setText(url);
+            urlText.addFocusListener(new FocusListener() {
+                public void onFocus (Widget sender) {
+                    // Select the text on focus.
+                    urlText.selectAll();
+                }
+                public void onLostFocus (Widget sender) {
+                    // Nothing needed.
+                }
+            });
+            table.setWidget(1, 1, urlText);
+            table.setText(2, 0, "Embed Game", 2, null);
+            icon = new SimplePanel();
+            icon.setStylePrimaryName("shareURLBox-embedIcon");
+            table.setWidget(3, 0, icon);
+            final TextBox embedText = new TextBox();
+            embedText.setText(createEmbedURL(gameId, FULL_WIDTH, FULL_HEIGHT));
+            embedText.addFocusListener(new FocusListener() {
+                public void onFocus (Widget sender) {
+                    // Select the text on focus.
+                    embedText.selectAll();
+                }
+                public void onLostFocus (Widget sender) {
+                    // Nothing needed.
+                }
+            });
+            table.setWidget(3, 1, embedText);
+
+            // Options panel
+            _optionsPanel = new SmartTable();
+            _optionsPanel.setStylePrimaryName("optionsPanel");
+            Hyperlink options = new Hyperlink();
+            options.setText("options");
+            options.setStylePrimaryName("shareURLBox-optionsLink");
+            options.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    setOptionsOpen(!_open);
+                }
+            });
+            _optionsPanel.setWidget(0, 0, options, 4, null);
+            _optionsPanel.getFlexCellFormatter().setHorizontalAlignment(0, 0,
+                HasHorizontalAlignment.ALIGN_RIGHT);
+            _smallPanel = new SizePanel("350x200", "small");
+            _mediumPanel = new SizePanel("400x415", "medium");
+            _largePanel = new SizePanel("700x575", "large");
+            _fullPanel = new SizePanel("100%x575", "full");
+            _smallPanel.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    embedText.setText(createEmbedURL(gameId, SMALL_WIDTH, SMALL_HEIGHT));
+                    _smallPanel.setSelected(true);
+                    _mediumPanel.setSelected(false);
+                    _largePanel.setSelected(false);
+                    _fullPanel.setSelected(false);
+                }
+            });
+            _mediumPanel.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    embedText.setText(createEmbedURL(gameId, MEDIUM_WIDTH, MEDIUM_HEIGHT));
+                    _smallPanel.setSelected(false);
+                    _mediumPanel.setSelected(true);
+                    _largePanel.setSelected(false);
+                    _fullPanel.setSelected(false);
+                }
+            });
+            _largePanel.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    embedText.setText(createEmbedURL(gameId, LARGE_WIDTH, LARGE_HEIGHT));
+                    _smallPanel.setSelected(false);
+                    _mediumPanel.setSelected(false);
+                    _largePanel.setSelected(true);
+                    _fullPanel.setSelected(false);
+                }
+            });
+            _fullPanel.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    embedText.setText(createEmbedURL(gameId, FULL_WIDTH, FULL_HEIGHT));
+                    _smallPanel.setSelected(false);
+                    _mediumPanel.setSelected(false);
+                    _largePanel.setSelected(false);
+                    _fullPanel.setSelected(true);
+                }
+            });
+            _fullPanel.setSelected(true);
+            table.setWidget(4, 0, _optionsPanel, 2, null);
+            add(table);
+            _open = false;
+        }
+
+        public void setOptionsOpen (boolean open)
+        {
+            if (open == _open) {
+                return;
+            }
+
+            if (open) {
+                _optionsPanel.setWidget(1, 0, _smallPanel);
+                _optionsPanel.setWidget(1, 1, _mediumPanel);
+                _optionsPanel.setWidget(1, 2, _largePanel);
+                _optionsPanel.setWidget(1, 3, _fullPanel);
+                addStyleName("shareURLBox-open");
+                removeStyleName("shareURLBox-closed");
+            } else {
+                _optionsPanel.removeRow(1);
+                addStyleName("shareURLBox-closed");
+                removeStyleName("shareURLBox-open");
+            }
+            _open = open;
+        }
+
+        protected static String createGameURL (int gameId, String gameToken, String type)
+        {
+            boolean isAVRG = type.startsWith("avrg");
+            return DeploymentConfig.serverURL + "#world-" + (isAVRG ?
+                "s" + type.substring(4) + "_world_" : "") + "game_t_" + gameId + "_" +
+                CShell.creds.getMemberId() + "_" + gameToken;
+        }
+
+        protected static String createEmbedURL (int gameId, String width, String height)
+        {
+            // Flash args.
+            StringBuilder args = new StringBuilder();
+            args.append("gameLobby=").append(gameId).append("&vec=e.whirled.game.").append(gameId);
+            if (!CShell.isGuest()) {
+                args.append("&aff=").append(CShell.getMemberId());
+            }
+
+            // URL to the swf.
+            String hostOnlyUrl = DeploymentConfig.serverURL.replaceFirst("(http:\\/\\/[^\\/]*).*",
+                "$1/");
+            String swfUrl = hostOnlyUrl + "clients/world-client.swf";
+
+            // URL to Whirled.
+            String fullUrl = hostOnlyUrl + (CShell.isGuest() ? "#" :
+                "welcome/" + CShell.getMemberId() + '/');
+
+            return _cmsgs.embed(args.toString(), swfUrl, width, height, fullUrl);
+        }
+
+        protected final static String SMALL_WIDTH = "350";
+        protected final static String MEDIUM_WIDTH = "400";
+        protected final static String LARGE_WIDTH = "700";
+        protected final static String FULL_WIDTH = "100%";
+        protected final static String SMALL_HEIGHT = "200";
+        protected final static String MEDIUM_HEIGHT = "415";
+        protected final static String LARGE_HEIGHT = "575";
+        protected final static String FULL_HEIGHT = "575";
+
+        protected final SmartTable _optionsPanel;
+        protected final SizePanel _smallPanel;
+        protected final SizePanel _mediumPanel;
+        protected final SizePanel _largePanel;
+        protected final SizePanel _fullPanel;
+        protected boolean _open;
+    }
+
+    protected static class GameInfoPanel extends HorizontalPanel
+    {
+        public GameInfoPanel (GameDetail detail)
+        {
+            setStylePrimaryName("shareGameInfo");
+
+            Game game = detail.item;
+            ThumbBox thumbnail = new ThumbBox(game.getShotMedia(), MediaDesc.THUMBNAIL_SIZE);
+            thumbnail.addStyleName("thumbnail");
+            add(thumbnail);
+            VerticalPanel infoPanel = new VerticalPanel();
+            FlowPanel nameInfoPanel = new FlowPanel();
+            Widget gameLink = Link.create(game.name, Pages.GAMES, Args.compose("d", game.gameId));
+            gameLink.addStyleName("inline");
+            gameLink.addStyleName("name");
+            nameInfoPanel.add(gameLink);
+            CreatorLabel creatorLabel = new CreatorLabel(detail.creator);
+            creatorLabel.addStyleName("inline");
+            nameInfoPanel.add(creatorLabel);
+            infoPanel.add(nameInfoPanel);
+            infoPanel.add(MsoyUI.createLabel(_dmsgs.xlate("genre" + game.genre), "genre"));
+            infoPanel.add(WidgetUtil.makeShim(5, 5));
+            infoPanel.add(MsoyUI.createLabel(game.description, "description"));
+            add(infoPanel);
+        }
+    }
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+}
