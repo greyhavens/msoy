@@ -9,6 +9,8 @@ import flash.external.ExternalInterface;
 
 import mx.core.Application;
 
+import com.threerings.flex.FlexUtil;
+
 import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.utils.UberClientLoader;
 
@@ -120,7 +122,15 @@ public class UberClient
 
         switch (mode) {
         default:
-            new WorldClient(app.stage);
+            // Do not a regular client be launched from the filesystem, it's probably
+            // actually a booch with reading parameters (and probably on fucking windows).
+            if (app.root.loaderInfo.url.indexOf("file:") == 0) {
+                // do not load the world! Instead complain about being unable to read parameters.
+                app.addChild(FlexUtil.createText("There was a problem starting the viewer."));
+
+            } else {
+                new WorldClient(app.stage);
+            }
             break;
 
         case UberClientModes.STUB:
