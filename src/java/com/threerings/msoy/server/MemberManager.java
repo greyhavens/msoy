@@ -148,7 +148,7 @@ public class MemberManager
         _greeterIdsInvalidator = new Interval(_batchInvoker) {
             @Override public void expired() {
                 List<Integer> greeterIds = _memberRepo.loadGreeterIds();
-                synchronized(MemberManager.this) {
+                synchronized (_snapshotLock) {
                     _greeterIdsSnapshot = greeterIds;
                 }
             }
@@ -160,7 +160,7 @@ public class MemberManager
             @Override public void expired() {
                 final PopularPlacesSnapshot newSnapshot =
                     PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan, getGreeterIdsSnapshot());
-                synchronized(MemberManager.this) {
+                synchronized (_snapshotLock) {
                     _ppSnapshot = newSnapshot;
                 }
             }
@@ -173,7 +173,7 @@ public class MemberManager
      */
     public PopularPlacesSnapshot getPPSnapshot ()
     {
-        synchronized(this) {
+        synchronized (_snapshotLock) {
             return _ppSnapshot;
         }
     }
@@ -1050,10 +1050,13 @@ public class MemberManager
     protected List<Integer> getGreeterIdsSnapshot ()
     {
         // using the same monitor here should be ok as the block is only 2 atoms on a 64 bit OS
-        synchronized (this) {
+        synchronized (_snapshotLock) {
             return _greeterIdsSnapshot;
         }
     }
+
+    /** An internal object on which we synchronize to update/get snapshots. */
+    protected final Object _snapshotLock = new Object();
 
     /** An interval that updates the popular places snapshot every so often. */
     protected Interval _ppInvalidator;
