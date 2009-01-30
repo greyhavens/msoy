@@ -6,10 +6,12 @@ package com.threerings.msoy.server.persist;
 import java.io.Serializable;
 import java.util.Set;
 
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.samskivert.depot.CacheInvalidator;
 import com.samskivert.depot.DepotRepository;
+import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Computed;
@@ -21,6 +23,8 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.msoy.data.all.RatingResult;
 import com.threerings.presents.annotation.BlockingThread;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the persistent side of rating of things in Whirled.
@@ -59,9 +63,7 @@ public abstract class RatingRepository extends DepotRepository
     {
         // Clamp the rating within bounds
         rating = (byte)Math.max(1, Math.min(rating, 5));
-        int deltaSum;
-        boolean newRating;
-        
+
         RatingExtractionRecord targetRec = load(RatingExtractionRecord.class,
             new FromOverride(getTargetClass()),
             new Where(_id, targetId),
@@ -74,8 +76,12 @@ public abstract class RatingRepository extends DepotRepository
         }
 
         RatingRecord ratingRec = load(getRatingClass(),
-            getRatingColumn(RatingRecord.TARGET_ID), targetId,
-            getRatingColumn(RatingRecord.MEMBER_ID), memberId);
+            CacheStrategy.NONE, new Where(
+                getRatingColumn(RatingRecord.TARGET_ID), targetId,
+                getRatingColumn(RatingRecord.MEMBER_ID), memberId));
+
+        boolean newRating;
+        int deltaSum;
 
         if (ratingRec != null) {
             deltaSum = rating - ratingRec.rating;
@@ -97,7 +103,18 @@ public abstract class RatingRepository extends DepotRepository
             ratingRec.targetId = targetId;
             ratingRec.memberId = memberId;
             ratingRec.rating = rating;
-            insert(ratingRec);
+            try {
+                insert(ratingRec);
+            } catch (DuplicateKeyException dke) {
+                // this happens, but rarely; it means another thread is surely rating this precise
+                // same item for this precise same member, so let's just yield to that thread and
+                // return a value
+                log.warning("Another thread inserted a rating just before us?",
+                    "class", StringUtil.shortClassName(getRatingClass()),
+                    "targetId", targetId, "memberId", memberId, "rating", rating);
+                return Tuple.newTuple(new RatingResult(
+                    targetRec.ratingSum, targetRec.ratingCount), newRating);
+            }
         }
 
         if (deltaSum != 0) {
@@ -112,8 +129,8 @@ public abstract class RatingRepository extends DepotRepository
             }
         }
         
-        RatingResult result = new RatingResult(targetRec.ratingSum, targetRec.ratingCount);
-        return Tuple.newTuple(result, newRating);
+        return Tuple.newTuple(new RatingResult(
+            targetRec.ratingSum, targetRec.ratingCount), newRating);
     }
 
     
