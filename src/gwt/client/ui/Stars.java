@@ -46,6 +46,7 @@ public class Stars extends FlowPanel
 
     public void setRating (float rating)
     {
+        rating = Math.max(0, Math.min(5, rating));
         updateStarImage(_rating = rating);
     }
 
