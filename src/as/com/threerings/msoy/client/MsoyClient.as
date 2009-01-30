@@ -111,7 +111,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
 
         // allow connecting the media server if it differs from the game server
-        if (DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverHost) == -1) {
+        if ((Security.sandboxType != Security.LOCAL_WITH_FILE) &&
+                (DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverHost) == -1)) {
             Security.loadPolicyFile(DeploymentConfig.mediaURL + "crossdomain.xml");
         }
 
