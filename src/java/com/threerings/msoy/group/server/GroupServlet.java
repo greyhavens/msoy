@@ -744,6 +744,8 @@ public class GroupServlet extends MsoyServiceServlet
     protected List<GroupMemberCard> loadGroupMembers (
         int groupId, byte minRank, int limit, boolean sortByRank)
     {
+        // TODO: We cannot load 5,000 records from the database every time somebody looks
+        // TODO: at a big group. This has to be redone using DB-side sorting and limits.
         IntMap<GroupMemberCard> members = IntMaps.newHashIntMap();
         for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId, minRank, true)) {
             members.put(gmrec.memberId, gmrec.toGroupMemberCard());
