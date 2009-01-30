@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.client {
 
 import flash.events.Event;
+
 import mx.events.CloseEvent;
 
 import com.threerings.io.TypedArray;
@@ -25,6 +26,7 @@ import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.msoy.client.BlankPlaceView;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -36,10 +38,9 @@ import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
-
-import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.client.MsoyPlaceView;
+import com.threerings.msoy.ui.ScalingMediaContainer;
+
 import com.whirled.game.data.MatchConfig;
 
 public class LobbyController extends Controller
@@ -87,6 +88,9 @@ public class LobbyController extends Controller
         _playNow = playNow;
         _lobbyLoaded = lobbyLoaded;
         _displaySplash = displaySplash;
+        
+        _lobbyTimer = new LobbyResolutionListener(_mctx);
+        _lobbyTimer.start();
 
         // create our lobby panel
         _panel = new LobbyPanel(_gctx, this);
@@ -402,6 +406,7 @@ public class LobbyController extends Controller
         _lobj = obj as LobbyObject;
         _panel.init(_lobj);
         _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
+        _lobbyTimer.stop();
 
         // create our table director
         _tableDir = new TableDirector(_gctx, LobbyObject.TABLES);
@@ -528,5 +533,57 @@ public class LobbyController extends Controller
 
     /** Are we seated? */
     protected var _isSeated :Boolean;
+    
+    /** Monitors whether we've successfully subscribed to a lobby object. */
+    protected var _lobbyTimer :LobbyResolutionListener;
 }
+}
+
+import flash.utils.Timer;
+import flash.events.TimerEvent;
+
+import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MsoyCodes;
+
+/** Displays occasional feedback messages while we wait for a lobby. */
+class LobbyResolutionListener 
+{
+    /** Show a message every 5 seconds... */
+    public static const DELAY :int = 5000; 
+    /** ... and show it only three times. */
+    public static const COUNT :int = 3;
+    
+    public function LobbyResolutionListener (mctx :MsoyContext)
+    {
+        _mctx = mctx;
+        _timer = new Timer(DELAY, COUNT);
+    }
+
+    public function start () :void
+    {
+        _timer.addEventListener(TimerEvent.TIMER, displayUpdate);
+        _timer.addEventListener(TimerEvent.TIMER_COMPLETE, displayFinalUpdate);
+        _timer.start();
+    }
+
+    public function stop () :void
+    {
+        _timer.stop();
+        _timer.removeEventListener(TimerEvent.TIMER, displayUpdate);
+        _timer.removeEventListener(TimerEvent.TIMER_COMPLETE, displayFinalUpdate);
+    } 
+    
+    public function displayUpdate (e :TimerEvent) :void
+    {
+        _mctx.displayInfo(MsoyCodes.GAME_MSGS, "e.waiting_for_lobby");
+    }
+    
+    public function displayFinalUpdate (e :TimerEvent) :void
+    {
+        _mctx.displayInfo(MsoyCodes.GAME_MSGS, "e.waiting_for_lobby_failed");
+        
+    }
+    
+    protected var _mctx :MsoyContext;
+    protected var _timer :Timer;
 }
