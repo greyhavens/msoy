@@ -33,7 +33,7 @@ import com.threerings.msoy.room.gwt.RoomInfo;
 /**
  * Contains metadata for a scene in the Whirled.
  */
-@Entity(indices={ @Index(name="ixNewAndHot_v2") })
+@Entity(indices={ @Index(name="ixNewAndHot_v3") })
 public class SceneRecord extends PersistentRecord
 {
     /** Enumerates our various stock scenes. */
@@ -98,10 +98,10 @@ public class SceneRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 10;
+    public static final int SCHEMA_VERSION = 11;
 
     /** Define the sort order for the new & hot queries. */
-    public static Tuple<SQLExpression, Order> ixNewAndHot_v2 ()
+    public static Tuple<SQLExpression, Order> ixNewAndHot_v3 ()
     {
         return Tuple.newTuple(MsoySceneRepository.NEW_AND_HOT_ORDER, OrderBy.Order.ASC);
     }

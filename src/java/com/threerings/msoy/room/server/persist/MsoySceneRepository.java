@@ -168,6 +168,10 @@ public class MsoySceneRepository extends DepotRepository
                         SceneRecord.RATING_COUNT, SceneRecord.RATING));
             }
         });
+        
+        // expression index version bump again
+        _ctx.registerMigration(
+            SceneRecord.class, new SchemaMigration.DropIndex(11, "ixNewAndHot_v2"));
     }
 
     /**
