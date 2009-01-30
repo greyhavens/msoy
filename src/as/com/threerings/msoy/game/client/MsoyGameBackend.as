@@ -85,16 +85,6 @@ public class MsoyGameBackend extends WhirledGameBackend
             xlate(MessageBundle.compose("e.game_error", cause)));
     }
 
-    // from BaseGameBackend
-    override protected function playerOwnsData (type :int, ident :String, playerId :int) :Boolean
-    {
-        if (playerId != CURRENT_USER && playerId != getMyId_v1()) {
-            throw new Error("Query of other user data not allowed");
-        }
-        var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);
-        return (_ctx as GameContext).getPlayerObject().ownsGameContent(cfg.getGameId(), type, ident)
-    }
-
     // TEMP: provide the 'back to lobby' link for games that have it.
     // TODO: Remove once we have the new standard game-over display sorted out
     override protected function backToWhirled_v1 (showLobby :Boolean = false) :void
