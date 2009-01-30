@@ -8,16 +8,19 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.msoy.game.client.LobbyService;
 
 /**
- * Codes and constants used by the lobby services.
+ * Constants used by the {@link LobbyService#playNow}.
  */
 public interface LobbyCodes extends InvocationCodes
 {
-    /** A mode constant for {@link LobbyService#playNow}. */
+    /** Resolves the lobby, and starts a single-player game. */
     public static final int PLAY_NOW_SINGLE = 0;
 
-    /** A mode constant for {@link LobbyService#playNow}. */
+    /** Resolves the lobby, and starts a multiplayer game with anyone. */
     public static final int PLAY_NOW_ANYONE = 1;
 
-    /** Indicates that we should start a single player game if that's the only option. */
+    /**
+     * Resolves the lobby, and if the game is single-player only, starts a new game.
+     * Otherwise just shows the resolved lobby.
+     */
     public static final int PLAY_NOW_IF_SINGLE = 2;
 }

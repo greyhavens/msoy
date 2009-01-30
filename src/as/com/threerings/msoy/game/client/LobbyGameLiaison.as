@@ -29,8 +29,8 @@ public class LobbyGameLiaison extends GameLiaison
 {
     public static const log :Log = Log.getLog(LobbyGameLiaison);
 
-    public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :int, playerId :int = 0,
-        token :String = "", shareMemberId :int = 0)
+    public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :LobbyDef, 
+        playerId :int = 0, token :String = "", shareMemberId :int = 0)
     {
         super(ctx, gameId);
 
@@ -79,7 +79,7 @@ public class LobbyGameLiaison extends GameLiaison
                 // some failure cases are innocuous, and should be followed up by a display of the
                 // lobby; if we really are hosed, joinLobby() will cause the liaison to shut down
                 _wctx.getWorldController().restoreSceneURL();
-                joinLobby(true);
+                joinLobby(LobbyDef.PLAY_NOW);
             });
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
     }
@@ -98,14 +98,14 @@ public class LobbyGameLiaison extends GameLiaison
     }
 
     /**
-     * Displays the lobby for the game for which we liaise, on top of the existing view. 
-     * If the lobby is already showing, this is a NOOP.
+     * Displays the lobby for the game for which we liaise, on top of the existing view, 
+     * in specified mode. If the lobby is already showing, this is a NOOP.
      */
-    public function showLobby (tryPlayNow :Boolean, mode :int = LobbyCodes.SHOW_LOBBY_ANY) :void
+    public function showLobby (mode :LobbyDef) :void
     {
         if (_lobby == null) {
             _lobby = new LobbyController(_gctx, mode, lobbyCleared, playNow, lobbyLoaded, false);
-            joinLobby(tryPlayNow);
+            joinLobby(mode);
         } // otherwise it's already showing
     }
 
@@ -114,6 +114,7 @@ public class LobbyGameLiaison extends GameLiaison
      *
      * @see LobbyCodes
      */
+     // TODO: this probably shouldn't be public - just use joinLobby instead
     public function playNow (mode :int) :void
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
@@ -206,25 +207,16 @@ public class LobbyGameLiaison extends GameLiaison
     override public function clientDidLogon (event :ClientEvent) :void
     {
         super.clientDidLogon(event);
-
-        switch (_mode) {
-        case LobbyCodes.JOIN_PLAYER:
+        
+        // are we joining a game in progress?
+        if (_playerIdGame != 0) {
             joinPlayer(_playerIdGame);
-            _mode = LobbyCodes.SHOW_LOBBY_ANY; // in case we end up back here after the game
-            break;
-
-        case LobbyCodes.PLAY_NOW_SINGLE:
-        case LobbyCodes.PLAY_NOW_ANYONE:
-            playNow(_mode);
-            _mode = LobbyCodes.SHOW_LOBBY_ANY; // in case we end up back here after the game
-            break;
-
-        default:
-        case LobbyCodes.SHOW_LOBBY_ANY:
-        case LobbyCodes.SHOW_LOBBY_MULTIPLAYER:
-            joinLobby(true);
-            break;
+        } else {
+            // just join whichever lobby we're supposed to join, however we're supposed to join
+            joinLobby(_mode);
         }
+        
+        _mode = LobbyDef.LOBBY_ONLY; // in case we end up back here after the game
     }
 
     // from interface GameReadyObserver
@@ -258,11 +250,11 @@ public class LobbyGameLiaison extends GameLiaison
         super.clientDidLogoff(event);
     }
 
-    protected function joinLobby (tryPlayNow :Boolean) :void
+    protected function joinLobby (mode :LobbyDef) :void
     {
-        if (tryPlayNow) {
-            // it's the new-style! if single player is the only option, go right in
-            playNow(LobbyCodes.PLAY_NOW_IF_SINGLE);
+        // if we're asked to play right away, let's try to do that
+        if (mode.playNow) {
+            playNow(mode.playNowMode);
             return;
         } 
         
@@ -307,7 +299,7 @@ public class LobbyGameLiaison extends GameLiaison
         var gameOid :int = int(result);
         if (gameOid == -1) {
             // player isn't currently playing - show the lobby instead
-            joinLobby(true);
+            joinLobby(_mode);
             // if they're at a table, join them there
             joinPlayerTable(_playerIdGame);
         } else {
@@ -339,8 +331,8 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
-    /** The action we'll take once we're connected to the game server. */
-    protected var _mode :int;
+    /** Lobby action definition. */
+    protected var _mode :LobbyDef;
 
     /** The id of the player we'd like to join. */
     protected var _playerIdGame :int = 0;

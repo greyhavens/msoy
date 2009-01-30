@@ -77,9 +77,8 @@ public class LobbyController extends Controller
     LobbyMarshaller;
 
 
-    public function LobbyController (
-        gctx :GameContext, mode :int, onClear :Function, playNow :Function, lobbyLoaded :Function,
-        displaySplash :Boolean)
+    public function LobbyController (gctx :GameContext, mode :LobbyDef, 
+        onClear :Function, playNow :Function, lobbyLoaded :Function, displaySplash :Boolean)
     {
         _gctx = gctx;
         _mctx = gctx.getMsoyContext();
@@ -388,8 +387,7 @@ public class LobbyController extends Controller
         const multiplayerSupported :Boolean = (match.getMaximumPlayers() > 1);
         const multiplayerRequired :Boolean = (match.getMinimumPlayers() > 1);
          
-        const lobbyMultiRequested :Boolean = 
-            (multiplayerSupported && _mode == LobbyCodes.SHOW_LOBBY_MULTIPLAYER); 
+        const lobbyMultiRequested :Boolean = (multiplayerSupported && _mode.multiplayerLobby); 
          
         // if we are a party game or multiplayer only...
         if (partyGame || multiplayerRequired || lobbyMultiRequested) {
@@ -498,8 +496,8 @@ public class LobbyController extends Controller
     /** The provider of game related services. */
     protected var _gctx :GameContext;
 
-    /** The mode in which we were opened. */
-    protected var _mode :int;
+    /** Lobby definition. */
+    protected var _mode :LobbyDef;
 
     /** Called when we shut ourselves down. */
     protected var _onClear :Function;

@@ -144,11 +144,13 @@ public class GameDirector extends BasicDirector
      */
     public function displayLobby (gameId :int, ghost :String, gport :int) :void
     {
+        const defaultMode :LobbyDef = LobbyDef.PLAY_NOW;
+        
         log.info("Displaying lobby [gameId=" + gameId + "].");
 
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
-                LobbyGameLiaison(_liaison).showLobby(true);
+                LobbyGameLiaison(_liaison).showLobby(defaultMode);
             } else {
                 _liaison.shutdown();
                 _liaison = null;
@@ -156,7 +158,7 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison == null) {
             // create our new liaison, which will resolve the lobby and do all the business
-            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.SHOW_LOBBY_ANY);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, defaultMode);
             _liaison.start(ghost, gport);
         }
     }
@@ -174,10 +176,8 @@ public class GameDirector extends BasicDirector
     {
         log.info("Display current game's lobby", "gameId", getGameId());
         if (_liaison is LobbyGameLiaison) {
-            const mode :int = multiplayer ? 
-                LobbyCodes.SHOW_LOBBY_MULTIPLAYER : LobbyCodes.SHOW_LOBBY_ANY;
-                
-            LobbyGameLiaison(_liaison).showLobby(false, mode);
+            const def :LobbyDef = new LobbyDef(false, LobbyCodes.PLAY_NOW_IF_SINGLE, multiplayer);
+            LobbyGameLiaison(_liaison).showLobby(def);
             return true;
         }
         
@@ -281,7 +281,8 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison == null) {
             // create our new liaison, which will head on into the game once we're logged on
-            _liaison = new LobbyGameLiaison(_wctx, gameId, mode, 0, token, shareMemberId);
+            const def :LobbyDef = new LobbyDef(true, mode);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, def, 0, token, shareMemberId);
             _liaison.start(ghost, gport);
         }
     }
@@ -299,7 +300,7 @@ public class GameDirector extends BasicDirector
         }
 
         if (_liaison == null) {
-            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyCodes.JOIN_PLAYER, memberId);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, LobbyDef.PLAY_NOW, memberId);
             _liaison.start(); // game host/port are unknown here
         } else {
             LobbyGameLiaison(_liaison).joinPlayer(memberId);
