@@ -174,6 +174,12 @@ public class InviteServlet extends MsoyServiceServlet
         _memberRepo.deleteInvite(inviteId);
     }
 
+    public int getHomeSceneId ()
+        throws ServiceException
+    {
+        return requireAuthedUser().homeSceneId;
+    }
+
     /**
      * Helper function for {@link #sendInvites}.
      */

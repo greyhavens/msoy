@@ -45,4 +45,13 @@ public interface InviteService extends RemoteService
      */
     void removeInvitation (String inviteId)
         throws ServiceException;
+
+    /**
+     * Gets the ID of the current user's home room.  Necessary for the new share page (this may
+     * in fact become more specialized to retrieve any data necessary for that page).
+     *
+     * @return ID of the current user's home room.
+     */
+    int getHomeSceneId ()
+        throws ServiceException;
 }

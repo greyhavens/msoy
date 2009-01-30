@@ -35,4 +35,9 @@ public interface InviteServiceAsync
      * The asynchronous version of {@link InviteService#removeInvitation}.
      */
     void removeInvitation (String inviteId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link InviteService#getHomeSceneId}.
+     */
+    void getHomeSceneId (AsyncCallback<Integer> callback);
 }

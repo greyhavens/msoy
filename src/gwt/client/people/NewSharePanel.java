@@ -44,22 +44,77 @@ import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.person.gwt.InviteService;
+import com.threerings.msoy.person.gwt.InviteServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-public class NewSharePanel extends FlowPanel
+public class NewSharePanel extends VerticalPanel
 {
-    public NewSharePanel (int gameId, String gameToken, String gameType)
+    public NewSharePanel ()
+    {
+        setStylePrimaryName("sharePanel-wrapper");
+        VerticalPanel subPanel = new VerticalPanel();
+        subPanel.setStylePrimaryName("sharePanel");
+        SimplePanel banner = new SimplePanel();
+        banner.setStylePrimaryName("sharePanel-banner");
+        add(banner);
+        add(subPanel);
+
+        // Top area
+        final HorizontalPanel topPanel = new HorizontalPanel();
+        VerticalPanel leftSide = new VerticalPanel();
+        leftSide.add(MsoyUI.createLabel("Earn money by sharing Whirled!",
+            "sharePanel-header"));
+        leftSide.add(MsoyUI.createHTML("If your friends join Whirled through this " +
+        		"link, you can <a class='external' href='http://wiki.whirled.com/Affiliate'>earn " +
+        		"money</a> from them!  You can copy, paste, and IM it to your buddies!",
+        		"sharePanel-url-description"));
+        leftSide.add(MsoyUI.createLabel("Copy and paste this code to embed your home " +
+        		"on your MySpace, blog, or website!", "sharePanel-embed-description"));
+        topPanel.add(leftSide);
+        subPanel.add(topPanel);
+
+        RollupBox emailBox = new RollupBox("Email Whirled to Your Friends", "emailRollup",
+            new InviteEmailPanel(""));
+        emailBox.setOpen(true);
+        subPanel.add(emailBox);
+
+        RollupBox imageLinksBox = new RollupBox("Image Links to Whirled", "imageLinksRollup",
+            new ImageLinkPanel());
+        subPanel.add(imageLinksBox);
+
+        RollupBox findFriendsBox = new RollupBox("Find Friends Already on Whirled",
+            "findFriendsRollup", new FindFriendsPanel());
+        subPanel.add(findFriendsBox);
+
+        _invitesvc.getHomeSceneId(new MsoyCallback<Integer>() {
+            public void onSuccess (Integer result) {
+                topPanel.add(new ShareURLBox("Your Whirled Invite URL", "Embed Your Home", result));
+            }
+        });
+    }
+
+    public NewSharePanel (int gameId, String gameToken, String gameType, String message)
     {
         setStylePrimaryName("sharePanel");
+
+        // Top area
+        final SmartTable topPanel = new SmartTable();
+        topPanel.setWidget(0, 0, MsoyUI.createLabel("Share this game with your friends!",
+            "sharePanel-header"));
+        topPanel.setWidget(0, 1, new ShareURLBox("Your Game URL", "Embed Game", gameId,
+            gameToken, gameType));
+        topPanel.getFlexCellFormatter().setRowSpan(0, 1, 2);
+        add(topPanel);
 
         // TODO: Add this in once we support this feature.
         /*Label testLabel = new Label("Test");
         RollupBox postGame = new RollupBox("Post this game to...", "postGameRollup", testLabel);
         add(postGame);*/
 
-        RollupBox emailBox = new RollupBox("Email Whirled to Your Friends", "emailRollup",
-            new InviteEmailPanel());
+        RollupBox emailBox = new RollupBox("Email This Game to Your Friends", "emailRollup",
+            new InviteEmailPanel(message));
         emailBox.setOpen(true);
         add(emailBox);
 
@@ -67,22 +122,17 @@ public class NewSharePanel extends FlowPanel
             new ImageLinkPanel());
         add(imageLinksBox);
 
-        RollupBox findFriendsBox = new RollupBox("Find Friends Already on Whirled",
+        /*RollupBox findFriendsBox = new RollupBox("Find Friends Already on Whirled",
             "findFriendsRollup", new FindFriendsPanel());
-        add(findFriendsBox);
+        add(findFriendsBox);*/
 
-        add(new ShareURLBox(gameId, gameToken, gameType));
+        //add(new ShareURLBox(gameId, gameToken, gameType));
 
         _gamesvc.loadGameDetail(gameId, new MsoyCallback<GameDetail>() {
             public void onSuccess (GameDetail result) {
-                showGame(result);
+                topPanel.setWidget(1, 0, new GameInfoPanel(result));
             }
         });
-    }
-
-    protected void showGame (final GameDetail detail)
-    {
-        add(new GameInfoPanel(detail));
     }
 
     protected static class FindFriendsPanel extends VerticalPanel
@@ -189,7 +239,7 @@ public class NewSharePanel extends FlowPanel
 
     protected static class InviteEmailPanel extends SmartTable
     {
-        public InviteEmailPanel ()
+        public InviteEmailPanel (String defaultMessage)
         {
             setStylePrimaryName("inviteEmailPanel");
             setText(0, 0, "Invite a friend by email and get 1000 coins when they join!", 1, "description");
@@ -239,6 +289,7 @@ public class NewSharePanel extends FlowPanel
             emailPanel.setText(2, 0, "Message", 1, "emailTab-field");
             emailPanel.setText(2, 1, "(optional)", 1, "emailTab-description");
             TextArea messageLine = new TextArea();
+            messageLine.setText(defaultMessage);
             messageLine.setStylePrimaryName("emailTab-input");
             emailPanel.setWidget(3, 0, messageLine, 2, null);
             PushButton send = MsoyUI.createButton("shortThin", "send", new ClickListener() {
@@ -313,14 +364,25 @@ public class NewSharePanel extends FlowPanel
 
     protected static class ShareURLBox extends SimplePanel
     {
-        public ShareURLBox (final int gameId, String gameToken, String type)
+        public ShareURLBox (String urlDesc, String embedDesc, int homeSceneId)
         {
-            String url = createGameURL(gameId, gameToken, type);
+            this(urlDesc, embedDesc, createAffiliateLandingUrl(Pages.LANDING), homeSceneId, false);
+        }
+
+        public ShareURLBox (String urlDesc, String embedDesc, final int gameId, String gameToken,
+            String type)
+        {
+            this(urlDesc, embedDesc, createGameURL(gameId, gameToken, type), gameId, true);
+        }
+
+        public ShareURLBox (String urlDesc, String embedDesc, String url, final int placeId,
+            final boolean isGame)
+        {
             setStylePrimaryName("shareURLBox");
             addStyleName("shareURLBox-closed");
             SmartTable table = new SmartTable();
             table.setStylePrimaryName("urlPanel");
-            table.setText(0, 0, "Your Game URL", 2, null);
+            table.setText(0, 0, urlDesc, 2, null);
             SimplePanel icon = new SimplePanel();
             icon.setStylePrimaryName("shareURLBox-urlIcon");
             table.setWidget(1, 0, icon);
@@ -336,12 +398,12 @@ public class NewSharePanel extends FlowPanel
                 }
             });
             table.setWidget(1, 1, urlText);
-            table.setText(2, 0, "Embed Game", 2, null);
+            table.setText(2, 0, embedDesc, 2, null);
             icon = new SimplePanel();
             icon.setStylePrimaryName("shareURLBox-embedIcon");
             table.setWidget(3, 0, icon);
             final TextBox embedText = new TextBox();
-            embedText.setText(createEmbedURL(gameId, FULL_WIDTH, FULL_HEIGHT));
+            embedText.setText(createEmbedURL(placeId, FULL_WIDTH, FULL_HEIGHT, isGame));
             embedText.addFocusListener(new FocusListener() {
                 public void onFocus (Widget sender) {
                     // Select the text on focus.
@@ -373,7 +435,7 @@ public class NewSharePanel extends FlowPanel
             _fullPanel = new SizePanel("100%x575", "full");
             _smallPanel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    embedText.setText(createEmbedURL(gameId, SMALL_WIDTH, SMALL_HEIGHT));
+                    embedText.setText(createEmbedURL(placeId, SMALL_WIDTH, SMALL_HEIGHT, isGame));
                     _smallPanel.setSelected(true);
                     _mediumPanel.setSelected(false);
                     _largePanel.setSelected(false);
@@ -382,7 +444,7 @@ public class NewSharePanel extends FlowPanel
             });
             _mediumPanel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    embedText.setText(createEmbedURL(gameId, MEDIUM_WIDTH, MEDIUM_HEIGHT));
+                    embedText.setText(createEmbedURL(placeId, MEDIUM_WIDTH, MEDIUM_HEIGHT, isGame));
                     _smallPanel.setSelected(false);
                     _mediumPanel.setSelected(true);
                     _largePanel.setSelected(false);
@@ -391,7 +453,7 @@ public class NewSharePanel extends FlowPanel
             });
             _largePanel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    embedText.setText(createEmbedURL(gameId, LARGE_WIDTH, LARGE_HEIGHT));
+                    embedText.setText(createEmbedURL(placeId, LARGE_WIDTH, LARGE_HEIGHT, isGame));
                     _smallPanel.setSelected(false);
                     _mediumPanel.setSelected(false);
                     _largePanel.setSelected(true);
@@ -400,7 +462,7 @@ public class NewSharePanel extends FlowPanel
             });
             _fullPanel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    embedText.setText(createEmbedURL(gameId, FULL_WIDTH, FULL_HEIGHT));
+                    embedText.setText(createEmbedURL(placeId, FULL_WIDTH, FULL_HEIGHT, isGame));
                     _smallPanel.setSelected(false);
                     _mediumPanel.setSelected(false);
                     _largePanel.setSelected(false);
@@ -442,11 +504,18 @@ public class NewSharePanel extends FlowPanel
                 CShell.creds.getMemberId() + "_" + gameToken;
         }
 
-        protected static String createEmbedURL (int gameId, String width, String height)
+        protected static String createEmbedURL (int placeId, String width, String height,
+            boolean isGame)
         {
             // Flash args.
             StringBuilder args = new StringBuilder();
-            args.append("gameLobby=").append(gameId).append("&vec=e.whirled.game.").append(gameId);
+            if (isGame) {
+                args.append("gameLobby=").append(placeId).append("&vec=e.whirled.games.")
+                    .append(placeId);
+            } else {
+                args.append("sceneId=").append(placeId).append("&vec=e.whirled.rooms.")
+                .append(placeId);
+            }
             if (!CShell.isGuest()) {
                 args.append("&aff=").append(CShell.getMemberId());
             }
@@ -461,6 +530,15 @@ public class NewSharePanel extends FlowPanel
                 "welcome/" + CShell.getMemberId() + '/');
 
             return _cmsgs.embed(args.toString(), swfUrl, width, height, fullUrl);
+        }
+
+        protected static String createAffiliateLandingUrl (Pages page, Object ...args)
+        {
+            String path = DeploymentConfig.serverURL + "welcome/" + CShell.creds.getMemberId();
+            if (page != Pages.LANDING) {
+                path += "/" + Pages.makeToken(page, Args.compose(args));
+            }
+            return path;
         }
 
         protected final static String SMALL_WIDTH = "350";
@@ -485,7 +563,6 @@ public class NewSharePanel extends FlowPanel
         public GameInfoPanel (GameDetail detail)
         {
             setStylePrimaryName("shareGameInfo");
-
             Game game = detail.item;
             ThumbBox thumbnail = new ThumbBox(game.getShotMedia(), MediaDesc.THUMBNAIL_SIZE);
             thumbnail.addStyleName("thumbnail");
@@ -511,4 +588,6 @@ public class NewSharePanel extends FlowPanel
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
+        ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
 }
