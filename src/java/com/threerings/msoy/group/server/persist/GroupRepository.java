@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -30,11 +31,12 @@ import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.EpochSeconds;
+import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
 import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Conditionals.FullTextMatch;
-import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
+import com.samskivert.depot.operator.Conditionals.In;
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.Logic.Not;
 import com.samskivert.depot.operator.SQLOperator;
@@ -423,40 +425,32 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetches the membership roster of a given group.
+     * Fetches the ids of the members of a given group.
      */
-    public List<GroupMembershipRecord> getMembers (int groupId)
+    public List<Integer> getMemberIds (int groupId)
     {
+        return getMemberIds(groupId, (byte)-1); // all ranks
+    }
+
+    /**
+     * Fetches the ids of the members of a given group that share a given rank.
+     */
+    public List<Integer> getMemberIdsWithRank (int groupId, byte rank)
+    {
+        return getMemberIds(groupId, rank);
+    }
+
+    /**
+     * Fetches the memberships for each of a given set of members in a group.
+     */
+    public List<GroupMembershipRecord> getMembers (int groupId, Collection<Integer> memberIds)
+    {
+        if (memberIds.size() == 0) {
+            return Collections.emptyList();
+        }
         return findAll(GroupMembershipRecord.class,
-                       new Where(GroupMembershipRecord.GROUP_ID, groupId));
-    }
-
-    /**
-     * Fetches the membership roster of a given group for a given member rank.
-     */
-    public List<GroupMembershipRecord> getMembers (int groupId, byte rank)
-    {
-        return getMembers(groupId, rank, false);
-    }
-
-    /**
-     * Fetches the membership roster of a given group for a given rank or minimum rank.
-     * @param minRank If true, return any member with a rank greater than or equal to the rank param
-     */
-    public List<GroupMembershipRecord> getMembers (int groupId, byte rank, boolean minRank)
-    {
-        Where where;
-        if (minRank) {
-            where = new Where(new And(
-                new Equals(GroupMembershipRecord.GROUP_ID, groupId),
-                new GreaterThanEquals(GroupMembershipRecord.RANK, rank)));
-        }
-        else {
-            where = new Where(new And(
-                new Equals(GroupMembershipRecord.GROUP_ID, groupId),
-                new Equals(GroupMembershipRecord.RANK, rank)));
-        }
-        return findAll(GroupMembershipRecord.class, where);
+            new Where(new And(new Equals(GroupMembershipRecord.GROUP_ID, groupId),
+                new In(GroupMembershipRecord.MEMBER_ID, memberIds))));
     }
 
     /**
@@ -538,6 +532,25 @@ public class GroupRepository extends DepotRepository
         } else {
             return new Where(publicOnly);
         }
+    }
+
+    /**
+     * Fetches a page of the membership roster of a given group for a given rank.
+     * @param rank the rank to select, or -1 for all members
+     */
+    protected List<Integer> getMemberIds (int groupId, byte rank)
+    {
+        SQLExpression test = new Equals(GroupMembershipRecord.GROUP_ID, groupId);
+        if (rank != -1) {
+            test = new And(test, new Equals(GroupMembershipRecord.RANK, rank));
+        }
+
+        return Lists.transform(findAllKeys(GroupMembershipRecord.class, false, new Where(test)),
+            new Function<Key<GroupMembershipRecord>, Integer> () {
+                public Integer apply (Key<GroupMembershipRecord> key) {
+                    return (Integer)key.getValues()[0];
+                }
+            });
     }
 
     @Override // from DepotRepository

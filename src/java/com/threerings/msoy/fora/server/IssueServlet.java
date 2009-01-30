@@ -28,7 +28,6 @@ import com.threerings.msoy.fora.server.persist.IssueRecord;
 import com.threerings.msoy.fora.server.persist.IssueRepository;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -159,13 +158,9 @@ public class IssueServlet extends MsoyServiceServlet
         throws ServiceException
     {
         List<MemberName> owners = Lists.newArrayList();
-        List<GroupMembershipRecord> gmrs = _groupRepo.getMembers(
+        List<Integer> gmrIds = _groupRepo.getMemberIdsWithRank(
             ServerConfig.getIssueGroupId(), GroupMembership.RANK_MANAGER);
-        ArrayIntSet memberIds = new ArrayIntSet();
-        for (GroupMembershipRecord gmr : gmrs) {
-            memberIds.add(gmr.memberId);
-        }
-        List<MemberRecord> members = _memberRepo.loadMembers(memberIds);
+        List<MemberRecord> members = _memberRepo.loadMembers(gmrIds);
         for (MemberRecord member : members) {
             owners.add(new MemberName(member.permaName, member.memberId));
         }

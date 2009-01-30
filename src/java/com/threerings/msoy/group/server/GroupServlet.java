@@ -27,6 +27,8 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Tuple;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -47,7 +49,6 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
-import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
@@ -173,24 +174,34 @@ public class GroupServlet extends MsoyServiceServlet
             detail.population = card.population;
         }
 
-        // collect the top members ordered by rank, then last online
-        detail.topMembers = loadGroupMembers(
-            grec.groupId, GroupMembership.RANK_MEMBER, GroupDetail.NUM_TOP_MEMBERS, true);
+        // we need to order by rank then by last online. this can't be done efficiently without
+        // a join on ProfileRecord and GroupMembershipRecord, so do two passes...
+
+        // first managers
+        detail.topMembers = resolveGroupMemberCards(
+            groupId, _groupRepo.getMemberIdsWithRank(groupId, GroupMembership.RANK_MANAGER), 0,
+            GroupDetail.NUM_TOP_MEMBERS);
+
+        // then everyone else (if we are below the needed number)
+        if (detail.topMembers.size() < GroupDetail.NUM_TOP_MEMBERS) {
+            detail.topMembers.addAll(resolveGroupMemberCards(
+                groupId, _groupRepo.getMemberIdsWithRank(groupId, GroupMembership.RANK_MEMBER), 0,
+                GroupDetail.NUM_TOP_MEMBERS - detail.topMembers.size()));
+        }
 
         return detail;
     }
 
     // from interface GroupService
-    public MembersResult getGroupMembers (int groupId)
+    public PagedResult<GroupMemberCard> getGroupMembers (int groupId, int offset, int count)
         throws ServiceException
     {
-        GroupRecord grec = _groupRepo.loadGroup(groupId);
-        if (grec == null) {
-            return null;
-        }
-        MembersResult result = new MembersResult();
-        result.name = grec.toGroupName();
-        result.members = loadGroupMembers(grec.groupId, GroupMembership.RANK_MEMBER, 0, false);
+        // resolve cards for one page of all members in the group
+        List<Integer> memberIds = _groupRepo.getMemberIds(groupId);
+
+        PagedResult<GroupMemberCard> result = new PagedResult<GroupMemberCard>();
+        result.total = memberIds.size();
+        result.page = resolveGroupMemberCards(groupId, memberIds, offset, count);
         return result;
     }
 
@@ -656,8 +667,7 @@ public class GroupServlet extends MsoyServiceServlet
             }
         }
 
-        Set<Integer> memberIds = Sets.newHashSet(Iterables.transform(
-            _groupRepo.getMembers(groupId), GroupMembershipRecord.TO_MEMBER_ID));
+        Set<Integer> memberIds = Sets.newHashSet(_groupRepo.getMemberIds(groupId));
         return Lists.newArrayList(Lists.transform(
             _memberRepo.loadMemberCards(_memberRepo.findMembersInCollection(search, memberIds)),
             MEMBER_CARD_REC_TO_VIZ_MEMBER_NAME));
@@ -736,48 +746,39 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     /**
-     * Load GroupMemberCard for members of this group.
-     * @param minRank Only include members with at least this rank
-     * @param sortByRank If true, sort by rank then last online, if false by last online
-     * @param limit The maximum number of members to return, or <= 0 for no limit
+     * Using a given list of member ids, sort by last time online and return one page of fully
+     * resolved group member cards.
      */
-    protected List<GroupMemberCard> loadGroupMembers (
-        int groupId, byte minRank, int limit, boolean sortByRank)
+    protected List<GroupMemberCard> resolveGroupMemberCards (
+        int groupId, List<Integer> memberIds, int offset, int count)
     {
-        // TODO: We cannot load 5,000 records from the database every time somebody looks
-        // TODO: at a big group. This has to be redone using DB-side sorting and limits.
+        // load a page of member cards, sorted by last online
+        List<MemberCardRecord> cards = _memberRepo.loadMemberCards(memberIds, offset, count, true);
+
+        // now we know the page contents, reduce the member ids
+        List<Integer> page = Lists.transform(cards, new Function<MemberCardRecord, Integer>() {
+            public Integer apply(MemberCardRecord mcr) {
+                return mcr.memberId;
+            }
+        });
+
+        // load memberships and convert to group cards
         IntMap<GroupMemberCard> members = IntMaps.newHashIntMap();
-        for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId, minRank, true)) {
+        for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId, page)) {
             members.put(gmrec.memberId, gmrec.toGroupMemberCard());
         }
 
-        List<GroupMemberCard> mlist = Lists.newArrayList();
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(members.keySet())) {
-            mlist.add(mcr.toMemberCard(members.get(mcr.memberId)));
-        }
-        if (mlist.size() < members.size()) {
-            Set<Integer> stale = Sets.newHashSet(members.keySet());
-            for (GroupMemberCard gmc : mlist) {
-                stale.remove(gmc.name.getMemberId());
+        // populate the member card bits of the group cards
+        List<GroupMemberCard> result = Lists.newArrayList();
+        for (MemberCardRecord mcr : cards) {
+            // someone could remove a member while we're in the midst of doing this
+            if (mcr == null) {
+                continue;
             }
-            log.warning("Group has stale members", "groupId", groupId, "ids", stale);
+            result.add(mcr.toMemberCard(members.get(mcr.memberId)));
         }
-        if (sortByRank) {
-            Collections.sort(mlist, MemberHelper.SORT_BY_RANK);
-        }
-        else {
-            Collections.sort(mlist, MemberHelper.SORT_BY_LAST_ONLINE);
-        }
-        if (limit > 0 && mlist.size() > limit) {
-            List<GroupMemberCard> truncatedMemberList = Lists.newArrayList();
-            for (int i = 0; i < limit; i++) {
-                truncatedMemberList.add(mlist.get(i));
-            }
-            return truncatedMemberList;
-        }
-        else {
-            return mlist;
-        }
+
+        return result;
     }
 
     /**

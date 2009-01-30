@@ -5,13 +5,14 @@ package client.groups;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.gwt.util.PagedResult;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.Group;
@@ -30,6 +31,7 @@ import client.ui.PromptPopup;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
 /**
@@ -47,12 +49,14 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
         _invite.addClickListener(Link.createListener(Pages.MAIL, args));
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
-        _groupsvc.getGroupMembers(
-            _detail.group.groupId, new MsoyCallback<GroupService.MembersResult>() {
-                public void onSuccess (GroupService.MembersResult result) {
-                    setModel(new SimpleDataModel<GroupMemberCard>(result.members), 0);
-                }
-            });
+        setModel(new PagedServiceDataModel<GroupMemberCard>(){
+            @Override protected void callFetchService (
+                int start, int count, boolean needCount,
+                AsyncCallback<PagedResult<GroupMemberCard>> callback) {
+                _groupsvc.getGroupMembers(_detail.group.groupId, start, count, callback);
+            }
+            
+        }, 0);
     }
 
     @Override // from PagedGrid

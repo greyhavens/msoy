@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.PagedResult;
 import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -53,7 +54,8 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getGroupMembers}
      */
-    void getGroupMembers (int groupId, AsyncCallback<GroupService.MembersResult> callback);
+    void getGroupMembers (int groupId, int offset, int count,
+        AsyncCallback<PagedResult<GroupMemberCard>> callback);
 
     /**
      * The asynchronous version of {@link GroupService#transferRoom}

@@ -218,7 +218,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the member records with the supplied set of ids.
      */
-    public List<MemberRecord> loadMembers (Set<Integer> memberIds)
+    public List<MemberRecord> loadMembers (Collection<Integer> memberIds)
     {
         return loadAll(MemberRecord.class, memberIds);
     }
@@ -320,16 +320,38 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads up member's names and profile photos by id.
+     * TODO: investigate callers for possibility of paging
      */
     public List<MemberCardRecord> loadMemberCards (Collection<Integer> memberIds)
+    {
+        return loadMemberCards(memberIds, 0, 0, false);
+    }
+
+    /**
+     * Loads up collection of members' names and profile photos by id, optionally paged and sorted
+     * by last time online.
+     * @param memberIds the ids of the members whose cards to load
+     * @param offset the index of the first item to return in the sorted list
+     * @param limit the number of cards to load, or 0 to load all
+     * @param sortByLastOnline whether to sort the results or just load some cards
+     */
+    public List<MemberCardRecord> loadMemberCards (Collection<Integer> memberIds,
+        int offset, int limit, boolean sortByLastOnline)
     {
         if (memberIds.size() == 0) {
             return Collections.emptyList();
         }
-        return findAll(MemberCardRecord.class,
-                       new FromOverride(MemberRecord.class),
-                       new Join(MemberRecord.MEMBER_ID, ProfileRecord.MEMBER_ID),
-                       new Where(new In(MemberRecord.MEMBER_ID, memberIds)));
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new FromOverride(MemberRecord.class));
+        clauses.add(new Join(MemberRecord.MEMBER_ID, ProfileRecord.MEMBER_ID));
+        clauses.add(new Where(new In(MemberRecord.MEMBER_ID, memberIds)));
+        if (sortByLastOnline) {
+            clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
+        }
+        if (limit != 0) {
+            clauses.add(new Limit(offset, limit));
+        }
+        return findAll(MemberCardRecord.class, clauses);
     }
 
     /**

@@ -22,21 +22,6 @@ import com.threerings.msoy.web.gwt.TagHistory;
  */
 public interface GroupService extends RemoteService
 {
-    /**
-     * Delivers the response to {@link #getGroupMembers}.
-     * TODO: Make this a {@link PagedResult}.
-     */
-    public static class MembersResult implements IsSerializable
-    {
-        /** The group's name and id. */
-        public GroupName name;
-
-        /**
-         * The members of this group.
-         */
-        public List<GroupMemberCard> members;
-    }
-
     /** Delivers the response to {@link #getGroupInfo}. */
     public static class GroupInfo implements IsSerializable
     {
@@ -158,10 +143,9 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
-     * Returns a list of all the members for the specified group.
-     * @TODO Paging
+     * Returns a single page of members for the specified group.
      */
-    MembersResult getGroupMembers (int groupId)
+    PagedResult<GroupMemberCard> getGroupMembers (int groupId, int offset, int count)
         throws ServiceException;
 
     /**

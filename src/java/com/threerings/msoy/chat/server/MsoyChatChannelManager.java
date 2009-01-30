@@ -88,9 +88,7 @@ public class MsoyChatChannelManager extends ChatChannelManager
         _invoker.postUnit(new RepositoryUnit("resolveGroup(" + channel + ")") {
             public void invokePersist () throws Exception {
                 int groupId = ((GroupName)channel.ident).getGroupId();
-                for (GroupMembershipRecord gmr : _groupRepo.getMembers(groupId)) {
-                    _memberIds.add(gmr.memberId);
-                }
+                _memberIds.addAll(_groupRepo.getMemberIds(groupId));
             }
             public void handleSuccess () {
                 resolutionComplete(channel, _memberIds);
