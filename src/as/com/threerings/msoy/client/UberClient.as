@@ -126,7 +126,7 @@ public class UberClient
             // actually a booch with reading parameters (and probably on fucking windows).
             if (app.root.loaderInfo.url.indexOf("file:") == 0) {
                 // do not load the world! Instead complain about being unable to read parameters.
-                app.addChild(FlexUtil.createText("There was a problem starting the viewer."));
+                app.addChild(FlexUtil.createLabel("There was a problem starting the viewer."));
 
             } else {
                 new WorldClient(app.stage);
