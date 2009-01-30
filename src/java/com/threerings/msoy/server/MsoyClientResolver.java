@@ -26,7 +26,6 @@ import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.msoy.data.LurkerName;
-import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -254,7 +253,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         //enforceConnected();
         //memobj.experiences = new DSet<MemberExperience>(
         //        _memberLogic.getExperiences(member.memberId));
-        
+
         log.info("Client resolution complete", "memberId", member.memberId,
             "timing", resolutionStamps);
     }

@@ -6,8 +6,6 @@ package com.threerings.msoy.server;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import com.threerings.util.StreamableArrayIntSet;
 
 import com.threerings.crowd.server.BodyLocal;
@@ -21,14 +19,11 @@ import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.party.data.PartySummary;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Contains server-side only information for a member.

@@ -12,7 +12,6 @@ import net.sf.ehcache.CacheManager;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.Invoker;
-import com.samskivert.depot.CacheAdapter;
 import com.samskivert.depot.EHCacheAdapter;
 import com.samskivert.depot.OldEHCacheAdapter;
 import com.samskivert.depot.PersistenceContext;
@@ -83,7 +82,7 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         boolean cacheFallback =
             "true".equals(ServerConfig.config.getValue("ehcache_fallback", "true"));
-                
+
         log.info("Initializing Depot...", "fallback", cacheFallback);
         _perCtx.init("msoy", conprov, cacheFallback ?
                      new OldEHCacheAdapter(_cacheMgr) : new EHCacheAdapter(_cacheMgr));
@@ -120,7 +119,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         // further units onto the main invoker instead
         _batchInvoker.shutdown();
     }
-    
+
     @Override // from PresentsServer
     protected void invokerDidShutdown ()
     {
@@ -166,7 +165,7 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** The batch invoker thread. */
     @Inject protected MsoyBatchInvoker _batchInvoker;
-    
+
     /** This is needed to ensure that the StatType enum's static initializer runs before anything
      * else in the server that might rely on stats runs. */
     protected static final StatType STAT_TRIGGER = StatType.UNUSED;

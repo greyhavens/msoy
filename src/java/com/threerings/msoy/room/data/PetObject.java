@@ -5,17 +5,12 @@ package com.threerings.msoy.room.data;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.Place;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.data.MsoyBodyObject;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Contains the distributed state associated with a Pet.
