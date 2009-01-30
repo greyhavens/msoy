@@ -56,6 +56,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
@@ -144,7 +145,7 @@ public class MemberManager
     {
         // loading all the greeter ids is a pretty expensive query, so run it infrequently.
         _greeterIdsSnapshot = _memberRepo.loadGreeterIds();
-        _greeterIdsInvalidator = new Interval(_invoker) {
+        _greeterIdsInvalidator = new Interval(_batchInvoker) {
             @Override public void expired() {
                 List<Integer> greeterIds = _memberRepo.loadGreeterIds();
                 synchronized(MemberManager.this) {
@@ -1073,6 +1074,7 @@ public class MemberManager
 
     // dependencies
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected @BatchInvoker Invoker _batchInvoker;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ClientManager _clmgr;
     @Inject protected PresentsDObjectMgr _omgr;
