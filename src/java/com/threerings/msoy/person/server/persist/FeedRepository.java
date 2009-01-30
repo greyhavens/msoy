@@ -28,6 +28,8 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.person.util.FeedMessageType;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Maintains persistent data for feeds.
  */
@@ -196,22 +198,21 @@ public class FeedRepository extends DepotRepository
         return true;
     }
 
-    // TODO: call this method periodically on the server... I'm not immediately thinking of a good
-    // way to do this; having the repository register an Interval at construct time seems sketchy
     /**
      * Prunes feed messages of all types that have expired.
      */
     public void pruneFeeds ()
     {
-        final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - FEED_EXPIRATION_PERIOD);
-        deleteAll(GlobalFeedMessageRecord.class,
+        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - FEED_EXPIRATION_PERIOD);
+        int global = deleteAll(GlobalFeedMessageRecord.class,
                   new Where(new Conditionals.LessThan(GlobalFeedMessageRecord.POSTED, cutoff)));
-        deleteAll(FriendFeedMessageRecord.class,
+        int friend = deleteAll(FriendFeedMessageRecord.class,
                   new Where(new Conditionals.LessThan(FriendFeedMessageRecord.POSTED, cutoff)));
-        deleteAll(GroupFeedMessageRecord.class,
+        int group = deleteAll(GroupFeedMessageRecord.class,
                   new Where(new Conditionals.LessThan(GroupFeedMessageRecord.POSTED, cutoff)));
-        deleteAll(SelfFeedMessageRecord.class,
+        int self = deleteAll(SelfFeedMessageRecord.class,
                   new Where(new Conditionals.LessThan(SelfFeedMessageRecord.POSTED, cutoff)));
+        log.info("Feeds pruned", "global", global, "friend", friend, "group", group, "self", self);
     }
 
     /**

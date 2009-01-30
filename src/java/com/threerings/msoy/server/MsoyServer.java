@@ -69,6 +69,7 @@ import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.room.server.MsoySceneFactory;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.PetManager;
@@ -221,6 +222,13 @@ public class MsoyServer extends MsoyBaseServer
         if (ServerConfig.autoRestart) {
             new AutoRestartChecker().schedule(AUTO_RESTART_CHECK_INTERVAL, true);
         }
+
+        _feedPruner = new Interval(_batchInvoker) {
+            @Override public void expired() {
+                _feedRepo.pruneFeeds();
+            }
+        };
+        _feedPruner.schedule(FEED_PRUNING_INTERVAL, true);
 
         log.info("Msoy server initialized.");
     }
@@ -380,6 +388,9 @@ public class MsoyServer extends MsoyBaseServer
      * that need to be accepted by the policy server. */
     protected ArrayIntSet _otherNodePorts;
 
+    /** Prunes the feeds every so often. */
+    protected Interval _feedPruner;
+
     /** Our runtime jabber manager. */
     @Inject protected JabberManager _jabberMan;
 
@@ -430,7 +441,13 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides our peer-aware runtime configuration. */
     @Inject protected PeeredDatabaseConfigRegistry _peerConfReg;
+    
+    /** The feed repository, so that we may prune. */
+    @Inject protected FeedRepository _feedRepo;
 
+    /** Prune the feeds once every 3 hours. On all servers at once? @TODO Fix. */
+    protected static final long FEED_PRUNING_INTERVAL = 3 * 60 * 60 * 1000;
+    
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;
 }
