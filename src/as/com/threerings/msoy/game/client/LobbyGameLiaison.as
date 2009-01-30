@@ -79,7 +79,7 @@ public class LobbyGameLiaison extends GameLiaison
                 // some failure cases are innocuous, and should be followed up by a display of the
                 // lobby; if we really are hosed, joinLobby() will cause the liaison to shut down
                 _wctx.getWorldController().restoreSceneURL();
-                joinLobby();
+                joinLobby(true);
             });
         lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
     }
@@ -101,11 +101,11 @@ public class LobbyGameLiaison extends GameLiaison
      * Displays the lobby for the game for which we liaise, on top of the existing view. 
      * If the lobby is already showing, this is a NOOP.
      */
-    public function showLobby (mode :int = LobbyCodes.SHOW_LOBBY_ANY) :void
+    public function showLobby (tryPlayNow :Boolean, mode :int = LobbyCodes.SHOW_LOBBY_ANY) :void
     {
         if (_lobby == null) {
             _lobby = new LobbyController(_gctx, mode, lobbyCleared, playNow, lobbyLoaded, false);
-            joinLobby();
+            joinLobby(tryPlayNow);
         } // otherwise it's already showing
     }
 
@@ -222,7 +222,7 @@ public class LobbyGameLiaison extends GameLiaison
         default:
         case LobbyCodes.SHOW_LOBBY_ANY:
         case LobbyCodes.SHOW_LOBBY_MULTIPLAYER:
-            joinLobby();
+            joinLobby(true);
             break;
         }
     }
@@ -258,19 +258,22 @@ public class LobbyGameLiaison extends GameLiaison
         super.clientDidLogoff(event);
     }
 
-    protected function joinLobby () :void
+    protected function joinLobby (tryPlayNow :Boolean) :void
     {
-//        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-//        var cb :ResultAdapter = new ResultAdapter(gotLobbyOid,
-//            function (cause :String) :void {
-//                _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-//                shutdown();
-//            });
-//        lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
-
-        // It's the new-style! Same as above, but if single player is the only option-
-        // go right in
-        playNow(LobbyCodes.PLAY_NOW_IF_SINGLE);
+        if (tryPlayNow) {
+            // it's the new-style! if single player is the only option, go right in
+            playNow(LobbyCodes.PLAY_NOW_IF_SINGLE);
+            return;
+        } 
+        
+        // otherwise just ask the server for the lobby
+        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
+        var cb :ResultAdapter = new ResultAdapter(gotLobbyOid,
+            function (cause :String) :void {
+                _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+                shutdown();
+            });
+        lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
     }
 
     protected function gameLocationDidChange (place :PlaceObject) :void
@@ -304,7 +307,7 @@ public class LobbyGameLiaison extends GameLiaison
         var gameOid :int = int(result);
         if (gameOid == -1) {
             // player isn't currently playing - show the lobby instead
-            joinLobby();
+            joinLobby(true);
             // if they're at a table, join them there
             joinPlayerTable(_playerIdGame);
         } else {

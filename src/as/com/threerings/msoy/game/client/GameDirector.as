@@ -148,7 +148,7 @@ public class GameDirector extends BasicDirector
 
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
-                LobbyGameLiaison(_liaison).showLobby();
+                LobbyGameLiaison(_liaison).showLobby(true);
             } else {
                 _liaison.shutdown();
                 _liaison = null;
@@ -174,10 +174,10 @@ public class GameDirector extends BasicDirector
     {
         log.info("Display current game's lobby", "gameId", getGameId());
         if (_liaison is LobbyGameLiaison) {
-            const type :int = multiplayer ? 
+            const mode :int = multiplayer ? 
                 LobbyCodes.SHOW_LOBBY_MULTIPLAYER : LobbyCodes.SHOW_LOBBY_ANY;
                 
-            LobbyGameLiaison(_liaison).showLobby(type);
+            LobbyGameLiaison(_liaison).showLobby(false, mode);
             return true;
         }
         
@@ -248,14 +248,14 @@ public class GameDirector extends BasicDirector
     
     public function viewSharePage (defmsg :String, token :String = "", roomId :int = 0) :void
     {
-    	// The default message and token can by anything.  We will parse the underscores specially,
-    	// so encode them before adding them as arguments to the invites page.
-    	var encoder :Base64Encoder = new Base64Encoder();
-    	encoder.encodeUTFBytes(token);
-    	var encodedToken :String = encoder.toString();
-    	var args :String = "invites_share_" + getGameId() + "_" + encodeShareString(defmsg) + "_" + 
-    	   encodedToken + (_liaison is AVRGameLiaison ? "_avrg" + roomId : "_game");
-    	_wctx.getWorldController().displayPage("people", args);
+        // The default message and token can by anything.  We will parse the underscores specially,
+        // so encode them before adding them as arguments to the invites page.
+        var encoder :Base64Encoder = new Base64Encoder();
+        encoder.encodeUTFBytes(token);
+        var encodedToken :String = encoder.toString();
+        var args :String = "invites_share_" + getGameId() + "_" + encodeShareString(defmsg) + "_" + 
+           encodedToken + (_liaison is AVRGameLiaison ? "_avrg" + roomId : "_game");
+        _wctx.getWorldController().displayPage("people", args);
     }
 
     /**
