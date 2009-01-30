@@ -89,7 +89,7 @@ public class LobbyController extends Controller
         _lobbyLoaded = lobbyLoaded;
         _displaySplash = displaySplash;
         
-        _lobbyTimer = new LobbyResolutionListener(_mctx);
+        _lobbyTimer = new LobbyResolutionTimer(_mctx);
         _lobbyTimer.start();
 
         // create our lobby panel
@@ -535,7 +535,7 @@ public class LobbyController extends Controller
     protected var _isSeated :Boolean;
     
     /** Monitors whether we've successfully subscribed to a lobby object. */
-    protected var _lobbyTimer :LobbyResolutionListener;
+    protected var _lobbyTimer :LobbyResolutionTimer;
 }
 }
 
@@ -546,14 +546,14 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 /** Displays occasional feedback messages while we wait for a lobby. */
-class LobbyResolutionListener 
+class LobbyResolutionTimer 
 {
     /** Show a message every 5 seconds... */
     public static const DELAY :int = 5000; 
     /** ... and show it only three times. */
     public static const COUNT :int = 3;
     
-    public function LobbyResolutionListener (mctx :MsoyContext)
+    public function LobbyResolutionTimer (mctx :MsoyContext)
     {
         _mctx = mctx;
         _timer = new Timer(DELAY, COUNT);
@@ -581,7 +581,6 @@ class LobbyResolutionListener
     public function displayFinalUpdate (e :TimerEvent) :void
     {
         _mctx.displayInfo(MsoyCodes.GAME_MSGS, "e.waiting_for_lobby_failed");
-        
     }
     
     protected var _mctx :MsoyContext;
