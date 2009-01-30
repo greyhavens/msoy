@@ -633,7 +633,7 @@ public class MsoySceneRepository extends DepotRepository
         // TODO: with parameters. So we trick Depot using a literal expression here. :/
         return new Arithmetic.Div(
             SceneRecord.RATING_SUM,
-            new FunctionExp("GREATEST", SceneRecord.RATING_COUNT, new LiteralExp("1")));
+            new FunctionExp("GREATEST", SceneRecord.RATING_COUNT, new LiteralExp("1.0")));
     }
 
     @Override // from DepotRepository

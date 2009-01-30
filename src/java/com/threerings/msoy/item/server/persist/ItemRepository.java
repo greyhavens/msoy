@@ -72,7 +72,6 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -1247,11 +1246,11 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     protected SQLExpression getRatingExpression ()
-{
-    return new Arithmetic.Div(
-        getItemColumn(ItemRecord.RATING_SUM),
-        new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT), new ValueExp(1)));
-}
+    {
+        return new Arithmetic.Div(
+            getItemColumn(ItemRecord.RATING_SUM),
+            new FunctionExp("GREATEST", getItemColumn(ItemRecord.RATING_COUNT), new ValueExp(1.0)));
+    }
 
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
