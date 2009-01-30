@@ -3,16 +3,8 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.Loader;
-import flash.display.Stage;
 import flash.events.Event;
 import flash.geom.Rectangle;
-import flash.net.URLRequest;
-import flash.net.URLVariables;
-import flash.system.ApplicationDomain;
-import flash.system.Capabilities;
-import flash.system.LoaderContext;
-import flash.system.SecurityDomain;
 
 import mx.core.Application;
 import mx.core.ScrollPolicy;
@@ -111,67 +103,6 @@ public class TopPanel extends Canvas
 
         // display something until someone comes along and sets a real view on us
         setPlaceView(new BlankPlaceView());
-    }
-
-    /**
-     * Ensures that we are running a sufficiently new version of Flash, returning true if so. If
-     * not, it displays a message to the user indicating that they need to upgrade their Flash
-     * player and returns false.
-     */
-    public function verifyFlashVersion () :Boolean
-    {
-        // the version looks like "LNX 9,0,31,0"
-        try {
-            var bits :Array = Capabilities.version.split(" ");
-            if (bits.length < 2) {
-                throw new Error("Failed to split on space");
-            }
-            bits = (bits[1] as String).split(",");
-            while (bits.length < MIN_FLASH_VERSION.length) {
-                bits.push(0);
-            }
-
-            // now check each portion of the version number
-            for (var ii :int = 0; ii < bits.length; ii++) {
-                var required :int = int(MIN_FLASH_VERSION[ii]);
-                var actual :int = int(bits[ii]);
-                if (actual > required) {
-                    break; // we're good to go
-
-                } else if (actual < required) {
-                    var panel :DisconnectedPanel = new DisconnectedPanel(_ctx);
-                    panel.setMessage(MessageBundle.tcompose(
-                        "m.min_flash_version", bits.join(","), MIN_FLASH_VERSION.join(",")), true);
-                    setPlaceView(panel);
-//
-//                    var l :Loader = new Loader();
-//                    var url :URLRequest = new URLRequest(DeploymentConfig.serverURL +
-//                        "expressinstall/expressInstall.swf");
-//                    var vars :URLVariables = new URLVariables();
-//                    vars["MMredirectURL"] = DeploymentConfig.serverURL;
-//                    vars["MMplayerType"] = "PlugIn";
-//                    vars["MMdoctitle"] = "Think of what";
-//                    url.data = vars;
-//                    trace("url.data: " + url.data);
-//                    l.load(url, new LoaderContext(false, ApplicationDomain.currentDomain,
-//                        SecurityDomain.currentDomain));
-//
-//                    var st :Stage = this.stage;
-//                    while (st.numChildren > 0) {
-//                        st.removeChildAt(0);
-//                    }
-//                    st.addChild(l);
-                    return false;
-                }
-                // else, the versions are the same for this field, proceed to the next...
-            }
-
-        } catch (error :Error) {
-            Log.getLog(this).warning("Choked checking version",
-                "version", Capabilities.version, error);
-            // ah well, whatever, let 'em in and hope for the best
-        }
-        return true;
     }
 
     /**
@@ -473,8 +404,5 @@ public class TopPanel extends Canvas
     protected var _controlBar :ControlBar;
 
     protected var _comicOverlay :ComicOverlay;
-
-    /** The minimum flash player version required by whirled. */
-    protected static const MIN_FLASH_VERSION :Array = [ 9, 0, 115, 0 ];
 }
 }

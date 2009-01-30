@@ -37,10 +37,7 @@ public class GameClient extends MsoyClient
 
         stage.quality = StageQuality.MEDIUM;
 
-        // make sure we're running a sufficiently new version of Flash
-        if (_ctx.getTopPanel().verifyFlashVersion()) {
-            logon(); // now logon
-        }
+        logon(); // now logon
 
         addServiceGroup(MsoyCodes.GAME_GROUP);
     }

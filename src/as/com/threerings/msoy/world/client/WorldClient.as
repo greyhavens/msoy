@@ -63,11 +63,6 @@ public class WorldClient extends MsoyClient
         // So: for now we just peg it to MEDIUM.
         stage.quality = StageQuality.MEDIUM;
 
-        // make sure we're running a sufficiently new version of Flash
-        if (!_wctx.getTopPanel().verifyFlashVersion()) {
-            return;
-        }
-
         // if we are embedded, we won't have a server host in our parameters, so we need to obtain
         // that via an HTTP request, otherwise just logon directly
         var params :Object = MsoyParameters.get();
