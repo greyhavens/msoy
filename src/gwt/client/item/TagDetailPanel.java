@@ -134,7 +134,15 @@ public class TagDetailPanel extends VerticalPanel
         }
 
         if (tags == null) {
-            refreshTags();
+            _service.getTags(new AsyncCallback<List<String>>() {
+                public void onSuccess (List<String> tags) {
+                    gotTags(tags);
+                }
+                public void onFailure (Throwable caught) {
+                    _tags.clear();
+                    _tags.add(new Label(CShell.serverError(caught)));
+                }
+            });
         } else {
             gotTags(tags);
         }
@@ -201,19 +209,11 @@ public class TagDetailPanel extends VerticalPanel
 
     protected void refreshTags ()
     {
-        _service.getTags(new AsyncCallback<List<String>>() {
-            public void onSuccess (List<String> tags) {
-                gotTags(tags);
-            }
-            public void onFailure (Throwable caught) {
-                _tags.clear();
-                _tags.add(new Label(CShell.serverError(caught)));
-            }
-        });
     }
 
     protected void gotTags (List<String> tags)
     {
+        _tlist = tags;
         _tags.clear();
         _tags.add(new InlineLabel("Tags:", false, false, true));
 
@@ -226,7 +226,8 @@ public class TagDetailPanel extends VerticalPanel
                     public void execute () {
                         _service.untag(tag, new MsoyCallback<TagHistory>() {
                             public void onSuccess (TagHistory result) {
-                                refreshTags();
+                                _tlist.remove(tag);
+                                gotTags(_tlist);
                             }
                         });
                     }
@@ -281,7 +282,7 @@ public class TagDetailPanel extends VerticalPanel
         }
 
         public void onClick (Widget sender) {
-            String tagName = getText().trim().toLowerCase();
+            final String tagName = getText().trim().toLowerCase();
             if (tagName.length() == 0) {
                 return;
             }
@@ -303,7 +304,8 @@ public class TagDetailPanel extends VerticalPanel
             }
             _service.tag(tagName, new MsoyCallback<TagHistory>() {
                 public void onSuccess (TagHistory result) {
-                    refreshTags();
+                    _tlist.add(tagName);
+                    gotTags(_tlist);
                 }
             });
             setText(null);
@@ -365,6 +367,7 @@ public class TagDetailPanel extends VerticalPanel
     protected FlagService _flagger;
     protected boolean _canEdit;
 
+    protected List<String> _tlist;
     protected FlowPanel _tags;
     protected ListBox _quickTags;
     protected Label _quickTagLabel;
