@@ -422,7 +422,7 @@
         <cacheEventListenerFactory
                 class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
                 properties="replicateAsynchronously=true, replicatePuts=false,
-                            replicateUpdates=false, replicateUpdatesViaCopy=false,
+                            replicateUpdates=true, replicateUpdatesViaCopy=false,
                             replicateRemovals=true"/>
     </cache>
 
@@ -437,7 +437,7 @@
         <cacheEventListenerFactory
                 class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
                 properties="replicateAsynchronously=true, replicatePuts=false,
-                            replicateUpdates=false, replicateUpdatesViaCopy=false,
+                            replicateUpdates=true, replicateUpdatesViaCopy=false,
                             replicateRemovals=true"/>
     </cache>
 
@@ -452,7 +452,7 @@
         <cacheEventListenerFactory
                 class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
                 properties="replicateAsynchronously=true, replicatePuts=false,
-                            replicateUpdates=false, replicateUpdatesViaCopy=false,
+                            replicateUpdates=true, replicateUpdatesViaCopy=false,
                             replicateRemovals=true"/>
     </cache>
 
