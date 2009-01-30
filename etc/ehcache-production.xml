@@ -154,7 +154,7 @@
     <cacheManagerPeerProviderFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
             properties="peerDiscovery=automatic,
-                        multicastGroupAddress=239.192.0.1,
+                        multicastGroupAddress=224.0.0.1,
                         multicastGroupPort=4446, timeToLive=1"
             propertySeparator=","
             />
