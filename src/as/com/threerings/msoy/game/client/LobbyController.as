@@ -93,10 +93,6 @@ public class LobbyController extends Controller
         _panel.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
         Command.bind(_panel, CloseEvent.CLOSE, handleCloseLobby);
         setControlledPanel(_panel);
-
-        // we may be being created during the very beginning of client initialization, so don't
-        // open our panel immediately but rather queue it up to be opened on the next frame
-        _mctx.getTopPanel().callLater(_panel.open);
     }
 
     /**
@@ -419,6 +415,7 @@ public class LobbyController extends Controller
         setGameView(_lobj.game);
         
         // set up our starting panel mode
+        _panel.open();
         _panel.setMode(getStartMode());
 
         // pass group back to the caller now that the lobby has loaded
