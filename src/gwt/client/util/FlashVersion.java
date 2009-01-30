@@ -78,7 +78,8 @@ public class FlashVersion
         String flashArgs = "MMredirectURL=" + getLocationNative() + "&MMplayerType=PlugIn"
             + "&MMdoctitle=" + Window.getTitle().substring(0, 47) + " - Flash Player Installation";
         return WidgetUtil.createFlashObjectDefinition(
-                "expressInstall", "/expressinstall/expressInstall.swf", width, height, flashArgs);
+                "expressInstall", "/expressinstall/playerProductInstall.swf",
+                width, height, flashArgs);
     }
 
     /**
