@@ -3,19 +3,21 @@
 
 package com.threerings.msoy.client {
 
+import flash.display.Loader;
 import flash.display.Sprite;
 import flash.display.MovieClip;
 
 import flash.events.Event;
 import flash.events.ProgressEvent;
 
-import flash.net.URLRequest;
-import flash.net.URLVariables;
+import flash.external.ExternalInterface;
+
 import flash.system.Capabilities;
 
-// NOTE: minimize dependancies outside of flash.*, since this is our preloader...
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
-import com.threerings.util.NetUtil;
+// NOTE: minimize dependancies outside of flash.*, since this is our preloader...
 
 import com.threerings.msoy.ui.LoadingSpinner;
 
@@ -30,7 +32,8 @@ import mx.preloaders.IPreloaderDisplay
 public class Preloader extends Sprite
     implements IPreloaderDisplay
 {
-    /** The minimum flash player version required by whirled. */
+    /** The minimum flash player version required by whirled.
+     * NOTE: if you update this value, you should also examine and update checkOldStub().  */
     public static const MIN_FLASH_VERSION :Array = [ 9, 0, 115, 0 ];
     //public static const MIN_FLASH_VERSION :Array = [ 10, 0, 12, 36 ];
 
@@ -124,14 +127,16 @@ public class Preloader extends Sprite
         trace("----> Preloader " + (working ? "DID" : "did NOT") + " work.");
         // END: TODO
 
-        // two error cases: we are in a stub that is forcing the version down
-        // or we aren't but the user doesn't have the required version.
-        if (checkInOldStub() || checkAutoUpgrade()) {
-            return;
-        }
+        MsoyParameters.init(value, function () :void {
+            // two error cases: we are in a stub that is forcing the version down
+            // or we aren't but the user doesn't have the required version.
+            if (checkFlashUpgrade() || checkOldStub()) {
+                return;
+            }
 
-        value.addEventListener(ProgressEvent.PROGRESS, handleProgress);
-        value.addEventListener(FlexEvent.INIT_COMPLETE, handleComplete);
+            value.addEventListener(ProgressEvent.PROGRESS, handleProgress);
+            value.addEventListener(FlexEvent.INIT_COMPLETE, handleComplete);
+        });
     }
 
     // from IPreloaderDisplay
@@ -147,13 +152,24 @@ public class Preloader extends Sprite
      *
      * @return true if we are and it is being handled.
      */
-    protected function checkInOldStub () :Boolean
+    protected function checkOldStub () :Boolean
     {
-        // TODO: detect when we're in a stub,
-        // check to see if it's forcing us to an old player version (???)
-        // show a message, redirect to whirled.com
+        // so... fucking... fucked-up
+        if ("10" != MsoyParameters.get()["mode"]) {
+            return false;
+        }
 
-        return false;
+        // NOTE: this code is flash 9 -> 10 specific. This might need to get more complicated
+        // in the future. Molotov's for adobe.
+        var l :Loader = new Loader();
+        if (l.hasOwnProperty("unloadAndStop")) { // only available in 10
+            // the stub is not booching us
+            return false;
+        }
+
+        showMessage("This swf must be updated. Please contact the page author.",
+            "Click here to visit Whirled.com and view the content there.");
+        return true;
     }
 
     /**
@@ -161,25 +177,14 @@ public class Preloader extends Sprite
      *
      * @return true if so.
      */
-    protected function checkAutoUpgrade () :Boolean
+    protected function checkFlashUpgrade () :Boolean
     {
         if (checkFlashVersion()) {
             return false;
         }
 
-        var url :URLRequest = new URLRequest(
-            DeploymentConfig.serverURL + "expressinstall/playerProductInstall.swf");
-        var vars :URLVariables = new URLVariables();
-        vars["MMredirectURL"] = DeploymentConfig.serverURL;
-        vars["MMplayerType"] = "PlugIn";
-        vars["MMdoctitle"] = "Upgrade";
-        url.data = vars;
-        if (NetUtil.navigateToURL(url)) {
-            return true;
-        }
-
-        // TODO
-        trace("Shit: could not autoupgrade?");
+        showMessage("This content requires Flash 10.",
+            "Click here to visit Whirled.com and upgrade your flash player.");
         return true;
     }
 
@@ -212,6 +217,62 @@ public class Preloader extends Sprite
         return true;
     }
 
+    protected function showMessage (msg :String, link :String) :void
+    {
+        removeChild(_spinner);
+
+        // prefer to open the link in the same window/frame/tab, but if we can't, then don't.
+        var target :String = "_self";
+        try {
+            ExternalInterface.call("window.location.href.toString");
+        } catch (e :Error) {
+            target = "_blank";
+        }
+
+        var field :TextField = new TextField();
+        field.autoSize = TextFieldAutoSize.CENTER;
+        field.wordWrap = true;
+        field.width = _stageW;
+        field.textColor = 0xFFFFFF;
+        field.htmlText = "<html>" + msg + " " +
+            "<a href=\"" + DeploymentConfig.serverURL + getWhirledPage() + "\" " +
+            "target=\"" + target + "\"><u>" + link + "</u></a>";
+        // TODO: remove debugging
+        trace("Computed page as " + getWhirledPage() + ".");
+        addChild(field);
+    }
+
+    /**
+     * Return a link back to whirled that attempts to visit the same page
+     * that was specified in the embed/stub parameters. Ugh!
+     */
+    protected function getWhirledPage () :String
+    {
+        // This is so fucking brittle
+        var p :Object = MsoyParameters.get();
+
+//        for (var s :String in p) {
+//            trace("parameter: " + s + "  =>  " + p[s]);
+//        }
+
+        // see WorldController.goToPlace();
+        var page :String = "";
+        for each (var stuffs :Array in ARGS_TO_PAGES) {
+            if (null != p[stuffs[0]]) {
+                page = String(stuffs[1] + p[stuffs[0]]);
+                break;
+            }
+        }
+
+        // if there's an affiliate, route them through /welcome/
+        if (null != p["aff"]) {
+            page = "welcome/" + p["aff"] + "/" + page;
+        } else {
+            page = "#" + page;
+        }
+        return page;
+    }
+
     protected function handleProgress (event :ProgressEvent) :void
     {
         _spinner.setProgress(event.bytesLoaded, event.bytesTotal);
@@ -231,5 +292,14 @@ public class Preloader extends Sprite
     protected var _bgSize :String;
     protected var _stageH :Number;
     protected var _stageW :Number;
+
+    // TODO: fill this out more? Are AVRG games handled?
+    protected static const ARGS_TO_PAGES :Array = [
+        [ "sceneId", "world-s" ],
+        [ "room", "world-s" ], // alias used by stubs
+        [ "memberHome", "world-h" ],
+        [ "gameLobby", "world-game_l_" ],
+        [ "game", "world-game_l_" ] // alias used by stubs
+    ];
 }
 }

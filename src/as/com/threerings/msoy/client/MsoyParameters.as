@@ -27,6 +27,11 @@ public class MsoyParameters
      */
     public static function init (disp :DisplayObject, thenRun :Function) :void
     {
+        if (_params != null) {
+            thenRun();
+            return;
+        }
+
         var d :DisplayObject = disp;
         while (d != null) {
             try {
