@@ -301,6 +301,7 @@ public class LobbyController extends Controller
     {
         // first do our UI cleanup
         _panel.close();
+        _lobbyTimer.stop();
 
         // then our distributed services cleanup
         if (_subscriber != null) {
