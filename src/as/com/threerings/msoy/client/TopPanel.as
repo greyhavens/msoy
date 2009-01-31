@@ -216,7 +216,7 @@ public class TopPanel extends Canvas
     /**
      * Set the panel at the top of the display.
      *
-     * This is an unfortunate name collision.  However, it is hte name that makes sense...
+     * This is an unfortunate name collision.  However, it is the name that makes sense...
      */
     public function setTopPanel (top :UIComponent) :void
     {

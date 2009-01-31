@@ -50,17 +50,6 @@ public class ControlBar extends HBox
     public static const DEFAULT_PRIORITY :int = 200;
     public static const PLACE_PRIORITY :int = 300;
 
-    /** Different groups of UI elements. */
-    public static const UI_ALL :String = "All UI Elements"; // created automatically
-    public static const UI_BASE :String = "Base UI"; // when in neither a game nor a room
-    public static const UI_ROOM :String = "Room UI";
-    public static const UI_GAME :String = "Game UI";
-    public static const UI_AVRGAME :String = "AVR Game UI";
-    public static const UI_VIEWER :String = "Room Entity Viewer UI";
-
-    public static const ALL_UI_GROUPS :Array = [
-        UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ];
-
     /** The chat preferences button. */
     public var chatOptsBtn :CommandButton;
 
@@ -163,7 +152,7 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Called to tell us when we're in avr game mode.
+     * Called to tell us when we're in avr game mode (normally overlaps with inRoom).
      */
     public function setInAVRGame (inAVRGame :Boolean, icon :MediaDesc = null) :void
     {
@@ -173,7 +162,7 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Called to tell us when we're in room mode.
+     * Called to tell us when we're in a room.
      */
     public function setInRoom (inRoom :Boolean) :void
     {
@@ -264,7 +253,8 @@ public class ControlBar extends HBox
     {
         removeAllChildren();
         _buttons.clearButtons();
-        clearAllGroups();
+        _priorities = new Dictionary(true);
+        _conditions = new Dictionary(true);
         addControls();
     }
 
@@ -276,26 +266,47 @@ public class ControlBar extends HBox
 
     protected function addControls () :void
     {
+        // visibility conditions for our buttons
+        function notInViewer () :Boolean {
+            return !isInViewer();
+        }
+
+        function inWhirled () :Boolean {
+            return _inRoom || _inGame;
+        }
+
+        function inRoom () :Boolean {
+            return _inRoom;
+        }
+
+        function inGame () :Boolean {
+            return _inGame || _inAVRGame;
+        }
+
         // add our standard control bar features
-        addControl(chatOptsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
-        addControl(_chatControl, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
-        addControl(_buttons, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], BUTTON_SECTION);
+        addControl(chatOptsBtn, notInViewer, CHAT_SECTION);
+        addControl(_chatControl, notInViewer, CHAT_SECTION);
+        addControl(_buttons, true, BUTTON_SECTION);
 
         // add buttons
-        addButton(volBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], VOLUME_PRIORITY);
+        addButton(volBtn, true, VOLUME_PRIORITY);
 //        if (DeploymentConfig.devDeployment) {
 //            addButton(fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ],
 //                GLOBAL_PRIORITY);
 //        }
 
-        addButton(shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
-        addButton(commentBtn, [ UI_ROOM, UI_AVRGAME ]);
-        addButton(gameBtn, [ UI_GAME, UI_AVRGAME ], PLACE_PRIORITY + 1);
+        addButton(shareBtn, inWhirled);
+        addButton(commentBtn, inRoom);
+        addButton(gameBtn, inGame);
 
         if (_notificationDisplay != null) {
-            addControl(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ],
-                NOTIFICATION_SECTION);
+            addControl(_notificationDisplay, notInViewer, NOTIFICATION_SECTION);
         }
+    }
+
+    protected function isInViewer () :Boolean
+    {
+        return false;
     }
 
     /**
@@ -308,63 +319,37 @@ public class ControlBar extends HBox
         return Integer.compare(pri1, pri2);
     }
 
-    protected function clearAllGroups () :void
-    {
-        for each (var key :String in ALL_UI_GROUPS) {
-            _groups[key] = new Array();
-        }
-    }
-
-    protected function addControl (child :UIComponent, groupNames :Array, section :int) :void
+    protected function addControl (child :UIComponent, condition :Object, section :int) :void
     {
         addChild(child);
-        addToGroups(child, groupNames, section);
+        registerControl(child, condition, section);
     }
 
     protected function addButton (
-        child :UIComponent, groupNames :Array, priority :int = DEFAULT_PRIORITY) :void
+        child :UIComponent, condition :Object, priority :int = DEFAULT_PRIORITY) :void
     {
         _buttons.addButton(child, priority);
-        addToGroups(child, groupNames, priority);
+        registerControl(child, condition, priority);
     }
 
-    protected function addToGroups (child :UIComponent, groupNames :Array, priority :int) :void
+    protected function registerControl (child :UIComponent, condition :Object, priority :int) :void
     {
         _priorities[child] = priority;
-        if (!ArrayUtil.contains(groupNames, UI_ALL)) {
-            groupNames.push(UI_ALL);
-        }
-        for each (var groupName :String in groupNames) {
-            _groups[groupName].push(child);
-        }
-    }
-
-    protected function updateGroup (groupName :String, value :Boolean) :void
-    {
-        for each (var elt :UIComponent in _groups[groupName]) {
-            FlexUtil.setVisible(elt, value);
-        }
+        _conditions[child] = condition;
     }
 
     protected function updateUI () :void
     {
-        updateGroup(UI_ALL, false);
-        updateGroup(getMode(), true);
+        for (var key :* in _conditions) {
+            var condition :Object = _conditions[key];
+            if (condition is Function) {
+                condition = (condition as Function).call(null);
+            }
+            FlexUtil.setVisible(UIComponent(key), Boolean(condition));
+        }
+
         sortControls();
         _buttons.recheckButtons();
-    }
-
-    protected function getMode () :String
-    {
-        if (_inGame) {
-            return UI_GAME;
-        } else if (_inAVRGame) {
-            return UI_AVRGAME;
-        } else if (_inRoom) {
-            return UI_ROOM;
-        } else {
-            return UI_BASE;
-        }
     }
 
     protected function setGameButtonStyle (icon :MediaDesc) :void
@@ -432,8 +417,8 @@ public class ControlBar extends HBox
     /** Are we in a room? */
     protected var _inRoom :Boolean;
 
-    /** Object that contains all the different groups of UI elements. */
-    protected var _groups :Object = new Object();
+    /** Button visibility conditions. */
+    protected var _conditions :Dictionary = new Dictionary(true);
 
     /** Button priority levels. */
     protected var _priorities :Dictionary = new Dictionary(true);

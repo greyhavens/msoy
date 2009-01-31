@@ -156,23 +156,35 @@ public class WorldControlBar extends ControlBar
     {
         super.addControls();
 
-        addButton(musicBtn, [ UI_ROOM, UI_AVRGAME ], VOLUME_PRIORITY);
-        //addButton(homePageGridBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
-        addButton(friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
+        function inRoom () :Boolean {
+            return _inRoom;
+        }
 
-        addButton(hotZoneBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
-        addButton(zoomBtn, [ UI_ROOM, UI_VIEWER, UI_AVRGAME ], PLACE_PRIORITY);
+        function notInViewer () :Boolean {
+            return !isInViewer();
+        }
 
-        addButton(snapBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
-        addButton(roomEditBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
+        function inRoomOrViewer () :Boolean {
+            return _inRoom || isInViewer();
+        }
 
-        addButton(partyBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY + 1);
+        addButton(musicBtn, inRoom, VOLUME_PRIORITY);
+        //addButton(homePageGridBtn, notInViewer, GLOBAL_PRIORITY);
+        addButton(friendsBtn, notInViewer, GLOBAL_PRIORITY);
+
+        addButton(hotZoneBtn, inRoom, PLACE_PRIORITY);
+        addButton(zoomBtn, inRoomOrViewer, PLACE_PRIORITY);
+
+        addButton(snapBtn, inRoom, PLACE_PRIORITY);
+        addButton(roomEditBtn, inRoom, PLACE_PRIORITY);
+
+        addButton(partyBtn, notInViewer, GLOBAL_PRIORITY + 1);
     }
 
     // from ControlBar
-    override protected function getMode () :String
+    override protected function isInViewer () :Boolean
     {
-        return UberClient.isRegularClient() ? super.getMode() : UI_VIEWER;
+        return !UberClient.isRegularClient();
     }
 
     /**
