@@ -11,6 +11,7 @@ import client.ui.MsoyUI;
 import client.ui.RollupBox;
 import client.ui.ThumbBox;
 import client.util.Link;
+import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -63,9 +64,8 @@ public class NewSharePanel extends VerticalPanel
 
         // Top area
         final HorizontalPanel topPanel = new HorizontalPanel();
+        topPanel.setStylePrimaryName("sharePanel-top");
         VerticalPanel leftSide = new VerticalPanel();
-        leftSide.add(MsoyUI.createLabel("Earn money by sharing Whirled!",
-            "sharePanel-header"));
         leftSide.add(MsoyUI.createHTML("If your friends join Whirled through this " +
         		"link, you can <a class='external' href='http://wiki.whirled.com/Affiliate'>earn " +
         		"money</a> from them!  You can copy, paste, and IM it to your buddies!",
@@ -74,6 +74,11 @@ public class NewSharePanel extends VerticalPanel
         		"on your MySpace, blog, or website!", "sharePanel-embed-description"));
         topPanel.add(leftSide);
         subPanel.add(topPanel);
+
+        // TODO: Add this in once we support this feature.
+        /*Label testLabel = new Label("Test");
+        RollupBox postGame = new RollupBox("Post this game to...", "postGameRollup", testLabel);
+        add(postGame);*/
 
         RollupBox emailBox = new RollupBox("Email Whirled to Your Friends", "emailRollup",
             new InviteEmailPanel(""));
@@ -95,17 +100,15 @@ public class NewSharePanel extends VerticalPanel
         });
     }
 
-    public NewSharePanel (int gameId, String gameToken, String gameType, String message)
+    public NewSharePanel (int gameId, final String gameToken, final String gameType, String message)
     {
         setStylePrimaryName("sharePanel");
 
         // Top area
-        final SmartTable topPanel = new SmartTable();
-        topPanel.setWidget(0, 0, MsoyUI.createLabel("Share this game with your friends!",
-            "sharePanel-header"));
-        topPanel.setWidget(0, 1, new ShareURLBox("Your Game URL", "Embed Game", gameId,
+        final HorizontalPanel topPanel = new HorizontalPanel();
+        topPanel.setStylePrimaryName("sharePanel-top");
+        topPanel.add(new ShareURLBox("Your Game URL", "Embed Game", gameId,
             gameToken, gameType));
-        topPanel.getFlexCellFormatter().setRowSpan(0, 1, 2);
         add(topPanel);
 
         // TODO: Add this in once we support this feature.
@@ -118,19 +121,12 @@ public class NewSharePanel extends VerticalPanel
         emailBox.setOpen(true);
         add(emailBox);
 
-        RollupBox imageLinksBox = new RollupBox("Image Links to this Game", "imageLinksRollup",
-            new ImageLinkPanel());
-        add(imageLinksBox);
-
-        /*RollupBox findFriendsBox = new RollupBox("Find Friends Already on Whirled",
-            "findFriendsRollup", new FindFriendsPanel());
-        add(findFriendsBox);*/
-
-        //add(new ShareURLBox(gameId, gameToken, gameType));
-
         _gamesvc.loadGameDetail(gameId, new MsoyCallback<GameDetail>() {
             public void onSuccess (GameDetail result) {
-                topPanel.setWidget(1, 0, new GameInfoPanel(result));
+                topPanel.insert(new GameInfoPanel(result), 0);
+                RollupBox imageLinksBox = new RollupBox("Image Links to this Game",
+                    "imageLinksRollup", new GameLinksPanel(result, gameToken, gameType));
+                add(imageLinksBox);
             }
         });
     }
@@ -403,7 +399,7 @@ public class NewSharePanel extends VerticalPanel
             icon.setStylePrimaryName("shareURLBox-embedIcon");
             table.setWidget(3, 0, icon);
             final TextBox embedText = new TextBox();
-            embedText.setText(createEmbedURL(placeId, FULL_WIDTH, FULL_HEIGHT, isGame));
+            embedText.setText(createEmbedCode(placeId, FULL_WIDTH, FULL_HEIGHT, isGame));
             embedText.addFocusListener(new FocusListener() {
                 public void onFocus (Widget sender) {
                     // Select the text on focus.
@@ -435,7 +431,7 @@ public class NewSharePanel extends VerticalPanel
             _fullPanel = new SizePanel("100%x575", "full");
             _smallPanel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    embedText.setText(createEmbedURL(placeId, SMALL_WIDTH, SMALL_HEIGHT, isGame));
+                    embedText.setText(createEmbedCode(placeId, SMALL_WIDTH, SMALL_HEIGHT, isGame));
                     _smallPanel.setSelected(true);
                     _mediumPanel.setSelected(false);
                     _largePanel.setSelected(false);
@@ -444,7 +440,7 @@ public class NewSharePanel extends VerticalPanel
             });
             _mediumPanel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    embedText.setText(createEmbedURL(placeId, MEDIUM_WIDTH, MEDIUM_HEIGHT, isGame));
+                    embedText.setText(createEmbedCode(placeId, MEDIUM_WIDTH, MEDIUM_HEIGHT, isGame));
                     _smallPanel.setSelected(false);
                     _mediumPanel.setSelected(true);
                     _largePanel.setSelected(false);
@@ -453,7 +449,7 @@ public class NewSharePanel extends VerticalPanel
             });
             _largePanel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    embedText.setText(createEmbedURL(placeId, LARGE_WIDTH, LARGE_HEIGHT, isGame));
+                    embedText.setText(createEmbedCode(placeId, LARGE_WIDTH, LARGE_HEIGHT, isGame));
                     _smallPanel.setSelected(false);
                     _mediumPanel.setSelected(false);
                     _largePanel.setSelected(true);
@@ -462,7 +458,7 @@ public class NewSharePanel extends VerticalPanel
             });
             _fullPanel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    embedText.setText(createEmbedURL(placeId, FULL_WIDTH, FULL_HEIGHT, isGame));
+                    embedText.setText(createEmbedCode(placeId, FULL_WIDTH, FULL_HEIGHT, isGame));
                     _smallPanel.setSelected(false);
                     _mediumPanel.setSelected(false);
                     _largePanel.setSelected(false);
@@ -494,42 +490,6 @@ public class NewSharePanel extends VerticalPanel
                 removeStyleName("shareURLBox-open");
             }
             _open = open;
-        }
-
-        protected static String createGameURL (int gameId, String gameToken, String type)
-        {
-            boolean isAVRG = type.startsWith("avrg");
-            return DeploymentConfig.serverURL + "#world-" + (isAVRG ?
-                "s" + type.substring(4) + "_world_" : "") + "game_t_" + gameId + "_" +
-                CShell.creds.getMemberId() + "_" + gameToken;
-        }
-
-        protected static String createEmbedURL (int placeId, String width, String height,
-            boolean isGame)
-        {
-            // Flash args.
-            StringBuilder args = new StringBuilder();
-            if (isGame) {
-                args.append("gameLobby=").append(placeId).append("&vec=e.whirled.games.")
-                    .append(placeId);
-            } else {
-                args.append("sceneId=").append(placeId).append("&vec=e.whirled.rooms.")
-                .append(placeId);
-            }
-            if (!CShell.isGuest()) {
-                args.append("&aff=").append(CShell.getMemberId());
-            }
-
-            // URL to the swf.
-            String hostOnlyUrl = DeploymentConfig.serverURL.replaceFirst("(http:\\/\\/[^\\/]*).*",
-                "$1/");
-            String swfUrl = hostOnlyUrl + "clients/world-client.swf";
-
-            // URL to Whirled.
-            String fullUrl = hostOnlyUrl + (CShell.isGuest() ? "#" :
-                "welcome/" + CShell.getMemberId() + '/');
-
-            return _cmsgs.embed(args.toString(), swfUrl, width, height, fullUrl);
         }
 
         protected static String createAffiliateLandingUrl (Pages page, Object ...args)
@@ -564,7 +524,7 @@ public class NewSharePanel extends VerticalPanel
         {
             setStylePrimaryName("shareGameInfo");
             Game game = detail.item;
-            ThumbBox thumbnail = new ThumbBox(game.getShotMedia(), MediaDesc.THUMBNAIL_SIZE);
+            ThumbBox thumbnail = new ThumbBox(game.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
             thumbnail.addStyleName("thumbnail");
             add(thumbnail);
             VerticalPanel infoPanel = new VerticalPanel();
@@ -582,6 +542,87 @@ public class NewSharePanel extends VerticalPanel
             infoPanel.add(MsoyUI.createLabel(game.description, "description"));
             add(infoPanel);
         }
+    }
+
+    protected static class GameLinksPanel extends VerticalPanel
+    {
+        public GameLinksPanel (final GameDetail detail, final String gameToken, final String type)
+        {
+            setStylePrimaryName("gameLinks");
+            add(new Label("Click the image you want to include on your blog or website, then " +
+            		"copy and paste the html code that appears in the box below.  Your id is " +
+            		"stored in the code, and when new users join Whirled through your link you " +
+            		"earn coins, bars and bling."));
+            final TextArea htmlCode = new TextArea();
+            htmlCode.setStylePrimaryName("gameLinks-htmlCode");
+            htmlCode.setReadOnly(true);
+            htmlCode.setText("Click an image below...");
+            add(htmlCode);
+            setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+
+            HorizontalPanel icons = new HorizontalPanel();
+            icons.setStylePrimaryName("gameLinks-icons");
+            final Game game = detail.item;
+            Widget thumbnail = MediaUtil.createMediaView(game.getShotMedia(), MediaDesc.THUMBNAIL_SIZE,
+                new ClickListener() {
+                    public void onClick (Widget sender) {
+                        htmlCode.setText(createLink(game.getShotMedia().getMediaPath(),
+                            detail.gameId, gameToken, type));
+                    }
+            });
+            icons.add(thumbnail);
+            thumbnail = MediaUtil.createMediaView(game.getThumbnailMedia(),
+                MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
+                    public void onClick (Widget sender) {
+                        htmlCode.setText(createLink(game.getThumbnailMedia().getMediaPath(),
+                            detail.gameId, gameToken, type));
+                    }
+            });
+            icons.add(thumbnail);
+            add(icons);
+        }
+
+        protected String createLink (String imageUrl, int gameId, String gameToken, String type)
+        {
+            return "<a href=\"" + createGameURL(gameId, gameToken, type) +
+                "\"><img src=\"" + imageUrl + "\"></a>";
+        }
+    }
+
+    protected static String createGameURL (int gameId, String gameToken, String type)
+    {
+        boolean isAVRG = type.startsWith("avrg");
+        return DeploymentConfig.serverURL + "#world-" + (isAVRG ?
+            "s" + type.substring(4) + "_world_" : "") + "game_t_" + gameId + "_" +
+            CShell.creds.getMemberId() + "_" + gameToken;
+    }
+
+    protected static String createEmbedCode (int placeId, String width, String height,
+        boolean isGame)
+    {
+        // Flash args.
+        StringBuilder args = new StringBuilder();
+        if (isGame) {
+            args.append("gameLobby=").append(placeId).append("&vec=e.whirled.games.")
+                .append(placeId);
+        } else {
+            args.append("sceneId=").append(placeId).append("&vec=e.whirled.rooms.")
+            .append(placeId);
+        }
+        if (!CShell.isGuest()) {
+            args.append("&aff=").append(CShell.getMemberId());
+        }
+
+        // URL to the swf.
+        String hostOnlyUrl = DeploymentConfig.serverURL.replaceFirst("(http:\\/\\/[^\\/]*).*",
+            "$1/");
+        String swfUrl = hostOnlyUrl + "clients/world-client.swf";
+
+        // URL to Whirled.
+        String fullUrl = hostOnlyUrl + (CShell.isGuest() ? "#" :
+            "welcome/" + CShell.getMemberId() + '/');
+
+        return _cmsgs.embed(args.toString(), swfUrl, width, height, fullUrl);
     }
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

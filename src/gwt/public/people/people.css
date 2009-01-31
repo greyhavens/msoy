@@ -483,13 +483,12 @@
 }
 
 .sharePanel {
-	width: 675px;
+	width: 680px;
 	padding: 5px;	
 }
 
-.sharePanel-header {
-	font-size: 17px;
-	color: #2c4969;
+.sharePanel-top {
+	width: 675px;
 }
 
 .sharePanel-banner {
@@ -504,6 +503,7 @@
 	background: url(/images/people/invite/bubble_arrow.png) no-repeat;
 	font-size: 11px;
 	color: #2c4969;
+	margin-top: 20px;
 	padding: 3px 10px 3px 5px;
 }
 
@@ -826,4 +826,20 @@
 .findFriendsPanel .importContacts-textBox {
 	width: 250px;
 	margin: 0px 20px 0px 0px;
+}
+
+.gameLinks {
+	font-size: 12px;
+	padding: 5px;
+}
+
+.gameLinks-htmlCode {
+	width: 650px;
+    border: 1px solid #cccccc;
+    padding: 5px;
+    font-size: 12px;
+}
+
+.gameLinks-icons img {
+	padding: 5px;
 }
