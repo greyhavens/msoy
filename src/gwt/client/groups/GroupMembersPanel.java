@@ -26,6 +26,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.ui.MemberStatusLabel;
+import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.ui.ThumbBox;
@@ -81,6 +82,12 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
     protected void addCustomControls (FlexTable controls)
     {
         controls.setWidget(0, 0, _invite = new Button(_msgs.wmpInvite()));
+    }
+
+    @Override // from PagedWidget
+    protected Widget getNowLoadingWidget ()
+    {
+        return new MiniNowLoadingWidget();
     }
 
     public boolean amSenior (GroupMemberCard member)
