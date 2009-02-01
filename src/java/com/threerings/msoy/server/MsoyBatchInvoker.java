@@ -44,9 +44,9 @@ public class MsoyBatchInvoker extends ReportingInvoker
         if (shutdownRequested()) {
             log.info("Shuttling unit to main invoker", "unit", unit);
             _mainInvoker.postUnit(unit);
-            return;
+        } else {
+            super.postUnit(unit);
         }
-        super.postUnit(unit);
     }
 
     @Override
