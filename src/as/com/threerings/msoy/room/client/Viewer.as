@@ -54,23 +54,10 @@ public class Viewer extends Sprite
         var media :String = params["media"] as String;
         var mode :int = int(params["mode"]);
 
-        switch (mode) {
-        // AVATAR handled elsewhere. This class is TEMP, anyway.
-
-        default: // FURNI, TOY, DECOR
-            _sprite = new FurniViewerSprite();
-            break;
-
-        case UberClientModes.PET_VIEWER:
-            _sprite = new PetViewerSprite();
-            break;
-        }
-
-        var d :DisplayObject = _sprite as DisplayObject;
-
-        d.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
+        _sprite = new ViewerSprite();
+        _sprite.addEventListener(MediaContainer.SIZE_KNOWN, handleSizeKnown);
         _sprite.setMedia(media);
-        addChild(d);
+        addChild(_sprite);
     }
 
     protected function handleSizeKnown (event :ValueEvent) :void
@@ -85,7 +72,7 @@ public class Viewer extends Sprite
         d.y = (HEIGHT - (scale * height)) / 2;
     }
 
-    protected var  _sprite :ViewerSprite;
+    protected var _sprite :ViewerSprite;
 
     [Embed(source="../../../../../../../pages/images/item/detail_preview_bg.png")]
     protected static const BACKGROUND :Class;
@@ -93,24 +80,15 @@ public class Viewer extends Sprite
 }
 
 import com.threerings.msoy.room.client.FurniSprite;
-import com.threerings.msoy.room.client.PetSprite;
 
 import com.threerings.msoy.room.data.FurniData;
-
-interface ViewerSprite
-{
-    function setScale (scale :Number) :void;
-
-    function setMedia (url :String) :void;
-}
 
 /**
  * A simple sprite used for viewing.
  */
-class FurniViewerSprite extends FurniSprite
-    implements ViewerSprite
+class ViewerSprite extends FurniSprite
 {
-    public function FurniViewerSprite ()
+    public function ViewerSprite ()
     {
         super(null, new FurniData());
     }
@@ -146,32 +124,4 @@ class FurniViewerSprite extends FurniSprite
     }
 
     protected var _scale :Number = 1;
-}
-
-/**
- * A simple sprite used for viewing.
- */
-class PetViewerSprite extends PetSprite
-    implements ViewerSprite
-{
-    public function PetViewerSprite ()
-    {
-        super(null, null, {});
-    }
-
-    public function setScale (scale :Number) :void
-    {
-        _scale = scale;
-        scaleUpdated();
-    }
-
-    override public function getState () :String
-    {
-        return null;
-    }
-
-    override protected function allowSetMedia () :Boolean
-    {
-        return true;
-    }
 }
