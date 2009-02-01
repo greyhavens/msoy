@@ -143,16 +143,32 @@ public class MemberManager
      */
     public void init ()
     {
-        // loading all the greeter ids is a pretty expensive query, so run it infrequently.
-        _greeterIdsSnapshot = _memberRepo.loadGreeterIds();
-        _greeterIdsInvalidator = new Interval(_batchInvoker) {
-            @Override public void expired() {
+        // unit to load greeters
+        final Invoker.Unit loadGreeters = new Invoker.Unit("loadGreeterIds") {
+            public boolean invoke () {
                 List<Integer> greeterIds = _memberRepo.loadGreeterIds();
                 synchronized (_snapshotLock) {
                     _greeterIdsSnapshot = greeterIds;
                 }
+                return false;
+            }
+
+            public long getLongThreshold () {
+                return 10 * 1000;
             }
         };
+
+        // do the initial load on the main thread so we are ready to go
+        _greeterIdsSnapshot = _memberRepo.loadGreeterIds();
+
+        // create the interval to post the unit
+        _greeterIdsInvalidator = new Interval() {
+            @Override public void expired() {
+                _batchInvoker.postUnit(loadGreeters);
+            }
+        };
+
+        // loading all the greeter ids is expensive, so do it infrequently
         _greeterIdsInvalidator.schedule(GREETERS_REFRESH_PERIOD, true);
 
         _ppSnapshot = PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan, getGreeterIdsSnapshot());
