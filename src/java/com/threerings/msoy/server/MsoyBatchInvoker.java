@@ -41,7 +41,7 @@ public class MsoyBatchInvoker extends ReportingInvoker
     public void postUnit (Unit unit)
     {
         // when the batch invoker has been shut down, shuffle units to the main invoker
-        if (_shutdownPending || !isRunning()) {
+        if (shutdownRequested()) {
             log.info("Shuttling unit to main invoker", "unit", unit);
             _mainInvoker.postUnit(unit);
             return;
@@ -54,7 +54,6 @@ public class MsoyBatchInvoker extends ReportingInvoker
     {
         log.info("Batch invoker got shutdown request.");
         super.shutdown();
-        _shutdownPending = true;
     }
 
     @Override
@@ -63,8 +62,6 @@ public class MsoyBatchInvoker extends ReportingInvoker
         log.info("Batch invoker shut down.");
         super.didShutdown();
     }
-
-    protected boolean _shutdownPending;
 
     @Inject protected @MainInvoker Invoker _mainInvoker;
 }
