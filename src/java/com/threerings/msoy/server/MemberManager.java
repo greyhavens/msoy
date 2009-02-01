@@ -441,7 +441,7 @@ public class MemberManager
 
     // from interface MemberProvider
     public void setAvatar (final ClientObject caller, final int avatarItemId, final float newScale,
-                           final InvocationService.ConfirmListener listener)
+                           InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -455,60 +455,28 @@ public class MemberManager
 
         // otherwise, make sure it exists and we own it
         final ItemIdent ident = new ItemIdent(Item.AVATAR, avatarItemId);
-
-        _invoker.postUnit(new RepositoryUnit("setAvatar") {
-            @Override public void invokePersist () throws Exception {
+        _invoker.postUnit(new PersistingUnit("setAvatar(" + avatarItemId + ")", listener) {
+            @Override public void invokePersistent () throws Exception {
                 _avatar = (Avatar)_itemMan.loadItem(ident);
                 if (_avatar == null) {
-                    _failure = ItemCodes.E_NO_SUCH_ITEM;
-                    return;
+                    throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
                 }
-
-                if (!user.isActive()) {
-                    // TODO: remove this logging, it's not very interesting
-                    log.info("User logged out during getItem", "avatar", _avatar,
-                        "user", user.which());
-                    _failure = InvocationCodes.INTERNAL_ERROR;
-                    return;
-                }
-
                 if (user.getMemberId() != _avatar.ownerId) { // ensure that they own it
                     log.warning("Not user's avatar", "user", user.which(),
-                        "ownerId", _avatar.ownerId,  _avatar.ownerId);
-                    _failure = InvocationCodes.INTERNAL_ERROR;
-                    return;
+                                "ownerId", _avatar.ownerId);
+                    throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
                 }
-
-
                 MemoriesRecord memrec = _memoryRepo.loadMemory(_avatar.getType(), _avatar.itemId);
                 _memories = (memrec == null) ? null : memrec.toEntries();
             }
 
             @Override public void handleSuccess () {
-                if (_failure == null && !user.isActive()) {
-                    // TODO: remove this logging, it's not very interesting
-                    log.info("User logged out during loadMemory", "avatar", _avatar,
-                        "user", user.which());
-                    _failure = InvocationCodes.INTERNAL_ERROR;
-                }
-
-                if (_failure != null) {
-                    listener.requestFailed(_failure);
-
-                } else {
-                    finishSetAvatar(user, _avatar, newScale, _memories, listener);
-                }
-            }
-
-            @Override public void handleFailure (final Exception pe) {
-                log.warning(
-                    "Unable to resolve avatar", "user", user.which(), "avatar", _avatar, pe);
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                finishSetAvatar(user, _avatar, newScale, _memories,
+                                (InvocationService.ConfirmListener)_listener);
             }
 
             protected List<EntityMemoryEntry> _memories;
             protected Avatar _avatar;
-            protected String _failure;
         });
     }
 
