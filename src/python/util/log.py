@@ -1,7 +1,9 @@
 
 ## Classes and procedures used for parsing log files.
 
-import datetime
+import datetime, re
+
+reMergedLine = re.compile('''[wgb]\d+ ''')
 
 def getDate (line):
     '''Returns the date stamp if the given string begins with a date stamp. Otherwise returns
@@ -26,6 +28,40 @@ def getLogDate (line):
         bpos = line.find('| ')
         if bpos >= 1: date = getDate(line[bpos+2:])
     return date
+
+def collectInvokerWarnings (log):
+    '''Reads through the log and returns a sequence of InvokerWarning contained therein'''
+
+    reInvokerWarning = re.compile('''WARN Invoker: (Really l|L)ong invoker unit \[unit=(?P<name>.*), time=(?P<time>\d+)ms\]\.''')
+    warnings = []
+    while True:
+        line = log.readline()
+        if len(line) == 0: break
+        d = getDate(line)
+        if d == None:
+            merged = reMergedLine.match(line)
+            if merged != None:
+                line = line[len(merged.group()):]
+                d = getDate(line)
+        if d == None: continue
+        warning = reInvokerWarning.search(line)
+        if warning == None: continue
+        warnings.append(InvokerWarning(d, warning.groupdict()))
+    return warnings
+
+class InvokerWarning:
+    def __init__(self, date, match):
+        self._match = match
+        self._date = date
+
+    def name (self):
+        return self._match['name']
+
+    def timestamp (self):
+        return self._date
+
+    def time (self):
+        return int(self._match['time'])
 
 class LogState:
     '''An opened log file with a one line cache so that lines may be merged. There is guaranteed
