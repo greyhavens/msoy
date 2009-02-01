@@ -429,7 +429,7 @@ public class WorldGameRegistry
         if (!checkCallerAccess(caller, "awardCoins(" + gameId + ", " + action + ", " + amount)) {
             return;
         }
-        _invoker.postUnit(new Invoker.Unit() {
+        _invoker.postUnit(new Invoker.Unit("awardCoins(gameId=" + gameId + ")") {
             public boolean invoke () {
                 _moneyLogic.awardCoins(action.memberId, amount, false, action);
                 return false;
@@ -499,7 +499,7 @@ public class WorldGameRegistry
         if (!checkCallerAccess(caller, "updateStat(" + memberId + ", " + modifier + ")")) {
             return;
         }
-        _invoker.postUnit(new Invoker.Unit() {
+        _invoker.postUnit(new Invoker.Unit("updateStat") {
             public boolean invoke () {
                 // stat logic will update the stat in the database and send a MemberNodeAction to
                 // the appropriate MemberObject
@@ -799,7 +799,7 @@ public class WorldGameRegistry
 
             // if we're not also shutting down, then restart this game server
             if (!_shutMan.isShuttingDown()) {
-                _invoker.postUnit(new Invoker.Unit() {
+                _invoker.postUnit(new Invoker.Unit("startGameServer") {
                     public boolean invoke () {
                         try {
                             startGameServer();
