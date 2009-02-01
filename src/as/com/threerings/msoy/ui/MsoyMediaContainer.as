@@ -40,20 +40,18 @@ public class MsoyMediaContainer extends MediaContainer
         Prefs.config.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
     }
 
+    /**
+     * ATTENTION: don't use this method in msoy unless you know what you're doing.
+     * MediaDescs should almost always be used in msoy instead of urls.
+     */
     override public function setMedia (url :String) :void
     {
-        if (allowSetMedia()) {
-            super.setMedia(url);
-
-        } else {
-            throw new IllegalOperationError("setMedia() should not be called " +
-                "on a MsoyMediaContainer, use setMediaDesc instead.");
-        }
+        // this method exists purely for the change in documentation.
+        super.setMedia(url);
     }
 
     /**
      * Set a new MediaDescriptor.
-     * @return true if it was accepted...
      */
     public function setMediaDesc (desc :MediaDesc) :void
     {
@@ -174,14 +172,6 @@ public class MsoyMediaContainer extends MediaContainer
                 setIsBlocked(blocked)
             }
         }
-    }
-
-    /**
-     * Do we allow setMedia(url) to be called?
-     */
-    protected function allowSetMedia () :Boolean
-    {
-        return false;
     }
 
     override protected function shutdownMedia () :void

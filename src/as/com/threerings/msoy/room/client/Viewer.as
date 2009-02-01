@@ -118,10 +118,5 @@ class ViewerSprite extends FurniSprite
         return _scale;
     }
 
-    override protected function allowSetMedia () :Boolean
-    {
-        return true;
-    }
-
     protected var _scale :Number = 1;
 }

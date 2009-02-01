@@ -75,7 +75,7 @@ public class AVRGamePanel extends UIComponent
         var cfg :AVRGameConfig = (_ctrl.getPlaceConfig() as AVRGameConfig);
 
         // create the container for the user media
-        _mediaHolder = new AVRGMediaContainer();
+        _mediaHolder = new DataPackMediaContainer();
         // set ourselves up properly once the media is loaded
         _mediaHolder.addEventListener(Event.COMPLETE, mediaComplete);
         _mediaHolder.addEventListener(DataPackMediaContainer.LOADING_MEDIA, handleGameMediaLoading);
@@ -192,20 +192,7 @@ public class AVRGamePanel extends UIComponent
 
     protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
-    protected var _mediaHolder :AVRGMediaContainer;
+    protected var _mediaHolder :DataPackMediaContainer;
     protected var _gameObj :AVRGameObject;
 }
-}
-
-import com.threerings.msoy.ui.DataPackMediaContainer;
-
-/**
- * Ye olde hacke.
- */
-class AVRGMediaContainer extends DataPackMediaContainer
-{
-    override protected function allowSetMedia () :Boolean
-    {
-        return true;
-    }
 }
