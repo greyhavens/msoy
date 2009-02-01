@@ -13,6 +13,8 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
+import com.threerings.flash.MediaContainer;
+
 import com.threerings.flex.CommandButton;
 
 import com.whirled.game.client.GamePlayerList;
@@ -38,9 +40,9 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 
 import com.threerings.msoy.item.data.all.Game;
 
+import com.threerings.msoy.ui.DataPackMediaContainer;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
-import com.threerings.msoy.ui.ScalingMediaContainer;
 
 /**
  * Coordinates the view for MSOY games.
@@ -211,8 +213,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     {
         super.initiateLoading();
         _spinner.watchLoader(
-            Loader(_gameView.getMediaContainer().getMedia()).contentLoaderInfo,
-            _gameView.getMediaContainer(), true);
+            Loader(_gameContainer.getMedia()).contentLoaderInfo, _gameContainer, true);
 
     }
 
@@ -280,6 +281,11 @@ public class MsoyGamePanel extends WhirledGamePanel
         if (_gameOverPanel == null) {
             _gameOverPanel = new GameOverPanel(_gctx, _rematch, _goBtn);
         }
+    }
+
+    override protected function createGameContainer () :MediaContainer
+    {
+        return new DataPackMediaContainer();
     }
 
     /** convenience reference to our game context */
