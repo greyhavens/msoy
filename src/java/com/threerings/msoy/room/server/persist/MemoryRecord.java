@@ -3,11 +3,6 @@
 
 package com.threerings.msoy.room.server.persist;
 
-import java.util.List;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.annotation.Column;
@@ -37,14 +32,6 @@ public class MemoryRecord extends PersistentRecord
      * object in a way that will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 2;
 
-    /** Transforms a persistent record to a runtime record. */
-    public static Function<MemoryRecord, EntityMemoryEntry> TO_ENTRY =
-        new Function<MemoryRecord, EntityMemoryEntry>() {
-        public EntityMemoryEntry apply (MemoryRecord record) {
-            return record.toEntry();
-        }
-    };
-
     /** The type of the item for which we're storing a memory datum. */
     @Id public byte itemType;
 
@@ -58,35 +45,9 @@ public class MemoryRecord extends PersistentRecord
     @Column(length=4096)
     public byte[] datumValue;
 
-    /**
-     * Extracts the modified memory entries from the supplied list and returns a list of
-     * MemoryRecord instances that can be saved to the database.
-     */
-    public static List<MemoryRecord> extractModified (Iterable<EntityMemoryEntry> memories)
-    {
-        List<MemoryRecord> memrecs = Lists.newArrayList();
-        for (EntityMemoryEntry entry : memories) {
-            if (entry.modified) {
-                memrecs.add(new MemoryRecord(entry));
-            }
-        }
-        return memrecs;
-    }
-
     /** Used when loading instances from the repository. */
     public MemoryRecord ()
     {
-    }
-
-    /**
-     * Creates a memory record from the supplied memory information.
-     */
-    public MemoryRecord (EntityMemoryEntry entry)
-    {
-        this.itemType = entry.item.type;
-        this.itemId = entry.item.itemId;
-        this.datumKey = entry.key;
-        this.datumValue = entry.value;
     }
 
     /**

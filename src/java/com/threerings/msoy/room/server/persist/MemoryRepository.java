@@ -80,28 +80,9 @@ public class MemoryRepository extends DepotRepository
     /**
      * Loads the memory for the specified item.
      */
-    public List<MemoryRecord> loadMemoryOld (byte itemType, int itemId)
-    {
-        return findAll(MemoryRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
-            new Where(MemoryRecord.ITEM_TYPE, itemType, MemoryRecord.ITEM_ID, itemId)));
-    }
-
-    /**
-     * Loads the memory for the specified item.
-     */
     public MemoriesRecord loadMemory (byte itemType, int itemId)
     {
         return load(MemoriesRecord.class, MemoriesRecord.getKey(itemType, itemId));
-    }
-
-    /**
-     * Loads up the all memory records for all items with the specified type and ids.
-     */
-    public List<MemoryRecord> loadMemoriesOld (byte itemType, Collection<Integer> itemIds)
-    {
-        return findAll(MemoryRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
-            new Where(new And(new Equals(MemoryRecord.ITEM_TYPE, itemType),
-                              new In(MemoryRecord.ITEM_ID, itemIds)))));
     }
 
     /**
@@ -119,31 +100,6 @@ public class MemoryRepository extends DepotRepository
     /**
      * Loads up the all memory records for all items with the specified type and ids.
      */
-    public List<MemoryRecord> loadMemoriesOld (Collection<ItemIdent> idents)
-    {
-        HashIntMap<ArrayIntSet> types = new HashIntMap<ArrayIntSet>();
-        for (ItemIdent ident : idents) {
-            ArrayIntSet typeSet = types.get(ident.type);
-            if (typeSet == null) {
-                types.put(ident.type, typeSet = new ArrayIntSet());
-            }
-            typeSet.add(ident.itemId);
-        }
-
-        And[] eachType = new And[types.size()];
-        int index = 0;
-        for (IntMap.IntEntry<ArrayIntSet> entry : types.intEntrySet()) {
-            eachType[index++] = new And(new Equals(MemoryRecord.ITEM_TYPE, entry.getIntKey()),
-                new In(MemoryRecord.ITEM_ID, entry.getValue()));
-        }
-
-        return findAll(MemoryRecord.class, CacheStrategy.RECORDS,
-                       Lists.newArrayList(new Where(new Or(eachType))));
-    }
-
-    /**
-     * Loads up the all memory records for all items with the specified type and ids.
-     */
     public List<MemoriesRecord> loadMemories (Collection<ItemIdent> idents)
     {
         List<Key<MemoriesRecord>> keys = Lists.newArrayList();
@@ -156,36 +112,10 @@ public class MemoryRepository extends DepotRepository
     /**
      * Stores all supplied memory records.
      */
-    public void storeMemoriesOld (Collection<MemoryRecord> records)
-    {
-        // TODO: if one storeMemory() fails, should we catch that error, keep going, then
-        // consolidate the errors and throw a single error?
-        for (MemoryRecord record : records) {
-            storeMemoryOld(record);
-        }
-    }
-
-    /**
-     * Stores all supplied memory records.
-     */
     public void storeMemories (Collection<MemoriesRecord> records)
     {
         for (MemoriesRecord record : records) {
             storeMemories(record);
-        }
-    }
-
-    /**
-     * Stores a particular memory record in the repository.
-     */
-    public void storeMemoryOld (MemoryRecord record)
-    {
-        // delete, update, or insert...
-        if (record.datumValue == null) {
-            delete(record);
-
-        } else if (update(record) == 0) {
-            insert(record);
         }
     }
 
@@ -205,18 +135,16 @@ public class MemoryRepository extends DepotRepository
     /**
      * Deletes all memories for the specified item.
      */
-    public void deleteMemoriesOld (final byte itemType, final int itemId)
-    {
-        deleteAll(MemoryRecord.class,
-                  new Where(MemoryRecord.ITEM_TYPE, itemType, MemoryRecord.ITEM_ID, itemId));
-    }
-
-    /**
-     * Deletes all memories for the specified item.
-     */
     public void deleteMemories (byte itemType, int itemId)
     {
         delete(MemoriesRecord.class, MemoriesRecord.getKey(itemType, itemId));
+    }
+
+    // TODO: remove. Support for convertMemories migration
+    protected List<MemoryRecord> loadMemoryOld (byte itemType, int itemId)
+    {
+        return findAll(MemoryRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
+            new Where(MemoryRecord.ITEM_TYPE, itemType, MemoryRecord.ITEM_ID, itemId)));
     }
 
     @Override // from DepotRepository
