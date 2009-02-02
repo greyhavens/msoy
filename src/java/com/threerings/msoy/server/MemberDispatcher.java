@@ -139,7 +139,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.SET_AVATAR:
             ((MemberProvider)provider).setAvatar(
-                source, ((Integer)args[0]).intValue(), ((Float)args[1]).floatValue(), (InvocationService.ConfirmListener)args[2]
+                source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]
             );
             return;
 

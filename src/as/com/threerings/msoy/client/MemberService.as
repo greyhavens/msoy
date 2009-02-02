@@ -67,7 +67,7 @@ public interface MemberService extends InvocationService
     function loadAllBadges (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
-    function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void;
+    function setAvatar (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function setAway (arg1 :Client, arg2 :Boolean, arg3 :String) :void;

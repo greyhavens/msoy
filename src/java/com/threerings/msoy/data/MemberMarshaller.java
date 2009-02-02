@@ -233,12 +233,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int SET_AVATAR = 18;
 
     // from interface MemberService
-    public void setAvatar (Client arg1, int arg2, float arg3, InvocationService.ConfirmListener arg4)
+    public void setAvatar (Client arg1, int arg2, InvocationService.ConfirmListener arg3)
     {
-        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
-        listener4.listener = arg4;
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, SET_AVATAR, new Object[] {
-            Integer.valueOf(arg2), Float.valueOf(arg3), listener4
+            Integer.valueOf(arg2), listener3
         });
     }
 

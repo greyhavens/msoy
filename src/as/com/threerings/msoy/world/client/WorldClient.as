@@ -257,9 +257,9 @@ public class WorldClient extends MsoyClient
      * Exposed to javascript so that it may tell us to use this avatar.  If the avatarId of 0 is
      * passed in, the current avatar is simply cleared away, leaving them with the default.
      */
-    protected function externalUseAvatar (avatarId :int, scale :Number) :void
+    protected function externalUseAvatar (avatarId :int) :void
     {
-        _wctx.getWorldDirector().setAvatar(avatarId, scale);
+        _wctx.getWorldDirector().setAvatar(avatarId);
     }
 
     /**

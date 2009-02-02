@@ -14,7 +14,6 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.util.Byte;
-import com.threerings.util.Float;
 import com.threerings.util.Integer;
 import com.threerings.util.langBoolean;
 
@@ -247,12 +246,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const SET_AVATAR :int = 18;
 
     // from interface MemberService
-    public function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
+    public function setAvatar (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, SET_AVATAR, [
-            Integer.valueOf(arg2), Float.valueOf(arg3), listener4
+            Integer.valueOf(arg2), listener3
         ]);
     }
 

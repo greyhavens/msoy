@@ -440,7 +440,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setAvatar (final ClientObject caller, final int avatarItemId, final float newScale,
+    public void setAvatar (final ClientObject caller, final int avatarItemId,
                            InvocationService.ConfirmListener listener)
         throws InvocationException
     {
@@ -449,7 +449,7 @@ public class MemberManager
 
         if (avatarItemId == 0) {
             // a request to return to the default avatar
-            finishSetAvatar(user, null, newScale, null, listener);
+            finishSetAvatar(user, null, null, listener);
             return;
         }
 
@@ -471,7 +471,7 @@ public class MemberManager
             }
 
             @Override public void handleSuccess () {
-                finishSetAvatar(user, _avatar, newScale, _memories,
+                finishSetAvatar(user, _avatar, _memories,
                                 (InvocationService.ConfirmListener)_listener);
             }
 
@@ -926,13 +926,10 @@ public class MemberManager
      * database.
      */
     protected void finishSetAvatar (
-        final MemberObject user, final Avatar avatar, final float newScale,
-        List<EntityMemoryEntry> memories, final InvocationService.ConfirmListener listener)
+        final MemberObject user, final Avatar avatar, List<EntityMemoryEntry> memories,
+        final InvocationService.ConfirmListener listener)
     {
         final Avatar prev = user.avatar;
-        if (newScale != 0 && avatar != null) {
-            avatar.scale = newScale;
-        }
 
         // now we need to make sure that the two avatars have a reasonable touched time
         user.startTransaction();
@@ -982,31 +979,19 @@ public class MemberManager
         // this just fires off an invoker unit, we don't need the result, log it
         _itemMan.updateItemUsage(
             user.getMemberId(), prev, avatar, new ResultListener.NOOP<Object>() {
-            @Override
-            public void requestFailed (final Exception cause) {
+            @Override public void requestFailed (final Exception cause) {
                 log.warning("Unable to update usage from an avatar change.");
             }
         });
 
         // now fire off a unit to update the avatar information in the database
-        _invoker.postUnit(new RepositoryUnit("updateAvatar") {
+        _invoker.postUnit(new WriteOnlyUnit("updateAvatar") {
             @Override public void invokePersist () throws Exception {
-                if (avatar != null) {
-                    if (newScale != 0 && avatar.scale != newScale) {
-                        _itemLogic.getAvatarRepository().updateScale(avatar.itemId, newScale);
-                    }
-                }
-                _memberRepo.configureAvatarId(user.getMemberId(),
-                    (avatar == null) ? 0 : avatar.itemId);
+                _memberRepo.configureAvatarId(
+                    user.getMemberId(), (avatar == null) ? 0 : avatar.itemId);
             }
-
-            @Override public void handleSuccess () {
-                // yay!
-            }
-
             @Override public void handleFailure (final Exception pe) {
-                log.warning("Unable to set avatar", "user", user.which(), "avatar", avatar,
-                    "error", pe);
+                log.warning("configureAvatarId failed", "user", user.which(), "avatar", avatar, pe);
             }
         });
     }

@@ -239,9 +239,9 @@ public class FlashClients
      * Tells the actionscript client that we'd like to use this avatar.  If 0 is passed in for the
      * avatarId, the current avatar is simply cleared away, leaving you tofulicious.
      */
-    public static void useAvatar (int avatarId, float scale)
+    public static void useAvatar (int avatarId)
     {
-        useAvatarNative(findClient(), avatarId, scale);
+        useAvatarNative(findClient(), avatarId);
     }
 
     /**
@@ -335,10 +335,10 @@ public class FlashClients
     /**
      * Does the actual <code>useAvatar()</code> call.
      */
-    protected static native void useAvatarNative (Element client, int avatarId, float scale) /*-{
+    protected static native void useAvatarNative (Element client, int avatarId) /*-{
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
-            try { client.useAvatar(avatarId, scale); } catch (e) {}
+            try { client.useAvatar(avatarId); } catch (e) {}
         }
     }-*/;
 

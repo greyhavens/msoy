@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 
 import client.item.ItemMessages;
@@ -108,9 +107,9 @@ public class ItemActivator extends FlowPanel
                 onClick = new ClickListener () {
                     public void onClick (Widget sender) {
                         if (fUsedHere) {
-                            FlashClients.useAvatar(0, 0);
+                            FlashClients.useAvatar(0);
                         } else {
-                            FlashClients.useAvatar(_item.itemId, ((Avatar) _item).scale);
+                            FlashClients.useAvatar(_item.itemId);
                         }
                     }
                 };

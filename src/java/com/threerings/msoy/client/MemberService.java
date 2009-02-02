@@ -67,10 +67,8 @@ public interface MemberService extends InvocationService
 
     /**
      * Set the avatar in use by this user.
-     *
-     * @param newScale a new scale for the avatar, or 0 to use the last scale.
      */
-    void setAvatar (Client client, int avatarId, float newScale, ConfirmListener listener);
+    void setAvatar (Client client, int avatarId, ConfirmListener listener);
 
     /**
      * Set the display name for this user.
