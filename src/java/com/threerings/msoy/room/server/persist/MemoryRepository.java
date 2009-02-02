@@ -19,14 +19,6 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.Conditionals.Equals;
-import com.samskivert.depot.operator.Conditionals.In;
-import com.samskivert.depot.operator.Logic.And;
-import com.samskivert.depot.operator.Logic.Or;
-
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntMap;
 
 import com.threerings.presents.annotation.BlockingThread;
 

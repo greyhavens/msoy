@@ -26,7 +26,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocator;
 
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
