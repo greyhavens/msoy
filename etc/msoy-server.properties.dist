@@ -119,7 +119,14 @@ agents_address = "Whirled Agents" <msoy-agents@threerings.net>
 #
 # Configures the member or members used for staff favorites
 
-# shop_favorites_member_ids = 1
+# shop_favorites_member_ids = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+#
+# Rooms winning the most recent Design Your Whirled contest, displayed on the main rooms page.
+# These are in order starting with 1st place, 2nd, 3rd, five honorable mentions, then some
+# number of 'too cool for school' runners-up.
+
+# contest_winning_scene_ids = 9, 7, 4, 12, 11, 5, 6, 8, 10
 
 #
 # Defines the directory into which uploaded media will be stored (in addition

@@ -77,7 +77,7 @@ public class TongueBox extends SmartTable
     {
         SmartTable header = new SmartTable("THeader", 0, 0);
         if (title != null && icon == null) {
-            header.setText(0, 0, title, 1, "Base");
+            header.setWidget(0, 0, MsoyUI.createHTML(title, null), 1, "Base");
             header.addTableListener(this);
         } else if (title == null && icon != null) {
             header.setWidget(0, 0, icon, 1, "Base");
@@ -85,7 +85,7 @@ public class TongueBox extends SmartTable
         } else {
             SmartTable base = new SmartTable("BaseContents", 0, 0);
             base.setWidget(0, 0, icon);
-            base.setText(0, 1, title, 1, "BaseText");
+            base.setWidget(0, 1, MsoyUI.createHTML(title, null), 1, "BaseText");
             base.addTableListener(this);
             header.setWidget(0, 0, base, 1, "Base");
         }

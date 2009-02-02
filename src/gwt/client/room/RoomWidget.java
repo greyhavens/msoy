@@ -21,6 +21,10 @@ public class RoomWidget extends FlowPanel
     {
         setStyleName("Room");
 
+        if (room.winnerRank != null) {
+            add(MsoyUI.createLabel(room.winnerRank, "WinnerRank"));
+        }
+
         Widget thumb = SceneUtil.createSceneThumbView(
             room.thumbnail, Link.createListener(Pages.WORLD, "s"+room.sceneId));
         thumb.setTitle(_msgs.rwThumbTip());

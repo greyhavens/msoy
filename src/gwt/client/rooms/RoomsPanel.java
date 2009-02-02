@@ -63,6 +63,25 @@ public class RoomsPanel extends FlowPanel
 
     protected void init (WebRoomService.OverviewResult overview)
     {
+        // give a title to each contest winning room based on its location in the list
+        for (int ii = 0; ii < overview.winningRooms.size(); ii++) {
+            RoomInfo room = overview.winningRooms.get(ii);
+            if (ii == 0) {
+                room.winnerRank = _msgs.winnerFirst();
+            } else if (ii == 1) {
+                room.winnerRank = _msgs.winnerSecond();
+            } else if (ii == 2) {
+                room.winnerRank = _msgs.winnerThird();
+            } else if (ii < 8) {
+                room.winnerRank = _msgs.winnerHonorable();
+            } else {
+                room.winnerRank = _msgs.winnerOther();
+            }
+        }
+        RoomsGrid winners = new RoomsGrid();
+        winners.setModel(new SimpleDataModel<RoomInfo>(overview.winningRooms), 0);
+        add(new TongueBox(_msgs.winningRooms(), winners));
+
         RoomsGrid active = new RoomsGrid();
         active.setModel(new SimpleDataModel<RoomInfo>(overview.activeRooms), 0);
         add(new TongueBox(_msgs.activeRooms(), active));
@@ -74,21 +93,18 @@ public class RoomsPanel extends FlowPanel
 
     protected static class RoomsGrid extends PagedGrid<RoomInfo>
     {
-        public RoomsGrid ()
-        {
+        public RoomsGrid () {
             super(2, 3, NAV_ON_BOTTOM);
             _cellVertAlign = HasAlignment.ALIGN_TOP;
         }
 
         @Override // from PagedGrid
-        protected Widget createWidget (RoomInfo room)
-        {
+        protected Widget createWidget (RoomInfo room) {
             return new RoomWidget(room);
         }
 
         @Override // from PagedGrid
-        protected String getEmptyMessage ()
-        {
+        protected String getEmptyMessage () {
             return _msgs.emptyGrid(); // This should almost never happen
         }
     }

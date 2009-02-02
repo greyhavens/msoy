@@ -8,6 +8,7 @@
 
 .roomsPanel {
   width: 100%;
+  background: #FFFFFF;
 }
 
 .roomsPanel .Intro {
@@ -24,6 +25,12 @@
 
 .roomsPanel .Room {
   padding-bottom: 10px;
+  width: 175px;
+  overflow: hidden;
+}
+
+.roomsPanel .Room .WinnerRank {
+  font-weight: bold;
 }
 
 .roomsPanel .marquee {

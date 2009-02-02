@@ -54,6 +54,9 @@ public interface WebRoomService extends RemoteService
 
         /** A sample of the newest-hottest rooms. */
         public List<RoomInfo> coolRooms;
+
+        /** Recent winners of the Design Your Whirled contest, in order starting with 1st place */
+        public List<RoomInfo> winningRooms;
     }
     /**
      * Loads information on a particular room.

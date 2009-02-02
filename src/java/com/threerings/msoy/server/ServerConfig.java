@@ -262,6 +262,18 @@ public class ServerConfig
     }
 
     /**
+     * Returns a list of sceneIds for winners of the most recent Design Your Whirled contest.
+     * These are in order: first is "First Place", second "Second Place", third "Third Place", the
+     * next 5 are "Honorable Mentions", and the rest (a varying number) are "Too Cool for School".
+     * Defaults to 10 early ids if not configured.
+     */
+    public static int[] getContestWinningSceneIds ()
+    {
+        int[] defaultSceneIds = { 9, 7, 4, 12, 11, 5, 6, 8, 10 };
+        return config.getValue("contest_winning_scene_ids", defaultSceneIds);
+    }
+
+    /**
      * Returns the configuration of the AMQP messaging server. If no messaging server is
      * configured, this will return null.
      */

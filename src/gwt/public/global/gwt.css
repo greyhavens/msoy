@@ -310,7 +310,8 @@ img, embed, applet, object {
   height: 28px;
 }
 
-.tongueBox .THeader .Base, .tongueBox .THeader .Base .BaseContents .BaseText {
+.tongueBox .THeader .Base, 
+.tongueBox .THeader .Base .BaseContents .BaseText {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 16px;
   font-weight: bold;
@@ -318,6 +319,10 @@ img, embed, applet, object {
   color: white;
 }
 
+.tongueBox .THeader .Base a {
+  color: white;
+}
+  
 .tongueBox .THeader .Base .BaseContents .BaseText {
   padding-left: 10px;
 }

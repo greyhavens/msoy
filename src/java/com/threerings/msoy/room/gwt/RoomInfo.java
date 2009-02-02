@@ -27,4 +27,7 @@ public class RoomInfo
 
     /** The number of players in the room. */
     public int population;
+
+    /** Some rooms are winners or runners-up of a contest; if so designate them here. */
+    public String winnerRank;
 }
