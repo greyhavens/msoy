@@ -157,7 +157,7 @@ public class Preloader extends Sprite
         // TODO: remove
         if (MIN_FLASH_VERSION[0] == 9) {
             trace("Not checking old stub-ness");
-            return;
+            return false;
         }
 
         // This "10" is the UberClientMode for 10. But I was trying to avoid importing that class
@@ -189,7 +189,7 @@ public class Preloader extends Sprite
             return false;
         }
 
-        showMessage("This content requires Flash " + MIN_FLASH_VERSION.join(",") + 
+        showMessage("This content requires Flash " + MIN_FLASH_VERSION.join(","),
             "Click here to visit Whirled.com and upgrade your flash player.");
         return true;
     }
