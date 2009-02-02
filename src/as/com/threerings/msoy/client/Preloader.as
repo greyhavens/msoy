@@ -32,13 +32,10 @@ import mx.preloaders.IPreloaderDisplay
 public class Preloader extends Sprite
     implements IPreloaderDisplay
 {
-    /** Temporary, until requiring version 10 is possible. */
-    public static const V10_BOOCHED :Boolean = true;
-
     /** The minimum flash player version required by whirled.
      * NOTE: if you update this value, you should also examine and update checkOldStub().  */
-    public static const MIN_FLASH_VERSION :Array =
-        V10_BOOCHED ? [ 9, 0, 115, 0 ] : [ 10, 0, 12, 36 ];
+    public static const MIN_FLASH_VERSION :Array = [ 9, 0, 115, 0 ];
+    //public static const MIN_FLASH_VERSION :Array = [ 10, 0, 12, 36 ];
 
     /**
      */
@@ -157,16 +154,21 @@ public class Preloader extends Sprite
      */
     protected function checkOldStub () :Boolean
     {
-        // so... fucking... fucked-up
-        var reqParam :String = V10_BOOCHED ? "9" : "10";
-        if (reqParam != MsoyParameters.get()["mode"]) {
+        // TODO: remove
+        if (MIN_FLASH_VERSION[0] == 9) {
+            trace("Not checking old stub-ness");
+            return;
+        }
+
+        // This "10" is the UberClientMode for 10. But I was trying to avoid importing that class
+        if ("10" != MsoyParameters.get()["mode"]) {
             return false;
         }
 
         // NOTE: this code is flash 9 -> 10 specific. This might need to get more complicated
         // in the future. Molotov's for adobe.
         var l :Loader = new Loader();
-        if (!V10_BOOCHED && l.hasOwnProperty("unloadAndStop")) { // only available in 10
+        if (l.hasOwnProperty("unloadAndStop")) { // only available in 10
             // the stub is not booching us
             return false;
         }
@@ -187,7 +189,7 @@ public class Preloader extends Sprite
             return false;
         }
 
-        showMessage("This content requires Flash ." + V10_BOOCHED ? "9" : "10",
+        showMessage("This content requires Flash " + MIN_FLASH_VERSION.join(",") + 
             "Click here to visit Whirled.com and upgrade your flash player.");
         return true;
     }
