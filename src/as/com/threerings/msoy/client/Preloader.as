@@ -155,12 +155,6 @@ public class Preloader extends Sprite
      */
     protected function checkOldStub () :Boolean
     {
-        // TODO: remove
-        if (MIN_FLASH_VERSION[0] == 9) {
-            trace("Not checking old stub-ness");
-            return false;
-        }
-
         // if we're not running in the stub, none of this applies
         if (UberClientModes.STUB != int(MsoyParameters.get()["mode"])) {
             return false;
@@ -168,15 +162,16 @@ public class Preloader extends Sprite
 
         // NOTE: this code is flash 9 -> 10 specific. This might need to get more complicated
         // in the future. Molotov's for adobe.
-        var l :Loader = new Loader();
-        if (l.hasOwnProperty("unloadAndStop")) { // only available in 10
-            // the stub is not booching us
-            return false;
+        if (getFlashVersion()[0] > 9) {
+            var l :Loader = new Loader();
+            if (!l.hasOwnProperty("unloadAndStop")) { // only available in 10
+                // the stub is booching us!
+                showMessage("This swf must be updated. Please contact the page author.",
+                    "Click here to visit Whirled.com and view the content there.");
+                return true;
+            }
         }
-
-        showMessage("This swf must be updated. Please contact the page author.",
-            "Click here to visit Whirled.com and view the content there.");
-        return true;
+        return false; // all is ok
     }
 
     /**
@@ -202,9 +197,8 @@ public class Preloader extends Sprite
      */
     protected function checkFlashVersion () :Boolean
     {
-        // the version looks like "LNX 9,0,31,0"
-        var bits :Array = Capabilities.version.split(" ");
-        bits = (bits[1] as String).split(",");
+        var bits :Array = getFlashVersion();
+        // pad out the version number to be the same length as our min
         while (bits.length < MIN_FLASH_VERSION.length) {
             bits.push(0);
         }
@@ -224,6 +218,16 @@ public class Preloader extends Sprite
         return true;
     }
 
+    /**
+     * Get the flash player version as an array of Strings, like [ "9", "0", "115", "0" ].
+     */
+    protected function getFlashVersion () :Array
+    {
+        // the version looks like "LNX 9,0,31,0"
+        var bits :Array = Capabilities.version.split(" ");
+        return (bits[1] as String).split(",");
+    }
+
     protected function showMessage (msg :String, link :String) :void
     {
         removeChild(_spinner);
@@ -239,11 +243,12 @@ public class Preloader extends Sprite
         var field :TextField = new TextField();
         field.autoSize = TextFieldAutoSize.CENTER;
         field.wordWrap = true;
+        field.multiline = true;
         field.width = _stageW;
         field.textColor = 0xFFFFFF;
-        field.htmlText = "<html>" + msg + " " +
+        field.htmlText = "<font size=\"18\">" + msg + "<br/><br/>" +
             "<a href=\"" + DeploymentConfig.serverURL + getWhirledPage() + "\" " +
-            "target=\"" + target + "\"><u>" + link + "</u></a>";
+            "target=\"" + target + "\"><u>" + link + "</u></a></font>";
         // TODO: remove debugging
         trace("Computed page as " + getWhirledPage() + ".");
         addChild(field);
