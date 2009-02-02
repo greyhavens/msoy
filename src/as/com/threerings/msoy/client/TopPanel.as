@@ -300,8 +300,8 @@ public class TopPanel extends Canvas
         // Pin the app to the stage.
         // This became necessary for "stubs" after we upgraded to flex 3.2.
         var app :Application = UberClient.getApplication();
-        app.width = stage.stageWidth;
-        app.height = stage.stageHeight;
+        app.width = _ctx.getWidth();
+        app.height = _ctx.getHeight();
 
         if (UberClient.isFeaturedPlaceView()) {
             // in this case, we only have one panel...
