@@ -86,6 +86,9 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         _stage = stage;
         setVersion(DeploymentConfig.version);
 
+        LoggingTargets.configureLogging(_ctx);
+        log.info("starting up", "capabilities", Capabilities.serverString);
+
         // wire up our JavaScript bridge functions
         try {
             if (ExternalInterface.available) {
@@ -95,6 +98,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             // nada: ExternalInterface isn't there. Oh well!
             log.info("Unable to configure external functions.");
         }
+        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
 
         _creds = createStartupCreds(null);
 
@@ -106,9 +110,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         }
 
         _ctx = createContext();
-        LoggingTargets.configureLogging(_ctx);
-
-        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
 
         // allow connecting the media server if it differs from the game server
         if ((Security.sandboxType != Security.LOCAL_WITH_FILE) &&
