@@ -26,7 +26,7 @@ public class FavoritesBlurb extends Blurb
 
         SmartTable grid = new SmartTable();
         for (int ii = 0; ii < pdata.faves.size(); ii++) {
-            grid.setWidget(0, ii, new ListingBox(pdata.faves.get(ii)));
+            grid.setWidget(0, ii, ListingBox.newBox(pdata.faves.get(ii)));
         }
         setContent(grid);
 

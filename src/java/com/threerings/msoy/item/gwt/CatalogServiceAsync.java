@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.gwt;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -71,7 +72,8 @@ public interface CatalogServiceAsync
                         AsyncCallback<CatalogService.FavoritesResult> callback);
 
     /**
-     * The asynchronous version of {@link CatalogService#loadGameSuiteInfo}.
+     * The asynchronous version of {@link CatalogService#loadSuite}.
      */
-    void loadGameSuiteInfo (int gameId, AsyncCallback<CatalogService.SuiteInfo> callback);
+    void loadSuite (byte itemType, int catalogId,
+                    AsyncCallback<CatalogService.SuiteResult> callback);
 }

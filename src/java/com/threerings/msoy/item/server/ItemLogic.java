@@ -325,17 +325,28 @@ public class ItemLogic
     }
 
     /**
+     * Loads and returns the specified listings. Throws {@link ItemCodes#E_NO_SUCH_ITEM} if the
+     * listing could not be found.
+     */
+    public CatalogRecord requireListing (byte itemType, int catalogId, boolean loadListedItem)
+        throws ServiceException
+    {
+        ItemRepository<ItemRecord> repo = getRepository(itemType);
+        CatalogRecord listing = repo.loadListing(catalogId, loadListedItem);
+        if (listing == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        }
+        return listing;
+    }
+
+    /**
      * Removes the specified catalog listing.
      */
     public void removeListing (MemberRecord remover, byte itemType, int catalogId)
         throws ServiceException
     {
         // load up the listing to be removed
-        ItemRepository<ItemRecord> repo = getRepository(itemType);
-        CatalogRecord listing = repo.loadListing(catalogId, true);
-        if (listing == null) {
-            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-        }
+        CatalogRecord listing = requireListing(itemType, catalogId, true);
 
         // make sure we're the creator of the listed item
         if (remover.memberId != listing.item.creatorId && !remover.isSupport()) {
@@ -357,7 +368,7 @@ public class ItemLogic
         }
 
         // remove the listing record and possibly the catalog master item
-        if (repo.removeListing(listing)) {
+        if (getRepository(itemType).removeListing(listing)) {
             itemDeleted(listing.item);
         }
 

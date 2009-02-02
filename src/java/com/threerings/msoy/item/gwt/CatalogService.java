@@ -64,8 +64,8 @@ public interface CatalogService extends RemoteService
         public List<ListingCard> favorites;
     }
 
-    /** Returned by {@link #loadGameSuiteInfo} */
-    public static class SuiteInfo implements IsSerializable
+    /** Returned by {@link #loadSuite} and {@link #loadGameSuite}. */
+    public static class SuiteResult implements IsSerializable
     {
         /** The name of the suite. For game suites, this is the game's name. */
         public String name;
@@ -78,6 +78,9 @@ public interface CatalogService extends RemoteService
 
         /** The tag that identifies non-sub-items in this suite. */
         public String suiteTag;
+
+        /** The listings of items in this suite. */
+        public List<ListingCard> listings;
     }
 
     /** The entry point for this service. */
@@ -151,9 +154,8 @@ public interface CatalogService extends RemoteService
         throws ServiceException;
 
     /**
-     * Gets the game suite info for the given game.
-     * @throws ServiceException
+     * Loads the specified suite.
      */
-    SuiteInfo loadGameSuiteInfo (int gameId)
+    SuiteResult loadSuite (byte itemType, int catalogId)
         throws ServiceException;
 }

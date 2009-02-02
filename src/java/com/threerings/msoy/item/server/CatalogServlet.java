@@ -27,7 +27,6 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
 
@@ -131,9 +130,7 @@ public class CatalogServlet extends MsoyServiceServlet
             return result;
         }
 
-        TagNameRecord tagRecord = (query.tag != null) ?
-            repo.getTagRepository().getTag(query.tag) : null;
-        int tagId = (tagRecord != null) ? tagRecord.tagId : 0;
+        int tagId = (query.tag != null) ? repo.getTagRepository().getTagId(query.tag) : 0;
 
         // fetch catalog records and loop over them
         list.addAll(Lists.transform(
@@ -167,12 +164,7 @@ public class CatalogServlet extends MsoyServiceServlet
         final MemberRecord mrec = requireAuthedUser();
 
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
-
-        final CatalogRecord listing = repo.loadListing(catalogId, true);
-        if (listing == null) {
-            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-        }
+        final CatalogRecord listing = _itemLogic.requireListing(itemType, catalogId, true);
         // make sure we haven't hit our limited edition count
         if (listing.pricing == CatalogListing.PRICING_LIMITED_EDITION &&
                 listing.purchases >= listing.salesTarget) {
@@ -185,9 +177,9 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // Create the operation that will actually take care of creating the item.
         final int fCatalogId = catalogId;
+        final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
         ItemBuyOperation buyOp = new ItemBuyOperation() {
-            public boolean create (boolean magicFree, Currency currency, int amountPaid)
-            {
+            public boolean create (boolean magicFree, Currency currency, int amountPaid) {
                 // create the clone row in the database
                 _newClone = repo.insertClone(listing.item, mrec.memberId, currency, amountPaid);
                 // note the new purchase for the item, but only if it wasn't magicFree.
@@ -199,20 +191,16 @@ public class CatalogServlet extends MsoyServiceServlet
                 _eventLog.shopPurchase(mrec.memberId, mrec.visitorId);
                 return true;
             }
-
-            public Item getItem ()
-            {
+            public Item getItem () {
                 return _newClone.toItem();
             }
-
             protected ItemRecord _newClone;
         };
 
         // update money as appropriate
         BuyResult result;
         try {
-            result = _moneyLogic.buyItem(
-                mrec, listing, currency, authedCost, buyOp);
+            result = _moneyLogic.buyItem(mrec, listing, currency, authedCost, buyOp);
         } catch (NotEnoughMoneyException neme) {
             throw neme.toServiceException();
         } catch (NotSecuredException nse) {
@@ -406,11 +394,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser();
 
         // load up the old catalog record
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
-        CatalogRecord record = repo.loadListing(catalogId, true);
-        if (record == null) {
-            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-        }
+        CatalogRecord record = _itemLogic.requireListing(itemType, catalogId, true);
 
         // if we're not the creator of the listing (who has to download it to update it) do
         // some access control checks
@@ -574,20 +558,73 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public SuiteInfo loadGameSuiteInfo (int gameId)
+    public SuiteResult loadSuite (byte itemType, int catalogId)
         throws ServiceException
     {
-        GameRecord record = _mgameRepo.loadGameRecord(gameId);
-        if (record == null) {
-            log.warning("Can't load suite info for non-existent game.", "gameId", gameId);
-            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        // NOTE: this method is expensive as fuck, but we cache the results on the client and
+        // viewing the game shop is an extremely important step on the path to paying us money, so
+        // we take the pain and hurt the database to make the game shop maximally convenient; if
+        // this turns out to be a big drain, we need to look into flagging a game as having or not
+        // having each of the various subtypes (easier) and tagged types (much harder)
+
+        CatalogRecord crec = null;
+        // hack to avoid cluttering CatalogModels and CatalogService/Servlet/ServiceAsyc APIs
+        if (itemType == Item.NOT_A_TYPE) {
+            GameRecord grec = _mgameRepo.loadGameRecord(catalogId); // gameId
+            if (grec == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+            crec = _itemLogic.requireListing(Item.GAME, grec.catalogId, false);
+            crec.item = grec;
+        } else {
+            crec = _itemLogic.requireListing(itemType, catalogId, true);
         }
-        Game game = (Game)record.toItem();
-        SuiteInfo info = new SuiteInfo();
-        info.name = game.name;
-        info.suiteId = game.getSuiteId();
-        info.creatorId = game.creatorId;
-        info.suiteTag = game.shopTag;
+        Item master = crec.item.toItem();
+
+        // configure the suite metadata
+        SuiteResult info = new SuiteResult();
+        info.name = master.name;
+        info.suiteId = master.getSuiteId();
+        info.creatorId = master.creatorId;
+        if (master instanceof Game) {
+            info.suiteTag = ((Game)master).shopTag;
+        }
+
+        // add the master item to the listings for this suite
+        info.listings = Lists.newArrayList();
+        info.listings.add(crec.toListingCard());
+
+        // load up all subitems of the master
+        MemberRecord mrec = getAuthedUser();
+        for (SubItem sitem : master.getSubTypes()) {
+            if (!sitem.isSalable()) {
+                continue;
+            }
+            ItemRepository<ItemRecord> srepo = _itemLogic.getRepository(sitem.getType());
+            List<CatalogRecord> slist = srepo.loadCatalog(
+                CatalogQuery.SORT_BY_LIST_DATE, showMature(mrec), null, 0,
+                0, null, info.suiteId, 0, Short.MAX_VALUE);
+            info.listings.addAll(Lists.transform(slist, CatalogRecord.TO_CARD));
+        }
+
+        if (info.suiteTag != null) {
+            // all tag repositories share the same name to id mapping
+            int tagId = _itemLogic.getRepository(
+                Item.PET).getTagRepository().getTagId(info.suiteTag);
+            if (tagId != 0) {
+                for (byte tagType : SUITE_TAG_TYPES) {
+                    ItemRepository<ItemRecord> trepo = _itemLogic.getRepository(tagType);
+                    List<CatalogRecord> tlist = trepo.loadCatalog(
+                        CatalogQuery.SORT_BY_LIST_DATE, showMature(mrec), null, tagId,
+                        info.creatorId, null, 0, 0, Short.MAX_VALUE);
+                    info.listings.addAll(Lists.transform(tlist, CatalogRecord.TO_CARD));
+                }
+            }
+        }
+
+        // resolve the creator names for these listings
+        _itemLogic.resolveCardNames(info.listings);
+
         return info;
     }
 
@@ -655,13 +692,19 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected RuntimeConfig _runtime;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected StatLogic _statLogic;
+    @Inject protected GameLogic _gameLogic;
+    @Inject protected UserActionRepository _userActionRepo;
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedRepository _feedRepo;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected UserActionRepository _userActionRepo;
-    @Inject protected GameLogic _gameLogic;
     @Inject protected MsoyGameRepository _mgameRepo;
-    @Inject protected StatLogic _statLogic;
-    @Inject protected RuntimeConfig _runtime;
+
+    /** Used by {@link #loadSuite}. */
+    protected static final byte[] SUITE_TAG_TYPES = new byte[] {
+        Item.AVATAR, Item.FURNITURE, Item.DECOR, Item.TOY,
+        Item.PET, Item.PHOTO, Item.AUDIO, Item.VIDEO
+    };
 }

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -136,9 +137,10 @@ public class GameDetailPanel extends SmartTable
                 Pages.GROUPS, Args.compose("f", game.groupId));
             buttons = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gdpDiscuss(), onClick);
         }
-        ClickListener onClick = Link.createListener(Pages.SHOP, Args.compose("g", game.gameId));
-        Widget shop = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.gdpShop(), onClick);
-        buttons = (buttons == null) ? shop : MsoyUI.createButtonPair(buttons, shop);
+        ClickListener onClick = Link.createListener(Pages.SHOP, Args.compose("s", game.catalogId));
+        PushButton shop = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.gdpShop(), onClick);
+        shop.setEnabled(game.catalogId != 0);
+        buttons = (buttons == null) ? (Widget)shop : MsoyUI.createButtonPair(buttons, shop);
         setWidget(2, 0, buttons);
         getFlexCellFormatter().setRowSpan(0, 0, 3);
         getFlexCellFormatter().setRowSpan(1, 1, 2);

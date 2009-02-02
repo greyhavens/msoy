@@ -3,7 +3,6 @@
 
 package client.shop;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
@@ -37,7 +36,8 @@ public class ShopPage extends Page
 {
     public static final String LOAD_LISTING = "l";
     public static final String FAVORITES = "f";
-    public static final String SUITE = "g";
+    public static final String SUITE = "s";
+    public static final String GAME = "g";
     public static final String REMIX = "r";
 
     @Override // from Page
@@ -53,7 +53,7 @@ public class ShopPage extends Page
                     setContent(new ListingDetailPanel(_models, listing));
                 }
             });
-            CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.SHOP, ""+type, 1);
+            addTypeNavi(type);
 
         } else if (action.equals(FAVORITES)) {
             // if no member is specified, we use the current member
@@ -63,24 +63,15 @@ public class ShopPage extends Page
             setContent(new FavoritesPanel(_models, memberId, type, page));
 
         } else if (action.equals(SUITE)) {
+            final byte type = getItemType(args, 1, Item.NOT_A_TYPE);
+            final int catalogId = args.get(2, 0);
+            setContent(new SuiteCatalogPanel(_models, type, catalogId));
+            addTypeNavi(type);
+
+        } else if (action.equals(GAME)) {
             final int gameId = args.get(1, 0);
-            final byte itemType = getItemType(args, 2, Item.LEVEL_PACK);
-            final int page = args.get(3, 0);
-            if (_suite.getGameId() != gameId) {
-                // only load the suite info in the case that the game id has changed
-                _catalogsvc.loadGameSuiteInfo(gameId, new MsoyCallback<CatalogService.SuiteInfo>() {
-                    public void onSuccess (CatalogService.SuiteInfo suite) {
-                        CShell.frame.addNavLink(
-                            suite.name, Pages.GAMES, Args.compose("d", gameId), 1);
-                        _suite.display(gameId, suite, itemType, page);
-                        setContent(_suite.getTitle(), _suite);
-                    }
-                });
-            } else {
-                CShell.frame.addNavLink(_suite.getName(), Pages.GAMES, Args.compose("d", gameId), 1);
-                _suite.display(itemType, page);
-                setContent(_suite.getTitle(), _suite);
-            }
+            setContent(new SuiteCatalogPanel(_models, gameId));
+            addTypeNavi(Item.GAME);
 
         } else if (action.equals(REMIX)) {
             final byte type = getItemType(args, 1, Item.AVATAR);
@@ -111,6 +102,11 @@ public class ShopPage extends Page
     public Pages getPageId ()
     {
         return Pages.SHOP;
+    }
+
+    protected void addTypeNavi (byte type)
+    {
+        CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.SHOP, ""+type, 1);
     }
 
     protected RemixerHost createRemixerHost (
@@ -161,15 +157,11 @@ public class ShopPage extends Page
 
     protected CatalogModels _models = new CatalogModels();
     protected CatalogPanel _catalog = new CatalogPanel(_models);
-    protected SuiteCatalogPanel _suite = new SuiteCatalogPanel(_models);
-    protected Map<Integer, Integer> suiteIdMap = new HashMap<Integer, Integer>();
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
-
-   protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
-       ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
-
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 }

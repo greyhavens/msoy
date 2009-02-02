@@ -164,6 +164,15 @@ public abstract class TagRepository extends DepotRepository
     }
 
     /**
+     * Returns the id for the specified tag or 0 if no such tag exists.
+     */
+    public int getTagId (String tagName)
+    {
+        TagNameRecord tnr = getTag(tagName);
+        return (tnr == null) ? 0 : tnr.tagId;
+    }
+
+    /**
      * Finds the tag record for a certain tag.
      */
     public TagNameRecord getTag (String tagName)

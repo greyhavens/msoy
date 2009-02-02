@@ -14,6 +14,8 @@ import com.threerings.gwt.util.ChainedCallback;
 import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
@@ -110,6 +112,29 @@ public class CatalogModels
         return faves;
     }
 
+    public void getSuite (byte itemType, int catalogId,
+                          final AsyncCallback<CatalogService.SuiteResult> callback)
+    {
+        final ItemIdent key = new ItemIdent(itemType, catalogId);
+        CatalogService.SuiteResult result = _suites.get(key);
+        if (result != null) {
+            callback.onSuccess(result);
+        } else {
+            _catalogsvc.loadSuite(
+                itemType, catalogId, new MsoyCallback<CatalogService.SuiteResult>() {
+                public void onSuccess (CatalogService.SuiteResult result) {
+                    _suites.put(key, result);
+                    callback.onSuccess(result);
+                }
+            });
+        }
+    }
+
+    public void getSuite (int gameId, final AsyncCallback<CatalogService.SuiteResult> callback)
+    {
+        getSuite(Item.NOT_A_TYPE, gameId, callback); // hack-a-saur
+    }
+
     public void itemDelisted (CatalogListing listing)
     {
         // fake up a listing card as that's what we remove from our models
@@ -127,8 +152,9 @@ public class CatalogModels
     }
 
     protected Map<CatalogQuery, Listings> _lmodels = new HashMap<CatalogQuery, Listings>();
-
     protected Map<String, Favorites> _fmodels = new HashMap<String, Favorites>();
+    protected Map<ItemIdent, CatalogService.SuiteResult> _suites =
+        new HashMap<ItemIdent, CatalogService.SuiteResult>();
 
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);

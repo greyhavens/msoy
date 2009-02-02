@@ -21,14 +21,19 @@ public abstract class ListingGrid extends PagedGrid<ListingCard>
 {
     public ListingGrid (int headerHeight)
     {
-        super(MsoyUI.computeRows(headerHeight+NAV_BAR_ETC, BOX_HEIGHT, 2), COLUMNS);
+        this(MsoyUI.computeRows(headerHeight+NAV_BAR_ETC, BOX_HEIGHT, 2), COLUMNS);
+    }
+
+    public ListingGrid (int rows, int columns)
+    {
+        super(rows, columns);
         addStyleName("listingGrid");
     }
 
     @Override // from PagedGrid
     protected Widget createWidget (ListingCard card)
     {
-        return new ListingBox(card);
+        return ListingBox.newBox(card);
     }
 
     @Override // from PagedGrid
