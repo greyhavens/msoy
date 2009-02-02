@@ -457,7 +457,7 @@ public class MemberManager
         final ItemIdent ident = new ItemIdent(Item.AVATAR, avatarItemId);
         _invoker.postUnit(new PersistingUnit("setAvatar(" + avatarItemId + ")", listener) {
             @Override public void invokePersistent () throws Exception {
-                _avatar = (Avatar)_itemMan.loadItem(ident);
+                _avatar = (Avatar)_itemLogic.loadItem(ident);
                 if (_avatar == null) {
                     throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
                 }

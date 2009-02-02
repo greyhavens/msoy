@@ -120,22 +120,6 @@ public class ItemManager
     }
 
     /**
-     * Blocks the current thread and loads the specified item from the database, returns null if it
-     * could not be loaded.
-     */
-    public Item loadItem (final ItemIdent ident)
-    {
-        ItemRepository<ItemRecord> repo;
-        try {
-            repo = _itemLogic.getRepositoryFor(ident.type);
-        } catch (MissingRepositoryException mre) {
-            return null;
-        }
-        ItemRecord rec = repo != null ? repo.loadItem(ident.itemId) : null;
-        return rec != null ? rec.toItem() : null;
-    }
-
-    /**
      * Awards the specified prize to the specified member.
      */
     public void awardPrize (final int memberId, final int gameId, final String gameName,

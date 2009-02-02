@@ -101,7 +101,7 @@ public class ItemLogic
     /**
      * An exception that may be thrown if an item repository doesn't exist.
      */
-    public static class MissingRepositoryException extends Exception
+    public static class MissingRepositoryException extends RuntimeException
     {
         public MissingRepositoryException (byte type)
         {
@@ -705,6 +705,19 @@ public class ItemLogic
         return loadItems(_listRepo.loadList(query));
     }
 
+    /**
+     * Loads the specified item from the database, returns null if it could not be loaded.
+     */
+    public Item loadItem (ItemIdent ident)
+    {
+        ItemRepository<ItemRecord> repo = getRepositoryFor(ident.type);
+        ItemRecord rec = repo.loadItem(ident.itemId);
+        return rec != null ? rec.toItem() : null;
+    }
+
+    /**
+     * Loads all items in the supplied array of idents.
+     */
     public List<Item> loadItems (ItemIdent[] idents)
     {
         // now we're going to load all of these items
