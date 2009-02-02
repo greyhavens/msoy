@@ -19,11 +19,12 @@ import flash.text.TextFieldAutoSize;
 
 // NOTE: minimize dependancies outside of flash.*, since this is our preloader...
 
-import com.threerings.msoy.ui.LoadingSpinner;
-
 import mx.events.FlexEvent;
 
 import mx.preloaders.IPreloaderDisplay
+
+import com.threerings.msoy.data.UberClientModes;
+import com.threerings.msoy.ui.LoadingSpinner;
 
 /**
  * Displays a spinny animation during loading, but also validates the required
@@ -160,8 +161,8 @@ public class Preloader extends Sprite
             return false;
         }
 
-        // This "10" is the UberClientMode for 10. But I was trying to avoid importing that class
-        if ("10" != MsoyParameters.get()["mode"]) {
+        // if we're not running in the stub, none of this applies
+        if (UberClientModes.STUB != int(MsoyParameters.get()["mode"])) {
             return false;
         }
 
