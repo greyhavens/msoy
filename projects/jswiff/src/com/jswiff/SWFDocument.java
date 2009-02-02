@@ -58,7 +58,7 @@ public class SWFDocument implements Serializable {
    */
   public static final short DEFAULT_FRAME_RATE    = 12;
   /** The latest supported SWF version (8) */
-  public static final short MAX_SWF_VERSION       = 9;
+  public static final short MAX_SWF_VERSION       = 10;
   /** Grants the SWF local file access */
   public static final byte ACCESS_MODE_LOCAL      = 0;
   /** Grants the SWF network access (local access is denied) */
