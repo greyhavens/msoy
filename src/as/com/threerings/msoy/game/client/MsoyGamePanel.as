@@ -4,10 +4,13 @@
 package com.threerings.msoy.game.client {
 
 import flash.display.Loader;
+import flash.display.LoaderInfo;
 
 import flash.ui.Mouse;
 
 import mx.containers.VBox;
+
+import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.data.PlaceObject;
 
@@ -212,8 +215,6 @@ public class MsoyGamePanel extends WhirledGamePanel
     override protected function initiateLoading () :void
     {
         super.initiateLoading();
-        _spinner.watchLoader(
-            Loader(_gameContainer.getMedia()).contentLoaderInfo, _gameContainer, true);
 
     }
 
@@ -285,7 +286,18 @@ public class MsoyGamePanel extends WhirledGamePanel
 
     override protected function createGameContainer () :MediaContainer
     {
-        return new DataPackMediaContainer();
+        var dpmc :DataPackMediaContainer = new DataPackMediaContainer();
+        dpmc.addEventListener(DataPackMediaContainer.LOADING_MEDIA, handleLoadingGameMedia);
+        return dpmc;
+    }
+
+    /**
+     * Called when the actual underlying game media begins loading.
+     */
+    protected function handleLoadingGameMedia (event :ValueEvent) :void
+    {
+        var info :LoaderInfo = event.value as LoaderInfo;
+        _spinner.watchLoader(info, _gameContainer, true);
     }
 
     /** convenience reference to our game context */
