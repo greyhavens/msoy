@@ -473,6 +473,18 @@ public class FrameEntryPoint
         return _activeInvite;
     }
 
+    // from interface Frame
+    public void reportClientAction (String test, String action, String details)
+    {
+        if (test == null) {
+            CShell.log("Reporting tracking action", "action", action, "details", details);
+            _membersvc.trackClientAction(CShell.visitor, action, details, new NoopAsyncCallback());
+        } else {
+            CShell.log("Reporting test action", "test", test, "action", action);
+            _membersvc.trackTestAction(CShell.visitor, action, test, new NoopAsyncCallback());
+        }
+    }
+
     public static class ExtractedParam
     {
         public String value;
@@ -897,6 +909,9 @@ public class FrameEntryPoint
         case GET_VISITOR_INFO:
             return (CShell.visitor == null) ? null
                 : CShell.visitor.flatten().toArray(new String[0]);
+        case CLIENT_ACTION:
+            reportClientAction(args[0], args[1], args[2]);
+            return null;
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");
         return null; // not reached

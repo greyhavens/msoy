@@ -96,6 +96,9 @@ public abstract class Page
                     return Invitation.unflatten(
                         ArrayUtil.toIterator(frameCall(Frame.Calls.GET_ACTIVE_INVITE)));
                 }
+                public void reportClientAction (String testId, String action, String details) {
+                    frameCall(Frame.Calls.CLIENT_ACTION, testId, action, details);
+                }
             });
 
             // obtain our current credentials from the frame
@@ -147,6 +150,9 @@ public abstract class Page
                 }
                 public Invitation getActiveInvitation () {
                     return null; // we're testing, no one invited us
+                }
+                public void reportClientAction (String testId, String action, String details) {
+                    CShell.log("Client action", "test", testId, "action", action, "deets", details);
                 }
             });
 

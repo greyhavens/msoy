@@ -231,11 +231,9 @@ public class MemberServlet extends MsoyServiceServlet
     public void trackClientAction (VisitorInfo info, String actionName, String details)
     {
         if (info == null) {
-            log.warning(
-                "Failed to log client action with null visitorInfo", "actionName", actionName);
+            log.warning("Failed to log client action with null visitorInfo", "name", actionName);
             return;
         }
-
         _eventLog.clientAction(info.id, actionName, details);
     }
 

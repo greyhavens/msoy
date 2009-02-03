@@ -51,8 +51,7 @@ public class LandingPanel extends SimplePanel
         content.add(titleAnimation, -23, 10);
 
         // join now
-        final Button joinButton =
-            new Button("", Link.createListener(Pages.ACCOUNT, "create"));
+        final Button joinButton = new Button("", Link.createListener(Pages.ACCOUNT, "create"));
         joinButton.setStyleName("JoinButton");
         MsoyUI.addTrackingListener(joinButton, "landingJoinButtonClicked", null);
         content.add(joinButton, 475, 0);

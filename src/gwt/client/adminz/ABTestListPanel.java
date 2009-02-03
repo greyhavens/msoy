@@ -108,7 +108,7 @@ public class ABTestListPanel extends FlowPanel
                     });
                 }
             });
-            MsoyUI.addTestTrackingListener(testButton, "ClickedTestButton_"+test.name, test.name);
+            MsoyUI.addTestTrackingListener(testButton, test.name, "ClickedTestButton_"+test.name);
             _contents.setWidget(row, col++, MsoyUI.createButtonPair(editButton, testButton));
 
         }

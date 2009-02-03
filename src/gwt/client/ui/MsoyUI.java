@@ -44,7 +44,6 @@ import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.util.DateUtil;
 import client.util.Link;
-import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -503,9 +502,7 @@ public class MsoyUI
     {
         target.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                CShell.log("Sending tracking action " + action + " " + details);
-                _membersvc.trackClientAction(
-                    CShell.visitor, action, details != null ? details : "", new NoopAsyncCallback());
+                CShell.frame.reportClientAction(null, action, details);
             }
         });
     }
@@ -515,16 +512,15 @@ public class MsoyUI
      * No callback is performed on success or failure.
      *
      * @param target the clickable thing on which to add a listener
-     * @param action String identifier for the action to be logged
      * @param testName Optional string identifier for the a/b test if associated with one
+     * @param action String identifier for the action to be logged
      */
     public static void addTestTrackingListener (
-        final SourcesClickEvents target, final String action, final String testName)
+        final SourcesClickEvents target, final String testName, final String action)
     {
         target.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                _membersvc.trackTestAction(
-                    CShell.visitor, action, testName, new NoopAsyncCallback());
+                CShell.frame.reportClientAction(testName, action, null);
             }
         });
     }
@@ -730,6 +726,4 @@ public class MsoyUI
     protected static final SimpleDateFormat _yfmt = new SimpleDateFormat("MMM dd, yyyy");
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
-        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

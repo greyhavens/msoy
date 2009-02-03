@@ -35,7 +35,7 @@ public interface Frame
     public static enum Calls {
         SET_TITLE, ADD_NAV_LINK, NAVIGATE_TO, NAVIGATE_REPLACE, CLOSE_CLIENT, CLOSE_CONTENT,
         DID_LOGON, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION, GET_ACTIVE_INVITE,
-        GET_VISITOR_INFO
+        GET_VISITOR_INFO, CLIENT_ACTION
     };
 
     /**
@@ -106,4 +106,14 @@ public interface Frame
      * Returns the invitation via which the current user arrived or null.
      */
     Invitation getActiveInvitation ();
+
+    /**
+     * Reports a client action to the server for statistical grindizations.
+     *
+     * @param testId the name of the A/B test with which this action is associated or null if it's
+     * not related to an A/B test.
+     * @param action an arbitrary string identifying the action in question.
+     * @param details optional details specific to this instance of the action (may be null).
+     */
+    void reportClientAction (String testId, String action, String details);
 }
