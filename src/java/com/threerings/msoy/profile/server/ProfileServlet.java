@@ -8,6 +8,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -38,6 +40,7 @@ import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletLogic;
 
+import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
@@ -126,10 +129,13 @@ public class ProfileServlet extends MsoyServiceServlet
         result.greeterStatus = getGreeterStatus(tgtrec, result.totalFriendCount);
 
         // load stamp info
-        result.stamps = Lists.newArrayList(
-            Lists.transform(
-                _badgeRepo.loadRecentEarnedBadges(tgtrec.memberId, ProfileResult.MAX_STAMPS),
-                EarnedBadgeRecord.TO_BADGE));
+        result.stamps = Lists.newArrayList(Iterables.transform(Iterables.filter(
+            _badgeRepo.loadRecentEarnedBadges(tgtrec.memberId, ProfileResult.MAX_STAMPS),
+            new Predicate<EarnedBadgeRecord>() {
+                public boolean apply (EarnedBadgeRecord badge) {
+                    return BadgeType.getType(badge.badgeCode) != BadgeType.OUTSPOKEN;
+                }
+            }), EarnedBadgeRecord.TO_BADGE));
 
         // load medal info
         result.medals = Lists.newArrayList();
