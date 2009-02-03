@@ -60,7 +60,6 @@ public class VisitorInfo
 
     /**
      * Return a list of variables suitable for the FlashVars embed param.
-     * @param affiliate most likely the memberId of the player requesting embed code
      * @param placeId id of the room to throw people into (sceneId/gameLobby)
      * @param inGame true if the flash vars are for a game and placeId is a game lobby whirled
      */
