@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.client {
+package com.threerings.msoy.game.client {
 
 import flash.display.LoaderInfo;
 import flash.display.Sprite;

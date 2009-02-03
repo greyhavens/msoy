@@ -31,7 +31,6 @@ import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
 
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.GameLoadingDisplay;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
@@ -304,7 +303,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     protected var _gctx :GameContext;
 
     /** The loading display. */
-    protected var _spinner :PlaceLoadingDisplay;
+    protected var _spinner :GameLoadingDisplay;
 
     protected var _showPlayers :CommandButton;
 
