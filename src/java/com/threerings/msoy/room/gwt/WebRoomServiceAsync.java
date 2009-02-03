@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.room.gwt;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.RatingResult;
@@ -36,4 +38,9 @@ public interface WebRoomServiceAsync
      * The asynchronous version of {@link WebRoomService#loadOverview}
      */
     void loadOverview (AsyncCallback<WebRoomService.OverviewResult> callback);
+
+    /**
+     * The asynchronous version of {@link WebRoomService#loadDesignWinners}
+     */
+    void loadDesignWinners (AsyncCallback<List<RoomInfo>> callback);
 }

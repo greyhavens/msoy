@@ -82,6 +82,15 @@ public interface WebRoomService extends RemoteService
     RatingResult rateRoom (int sceneId, byte rating)
         throws ServiceException;
 
+    /**
+     * Load content for the main rooms page.
+     */
     OverviewResult loadOverview ()
+        throws ServiceException;
+
+    /**
+     * Load content for the Design Your Whirled winners page.
+     */
+    List<RoomInfo> loadDesignWinners ()
         throws ServiceException;
 }

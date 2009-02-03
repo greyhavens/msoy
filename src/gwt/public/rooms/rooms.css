@@ -61,3 +61,76 @@
   font-weight: bold;
   font-size: 22px;
 }
+
+
+/* ------------------------------------
+   DESIGN YOUR WHIRLED CONTEST WINNERS
+-------------------------------------*/
+
+.designWinnersPanel {
+  background: #61ABD0 url(/images/whirled/bg_gradient_long_blue.png) repeat-x;
+  width: 100%;
+  min-height: 100%;
+}
+
+.designWinnersPanel a {
+  text-decoration: none;
+}
+.designWinnersPanel a:hover {
+  text-decoration: underline;
+}
+
+.designWinnersPanel .Header {
+  width: 100%;
+  height: 125px;
+  overflow-x: hidden;
+}
+
+.designWinnersPanel .Winners {
+  background: url(/images/rooms/design_winners_box_bg.png) no-repeat;
+  width: 646px;
+  height: 406px;
+  margin: 20px auto;
+}
+
+.designWinnersPanel .Winners .Title {
+  font-family: "Trebuchet MS",Arial,Helvetica,sans-serif;
+  font-size: 26px;
+  font-weight: bold;
+  color: #3595B7;
+  padding: 20px 0 0 60px;
+}
+
+.designWinnersPanel .Winners .SubTitle {
+  font-size: 14px;
+  font-weight: bold;
+  color: #3595B7;
+  padding: 5px 0 10px 60px;
+}
+
+.designWinnersPanel .HonorableTop,
+.designWinnersPanel .HonorableBottom {
+  margin-left: 50px;
+}
+
+.designWinnersPanel .HonorableMention {
+  width: 175px;
+  height: 145px;
+  overflow: hidden;
+  text-align: center;
+}
+
+.designWinnersPanel .HonorableTop .HonorableMention {
+  margin-left: 10px;
+}
+
+.designWinnersPanel .HonorableBottom .HonorableMention {
+  margin-left: 70px;
+}
+
+.designWinnersPanel .TooCool {
+  margin-left: 90px;
+  width: 500px;
+  white-space: nowrap;
+  overflow-x: hidden;
+}

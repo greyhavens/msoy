@@ -141,11 +141,19 @@ public class WebRoomServlet extends MsoyServiceServlet
         Iterable<SceneRecord> cool = _sceneRepo.loadScenes(0, 20);
         overview.coolRooms = Lists.newArrayList(Iterables.transform(cool, TO_ROOM_INFO));
 
-        Integer[] winnerSceneIds = ArrayUtils.toObject(ServerConfig.getContestWinningSceneIds());
-        Iterable<SceneRecord> winners = _sceneRepo.loadScenes(Lists.newArrayList(winnerSceneIds));
-        overview.winningRooms = Lists.newArrayList(Iterables.transform(winners, TO_ROOM_INFO));
+        overview.winningRooms = loadDesignWinners();
 
         return overview;
+    }
+
+    // from interface WebRoomService
+    public List<RoomInfo> loadDesignWinners ()
+        throws ServiceException
+    {
+        // Fetch winners from server properties file; these are ordered starting with 1st place.
+        Integer[] winnerSceneIds = ArrayUtils.toObject(ServerConfig.getContestWinningSceneIds());
+        Iterable<SceneRecord> winners = _sceneRepo.loadScenes(Lists.newArrayList(winnerSceneIds));
+        return Lists.newArrayList(Iterables.transform(winners, TO_ROOM_INFO));
     }
 
     protected static final Predicate<SceneRecord> IS_PUBLIC = new Predicate<SceneRecord>() {

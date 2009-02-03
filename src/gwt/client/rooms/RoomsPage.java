@@ -20,6 +20,7 @@ import client.util.ServiceUtil;
 public class RoomsPage extends Page
 {
     public static final String ROOM_DETAIL = "room";
+    public static final String DESIGN_WINNERS = "designwinners";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -28,6 +29,9 @@ public class RoomsPage extends Page
 
         if (ROOM_DETAIL.equals(action)) {
             setContent(new RoomDetailPanel(args.get(1, 0)));
+
+        } else if (action.equals(DESIGN_WINNERS)) {
+            setContent(_msgs.titleDesignWinners(), new DesignWinnersPanel());
 
         } else {
             setContent(new RoomsPanel());
