@@ -74,7 +74,7 @@ public class PlayButton
                     // is the Flash client loaded and ready?
                     String stage = "stage 1 " + (FlashClients.clientExists() ? "flash" : "none");
                     _membersvc.trackClientAction(CShell.visitor, "WRLD-531-2 game started",
-                        stage, new NoopAsyncCallback() { });
+                        stage, new NoopAsyncCallback());
                 }
             });
         }

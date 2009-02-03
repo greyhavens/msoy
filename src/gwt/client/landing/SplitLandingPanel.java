@@ -88,8 +88,8 @@ public class SplitLandingPanel extends FlowPanel
                     "/images/landing/landing_movie.swf", 208, 154, null));
             }
         };
+        onClick = MsoyUI.makeTrackingListener("landingGames VideoPlayed", null, onClick);
         final Image clickToPlayImage = MsoyUI.createInvisiLink(onClick, 208, 154);
-        MsoyUI.addTrackingListener(clickToPlayImage, "landingGames VideoPlayed", null);
         video.setWidget(clickToPlayImage);
         header.add(video, 569, 41);
 

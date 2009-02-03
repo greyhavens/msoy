@@ -31,7 +31,7 @@ public class AvatarPanel extends FlowPanel
     /**
      * Display the four most popular avatars
      */
-    protected void setAvatars(ListingCard[] cards)
+    protected void setAvatars (ListingCard[] cards)
     {
         for (int i = 0; i < 4; i++) {
             if (i >= cards.length) {

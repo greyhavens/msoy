@@ -196,10 +196,9 @@ public class TopGamesPanel extends AbsolutePanel
         right.add(play);
 
         // more games button
-        PushButton moreGames = MsoyUI.createImageButton("MoreGames",
-            Link.createListener(Pages.GAMES, ""));
-        MsoyUI.addTrackingListener(moreGames, "landingMoreGamesClicked", null);
-        right.add(moreGames);
+        ClickListener onMore = Link.createListener(Pages.GAMES, "");
+        onMore = MsoyUI.makeTrackingListener("landingMoreGamesClicked", null, onMore);
+        right.add(MsoyUI.createImageButton("MoreGames", onMore));
 
         gameInfoTable.setWidget(0, 2, right);
         gameInfoTable.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);

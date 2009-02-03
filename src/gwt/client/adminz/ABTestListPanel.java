@@ -97,8 +97,7 @@ public class ABTestListPanel extends FlowPanel
                 }
             });
 
-            Button testButton = new Button("Test");
-            testButton.addClickListener(new ClickListener() {
+            ClickListener onClick = new ClickListener() {
                 public void onClick (Widget sender) {
                     _membersvc.getABTestGroup(
                         CShell.visitor, test.name, true, new MsoyCallback<Integer>() {
@@ -107,9 +106,11 @@ public class ABTestListPanel extends FlowPanel
                             }
                     });
                 }
-            });
-            MsoyUI.addTestTrackingListener(testButton, test.name, "ClickedTestButton_"+test.name);
-            _contents.setWidget(row, col++, MsoyUI.createButtonPair(editButton, testButton));
+            };
+            onClick = MsoyUI.makeTestTrackingListener(
+                test.name, "ClickedTestButton_"+test.name, onClick);
+            _contents.setWidget(
+                row, col++, MsoyUI.createButtonPair(editButton, new Button("Test", onClick)));
 
         }
     }

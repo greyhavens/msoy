@@ -490,39 +490,56 @@ public class MsoyUI
     }
 
     /**
-     * Adds a ClickListener that will track an arbitrary click on any widget against our
-     * server-side tracking system.  No callback.
+     * Wraps the supplied ClickListener into a new ClickListener that first reports a tracking
+     * action to our server-side event tracking system and then takes the desired action.
      *
-     * @param target the clickable thing on which to add a listener
      * @param action String identifier for the action to be logged eg "landingPlayButtonClicked"
      * @param details Optional additional info about the action performed eg game or whirled id
+     * @param target the click listener to call once we've sent off our tracking action
      */
-    public static void addTrackingListener (
-        final SourcesClickEvents target, final String action, final String details)
+    public static ClickListener makeTrackingListener (
+        final String action, final String details, final ClickListener target)
     {
-        target.addClickListener(new ClickListener() {
+        return new ClickListener() {
             public void onClick (Widget sender) {
                 CShell.frame.reportClientAction(null, action, details);
+                if (target != null) {
+                    target.onClick(sender);
+                }
             }
-        });
+        };
     }
 
     /**
-     * Create a ClickListener that will track an arbitrary click on any widget during an a/b test.
-     * No callback is performed on success or failure.
+     * Adds a tracking click listener to the supplied click target. NOTE: do not use this on a
+     * click target that will take the user to a new page. In that case you have to wrap the click
+     * listener that changes the page with a tracking listener using {@link #makeTrackingListener}.
+     */
+    public static void addTrackingListener (
+        SourcesClickEvents target, String action, String details)
+    {
+        target.addClickListener(makeTrackingListener(action, details, null));
+    }
+
+    /**
+     * Wraps the supplied ClickListener into a new ClickListener that will track an arbitrary click
+     * on any widget during an a/b test and then take the desired action.
      *
-     * @param target the clickable thing on which to add a listener
      * @param testName Optional string identifier for the a/b test if associated with one
      * @param action String identifier for the action to be logged
+     * @param target the click listener to call once we've sent off our tracking action
      */
-    public static void addTestTrackingListener (
-        final SourcesClickEvents target, final String testName, final String action)
+    public static ClickListener makeTestTrackingListener (
+        final String testName, final String action, final ClickListener target)
     {
-        target.addClickListener(new ClickListener() {
+        return new ClickListener() {
             public void onClick (Widget sender) {
                 CShell.frame.reportClientAction(testName, action, null);
+                if (target != null) {
+                    target.onClick(sender);
+                }
             }
-        });
+        };
     }
 
     /**

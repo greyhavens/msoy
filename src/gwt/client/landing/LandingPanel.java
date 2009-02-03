@@ -51,10 +51,9 @@ public class LandingPanel extends SimplePanel
         content.add(titleAnimation, -23, 10);
 
         // join now
-        final Button joinButton = new Button("", Link.createListener(Pages.ACCOUNT, "create"));
-        joinButton.setStyleName("JoinButton");
-        MsoyUI.addTrackingListener(joinButton, "landingJoinButtonClicked", null);
-        content.add(joinButton, 475, 0);
+        ClickListener onJoin = Link.createListener(Pages.ACCOUNT, "create");
+        onJoin = MsoyUI.makeTrackingListener("landingJoinButtonClicked", null, onJoin);
+        content.add(MsoyUI.createImageButton("JoinButton", onJoin), 475, 0);
 
         // logon box
         final FlowPanel logon = new FlowPanel();
@@ -75,9 +74,9 @@ public class LandingPanel extends SimplePanel
                     "preview", "/images/landing/landing_movie.swf", 208, 154, null), 34, 1);
             }
         };
+        onClick = MsoyUI.makeTrackingListener("landingVideoPlayed", null, onClick);
         final Image clickToPlayImage = MsoyUI.createActionImage(
-                "/images/landing/play_screen.png", _msgs.landingClickToStart(), onClick);
-        MsoyUI.addTrackingListener(clickToPlayImage, "landingVideoPlayed", null);
+            "/images/landing/play_screen.png", _msgs.landingClickToStart(), onClick);
         video.add(clickToPlayImage, 0, 0);
         content.add(video, 465, 90);
 

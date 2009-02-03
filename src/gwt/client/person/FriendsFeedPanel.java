@@ -51,25 +51,25 @@ public class FriendsFeedPanel extends FlowPanel
         if (category == null) {
             return;
         }
-        String categoryTitle = _dmsgs.xlate("feedCategory" + category.category);
 
-        String showMoreText = fullSize ? _pmsgs.shortFeed() : _pmsgs.fullFeed();
-        Label showMore = MsoyUI.createActionLabel(showMoreText, "FeedShowMore",
-            new ClickListener() {
-                public void onClick (Widget sender) {
-                    _mesvc.loadFeedCategory(category.category, !fullSize,
-                        new MsoyCallback<FeedCategory>() {
-                            public void onSuccess (FeedCategory data) {
-                                fillCategory(categoryPanel, data, !fullSize);
-                            }
-                        });
-                }
-            });
+        String categoryTitle = _dmsgs.xlate("feedCategory" + category.category);
+        ClickListener onClick = new ClickListener() {
+            public void onClick (Widget sender) {
+                _mesvc.loadFeedCategory(
+                    category.category, !fullSize, new MsoyCallback<FeedCategory>() {
+                    public void onSuccess (FeedCategory data) {
+                        fillCategory(categoryPanel, data, !fullSize);
+                    }
+                });
+            }
+        };
         if (!fullSize) {
-            MsoyUI.addTrackingListener(showMore, "meClickedShowMore", categoryTitle);
+            onClick = MsoyUI.makeTrackingListener("meClickedShowMore", categoryTitle, onClick);
         } else {
-            MsoyUI.addTrackingListener(showMore, "meClickedShowLess", categoryTitle);
+            onClick = MsoyUI.makeTrackingListener("meClickedShowLess", categoryTitle, onClick);
         }
+        String showMoreText = fullSize ? _pmsgs.shortFeed() : _pmsgs.fullFeed();
+        Label showMore = MsoyUI.createActionLabel(showMoreText, "FeedShowMore", onClick);
         categoryPanel.add(showMore);
 
         categoryPanel.add(MsoyUI.createLabel(categoryTitle, "FeedCategoryHeader"));
