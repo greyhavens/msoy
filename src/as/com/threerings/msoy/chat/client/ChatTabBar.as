@@ -193,19 +193,19 @@ public class ChatTabBar extends HBox
      */
     public function locationDidChange (name :RoomName) :void
     {
-        // update our name (when a room tab is selected, it may have a new name)
-        if (name != null) {
-            if (_tabs.length == 0) {
-                // create our room chat tab
-                addTab(new ChatTab(_ctx, this, MsoyChatChannel.makeRoomChannel(name), ""+name));
-                selectedIndex = 0;
-            } else {
-                // update our room's chat tab name
-                _tabs[0].text = name.toString();
-                // and clear out pending chat if we're not in history mode
-            }
-        } else if (_tabs.length > 0) {
-            _tabs[0].text = "";
+        if (name == null) {
+            // we don't need to do anything if we're leaving
+            return;
+        }
+
+        var roomTabIx :int = getLocalTypeIndex(ChatCodes.PLACE_CHAT_TYPE);
+        if (roomTabIx >= 0) {
+            // there's already a room tab up, just modify it
+            _tabs[roomTabIx].text = name.toString();
+        } else {
+            // else create our room chat tab, in the leftmost position
+            addTab(new ChatTab(_ctx, this, MsoyChatChannel.makeRoomChannel(name), ""+name), 0);
+            selectedIndex = 0;
         }
     }
 
