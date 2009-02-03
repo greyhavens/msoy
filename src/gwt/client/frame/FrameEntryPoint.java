@@ -942,12 +942,14 @@ public class FrameEntryPoint
                         _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
                     }
                     Widget right = (_client == null) ? _noclient : _client;
-                    // if we have content, the client is in explicitly sized mode and will need its
-                    // width updated manually; if we have no content, it is width 100%
-                    if (_content != null) {
-                        right.setWidth(computeClientWidth());
+                    if (right != null) {
+                        // if we have content, the client is in explicitly sized mode and will need
+                        // its width updated manually; if we have no content, it is width 100%
+                        if (_content != null) {
+                            right.setWidth(computeClientWidth());
+                        }
+                        right.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
                     }
-                    right.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
                 }
             };
             Window.addWindowResizeListener(_resizer);
