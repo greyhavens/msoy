@@ -67,7 +67,7 @@ public class LobbyGameLiaison extends GameLiaison
         // create our lobby controller which will display a "locating game..." interface
         var inRoom :Boolean = (loc.getPlaceObject() != null) || loc.movePending();
         _lobby = new LobbyController(
-            _gctx, _wctx, _mode, lobbyCleared, playNow, lobbyLoaded, !inRoom);
+            _gctx, _mode, lobbyCleared, playNow, lobbyLoaded, !inRoom);
     }
 
     /**
@@ -115,7 +115,7 @@ public class LobbyGameLiaison extends GameLiaison
     {
         if (_lobby == null) {
             _lobby = new LobbyController(
-                _gctx, _wctx, mode, lobbyCleared, playNow, lobbyLoaded, false);
+                _gctx, mode, lobbyCleared, playNow, lobbyLoaded, false);
             joinLobby(mode);
         } // otherwise it's already showing
     }

@@ -80,8 +80,8 @@ public class LobbyController extends Controller
     LobbyMarshaller;
 
 
-    public function LobbyController (gctx :GameContext, wctx :WorldContext, mode :LobbyDef, 
-        onClear :Function, playNow :Function, lobbyLoaded :Function, displaySplash :Boolean)
+    public function LobbyController (gctx :GameContext, mode :LobbyDef, onClear :Function, 
+        playNow :Function, lobbyLoaded :Function, displaySplash :Boolean)
     {
         _gctx = gctx;
         _mctx = gctx.getMsoyContext();
@@ -92,7 +92,7 @@ public class LobbyController extends Controller
         _displaySplash = displaySplash;
         
         _waitForWorldLogon = new GatedExecutor(function () :Boolean {
-            return wctx.getClient().isLoggedOn();
+            return _gctx.getMsoyContext().getClient().isLoggedOn();
         });
         
         _lobbyTimer = new LobbyResolutionTimer(_mctx);
