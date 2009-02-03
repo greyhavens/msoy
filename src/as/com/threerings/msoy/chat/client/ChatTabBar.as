@@ -211,7 +211,8 @@ public class ChatTabBar extends HBox
 
     public function getCurrentChannel () :MsoyChatChannel
     {
-        return _tabs.length > 0 ? (_tabs[_selectedIndex] as ChatTab).channel : null;
+        return _selectedIndex >= 0 && _tabs.length > 0 ?
+            (_tabs[_selectedIndex] as ChatTab).channel : null;
     }
 
     public function getCurrentLocalType () :String
