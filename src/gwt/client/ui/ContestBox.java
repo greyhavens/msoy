@@ -40,10 +40,7 @@ public class ContestBox extends FloatPanel
             FlowPanel contestInfo = MsoyUI.createFlowPanel("ContestInfo");
             add(contestInfo);
 
-            HTML contestName = MsoyUI.createHTML(contest.name, "ContestName");
-            MsoyUI.addTrackingListener(contestName, "contestsNameClicked", contest.contestId);
-            contestInfo.add(contestName);
-
+            contestInfo.add(MsoyUI.createHTML(contest.name, "ContestName"));
             contestInfo.add(MsoyUI.createHTML(contest.blurb, "ContestText"));
             contestInfo.add(MsoyUI.createHTML(contest.status, "Status"));
 
