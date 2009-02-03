@@ -871,7 +871,11 @@ public class AwardDelegate extends RatingDelegate
 
         @Override
         public String toString () {
-            return StringUtil.fieldsToString(this);
+            StringBuilder buf = new StringBuilder("[");
+            buf.append("memberId=").append(name.getMemberId()).append(", ");
+            StringUtil.fieldsToString(buf, this);
+            buf.append("]");
+            return buf.toString();
         }
     }
 
