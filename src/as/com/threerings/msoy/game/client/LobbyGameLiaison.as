@@ -20,6 +20,8 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.data.ClientObject;
 
 /**
  * Handles the lobby-specific aspects of the game server connection.
@@ -37,6 +39,10 @@ public class LobbyGameLiaison extends GameLiaison
         _mode = mode;
         _playerIdGame = playerId;
         
+        _waitForWorldLogon = new GatedExecutor(function () :Boolean {
+            return _wctx.getClient().isLoggedOn();
+        });
+        
         log.info("Started game liaison [gameId=" + _gameId + ", mode=" + _mode + "].");
 
         // listen for our game to be ready so that we can display it
@@ -47,6 +53,9 @@ public class LobbyGameLiaison extends GameLiaison
         _gctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, gameLocationDidChange, null));
 
+        // get a notification about logins to the game server
+        _wctx.getWorldClient().addClientObserver(new ClientAdapter(null, worldClientDidLogon));
+        
         // Set the token on the game context, so it can get passed to the game.
         (_gctx as LiaisonGameContext).setShareToken(token);
         (_gctx as LiaisonGameContext).setShareMemberId(shareMemberId);
@@ -57,7 +66,8 @@ public class LobbyGameLiaison extends GameLiaison
 
         // create our lobby controller which will display a "locating game..." interface
         var inRoom :Boolean = (loc.getPlaceObject() != null) || loc.movePending();
-        _lobby = new LobbyController(_gctx, _mode, lobbyCleared, playNow, lobbyLoaded, !inRoom);
+        _lobby = new LobbyController(
+            _gctx, _wctx, _mode, lobbyCleared, playNow, lobbyLoaded, !inRoom);
     }
 
     /**
@@ -104,7 +114,8 @@ public class LobbyGameLiaison extends GameLiaison
     public function showLobby (mode :LobbyDef) :void
     {
         if (_lobby == null) {
-            _lobby = new LobbyController(_gctx, mode, lobbyCleared, playNow, lobbyLoaded, false);
+            _lobby = new LobbyController(
+                _gctx, _wctx, mode, lobbyCleared, playNow, lobbyLoaded, false);
             joinLobby(mode);
         } // otherwise it's already showing
     }
@@ -135,11 +146,14 @@ public class LobbyGameLiaison extends GameLiaison
                 _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
                 shutdown();
             });
-        
-        // the playNow() call will resolve the lobby on the game server, then attempt to start a
-        // game for us; if it succeeds, it sends back a zero result and we need take no further
-        // action; if it fails, it sends back the lobby OID so we can join the lobby
-        lsvc.playNow(_gctx.getClient(), _gameId, mode, cb);
+
+        // once we're logged in to the world server, start the game!
+        _waitForWorldLogon.execute(function () :void { 
+            // the playNow() call will resolve the lobby on the game server, then attempt to start
+            // a game for us; if it succeeds, it sends back a zero result and we need take no 
+            // further action; if it fails, it sends back the lobby OID so we can join the lobby
+            lsvc.playNow(_gctx.getClient(), _gameId, mode, cb);
+        });
     }
 
     /**
@@ -244,10 +258,14 @@ public class LobbyGameLiaison extends GameLiaison
         var config :MsoyGameConfig = gameConfig as MsoyGameConfig;
         return (config != null) ? config.groupId : super.gameGroupId;
     }
-
-    override public function clientDidLogoff (event :ClientEvent) :void
+    
+    /** Listens for logins to the world server. */
+    protected function worldClientDidLogon (event :ClientEvent) :void
     {
-        super.clientDidLogoff(event);
+        _waitForWorldLogon.update();
+        if (_lobby != null) {
+            _lobby.worldClientDidLogon(event);
+        }
     }
 
     protected function joinLobby (mode :LobbyDef) :void
@@ -352,5 +370,8 @@ public class LobbyGameLiaison extends GameLiaison
 
     /** True if we're shutting down. */
     protected var _shuttingDown :Boolean;
+    
+    /** Executor that waits for the world client to log in. */
+    protected var _waitForWorldLogon :GatedExecutor;
 }
 }

@@ -42,6 +42,8 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.whirled.game.data.MatchConfig;
+import com.threerings.presents.client.ClientEvent;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class LobbyController extends Controller
     implements Subscriber, SeatednessObserver
@@ -78,7 +80,7 @@ public class LobbyController extends Controller
     LobbyMarshaller;
 
 
-    public function LobbyController (gctx :GameContext, mode :LobbyDef, 
+    public function LobbyController (gctx :GameContext, wctx :WorldContext, mode :LobbyDef, 
         onClear :Function, playNow :Function, lobbyLoaded :Function, displaySplash :Boolean)
     {
         _gctx = gctx;
@@ -89,9 +91,13 @@ public class LobbyController extends Controller
         _lobbyLoaded = lobbyLoaded;
         _displaySplash = displaySplash;
         
+        _waitForWorldLogon = new GatedExecutor(function () :Boolean {
+            return wctx.getClient().isLoggedOn();
+        });
+        
         _lobbyTimer = new LobbyResolutionTimer(_mctx);
         _lobbyTimer.start();
-
+        
         // create our lobby panel
         _panel = new LobbyPanel(_gctx, this);
         _panel.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
@@ -405,9 +411,9 @@ public class LobbyController extends Controller
     public function objectAvailable (obj :DObject) :void
     {
         _lobj = obj as LobbyObject;
-        _panel.init(_lobj);
-        _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
         _lobbyTimer.stop();
+        
+        _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
 
         // create our table director
         _tableDir = new TableDirector(_gctx, LobbyObject.TABLES);
@@ -419,30 +425,34 @@ public class LobbyController extends Controller
 
         // replace the current view with the game's splash screen
         setGameView(_lobj.game);
-        
-        // set up our starting panel mode
-        _panel.open();
-        _panel.setMode(getStartMode());
 
-        // pass group back to the caller now that the lobby has loaded
-        _lobbyLoaded(_lobj.groupId);
-
-        // this is only used for testing game loading issues per WRLD-531, and will be removed
-        // after the test is over. -- robert
-        _mctx.getMsoyClient().trackClientAction("WRLD-531-2 game started", "stage 4");
-        
-        // if we have a player table to join, do that now, otherwise
-        if (_playerId != 0) {
-            joinPlayerTable(_playerId);
-
-        } else {
-            // otherwise do something appropriate based on our mode
-            switch (_mode) {
-            case LobbyCodes.PLAY_NOW_ANYONE:
-                joinSomeTable();
-                break;
+        _waitForWorldLogon.execute(function () :void {
+           
+            // set up our starting panel mode
+            _panel.init(_lobj);
+            _panel.open();
+            _panel.setMode(getStartMode());
+    
+            // pass group back to the caller now that the lobby has loaded
+            _lobbyLoaded(_lobj.groupId);
+    
+            // this is only used for testing game loading issues per WRLD-531, and will be removed
+            // after the test is over. -- robert
+            _mctx.getMsoyClient().trackClientAction("WRLD-531-2 game started", "stage 4");
+            
+            // if we have a player table to join, do that now, otherwise
+            if (_playerId != 0) {
+                joinPlayerTable(_playerId);
+    
+            } else {
+                // otherwise do something appropriate based on our mode
+                switch (_mode) {
+                case LobbyCodes.PLAY_NOW_ANYONE:
+                    joinSomeTable();
+                    break;
+                }
             }
-        }
+        });
     }
 
     // from Subscriber
@@ -461,6 +471,13 @@ public class LobbyController extends Controller
         _panel.setMode(nowSeated ? MODE_SEATED : MODE_MATCH);
     }
 
+    /** Called by the LobbyGameLiaison upon login to the world server. */
+    public function worldClientDidLogon (event :ClientEvent) :void
+    {
+        // run anything that's been waiting on the member object
+        _waitForWorldLogon.update();
+    }
+    
     /**
      * Once the lobby object has been located, this function pulls out the splash media,
      * and creates a new place view to display it.
@@ -537,6 +554,9 @@ public class LobbyController extends Controller
     
     /** Monitors whether we've successfully subscribed to a lobby object. */
     protected var _lobbyTimer :LobbyResolutionTimer;
+    
+    /** Executes jobs only when the lobby object and the member object have been resolved. */
+    protected var _waitForWorldLogon :GatedExecutor;
 }
 }
 
