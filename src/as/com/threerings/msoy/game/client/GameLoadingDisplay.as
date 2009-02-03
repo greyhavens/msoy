@@ -20,6 +20,7 @@ import caurina.transitions.Tweener;
 import mx.events.ResizeEvent;
 
 import com.threerings.msoy.client.PlaceBox;
+import com.threerings.msoy.client.PlaceLoadingDisplay;
 
 import com.threerings.msoy.ui.LoadingSpinner;
 import com.threerings.msoy.ui.ScalingMediaContainer;
