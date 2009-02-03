@@ -119,6 +119,12 @@ public class DecorEditPanel extends FlyingPanel
             _studioView.getBackground().addEventListener(
                 MediaContainer.SIZE_KNOWN, handleSizeKnown);
         }
+        if (_noMedia.visible) {
+            // set things up to actually edit this decor now
+            FlexUtil.setVisible(_noMedia, false);
+            FlexUtil.setVisible(_grid, true);
+            showCloseButton = true;
+        }
     }
 
     protected function updateParameters (
@@ -320,13 +326,6 @@ public class DecorEditPanel extends FlyingPanel
      */
     protected function handleSizeKnown (event :ValueEvent) :void
     {
-        if (_noMedia.visible) {
-            // set things up to actually edit this decor now
-            FlexUtil.setVisible(_noMedia, false);
-            FlexUtil.setVisible(_grid, true);
-            showCloseButton = true;
-        }
-
         const w :int = int(event.value[0]);
         const h :int = int(event.value[1]);
         updateParameters(Decor.IMAGE_OVERLAY, false, w, h, h, .5, 1, 1);
