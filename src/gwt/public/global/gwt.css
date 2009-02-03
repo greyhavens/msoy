@@ -1251,3 +1251,36 @@ img, embed, applet, object {
 .rollupBox-title-open {
 	font-weight: bold;
 }
+
+/* ------------------------------------
+   CHECKLIST
+-------------------------------------*/
+
+.checklist {
+    width: 641px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.checklist-header {
+    background-color: #b4ddf3;
+    color: #1b557d;
+}
+
+.checklist-check {
+    width: 36px;
+    border-bottom: 1px solid #b1c0c7;
+}
+
+.checklist-widget {
+    width: 605px;
+    border-bottom: 1px solid #b1c0c7;
+}
+
+.checklist-notSelected {
+    background-color: #e8f5fb;
+}
+
+.checklist-selected {
+    background-color: #d9f0f9;
+}

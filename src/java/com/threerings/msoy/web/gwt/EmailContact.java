@@ -19,6 +19,21 @@ public class EmailContact
     /** The memberName. */
     public MemberName mname;
 
+    public EmailContact () { /* For serialization. */ }
+
+    public EmailContact (String name, String email)
+    {
+        this.name = name;
+        this.email = email;
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        return email.hashCode();
+    }
+
+    @Override
     public boolean equals (Object other)
     {
         if (other == null || !(other instanceof EmailContact)) {

@@ -3,8 +3,12 @@
 
 package client.people;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import client.shell.CShell;
 import client.shell.DynamicLookup;
+import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.CreatorLabel;
 import client.ui.MsoyUI;
@@ -48,11 +52,12 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.InviteServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Pages;
 
 public class NewSharePanel extends VerticalPanel
 {
-    public NewSharePanel ()
+    public NewSharePanel (PeoplePage page)
     {
         setStylePrimaryName("sharePanel-wrapper");
         VerticalPanel subPanel = new VerticalPanel();
@@ -81,7 +86,7 @@ public class NewSharePanel extends VerticalPanel
         add(postGame);*/
 
         RollupBox emailBox = new RollupBox("Email Whirled to Your Friends", "emailRollup",
-            new InviteEmailPanel(""));
+            new InviteEmailPanel(page, ""));
         emailBox.setOpen(true);
         subPanel.add(emailBox);
 
@@ -100,7 +105,8 @@ public class NewSharePanel extends VerticalPanel
         });
     }
 
-    public NewSharePanel (int gameId, final String gameToken, final String gameType, String message)
+    public NewSharePanel (final PeoplePage page, int gameId, final String gameToken, final String
+        gameType, String message)
     {
         setStylePrimaryName("sharePanel");
 
@@ -117,7 +123,7 @@ public class NewSharePanel extends VerticalPanel
         add(postGame);*/
 
         RollupBox emailBox = new RollupBox("Email This Game to Your Friends", "emailRollup",
-            new InviteEmailPanel(message));
+            new InviteEmailPanel(page, message));
         emailBox.setOpen(true);
         add(emailBox);
 
@@ -235,7 +241,7 @@ public class NewSharePanel extends VerticalPanel
 
     protected static class InviteEmailPanel extends SmartTable
     {
-        public InviteEmailPanel (String defaultMessage)
+        public InviteEmailPanel (final Page page, String defaultMessage)
         {
             setStylePrimaryName("inviteEmailPanel");
             setText(0, 0, "Invite a friend by email and get 1000 coins when they join!", 1, "description");
@@ -306,13 +312,24 @@ public class NewSharePanel extends VerticalPanel
             description.setStylePrimaryName("importContacts-field");
             allPanel.add(description);
             ImportContactsPanel importContacts = new ImportContactsPanel();
+            int row = importContacts.insertRow(0);
+            importContacts.setText(row, 0, "Message", 1, "importContacts-field");
+            TextArea importMessage = new TextArea();
+            importMessage.setText(defaultMessage);
+            importMessage.setStylePrimaryName("allTab-message");
+            importContacts.setWidget(row, 1, importMessage, 3, null);
             importContacts.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    // TODO:
-                    Window.alert("send webmail");
+                    // TODO: Replace fake list with real one.
+                    List<EmailContact> contacts = new ArrayList<EmailContact>();
+                    contacts.add(new EmailContact("Daniel James", "daniel@threerings.net"));
+                    contacts.add(new EmailContact("Robert Zubek", "robert@threerings.net"));
+                    contacts.add(new EmailContact("Annie Shao", "annie@threerings.net"));
+                    contacts.add(new EmailContact("Kyle Sampson", "kyle@threerings.net"));
+                    page.setContent(new ImportContactListPanel(contacts));
                 }
             });
-            allPanel.add(new ImportContactsPanel());
+            allPanel.add(importContacts);
             tabs.add(allPanel, "All Your Friends");
 
             tabs.selectTab(0);

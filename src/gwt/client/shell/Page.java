@@ -205,6 +205,34 @@ public abstract class Page
     }
 
     /**
+     * Clears out any existing content and sets the specified widget as the main page content.
+     */
+    public void setContent (Widget content)
+    {
+        setContent(null, content);
+    }
+
+    /**
+     * Clears out any existing content and sets the specified widget as the main page content.
+     */
+    public void setContent (String title, Widget content)
+    {
+        CShell.frame.setTitle(title == null ? getDefaultTitle(getPageId().getTab()) : title);
+
+        RootPanel contentDiv = RootPanel.get();
+        if (_content != null) {
+            contentDiv.remove(_content);
+        }
+        _content = content;
+        if (_content != null) {
+            contentDiv.add(_content);
+        }
+
+        // clear out any lingering dialog
+        CShell.frame.clearDialog();
+    }
+
+    /**
      * Returns the identifier of this page (used for navigation).
      */
     public abstract Pages getPageId ();
@@ -240,34 +268,6 @@ public abstract class Page
         setContent(title, control);
         control.setHTML(definition);
         return control;
-    }
-
-    /**
-     * Clears out any existing content and sets the specified widget as the main page content.
-     */
-    protected void setContent (Widget content)
-    {
-        setContent(null, content);
-    }
-
-    /**
-     * Clears out any existing content and sets the specified widget as the main page content.
-     */
-    protected void setContent (String title, Widget content)
-    {
-        CShell.frame.setTitle(title == null ? getDefaultTitle(getPageId().getTab()) : title);
-
-        RootPanel contentDiv = RootPanel.get();
-        if (_content != null) {
-            contentDiv.remove(_content);
-        }
-        _content = content;
-        if (_content != null) {
-            contentDiv.add(_content);
-        }
-
-        // clear out any lingering dialog
-        CShell.frame.clearDialog();
     }
 
     /**

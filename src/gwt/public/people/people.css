@@ -768,17 +768,26 @@
     padding: 0px 5px 0px 5px;
 }
 
+.inviteEmailPanel .allTab-message {
+	width: 330px;
+    border: 1px solid #cccccc;
+    padding: 5px;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size: 13px;
+    margin: 2px 0px 2px 20px;
+}
+
 .importContacts-field {
 	font-size: 13px;
 }
 
 .importContacts-textBox {
-	width: 170px;
+	width: 165px;
 	border: 1px solid #cccccc;
 	padding: 5px;
     font-family:Arial,Helvetica,sans-serif;
     font-size: 13px;
-    margin: 10px 0px 10px 20px;
+    margin: 2px 0px 2px 20px;
 }
 
 .importContacts-webmailList {
@@ -842,4 +851,60 @@
 
 .gameLinks-icons img {
 	padding: 5px;
+}
+
+/* ------------------------------------
+   SELECT CONTACTS TO IMPORT
+-------------------------------------*/
+
+.importContactList-wrapper {
+	background-color: #89C6E3;
+	min-height: 100%;
+}
+
+.importContactList {
+	margin: 8px auto;
+	width: 657px;
+}
+
+.importContactList .N {
+	background: url(/images/ui/blue_bg_top.png) no-repeat;
+	height: 7px;
+}
+
+.importContactList .S {
+	background: url(/images/ui/blue_bg_bot.png) no-repeat;
+	height: 7px;
+}
+
+.importContactList .X {
+	background: url(/images/ui/blue_bg_mid.png) #287099 no-repeat bottom;
+	padding: 8px;
+}
+
+.importContactList-header {
+	font-size: 18px;
+	color: white;
+	margin-bottom: 5px;
+}
+
+.importContactList-description {
+    font-size: 12px;
+    color: #beddef;
+}
+
+.importContactList .orangeButton {
+	margin: 8px 0px;
+}
+
+.importContactList-listName {
+    color: black;
+    width: 222px;
+    font-size: 13px;
+}
+
+.importContactList-listEmail {
+    color: #7e7f84;
+    width: 383px;
+    font-size: 13px;
 }

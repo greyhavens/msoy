@@ -102,10 +102,10 @@ public class PeoplePage extends Page
             setContent(_msgs.greetersTitle(), new GreeterPanel());
 
         } else if (action.equals("invitetest") && DeploymentConfig.devDeployment) {
-            setContent(_msgs.inviteTitle(), new NewSharePanel());
+            setContent(_msgs.inviteTitle(), new NewSharePanel(this));
 
         } else if (action.equals("invitetest2") && DeploymentConfig.devDeployment) {
-            setContent(_msgs.inviteTitle(), new NewSharePanel(-13, "ABEXGhi283--", "game",
+            setContent(_msgs.inviteTitle(), new NewSharePanel(this, -13, "ABEXGhi283--", "game",
                 "Try and beat my score!"));
 
         } else { // !guest
