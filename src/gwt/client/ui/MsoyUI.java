@@ -36,15 +36,12 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.WebMemberService;
-import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.util.DateUtil;
 import client.util.Link;
-import client.util.ServiceUtil;
 
 /**
  * Contains useful user interface related methods.

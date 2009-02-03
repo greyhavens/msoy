@@ -123,7 +123,7 @@ public class GameGameRegistry
 {
     /**
      * When updating metrics, there are these 3 modes.
-     * @see GameGameRegistry#updateGameMetrics()
+     * @see GameGameRegistry#updateGameMetrics
      */
     public enum MetricType
     {

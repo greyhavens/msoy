@@ -64,7 +64,7 @@ public interface CatalogService extends RemoteService
         public List<ListingCard> favorites;
     }
 
-    /** Returned by {@link #loadSuite} and {@link #loadGameSuite}. */
+    /** Returned by {@link #loadSuite}. */
     public static class SuiteResult implements IsSerializable
     {
         /** The name of the suite. For game suites, this is the game's name. */

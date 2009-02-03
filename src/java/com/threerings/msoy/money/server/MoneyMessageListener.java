@@ -39,9 +39,6 @@ public class MoneyMessageListener
 {
     /**
      * Constructs a new receiver.  This will not automatically start.
-     *
-     * @param conn Connection to listen for messages on.
-     * @param logic MoneyLogic implementation to call.
      */
     @Inject public MoneyMessageListener (ShutdownManager sm)
     {

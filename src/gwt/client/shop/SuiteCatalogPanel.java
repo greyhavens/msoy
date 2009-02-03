@@ -14,18 +14,12 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
-import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ListingCard;
-import com.threerings.msoy.web.gwt.Args;
-import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ListingBox;
-import client.item.ShopUtil;
 import client.item.SideBar;
 import client.ui.Marquee;
-import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.ServiceUtil;
 
 /**
  * Displays catalog items belonging to a suite.
