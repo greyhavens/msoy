@@ -53,8 +53,6 @@ import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 
-import com.samskivert.depot.operator.Arithmetic.BitAnd;
-
 import com.samskivert.depot.operator.Arithmetic;
 
 import com.samskivert.depot.operator.Conditionals.Equals;
@@ -62,6 +60,7 @@ import com.samskivert.depot.operator.Conditionals.FullTextMatch;
 import com.samskivert.depot.operator.Conditionals.GreaterThan;
 import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.depot.operator.Conditionals.In;
+import com.samskivert.depot.operator.Conditionals.Like;
 import com.samskivert.depot.operator.Conditionals.NotEquals;
 
 import com.samskivert.depot.operator.Conditionals;
@@ -370,7 +369,7 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Returns MemberCardRecords for all members that are part of the given collection and also
-     * match their displayName against the given search string.
+     * substring match their displayName against the given search string.
      */
     public List<Integer> findMembersInCollection (String search,
         Collection<Integer> memberIds)
@@ -381,7 +380,7 @@ public class MemberRepository extends DepotRepository
         search = search.toLowerCase();
         Where whereClause = new Where(new And(
             new In(MemberRecord.MEMBER_ID, memberIds),
-            new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search)));
+            new Like(MemberRecord.NAME, "%" + search + "%")));
 
         return Lists.transform(
             findAllKeys(MemberRecord.class, false, whereClause),
@@ -1389,6 +1388,6 @@ public class MemberRepository extends DepotRepository
 
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
-    protected static final NotEquals GREETER_FLAG_IS_SET = new NotEquals(new BitAnd(
+    protected static final NotEquals GREETER_FLAG_IS_SET = new NotEquals(new Arithmetic.BitAnd(
         MemberRecord.FLAGS, MemberRecord.Flag.GREETER.getBit()), 0);
 }
