@@ -53,7 +53,8 @@ public class MsoyGameManager extends WhirledGameManager
         InvocationService.InvocationListener listener)
         throws InvocationException
     {
-    	_awardDelegate.endGameWithScores(caller, playerOids, scores, payoutType, gameMode, listener);
+    	_awardDelegate.endGameWithScores(
+            caller, playerOids, scores, payoutType, gameMode, listener);
     }
 
     // from interface WhirledGameProvider
