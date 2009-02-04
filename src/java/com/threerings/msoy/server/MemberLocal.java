@@ -107,7 +107,8 @@ public class MemberLocal extends BodyLocal
     public void putAvatarMemoriesIntoRoom (RoomObject roomObj, boolean fromEnter)
     {
         if (memories != null) {
-            roomObj.putMemories(memories, "source", fromEnter ? "willEnter" : "setAvatar");
+            roomObj.putMemories(memories, "source", fromEnter ? "willEnter" : "setAvatar",
+                new Exception());
             memories = null;
         }
     }
@@ -167,7 +168,7 @@ public class MemberLocal extends BodyLocal
             takeAvatarMemoriesFromRoom(memobj, roomObj);
 
             // if we're in a party and the last member to leave this room, clean up our bits
-            if (party != null && !roomObj.parties.containsKey(party.id)) {
+            if (party != null && roomObj.parties.containsKey(party.id)) {
                 roomObj.removeFromParties(party.id);
                 party = null;
             }
