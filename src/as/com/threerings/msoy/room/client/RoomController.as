@@ -53,7 +53,7 @@ import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.EntityControl;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 
@@ -252,12 +252,13 @@ public class RoomController extends SceneController
     {
         // NOTE: there is no need to be "in control" to update memory.
 
+//        validateKey(key);
         // This will validate that the memory being set isn't greater than the maximum
         // alloted space for all memories, becauses that will surely fail on the server,
         // but the server will do further checks to ensure that this entry can be
         // safely added to the memory set such that combined they're all under the maximum.
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
-                EntityMemoryEntry.MAX_ENCODED_MEMORY_LENGTH);
+                EntityMemories.MAX_ENCODED_MEMORY_LENGTH);
         updateMemory2(ident, key, data, callback);
     }
 
@@ -808,6 +809,18 @@ public class RoomController extends SceneController
                  ", item=" + ident + "].");
         return false;
     }
+
+//    protected function validateKey (key :String) :void
+//    {
+//        if (key == null) {
+//            throw new Error("Null is an invalid key!");
+//        }
+//        for (var ii :int = 0; ii < key.length; ii++) {
+//            if (key.charAt(ii) > "\u007F") {
+//                throw new Error("Unicode characters not supported in keys.");
+//            }
+//        }
+//    }
 
     /**
      * Does this client have control over the specified entity?

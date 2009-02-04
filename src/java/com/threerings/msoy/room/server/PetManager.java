@@ -40,7 +40,7 @@ import com.threerings.msoy.item.server.persist.PetRecord;
 import com.threerings.msoy.item.server.persist.PetRepository;
 
 import com.threerings.msoy.room.client.PetService;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.PetCodes;
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.PetObject;
@@ -74,6 +74,7 @@ public class PetManager
                     PetLocal local = new PetLocal();
                     local.pet = petobj.pet;
                     local.memories = petobj.memories;
+                    // TODO: what about the memories in the pet object now?
                     memobj.setLocal(PetLocal.class, local);
                     // the pet will shutdown later when the walking member is destroyed
                 }
@@ -123,7 +124,7 @@ public class PetManager
                 // next load up their memories
                 if (mids.size() > 0) {
                     for (MemoriesRecord memrec : _memoryRepo.loadMemories(Pet.PET, mids)) {
-                        _memories.put(memrec.itemId, memrec.toEntries());
+                        _memories.put(memrec.itemId, memrec.toEntry());
                     }
                 }
             }
@@ -136,7 +137,7 @@ public class PetManager
             }
 
             protected List<Pet> _pets = Lists.newArrayList();
-            protected IntMap<List<EntityMemoryEntry>> _memories = IntMaps.newHashIntMap();
+            protected IntMap<EntityMemories> _memories = IntMaps.newHashIntMap();
         });
     }
 
@@ -195,7 +196,7 @@ public class PetManager
                 // load up its memory
                 MemoriesRecord memrec = _memoryRepo.loadMemory(Pet.PET, petId);
                 if (memrec != null) {
-                    _memory = memrec.toEntries();
+                    _memory = memrec.toEntry();
                 }
             }
 
@@ -209,7 +210,7 @@ public class PetManager
             }
 
             protected Pet _pet;
-            protected List<EntityMemoryEntry> _memory;
+            protected EntityMemories _memory;
         });
     }
 
@@ -281,7 +282,7 @@ public class PetManager
      * pet resolution.
      */
     protected void resolveRoomPets (int sceneId, List<Pet> pets,
-                                    IntMap<List<EntityMemoryEntry>> memories)
+                                    IntMap<EntityMemories> memories)
     {
         for (Pet pet : pets) {
             // if this pet is already resolved (is wandering around with its owner), skip it (TODO:
@@ -300,8 +301,8 @@ public class PetManager
     /**
      * Finishes the resolution of a pet initiated by {@link #callPet}.
      */
-    protected void createHandler (MemberObject owner, Pet pet, List<EntityMemoryEntry> memories,
-                                  boolean moveToOwner)
+    protected void createHandler (
+        MemberObject owner, Pet pet, EntityMemories memories, boolean moveToOwner)
     {
         // instead of doing a bunch of complicated prevention to avoid multiply resolving pets,
         // we'll just get this far and abandon ship; it's not going to happen that often

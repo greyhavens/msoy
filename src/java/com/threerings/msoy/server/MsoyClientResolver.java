@@ -240,7 +240,7 @@ public class MsoyClientResolver extends CrowdClientResolver
                 memobj.avatar = (Avatar)avatar.toItem();
                 enforceConnected();
                 MemoriesRecord memrec = _memoryRepo.loadMemory(avatar.getType(), avatar.itemId);
-                local.memories = (memrec == null) ? null : memrec.toEntries();
+                local.memories = (memrec == null) ? null : memrec.toEntry();
             }
         }
 

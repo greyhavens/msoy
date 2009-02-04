@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.threerings.util.StreamableArrayIntSet;
@@ -21,7 +20,7 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.party.data.PartySummary;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
 
@@ -59,7 +58,7 @@ public class MemberLocal extends BodyLocal
     public StreamableArrayIntSet touredRooms;
 
     /** The memories of the member's avatar. */
-    public Collection<EntityMemoryEntry> memories;
+    public EntityMemories memories;
 
     /** Info on the party this member is currently rocking (or null if they're dull). */
     public PartySummary party;

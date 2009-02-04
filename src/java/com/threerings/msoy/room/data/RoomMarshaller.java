@@ -184,12 +184,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int UPDATE_MEMORY = 14;
 
     // from interface RoomService
-    public void updateMemory (Client arg1, EntityMemoryEntry arg2, InvocationService.ResultListener arg3)
+    public void updateMemory (Client arg1, ItemIdent arg2, String arg3, byte[] arg4, InvocationService.ResultListener arg5)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
+        InvocationMarshaller.ResultMarshaller listener5 = new InvocationMarshaller.ResultMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, UPDATE_MEMORY, new Object[] {
-            arg2, listener3
+            arg2, arg3, arg4, listener5
         });
     }
 

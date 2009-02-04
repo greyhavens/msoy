@@ -105,7 +105,7 @@ import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.Controllable;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate;
 import com.threerings.msoy.room.data.MemberInfo;
@@ -144,7 +144,7 @@ public class RoomManager extends SpotSceneManager
      * Flush any modified memories contained within the specified Iterable.
      */
     public static void flushMemories (Invoker invoker, final MemoryRepository memoryRepo,
-                                      Iterable<EntityMemoryEntry> entries)
+                                      Iterable<EntityMemories> entries)
     {
         final List<MemoriesRecord> memrecs = MemoriesRecord.extractModified(entries);
         if (memrecs.size() > 0) {
@@ -558,7 +558,8 @@ public class RoomManager extends SpotSceneManager
 
     // documentation inherited from RoomProvider
     public void updateMemory (
-        ClientObject caller, final EntityMemoryEntry entry, RoomService.ResultListener listener)
+        ClientObject caller, final ItemIdent ident, String key, byte[] newValue,
+        RoomService.ResultListener listener)
     {
         // TODO: Validate that the client is at least in the same room?
 
@@ -574,27 +575,19 @@ public class RoomManager extends SpotSceneManager
         // restrictions
 
         // verify that the memory does not exceed legal size
-        int totalSize = 0;
-        for (EntityMemoryEntry rent : _roomObj.memories) {
-            if (rent.item.equals(entry.item) && !rent.key.equals(entry.key)) {
-                totalSize += rent.getSize();
-            }
-        }
-        if (totalSize + entry.getSize() > EntityMemoryEntry.MAX_ENCODED_MEMORY_LENGTH) {
+        EntityMemories mems = _roomObj.memories.get(ident);
+        int totalSize = (mems == null) ? 0 : mems.getSize(key);
+        int newSize = EntityMemories.getSize(key, newValue);
+        if ((totalSize + newSize) > EntityMemories.MAX_ENCODED_MEMORY_LENGTH) {
             log.info("Rejecting memory update as too large",
-                "otherSize", totalSize, "newEntrySize", entry.getSize());
+                "otherSize", totalSize, "newEntrySize", newSize);
             // Let the client know we looked at the memory, but didn't actually store it
             listener.requestProcessed(Boolean.FALSE);
             return;
         }
 
         // mark it as modified and update the room object; we'll save it when we unload the room
-        entry.modified = true;
-        if (_roomObj.memories.contains(entry)) {
-            _roomObj.updateMemories(entry);
-        } else {
-            _roomObj.addToMemories(entry);
-        }
+        _roomObj.updateMemory(ident, key, newValue);
         listener.requestProcessed(Boolean.TRUE);
     }
 
@@ -1491,7 +1484,7 @@ public class RoomManager extends SpotSceneManager
         _roomObj.startTransaction();
         try {
             for (MemoriesRecord mrec : memories) {
-                _roomObj.putMemories(mrec.toEntries());
+                _roomObj.putMemories(mrec.toEntry());
             }
         } finally {
             _roomObj.commitTransaction();
@@ -1500,10 +1493,10 @@ public class RoomManager extends SpotSceneManager
 
     protected void removeAndFlushMemories (ItemIdent item)
     {
-        List<EntityMemoryEntry> removed = _roomObj.takeMemories(item);
+        EntityMemories removed = _roomObj.takeMemories(item);
         if (removed != null) {
             // persist any of the old memories that were modified
-            flushMemories(_invoker, _memoryRepo, removed);
+            flushMemories(_invoker, _memoryRepo, Collections.singleton(removed));
         }
     }
 

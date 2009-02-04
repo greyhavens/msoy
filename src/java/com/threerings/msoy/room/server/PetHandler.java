@@ -32,7 +32,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.server.persist.PetRepository;
 
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.PetCodes;
 import com.threerings.msoy.room.data.PetObject;
 import com.threerings.msoy.room.data.PetName;
@@ -45,7 +45,7 @@ import static com.threerings.msoy.Log.log;
  */
 public class PetHandler
 {
-    public void init (Pet pet, List<EntityMemoryEntry> memories)
+    public void init (Pet pet, EntityMemories memories)
     {
         _petobj = _omgr.registerObject(new PetObject());
         _petobj.memories = memories;
@@ -96,7 +96,8 @@ public class PetHandler
             // leave our current location (which will extract our memories)
             _sceneReg.leaveOccupiedScene(_petobj);
             // and save them
-            RoomManager.flushMemories(_invoker, _memoryRepo, _petobj.memories);
+            RoomManager.flushMemories(_invoker, _memoryRepo,
+                Collections.singleton(_petobj.memories));
         }
 
         // if we're following a member, clear that out

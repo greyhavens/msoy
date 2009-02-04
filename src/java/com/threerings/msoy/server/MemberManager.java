@@ -81,7 +81,7 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.profile.gwt.Profile;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomObject;
@@ -467,7 +467,7 @@ public class MemberManager
                     throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
                 }
                 MemoriesRecord memrec = _memoryRepo.loadMemory(_avatar.getType(), _avatar.itemId);
-                _memories = (memrec == null) ? null : memrec.toEntries();
+                _memories = (memrec == null) ? null : memrec.toEntry();
             }
 
             @Override public void handleSuccess () {
@@ -475,7 +475,7 @@ public class MemberManager
                                 (InvocationService.ConfirmListener)_listener);
             }
 
-            protected List<EntityMemoryEntry> _memories;
+            protected EntityMemories _memories;
             protected Avatar _avatar;
         });
     }
@@ -926,7 +926,7 @@ public class MemberManager
      * database.
      */
     protected void finishSetAvatar (
-        final MemberObject user, final Avatar avatar, List<EntityMemoryEntry> memories,
+        final MemberObject user, final Avatar avatar, EntityMemories memories,
         final InvocationService.ConfirmListener listener)
     {
         final Avatar prev = user.avatar;

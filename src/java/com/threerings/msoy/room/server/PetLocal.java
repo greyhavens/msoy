@@ -8,7 +8,7 @@ import java.util.List;
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.msoy.item.data.all.Pet;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 
 /**
  * Contains information forwarded between servers when a member moves thusly.
@@ -19,5 +19,5 @@ public class PetLocal extends SimpleStreamableObject
     public Pet pet;
 
     /** The pet's memories. */
-    public List<EntityMemoryEntry> memories;
+    public EntityMemories memories;
 }

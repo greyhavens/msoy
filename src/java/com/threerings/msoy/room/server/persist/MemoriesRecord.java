@@ -12,12 +12,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistentRecord;
@@ -26,9 +24,11 @@ import com.samskivert.depot.annotation.Entity;
 import com.samskivert.depot.annotation.Id;
 import com.samskivert.depot.expression.ColumnExp;
 
+import com.threerings.util.StreamableHashMap;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 
 import static com.threerings.msoy.Log.log;
 
@@ -63,26 +63,19 @@ public class MemoriesRecord extends PersistentRecord
      * Extracts the modified memory entries from the supplied list and returns a list of
      * MemoriesRecord instances that can be saved to the database.
      */
-    public static List<MemoriesRecord> extractModified (Iterable<EntityMemoryEntry> memories)
+    public static List<MemoriesRecord> extractModified (Iterable<EntityMemories> memories)
     {
-        List<MemoriesRecord> mems = Lists.newArrayList();
-        if (memories == null) {
-            return mems;
-        }
-        // TODO: I may change the runtime representation of memories if we keep this
-        ListMultimap<ItemIdent, EntityMemoryEntry> map = Multimaps.newArrayListMultimap();
-        Set<ItemIdent> modified = Sets.newHashSet();
-        for (EntityMemoryEntry entry : memories) {
-            map.put(entry.item, entry);
-            if (entry.modified) {
-                modified.add(entry.item);
+        // TODO: does this expect the modified entries to be removed?
+
+        List<MemoriesRecord> list = Lists.newArrayList();
+        if (memories != null) {
+            for (EntityMemories entry : memories) {
+                if (entry.modified) {
+                    list.add(new MemoriesRecord(entry));
+                }
             }
         }
-
-        for (ItemIdent key : modified) {
-            mems.add(new MemoriesRecord(map.get(key)));
-        }
-        return mems;
+        return list;
     }
 
     /** Used when loading instances from the repository. */
@@ -92,23 +85,14 @@ public class MemoriesRecord extends PersistentRecord
 
     /**
      * Creates a memory record from the supplied memory information.
-     * The specified entries should all refer to the same item.
      */
-    public MemoriesRecord (Collection<EntityMemoryEntry> entries)
+    public MemoriesRecord (EntityMemories mems)
     {
-        // first, assign our item id and prune any null entries
-        for (Iterator<EntityMemoryEntry> itr = entries.iterator(); itr.hasNext(); ) {
-            EntityMemoryEntry mem = itr.next();
-            if (this.itemType == 0) {
-                this.itemType = mem.item.type;
-                this.itemId = mem.item.itemId;
-            }
-            if (mem.value == null) {
-                itr.remove();
-            }
-        }
+        this.itemType = mems.ident.type;
+        this.itemId = mems.ident.itemId;
 
-        if (entries.isEmpty()) {
+        int size = mems.memories.size();
+        if (size == 0) {
             // this.data stays at null. We represent a loss of memory: delete the row.
             return;
         }
@@ -116,11 +100,12 @@ public class MemoriesRecord extends PersistentRecord
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bos);
-            out.writeShort(entries.size());
-            for (EntityMemoryEntry mem : entries) {
-                out.writeUTF(mem.key);
-                out.writeShort(mem.value.length);
-                out.write(mem.value);
+            out.writeShort(size);
+            for (Map.Entry<String, byte[]> entry : mems.memories.entrySet()) {
+                out.writeUTF(entry.getKey());
+                byte[] value = entry.getValue();
+                out.writeShort(value.length);
+                out.write(value);
             }
             out.flush();
             this.data = bos.toByteArray();
@@ -138,27 +123,28 @@ public class MemoriesRecord extends PersistentRecord
     /**
      * Converts this persistent record to a runtime record.
      */
-    public List<EntityMemoryEntry> toEntries ()
+    public EntityMemories toEntry ()
     {
         try {
             ItemIdent ident = new ItemIdent(this.itemType, this.itemId);
             DataInputStream ins = new DataInputStream(new ByteArrayInputStream(this.data));
             int count = ins.readShort();
-            List<EntityMemoryEntry> entries = Lists.newArrayListWithExpectedSize(count);
+            StreamableHashMap<String, byte[]> map = new StreamableHashMap<String, byte[]>();
             for (int ii = 0; ii < count; ii++) {
-                EntityMemoryEntry entry = new EntityMemoryEntry();
-                entry.item = ident;
-                entry.key = ins.readUTF();
-                entry.value = new byte[ins.readShort()];
-                ins.read(entry.value, 0, entry.value.length);
-                entries.add(entry);
+                String key = ins.readUTF();
+                byte[] value = new byte[ins.readShort()];
+                ins.read(value, 0, value.length);
+                map.put(key, value);
             }
             // TEMP: debugging
             if (ins.available() > 0) {
                 log.warning("Haven't fully read memories",
                     "ident", ident, "available", ins.available());
             }
-            return entries;
+            EntityMemories mems = new EntityMemories();
+            mems.ident = ident;
+            mems.memories = map;
+            return mems;
 
         } catch (IOException ioe) {
             throw new RuntimeException("Can't happen", ioe);

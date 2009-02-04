@@ -44,7 +44,7 @@ public class RoomObject extends SpotSceneObject
     public RoomMarshaller roomService;
 
     /** Contains the memories for all entities in this room. */
-    public DSet<EntityMemoryEntry> memories = DSet.newDSet();
+    public DSet<EntityMemories> memories = DSet.newDSet();
 
     /** Contains mappings for all controlled entities in this room. */
     public DSet<EntityControl> controllers = DSet.newDSet();
@@ -77,7 +77,7 @@ public class RoomObject extends SpotSceneObject
      * <code>memories</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToMemories (EntityMemoryEntry elem)
+    public void addToMemories (EntityMemories elem)
     {
         requestEntryAdd(MEMORIES, memories, elem);
     }
@@ -97,7 +97,7 @@ public class RoomObject extends SpotSceneObject
      * <code>memories</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateMemories (EntityMemoryEntry elem)
+    public void updateMemories (EntityMemories elem)
     {
         requestEntryUpdate(MEMORIES, memories, elem);
     }
@@ -112,10 +112,10 @@ public class RoomObject extends SpotSceneObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setMemories (DSet<EntityMemoryEntry> value)
+    public void setMemories (DSet<EntityMemories> value)
     {
         requestAttributeChange(MEMORIES, value, this.memories);
-        DSet<EntityMemoryEntry> clone = (value == null) ? null : value.typedClone();
+        DSet<EntityMemories> clone = (value == null) ? null : value.typedClone();
         this.memories = clone;
     }
 
@@ -262,55 +262,54 @@ public class RoomObject extends SpotSceneObject
     // AUTO-GENERATED: METHODS END
 
     /**
-     * Put all the specified memories into this room.
-     * If there are duplicate entries, a warning is logged, with any log args you specify
-     * added to the end of the logging.
+     * Do whatever's necessary to update the specified memory value.
      */
-    public void putMemories (Iterable<EntityMemoryEntry> mems, Object... logArgs)
+    public void updateMemory (ItemIdent ident, String key, byte[] value)
     {
-        startTransaction();
-        try {
-            for (EntityMemoryEntry mem : mems) {
-                if (memories.contains(mem)) {
-                    log.warning("WTF? Room already contains memory entry", ArrayUtil.concatenate(
-                        new Object[] {"room", getOid(), "memory", mem}, logArgs));
-                    updateMemories(mem);
-
-                } else {
-                    addToMemories(mem);
-                }
+        // if we're removing a value, it doesn't matter if it was there before, we still
+        // need to dispatch the remove to all clients. We do that with the custom event.
+        if (value == null || memories.containsKey(ident)) {
+            // we already have an entry for this item, let's use our special event
+            MemoryChangedEvent mce = new MemoryChangedEvent(_oid, MEMORIES, ident, key, value);
+            // if we're on the authoritative server, update things immediately.
+            if (_omgr != null && _omgr.isManager(this)) {
+                mce.applyToObject(this);
             }
-        } finally {
-            commitTransaction();
+            postEvent(mce);
+
+        } else {
+            // we do not have an entry and we're adding a new value.
+            // This form of the constructor marks the memories modified immediately.
+            addToMemories(new EntityMemories(ident, key, value));
         }
     }
 
     /**
-     * Extract memories from the room that match the specified item, return a List of the
+     * Put the specified memories into this room.
+     * If there is a duplicate entry, a warning is logged, with any log args you specify
+     * added to the end of the logging.
+     */
+    public void putMemories (EntityMemories mems, Object... logArgs)
+    {
+        if (memories.contains(mems)) {
+            log.warning("WTF? Room already contains memory entry",
+                ArrayUtil.concatenate(new Object[] {"room", getOid(), "mems", mems}, logArgs));
+            updateMemories(mems);
+        } else {
+            addToMemories(mems);
+        }
+    }
+
+    /**
+     * Extract memories from the room that match the specified item, return the
      * memories extracted, or null if none.
      */
-    public List<EntityMemoryEntry> takeMemories (ItemIdent ident)
+    public EntityMemories takeMemories (ItemIdent ident)
     {
-        List<EntityMemoryEntry> list = null;
-        for (EntityMemoryEntry entry : memories) {
-            if (entry.item.equals(ident)) {
-                if (list == null) {
-                    list = Lists.newArrayList();
-                }
-                list.add(entry);
-            }
+        EntityMemories mems = memories.get(ident);
+        if (mems != null) {
+            removeFromMemories(ident);
         }
-
-        if (list != null) {
-            startTransaction();
-            try {
-                for (EntityMemoryEntry entry : list) {
-                    removeFromMemories(entry.getRemoveKey());
-                }
-            } finally {
-                commitTransaction();
-            }
-        }
-        return list;
+        return mems;
     }
 }

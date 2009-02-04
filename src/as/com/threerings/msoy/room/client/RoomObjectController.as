@@ -67,7 +67,7 @@ import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate_Add;
 import com.threerings.msoy.room.data.FurniUpdate_Remove;
@@ -498,20 +498,20 @@ public class RoomObjectController extends RoomController
     override public function getMemories (ident :ItemIdent) :Object
     {
         var mems :Object = {};
-        for each (var entry :EntityMemoryEntry in _roomObj.memories.toArray()) {
-            // filter out memories with null as the value, those will not be persisted
-            if (entry.value != null && entry.item.equals(ident)) {
-                mems[entry.key] = ObjectMarshaller.decode(entry.value);
-            }
+        var entry :EntityMemories = _roomObj.memories.get(ident) as EntityMemories;
+        if (entry != null) {
+            entry.memories.forEach(function (key :String, data :ByteArray) :void {
+                mems[key] = ObjectMarshaller.decode(data);
+            });
         }
         return mems;
     }
 
     override public function lookupMemory (ident :ItemIdent, key :String) :Object
     {
-        var mkey :EntityMemoryEntry = new EntityMemoryEntry(ident, key, null);
-        var entry :EntityMemoryEntry = _roomObj.memories.get(mkey) as EntityMemoryEntry;
-        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
+        var entry :EntityMemories = _roomObj.memories.get(ident) as EntityMemories;
+        return (entry == null) ? null
+                               : ObjectMarshaller.decode(entry.memories.get(key) as ByteArray);
     }
 
     override public function canManageRoom (memberId :int = 0) :Boolean
@@ -863,8 +863,7 @@ public class RoomObjectController extends RoomController
 
         // ship the update request off to the server
         throttle(ident, _roomObj.roomService.updateMemory,
-            _wdctx.getClient(), new EntityMemoryEntry(ident, key, data),
-            _wdctx.resultListener(resultHandler));
+            _wdctx.getClient(), ident, key, data, _wdctx.resultListener(resultHandler));
     }
 
     // documentation inherited

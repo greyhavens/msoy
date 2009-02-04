@@ -5,7 +5,6 @@ package com.threerings.msoy.room.server;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.client.RoomService;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -94,7 +93,7 @@ public interface RoomProvider extends InvocationProvider
     /**
      * Handles a {@link RoomService#updateMemory} request.
      */
-    void updateMemory (ClientObject caller, EntityMemoryEntry arg1, InvocationService.ResultListener arg2)
+    void updateMemory (ClientObject caller, ItemIdent arg1, String arg2, byte[] arg3, InvocationService.ResultListener arg4)
         throws InvocationException;
 
     /**

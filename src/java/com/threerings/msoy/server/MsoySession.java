@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -180,8 +181,8 @@ public class MsoySession extends WhirledSession
             final int memberId = _memobj.getMemberId();
             final StatSet stats = local.stats;
             //final List<MemberExperience> experiences = Lists.newArrayList(_memobj.experiences);
-            final List<MemoriesRecord> memrecs = local.memories != null ?
-                MemoriesRecord.extractModified(local.memories) : null;
+            final List<MemoriesRecord> memrecs = (local.memories == null) ? null :
+                MemoriesRecord.extractModified(Collections.singleton(local.memories));
 
             log.info("Session ended [id=" + memberId + ", amins=" + activeMins + "].");
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);

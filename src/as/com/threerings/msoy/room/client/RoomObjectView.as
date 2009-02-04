@@ -61,9 +61,10 @@ import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.FurniUpdate_Remove;
 import com.threerings.msoy.room.data.MemberInfo;
+import com.threerings.msoy.room.data.MemoryChangedListener;
 import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
@@ -75,7 +76,8 @@ import com.threerings.msoy.room.data.SceneAttrsUpdate;
  * Extends the base roomview with the ability to view a RoomObject, view chat, and edit.
  */
 public class RoomObjectView extends RoomView
-    implements SetListener, MessageListener, ChatSnooper, ChatDisplay, ChatInfoProvider
+    implements SetListener, MessageListener, ChatSnooper, ChatDisplay, ChatInfoProvider,
+               MemoryChangedListener
 {
     /**
      * Create a roomview.
@@ -263,8 +265,10 @@ public class RoomObjectView extends RoomView
             portalTraversed(sceneLoc.loc, true);
 
         } else if (RoomObject.MEMORIES == name) {
-            var mem :EntityMemoryEntry = event.getEntry() as EntityMemoryEntry;
-            dispatchMemoryChanged(mem.item, mem.key, mem.value);
+            var entry :EntityMemories = event.getEntry() as EntityMemories;
+            entry.memories.forEach(function (key :String, value :ByteArray) :void {
+                dispatchMemoryChanged(entry.ident, key, value);
+            });
 
         } else if (RoomObject.CONTROLLERS == name) {
             var ctrl :EntityControl = (event.getEntry() as EntityControl);
@@ -293,8 +297,11 @@ public class RoomObjectView extends RoomView
             moveBody((event.getEntry() as SceneLocation).bodyOid);
 
         } else if (RoomObject.MEMORIES == name) {
-            var mem :EntityMemoryEntry = event.getEntry() as EntityMemoryEntry;
-            dispatchMemoryChanged(mem.item, mem.key, mem.value);
+            // TODO: this presently should not happen, but we cope and treat it like an add
+            var entry :EntityMemories = event.getEntry() as EntityMemories;
+            entry.memories.forEach(function (key :String, value :ByteArray) :void {
+                dispatchMemoryChanged(entry.ident, key, value);
+            });
         }
     }
 
@@ -308,7 +315,13 @@ public class RoomObjectView extends RoomView
         }
     }
 
-    // fro interface MessageListener
+    // from interface MemoryChangedListener
+    public function memoryChanged (ident :ItemIdent, key :String, value :ByteArray) :void
+    {
+        dispatchMemoryChanged(ident, key, value);
+    }
+
+    // from interface MessageListener
     public function messageReceived (event :MessageEvent) :void
     {
         var args :Array = event.getArgs();

@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.room.server.persist;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +22,9 @@ import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.impl.Modifier;
+
+import com.samskivert.jdbc.DatabaseLiaison;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -36,35 +42,14 @@ public class MemoryRepository extends DepotRepository
     {
         super(ctx);
 
-        registerMigration(new DataMigration("2009_01_26_convertMemories") {
+        registerMigration(new DataMigration("2009_02_03_dropMemoryRecord") {
             @Override public void invoke () throws DatabaseException {
-                log.info("Memory migrate: starting");
-                List<Key<MemoryRecord>> oldKeys = findAllKeys(MemoryRecord.class, true);
-                log.info("Memory migrate: found keys", "memories", oldKeys.size());
-                // grind through these keys and build a set of itemIds
-                Set<ItemIdent> ids = Sets.newHashSet();
-                for (Key<MemoryRecord> key : oldKeys) {
-                    ids.add(new ItemIdent(
-                        ((Number)key.getValues()[0]).byteValue(),
-                        ((Number)key.getValues()[1]).intValue()));
-                }
-                oldKeys = null; // allow for GC
-                // now load all memories for each entity and turn them into a MemoriesRecord
-                log.info("Memory migrate: identified entities", "entities", ids.size());
-                int count = 0;
-                for (ItemIdent id : ids) {
-                    if (++count % 1000 == 0) {
-                        log.info("Memory migrate: still going...");
+                _ctx.invoke(new Modifier() {
+                    @Override protected int invoke (Connection conn, DatabaseLiaison liaison)
+                        throws SQLException {
+                        return liaison.dropTable(conn, "MemoryRecord") ? 1 : 0;
                     }
-                    List<MemoryRecord> recs = loadMemoryOld(id.type, id.itemId);
-                    List<com.threerings.msoy.room.data.EntityMemoryEntry> entries =
-                        Lists.newArrayListWithExpectedSize(recs.size());
-                    for (MemoryRecord rec : recs) {
-                        entries.add(rec.toEntry());
-                    }
-                    storeMemories(new MemoriesRecord(entries));
-                }
-                log.info("Memory migrate: done!");
+                });
             }
         });
     }
@@ -132,17 +117,9 @@ public class MemoryRepository extends DepotRepository
         delete(MemoriesRecord.class, MemoriesRecord.getKey(itemType, itemId));
     }
 
-    // TODO: remove. Support for convertMemories migration
-    protected List<MemoryRecord> loadMemoryOld (byte itemType, int itemId)
-    {
-        return findAll(MemoryRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
-            new Where(MemoryRecord.ITEM_TYPE, itemType, MemoryRecord.ITEM_ID, itemId)));
-    }
-
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
-        classes.add(MemoryRecord.class);
         classes.add(MemoriesRecord.class);
     }
 }

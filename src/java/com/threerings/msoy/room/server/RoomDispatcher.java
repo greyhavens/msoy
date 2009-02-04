@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.server;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.RoomMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -119,7 +118,7 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
 
         case RoomMarshaller.UPDATE_MEMORY:
             ((RoomProvider)provider).updateMemory(
-                source, (EntityMemoryEntry)args[0], (InvocationService.ResultListener)args[1]
+                source, (ItemIdent)args[0], (String)args[1], (byte[])args[2], (InvocationService.ResultListener)args[3]
             );
             return;
 

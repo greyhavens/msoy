@@ -11,7 +11,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.party.data.PartySummary;
 
-import com.threerings.msoy.room.data.EntityMemoryEntry;
+import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 
@@ -42,7 +42,7 @@ public class RoomObject extends SpotSceneObject
 
     /** Contains the memories for all entities in this room. */
     public var memories :DSet;
-    EntityMemoryEntry; // reference to force linkage
+    EntityMemories; MemoryChangedEvent; // references to force linkage
 
     /** Contains mappings for all controlled entities in this room. */
     public var controllers :DSet;

@@ -26,7 +26,7 @@ public class PetObject extends MsoyBodyObject
     public Pet pet;
 
     /** Memories extracted from our most recently departed room. */
-    public transient List<EntityMemoryEntry> memories;
+    public transient EntityMemories memories;
 
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
