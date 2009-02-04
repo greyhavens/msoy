@@ -431,8 +431,8 @@
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
-           timeToIdleSeconds="30"
-           timeToLiveSeconds="60"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="300"
            memoryStoreEvictionPolicy="LRU">
         <cacheEventListenerFactory
                 class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
@@ -446,8 +446,8 @@
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
-           timeToIdleSeconds="30"
-           timeToLiveSeconds="60"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="300"
            memoryStoreEvictionPolicy="LRU">
         <cacheEventListenerFactory
                 class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
