@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -21,7 +20,6 @@ import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.Key;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.impl.Modifier;
 
 import com.samskivert.jdbc.DatabaseLiaison;
@@ -29,8 +27,6 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages "smart" digital item memory.

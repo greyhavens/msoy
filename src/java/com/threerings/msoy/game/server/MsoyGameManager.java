@@ -3,20 +3,35 @@
 
 package com.threerings.msoy.game.server;
 
+import com.google.inject.Inject;
+
+import com.samskivert.util.Invoker;
+import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.presents.annotation.EventThread;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
+import com.whirled.game.data.GameContentOwnership;
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.WhirledPlayerObject;
 import com.whirled.game.server.WhirledGameManager;
+
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
 import com.threerings.msoy.bureau.server.MsoyBureauClient;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -111,6 +126,17 @@ public class MsoyGameManager extends WhirledGameManager
     }
 
     @Override // from PlaceManager
+    public String where ()
+    {
+        if (_config == null || _plobj == null) {
+            return super.where();
+        }
+        MsoyGameConfig cfg = (MsoyGameConfig)_config;
+        return "[" + cfg.game.name + ":" + cfg.getGameId() + ":" + _gameobj.getOid() +
+            "(" + StringUtil.toString(_gameobj.players) + ")";
+    }
+
+    @Override // from PlaceManager
     protected void didShutdown ()
     {
         super.didShutdown();
@@ -123,15 +149,56 @@ public class MsoyGameManager extends WhirledGameManager
         }
     }
 
-    @Override // from PlaceManager
-    public String where ()
+    @Override // from WhirledGameManager
+    protected void resolveContentOwnership (BodyObject body, final ResultListener<Void> listener)
     {
-        if (_config == null || _plobj == null) {
-            return super.where();
+        final PlayerObject plobj = (PlayerObject)body;
+        final Game game = ((MsoyGameConfig)getGameConfig()).game;
+        if (plobj.isContentResolved(game.gameId) || plobj.isContentResolving(game.gameId)) {
+            listener.requestCompleted(null);
+            return;
         }
-        MsoyGameConfig cfg = (MsoyGameConfig)_config;
-        return "[" + cfg.game.name + ":" + cfg.getGameId() + ":" + _gameobj.getOid() +
-            "(" + StringUtil.toString(_gameobj.players) + ")";
+
+        final GameContentOwnership resolving =  new GameContentOwnership(game.gameId,
+            GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVING);
+        plobj.addToGameContent(resolving);
+        _invoker.postUnit(
+            new ContentOwnershipUnit(game.gameId, game.getSuiteId(), plobj.getMemberId()) {
+                @Override public void handleSuccess() {
+                    if (!plobj.isActive()) {
+                        listener.requestCompleted(null);
+                        return; // the player has logged off, nevermind
+                    }
+                    plobj.startTransaction();
+                    try {
+                        for (GameContentOwnership ownership : _content) {
+                            plobj.addToGameContent(ownership);
+                        }
+                    } finally {
+                        plobj.removeFromGameContent(resolving);
+                        plobj.addToGameContent(new GameContentOwnership(game.gameId,
+                            GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVED));
+                        plobj.commitTransaction();
+                    }
+
+                    listener.requestCompleted(null);
+                }
+
+                @Override protected ItemPackRepository getIpackRepo() {
+                    return _ipackRepo;
+                }
+                @Override protected LevelPackRepository getLpackRepo() {
+                    return _lpackRepo;
+                }
+                @Override protected TrophyRepository getTrophyRepo() {
+                    return _trophyRepo;
+                }
+
+                @Override protected String getFailureMessage () {
+                    return "Failed to resolve content [game=" + _gameconfig.getGameId() +
+                        ", who=" + plobj.who() + "].";
+                }
+            });
     }
 
     /** A delegate that takes care of awarding flow and ratings. */
@@ -145,4 +212,9 @@ public class MsoyGameManager extends WhirledGameManager
 
     /** Tracks whether we added an agent to our parent session. */
     protected boolean _agentAdded;
+
+    @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected ItemPackRepository _ipackRepo;
+    @Inject protected LevelPackRepository _lpackRepo;
+    @Inject protected TrophyRepository _trophyRepo;
 }

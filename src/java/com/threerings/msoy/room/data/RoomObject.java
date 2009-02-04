@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.room.data;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import com.samskivert.util.ArrayUtil;
 
 import com.threerings.presents.dobj.DSet;

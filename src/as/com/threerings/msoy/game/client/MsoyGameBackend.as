@@ -18,6 +18,7 @@ import com.whirled.game.client.HeadShot;
 import com.whirled.game.client.WhirledGameBackend;
 import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.WhirledGameObject;
+import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.data.all.VizMemberName;
 
@@ -96,8 +97,8 @@ public class MsoyGameBackend extends WhirledGameBackend
     override protected function showGameLobby_v1 (multiplayer :Boolean) :void
     {
         (_ctx as GameContext).showGameLobby(multiplayer);
-    }    
-    
+    }
+
     // from WhirledGameBackend
     override protected function showGameShop_v1 (itemType :String, catalogId :int = 0) :void
     {
@@ -131,7 +132,7 @@ public class MsoyGameBackend extends WhirledGameBackend
         }
         (_ctx as GameContext).showGameShop(itemTypeCode, catalogId);
     }
-    
+
     // from WhirledGameBackend
     override protected function showSharePage_v1 (defmsg :String, token :String = "") :void
     {
@@ -143,13 +144,13 @@ public class MsoyGameBackend extends WhirledGameBackend
     {
     	return (_ctx as GameContext).getShareToken();
     }
-    
+
     // from WhirledGameBackend
     override protected function getShareMemberId_v1 () :int
     {
     	return (_ctx as GameContext).getShareMemberId();
     }
-    
+
     // from WhirledGameBackend
     override protected function showTrophies_v1 () :void
     {
@@ -159,7 +160,7 @@ public class MsoyGameBackend extends WhirledGameBackend
     protected function entryAddedOnUserObject (event :EntryAddedEvent) :void
     {
         var name :String = event.getName();
-        if (name == PlayerObject.GAME_CONTENT) {
+        if (name == WhirledPlayerObject.GAME_CONTENT) {
             var content :GameContentOwnership = (event.getEntry() as GameContentOwnership);
             // it should not be possible for a player to have content dynamically added for a game
             // other than the one they are playing, but let's be extra specially safe

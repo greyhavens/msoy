@@ -15,8 +15,6 @@ import java.util.Set;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -187,89 +185,6 @@ public class GameGameRegistry
             _distribs.put(key, tiler = new Percentiler());
         }
         return tiler;
-    }
-
-    /**
-     * Resolves the item and level packs owned by the player in question for the specified game, as
-     * well as trophies they have earned. This information will show up asynchronously, once the
-     */
-    public void resolveOwnedContent (final Game game, final PlayerObject plobj)
-    {
-        // if we've already resolved or started resolving content for this player, we are done
-        if (plobj.isContentResolved(game.gameId) || plobj.isContentResolving(game.gameId)) {
-            return;
-        }
-
-        // add our "currently resolving" marker and then start resolving
-        plobj.addToGameContent(new GameContentOwnership(
-            game.gameId, GameData.RESOLUTION_MARKER, PlayerObject.RESOLVING));
-        _invoker.postUnit(new RepositoryUnit("resolveOwnedContent") {
-            @Override public void invokePersist () throws Exception {
-                int memberId = plobj.getMemberId(), suiteId = game.getSuiteId();
-                Iterable<LevelPackRecord> lrecords;
-                Iterable<ItemPackRecord> irecords;
-                if (game.isDevelopmentVersion()) {
-                    // only the game creator will appear to "own" premium level packs (or any item
-                    // packs since all item packs are premium); however a crafty creator could
-                    // create extra item or premium level packs and give them to a tester and the
-                    // tester will then also appear to own said premium content
-                    lrecords = _lpackRepo.loadOriginalItems(memberId, suiteId);
-                    irecords = _ipackRepo.loadOriginalItems(memberId, suiteId);
-                    // filter out non-premium level packs (which will generally show up in the
-                    // creator's inventory) since those normally wouldn't be owned
-                    lrecords = Iterables.filter(lrecords, new Predicate<LevelPackRecord>() {
-                        public boolean apply (LevelPackRecord record) {
-                            return record.premium;
-                        }
-                    });
-                } else {
-                    lrecords = _lpackRepo.loadClonedItems(memberId, suiteId);
-                    irecords = _ipackRepo.loadClonedItems(memberId, suiteId);
-                }
-                Iterables.addAll(_lpacks, Iterables.transform(lrecords, LevelPackRecord.GET_IDENT));
-                Iterables.addAll(_ipacks, Iterables.transform(irecords, ItemPackRecord.GET_IDENT));
-                _trophies = _trophyRepo.loadTrophyOwnership(game.gameId, memberId);
-            }
-
-            @Override public void handleSuccess () {
-                if (!plobj.isActive()) {
-                    return; // the player has logged off, nevermind
-                }
-                plobj.startTransaction();
-                try {
-                    addContent(GameData.LEVEL_DATA, _lpacks);
-                    addContent(GameData.ITEM_DATA, _ipacks);
-                    addContent(GameData.TROPHY_DATA, _trophies);
-                } finally {
-                    // transition from "resolving" to "resolved"
-                    plobj.addToGameContent(new GameContentOwnership(
-                        game.gameId, GameData.RESOLUTION_MARKER, PlayerObject.RESOLVED));
-                    plobj.removeFromGameContent(new GameContentOwnership(
-                        game.gameId, GameData.RESOLUTION_MARKER, PlayerObject.RESOLVING));
-                    plobj.commitTransaction();
-                }
-            }
-
-            protected void addContent (byte type, Iterable<String> idents) {
-                plobj.startTransaction();
-                try {
-                    for (String ident : idents) {
-                        plobj.addToGameContent(new GameContentOwnership(game.gameId, type, ident));
-                    }
-                } finally {
-                    plobj.commitTransaction();
-                }
-            }
-
-            @Override protected String getFailureMessage () {
-                return "Failed to resolve content [game=" + game.gameId +
-                    ", who=" + plobj.who() + "].";
-            }
-
-            protected Set<String> _lpacks = Sets.newHashSet();
-            protected Set<String> _ipacks = Sets.newHashSet();
-            protected List<String> _trophies;
-        });
     }
 
     /**
@@ -909,6 +824,7 @@ public class GameGameRegistry
         throws InvocationException
     {
         final PlayerObject plobj = (PlayerObject)caller;
+        log.info("playNow", "gameId", gameId, "mode", mode);
         // we need to make sure the lobby is resolved, so route through identifyLobby
         identifyLobby(caller, gameId, new InvocationService.ResultListener() {
             public void requestProcessed (Object result) {
@@ -936,11 +852,14 @@ public class GameGameRegistry
                         gameCreated = false;
                         break;
                     }
+                    log.info("falling through to PLAY_NOW_SINGLE");
                     // else, fall through to PLAY_NOW_SINGLE
 
                 default:
                 case LobbyCodes.PLAY_NOW_SINGLE:
+                    log.info("playNowSingle", "plobj", plobj);
                     gameCreated = mgr.playNowSingle(plobj);
+                    log.info("gameCreated", "value", gameCreated);
                     break;
 
                 case LobbyCodes.PLAY_NOW_ANYONE:

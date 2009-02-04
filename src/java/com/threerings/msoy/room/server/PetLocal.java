@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.server;
 
-import java.util.List;
-
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.msoy.item.data.all.Pet;

@@ -29,6 +29,7 @@ public class AVRGameConfig extends PlaceConfig
         this.name = game.name;
         this.thumbnail = game.getThumbnailMedia();
         _gameId = game.gameId;
+        _suiteId = game.getSuiteId();
         _gameDef = gameDef;
     }
 
@@ -55,8 +56,19 @@ public class AVRGameConfig extends PlaceConfig
         return _gameId;
     }
 
+    /**
+     * Returns the suiteId of the Game object.
+     */
+    public int getSuiteId ()
+    {
+        return _suiteId;
+    }
+
     /** Our game's unique id. */
     protected int _gameId;
+
+    /** Our game item's suiteId */
+    protected int _suiteId;
 
     /** Our game definition. */
     protected GameDefinition _gameDef;

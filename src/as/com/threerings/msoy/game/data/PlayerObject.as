@@ -38,9 +38,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>humanity</code> field. */
     public static const HUMANITY :String = "humanity";
 
-    /** The field name of the <code>gameContent</code> field. */
-    public static const GAME_CONTENT :String = "gameContent";
-
     /** The field name of the <code>visitorInfo</code> field. */
     public static const VISITOR_INFO :String = "visitorInfo";
     // AUTO-GENERATED: FIELDS END

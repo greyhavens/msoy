@@ -80,7 +80,7 @@ public class LobbyController extends Controller
     LobbyMarshaller;
 
 
-    public function LobbyController (gctx :GameContext, mode :LobbyDef, onClear :Function, 
+    public function LobbyController (gctx :GameContext, mode :LobbyDef, onClear :Function,
         playNow :Function, lobbyLoaded :Function, displaySplash :Boolean)
     {
         _gctx = gctx;
@@ -90,14 +90,14 @@ public class LobbyController extends Controller
         _playNow = playNow;
         _lobbyLoaded = lobbyLoaded;
         _displaySplash = displaySplash;
-        
+
         _waitForWorldLogon = new GatedExecutor(function () :Boolean {
             return _gctx.getMsoyContext().getClient().isLoggedOn();
         });
-        
+
         _lobbyTimer = new LobbyResolutionTimer(_mctx);
         _lobbyTimer.start();
-        
+
         // create our lobby panel
         _panel = new LobbyPanel(_gctx, this);
         _panel.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
@@ -393,9 +393,9 @@ public class LobbyController extends Controller
         const partyGame :Boolean = (match.getMatchType() == GameConfig.PARTY);
         const multiplayerSupported :Boolean = (match.getMaximumPlayers() > 1);
         const multiplayerRequired :Boolean = (match.getMinimumPlayers() > 1);
-         
-        const lobbyMultiRequested :Boolean = (multiplayerSupported && _mode.multiplayerLobby); 
-         
+
+        const lobbyMultiRequested :Boolean = (multiplayerSupported && _mode.multiplayerLobby);
+
         // if we are a party game or multiplayer only...
         if (partyGame || multiplayerRequired || lobbyMultiRequested) {
             // either go to the matchmaking panel or right into create if there is nothing to show
@@ -412,7 +412,7 @@ public class LobbyController extends Controller
     {
         _lobj = obj as LobbyObject;
         _lobbyTimer.stop();
-        
+
         _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
 
         // create our table director
@@ -427,23 +427,23 @@ public class LobbyController extends Controller
         setGameView(_lobj.game);
 
         _waitForWorldLogon.execute(function () :void {
-           
+
             // set up our starting panel mode
             _panel.init(_lobj);
             _panel.open();
             _panel.setMode(getStartMode());
-    
+
             // pass group back to the caller now that the lobby has loaded
             _lobbyLoaded(_lobj.groupId);
-    
+
             // this is only used for testing game loading issues per WRLD-531, and will be removed
             // after the test is over. -- robert
             _mctx.getMsoyClient().trackClientAction("WRLD-531-2 game started", "stage 4");
-            
+
             // if we have a player table to join, do that now, otherwise
             if (_playerId != 0) {
                 joinPlayerTable(_playerId);
-    
+
             } else {
                 // otherwise do something appropriate based on our mode
                 switch (_mode) {
@@ -477,7 +477,7 @@ public class LobbyController extends Controller
         // run anything that's been waiting on the member object
         _waitForWorldLogon.update();
     }
-    
+
     /**
      * Once the lobby object has been located, this function pulls out the splash media,
      * and creates a new place view to display it.
@@ -485,9 +485,9 @@ public class LobbyController extends Controller
     protected function setGameView (game :Game) :void
     {
         if (! _displaySplash) {
-            return; 
+            return;
         }
-        
+
         _mctx.setPlaceView(new LobbyPlaceView(game));
     }
 
@@ -542,7 +542,7 @@ public class LobbyController extends Controller
 
     /** Whether or not the user clicked the close box to close this lobby. */
     protected var _closedByUser :Boolean;
-    
+
     /** Should the lobby be displayed on top of a custom splash view? */
     protected var _displaySplash :Boolean;
 
@@ -551,10 +551,10 @@ public class LobbyController extends Controller
 
     /** Are we seated? */
     protected var _isSeated :Boolean;
-    
+
     /** Monitors whether we've successfully subscribed to a lobby object. */
     protected var _lobbyTimer :LobbyResolutionTimer;
-    
+
     /** Executes jobs only when the lobby object and the member object have been resolved. */
     protected var _waitForWorldLogon :GatedExecutor;
 }
@@ -567,13 +567,13 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 /** Displays occasional feedback messages while we wait for a lobby. */
-class LobbyResolutionTimer 
+class LobbyResolutionTimer
 {
     /** Show a message every 5 seconds... */
-    public static const DELAY :int = 5000; 
+    public static const DELAY :int = 5000;
     /** ... and show it only three times. */
     public static const COUNT :int = 3;
-    
+
     public function LobbyResolutionTimer (mctx :MsoyContext)
     {
         _mctx = mctx;
@@ -592,18 +592,18 @@ class LobbyResolutionTimer
         _timer.stop();
         _timer.removeEventListener(TimerEvent.TIMER, displayUpdate);
         _timer.removeEventListener(TimerEvent.TIMER_COMPLETE, displayFinalUpdate);
-    } 
-    
+    }
+
     public function displayUpdate (e :TimerEvent) :void
     {
         _mctx.displayInfo(MsoyCodes.GAME_MSGS, "e.waiting_for_lobby");
     }
-    
+
     public function displayFinalUpdate (e :TimerEvent) :void
     {
         _mctx.displayInfo(MsoyCodes.GAME_MSGS, "e.waiting_for_lobby_failed");
     }
-    
+
     protected var _mctx :MsoyContext;
     protected var _timer :Timer;
 }

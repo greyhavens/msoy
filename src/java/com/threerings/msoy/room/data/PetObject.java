@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.data;
 
-import java.util.List;
-
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.Place;
 import com.threerings.crowd.data.PlaceObject;

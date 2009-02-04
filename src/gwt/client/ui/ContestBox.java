@@ -7,7 +7,6 @@ import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.threerings.gwt.ui.FloatPanel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.gwt.Contest;

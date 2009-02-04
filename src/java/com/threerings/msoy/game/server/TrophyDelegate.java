@@ -13,7 +13,6 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
@@ -76,12 +75,6 @@ public class TrophyDelegate extends PlayManagerDelegate
         }
 
         final int gameId = _content.game.gameId;
-
-        // the player's content is not loaded up yet so we can't make this award
-        // TODO: guarantee this operation by starting the game after the content has been resolved
-        if (!plobj.isContentResolved(gameId)) {
-            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
-        }
 
         // locate the trophy source record in question
         TrophySource source = null;
@@ -225,19 +218,6 @@ public class TrophyDelegate extends PlayManagerDelegate
     public void didShutdown ()
     {
         super.didShutdown();
-    }
-
-    @Override // from PlaceManagerDelegate
-    public void bodyEntered (int bodyOid)
-    {
-        super.bodyEntered(bodyOid);
-
-        PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
-
-        // if this person is a player, load up their content packs and trophies
-        if (isPlayer(plobj)) {
-            _gameReg.resolveOwnedContent(_content.game, plobj);
-        }
     }
 
     @Override // from PlaceManagerDelegate

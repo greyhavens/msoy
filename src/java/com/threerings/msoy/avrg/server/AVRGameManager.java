@@ -48,10 +48,12 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
+import com.threerings.msoy.game.server.ContentOwnershipUnit;
 import com.threerings.msoy.game.server.GameWatcherManager;
 import com.threerings.msoy.game.server.TrophyDelegate;
 import com.threerings.msoy.game.server.WorldServerClient;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.game.server.PlayerLocator;
 import com.threerings.msoy.room.server.RoomManager;
 
@@ -68,7 +70,10 @@ import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
 import com.threerings.msoy.bureau.server.MsoyBureauClient;
 
 import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.data.GameContentOwnership;
+import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.data.WhirledPlayerObject;
 import com.whirled.game.server.PrizeDispatcher;
 import com.whirled.game.server.PrizeProvider;
 import com.whirled.game.server.PropertySpaceDispatcher;
@@ -77,6 +82,9 @@ import com.whirled.game.server.PropertySpaceHelper;
 import com.whirled.game.server.WhirledGameManager;
 import com.whirled.game.server.WhirledGameMessageDispatcher;
 import com.whirled.game.server.WhirledGameMessageHandler;
+
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -493,44 +501,77 @@ public class AVRGameManager extends PlaceManager
     public void joinGame (final int playerId, final AVRService.AVRGameJoinListener listener)
     {
         if (MemberName.isGuest(playerId)) {
-            doJoinGame(playerId, null, listener);
+            doJoinGame(playerId, null, null, listener);
             return;
         }
 
-        PropertySpaceObject offlineProps = _offlineProps.remove(playerId);
-        if (offlineProps != null) {
-            // if a player joins whose offline properties have been manipulated, flush to database
-            // simultaneous to initializing the new player object with our cached data
-            doJoinGame(playerId, offlineProps.getUserProps(), listener);
+        AVRGameConfig config = (AVRGameConfig)getConfig();
+        int gameId = config.getGameId();
+        final PropertySpaceObject offlineProps = _offlineProps.remove(playerId);
+        final PlayerObject player = _locator.lookupPlayer(playerId);
+        final boolean resolveOwnership = player != null &&
+            !(player.isContentResolving(gameId) || player.isContentResolved(gameId));
+        if (resolveOwnership) {
+            player.addToGameContent(new GameContentOwnership(gameId,
+                GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVING));
+        }
+
+        if (!resolveOwnership && offlineProps != null) {
+            // in this unlikely combination, we get to skip the invoker trip altogether.
+            doJoinGame(playerId, offlineProps.getUserProps(), null, listener);
             flushPlayerGameState(playerId, offlineProps);
             return;
         }
 
-        _invoker.postUnit(new RepositoryUnit("joinAVRGame") {
-            @Override
-            public void invokePersist () throws Exception {
-                // read the game state records from store
-                _stateRecs = _repo.getPlayerGameState(_gameId, playerId);
-            }
-            @Override
-            public void handleSuccess () {
-                // turn them into a handy mapping
-                Map<String, byte[]> initialState = new HashMap<String, byte[]>();
-                for (PlayerGameStateRecord record : _stateRecs) {
-                    initialState.put(record.datumKey, record.datumValue);
-                }
-                // and fire up the game -- after decoding the property values
-                doJoinGame(playerId, PropertySpaceHelper.recordsToProperties(initialState),
-                           listener);
-            }
-            @Override
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to resolve player state", "gameId", _gameId,
-                            "player", playerId, pe);
-                listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
-            }
+        _invoker.postUnit(new ContentOwnershipUnit(gameId, config.getSuiteId(), playerId) {
+                @Override public void invokePersist () throws Exception {
+                    // read the game state records from store
+                    if (offlineProps == null) {
+                        _stateRecs = _repo.getPlayerGameState(_gameId, playerId);
+                    }
 
-            protected List<PlayerGameStateRecord> _stateRecs;
+                    if (resolveOwnership) {
+                        super.invokePersist();
+                    }
+                }
+
+                @Override public void handleSuccess() {
+                    Map<String, Object> props;
+                    if (offlineProps != null) {
+                        props = offlineProps.getUserProps();
+                    } else {
+                        // turn them into a handy mapping
+                        Map<String, byte[]> initialState = new HashMap<String, byte[]>();
+                        for (PlayerGameStateRecord record : _stateRecs) {
+                            initialState.put(record.datumKey, record.datumValue);
+                        }
+                        props = PropertySpaceHelper.recordsToProperties(initialState);
+                    }
+                    // and fire up the game -- after decoding the property values
+                    doJoinGame(playerId, props, _content, listener);
+
+                    if (offlineProps != null) {
+                        flushPlayerGameState(playerId, offlineProps);
+                    }
+                }
+
+                @Override public void handleFailure (Exception pe) {
+                    log.warning("Unable to resolve player state", "gameId", _gameId,
+                                "player", playerId, pe);
+                    listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+                }
+
+                @Override protected ItemPackRepository getIpackRepo() {
+                    return _ipackRepo;
+                }
+                @Override protected LevelPackRepository getLpackRepo() {
+                    return _lpackRepo;
+                }
+                @Override protected TrophyRepository getTrophyRepo() {
+                    return _trophyRepo;
+                }
+
+                protected List<PlayerGameStateRecord> _stateRecs;
         });
     }
 
@@ -540,6 +581,7 @@ public class AVRGameManager extends PlaceManager
     }
 
     protected void doJoinGame (int playerId, Map<String, Object> initialProps,
+                               List<GameContentOwnership> content,
                                AVRService.AVRGameJoinListener listener)
     {
         PlayerObject player = _locator.lookupPlayer(playerId);
@@ -548,6 +590,22 @@ public class AVRGameManager extends PlaceManager
             // database, the client is surely about to disintegrate anyway and we just
             // don't respond on the listener
             return;
+        }
+
+        if (content != null && player.isActive()) {
+            int gameId = ((AVRGameConfig)getConfig()).getGameId();
+            player.startTransaction();
+            try {
+                for (GameContentOwnership ownership : content) {
+                    player.addToGameContent(ownership);
+                }
+            } finally {
+                player.removeFromGameContent(new GameContentOwnership(gameId,
+                    GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVING));
+                player.addToGameContent(new GameContentOwnership(gameId,
+                    GameData.RESOLUTION_MARKER, WhirledPlayerObject.RESOLVED));
+                player.commitTransaction();
+            }
         }
 
         if (player.location == null || !player.location.equals(getLocation())) {
@@ -980,6 +1038,9 @@ public class AVRGameManager extends PlaceManager
     @Inject protected PlayerLocator _locator;
     @Inject protected LocationManager _locmgr;
     @Inject protected WorldServerClient _worldClient;
+    @Inject protected ItemPackRepository _ipackRepo;
+    @Inject protected LevelPackRepository _lpackRepo;
+    @Inject protected TrophyRepository _trophyRepo;
 
     /** idle time before shutting down the manager. */
     protected static final long IDLE_UNLOAD_PERIOD = 5*60*1000L; // in ms

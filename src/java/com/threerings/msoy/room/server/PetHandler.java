@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.server;
 
-import java.util.List;
 import java.util.Collections;
 
 import com.google.inject.Inject;
