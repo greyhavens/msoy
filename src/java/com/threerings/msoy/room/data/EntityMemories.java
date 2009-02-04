@@ -56,6 +56,9 @@ public class EntityMemories
         return size;
     }
 
+    /**
+     * Get the estimated size of one particular entry.
+     */
     public static int getSize (String key, byte[] value)
     {
         return (value == null) ? 0 : (key.length() + value.length);

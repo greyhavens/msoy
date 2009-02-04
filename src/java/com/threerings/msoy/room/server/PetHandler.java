@@ -96,8 +96,10 @@ public class PetHandler
             // leave our current location (which will extract our memories)
             _sceneReg.leaveOccupiedScene(_petobj);
             // and save them
-            RoomManager.flushMemories(_invoker, _memoryRepo,
-                Collections.singleton(_petobj.memories));
+            if (_petobj.memories != null) {
+                RoomManager.flushMemories(_invoker, _memoryRepo,
+                    Collections.singleton(_petobj.memories));
+            }
         }
 
         // if we're following a member, clear that out

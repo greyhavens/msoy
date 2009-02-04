@@ -181,8 +181,8 @@ public class MsoySession extends WhirledSession
             final int memberId = _memobj.getMemberId();
             final StatSet stats = local.stats;
             //final List<MemberExperience> experiences = Lists.newArrayList(_memobj.experiences);
-            final List<MemoriesRecord> memrecs = (local.memories == null) ? null :
-                MemoriesRecord.extractModified(Collections.singleton(local.memories));
+            final MemoriesRecord memrec = (local.memories == null || !local.memories.modified)
+                ? null : new MemoriesRecord(local.memories);
 
             log.info("Session ended [id=" + memberId + ", amins=" + activeMins + "].");
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
@@ -203,8 +203,8 @@ public class MsoySession extends WhirledSession
                     // save their experiences
                     //_memberLogic.saveExperiences(memberId, experiences);
                     // save any modified avatar memories
-                    if (memrecs != null) {
-                        _memoryRepo.storeMemories(memrecs);
+                    if (memrec != null) {
+                        _memoryRepo.storeMemories(memrec);
                         resolutionStamps.add(System.currentTimeMillis() - startStamp);
                     }
                     log.info("Session persisted", "memberId", memberId, "timing", resolutionStamps);

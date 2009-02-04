@@ -59,25 +59,6 @@ public class MemoriesRecord extends PersistentRecord
     @Column(length=8192) // 4k + extra. See Ray for explanation.
     public byte[] data;
 
-    /**
-     * Extracts the modified memory entries from the supplied list and returns a list of
-     * MemoriesRecord instances that can be saved to the database.
-     */
-    public static List<MemoriesRecord> extractModified (Iterable<EntityMemories> memories)
-    {
-        // TODO: does this expect the modified entries to be removed?
-
-        List<MemoriesRecord> list = Lists.newArrayList();
-        if (memories != null) {
-            for (EntityMemories entry : memories) {
-                if (entry.modified) {
-                    list.add(new MemoriesRecord(entry));
-                }
-            }
-        }
-        return list;
-    }
-
     /** Used when loading instances from the repository. */
     public MemoriesRecord ()
     {
@@ -125,30 +106,30 @@ public class MemoriesRecord extends PersistentRecord
      */
     public EntityMemories toEntry ()
     {
-        try {
-            ItemIdent ident = new ItemIdent(this.itemType, this.itemId);
-            DataInputStream ins = new DataInputStream(new ByteArrayInputStream(this.data));
-            int count = ins.readShort();
-            StreamableHashMap<String, byte[]> map = new StreamableHashMap<String, byte[]>();
-            for (int ii = 0; ii < count; ii++) {
-                String key = ins.readUTF();
-                byte[] value = new byte[ins.readShort()];
-                ins.read(value, 0, value.length);
-                map.put(key, value);
-            }
-            // TEMP: debugging
-            if (ins.available() > 0) {
-                log.warning("Haven't fully read memories",
-                    "ident", ident, "available", ins.available());
-            }
-            EntityMemories mems = new EntityMemories();
-            mems.ident = ident;
-            mems.memories = map;
-            return mems;
+        EntityMemories mems = new EntityMemories();
+        mems.ident = new ItemIdent(this.itemType, this.itemId);
+        mems.memories = new StreamableHashMap<String, byte[]>();
+        if (this.data != null) {
+            try {
+                DataInputStream ins = new DataInputStream(new ByteArrayInputStream(this.data));
+                int count = ins.readShort();
+                for (int ii = 0; ii < count; ii++) {
+                    String key = ins.readUTF();
+                    byte[] value = new byte[ins.readShort()];
+                    ins.read(value, 0, value.length);
+                    mems.memories.put(key, value);
+                }
+                // TEMP: debugging
+                if (ins.available() > 0) {
+                    log.warning("Haven't fully read memories",
+                        "ident", mems.ident, "available", ins.available());
+                }
 
-        } catch (IOException ioe) {
-            throw new RuntimeException("Can't happen", ioe);
+            } catch (IOException ioe) {
+                throw new RuntimeException("Can't happen", ioe);
+            }
         }
+        return mems;
     }
 
     // AUTO-GENERATED: METHODS START
