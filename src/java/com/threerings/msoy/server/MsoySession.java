@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;

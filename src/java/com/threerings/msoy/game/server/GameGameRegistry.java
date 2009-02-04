@@ -824,7 +824,6 @@ public class GameGameRegistry
         throws InvocationException
     {
         final PlayerObject plobj = (PlayerObject)caller;
-        log.info("playNow", "gameId", gameId, "mode", mode);
         // we need to make sure the lobby is resolved, so route through identifyLobby
         identifyLobby(caller, gameId, new InvocationService.ResultListener() {
             public void requestProcessed (Object result) {
@@ -852,14 +851,11 @@ public class GameGameRegistry
                         gameCreated = false;
                         break;
                     }
-                    log.info("falling through to PLAY_NOW_SINGLE");
                     // else, fall through to PLAY_NOW_SINGLE
 
                 default:
                 case LobbyCodes.PLAY_NOW_SINGLE:
-                    log.info("playNowSingle", "plobj", plobj);
                     gameCreated = mgr.playNowSingle(plobj);
-                    log.info("gameCreated", "value", gameCreated);
                     break;
 
                 case LobbyCodes.PLAY_NOW_ANYONE:
