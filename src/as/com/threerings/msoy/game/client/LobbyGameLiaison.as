@@ -128,7 +128,6 @@ public class LobbyGameLiaison extends GameLiaison
      // TODO: this probably shouldn't be public - just use joinLobby instead
     public function playNow (mode :int) :void
     {
-        log.debug("playNow", "mode", mode);
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultAdapter = new ResultAdapter(
             function (lobbyOid :int) :void
@@ -153,7 +152,6 @@ public class LobbyGameLiaison extends GameLiaison
             // the playNow() call will resolve the lobby on the game server, then attempt to start
             // a game for us; if it succeeds, it sends back a zero result and we need take no
             // further action; if it fails, it sends back the lobby OID so we can join the lobby
-            log.debug("lsvc.playNow()", "gameId", _gameId, "mode", mode);
             lsvc.playNow(_gctx.getClient(), _gameId, mode, cb);
         });
     }
