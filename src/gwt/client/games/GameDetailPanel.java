@@ -137,7 +137,8 @@ public class GameDetailPanel extends SmartTable
                 Pages.GROUPS, Args.compose("f", game.groupId));
             buttons = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gdpDiscuss(), onClick);
         }
-        ClickListener onClick = Link.createListener(Pages.SHOP, Args.compose("s", game.catalogId));
+        ClickListener onClick = Link.createListener(
+            Pages.SHOP, Args.compose("s", Game.GAME, game.catalogId));
         PushButton shop = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.gdpShop(), onClick);
         shop.setEnabled(game.catalogId != 0);
         buttons = (buttons == null) ? (Widget)shop : MsoyUI.createButtonPair(buttons, shop);
