@@ -167,11 +167,10 @@ public class MemberLocal extends BodyLocal
             // remove our avatar memories from this room
             takeAvatarMemoriesFromRoom(memobj, roomObj);
 
-            // if we're in a party and the last member to leave this room, clean up our bits
-            if (party != null && roomObj.parties.containsKey(party.id)) {
-                roomObj.removeFromParties(party.id);
-                party = null;
-            }
+//            // if we're in a party and the last member to leave this room, clean up our bits
+//            if (party != null && roomObj.parties.containsKey(party.id)) {
+//                roomObj.removeFromParties(party.id);
+//            }
 
         } finally {
             roomObj.commitTransaction();
