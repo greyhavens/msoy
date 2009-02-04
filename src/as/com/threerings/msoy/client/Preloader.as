@@ -168,14 +168,6 @@ public class Preloader extends Sprite
             var l :Loader = new Loader();
             if (!l.hasOwnProperty("unloadAndStop")) { // only available in 10
                 // the stub is booching us!
-
-                graphics.beginFill(0x79afd3);
-                graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
-                graphics.endFill();
-
-                addChild(l);
-                l.load(new URLRequest(DeploymentConfig.serverURL + "images/stub/error.jpg"));
-
                 showMessage("This window into the Whirled needs to be updated by the creator.",
                     "Click here to see their whirled live instead.");
                 return true;
@@ -241,6 +233,14 @@ public class Preloader extends Sprite
     protected function showMessage (msg :String, link :String) :void
     {
         removeChild(_spinner);
+
+        // show a fun error
+        graphics.beginFill(0x79afd3);
+        graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+        graphics.endFill();
+        var l :Loader = new Loader();
+        addChild(l);
+        l.load(new URLRequest(DeploymentConfig.serverURL + "images/stub/error.jpg"));
 
         // prefer to open the link in the same window/frame/tab, but if we can't, then don't.
         var target :String = "_self";
