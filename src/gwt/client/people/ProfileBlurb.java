@@ -118,16 +118,13 @@ public class ProfileBlurb extends Blurb
 
         // create our award box
         if (_pdata.profile.award != null) {
-            final Award award = _pdata.profile.award;
+            Award award = _pdata.profile.award;
             FlowPanel awardBox = MsoyUI.createFlowPanel("AwardBox");
             info.addWidget(awardBox, 1, null);
 
-            ClickListener clicker = new ClickListener () {
-                public void onClick (Widget sender) {
-                    String page = award.type == Award.AwardType.BADGE ? "passport" : "medals";
-                    Link.go(Pages.ME, Args.compose(page, _name.getMemberId()));
-                }
-            };
+            String page = award.type == Award.AwardType.BADGE ? "passport" : "medals";
+            ClickListener clicker =
+                Link.createListener(Pages.ME, Args.compose(page, _name.getMemberId()));
 
             if (award.type == AwardType.BADGE) {
                 String hexCode = Integer.toHexString(award.awardId);
