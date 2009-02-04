@@ -39,6 +39,8 @@ public class DesignWinnersPanel extends FlowPanel
         add(MsoyUI.createSimplePanel(new Image("/images/rooms/design_winners_header.png"),
             "Header"));
 
+        add(MsoyUI.createHTML(_msgs.designwinnersBlurb(), "Blurb"));
+
         _worldsvc.loadDesignWinners(new MsoyCallback<List<RoomInfo>>() {
             public void onSuccess (List<RoomInfo> winners) {
                 init(winners);
