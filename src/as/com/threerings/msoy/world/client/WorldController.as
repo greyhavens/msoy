@@ -10,6 +10,7 @@ import flash.system.Capabilities;
 
 import mx.controls.Button;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
@@ -294,7 +295,7 @@ public class WorldController extends MsoyController
         }
         menuData.push({ label: Msgs.GENERAL.get("l.friends"), children: friends });
 
-        var groups :Array = (me.groups != null) ? me.groups.toArray() : [];
+        var groups :Array = (me.groups != null) ? me.getSortedGroups() : [];
         groups = groups.map(function (gm :GroupMembership, index :int, array :Array) :Object {
             var item :Object = { label: gm.group.toString(), command: OPEN_CHANNEL, arg: gm.group };
             checkChatChannelOpen(gm.group, item);

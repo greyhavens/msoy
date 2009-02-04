@@ -22,7 +22,7 @@ public class PlayerEntry
     public var name :VizMemberName;
 
     /**
-     * A aort function that may be used for PlayerEntrys
+     * A sort function that may be used for PlayerEntrys
      */
     public static function sortByName (lhs :PlayerEntry, rhs :PlayerEntry, ... rest) :int
     {

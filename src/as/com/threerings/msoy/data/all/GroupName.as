@@ -17,6 +17,13 @@ import com.threerings.util.Name;
 public class GroupName extends Name
     implements Comparable, Hashable
 {
+    /** A sort function for sorting Names by their display portion, case insensitively.  */
+    public static const BY_DISPLAY_NAME :Function = function (n1 :Name, n2 :Name) :int {
+        var val :int = n1.toString().toLowerCase().localeCompare(n2.toString().toLowerCase());
+        // massage the value into something that a Sort can handle
+        return (val > 0) ? 1 : ((val == 0) ? 0 : -1);
+    };
+
     /** The maximum length of a group name */
     public static const LENGTH_MAX :int = 24;
 

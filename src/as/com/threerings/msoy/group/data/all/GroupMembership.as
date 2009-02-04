@@ -6,6 +6,7 @@ package com.threerings.msoy.group.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
+import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
@@ -40,6 +41,14 @@ public class GroupMembership
     public static function isValidRank (rank :int) :Boolean
     {
         return rank >= RANK_MEMBER && rank <= RANK_MANAGER;
+    }
+
+    /**
+     * A sort function that may be used for GroupMemberships.
+     */
+    public static function sortByName (lhs :GroupMembership, rhs :GroupMembership, ... rest) :int
+    {
+        return GroupName.BY_DISPLAY_NAME(lhs.group, rhs.group);
     }
 
     public function GroupMembership ()

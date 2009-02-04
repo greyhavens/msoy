@@ -249,6 +249,14 @@ public class MemberObject extends MsoyBodyObject
     }
 
     /**
+     * Get a sorted list of groups we're a member of.
+     */
+    public function getSortedGroups () :Array
+    {
+        return groups.toArray().sort(GroupMembership.sortByName);
+    }
+
+    /**
      * Tests if this member has any friends online.
      */
     public function hasOnlineFriends () :Boolean
