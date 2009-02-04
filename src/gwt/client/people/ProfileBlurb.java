@@ -118,22 +118,30 @@ public class ProfileBlurb extends Blurb
 
         // create our award box
         if (_pdata.profile.award != null) {
-            Award award = _pdata.profile.award;
+            final Award award = _pdata.profile.award;
             FlowPanel awardBox = MsoyUI.createFlowPanel("AwardBox");
             info.addWidget(awardBox, 1, null);
 
+            ClickListener clicker = new ClickListener () {
+                public void onClick (Widget sender) {
+                    String page = award.type == Award.AwardType.BADGE ? "passport" : "medals";
+                    Link.go(Pages.ME, Args.compose(page, _name.getMemberId()));
+                }
+            };
+
             if (award.type == AwardType.BADGE) {
                 String hexCode = Integer.toHexString(award.awardId);
-                awardBox.add(MsoyUI.createLabel(
-                    _dmsgs.get("badge_" + hexCode, award.name), "Name"));
+                awardBox.add(MsoyUI.createActionLabel(
+                    _dmsgs.get("badge_" + hexCode, award.name), "Name", clicker));
                 awardBox.add(MsoyUI.createLabel(_msgs.awardBadge(), "Type"));
 
             } else if (award.type == AwardType.MEDAL) {
-                awardBox.add(MsoyUI.createLabel(award.name, "Name"));
+                awardBox.add(MsoyUI.createActionLabel(award.name, "Name", clicker));
                 awardBox.add(MsoyUI.createLabel(_msgs.awardMedal(), "Type"));
             }
 
-            awardBox.add(MsoyUI.createImage(award.icon.getMediaPath(), "Icon"));
+            awardBox.add(MsoyUI.makeActionImage(
+                MsoyUI.createImage(award.icon.getMediaPath(), "Icon"), null, clicker));
             awardBox.add(MsoyUI.createLabel(_msgs.awardEarned(MsoyUI.formatDate(
                 new Date(award.whenEarned))), "WhenEarned"));
         }
