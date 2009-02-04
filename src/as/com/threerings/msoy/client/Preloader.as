@@ -12,6 +12,8 @@ import flash.events.ProgressEvent;
 
 import flash.external.ExternalInterface;
 
+import flash.net.URLRequest;
+
 import flash.system.Capabilities;
 
 import flash.text.TextField;
@@ -166,8 +168,16 @@ public class Preloader extends Sprite
             var l :Loader = new Loader();
             if (!l.hasOwnProperty("unloadAndStop")) { // only available in 10
                 // the stub is booching us!
-                showMessage("This swf must be updated. Please contact the page author.",
-                    "Click here to visit Whirled.com and view the content there.");
+
+                graphics.beginFill(0x79afd3);
+                graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+                graphics.endFill();
+
+                addChild(l);
+                l.load(new URLRequest(DeploymentConfig.serverURL + "images/stub/error.jpg"));
+
+                showMessage("This window into the Whirled needs to be updated by the creator.",
+                    "Click here to see their whirled live instead.");
                 return true;
             }
         }
