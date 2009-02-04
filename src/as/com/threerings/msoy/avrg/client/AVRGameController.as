@@ -442,6 +442,34 @@ public class AVRGameController extends PlaceController
         }
     }
 
+    protected function occupantEntered (info :OccupantInfo) :void
+    {
+        if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
+            roomOccupantAdded(info.username, "room occupancy changed");
+        }
+    }
+
+    protected function occupantLeft (info :OccupantInfo) :void
+    {
+        if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
+            roomOccupantRemoved(info.username, "room occupancy changed");
+        }
+    }
+
+    protected function playerMessage (event :MessageEvent) :void
+    {
+        var name :String = event.getName();
+        if (name == AVRGameObject.TASK_COMPLETED_MESSAGE) {
+            var args :Array = event.getArgs();
+            var task :String = String(args[0]);
+            var amount :int = int(args[1]);
+            if (!_backend.taskCompleted(task, amount)) {
+                const forReal :Boolean = Boolean(args[2]);
+                reportCoinsAwarded(amount, forReal);
+            }
+        }
+    }
+
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
 
@@ -457,33 +485,13 @@ public class AVRGameController extends PlaceController
 
     protected var _lastDispatchedSceneId :int;
 
-    protected var _playerListener :MessageAdapter = new MessageAdapter(
-        function (event :MessageEvent) :void {
-            var name :String = event.getName();
-            if (name == AVRGameObject.TASK_COMPLETED_MESSAGE) {
-                var args :Array = event.getArgs();
-                var task :String = String(args[0]);
-                var amount :int = int(args[1]);
-                if (!_backend.taskCompleted(task, amount)) {
-                    const forReal :Boolean = Boolean(args[2]);
-                    reportCoinsAwarded(amount, forReal);
-                }
-            }
-        });
+    protected var _playerListener :MessageAdapter =
+        new MessageAdapter(playerMessage);
 
     protected var _gameListener :SetAdapter =
         new SetAdapter(gameEntryAdded, gameEntryUpdated, gameEntryRemoved);
 
-    protected var _occupantObserver :OccupantObserver = new OccupantAdapter(
-        function (info :OccupantInfo) :void {
-            if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
-                roomOccupantAdded(info.username, "room occupancy changed");
-            }
-        },
-        function (info :OccupantInfo) :void {
-            if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
-                roomOccupantRemoved(info.username, "room occupancy changed");
-            }
-        });
+    protected var _occupantObserver :OccupantObserver =
+        new OccupantAdapter(occupantEntered, occupantLeft);
 }
 }
