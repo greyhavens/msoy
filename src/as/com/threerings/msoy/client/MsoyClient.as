@@ -432,8 +432,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected static function getServerPorts () :Array
     {
         var params :Object = MsoyParameters.get();
-        return (params["port"] != null) ?
-            [ int(parseInt(params["port"])) ] : DeploymentConfig.serverPorts;
+        return (params["port"] != null) ? [ int(params["port"]) ] : DeploymentConfig.serverPorts;
     }
 
     protected var _ctx :MsoyContext;
