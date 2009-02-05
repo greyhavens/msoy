@@ -360,14 +360,6 @@ public class LobbyController extends Controller
     }
 
     /**
-     * Restores the lobby UI.
-     */
-    public function restoreLobbyUI () :void
-    {
-        _panel.open();
-    }
-
-    /**
      * Event handler for Event.ADDED_TO_STAGE
      */
     public function handleAddedToStage (evt :Event) :void
@@ -393,7 +385,6 @@ public class LobbyController extends Controller
         const partyGame :Boolean = (match.getMatchType() == GameConfig.PARTY);
         const multiplayerSupported :Boolean = (match.getMaximumPlayers() > 1);
         const multiplayerRequired :Boolean = (match.getMinimumPlayers() > 1);
-
         const lobbyMultiRequested :Boolean = (multiplayerSupported && _mode.multiplayerLobby);
 
         // if we are a party game or multiplayer only...
