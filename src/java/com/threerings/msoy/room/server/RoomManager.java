@@ -808,6 +808,9 @@ public class RoomManager extends SpotSceneManager
         // provide MsoyBodyObject instances with a RoomLocal they can use to determine stoniness
         // and managerness; MsoyBodyObject clears this local out in its didLeavePlace() override
         if (body instanceof MsoyBodyObject) {
+            // add them to our list of ordered bodies
+            _actors.add(body.getOid());
+
             body.setLocal(RoomLocal.class, new RoomLocal() {
                 public boolean useStaticMedia (MsoyBodyObject body) {
                     return _actors.indexOf(body.getOid()) >= ACTOR_RENDERING_LIMIT;
@@ -988,11 +991,6 @@ public class RoomManager extends SpotSceneManager
                     new MemberExperience(new Date(), HomePageItem.ACTION_ROOM, model.sceneId));
             }
         }
-
-        // if this is an actor, add them to our list
-        if (_plobj.occupantInfo.get(bodyOid) instanceof ActorInfo) {
-            _actors.add(bodyOid);
-        }
     }
 
     @Override // from PlaceManager
@@ -1033,7 +1031,7 @@ public class RoomManager extends SpotSceneManager
         reassignControllers(bodyOid);
 
         // remove this body from our actor list
-        _actors.remove(Integer.valueOf(bodyOid));
+        _actors.remove(bodyOid);
 
         // potentially unstone one or more actors
         for (int ii = 0, ll = _actors.size(); ii < ll; ii++) {
