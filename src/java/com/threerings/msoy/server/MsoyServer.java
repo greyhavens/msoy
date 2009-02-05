@@ -118,6 +118,16 @@ public class MsoyServer extends MsoyBaseServer
      */
     public static void main (final String[] args)
     {
+        // don't let people not test
+        if (-1 != DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverURL)) {
+            System.err.println("Sorry, to properly test whirled your mediaURL needs to be " +
+                "a different server than your serverURL. Luckily, the easy trick is to " +
+                "change the mediaURL to be your IP address. These values can be editied in " +
+                "etc/msoy-server.properties. You may need a static IP for your workstation.");
+            System.exit(-1);
+            return;
+        }
+
         // if we're on the dev server, up our long invoker warning to 3 seconds
         if (ServerConfig.autoRestart) {
             Invoker.setDefaultLongThreshold(3000L);

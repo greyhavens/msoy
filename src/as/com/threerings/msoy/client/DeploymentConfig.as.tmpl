@@ -13,18 +13,5 @@ package com.threerings.msoy.client {
         public static const staticMediaURL :String = "@static_media_url@";
         public static const logLevelsConfig :String = "@log_levels_config@";
         public static const billingURL :String = "@billing_url@";
-        
-        private static function staticInit () :void
-        {
-            if (-1 != mediaURL.indexOf(serverHost)) {
-                trace("\n\n====\n" +
-                    "WARNING! WARNING!\n" +
-                    "To properly test whirled, you need to have your media loaded " +
-                    "from a different address than the server. Try setting the media_url " +
-                    "in your msoy-server.properties to the IP address of your server." +
-                    "\n====\n\n");
-            }
-        }
-        staticInit();
     }
 }
