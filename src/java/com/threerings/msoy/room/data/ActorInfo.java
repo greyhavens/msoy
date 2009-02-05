@@ -74,7 +74,7 @@ public abstract class ActorInfo extends OccupantInfo
     {
         super(body);
         _state = body.actorState;
-        useDynamicMedia(body);
+        updateMedia(body);
     }
 
     /** Used for unserialization. */
