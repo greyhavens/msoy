@@ -29,10 +29,11 @@ public class ImportContactListPanel extends FlowPanel
         VerticalPanel contents = new VerticalPanel();
         contents.add(MsoyUI.createLabel("Invite Friends from Your Address Book",
             "importContactList-header"));
-        contents.add(MsoyUI.createHTML("Select the people from your address book that you would like " +
-        		"to send this invitation to.  We'll give you <b>1000 coins</b> for each person " +
-        		"that joins through your invite, and we'll add them to your friends list as soon " +
-        		"as they sign up.", "importContactList-description"));
+        contents.add(MsoyUI.createHTML(
+            "Select the people from your address book that you would like " +
+            "to send this invitation to.  We'll give you <b>1000 coins</b> for each person " +
+            "that joins through your invite, and we'll add them to your friends list as soon " +
+            "as they sign up.", "importContactList-description"));
         Widget invite = MsoyUI.createButton("shortThin", "Invite", new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO

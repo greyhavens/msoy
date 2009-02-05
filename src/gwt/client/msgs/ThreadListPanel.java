@@ -72,7 +72,8 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             });
         }
         else {
-            _forumsvc.findThreads(_groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
+            _forumsvc.findThreads(_groupId, search, MAX_RESULTS,
+                new MsoyCallback<List<ForumThread>>() {
                 public void onSuccess (List<ForumThread> threads) {
                     setModel(new SimpleDataModel<ForumThread>(threads), 0);
                 }

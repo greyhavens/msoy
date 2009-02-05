@@ -281,7 +281,8 @@ public class FeedMessageAggregator extends FlowPanel
             case 104: // FRIEND_GAINED_LEVEL
                 // don't show the same friend's level gain more than once
                 for (FeedMessage msg : this.messages) {
-                    if (((FriendFeedMessage)msg).friend.equals(((FriendFeedMessage)message).friend)) {
+                    if (((FriendFeedMessage)msg).friend.equals(
+                            ((FriendFeedMessage)message).friend)) {
                         return true;
                     }
                 }
@@ -310,7 +311,8 @@ public class FeedMessageAggregator extends FlowPanel
         public void add (FeedMessage message)
         {
             if (displayed) {
-                CShell.log("Ignoring addition of messages to a MessageAggregate that has been displayed");
+                CShell.log(
+                    "Ignoring addition of messages to a MessageAggregate that has been displayed");
                 return;
             }
             list.add(message);

@@ -58,7 +58,8 @@ public class GalleriesBlurb extends Blurb
         // links to create gallery and/or see all galleries
         FlowPanel footerLinks = new FlowPanel();
         if (CShell.getMemberId() == _name.getMemberId()) {
-            footerLinks.add(Link.create(_msgs.createGallery(), Pages.PEOPLE, GalleryActions.CREATE));
+            footerLinks.add(
+                Link.create(_msgs.createGallery(), Pages.PEOPLE, GalleryActions.CREATE));
         }
         if (pdata.galleries != null && pdata.galleries.size() > NUM_GALLERIES) {
             footerLinks.add(WidgetUtil.makeShim(10, 10));

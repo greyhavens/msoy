@@ -170,7 +170,8 @@ public class ProfileBlurb extends Blurb
                       MsoyUI.formatDateTime(new Date(_profile.lastLogon)));
         }
         if (!isBlank(_profile.homePageURL)) {
-            Anchor homepage = new Anchor(_profile.homePageURL, _profile.homePageURL, "_blank", true);
+            Anchor homepage = new Anchor(
+                _profile.homePageURL, _profile.homePageURL, "_blank", true);
             addDetail(dbits, _msgs.homepage(), homepage);
         }
         details.add(dbits);

@@ -86,13 +86,17 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
                          Integer.toString(item.memberId)), 1, "Name");
             
             setWidget(1, 0, new Anchor("mailto:" + item.emailAddress, item.emailAddress));
-            setText(2, 0, _msgs.cashOutEntryAmount(Currency.BLING.format(item.cashOutInfo.blingAmount)));
-            setText(3, 0, _msgs.cashOutEntryWorth(MoneyUtil.formatUSD(item.cashOutInfo.blingWorth)));
-            setText(4, 0, _msgs.cashOutEntryRequested(MsoyUI.formatDateTime(item.cashOutInfo.timeRequested)));
+            setText(2, 0,
+                _msgs.cashOutEntryAmount(Currency.BLING.format(item.cashOutInfo.blingAmount)));
+            setText(3, 0,
+                _msgs.cashOutEntryWorth(MoneyUtil.formatUSD(item.cashOutInfo.blingWorth)));
+            setText(4, 0,
+                _msgs.cashOutEntryRequested(MsoyUI.formatDateTime(item.cashOutInfo.timeRequested)));
             setText(0, 1, item.cashOutInfo.billingInfo.firstName + ' ' + 
                 item.cashOutInfo.billingInfo.lastName +
                 (item.charity ? ' ' + _msgs.cashOutIsCharity() : ""));
-            setText(1, 1, _msgs.cashOutEntryPayPal(item.cashOutInfo.billingInfo.paypalEmailAddress));
+            setText(1, 1,
+                _msgs.cashOutEntryPayPal(item.cashOutInfo.billingInfo.paypalEmailAddress));
             setText(2, 1, item.cashOutInfo.billingInfo.streetAddress);
             setText(3, 1, item.cashOutInfo.billingInfo.city + ", " +
                 item.cashOutInfo.billingInfo.state + ' ' +
@@ -161,7 +165,8 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             
             protected void doCancel ()
             {
-                _moneysvc.cancelCashOut(entry.memberId, _reasonBox.getText(), new MsoyCallback<Void>() {
+                _moneysvc.cancelCashOut(entry.memberId, _reasonBox.getText(),
+                    new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         reload();
                         MsoyUI.info(_msgs.cashOutEntryCancelSuccess());

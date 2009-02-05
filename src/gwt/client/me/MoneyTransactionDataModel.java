@@ -25,7 +25,8 @@ import client.util.ServiceUtil;
  * receive other information as it's loaded, but this is still driven by the display of the
  * balance sheet itself.
  */
-public class MoneyTransactionDataModel extends ServiceBackedDataModel<MoneyTransaction, TransactionPageResult>
+public class MoneyTransactionDataModel
+    extends ServiceBackedDataModel<MoneyTransaction, TransactionPageResult>
 {
     public /* final */ int memberId;
     public /* final */ ReportType report;
@@ -37,8 +38,8 @@ public class MoneyTransactionDataModel extends ServiceBackedDataModel<MoneyTrans
     }
     
     /**
-     * Sets the callback that should be called when the bling information is retrieved by the server.
-     * If the information is immediately available, this will call the callback immediately.
+     * Sets the callback that should be called when the bling information is retrieved by the
+     * server. If the information is immediately available, this will call the callback immediately.
      * @param callback
      */
     public void addBlingCallback (AsyncCallback<BlingInfo> callback) 
@@ -70,7 +71,8 @@ public class MoneyTransactionDataModel extends ServiceBackedDataModel<MoneyTrans
     }
     
     @Override
-    protected void onSuccess (TransactionPageResult result, AsyncCallback<List<MoneyTransaction>> callback)
+    protected void onSuccess (
+        TransactionPageResult result, AsyncCallback<List<MoneyTransaction>> callback)
     {
         super.onSuccess(result, callback);
         _blingInfo = result.blingInfo;

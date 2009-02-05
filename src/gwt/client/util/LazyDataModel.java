@@ -23,7 +23,8 @@ public abstract class LazyDataModel<T> extends SimpleDataModel<T>
     }
 
     @Override // from SimpleDataModel
-    public void doFetchRows (final int start, final int count, final AsyncCallback<List<T>> callback)
+    public void doFetchRows (
+        final int start, final int count, final AsyncCallback<List<T>> callback)
     {
         if (_items == null) {
             fetchData(new AsyncCallback<List<T>>() {

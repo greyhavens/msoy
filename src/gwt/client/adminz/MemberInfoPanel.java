@@ -83,7 +83,8 @@ public class MemberInfoPanel extends SmartTable
 
         new ClickCallback<Void>(role) {
             @Override protected boolean callService () {
-                _role = Enum.valueOf(WebCreds.Role.class, role.getItemText(role.getSelectedIndex()));
+                _role = Enum.valueOf(
+                    WebCreds.Role.class, role.getItemText(role.getSelectedIndex()));
                 if (_role == info.role) {
                     return false; // we're reverting due to failure, so do nothing
                 }
@@ -148,8 +149,9 @@ public class MemberInfoPanel extends SmartTable
         row = addWidget(charity, 1, "Label");
         setText(row, 1, "Make this member a charity");
 
-        final CheckBox coreCharity = new CheckBox("This charity can be selected randomly when a member " +
-        		"making a purchase has not already selected a charity.");
+        final CheckBox coreCharity = new CheckBox(
+            "This charity can be selected randomly when a member " +
+            "making a purchase has not already selected a charity.");
         coreCharity.setChecked(info.coreCharity);
         coreCharity.setEnabled(charity.isChecked());
         setWidget(++row, 1, coreCharity);

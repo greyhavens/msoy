@@ -95,7 +95,8 @@ public class ArcadePanel extends FlowPanel
         public GenreBox (ArcadeData.Genre genre) {
             setStyleName("GenreBox");
 
-            ClickListener onClick = Link.createListener(Pages.GAMES, Args.compose("g", genre.genre));
+            ClickListener onClick = Link.createListener(
+                Pages.GAMES, Args.compose("g", genre.genre));
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));

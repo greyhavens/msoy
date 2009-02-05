@@ -147,7 +147,8 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
             protected void doCashOut()
             {
                 int blingAmount = Currency.BLING.parse(_amountBox.getText());
-                _moneysvc.charityCashOutBling(entry.memberId, blingAmount, new MsoyCallback<Void>() {
+                _moneysvc.charityCashOutBling(entry.memberId, blingAmount,
+                    new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         reload();
                         MsoyUI.info(_msgs.cashOutEntryCashOutSuccess());

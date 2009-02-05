@@ -29,7 +29,8 @@ import client.util.Link;
  */
 public class FavoritesPanel extends HorizontalPanel
 {
-    public FavoritesPanel (CatalogModels models, final int memberId, final byte itemType, int pageNo)
+    public FavoritesPanel (
+        CatalogModels models, final int memberId, final byte itemType, int pageNo)
     {
         setStyleName("shopPanel"); // hijack the complex stylings of the shop panel
         addStyleName("favoritesPanel");

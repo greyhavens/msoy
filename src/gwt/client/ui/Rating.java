@@ -22,8 +22,8 @@ public abstract class Rating extends FlexTable
     implements Stars.StarMouseListener
 {
     /**
-     * Construct a new display for the given target with member's previous rating of the target and a
-     * specified display mode.
+     * Construct a new display for the given target with member's previous rating of the
+     * target and a specified display mode.
      */
     public Rating (float averageRating, int ratingCount, byte myRating, boolean horiz)
     {

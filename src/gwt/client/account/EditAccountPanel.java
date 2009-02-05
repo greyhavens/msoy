@@ -158,7 +158,8 @@ public class EditAccountPanel extends FlowPanel
     {
         SmartTable table = new SmartTable(0, 10);
         table.setText(0, 0, _msgs.editRealName(), 1, "rightLabel");
-        table.setWidget(0, 1, _rname = MsoyUI.createTextBox("", MemberName.MAX_REALNAME_LENGTH, -1));
+        table.setWidget(0, 1,
+            _rname = MsoyUI.createTextBox("", MemberName.MAX_REALNAME_LENGTH, -1));
         _rname.setText(_accountInfo.realName);
         _rname.addKeyboardListener(new DeferredKeyAdapter() {
             public void execute () {
@@ -244,7 +245,8 @@ public class EditAccountPanel extends FlowPanel
                 new HTML(charity.description), 1, "charityDescription");
         }
 
-        charityTable.setWidget(row, 1, _upcharity = new Button(_cmsgs.update(), new ClickListener() {
+        charityTable.setWidget(row, 1,
+            _upcharity = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget sender) {
                 // The index of the selected radio button in the list will be the index in the list
                 // of charity names + 1 (the +1 for the random charity).

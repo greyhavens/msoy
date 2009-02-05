@@ -90,7 +90,8 @@ public class BuyPanel extends FlowPanel
         if (FlashClients.clientExists()) {
             if (item instanceof SubItem) {
                 add(WidgetUtil.makeShim(10, 10));
-                add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.boughtBackTo(), new ClickListener() {
+                add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.boughtBackTo(),
+                    new ClickListener() {
                     public void onClick (Widget sender) {
                         CShell.frame.closeContent();
                     }

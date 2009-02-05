@@ -36,7 +36,8 @@ public class GamesPage extends Page
             setContent(new TrophyCasePanel(args.get(1, 0)));
 
         } else if (action.equals("ct")) {
-            setContent(_msgs.compareTitle(), new TrophyComparePanel(args.get(1, 0), args.get(2, 0)));
+            setContent(_msgs.compareTitle(),
+                new TrophyComparePanel(args.get(1, 0), args.get(2, 0)));
 
         } else if (action.equals("g")) {
             setContent(new GameGenrePanel(

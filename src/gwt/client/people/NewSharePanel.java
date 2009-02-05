@@ -244,7 +244,8 @@ public class NewSharePanel extends VerticalPanel
         public InviteEmailPanel (final Page page, String defaultMessage)
         {
             setStylePrimaryName("inviteEmailPanel");
-            setText(0, 0, "Invite a friend by email and get 1000 coins when they join!", 1, "description");
+            setText(0, 0, "Invite a friend by email and get 1000 coins when they join!",
+                1, "description");
 
             // Side panel
             VerticalPanel sidePanel = new VerticalPanel();
@@ -457,7 +458,8 @@ public class NewSharePanel extends VerticalPanel
             });
             _mediumPanel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    embedText.setText(createEmbedCode(placeId, MEDIUM_WIDTH, MEDIUM_HEIGHT, isGame));
+                    embedText.setText(
+                        createEmbedCode(placeId, MEDIUM_WIDTH, MEDIUM_HEIGHT, isGame));
                     _smallPanel.setSelected(false);
                     _mediumPanel.setSelected(true);
                     _largePanel.setSelected(false);
@@ -580,8 +582,8 @@ public class NewSharePanel extends VerticalPanel
             HorizontalPanel icons = new HorizontalPanel();
             icons.setStylePrimaryName("gameLinks-icons");
             final Game game = detail.item;
-            Widget thumbnail = MediaUtil.createMediaView(game.getShotMedia(), MediaDesc.THUMBNAIL_SIZE,
-                new ClickListener() {
+            Widget thumbnail = MediaUtil.createMediaView(
+                game.getShotMedia(), MediaDesc.THUMBNAIL_SIZE, new ClickListener() {
                     public void onClick (Widget sender) {
                         htmlCode.setText(createLink(game.getShotMedia().getMediaPath(),
                             detail.gameId, gameToken, type));

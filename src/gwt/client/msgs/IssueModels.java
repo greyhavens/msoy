@@ -51,7 +51,9 @@ public class IssueModels
         }
 
         @Override // from ServiceBackedDataModel
-        protected void onSuccess (IssueService.IssueResult result, AsyncCallback<List<Issue>> callback) {
+        protected void onSuccess (
+            IssueService.IssueResult result, AsyncCallback<List<Issue>> callback)
+        {
             _isManager = result.isManager;
             for (Issue issue : result.issues) {
                 mapIssue(issue);
