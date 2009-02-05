@@ -51,6 +51,12 @@ public class LobbyDef
         return _multiplayerLobby;
     }
     
+    public function toString () :String
+    {
+        return "LobbyDef [playNow=" + _playNow + ", playNowMode=" + _playNowMode +
+            ", multiplayerLobby=" + _multiplayerLobby + "]";
+    }
+
     protected var _playNow :Boolean;
     protected var _playNowMode :int; // of LobbyCodes
     protected var _multiplayerLobby :Boolean;
