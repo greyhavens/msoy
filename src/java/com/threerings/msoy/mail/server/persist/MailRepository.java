@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -79,12 +80,11 @@ public class MailRepository extends DepotRepository
      */
     public List<ConversationRecord> loadConversations (int participantId, int offset, int count)
     {
-        return findAll(
-            ConversationRecord.class,
+        return findAll(ConversationRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
             new Join(ConversationRecord.CONVERSATION_ID, ParticipantRecord.CONVERSATION_ID),
             new Where(ParticipantRecord.PARTICIPANT_ID, participantId),
             new Limit(offset, count),
-            OrderBy.descending(ConversationRecord.LAST_SENT));
+            OrderBy.descending(ConversationRecord.LAST_SENT)));
     }
 
     /**
@@ -100,9 +100,9 @@ public class MailRepository extends DepotRepository
      */
     public List<ConvMessageRecord> loadMessages (int conversationId)
     {
-        return findAll(ConvMessageRecord.class,
+        return findAll(ConvMessageRecord.class, CacheStrategy.RECORDS, Lists.newArrayList(
                        new Where(ConvMessageRecord.CONVERSATION_ID, conversationId),
-                       OrderBy.ascending(ConvMessageRecord.SENT));
+                       OrderBy.ascending(ConvMessageRecord.SENT)));
     }
 
     /**
