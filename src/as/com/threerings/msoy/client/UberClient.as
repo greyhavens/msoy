@@ -7,6 +7,8 @@ import flash.display.DisplayObject;
 
 import flash.external.ExternalInterface;
 
+import flash.system.Security;
+
 import mx.core.Application;
 
 import com.threerings.flex.FlexUtil;
@@ -41,6 +43,26 @@ public class UberClient
     public static function isFeaturedPlaceView () :Boolean
     {
         return (UberClientModes.FEATURED_PLACE == getMode());
+    }
+
+    /**
+     * Are we a viewer of some sort, and not a client into the whirled servers?
+     */
+    public static function isViewer () :Boolean
+    {
+        switch (getMode()) {
+        case UberClientModes.AVATAR_VIEWER:
+        case UberClientModes.PET_VIEWER:
+        case UberClientModes.DECOR_VIEWER:
+        case UberClientModes.FURNI_VIEWER:
+        case UberClientModes.TOY_VIEWER:
+        case UberClientModes.DECOR_EDITOR:
+        case UberClientModes.GENERIC_VIEWER:
+            return true;
+
+        default:
+            return false;
+        }
     }
 
     /**
@@ -120,17 +142,17 @@ public class UberClient
             params.mode = mode;
         }
 
+        // Do not let a regular client be launched from the filesystem, it's probably
+        // actually a booch with reading parameters (and probably on fucking windows).
+        if (!isViewer() && (Security.sandboxType == Security.LOCAL_WITH_FILE)) {
+            // do not load the world! Instead complain about being unable to read parameters.
+            app.addChild(FlexUtil.createLabel("There was a problem starting the viewer."));
+            return;
+        }
+
         switch (mode) {
         default:
-            // Do not a regular client be launched from the filesystem, it's probably
-            // actually a booch with reading parameters (and probably on fucking windows).
-            if (app.root.loaderInfo.url.indexOf("file:") == 0) {
-                // do not load the world! Instead complain about being unable to read parameters.
-                app.addChild(FlexUtil.createLabel("There was a problem starting the viewer."));
-
-            } else {
-                new WorldClient(app.stage);
-            }
+            new WorldClient(app.stage);
             break;
 
         case UberClientModes.STUB:
