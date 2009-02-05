@@ -1031,7 +1031,7 @@ public class RoomManager extends SpotSceneManager
         reassignControllers(bodyOid);
 
         // remove this body from our actor list
-        _actors.remove(bodyOid);
+        _actors.remove((Object)bodyOid); // force usage of the Object, we're not removing by index
 
         // potentially unstone one or more actors
         for (int ii = 0, ll = _actors.size(); ii < ll; ii++) {
