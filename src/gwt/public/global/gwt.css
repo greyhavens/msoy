@@ -84,6 +84,15 @@ img, embed, applet, object {
   white-space: nowrap;
 }
 
+.blueButton {
+  border: none;
+  color: #FFFFFF;
+  font-weight: bold;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  text-align: center;
+  white-space: nowrap;
+}
+
 .backButton {
   background-image: url(/images/ui/back.png);
   width: 29px;

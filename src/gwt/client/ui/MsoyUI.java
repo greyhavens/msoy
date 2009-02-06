@@ -337,6 +337,22 @@ public class MsoyUI
     }
 
     /**
+     * Creates an orange button of the specified size with the supplied text.
+     */
+    public static PushButton createBlueButton (String size, String label, ClickListener listener)
+    {
+        if (!MEDIUM_THIN.equals(size) && !LONG_THIN.equals(size)) {
+            throw new IllegalArgumentException(
+                "Blue buttons only come in MEDIUM_THIN and LONG_THIN.");
+        }
+        PushButton button = new PushButton(label);
+        maybeAddClickListener(button, listener);
+        button.setStyleName(size + "BlueButton");
+        button.addStyleName("blueButton");
+        return button;
+    }
+
+    /**
      * Creates a button with tiny text.
      */
     public static Button createTinyButton (String label, ClickListener listener)
