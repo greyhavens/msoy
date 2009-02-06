@@ -138,13 +138,13 @@ public abstract class BuyPanel<T extends PurchaseResult> extends SmartTable
         if (quote.getListedCurrency() == Currency.BARS) {
             _barLabel.setText(_msgs.barCost(NumberFormat.getCurrencyFormat().format(
                 quote.getUSDPerBarCost() * quote.getBars())));
-            _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(
-                (int)Math.ceil(quote.getExchangeRate()))));
-            _addenda.add(_wikiLink);
+            _addenda.remove(_wikiLink);
         } else {
             _barLabel.setText(quote.getCoinChange() > 0 ?
                 _msgs.coinChange(Currency.COINS.format(quote.getCoinChange())) : "");
-            _addenda.remove(_wikiLink);
+            _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(
+                (int)Math.ceil(quote.getExchangeRate()))));
+            _addenda.add(_wikiLink);
         }
         _buyCoins.setAmount(quote.getCoins());
     }
