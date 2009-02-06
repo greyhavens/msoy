@@ -20,7 +20,9 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
+import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.ui.AwardPanel;
 
 import com.threerings.msoy.client.MemberService;
@@ -29,6 +31,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
@@ -118,6 +121,23 @@ public class NotificationDirector extends BasicDirector
             _awardPanel = new AwardPanel(_mctx);
         }
         _awardPanel.displayAward(award);
+
+        // also gin up a local notification and post that
+        var msg :String = null;
+        if (award is Trophy) {
+            var trophy :Trophy = (award as Trophy);
+            msg = MessageBundle.tcompose("m.trophy_earned", trophy.name, trophy.gameId);
+        } else if (award is Item) {
+            var prize :Item = (award as Item);
+            msg = MessageBundle.tcompose("m.prize_earned", prize.name, prize.getType());
+        } else if (award is Badge) {
+            var badge :Badge = (award as Badge);
+            var nm :String = _mctx.xlate(MsoyCodes.PASSPORT_MSGS, badge.nameProp, badge.levelName);
+            msg = MessageBundle.tcompose("m.badge_awarded", nm, badge.coinValue);
+        }
+        if (msg != null) {
+            addGenericNotification(msg, Notification.BUTTSCRATCHING);
+        }
     }
 
     // from interface AttributeChangeListener

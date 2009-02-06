@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.badge.data.all {
 
 import com.threerings.io.ObjectInputStream;

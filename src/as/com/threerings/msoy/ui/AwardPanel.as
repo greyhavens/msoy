@@ -18,7 +18,6 @@ import caurina.transitions.Tweener;
 import com.threerings.flash.MediaContainer;
 
 import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
 import com.threerings.util.MultiLoader;
 
 import com.threerings.msoy.badge.data.all.Badge;
@@ -80,43 +79,33 @@ public class AwardPanel
 
     protected function showNextAward (award :Object) :void
     {
-        var msg :String, name :String, title :String;
-        var messageBundle :String;
+        var name :String, title :String;
         var mediaDesc :MediaDesc;
         var mediaUrl :String;
         if (award is Trophy) {
             var trophy :Trophy = (award as Trophy);
-            msg = MessageBundle.tcompose("m.trophy_earned", trophy.name);
             name = trophy.name;
             title = _ctx.xlate(MsoyCodes.GAME_MSGS, "m.trophy_title");
             mediaDesc = trophy.trophyMedia;
-            messageBundle = MsoyCodes.GAME_MSGS;
 
         } else if (award is Item) {
             var item :Item = (award as Item);
-            msg = MessageBundle.tcompose("m.prize_earned", item.name);
             name = item.name;
             title = _ctx.xlate(MsoyCodes.GAME_MSGS, "m.prize_title");
             mediaDesc = item.getThumbnailMedia();
-            messageBundle = MsoyCodes.GAME_MSGS;
 
         } else if (award is Badge) {
             var badge :Badge = (award as Badge);
             var level :String = badge.levelName;
             name = _ctx.xlate(MsoyCodes.PASSPORT_MSGS, badge.nameProp, level);
-            msg = MessageBundle.tcompose("m.badge_awarded", name, badge.coinValue);
             title = _ctx.xlate(MsoyCodes.PASSPORT_MSGS, "t.badge_awarded");
             mediaUrl = badge.imageUrl;
-            messageBundle = MsoyCodes.PASSPORT_MSGS;
 
         } else {
             log.warning("Requested to display unknown award " + award + ".");
             checkPendingAwards();
             return;
         }
-
-        // display a chat message reporting their award
-        _ctx.displayInfo(messageBundle, msg);
 
         // configure the award display panel with the award info
         (_panel.getChildByName("statement") as TextField).text = title;

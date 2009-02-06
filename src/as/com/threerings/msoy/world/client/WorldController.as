@@ -129,6 +129,9 @@ public class WorldController extends MsoyController
     /** Command to view a game, arg is [ gameId ] */
     public static const VIEW_GAME :String = "ViewGame";
 
+    /** Command to view the trophies awarded by a game, arg is [ gameId ] */
+    public static const VIEW_TROPHIES :String = "ViewTrophies";
+
     /** Command to visit a member's current location */
     public static const VISIT_MEMBER :String = "VisitMember";
 
@@ -486,6 +489,14 @@ public class WorldController extends MsoyController
 //         if (!inGWTApp() || !displayPage("games", "d_" + gameId)) {
             handleJoinGameLobby(gameId);
 //         }
+    }
+
+    /**
+     * Handles the VIEW_TROPHIES command.
+     */
+    public function handleViewTrophies (gameId :int) :void
+    {
+        displayPage("games", "d_" + gameId + "_t");
     }
 
     /**
