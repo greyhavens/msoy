@@ -43,6 +43,9 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The field name of the <code>targetExchangeRate</code> field. */
     public static final String TARGET_EXCHANGE_RATE = "targetExchangeRate";
+
+    /** The field name of the <code>barCost</code> field. */
+    public static final String BAR_COST = "barCost";
     // AUTO-GENERATED: FIELDS END
 
     /** The amount of flow per hour that a game can award a player. */
@@ -70,7 +73,7 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The amount of USD cents each bling (NOT centibling) is worth. */
     public int blingWorth = 9;
-
+    
     /** The minimum amount of bling (NOT centibling) that can be cashed out at a time. */
     public int minimumBlingCashOut = 500;
 
@@ -79,6 +82,9 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The target bar/coin exchange rate. */
     public float targetExchangeRate = 3000;
+
+    /** The amount of USD cents each bar currently costs (for display purposes). */
+    public int barCost = 9;
 
     /**
      * The percentage of the purchase price that disappears, notionally going into the system
@@ -264,6 +270,22 @@ public class MoneyConfigObject extends ConfigObject
         requestAttributeChange(
             TARGET_EXCHANGE_RATE, Float.valueOf(value), Float.valueOf(ovalue));
         this.targetExchangeRate = value;
+    }
+
+    /**
+     * Requests that the <code>barCost</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBarCost (int value)
+    {
+        int ovalue = this.barCost;
+        requestAttributeChange(
+            BAR_COST, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.barCost = value;
     }
     // AUTO-GENERATED: METHODS END
 }

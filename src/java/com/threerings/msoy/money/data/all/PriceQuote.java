@@ -22,13 +22,15 @@ public class PriceQuote extends SimpleStreamableObject
     implements Serializable, IsSerializable
 {
     public PriceQuote (
-        Currency listedCurrency, int coins, int bars, int coinChangeForBars, float rate)
+        Currency listedCurrency, int coins, int bars, int coinChangeForBars,
+        float rate, float barCost)
     {
         _listedCurrency = listedCurrency;
         _coins = coins;
         _bars = bars;
         _coinChange = coinChangeForBars;
         _rate = rate;
+        _barCost = barCost;
     }
 
     /** For serialization. */
@@ -102,6 +104,14 @@ public class PriceQuote extends SimpleStreamableObject
     {
         return _rate;
     }
+    
+    /**
+     * Return the current cost in USD for a single bar.
+     */
+    public float getUSDPerBarCost ()
+    {
+        return _barCost;
+    }
 
     /* For debugging */
     public String toString ()
@@ -115,6 +125,7 @@ public class PriceQuote extends SimpleStreamableObject
     protected int _bars;
     protected int _coinChange;
     protected float _rate;
+    protected float _barCost;
 
     /** The maximum amount the exchange rate can vary at purchase time. */
     protected static final float MAX_RATE_VARIANCE = .05f;

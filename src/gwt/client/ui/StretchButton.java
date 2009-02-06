@@ -16,6 +16,7 @@ public class StretchButton extends FocusPanel
 {
     public static final String ORANGE_THICK = "orangeThick";
     public static final String BLUE_THICK = "blueThick";
+    public static final String BLUE_THIN = "blueThin";
 
     public static StretchButton makeOrange (String label, ClickListener listener)
     {

@@ -23,11 +23,10 @@
   margin-top: 10px;
 }
 
-.buyButton {
-  margin-top: 20px;
-  width: 100%;
+.buyPanelButton {
+  margin-top: 10px;
 }
 
 .buyButton .X {
-  width: 170px;
+  width: 120px;
 }

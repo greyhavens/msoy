@@ -5,16 +5,19 @@ package client.money;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.money.gwt.CostUpdatedException;
@@ -24,8 +27,10 @@ import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.PurchaseResult;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.StretchButton;
+import client.util.BillingURLs;
 import client.util.ClickCallback;
 import client.util.MoneyUtil;
 import client.util.Link;
@@ -33,7 +38,7 @@ import client.util.Link;
 /**
  * A base-class interface for buying an item in whirled.
  */
-public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
+public abstract class BuyPanel<T extends PurchaseResult> extends SmartTable
 {
     /**
      */
@@ -45,16 +50,26 @@ public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
         _buyBars = new BuyButton(Currency.BARS);
         _barPanel = new FlowPanel();
         _barPanel.add(_buyBars);
-        _changeLabel = new Label();
-        _barPanel.add(_changeLabel);
-        Widget link = Link.buyBars(_msgs.getBars());
-        link.setStyleName("GetBars");
-        _barPanel.add(link);
-        add(_barPanel);
+        _barLabel = new Label();
+        _barPanel.add(_barLabel);
+        getFlexCellFormatter().setColSpan(0, 0, 2);
+        setWidget(0, 0, _barPanel);
+
+        _getBars = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.getBars(), new ClickListener() {
+            public void onClick (Widget sender) {
+                Window.open(BillingURLs.getEntryPoint(CShell.creds), "_blank", "");
+            }
+        });
+        _getBars.addStyleName("buyPanelButton");
+        setWidget(1, 0, _getBars);
 
         _buyCoins = new BuyButton(Currency.COINS);
-        add(_buyCoins);
+        setWidget(1, 1, _buyCoins);
 
+        _addenda = new FlowPanel();
+        setWidget(2, 0, _addenda);
+        getFlexCellFormatter().setColSpan(2, 0, 2);
+        
         // Display exchange rate 
         _wikiLink = MsoyUI.createExternalAnchor("http://wiki.whirled.com/Currency", "");
         
@@ -69,8 +84,9 @@ public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
 
     /**
      * Add any special UI to the BuyPanel after a purchase has executed.
+     * @param boughtPanel 
      */
-    protected void addPurchasedUI (T result, Currency currency)
+    protected void addPurchasedUI (T result, Currency currency, FlowPanel boughtPanel)
     {
         // nothing by default
     }
@@ -84,12 +100,14 @@ public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
         clear();
         setStyleName("Bought");
 
-        addPurchasedUI(result, currency);
+        FlowPanel boughtPanel = new FlowPanel();
+        
+        addPurchasedUI(result, currency, boughtPanel);
 
         if (result.charity != null) {
             String percentage = NumberFormat.getPercentFormat().format(
                 (int)(100.0 * result.charityPercentage) / 100.0);
-            add(WidgetUtil.makeShim(10, 10));
+            boughtPanel.add(WidgetUtil.makeShim(10, 10));
             FlowPanel charityPanel = new FlowPanel();
             charityPanel.setStyleName("Charity");
             charityPanel.add(new InlineLabel(_msgs.donatedToCharity(percentage)));
@@ -97,7 +115,7 @@ public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
                 result.charity.toString(), Pages.PEOPLE, ""+result.charity.getMemberId()));
             charityPanel.add(WidgetUtil.makeShim(10, 10));
             charityPanel.add(Link.create(_msgs.changeCharity(), Pages.ACCOUNT, "edit"));
-            add(charityPanel);
+            boughtPanel.add(charityPanel);
         }
         
         FlowPanel again = new FlowPanel();
@@ -106,7 +124,9 @@ public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
         buyAgain.addStyleDependentName("small");
         again.add(buyAgain);
         again.add(MsoyUI.createLabel(_msgs.timesBought(""+_timesBought), null));
-        add(again);
+        boughtPanel.add(again);
+        
+        setWidget(0, 0, boughtPanel);
     }
 
     protected void updatePrice (PriceQuote quote)
@@ -115,16 +135,18 @@ public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
 
         _barPanel.setVisible(quote.getCoins() > 0);
         _buyBars.setAmount(quote.getBars());
-        _changeLabel.setText(quote.getCoinChange() > 0 ?
-            _msgs.coinChange(Currency.COINS.format(quote.getCoinChange())) : "");
-        _buyCoins.setAmount(quote.getCoins());
         if (quote.getListedCurrency() == Currency.BARS) {
+            _barLabel.setText(_msgs.barCost(NumberFormat.getCurrencyFormat().format(
+                quote.getUSDPerBarCost() * quote.getBars())));
             _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(
                 (int)Math.ceil(quote.getExchangeRate()))));
-            add(_wikiLink);
+            _addenda.add(_wikiLink);
         } else {
-            remove(_wikiLink);
+            _barLabel.setText(quote.getCoinChange() > 0 ?
+                _msgs.coinChange(Currency.COINS.format(quote.getCoinChange())) : "");
+            _addenda.remove(_wikiLink);
         }
+        _buyCoins.setAmount(quote.getCoins());
     }
 
     protected class BuyCallback extends ClickCallback<T>
@@ -171,9 +193,9 @@ public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
     {
         public BuyButton (Currency currency)
         {
-            super(currency == Currency.BARS ? ORANGE_THICK : BLUE_THICK, null);
+            super(currency == Currency.BARS ? ORANGE_THICK : BLUE_THIN, null);
             _currency = currency;
-            addStyleName("buyButton");
+            addStyleName("buyPanelButton");
             new BuyCallback(this, currency);
         }
 
@@ -183,9 +205,9 @@ public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
             horiz.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 
             horiz.add(MsoyUI.createLabel((amount > 0) ? _msgs.buy() : _msgs.buyFree(), null));
-            horiz.add(WidgetUtil.makeShim(10, 1));
+            horiz.add(WidgetUtil.makeShim(_currency == Currency.BARS ? 10 : 5, 1));
             horiz.add(MsoyUI.createImage(_currency.getLargeIcon(), null));
-            horiz.add(WidgetUtil.makeShim(10, 1));
+            horiz.add(WidgetUtil.makeShim(_currency == Currency.BARS ? 10 : 5, 1));
             horiz.add(MsoyUI.createLabel(_currency.format(amount), null));
 
             setContent(horiz);
@@ -197,8 +219,10 @@ public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
     protected PriceQuote _quote;
 
     protected BuyButton _buyBars, _buyCoins;
+    protected PushButton _getBars;
     protected FlowPanel _barPanel;
-    protected Label _changeLabel;
+    protected FlowPanel _addenda;
+    protected Label _barLabel;
     protected Anchor _wikiLink;
     
     protected int _timesBought;

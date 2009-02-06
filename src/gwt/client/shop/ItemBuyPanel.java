@@ -6,6 +6,7 @@ package client.shop;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,14 +19,12 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.PurchaseResult;
 
 import client.item.ItemActivator;
 import client.money.BuyPanel;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
-import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.ServiceUtil;
@@ -60,7 +59,8 @@ public class ItemBuyPanel extends BuyPanel<CatalogService.ItemPurchaseResult>
     }
 
     @Override
-    protected void addPurchasedUI (CatalogService.ItemPurchaseResult result, Currency currency)
+    protected void addPurchasedUI (
+        CatalogService.ItemPurchaseResult result, Currency currency, FlowPanel boughtPanel)
     {
         Item item = result.item;
         byte itype = item.getType();
@@ -71,26 +71,26 @@ public class ItemBuyPanel extends BuyPanel<CatalogService.ItemPurchaseResult>
 
         // change the buy button into a "you bought it" display
         String type = _dmsgs.xlate("itemType" + itype);
-        add(MsoyUI.createLabel(_msgs.boughtTitle(type), "Title"));
+        boughtPanel.add(MsoyUI.createLabel(_msgs.boughtTitle(type), "Title"));
 
         if (FlashClients.clientExists()) {
             if (item instanceof SubItem) {
-                add(WidgetUtil.makeShim(10, 10));
-                add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.boughtBackTo(),
+                boughtPanel.add(WidgetUtil.makeShim(10, 10));
+                boughtPanel.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.boughtBackTo(),
                     new ClickListener() {
                     public void onClick (Widget sender) {
                         CShell.frame.closeContent();
                     }
                 }));
             } else {
-                add(new ItemActivator(item, true));
-                add(new Label(getUsageMessage(itype)));
+                boughtPanel.add(new ItemActivator(item, true));
+                boughtPanel.add(new Label(getUsageMessage(itype)));
             }
 
         } else {
-            add(new Label(_msgs.boughtViewStuff(type)));
+            boughtPanel.add(new Label(_msgs.boughtViewStuff(type)));
             String ptype = _dmsgs.xlate("pItemType" + itype);
-            add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
+            boughtPanel.add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
         }
     }
 

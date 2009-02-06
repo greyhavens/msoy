@@ -113,6 +113,12 @@ img, embed, applet, object {
   padding-top: 4px;
 }
 
+.mediumThinBlueButton .longThinBlueButton {
+  font-size: 15px;
+  height: 25px;
+  padding-top: 4px;
+}
+
 .shortThickOrangeButton, .mediumThickOrangeButton, .longThickOrangeButton {
   font-size: 28px;
   height: 40px;
@@ -1058,6 +1064,13 @@ img, embed, applet, object {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 }
 
+.orangeThin, .blueThin {
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
 .stretchButton-small .buyButton .X {
   width: 80px;
 }
@@ -1071,7 +1084,11 @@ img, embed, applet, object {
   width: 36px;
 }
 
-/** ORANGE BUTTON */
+.orangeThin .W, .orangeThin .E, .blueThin .W, .blueThin .E {
+  width: 24px;
+}
+
+/** THICK ORANGE BUTTON */
 
 .orangeThick .W {
   background-image: url(/images/ui/button/orange_thick_left.png);
@@ -1110,43 +1127,43 @@ img, embed, applet, object {
   background-image: url(/images/ui/button/orange_thick_right_down.png);
 }
 
-/** BLUE BUTTON */
+/** THIN BLUE BUTTON */
 
-.blueThick .W {
-  background-image: url(/images/ui/button/blue_thick_left.png);
+.blueThin .W {
+  background-image: url(/images/ui/button/blue_thin_left.png);
 }
 
-.blueThick .X {
-  background-image: url(/images/ui/button/blue_thick_center.png);
-  height: 44px;
+.blueThin .X {
+  background-image: url(/images/ui/button/blue_thin_center.png);
+  height: 29px;
 }
 
-.blueThick .E {
-  background-image: url(/images/ui/button/blue_thick_right.png);
+.blueThin .E {
+  background-image: url(/images/ui/button/blue_thin_right.png);
 }
 
-.blueThick-up-hovering .W {
-  background-image: url(/images/ui/button/blue_thick_left_over.png);
+.blueThin-up-hovering .W {
+  background-image: url(/images/ui/button/blue_thin_left_over.png);
 }
 
-.blueThick-up-hovering .X {
-  background-image: url(/images/ui/button/blue_thick_center_over.png);
+.blueThin-up-hovering .X {
+  background-image: url(/images/ui/button/blue_thin_center_over.png);
 }
 
-.blueThick-up-hovering .E {
-  background-image: url(/images/ui/button/blue_thick_right_over.png);
+.blueThin-up-hovering .E {
+  background-image: url(/images/ui/button/blue_thin_right_over.png);
 }
 
-.blueThick-down-hovering .W {
-  background-image: url(/images/ui/button/blue_thick_left_down.png);
+.blueThin-down-hovering .W {
+  background-image: url(/images/ui/button/blue_thin_left_down.png);
 }
 
-.blueThick-down-hovering .X {
-  background-image: url(/images/ui/button/blue_thick_center_down.png);
+.blueThin-down-hovering .X {
+  background-image: url(/images/ui/button/blue_thin_center_down.png);
 }
 
-.blueThick-down-hovering .E {
-  background-image: url(/images/ui/button/blue_thick_right_down.png);
+.blueThin-down-hovering .E {
+  background-image: url(/images/ui/button/blue_thin_right_down.png);
 }
 
 /* ------------------------------------
