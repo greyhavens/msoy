@@ -380,7 +380,7 @@ public class MemberRepository extends DepotRepository
         search = search.toLowerCase();
         Where whereClause = new Where(new And(
             new In(MemberRecord.MEMBER_ID, memberIds),
-            new Like(MemberRecord.NAME, "%" + search + "%")));
+            new Like(new FunctionExp("LOWER", MemberRecord.NAME), "%" + search + "%")));
 
         return Lists.transform(
             findAllKeys(MemberRecord.class, false, whereClause),
