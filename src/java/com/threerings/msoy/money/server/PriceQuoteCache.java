@@ -11,8 +11,6 @@ import net.sf.ehcache.Element;
 
 import com.google.common.base.Preconditions;
 
-import com.threerings.msoy.item.data.all.CatalogIdent;
-
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
@@ -45,10 +43,13 @@ public class PriceQuoteCache
      * Adds the quote to the cache. Subsequent calls to {@link #getQuote} for this PriceKey will
      * return the quote data, unless the cache is full and the quote is dropped to make room, or
      * the quote expires.
+     *
+     * @param wareKey some Object representing the ware for which this quote applies. Must
+     * provide a meaningful hashCode() and equals().
      */
-    public void addQuote (int memberId, CatalogIdent item, PriceQuote quote)
+    public void addQuote (int memberId, Object wareKey, PriceQuote quote)
     {
-        _cache.put(new Element(new PriceKey(memberId, item), quote));
+        _cache.put(new Element(new PriceKey(memberId, wareKey), quote));
     }
 
     /**
@@ -58,10 +59,10 @@ public class PriceQuoteCache
      *
      * @return The secured quote, or null.
      */
-    public PriceQuote getQuote (int memberId, CatalogIdent item)
+    public PriceQuote getQuote (int memberId, Object wareKey)
         throws NotSecuredException
     {
-        final Element e = _cache.getQuiet(new PriceKey(memberId, item));
+        final Element e = _cache.getQuiet(new PriceKey(memberId, wareKey));
         if (e == null) {
             return null;
         }
@@ -71,9 +72,9 @@ public class PriceQuoteCache
     /**
      * Removes the quote, so it is no longer reserved. Does nothing if the key is not present.
      */
-    public void removeQuote (int memberId, CatalogIdent item)
+    public void removeQuote (int memberId, Object wareKey)
     {
-        _cache.remove(new PriceKey(memberId, item));
+        _cache.remove(new PriceKey(memberId, wareKey));
     }
 
     protected Cache _cache;
@@ -86,18 +87,18 @@ public class PriceQuoteCache
 class PriceKey
     implements Serializable
 {
-    public PriceKey (int memberId, CatalogIdent item)
+    public PriceKey (int memberId, Object wareKey)
     {
-        Preconditions.checkNotNull(item);
+        Preconditions.checkNotNull(wareKey);
         _memberId = memberId;
-        _ident = item;
+        _wareKey = wareKey;
     }
 
     @Override
     public int hashCode ()
     {
         int hash = _memberId;
-        hash = 31 * hash + _ident.hashCode();
+        hash = 31 * hash + _wareKey.hashCode();
         return hash;
     }
 
@@ -109,9 +110,9 @@ class PriceKey
             return false;
         }
         PriceKey that = (PriceKey)obj;
-        return (_memberId == that._memberId) && _ident.equals(that._ident);
+        return (_memberId == that._memberId) && _wareKey.equals(that._wareKey);
     }
 
     protected int _memberId;
-    protected CatalogIdent _ident;
+    protected Object _wareKey;
 }
