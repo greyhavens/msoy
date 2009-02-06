@@ -408,7 +408,9 @@ public class MsoySprite extends DataPackMediaContainer
     public function entityMoved (entityId :String, destination :Array) :void
     {
         if (hasUserCode("entityMoved_v2")) {
-            callUserCode("entityMoved_v2", entityId, destination);
+            // make a copy of the array so that usercode can't fuck with it
+            callUserCode("entityMoved_v2", entityId,
+                (destination == null) ? null : destination.concat());
         } else if (destination == null) {
             // v1 only fired this event upon arrival of the destination
             callUserCode("entityMoved_v1", entityId);
