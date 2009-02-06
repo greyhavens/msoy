@@ -193,6 +193,19 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Called when control of an entity is assigned to us.
+     */
+    public function dispatchEntityGotControl (ident :ItemIdent) :void
+    {
+        var sprite :MsoySprite = _roomView.getEntity(ident);
+        if (sprite != null) {
+            sprite.gotControl();
+        } else {
+            log.info("Received got control for unknown sprite", "item", ident);
+        }
+    }
+
+    /**
      * Handles a request by an item in our room to send an "action" (requires control) or a
      * "message" (doesn't require control).
      */

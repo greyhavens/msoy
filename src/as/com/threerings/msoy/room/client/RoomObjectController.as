@@ -916,7 +916,7 @@ public class RoomObjectController extends RoomController
                 if (ident.equals(winfo.getItemIdent())) {
                     if (winfo.bodyOid == ourOid) {
                         // dispatch got-control to the avatar, it should supress repeats
-                        _roomView.dispatchEntityGotControl(ident);
+                        dispatchEntityGotControl(ident);
                         return true;
 
                     } else {
@@ -935,7 +935,7 @@ public class RoomObjectController extends RoomController
         } else if (ctrl.controllerOid == ourOid) {
             // redispatch that we have control, just in case the media
             // started up after the last dispatch...
-            _roomView.dispatchEntityGotControl(ident);
+            dispatchEntityGotControl(ident);
             return true;
 
         } else {

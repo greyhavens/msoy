@@ -274,7 +274,7 @@ public class RoomObjectView extends RoomView
             var ctrl :EntityControl = (event.getEntry() as EntityControl);
             if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
                 if (ctrl.controlled is ControllableEntity) {
-                    dispatchEntityGotControl(
+                    _ctrl.dispatchEntityGotControl(
                         (ctrl.controlled as ControllableEntity).getItemIdent());
 
                 } else {

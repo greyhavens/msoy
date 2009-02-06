@@ -518,6 +518,15 @@ public class RoomView extends Sprite
         return _entities.get(ident) as MsoySprite;
     }
 
+    /**
+     * Execute the specified function for each entity.
+     * function (key :ItemIdent, entity :MsoySprite) :void
+     */
+    public function forEachEntity (foreach :Function) :void
+    {
+        _entities.forEach(foreach);
+    }
+
     public function getItemIdents () :Array
     {
         return _entities.keys();
@@ -534,19 +543,6 @@ public class RoomView extends Sprite
 
         return keys;
     }*/
-
-    /**
-     * Called when control of an entity is assigned to us.
-     */
-    public function dispatchEntityGotControl (ident :ItemIdent) :void
-    {
-        var sprite :MsoySprite = (_entities.get(ident) as MsoySprite);
-        if (sprite != null) {
-            sprite.gotControl();
-        } else {
-            log.info("Received got control for unknown sprite", "item", ident);
-        }
-    }
 
     /**
      * Called when a sprite message arrives on the room object.

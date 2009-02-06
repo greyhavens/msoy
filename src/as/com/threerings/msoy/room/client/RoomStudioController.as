@@ -94,7 +94,7 @@ public class RoomStudioController extends RoomController
     // handle control requests
     override public function requestControl (ident :ItemIdent) :void
     {
-        MethodQueue.callLater(_studioView.dispatchEntityGotControl, [ ident ]);
+        MethodQueue.callLater(dispatchEntityGotControl, [ ident ]);
     }
 
     // documentation inherited
