@@ -314,13 +314,23 @@
            memoryStoreEvictionPolicy="LRU">
     </cache>
 
-    <cache name="depotKeyset"
+    <cache name="depotShortKeyset"
            maxElementsInMemory="50"
            overflowToDisk="false"
            maxElementsOnDisk="0"
            eternal="false"
            timeToIdleSeconds="30"
-           timeToLiveSeconds="60"
+           timeToLiveSeconds="30"
+           memoryStoreEvictionPolicy="LRU">
+    </cache>
+
+    <cache name="depotLongKeyset"
+           maxElementsInMemory="50"
+           overflowToDisk="false"
+           maxElementsOnDisk="0"
+           eternal="false"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="300"
            memoryStoreEvictionPolicy="LRU">
     </cache>
 

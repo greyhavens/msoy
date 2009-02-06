@@ -426,7 +426,22 @@
                             replicateRemovals=true"/>
     </cache>
 
-    <cache name="depotKeyset"
+    <cache name="depotShortKeyset"
+           maxElementsInMemory="25000"
+           overflowToDisk="false"
+           maxElementsOnDisk="0"
+           eternal="false"
+           timeToIdleSeconds="10"
+           timeToLiveSeconds="10"
+           memoryStoreEvictionPolicy="LRU">
+        <cacheEventListenerFactory
+                class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+                properties="replicateAsynchronously=true, replicatePuts=false,
+                            replicateUpdates=true, replicateUpdatesViaCopy=false,
+                            replicateRemovals=true"/>
+    </cache>
+
+    <cache name="depotLongKeyset"
            maxElementsInMemory="25000"
            overflowToDisk="false"
            maxElementsOnDisk="0"
