@@ -153,7 +153,10 @@ public class HeaderBar extends HBox
         var closeBtn :CommandButton = new CommandButton(null, MsoyController.CLOSE_PLACE_VIEW);
         closeBtn.styleName = "closeButton";
         _closeBox.addChild(closeBtn);
-        FlexUtil.setVisible(_closeBox, false) // start out hidden
+        FlexUtil.setVisible(_closeBox, false); // start out hidden
+
+        _ctx.getUIState().addEventListener(UIStateChangeEvent.STATE_CHANGE, handleUIStateChange);
+        handleUIStateChange(null);
     }
 
     protected function handleEmbeddedKnown (event :ValueEvent) :void
@@ -163,15 +166,20 @@ public class HeaderBar extends HBox
 
         // add a coins display
         if (embedded) {
-            addCurrencyIcon(Currency.COINS);
-            _coinsLabel = new Label();
-            _coinsLabel.styleName = "currencyLabel";
-            addChild(_coinsLabel);
 
-            addCurrencyIcon(Currency.BARS);
-            _barsLabel = new Label();
-            _barsLabel.styleName = "currencyLabel";
-            addChild(_barsLabel);
+            // disabled for the time being
+            // TODO: remove permanently
+            if (false) {
+                addCurrencyIcon(Currency.COINS);
+                _coinsLabel = new Label();
+                _coinsLabel.styleName = "currencyLabel";
+                addChild(_coinsLabel);
+
+                addCurrencyIcon(Currency.BARS);
+                _barsLabel = new Label();
+                _barsLabel.styleName = "currencyLabel";
+                addChild(_barsLabel);
+            }
 
             // set up a listener to hear about userobject changes
             _ctx.getClient().addClientObserver(
@@ -225,6 +233,13 @@ public class HeaderBar extends HBox
             _barsLabel.text = Currency.BARS.format(int(event.getValue()));
             break;
         }
+    }
+
+    protected function handleUIStateChange (event :UIStateChangeEvent) :void
+    {
+        var state :UIState = _ctx.getUIState();
+        _goBtn.visible = !state.embedded;
+        _tabsContainer.visible = state.showChat;
     }
 
     protected static const WHIRLED_LOGO_WIDTH :int = 124;

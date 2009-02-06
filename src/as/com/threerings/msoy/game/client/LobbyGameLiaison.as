@@ -53,7 +53,7 @@ public class LobbyGameLiaison extends GameLiaison
         _gctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, gameLocationDidChange, null));
 
-        // get a notification about logins to the game server
+        // get a notification about logins to the world server
         _wctx.getWorldClient().addClientObserver(new ClientAdapter(null, worldClientDidLogon));
 
         // Set the token on the game context, so it can get passed to the game.

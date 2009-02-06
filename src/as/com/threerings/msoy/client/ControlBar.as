@@ -93,6 +93,8 @@ public class ControlBar extends HBox
 
         createControls();
         checkControls();
+
+        _ctx.getUIState().addEventListener(UIStateChangeEvent.STATE_CHANGE, uiStateChanged);
     }
 
     /**
@@ -142,32 +144,11 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Called to tell us when we're in game mode.
+     * Called to tell us what the game button should look like.
      */
-    public function setInGame (inGame :Boolean, icon :MediaDesc = null) :void
+    public function setGameButtonIcon (icon :MediaDesc) :void
     {
         setGameButtonStyle(icon);
-        _inGame = inGame;
-        updateUI();
-    }
-
-    /**
-     * Called to tell us when we're in avr game mode (normally overlaps with inRoom).
-     */
-    public function setInAVRGame (inAVRGame :Boolean, icon :MediaDesc = null) :void
-    {
-        setGameButtonStyle(icon);
-        _inAVRGame = inAVRGame;
-        updateUI();
-    }
-
-    /**
-     * Called to tell us when we're in a room.
-     */
-    public function setInRoom (inRoom :Boolean) :void
-    {
-        _inRoom = inRoom;
-        updateUI();
     }
 
     /**
@@ -266,26 +247,33 @@ public class ControlBar extends HBox
 
     protected function addControls () :void
     {
+        var state :UIState = _ctx.getUIState();
+
         // visibility conditions for our buttons
-        function notInViewer () :Boolean {
+        function showChat () :Boolean {
+            return !isInViewer() && state.showChat;
+        }
+
+        function showNotification () :Boolean {
             return !isInViewer();
         }
 
-        function inWhirled () :Boolean {
-            return _inRoom || _inGame;
+        function showShare () :Boolean {
+            return state.inRoom || (!state.embedded && state.inGame);
         }
 
-        function inRoom () :Boolean {
-            return _inRoom;
+        function showComment () :Boolean {
+            return state.inRoom;
         }
 
-        function inGame () :Boolean {
-            return _inGame || _inAVRGame;
+        function showGame () :Boolean {
+            return (state.inGame && !state.embedded) || state.inAVRGame;
         }
 
         // add our standard control bar features
-        addControl(chatOptsBtn, notInViewer, CHAT_SECTION);
-        addControl(_chatControl, notInViewer, CHAT_SECTION);
+        // TODO: show chat in lobby
+        addControl(chatOptsBtn, showChat, CHAT_SECTION);
+        addControl(_chatControl, showChat, CHAT_SECTION);
         addControl(_buttons, true, BUTTON_SECTION);
 
         // add buttons
@@ -295,12 +283,12 @@ public class ControlBar extends HBox
 //                GLOBAL_PRIORITY);
 //        }
 
-        addButton(shareBtn, inWhirled);
-        addButton(commentBtn, inRoom);
-        addButton(gameBtn, inGame);
+        addButton(shareBtn, showShare);
+        addButton(commentBtn, showComment);
+        addButton(gameBtn, showGame);
 
         if (_notificationDisplay != null) {
-            addControl(_notificationDisplay, notInViewer, NOTIFICATION_SECTION);
+            addControl(_notificationDisplay, showNotification, NOTIFICATION_SECTION);
         }
     }
 
@@ -386,6 +374,11 @@ public class ControlBar extends HBox
         volBtn.styleName = getVolumeStyle(level);
     }
 
+    protected function uiStateChanged (event :UIStateChangeEvent) :void
+    {
+        updateUI();
+    }
+
 //    protected function handleFullScreen () :void
 //    {
 //        try {
@@ -407,15 +400,6 @@ public class ControlBar extends HBox
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
-
-    /** Are we in a game? */
-    protected var _inGame :Boolean;
-
-    /** Are we in alternate reality game? */
-    protected var _inAVRGame :Boolean;
-
-    /** Are we in a room? */
-    protected var _inRoom :Boolean;
 
     /** Button visibility conditions. */
     protected var _conditions :Dictionary = new Dictionary(true);

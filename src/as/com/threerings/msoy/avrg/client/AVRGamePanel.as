@@ -55,7 +55,7 @@ public class AVRGamePanel extends UIComponent
 
         log.info("Entering AVRG [plobj=" + plobj + "]");
 
-        getControlBar().setInAVRGame(true);
+        getMsoyCtx().getUIState().setInAVRGame(true);
     }
 
     // from PlaceView
@@ -63,7 +63,7 @@ public class AVRGamePanel extends UIComponent
     {
         log.info("Leaving AVRG [plobj=" + plobj + "]");
 
-        getControlBar().setInAVRGame(false);
+        getMsoyCtx().getUIState().setInAVRGame(false);
 
         // null gameObj for mediaComplete to find if it should run after us
         _gameObj = null;
@@ -87,7 +87,7 @@ public class AVRGamePanel extends UIComponent
         addEventListener(ResizeEvent.RESIZE, handleResize);
 
         // Give the control bar button our thumbnail
-        getControlBar().setInAVRGame(true, cfg.thumbnail);
+        getMsoyCtx().getControlBar().setGameButtonIcon(cfg.thumbnail);
     }
 
     // from PlaceLayer
@@ -155,15 +155,14 @@ public class AVRGamePanel extends UIComponent
         }
     }
 
-    protected function getControlBar () :ControlBar
+    protected function getMsoyCtx() :MsoyContext
     {
-        const mctx :MsoyContext = _gctx.getMsoyContext();
-        return mctx.getControlBar();
+        return _gctx.getMsoyContext();
     }
 
     protected function provideLoadingFeedback () :void
     {
-        const gameBtn :UIComponent = getControlBar().gameBtn;
+        const gameBtn :UIComponent = getMsoyCtx().getControlBar().gameBtn;
         const PERIOD :Number = 1.5 * 1000;
         const DELAY :Number = 3.0 * 1000;
 

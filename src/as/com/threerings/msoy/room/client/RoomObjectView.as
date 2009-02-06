@@ -398,7 +398,7 @@ public class RoomObjectView extends RoomView
         // we add ourselves as a chat display so that we can trigger speak actions on avatars
         _ctx.getChatDirector().addChatSnooper(this);
         _ctx.getChatDirector().addChatDisplay(this);
-        _ctx.getControlBar().setInRoom(true);
+        _ctx.getUIState().setInRoom(true);
 
         // let the chat overlay know about us so we can be queried for chatter locations
         var comicOverlay :ComicOverlay = _ctx.getTopPanel().getPlaceChatOverlay();
@@ -427,7 +427,7 @@ public class RoomObjectView extends RoomView
     {
         _roomObj.removeListener(this);
 
-        _ctx.getControlBar().setInRoom(false);
+        _ctx.getUIState().setInRoom(false);
         // stop listening for avatar speak action triggers
         _ctx.getChatDirector().removeChatDisplay(this);
         _ctx.getChatDirector().removeChatSnooper(this);

@@ -20,6 +20,8 @@ import com.threerings.flash.MediaContainer;
 
 import com.threerings.flex.CommandButton;
 
+import com.threerings.parlor.game.data.GameConfig;
+
 import com.whirled.game.client.GamePlayerList;
 import com.whirled.game.client.WhirledGamePanel;
 
@@ -124,23 +126,29 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from WhirledGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
+        var config :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
+
         _spinner = new GameLoadingDisplay(
             _gctx.getMsoyContext().getTopPanel().getPlaceContainer(),
-            LobbyPlaceView.getLoadingMedia((_ctrl.getPlaceConfig() as MsoyGameConfig).game));
+            LobbyPlaceView.getLoadingMedia(config.game));
 
         super.willEnterPlace(plobj);
 
         const mctx :MsoyContext = _gctx.getMsoyContext();
         const bar :ControlBar = mctx.getControlBar();
         const gameChatDir :ChatDirector = _gctx.getChatDirector();
+        const multiplayer :Boolean =
+            config.getMatchType() == GameConfig.PARTY || config.players.length > 1;
+        const embedded :Boolean = mctx.getMsoyClient().isEmbedded();
 
         mctx.getMsoyController().addGoMenuProvider(populateGoMenu);
-        bar.setInGame(true, getPlaceLogo());
+        mctx.getUIState().setInGame(true, multiplayer);
+        bar.setGameButtonIcon(getPlaceLogo());
 
-        // if we're embedded and too small to display chat in a sidebar,
+        // if we're embedded and multiplayer and too small to display chat in a sidebar,
         // we go into "gamestub" mode and do an overlay instead.
         if (GAMESTUB_DEBUG_MODE ||
-                (mctx.getMsoyClient().isEmbedded() &&
+                (embedded && multiplayer &&
                 mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH)) {
             // set up a button to pop/hide the _playerList
             _showPlayers = new CommandButton();
@@ -169,8 +177,12 @@ public class MsoyGamePanel extends WhirledGamePanel
             bar.setChatDirector(gameChatDir);
 
         } else {
+            // don't show player list in single player embeds
+            var hidePlayers :Boolean = embedded && !multiplayer;
+
             // put game chat in the sidebar
-            mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
+            mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, gameChatDir,
+                hidePlayers ? null : _playerList));
         }
     }
 
@@ -182,7 +194,7 @@ public class MsoyGamePanel extends WhirledGamePanel
         const mctx :MsoyContext = _gctx.getMsoyContext();
         const bar :ControlBar = mctx.getControlBar();
 
-        bar.setInGame(false);
+        mctx.getUIState().setInGame(false, false);
         mctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
 
         if (_showPlayers != null) { // indicates we're in "gamestub" mode where chat is an overlay

@@ -17,6 +17,7 @@ import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
+import com.threerings.msoy.client.UIState;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.room.client.RoomStudioView;
@@ -155,30 +156,47 @@ public class WorldControlBar extends ControlBar
     override protected function addControls () :void
     {
         super.addControls();
+        var state :UIState = _ctx.getUIState();
 
-        function inRoom () :Boolean {
-            return _inRoom;
+        function showMusic () :Boolean {
+            return state.inRoom;
         }
 
-        function notInViewer () :Boolean {
-            return !isInViewer();
+        function showFriends () :Boolean {
+            return !isInViewer() && !state.embedded;
         }
 
-        function inRoomOrViewer () :Boolean {
-            return _inRoom || isInViewer();
+        function showHotZone () :Boolean {
+            return state.inRoom;
         }
 
-        addButton(musicBtn, inRoom, VOLUME_PRIORITY);
+        function showZoom () :Boolean {
+            return state.inRoom || isInViewer();
+        }
+
+        function showSnap () :Boolean {
+            return state.inRoom;
+        }
+
+        function showRoomEdit () :Boolean {
+            return state.inRoom;
+        }
+
+        function showParty () :Boolean {
+            return !isInViewer() && !state.embedded;
+        }
+
+        addButton(musicBtn, showMusic, VOLUME_PRIORITY);
         //addButton(homePageGridBtn, notInViewer, GLOBAL_PRIORITY);
-        addButton(friendsBtn, notInViewer, GLOBAL_PRIORITY);
+        addButton(friendsBtn, showFriends, GLOBAL_PRIORITY);
 
-        addButton(hotZoneBtn, inRoom, PLACE_PRIORITY);
-        addButton(zoomBtn, inRoomOrViewer, PLACE_PRIORITY);
+        addButton(hotZoneBtn, showHotZone, PLACE_PRIORITY);
+        addButton(zoomBtn, showZoom, PLACE_PRIORITY);
 
-        addButton(snapBtn, inRoom, PLACE_PRIORITY);
-        addButton(roomEditBtn, inRoom, PLACE_PRIORITY);
+        addButton(snapBtn, showSnap, PLACE_PRIORITY);
+        addButton(roomEditBtn, showRoomEdit, PLACE_PRIORITY);
 
-        addButton(partyBtn, notInViewer, GLOBAL_PRIORITY + 1);
+        addButton(partyBtn, showParty, GLOBAL_PRIORITY + 1);
     }
 
     // from ControlBar

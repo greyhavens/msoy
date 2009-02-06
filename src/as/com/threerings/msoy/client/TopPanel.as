@@ -103,6 +103,9 @@ public class TopPanel extends Canvas
 
         // display something until someone comes along and sets a real view on us
         setPlaceView(new BlankPlaceView());
+
+        _ctx.getUIState().addEventListener(UIStateChangeEvent.STATE_CHANGE, handleUIStateChange);
+        handleUIStateChange(null);
     }
 
     /**
@@ -225,6 +228,7 @@ public class TopPanel extends Canvas
         _topPanel.includeInLayout = false;
         addChild(_topPanel);
         layoutPanels();
+        handleUIStateChange(null);
     }
 
     public function clearTopPanel (top :UIComponent = null) :void
@@ -236,11 +240,6 @@ public class TopPanel extends Canvas
             _topPanel = null;
             layoutPanels();
         }
-    }
-
-    public function getTopPanel () :UIComponent
-    {
-        return _topPanel;
     }
 
     /**
@@ -283,6 +282,15 @@ public class TopPanel extends Canvas
     protected function stageResized (event :Event) :void
     {
         layoutPanels();
+    }
+
+    protected function handleUIStateChange (event :UIStateChangeEvent) :void
+    {
+        var state :UIState = _ctx.getUIState();
+
+        if (_topPanel != null) {
+            _topPanel.visible = state.embedded && state.inRoom;
+        }
     }
 
     protected function getTopPanelHeight () :int

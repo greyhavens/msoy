@@ -329,6 +329,11 @@ public /*abstract*/ class MsoyContext
         _topPanel.clearPlaceView(view);
     }
 
+    public function getUIState () :UIState
+    {
+        return _uiState;
+    }
+
     /**
      * Convenience translation method. If the first arg imethod to translate a key using the
      * general bundle.
@@ -394,6 +399,7 @@ public /*abstract*/ class MsoyContext
 
     protected var _client :MsoyClient;
     protected var _topPanel :TopPanel;
+    protected var _uiState :UIState = new UIState();
 
     protected var _msgMgr :MessageManager;
     protected var _locDir :LocationDirector;

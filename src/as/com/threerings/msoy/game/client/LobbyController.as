@@ -308,6 +308,7 @@ public class LobbyController extends Controller
         // first do our UI cleanup
         _panel.close();
         _lobbyTimer.stop();
+        _mctx.getUIState().setInLobby(false);
 
         // then our distributed services cleanup
         if (_subscriber != null) {
@@ -423,6 +424,7 @@ public class LobbyController extends Controller
             _panel.init(_lobj);
             _panel.open();
             _panel.setMode(getStartMode());
+            _mctx.getUIState().setInLobby(true);
 
             // pass group back to the caller now that the lobby has loaded
             _lobbyLoaded(_lobj.groupId);
