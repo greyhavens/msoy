@@ -35,6 +35,8 @@ public class MediaStub extends Sprite
 {
     public function MediaStub ()
     {
+        trace("MediaStub.new: Loaded!");
+
         // Allow the swf that loaded us to cross-script us.
         Security.allowDomain(this.root.loaderInfo.loaderURL);
         this.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
@@ -86,6 +88,7 @@ public class MediaStub extends Sprite
      */
     protected function handleUnload (event :Event) :void
     {
+        trace("MediaStub.new: Unloading..");
         for (var ii :int = numChildren - 1; ii >= 0; ii--) {
             var disp :DisplayObject = getChildAt(ii);
             if (disp is Loader) {
