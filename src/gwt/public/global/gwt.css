@@ -128,6 +128,15 @@ img, embed, applet, object {
   cursor: pointer;
 }
 
+.mediumThinBlueButton {
+  background-image: url(/images/ui/blue/medium_thin.png);
+  width: 92px;
+}
+.mediumThinBlueButton-up-hovering, .mediumThinBlueButton-down-hovering {
+  background-image: url(/images/ui/blue/medium_thin_over.png);
+  cursor: pointer;
+}
+
 .longThinOrangeButton {
   background-image: url(/images/ui/orange/long_thin.png);
   width: 120px;
@@ -139,6 +148,15 @@ img, embed, applet, object {
 .longThinOrangeButton-up-disabled {
   background-image: url(/images/ui/orange/long_thin_disabled.png);
   color: #CCCCCC;
+}
+
+.longThinBlueButton {
+  background-image: url(/images/ui/blue/long_thin.png);
+  width: 120px;
+}
+.longThinBlueButton-up-hovering, .longThinBlueButton-down-hovering {
+  background-image: url(/images/ui/blue/long_thin_over.png);
+  cursor: pointer;
 }
 
 .shortThickOrangeButton {
