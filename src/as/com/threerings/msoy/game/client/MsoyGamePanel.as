@@ -177,12 +177,7 @@ public class MsoyGamePanel extends WhirledGamePanel
             bar.setChatDirector(gameChatDir);
 
         } else {
-            // don't show player list in single player embeds
-            var hidePlayers :Boolean = embedded && !multiplayer;
-
-            // put game chat in the sidebar
-            mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, gameChatDir,
-                hidePlayers ? null : _playerList));
+            mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
         }
     }
 
