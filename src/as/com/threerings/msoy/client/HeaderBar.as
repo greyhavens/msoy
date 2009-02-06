@@ -169,7 +169,7 @@ public class HeaderBar extends HBox
 
             // disabled for the time being
             // TODO: remove permanently
-            if (false) {
+            if (_moneyEnabled) {
                 addCurrencyIcon(Currency.COINS);
                 _coinsLabel = new Label();
                 _coinsLabel.styleName = "currencyLabel";
@@ -214,8 +214,10 @@ public class HeaderBar extends HBox
         const cliObj :MemberObject = _ctx.getClient().getClientObject() as MemberObject;
         if (cliObj != null) {
             cliObj.addListener(new AttributeChangeAdapter(clientAttrChanged));
-            _coinsLabel.text = Currency.COINS.format(cliObj.coins);
-            _barsLabel.text = Currency.BARS.format(cliObj.bars);
+            if (_moneyEnabled) {
+                _coinsLabel.text = Currency.COINS.format(cliObj.coins);
+                _barsLabel.text = Currency.BARS.format(cliObj.bars);
+            }
         }
     }
 
@@ -226,11 +228,15 @@ public class HeaderBar extends HBox
     {
         switch (event.getName()) {
         case MemberObject.COINS:
-            _coinsLabel.text = Currency.COINS.format(int(event.getValue()));
+            if (_moneyEnabled) {
+                _coinsLabel.text = Currency.COINS.format(int(event.getValue()));
+            }
             break;
 
         case MemberObject.BARS:
-            _barsLabel.text = Currency.BARS.format(int(event.getValue()));
+            if (_moneyEnabled) {
+                _barsLabel.text = Currency.BARS.format(int(event.getValue()));
+            }
             break;
         }
     }
@@ -261,7 +267,9 @@ public class HeaderBar extends HBox
     /** The go button. */
     protected var _goBtn :CommandButton;
 
-    /** The currency labels, used only when embedded. */
+    /** The currency labels, used only when embedded. Disabled for now.
+     * TODO: remove. */
+    protected var _moneyEnabled :Boolean;
     protected var _coinsLabel :Label;
     protected var _barsLabel :Label;
 }
