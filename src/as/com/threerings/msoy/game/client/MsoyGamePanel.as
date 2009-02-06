@@ -145,11 +145,10 @@ public class MsoyGamePanel extends WhirledGamePanel
         mctx.getUIState().setInGame(true, multiplayer);
         bar.setGameButtonIcon(getPlaceLogo());
 
-        // if we're embedded and multiplayer and too small to display chat in a sidebar,
+        // if we're embedded and too small to display chat in a sidebar,
         // we go into "gamestub" mode and do an overlay instead.
-        if (GAMESTUB_DEBUG_MODE ||
-                (embedded && multiplayer &&
-                mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH)) {
+        if (GAMESTUB_DEBUG_MODE || (embedded && 
+            mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH)) {
             // set up a button to pop/hide the _playerList
             _showPlayers = new CommandButton();
             _showPlayers.toolTip = Msgs.GAME.get("i.scores");
