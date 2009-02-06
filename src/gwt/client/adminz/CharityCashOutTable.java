@@ -48,7 +48,7 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return _msgs.cashOutEmptyMessage();
+        return _msgs.coEmptyMessage();
     }
 
     @Override // from PagedGrid
@@ -85,16 +85,16 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
                          Integer.toString(item.memberId)), 1, "Name");
             
             setWidget(1, 0, new Anchor("mailto:" + item.emailAddress, item.emailAddress));
-            setText(0, 1, _msgs.cashOutEntryAmount(Currency.BLING.format(item.blingAmount)));
-            setText(1, 1, _msgs.cashOutEntryWorth(MoneyUtil.formatUSD(item.blingWorth)));
+            setText(0, 1, _msgs.coEntryAmount(Currency.BLING.format(item.blingAmount)));
+            setText(1, 1, _msgs.coEntryWorth(MoneyUtil.formatUSD(item.blingWorth)));
             
             SmartTable extras = new SmartTable("Extras", 0, 5);
-            Button btn = new Button(_msgs.cashOutEntryTransactionsButton());
+            Button btn = new Button(_msgs.coEntryTransactionsButton());
             btn.addStyleName("sideButton");
             btn.addClickListener(Link.createListener(Pages.ME, Args.compose("transactions", "3", 
                 String.valueOf(item.memberId))));
             extras.addWidget(btn, 0, null);
-            btn = new Button(_msgs.cashOutEntryCashOutButton());
+            btn = new Button(_msgs.coEntryCashOutButton());
             btn.addStyleName("sideButton");
             btn.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -118,13 +118,13 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
         {
             public CashOutPanel (int initialAmount)
             {
-                add(new InlineLabel(_msgs.cashOutEntryCashOutPanelAmount()));
+                add(new InlineLabel(_msgs.coEntryCashOutPanelAmount()));
                 
                 _amountBox = new TextBox();
                 _amountBox.setText(Currency.BLING.format(initialAmount));
                 add(_amountBox);
                 
-                Button btn = new Button(_msgs.cashOutEntryCashOutPanelButton());
+                Button btn = new Button(_msgs.coEntryCashOutPanelButton());
                 btn.addStyleName("PopupButton");
                 btn.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
@@ -151,7 +151,7 @@ public class CharityCashOutTable extends PagedGrid<CharityBlingInfo>
                     new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         reload();
-                        MsoyUI.info(_msgs.cashOutEntryCashOutSuccess());
+                        MsoyUI.info(_msgs.coEntryCashOutSuccess());
                     }
                 });
             }
