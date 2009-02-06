@@ -1,0 +1,9 @@
+<module>
+  <inherits name="page"/>
+
+  <source path="com/threerings/msoy/money/gwt"/>
+  <source path="client/money"/>
+
+  <public path="public/money"/>
+  <stylesheet src="money.css"/>
+</module>

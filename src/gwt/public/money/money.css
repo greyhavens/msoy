@@ -1,0 +1,33 @@
+/** 
+ * $Id$
+ *
+ * CSS styles for the Money interfaces.
+ */
+
+.Buy {
+  text-align: center;
+}
+
+.Bought .Charity {
+  font-size: 12px;
+}
+
+.Buy table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.Bought {
+  border: 1px solid #3776A0;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.buyButton {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.buyButton .X {
+  width: 170px;
+}

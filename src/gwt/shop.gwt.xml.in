@@ -1,6 +1,7 @@
 <module>
   <inherits name="com.google.gwt.xml.XML"/>
   <inherits name="item"/>
+  <inherits name="money"/>
 
   <source path="com/threerings/msoy/comment/gwt"/>
   <source path="com/threerings/msoy/stuff/gwt"/>

@@ -1,7 +1,7 @@
 //
-// $Id$
+// $Id: BuyPanel.java 14685 2009-02-05 02:41:10Z ray $
 
-package client.shop;
+package client.money;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -17,41 +17,28 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.SubItem;
-import com.threerings.msoy.item.gwt.CatalogListing;
-import com.threerings.msoy.item.gwt.CatalogService;
-import com.threerings.msoy.item.gwt.CatalogServiceAsync;
-import com.threerings.msoy.item.gwt.CostUpdatedException;
+import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.web.gwt.Pages;
+import com.threerings.msoy.web.gwt.PurchaseResult;
 
-import client.item.ItemActivator;
-import client.shell.CShell;
-import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.StretchButton;
 import client.util.ClickCallback;
-import client.util.FlashClients;
-import client.util.Link;
 import client.util.MoneyUtil;
-import client.util.ServiceUtil;
+import client.util.Link;
 
 /**
- * An interface for buying a CatalogListing. Doesn't display anything but functional buy
- * buttons.
+ * A base-class interface for buying an item in whirled.
  */
-public class BuyPanel extends FlowPanel
+public abstract class BuyPanel<T extends PurchaseResult> extends FlowPanel
 {
     /**
-     * @param callback optional. Notified only on success.
      */
-    public BuyPanel (CatalogListing listing, AsyncCallback<Item> callback)
+    public BuyPanel (PriceQuote quote)
     {
-        _listing = listing;
-        _callback = callback;
         setStyleName("Buy");
 
         // Buy with bars, plus a link on how to acquire some
@@ -60,7 +47,7 @@ public class BuyPanel extends FlowPanel
         _barPanel.add(_buyBars);
         _changeLabel = new Label();
         _barPanel.add(_changeLabel);
-        Widget link = Link.buyBars(_msgs.listingBuyBars());
+        Widget link = Link.buyBars(_msgs.getBars());
         link.setStyleName("GetBars");
         _barPanel.add(link);
         add(_barPanel);
@@ -71,41 +58,33 @@ public class BuyPanel extends FlowPanel
         // Display exchange rate 
         _wikiLink = MsoyUI.createExternalAnchor("http://wiki.whirled.com/Currency", "");
         
-        updatePrice(_listing.quote);
+        updatePrice(quote);
     }
 
-    protected void itemPurchased (CatalogService.PurchaseResult result, Currency currency)
-    {
-        Item item = result.item;
-        byte itype = item.getType();
+    /**
+     * Do the service request to make the purchase.
+     */
+    protected abstract void makePurchase (
+        Currency currency, int amount, AsyncCallback<T> listener);
 
+    /**
+     * Add any special UI to the BuyPanel after a purchase has executed.
+     */
+    protected void addPurchasedUI (T result, Currency currency)
+    {
+        // nothing by default
+    }
+
+    /**
+     * Handle the result of the purchase.
+     */
+    protected void wasPurchased (T result, Currency currency)
+    {
         // clear out the buy button
         clear();
         setStyleName("Bought");
 
-        // change the buy button into a "you bought it" display
-        String type = _dmsgs.xlate("itemType" + itype);
-        add(MsoyUI.createLabel(_msgs.boughtTitle(type), "Title"));
-
-        if (FlashClients.clientExists()) {
-            if (item instanceof SubItem) {
-                add(WidgetUtil.makeShim(10, 10));
-                add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.boughtBackTo(),
-                    new ClickListener() {
-                    public void onClick (Widget sender) {
-                        CShell.frame.closeContent();
-                    }
-                }));
-            } else {
-                add(new ItemActivator(item, true));
-                add(new Label(getUsageMessage(itype)));
-            }
-
-        } else {
-            add(new Label(_msgs.boughtViewStuff(type)));
-            String ptype = _dmsgs.xlate("pItemType" + itype);
-            add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
-        }
+        addPurchasedUI(result, currency);
 
         if (result.charity != null) {
             String percentage = NumberFormat.getPercentFormat().format(
@@ -114,8 +93,8 @@ public class BuyPanel extends FlowPanel
             FlowPanel charityPanel = new FlowPanel();
             charityPanel.setStyleName("Charity");
             charityPanel.add(new InlineLabel(_msgs.donatedToCharity(percentage)));
-            charityPanel.add(Link.create(result.charity.toString(),
-                                         Pages.PEOPLE, ""+result.charity.getMemberId()));
+            charityPanel.add(Link.create(
+                result.charity.toString(), Pages.PEOPLE, ""+result.charity.getMemberId()));
             charityPanel.add(WidgetUtil.makeShim(10, 10));
             charityPanel.add(Link.create(_msgs.changeCharity(), Pages.ACCOUNT, "edit"));
             add(charityPanel);
@@ -128,39 +107,19 @@ public class BuyPanel extends FlowPanel
         again.add(buyAgain);
         again.add(MsoyUI.createLabel(_msgs.timesBought(""+_timesBought), null));
         add(again);
-
-        if (_callback != null) {
-            _callback.onSuccess(item);
-        }
-    }
-
-    protected static String getUsageMessage (byte itemType)
-    {
-        if (itemType == Item.AVATAR) {
-            return _msgs.boughtAvatarUsage();
-        } else if (itemType == Item.DECOR) {
-            return _msgs.boughtDecorUsage();
-        } else if (itemType == Item.AUDIO) {
-            return _msgs.boughtAudioUsage();
-        } else if (itemType == Item.PET) {
-            return _msgs.boughtPetUsage();
-        } else {
-            return _msgs.boughtOtherUsage();
-        }
     }
 
     protected void updatePrice (PriceQuote quote)
     {
-        _listing.quote = quote;
+        _quote = quote;
 
         _barPanel.setVisible(quote.getCoins() > 0);
         _buyBars.setAmount(quote.getBars());
-        _changeLabel.setText(quote.getCoinChange() > 0 ? 
-            _msgs.listingCoinChange(Currency.COINS.format(
-            _listing.quote.getCoinChange())) : "");
+        _changeLabel.setText(quote.getCoinChange() > 0 ?
+            _msgs.coinChange(Currency.COINS.format(quote.getCoinChange())) : "");
         _buyCoins.setAmount(quote.getCoins());
         if (quote.getListedCurrency() == Currency.BARS) {
-            _wikiLink.setText(_msgs.listingExchangeRate(Currency.COINS.format(
+            _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(
                 (int)Math.ceil(quote.getExchangeRate()))));
             add(_wikiLink);
         } else {
@@ -168,7 +127,7 @@ public class BuyPanel extends FlowPanel
         }
     }
 
-    protected class BuyCallback extends ClickCallback<CatalogService.PurchaseResult>
+    protected class BuyCallback extends ClickCallback<T>
     {
         public BuyCallback (SourcesClickEvents button, Currency currency)
         {
@@ -178,22 +137,16 @@ public class BuyPanel extends FlowPanel
 
         @Override protected boolean callService ()
         {
-            if (CShell.isGuest()) {
-                MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
-                                  Link.createListener(Pages.ACCOUNT, "create"));
-            } else {
-                _catalogsvc.purchaseItem(_listing.detail.item.getType(), _listing.catalogId,
-                                         _currency, _listing.quote.getAmount(_currency), this);
-            }
+            makePurchase(_currency, _quote.getAmount(_currency), this);
             return true;
         }
 
-        @Override protected boolean gotResult (CatalogService.PurchaseResult result)
+        @Override protected boolean gotResult (T result)
         {
-            _timesBought += 1;
+            _timesBought++;
             MoneyUtil.updateBalances(result.balances);
             updatePrice(result.quote);
-            itemPurchased(result, _currency);
+            wasPurchased(result, _currency);
             return true;
         }
 
@@ -229,7 +182,7 @@ public class BuyPanel extends FlowPanel
             HorizontalPanel horiz = new HorizontalPanel();
             horiz.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 
-            horiz.add(MsoyUI.createLabel((amount > 0) ? _msgs.shopBuy() : _msgs.shopFree(), null));
+            horiz.add(MsoyUI.createLabel((amount > 0) ? _msgs.buy() : _msgs.buyFree(), null));
             horiz.add(WidgetUtil.makeShim(10, 1));
             horiz.add(MsoyUI.createImage(_currency.getLargeIcon(), null));
             horiz.add(WidgetUtil.makeShim(10, 1));
@@ -241,9 +194,7 @@ public class BuyPanel extends FlowPanel
         protected Currency _currency;
     }; // end: class BuyButton
 
-    protected CatalogListing _listing;
-
-    protected AsyncCallback<Item> _callback;
+    protected PriceQuote _quote;
 
     protected BuyButton _buyBars, _buyCoins;
     protected FlowPanel _barPanel;
@@ -252,8 +203,5 @@ public class BuyPanel extends FlowPanel
     
     protected int _timesBought;
 
-    protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
-    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
-    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
-        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
+    protected static final MoneyMessages _msgs = GWT.create(MoneyMessages.class);
 }

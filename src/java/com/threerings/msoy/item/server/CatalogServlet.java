@@ -39,6 +39,7 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
+import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.PriceQuote;
@@ -56,7 +57,6 @@ import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
-import com.threerings.msoy.item.gwt.CostUpdatedException;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -157,7 +157,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public PurchaseResult purchaseItem (
+    public ItemPurchaseResult purchaseItem (
         byte itemType, int catalogId, Currency currency, int authedCost)
         throws ServiceException
     {
@@ -257,7 +257,7 @@ public class CatalogServlet extends MsoyServiceServlet
         PriceQuote quote = _moneyLogic.securePrice(mrec.memberId,
             new CatalogIdent(itemType, catalogId), listing.currency, listing.cost);
 
-        PurchaseResult purchResult = new PurchaseResult();
+        ItemPurchaseResult purchResult = new ItemPurchaseResult();
         purchResult.item = buyOp.getItem();
         purchResult.balances = result.getBuyerBalances();
         purchResult.quote = quote;

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.gwt;
+package com.threerings.msoy.money.gwt;
 
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.web.gwt.ServiceException;

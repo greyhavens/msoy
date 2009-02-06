@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.gwt.PurchaseResult;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -24,38 +25,26 @@ import com.threerings.msoy.money.data.all.PriceQuote;
 public interface CatalogService extends RemoteService
 {
     /** Provides results for {@link #loadCatalog}. */
-    public static class CatalogResult implements IsSerializable
+    public static class CatalogResult
+        implements IsSerializable
     {
         /** The total count of listings matching the query. */
         public int listingCount;
 
-        /**
-         * The particular set of listings requested.
-         */
+        /** The particular set of listings requested. */
         public List<ListingCard> listings;
     }
 
     /** Returned by {@link #purchaseItem} */
-    public static class PurchaseResult implements IsSerializable
+    public static class ItemPurchaseResult extends PurchaseResult
     {
         /** The item that was purchased. */
         public Item item;
-
-        /** Any updated balances. */
-        public BalanceInfo balances;
-
-        /** Another price quote if they wish to buy again. */
-        public PriceQuote quote;
-
-        /** The percentage of the purchase price the charity received. */
-        public float charityPercentage;
-
-        /** The name of the charity that received the donation. */
-        public MemberName charity;
     }
 
     /** Provides results for {@link #loadFavorites}. */
-    public static class FavoritesResult implements IsSerializable
+    public static class FavoritesResult
+        implements IsSerializable
     {
         /** The member for whom we're returning favorites. */
         public MemberName noter;
@@ -65,7 +54,8 @@ public interface CatalogService extends RemoteService
     }
 
     /** Returned by {@link #loadSuite}. */
-    public static class SuiteResult implements IsSerializable
+    public static class SuiteResult
+        implements IsSerializable
     {
         /** The name of the suite. For game suites, this is the game's name. */
         public String name;
@@ -104,7 +94,8 @@ public interface CatalogService extends RemoteService
     /**
      * Purchases the item of the specified id and type.
      */
-    PurchaseResult purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost)
+    ItemPurchaseResult purchaseItem (
+        byte itemType, int catalogId, Currency currency, int authedCost)
         throws ServiceException;
 
     /**

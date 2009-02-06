@@ -206,25 +206,6 @@
   padding-right: 5px;
 }
 
-.listingDetailPanel .Buy {
-  text-align: center;
-}
-
-.listingDetailPanel .Bought .Charity {
-  font-size: 12px;
-}
-
-.listingDetailPanel .Buy table {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.listingDetailPanel .Bought {
-  border: 1px solid #3776A0;
-  padding: 5px;
-  margin-top: 10px;
-}
-
 .listingDetailPanel .Bought .itemActivator {
   padding: 10px;
 }
@@ -236,15 +217,6 @@
 
 .listingDetailPanel .messagePanel .Scroller {
   width: 555px;
-}
-
-.listingDetailPanel .buyButton .X {
-  width: 170px;
-}
-
-.listingDetailPanel .buyButton {
-  margin-top: 20px;
-  width: 100%;
 }
 
 .listingDetailPanel .controls {
