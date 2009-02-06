@@ -397,8 +397,8 @@ public class OccupantSprite extends MsoySprite
     {
         _walk = null;
 
-        dispatchEntityMoved(null);
         appearanceChanged();
+        dispatchEntityMoved(null);
         if (parent is RoomView) {
             RoomView(parent).moveFinished(this);
         }
