@@ -119,7 +119,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // this will contain all of the buy-related interface and will be replaced with the
         // "bought" interface when the buying is done
-        _details.add(new ShopBuyPanel(_listing, null));
+        _details.add(new ItemBuyPanel(_listing, null));
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId, true), true);

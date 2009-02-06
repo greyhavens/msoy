@@ -34,12 +34,12 @@ import client.util.ServiceUtil;
  * An interface for buying a CatalogListing. Doesn't display anything but functional buy
  * buttons.
  */
-public class ShopBuyPanel extends BuyPanel<CatalogService.ItemPurchaseResult>
+public class ItemBuyPanel extends BuyPanel<CatalogService.ItemPurchaseResult>
 {
     /**
      * @param callback optional. Notified only on success.
      */
-    public ShopBuyPanel (CatalogListing listing, AsyncCallback<Item> callback)
+    public ItemBuyPanel (CatalogListing listing, AsyncCallback<Item> callback)
     {
         super(listing.quote);
         _listing = listing;

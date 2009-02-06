@@ -35,7 +35,7 @@ public class BuyRemixDialog extends BorderedDialog
         panel.addStyleName("buyRemixPanel");
         panel.add(MsoyUI.createLabel(_msgs.buyRemixPrompt(), null));
 
-        panel.add(new ShopBuyPanel(listing, new AsyncCallback<Item>() {
+        panel.add(new ItemBuyPanel(listing, new AsyncCallback<Item>() {
             public void onFailure (Throwable cause) { /* unused */ }
             public void onSuccess (Item item) {
                 hide();
