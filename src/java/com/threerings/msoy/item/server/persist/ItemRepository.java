@@ -623,7 +623,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // finally fetch all the catalog records of interest and resolve their item bits
         return resolveCatalogRecords(findAll(getCatalogClass(),
             (!significantlyConstrained && sortBy == CatalogQuery.SORT_BY_NEW_AND_HOT) ?
-                CacheStrategy.CONTENTS : CacheStrategy.KEYS, clauses));
+                CacheStrategy.CONTENTS : CacheStrategy.LONG_KEYS, clauses));
     }
 
     /**
