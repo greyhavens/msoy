@@ -50,13 +50,14 @@ public class FurniEditor extends FurniHighlight
     /** Called by hotspots, stores a reference to the currently active hotspot. */
     public function setActive (hotspot :Hotspot) :void
     {
+        var furniData :FurniData = target.getFurniData();
         if (hotspot != null) {
             // we just started a new action - make a copy of the target's data
-            _originalTargetData = target.getFurniData().clone() as FurniData;
+            _originalTargetData = furniData.clone() as FurniData;
         } else {
             // the action just finished - wrap up.
-            if (_originalTargetData != null) {
-                _controller.updateFurni(_originalTargetData, target.getFurniData());
+            if (_originalTargetData != null && !_originalTargetData.equivalent(furniData)) {
+                _controller.updateFurni(_originalTargetData, furniData);
                 _originalTargetData = null;
             }
         }
