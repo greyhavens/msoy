@@ -132,8 +132,13 @@ public class MsoyGameManager extends WhirledGameManager
             return super.where();
         }
         MsoyGameConfig cfg = (MsoyGameConfig)_config;
-        return "[" + cfg.game.name + ":" + cfg.getGameId() + ":" + _gameobj.getOid() +
-            "(" + StringUtil.toString(_gameobj.players) + ")";
+        StringBuilder sbuf = new StringBuilder();
+        sbuf.append("[");
+        sbuf.append(cfg.game.name).append(":").append(cfg.getGameId());
+        sbuf.append(":").append(_gameObj.getOid());
+        StringUtil.toString(sbuf, _gameobj.players);
+        sbuf.append("]");
+        return sbuf.toString();
     }
 
     @Override // from PlaceManager
