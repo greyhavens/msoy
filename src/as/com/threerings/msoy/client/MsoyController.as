@@ -19,6 +19,7 @@ import flash.utils.Timer;
 import flash.utils.getTimer;
 
 import mx.controls.Button;
+import mx.core.IUITextField;
 import mx.events.MenuEvent;
 
 import com.threerings.util.ArrayUtil;
@@ -140,6 +141,7 @@ public class MsoyController extends Controller
         setControlledPanel(topPanel);
         var stage :Stage = mctx.getStage();
         stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, handleStageKeyDown, false, int.MAX_VALUE);
 
         // create a timer that checks whether we should be logged out for being idle too long
         _byebyeTimer = new Timer(MAX_GUEST_IDLE_TIME, 1);
@@ -658,6 +660,31 @@ public class MsoyController extends Controller
     {
         _mctx.getStage().removeEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
         checkChatFocus();
+    }
+
+    /**
+     * TODO: remove someday.
+     * This is a boochy workaround for the bug in flex 3.2 where some people don't get a space
+     * character if they are pressing shift.
+     */
+    protected function handleStageKeyDown (event :KeyboardEvent) :void
+    {
+        if (event.shiftKey && (event.keyCode == Keyboard.SPACE) &&
+                (event.target is IUITextField)) {
+            var field :IUITextField = (event.target as IUITextField);
+            var caretIdx :int = field.caretIndex;
+            field.text = field.text.substr(0, caretIdx) + " " + field.text.substr(caretIdx);
+            caretIdx++;
+            field.setSelection(caretIdx, caretIdx);
+            // NOTE: here, we try desperately to prevent the key from being accepted,
+            // but it doesn't work: people who don't have the bug get double spaces.
+            // I suspect that maybe this is because we are listening on the stage and so the
+            // textfield itself may have already processed the key event?
+            // Unfortunately, there doesn't seem to be a way to hook-in to the creation
+            // of these text fields so that we could install a listener directly.
+            event.stopImmediatePropagation();
+            event.preventDefault();
+        }
     }
 
     /**
