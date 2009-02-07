@@ -77,10 +77,6 @@ public class MsoyBureauClient extends PresentsSession
         public void eventReceived (DEvent event)
         {
             if (_blockInvocationResponses && event instanceof InvocationResponseEvent) {
-                // TODO: remove log message once this is proven to work
-                log.info(
-                    "Preventing bureau invocation response event", "bureau", getUsername(),
-                    "event", event);
                 return;
             }
             super.eventReceived(event);
