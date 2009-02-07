@@ -1,0 +1,102 @@
+#!/usr/bin/python
+
+import os.path, sys
+sys.path.append(os.path.join(os.path.dirname(sys.argv[0]), "../src/python"))
+
+## TODO: fix up and document
+
+import msoy.games, operator, util.log
+
+def matchField (event, fname, value, eq):
+    field = event.field(fname)
+    if field == None:
+        print "Missing", fname, "field in event type", event.type(), event.line(),
+        return False
+    return eq(field, value)
+
+def strstr (field, value):
+    return field.find(value) >= 0
+
+def inteq (field, value):
+    return int(field) == value
+
+def evTime (event):
+    return event.time().strftime("%m-%d %H:%M")
+
+def logEvent(event):
+    print evTime(event), str(event)
+
+def dump (filtFn=lambda x: True, dumpFn=logEvent):
+    for event in msoy.games.enumerateEvents (sys.stdin):
+        if filtFn(event):
+            dumpFn(event)
+
+def playerSearch (playerId, output):
+
+    def out (event):
+        print >>output, event.line(),
+        output.flush()
+
+    session = None
+    flowAward = None
+    count = 0
+    for event in msoy.games.enumerateEvents (sys.stdin):
+        count = count + 1
+        if count % 1000 == 0: print "Processed %d events" % count, event.time().strftime("%H:%M")
+        #if event.type() == msoy.games.SESSION_START or event.type() == msoy.games.SESSION_END:
+        #    print event.time().strftime("%H:%M"), str(event)
+
+        if event.type() == msoy.games.GAME_SESSION_START:
+            if int(event.field('memberId')) == playerId:
+                session = event
+                out(event)
+        elif event.type() == msoy.games.FLOW_SCALED:
+            if matchField(event, 'memberId', playerId, inteq):
+                out(event)
+        elif event.type() == msoy.games.GAME_ENDED:
+            if session != None and matchField(event, 'players', "playerOid=%s" % session.field('oid'), strstr):
+                out(event)
+        elif event.type() == msoy.games.FLOW_AWARDED:
+            if session != None and matchField(event, 'to', "playerOid=%s" % session.field('oid'), strstr):
+                flowAward = event
+                out(event)
+        elif event.type() == msoy.games.RATING_UPDATED:
+            if flowAward != None and matchField(event, 'where', flowAward.field("game"), operator.eq):
+                out(event)
+
+    output.close()
+
+
+def getScore(event):
+    players = event.field('players')
+    players = players[2:-2]
+    score = util.log.parseValues(players, None)['score']
+    return int(score)
+
+def fmtDelta (delta):
+    return "%+3dm %02ds" % (delta.seconds / 60, delta.seconds % 60)
+
+if len(sys.argv) == 1:
+    dump()
+elif sys.argv[1] == 'sparky':
+    lastScore = None
+    for event in msoy.games.enumerateEvents (sys.stdin):
+        if event.type() == msoy.games.GAME_SESSION_START:
+            if lastScore != None: print
+            lastScore = None
+        if event.type() == msoy.games.GAME_ENDED:
+            id = event.field('id')
+            if id == None: print >> sys.stderr, event
+            elif int(id) == 1342:
+                print evTime(event),
+                if lastScore != None:
+                    print fmtDelta(event.time() - lastScore.time()),
+                else: print " " * 8,
+                print "Scored", "%6d" % getScore(event),
+                if lastScore != None: print "%+6d" % (getScore(event) - getScore(lastScore)),
+                print
+                lastScore = event
+else:
+    playerId = int(sys.argv[1])
+    output = open(sys.argv[2], "a")
+    playerSearch(playerId, output)
