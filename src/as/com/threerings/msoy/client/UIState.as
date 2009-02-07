@@ -65,7 +65,7 @@ public class UIState extends EventDispatcher
     public function get showChat () :Boolean
     {
         if (embedded) {
-            return inGame && multiplayer;
+            return inRoom || (inGame && multiplayer);
         }
         return true;
     }
