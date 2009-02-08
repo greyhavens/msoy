@@ -15,7 +15,6 @@ import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 
-import client.room.RoomBuyPanel;
 import client.room.RoomWidget;
 import client.shell.CShell;
 import client.ui.TongueBox;
