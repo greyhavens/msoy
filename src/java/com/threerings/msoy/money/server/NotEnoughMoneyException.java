@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.money.server;
 
+import com.threerings.msoy.web.gwt.ServiceException;
+
 import com.threerings.msoy.money.data.all.BalanceInfo;
 import com.threerings.msoy.money.data.all.Currency;
-
 import com.threerings.msoy.money.gwt.InsufficientFundsException;
 
 /**
@@ -34,7 +35,8 @@ public class NotEnoughMoneyException extends MoneyException
         initCause(cause);
     }
 
-    public InsufficientFundsException toServiceException ()
+    @Override
+    public ServiceException toServiceException ()
     {
         BalanceInfo balances = new BalanceInfo();
         switch (_currency) {

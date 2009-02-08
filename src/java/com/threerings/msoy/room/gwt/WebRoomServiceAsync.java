@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.RatingResult;
 
+import com.threerings.msoy.money.data.all.Currency;
+
 /**
  * The asynchronous (client-side) version of {@link WebRoomService}.
  */
@@ -43,4 +45,11 @@ public interface WebRoomServiceAsync
      * The asynchronous version of {@link WebRoomService#loadDesignWinners}
      */
     void loadDesignWinners (AsyncCallback<List<RoomInfo>> callback);
+
+    /**
+     * The asynchronous version of {@link WebRoomService#purchaseRoom}
+     */
+    void purchaseRoom (
+        Currency currency, int authedCost,
+        AsyncCallback<WebRoomService.RoomPurchaseResult> callback);
 }

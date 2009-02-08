@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.money.server;
 
+import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.money.data.MoneyCodes;
+
 /**
  * Indicates that the user attempted to cash out bling when they've already requested a cash out
  * previously.
@@ -31,5 +35,11 @@ public class AlreadyCashedOutException extends MoneyException
             cashedOutBling, cause);
         this.memberId = memberId;
         this.cashedOutBling = cashedOutBling;
+    }
+
+    @Override
+    public ServiceException toServiceException ()
+    {
+        return new ServiceException(MoneyCodes.E_ALREADY_CASHED_OUT);
     }
 }

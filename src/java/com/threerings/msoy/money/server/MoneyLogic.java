@@ -181,7 +181,8 @@ public class MoneyLogic
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
 
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
-            memberId, Currency.COINS, amount, TransactionType.AWARD, action.description, null, true);
+            memberId, Currency.COINS, amount, TransactionType.AWARD, action.description,
+            null, true);
         if (notify) {
             _nodeActions.moneyUpdated(tx, true);
         }
@@ -252,46 +253,235 @@ public class MoneyLogic
         BuyOperation buyOp)
         throws NotEnoughMoneyException, NotSecuredException
     {
-        Preconditions.checkArgument(
-            buyCurrency == Currency.BARS || buyCurrency == Currency.COINS,
-            "buyCurrency is invalid: %s", buyCurrency);
         Preconditions.checkArgument(catrec.item != null, "catalog master not loaded");
-        CatalogIdent item = new CatalogIdent(catrec.item.getType(), catrec.catalogId);
+        final CatalogIdent item = new CatalogIdent(catrec.item.getType(), catrec.catalogId);
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
         Currency listedCurrency = catrec.currency;
         int listedAmount = catrec.cost;
-        int creatorId = catrec.item.creatorId;
-        String itemName = catrec.item.name;
-        ItemIdent iident = new ItemIdent(catrec.item.getType(), catrec.listedItemId);
-
         int buyerId = buyerRec.memberId;
+        int creatorId = catrec.item.creatorId;
+        final String itemName = catrec.item.name;
+        ItemIdent iident = new ItemIdent(catrec.item.getType(), catrec.listedItemId);
+        boolean forceFree = (buyerId == creatorId);
+        Function<Boolean, String> buyMsgFn = new Function<Boolean,String>() {
+            public String apply (Boolean magicFree) {
+                return MessageBundle.tcompose(magicFree ? "m.item_magicfree" : "m.item_bought",
+                    itemName, item.type, item.catalogId);
+            }
+        };
+        String changeMsg = MessageBundle.tcompose("m.change_received",
+            itemName, item.type, item.catalogId);
+
+        // do the buy!
+        IntermediateBuyResult ibr = buy(buyerRec, item, buyCurrency, authedAmount,
+            forceFree, listedCurrency, listedAmount, buyOp, TransactionType.ITEM_PURCHASE,
+            buyMsgFn, iident, changeMsg);
+        if (ibr == null) {
+            return null;
+        }
+
+        // now process the results of the buy
+        boolean magicFree = ibr.magicFree;
+        PriceQuote quote = ibr.quote;
+        MoneyTransactionRecord buyerTx = ibr.buyerTx;
+        MoneyTransactionRecord changeTx = ibr.changeTx;
+
+        // see what kind of payouts we're going pay- null means don't load, don't care
+        CurrencyAmount creatorPayout = magicFree ? null : computeCreatorPayout(quote);
+        CurrencyAmount affiliatePayout = magicFree ? null : computeAffiliatePayout(quote);
+        CurrencyAmount charityPayout = magicFree ? null : computeCharityPayout(quote);
+
+        MoneyTransactionRecord creatorTx = null;
+        if (creatorPayout != null) {
+            try {
+                creatorTx = _repo.accumulateAndStoreTransaction(creatorId,
+                    creatorPayout.currency, creatorPayout.amount,
+                    TransactionType.CREATOR_PAYOUT,
+                    MessageBundle.tcompose("m.item_sold",
+                        itemName, item.type, item.catalogId),
+                    iident, buyerTx.id, buyerId, true);
+
+            } catch (MoneyRepository.NoSuchMemberException nsme) {
+                log.warning("Invalid item creator, payout cancelled.",
+                    "buyer", buyerId, "creator", creatorId,
+                    "item", itemName, "catalogIdent", item);
+                // but, we continue, just having no creatorTx
+            }
+        }
+
+        // load the buyer's affiliate
+        int affiliateId = buyerRec.affiliateMemberId;
+        MoneyTransactionRecord affiliateTx = null;
+        if (affiliateId != 0 && affiliatePayout != null) {
+            try {
+                affiliateTx = _repo.accumulateAndStoreTransaction(affiliateId,
+                    affiliatePayout.currency, affiliatePayout.amount,
+                    TransactionType.AFFILIATE_PAYOUT,
+                    MessageBundle.tcompose("m.item_affiliate",
+                        buyerRec.name, buyerRec.memberId),
+                    iident, buyerTx.id, buyerId, true);
+
+            } catch (MoneyRepository.NoSuchMemberException nsme) {
+                log.warning("Invalid user affiliate, payout cancelled.",
+                    "buyer", buyerId, "affiliate", affiliateId,
+                    "item", itemName, "catalogIdent", item);
+                // but, we continue, just having no affiliateTx
+            }
+        }
+
+        // Determine the ID of the charity that will receive a payout.
+        int charityId = getChosenCharity(buyerRec);
+        MoneyTransactionRecord charityTx = null;
+        if (charityId != 0 && charityPayout != null) {
+            try {
+                charityTx = _repo.accumulateAndStoreTransaction(charityId,
+                    charityPayout.currency, charityPayout.amount,
+                    TransactionType.CHARITY_PAYOUT,
+                    MessageBundle.tcompose("m.item_charity", buyerRec.name, buyerRec.memberId),
+                    iident, buyerTx.id, buyerId, true);
+            } catch (MoneyRepository.NoSuchMemberException nsme) {
+                log.warning("Invalid user charity, payout cancelled.",
+                    "buyer", buyerId, "charity", charityId,
+                    "item", itemName, "catalogIdent", item);
+                // but, we continue, just having no charityTx
+            }
+        }
+
+        // log this!
+        logAction(UserAction.boughtItem(buyerId), buyerTx);
+        if (changeTx != null) {
+            // It's kind of a payout.  Really.
+            logAction(UserAction.receivedPayout(buyerId), changeTx);
+        }
+        if (creatorTx != null) {
+            logAction(UserAction.receivedPayout(creatorId), creatorTx);
+        }
+        if (affiliateTx != null) {
+            logAction(UserAction.receivedPayout(affiliateId), affiliateTx);
+        }
+        if (charityTx != null) {
+            logAction(UserAction.receivedPayout(charityId), charityTx);
+        }
+
+        // notify affected members of their money changes
+        _nodeActions.moneyUpdated(buyerTx, true);
+        if (changeTx != null) {
+            _nodeActions.moneyUpdated(changeTx, false); // Don't accumulate
+        }
+        if (creatorTx != null) {
+            _nodeActions.moneyUpdated(creatorTx, true);
+        }
+        if (affiliateTx != null) {
+            _nodeActions.moneyUpdated(affiliateTx, true);
+        }
+        if (charityTx != null) {
+            _nodeActions.moneyUpdated(charityTx, true);
+        }
+
+        return new BuyResult(magicFree, buyerTx.toMoneyTransaction(),
+            (changeTx == null) ? null : changeTx.toMoneyTransaction(),
+            (creatorTx == null) ? null : creatorTx.toMoneyTransaction(),
+            (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction(),
+            (charityTx == null) ? null : charityTx.toMoneyTransaction());
+    }
+
+    /**
+     * Process the purchase of a room.
+     */
+    public BuyResult buyRoom (
+        MemberRecord buyerRec, Object roomKey, Currency buyCurrency, int authedAmount,
+        Currency listCurrency, int listAmount, BuyOperation buyOp)
+        throws NotEnoughMoneyException, NotSecuredException
+    {
+        int buyerId = buyerRec.memberId;
+        Function<Boolean, String> buyMsgFn = new Function<Boolean,String>() {
+            public String apply (Boolean magicFree) {
+                return "m.room_bought";
+            }
+        };
+        String changeMsg = "m.change_rcvd_room";
+
+        // do the buy!
+        IntermediateBuyResult ibr = buy(buyerRec, roomKey, buyCurrency, authedAmount,
+            false /*forcefree*/, listCurrency, listAmount, buyOp, TransactionType.ROOM_PURCHASE,
+            buyMsgFn, null /*subject*/, changeMsg);
+        if (ibr == null) {
+            return null;
+        }
+
+        // now process the results of the buy
+        MoneyTransactionRecord buyerTx = ibr.buyerTx;
+        MoneyTransactionRecord changeTx = ibr.changeTx;
+
+        // log this!
+        logAction(UserAction.boughtItem(buyerId), buyerTx);
+        if (changeTx != null) {
+            // It's kind of a payout.  Really.
+            logAction(UserAction.receivedPayout(buyerId), changeTx);
+        }
+
+        // notify affected members of their money changes
+        _nodeActions.moneyUpdated(buyerTx, true);
+        if (changeTx != null) {
+            _nodeActions.moneyUpdated(changeTx, false); // Don't accumulate
+        }
+
+        return new BuyResult(ibr.magicFree, buyerTx.toMoneyTransaction(),
+            (changeTx == null) ? null : changeTx.toMoneyTransaction(),
+            null, null, null);
+    }
+
+    /**
+     * Purchases SOMETHING. This will only update the appropriate
+     * accounts of an exchange of money -- item fulfillment must be handled separately.
+     *
+     * @param buyerRec the member record of the buying user.
+     * @param wareKey the key identifying the ware being sold.
+     * @param buyCurrency the currency the buyer is using
+     * @param authedAmount the amount the buyer has validated to purchase the item.
+     * @param forceFree force the transaction to be free
+     * @param listedCurrency the currency in which the payee will be paid
+     * @param listedAmount the amount the payee will be paid
+     * @param buyOp enacts the purchase
+     * @throws NotSecuredException iff there is no secured price for the item and the authorized
+     * buy amount is not enough money.
+     * @return a BuyResult, or null if the BuyOperation returned false.
+     */
+    public IntermediateBuyResult buy (
+        final MemberRecord buyerRec, Object wareKey, Currency buyCurrency, int authedAmount,
+        boolean forceFree, Currency listedCurrency, int listedAmount, BuyOperation buyOp,
+        TransactionType buyerTxType, Function<Boolean,String> buyMsgFn, Object subject,
+        String changeMsg)
+        throws NotEnoughMoneyException, NotSecuredException
+    {
+        Preconditions.checkArgument(
+            buyCurrency == Currency.BARS || buyCurrency == Currency.COINS,
+            "buyCurrency is invalid: %s", buyCurrency);
 
         // Get the secured prices for the item.
-        PriceQuote quote = _priceCache.getQuote(buyerId, item);
+        int buyerId = buyerRec.memberId;
+        PriceQuote quote = _priceCache.getQuote(buyerId, wareKey);
         if (quote == null ||
                 !quote.isPurchaseValid(buyCurrency, authedAmount, _exchange.getRate())) {
             // In the unlikely scenarios that there was either no secured price (expired) or
             // they provided an out-of-date authed amount, we go ahead and secure a new price
             // right now and see if that works.
-            quote = securePrice(buyerId, item, listedCurrency, listedAmount);
+            quote = securePrice(buyerId, wareKey, listedCurrency, listedAmount);
             if (!quote.isPurchaseValid(buyCurrency, authedAmount, _exchange.getRate())) {
                 // doh, it doesn't work, so we need to tell them about this new latest price
                 // we've secured for them
-                throw new NotSecuredException(buyerId, item, quote);
+                throw new NotSecuredException(buyerId, wareKey, quote);
             }
         }
 
-        // If this buyer should always get the item for free
-        boolean buyerFree = buyerRec.memberId == creatorId;
-
         // if the item is free, always buy in the listed currency
-        if (quote.getListedAmount() == 0 || buyerFree) {
+        if (forceFree || quote.getListedAmount() == 0) {
             buyCurrency = quote.getListedCurrency();
         }
 
         // Note that from here on, we're going to use the buyCost, which *could* be lower
         // than what the user authorized. Good for them.
-        int buyCost = buyerFree ? 0 : quote.getAmount(buyCurrency);
+        int buyCost = forceFree ? 0 : quote.getAmount(buyCurrency);
 
         // deduct from the buyer (but don't yet save the transaction)
         // (This will throw a NotEnoughMoneyException if applicable)
@@ -299,145 +489,43 @@ public class MoneyLogic
             buyerId, buyCurrency, buyCost, buyerRec.isSupport());
         try {
             // Are we giving away a free item?
-            boolean magicFree = buyerFree || (buyerTx.amount == 0 && buyCost != 0);
+            boolean magicFree = forceFree || (buyerTx.amount == 0 && buyCost != 0);
 
             // actually create the item!
             boolean creationSuccess = buyOp.create(magicFree, buyerTx.currency, -buyerTx.amount);
             if (!creationSuccess) {
-                return null; // stop now
+                return null; // stop now: rollback will occur in finally
             }
 
-            // let's go ahead and insert the buyer transaction
-            buyerTx.fill(
-                TransactionType.ITEM_PURCHASE,
-                MessageBundle.tcompose(magicFree ? "m.item_magicfree" : "m.item_bought",
-                    itemName, item.type, item.catalogId),
-                iident);
+            // go ahead and insert the buyer transaction
+            buyerTx.fill(buyerTxType, buyMsgFn.apply(magicFree), subject);
             _repo.storeTransaction(buyerTx);
 
-            // If there is any change in coins from the purchase, create a transaction for it.
-            MoneyTransactionRecord changeTx = null;
-            if (quote.getCoinChange() > 0 && buyCurrency == Currency.BARS && !magicFree) {
-                try {
-                    // Don't update accumulated coins column with this.
-                    changeTx = _repo.accumulateAndStoreTransaction(buyerId, Currency.COINS,
-                        quote.getCoinChange(), TransactionType.CHANGE_IN_COINS,
-                        MessageBundle.tcompose("m.change_received",
-                            itemName, item.type, item.catalogId), iident,
-                        buyerTx.id, buyerId, false);
-                } catch (MoneyRepository.NoSuchMemberException nsme) {
-                    // Likely a programming error in this case.
-                    log.warning("Invalid original purchaser, change transaction cancelled.",
-                        "buyer", buyerId, "creator", creatorId,
-                        "item", itemName, "catalogIdent", item);
-                    // but, we continue, just having no changeTx
-                }
-            }
-
-            // see what kind of payouts we're going pay- null means don't load, don't care
-            CurrencyAmount creatorPayout = magicFree ? null : computeCreatorPayout(quote);
-            CurrencyAmount affiliatePayout = magicFree ? null : computeAffiliatePayout(quote);
-            CurrencyAmount charityPayout = magicFree ? null : computeCharityPayout(quote);
-
-            MoneyTransactionRecord creatorTx = null;
-            if (creatorPayout != null) {
-                try {
-                    creatorTx = _repo.accumulateAndStoreTransaction(creatorId,
-                        creatorPayout.currency, creatorPayout.amount,
-                        TransactionType.CREATOR_PAYOUT,
-                        MessageBundle.tcompose("m.item_sold",
-                            itemName, item.type, item.catalogId),
-                        iident, buyerTx.id, buyerId, true);
-
-                } catch (MoneyRepository.NoSuchMemberException nsme) {
-                    log.warning("Invalid item creator, payout cancelled.",
-                        "buyer", buyerId, "creator", creatorId,
-                        "item", itemName, "catalogIdent", item);
-                    // but, we continue, just having no creatorTx
-                }
-            }
-
-            // load the buyer's affiliate
-            int affiliateId = buyerRec.affiliateMemberId;
-            MoneyTransactionRecord affiliateTx = null;
-            if (affiliateId != 0 && affiliatePayout != null) {
-                try {
-                    affiliateTx = _repo.accumulateAndStoreTransaction(affiliateId,
-                        affiliatePayout.currency, affiliatePayout.amount,
-                        TransactionType.AFFILIATE_PAYOUT,
-                        MessageBundle.tcompose("m.item_affiliate",
-                            buyerRec.name, buyerRec.memberId),
-                        iident, buyerTx.id, buyerId, true);
-
-                } catch (MoneyRepository.NoSuchMemberException nsme) {
-                    log.warning("Invalid user affiliate, payout cancelled.",
-                        "buyer", buyerId, "affiliate", affiliateId,
-                        "item", itemName, "catalogIdent", item);
-                    // but, we continue, just having no affiliateTx
-                }
-            }
-
-            // Determine the ID of the charity that will receive a payout.
-            int charityId = getChosenCharity(buyerRec);
-            MoneyTransactionRecord charityTx = null;
-            if (charityId != 0 && charityPayout != null) {
-                try {
-                    charityTx = _repo.accumulateAndStoreTransaction(charityId,
-                        charityPayout.currency, charityPayout.amount,
-                        TransactionType.CHARITY_PAYOUT,
-                        MessageBundle.tcompose("m.item_charity", buyerRec.name, buyerRec.memberId),
-                        iident, buyerTx.id, buyerId, true);
-                } catch (MoneyRepository.NoSuchMemberException nsme) {
-                    log.warning("Invalid user charity, payout cancelled.",
-                        "buyer", buyerId, "charity", charityId,
-                        "item", itemName, "catalogIdent", item);
-                    // but, we continue, just having no charityTx
-                }
-            }
-
-            // log this!
-            logAction(UserAction.boughtItem(buyerId), buyerTx);
-            if (changeTx != null) {
-                // It's kind of a payout.  Really.
-                logAction(UserAction.receivedPayout(buyerId), changeTx);
-            }
-            if (creatorTx != null) {
-                logAction(UserAction.receivedPayout(creatorId), creatorTx);
-            }
-            if (affiliateTx != null) {
-                logAction(UserAction.receivedPayout(affiliateId), affiliateTx);
-            }
-            if (charityTx != null) {
-                logAction(UserAction.receivedPayout(charityId), charityTx);
-            }
-
-            // notify affected members of their money changes
-            _nodeActions.moneyUpdated(buyerTx, true);
-            if (changeTx != null) {
-                _nodeActions.moneyUpdated(changeTx, false); // Don't accumulate
-            }
-            if (creatorTx != null) {
-                _nodeActions.moneyUpdated(creatorTx, true);
-            }
-            if (affiliateTx != null) {
-                _nodeActions.moneyUpdated(affiliateTx, true);
-            }
-            if (charityTx != null) {
-                _nodeActions.moneyUpdated(charityTx, true);
-            }
-
             // The price no longer needs to be in the cache.
-            _priceCache.removeQuote(buyerId, item);
+            _priceCache.removeQuote(buyerId, wareKey);
             // Inform the exchange that we've actually made the exchange
             if (!magicFree) {
                 _exchange.processPurchase(quote, buyCurrency, buyerTx.id);
             }
 
-            return new BuyResult(magicFree, buyerTx.toMoneyTransaction(),
-                (changeTx == null) ? null : changeTx.toMoneyTransaction(),
-                (creatorTx == null) ? null : creatorTx.toMoneyTransaction(),
-                (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction(),
-                (charityTx == null) ? null : charityTx.toMoneyTransaction());
+            // If there is any change in coins from the purchase, create a transaction for it.
+            MoneyTransactionRecord changeTx = null;
+            if (!magicFree && (buyCurrency == Currency.BARS) && (quote.getCoinChange() > 0)) {
+                try {
+                    // Don't update accumulated coins column with this.
+                    changeTx = _repo.accumulateAndStoreTransaction(buyerId, Currency.COINS,
+                        quote.getCoinChange(), TransactionType.CHANGE_IN_COINS, changeMsg, subject,
+                        buyerTx.id, buyerId, false);
+
+                } catch (MoneyRepository.NoSuchMemberException nsme) {
+                    // Likely a programming error in this case.
+                    log.warning("This is fucking impossible since we just deducted",
+                        "buyer", buyerId, new Exception());
+                    // but, we continue, just having no changeTx
+                }
+            }
+
+            return new IntermediateBuyResult(magicFree, quote, buyerTx, changeTx);
 
         } finally {
             // We may have never inserted the buyerTx if the creation failed or
@@ -908,11 +996,20 @@ public class MoneyLogic
         int buyerId, CatalogIdent item, Currency listedCurrency, int listedAmount)
     {
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
+        return securePrice(buyerId, (Object)item, listedCurrency, listedAmount);
+    }
+
+    /**
+     * Secure a price for a generic ware.
+     */
+    public PriceQuote securePrice (
+        int buyerId, Object wareKey, Currency listedCurrency, int listedAmount)
+    {
         Preconditions.checkArgument(listedAmount >= 0, "listedAmount is invalid: %d", listedAmount);
 
-        final PriceQuote quote = _exchange.secureQuote(listedCurrency, listedAmount);
+        PriceQuote quote = _exchange.secureQuote(listedCurrency, listedAmount);
         if (!MemberName.isGuest(buyerId)) {
-            _priceCache.addQuote(buyerId, item, quote);
+            _priceCache.addQuote(buyerId, wareKey, quote);
         }
         return quote;
     }
@@ -1068,13 +1165,39 @@ public class MoneyLogic
      * Avoids the repetitive pattern of getting an entry from a map and putting a new (blank) one
      * if it is null.
      */
-    protected static <K, V> V getOrCreate (Map<K, V> map, K key, Function <K, V> createFunc)
+    protected static <K, V> V getOrCreate (Map<K, V> map, K key, Function<K, V> createFunc)
     {
         V value = map.get(key);
         if (value == null) {
             map.put(key, value = createFunc.apply(key));
         }
         return value;
+    }
+
+    protected static class IntermediateBuyResult
+    {
+        /** Was this a magic-free transaction? */
+        public boolean magicFree;
+
+        /** The price quote that was used for the purchase. */
+        public PriceQuote quote;
+
+        /** A fully-stored MoneyTransaction representing the money removed from the buyer. */
+        public MoneyTransactionRecord buyerTx;
+
+        /** A fully-stored MoneyTransaction representing the change to the buyer, or null. */
+        public MoneyTransactionRecord changeTx;
+
+        /** Mr. Constructor */
+        public IntermediateBuyResult (
+            boolean magicFree, PriceQuote quote,
+            MoneyTransactionRecord buyerTx, MoneyTransactionRecord changeTx)
+        {
+            this.magicFree = magicFree;
+            this.quote = quote;
+            this.buyerTx = buyerTx;
+            this.changeTx = changeTx;
+        }
     }
 
     /** A Function that transforms a MemberArroundRecord and CashOutRecord to BlingInfo. */

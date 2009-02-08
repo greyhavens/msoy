@@ -25,6 +25,13 @@ import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.gwt.CostUpdatedException;
+import com.threerings.msoy.money.server.BuyResult;
+import com.threerings.msoy.money.server.MoneyException;
+import com.threerings.msoy.money.server.MoneyLogic;
+
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.gwt.RoomDetail;
 import com.threerings.msoy.room.gwt.RoomInfo;
@@ -94,6 +101,10 @@ public class WebRoomServlet extends MsoyServiceServlet
         // hide locked rooms from other members (even from friends)
         if (reqrec == null || reqrec.memberId != memberId) {
             riter = Iterables.filter(riter, IS_PUBLIC);
+
+        } else {
+            // if viewing your own rooms, return a quote for buying a new one
+            data.newRoomQuote = getRoomQuote(memberId);
         }
         data.rooms = Lists.newArrayList(Iterables.transform(riter, TO_ROOM_INFO));
         return data;
@@ -156,6 +167,67 @@ public class WebRoomServlet extends MsoyServiceServlet
         return Lists.newArrayList(Iterables.transform(winners, TO_ROOM_INFO));
     }
 
+    // from interface WebRoomService
+    public WebRoomService.RoomPurchaseResult purchaseRoom (Currency currency, int authedCost)
+        throws ServiceException
+    {
+        final MemberRecord mrec = requireAuthedUser();
+
+        RoomBuyOperation buyOp = new RoomBuyOperation() {
+            public boolean create (boolean magicFree, Currency currency, int amountPaid) {
+                String name = mrec.name + "'s new room"; // TODO!? (see msoyAuthent)
+                String portalAction = mrec.homeSceneId + ":" + "Home";
+                _newScene = _sceneRepo.createBlankRoom(
+                    MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, portalAction, false);
+                return true;
+            }
+
+            public RoomInfo getRoom () {
+                return _newScene.toRoomInfo();
+            }
+
+            protected SceneRecord _newScene;
+        };
+
+        BuyResult result;
+        try {
+            result = _moneyLogic.buyRoom(mrec, ROOM_PURCHASE_KEY, currency, authedCost,
+                Currency.COINS, 10000 /* TODO (cost) */, buyOp);
+        } catch (MoneyException me) {
+            throw me.toServiceException();
+        }
+        if (result == null) {
+            // this won't happen because our buyOp always returns true.
+            log.warning("This isn't supposed to happen.");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        WebRoomService.RoomPurchaseResult purchResult = new WebRoomService.RoomPurchaseResult();
+        purchResult.newRoom = buyOp.getRoom();
+        purchResult.balances = result.getBuyerBalances();
+        purchResult.quote = getRoomQuote(mrec.memberId);
+        // TODO: charity for room purchases? funk dat.
+        return purchResult;
+    }
+
+    /**
+     * Get a price quote for a new room.
+     */
+    protected PriceQuote getRoomQuote (int memberId)
+    {
+        // TODO: tie to bar, or runtime config
+        return _moneyLogic.securePrice(memberId, ROOM_PURCHASE_KEY, Currency.COINS, 10000);
+    }
+
+    /**
+     * Handles creating a room for MoneyLogic.
+     */
+    protected static abstract class RoomBuyOperation
+        implements MoneyLogic.BuyOperation
+    {
+        public abstract RoomInfo getRoom ();
+    }
+
     protected static final Predicate<SceneRecord> IS_PUBLIC = new Predicate<SceneRecord>() {
         public boolean apply (SceneRecord room) {
             return room.accessControl == MsoySceneModel.ACCESS_EVERYONE;
@@ -180,9 +252,13 @@ public class WebRoomServlet extends MsoyServiceServlet
             }
         };
 
+    /** An arbitrary key for tracking quotes for new rooms. */
+    protected static final Object ROOM_PURCHASE_KEY = new Object();
+
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemberManager _memberMan;
+    @Inject protected MoneyLogic _moneyLogic;
 }

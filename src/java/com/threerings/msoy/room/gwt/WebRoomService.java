@@ -10,7 +10,11 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
+import com.threerings.msoy.web.gwt.PurchaseResult;
 import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
  * Provides information related to the world.
@@ -43,6 +47,9 @@ public interface WebRoomService extends RemoteService
 
         /** Name of the member whose rooms these are */
         public MemberName owner;
+
+        /** The price for a new room. */
+        public PriceQuote newRoomQuote;
     }
 
     /** Delivers the respose to {@link #loadOverview}. */
@@ -58,6 +65,13 @@ public interface WebRoomService extends RemoteService
         /** Recent winners of the Design Your Whirled contest, in order starting with 1st place */
         public List<RoomInfo> winningRooms;
     }
+
+    public static class RoomPurchaseResult extends PurchaseResult
+    {
+        /** The info on the newly purchased room. */
+        public RoomInfo newRoom;
+    }
+
     /**
      * Loads information on a particular room.
      */
@@ -92,5 +106,11 @@ public interface WebRoomService extends RemoteService
      * Load content for the Design Your Whirled winners page.
      */
     List<RoomInfo> loadDesignWinners ()
+        throws ServiceException;
+
+    /**
+     * Purchase a new room.
+     */
+    RoomPurchaseResult purchaseRoom (Currency currency, int authedCost)
         throws ServiceException;
 }

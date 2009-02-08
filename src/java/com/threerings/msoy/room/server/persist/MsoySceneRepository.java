@@ -473,11 +473,9 @@ public class MsoySceneRepository extends DepotRepository
      * @param ownerType may be an individual member or a group.
      * @param portalAction to where to link the new room's door.
      * @param firstTime whether this the first room this owner has created.
-     *
-     * @return the scene id of the newly created room.
      */
-    public int createBlankRoom (byte ownerType, int ownerId, String roomName, String portalAction,
-                                boolean firstTime)
+    public SceneRecord createBlankRoom (
+        byte ownerType, int ownerId, String roomName, String portalAction, boolean firstTime)
     {
         // determine the scene id to clone
         SceneRecord.Stock stock = null;
@@ -532,7 +530,7 @@ public class MsoySceneRepository extends DepotRepository
             insert(furni);
         }
 
-        return record.sceneId;
+        return record;
     }
 
     public void transferSceneOwnership (int sceneId, byte ownerType, int ownerId)
@@ -573,14 +571,14 @@ public class MsoySceneRepository extends DepotRepository
      * Insert a new scene, with furni and all, into the database and return the newly assigned
      * sceneId.
      */
-    protected int insertScene (MsoySceneModel model)
+    protected SceneRecord insertScene (MsoySceneModel model)
     {
         SceneRecord scene = new SceneRecord(model);
         insert(scene);
         for (FurniData data : model.furnis) {
             insert(new SceneFurniRecord(scene.sceneId, data));
         }
-        return scene.sceneId;
+        return scene;
     }
 
     protected void checkCreateStockScene (SceneRecord.Stock stock)

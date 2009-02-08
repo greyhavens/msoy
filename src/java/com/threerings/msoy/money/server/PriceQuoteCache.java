@@ -60,7 +60,6 @@ public class PriceQuoteCache
      * @return The secured quote, or null.
      */
     public PriceQuote getQuote (int memberId, Object wareKey)
-        throws NotSecuredException
     {
         final Element e = _cache.getQuiet(new PriceKey(memberId, wareKey));
         if (e == null) {

@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.money.server;
 
+import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.money.data.MoneyCodes;
+
 public class BelowMinimumBlingException extends MoneyException
 {
     public final int memberId;
@@ -26,5 +30,11 @@ public class BelowMinimumBlingException extends MoneyException
         this.memberId = memberId;
         this.amountRequested = amountRequested;
         this.minimumAmount = minimumAmount;
+    }
+
+    @Override
+    public ServiceException toServiceException ()
+    {
+        return new ServiceException(MoneyCodes.E_BELOW_MINIMUM_BLING);
     }
 }

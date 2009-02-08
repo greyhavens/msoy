@@ -3,6 +3,7 @@
   <inherits name="person"/>
   <inherits name="trophy"/>
   <inherits name="room"/>
+  <inherits name="money"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 

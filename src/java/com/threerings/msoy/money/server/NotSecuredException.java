@@ -6,6 +6,10 @@ package com.threerings.msoy.money.server;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
+import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.money.gwt.CostUpdatedException;
+
 /**
  * Occurs when a member attempts to purchase an item for which they have not secured a price.
  *
@@ -13,12 +17,12 @@ import com.threerings.msoy.money.data.all.PriceQuote;
  */
 public class NotSecuredException extends MoneyException
 {
-    public NotSecuredException (final int memberId, final CatalogIdent item, final PriceQuote quote)
+    public NotSecuredException (final int memberId, final Object wareKey, final PriceQuote quote)
     {
-        super("The price of the item " + item + " was not secured previously by member "
+        super("The price of the item " + wareKey + " was not secured previously by member "
             + memberId);
         _memberId = memberId;
-        _item = item;
+        _wareKey = wareKey;
         _quote = quote;
     }
 
@@ -34,9 +38,9 @@ public class NotSecuredException extends MoneyException
         return _memberId;
     }
 
-    public CatalogIdent getItem ()
+    public Object getWareKey ()
     {
-        return _item;
+        return _wareKey;
     }
 
     public PriceQuote getQuote ()
@@ -44,7 +48,13 @@ public class NotSecuredException extends MoneyException
         return _quote;
     }
 
+    @Override
+    public ServiceException toServiceException ()
+    {
+        return new CostUpdatedException(_quote);
+    }
+
     protected final int _memberId;
-    protected final CatalogIdent _item;
+    protected final Object _wareKey;
     protected final PriceQuote _quote;
 }

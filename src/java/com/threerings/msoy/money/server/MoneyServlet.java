@@ -77,13 +77,14 @@ public class MoneyServlet extends MsoyServiceServlet
         }
         try {
             return _moneyLogic.exchangeBlingForBars(memberId, blingAmount);
-        } catch (NotEnoughMoneyException neme) {
-            throw neme.toServiceException();
+        } catch (MoneyException me) {
+            throw me.toServiceException();
         }
     }
 
-    public BlingInfo requestCashOutBling (int memberId, int blingAmount, String password,
-        CashOutBillingInfo info) throws ServiceException
+    public BlingInfo requestCashOutBling (
+        int memberId, int blingAmount, String password, CashOutBillingInfo info)
+        throws ServiceException
     {
         // Re-auth the user before allowing them to continue.
         MemberRecord mrec = requireAuthedUser();
@@ -95,12 +96,8 @@ public class MoneyServlet extends MsoyServiceServlet
         BlingInfo result;
         try {
             result = _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
-        } catch (NotEnoughMoneyException neme) {
-            throw neme.toServiceException();
-        } catch (AlreadyCashedOutException acoe) {
-            throw new ServiceException(MoneyCodes.E_ALREADY_CASHED_OUT);
-        } catch (BelowMinimumBlingException bmbe) {
-            throw new ServiceException(MoneyCodes.E_BELOW_MINIMUM_BLING);
+        } catch (MoneyException me) {
+            throw me.toServiceException();
         }
 
         // Spam the cash out mailing list
@@ -170,8 +167,8 @@ public class MoneyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // Support can modify coins, but only admin can modify other currencies.
-        MemberRecord mrec = (currency == Currency.COINS ? requireSupportUser() : requireAdminUser());
-
+        MemberRecord mrec = (currency == Currency.COINS) ? requireSupportUser()
+                                                         : requireAdminUser();
         try {
             // Additional safety checks in MoneyLogic
             _moneyLogic.supportAdjust(memberId, currency, delta, mrec.getName());
@@ -209,10 +206,13 @@ public class MoneyServlet extends MsoyServiceServlet
                 // Ignore any already cashed out exception -- we'll go ahead and cash out from that.
             }
             _moneyLogic.cashOutBling(memberId, blingAmount);
-        } catch (BelowMinimumBlingException bmbe) {
-            throw new ServiceException(MoneyCodes.E_BELOW_MINIMUM_BLING);
+
         } catch (NotEnoughMoneyException neme) {
+            // customize this service exception...
             throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
+
+        } catch (MoneyException me) {
+            throw me.toServiceException();
         }
     }
 

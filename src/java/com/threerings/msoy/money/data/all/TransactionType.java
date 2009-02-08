@@ -29,6 +29,7 @@ public enum TransactionType
     CHANGE_IN_COINS(14),
     REFUND_GIVEN(15),
     REFUND_DEDUCTED(16),
+    ROOM_PURCHASE(17),
     ;
 
     // Required by ByteEnum

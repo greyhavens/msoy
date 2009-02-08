@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.money.server;
 
+import com.threerings.msoy.web.gwt.ServiceException;
+
 /**
  * Base type for all exceptions in the MoneyService.
  *
@@ -24,4 +26,8 @@ public abstract class MoneyException extends Exception
     {
         super(cause);
     }
+
+    // TODO: you know, why don't we just throw these fuckers directly,
+    // and do away with MoneyException?
+    public abstract ServiceException toServiceException ();
 }

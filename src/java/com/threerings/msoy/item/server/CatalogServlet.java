@@ -39,14 +39,12 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
-import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.server.BuyResult;
+import com.threerings.msoy.money.server.MoneyException;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.NotEnoughMoneyException;
-import com.threerings.msoy.money.server.NotSecuredException;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
@@ -201,10 +199,8 @@ public class CatalogServlet extends MsoyServiceServlet
         BuyResult result;
         try {
             result = _moneyLogic.buyItem(mrec, listing, currency, authedCost, buyOp);
-        } catch (NotEnoughMoneyException neme) {
-            throw neme.toServiceException();
-        } catch (NotSecuredException nse) {
-            throw new CostUpdatedException(nse.getQuote());
+        } catch (MoneyException me) {
+            throw me.toServiceException();
         }
 
         if (result == null) {
