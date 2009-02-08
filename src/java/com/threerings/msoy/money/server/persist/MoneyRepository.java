@@ -124,6 +124,39 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
+     * Accumulate money, return a partially-populated MoneyTransactionRecord for
+     * storing.
+     *
+     * @param updateAcc true if this transaction is "accumulating", meaning that they
+     * earned the coins rather than got them through change, for example.
+     */
+    protected MoneyTransactionRecord accumulate (
+        int memberId, Currency currency, int amount, boolean updateAcc)
+    {
+        Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
+
+        ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
+        ImmutableMap.Builder<ColumnExp, SQLExpression> builder = ImmutableMap.builder();
+        builder.put(currencyCol, new Arithmetic.Add(currencyCol, amount));
+        if (updateAcc) {
+            ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
+            builder.put(currencyAccCol, new Arithmetic.Add(currencyAccCol, amount));
+        }
+
+        Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
+        int count = updateLiteral(MemberAccountRecord.class, key, key, builder.build());
+        if (count == 0) {
+            // the accumulate should always work, so if we mod'd 0 rows, it means there's
+            // no member.
+            throw new NoSuchMemberException(memberId);
+        }
+        // TODO: be able to get the balance at the same time as the update, pending Depot changes
+        int balance = load(MemberAccountRecord.class, key).getAmount(currency);
+
+        return new MoneyTransactionRecord(memberId, currency, amount, balance);
+    }
+
+    /**
      * Deduct money from the specified member's money.
      * If the user does not have enough money, a NotEnoughMoneyException will be thrown.
      *
@@ -478,7 +511,8 @@ public class MoneyRepository extends DepotRepository
     public BlingCashOutRecord createCashOut (int memberId, int blingAmount, int blingWorth,
         CashOutBillingInfo info)
     {
-        BlingCashOutRecord cashOut = new BlingCashOutRecord(memberId, blingAmount, blingWorth, info);
+        BlingCashOutRecord cashOut = new BlingCashOutRecord(
+            memberId, blingAmount, blingWorth, info);
         insert(cashOut);
         return cashOut;
     }
@@ -567,36 +601,6 @@ public class MoneyRepository extends DepotRepository
         classes.add(BlingCashOutRecord.class);
         classes.add(BarPoolRecord.class);
         classes.add(ExchangeRecord.class);
-    }
-
-    /**
-     * Accumulate money, return a partially-populated MoneyTransactionRecord for
-     * storing.
-     */
-    protected MoneyTransactionRecord accumulate (int memberId, Currency currency, int amount,
-        boolean updateAcc)
-    {
-        Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
-
-        ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
-        ImmutableMap.Builder<ColumnExp, SQLExpression> builder = ImmutableMap.builder();
-        builder.put(currencyCol, new Arithmetic.Add(currencyCol, amount));
-        if (updateAcc) {
-            ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
-            builder.put(currencyAccCol, new Arithmetic.Add(currencyAccCol, amount));
-        }
-
-        Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
-        int count = updateLiteral(MemberAccountRecord.class, key, key, builder.build());
-        if (count == 0) {
-            // the accumulate should always work, so if we mod'd 0 rows, it means there's
-            // no member.
-            throw new NoSuchMemberException(memberId);
-        }
-        // TODO: be able to get the balance at the same time as the update, pending Depot changes
-        int balance = load(MemberAccountRecord.class, key).getAmount(currency);
-
-        return new MoneyTransactionRecord(memberId, currency, amount, balance);
     }
 
     /** Cache invalidator that invalidates a member's current cash out record. */
