@@ -40,9 +40,17 @@ public class EmbedStubMochiAd extends EmbedStub
             clip: dynosprite, id: MOCHI_AD_ID, res: WIDTH + "x" + HEIGHT,
             no_progress_bar: true, ad_started: function () :void {},
             ad_finished: function () :void {
-                removeChild(dynosprite);
                 init();
+                removeChild(dynosprite);
             } });
+    }
+
+    override protected function init () :void
+    {
+        // block init until after we show the ad
+        if (this.numChildren > 0) {
+            super.init();
+        }
     }
 }
 }
