@@ -104,7 +104,8 @@ public class GroupLogic
         throws ServiceException
     {
         // make sure the name is valid; this is checked on the client as well
-        if (!isValidName(group.name)) {
+        // TEMP: ensure the group name is null and won't be updated
+        if (group.name != null) { //if (!isValidName(group.name)) {
             log.warning("Asked to update group with invalid name [for=" + mrec.who() +
                     ", name=" + group.name + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);

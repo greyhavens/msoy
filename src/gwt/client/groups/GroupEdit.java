@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -58,22 +59,29 @@ public class GroupEdit extends FlexTable
     {
         _group = group;
         _extras = extras;
+        boolean isCreate = (_group.groupId == 0);
+
+        // if this is a blank group, set up some defaults
+        if (isCreate) {
+            _group.policy = Group.POLICY_PUBLIC;
+            _group.forumPerms = Group.makePerms(Group.PERM_MEMBER, Group.PERM_ALL);
+            _group.partyPerms = Group.PERM_MEMBER;
+        }
 
         setStyleName("groupEditor");
         setCellSpacing(5);
         setCellPadding(0);
 
-        CShell.frame.setTitle(_group.groupId == 0 ? _msgs.editCreateTitle() : group.name);
+        CShell.frame.setTitle(isCreate ? _msgs.editCreateTitle() : group.name);
 
         // set up our editor contents
-        _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);
-        addRow(_msgs.editName(), _name);
+        // TEMP: only allow group name editing when creating
+        if (isCreate) {
+            _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);
+            addRow(_msgs.editName(), _name);
 
-        // if this is a blank group, set up some defaults
-        if (_group.policy == 0) {
-            _group.policy = Group.POLICY_PUBLIC;
-            _group.forumPerms = Group.makePerms(Group.PERM_MEMBER, Group.PERM_ALL);
-            _group.partyPerms = Group.PERM_MEMBER;
+        } else {
+            addRow(_msgs.editName(), new Label(_group.name));
         }
 
         // make sure the group's configured policy is consistent with what's shown in the GUI
@@ -176,7 +184,6 @@ public class GroupEdit extends FlexTable
             addRow("", WidgetUtil.makeShim(1, 20));
             addRow("", tags);
         }
-
     }
 
     protected void addRow (String label, Widget contents)
@@ -191,7 +198,11 @@ public class GroupEdit extends FlexTable
     protected void commitEdit ()
     {
         // extract our values
-        _group.name = _name.getText().trim();
+        if (_name != null) {
+            _group.name = _name.getText().trim();
+        } else {
+            _group.name = null;
+        }
         _group.logo = _logo.getMedia();
         _group.blurb = _blurb.getText().trim();
         _group.policy = (byte)(_policy.getSelectedIndex()+Group.POLICY_PUBLIC);
