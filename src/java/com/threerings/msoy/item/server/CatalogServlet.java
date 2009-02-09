@@ -176,7 +176,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // Create the operation that will actually take care of creating the item.
         final int fCatalogId = catalogId;
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
-        ItemBuyOperation buyOp = new ItemBuyOperation() {
+        MoneyLogic.BuyOperation<Item> buyOp = new MoneyLogic.BuyOperation<Item>() {
             public boolean create (boolean magicFree, Currency currency, int amountPaid) {
                 // create the clone row in the database
                 _newClone = repo.insertClone(listing.item, mrec.memberId, currency, amountPaid);
@@ -189,7 +189,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 _eventLog.shopPurchase(mrec.memberId, mrec.visitorId);
                 return true;
             }
-            public Item getItem () {
+            public Item getWare () {
                 return _newClone.toItem();
             }
             protected ItemRecord _newClone;
@@ -254,7 +254,7 @@ public class CatalogServlet extends MsoyServiceServlet
             new CatalogIdent(itemType, catalogId), listing.currency, listing.cost);
 
         ItemPurchaseResult purchResult = new ItemPurchaseResult();
-        purchResult.item = buyOp.getItem();
+        purchResult.item = buyOp.getWare();
         purchResult.balances = result.getBuyerBalances();
         purchResult.quote = quote;
 
@@ -672,18 +672,6 @@ public class CatalogServlet extends MsoyServiceServlet
     protected boolean showMature (MemberRecord mrec)
     {
         return (mrec == null) ? false : mrec.isSet(MemberRecord.Flag.SHOW_MATURE);
-    }
-
-    /**
-     * Handles creating an item for MoneyLogic.
-     */
-    protected static abstract class ItemBuyOperation
-        implements MoneyLogic.BuyOperation
-    {
-        /**
-         * Return the newly-created item.
-         */
-        public abstract Item getItem ();
     }
 
     // our dependencies

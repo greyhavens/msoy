@@ -181,7 +181,7 @@ public class WebRoomServlet extends MsoyServiceServlet
     {
         final MemberRecord mrec = requireAuthedUser();
 
-        RoomBuyOperation buyOp = new RoomBuyOperation() {
+        MoneyLogic.BuyOperation<RoomInfo> buyOp = new MoneyLogic.BuyOperation<RoomInfo>() {
             public boolean create (boolean magicFree, Currency currency, int amountPaid) {
                 MessageBundle bundle = _serverMsgs.getBundle("server");
                 String name = bundle.get("m.new_room_name", mrec.name);
@@ -192,7 +192,7 @@ public class WebRoomServlet extends MsoyServiceServlet
                 return true;
             }
 
-            public RoomInfo getRoom () {
+            public RoomInfo getWare () {
                 return _newScene.toRoomInfo();
             }
 
@@ -213,7 +213,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
 
         WebRoomService.RoomPurchaseResult purchResult = new WebRoomService.RoomPurchaseResult();
-        purchResult.newRoom = buyOp.getRoom();
+        purchResult.newRoom = buyOp.getWare();
         purchResult.balances = result.getBuyerBalances();
         purchResult.quote = getRoomQuote(mrec.memberId);
         // TODO: charity for room purchases? funk dat.
@@ -240,15 +240,6 @@ public class WebRoomServlet extends MsoyServiceServlet
             cost *= -1 * (int) Math.ceil(_exchange.getRate());
         }
         return cost;
-    }
-
-    /**
-     * Handles creating a room for MoneyLogic.
-     */
-    protected static abstract class RoomBuyOperation
-        implements MoneyLogic.BuyOperation
-    {
-        public abstract RoomInfo getRoom ();
     }
 
     protected static final Predicate<SceneRecord> IS_PUBLIC = new Predicate<SceneRecord>() {

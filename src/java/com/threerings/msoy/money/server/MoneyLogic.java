@@ -81,7 +81,7 @@ public class MoneyLogic
      * Right now only used in buyItem, but we may generalize that a bit to buy
      * other things.
      */
-    public static interface BuyOperation
+    public static abstract class BuyOperation<T>
     {
         /**
          * Create the thing that is being purchased.
@@ -93,7 +93,12 @@ public class MoneyLogic
          *
          * @return true on success.
          */
-        boolean create (boolean magicFree, Currency currency, int amountPaid);
+        public abstract boolean create (boolean magicFree, Currency currency, int amountPaid);
+
+        /**
+         * Get the ware that was created.
+         */
+        public abstract T getWare ();
     }
 
     /**
@@ -250,7 +255,7 @@ public class MoneyLogic
      */
     public BuyResult buyItem (
         final MemberRecord buyerRec, CatalogRecord catrec, Currency buyCurrency, int authedAmount,
-        BuyOperation buyOp)
+        BuyOperation<?> buyOp)
         throws NotEnoughMoneyException, NotSecuredException
     {
         Preconditions.checkArgument(catrec.item != null, "catalog master not loaded");
@@ -390,7 +395,7 @@ public class MoneyLogic
      */
     public BuyResult buyRoom (
         MemberRecord buyerRec, Object roomKey, Currency buyCurrency, int authedAmount,
-        Currency listCurrency, int listAmount, BuyOperation buyOp)
+        Currency listCurrency, int listAmount, BuyOperation<?> buyOp)
         throws NotEnoughMoneyException, NotSecuredException
     {
         int buyerId = buyerRec.memberId;
@@ -449,7 +454,7 @@ public class MoneyLogic
      */
     public IntermediateBuyResult buy (
         final MemberRecord buyerRec, Object wareKey, Currency buyCurrency, int authedAmount,
-        boolean forceFree, Currency listedCurrency, int listedAmount, BuyOperation buyOp,
+        boolean forceFree, Currency listedCurrency, int listedAmount, BuyOperation<?> buyOp,
         TransactionType buyerTxType, Function<Boolean,String> buyMsgFn, Object subject,
         String changeMsg)
         throws NotEnoughMoneyException, NotSecuredException
