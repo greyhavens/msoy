@@ -236,25 +236,24 @@ public class GroupEdit extends FlexTable
                 Link.go(Pages.GROUPS, Args.compose("d", String.valueOf(group.groupId), "r"));
             }
         };
-        // check if we're trying to set the policy to exclusive on a group that has tags
-        if (_group.policy == Group.POLICY_EXCLUSIVE) {
+
+        if (_group.groupId == 0) {
+            _groupsvc.createGroup(_group, _extras, createCallback);
+
+        } else if (_group.policy == Group.POLICY_EXCLUSIVE) {
+            // check if we're trying to set the policy to exclusive on a group that has tags
             _groupsvc.getTags(_group.groupId, new MsoyCallback<List<String>>() {
                 public void onSuccess (List<String> tags) {
                     if (tags.size() > 0) {
                         MsoyUI.error(_msgs.errTagsOnExclusive());
-                    } else if (_group.groupId > 0) {
-                        _groupsvc.updateGroup(_group, _extras, updateCallback);
                     } else {
-                        _groupsvc.createGroup(_group, _extras, createCallback);
+                        _groupsvc.updateGroup(_group, _extras, updateCallback);
                     }
                 }
             });
+
         } else {
-            if (_group.groupId > 0) {
-                _groupsvc.updateGroup(_group, _extras, updateCallback);
-            } else {
-                _groupsvc.createGroup(_group, _extras, createCallback);
-            }
+            _groupsvc.updateGroup(_group, _extras, updateCallback);
         }
     }
 
