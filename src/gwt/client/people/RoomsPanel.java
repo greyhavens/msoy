@@ -6,6 +6,7 @@ package client.people;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -17,6 +18,7 @@ import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 
 import client.room.RoomWidget;
 import client.shell.CShell;
+import client.ui.RoundBox;
 import client.ui.TongueBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -55,8 +57,15 @@ public class RoomsPanel extends FlowPanel
                     addRoom(result);
                 }
             };
-            header.setWidget(0, 1, new RoomBuyPanel(result.newRoomQuote, boughtCallback),
-                1, "TContent");
+
+            RoundBox box = new RoundBox(RoundBox.BLUE);
+            box.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+            Label prompt = new Label(_msgs.buyNewRoom());
+            prompt.setStyleName("BuyPrompt");
+            box.add(prompt);
+            box.add(new RoomBuyPanel(result.newRoomQuote, boughtCallback));
+
+            header.setWidget(0, 1, box, 1, "TContent");
         }
         add(new TongueBox(null, header));
 

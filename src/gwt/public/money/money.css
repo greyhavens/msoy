@@ -4,6 +4,12 @@
  * CSS styles for the Money interfaces.
  */
 
+.BuyPrompt {
+  font-size: 20px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
 .Buy {
   text-align: center;
 }
