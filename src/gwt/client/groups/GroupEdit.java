@@ -48,13 +48,16 @@ import client.util.ServiceUtil;
 public class GroupEdit extends FlexTable
 {
     /**
-     * This constructor is for creating new Groups.
+     * Create a new group.
      */
     public GroupEdit ()
     {
         this(new Group(), new GroupExtras());
     }
 
+    /**
+     * Edit an existing group.
+     */
     public GroupEdit (Group group, GroupExtras extras)
     {
         _group = group;
@@ -159,7 +162,7 @@ public class GroupEdit extends FlexTable
         getFlexCellFormatter().setHorizontalAlignment(frow, 1, HasAlignment.ALIGN_RIGHT);
 
         // TODO integrate tags into the main form
-        if (_group.groupId != 0 && _group.policy != Group.POLICY_EXCLUSIVE) {
+        if (!isCreate && (_group.policy != Group.POLICY_EXCLUSIVE)) {
             TagDetailPanel tags = new TagDetailPanel(new TagDetailPanel.TagService() {
                 public void tag (String tag, AsyncCallback<TagHistory> cback) {
                     _groupsvc.tagGroup(_group.groupId, tag, true, cback);
@@ -199,7 +202,15 @@ public class GroupEdit extends FlexTable
     {
         // extract our values
         if (_name != null) {
-            _group.name = _name.getText().trim();
+            // validate the name
+            String name = _name.getText().trim();
+            if (name.length() < GroupName.LENGTH_MIN || name.length() > GroupName.LENGTH_MAX ||
+                    !Character.isLetterOrDigit(name.charAt(0))) {
+                MsoyUI.error(_msgs.errInvalidGroupName());
+                return;
+            }
+            _group.name = name;
+
         } else {
             _group.name = null;
         }
@@ -214,15 +225,6 @@ public class GroupEdit extends FlexTable
         _extras.homepageUrl = _homepage.getText().trim();
         _extras.catalogItemType = Item.SHOP_TYPES[_catalogType.getSelectedIndex()];
         _extras.catalogTag = _catalogTag.getText().trim();
-
-        // check that the group name is valid
-        if (_group.name.length() < GroupName.LENGTH_MIN ||
-            _group.name.length() > GroupName.LENGTH_MAX ||
-            !(Character.isLetter(_group.name.charAt(0)) ||
-              Character.isDigit(_group.name.charAt(0)))) {
-            MsoyUI.error(_msgs.errInvalidGroupName());
-            return;
-        }
 
         final MsoyCallback<Void> updateCallback = new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
