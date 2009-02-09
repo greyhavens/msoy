@@ -46,6 +46,9 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The field name of the <code>barCost</code> field. */
     public static final String BAR_COST = "barCost";
+
+    /** The field name of the <code>roomCoinCost</code> field. */
+    public static final String ROOM_COIN_COST = "roomCoinCost";
     // AUTO-GENERATED: FIELDS END
 
     /** The amount of flow per hour that a game can award a player. */
@@ -85,6 +88,9 @@ public class MoneyConfigObject extends ConfigObject
 
     /** The amount of USD cents each bar currently costs (for display purposes). */
     public int barCost = 9;
+
+    /** The cost of a room, or 0 for free, or a negative number to peg it to that many bars. */
+    public int roomCoinCost = -1; // so this means "the cost of 1 bar, in coins"
 
     /**
      * The percentage of the purchase price that disappears, notionally going into the system
@@ -286,6 +292,22 @@ public class MoneyConfigObject extends ConfigObject
         requestAttributeChange(
             BAR_COST, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.barCost = value;
+    }
+
+    /**
+     * Requests that the <code>roomCoinCost</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setRoomCoinCost (int value)
+    {
+        int ovalue = this.roomCoinCost;
+        requestAttributeChange(
+            ROOM_COIN_COST, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.roomCoinCost = value;
     }
     // AUTO-GENERATED: METHODS END
 }

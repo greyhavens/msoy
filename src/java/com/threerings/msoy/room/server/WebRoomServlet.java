@@ -12,10 +12,13 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.threerings.msoy.group.server.persist.GroupRepository;
+
+import com.threerings.util.MessageBundle;
+
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -25,11 +28,16 @@ import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
+
+import com.threerings.msoy.group.server.persist.GroupRepository;
+
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyException;
+import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
@@ -175,8 +183,10 @@ public class WebRoomServlet extends MsoyServiceServlet
 
         RoomBuyOperation buyOp = new RoomBuyOperation() {
             public boolean create (boolean magicFree, Currency currency, int amountPaid) {
-                String name = mrec.name + "'s new room"; // TODO!? (see msoyAuthent)
-                String portalAction = mrec.homeSceneId + ":" + "Home";
+                MessageBundle bundle = _serverMsgs.getBundle("server");
+                String name = bundle.get("m.new_room_name", mrec.name);
+                String portalAction = mrec.homeSceneId + ":" +
+                    bundle.get("m.new_room_door", mrec.name);
                 _newScene = _sceneRepo.createBlankRoom(
                     MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, portalAction, false);
                 return true;
@@ -192,7 +202,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         BuyResult result;
         try {
             result = _moneyLogic.buyRoom(mrec, ROOM_PURCHASE_KEY, currency, authedCost,
-                Currency.COINS, 10000 /* TODO (cost) */, buyOp);
+                Currency.COINS, getRoomCoinCost(), buyOp);
         } catch (MoneyException me) {
             throw me.toServiceException();
         }
@@ -215,8 +225,21 @@ public class WebRoomServlet extends MsoyServiceServlet
      */
     protected PriceQuote getRoomQuote (int memberId)
     {
-        // TODO: tie to bar, or runtime config
-        return _moneyLogic.securePrice(memberId, ROOM_PURCHASE_KEY, Currency.COINS, 10000);
+        return _moneyLogic.securePrice(memberId, ROOM_PURCHASE_KEY,
+            Currency.COINS, getRoomCoinCost());
+    }
+
+    /**
+     * Return the current cost of a room, in coins.
+     */
+    protected int getRoomCoinCost ()
+    {
+        int cost = _runtime.money.roomCoinCost;
+        if (cost < 0) {
+            // if negative, it means pin it to the exchange rate
+            cost *= -1 * (int) Math.ceil(_exchange.getRate());
+        }
+        return cost;
     }
 
     /**
@@ -261,4 +284,7 @@ public class WebRoomServlet extends MsoyServiceServlet
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemberManager _memberMan;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MoneyExchange _exchange;
+    @Inject protected ServerMessages _serverMsgs;
+    @Inject protected RuntimeConfig _runtime;
 }
