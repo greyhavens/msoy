@@ -28,8 +28,8 @@ public class ItemUsedDialog extends FloatingPanel
     override protected function getButtonLabel (buttonId :int) :String
     {
         switch (buttonId) {
-        case CANCEL_BUTTON: return Msgs.EDITING.get("b.item_used_no");
-        case OK_BUTTON: return Msgs.EDITING.get("b.item_used_yes");
+        case CANCEL_BUTTON: return Msgs.EDITING.get("b.no");
+        case OK_BUTTON: return Msgs.EDITING.get("b.yes");
         default: return super.getButtonLabel(buttonId)
         }
     }

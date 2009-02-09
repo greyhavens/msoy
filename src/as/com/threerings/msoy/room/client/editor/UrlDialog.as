@@ -17,7 +17,7 @@ public class UrlDialog extends FloatingPanel
 {
     public function UrlDialog (ctx :MsoyContext, callback :Function)
     {
-        super(ctx, Msgs.EDITING.get("t.url_dialog_title"));
+        super(ctx, Msgs.EDITING.get("t.url_dialog"));
 
         _callback = callback;
         open(true);

@@ -46,10 +46,10 @@ public class BasePanel extends VBox
     /** Creates the apply/cancel buttons which are magically shown and hidden when we're changed. */
     protected function makeApplyButtons () :Container
     {
-        _applyButton = new CommandButton(Msgs.EDITING.get("b.apply_changes"), applyChanges);
+        _applyButton = new CommandButton(Msgs.EDITING.get("b.apply"), applyChanges);
         _applyButton.styleName = "roomEditPanelButton";
         _applyButton.height = 20;
-        _cancelButton = new CommandButton(Msgs.EDITING.get("b.revert_changes"), revertChanges);
+        _cancelButton = new CommandButton(Msgs.EDITING.get("b.cancel"), revertChanges);
         _cancelButton.styleName = "roomEditPanelButton";
         _cancelButton.height = 20;
 

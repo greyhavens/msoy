@@ -65,11 +65,6 @@ public interface RoomService extends InvocationService
     void updateRoom (Client client, SceneUpdate update, InvocationListener listener);
 
     /**
-     * Requests to purchase a new room.
-     */
-    void purchaseRoom (Client client, ResultListener listener);
-
-    /**
      * Requests to publish this room to the rest of friends and the rest of Whirled.
      */
     void publishRoom (Client client, InvocationListener listener);

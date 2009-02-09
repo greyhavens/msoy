@@ -47,7 +47,7 @@ public class RoomEditorPanel extends FlyingPanel
 {
     public function RoomEditorPanel (ctx :WorldContext, controller :RoomEditorController)
     {
-        super(ctx, Msgs.EDITING.get("t.editor_title"));
+        super(ctx, Msgs.EDITING.get("t.editor"));
         _wctx = ctx;
         _controller = controller;
 
@@ -333,7 +333,7 @@ public class RoomEditorPanel extends FlyingPanel
         _namebox.percentWidth = 100;
         _namebox.maxWidth = 300;
         _namebox.prompt = Msgs.EDITING.get("l.select_item");
-        _namebox.toolTip = Msgs.EDITING.get("i.namebox_tip");
+        _namebox.toolTip = Msgs.EDITING.get("i.namebox");
         box.addChild(_namebox);
 
         var spacer :VBox = new VBox();

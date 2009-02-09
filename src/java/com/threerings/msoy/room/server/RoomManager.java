@@ -507,50 +507,6 @@ public class RoomManager extends SpotSceneManager
     }
 
     // from interface RoomProvider
-    public void purchaseRoom (ClientObject caller, final RoomService.ResultListener listener)
-        throws InvocationException
-    {
-        throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
-    }
-//
-//        final MemberObject user = (MemberObject) caller;
-//
-//        // make sure they have editing privileges in this scene as they will be adding to this
-//        // scene group
-//        MsoyScene scene = (MsoyScene) _scene;
-//        if (!scene.canManage(user)) {
-//        }
-//        MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
-//
-//        // figure out if they want a group or a personal room
-//        boolean isGroup = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
-//        final byte ownerType = isGroup ? MsoySceneModel.OWNER_TYPE_GROUP
-//                                       : MsoySceneModel.OWNER_TYPE_MEMBER;
-//        final int ownerId = isGroup ? model.ownerId : user.getMemberId();
-//        final String roomName = isGroup ? // TODO: i18n!
-//            "New 'somegroup' room" : (user.memberName + "'s new room");
-//        final String portalAction = scene.getId() + ":" + scene.getName();
-//
-//        // TODO: charge some flow
-//
-//        _invoker.postUnit(new RepositoryUnit("purchaseRoom") {
-//            public void invokePersist () throws Exception {
-//                _newRoomId = _sceneRepo.createBlankRoom(
-//                    ownerType, ownerId, roomName, portalAction, false);
-//            }
-//            public void handleSuccess () {
-//                listener.requestProcessed(_newRoomId);
-//            }
-//            public void handleFailure (Exception pe) {
-//                log.warning("Unable to create a new room", "user", user.which(),
-//                    "error", pe, "cause", pe.getCause());
-//                listener.requestFailed(RoomCodes.INTERNAL_ERROR);
-//            }
-//            protected int _newRoomId;
-//        });
-//    }
-
-    // from interface RoomProvider
     public void publishRoom (ClientObject caller, RoomService.InvocationListener listener)
         throws InvocationException
     {

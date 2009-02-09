@@ -175,7 +175,7 @@ public class ActionPanel extends BasePanel
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, _ignoreMouse = new CheckBox());
         _ignoreMouse.label = Msgs.EDITING.get("l.ignore_mouse");
-        _ignoreMouse.toolTip = Msgs.EDITING.get("l.ignore_mouse_tooltip");
+        _ignoreMouse.toolTip = Msgs.EDITING.get("i.ignore_mouse");
 
         _ignoreMouse.addEventListener(MouseEvent.CLICK, changedHandler);
         _ignoreMouse.addEventListener(MouseEvent.CLICK, applyHandler);

@@ -140,50 +140,32 @@ public class DoorTargetEditController
     protected function makeUI () :FloatingPanel
     {
         var panel :FloatingPanel = new FloatingPanel(_ctx, Msgs.EDITING.get("t.edit_door"));
+        panel.setButtonWidth(0);
         panel.showCloseButton = true;
 
-        panel.addChild(FlexUtil.createText(Msgs.EDITING.get("l.edit_door_label"), 400));
+        panel.addChild(FlexUtil.createText(Msgs.EDITING.get("m.edit_door"), 400));
 
-        var elts :HBox = new HBox();
-        elts.setStyle("right", 2);
-        elts.setStyle("left", 2);
-        elts.setStyle("top", 20);
-        elts.setStyle("bottom", 2);
-        elts.verticalScrollPolicy = ScrollPolicy.OFF;
-        panel.addChild(elts);
+        var showRooms :CommandButton = new CommandButton(Msgs.EDITING.get("b.show_rooms"),
+            _ctx.getWorldController().displayPage,
+            [ "people", "rooms_" + _ctx.getMyName().getMemberId() ]);
+        showRooms.styleName = "orangeButton";
+        panel.addChild(showRooms);
 
-        elts.addChild(new CommandButton(Msgs.EDITING.get("b.edit_door_ok"), select));
-        elts.addChild(new CommandButton(Msgs.EDITING.get("b.buy_room"), purchase));
+        panel.addButtons(new CommandButton(Msgs.EDITING.get("b.set_door"), setTarget));
 
         return panel;
     }
 
     /**
-     * Called when the player hits the 'select' button.
+     * Called when the player hits the 'b.set_door' button.
      */
-    protected function select () :void
+    protected function setTarget () :void
     {
         var sd :SceneDirector = _ctx.getSceneDirector();
         if (sd != null) {
             // the door should point to where we are right now
             setDoor(sd.getScene().getId());
         }
-    }
-
-    /**
-     * Called when the player hits the 'purchase' button.
-     */
-    protected function purchase () :void
-    {
-        var resultHandler :Function = function (result :Object) :void {
-            if (result != null) {
-                var newSceneId :int = int(result);
-                // Log.getLog(this).info("Room purchase success, id = " + newSceneId);
-                setDoor(newSceneId);
-            }
-        };
-        var roomObj :RoomObject = (_ctx.getLocationDirector().getPlaceObject() as RoomObject);
-        roomObj.roomService.purchaseRoom(_ctx.getClient(), _ctx.resultListener(resultHandler));
     }
 
     /**

@@ -68,12 +68,6 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
             );
             return;
 
-        case RoomMarshaller.PURCHASE_ROOM:
-            ((RoomProvider)provider).purchaseRoom(
-                source, (InvocationService.ResultListener)args[0]
-            );
-            return;
-
         case RoomMarshaller.RATE_ROOM:
             ((RoomProvider)provider).rateRoom(
                 source, ((Byte)args[0]).byteValue(), (InvocationService.InvocationListener)args[1]
