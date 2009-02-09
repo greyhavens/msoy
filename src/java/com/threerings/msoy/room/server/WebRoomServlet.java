@@ -234,12 +234,7 @@ public class WebRoomServlet extends MsoyServiceServlet
      */
     protected int getRoomCoinCost ()
     {
-        int cost = _runtime.money.roomCoinCost;
-        if (cost < 0) {
-            // if negative, it means pin it to the exchange rate
-            cost *= -1 * (int) Math.ceil(_exchange.getRate());
-        }
-        return cost;
+        return _runtime.costs.getCost(_runtime.costs.newRoom, _exchange.getRate());
     }
 
     protected static final Predicate<SceneRecord> IS_PUBLIC = new Predicate<SceneRecord>() {

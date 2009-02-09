@@ -16,6 +16,7 @@ import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.admin.server.ConfigRegistry;
 
+import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.data.MemberObject;
@@ -34,6 +35,9 @@ public class RuntimeConfig
     /** Contains money configuration data. */
     public final MoneyConfigObject money = new MoneyConfigObject();
 
+    /** Contains costs of wares configuration data. */
+    public final CostsConfigObject costs = new CostsConfigObject();
+
     /**
      * Creates and registers the runtime configuration objects.
      */
@@ -41,6 +45,7 @@ public class RuntimeConfig
     {
         registerObject(omgr, confReg, "server", server);
         registerObject(omgr, confReg, "money", money);
+        registerObject(omgr, confReg, "costs", costs);
     }
 
     protected void registerObject (RootDObjectManager omgr, ConfigRegistry confReg,
