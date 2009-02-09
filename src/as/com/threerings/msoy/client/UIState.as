@@ -92,7 +92,7 @@ public class UIState extends EventDispatcher
     /**
      * Called to tell us we are in a game lobby.
      */
-    public function setInLobby (inlobby :Boolean) :void
+    public function setInLobby (inLobby :Boolean) :void
     {
         _inLobby = inLobby;
         dispatch();

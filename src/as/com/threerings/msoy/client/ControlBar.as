@@ -267,7 +267,7 @@ public class ControlBar extends HBox
         }
 
         function showGame () :Boolean {
-            return state.inGame || state.inAVRGame || state.inLobby;
+            return state.inGame || state.inAVRGame;
         }
 
         // add our standard control bar features
