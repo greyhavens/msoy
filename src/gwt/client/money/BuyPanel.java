@@ -24,8 +24,8 @@ import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.PurchaseResult;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
@@ -38,12 +38,17 @@ import client.util.Link;
 /**
  * A base-class interface for buying an item in whirled.
  */
-public abstract class BuyPanel<T extends PurchaseResult> extends SmartTable
+public abstract class BuyPanel<T> extends SmartTable
 {
     /**
+     * Initialize the buy panel. (Separted from constructor to reduce subclassing pain.)
+     *
+     * @param quote the price quote
+     * @param callback optional, notified only on success.
      */
-    public BuyPanel (PriceQuote quote)
+    public void init (PriceQuote quote, AsyncCallback<T> callback)
     {
+        _callback = callback;
         setStyleName("Buy");
 
         // Buy with bars, plus a link on how to acquire some
@@ -80,13 +85,13 @@ public abstract class BuyPanel<T extends PurchaseResult> extends SmartTable
      * Do the service request to make the purchase.
      */
     protected abstract void makePurchase (
-        Currency currency, int amount, AsyncCallback<T> listener);
+        Currency currency, int amount, AsyncCallback<PurchaseResult<T>> listener);
 
     /**
      * Add any special UI to the BuyPanel after a purchase has executed.
      * @param boughtPanel 
      */
-    protected void addPurchasedUI (T result, Currency currency, FlowPanel boughtPanel)
+    protected void addPurchasedUI (T ware, FlowPanel boughtPanel)
     {
         // nothing by default
     }
@@ -94,15 +99,14 @@ public abstract class BuyPanel<T extends PurchaseResult> extends SmartTable
     /**
      * Handle the result of the purchase.
      */
-    protected void wasPurchased (T result, Currency currency)
+    protected void wasPurchased (PurchaseResult<T> result, Currency currency)
     {
         // clear out the buy button
         clear();
         setStyleName("Bought");
 
         FlowPanel boughtPanel = new FlowPanel();
-        
-        addPurchasedUI(result, currency, boughtPanel);
+        addPurchasedUI(result.ware, boughtPanel);
 
         if (result.charity != null) {
             String percentage = NumberFormat.getPercentFormat().format(
@@ -149,7 +153,7 @@ public abstract class BuyPanel<T extends PurchaseResult> extends SmartTable
         _buyCoins.setAmount(quote.getCoins());
     }
 
-    protected class BuyCallback extends ClickCallback<T>
+    protected class BuyCallback extends ClickCallback<PurchaseResult<T>>
     {
         public BuyCallback (SourcesClickEvents button, Currency currency)
         {
@@ -163,12 +167,15 @@ public abstract class BuyPanel<T extends PurchaseResult> extends SmartTable
             return true;
         }
 
-        @Override protected boolean gotResult (T result)
+        @Override protected boolean gotResult (PurchaseResult<T> result)
         {
             _timesBought++;
             MoneyUtil.updateBalances(result.balances);
             updatePrice(result.quote);
             wasPurchased(result, _currency);
+            if (_callback != null) {
+                _callback.onSuccess(result.ware);
+            }
             return true;
         }
 
@@ -215,6 +222,8 @@ public abstract class BuyPanel<T extends PurchaseResult> extends SmartTable
 
         protected Currency _currency;
     }; // end: class BuyButton
+
+    protected AsyncCallback<T> _callback;
 
     protected PriceQuote _quote;
 

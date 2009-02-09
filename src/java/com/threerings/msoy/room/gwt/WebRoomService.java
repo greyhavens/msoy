@@ -10,11 +10,11 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RatingResult;
-import com.threerings.msoy.web.gwt.PurchaseResult;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 
 /**
  * Provides information related to the world.
@@ -66,12 +66,6 @@ public interface WebRoomService extends RemoteService
         public List<RoomInfo> winningRooms;
     }
 
-    public static class RoomPurchaseResult extends PurchaseResult
-    {
-        /** The info on the newly purchased room. */
-        public RoomInfo newRoom;
-    }
-
     /**
      * Loads information on a particular room.
      */
@@ -111,6 +105,6 @@ public interface WebRoomService extends RemoteService
     /**
      * Purchase a new room.
      */
-    RoomPurchaseResult purchaseRoom (Currency currency, int authedCost)
+    PurchaseResult<RoomInfo> purchaseRoom (Currency currency, int authedCost)
         throws ServiceException;
 }

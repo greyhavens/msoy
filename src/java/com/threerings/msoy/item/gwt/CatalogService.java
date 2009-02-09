@@ -10,7 +10,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.web.gwt.PurchaseResult;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -18,6 +17,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.data.all.BalanceInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 
 /**
  * Provides digital items related services.
@@ -33,13 +33,6 @@ public interface CatalogService extends RemoteService
 
         /** The particular set of listings requested. */
         public List<ListingCard> listings;
-    }
-
-    /** Returned by {@link #purchaseItem} */
-    public static class ItemPurchaseResult extends PurchaseResult
-    {
-        /** The item that was purchased. */
-        public Item item;
     }
 
     /** Provides results for {@link #loadFavorites}. */
@@ -94,7 +87,7 @@ public interface CatalogService extends RemoteService
     /**
      * Purchases the item of the specified id and type.
      */
-    ItemPurchaseResult purchaseItem (
+    PurchaseResult<Item> purchaseItem (
         byte itemType, int catalogId, Currency currency, int authedCost)
         throws ServiceException;
 

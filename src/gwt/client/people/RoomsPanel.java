@@ -63,7 +63,10 @@ public class RoomsPanel extends FlowPanel
             Label prompt = new Label(_msgs.buyNewRoom());
             prompt.setStyleName("BuyPrompt");
             box.add(prompt);
-            box.add(new RoomBuyPanel(result.newRoomQuote, boughtCallback));
+
+            RoomBuyPanel buyPanel = new RoomBuyPanel();
+            buyPanel.init(result.newRoomQuote, boughtCallback);
+            box.add(buyPanel);
 
             header.setWidget(0, 1, box, 1, "TContent");
         }

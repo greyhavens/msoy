@@ -1,21 +1,31 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.gwt;
+package com.threerings.msoy.money.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.money.data.all.BalanceInfo;
-import com.threerings.msoy.money.data.all.PriceQuote;
-
 /**
  * A base class for purchase results.
  */
-public abstract class PurchaseResult
+public class PurchaseResult<T>
     implements IsSerializable
 {
+    /** Suitable for unserialization. */
+    public PurchaseResult ()
+    {
+    }
+
+    /** The minimum required fields. */
+    public PurchaseResult (T ware, BalanceInfo balances, PriceQuote quote)
+    {
+        this.ware = ware;
+        this.balances = balances;
+        this.quote = quote;
+    }
+
     /** Any updated balances. */
     public BalanceInfo balances;
 
@@ -27,4 +37,7 @@ public abstract class PurchaseResult
 
     /** The name of the charity that received the donation. Optional. */
     public MemberName charity;
+
+    /** The ware that was created. */
+    public T ware;
 }

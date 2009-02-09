@@ -34,6 +34,7 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyException;
@@ -176,7 +177,7 @@ public class WebRoomServlet extends MsoyServiceServlet
     }
 
     // from interface WebRoomService
-    public WebRoomService.RoomPurchaseResult purchaseRoom (Currency currency, int authedCost)
+    public PurchaseResult<RoomInfo> purchaseRoom (Currency currency, int authedCost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -212,12 +213,8 @@ public class WebRoomServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        WebRoomService.RoomPurchaseResult purchResult = new WebRoomService.RoomPurchaseResult();
-        purchResult.newRoom = buyOp.getWare();
-        purchResult.balances = result.getBuyerBalances();
-        purchResult.quote = getRoomQuote(mrec.memberId);
-        // TODO: charity for room purchases? funk dat.
-        return purchResult;
+        return new PurchaseResult<RoomInfo>(
+            buyOp.getWare(), result.getBuyerBalances(), getRoomQuote(mrec.memberId));
     }
 
     /**

@@ -7,8 +7,10 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 
 /**
  * The asynchronous (client-side) version of {@link CatalogService}.
@@ -30,7 +32,7 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#purchaseItem}
      */
     void purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost,
-                       AsyncCallback<CatalogService.ItemPurchaseResult> callback);
+                       AsyncCallback<PurchaseResult<Item>> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#listItem}

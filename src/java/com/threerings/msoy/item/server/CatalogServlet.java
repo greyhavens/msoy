@@ -42,6 +42,7 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyException;
 import com.threerings.msoy.money.server.MoneyLogic;
@@ -155,7 +156,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public ItemPurchaseResult purchaseItem (
+    public PurchaseResult<Item> purchaseItem (
         byte itemType, int catalogId, Currency currency, int authedCost)
         throws ServiceException
     {
@@ -253,11 +254,8 @@ public class CatalogServlet extends MsoyServiceServlet
         PriceQuote quote = _moneyLogic.securePrice(mrec.memberId,
             new CatalogIdent(itemType, catalogId), listing.currency, listing.cost);
 
-        ItemPurchaseResult purchResult = new ItemPurchaseResult();
-        purchResult.item = buyOp.getWare();
-        purchResult.balances = result.getBuyerBalances();
-        purchResult.quote = quote;
-
+        PurchaseResult<Item> purchResult = new PurchaseResult<Item>(
+            buyOp.getWare(), result.getBuyerBalances(), quote);
         // If a charity was selected, set charity info
         if (result.getCharityTransaction() != null) {
             purchResult.charityPercentage = _runtime.money.charityPercentage;

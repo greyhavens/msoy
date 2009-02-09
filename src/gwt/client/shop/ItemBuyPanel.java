@@ -18,6 +18,7 @@ import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.item.ItemActivator;
@@ -33,21 +34,20 @@ import client.util.ServiceUtil;
  * An interface for buying a CatalogListing. Doesn't display anything but functional buy
  * buttons.
  */
-public class ItemBuyPanel extends BuyPanel<CatalogService.ItemPurchaseResult>
+public class ItemBuyPanel extends BuyPanel<Item>
 {
     /**
      * @param callback optional. Notified only on success.
      */
     public ItemBuyPanel (CatalogListing listing, AsyncCallback<Item> callback)
     {
-        super(listing.quote);
         _listing = listing;
-        _callback = callback;
+        init(listing.quote, callback);
     }
 
     @Override
     protected void makePurchase (
-        Currency currency, int amount, AsyncCallback<CatalogService.ItemPurchaseResult> listener)
+        Currency currency, int amount, AsyncCallback<PurchaseResult<Item>> listener)
     {
         if (CShell.isGuest()) {
             MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
@@ -59,15 +59,9 @@ public class ItemBuyPanel extends BuyPanel<CatalogService.ItemPurchaseResult>
     }
 
     @Override
-    protected void addPurchasedUI (
-        CatalogService.ItemPurchaseResult result, Currency currency, FlowPanel boughtPanel)
+    protected void addPurchasedUI (Item item, FlowPanel boughtPanel)
     {
-        Item item = result.item;
         byte itype = item.getType();
-
-        if (_callback != null) {
-            _callback.onSuccess(item);
-        }
 
         // change the buy button into a "you bought it" display
         String type = _dmsgs.xlate("itemType" + itype);
@@ -111,8 +105,6 @@ public class ItemBuyPanel extends BuyPanel<CatalogService.ItemPurchaseResult>
 
     protected CatalogListing _listing;
 
-    protected AsyncCallback<Item> _callback;
-    
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
