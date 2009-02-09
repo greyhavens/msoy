@@ -70,6 +70,9 @@ public class ChatOverlay
     /** Pixel padding surrounding most things. */
     public static const PAD :int = 10;
 
+    /** Spacing between chat messages. */
+    public static const SPACING :int = 1;
+
     /**
      * Create the standard chat TextFormat. This is exposed so that other things can
      * show something in the current "chat font".
@@ -136,7 +139,7 @@ public class ChatOverlay
             _filteredMessages.push(msg);
             var val :int = _historyBar.scrollPosition;
             updateHistoryBar();
-            if (val != _historyBar.scrollPosition || !_histOffsetFinal) {
+            if (val != _historyBar.scrollPosition || _minScrollDirty) {
                 showCurrentHistory();
             }
         } else {
@@ -1090,8 +1093,7 @@ public class ChatOverlay
 
     protected function resetHistoryOffset () :void
     {
-        _histOffsetFinal = false;
-        _histOffset = 0;
+        _minScrollDirty = true;
         // force scrollbar to the bottom when updateHistoryBar() is called.
         _historyBar.scrollPosition = int.MAX_VALUE;
     }
@@ -1102,19 +1104,43 @@ public class ChatOverlay
             return;
         }
 
-        if (!_histOffsetFinal && (_filteredMessages.length > _histOffset)) {
-            figureHistoryOffset();
+        // calculate the minimum scroll bar position, if necessary
+        var minVal :int = _historyBar.minScrollPosition;
+        if (_minScrollDirty && (_filteredMessages.length > minVal) && _targetBounds != null) {
+            var hsize :int = _filteredMessages.length;
+            var ypos :int = _targetBounds.bottom - PAD;
+            for (var ii :int = 0; ii < hsize; ii++) {
+                var glyph :ChatGlyph = getHistorySubtitle(ii);
+                ypos -= int(glyph.height);
+
+                if (ypos <= getMinHistY()) {
+                    minVal = Math.max(0, ii - 1);
+                    _minScrollDirty = false;
+                    break;
+                }
+
+                ypos -= SPACING;
+            }
+
+            // basically, this means there isn't yet enough history to fill the first 'page' of the
+            // history scrollback, so we set the offset to the max value but do not clear the dirty
+            // flag, forcing recalculation next time
+            if (ii == hsize) {
+                minVal = hsize - 1;
+            }
         }
 
-        var oldVal :int = Math.max(_historyBar.scrollPosition, _histOffset);
+        var oldVal :int = Math.max(_historyBar.scrollPosition, minVal);
         var newMaxVal :int = Math.max(_filteredMessages.length - 1, 0);
         var newVal :int = (oldVal >= newMaxVal - 1) ? newMaxVal : oldVal;
 
         // _settingBar protects us from reacting to our own change
         _settingBar = true;
         try {
-            _historyBar.setScrollProperties(_historyExtent, _histOffset, newMaxVal);
+            _historyBar.setScrollProperties(_historyExtent, minVal, newMaxVal);
             _historyBar.scrollPosition = newVal;
+            _historyBar.visible = (minVal != newMaxVal);
+
         } finally {
             _settingBar = false;
         }
@@ -1125,38 +1151,6 @@ public class ChatOverlay
         return _targetBounds.y +
             ((_occupantList != null && _includeOccList && Prefs.getShowingOccupantList()) ?
               _occupantList.y + _occupantList.height : 0);
-    }
-
-    /**
-     * Figure out how many of hte first history elements fit in our bounds such that we can set the
-     * bounds on the scrollbar correctly such that the scrolling to the smallest value just barely
-     * puts the first element onscreen.
-     */
-    protected function figureHistoryOffset () :void
-    {
-        if (_targetBounds == null) {
-            return;
-        }
-
-        var hsize :int = _filteredMessages.length;
-        var ypos :int = _targetBounds.bottom - PAD;
-        for (var ii :int = 0; ii < hsize; ii++) {
-            var glyph :ChatGlyph = getHistorySubtitle(ii);
-            ypos -= int(glyph.height);
-
-            if (ypos <= getMinHistY()) {
-                _histOffset = Math.max(0, ii - 1);
-                _histOffsetFinal = true;
-                return;
-            }
-
-            ypos -= 1; // spacing
-        }
-
-        // basically, this means there isn't yet enough history to fill the first 'page' of the
-        // history scrollback, so we set hte offset to the max value but do not set histOffsetFinal
-        // to be true so that this will be recalculated
-        _histOffset = hsize - 1;
     }
 
     private static const log :Log = Log.getLog(ChatOverlay);
@@ -1282,14 +1276,10 @@ public class ChatOverlay
     /** The currently displayed subtitles in history mode. */
     protected var _showingHistory :Array = [];
 
-    /** The history offset (from 0) such that the history lines (0, _histOffset - 1) will all fit
-     * onscreen if the lowest scrollbar positon is _histOffset. */
-    protected var _histOffset :int = 0;
+    /** True if the scroll bar min position needs to be calculated. */
+    protected var _minScrollDirty :Boolean = false;
 
-    /** True if the histOffset does need to be recalculated. */
-    protected var _histOffsetFinal :Boolean = false;
-
-    /** A guess of how many history lines fit onscreen at a time. */
+    /** An estimate of how many history lines fit onscreen at a time. */
     protected var _historyExtent :int;
 
     /** The unbounded expire time of the last chat glyph displayed. */
