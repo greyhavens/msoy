@@ -218,6 +218,7 @@ public class AVRGameBackend extends ControlBackend
         o["room_getGameData_v1"] = room_getGameData_v1;
         o["room_getPlayerIds_v1"] = room_getPlayerIds_v1;
         o["room_getRoomId_v1"] = room_getRoomId_v1;
+        o["room_getRoomName_v1"] = room_getRoomName_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
         o["getEntityIds_v1"] = getEntityIds_v1;
@@ -313,6 +314,14 @@ public class AVRGameBackend extends ControlBackend
         // TODO: this should guarantee to only return a non-zero value after the room entry event
         // has been sent
         return getRoomId();
+    }
+
+    // RoomSubControl
+    protected function room_getRoomName_v1 (targetId :int /* ignored */) :String
+    {
+        validateRoomTargetId(targetId);
+        var scene :Scene = _wctx.getSceneDirector().getScene();
+        return scene != null ? scene.getName() : null;
     }
 
     // RoomSubControl
