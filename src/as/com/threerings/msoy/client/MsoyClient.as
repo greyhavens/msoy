@@ -365,8 +365,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
 //        custom.push(MenuUtil.createControllerMenuItem(
 //                        Msgs.GENERAL.get("b.toggle_fullscreen"),
-//                        MsoyController.TOGGLE_FULLSCREEN, null, false,
-//                        _wctx.getMsoyController().supportsFullScreen()));
+//                        MsoyController.TOGGLE_FULLSCREEN, null, false));
 
         populateContextMenu(custom);
 

@@ -160,20 +160,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * @return true if this player appears to support full-screen mode.
-     */
-    public function supportsFullScreen () :Boolean
-    {
-        // TODO: this too could be cleaned up. See note in handleToggleFullscreen
-        var o :Object = _mctx.getStage();
-        try {
-            return (undefined !== o.displayState);
-        } catch (e :Error) {
-        }
-        return false;
-    }
-
-    /**
      * Convenience method for opening an external window and showing the specified url. This is
      * done when we want to show the user something without unloading the msoy world.
      *
