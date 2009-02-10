@@ -221,24 +221,30 @@ public class StatusPanel extends SmartTable
         }
 
         public void showEarnedCoinsPopup () {
-            showPopup("/media/static/levelbling.swf", _coinsLabel);
+            _coinPopup = showPopup("/media/static/levelbling.swf", _coinsLabel, _coinPopup);
         }
 
         public void showLevelUpPopup () {
-            showPopup("/media/static/levelbling.swf", _levelLabel);
+            _levelPopup = showPopup("/media/static/levelbling.swf", _levelLabel, _levelPopup);
         }
 
-        protected void showPopup (String path, Widget underWidget) {
+        protected PopupPanel showPopup (String path, Widget underWidget, PopupPanel previous) {
+            if (previous != null) {
+                previous.hide();
+            }
             PopupPanel bling = new PopupPanel(true);
             bling.add(WidgetUtil.createTransparentFlashContainer("levelBling", path, 60, 60, null));
             Element elem = underWidget.getElement();
             bling.setPopupPosition(DOM.getAbsoluteLeft(elem) - 30, DOM.getAbsoluteTop(elem) - 23);
             bling.show();
+            return bling;
         }
 
         protected Label _coinsLabel;
         protected Label _barsLabel;
         protected Label _levelLabel;
+        protected PopupPanel _coinPopup;
+        protected PopupPanel _levelPopup;
     }
 
     protected WebCreds _creds;
