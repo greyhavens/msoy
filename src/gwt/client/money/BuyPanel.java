@@ -90,10 +90,11 @@ public abstract class BuyPanel<T> extends SmartTable
         _addenda = new FlowPanel();
         setWidget(2, 0, _addenda);
         getFlexCellFormatter().setColSpan(2, 0, 2);
-        
-        // Display exchange rate 
+
+        // Display exchange rate
         _wikiLink = MsoyUI.createExternalAnchor("http://wiki.whirled.com/Currency", "");
-        
+        _wikiLink.setStyleName("exchangeRateLink");
+
         updatePrice(quote);
     }
 
@@ -106,7 +107,7 @@ public abstract class BuyPanel<T> extends SmartTable
 
     /**
      * Add any special UI to the BuyPanel after a purchase has executed.
-     * @param boughtPanel 
+     * @param boughtPanel
      */
     protected void addPurchasedUI (T ware, FlowPanel boughtPanel)
     {
@@ -138,7 +139,7 @@ public abstract class BuyPanel<T> extends SmartTable
             charityPanel.add(Link.create(_msgs.changeCharity(), Pages.ACCOUNT, "edit"));
             boughtPanel.add(charityPanel);
         }
-        
+
         FlowPanel again = new FlowPanel();
         again.setStyleName("Buy");
         BuyButton buyAgain = (currency == Currency.BARS) ? _buyBars : _buyCoins;
@@ -146,7 +147,7 @@ public abstract class BuyPanel<T> extends SmartTable
         again.add(buyAgain);
         again.add(MsoyUI.createLabel(_msgs.timesBought(""+_timesBought), null));
         boughtPanel.add(again);
-        
+
         setWidget(0, 0, boughtPanel);
     }
 
@@ -159,13 +160,13 @@ public abstract class BuyPanel<T> extends SmartTable
         if (quote.getListedCurrency() == Currency.BARS) {
             _barLabel.setText(_msgs.barCost(NumberFormat.getCurrencyFormat().format(
                 quote.getUSDPerBarCost() * quote.getBars())));
-            _addenda.remove(_wikiLink);
-        } else {
-            _barLabel.setText(quote.getCoinChange() > 0 ?
-                _msgs.coinChange(Currency.COINS.format(quote.getCoinChange())) : "");
             _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(
                 (int)Math.floor(quote.getExchangeRate()))));
             _addenda.add(_wikiLink);
+        } else {
+            _barLabel.setText(quote.getCoinChange() > 0 ?
+                _msgs.coinChange(Currency.COINS.format(quote.getCoinChange())) : "");
+            _addenda.remove(_wikiLink);
         }
         _buyCoins.setAmount(quote.getCoins());
     }
@@ -251,7 +252,7 @@ public abstract class BuyPanel<T> extends SmartTable
     protected FlowPanel _addenda;
     protected Label _barLabel;
     protected Anchor _wikiLink;
-    
+
     protected int _timesBought;
 
     protected static final MoneyMessages _msgs = GWT.create(MoneyMessages.class);

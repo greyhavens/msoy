@@ -36,3 +36,7 @@
 .buyButton .X {
   width: 120px;
 }
+
+.exchangeRateLink {
+  font-size: 12px;
+}
