@@ -156,10 +156,9 @@ public class GroupLogic
         throws ServiceException
     {
         // make sure the name is valid; this is checked on the client as well
-        // TEMP: ensure the group name is null and won't be updated
-        if (group.name != null) { //if (!isValidName(group.name)) {
-            log.warning("Asked to update group with invalid name [for=" + mrec.who() +
-                    ", name=" + group.name + "].");
+        if (!isValidName(group.name)) {
+            log.warning("Asked to update group with invalid name",
+                "member", mrec.who(), "name", group.name);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -180,6 +179,11 @@ public class GroupLogic
                 log.warning("Cannot update non-existent group", "id", group.groupId);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
+            // TEMP: block editing group name
+            if (!group.name.equals(grec.name)) {
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+
             Map<ColumnExp, Object> updates = grec.findUpdates(group, extras);
             if (updates.size() > 0) {
                 _groupRepo.updateGroup(group.groupId, updates);

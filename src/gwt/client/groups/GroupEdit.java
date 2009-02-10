@@ -229,10 +229,7 @@ public class GroupEdit extends FlexTable
                 return false;
             }
             _group.name = name;
-
-        } else {
-            _group.name = null;
-        }
+        } // else keep name the same
         _group.logo = _logo.getMedia();
         _group.blurb = _blurb.getText().trim();
         _group.policy = (byte)(_policy.getSelectedIndex()+Group.POLICY_PUBLIC);
