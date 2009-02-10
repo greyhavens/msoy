@@ -34,6 +34,7 @@ public class ComplainDialog extends FloatingPanel
         tainer.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.complain_descrip"), 350));
 
         _complaint = new TextInput();
+        _complaint.maxChars = MAX_COMPLAINT_CHARS;
         _complaint.width = 350;
         tainer.addChild(_complaint);
 
@@ -49,10 +50,6 @@ public class ComplainDialog extends FloatingPanel
     {
         if (buttonId == OK_BUTTON && _complaint.text == "") {
             _status.text = Msgs.GENERAL.get("e.complain_required");
-            return;
-        }
-        if (buttonId == OK_BUTTON && _complaint.text.length > MAX_COMPLAINT_CHARS) {
-            _status.text = Msgs.GENERAL.get("e.complain_too_long", MAX_COMPLAINT_CHARS);
             return;
         }
         super.buttonClicked(buttonId);
