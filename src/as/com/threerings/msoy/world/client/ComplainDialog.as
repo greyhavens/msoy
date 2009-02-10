@@ -18,6 +18,8 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 public class ComplainDialog extends FloatingPanel
 {
+    public static const MAX_COMPLAINT_CHARS :int = 255;
+
     public function ComplainDialog (ctx :MsoyContext, memberId :int, name :String)
     {
         super(ctx, Msgs.GENERAL.xlate(MessageBundle.tcompose("t.complain", name)));
@@ -47,6 +49,10 @@ public class ComplainDialog extends FloatingPanel
     {
         if (buttonId == OK_BUTTON && _complaint.text == "") {
             _status.text = Msgs.GENERAL.get("e.complain_required");
+            return;
+        }
+        if (buttonId == OK_BUTTON && _complaint.text.length > MAX_COMPLAINT_CHARS) {
+            _status.text = Msgs.GENERAL.get("e.complain_too_long", MAX_COMPLAINT_CHARS);
             return;
         }
         super.buttonClicked(buttonId);
