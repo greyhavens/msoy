@@ -187,7 +187,9 @@ public abstract class BuyPanel<T> extends SmartTable
         {
             _timesBought++;
             MoneyUtil.updateBalances(result.balances);
-            updatePrice(result.quote);
+            if (result.quote != null) {
+                updatePrice(result.quote);
+            }
             wasPurchased(result, _currency);
             if (_callback != null) {
                 _callback.onSuccess(result.ware);
