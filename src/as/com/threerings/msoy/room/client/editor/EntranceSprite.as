@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.room.client.editor {
 
+import flash.display.BitmapData;
+
+import flash.geom.Matrix;
+
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.world.client.WorldContext;
@@ -30,6 +34,13 @@ public class EntranceSprite extends FurniSprite
         // since this is an embedded image, we'll never get the COMPLETED event -
         // so let's just clean up right here.
         stoppedLoading();
+    }
+
+    // from DataPackMediaContainer
+    override public function snapshot (
+        bitmapData :BitmapData, matrix :Matrix, childPredicate :Function = null) :Boolean
+    {
+        return true; // do nothing, don't raise a stink
     }
 
     // from FurniSprite
