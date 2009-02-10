@@ -28,10 +28,10 @@ import static com.threerings.msoy.Log.log;
  * Implements account authentication against the OOO global user database.
  */
 public class OOOAuthenticationDomain
-    implements MsoyAuthenticator.Domain
+    implements AuthenticationDomain
 {
     // from interface MsoyAuthenticator.Domain
-    public MsoyAuthenticator.Account createAccount (String accountName, String password)
+    public Account createAccount (String accountName, String password)
         throws ServiceException
     {
         // make sure this account is not already in use
@@ -114,7 +114,7 @@ public class OOOAuthenticationDomain
     }
 
     // from interface MsoyAuthenticator.Domain
-    public MsoyAuthenticator.Account authenticateAccount (String accountName, String password)
+    public Account authenticateAccount (String accountName, String password)
         throws ServiceException
     {
         // load up their user account record
@@ -137,7 +137,7 @@ public class OOOAuthenticationDomain
 
     // from interface MsoyAuthenticator.Domain
     public void validateAccount (
-            MsoyAuthenticator.Account account, String machIdent, boolean newIdent)
+            Account account, String machIdent, boolean newIdent)
         throws ServiceException
     {
         OOOAccount oooacc = (OOOAccount)account;
@@ -185,7 +185,7 @@ public class OOOAuthenticationDomain
     }
 
     // from interface MsoyAuthenticator.Domain
-    public void validateAccount (MsoyAuthenticator.Account account)
+    public void validateAccount (Account account)
         throws ServiceException
     {
         OOOAccount oooacc = (OOOAccount)account;
@@ -216,7 +216,7 @@ public class OOOAuthenticationDomain
         return _authrep.getMachineIdentCount(machIdent) == 0;
     }
 
-    protected static class OOOAccount extends MsoyAuthenticator.Account
+    protected static class OOOAccount extends Account
     {
         public OOOUser user;
     }

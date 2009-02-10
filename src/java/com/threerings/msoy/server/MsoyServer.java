@@ -107,7 +107,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(SceneRegistry.class).to(MsoySceneRegistry.class);
             bind(SceneRegistry.ConfigFactory.class).to(MsoySceneFactory.class);
             // msoy auth dependencies
-            bind(MsoyAuthenticator.Domain.class).to(OOOAuthenticationDomain.class);
+            bind(AuthenticationDomain.class).to(OOOAuthenticationDomain.class);
             // Messaging dependencies
             bind(MessageConnection.class).toInstance(createAMQPConnection());
         }

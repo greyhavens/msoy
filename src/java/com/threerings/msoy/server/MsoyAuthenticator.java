@@ -24,11 +24,13 @@ import com.threerings.presents.server.net.AuthingConnection;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
-import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
+
+import com.threerings.msoy.server.AuthenticationDomain.Account;
+
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
@@ -54,114 +56,6 @@ public class MsoyAuthenticator extends Authenticator
     /** Whether we create accounts for guests. */
     public static final boolean PERMAGUESTS_ENABLED = DeploymentConfig.devDeployment &&
         "true".equals(System.getProperty("permaguests", null));
-
-    // TODO: make a top-level class now that AccountLogic is handling Domains too
-    /** Used to coordinate with authentication domains. */
-    public static class Account
-    {
-        /** The account name in question. */
-        public String accountName;
-
-        /** The access privileges conferred to this account. */
-        public MsoyTokenRing tokens;
-
-        /** Whether or not this account is logging on for the first time. */
-        public boolean firstLogon;
-    }
-
-    // TODO: make a top-level interface now that AccountLogic is handling Domains too
-    /** Provides authentication information for a particular partner. */
-    public static interface Domain
-    {
-        /** A string that can be passed to the Domain to bypass password checking. Pass this actual
-         * instance. */
-        public static final String PASSWORD_BYPASS = "pwBypass";
-
-        /**
-         * Creates a new account for this authentication domain.
-         */
-        public Account createAccount (String accountName, String password)
-            throws ServiceException;
-
-        /**
-         * Uncreates an account that was created but needs to be deleted because of a later failure
-         * in the account creation process.
-         */
-        public void uncreateAccount (String accountName);
-
-        /**
-         * Notifies the authentication domain that the supplied information was modified for the
-         * specified account.
-         *
-         * @param newAccountName if non-null, a new email address for this account.
-         * @param newPermaName if non-null, the permaname assigned to this account.
-         * @param newPassword if non-null, the new password to be assigned to this account.
-         */
-        public void updateAccount (String accountName, String newAccountName, String newPermaName,
-                                   String newPassword)
-            throws ServiceException;
-
-        /**
-         * Loads up account information for the specified account and checks the supplied password.
-         *
-         * @exception ServiceException thrown with {@link MsoyAuthCodes#NO_SUCH_USER} if the account
-         * does not exist or with {@link MsoyAuthCodes#INVALID_PASSWORD} if the provided password
-         * is invalid.
-         */
-        public Account authenticateAccount (String accountName, String password)
-            throws ServiceException;
-
-        /**
-         * Called with an account loaded from {@link #authenticateAccount} to check whether the
-         * specified account is banned or if the supplied machine identifier should be prevented
-         * from creating a new account.
-         *
-         * @param machIdent a unique identifier assigned to the machine from which this account is
-         * logging in.
-         * @param newIdent if the machIdent was generated on the server
-         *
-         * @exception ServiceException thrown with {@link MsoyAuthCodes#BANNED} if the account is
-         * banned or {@link MsoyAuthCodes#MACHINE_TAINTED} if the machine identifier provided is
-         * associated with a banned account and this is the account's first logon.
-         */
-        public void validateAccount (Account account, String machIdent, boolean newIdent)
-            throws ServiceException;
-
-        /**
-         * Called with an account loaded from {@link #authenticateAccount} to check whether the
-         * specified account is banned. This is used when the account logs in from a
-         * non-machine-ident supporting client (like the web browser).
-         *
-         * @exception ServiceException thrown with {@link MsoyAuthCodes#BANNED} if the account is
-         * banned.
-         */
-        public void validateAccount (Account account)
-            throws ServiceException;
-
-        /**
-         * Generates a secret code that can be emailed to a user and then subsequently passed to
-         * {@link #validatePasswordResetCode} to confirm that the user is in fact receiving email
-         * sent to the address via which their account is registered.
-         *
-         * @return null if no account is registered for that address, a secret code otherwise.
-         */
-        public String generatePasswordResetCode (String accountName)
-            throws ServiceException;
-
-        /**
-         * Validates that the supplied password reset code is the one earlier provided by a call to
-         * {@link #generatePasswordResetCode}.
-         *
-         * @return true if the code is valid, false otherwise.
-         */
-        public boolean validatePasswordResetCode (String accountName, String code)
-            throws ServiceException;
-
-        /**
-         * Validates that this is a unique machine identifier.
-         */
-        public boolean isUniqueIdent (String machIdent);
-    }
 
     /**
      * Verifies that an ident is valid.
@@ -199,7 +93,7 @@ public class MsoyAuthenticator extends Authenticator
             email = email.toLowerCase();
 
             // validate their account credentials; make sure they're not banned
-            final Domain domain = _accountLogic.getDomain(email);
+            final AuthenticationDomain domain = _accountLogic.getDomain(email);
             final Account account = domain.authenticateAccount(email, password);
 
             // load up their member information
@@ -335,8 +229,8 @@ public class MsoyAuthenticator extends Authenticator
                     if (member == null) {
                         throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
                     }
-                    rsp.authdata = authenticateMember(
-                        creds, rdata, member, false, member.accountName, Domain.PASSWORD_BYPASS);
+                    rsp.authdata = authenticateMember(creds, rdata, member, false,
+                        member.accountName, AuthenticationDomain.PASSWORD_BYPASS);
                 }
 
             } else if (creds.getUsername() != null) {
@@ -398,7 +292,7 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         // obtain the authentication domain appropriate to their account name
-        final Domain domain = _accountLogic.getDomain(accountName);
+        final AuthenticationDomain domain = _accountLogic.getDomain(accountName);
 
         boolean newIdent = false;
         // see if we need to generate a new ident

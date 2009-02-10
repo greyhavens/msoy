@@ -29,8 +29,7 @@ import com.threerings.msoy.room.data.MsoySceneModel;
 
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
-import com.threerings.msoy.server.MsoyAuthenticator.Account;
-import com.threerings.msoy.server.MsoyAuthenticator.Domain;
+import com.threerings.msoy.server.AuthenticationDomain.Account;
 
 import com.threerings.msoy.server.persist.AffiliateMapRepository;
 import com.threerings.msoy.server.persist.InvitationRecord;
@@ -55,7 +54,7 @@ public class AccountLogic
      * could route all @yahoo.com addresses to a custom authenticator that talked to Yahoo!  to
      * authenticate user accounts.
      */
-    public Domain getDomain (final String accountName)
+    public AuthenticationDomain getDomain (final String accountName)
     {
         // TODO: fancy things based on the user's email domain for our various exciting partners
         return _defaultDomain;
@@ -220,7 +219,7 @@ public class AccountLogic
         // make sure we're dealing with a lower cased email
         email = email.toLowerCase();
 
-        Domain domain = null;
+        AuthenticationDomain domain = null;
         Account account = null;
         MemberRecord stalerec = null;
         try {
@@ -353,7 +352,7 @@ public class AccountLogic
         return PERMAGUEST_DISPLAY_PREFIX + " " + memberId;
     }
 
-    @Inject protected Domain _defaultDomain;
+    @Inject protected AuthenticationDomain _defaultDomain;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected AffiliateMapRepository _affMapRepo;
     @Inject protected MemberRepository _memberRepo;
