@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -29,6 +30,7 @@ import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.ui.RoundBox;
 import client.ui.StretchButton;
 import client.util.BillingURLs;
 import client.util.ClickCallback;
@@ -40,6 +42,20 @@ import client.util.Link;
  */
 public abstract class BuyPanel<T> extends SmartTable
 {
+    /**
+     * Return a generic widget hosting this BuyPanel with the specified message.
+     */
+    public RoundBox createPromptHost (String promptStr)
+    {
+        RoundBox box = new RoundBox(RoundBox.BLUE);
+        box.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
+        Label prompt = new Label(promptStr);
+        prompt.setStyleName("BuyPrompt");
+        box.add(prompt);
+        box.add(this);
+        return box;
+    }
+
     /**
      * Initialize the buy panel. (Separted from constructor to reduce subclassing pain.)
      *
@@ -83,8 +99,9 @@ public abstract class BuyPanel<T> extends SmartTable
 
     /**
      * Do the service request to make the purchase.
+     * @return true if a service request was sent.
      */
-    protected abstract void makePurchase (
+    protected abstract boolean makePurchase (
         Currency currency, int amount, AsyncCallback<PurchaseResult<T>> listener);
 
     /**
@@ -163,8 +180,7 @@ public abstract class BuyPanel<T> extends SmartTable
 
         @Override protected boolean callService ()
         {
-            makePurchase(_currency, _quote.getAmount(_currency), this);
-            return true;
+            return makePurchase(_currency, _quote.getAmount(_currency), this);
         }
 
         @Override protected boolean gotResult (PurchaseResult<T> result)

@@ -14,6 +14,10 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.web.gwt.TagHistory;
 
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+
 /**
  * The asynchronous (client-side) version of {@link GroupService}.
  */
@@ -68,9 +72,16 @@ public interface GroupServiceAsync
     void updateGroup (Group group, GroupExtras extras, AsyncCallback<Void> callback);
 
     /**
+     * The asynchronous version of {@link GroupService#quoteCreateGroup}
+     */
+    void quoteCreateGroup (AsyncCallback<PriceQuote> callback);
+
+    /**
      * The asynchronous version of {@link GroupService#createGroup}
      */
-    void createGroup (Group group, GroupExtras extras, AsyncCallback<Group> callback);
+    void createGroup (
+        Group group, GroupExtras extras, Currency currency, int authedAmount,
+        AsyncCallback<PurchaseResult<Group>> callback);
 
     /**
      * The asynchronous version of {@link GroupService#leaveGroup}

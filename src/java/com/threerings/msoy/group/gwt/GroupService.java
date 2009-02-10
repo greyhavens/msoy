@@ -17,6 +17,10 @@ import com.threerings.msoy.group.data.all.Medal;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.TagHistory;
 
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+
 /**
  * Defines group services available to the GWT/AJAX web client.
  */
@@ -155,9 +159,16 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
+     * Return a PriceQuote for creating a new group.
+     */
+    PriceQuote quoteCreateGroup ()
+        throws ServiceException;
+
+    /**
      * Create a new group in the system, with data supplied in the {@link Group} argument.
      */
-    Group createGroup (Group group, GroupExtras extras)
+    PurchaseResult<Group> createGroup (
+        Group group, GroupExtras extras, Currency currency, int authedAmount)
         throws ServiceException;
 
     /**

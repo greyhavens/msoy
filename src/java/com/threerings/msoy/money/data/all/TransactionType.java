@@ -30,6 +30,7 @@ public enum TransactionType
     REFUND_GIVEN(15),
     REFUND_DEDUCTED(16),
     ROOM_PURCHASE(17),
+    GROUP_PURCHASE(18),
     ;
 
     // Required by ByteEnum

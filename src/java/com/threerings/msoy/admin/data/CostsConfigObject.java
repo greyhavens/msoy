@@ -8,8 +8,9 @@ import com.threerings.admin.data.ConfigObject;
 /**
  * Contains runtime configurable costs.
  *
- * Each cost is specified in coins, 0 for free, or a negative number to peg it to the value
- * of the magnitude of bars.
+ * To interpret the value of a cost, use RuntimeConfig.getCoinCost();
+ * (Each cost is specified in coins, 0 for free, or a negative number to peg it to the value
+ * of the magnitude of bars.)
  */
 public class CostsConfigObject extends ConfigObject
 {
@@ -32,14 +33,6 @@ public class CostsConfigObject extends ConfigObject
 
     /** The cost to rename a group. */
     public int renameGroup = -1;
-
-    /**
-     * Get the cost of one of the fields, above.
-     */
-    public static int getCost (int value, float exchangeRate)
-    {
-        return (value >= 0) ? value : (int)Math.ceil(-1 * value * exchangeRate);
-    }
 
     // AUTO-GENERATED: METHODS START
     /**

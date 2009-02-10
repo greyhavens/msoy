@@ -78,14 +78,12 @@ public class MoneyLogic
 {
     /**
      * An operation to complete a purchase.
-     * Right now only used in buyItem, but we may generalize that a bit to buy
-     * other things.
      */
     public static abstract class BuyOperation<T>
     {
         /**
          * Create the thing that is being purchased.
-         * You may throw a RuntimeException or return false on failure.
+         * You may throw a MoneyServiceException, RuntimeException or return false on failure.
          *
          * @param magicFree indicates that the product was received for free.
          * @param currency the currency used to make the purchase.
@@ -93,7 +91,8 @@ public class MoneyLogic
          *
          * @return true on success.
          */
-        public abstract boolean create (boolean magicFree, Currency currency, int amountPaid);
+        public abstract boolean create (boolean magicFree, Currency currency, int amountPaid)
+            throws MoneyServiceException;
 
         /**
          * Get the ware that was created.
@@ -256,7 +255,7 @@ public class MoneyLogic
     public BuyResult buyItem (
         final MemberRecord buyerRec, CatalogRecord catrec, Currency buyCurrency, int authedAmount,
         BuyOperation<?> buyOp)
-        throws NotEnoughMoneyException, NotSecuredException
+        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
     {
         Preconditions.checkArgument(catrec.item != null, "catalog master not loaded");
         final CatalogIdent item = new CatalogIdent(catrec.item.getType(), catrec.catalogId);
@@ -396,20 +395,47 @@ public class MoneyLogic
     public BuyResult buyRoom (
         MemberRecord buyerRec, Object roomKey, Currency buyCurrency, int authedAmount,
         Currency listCurrency, int listAmount, BuyOperation<?> buyOp)
-        throws NotEnoughMoneyException, NotSecuredException
+        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
+    {
+        return buyFromOOO(buyerRec, roomKey, buyCurrency, authedAmount,
+            listCurrency, listAmount, buyOp,
+            "m.room_bought", TransactionType.ROOM_PURCHASE, "m.change_rcvd_room");
+    }
+
+    /**
+     * Process the purchase of a group.
+     */
+    public BuyResult buyGroup (
+        MemberRecord buyerRec, Object groupKey, Currency buyCurrency, int authedAmount,
+        Currency listCurrency, int listAmount, BuyOperation<?> buyOp, String groupName)
+        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
+    {
+        return buyFromOOO(buyerRec, groupKey, buyCurrency, authedAmount,
+            listCurrency, listAmount, buyOp,
+            MessageBundle.tcompose("m.group_created", groupName), TransactionType.GROUP_PURCHASE,
+            "m.change_rcvd_group");
+    }
+
+    /**
+     * Process a purchase of a ware from Three Rings.
+     */
+    public BuyResult buyFromOOO (
+        MemberRecord buyerRec, Object wareKey, Currency buyCurrency, int authedAmount,
+        Currency listCurrency, int listAmount, BuyOperation<?> buyOp,
+        final String boughtTxMsg, TransactionType boughtTxType, String changeTxMsg)
+        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
     {
         int buyerId = buyerRec.memberId;
-        Function<Boolean, String> buyMsgFn = new Function<Boolean,String>() {
+        Function<Boolean, String> boughtTxMsgFn = new Function<Boolean,String>() {
             public String apply (Boolean magicFree) {
-                return "m.room_bought";
+                return boughtTxMsg;
             }
         };
-        String changeMsg = "m.change_rcvd_room";
 
         // do the buy!
-        IntermediateBuyResult ibr = buy(buyerRec, roomKey, buyCurrency, authedAmount,
-            false /*forcefree*/, listCurrency, listAmount, buyOp, TransactionType.ROOM_PURCHASE,
-            buyMsgFn, null /*subject*/, changeMsg);
+        IntermediateBuyResult ibr = buy(buyerRec, wareKey, buyCurrency, authedAmount,
+            false /*forcefree*/, listCurrency, listAmount, buyOp,
+            boughtTxType, boughtTxMsgFn, null /*subject*/, changeTxMsg);
         if (ibr == null) {
             return null;
         }
@@ -457,7 +483,7 @@ public class MoneyLogic
         boolean forceFree, Currency listedCurrency, int listedAmount, BuyOperation<?> buyOp,
         TransactionType buyerTxType, Function<Boolean,String> buyMsgFn, Object subject,
         String changeMsg)
-        throws NotEnoughMoneyException, NotSecuredException
+        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
     {
         Preconditions.checkArgument(
             buyCurrency == Currency.BARS || buyCurrency == Currency.COINS,

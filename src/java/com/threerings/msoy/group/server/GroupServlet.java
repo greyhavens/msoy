@@ -57,6 +57,11 @@ import com.threerings.msoy.chat.server.MsoyChatChannelManager;
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
+
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
@@ -282,10 +287,18 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Group createGroup (Group group, GroupExtras extras)
+    public PriceQuote quoteCreateGroup ()
         throws ServiceException
     {
-        return _groupLogic.createGroup(requireAuthedUser(), group, extras);
+        return _groupLogic.quoteCreateGroup(requireAuthedUser());
+    }
+
+    // from interface GroupService
+    public PurchaseResult<Group> createGroup (
+        Group group, GroupExtras extras, Currency currency, int authedAmount)
+        throws ServiceException
+    {
+        return _groupLogic.createGroup(requireAuthedUser(), group, extras, currency, authedAmount);
     }
 
     // from interface GroupService

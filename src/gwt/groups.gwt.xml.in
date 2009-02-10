@@ -1,6 +1,7 @@
 <module>
   <inherits name="msgs"/>
   <inherits name="room"/>
+  <inherits name="money"/>
 
   <source path="com/threerings/msoy/group/data/all"/>
   <source path="com/threerings/msoy/group/gwt"/>

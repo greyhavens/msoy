@@ -28,6 +28,7 @@ import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
+import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -38,7 +39,6 @@ import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyException;
-import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
@@ -231,7 +231,7 @@ public class WebRoomServlet extends MsoyServiceServlet
      */
     protected int getRoomCoinCost ()
     {
-        return _runtime.costs.getCost(_runtime.costs.newRoom, _exchange.getRate());
+        return _runtime.getCoinCost(CostsConfigObject.NEW_ROOM);
     }
 
     protected static final Predicate<SceneRecord> IS_PUBLIC = new Predicate<SceneRecord>() {
@@ -267,7 +267,6 @@ public class WebRoomServlet extends MsoyServiceServlet
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MemberManager _memberMan;
     @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MoneyExchange _exchange;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected RuntimeConfig _runtime;
 }

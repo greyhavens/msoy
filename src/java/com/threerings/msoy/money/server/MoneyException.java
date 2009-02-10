@@ -12,17 +12,17 @@ import com.threerings.msoy.web.gwt.ServiceException;
  */
 public abstract class MoneyException extends Exception
 {
-    public MoneyException (final String message)
+    public MoneyException (String message)
     {
         super(message);
     }
 
-    public MoneyException (final String message, final Throwable cause)
+    public MoneyException (String message, Throwable cause)
     {
         super(message, cause);
     }
 
-    public MoneyException (final Throwable cause)
+    public MoneyException (Throwable cause)
     {
         super(cause);
     }

@@ -4,12 +4,14 @@
 package com.threerings.msoy.admin.server;
 
 import com.google.inject.Singleton;
+import com.google.inject.Inject;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.ObjectAccessException;
 import com.threerings.presents.dobj.ProxySubscriber;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.dobj.Subscriber;
@@ -20,6 +22,8 @@ import com.threerings.msoy.admin.data.CostsConfigObject;
 import com.threerings.msoy.admin.data.MoneyConfigObject;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.data.MemberObject;
+
+import com.threerings.msoy.money.server.MoneyExchange;
 
 import static com.threerings.msoy.Log.log;
 
@@ -46,6 +50,20 @@ public class RuntimeConfig
         registerObject(omgr, confReg, "server", server);
         registerObject(omgr, confReg, "money", money);
         registerObject(omgr, confReg, "costs", costs);
+    }
+
+    /**
+     * Get the cost, in coins, of the specified field of the CostsConfigObject.
+     */
+    public int getCoinCost (String costsFieldName)
+    {
+        try {
+            int value = ((Integer)costs.getAttribute(costsFieldName)).intValue();
+            return (value >= 0) ? value : (int)Math.ceil(-1 * value * _exchange.getRate());
+        } catch (ObjectAccessException oae) {
+            // Shouldn't happen as long as you're using CostsConfigObject constants in your code...
+            throw new RuntimeException(oae);
+        }
     }
 
     protected void registerObject (RootDObjectManager omgr, ConfigRegistry confReg,
@@ -120,4 +138,7 @@ public class RuntimeConfig
 
         protected RootDObjectManager _omgr;
     };
+
+    // our dependencies
+    @Inject protected MoneyExchange _exchange;
 }

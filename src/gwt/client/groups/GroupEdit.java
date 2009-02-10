@@ -31,13 +31,19 @@ import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.TagHistory;
 
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PurchaseResult;
+
 import client.item.TagDetailPanel;
+import client.money.BuyPanel;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.ShellMessages;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
+import client.ui.RoundBox;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -49,6 +55,9 @@ public class GroupEdit extends FlexTable
 {
     /**
      * Create a new group.
+     *
+     * Please note that this constructor ends up triggering a service request to
+     * get the PriceQuote for creating a group.
      */
     public GroupEdit ()
     {
@@ -145,18 +154,23 @@ public class GroupEdit extends FlexTable
         }
 
         HorizontalPanel footer = new HorizontalPanel();
-        footer.add(new Button(_cmsgs.cancel(), new ClickListener() {
+        footer.add(_cancel = new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 Link.go(Pages.GROUPS, _group.groupId == 0 ? "" :
                         Args.compose("d", _group.groupId));
             }
         }));
         footer.add(WidgetUtil.makeShim(5, 5));
-        footer.add(_submit = new Button(_cmsgs.change(), new ClickListener() {
-            public void onClick (Widget sender) {
-                commitEdit();
-            }
-        }));
+        if (isCreate) {
+            footer.add(new GroupBuyPanel().createPromptHost(_msgs.createNew()));
+
+        } else {
+            footer.add(_submit = new Button(_cmsgs.change(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    updateGroup();
+                }
+            }));
+        }
         int frow = getRowCount();
         setWidget(frow, 1, footer);
         getFlexCellFormatter().setHorizontalAlignment(frow, 1, HasAlignment.ALIGN_RIGHT);
@@ -198,7 +212,12 @@ public class GroupEdit extends FlexTable
         setWidget(row, 1, contents);
     }
 
-    protected void commitEdit ()
+    /**
+     * Copy settings in UI fields back into _group and _extras.
+     *
+     * @return true if we're ready to go
+     */
+    protected boolean commitEdits ()
     {
         // extract our values
         if (_name != null) {
@@ -207,7 +226,7 @@ public class GroupEdit extends FlexTable
             if (name.length() < GroupName.LENGTH_MIN || name.length() > GroupName.LENGTH_MAX ||
                     !Character.isLetterOrDigit(name.charAt(0))) {
                 MsoyUI.error(_msgs.errInvalidGroupName());
-                return;
+                return false;
             }
             _group.name = name;
 
@@ -225,22 +244,25 @@ public class GroupEdit extends FlexTable
         _extras.homepageUrl = _homepage.getText().trim();
         _extras.catalogItemType = Item.SHOP_TYPES[_catalogType.getSelectedIndex()];
         _extras.catalogTag = _catalogTag.getText().trim();
+        return true;
+    }
 
-        final MsoyCallback<Void> updateCallback = new MsoyCallback<Void>() {
+    /**
+     * Called to save changes when editing an existing group.
+     */
+    protected void updateGroup ()
+    {
+        if (!commitEdits()) {
+            return;
+        }
+
+        final MsoyCallback<Void> updateCallback = new MsoyCallback<Void>(_submit) {
             public void onSuccess (Void result) {
                 Link.go(Pages.GROUPS, Args.compose("d", String.valueOf(_group.groupId), "r"));
             }
         };
-        final MsoyCallback<Group> createCallback = new MsoyCallback<Group>() {
-            public void onSuccess (Group group) {
-                Link.go(Pages.GROUPS, Args.compose("d", String.valueOf(group.groupId), "r"));
-            }
-        };
 
-        if (_group.groupId == 0) {
-            _groupsvc.createGroup(_group, _extras, createCallback);
-
-        } else if (_group.policy == Group.POLICY_EXCLUSIVE) {
+        if (_group.policy == Group.POLICY_EXCLUSIVE) {
             // check if we're trying to set the policy to exclusive on a group that has tags
             _groupsvc.getTags(_group.groupId, new MsoyCallback<List<String>>() {
                 public void onSuccess (List<String> tags) {
@@ -257,6 +279,35 @@ public class GroupEdit extends FlexTable
         }
     }
 
+    protected class GroupBuyPanel extends BuyPanel<Group>
+    {
+        public GroupBuyPanel ()
+        {
+            _groupsvc.quoteCreateGroup(new MsoyCallback<PriceQuote>(_cancel) {
+                public void onSuccess (PriceQuote quote) {
+                    init(quote, new AsyncCallback<Group>() {
+                        public void onSuccess (Group group) {
+                            Link.go(Pages.GROUPS,
+                                Args.compose("d", String.valueOf(group.groupId), "r"));
+                        }
+                        public void onFailure (Throwable t) {} /* not used */
+                    });
+                }
+            });
+        }
+
+        @Override
+        protected boolean makePurchase (
+            Currency currency, int amount, AsyncCallback<PurchaseResult<Group>> listener)
+        {
+            boolean editsOk = commitEdits();
+            if (editsOk) {
+                _groupsvc.createGroup(_group, _extras, currency, amount, listener);
+            }
+            return editsOk;
+        }
+    }
+
     protected Group _group;
     protected GroupExtras _extras;
 
@@ -264,7 +315,7 @@ public class GroupEdit extends FlexTable
     protected PhotoChoiceBox _logo;
     protected ListBox _policy, _party, _thread, _post, _catalogType;
     protected LimitedTextArea _charter;
-    protected Button _submit;
+    protected Button _cancel, _submit;
     protected CheckBox _official;
 
     protected static final GroupsMessages _msgs = GWT.create(GroupsMessages.class);

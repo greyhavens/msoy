@@ -24,10 +24,11 @@ import client.money.BuyPanel;
 public class RoomBuyPanel extends BuyPanel<RoomInfo>
 {
     @Override
-    protected void makePurchase (
+    protected boolean makePurchase (
         Currency currency, int amount, AsyncCallback<PurchaseResult<RoomInfo>> listener)
     {
         _roomsvc.purchaseRoom(currency, amount, listener);
+        return true;
     }
 
     protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)

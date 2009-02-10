@@ -46,15 +46,18 @@ public class ItemBuyPanel extends BuyPanel<Item>
     }
 
     @Override
-    protected void makePurchase (
+    protected boolean makePurchase (
         Currency currency, int amount, AsyncCallback<PurchaseResult<Item>> listener)
     {
         if (CShell.isGuest()) {
             MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
                 Link.createListener(Pages.ACCOUNT, "create"));
+            return false;
+
         } else {
             _catalogsvc.purchaseItem(_listing.detail.item.getType(), _listing.catalogId,
                 currency, amount, listener);
+            return true;
         }
     }
 
