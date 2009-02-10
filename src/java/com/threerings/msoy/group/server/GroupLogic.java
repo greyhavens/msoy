@@ -30,7 +30,6 @@ import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyException;
-import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyServiceException;
 
@@ -229,6 +228,5 @@ public class GroupLogic
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MoneyExchange _exchange;
     @Inject protected RuntimeConfig _runtime;
 }
