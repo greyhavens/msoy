@@ -140,8 +140,9 @@ public class MsoyController extends Controller
 
         setControlledPanel(topPanel);
         var stage :Stage = mctx.getStage();
-        stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
+//        stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
         stage.addEventListener(KeyboardEvent.KEY_DOWN, handleStageKeyDown, false, int.MAX_VALUE);
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, false, int.MAX_VALUE);
 
         // create a timer that checks whether we should be logged out for being idle too long
         _byebyeTimer = new Timer(MAX_GUEST_IDLE_TIME, 1);
@@ -384,7 +385,7 @@ public class MsoyController extends Controller
         // give the client a chance to log off, then log back on
         _topPanel.callLater(function () :void {
             var client :Client = _mctx.getClient();
-            log.info("Logging on [creds=" + creds + ", version=" + DeploymentConfig.version + "].");
+            log.info("Logging on", "creds", creds, "version", DeploymentConfig.version);
             client.setCredentials(creds);
             client.logon();
         });
@@ -506,13 +507,11 @@ public class MsoyController extends Controller
         // for LINK events and handle them all here.
         if (_controlledPanel != null) {
             _controlledPanel.removeEventListener(TextEvent.LINK, handleLink);
-            _controlledPanel.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, true);
             _controlledPanel.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         }
         super.setControlledPanel(panel);
         if (_controlledPanel != null) {
             _controlledPanel.addEventListener(TextEvent.LINK, handleLink);
-            _controlledPanel.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, true);
             _controlledPanel.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         }
     }
@@ -629,24 +628,24 @@ public class MsoyController extends Controller
         }
     }
 
-    /**
-     * Detect the kind of unfocus that happens when the user switches tabs.
-     */
-    protected function handleUnfocus (event :FocusEvent) :void
-    {
-        if (event.target is TextField && event.relatedObject == null) {
-            _mctx.getStage().addEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
-        }
-    }
-
-    /**
-     * Attempt to refocus the chatbox after the browser caused focus to lose.
-     */
-    protected function handleRefocus (event :MouseEvent) :void
-    {
-        _mctx.getStage().removeEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
-        checkChatFocus();
-    }
+//    /**
+//     * Detect the kind of unfocus that happens when the user switches tabs.
+//     */
+//    protected function handleUnfocus (event :FocusEvent) :void
+//    {
+//        if (event.target is TextField && event.relatedObject == null) {
+//            _mctx.getStage().addEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
+//        }
+//    }
+//
+//    /**
+//     * Attempt to refocus the chatbox after the browser caused focus to lose.
+//     */
+//    protected function handleRefocus (event :MouseEvent) :void
+//    {
+//        _mctx.getStage().removeEventListener(MouseEvent.MOUSE_MOVE, handleRefocus);
+//        checkChatFocus();
+//    }
 
     /**
      * TODO: remove someday.
