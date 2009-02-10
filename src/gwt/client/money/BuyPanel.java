@@ -164,7 +164,7 @@ public abstract class BuyPanel<T> extends SmartTable
             _barLabel.setText(quote.getCoinChange() > 0 ?
                 _msgs.coinChange(Currency.COINS.format(quote.getCoinChange())) : "");
             _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(
-                (int)Math.ceil(quote.getExchangeRate()))));
+                (int)Math.floor(quote.getExchangeRate()))));
             _addenda.add(_wikiLink);
         }
         _buyCoins.setAmount(quote.getCoins());
