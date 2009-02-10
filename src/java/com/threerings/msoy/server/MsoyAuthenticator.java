@@ -5,7 +5,6 @@ package com.threerings.msoy.server;
 
 import static com.threerings.msoy.Log.log;
 
-import java.security.MessageDigest;
 import java.util.Date;
 
 import com.google.inject.Inject;
@@ -22,7 +21,6 @@ import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
-import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
@@ -31,24 +29,18 @@ import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.server.persist.AffiliateMapRepository;
-import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
 
 import com.threerings.msoy.web.gwt.BannedException;
-import com.threerings.msoy.web.gwt.ExternalAuther;
 import com.threerings.msoy.web.gwt.ExternalCreds;
 // import com.threerings.msoy.web.gwt.FacebookCreds;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 /**
  * Handles authentication for the MetaSOY server. We rely on underlying authentication domain
@@ -63,6 +55,7 @@ public class MsoyAuthenticator extends Authenticator
     public static final boolean PERMAGUESTS_ENABLED = DeploymentConfig.devDeployment &&
         "true".equals(System.getProperty("permaguests", null));
 
+    // TODO: make a top-level class now that AccountLogic is handling Domains too
     /** Used to coordinate with authentication domains. */
     public static class Account
     {
@@ -76,6 +69,7 @@ public class MsoyAuthenticator extends Authenticator
         public boolean firstLogon;
     }
 
+    // TODO: make a top-level interface now that AccountLogic is handling Domains too
     /** Provides authentication information for a particular partner. */
     public static interface Domain
     {
@@ -189,86 +183,6 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
-     * Returns the default domain used for the internal support tools.
-     */
-    public Domain getDefaultDomain ()
-    {
-        return _defaultDomain;
-    }
-
-    /**
-     * Creates a new account with the supplied credentials.
-     *
-     * @param email the email address of the to-be-created account.
-     * @param password the MD5 encrypted password for this account.
-     * @param displayName the user's initial display name.
-     * @param ignoreRestrict whether to ignore the registration enabled toggle.
-     *
-     * @return the newly created member record.
-     */
-    public MemberRecord createAccount (
-        String email, final String password, final String displayName, boolean ignoreRestrict,
-        final InvitationRecord invite, final VisitorInfo visitor, String affiliate)
-        throws ServiceException
-    {
-        if (!_runtime.server.registrationEnabled && !ignoreRestrict) {
-            throw new ServiceException(MsoyAuthCodes.NO_REGISTRATIONS);
-        }
-        return createAccount(email, password, displayName, invite, visitor, affiliate, null, null);
-    }
-
-    /**
-     * Updates any of the supplied authentication information for the supplied account. Any of the
-     * new values may be null to indicate that they are not to be updated.
-     */
-    public void updateAccount (
-        String oldEmail, String newEmail, String newPermaName, String newPass)
-        throws ServiceException
-    {
-        try {
-            // make sure we're dealing with lower cased email addresses
-            oldEmail = oldEmail.toLowerCase();
-            if (newEmail != null) {
-                newEmail = newEmail.toLowerCase();
-            }
-            getDomain(oldEmail).updateAccount(oldEmail, newEmail, newPermaName, newPass);
-        } catch (final RuntimeException e) {
-            log.warning("Error updating account", "for", oldEmail, "nemail", newEmail,
-                        "nperma", newPermaName, "npass", newPass, e);
-            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Generates a secret code that can be emailed to a user and then subsequently passed to {@link
-     * #validatePasswordResetCode} to confirm that the user is in fact receiving email sent to the
-     * address via which their account is registered.
-     *
-     * @return null if no account is registered for that address, a secret code otherwise.
-     */
-    public String generatePasswordResetCode (String email)
-        throws ServiceException
-    {
-        // make sure we're dealing with a lower cased email
-        email = email.toLowerCase();
-        return getDomain(email).generatePasswordResetCode(email);
-    }
-
-    /**
-     * Validates that the supplied password reset code is the one earlier provided by a call to
-     * {@link #generatePasswordResetCode}.
-     *
-     * @return true if the code is valid, false otherwise.
-     */
-    public boolean validatePasswordResetCode (String email, final String code)
-        throws ServiceException
-    {
-        // make sure we're dealing with a lower cased email
-        email = email.toLowerCase();
-        return getDomain(email).validatePasswordResetCode(email, code);
-    }
-
-    /**
      * Authenticates a web sesssion, verifying the supplied email and password and loading,
      * creating (or reusing) a member record.
      *
@@ -285,7 +199,7 @@ public class MsoyAuthenticator extends Authenticator
             email = email.toLowerCase();
 
             // validate their account credentials; make sure they're not banned
-            final Domain domain = getDomain(email);
+            final Domain domain = _accountLogic.getDomain(email);
             final Account account = domain.authenticateAccount(email, password);
 
             // load up their member information
@@ -349,18 +263,9 @@ public class MsoyAuthenticator extends Authenticator
             ExternalAuthHandler.Info info = handler.getInfo(creds);
 
             // create their account
-            MemberRecord mrec = createAccount(
-                creds.getPlaceholderAddress(), "", info.displayName, null, visitor, null,
-                creds.getAuthSource(), creds.getUserId());
-
-            // store their profile
-            try {
-                info.profile.memberId = mrec.memberId;
-                _profileRepo.storeProfile(info.profile);
-            } catch (Exception e) {
-                log.warning("Failed to store initial profile for autocreated external user",
-                            "creds", creds, "info", info, e);
-            }
+            MemberRecord mrec = _accountLogic.createExternalAccount(
+                creds.getPlaceholderAddress(), info.displayName, visitor, creds.getAuthSource(),
+                creds.getUserId());
 
             // wire them up to any friends they might have
             if (info.friendIds != null) {
@@ -441,22 +346,15 @@ public class MsoyAuthenticator extends Authenticator
 
             } else if (PERMAGUESTS_ENABLED && !creds.featuredPlaceView) {
 
-                // create a new account a unique placeholder email and empty password
-                String username = createPermaguestAccountName(conn.getInetAddress().toString());
-                String password = "";
-                MemberRecord newMember = createAccount(username, password,
-                    "Temporary", null, new VisitorInfo(creds.visitorId, false),
-                    null, null, null);
-                log.info("Created permaguest account", "username", username);
+                // create a new guest account
+                MemberRecord newMember = _accountLogic.createGuestAccount(
+                    conn.getInetAddress().toString(), creds.visitorId);
+                log.info("Created permaguest account", "username", newMember.accountName);
 
                 // now authenticate just to make sure everything is in order and get the token
-                creds.setUsername(new Name(username));
-                rsp.authdata = authenticateMember(
-                    creds, rdata, newMember, true, username, password);
-
-                // give them a rubbish name so they will want to save their account
-                _memberRepo.configureDisplayName(
-                    newMember.memberId, generatePermaguestDisplayName(newMember.memberId));
+                creds.setUsername(new Name(newMember.accountName));
+                rsp.authdata = authenticateMember(creds, rdata, newMember, true,
+                    newMember.accountName, AccountLogic.PERMAGUEST_PASSWORD);
 
             } else {
                 // if this is not just a "featured whirled" client; assign this guest a member id
@@ -500,7 +398,7 @@ public class MsoyAuthenticator extends Authenticator
         throws ServiceException
     {
         // obtain the authentication domain appropriate to their account name
-        final Domain domain = getDomain(accountName);
+        final Domain domain = _accountLogic.getDomain(accountName);
 
         boolean newIdent = false;
         // see if we need to generate a new ident
@@ -563,128 +461,6 @@ public class MsoyAuthenticator extends Authenticator
                                member.created.getTime());
 
         return account;
-    }
-
-    /**
-     * Returns the authentication domain to use for the supplied account name. We support
-     * federation of authentication domains based on the domain of the address. For example, we
-     * could route all @yahoo.com addresses to a custom authenticator that talked to Yahoo!  to
-     * authenticate user accounts.
-     */
-    protected Domain getDomain (final String accountName)
-    {
-        // TODO: fancy things based on the user's email domain for our various exciting partners
-        return _defaultDomain;
-    }
-
-    /**
-     * Does the complicated and failure complex account creation process. Whee!
-     */
-    protected MemberRecord createAccount (
-        String email, String password, String displayName, InvitationRecord invite,
-        VisitorInfo visitor, String affiliate, ExternalAuther exAuther, String externalId)
-        throws ServiceException
-    {
-        // make sure we're dealing with a lower cased email
-        email = email.toLowerCase();
-
-        Domain domain = null;
-        Account account = null;
-        MemberRecord stalerec = null;
-        try {
-            // create and validate the new account
-            domain = getDomain(email);
-            account = domain.createAccount(email, password);
-            account.firstLogon = true;
-            domain.validateAccount(account);
-
-//             // create a new member record for the account
-//             MemberRecord mrec = createMember(
-//                 account.accountName, displayName, invite, visitor, affiliate);
-
-            // normalize blank affiliates to null
-            if (StringUtil.isBlank(affiliate)) {
-                affiliate = null;
-            }
-
-            // create their main member record
-            final MemberRecord mrec = new MemberRecord();
-            stalerec = mrec;
-            mrec.accountName = account.accountName;
-            mrec.name = displayName;
-            if (invite != null) {
-                String inviterStr = String.valueOf(invite.inviterId);
-                if (affiliate != null && !affiliate.equals(inviterStr)) {
-                    log.warning("New member has both an inviter and an affiliate. Using inviter.",
-                                "email", mrec.accountName, "inviter", inviterStr,
-                                "affiliate", affiliate);
-                }
-                affiliate = inviterStr; // turn the inviter into an affiliate
-            }
-            if (affiliate != null) {
-                // look up their affiliate's memberId, if any
-                mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(affiliate);
-            }
-            if (visitor != null) {
-                mrec.visitorId = visitor.id;
-            } else {
-                log.warning("Missing visitor id when creating user " + account.accountName);
-            }
-
-            // store their member record in the repository making them a real Whirled citizen
-            _memberRepo.insertMember(mrec);
-
-            // if we're coming from an external authentication source, note that
-            if (exAuther != null) {
-                _memberRepo.mapExternalAccount(exAuther, externalId, mrec.memberId);
-            }
-
-            // create a blank room for them, store it
-            final String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
-            mrec.homeSceneId = _sceneRepo.createBlankRoom(
-                MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true).sceneId;
-            _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
-
-            // create their money account, granting them some starting flow
-            _moneyLogic.createMoneyAccount(mrec.memberId, CoinAwards.CREATED_ACCOUNT);
-
-            // store their affiliate, if any (may also be the inviter's memberId)
-            if (affiliate != null) {
-                _memberRepo.setAffiliate(mrec.memberId, affiliate);
-            }
-
-            // record to the event log that we created a new account
-            final String iid = (invite == null) ? null : invite.inviteId;
-            final String vid = (visitor == null) ? null : visitor.id;
-            _eventLog.accountCreated(mrec.memberId, iid, mrec.affiliateMemberId, vid);
-
-            // clear out account and stalerec to let the finally block know that all went well and
-            // we need not roll back the domain account and member record creation
-            account = null;
-            stalerec = null;
-
-            return mrec;
-
-        } catch (final RuntimeException e) {
-            log.warning("Error creating member record", "for", email, e);
-            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-
-        } finally {
-            if (account != null) {
-                try {
-                    domain.uncreateAccount(email);
-                } catch (final RuntimeException e) {
-                    log.warning("Failed to rollback account creation", "email", email, e);
-                }
-            }
-            if (stalerec != null) {
-                try {
-                    _memberRepo.deleteMember(stalerec);
-                } catch (RuntimeException e) {
-                    log.warning("Failed to rollback MemberRecord creation", "mrec", stalerec, e);
-                }
-            }
-        }
     }
 
     /**
@@ -753,59 +529,18 @@ public class MsoyAuthenticator extends Authenticator
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
     }
 
-    /**
-     * Generates a generic display name for permaguests.
-     */
-    public static String generatePermaguestDisplayName (int memberId)
-    {
-        return PERMAGUEST_DISPLAY_PREFIX + " " + memberId;
-    }
-
-    /**
-     * Creates a username to give permanence to unregistered users.
-     */
-    public static String createPermaguestAccountName (String ipAddress)
-    {
-        // generate some unique stuff
-        String hashSource = "" + System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random();
-
-        // hash it
-        byte[] digest;
-        try {
-            digest = MessageDigest.getInstance("MD5").digest(hashSource.getBytes());
-
-        } catch (java.security.NoSuchAlgorithmException nsae) {
-            throw new RuntimeException("MD5 not found!?");
-        }
-
-        if (digest.length != 16) {
-            throw new RuntimeException("Odd MD5 digest: " + StringUtil.hexlate(digest));
-        }
-
-        // convert to an email address
-        return MemberName.PERMAGUEST_EMAIL_PREFIX + StringUtil.hexlate(digest) +
-            MemberName.PERMAGUEST_EMAIL_SUFFIX;
-    }
-
     // our dependencies
-    @Inject protected Domain _defaultDomain;
-    @Inject protected ServerMessages _serverMsgs;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected ExternalAuthLogic _extLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ProfileRepository _profileRepo;
-    @Inject protected AffiliateMapRepository _affMapRepo;
-    @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected AccountLogic _accountLogic;
 
     /** The number of times we'll try generate a unique ident before failing. */
     protected static final int MAX_TRIES = 100;
 
     /** The number of milliseconds in an hour. */
     protected static final long ONE_HOUR = 60 * 60 * 1000L;
-
-    /** Prefix of permaguest display names. They have to create an account to get a real one. */ 
-    protected static final String PERMAGUEST_DISPLAY_PREFIX = "Guest";
 }

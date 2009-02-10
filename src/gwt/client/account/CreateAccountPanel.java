@@ -161,7 +161,6 @@ public class CreateAccountPanel extends FlowPanel
                 info.password = CShell.frame.md5hex(_password.getText().trim());
                 info.displayName = _name.getText().trim();
                 info.birthday = _dateOfBirth.getDate();
-                info.photo = null; // TODO: remove since we're not using this any more
                 info.info = new AccountInfo();
                 info.info.realName = _rname.getText().trim();
                 info.expireDays = 1; // TODO: unmagick?

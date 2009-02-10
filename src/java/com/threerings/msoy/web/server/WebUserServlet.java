@@ -14,7 +14,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Calendar;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -31,6 +30,8 @@ import com.samskivert.util.StringUtil;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
+
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -40,6 +41,8 @@ import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
+
+import com.threerings.msoy.server.AccountLogic;
 import com.threerings.msoy.server.ExternalAuthHandler;
 import com.threerings.msoy.server.ExternalAuthLogic;
 import com.threerings.msoy.server.FriendManager;
@@ -108,30 +111,18 @@ public class WebUserServlet extends MsoyServiceServlet
     {
         checkClientVersion(clientVersion, info.email);
 
-        // check age restriction
-        java.sql.Date birthday = ProfileRecord.fromDateVec(info.birthday);
-        Calendar thirteenYearsAgo = Calendar.getInstance();
-        thirteenYearsAgo.add(Calendar.YEAR, -13);
-        if (birthday.compareTo(thirteenYearsAgo.getTime()) > 0) {
-            log.warning("User submitted invalid birtdate [date=" + birthday + "].");
-            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-        }
-
         // check invitation validity
-        boolean ignoreRestrict = false;
         InvitationRecord invite = null;
         if (info.inviteId != null) {
             invite = _memberRepo.inviteAvailable(info.inviteId);
             if (invite == null) {
                 throw new ServiceException(MsoyAuthCodes.INVITE_ALREADY_REDEEMED);
             }
-            ignoreRestrict = true;
         }
 
-        // make sure the email is valid and not too long (this is also validated on the client)
-        if (!MailUtil.isValidAddress(info.email) ||
-            info.email.length() > MemberName.MAX_EMAIL_LENGTH) {
-            throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
+        // check registration limits
+        if (!_runtime.server.registrationEnabled && invite == null) {
+            throw new ServiceException(MsoyAuthCodes.NO_REGISTRATIONS);
         }
 
         // having registered users with permaguest emails would be a pain, so prevent it
@@ -139,36 +130,16 @@ public class WebUserServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         }
 
-        // validate display name length (this is enforced on the client)
-        String displayName = info.displayName.trim();
-        if (!MemberName.isValidDisplayName(displayName) ||
-            !MemberName.isValidNonSupportName(displayName)) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
         // validate the captcha if appropriate
         if (!StringUtil.isBlank(ServerConfig.recaptchaPrivateKey)) {
             verifyCaptcha(info.captchaChallenge, info.captchaResponse);
         }
 
-        // we are running on a servlet thread at this point and can thus talk to the authenticator
-        // directly as it is thread safe (and it blocks) and we are allowed to block
-        final MemberRecord mrec = _author.createAccount(
-            info.email, info.password, info.displayName, ignoreRestrict, invite, info.visitor,
-            AffiliateCookie.get(getThreadLocalRequest()));
+        final MemberRecord mrec = _accountLogic.createWebAccount(info.email, info.password,
+            info.displayName, info.info.realName, invite, info.visitor,
+            AffiliateCookie.get(getThreadLocalRequest()), info.birthday);
 
-        // store the user's birthday and realname in their profile
-        ProfileRecord prec = new ProfileRecord();
-        prec.memberId = mrec.memberId;
-        prec.birthday = birthday;
-        prec.realName = info.info.realName;
-        prec.setPhoto(info.photo);
-        try {
-            _profileRepo.storeProfile(prec);
-        } catch (Exception e) {
-            log.warning("Failed to create initial profile [prec=" + prec + "]", e);
-            // keep on keepin' on
-        }
+        // TODO: consider moving the below code into AccountLogic
 
         // if they have accumulated flow as a guest, transfer that to their account (note: only
         // negative ids are valid guest ids)
@@ -185,7 +156,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 // send them a whirled mail informing them of the acceptance
                 String subject = _serverMsgs.getBundle("server").get("m.invite_accepted_subject");
                 String body = _serverMsgs.getBundle("server").get(
-                    "m.invite_accepted_body", invite.inviteeEmail, displayName);
+                    "m.invite_accepted_body", invite.inviteeEmail, mrec.name);
                 try {
                     _mailLogic.startConversation(mrec, inviter, subject, body, null);
                 } catch (Exception e) {
@@ -325,7 +296,7 @@ public class WebUserServlet extends MsoyServiceServlet
     public void sendForgotPasswordEmail (String email)
         throws ServiceException
     {
-        String code = _author.generatePasswordResetCode(email);
+        String code = _accountLogic.generatePasswordResetCode(email);
         if (code == null) {
             throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }
@@ -364,7 +335,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
         try {
             // let the authenticator know that we updated our account name
-            _author.updateAccount(mrec.accountName, newEmail, null, null);
+            _accountLogic.updateAccount(mrec.accountName, newEmail, null, null);
         } catch (ServiceException se) {
             // we need to roll back the account name change to preserve a proper mapping between
             // MemberRecord and the authenticator's record
@@ -398,7 +369,7 @@ public class WebUserServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        _author.updateAccount(mrec.accountName, null, null, newPassword);
+        _accountLogic.updateAccount(mrec.accountName, null, null, newPassword);
     }
 
     // from interface WebUserService
@@ -411,14 +382,14 @@ public class WebUserServlet extends MsoyServiceServlet
             return false;
         }
 
-        if (!_author.validatePasswordResetCode(mrec.accountName, code)) {
-            String actual = _author.generatePasswordResetCode(mrec.accountName);
+        if (!_accountLogic.validatePasswordResetCode(mrec.accountName, code)) {
+            String actual = _accountLogic.generatePasswordResetCode(mrec.accountName);
             log.info("Code mismatch for password reset [id=" + memberId + ", code=" + code +
                      ", actual=" + actual + "].");
             return false;
         }
 
-        _author.updateAccount(mrec.accountName, null, null, newPassword);
+        _accountLogic.updateAccount(mrec.accountName, null, null, newPassword);
         return true;
     }
 
@@ -447,7 +418,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // let the authenticator know that we updated our permaname
-        _author.updateAccount(mrec.accountName, null, permaName, null);
+        _accountLogic.updateAccount(mrec.accountName, null, permaName, null);
     }
 
     // from interface WebUserService
@@ -661,6 +632,8 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected MailRepository _mailRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected RuntimeConfig _runtime;
+    @Inject protected AccountLogic _accountLogic;
 
     /** The regular expression defining valid permanames. */
     protected static final String PERMANAME_REGEX = "^[a-z][_a-z0-9]*$";

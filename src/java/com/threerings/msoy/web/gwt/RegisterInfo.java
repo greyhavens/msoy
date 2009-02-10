@@ -5,7 +5,6 @@ package com.threerings.msoy.web.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
@@ -18,7 +17,6 @@ public class RegisterInfo
     public String password;
     public String displayName;
     public int[] birthday;
-    public MediaDesc photo;
     public AccountInfo info;
 
     public int expireDays;
