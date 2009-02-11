@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.data;
 
-import com.samskivert.util.ArrayUtil;
-
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
