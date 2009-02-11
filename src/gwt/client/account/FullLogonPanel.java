@@ -52,6 +52,7 @@ public class FullLogonPanel extends LogonPanel
                     MsoyUI.error("Unable to connect to Facebook. Sorry!"); // TODO
                     return;
                 }
+                // TODO: send permaguest member id here
                 _usersvc.externalLogon(
                     DeploymentConfig.version, creds, CShell.visitor,
                     WebUserService.DEFAULT_SESSION_DAYS, new MsoyCallback<SessionData>() {

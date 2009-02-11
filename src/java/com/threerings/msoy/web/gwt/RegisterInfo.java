@@ -23,6 +23,7 @@ public class RegisterInfo
 
     public String inviteId;
     public int guestId;
+    public int permaguestId;
     public VisitorInfo visitor;
 
     public String captchaChallenge;

@@ -577,6 +577,15 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Updates registration fields, for when a prevsiously inserted permaguest registers.
+     */
+    public void updateRegistration (int memberId, String email, String displayName, int affiliate)
+    {
+        updatePartial(MemberRecord.class, memberId, MemberRecord.ACCOUNT_NAME, email,
+            MemberRecord.NAME, displayName, MemberRecord.AFFILIATE_MEMBER_ID, affiliate);
+    }
+
+    /**
      * Deletes the specified member from the repository.
      */
     public void deleteMember (MemberRecord member)

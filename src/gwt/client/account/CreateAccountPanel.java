@@ -66,11 +66,17 @@ public class CreateAccountPanel extends FlowPanel
         add(content);
         add(new Image("/images/account/create_bg_bot.png"));
 
-        content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
-        content.add(new FullLogonPanel());
+        if (CShell.isPermaguest()) {
+            content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
+            content.add(MsoyUI.createLabel(_msgs.createSaveModeIntro(), "Coins"));
 
-        content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
-        content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
+        } else {
+            content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
+            content.add(new FullLogonPanel());
+
+            content.add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
+            content.add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
+        }
 
         // IE doesn't appear to like the float style, so be explicit; use a table with the user's
         // registration data on the left and the promo on the right
@@ -167,6 +173,7 @@ public class CreateAccountPanel extends FlowPanel
                 Invitation invite = CShell.frame.getActiveInvitation();
                 info.inviteId = (invite == null) ? null : invite.inviteId;
                 info.guestId = CShell.isGuest() ? CShell.getMemberId() : 0;
+                info.permaguestId = CShell.isPermaguest() ? CShell.getMemberId() : 0;
                 info.visitor = CShell.visitor;
                 info.captchaChallenge =
                     RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
@@ -209,14 +216,16 @@ public class CreateAccountPanel extends FlowPanel
         };
 
         // temporary - trying to debug Google Analytics discrepancy
-        _membersvc.trackClientAction(CShell.visitor, "registration page - viewed", null,
-            new AsyncCallback<Void>() {
-                public void onFailure (Throwable caught) {}
-                public void onSuccess (Void result) {
-                    _pageViewRecorded = true;
-                }
-            });
-
+        // TODO: should this log an action in permaguest mode too?
+        if (!CShell.isPermaguest()) {
+            _membersvc.trackClientAction(CShell.visitor, "registration page - viewed", null,
+                new AsyncCallback<Void>() {
+                    public void onFailure (Throwable caught) {}
+                    public void onSuccess (Void result) {
+                        _pageViewRecorded = true;
+                    }
+                });
+        }
 
         // A/B test different header images on this page
         _membersvc.getABTestGroup(CShell.visitor, "2008 12 AccountCreationHeader", true,
@@ -229,6 +238,11 @@ public class CreateAccountPanel extends FlowPanel
                 gotABTestGroup(-1);
             }
         });
+
+        if (CShell.isPermaguest()) {
+            content.add(MsoyUI.createLabel(_msgs.createLogon(), "Intro"));
+            content.add(new FullLogonPanel());
+        }
     }
 
     /**

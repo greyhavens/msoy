@@ -21,7 +21,7 @@ public class AccountPage extends Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");
-        if (action.equals("create") && CShell.isGuest()) {
+        if (action.equals("create") && (CShell.isGuest() || CShell.isPermaguest())) {
             setContent(_msgs.createTitle(), new CreateAccountPanel());
 
         } else if (action.equals("edit")) {

@@ -106,22 +106,34 @@ public class StatusPanel extends SmartTable
         _creds = data.creds;
         CookieUtil.set("/", Session.SESSION_DAYS, "who", _creds.accountName);
 
+        boolean permaguest = MemberName.isPermaguest(_creds.accountName);
+
         // mail, name, help, sign out in a box at top
         HorizontalPanel links = new HorizontalPanel();
-        links.add(_mail);
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL,
-            data.newMailCount, 0));
-        links.add(MsoyUI.createLabel("|", "Spacer"));
-        _namePanel.setWidget(Link.memberView(_creds.name));
-        links.add(_namePanel);
-        links.add(MsoyUI.createLabel("|", "Spacer"));
+        if (!permaguest) {
+            links.add(_mail);
+            CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL,
+                data.newMailCount, 0));
+            links.add(MsoyUI.createLabel("|", "Spacer"));
+            _namePanel.setWidget(Link.memberView(_creds.name));
+            links.add(_namePanel);
+            links.add(MsoyUI.createLabel("|", "Spacer"));
+        }
         links.add(Link.create(_cmsgs.statusHelp(), Pages.HELP, null));
         links.add(MsoyUI.createLabel("|", "Spacer"));
-        links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
-            public void onClick (Widget sender) {
-                Session.didLogoff(Session.LogoffCondition.LOGOFF_REQUESTED);
-            }
-        }));
+        if (permaguest) {
+            links.add(MsoyUI.createActionLabel(_cmsgs.statusSaveGuest(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Link.go(Pages.ACCOUNT, "create");
+                }
+            }));
+        } else {
+            links.add(MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Session.didLogoff(Session.LogoffCondition.LOGOFF_REQUESTED);
+                }
+            }));
+        }
 
         // white top box aligned to right of window
         HorizontalPanel topBox = new HorizontalPanel();

@@ -9,7 +9,10 @@ import java.util.Calendar;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.depot.DuplicateKeyException;
+
 import com.samskivert.net.MailUtil;
+
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -76,6 +79,87 @@ public class AccountLogic
     }
 
     /**
+     * Registers a previously created permaguest account. 
+     */
+    public MemberRecord savePermaguestAccount (int memberId, String email, String password,
+        String displayName, String realName, InvitationRecord invite, VisitorInfo vinfo,
+        String cookie, int[] birthdayYMD)
+        throws ServiceException
+    {
+        // check basic validity and age limit
+        displayName = displayName.trim();
+        validateRegistrationInfo(birthdayYMD, email, displayName);
+
+        // load the member
+        MemberRecord mrec = _memberRepo.loadMember(memberId);
+        if (mrec == null) {
+            throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
+        }
+
+        // sanity check permaguest-ness
+        if (!MemberName.isPermaguest(mrec.accountName)) {
+            log.warning("Account not a permaguest", "email", mrec.accountName);
+            throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+        }
+
+        // visitor id can't change, can it?
+        String visitorId = checkVisitorInfo(mrec.accountName, vinfo);
+        if (visitorId != null && !visitorId.equals(mrec.visitorId)) {
+            log.warning("Permaguest visitor id changed", "original", mrec.visitorId,
+                "new", visitorId, "memberId", mrec.memberId);
+        }
+
+        // get the affiliate
+        int affiliate = resolveAffiliate(email, cookie, invite);
+
+        // update member data
+        try {
+            _memberRepo.updateRegistration(memberId, email, displayName, affiliate);
+
+        } catch (DuplicateKeyException dke) {
+            throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
+        }
+
+        try {
+            // update the account name and password with the domain
+            updateAccount(mrec.accountName, email, null, password);
+
+        } catch (ServiceException se) {
+            // we need to roll back the account name change to preserve a proper mapping between
+            // MemberRecord and the authenticator's record
+            try {
+                _memberRepo.configureAccountName(mrec.memberId, mrec.accountName);
+
+            } catch (Exception e) {
+                log.warning("Failed to roll back account name change", "who", mrec.who(),
+                            "newEmail", email, "oldEmail", mrec.accountName, e);
+            }
+            throw se;
+        }
+
+        // TODO: event logging, this is really the account creation
+
+        // fill in fields so we are returning up-to-date information
+        mrec.accountName = email;
+        mrec.name = displayName;
+        mrec.affiliateMemberId = affiliate;
+
+        // update profile
+        ProfileRecord prec = _profileRepo.loadProfile(memberId);
+        prec.birthday = ProfileRecord.fromDateVec(birthdayYMD);
+        prec.realName = realName;
+        try {
+            _profileRepo.storeProfile(prec);
+
+        } catch (Exception e) {
+            log.warning("Failed to create profile", "prec", prec, e);
+            // move along
+        }
+
+        return mrec;
+    }
+
+    /**
      * Creates a new account for a guest user. All profile data will be default. The credentials
      * will be a placeholder email address and a default password.
      * @return the new guest account record
@@ -84,9 +168,10 @@ public class AccountLogic
     public MemberRecord createGuestAccount (String inetAddress, String visitorId)
         throws ServiceException
     {
+        String name = _serverMsgs.getBundle("server").get("m.permaguest_name");
         MemberRecord guest =  createAccount(createPermaguestAccountName(inetAddress),
-            PERMAGUEST_PASSWORD, "tmp", null, null, new VisitorInfo(visitorId, false), null, null, null,
-            null);
+            PERMAGUEST_PASSWORD, name, null, null, new VisitorInfo(visitorId, false), null, null,
+            null, null);
         guest.name = generatePermaguestDisplayName(guest.memberId);
         _memberRepo.configureDisplayName(guest.memberId, guest.name);
         return guest;
@@ -164,30 +249,9 @@ public class AccountLogic
         String cookie, int[] birthdayYMD, ExternalAuther exAuther, String exAuthUserId)
         throws ServiceException
     {
-        // check age restriction
-        Calendar thirteenYearsAgo = Calendar.getInstance();
-        thirteenYearsAgo.add(Calendar.YEAR, -13);
-        java.sql.Date birthday = null;
-        if (birthdayYMD != null) {
-            birthday = ProfileRecord.fromDateVec(birthdayYMD);
-            if (birthday.compareTo(thirteenYearsAgo.getTime()) > 0) {
-                log.warning("User submitted invalid birtdate [date=" + birthday + "].");
-                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-            }
-        }
-
-        // make sure the email is valid and not too long (this is also validated on the client)
-        if (!MailUtil.isValidAddress(email) ||
-            email.length() > MemberName.MAX_EMAIL_LENGTH) {
-            throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
-        }
-
-        // validate display name length (this is enforced on the client)
         displayName = displayName.trim();
-        if (!MemberName.isValidDisplayName(displayName) ||
-            !MemberName.isValidNonSupportName(displayName)) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+
+        validateRegistrationInfo(birthdayYMD, email, displayName);
 
         // attempt to create the account
         final MemberRecord mrec = createAccount(
@@ -196,7 +260,7 @@ public class AccountLogic
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();
         prec.memberId = mrec.memberId;
-        prec.birthday = birthday;
+        prec.birthday = birthdayYMD != null ? ProfileRecord.fromDateVec(birthdayYMD) : null;
         prec.realName = realName != null ? realName : "";
         try {
             _profileRepo.storeProfile(prec);
@@ -241,26 +305,12 @@ public class AccountLogic
             // create their main member record
             final MemberRecord mrec = new MemberRecord();
             stalerec = mrec;
+
+            // set the required fields for registration
             mrec.accountName = account.accountName;
             mrec.name = displayName;
-            if (invite != null) {
-                String inviterStr = String.valueOf(invite.inviterId);
-                if (affiliate != null && !affiliate.equals(inviterStr)) {
-                    log.warning("New member has both an inviter and an affiliate. Using inviter.",
-                                "email", mrec.accountName, "inviter", inviterStr,
-                                "affiliate", affiliate);
-                }
-                affiliate = inviterStr; // turn the inviter into an affiliate
-            }
-            if (affiliate != null) {
-                // look up their affiliate's memberId, if any
-                mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(affiliate);
-            }
-            if (visitor != null) {
-                mrec.visitorId = visitor.id;
-            } else {
-                log.warning("Missing visitor id when creating user " + account.accountName);
-            }
+            mrec.affiliateMemberId = resolveAffiliate(account.accountName, affiliate, invite);
+            mrec.visitorId = checkVisitorInfo(account.accountName, visitor);
 
             // store their member record in the repository making them a real Whirled citizen
             _memberRepo.insertMember(mrec);
@@ -285,6 +335,7 @@ public class AccountLogic
             }
 
             // record to the event log that we created a new account
+            // TODO: correct/remove for permaguests
             final String iid = (invite == null) ? null : invite.inviteId;
             final String vid = (visitor == null) ? null : visitor.id;
             _eventLog.accountCreated(mrec.memberId, iid, mrec.affiliateMemberId, vid);
@@ -319,6 +370,69 @@ public class AccountLogic
     }
 
     /**
+     * Generates a generic display name for permaguests.
+     */
+    protected String generatePermaguestDisplayName (int memberId)
+    {
+        String prefix = _serverMsgs.getBundle("server").get("m.permaguest_name");
+        return prefix + " " + memberId;
+    }
+
+    protected void validateRegistrationInfo (int[] birthdayYMD, String email, String displayName)
+        throws ServiceException
+    {
+        // check age restriction
+        if (birthdayYMD != null) {
+            Calendar thirteenYearsAgo = Calendar.getInstance();
+            thirteenYearsAgo.add(Calendar.YEAR, -13);
+            java.sql.Date bday = ProfileRecord.fromDateVec(birthdayYMD);
+            if (bday.compareTo(thirteenYearsAgo.getTime()) > 0) {
+                log.warning("User submitted invalid birtdate", "date", bday);
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+            }
+        }
+
+        // make sure the email is valid and not too long (this is also validated on the client)
+        if (!MailUtil.isValidAddress(email) ||
+            email.length() > MemberName.MAX_EMAIL_LENGTH) {
+            throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
+        }
+
+        // validate display name length (this is enforced on the client)
+        if (!MemberName.isValidDisplayName(displayName) ||
+            !MemberName.isValidNonSupportName(displayName)) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    protected int resolveAffiliate (String account, String affiliate, InvitationRecord invite)
+    {
+        if (invite != null) {
+            String inviterStr = String.valueOf(invite.inviterId);
+            if (affiliate != null && !affiliate.equals(inviterStr)) {
+                log.warning("New member has both an inviter and an affiliate. Using inviter.",
+                    "email", account, "inviter", inviterStr, "affiliate", affiliate);
+            }
+            affiliate = inviterStr; // turn the inviter into an affiliate
+        }
+        if (affiliate != null) {
+            // look up their affiliate's memberId, if any
+            return _affMapRepo.getAffiliateMemberId(affiliate);
+        }
+        return 0;
+    }
+
+    protected String checkVisitorInfo (String account, VisitorInfo visitor)
+    {
+        if (visitor != null) {
+            return visitor.id;
+        } else {
+            log.warning("Missing visitor id when creating user", "email", account);
+            return null;
+        }        
+    }
+
+    /**
      * Creates a username to give permanence to unregistered users.
      */
     protected static String createPermaguestAccountName (String ipAddress)
@@ -342,14 +456,6 @@ public class AccountLogic
         // convert to an email address
         return MemberName.PERMAGUEST_EMAIL_PREFIX + StringUtil.hexlate(digest) +
             MemberName.PERMAGUEST_EMAIL_SUFFIX;
-    }
-
-    /**
-     * Generates a generic display name for permaguests.
-     */
-    protected static String generatePermaguestDisplayName (int memberId)
-    {
-        return PERMAGUEST_DISPLAY_PREFIX + " " + memberId;
     }
 
     @Inject protected AuthenticationDomain _defaultDomain;

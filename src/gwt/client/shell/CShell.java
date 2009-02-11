@@ -57,6 +57,14 @@ public class CShell
     }
 
     /**
+     * Returns true if we're a permaguest, false if we're a registered member.
+     */
+    public static boolean isPermaguest ()
+    {
+        return creds != null && MemberName.isPermaguest(creds.accountName);
+    }
+
+    /**
      * Returns true if we're logged in and have support+ privileges.
      */
     public static boolean isSupport ()

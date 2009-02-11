@@ -49,6 +49,9 @@ public class MePage extends Page
         } else if (action.equals(DEVIANT_CONTEST)) {
             Link.go(Pages.LANDING, "dawinners");
 
+        } else if (CShell.isPermaguest()) {
+            Link.go(Pages.ACCOUNT, "create");
+
         } else if (!CShell.isGuest()) {
             setContent(new MyWhirled());
 

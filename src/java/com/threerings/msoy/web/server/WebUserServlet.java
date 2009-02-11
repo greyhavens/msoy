@@ -100,6 +100,7 @@ public class WebUserServlet extends MsoyServiceServlet
                                       int expireDays)
         throws ServiceException
     {
+        // TODO: deal with joining to the permaguest account, if any
         checkClientVersion(clientVersion, creds.getPlaceholderAddress());
         String affiliate = AffiliateCookie.get(getThreadLocalRequest());
         return startSession(_author.authenticateSession(creds, vinfo, affiliate), expireDays);
@@ -135,9 +136,13 @@ public class WebUserServlet extends MsoyServiceServlet
             verifyCaptcha(info.captchaChallenge, info.captchaResponse);
         }
 
-        final MemberRecord mrec = _accountLogic.createWebAccount(info.email, info.password,
-            info.displayName, info.info.realName, invite, info.visitor,
-            AffiliateCookie.get(getThreadLocalRequest()), info.birthday);
+        final MemberRecord mrec = info.permaguestId > 0 ? 
+            _accountLogic.savePermaguestAccount(info.permaguestId, info.email,
+                info.password, info.displayName, info.info.realName, invite, info.visitor,
+                AffiliateCookie.get(getThreadLocalRequest()), info.birthday) :
+            _accountLogic.createWebAccount(info.email, info.password,
+                info.displayName, info.info.realName, invite, info.visitor,
+                AffiliateCookie.get(getThreadLocalRequest()), info.birthday);
 
         // TODO: consider moving the below code into AccountLogic
 
@@ -172,8 +177,8 @@ public class WebUserServlet extends MsoyServiceServlet
                         inviter.memberId, CoinAwards.INVITED_FRIEND_JOINED, true,
                         UserAction.invitedFriendJoined(inviter.memberId, mrec.getName()));
                 } catch (Exception e) {
-                    log.warning("Failed to wire up friendship for created account " +
-                            "[member=" + mrec.who() + ", inviter=" + inviter.who() + "].", e);
+                    log.warning("Failed to wire up friendship for created account",
+                        "member", mrec.who(), "inviter", inviter.who(), e);
                 }
 
                 // dispatch a notification to the inviter that the invite was accepted
