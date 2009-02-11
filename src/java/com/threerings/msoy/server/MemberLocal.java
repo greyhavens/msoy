@@ -116,8 +116,7 @@ public class MemberLocal extends BodyLocal
      */
     public void takeAvatarMemoriesFromRoom (MemberObject memobj, RoomObject roomObj)
     {
-        memobj.getLocal(MemberLocal.class).memories = (memobj.avatar == null) ? null
-            : roomObj.takeMemories(memobj.avatar.getIdent());
+        memories = (memobj.avatar == null) ? null : roomObj.takeMemories(memobj.avatar.getIdent());
     }
 
     /**
