@@ -111,7 +111,7 @@ public class DoorTargetEditController
                 _ctx.getLocationDirector().getPlaceController() as RoomObjectController;
 
             var newdata :FurniData = doorData.clone() as FurniData;
-            // note: the destinationName may have colons in it, so we split with care in  FurniData
+            // note: the destinationName may have colons in it, so we split with care in FurniData
             newdata.actionData = _destinationScene + ":" + roundCoord(_destinationLoc.x) + ":" +
                 roundCoord(_destinationLoc.y) + ":" +  roundCoord(_destinationLoc.z) + ":" +
                 _destinationLoc.orient + ":" + _destinationName;
@@ -131,9 +131,18 @@ public class DoorTargetEditController
     }
 
     /** Used to round locations to nearest hundredths to avoid giant actionData strings. */
-    protected function roundCoord (value :Number) :Number
+    protected function roundCoord (value :Number) :String
     {
-        return Math.round(value / .01) * .01;
+        var str :String = String(value);
+        // remove any leading 0 for brevity
+        if (str.length > 1 && str.charAt(0) == "0") {
+            str = str.substring(1);
+        }
+        var period :int = str.lastIndexOf(".");
+        if (period != -1) {
+            str = str.substring(0, Math.min(period + 3, str.length));
+        }
+        return str;
     }
 
     /** Creates the UI. */
