@@ -15,6 +15,8 @@ import com.samskivert.depot.expression.ColumnExp;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.data.all.GroupName;
+
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -71,7 +73,7 @@ public class GroupLogic
         throws ServiceException
     {
         // make sure the name is valid; this is checked on the client as well
-        if (!isValidName(group.name)) {
+        if (!GroupName.isValidName(group.name)) {
             log.warning("Asked to create group with invalid name",
                 "member", mrec.who(), "name", group.name);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -155,7 +157,7 @@ public class GroupLogic
         throws ServiceException
     {
         // make sure the name is valid; this is checked on the client as well
-        if (!isValidName(group.name)) {
+        if (!GroupName.isValidName(group.name)) {
             log.warning("Asked to update group with invalid name",
                 "member", mrec.who(), "name", group.name);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -218,11 +220,6 @@ public class GroupLogic
     protected int getGroupCoinCost ()
     {
         return _runtime.getCoinCost(CostsConfigObject.NEW_GROUP);
-    }
-
-    protected static boolean isValidName (String name)
-    {
-        return Character.isLetterOrDigit(name.charAt(0));
     }
 
     /** An arbitrary key for quoting group creation(purchase). */

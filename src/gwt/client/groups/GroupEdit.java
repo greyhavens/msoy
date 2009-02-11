@@ -222,8 +222,7 @@ public class GroupEdit extends FlexTable
         if (_name != null) {
             // validate the name
             String name = _name.getText().trim();
-            if (name.length() < GroupName.LENGTH_MIN || name.length() > GroupName.LENGTH_MAX ||
-                    !Character.isLetterOrDigit(name.charAt(0))) {
+            if (!GroupName.isValidName(name)) {
                 MsoyUI.error(_msgs.errInvalidGroupName());
                 return false;
             }

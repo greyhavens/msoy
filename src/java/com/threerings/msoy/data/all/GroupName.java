@@ -30,6 +30,15 @@ public class GroupName extends Name
     public static final int LENGTH_MIN = 3;
 
     /**
+     * Is the specified name valid for a group name?
+     */
+    public static boolean isValidName (String name)
+    {
+        return (name != null) && (name.length() >= LENGTH_MIN) && (name.length() <= LENGTH_MAX) &&
+            Character.isLetterOrDigit(name.charAt(0));
+    }
+
+    /**
      * Creates a group name that can be used as a key for a DSet lookup or whereever else one might
      * need to use a {@link GroupName} instance as a key but do not have the (unneeded) group name.
      */
