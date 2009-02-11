@@ -5,6 +5,7 @@ package com.threerings.msoy.game.client {
 
 import flash.display.Loader;
 import flash.display.LoaderInfo;
+import flash.events.KeyboardEvent;
 
 import flash.ui.Mouse;
 
@@ -303,6 +304,12 @@ public class MsoyGamePanel extends WhirledGamePanel
     {
         var info :LoaderInfo = event.value as LoaderInfo;
         _spinner.watchLoader(info, _gameContainer, true);
+
+        // install a listener on the MediaStub to un-idle the user when they generate key events
+        // therein
+        Loader(_gameContainer.getMedia()).content.addEventListener(
+            KeyboardEvent.KEY_DOWN, _gctx.getMsoyContext().getMsoyController().resetIdleTracking,
+            false, int.MAX_VALUE, true);
     }
 
     /** convenience reference to our game context */

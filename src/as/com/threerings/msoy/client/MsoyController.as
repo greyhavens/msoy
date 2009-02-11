@@ -3,14 +3,17 @@
 
 package com.threerings.msoy.client {
 
-import flash.events.IEventDispatcher;
+import flash.events.Event;
 import flash.events.FocusEvent;
+import flash.events.IEventDispatcher;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.events.TextEvent;
 import flash.events.TimerEvent;
 
+import flash.display.DisplayObject;
 import flash.display.Stage;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.system.Capabilities;
 import flash.text.TextField;
@@ -138,26 +141,23 @@ public class MsoyController extends Controller
         _mctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
 
-        setControlledPanel(topPanel);
-        var stage :Stage = mctx.getStage();
-//        stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, handleStageKeyDown, false, int.MAX_VALUE);
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, false, int.MAX_VALUE);
+        // create a timer to poll mouse position and track timing
+        _idleTimer = new Timer(1000);
+        _idleTimer.addEventListener(TimerEvent.TIMER, handlePollIdleMouse);
 
         // create a timer that checks whether we should be logged out for being idle too long
         _byebyeTimer = new Timer(MAX_GUEST_IDLE_TIME, 1);
         _byebyeTimer.addEventListener(TimerEvent.TIMER, checkIdleLogoff);
 
-        // create a timer for tracking whether we've gone idle
-        _idleTimer = new Timer(ChatCodes.DEFAULT_IDLE_TIME, 1);
-        _idleTimer.addEventListener(TimerEvent.TIMER, function (... ignored) :void {
-            setIdle(true)
-        });
-        restartIdleTimer();
-
         // listen for location changes
         _mctx.getLocationDirector().addLocationObserver(
             new LocationAdapter(null, this.locationDidChange, null));
+
+        setControlledPanel(topPanel);
+        var stage :Stage = mctx.getStage();
+//        stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, handleStageKeyDown, false, int.MAX_VALUE);
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown, false, int.MAX_VALUE);
     }
 
     /**
@@ -484,6 +484,17 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Can be called with nearly any event (or none) to reset the idle tracking.
+     * This function is public because it may be registered as an event listener for
+     * components that have access to events in a different security boundary.
+     */
+    public function resetIdleTracking (event :Event = null) :void
+    {
+        _idleStamp = getTimer();
+        setIdle(false);
+    }
+
+    /**
      * Return true if we are running in the GWT application shell, false otherwise.
      */
     protected function inGWTApp () :Boolean
@@ -507,12 +518,13 @@ public class MsoyController extends Controller
         // for LINK events and handle them all here.
         if (_controlledPanel != null) {
             _controlledPanel.removeEventListener(TextEvent.LINK, handleLink);
-            _controlledPanel.removeEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
         }
+        _idleTimer.reset();
         super.setControlledPanel(panel);
         if (_controlledPanel != null) {
             _controlledPanel.addEventListener(TextEvent.LINK, handleLink);
-            _controlledPanel.addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
+            _idleTimer.start();
+            resetIdleTracking();
         }
     }
 
@@ -545,10 +557,9 @@ public class MsoyController extends Controller
      */
     protected function handleKeyDown (event :KeyboardEvent) :void
     {
-        restartIdleTimer();
+        resetIdleTracking(event);
 
         switch (event.keyCode) {
-
         case Keyboard.F7:
             _mctx.getTopPanel().getHeaderBar().getChatTabs().selectedIndex--;
             break;
@@ -571,14 +582,6 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handles mouse moves on the stage.
-     */
-    protected function handleMouseMove (event :MouseEvent) :void
-    {
-        restartIdleTimer();
-    }
-
-    /**
      * Called when our location changes.
      */
     protected function locationDidChange (place :PlaceObject) :void
@@ -596,14 +599,20 @@ public class MsoyController extends Controller
         // handled by our derived classes
     }
 
-    /**
-     * Called when we've detected user activity, like mouse movement or key presses.
-     */
-    protected function restartIdleTimer () :void
+    protected function handlePollIdleMouse (event :TimerEvent) :void
     {
-        setIdle(false);
-        _idleTimer.reset();
-        _idleTimer.start();
+        var panel :DisplayObject = DisplayObject(_controlledPanel);
+        var mousePoint :Point = new Point(panel.mouseX, panel.mouseY);
+        if (_idleMousePoint == null || !_idleMousePoint.equals(mousePoint)) {
+            // we are not idle: either we just started, or a key event was detected,
+            // or the mouse moved.
+            _idleMousePoint = mousePoint;
+            resetIdleTracking();
+
+        } else if (!isNaN(_idleStamp) && (getTimer() - _idleStamp >= ChatCodes.DEFAULT_IDLE_TIME)) {
+            _idleStamp = NaN;
+            setIdle(true);
+        }
     }
 
     /**
@@ -726,6 +735,11 @@ public class MsoyController extends Controller
 
     /** A timer to watch our idleness. */
     protected var _idleTimer :Timer;
+
+    /** Used for idle tracking. */
+    protected var _idleMousePoint :Point;
+
+    protected var _idleStamp :Number;
 
     /** A timer to log us out if we've been idle too long. */
     protected var _byebyeTimer :Timer;
