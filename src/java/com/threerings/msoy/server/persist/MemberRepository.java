@@ -631,7 +631,8 @@ public class MemberRepository extends DepotRepository
     // TEMP: to support a migration in MsoySceneRepository
     public void removeAllHomes (Set<Integer> sceneIds)
     {
-        for (MemberRecord rec : findAll(MemberRecord.class)) {
+        for (MemberRecord rec :
+                findAll(MemberRecord.class, CacheStrategy.NONE, new ArayList<QueryClause>())) {
             sceneIds.remove(rec.homeSceneId);
         }
     }
