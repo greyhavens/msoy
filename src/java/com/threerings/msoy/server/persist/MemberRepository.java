@@ -20,6 +20,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -625,6 +626,17 @@ public class MemberRepository extends DepotRepository
         // - group memberships
         // - member action records, action summary record
         // - thread read tracking info
+    }
+
+    // TODO: remove
+    // TEMP: to support a migration in MsoySceneRepository
+    public Set<Integer> getAllHomes ()
+    {
+        Set<Integer> ids = Sets.newHashSet();
+        for (MemberRecord rec : findAll(MemberRecord.class)) {
+            ids.add(rec.homeSceneId);
+        }
+        return ids;
     }
 
     /**

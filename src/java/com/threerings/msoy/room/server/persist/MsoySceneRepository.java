@@ -10,6 +10,7 @@ import java.util.Set;
 import java.sql.Timestamp;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -172,6 +173,34 @@ public class MsoySceneRepository extends DepotRepository
         // expression index version bump again
         _ctx.registerMigration(
             SceneRecord.class, new SchemaMigration.DropIndex(11, "ixNewAndHot_v2"));
+
+        registerMigration(new DataMigration("2009_02_10_deleteExtraRooms") {
+            @Override public void invoke () throws DatabaseException {
+                log.info("Migrating: finding free scenes...");
+                List<Key<SceneRecord>> keys = findAllKeys(SceneRecord.class, true,
+                    new Where(SceneRecord.OWNER_TYPE, MsoySceneModel.OWNER_TYPE_MEMBER,
+                            SceneRecord.VERSION, 1));
+                // put all those keys into a map
+                Set<Integer> ids = Sets.newHashSet();
+                for (Key<SceneRecord> key : keys) {
+                    ids.add((Integer) key.getValues()[0]);
+                }
+                keys = null; // aid gc
+                // let's keep all room ids under 10, which will include the prototypes
+                for (int ii = 0; ii <= 10; ii++) {
+                    ids.remove(ii);
+                }
+                // remove all homes
+                ids.removeAll(_memberRepo.getAllHomes());
+
+                log.info("Migration: deleting free scenes", "count", ids.size());
+                // let's do it!
+                deleteAll(SceneRecord.class, new Where(new In(SceneRecord.SCENE_ID, ids)), null);
+                deleteAll(SceneFurniRecord.class, new Where(new In(SceneFurniRecord.SCENE_ID, ids)),
+                    null);
+                log.info("Migration: done!");
+            }
+        });
     }
 
     /**
