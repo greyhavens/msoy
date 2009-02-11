@@ -248,30 +248,12 @@ public class GroupEdit extends FlexTable
      */
     protected void updateGroup ()
     {
-        if (!commitEdits()) {
-            return;
-        }
-
-        final MsoyCallback<Void> updateCallback = new MsoyCallback<Void>(_submit) {
-            public void onSuccess (Void result) {
-                Link.go(Pages.GROUPS, Args.compose("d", String.valueOf(_group.groupId), "r"));
-            }
-        };
-
-        if (_group.policy == Group.POLICY_EXCLUSIVE) {
-            // check if we're trying to set the policy to exclusive on a group that has tags
-            _groupsvc.getTags(_group.groupId, new MsoyCallback<List<String>>() {
-                public void onSuccess (List<String> tags) {
-                    if (tags.size() > 0) {
-                        MsoyUI.error(_msgs.errTagsOnExclusive());
-                    } else {
-                        _groupsvc.updateGroup(_group, _extras, updateCallback);
-                    }
+        if (commitEdits()) {
+            _groupsvc.updateGroup(_group, _extras, new MsoyCallback<Void>(_submit) {
+                public void onSuccess (Void result) {
+                    Link.go(Pages.GROUPS, Args.compose("d", String.valueOf(_group.groupId), "r"));
                 }
             });
-
-        } else {
-            _groupsvc.updateGroup(_group, _extras, updateCallback);
         }
     }
 

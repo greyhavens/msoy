@@ -172,6 +172,11 @@ public class GroupLogic
                 log.warning("Non-admin updating group to be official", "member", mrec.who());
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
+            // make sure they're not making a tagged group exclusive
+            if ((group.policy == Group.POLICY_EXCLUSIVE) &&
+                    !_groupRepo.getTagRepository().getTags(group.groupId).isEmpty()) {
+                throw new ServiceException(GroupCodes.E_GROUP_TAGS_ON_EXCLUSIVE);
+            }
 
             GroupRecord grec = _groupRepo.loadGroup(group.groupId);
             if (grec == null) {
