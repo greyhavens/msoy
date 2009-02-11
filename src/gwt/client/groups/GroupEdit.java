@@ -43,7 +43,6 @@ import client.shell.ShellMessages;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
-import client.ui.RoundBox;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

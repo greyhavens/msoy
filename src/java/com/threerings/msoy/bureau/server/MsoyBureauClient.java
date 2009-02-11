@@ -10,8 +10,6 @@ import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.msoy.game.data.PlayerObject;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Extends the standard client session for msoy bureaus. It prevents invocation responses that are
  * intended for flash clients from being sent to thane clients. While the responses themselves only

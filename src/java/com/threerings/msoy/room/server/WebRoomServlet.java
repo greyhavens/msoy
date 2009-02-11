@@ -36,7 +36,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.PurchaseResult;
-import com.threerings.msoy.money.gwt.CostUpdatedException;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyException;
 import com.threerings.msoy.money.server.MoneyLogic;
