@@ -38,7 +38,7 @@ public class PetObject extends MsoyBodyObject
         super.willEnterPlace(place, plobj);
 
         if (plobj instanceof RoomObject && memories != null) {
-            ((RoomObject) plobj).putMemories(memories, "pet", pet);
+            ((RoomObject) plobj).putMemories(memories);
             memories = null;
         }
     }

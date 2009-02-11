@@ -262,10 +262,11 @@ public class RoomObject extends SpotSceneObject
      */
     public void updateMemory (ItemIdent ident, String key, byte[] value)
     {
-        // if we're removing a value, it doesn't matter if it was there before, we still
-        // need to dispatch the remove to all clients. We do that with the custom event.
         if (value == null || memories.containsKey(ident)) {
-            // we already have an entry for this item, let's use our special event
+            // we're removing or already have an entry for this item, let's use our special event.
+            // Note that we dispatch the event for the remove *even if there are no memories*,
+            // the remove is still valid and the special event will take care of notifying
+            // listeners without actually modifying anything.
             MemoryChangedEvent mce = new MemoryChangedEvent(_oid, MEMORIES, ident, key, value);
             // if we're on the authoritative server, update things immediately.
             if (_omgr != null && _omgr.isManager(this)) {
@@ -274,7 +275,7 @@ public class RoomObject extends SpotSceneObject
             postEvent(mce);
 
         } else {
-            // we do not have an entry and we're adding a new value.
+            // We do not have an entry and we're adding a new value.
             // This form of the constructor marks the memories modified immediately.
             addToMemories(new EntityMemories(ident, key, value));
         }
@@ -282,14 +283,12 @@ public class RoomObject extends SpotSceneObject
 
     /**
      * Put the specified memories into this room.
-     * If there is a duplicate entry, a warning is logged, with any log args you specify
-     * added to the end of the logging.
      */
-    public void putMemories (EntityMemories mems, Object... logArgs)
+    public void putMemories (EntityMemories mems)
     {
         if (memories.contains(mems)) {
             log.warning("WTF? Room already contains memory entry",
-                ArrayUtil.concatenate(new Object[] {"room", getOid(), "mems", mems}, logArgs));
+                "room", getOid(), "entityIdent", mems.getKey(), new Exception());
             updateMemories(mems);
         } else {
             addToMemories(mems);

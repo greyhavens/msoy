@@ -101,14 +101,11 @@ public class MemberLocal extends BodyLocal
      * either because it was put there (and possibly serialized in the case of a peer move) when
      * the player left a previous room, or because we put them there manually as part of avatar
      * resolution (see {@link MemberManager#finishSetAvatar}).
-     *
-     * TODO: The 'fromEnter' parameter is temporary debug information.
      */
-    public void putAvatarMemoriesIntoRoom (RoomObject roomObj, boolean fromEnter)
+    public void putAvatarMemoriesIntoRoom (RoomObject roomObj)
     {
         if (memories != null) {
-            roomObj.putMemories(memories, "source", fromEnter ? "willEnter" : "setAvatar",
-                new Exception());
+            roomObj.putMemories(memories);
             memories = null;
         }
     }
@@ -145,7 +142,7 @@ public class MemberLocal extends BodyLocal
         roomObj.startTransaction();
         try {
             // add our avatar memories to this room
-            putAvatarMemoriesIntoRoom(roomObj, true);
+            putAvatarMemoriesIntoRoom(roomObj);
 
             // if we're in a party, maybe put our party summary in the room as well
             if (party != null && !roomObj.parties.containsKey(party.id)) {
