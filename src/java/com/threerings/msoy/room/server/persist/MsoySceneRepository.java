@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.sql.Timestamp;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -192,11 +193,15 @@ public class MsoySceneRepository extends DepotRepository
                 }
                 _memberRepo.removeAllHomes(ids);
 
-                log.info("Migration: deleting free scenes", "count", ids.size());
-                // let's do it!
-                deleteAll(SceneRecord.class, new Where(new In(SceneRecord.SCENE_ID, ids)), null);
-                deleteAll(SceneFurniRecord.class, new Where(new In(SceneFurniRecord.SCENE_ID, ids)),
-                    null);
+                // break up the sets so that nothing is bigger than 5k, to be extra safe
+                for (Iterable<Integer> subset : Iterables.partition(ids, 5000, false)) {
+                    List<Integer> subsetIds = Lists.newArrayList(subset);
+                    log.info("Migration: deleting free scenes", "count", subsetIds.size());
+                    deleteAll(SceneRecord.class,
+                        new Where(new In(SceneRecord.SCENE_ID, subsetIds)), null);
+                    deleteAll(SceneFurniRecord.class,
+                        new Where(new In(SceneFurniRecord.SCENE_ID, subsetIds)), null);
+                }
                 log.info("Migration: done!");
             }
         });
