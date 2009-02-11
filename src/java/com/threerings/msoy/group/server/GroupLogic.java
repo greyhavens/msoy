@@ -178,8 +178,8 @@ public class GroupLogic
                 log.warning("Cannot update non-existent group", "id", group.groupId);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-            // TEMP: block editing group name
-            if (!group.name.equals(grec.name)) {
+            // TEMP: block editing group name (except for support+)
+            if (!mrec.isSupport() && !group.name.equals(grec.name)) {
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 

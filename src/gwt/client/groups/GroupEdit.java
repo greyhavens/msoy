@@ -87,7 +87,7 @@ public class GroupEdit extends FlexTable
 
         // set up our editor contents
         // TEMP: only allow group name editing when creating
-        if (isCreate) {
+        if (isCreate || CShell.isSupport()) {
             _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);
             addRow(_msgs.editName(), _name);
 
