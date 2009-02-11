@@ -197,6 +197,9 @@ public class MsoySceneRepository extends DepotRepository
                 for (Iterable<Integer> subset : Iterables.partition(ids, 5000, false)) {
                     List<Integer> subsetIds = Lists.newArrayList(subset);
                     log.info("Migration: deleting free scenes", "count", subsetIds.size());
+                    if (subsetIds.isEmpty()) {
+                        break;
+                    }
                     deleteAll(SceneRecord.class,
                         new Where(new In(SceneRecord.SCENE_ID, subsetIds)), null);
                     deleteAll(SceneFurniRecord.class,
