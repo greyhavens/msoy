@@ -20,7 +20,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -630,13 +629,11 @@ public class MemberRepository extends DepotRepository
 
     // TODO: remove
     // TEMP: to support a migration in MsoySceneRepository
-    public Set<Integer> getAllHomes ()
+    public void removeAllHomes (Set<Integer> sceneIds)
     {
-        Set<Integer> ids = Sets.newHashSet();
         for (MemberRecord rec : findAll(MemberRecord.class)) {
-            ids.add(rec.homeSceneId);
+            sceneIds.remove(rec.homeSceneId);
         }
-        return ids;
     }
 
     /**

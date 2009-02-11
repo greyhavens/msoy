@@ -190,8 +190,7 @@ public class MsoySceneRepository extends DepotRepository
                 for (int ii = 0; ii <= 10; ii++) {
                     ids.remove(ii);
                 }
-                // remove all homes
-                ids.removeAll(_memberRepo.getAllHomes());
+                _memberRepo.removeAllHomes(ids);
 
                 log.info("Migration: deleting free scenes", "count", ids.size());
                 // let's do it!
