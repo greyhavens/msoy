@@ -6,6 +6,7 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -632,7 +633,7 @@ public class MemberRepository extends DepotRepository
     public void removeAllHomes (Set<Integer> sceneIds)
     {
         for (MemberRecord rec :
-                findAll(MemberRecord.class, CacheStrategy.NONE, new ArayList<QueryClause>())) {
+                findAll(MemberRecord.class, CacheStrategy.NONE, new ArrayList<QueryClause>())) {
             sceneIds.remove(rec.homeSceneId);
         }
     }
