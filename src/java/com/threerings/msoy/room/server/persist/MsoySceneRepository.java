@@ -191,7 +191,12 @@ public class MsoySceneRepository extends DepotRepository
                 for (int ii = 0; ii <= 10; ii++) {
                     ids.remove(ii);
                 }
-                _memberRepo.removeAllHomes(ids);
+                try {
+                    _memberRepo.removeAllHomes(ids);
+                } catch (Exception e) {
+                    log.warning("Migration: crap. Let's do it another time.", e);
+                    return;
+                }
 
                 // break up the sets so that nothing is bigger than 5k, to be extra safe
                 for (Iterable<Integer> subset : Iterables.partition(ids, 5000, false)) {
