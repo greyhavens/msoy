@@ -120,18 +120,32 @@ public class ShareDialog extends FloatingPanel
 
         var row :HBox = new HBox();
         row.percentWidth = 100;
+        row.setStyle("horizontalGap", 20);
+
+        row.addChild(createSocialButton("b.share_facebook", 
+            "http://b.static.ak.fbcdn.net/images/share/facebook_share_icon.gif?8:26981",
+            popFacebook));
+        row.addChild(createSocialButton("b.share_myspace", 
+            "http://cms.myspacecdn.com/cms/post_myspace_icon.gif",
+            popMyspace));
+
         box.addChild(row);
+        return box;
+    }
 
-        var img :CommandButton = new CommandButton(null, popFacebook);
+    protected function createSocialButton (
+        msg :String, iconURL :String, callback :Function) :UIComponent
+    {
+        var box :HBox = new HBox();
+        box.setStyle("horizontalGap", 0);
+
+        var img :CommandButton = new CommandButton(null, callback);
         img.styleName = "imageButton";
-        img.setStyle("image", 
-            "http://b.static.ak.fbcdn.net/images/share/facebook_share_icon.gif?8:26981");
-        row.addChild(img);
-        var facebook :CommandLinkButton = new CommandLinkButton(
-            Msgs.GENERAL.get("b.share_facebook"), popFacebook);
-        facebook.styleName = "underLink"; // TODO: revamp, make this the FUCKING DEFUCKINGFAULT!!!!
-        row.addChild(facebook);
-
+        img.setStyle("image", iconURL);
+        box.addChild(img);
+        var link :CommandLinkButton = new CommandLinkButton(Msgs.GENERAL.get(msg), callback);
+        link.styleName = "underLink"; // TODO: god it irks me that the default is un-underlined.
+        box.addChild(link);
         return box;
     }
 
@@ -343,12 +357,33 @@ public class ShareDialog extends FloatingPanel
         }
     }
 
+    protected function getShareTitle () :String
+    {
+        return Msgs.GENERAL.get(_inGame ? "m.social_share_game" : "m.social_share_room");
+    }
+
+    /**
+     * http://www.facebook.com/share_partners.php
+     */
     protected function popFacebook () :void
     {
         var shareURL :String = "http://www.facebook.com/sharer.php" +
             "?u=" + encodeURIComponent(createLink()) +
-            "&t=" + encodeURIComponent("Check out this place on whirled!");
+            "&t=" + encodeURIComponent(getShareTitle());
         popShareLink(shareURL, "Whirled", "width=620,height=440");
+    }
+
+    /**
+     * http://x.myspace.com/download/posttomyspacedeveloperdocumentation001.pdf
+     */
+    protected function popMyspace () :void
+    {
+        var shareURL :String = "http://www.myspace.com/index.cfm?fuseaction=postto" +
+            "&u=" + encodeURIComponent(createLink()) +
+            "&t=" + encodeURIComponent(getShareTitle()) +
+            "&l=1" + // post to their Blog
+            "&c=" + encodeURIComponent(getEmbedCode(DEFAULT_SIZE));
+        popShareLink(shareURL, "Whirled", "width=1024,height=650");
     }
 
     /**
