@@ -62,7 +62,9 @@ public class LobbyPanel extends FloatingPanel
         setStyle("horizontalAlign", "left"); // override the sexy default
         width = WIDTH;
         height = HEIGHT;
-        showCloseButton = ! gctx.getMsoyContext().getMsoyClient().isEmbedded();
+        showCloseButton = !gctx.getMsoyContext().getMsoyClient().isEmbedded() ||
+            (gctx.getLocationDirector().getPlaceObject() != null) ||
+            (gctx.getMsoyContext().getLocationDirector().getPlaceObject() != null);
     }
 
     public function init (lobbyObj :LobbyObject) :void
