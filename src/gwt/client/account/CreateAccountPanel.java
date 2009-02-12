@@ -185,7 +185,7 @@ public class CreateAccountPanel extends FlowPanel
                 return true;
             }
 
-            @Override protected boolean gotResult (final SessionData result) {
+            @Override protected boolean gotResult (final SessionData session) {
                 // display a nice confirmation message, as an excuse to embed a tracking iframe.
                 // we'll show it for two seconds, and then rock on!
                 setStatus(_msgs.creatingDone(),
@@ -199,8 +199,8 @@ public class CreateAccountPanel extends FlowPanel
                                                  new NoopAsyncCallback());
                 }
 
-                new FinishRegistration(result);
-
+                session.justCreated = true;
+                CShell.frame.dispatchDidLogon(session);
                 return false; // don't reenable the create button
             }
 
@@ -386,54 +386,6 @@ public class CreateAccountPanel extends FlowPanel
         }
 
         protected SmartTable _tip;
-    }
-
-    /**
-     * Requests the registration a/b group and after a minimum timeout lets the frame know we're
-     * logged on.
-     */
-    protected static class FinishRegistration extends Timer
-        implements AsyncCallback<Integer>
-    {
-        long start = System.currentTimeMillis();
-        final int feedbackDelayMs = 2000;
-        Integer group;
-        SessionData session;
-
-        public FinishRegistration (SessionData result)
-        {
-            session = result;
-            // TODO: If this is useful beyond the force invite test, it would be more efficient
-            // for the server to fill in the result.registrationABGroup before sending the result
-            // rather than making a separate request.
-            _membersvc.getABTestGroup(
-                result.visitor, "2008 12 find friends on registration", true, this);
-            schedule(feedbackDelayMs);
-        }
-
-        public void onFailure (Throwable caught)
-        {
-            group = -1;
-        }
-
-        public void onSuccess (Integer result)
-        {
-            group = result;
-        }
-
-        public void run ()
-        {
-            if (group == null) {
-                // keep waiting for the member service to return
-                schedule(500);
-                return;
-            }
-
-            // let the top-level frame know that we logged on (will trigger a redirect)
-            session.registrationABGroup = group;
-            session.justCreated = true;
-            CShell.frame.dispatchDidLogon(session);
-        }
     }
 
     protected KeyboardListenerAdapter _onType = new KeyboardListenerAdapter() {
