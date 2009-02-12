@@ -20,6 +20,7 @@ import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
+import mx.controls.Button;
 import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.RadioButton;
@@ -89,7 +90,11 @@ public class ShareDialog extends FloatingPanel
 
         open(false);
 
-        // TODO: godfucking dammit, the first tab text jiggles
+        // Hack to jiggle the text in the first tab, so that it all shows up.
+        var btn :Button = tabs.getTabAt(0);
+        var lbl :String = btn.label;
+        btn.label = "";
+        btn.label = lbl;
     }
 
     public function getEmbedCode (size :int) :String
