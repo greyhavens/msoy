@@ -155,7 +155,7 @@ public class MoneyExchange
      */
     protected void adjustDesiredBarPool (int delta)
     {
-        _moneyRepo.adjustExchangeBarPoolTarget(delta);
+        _moneyRepo.adjustBarPool(delta);
         recalculateRate();
     }
 

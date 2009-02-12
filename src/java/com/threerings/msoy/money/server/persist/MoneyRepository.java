@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.CacheInvalidator.TraverseWithFilter;
+import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
@@ -45,6 +46,8 @@ import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.jdbc.DatabaseLiaison;
 
 import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
 
 import com.threerings.msoy.server.persist.CountRecord;
 
@@ -95,6 +98,14 @@ public class MoneyRepository extends DepotRepository
                 return 0;
             }
         });
+
+        if (!DeploymentConfig.devDeployment) {
+            registerMigration(new DataMigration("2009_02_12_dumpBarsIntoExchange") {
+                @Override public void invoke () throws DatabaseException {
+                    adjustBarPool(15000);
+                }
+            });
+        }
     }
 
     /**
@@ -386,7 +397,14 @@ public class MoneyRepository extends DepotRepository
             new Limit(start, count));
     }
 
-    public void adjustExchangeBarPoolTarget (int delta)
+    /**
+     * Adjust the bar pool.
+     * This is used in two circumstances:
+     * 1. When we react to adjustments in the *size* of the target bar pool size, we automatically
+     * remove or add bars.
+     * 2. Sometimes Daniel dumps more bars in, cuz we're crazy like that. These are done manually.
+     */
+    public void adjustBarPool (int delta)
     {
         Map<ColumnExp, SQLExpression> updates = new ImmutableMap.Builder<ColumnExp, SQLExpression>()
             .put(BarPoolRecord.BAR_POOL, new Arithmetic.Add(BarPoolRecord.BAR_POOL, delta))
