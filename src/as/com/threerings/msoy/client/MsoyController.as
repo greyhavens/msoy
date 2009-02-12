@@ -202,8 +202,7 @@ public class MsoyController extends Controller
             // Trust me. Things like the facebook sharing link need to work even if you're a guest.
             affiliate = isGuest ? "0" : String(memName.getMemberId());
         }
-        //var url :String = DeploymentConfig.serverURL;
-        var url :String = "http://www.whirled.com/";
+        var url :String = DeploymentConfig.serverURL;
         if (StringUtil.isBlank(affiliate)) {
             return url + "#" + page; // just a straight page visit
 
