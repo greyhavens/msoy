@@ -17,6 +17,10 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.GameRecord;
+
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
@@ -79,6 +83,10 @@ public class WelcomeServlet extends HttpServlet
     protected boolean serveFacebook (HttpServletRequest req, HttpServletResponse rsp, String path)
         throws IOException
     {
+        MediaDesc image;
+        String title;
+        String desc;
+
         try {
             if (path.startsWith(SHARE_ROOM_PREFIX)) {
                 int sceneId = Integer.parseInt(path.substring(SHARE_ROOM_PREFIX.length()));
@@ -87,24 +95,42 @@ public class WelcomeServlet extends HttpServlet
                     log.warning("Facebook requested share of nonexistant room?", "path", path);
                     return false;
                 }
-                MediaDesc snap = scene.getSnapshot();
-                if (snap == null) {
-                    snap = RoomCodes.DEFAULT_ROOM_SNAPSHOT;
+                image = scene.getSnapshot();
+                if (image == null) {
+                    image = RoomCodes.DEFAULT_ROOM_SNAPSHOT;
                 }
-                String title = "Visit this room on Whirled: " /* TODO */ + scene.name;
-                String desc = "This user-created room is so cool!"; /* TODO */
-                outputFacebook(rsp, title, desc, snap);
+                title = "Visit this room on Whirled: " /* TODO */ + scene.name;
+                desc = "This user-created room is so cool!"; /* TODO */
 
             } else if (path.startsWith(SHARE_GAME_PREFIX)) {
                 int gameId = Integer.parseInt(path.substring(SHARE_GAME_PREFIX.length()));
-                // TODO
-                return false; // for now
+                GameRecord game = _gameRepo.loadItem(gameId); // TODO: development games???
+                if (game == null) {
+                    log.warning("Facebook requested share of nonexistant game?", "path", path);
+                    return false;
+                }
+                if (game.shotMediaHash != null) {
+                    image = new MediaDesc(game.shotMediaHash, game.shotMimeType);
+                } else if (game.thumbMediaHash != null) {
+                    image = new MediaDesc(
+                        game.thumbMediaHash, game.thumbMimeType, game.thumbConstraint);
+                } else {
+                    image = Item.getDefaultThumbnailMediaFor(Item.GAME);
+                }
+                title = "Play this game on Whirled: " /* TODO */ + game.name;
+                desc = "This user-created game is so cool!"; /* TODO */
+
+            } else {
+                log.warning("Unknown facebook share request", "path", path);
+                return false;
             }
 
         } catch (NumberFormatException nfe) {
             log.warning("Could not parse page for facebook sharing.", "path", path);
             return false;
         }
+
+        outputFacebook(rsp, title, desc, image);
         return true;
     }
 
@@ -141,4 +167,5 @@ public class WelcomeServlet extends HttpServlet
 
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected GameRepository _gameRepo;
 }
