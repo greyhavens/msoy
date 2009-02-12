@@ -5,6 +5,9 @@ package com.threerings.msoy.room.data;
 
 import com.threerings.presents.data.InvocationCodes;
 
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.StaticMediaDesc;
+
 /**
  * Codes and constants relating to the Room services.
  */
@@ -47,4 +50,11 @@ public interface RoomCodes extends InvocationCodes
     /** Layout constant: fill the visible room area. */
     public static final byte LAYOUT_FILL = 1;
 
+    /** Static media descriptor for the default room snapshot. */
+    public static final MediaDesc DEFAULT_ROOM_SNAPSHOT = new StaticMediaDesc(
+        // It's not obvious from the docs in StaticMediaDesc that you can do this,
+        // but this is what Group.getDefaultGroupLogoMedia() does.
+        MediaDesc.IMAGE_JPEG, "snapshot", "default_t",
+        // we know that we're 66x60
+        MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 }

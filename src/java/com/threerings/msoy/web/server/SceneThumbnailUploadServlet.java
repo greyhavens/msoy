@@ -54,8 +54,8 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
         }
 
         if (ctx.memrec.isSupport()) {
-            log.info("Allowing support+ to upload a screenshot of another user's room [sceneId=" +
-                     sceneId + ", memberId=" + ctx.memrec.memberId + "].");
+            log.info("Allowing support+ to upload a screenshot of another user's room",
+                "sceneId", sceneId, "memberId", ctx.memrec.memberId);
             return; // we're good to go!
         }
 
@@ -79,8 +79,9 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
             throw new FileUploadException("Received snapshot file that is not an image [type=" +
                                           uploadFile.getMimeType() + "].");
         } else {
-            log.info("Received snapshot: [type: " + ctx.file.getContentType() + ", size="
-                     + ctx.file.getSize() + ", id=" + ctx.file.getFieldName() + "].");
+            log.info("Received snapshot",
+                "type", ctx.file.getContentType(), "size", ctx.file.getSize(),
+                "id",ctx.file.getFieldName());
         }
         validateFileLength(uploadFile.getMimeType(), ctx.uploadLength);
 
@@ -96,12 +97,12 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
         if (sceneRecord.lastPublished != null && sceneRecord.lastPublished.after(oneMinuteAgo)) {
             if (sceneRecord.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                 _feedRepo.publishMemberMessage(sceneRecord.ownerId,
-                    FeedMessageType.FRIEND_UPDATED_ROOM, String.valueOf(sceneId) + "\t"
-                        + sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
+                    FeedMessageType.FRIEND_UPDATED_ROOM, String.valueOf(sceneId) + "\t" +
+                        sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
             } else {
                 _feedRepo.publishGroupMessage(sceneRecord.ownerId,
-                    FeedMessageType.GROUP_UPDATED_ROOM, String.valueOf(sceneId) + "\t"
-                        + sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
+                    FeedMessageType.GROUP_UPDATED_ROOM, String.valueOf(sceneId) + "\t" +
+                        sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
             }
         }
     }

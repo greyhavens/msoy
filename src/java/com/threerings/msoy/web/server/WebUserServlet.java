@@ -86,7 +86,8 @@ public class WebUserServlet extends MsoyServiceServlet
     implements WebUserService
 {
     // from interface WebUserService
-    public SessionData logon (String clientVersion, String username, String password, int expireDays)
+    public SessionData logon (
+        String clientVersion, String username, String password, int expireDays)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);

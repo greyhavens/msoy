@@ -54,6 +54,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.web.gwt.MemberCard;
@@ -314,7 +315,7 @@ public class MemberLogic
                     SceneRecord scene = _sceneRepo.loadScene(place.placeId);
                     MediaDesc media = scene.getSnapshot();
                     if (media == null) {
-                        media = DEFAULT_ROOM_SNAPSHOT;
+                        media = RoomCodes.DEFAULT_ROOM_SNAPSHOT;
                     }
                     rooms.add(new HomePageItem(
                         HomePageItem.ACTION_ROOM,
@@ -474,7 +475,7 @@ public class MemberLogic
                 }
                 media = scene.getSnapshot();
                 if (media == null) {
-                    media = DEFAULT_ROOM_SNAPSHOT;
+                    media = RoomCodes.DEFAULT_ROOM_SNAPSHOT;
                 }
                 data = new BasicNavItemData(se.experience.data, scene.name);
                 break;
@@ -632,14 +633,6 @@ public class MemberLogic
     protected static final HomePageItem EXPLORE_ITEM = new HomePageItem(
         HomePageItem.ACTION_EXPLORE, null, new StaticMediaDesc(
             MediaDesc.IMAGE_PNG, "icon", "home_page_tour"));
-
-    /** Static media descriptor for the default room snapshot. */
-    protected static final MediaDesc DEFAULT_ROOM_SNAPSHOT = new StaticMediaDesc(
-        // It's not obvious from the docs in StaticMediaDesc that you can do this,
-        // but this is what Group.getDefaultGroupLogoMedia() does.
-        MediaDesc.IMAGE_JPEG, "snapshot", "default_t",
-        // we know that we're 66x60
-        MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 
     /** The number of slots we have in My Whired Places. */
     protected static final int MWP_COUNT = 9;

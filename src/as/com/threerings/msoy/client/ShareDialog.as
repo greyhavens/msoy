@@ -9,6 +9,8 @@ import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
 import flash.events.MouseEvent;
 
+import flash.external.ExternalInterface;
+
 import flash.net.FileReference;
 import flash.net.URLRequest;
 
@@ -67,9 +69,10 @@ public class ShareDialog extends FloatingPanel
         tabs.styleName = "sexyTabber";
         tabs.setStyle("tabWidth", NaN);
         tabs.resizeToContent = true;
-        tabs.width = 380;
+        tabs.width = 450;
         tabs.height = 200;
 
+        tabs.addChild(createSocialBox());
         // TODO: guests can't abuse the email thingy?
 //        if (!_memObj.isGuest()) {
             tabs.addChild(createEmailBox());
@@ -106,6 +109,30 @@ public class ShareDialog extends FloatingPanel
 
         return Msgs.GENERAL.get("m.embed", flashVars, swfUrl,
             EMBED_SIZES[size][0], EMBED_SIZES[size][1], fullLink);
+    }
+
+    protected function createSocialBox () :VBox
+    {
+        var box :VBox = createContainer("t.social_share");
+        box.setStyle("horizontalAlign", "center");
+
+        box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("m.social_share")));
+
+        var row :HBox = new HBox();
+        row.percentWidth = 100;
+        box.addChild(row);
+
+        var img :CommandButton = new CommandButton(null, popFacebook);
+        img.styleName = "imageButton";
+        img.setStyle("image", 
+            "http://b.static.ak.fbcdn.net/images/share/facebook_share_icon.gif?8:26981");
+        row.addChild(img);
+        var facebook :CommandLinkButton = new CommandLinkButton(
+            Msgs.GENERAL.get("b.share_facebook"), popFacebook);
+        facebook.styleName = "underLink"; // TODO: revamp, make this the FUCKING DEFUCKINGFAULT!!!!
+        row.addChild(facebook);
+
+        return box;
     }
 
     protected function createEmailBox () :VBox
@@ -183,15 +210,7 @@ public class ShareDialog extends FloatingPanel
     {
         var box :VBox = createContainer("t.grab_link");
         box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.link_instruction")));
-
-        var page :String;
-        if (_inGame) {
-            page = "world-game_l_" + _placeId;
-        } else if (_placeId != 0) {
-            page = "world-s" + _placeId;
-        }
-        const url :String = _ctx.getMsoyController().createPageLink(page, false);
-        box.addChild(new CopyableText(url));
+        box.addChild(new CopyableText(createLink()));
         return box;
     }
 
@@ -289,6 +308,20 @@ public class ShareDialog extends FloatingPanel
         close(); // and make like the proverbial audi 5000
     }
 
+    /**
+     * Return a shareable link to this place.
+     */
+    protected function createLink () :String
+    {
+        var page :String;
+        if (_inGame) {
+            page = "world-game_l_" + _placeId;
+        } else if (_placeId != 0) {
+            page = "world-s" + _placeId;
+        }
+        return _ctx.getMsoyController().createPageLink(page, false);
+    }
+
     protected function startDownload (url :String, localFile :String) :void
     {
         _downloadBtn.enabled = false;
@@ -308,6 +341,32 @@ public class ShareDialog extends FloatingPanel
         if (event is ErrorEvent) {
             _downloadError.text = ErrorEvent(event).text;
         }
+    }
+
+    protected function popFacebook () :void
+    {
+        var shareURL :String = "http://www.facebook.com/sharer.php" +
+            "?u=" + encodeURIComponent(createLink()) +
+            "&t=" + encodeURIComponent("Check out this place on whirled!");
+        popShareLink(shareURL, "Whirled", "width=620,height=440");
+    }
+
+    /**
+     * Open an external window via javascript.
+     */
+    protected function popShareLink (
+        shareURL :String, windowTitle :String, windowParams :String = "") :void
+    {
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("window.open", shareURL, windowTitle, windowParams);
+                return;
+            }
+        } catch (e :Error) {
+            // nada, handled below
+        }
+        // fall back to opening the URL in a new page
+        _ctx.getMsoyController().handleViewUrl(shareURL);
     }
 
     // from FloatingPanel

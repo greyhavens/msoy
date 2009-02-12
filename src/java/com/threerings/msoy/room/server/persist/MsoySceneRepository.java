@@ -308,7 +308,7 @@ public class MsoySceneRepository extends DepotRepository
     public SceneModel loadSceneModel (int sceneId)
         throws NoSuchSceneException
     {
-        SceneRecord scene = load(SceneRecord.class, SceneRecord.getKey(sceneId));
+        SceneRecord scene = loadScene(sceneId);
         if (scene == null) {
             throw new NoSuchSceneException(sceneId);
         }
