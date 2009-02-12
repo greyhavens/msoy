@@ -63,12 +63,6 @@ public class TourDialog extends FlyingPanel
 
         addChild(nextBtn);
         addChild(hbox);
-
-        // log that we've shown this panel, so we can compare conversion/retention rates later
-        ctx.getMsoyClient().getABTestGroup(
-            "2008 12 world tour", true, ctx.resultListener(function (group :int) :void {
-                ctx.getMsoyClient().trackClientAction("2008 12 world tour shown", null);
-            }));
     }
 
     public function setRating (rating :Number) :void
