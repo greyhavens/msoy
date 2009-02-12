@@ -20,6 +20,7 @@ import mx.containers.HBox;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
+import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;
@@ -33,6 +34,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 import com.threerings.io.TypedArray;
+import com.threerings.util.Command;
 import com.threerings.util.MailUtil;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -69,7 +71,7 @@ public class ShareDialog extends FloatingPanel
         tabs.styleName = "sexyTabber";
         tabs.setStyle("tabWidth", NaN);
         tabs.resizeToContent = true;
-        tabs.width = 450;
+        tabs.width = 430;
         tabs.height = 200;
 
         tabs.addChild(createSocialBox());
@@ -83,12 +85,11 @@ public class ShareDialog extends FloatingPanel
         if (_ctx.getMsoyController().canManagePlace()) {
             tabs.addChild(createStubBox());
         }
-
         addChild(tabs);
 
-        //addButtons(_copyBtn, OK_BUTTON);
-        //setButtonWidth(0); // free-size
         open(false);
+
+        // TODO: godfucking dammit, the first tab text jiggles
     }
 
     public function getEmbedCode (size :int) :String
@@ -139,9 +140,10 @@ public class ShareDialog extends FloatingPanel
         var box :HBox = new HBox();
         box.setStyle("horizontalGap", 0);
 
-        var img :CommandButton = new CommandButton(null, callback);
-        img.styleName = "imageButton";
-        img.setStyle("image", iconURL);
+        var img :Image = new Image();
+        img.source = iconURL;
+        img.buttonMode = true;
+        Command.bind(img, MouseEvent.CLICK, callback);
         box.addChild(img);
         var link :CommandLinkButton = new CommandLinkButton(Msgs.GENERAL.get(msg), callback);
         link.styleName = "underLink"; // TODO: god it irks me that the default is un-underlined.
