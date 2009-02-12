@@ -18,8 +18,9 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
+
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -104,7 +105,7 @@ public class WelcomeServlet extends HttpServlet
 
             } else if (path.startsWith(SHARE_GAME_PREFIX)) {
                 int gameId = Integer.parseInt(path.substring(SHARE_GAME_PREFIX.length()));
-                GameRecord game = _gameRepo.loadItem(gameId); // TODO: development games???
+                GameRecord game = _mgameRepo.loadGameRecord(gameId);
                 if (game == null) {
                     log.warning("Facebook requested share of nonexistant game?", "path", path);
                     return false;
@@ -167,5 +168,5 @@ public class WelcomeServlet extends HttpServlet
 
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
 }
