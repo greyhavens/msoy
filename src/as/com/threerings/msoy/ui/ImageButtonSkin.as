@@ -63,11 +63,7 @@ public class ImageButtonSkin extends UIComponent
 
         if (rsrc is String) {
             // If it's a string, treat it like an URL
-            var url :String = rsrc as String;
-            if (url.indexOf("http:") != 0) {
-                url = DeploymentConfig.serverURL + url;
-            }
-            rsrc = new MediaContainer(url);
+            rsrc = new MediaContainer(DeploymentConfig.serverURL + rsrc);
             rsrc.addEventListener(MediaContainer.SIZE_KNOWN, function (event :ValueEvent) :void {
                 parent.width = event.value[0];
                 parent.height = event.value[1];
