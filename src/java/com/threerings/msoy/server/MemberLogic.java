@@ -315,7 +315,7 @@ public class MemberLogic
                     SceneRecord scene = _sceneRepo.loadScene(place.placeId);
                     MediaDesc media = scene.getSnapshot();
                     if (media == null) {
-                        media = RoomCodes.DEFAULT_ROOM_SNAPSHOT;
+                        media = RoomCodes.DEFAULT_ROOM_THUMBNAIL;
                     }
                     rooms.add(new HomePageItem(
                         HomePageItem.ACTION_ROOM,
@@ -475,7 +475,7 @@ public class MemberLogic
                 }
                 media = scene.getSnapshot();
                 if (media == null) {
-                    media = RoomCodes.DEFAULT_ROOM_SNAPSHOT;
+                    media = RoomCodes.DEFAULT_ROOM_THUMBNAIL;
                 }
                 data = new BasicNavItemData(se.experience.data, scene.name);
                 break;

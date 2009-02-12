@@ -50,11 +50,7 @@ public interface RoomCodes extends InvocationCodes
     /** Layout constant: fill the visible room area. */
     public static final byte LAYOUT_FILL = 1;
 
-    /** Static media descriptor for the default room snapshot. */
-    public static final MediaDesc DEFAULT_ROOM_SNAPSHOT = new StaticMediaDesc(
-        // It's not obvious from the docs in StaticMediaDesc that you can do this,
-        // but this is what Group.getDefaultGroupLogoMedia() does.
-        MediaDesc.IMAGE_JPEG, "snapshot", "default_t",
-        // we know that we're 66x60
-        MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+    /** Static media descriptor for the default room snapshot in thumbnail size. */
+    public static final MediaDesc DEFAULT_ROOM_THUMBNAIL = new StaticMediaDesc(
+        MediaDesc.IMAGE_JPEG, "snapshot", "default_t", MediaDesc.HALF_VERTICALLY_CONSTRAINED);
 }

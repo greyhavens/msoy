@@ -15,7 +15,10 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.util.MessageBundle;
+
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.server.ServerMessages;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.persist.GameRecord;
@@ -71,6 +74,8 @@ public class WelcomeServlet extends HttpServlet
 
         // satisfy a normal request by a user (or if there were problems serving special)
         if (!StringUtil.isBlank(affiliate) && !"0".equals(affiliate)) {
+            // TODO: we need to fix affiliates to be first-seen, as well as always set
+            // up a OOO affiliate cookie for the unaffiliated.
             AffiliateCookie.set(rsp, affiliate);
         }
         rsp.sendRedirect("/#" + path);
@@ -88,6 +93,7 @@ public class WelcomeServlet extends HttpServlet
         String title;
         String desc;
 
+        MessageBundle msgs = _serverMsgs.getBundle("server");
         try {
             if (path.startsWith(SHARE_ROOM_PREFIX)) {
                 int sceneId = Integer.parseInt(path.substring(SHARE_ROOM_PREFIX.length()));
@@ -96,12 +102,12 @@ public class WelcomeServlet extends HttpServlet
                     log.warning("Facebook requested share of nonexistant room?", "path", path);
                     return false;
                 }
-                image = scene.getSnapshot();
+                image = scene.getThumbnail();
                 if (image == null) {
-                    image = RoomCodes.DEFAULT_ROOM_SNAPSHOT;
+                    image = RoomCodes.DEFAULT_ROOM_THUMBNAIL;
                 }
-                title = "Visit this room on Whirled: " /* TODO */ + scene.name;
-                desc = "This user-created room is so cool!"; /* TODO */
+                title = msgs.get("m.room_share_title", scene.name);
+                desc = msgs.get("m.room_share_desc");
 
             } else if (path.startsWith(SHARE_GAME_PREFIX)) {
                 int gameId = Integer.parseInt(path.substring(SHARE_GAME_PREFIX.length()));
@@ -118,8 +124,8 @@ public class WelcomeServlet extends HttpServlet
                 } else {
                     image = Item.getDefaultThumbnailMediaFor(Item.GAME);
                 }
-                title = "Play this game on Whirled: " /* TODO */ + game.name;
-                desc = "This user-created game is so cool!"; /* TODO */
+                title = msgs.get("m.game_share_title", game.name);
+                desc = msgs.get("m.game_share_desc");
 
             } else {
                 log.warning("Unknown facebook share request", "path", path);
@@ -169,4 +175,5 @@ public class WelcomeServlet extends HttpServlet
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected ServerMessages _serverMsgs;
 }
