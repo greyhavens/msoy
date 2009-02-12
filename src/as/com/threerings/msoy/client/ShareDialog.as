@@ -366,7 +366,7 @@ public class ShareDialog extends FloatingPanel
 
     protected function getShareTitle () :String
     {
-        return Msgs.GENERAL.get(_inGame ? "m.social_share_game" : "m.social_share_room");
+        return Msgs.GENERAL.get(_inGame ? "m.social_share_game" : "m.social_share_room", _placeName);
     }
 
     /**
