@@ -98,11 +98,13 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
             if (sceneRecord.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                 _feedRepo.publishMemberMessage(sceneRecord.ownerId,
                     FeedMessageType.FRIEND_UPDATED_ROOM, String.valueOf(sceneId) + "\t" +
-                        sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
+                        sceneRecord.name + "\t" +
+                        MediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
             } else {
                 _feedRepo.publishGroupMessage(sceneRecord.ownerId,
                     FeedMessageType.GROUP_UPDATED_ROOM, String.valueOf(sceneId) + "\t" +
-                        sceneRecord.name + "\t" + MediaDesc.mdToString(sceneRecord.getSnapshot()));
+                        sceneRecord.name + "\t" +
+                        MediaDesc.mdToString(sceneRecord.getSnapshotThumb()));
             }
         }
     }

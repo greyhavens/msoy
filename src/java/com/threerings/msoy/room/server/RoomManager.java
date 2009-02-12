@@ -746,7 +746,7 @@ public class RoomManager extends SpotSceneManager
             public void invokePersistent () throws Exception {
                 // if we have no snapshot URL, we want the canonical URL
                 SceneRecord srec = _sceneRepo.loadScene(getScene().getId());
-                _snap = (srec == null) ? null : srec.getSnapshot();
+                _snap = (srec == null) ? null : srec.getSnapshotFull();
                 if (_snap == null) {
                     log.warning("Unable to load snapshot", "where", where(), "srec", srec);
                     throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);

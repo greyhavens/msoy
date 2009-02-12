@@ -247,7 +247,7 @@ public class SceneRecord extends PersistentRecord
         info.sceneId = sceneId;
         info.name = name;
         info.rating = getRating();
-        info.thumbnail = getThumbnail();
+        info.thumbnail = getSnapshotThumb();
         return info;
     }
 
@@ -261,14 +261,14 @@ public class SceneRecord extends PersistentRecord
         RoomDetail detail = new RoomDetail();
         detail.info = toRoomInfo();
         detail.ratingCount = ratingCount;
-        detail.snapshot = getSnapshot();
+        detail.snapshot = getSnapshotFull();
         return detail;
     }
 
     /**
      * Returns the full snapshot image for this scene, or null if it has none.
      */
-    public MediaDesc getSnapshot ()
+    public MediaDesc getSnapshotFull ()
     {
         return (canonicalImageHash == null) ? null:
             new MediaDesc(canonicalImageHash, canonicalImageType, MediaDesc.NOT_CONSTRAINED);
@@ -277,7 +277,7 @@ public class SceneRecord extends PersistentRecord
     /**
      * Returns the thumbnail snapshot image for this scene, or null if it has none.
      */
-    public MediaDesc getThumbnail ()
+    public MediaDesc getSnapshotThumb ()
     {
         return (thumbnailHash == null) ? null:
             new MediaDesc(thumbnailHash, thumbnailType, MediaDesc.NOT_CONSTRAINED);

@@ -118,7 +118,7 @@ public class CommentServlet extends MsoyServiceServlet
             SceneRecord scene = _sceneRepo.loadScene(eid);
             if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                 String data = scene.sceneId + "\t" + scene.name + "\t"
-                    + MediaDesc.mdToString(scene.getSnapshot());
+                    + MediaDesc.mdToString(scene.getSnapshotThumb());
                 _feedRepo.publishSelfMessage(
                     scene.ownerId,  mrec.memberId, FeedMessageType.SELF_ROOM_COMMENT, data);
                 ownerId = scene.ownerId;

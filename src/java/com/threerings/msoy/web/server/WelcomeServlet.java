@@ -102,9 +102,9 @@ public class WelcomeServlet extends HttpServlet
                     log.warning("Facebook requested share of nonexistant room?", "path", path);
                     return false;
                 }
-                image = scene.getThumbnail();
+                image = scene.getSnapshotThumb();
                 if (image == null) {
-                    image = RoomCodes.DEFAULT_ROOM_THUMBNAIL;
+                    image = RoomCodes.DEFAULT_SNAPSHOT_THUMB;
                 }
                 title = msgs.get("m.room_share_title", scene.name);
                 desc = msgs.get("m.room_share_desc");

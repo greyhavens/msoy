@@ -431,7 +431,7 @@ public class MsoySceneRepository extends DepotRepository
     public MediaDesc loadSceneSnapshot (int sceneId)
     {
         SceneRecord scene = loadScene(sceneId);
-        return (scene == null) ? null : scene.getSnapshot();
+        return (scene == null) ? null : scene.getSnapshotFull();
     }
 
     /**

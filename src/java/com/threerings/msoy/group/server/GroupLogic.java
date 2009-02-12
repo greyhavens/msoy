@@ -210,7 +210,7 @@ public class GroupLogic
             cmap.put(card.homeSceneId, card);
         }
         for (SceneRecord srec : _sceneRepo.loadScenes(cmap.keySet())) {
-            cmap.get(srec.sceneId).homeSnapshot = srec.getSnapshot();
+            cmap.get(srec.sceneId).homeSnapshot = srec.getSnapshotFull();
         }
     }
 

@@ -313,9 +313,9 @@ public class MemberLogic
             for (PopularPlacesSnapshot.Place place : pps.getTopScenes()) {
                 if (!haveRooms.contains(place.placeId)) {
                     SceneRecord scene = _sceneRepo.loadScene(place.placeId);
-                    MediaDesc media = scene.getSnapshot();
+                    MediaDesc media = scene.getSnapshotFull();
                     if (media == null) {
-                        media = RoomCodes.DEFAULT_ROOM_THUMBNAIL;
+                        media = RoomCodes.DEFAULT_SNAPSHOT_FULL;
                     }
                     rooms.add(new HomePageItem(
                         HomePageItem.ACTION_ROOM,
@@ -473,9 +473,9 @@ public class MemberLogic
                 if (scene == null) {
                     continue;
                 }
-                media = scene.getSnapshot();
+                media = scene.getSnapshotFull();
                 if (media == null) {
-                    media = RoomCodes.DEFAULT_ROOM_THUMBNAIL;
+                    media = RoomCodes.DEFAULT_SNAPSHOT_FULL;
                 }
                 data = new BasicNavItemData(se.experience.data, scene.name);
                 break;

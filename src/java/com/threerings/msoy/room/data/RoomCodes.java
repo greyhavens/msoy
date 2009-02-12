@@ -50,7 +50,11 @@ public interface RoomCodes extends InvocationCodes
     /** Layout constant: fill the visible room area. */
     public static final byte LAYOUT_FILL = 1;
 
+    /** Static media descriptor for the default room snapshot in full size. */
+    public static final MediaDesc DEFAULT_SNAPSHOT_FULL = new StaticMediaDesc(
+        MediaDesc.IMAGE_JPEG, "snapshot", "default");
+
     /** Static media descriptor for the default room snapshot in thumbnail size. */
-    public static final MediaDesc DEFAULT_ROOM_THUMBNAIL = new StaticMediaDesc(
-        MediaDesc.IMAGE_JPEG, "snapshot", "default_t", MediaDesc.HALF_VERTICALLY_CONSTRAINED);
+    public static final MediaDesc DEFAULT_SNAPSHOT_THUMB = new StaticMediaDesc(
+        MediaDesc.IMAGE_JPEG, "snapshot", "default_t");
 }
