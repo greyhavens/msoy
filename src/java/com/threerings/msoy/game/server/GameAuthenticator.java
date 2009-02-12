@@ -3,103 +3,28 @@
 
 package com.threerings.msoy.game.server;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.StringUtil;
+import com.threerings.msoy.data.AuthName;
+import com.threerings.msoy.server.AuxAuthenticator;
 
-import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
-
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.net.AuthResponse;
-import com.threerings.presents.net.AuthResponseData;
-import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.net.AuthingConnection;
-
-import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MsoyAuthenticator;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
+import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.GameCredentials;
-import com.threerings.msoy.web.gwt.ServiceException;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Handles authentication on an MSOY Game server.
  */
 @Singleton
-public class GameAuthenticator extends Authenticator
+public class GameAuthenticator extends AuxAuthenticator<GameCredentials>
 {
-    // from abstract Authenticator
-    protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
+    protected GameAuthenticator ()
     {
-        AuthRequest req = conn.getAuthRequest();
-        AuthResponseData rdata = rsp.getData();
-        GameCredentials creds = null;
-
-        try {
-            // make sure they've got the correct version
-            String cvers = req.getVersion(), svers = DeploymentConfig.version;
-            if (!svers.equals(cvers)) {
-                log.info("Refusing wrong version [creds=" + req.getCredentials() +
-                         ", cvers=" + cvers + ", svers=" + svers + "].");
-                throw new ServiceException(
-                    (cvers.compareTo(svers) > 0) ? MsoyAuthCodes.NEWER_VERSION :
-                    MessageBundle.tcompose(MsoyAuthCodes.VERSION_MISMATCH, svers));
-            }
-
-            // make sure they've sent valid credentials
-            try {
-                creds = (GameCredentials) req.getCredentials();
-            } catch (ClassCastException cce) {
-                log.warning("Invalid creds " + req.getCredentials() + ".", cce);
-                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-            }
-
-            if (StringUtil.isBlank(creds.sessionToken)) {
-                log.warning("Receieved session-tokenless auth request " + req + ".");
-                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
-            }
-
-            if (MsoyCredentials.isGuestSessionToken(creds.sessionToken)) {
-                // extract their assigned member id from their token
-                int memberId = MsoyCredentials.getGuestMemberId(creds.sessionToken);
-                // if they didn't supply a username, generate one from their guest member id.
-                Name credsName = creds.getUsername();
-                creds.setUsername(new MemberName(credsName != null ? credsName.toString() :
-                                                 MsoyAuthenticator.generateGuestName(memberId),
-                                                 memberId));
-
-            } else {
-                MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
-                if (member == null) {
-                    throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
-                }
-
-                // set their starting username to their auth username
-                creds.setUsername(new Name(member.accountName));
-
-                // fill in our access control tokens
-                rsp.authdata = member.toTokenRing();
-            }
-
-            //log.info("User logged on [user=" + creds.getUsername() + "].");
-            rdata.code = AuthResponseData.SUCCESS;
-
-        } catch (ServiceException se) {
-            rdata.code = se.getMessage();
-            log.info("Rejecting authentication [creds=" + creds + ", code=" + rdata.code + "].");
-        }
+        super(GameCredentials.class);
     }
 
-    @Inject protected MemberRepository _memberRepo;
-
-    /** Used to assign unique usernames to guests that authenticate with the server. */
-    protected static int _guestCount;
+    @Override // from AuxAuthenticator
+    protected AuthName createName (String accountName, int memberId)
+    {
+        return new GameAuthName(accountName, memberId);
+    }
 }

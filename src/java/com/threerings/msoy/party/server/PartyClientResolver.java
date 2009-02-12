@@ -45,9 +45,7 @@ public class PartyClientResolver extends ClientResolver
                 authName.toString(), authName.getMemberId(), VizMemberName.DEFAULT_PHOTO);
 
         } else {
-            // load up their member information using on their authentication (account) name
-            MemberRecord member = _memberRepo.loadMember(_username.toString());
-            // we need their profile photo as well
+            MemberRecord member = _memberRepo.loadMember(authName.getMemberId());
             ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
             MediaDesc photo = (precord == null) ? VizMemberName.DEFAULT_PHOTO : precord.getPhoto();
             name = new VizMemberName(member.name, member.memberId, photo);

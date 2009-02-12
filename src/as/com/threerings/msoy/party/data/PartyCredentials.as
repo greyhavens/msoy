@@ -6,6 +6,7 @@ package com.threerings.msoy.party.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.util.Name;
+import com.threerings.util.StringBuilder;
 
 import com.threerings.msoy.data.MsoyCredentials;
 
@@ -34,6 +35,13 @@ public class PartyCredentials extends MsoyCredentials
     {
         super.writeObject(out);
         out.writeInt(partyId);
+    }
+
+    // from Credentials
+    override protected function toStringBuf (buf :StringBuilder) :void
+    {
+        super.toStringBuf(buf);
+        buf.append(", partyId=", partyId);
     }
 }
 }

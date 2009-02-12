@@ -8,18 +8,13 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.util.Name;
 import com.threerings.util.StringBuilder;
 
-import com.threerings.presents.net.Credentials;
-
-import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.data.MsoyCredentials;
 
 /**
  * Used to authenticate with an MSOY Game server.
  */
-public class GameCredentials extends Credentials
+public class GameCredentials extends MsoyCredentials
 {
-    /** A session token that identifies this user. */
-    public var sessionToken :String;
-
     /** The unique tracking id for this client, if one is assigned */
     public var visitorId :String;
 
@@ -32,7 +27,6 @@ public class GameCredentials extends Credentials
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        sessionToken = (ins.readField(String) as String);
         visitorId = (ins.readField(String) as String);
     }
 
@@ -40,7 +34,6 @@ public class GameCredentials extends Credentials
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeField(sessionToken);
         out.writeField(visitorId);
     }
 
@@ -48,7 +41,6 @@ public class GameCredentials extends Credentials
     override protected function toStringBuf (buf :StringBuilder) :void
     {
         super.toStringBuf(buf);
-        buf.append(", token=", sessionToken);
         buf.append(", visitorId=", visitorId);
     }
 }

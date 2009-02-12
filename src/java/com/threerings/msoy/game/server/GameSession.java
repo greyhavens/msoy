@@ -33,11 +33,11 @@ public class GameSession extends CrowdSession
         // configure their access control tokens
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
-        GameCredentials credentials = (GameCredentials) getCredentials();
 
         // if this is a guest account, they didn't get a VisitorInfo through the resolver.
         // so let's pull one from their flash credentials, or manufacture a brand new one.
         if (_plobj.visitorInfo == null) {
+            GameCredentials credentials = (GameCredentials) getCredentials();
             if (credentials.visitorId != null) {
                 _plobj.visitorInfo = new VisitorInfo(credentials.visitorId, false);
             } else {
@@ -76,31 +76,8 @@ public class GameSession extends CrowdSession
         // let our various server entities know that this member logged off
         _locator.playerLoggedOff(_plobj);
 
-        // nothing more needs doing for guests
-        if (_plobj.isGuest()) {
-            _plobj = null;
-            return;
-        }
-
-//         final MemberName name = _plobj.memberName;
-//         final StatSet stats = _plobj.stats;
+        // clear out our player object reference
         _plobj = null;
-
-//         // update the member record in the database
-//         _invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
-//             public boolean invoke () {
-//                 try {
-//                     // write out any modified stats
-//                     Stat[] statArr = new Stat[stats.size()];
-//                     stats.toArray(statArr);
-//                     _statRepo.writeModified(name.getMemberId(), statArr);
-
-//                 } catch (Exception e) {
-//                     log.warning("Failed to note ended session [member=" + name + "].", e);
-//                 }
-//                 return false;
-//             }
-//         });
     }
 
     /** A casted reference to the userobject. */

@@ -84,6 +84,7 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                 memberId = member.memberId;
                 accountName = member.accountName;
                 name = member.name;
+                rsp.authdata = member.toTokenRing(); // export our access control tokens
             }
 
             // fill in the appropriate AuthName instance into their creds

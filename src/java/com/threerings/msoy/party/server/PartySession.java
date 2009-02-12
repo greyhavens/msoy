@@ -69,7 +69,8 @@ public class PartySession extends PresentsSession
         if (pmgr != null) {
             pdata.partyOid = pmgr.getPartyObject().getOid();
         } else {
-            log.warning("Pants! Can't find party for partier", "partier", _username, "pid", partyId);
+            log.warning("Pants! Can't find party for partier", "partier", _username,
+                        "pid", partyId);
         }
     }
 

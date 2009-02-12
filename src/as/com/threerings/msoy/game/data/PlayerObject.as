@@ -25,6 +25,8 @@ import com.threerings.msoy.data.all.VizMemberName;
 public class PlayerObject extends WhirledPlayerObject
     implements PropertySpaceObject
 {
+    GameAuthName // filled into username
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
     public static const MEMBER_NAME :String = "memberName";
