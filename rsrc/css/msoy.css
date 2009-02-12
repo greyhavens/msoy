@@ -547,6 +547,7 @@ TabNavigator, TabBar {
 }
 
 /** All these buttons use the ImageButtonSkin and need the per-state skins cleared out. */
+.imageButton,
 .controlBarButtonChat, .controlBarButtonEdit, .controlBarButtonZoom, .controlBarButtonComment,
 .controlBarButtonInstructions, .controlBarButtonShare, .controlBarButtonScores,
 .controlBarHoverZone, .controlBarButtonSnapshot, .controlBarFriendButton, .controlBarTalkButton,
