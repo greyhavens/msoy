@@ -188,6 +188,7 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         const mctx :MsoyContext = _gctx.getMsoyContext();
         const bar :ControlBar = mctx.getControlBar();
+        bar.setChatDirector(mctx.getMsoyChatDirector());
 
         mctx.getUIState().setInGame(false, false);
         mctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
@@ -198,7 +199,6 @@ public class MsoyGamePanel extends WhirledGamePanel
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
             overlay.setSuppressSidebar(false);
             _gctx.getChatDirector().removeChatDisplay(overlay);
-            bar.setChatDirector(mctx.getMsoyChatDirector());
             mctx.getTopPanel().getHeaderBar().getChatTabs().locationName = null;
 
         } else {

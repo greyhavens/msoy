@@ -70,8 +70,6 @@ public class GameChatContainer extends LayeredContainer
         clearOverlay();
 
         _ctx.getTopPanel().getHeaderBar().getChatTabs().width = NaN;
-        var controlBar :ControlBar = _ctx.getControlBar();
-        controlBar.setChatDirector(_ctx.getMsoyChatDirector());
     }
 
     public function displayOccupantList (occList :UIComponent) :void
