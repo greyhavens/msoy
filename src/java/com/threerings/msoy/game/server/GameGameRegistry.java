@@ -88,6 +88,7 @@ import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
@@ -303,6 +304,7 @@ public class GameGameRegistry
      */
     public void reportCoinAward (int memberId, int deltaCoins)
     {
+        _moneyActions.coinsEarned(memberId, deltaCoins);
     }
 
     /**
@@ -1240,6 +1242,7 @@ public class GameGameRegistry
     @Inject protected RuntimeConfig _runtime;
     @Inject protected PlayerLocator _locator;
     @Inject protected PlayerNodeActions _playerActions;
+    @Inject protected MoneyNodeActions _moneyActions;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected InvocationManager _invmgr;
     @Inject protected WorldGameRegistry _wgameReg;

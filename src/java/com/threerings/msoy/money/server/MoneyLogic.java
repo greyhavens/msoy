@@ -26,7 +26,6 @@ import com.samskivert.util.Tuple;
 
 import net.sf.ehcache.CacheManager;
 
-import com.threerings.presents.annotation.AnyThread;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.util.MessageBundle;
@@ -72,8 +71,7 @@ import static com.threerings.msoy.Log.log;
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */
-@Singleton
-@BlockingThread
+@Singleton @BlockingThread
 public class MoneyLogic
 {
     /**
@@ -151,21 +149,6 @@ public class MoneyLogic
             monies.put(mar.memberId, mar.getMemberMoney());
         }
         return monies;
-    }
-
-    /**
-     * Indicates that a member has earned some number of coins.  This will notify interested
-     * clients that coins were earned, without actually awarding the coins yet.  Future calls to
-     * {@link #awardCoins(int, int, boolean, UserAction)} to award
-     * the coins must use "false" for notify to indicate the user was already notified of this.
-     *
-     * @param memberId ID of the member who earned coins.
-     * @param amount Number of coins earned.
-     */
-    @AnyThread
-    public void notifyCoinsEarned (int memberId, int amount)
-    {
-        _nodeActions.moneyUpdated(memberId, Currency.COINS, amount, true);
     }
 
     /**

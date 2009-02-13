@@ -11,12 +11,26 @@ import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-class MoneyNodeActions
+public class MoneyNodeActions
 {
     @Inject
     public MoneyNodeActions (final MsoyPeerManager peerMan)
     {
         _peerMan = peerMan;
+    }
+
+    /**
+     * Reports to a member that they have earned some number of coins. This will notify interested
+     * clients that coins were earned, without actually awarding the coins.  Future calls to {@link
+     * MoneyLogic#awardCoins(int, int, boolean, UserAction)} to award the coins must use "false"
+     * for notify to indicate the user was already notified of the earnings.
+     *
+     * @param memberId the member who earned coins.
+     * @param amount number of coins earned.
+     */
+    public void coinsEarned (int memberId, int amount)
+    {
+        moneyUpdated(memberId, Currency.COINS, amount, true);
     }
 
     /**
@@ -28,6 +42,10 @@ class MoneyNodeActions
         moneyUpdated(tx.memberId, tx.currency, tx.amount, updateAcc);
     }
 
+    /**
+     * Dispatches a notification that a member's money count has changed to whichever server they
+     * are logged into.
+     */
     public void moneyUpdated (int memberId, Currency currency, int amount, boolean updateAcc)
     {
         if (currency != Currency.BLING) { // avoid spamming the other nodes
