@@ -178,6 +178,7 @@ public class BureauLauncher
      */
     public void run ()
     {
+        _connections = new Connections(this);
         _pollNodes.schedule(0, PEER_POLL_INTERVAL);
 
         // reset our log limit when the file is rolled
@@ -471,7 +472,7 @@ public class BureauLauncher
     protected Runner _dbrunner = new Runner();
 
     /** World and game server connections. */
-    protected Connections _connections = new Connections(this);
+    protected Connections _connections;
 
     /** The last time a client logged off. */
     protected long _lastLogoffTime;
