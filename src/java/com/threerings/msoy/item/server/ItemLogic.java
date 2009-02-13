@@ -40,8 +40,8 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 
+import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.GameLogic;
-import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -405,7 +405,7 @@ public class ItemLogic
 
             } else if (nrecord.getType() == Item.GAME) {
                 GameRecord grec = (GameRecord)nrecord;
-                if (nrecord.ownerId != 0 && // group changes are only triggered for the original item
+                if (nrecord.ownerId != 0 && // group changes only triggered for the original item
                     (orecord == null || ((GameRecord)orecord).groupId != grec.groupId)) {
                     if (orecord != null && ((GameRecord)orecord).groupId != Game.NO_GROUP) {
                         _groupRepo.updateGroup(
@@ -939,9 +939,9 @@ public class ItemLogic
         public GameUpdatedAction () {
         }
         @Override protected void execute () {
-            _gameReg.gameUpdated(_gameId);
+            _gameReg.gameContentUpdated(_gameId);
         }
-        @Inject protected transient WorldGameRegistry _gameReg;
+        @Inject protected transient GameGameRegistry _gameReg;
     }
 
     /** Notifies other nodes when a user has purchased game content. */
@@ -961,7 +961,7 @@ public class ItemLogic
         protected int _memberId;
         protected byte _itemType;
         protected String _ident;
-        @Inject protected transient WorldGameRegistry _gameReg;
+        @Inject protected transient GameGameRegistry _gameReg;
     }
 
     /** Maps byte type ids to repository for all digital item types. */

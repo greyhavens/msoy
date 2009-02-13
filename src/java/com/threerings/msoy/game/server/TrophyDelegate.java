@@ -9,10 +9,12 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.util.ResultListener;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
@@ -35,6 +37,7 @@ import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
+import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -164,15 +167,19 @@ public class TrophyDelegate extends PlayManagerDelegate
         plobj.addToGameContent(
             new GameContentOwnership(gameId, GameData.PRIZE_MARKER, prize.ident));
 
-        // because we don't have a full item manager, we have to pass the buck to a world server to
-        // do the actual prize awarding
-        _worldClient.awardPrize(plobj.getMemberId(), gameId, _content.game.name, prize,
-                                new InvocationService.ResultListener() {
-            public void requestProcessed (Object result) {
-                plobj.postMessage(MsoyGameCodes.PRIZE_AWARDED, (Item)result);
+        // pass the buck to the item manager
+        _itemMan.awardPrize(
+            plobj.getMemberId(), gameId, _content.game.name, prize, new ResultListener<Item>() {
+            public void requestCompleted (Item item) {
+                plobj.postMessage(MsoyGameCodes.PRIZE_AWARDED, item);
             }
-            public void requestFailed (String cause) {
-                listener.requestFailed(cause);
+            public void requestFailed (Exception cause) {
+                if (cause instanceof InvocationException) {
+                    listener.requestFailed(cause.getMessage());
+                } else {
+                    log.warning("Prize award failed", cause);
+                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                }
             }
         });
     }
@@ -247,5 +254,5 @@ public class TrophyDelegate extends PlayManagerDelegate
 
     // our dependencies
     @Inject protected GameGameRegistry _gameReg;
-    @Inject protected WorldServerClient _worldClient;
+    @Inject protected ItemManager _itemMan;
 }

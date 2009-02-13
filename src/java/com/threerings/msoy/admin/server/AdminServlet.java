@@ -46,7 +46,6 @@ import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletWaiter;
 
-import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.ItemFlag;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -611,7 +610,6 @@ public class AdminServlet extends MsoyServiceServlet
                     return false;
                 }
             });
-            _gameReg.resetEventLogger();
         }
 
         @Override
@@ -622,7 +620,6 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         @Inject protected transient MsoyEventLogger _nodeLogger;
-        @Inject protected transient WorldGameRegistry _gameReg;
         @Inject protected transient @MainInvoker Invoker _invoker;
     }
 

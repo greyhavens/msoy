@@ -50,8 +50,8 @@ import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameLogs;
-import com.threerings.msoy.game.gwt.GameMetrics;
 import com.threerings.msoy.game.gwt.GameMetrics.TilerSummary;
+import com.threerings.msoy.game.gwt.GameMetrics;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.game.gwt.TrophyCase;
@@ -645,13 +645,13 @@ public class GameServlet extends MsoyServiceServlet
 
         @Override // from PeerManager.NodeAction
         protected void execute () {
-            _gameReg.resetGameScores(_gameId, _single, _gameMode);
+            _gameReg.resetScorePercentiler(_gameId, _single, _gameMode);
         }
 
         protected boolean _single;
         protected int _gameMode;
 
-        @Inject protected transient WorldGameRegistry _gameReg;
+        @Inject protected transient GameGameRegistry _gameReg;
     }
 
     // our dependencies

@@ -8,9 +8,6 @@ package com.threerings.msoy.peer.data;
  */
 public class HostedGame extends HostedPlace
 {
-    /** The port on which this game server is listening. */
-    public Integer port;
-
     /**
      * Empty constructor used for unserializing
      */
@@ -21,9 +18,9 @@ public class HostedGame extends HostedPlace
     /**
      * Creates a hosted game record.
      */
-    public HostedGame (int placeId, String name, int port)
+    public HostedGame (int placeId, String name)
     {
         super(placeId, name);
-        this.port = port;
+        // nothing special currently
     }
 }

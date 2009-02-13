@@ -224,7 +224,7 @@ public class PlayerObject extends WhirledPlayerObject
     @Override // from BodyObject
     protected void addWhoData (StringBuilder buf)
     {
-        buf.append("id=").append(getMemberId()).append(" oid=");
+        buf.append("pid=").append(getMemberId()).append(" oid=");
         super.addWhoData(buf);
     }
 

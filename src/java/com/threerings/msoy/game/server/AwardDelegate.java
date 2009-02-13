@@ -75,7 +75,8 @@ public class AwardDelegate extends RatingDelegate
             log.info("OMG, we're actually paying out pending earnings.", "where", where(),
                      "playerId", playerId, "coins", record._unnotedAward);
             // payout their pending earnings (this will NOOP if they have nothing pending)
-            payoutCoins(record.memberId, record.getAndNoteAward(), record.getAndNoteSecondsPlayed());
+            payoutCoins(record.memberId, record.getAndNoteAward(),
+                        record.getAndNoteSecondsPlayed());
         }
     }
 
@@ -351,16 +352,16 @@ public class AwardDelegate extends RatingDelegate
             }
 
             // track total game sessions
-            _worldClient.incrementStat(memberId, StatType.GAME_SESSIONS, 1);
+            _gameReg.incrementStat(memberId, StatType.GAME_SESSIONS, 1);
             // track unique games played
             // Note: commented out because we don't have a badge for this right now
-            /*_worldClient.addToSetStat(
+            /*_gameReg.addToSetStat(
                 memberId, StatType.UNIQUE_GAMES_PLAYED, _content.detail.gameId);*/
 
             if (isMultiplayer() && ((MsoyGameManager) _gmgr).getPlayerCount() > 1) {
                 // track multiplayer game wins
                 if (player.score == winningScore) {
-                    _worldClient.incrementStat(memberId, StatType.MP_GAMES_WON, 1);
+                    _gameReg.incrementStat(memberId, StatType.MP_GAMES_WON, 1);
                 }
 
                 // track unique game partners
@@ -368,7 +369,7 @@ public class AwardDelegate extends RatingDelegate
                 /*for (Player oplayer : players) {
                     int oMemberId = oplayer.getMemberId();
                     if (oMemberId != memberId && !MemberName.isGuest(oMemberId)) {
-                        _worldClient.addToSetStat(memberId, StatType.MP_GAME_PARTNERS, oMemberId);
+                        _gameReg.addToSetStat(memberId, StatType.MP_GAME_PARTNERS, oMemberId);
                     }
                 }*/
             }
@@ -527,7 +528,7 @@ public class AwardDelegate extends RatingDelegate
 
             // update the player's member object on their world server
             if (actuallyAward && player.flowAward > 0) {
-                _worldClient.reportCoinAward(record.memberId, player.flowAward);
+                _gameReg.reportCoinAward(record.memberId, player.flowAward);
             }
 
             // report to the game that this player earned some flow
@@ -751,7 +752,7 @@ public class AwardDelegate extends RatingDelegate
         if (coinAward > 0) {
             UserAction action = UserAction.playedGame(
                 memberId, _content.game.name, _content.game.gameId, secondsPlayed);
-            _worldClient.awardCoins(_content.game.gameId, action, coinAward);
+            _gameReg.awardCoins(_content.game.gameId, action, coinAward);
         }
     }
 
@@ -908,7 +909,6 @@ public class AwardDelegate extends RatingDelegate
     // our dependencies
     @Inject protected RuntimeConfig _runtime;
     @Inject protected GameGameRegistry _gameReg;
-    @Inject protected WorldServerClient _worldClient;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
 

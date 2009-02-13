@@ -9,7 +9,10 @@ import java.util.Iterator;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.msoy.bureau.data.ThaneCodes;
@@ -19,6 +22,9 @@ import com.threerings.msoy.bureau.server.ThaneWorldProvider;
 
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
+
+import com.threerings.msoy.game.data.MsoyGameConfig;
+import com.threerings.msoy.game.server.PlayerLocator;
 
 import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.data.ClientObject;
@@ -78,4 +84,28 @@ public class RoomRegistry extends PlaceRegistry
             resultListener.requestProcessed(plobj.getOid());
         }
     }
+
+    @Override // from PlaceRegistry
+    protected BodyLocator selectLocator (PlaceConfig config)
+    {
+        if (config instanceof MsoyGameConfig) { // TODO: avrgs?
+            return _plocator;
+        } else {
+            return super.selectLocator(config);
+        }
+    }
+
+// TODO
+//     @Override protected PlaceManager createPlaceManager (PlaceConfig config) throws Exception {
+//         ClassLoader loader = _hostedMan.getClassLoader(config);
+//         if (loader == null) {
+//             return super.createPlaceManager(config);
+//         }
+//         return (PlaceManager)Class.forName(
+//             config.getManagerClassName(), true, loader).newInstance();
+//     }
+
+//     @Inject protected HostedGameManager _hostedMan;
+
+    @Inject protected PlayerLocator _plocator;
 }

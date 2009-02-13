@@ -27,6 +27,7 @@ import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -222,7 +223,7 @@ public class GameLogic
             public String call () {
                 MemberLocation memloc = _peerMan.getMemberLocation(memberId);
                 if (memloc != null && memloc.gameId != 0) {
-                    Tuple<String, Integer> gameHost = _peerMan.getGameHost(memloc.gameId);
+                    Tuple<String, HostedGame> gameHost = _peerMan.getGameHost(memloc.gameId);
                     if (gameHost != null) {
                         return gameHost.left;
                     }
@@ -305,7 +306,7 @@ public class GameLogic
         }
         protected String _nodeName;
         protected int _memberId;
-        @Inject protected transient WorldGameRegistry _gameReg;
+        @Inject protected transient GameGameRegistry _gameReg;
     }
 
     @Inject protected RootDObjectManager _omgr;

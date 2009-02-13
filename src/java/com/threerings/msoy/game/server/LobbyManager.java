@@ -70,7 +70,7 @@ public class LobbyManager
         _lobj.subscriberListener = this;
         _lobj.addListener(_tableWatcher);
 
-        _tableMgr = new MsoyTableManager(_omgr, invmgr, _plreg, _worldClient, this);
+        _tableMgr = new MsoyTableManager(_omgr, invmgr, _plreg, _playerActions, this);
 
         // since we start empty, we need to immediately assume shutdown
         recheckShutdownInterval();
@@ -338,7 +338,7 @@ public class LobbyManager
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlaceRegistry _plreg;
-    @Inject protected WorldServerClient _worldClient;
+    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected GameRepository _gameRepo;
 
     /** idle time before shutting down the manager. */

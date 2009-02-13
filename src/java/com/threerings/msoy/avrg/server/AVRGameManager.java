@@ -49,12 +49,12 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
 import com.threerings.msoy.game.server.ContentOwnershipUnit;
-import com.threerings.msoy.game.server.GameWatcherManager;
-import com.threerings.msoy.game.server.TrophyDelegate;
-import com.threerings.msoy.game.server.WorldServerClient;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
-import com.threerings.msoy.game.server.persist.TrophyRepository;
+import com.threerings.msoy.game.server.GameWatcherManager;
 import com.threerings.msoy.game.server.PlayerLocator;
+import com.threerings.msoy.game.server.PlayerNodeActions;
+import com.threerings.msoy.game.server.TrophyDelegate;
+import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.room.server.RoomManager;
 
 import com.threerings.msoy.avrg.client.AVRService;
@@ -643,7 +643,7 @@ public class AVRGameManager extends PlaceManager
 
         // Make sure we notify the world server too, since we are officially deactivating this
         // game as opposed to just leaving it tempoararily.
-        _worldClient.leaveAVRGame(playerId);
+        _playerActions.leaveAVRGame(playerId);
     }
 
     @Override
@@ -1037,7 +1037,7 @@ public class AVRGameManager extends PlaceManager
     @Inject protected RootDObjectManager _omgr;
     @Inject protected PlayerLocator _locator;
     @Inject protected LocationManager _locmgr;
-    @Inject protected WorldServerClient _worldClient;
+    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected LevelPackRepository _lpackRepo;
     @Inject protected TrophyRepository _trophyRepo;

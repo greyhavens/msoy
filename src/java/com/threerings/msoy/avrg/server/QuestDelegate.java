@@ -29,11 +29,11 @@ import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 
 import com.threerings.msoy.data.UserAction;
 
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameContent;
 import com.threerings.msoy.game.server.GameGameRegistry;
-import com.threerings.msoy.game.server.WorldServerClient;
-import com.threerings.msoy.game.server.GameGameRegistry.MetricType;
+import com.threerings.msoy.game.server.PlayerNodeActions;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 
@@ -97,7 +97,7 @@ public class QuestDelegate extends PlayManagerDelegate
             return;
         }
         _players.put(bodyOid, new Player(player));
-        _worldClient.updatePlayer(player.getMemberId(), _content.game);
+        _playerActions.updatePlayer(player.getMemberId(), new GameSummary(_content.game));
         _eventLog.avrgEntered(player.getMemberId(), player.getVisitorId());
     }
 
@@ -184,7 +184,7 @@ public class QuestDelegate extends PlayManagerDelegate
 
             // accumulate the flow for this quest (to be persisted later)
             if (payout > 0) {
-                _worldClient.reportCoinAward(plobj.getMemberId(), payout);
+                _gameReg.reportCoinAward(plobj.getMemberId(), payout);
             }
         }
 
@@ -232,7 +232,7 @@ public class QuestDelegate extends PlayManagerDelegate
                 if (!player.playerObject.isGuest()) {
                     final UserAction action = UserAction.playedGame(
                         player.playerObject.getMemberId(), _content.game.name, _gameId, playerSecs);
-                    _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+                    _gameReg.awardCoins(_gameId, action, player.coinsAccrued);
                 }
                 totalAward += player.coinsAccrued;
                 player.reset();
@@ -242,8 +242,8 @@ public class QuestDelegate extends PlayManagerDelegate
         // if we actually awarded coins or accrued time, update our game metrics
         if (totalAward > 0 || totalSecs > 0) {
             final int totalMins = Math.round(totalSecs / 60f);
-            _gameReg.updateGameMetrics(
-                _content.detail, MetricType.AVRG, totalMins, totalTasks, totalAward);
+            _gameReg.updateGameMetrics(_content.detail, GameGameRegistry.MetricType.AVRG, totalMins,
+                                       totalTasks, totalAward);
         }
     }
 
@@ -268,20 +268,20 @@ public class QuestDelegate extends PlayManagerDelegate
                                player.playerObject.getVisitorId());
 
             // let the world know that this player is no longer playing our game
-            _worldClient.updatePlayer(memberId, null);
+            _playerActions.updatePlayer(memberId, null);
         }
 
         // if they accrued any coins (and are not a guest), do the actual coin awarding
         if (!player.playerObject.isGuest() && player.coinsAccrued > 0) {
             final UserAction action = UserAction.playedGame(
                 memberId, _content.game.name, _gameId, playerSecs);
-            _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+            _gameReg.awardCoins(_gameId, action, player.coinsAccrued);
         }
 
         // note time played and coins awarded for coin payout factor calculation purposes
         if (playerMins > 0 || player.coinsAccrued > 0) {
-            _gameReg.updateGameMetrics(_content.detail, MetricType.AVRG, playerMins,
-                player.tasksCompleted, player.coinsAccrued);
+            _gameReg.updateGameMetrics(_content.detail, GameGameRegistry.MetricType.AVRG,
+                                       playerMins, player.tasksCompleted, player.coinsAccrued);
         }
 
         // reset their accumulated coins and whatnot
@@ -370,7 +370,7 @@ public class QuestDelegate extends PlayManagerDelegate
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected RuntimeConfig _runtime;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected PlayerNodeActions _playerActions;
     @Inject protected GameGameRegistry _gameReg;
-    @Inject protected WorldServerClient _worldClient;
     @Inject protected AVRGameRepository _repo;
 }

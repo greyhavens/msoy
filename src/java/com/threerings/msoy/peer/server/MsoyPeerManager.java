@@ -242,11 +242,10 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public Tuple<String, HostedRoom> getSceneHost (final int sceneId)
     {
-        return lookupNodeDatum(new Function<NodeObject,Tuple<String,HostedRoom>>() {
-            public Tuple<String,HostedRoom> apply (NodeObject nodeobj) {
+        return lookupNodeDatum(new Function<NodeObject, Tuple<String, HostedRoom>>() {
+            public Tuple<String, HostedRoom> apply (NodeObject nodeobj) {
                 HostedRoom info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
-                return (info == null) ? null :
-                    new Tuple<String, HostedRoom>(nodeobj.nodeName, info);
+                return (info == null) ? null : Tuple.newTuple(nodeobj.nodeName, info);
             }
         });
     }
@@ -255,13 +254,12 @@ public class MsoyPeerManager extends CrowdPeerManager
      * Returns the name and game server port of the peer that is hosting the specified game, or
      * null if no peer has published that they are hosting the game.
      */
-    public Tuple<String, Integer> getGameHost (final int gameId)
+    public Tuple<String, HostedGame> getGameHost (final int gameId)
     {
-        return lookupNodeDatum(new Function<NodeObject,Tuple<String,Integer>>() {
-            public Tuple<String,Integer> apply (NodeObject nodeobj) {
+        return lookupNodeDatum(new Function<NodeObject, Tuple<String, HostedGame>>() {
+            public Tuple<String, HostedGame> apply (NodeObject nodeobj) {
                 HostedGame info = ((MsoyNodeObject) nodeobj).hostedGames.get(gameId);
-                return (info == null) ? null :
-                    new Tuple<String, Integer>(nodeobj.nodeName, info.port);
+                return (info == null) ? null : Tuple.newTuple(nodeobj.nodeName, info);
             }
         });
     }
@@ -272,7 +270,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public ConnectConfig getProjectConnectConfig (final int projectId)
     {
-        return lookupNodeDatum(new Function<NodeObject,ConnectConfig>() {
+        return lookupNodeDatum(new Function<NodeObject, ConnectConfig>() {
             public ConnectConfig apply (NodeObject nodeobj) {
                 HostedProject info = ((MsoyNodeObject) nodeobj).hostedProjects.get(projectId);
                 return (info == null) ? null : info.createConnectConfig();
@@ -312,10 +310,10 @@ public class MsoyPeerManager extends CrowdPeerManager
      * Called by the WorldGameRegistry when we have established a new game server to host a
      * particular game.
      */
-    public void gameDidStartup (int gameId, String name, int port)
+    public void gameDidStartup (int gameId, String name)
     {
         log.info("Hosting game", "id", gameId, "name", name);
-        _mnobj.addToHostedGames(new HostedGame(gameId, name, port));
+        _mnobj.addToHostedGames(new HostedGame(gameId, name));
         // releases our lock on this game now that it is resolved and we are hosting it
         releaseLock(getGameLock(gameId), new ResultListener.NOOP<String>());
     }

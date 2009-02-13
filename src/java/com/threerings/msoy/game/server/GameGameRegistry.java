@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,6 +52,8 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
+import com.threerings.stats.data.Stat;
+
 import com.threerings.bureau.server.BureauRegistry;
 
 import com.whirled.bureau.data.BureauTypes;
@@ -63,10 +63,11 @@ import com.whirled.game.server.PropertySpaceDelegate;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.BatchInvoker;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -86,7 +87,9 @@ import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -110,6 +113,8 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.game.xml.MsoyGameParser;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages the lobbies active on this server.
@@ -176,7 +181,8 @@ public class GameGameRegistry
             log.warning("Requested invalid score distribution", "gameId", gameId, "mode", gameMode);
             gameMode = 0;
         }
-        log.info("Attempting to locate score distribution", "gameId", gameId, "mp", multiplayer, "gameMode", gameMode);
+        log.info("Attempting to locate score distribution", "gameId", gameId, "mp", multiplayer,
+                 "gameMode", gameMode);
         TilerKey key = new TilerKey(gameId, multiplayer, gameMode);
         Percentiler tiler = _distribs.get(key);
         if (tiler == null) {
@@ -292,50 +298,21 @@ public class GameGameRegistry
     }
 
     /**
-     * Awards the supplied trophy and provides a {@link Trophy} instance on success to the supplied
-     * listener or failure.
+     * Reports the supplied incremental coin award to a member's runtime but does not actually
+     * award the coins. The real coin award will come once when the player finally leaves the game.
      */
-    public void awardTrophy (final String gameName, final TrophyRecord trophy, String description,
-                             InvocationService.ResultListener listener)
+    public void reportCoinAward (int memberId, int deltaCoins)
     {
-        // create the trophy record we'll use to notify them of their award
-        final Trophy trec = trophy.toTrophy();
-        // fill in the description so that we can report that in the award email
-        trec.description = description;
+    }
 
-        _invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
-            @Override
-            public void invokePersistent () throws Exception {
-                try {
-                    // store the trophy in the database
-                    _trophyRepo.storeTrophy(trophy);
-
-                    if (!Game.isDevelopmentVersion(trophy.gameId)) {
-                        // publish the trophy earning event to the member's feed
-                        _feedRepo.publishMemberMessage(
-                            trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
-                            trophy.name + "\t" + trophy.gameId +
-                            "\t" + MediaDesc.mdToString(trec.trophyMedia));
-                    }
-
-                } catch (DuplicateKeyException dke) {
-                    throw new InvocationException("e.trophy_already_awarded");
-                }
-            }
-            @Override
-            public void handleSuccess () {
-                // none of the reporting mechanisms below should be followed through for
-                // persisted in-development game trophies.
-                if (!Game.isDevelopmentVersion(trophy.gameId)) {
-                    _worldClient.reportTrophyAward(trophy.memberId, gameName, trec);
-                    _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);
-                    _worldClient.incrementStat(trophy.memberId, StatType.TROPHIES_EARNED, 1);
-                }
-                reportRequestProcessed(trec);
-            }
-            @Override
-            protected String getFailureMessage () {
-                return "Failed to store trophy " + trophy + ".";
+    /**
+     * Makes the supplied coin award to the player identified by the supplied user action.
+     */
+    public void awardCoins (final int gameId, final UserAction action, final int coinAward)
+    {
+        _invoker.postUnit(new WriteOnlyUnit("awardCoins(" + gameId + ")") {
+            public void invokePersist () throws Exception {
+                _moneyLogic.awardCoins(action.memberId, coinAward, false, action);
             }
         });
     }
@@ -347,6 +324,66 @@ public class GameGameRegistry
     public void gameDidPayout (int memberId, Game game, int payout, int secondsPlayed)
     {
         _eventLog.gamePlayed(game.genre, game.gameId, game.itemId, payout, secondsPlayed, memberId);
+    }
+
+    /**
+     * Awards the supplied trophy and provides a {@link Trophy} instance on success to the supplied
+     * listener or failure.
+     */
+    public void awardTrophy (final String gameName, final TrophyRecord trophy, String description,
+                             InvocationService.ResultListener listener)
+    {
+        final Trophy trec = trophy.toTrophy();
+        trec.description = description;
+
+        _invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
+            @Override
+            public void invokePersistent () throws Exception {
+                try {
+                    _trophyRepo.storeTrophy(trophy); // store the trophy in the database
+                } catch (DuplicateKeyException dke) {
+                    throw new InvocationException("e.trophy_already_awarded");
+                }
+
+                if (!Game.isDevelopmentVersion(trophy.gameId)) {
+                    // publish the trophy earning event to the member's feed
+                    _feedRepo.publishMemberMessage(
+                        trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
+                        trophy.name + "\t" + trophy.gameId +
+                        "\t" + MediaDesc.mdToString(trec.trophyMedia));
+
+                    // report the trophy award to panopticon
+                    _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);
+
+                    // increment their trophies earned stat
+                    _statLogic.incrementStat(trophy.memberId, StatType.TROPHIES_EARNED, 1);
+                }
+            }
+            @Override public void handleSuccess () {
+                reportRequestProcessed(trec);
+            }
+            @Override protected String getFailureMessage () {
+                return "Failed to store trophy " + trophy + ".";
+            }
+        });
+    }
+
+    public void incrementStat (final int memberId, final Stat.Type type, final int delta)
+    {
+        _invoker.postUnit(new WriteOnlyUnit("incrementStat(" + memberId + ")") {
+            public void invokePersist () throws Exception {
+                _statLogic.incrementStat(memberId, type, delta);
+            }
+        });
+    }
+
+    public void addToSetStat (final int memberId, final Stat.Type type, final int value)
+    {
+        _invoker.postUnit(new WriteOnlyUnit("incrementStat(" + memberId + ")") {
+            public void invokePersist () throws Exception {
+                _statLogic.addToSetStat(memberId, type, value);
+            }
+        });
     }
 
     /**
@@ -460,7 +497,7 @@ public class GameGameRegistry
         killBureauSession(gameId);
 
         // let our world server know we're audi
-        _worldClient.stoppedHostingGame(gameId);
+        _wgameReg.clearGame(gameId);
 
         // flush any modified percentile distributions
         flushPercentilers(gameId);
@@ -487,7 +524,7 @@ public class GameGameRegistry
         }.schedule(30 * 1000);
 
         // let our world server know we're audi
-        _worldClient.stoppedHostingGame(gameId);
+        _wgameReg.clearGame(gameId);
     }
 
     // from AVRGameManager.LifecycleObserver
@@ -726,7 +763,7 @@ public class GameGameRegistry
 
             // Make sure we notify the world server too, since we are officially deactivating this
             // game as opposed to just leaving it tempoararily.
-            _worldClient.leaveAVRGame(playerId);
+            _playerActions.leaveAVRGame(playerId);
 
         } else {
             log.warning("Tried to deactivate AVRG without manager [gameId=" + gameId + "]");
@@ -809,7 +846,7 @@ public class GameGameRegistry
 
                 // clear out the hosting record that our world server assigned to us when it sent
                 // this client our way to resolve this game
-                _worldClient.stoppedHostingGame(gameId);
+                _wgameReg.clearGame(gameId);
             }
 
             protected GameContent _content;
@@ -959,7 +996,8 @@ public class GameGameRegistry
                     trophy.gameId = fGameId;
                     trophy.trophyMedia = source.getPrimaryMedia();
                     trophy.name = source.name;
-                    boolean got = plobj.ownsGameContent(fGameId, GameData.TROPHY_DATA, source.ident);
+                    boolean got = plobj.ownsGameContent(
+                        fGameId, GameData.TROPHY_DATA, source.ident);
                     if (!source.secret || got) {
                         trophy.description = source.description;
                     }
@@ -1198,16 +1236,19 @@ public class GameGameRegistry
     // various and sundry dependent services
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected @BatchInvoker Invoker _batchInvoker;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected RuntimeConfig _runtime;
+    @Inject protected PlayerLocator _locator;
+    @Inject protected PlayerNodeActions _playerActions;
+    @Inject protected RootDObjectManager _omgr;
     @Inject protected InvocationManager _invmgr;
+    @Inject protected WorldGameRegistry _wgameReg;
     @Inject protected GameWatcherManager _watchmgr;
     @Inject protected LocationManager _locmgr;
     @Inject protected PlaceRegistry _placeReg;
-    @Inject protected WorldServerClient _worldClient;
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected PlayerLocator _locator;
     @Inject protected BureauRegistry _bureauReg;
-    @Inject protected RootDObjectManager _omgr;
+    @Inject protected StatLogic _statLogic;
+    @Inject protected MoneyLogic _moneyLogic;
 
     // various and sundry repositories for loading persistent data
     @Inject protected MsoyGameRepository _mgameRepo;

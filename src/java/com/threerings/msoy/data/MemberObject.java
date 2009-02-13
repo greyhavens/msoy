@@ -1085,7 +1085,7 @@ public class MemberObject extends MsoyBodyObject
     @Override // from BodyObject
     protected void addWhoData (StringBuilder buf)
     {
-        buf.append("id=").append(getMemberId()).append(" oid=");
+        buf.append("mid=").append(getMemberId()).append(" oid=");
         super.addWhoData(buf);
     }
 

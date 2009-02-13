@@ -9,6 +9,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
@@ -25,13 +26,15 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
+import com.threerings.presents.server.ClientManager.ClientObserver;
+import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.server.ClientManager.ClientObserver;
+import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
 
@@ -48,9 +51,9 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.AuxSessionFactory;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyReportManager;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.StatLogic;
@@ -71,8 +74,9 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.game.data.GameAuthName;
+import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
@@ -88,17 +92,11 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class WorldGameRegistry
-    implements WorldGameProvider, GameServerProvider, ShutdownManager.Shutdowner,
-               MsoyPeerManager.PeerObserver
+    implements WorldGameProvider, MsoyPeerManager.PeerObserver
 {
-    /** The invocation services group for game server services. */
-    public static final String GAME_SERVER_GROUP = "game_server";
-
-    @Inject public WorldGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
+    @Inject public WorldGameRegistry (InvocationManager invmgr)
     {
-        shutmgr.registerShutdowner(this);
         invmgr.registerDispatcher(new WorldGameDispatcher(this), MsoyCodes.GAME_GROUP);
-        invmgr.registerDispatcher(new GameServerDispatcher(this), GAME_SERVER_GROUP);
     }
 
     /**
@@ -109,49 +107,8 @@ public class WorldGameRegistry
         _serverRegObj = new ServerRegistryObject();
         _omgr.registerObject(_serverRegObj);
 
-        // start up our servers after the rest of server initialization is completed (and we know
-        // that we're listening for client connections)
-        _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable() {
-            public void run () {
-                // start up our game server handlers (and hence our game servers)
-                for (int ii = 0; ii < _handlers.length; ii++) {
-                    int port = ServerConfig.gameServerPort + ii;
-                    try {
-                        _handlers[ii] = new GameServerHandler(port);
-                    } catch (Exception e) {
-                        log.warning("Failed to start up game server", "port", port, e);
-                    }
-                }
-            }
-        });
-
         // listen for peer connections so that we can manage multiply claimed games
         _peerMan.peerObs.add(this);
-
-        // listen for game server connections so that we can be sure our servers launched ok
-        _clmgr.addClientObserver(new ClientObserver() {
-            public void clientSessionDidStart (PresentsSession session) {
-                String username = session.getUsername().toString();
-                int port = WorldServerClient.extractGameServerPort(username);
-                if (port != 0) {
-                    GameServerHandler handler = lookupHandler(port, "sessionDidStart");
-                    if (handler != null) {
-                        handler.sessionDidStart(session);
-                    }
-                }
-            }
-
-            public void clientSessionDidEnd (PresentsSession session) {
-                String username = session.getUsername().toString();
-                int port = WorldServerClient.extractGameServerPort(username);
-                if (port != 0) {
-                    GameServerHandler handler = lookupHandler(port, "sessionDidEnd");
-                    if (handler != null) {
-                        handler.sessionDidEnd(session);
-                    }
-                }
-            }
-        });
     }
 
     /**
@@ -160,6 +117,18 @@ public class WorldGameRegistry
     public ServerRegistryObject getServerRegistryObject ()
     {
         return _serverRegObj;
+    }
+
+    /**
+     * Called during server initialization to give us a chance to wire up our authenticator and
+     * session factory.
+     */
+    public void configSessionFactory (ConnectionManager conmgr, ClientManager clmgr)
+    {
+        conmgr.addChainedAuthenticator(_injector.getInstance(GameAuthenticator.class));
+        clmgr.setSessionFactory(new AuxSessionFactory(
+            clmgr.getSessionFactory(), GameCredentials.class, GameAuthName.class,
+            GameSession.class, GameClientResolver.class));
     }
 
     /**
@@ -217,92 +186,14 @@ public class WorldGameRegistry
         _peerMan.updateMemberLocation(memObj);
     }
 
-    /**
-     * Called when the persistent data for a game that we host has been updated. Notifies the game
-     * server hosting the game in question so that it can reload that game's content.
-     */
-    public void gameUpdated (int gameId)
-    {
-        GameServerHandler handler = _handmap.get(gameId);
-        if (handler == null) {
-            log.info("Eek, handler vanished", "gameId", gameId);
-            return;
-        }
-        handler.postMessage(WorldServerClient.GAME_CONTENT_UPDATED, gameId);
-    }
-
-    /**
-     * This will reset the event logger on all game servers attached to this world server.
-     */
-    public void resetEventLogger ()
-    {
-        for (GameServerHandler handler : _handlers) {
-            handler.postMessage(WorldServerClient.EVENT_LOGGER_RESET);
-        }
-    }
-
-    /**
-     * Called when the user has purchased game content.
-     *
-     * @param itemType the type of content item that was purchased (ie. {@link Item#LEVEL_PACK}).
-     * @param ident the string that the game uses internally to identify the content.
-     */
-    public void gameContentPurchased (int memberId, int gameId, byte itemType, String ident)
-    {
-        GameServerHandler handler = _handmap.get(gameId);
-        if (handler == null) {
-            log.info("Egad, the game handler vanished", "gameId", gameId);
-            return;
-        }
-        handler.postMessage(WorldServerClient.GAME_CONTENT_PURCHASED,
-                            memberId, gameId, itemType, ident);
-    }
-
-    /**
-     * Forwards a request to our game server to have the specified resolved game reset its
-     * percentiler score trackers in memory.
-     */
-    public void resetGameScores (int gameId, boolean single, int gameMode)
-    {
-        GameServerHandler handler = _handmap.get(gameId);
-        if (handler == null) {
-            log.info("Eek, handler vanished", "gameId", gameId);
-            return;
-        }
-        handler.postMessage(WorldServerClient.RESET_SCORE_PERCENTILER, gameId, single, gameMode);
-    }
-
-    /**
-     * Forwards a broadcast to the game server, so that it can be sent on all of that server's
-     * place (game) objects.
-     */
-    public void forwardBroadcast (Name from, String bundle, String msg, boolean attention)
-    {
-        for (GameServerHandler handler : _handlers) {
-            handler.postMessage(WorldServerClient.FORWARD_BROADCAST, from, bundle, msg, attention);
-        }
-    }
-
-    /**
-     * Requests that we instruct our game server to flush any pending coin earnings for the
-     * specified member.
-     */
-    public void flushCoinEarnings (int memberId)
-    {
-        for (GameServerHandler handler : _handlers) {
-            handler.postMessage(WorldServerClient.FLUSH_COIN_EARNINGS, memberId);
-        }
-    }
-
     // from interface MsoyGameProvider
     public void locateGame (ClientObject caller, final int gameId,
                             WorldGameService.LocationListener listener)
         throws InvocationException
     {
         // if we're already hosting this game, then report back immediately
-        GameServerHandler handler = _handmap.get(gameId);
-        if (handler != null) {
-            listener.gameLocated(ServerConfig.serverHost, handler.port);
+        if (_games.contains(gameId)) {
+            listener.gameLocated(ServerConfig.serverHost, ServerConfig.serverPorts[0]);
             return;
         }
 
@@ -364,162 +255,6 @@ public class WorldGameRegistry
         });
     }
 
-    // from interface GameServerProvider
-    public void sayHello (ClientObject caller, int port)
-    {
-        if (!checkCallerAccess(caller, "sayHello(" + port + ")")) {
-            return;
-        }
-
-        GameServerHandler handler = lookupHandler(port, "sayHello");
-        if (handler != null) {
-            handler.clientDidSayHello(caller);
-        }
-    }
-
-    // from interface GameServerProvider
-    public void deliverReport (ClientObject caller, String type, String report)
-    {
-        if (!checkCallerAccess(caller, "deliverReport()")) {
-            return;
-        }
-
-        // pass this report to the handler for this server
-        for (GameServerHandler handler : _handlers) {
-            if (handler._clobj == caller) {
-                handler.gotReport(type, report);
-                return;
-            }
-        }
-
-        log.warning("Got report from unknown game server", "who", caller.who(), "type", type);
-    }
-
-    // from interface GameServerProvider
-    public void leaveAVRGame (ClientObject caller, int playerId)
-    {
-        if (!checkCallerAccess(caller, "leaveAVRGame(" + playerId + ")")) {
-            return;
-        }
-        _peerMan.invokeNodeAction(new LeaveAVRGameAction(playerId));
-    }
-
-    // from interface GameServerProvider
-    public void updatePlayer (ClientObject caller, int playerId, GameSummary game)
-    {
-        if (!checkCallerAccess(caller, "updatePlayer(" + playerId + ")")) {
-            return;
-        }
-        _peerMan.invokeNodeAction(new UpdatePlayerAction(playerId, game));
-    }
-
-    // from interface GameServerProvider
-    public void reportCoinAward (ClientObject caller, int memberId, int deltaCoins)
-    {
-        if (!checkCallerAccess(caller, "reportCoinAward(" + memberId + ", " + deltaCoins + ")")) {
-            return;
-        }
-        _moneyLogic.notifyCoinsEarned(memberId, deltaCoins);
-    }
-
-    // from interface GameServerProvider
-    public void awardCoins (
-        ClientObject caller, int gameId, final UserAction action, final int amount)
-    {
-        if (!checkCallerAccess(caller, "awardCoins(" + gameId + ", " + action + ", " + amount)) {
-            return;
-        }
-        _invoker.postUnit(new Invoker.Unit("awardCoins(gameId=" + gameId + ")") {
-            public boolean invoke () {
-                _moneyLogic.awardCoins(action.memberId, amount, false, action);
-                return false;
-            }
-        });
-    }
-
-    // from interface GameServerProvider
-    public void clearGameHost (ClientObject caller, int port, int gameId)
-    {
-        if (!checkCallerAccess(caller, "clearGameHost(" + port + ", " + gameId + ")")) {
-            return;
-        }
-
-        GameServerHandler handler = _handmap.remove(gameId);
-        if (handler != null) {
-            handler.clearGame(gameId);
-        } else {
-            log.warning("Game cleared by unknown handler?", "port", port, "id", gameId);
-        }
-    }
-
-    // from interface GameServerProvider
-    public void reportTrophyAward (
-        ClientObject caller, int memberId, String gameName, Trophy trophy)
-    {
-        if (!checkCallerAccess(caller, "reportTrophyAward(" + memberId + ", " + gameName + ")")) {
-            return;
-        }
-
-// TODO: put this in their feed
-//         // send them a mail message as well
-//         String subject = _serverMsgs.getBundle("server").get(
-//             "m.got_trophy_subject", trophy.name);
-//         String body = _serverMsgs.getBundle("server").get(
-//             "m.got_trophy_body", trophy.description);
-//         _mailMan.deliverMessage(
-//             // TODO: sender should be special system id
-//             memberId, memberId, subject, body, new GameAwardPayload(
-//                 trophy.gameId, gameName, GameAwardPayload.TROPHY, trophy.name, trophy.trophyMedia),
-//             true, new ResultListener.NOOP<Void>());
-    }
-
-    // from interface GameServerProvider
-    public void awardPrize (ClientObject caller, int memberId, int gameId, String gameName,
-                            Prize prize, GameServerService.ResultListener listener)
-        throws InvocationException
-    {
-        if (!checkCallerAccess(caller, "awardPrize(" + memberId + ", " + prize.ident + ")")) {
-            return;
-        }
-        // pass the buck to the item manager
-        _itemMan.awardPrize(memberId, gameId, gameName, prize, new ResultAdapter<Item>(listener));
-    }
-
-    // from interface GameServerProvider
-    public void notifyMemberStartedGame (ClientObject caller, final int memberId, final byte action,
-        final int gameId)
-    {
-        MemberNodeActions.addExperience(memberId, action, gameId);
-    }
-
-    // from interface GameServerProvider
-    @SuppressWarnings("unchecked")
-    public void updateStat (ClientObject caller, final int memberId, final StatModifier modifier)
-    {
-        if (!checkCallerAccess(caller, "updateStat(" + memberId + ", " + modifier + ")")) {
-            return;
-        }
-        _invoker.postUnit(new Invoker.Unit("updateStat") {
-            public boolean invoke () {
-                // stat logic will update the stat in the database and send a MemberNodeAction to
-                // the appropriate MemberObject
-                _statLogic.updateStat(memberId, modifier);
-                return false;
-            }
-        });
-    }
-
-    // from interface ShutdownManager.Shutdowner
-    public void shutdown ()
-    {
-        // shutdown our game server handlers
-        for (GameServerHandler handler : _handlers) {
-            if (handler != null) {
-                handler.shutdown();
-            }
-        }
-    }
-
     // from interface MsoyPeerManager.PeerObserver
     public void connectedToPeer (MsoyNodeObject peerobj)
     {
@@ -534,7 +269,7 @@ public class WorldGameRegistry
             }
         }
         for (int gameId : gamesToDrop) {
-            clearGameHost(null, 0, gameId);
+            clearGame(gameId);
         }
     }
 
@@ -544,27 +279,29 @@ public class WorldGameRegistry
         // nada
     }
 
-    // from interface ReportManager.Reporter
-    public void appendReport (StringBuilder buffer, long now, long sinceLast, boolean reset)
+    /**
+     * Called when we're no longer hosting the game in question. Called by the GameGameRegistry and
+     * ourselves.
+     */
+    public void clearGame (int gameId)
     {
-        for (GameServerHandler handler : _handlers) {
-            buffer.append(ServerConfig.nodeName).append(" game ").append(handler.port).append("\n");
-            if (handler.latestReport != null) {
-                buffer.append(handler.latestReport);
-            }
+        if (!_games.remove(gameId)) {
+            log.warning("Requested to clear game that we're not hosting?", "game", gameId);
+        } else {
+            _peerMan.gameDidShutdown(gameId);
         }
     }
 
     protected boolean checkAndSendToNode (int gameId, WorldGameService.LocationListener listener)
     {
-        Tuple<String, Integer> rhost = _peerMan.getGameHost(gameId);
+        Tuple<String, HostedGame> rhost = _peerMan.getGameHost(gameId);
         if (rhost == null) {
             return false;
         }
 
-        String hostname = _peerMan.getPeerPublicHostName(rhost.left);
         // log.info("Sending game player to " + rhost.left + ":" + rhost.right + ".");
-        listener.gameLocated(hostname, rhost.right);
+        listener.gameLocated(_peerMan.getPeerPublicHostName(rhost.left),
+                             _peerMan.getPeerPort(rhost.left));
         return true;
     }
 
@@ -602,222 +339,12 @@ public class WorldGameRegistry
 
     protected void hostGame (Game game, WorldGameService.LocationListener listener)
     {
-        // TODO: load balance across our handlers if we ever have more than one
-        GameServerHandler handler = _handlers[0];
-        if (handler == null) {
-            log.warning("Have no game servers, cannot handle game", "id", game.gameId);
-            listener.requestFailed(GameCodes.INTERNAL_ERROR);
-
-            // releases our lock on this game as we didn't end up hosting it
-            _peerMan.releaseLock(MsoyPeerManager.getGameLock(game.gameId),
-                                 new ResultListener.NOOP<String>());
-            return;
+        if (!_games.add(game.gameId)) {
+            log.warning("Requested to host game that we're already hosting?", "game", game.gameId);
+        } else {
+            _peerMan.gameDidStartup(game.gameId, game.name);
         }
-
-        // register this handler as handling this game
-        handler.hostGame(game);
-        _handmap.put(game.gameId, handler);
-
-        listener.gameLocated(ServerConfig.serverHost, handler.port);
-    }
-
-    protected boolean checkCallerAccess (ClientObject caller, String method)
-    {
-        // peers will not have member objects and server local calls will be a null caller
-        if (caller instanceof MemberObject) {
-            log.warning("Rejecting non-peer caller of " + method, "who", caller.who());
-            return false;
-        }
-        return true;
-    }
-
-    protected GameServerHandler lookupHandler (int port, String call)
-    {
-        for (GameServerHandler handler : _handlers) {
-            if (handler != null && handler.port == port) {
-                return handler;
-            }
-        }
-        log.warning("Got " + call + " from unknwon game server", "port", port);
-        return null;
-    }
-
-    /** Handles communications with a delegate game server. */
-    protected class GameServerHandler
-        implements ObjectDeathListener, MsoyReportManager.AuxReporter
-    {
-        public int port;
-        public String latestReport;
-
-        public GameServerHandler (int port) throws Exception {
-            // make a note of our port
-            this.port = port;
-
-            // start up our game server
-            startGameServer();
-
-            // register as a auxiliary report provider
-            _reportMan.registerAuxReporter(this);
-        }
-
-        public void clientDidSayHello (ClientObject clobj) {
-            _clobj = clobj;
-            _clobj.addListener(this);
-
-            log.info("Game server said hello", "port", port);
-
-            // if we had report requests out to the old server that had not yet come back, they're
-            // never coming back, so fail them now
-            for (Function<String, Void> receiver : _rpenders.values()) {
-                receiver.apply("- Server failed, request again for new server info");
-            }
-            _rpenders.clear();
-
-            _serverRegObj.addToServers(new ServerRegistryObject.ServerInfo(
-                ServerConfig.serverHost, port));
-        }
-
-        public void hostGame (Game game) {
-            if (!_games.add(game.gameId)) {
-                log.warning("Requested to host game that we're already hosting?",
-                            "port", port, "game", game.gameId);
-            } else {
-                _peerMan.gameDidStartup(game.gameId, game.name, port);
-            }
-        }
-
-        public void clearGame (int gameId) {
-            if (!_games.remove(gameId)) {
-                log.warning("Requested to clear game that we're not hosting?",
-                            "port", port, "game", gameId);
-            } else {
-                _peerMan.gameDidShutdown(gameId);
-            }
-        }
-
-        public void shutdown () {
-            if (_clobj != null && _clobj.isActive()) {
-                log.info("Shutting down game server " + port + "...");
-                _clobj.postMessage(WorldServerClient.SHUTDOWN_MESSAGE);
-            } else {
-                log.info("Not shutting down game server " + port + "...");
-            }
-        }
-
-        public void postMessage (String name, Object... args) {
-            if (_clobj != null) {
-                _clobj.postMessage(name, args);
-            } else {
-                log.warning("Dropping message to game server", "name", name, "args", args);
-            }
-        }
-
-        public void gotReport (String type, String report)
-        {
-            Collection<Function<String, Void>> receivers = _rpenders.removeAll(type);
-            if (receivers == null) {
-                log.warning("Got report and have no receivers!", "port", port, "type", type);
-                return;
-            }
-            for (Function<String, Void> receiver : receivers) {
-                receiver.apply(formatReport(report));
-            }
-        }
-
-        // from interface ObjectDeathListener
-        public void objectDestroyed (ObjectDestroyedEvent event) {
-            // note that we no longer hosting this server
-            _serverRegObj.removeFromServers(
-                new ServerRegistryObject.ServerInfo(ServerConfig.serverHost, this.port).getKey());
-        }
-
-        // from interface MsoyReportManager.AuxReporter
-        public void generateReport (String type, Function<String, Void> receiver)
-        {
-            // note if someone asks for a report while the game server is down, badness will ensue;
-            // "properly" solving that problem is unfortunately way more complicated than ad hoc
-            // reporting mechanism merits at the moment; we'll do some half-assed ass covering
-            if (_clobj == null || !_clobj.isActive()) {
-                receiver.apply(formatReport("- Server unavailable"));
-                return;
-            }
-
-            // add this receiver to our pending map
-            _rpenders.put(type, receiver);
-
-            // if we've already initiated a request for this report, we're done
-            if (_rpenders.get(type).size() > 1) {
-                return;
-            }
-
-            // otherwise send the game server a message requesting the report
-            _clobj.postMessage(WorldServerClient.GENERATE_REPORT, type);
-        }
-
-        protected void startGameServer () throws Exception {
-            String exec[] = {
-                ServerConfig.serverRoot + "/bin/rungame",
-                String.valueOf(this.port),
-                // have the game server connect to us on our first port
-                String.valueOf(ServerConfig.serverPorts[0]),
-            };
-
-            // fire up the game server process
-            Process proc = Runtime.getRuntime().exec(exec);
-
-            log.info("Launched process " + StringUtil.toString(exec));
-
-            // copy stdout and stderr to our logs
-            ProcessLogger.copyOutput(log, "rungame", proc);
-        }
-
-        protected String formatReport (String report)
-        {
-            // if our game server has nothing to say for the requested report type then just
-            // pretend like they don't exist
-            return report.equals("") ? "" :
-                ServerConfig.nodeName + " game:" + this.port + "\n" + report;
-        }
-
-        protected void sessionDidStart (final PresentsSession session) {
-            _session = session;
-
-            // end the session if the hello doesn't come after a certain time
-            new Interval(_omgr) {
-                public void expired () {
-                    if (_session == session && _clobj == null) {
-                        log.info("Game server did not ack within " + HELLO_TIMEOUT / 1000f +
-                            " seconds, shutting down", "port", port);
-                        _session.endSession();
-                    }
-                }
-            }.schedule(HELLO_TIMEOUT);
-        }
-
-        protected void sessionDidEnd (PresentsSession session) {
-            _session = null;
-
-            // if we're not also shutting down, then restart this game server
-            if (!_shutMan.isShuttingDown()) {
-                _invoker.postUnit(new Invoker.Unit("startGameServer") {
-                    public boolean invoke () {
-                        try {
-                            startGameServer();
-                        } catch (Exception e) {
-                            log.warning("Failed to restart failed game server", "port", port, e);
-                        }
-                        return false;
-                    }
-                });
-            }
-        }
-
-        protected PresentsSession _session;
-        protected ClientObject _clobj;
-        protected ArrayIntSet _games = new ArrayIntSet();
-        protected Multimap<String, Function<String, Void>> _rpenders =
-            Multimaps.newArrayListMultimap();
-        protected static final int HELLO_TIMEOUT = 60 * 1000;
+        listener.gameLocated(ServerConfig.serverHost, ServerConfig.serverPorts[0]);
     }
 
     /** Handles dispatching invitations to users wherever they may be. */
@@ -843,55 +370,17 @@ public class WorldGameRegistry
         @Inject protected transient NotificationManager _notifyMan;
     }
 
-    /** Handles updating a player's game. */
-    protected static class UpdatePlayerAction extends MemberNodeAction
-    {
-        public UpdatePlayerAction (int memberId, GameSummary game) {
-            super(memberId);
-            _game = game;
-        }
-
-        public UpdatePlayerAction () {
-        }
-
-        protected void execute (MemberObject memObj) {
-            _gameReg.updatePlayerOnPeer(memObj, _game);
-        }
-
-        protected GameSummary _game;
-        @Inject protected transient WorldGameRegistry _gameReg;
-    }
-
-    /** Handles leaving an AVR game. */
-    protected static class LeaveAVRGameAction extends MemberNodeAction
-    {
-        public LeaveAVRGameAction (int memberId) {
-            super(memberId);
-        }
-
-        public LeaveAVRGameAction () {
-        }
-
-        protected void execute (MemberObject memObj) {
-            // clear their AVRG affiliation
-            memObj.setAvrGameId(0);
-        }
-    }
-
     /** Hold distributed information about our game servers. */
     protected ServerRegistryObject _serverRegObj;
 
-    /** Handlers for our delegate game servers. */
-    protected GameServerHandler[] _handlers = new GameServerHandler[DELEGATE_GAME_SERVERS];
-
-    /** Contains a mapping from gameId to handler for all game servers hosted on this machine. */
-    protected HashIntMap<GameServerHandler> _handmap = new HashIntMap<GameServerHandler>();
+    /** A map of all games hosted on this server. */
+    protected ArrayIntSet _games = new ArrayIntSet();
 
     // dependencies
+    @Inject protected Injector _injector;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected MsoyReportManager _reportMan;
     @Inject protected ShutdownManager _shutMan;
     @Inject protected BodyManager _bodyMan;
     @Inject protected PlaceRegistry _placeReg;
@@ -903,7 +392,4 @@ public class WorldGameRegistry
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected ClientManager _clmgr;
-
-    /** The number of delegate game servers to be started. */
-    protected static final int DELEGATE_GAME_SERVERS = 1;
 }

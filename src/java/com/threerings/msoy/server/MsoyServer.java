@@ -49,10 +49,15 @@ import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
 
 import com.threerings.parlor.game.server.GameManager;
+import com.threerings.parlor.server.ParlorManager;
 
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.util.SceneFactory;
+
+import com.whirled.game.server.DictionaryManager;
+import com.whirled.game.server.GameCookieManager;
+import com.whirled.game.server.RepoCookieManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -63,7 +68,8 @@ import com.threerings.msoy.bureau.server.WindowAuthenticator;
 import com.threerings.msoy.bureau.server.WindowSessionFactory;
 import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.chat.server.MsoyChatChannelManager;
-import com.threerings.msoy.chat.server.MsoyChatProvider;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.money.server.MoneyLogic;
@@ -76,7 +82,6 @@ import com.threerings.msoy.room.server.PetManager;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
-import com.threerings.msoy.world.server.WorldWatcherManager;
 import com.threerings.msoy.world.tour.server.TourManager;
 
 /**
@@ -97,7 +102,6 @@ public class MsoyServer extends MsoyBaseServer
             bind(ReportManager.class).to(MsoyReportManager.class);
             // crowd dependencies
             bind(BodyLocator.class).to(MemberLocator.class);
-            bind(ChatProvider.class).to(MsoyChatProvider.class);
             bind(PlaceRegistry.class).to(RoomRegistry.class);
             bind(CrowdPeerManager.class).to(MsoyPeerManager.class);
             bind(ChatChannelManager.class).to(MsoyChatChannelManager.class);
@@ -106,6 +110,8 @@ public class MsoyServer extends MsoyBaseServer
             bind(SceneFactory.class).to(MsoySceneFactory.class);
             bind(SceneRegistry.class).to(MsoySceneRegistry.class);
             bind(SceneRegistry.ConfigFactory.class).to(MsoySceneFactory.class);
+            // vilya game dependencies
+            bind(GameCookieManager.class).to(RepoCookieManager.class);
             // msoy auth dependencies
             bind(AuthenticationDomain.class).to(OOOAuthenticationDomain.class);
             // Messaging dependencies
@@ -181,12 +187,6 @@ public class MsoyServer extends MsoyBaseServer
         // initialize our HTTP server
         _httpServer.init(new File(ServerConfig.serverRoot, "log"));
 
-        // Due to a circular dependency, this instance cannot be injected into MsoyChatProvider.
-        // This is also temporary to support broadcasts in games.  When you maintain a subscription
-        // to a PlaceObject on the WorldServer while in games, MsoyChatProvider's overridden
-        // broadcast method becomes unnecessary
-        ((MsoyChatProvider) _chatprov).init(_gameReg);
-
         // start up our peer manager
         log.info("Running in cluster mode as node '" + ServerConfig.nodeName + "'.");
         _peerMan.init(injector, ServerConfig.nodeName, ServerConfig.sharedSecret,
@@ -199,23 +199,28 @@ public class MsoyServer extends MsoyBaseServer
         _jabberMan.init();
         _itemMan.init();
         _swiftlyMan.init(_invmgr);
-        _gameReg.init();
+        _wgameReg.init();
+        _ggameReg.init(injector);
         _partyReg.init();
         _moneyLogic.init(_cacheMgr);
         _tourMan.init();
 
-        // Let the bureaus connect to our game server(s)
-        _bureauMgr.setGameServerRegistryOid(_gameReg.getServerRegistryObject().getOid());
+        // tell our dictionary manager where to find its dictionaries
+        _dictMan.init("data/dictionary");
 
-        // TEMP: give a peer manager reference to MemberNodeActions
-        MemberNodeActions.init(_peerMan);
-
+        // tell GameManager how to identify our users
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
-            public int getUserId (final BodyObject bodyObj) {
-                final int memberId = ((MemberObject) bodyObj).getMemberId();
+            public int getUserId (BodyObject bodyObj) {
+                int memberId = ((PlayerObject) bodyObj).getMemberId();
                 return MemberName.isGuest(memberId) ? 0 : memberId;
             }
         });
+
+        // Let the bureaus connect to our game server(s)
+        _bureauMgr.setGameServerRegistryOid(_wgameReg.getServerRegistryObject().getOid());
+
+        // TEMP: give a peer manager reference to MemberNodeActions
+        MemberNodeActions.init(_peerMan);
 
         // start up our HTTP server
         _httpServer.start();
@@ -324,8 +329,9 @@ public class MsoyServer extends MsoyBaseServer
         _conmgr.addChainedAuthenticator(new WindowAuthenticator(ServerConfig.windowSharedSecret));
         _clmgr.setSessionFactory(new WindowSessionFactory(_clmgr.getSessionFactory()));
 
-        // wire up the party authenticator and session factory
+        // wire up the party and game authenticator and session factories
         _partyReg.configSessionFactory(_conmgr, _clmgr);
+        _wgameReg.configSessionFactory(_conmgr, _clmgr);
     }
 
     @Override // from PresentsServer
@@ -407,9 +413,6 @@ public class MsoyServer extends MsoyBaseServer
     /** Manages interactions with our peer servers. */
     @Inject protected MsoyPeerManager _peerMan;
 
-    /** Manages our external game servers. */
-    @Inject protected WorldGameRegistry _gameReg;
-
     /** Manages our parties. */
     @Inject protected PartyRegistry _partyReg;
 
@@ -437,11 +440,24 @@ public class MsoyServer extends MsoyBaseServer
     /** Handles our cuddly little pets. */
     @Inject protected PetManager _petMan;
 
-    /** The member movement observation manager. */
-    @Inject protected WorldWatcherManager _watcherMan;
+    /** Manages our external game servers. */
+    @Inject protected WorldGameRegistry _wgameReg;
+
+    /** Manages lobbies and other game bits on this server. */
+    @Inject protected GameGameRegistry _ggameReg;
 
     /** The Whirled Tour manager. */
     @Inject protected TourManager _tourMan;
+
+    /** Provides parlor game services. */
+    @Inject protected ParlorManager _parlorMan;
+
+    /** Handles dictionary services for games. */
+    @Inject protected DictionaryManager _dictMan;
+
+    // these need to be injected here to ensure that they're created at server startup time rather
+    // than lazily the first time they're referenced
+    @Inject protected GameCookieManager _cookMan;
 
     /** Connection to the AMQP messaging server. */
     @Inject protected MessageConnection _messageConn;
