@@ -378,6 +378,7 @@ public class ShareDialog extends FloatingPanel
             "?u=" + encodeURIComponent(createLink()) +
             "&t=" + encodeURIComponent(getShareTitle());
         popShareLink(shareURL, "Whirled", "width=620,height=440");
+        _ctx.getMsoyClient().trackClientAction("share_facebook", null);
     }
 
     /**
@@ -391,6 +392,7 @@ public class ShareDialog extends FloatingPanel
             "&l=1" + // post to their Blog
             "&c=" + encodeURIComponent(getEmbedCode(DEFAULT_SIZE));
         popShareLink(shareURL, "Whirled", "width=1024,height=650");
+        _ctx.getMsoyClient().trackClientAction("share_myspace", null);
     }
 
     /**
