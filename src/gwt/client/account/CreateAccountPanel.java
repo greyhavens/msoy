@@ -192,13 +192,6 @@ public class CreateAccountPanel extends FlowPanel
                           ConversionTrackingUtil.createAdWordsTracker(),
                           ConversionTrackingUtil.createBeacon(EntryVectorCookie.get()));
 
-
-                // temporary - trying to debug Google Analytics discrepancy
-                if (_pageViewRecorded) {
-                    _membersvc.trackClientAction(CShell.visitor, "registration page - joined", null,
-                                                 new NoopAsyncCallback());
-                }
-
                 session.justCreated = true;
                 CShell.frame.dispatchDidLogon(session);
                 return false; // don't reenable the create button
@@ -214,18 +207,6 @@ public class CreateAccountPanel extends FlowPanel
                 setStatus(CShell.serverError(cause));
             }
         };
-
-        // temporary - trying to debug Google Analytics discrepancy
-        // TODO: should this log an action in permaguest mode too?
-        if (!CShell.isPermaguest()) {
-            _membersvc.trackClientAction(CShell.visitor, "registration page - viewed", null,
-                new AsyncCallback<Void>() {
-                    public void onFailure (Throwable caught) {}
-                    public void onSuccess (Void result) {
-                        _pageViewRecorded = true;
-                    }
-                });
-        }
 
         // A/B test different header images on this page
         _membersvc.getABTestGroup(CShell.visitor, "2008 12 AccountCreationHeader", true,
@@ -399,7 +380,6 @@ public class CreateAccountPanel extends FlowPanel
     protected DateFields _dateOfBirth;
     protected CheckBox _tosBox;
     protected SimplePanel _status;
-    protected boolean _pageViewRecorded;
     protected SimplePanel _promoPanel;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
