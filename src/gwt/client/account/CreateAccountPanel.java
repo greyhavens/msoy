@@ -191,9 +191,12 @@ public class CreateAccountPanel extends FlowPanel
                 setStatus(_msgs.creatingDone(),
                           ConversionTrackingUtil.createAdWordsTracker(),
                           ConversionTrackingUtil.createBeacon(EntryVectorCookie.get()));
-
                 session.justCreated = true;
-                CShell.frame.dispatchDidLogon(session);
+                new Timer() {
+                    public void run () {
+                        CShell.frame.dispatchDidLogon(session);
+                    }
+                }.schedule(2000);
                 return false; // don't reenable the create button
             }
 
