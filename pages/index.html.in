@@ -16,6 +16,11 @@
 </head>
 
 <body>
+  <script type="text/javascript">
+    if (top.location != location) {
+        top.location.href = document.location.href;
+    }
+  </script>
   <div id="loading" class="loading">
       <h2>Whirled is loading...</h2>
       <noscript><blockquote>
