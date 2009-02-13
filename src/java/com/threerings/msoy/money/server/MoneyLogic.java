@@ -445,7 +445,7 @@ public class MoneyLogic
         MoneyTransactionRecord changeTx = ibr.changeTx;
 
         // log this!
-        logAction(UserAction.boughtFromOOO(buyerId, buyActionType), buyerTx);
+        logAction(UserAction.boughtFromOOO(buyerId, buyActionType, boughtTxMsg), buyerTx);
         if (changeTx != null) {
             // It's kind of a payout.  Really.
             logAction(UserAction.receivedPayout(buyerId), changeTx);

@@ -141,9 +141,9 @@ public class UserAction extends SimpleStreamableObject
         return new UserAction(Type.BOUGHT_ITEM, memberId, null);
     }
 
-    public static UserAction boughtFromOOO (int memberId, Type buyActionType)
+    public static UserAction boughtFromOOO (int memberId, Type buyActionType, String desc)
     {
-        return new UserAction(buyActionType, memberId, null);
+        return new UserAction(buyActionType, memberId, desc);
     }
 
     public static UserAction listedItem (int memberId)
