@@ -19,6 +19,9 @@ public class MsoyCredentials extends Credentials
     /** A session token that identifies a user without requiring username or password. */
     public String sessionToken;
 
+    /** The unique tracking id for this client, if one is assigned */
+    public String visitorId;
+
     /**
      * Returns true if the supplied (non-null) session token is a guest session token.
      */
@@ -65,5 +68,6 @@ public class MsoyCredentials extends Credentials
     {
         super.toString(buf);
         buf.append(", token=").append(sessionToken);
+        buf.append(", visitorId=").append(visitorId);
     }
 }

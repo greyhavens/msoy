@@ -21,9 +21,6 @@ public class WorldCredentials extends MsoyCredentials
     /** Indicates whether this client is set up as a featured place view. */
     public boolean featuredPlaceView;
 
-    /** The unique tracking id for this client, if one is assigned */
-    public String visitorId;
-
     /**
      * Creates credentials with the specified username and password. {@link #ident} should be set
      * before logging in unless the client does not know its machine identifier in which case it
@@ -57,7 +54,6 @@ public class WorldCredentials extends MsoyCredentials
         buf.append(", password=").append(_password);
         buf.append(", ident=").append(ident);
         buf.append(", featuredPlaceView=").append(featuredPlaceView);
-        buf.append(", visitorId=").append(visitorId);
     }
 
     protected String _password;

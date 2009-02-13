@@ -22,6 +22,9 @@ public class MsoyCredentials extends Credentials
     /** A session token that identifies a user without requiring username or password. */
     public var sessionToken :String;
 
+    /** The unique tracking id for this client, if one is assigned */
+    public var visitorId :String;
+
     /**
      * Creates credentials with the specified username.
      */
@@ -35,6 +38,7 @@ public class MsoyCredentials extends Credentials
     {
         super.readObject(ins);
         sessionToken = (ins.readField(String) as String);
+        visitorId = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -42,6 +46,7 @@ public class MsoyCredentials extends Credentials
     {
         super.writeObject(out);
         out.writeField(sessionToken);
+        out.writeField(visitorId);
     }
 
     // documentation inherited

@@ -20,9 +20,6 @@ public class WorldCredentials extends MsoyCredentials
     /** Indicates whether this client is set up as a featured place view. */
     public var featuredPlaceView :Boolean;
 
-    /** The unique tracking id for this client, if one is assigned */
-    public var visitorId :String;
-
     /**
      * Creates credentials with the specified username and password. The other public fields should
      * be set before logging in.
@@ -39,7 +36,6 @@ public class WorldCredentials extends MsoyCredentials
         super.readObject(ins);
         ident = (ins.readField(String) as String);
         featuredPlaceView = ins.readBoolean();
-        visitorId = (ins.readField(String) as String);
         _password = (ins.readField(String) as String);
     }
 
@@ -49,7 +45,6 @@ public class WorldCredentials extends MsoyCredentials
         super.writeObject(out);
         out.writeField(ident);
         out.writeBoolean(featuredPlaceView);
-        out.writeField(visitorId);
         out.writeField(_password);
     }
 
@@ -60,7 +55,6 @@ public class WorldCredentials extends MsoyCredentials
         buf.append(", password=").append(_password);
         buf.append(", ident=").append(ident);
         buf.append(", featuredPlaceView=").append(featuredPlaceView);
-        buf.append(", visitorId=").append(visitorId);
     }
 
     /** Our encrypted password, if one was provided. */
