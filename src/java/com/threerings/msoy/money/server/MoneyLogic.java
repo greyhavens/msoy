@@ -158,7 +158,7 @@ public class MoneyLogic
      *
      * @param memberId ID of the member to receive the coins.
      * @param amount Number of coins to be awarded.
-     * @param notify If false, an earlier call to {@link #notifyCoinsEarned(int, int)} was made, so
+     * @param notify If false, an earlier call to {@link MoneyNodeActions#coinsEarned} was made, so
      * this call should not notify the user.
      * @param action The user action that caused coins to be awarded.
      */

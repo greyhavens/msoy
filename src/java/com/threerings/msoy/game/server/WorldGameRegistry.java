@@ -3,70 +3,40 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.Collection;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.ObjectDeathListener;
-import com.threerings.presents.dobj.ObjectDestroyedEvent;
-import com.threerings.presents.server.ClientManager.ClientObserver;
-import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.ClientManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.PresentsSession;
-import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.net.ConnectionManager;
 import com.threerings.presents.util.PersistingUnit;
-import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.parlor.game.data.GameCodes;
-import com.threerings.stats.data.StatModifier;
-
-import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.AuxSessionFactory;
-import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.StatLogic;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 
-import com.threerings.msoy.bureau.data.ServerRegistryObject;
-import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.peer.data.HostedGame;
@@ -78,7 +48,6 @@ import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameAuthName;
 import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.GameSummary;
-import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.room.data.MemberInfo;
@@ -104,19 +73,8 @@ public class WorldGameRegistry
      */
     public void init ()
     {
-        _serverRegObj = new ServerRegistryObject();
-        _omgr.registerObject(_serverRegObj);
-
         // listen for peer connections so that we can manage multiply claimed games
         _peerMan.peerObs.add(this);
-    }
-
-    /**
-     * Returns the object in which we track bureau server registration.
-     */
-    public ServerRegistryObject getServerRegistryObject ()
-    {
-        return _serverRegObj;
     }
 
     /**
@@ -370,26 +328,14 @@ public class WorldGameRegistry
         @Inject protected transient NotificationManager _notifyMan;
     }
 
-    /** Hold distributed information about our game servers. */
-    protected ServerRegistryObject _serverRegObj;
-
     /** A map of all games hosted on this server. */
     protected ArrayIntSet _games = new ArrayIntSet();
 
     // dependencies
     @Inject protected Injector _injector;
-    @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected PresentsDObjectMgr _omgr;
-    @Inject protected ShutdownManager _shutMan;
     @Inject protected BodyManager _bodyMan;
     @Inject protected PlaceRegistry _placeReg;
-    @Inject protected ItemManager _itemMan;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MsoyGameRepository _mgameRepo;
-    @Inject protected GameRepository _gameRepo;
-    @Inject protected StatLogic _statLogic;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MemberLogic _memberLogic;
-    @Inject protected ClientManager _clmgr;
 }

@@ -6,6 +6,7 @@ package com.threerings.msoy.money.server;
 import com.google.inject.Inject;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.peer.server.MemberNodeAction;

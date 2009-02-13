@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import com.google.inject.Inject;
-
 import com.threerings.parlor.game.server.GameManagerDelegate;
 
 import com.threerings.msoy.data.HomePageItem;

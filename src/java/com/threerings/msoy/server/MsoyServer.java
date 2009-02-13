@@ -39,7 +39,6 @@ import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.SessionFactory;
 
 import com.threerings.crowd.chat.server.ChatChannelManager;
-import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.BodyLocator;
@@ -215,9 +214,6 @@ public class MsoyServer extends MsoyBaseServer
                 return MemberName.isGuest(memberId) ? 0 : memberId;
             }
         });
-
-        // Let the bureaus connect to our game server(s)
-        _bureauMgr.setGameServerRegistryOid(_wgameReg.getServerRegistryObject().getOid());
 
         // TEMP: give a peer manager reference to MemberNodeActions
         MemberNodeActions.init(_peerMan);

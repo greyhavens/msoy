@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.data;
 
-import com.threerings.util.Name;
-
 import com.threerings.msoy.data.MsoyCredentials;
 
 /**

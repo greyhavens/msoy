@@ -5,7 +5,6 @@ package com.threerings.msoy.bureau.server;
 
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.bureau.data.BureauLauncherMarshaller;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
@@ -36,12 +35,6 @@ public class BureauLauncherDispatcher extends InvocationDispatcher<BureauLaunche
         throws InvocationException
     {
         switch (methodId) {
-        case BureauLauncherMarshaller.GET_GAME_SERVER_REGISTRY_OID:
-            ((BureauLauncherProvider)provider).getGameServerRegistryOid(
-                source, (InvocationService.ResultListener)args[0]
-            );
-            return;
-
         case BureauLauncherMarshaller.LAUNCHER_INITIALIZED:
             ((BureauLauncherProvider)provider).launcherInitialized(
                 source

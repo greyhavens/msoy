@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;

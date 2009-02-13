@@ -11,7 +11,7 @@ import com.threerings.presents.client.InvocationService;
  */
 public interface PartyBoardService extends InvocationService
 {
-    /** Provides a response to {@link #joinParty}. */
+    /** Provides a response to {@link #createParty} and {@link #locateParty}. */
     public static interface JoinListener extends InvocationListener
     {
         /**

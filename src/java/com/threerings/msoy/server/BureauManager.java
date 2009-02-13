@@ -8,7 +8,8 @@ import java.io.IOException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.bureau.server.BureauAuthenticator;
@@ -25,14 +26,11 @@ import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
 import com.threerings.msoy.bureau.server.MsoyBureauSessionFactory;
 
-import com.threerings.presents.client.InvocationService.ResultListener;
-
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 
 import com.threerings.presents.server.ClientManager;
-import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.net.ConnectionManager;
@@ -87,15 +85,9 @@ public class BureauManager
                 BureauTypes.THANE_BUREAU_TYPE, new RemoteBureauLauncher(), BUREAU_TIMEOUT);
             _conmgr.addChainedAuthenticator(new BureauLauncherAuthenticator());
             _invmgr.registerDispatcher(new BureauLauncherDispatcher(new BureauLauncherProvider() {
-                public void getGameServerRegistryOid (ClientObject caller, ResultListener arg1)
-                    throws InvocationException {
-                    arg1.requestProcessed(_gameServerRegistryOid);
-                }
-
                 public void launcherInitialized (ClientObject caller) {
                     BureauManager.this.launcherInitialized(caller);
                 }
-
                 public void setBureauLauncherInfo (ClientObject caller, BureauLauncherInfo arg1) {
                     BureauManager.this.setBureauLauncherInfo(caller, arg1);
                 }
@@ -127,15 +119,6 @@ public class BureauManager
         // factories which sit on top of whatever factory the server uses for normal clients
         _clmgr.setSessionFactory(new MsoyBureauSessionFactory(_clmgr.getSessionFactory()));
         _clmgr.setSessionFactory(new BureauLauncherSessionFactory(_clmgr.getSessionFactory()));
-    }
-
-    /**
-     * Sets the object id that bureau launchers should subscribe to to obtain information about
-     * game servers.
-     */
-    public void setGameServerRegistryOid (int oid)
-    {
-        _gameServerRegistryOid = oid;
     }
 
     /**
@@ -248,14 +231,10 @@ public class BureauManager
     protected int _listenPort;
 
     /** Currently logged in bureau launchers. */
-    protected HashIntMap<BureauLauncherClientObject> _launcherClients =
-        new HashIntMap<BureauLauncherClientObject>();
+    protected IntMap<BureauLauncherClientObject> _launcherClients = IntMaps.newHashIntMap();
 
     /** Summary information about each bureau launcher. */
-    protected HashIntMap<BureauLauncherInfo> _launcherInfo =
-        new HashIntMap<BureauLauncherInfo>();
-
-    protected int _gameServerRegistryOid;
+    protected IntMap<BureauLauncherInfo> _launcherInfo = IntMaps.newHashIntMap();
 
     /** The container for our bureaus (server-side processes for user code). */
     @Inject protected BureauRegistry _bureauReg;

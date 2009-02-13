@@ -81,7 +81,6 @@ public class Game extends Item
      *  The server code media. Games may provide server code (in the form of a compiled action
      *  script library) to be run in a bureau whenever the game launches.
      *  @see com.threerings.bureau.server.BureauRegistry
-     *  @see com.threerings.msoy.game.server.GameServer
      */
     public MediaDesc serverMedia;
 

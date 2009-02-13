@@ -47,7 +47,6 @@ import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.DateUtil;
-import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 /**
