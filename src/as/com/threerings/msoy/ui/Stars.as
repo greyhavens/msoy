@@ -9,11 +9,12 @@ import mx.controls.Image;
 import mx.containers.HBox;
 
 import com.threerings.util.Command;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.client.Msgs;
 
-[Event(name="starClick", type="StarsEvent")]
-[Event(name="starOver", type="StarsEvent")]
+[Event(name="starClick", type="ValueEvent")]
+[Event(name="starOver", type="ValueEvent")]
 
 public class Stars extends HBox
 {
@@ -60,12 +61,12 @@ public class Stars extends HBox
 
     protected function handleClick (index :int) :void
     {
-        dispatchEvent(new StarsEvent(STAR_CLICK, int(index/2+1)));
+        dispatchEvent(new ValueEvent(STAR_CLICK, int(index/2+1)));
     }
 
     protected function handleMouseOver (index :int) :void
     {
-        dispatchEvent(new StarsEvent(STAR_OVER, int(index/2+1)));
+        dispatchEvent(new ValueEvent(STAR_OVER, int(index/2+1)));
     }
 
     protected function getRatingFor (event :MouseEvent) :Number

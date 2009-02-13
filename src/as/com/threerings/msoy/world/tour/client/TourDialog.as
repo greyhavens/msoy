@@ -12,6 +12,7 @@ import mx.controls.Image;
 import mx.controls.Text;
 
 import com.threerings.util.CommandEvent;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
@@ -20,7 +21,6 @@ import com.threerings.msoy.data.all.RatingResult;
 
 import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.ui.Stars;
-import com.threerings.msoy.ui.StarsEvent;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
@@ -49,11 +49,11 @@ public class TourDialog extends FlyingPanel
 
         _myStars = new Stars(0, Stars.USER_LEFT, Stars.USER_RIGHT);
         _myStars.addEventListener(Stars.STAR_CLICK, handleRate);
-        _myStars.addEventListener(Stars.STAR_OVER, function (event :StarsEvent) :void {
-            _myStars.setRating(event.rating);
+        _myStars.addEventListener(Stars.STAR_OVER, function (event :ValueEvent) :void {
+            _myStars.setRating(int(event.value));
         });
         _myStars.addEventListener(MouseEvent.ROLL_OUT, function (event :MouseEvent) :void {
-            _myStars.setRating(_myRating);
+            _myStars.setRating(int(_myRating));
         });
 
         var hbox :HBox = new HBox();
@@ -71,14 +71,13 @@ public class TourDialog extends FlyingPanel
         _myStars.setRating(rating);
     }
 
-    protected function handleRate (event :StarsEvent) :void
+    protected function handleRate (event :ValueEvent) :void
     {
-        setRating(event.rating);
-        CommandEvent.dispatch(this, WorldController.ROOM_RATE, event.rating);
+        setRating(int(event.value));
+        CommandEvent.dispatch(this, WorldController.ROOM_RATE, event.value);
     }
 
     protected var _myStars :Stars;
     protected var _myRating :Number;
 }
-
 }
