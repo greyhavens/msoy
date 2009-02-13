@@ -21,11 +21,11 @@ public class Stars extends HBox
     public static const STAR_CLICK :String = "starClick";
     public static const STAR_OVER :String = "starOver";
 
-    // There's no Flex CSS property for Image source, embed these here
-    [Embed(source="../../../../../../pages/images/ui/stars/full/average_lhalf.png")]
-    public static const AVERAGE_LEFT :Class;
-    [Embed(source="../../../../../../pages/images/ui/stars/full/average_rhalf.png")]
-    public static const AVERAGE_RIGHT :Class;
+//    // There's no Flex CSS property for Image source, embed these here
+//    [Embed(source="../../../../../../pages/images/ui/stars/full/average_lhalf.png")]
+//    public static const AVERAGE_LEFT :Class;
+//    [Embed(source="../../../../../../pages/images/ui/stars/full/average_rhalf.png")]
+//    public static const AVERAGE_RIGHT :Class;
 
     [Embed(source="../../../../../../pages/images/ui/stars/full/user_lhalf.png")]
     public static const USER_LEFT :Class;
@@ -39,6 +39,7 @@ public class Stars extends HBox
 
         for (var i :int = 0; i < 10; ++i) {
             _images[i] = new Image();
+            _images[i].buttonMode = true;
             Command.bind(_images[i], MouseEvent.CLICK, handleClick, i);
             Command.bind(_images[i], MouseEvent.MOUSE_OVER, handleMouseOver, i);
             addChild(_images[i]);
