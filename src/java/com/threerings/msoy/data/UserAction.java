@@ -45,6 +45,9 @@ public class UserAction extends SimpleStreamableObject
         BOUGHT_BARS(50), RECEIVED_PAYOUT(51), TRANSFER_FROM_GUEST(52), SUPPORT_ADJUST(53),
         EXCHANGED_CURRENCY(54), CASHED_OUT_BLING(55),
 
+        // buying shit from OOO
+        BOUGHT_ROOM(100), BOUGHT_GROUP(101),
+
         UNUSED(255);
 
         /** Fetch the numerical representation of this type. */
@@ -136,6 +139,11 @@ public class UserAction extends SimpleStreamableObject
     public static UserAction boughtItem (int memberId)
     {
         return new UserAction(Type.BOUGHT_ITEM, memberId, null);
+    }
+
+    public static UserAction boughtFromOOO (int memberId, Type buyActionType)
+    {
+        return new UserAction(buyActionType, memberId, null);
     }
 
     public static UserAction listedItem (int memberId)

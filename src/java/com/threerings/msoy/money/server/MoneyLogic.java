@@ -398,7 +398,7 @@ public class MoneyLogic
         throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
     {
         return buyFromOOO(buyerRec, roomKey, buyCurrency, authedAmount,
-            listCurrency, listAmount, buyOp,
+            listCurrency, listAmount, buyOp, UserAction.Type.BOUGHT_ROOM,
             "m.room_bought", TransactionType.ROOM_PURCHASE, "m.change_rcvd_room");
     }
 
@@ -411,7 +411,7 @@ public class MoneyLogic
         throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
     {
         return buyFromOOO(buyerRec, groupKey, buyCurrency, authedAmount,
-            listCurrency, listAmount, buyOp,
+            listCurrency, listAmount, buyOp, UserAction.Type.BOUGHT_GROUP,
             MessageBundle.tcompose("m.group_created", groupName), TransactionType.GROUP_PURCHASE,
             "m.change_rcvd_group");
     }
@@ -421,7 +421,7 @@ public class MoneyLogic
      */
     public BuyResult buyFromOOO (
         MemberRecord buyerRec, Object wareKey, Currency buyCurrency, int authedAmount,
-        Currency listCurrency, int listAmount, BuyOperation<?> buyOp,
+        Currency listCurrency, int listAmount, BuyOperation<?> buyOp, UserAction.Type buyActionType,
         final String boughtTxMsg, TransactionType boughtTxType, String changeTxMsg)
         throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
     {
@@ -445,7 +445,7 @@ public class MoneyLogic
         MoneyTransactionRecord changeTx = ibr.changeTx;
 
         // log this!
-        logAction(UserAction.boughtItem(buyerId), buyerTx);
+        logAction(UserAction.boughtFromOOO(buyerId, buyActionType), buyerTx);
         if (changeTx != null) {
             // It's kind of a payout.  Really.
             logAction(UserAction.receivedPayout(buyerId), changeTx);
