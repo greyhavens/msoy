@@ -630,6 +630,16 @@ public class MemberRepository extends DepotRepository
 
     // TODO: remove
     // TEMP: to support a migration in MsoySceneRepository
+    public void removeAllUsedAvatars (Set<Integer> avatarIds)
+    {
+        for (MemberRecord rec :
+                findAll(MemberRecord.class, CacheStrategy.NONE, new ArrayList<QueryClause>())) {
+            avatarIds.remove(rec.avatarId);
+        }
+    }
+
+    // TODO: remove
+    // TEMP: to support a migration in MsoySceneRepository
     public void removeAllHomes (Set<Integer> sceneIds)
     {
         for (MemberRecord rec :
