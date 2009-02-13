@@ -50,10 +50,10 @@ public class TourDialog extends FlyingPanel
         _myStars = new Stars(0, Stars.USER_LEFT, Stars.USER_RIGHT);
         _myStars.addEventListener(Stars.STAR_CLICK, handleRate);
         _myStars.addEventListener(Stars.STAR_OVER, function (event :ValueEvent) :void {
-            _myStars.setRating(int(event.value));
+            _myStars.setRating(Number(event.value));
         });
         _myStars.addEventListener(MouseEvent.ROLL_OUT, function (event :MouseEvent) :void {
-            _myStars.setRating(int(_myRating));
+            _myStars.setRating(_myRating);
         });
 
         var hbox :HBox = new HBox();
