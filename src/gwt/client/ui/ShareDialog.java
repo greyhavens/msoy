@@ -18,15 +18,20 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import client.shell.CShell;
 
+// TODO:
+// - translations
+// - UI love
+// - share things other than games: items. Why not!?
 public class ShareDialog extends BorderedDialog
 {
     public ShareDialog (
         String token, String title, String desc, final MediaDesc image)
     {
         super(true); // autohide
-        setHeaderTitle("Share this shit");
+        setHeaderTitle("Share this game!"); // TODO: xlate, we'll have more than games...
 
         SmartTable panel = new SmartTable();
+        panel.setCellPadding(20);
 
         String goURL = URL.encodeComponent(DeploymentConfig.serverURL + "go/" + token);
         final String welcURL = URL.encodeComponent(DeploymentConfig.serverURL + "welcome/" +
@@ -42,7 +47,7 @@ public class ShareDialog extends BorderedDialog
                 Window.open(facebookURL, "Whirled", "width=620,height=440");
             }
         };
-        panel.setWidget(0, 1, MsoyUI.createButtonPair(
+        panel.setWidget(0, 0, MsoyUI.createButtonPair(
             MsoyUI.createActionImage(
                 "http://b.static.ak.fbcdn.net/images/share/facebook_share_icon.gif?8:26981",
                 facebookListener),
@@ -59,7 +64,7 @@ public class ShareDialog extends BorderedDialog
                 Window.open(myspaceURL, "Whirled", "width=1024,height=650");
             }
         };
-        panel.setWidget(0, 2, MsoyUI.createButtonPair(
+        panel.setWidget(0, 1, MsoyUI.createButtonPair(
             MsoyUI.createActionImage(
                 "http://cms.myspacecdn.com/cms/post_myspace_icon.gif", myspaceListener),
             MsoyUI.createActionLabel("Share on MySpace", myspaceListener)));
@@ -71,7 +76,7 @@ public class ShareDialog extends BorderedDialog
         String diggURL = "http://digg.com/submit" +
             "?url=" + goURL + "&title=" + eTitle + "&bodytext=" + eDesc +
             "&media=news&topic=playable_web_games";
-        panel.setWidget(0, 0, new HTML("<a target='_blank' href='" + diggURL + "'>" +
+        panel.setWidget(0, 2, new HTML("<a target='_blank' href='" + diggURL + "'>" +
             "<img src='/images/ui/digg.png' border=0></a>"));
 
         setContents(panel);
