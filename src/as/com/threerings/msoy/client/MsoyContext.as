@@ -31,8 +31,11 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.MuteDirector;
 
+import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
+
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.client.CurseFilter;
@@ -346,6 +349,21 @@ public /*abstract*/ class MsoyContext
         }
         var mb :MessageBundle = _msgMgr.getBundle(bundle);
         return mb.get.apply(mb, args);
+    }
+
+    /**
+     * Saves the auth response token. It is stored in the local client's preferences as well as to
+     * the credentials of the client so that we can log in more efficiently on a reconnect, so that
+     * we can log into game servers and so that guests can preserve some sense of identity during
+     * the course of their session.
+     */
+    public function saveSessionToken (client :Client) :void
+    {
+        var rdata :MsoyAuthResponseData = (client.getAuthResponseData() as MsoyAuthResponseData);
+        if (rdata.sessionToken != null) {
+            Prefs.setSessionToken(rdata.sessionToken);
+            MsoyCredentials(client.getCredentials()).sessionToken = rdata.sessionToken;
+        }
     }
 
     /**

@@ -31,6 +31,7 @@ import com.threerings.whirled.data.Scene;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.EmbedHeader;
+import com.threerings.msoy.client.GuestSessionCapture;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyParameters;
@@ -85,6 +86,7 @@ public class WorldClient extends MsoyClient
                 loader.removeEventListener(Event.COMPLETE, arguments.callee);
                 var bits :Array = (loader.data as String).split(":");
                 setServer(bits[0], [ int(bits[1]) ]);
+                GuestSessionCapture.capture(this);
                 logon();
             });
             // TODO: add listeners for failure events? give feedback on failure?
@@ -98,6 +100,7 @@ public class WorldClient extends MsoyClient
             log.info("Loading server info from " + url + ".");
 
         } else {
+            GuestSessionCapture.capture(this);
             logon();
         }
 
@@ -118,17 +121,9 @@ public class WorldClient extends MsoyClient
         if (rdata.ident != null) {
             Prefs.setMachineIdent(rdata.ident);
         }
-        if (rdata.sessionToken != null) {
-            Prefs.setSessionToken(rdata.sessionToken);
 
-            // record whether or not we used a token to login
-            _usedToken = WorldCredentials(getCredentials()).sessionToken != null;
-
-            // fill our session token into our credentials so that we can log in more efficiently
-            // on a reconnect, so that we can log into game servers and so that guests can preserve
-            // some sense of identity during the course of their session
-            WorldCredentials(getCredentials()).sessionToken = rdata.sessionToken;
-        }
+        // store the session token
+        _ctx.saveSessionToken(this);
 
         log.info("Client logged on [built=" + DeploymentConfig.buildTime +
                  ", mediaURL=" + DeploymentConfig.mediaURL +
@@ -184,25 +179,6 @@ public class WorldClient extends MsoyClient
         var member :MemberObject = _clobj as MemberObject;
         if (member == null || _embedded) {
             return;
-        }
-
-        // set or reset our permaguest stuff
-        var username :String = member.username.toString();
-        var memname :String = member.memberName.toString();
-        if (MemberName.isPermaguest(username)) {
-            log.info("You are a permaguest", "name", username, "mname", memname);
-            Prefs.setPermaguestUsername(username);
-
-            var serverToken :String =
-                _authData != null ? MsoyAuthResponseData(_authData).sessionToken : null;
-
-            if (!_usedToken && serverToken != null) {
-                // the server has created an account for us, yippee! let gwt know
-                if (ExternalInterface.available) {
-                    log.info("Setting permaguest token to GWT", "token", serverToken);
-                    ExternalInterface.call("setPermaguestInfo", username, serverToken);
-                }
-            }
         }
     }
 
@@ -392,7 +368,6 @@ public class WorldClient extends MsoyClient
 
     protected var _wctx :WorldContext;
     protected var _user :MemberObject;
-    protected var _usedToken :Boolean;
 
     private static const log :Log = Log.getLog(WorldClient);
 }
