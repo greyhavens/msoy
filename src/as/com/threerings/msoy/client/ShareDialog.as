@@ -134,6 +134,9 @@ public class ShareDialog extends FloatingPanel
         row.addChild(createSocialButton("b.share_myspace", 
             "http://cms.myspacecdn.com/cms/post_myspace_icon.gif",
             popMyspace));
+        row.addChild(createSocialButton(null,
+            DeploymentConfig.serverURL + "images/ui/digg.png",
+            popDigg));
 
         box.addChild(row);
         return box;
@@ -145,14 +148,18 @@ public class ShareDialog extends FloatingPanel
         var box :HBox = new HBox();
         box.setStyle("horizontalGap", 0);
 
-        var img :Image = new Image();
-        img.source = iconURL;
-        img.buttonMode = true;
-        Command.bind(img, MouseEvent.CLICK, callback);
-        box.addChild(img);
-        var link :CommandLinkButton = new CommandLinkButton(Msgs.GENERAL.get(msg), callback);
-        link.styleName = "underLink"; // TODO: god it irks me that the default is un-underlined.
-        box.addChild(link);
+        if (iconURL != null) {
+            var img :Image = new Image();
+            img.source = iconURL;
+            img.buttonMode = true;
+            Command.bind(img, MouseEvent.CLICK, callback);
+            box.addChild(img);
+        }
+        if (msg != null) {
+            var link :CommandLinkButton = new CommandLinkButton(Msgs.GENERAL.get(msg), callback);
+            link.styleName = "underLink"; // TODO: god it irks me that the default is un-underlined.
+            box.addChild(link);
+        }
         return box;
     }
 
@@ -332,15 +339,22 @@ public class ShareDialog extends FloatingPanel
     /**
      * Return a shareable link to this place.
      */
-    protected function createLink () :String
+    protected function createLink (forDigg :Boolean = false) :String
     {
         var page :String;
         if (_inGame) {
-            page = "world-game_l_" + _placeId;
+            //page = "world-game_l_" + _placeId;
+            page = "game-d_" + _placeId;
         } else if (_placeId != 0) {
             page = "world-s" + _placeId;
         }
-        return _ctx.getMsoyController().createPageLink(page, false);
+        if (forDigg) {
+            // we want to give out the same URL for everyone. :(
+            return DeploymentConfig.serverURL + "go/" + page;
+
+        } else {
+            return _ctx.getMsoyController().createPageLink(page, false);
+        }
     }
 
     protected function startDownload (url :String, localFile :String) :void
@@ -366,7 +380,8 @@ public class ShareDialog extends FloatingPanel
 
     protected function getShareTitle () :String
     {
-        return Msgs.GENERAL.get(_inGame ? "m.social_share_game" : "m.social_share_room", _placeName);
+        return Msgs.GENERAL.get(_inGame ? "m.social_share_game" : "m.social_share_room",
+            _placeName);
     }
 
     /**
@@ -378,7 +393,7 @@ public class ShareDialog extends FloatingPanel
             "?u=" + encodeURIComponent(createLink()) +
             "&t=" + encodeURIComponent(getShareTitle());
         popShareLink(shareURL, "Whirled", "width=620,height=440");
-        _ctx.getMsoyClient().trackClientAction("share_facebook", null);
+        trackSocialShare("facebook");
     }
 
     /**
@@ -392,7 +407,18 @@ public class ShareDialog extends FloatingPanel
             "&l=1" + // post to their Blog
             "&c=" + encodeURIComponent(getEmbedCode(DEFAULT_SIZE));
         popShareLink(shareURL, "Whirled", "width=1024,height=650");
-        _ctx.getMsoyClient().trackClientAction("share_myspace", null);
+        trackSocialShare("myspace");
+    }
+
+    protected function popDigg () :void
+    {
+        var link :String = createLink(true /* digg link */);
+        var shareURL :String = "http://digg.com/submit?media=news&topic=playable_web_games" +
+            "&url=" + encodeURIComponent(link) +
+            "&title=" + encodeURIComponent(getShareTitle()) +
+            "&bodytext=" + encodeURIComponent(getShareTitle()); // TODO
+        _ctx.getMsoyController().handleViewUrl(shareURL, "_blank");
+        trackSocialShare("digg");
     }
 
     /**
@@ -411,6 +437,15 @@ public class ShareDialog extends FloatingPanel
         }
         // fall back to opening the URL in a new page
         _ctx.getMsoyController().handleViewUrl(shareURL);
+    }
+
+    /**
+     * TEMP?? Track the client action of sharing the place via a social network.
+     */
+    protected function trackSocialShare (extShareId :String) :void
+    {
+        _ctx.getMsoyClient().trackClientAction("share_" + extShareId,
+            (_inGame ? "game" : "room") + "=" + _placeId);
     }
 
     // from FloatingPanel

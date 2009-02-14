@@ -170,7 +170,8 @@ public class WelcomeServlet extends HttpServlet
     }
 
     protected static final String SHARE_ROOM_PREFIX = "world-s";
-    protected static final String SHARE_GAME_PREFIX = "world-game_l_";
+    //protected static final String SHARE_GAME_PREFIX = "world-game_l_";
+    protected static final String SHARE_GAME_PREFIX = "game-d_";
 
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
