@@ -101,8 +101,8 @@ public class GameDetailPanel extends SmartTable
                 mbits.add(new FavoriteIndicator(game, detail.memberItemInfo));
                 mbits.add(WidgetUtil.makeShim(10, 10));
             }
-            mbits.add(MsoyUI.makeDiggButton(Pages.GAMES, Args.compose("d", gameId),
-                                            detail.item.name, detail.item.description));
+            mbits.add(MsoyUI.makeShareButton(Pages.GAMES, Args.compose("d", gameId),
+                detail.item.name, detail.item.description, game.getShotMedia()));
             shot.add(mbits);
         }
         setWidget(0, 0, shot);

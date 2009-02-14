@@ -8,7 +8,6 @@ import java.util.Date;
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -34,7 +33,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MediaDesc;
+
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -717,14 +717,18 @@ public class MsoyUI
      * Creates a button that allows a Digg submission for the specified page with the supplied
      * title and description.
      */
-    public static Widget makeDiggButton (Pages page, String args, String title, String descrip)
+    public static Widget makeShareButton (
+        Pages page, String args, final String title, final String desc, final MediaDesc image)
     {
-        String url = DeploymentConfig.serverURL + "go/" + Link.createToken(page, args);
-        String diggURL = "http://digg.com/submit?url=" + URL.encodeComponent(url) +
-            "&title=" + URL.encodeComponent(title) + "&bodytext=" + URL.encodeComponent(descrip) +
-            "&media=news&topic=playable_web_games";
-        return new HTML("<a target='_blank' href='" + diggURL + "'>" +
-                        "<img src='/images/ui/digg.png' border=0></a>");
+        // TODO: xlate
+        final String token = Link.createToken(page, args);
+        // TODO: better than a button
+        Button trigger = new Button("Share", new ClickListener() {
+            public void onClick (Widget sender) {
+                new ShareDialog(token, title, desc, image).show();
+            }
+        });
+        return trigger;
     }
 
     protected static class TextBoxSelector
