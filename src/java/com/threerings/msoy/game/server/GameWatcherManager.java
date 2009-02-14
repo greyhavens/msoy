@@ -8,11 +8,13 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.EventThread;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import static com.threerings.msoy.Log.log;
@@ -51,6 +53,8 @@ public class GameWatcherManager
 
     /**
      * Subscribe to notification of this member's scene-to-scene movements on the world servers.
+     * The observer will be immediately notified of the member's current location via a call to
+     * {@link Observer#memberMoved} if the member is currently in a location.
      */
     public void addWatch (int memberId, Observer observer)
     {
@@ -58,6 +62,20 @@ public class GameWatcherManager
         if (old != null) {
             log.warning("Displaced existing watcher", "memberId", "observer", old);
         }
+
+        MemberLocation location = _peerMan.getMemberLocation(memberId);
+        if (location == null) {
+            log.warning("Watched member has no current location", "memberId", memberId);
+            return;
+        }
+
+        Tuple<String, HostedRoom> room = _peerMan.getSceneHost(location.sceneId);
+        if (room == null) {
+            log.warning("Host not found for scene", "location", location);
+            return;
+        }
+
+        memberEnteredScene(room.left, location);
     }
 
     /**
