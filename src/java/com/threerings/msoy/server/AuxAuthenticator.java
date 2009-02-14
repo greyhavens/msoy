@@ -16,6 +16,7 @@ import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.msoy.data.AuthName;
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
@@ -66,15 +67,26 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
 
             // we'll be figuring these things out shortly
             int memberId;
-            String accountName, name;
+            String accountName, name, token;
 
-            // if this is a guest, see if they supplied a guest id and if not, assign one
-            if (MsoyCredentials.isGuestSessionToken(creds.sessionToken)) {
+            // if permaguests are enabled, a null token will be passed, create an account for them
+            if (creds.sessionToken == null && MsoyAuthenticator.PERMAGUESTS_ENABLED) {
+                MemberRecord guest = _accountLogic.createGuestAccount(
+                    conn.getInetAddress().toString(), creds.visitorId);
+                memberId = guest.memberId;
+                accountName = guest.accountName;
+                name = guest.name;
+                token = _memberRepo.startOrJoinSession(guest.memberId, 1);
+
+            } else if (MsoyCredentials.isGuestSessionToken(creds.sessionToken)) {
+                // if this is a guest, see if they supplied a guest id and if not, assign one
+                log.info("Authenticating guest", "token", creds.sessionToken);
                 memberId = MsoyCredentials.getGuestMemberId(creds.sessionToken);
                 Name credsName = creds.getUsername();
                 accountName = credsName != null ? credsName.toString() :
                     MsoyAuthenticator.generateGuestName(memberId);
                 name = accountName;
+                token = creds.sessionToken;
 
             } else {
                 MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
@@ -85,10 +97,16 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                 accountName = member.accountName;
                 name = member.name;
                 rsp.authdata = member.toTokenRing(); // export our access control tokens
+                token = creds.sessionToken;
             }
 
             // fill in the appropriate AuthName instance into their creds
             creds.setUsername(createName(accountName, memberId));
+
+            // always return the session token (even if they gave it to us in the first place)
+            ((MsoyAuthResponseData)rdata).sessionToken = token;
+                
+            // TODO: other MsoyAuthResponseData fields?
 
             // do our domain specific authentication (if any)
             finishAuthentication(creds, new MemberName(name, memberId));
@@ -118,7 +136,14 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
         // nothing to do by default
     }
 
+    @Override
+    protected AuthResponseData createResponseData ()
+    {
+        return new MsoyAuthResponseData();
+    }
+
     protected Class<T> _credsClass;
 
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected AccountLogic _accountLogic;
 }

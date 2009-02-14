@@ -174,6 +174,8 @@ public class AccountLogic
             null, null);
         guest.name = generatePermaguestDisplayName(guest.memberId);
         _memberRepo.configureDisplayName(guest.memberId, guest.name);
+        log.info("Created permaguest account", "username", guest.accountName,
+            "memberId", guest.memberId);
         return guest;
     }
 

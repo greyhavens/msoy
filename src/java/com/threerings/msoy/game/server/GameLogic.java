@@ -23,6 +23,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -62,6 +63,7 @@ public class GameLogic
 {
     /**
      * Loads the launch config for the specified game, resolving it on this server if necessary.
+     * TODO: tempaguest removal: assignGuestId will not be needed here
      */
     public LaunchConfig loadLaunchConfig (int gameId, boolean assignGuestId)
         throws ServiceException
@@ -150,8 +152,9 @@ public class GameLogic
         config.gamePort = rhost.right;
 
         // finally, if they are a guest and have not yet been assigned a guest id, do so now so
-        // that they can log directly into the game server
-        if (assignGuestId) {
+        // that they can log directly into the game server; ignore the guest id request if we
+        // want to create permaguests for anonymous sessions
+        if (assignGuestId && !MsoyAuthenticator.PERMAGUESTS_ENABLED) {
             config.guestId = _peerMan.getNextGuestId(); // this method is thread safe
         }
 

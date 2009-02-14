@@ -242,7 +242,6 @@ public class MsoyAuthenticator extends Authenticator
                 // create a new guest account
                 MemberRecord newMember = _accountLogic.createGuestAccount(
                     conn.getInetAddress().toString(), creds.visitorId);
-                log.info("Created permaguest account", "username", newMember.accountName);
 
                 // now authenticate just to make sure everything is in order and get the token
                 creds.setUsername(new Name(newMember.accountName));
