@@ -811,7 +811,7 @@ public class WorldController extends MsoyController
                                                                : (page + "-" + args + tracking);
             const url :String = createPageLink(pageToken, true);
             log.info("Showing external URL " + url);
-            return super.handleViewUrl(url, false);
+            return super.handleViewUrl(url, null);
         }
     }
 
@@ -985,7 +985,7 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
-    override public function handleViewUrl (url :String, top :Boolean = false) :Boolean
+    override public function handleViewUrl (url :String, windowOrTab :String = null) :Boolean
     {
         // if our page refers to a Whirled page...
         var gwtPrefix :String = DeploymentConfig.serverURL + "#";
@@ -995,7 +995,7 @@ public class WorldController extends MsoyController
         } else if (url.indexOf("#") == 0) {
             gwtUrl = url.substring(1);
         } else {
-            return super.handleViewUrl(url, top);
+            return super.handleViewUrl(url, windowOrTab);
         }
 
         // ...extract the page and arguments and tell GWT to display them properly

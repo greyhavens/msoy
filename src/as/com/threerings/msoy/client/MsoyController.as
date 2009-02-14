@@ -166,11 +166,15 @@ public class MsoyController extends Controller
      *
      * Also, handles VIEW_URL.
      *
+     * @param url The url to show
+     * @param windowOrTab the identifier of the tab to use, like _top or _blank, or null to
+     * use the default, which is the same as _blank, I think. :)
+     *
      * @return true on success
      */
-    public function handleViewUrl (url :String, top :Boolean = false) :Boolean
+    public function handleViewUrl (url :String, windowOrTab :String = null) :Boolean
     {
-        if (NetUtil.navigateToURL(url, top ? "_top" : null)) {
+        if (NetUtil.navigateToURL(url, windowOrTab)) {
             return true;
 
         } else {
