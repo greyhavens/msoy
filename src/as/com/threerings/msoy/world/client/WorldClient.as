@@ -82,11 +82,12 @@ public class WorldClient extends MsoyClient
 
         } else if (getHostname() == null) {
             var loader :URLLoader = new URLLoader();
+            var worldClient :WorldClient = this;
             loader.addEventListener(Event.COMPLETE, function () :void {
                 loader.removeEventListener(Event.COMPLETE, arguments.callee);
                 var bits :Array = (loader.data as String).split(":");
                 setServer(bits[0], [ int(bits[1]) ]);
-                GuestSessionCapture.capture(this);
+                GuestSessionCapture.capture(worldClient);
                 logon();
             });
             // TODO: add listeners for failure events? give feedback on failure?
