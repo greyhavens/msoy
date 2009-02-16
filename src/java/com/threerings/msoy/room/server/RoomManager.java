@@ -765,7 +765,7 @@ public class RoomManager extends SpotSceneManager
     {
         // provide MsoyBodyObject instances with a RoomLocal they can use to determine stoniness
         // and managerness; MsoyBodyObject clears this local out in its didLeavePlace() override
-        if (body instanceof MsoyBodyObject) {
+        if (body instanceof MsoyBodyObject && ((MsoyBodyObject)body).isActor()) {
             // add them to our list of ordered bodies
             _actors.add(body.getOid());
 

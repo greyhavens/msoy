@@ -45,6 +45,15 @@ public class MsoyBodyObject extends BodyObject
         return true;
     }
 
+    /**
+     * Returns true if this body has an actor in the scene and as a consequence uses an
+     * OccupantInfo that is instanceof ActorInfo.
+     */
+    public boolean isActor ()
+    {
+        return true;
+    }
+
     @Override // from MsoyBodyObject
     public void didLeavePlace (PlaceObject plobj)
     {

@@ -398,6 +398,12 @@ public class MemberObject extends MsoyBodyObject
         return hasRights;
     }
 
+    @Override // from MsoyBodyObject
+    public boolean isActor ()
+    {
+        return !isViewer();
+    }
+
     @Override // from BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
