@@ -46,8 +46,8 @@ public class GameSession extends CrowdSession
             }
         }
 
-        log.info("Player session starting", "memberId", _plobj.memberName.getMemberId(),
-                 "memberName", _plobj.memberName, "oid", _plobj.getOid());
+        log.debug("Player session starting", "memberId", _plobj.memberName.getMemberId(),
+                  "memberName", _plobj.memberName, "oid", _plobj.getOid());
 
         // let our various server entities know that this member logged on
         _locator.playerLoggedOn(_plobj);

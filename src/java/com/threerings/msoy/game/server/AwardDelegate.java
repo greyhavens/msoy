@@ -72,8 +72,6 @@ public class AwardDelegate extends RatingDelegate
             }
         });
         if (record != null) {
-            log.info("OMG, we're actually paying out pending earnings.", "where", where(),
-                     "playerId", playerId, "coins", record._unnotedAward);
             // payout their pending earnings (this will NOOP if they have nothing pending)
             payoutCoins(record.memberId, record.getAndNoteAward(),
                         record.getAndNoteSecondsPlayed());
@@ -269,7 +267,8 @@ public class AwardDelegate extends RatingDelegate
             totalMinutes = Math.round(capDuration * _totalTrackedGames / 60f);
             log.info("Capping player minutes at 120% of average", "game", where(),
                      "pgames", _totalTrackedGames, "average", avgDuration,
-                     "current", perPlayerDuration, "capped", capDuration, "totalMins", totalMinutes);
+                     "current", perPlayerDuration, "capped", capDuration,
+                     "totalMins", totalMinutes);
         }
 
         // record that games were played and potentially update our payout factor

@@ -382,9 +382,8 @@ public class MsoyGameRepository extends DepotRepository
             new And(isDev, new Conditionals.LessThan(recorded, devCutoffTimestamp)),
             new And(isListed, new Conditionals.LessThan(recorded, listedCutoffTimestamp)))));
 
-        log.info(
-            "Deleted trace logs", "devCutoff", devCutoffTimestamp, "listedCutoff",
-            listedCutoffTimestamp, "rows", rows);
+        log.info("Deleted trace logs", "devCutoff", devCutoffTimestamp,
+                 "listedCutoff", listedCutoffTimestamp, "rows", rows);
     }
 
     /**

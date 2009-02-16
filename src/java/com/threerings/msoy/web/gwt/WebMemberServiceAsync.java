@@ -112,9 +112,4 @@ public interface WebMemberServiceAsync
      */
     void trackSessionStatusChange (VisitorInfo info, boolean guest, boolean newInfo,
                                    AsyncCallback<Void> callback);
-
-    /**
-     * Small debugging function, writes to text logs on the server. TODO: remove me.
-     */
-    void debugLog (String stage, String token, String vector, AsyncCallback<Void> callback);
 }

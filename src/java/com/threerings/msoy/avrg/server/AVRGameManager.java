@@ -274,7 +274,7 @@ public class AVRGameManager extends PlaceManager
         _gameAgentObj.addListener(new ObjectDeathListener() {
             public void objectDestroyed (ObjectDestroyedEvent event) {
                 if (_gameAgentObj != null) {
-                    log.info("Game agent destroyed", "gameObj", _gameObj.which());
+                    log.debug("Game agent destroyed", "gameObj", _gameObj.which());
                     if (_lifecycleObserver != null) {
                         if (_agentStarted) {
                             // we got dc'ed, kick out all the players
@@ -453,8 +453,8 @@ public class AVRGameManager extends PlaceManager
      */
     public void agentReady (ClientObject caller)
     {
-        log.info(
-            "AVRG Agent ready", "clientOid", caller.getOid(), "agentOid", _gameAgentObj.getOid());
+        log.debug("AVRG Agent ready", "clientOid", caller.getOid(),
+                  "agentOid", _gameAgentObj.getOid());
         _agentStarted = true;
         _lifecycleObserver.avrGameReady(this);
     }
@@ -464,8 +464,8 @@ public class AVRGameManager extends PlaceManager
      */
     public void agentFailed (ClientObject caller)
     {
-        log.info(
-            "AVRG Agent failed", "clientOid", caller.getOid(), "agentOid", _gameAgentObj.getOid());
+        log.info("AVRG Agent failed", "clientOid", caller.getOid(),
+                 "agentOid", _gameAgentObj.getOid());
         _lifecycleObserver.avrGameAgentFailedToStart(this, null);
     }
 
@@ -773,7 +773,7 @@ public class AVRGameManager extends PlaceManager
             ", hostname=" + hostname + ", port=" + port + "]");
 
         if (sceneId == 0) {
-            log.info("Ignoring entry of scene 0", "memberId", memberId);
+            log.debug("Ignoring entry of scene 0", "memberId", memberId);
             return;
         }
 

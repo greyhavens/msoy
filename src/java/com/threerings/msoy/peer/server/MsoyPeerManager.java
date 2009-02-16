@@ -284,7 +284,7 @@ public class MsoyPeerManager extends CrowdPeerManager
     public void roomDidStartup (
         int sceneId, String name, int ownerId, byte ownerType, byte accessControl)
     {
-        log.info("Hosting scene", "id", sceneId, "name", name);
+        log.debug("Hosting scene", "id", sceneId, "name", name);
         _mnobj.addToHostedScenes(new HostedRoom(sceneId, name, ownerId, ownerType, accessControl));
     }
 
@@ -293,7 +293,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void roomDidShutdown (int sceneId)
     {
-        log.info("No longer hosting scene", "id", sceneId);
+        log.debug("No longer hosting scene", "id", sceneId);
         _mnobj.removeFromHostedScenes(sceneId);
     }
 
@@ -312,7 +312,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void gameDidStartup (int gameId, String name)
     {
-        log.info("Hosting game", "id", gameId, "name", name);
+        log.debug("Hosting game", "id", gameId, "name", name);
         _mnobj.addToHostedGames(new HostedGame(gameId, name));
         // releases our lock on this game now that it is resolved and we are hosting it
         releaseLock(getGameLock(gameId), new ResultListener.NOOP<String>());
@@ -323,7 +323,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void gameDidShutdown (int gameId)
     {
-        log.info("No longer hosting game", "id", gameId);
+        log.debug("No longer hosting game", "id", gameId);
         _mnobj.removeFromHostedGames(gameId);
     }
 
@@ -332,7 +332,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void projectDidStartup (SwiftlyProject project, ConnectConfig config)
     {
-        log.info("Hosting project", "id", project.projectId, "name", project.projectName);
+        log.debug("Hosting project", "id", project.projectId, "name", project.projectName);
         _mnobj.addToHostedProjects(new HostedProject(project, config));
     }
 
@@ -341,7 +341,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public void projectDidShutdown (int projectId)
     {
-        log.info("No longer hosting project", "id", projectId);
+        log.debug("No longer hosting project", "id", projectId);
         _mnobj.removeFromHostedProjects(projectId);
     }
 
@@ -620,8 +620,8 @@ public class MsoyPeerManager extends CrowdPeerManager
             }
         }
         if (maxGuestId > 0) {
-            log.info("Adjusting next guest id due to extant users [node=" + peer.nodeobj.nodeName +
-                     ", maxGuestId=" + maxGuestId + "].");
+            log.info("Adjusting next guest id due to extant users", "node", peer.nodeobj.nodeName,
+                     "maxGuestId", maxGuestId);
             synchronized (this) {
                 _guestIdCounter = Math.max(_guestIdCounter, maxGuestId);
             }

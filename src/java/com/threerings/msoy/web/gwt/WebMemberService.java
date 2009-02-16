@@ -151,9 +151,4 @@ public interface WebMemberService extends RemoteService
      * and if not, was this a guest visit?
      */
     void trackSessionStatusChange (VisitorInfo info, boolean guest, boolean newInfo);
-
-    /**
-     * Small debugging function, writes to text logs on the server. TODO: remove me.
-     */
-    void debugLog (String stage, String token, String vector);
 }

@@ -44,8 +44,7 @@ public class HTMLSanitizer
         try {
             _policy = Policy.getInstance(policyLoc.toString());
         } catch (Exception e) {
-            log.warning("Failed to parse HTML sanitizer policy file " +
-                    "[loc=" + policyLoc + "].", e);
+            log.warning("Failed to parse HTML sanitizer policy file", "loc", policyLoc, e);
         }
     }
 }

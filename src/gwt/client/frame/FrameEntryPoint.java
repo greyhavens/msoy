@@ -99,12 +99,6 @@ public class FrameEntryPoint
         History.addHistoryListener(this);
         _currentToken = History.getToken();
 
-        // log any token that includes the "vec_" string
-        // used for WRLD-465 - TODO: remove in a week after the test is over
-        if (_currentToken != null && _currentToken.contains("vec_")) {
-            _membersvc.debugLog("stage 1", _currentToken, null, new NoopAsyncCallback());
-        }
-
         // validate our session which will dispatch a didLogon or didLogoff
         Session.validate();
 
@@ -232,11 +226,6 @@ public class FrameEntryPoint
 
         // if we got a new vector from the URL, record it in Panopticon and in a cookie
         if (vector != null) {
-            // log any token that includes the "vec_" string
-            // used for WRLD-465 - TODO: remove after the test is over
-            if (_currentToken != null && _currentToken.contains("vec_")) {
-                _membersvc.debugLog("stage 2", _currentToken, vector, new NoopAsyncCallback());
-            }
             final VisitorInfo constInfo = info;
             _membersvc.trackVectorAssociation(info, vector, new AsyncCallback<Void>() {
                 public void onSuccess (Void result) {
@@ -261,13 +250,6 @@ public class FrameEntryPoint
         if (!info.isAuthoritative && HttpReferrerCookie.available()) {
             String ref = HttpReferrerCookie.get();
             _membersvc.trackHttpReferrerAssociation(info, ref, new NoopAsyncCallback());
-
-            // used for WRLD-465 - TODO: remove after the test is over
-            if (HttpReferrerCookie.available()) {
-                _membersvc.debugLog("referrer for id " + info.id, "#" + _currentToken,
-                    HttpReferrerCookie.get(), new NoopAsyncCallback());
-            }
-
             HttpReferrerCookie.disable();
         }
 

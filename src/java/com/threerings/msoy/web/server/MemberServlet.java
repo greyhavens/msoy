@@ -282,21 +282,6 @@ public class MemberServlet extends MsoyServiceServlet
         _eventLog.webSessionStatusChanged(info, guest, newInfo);
     }
 
-    // from WebMemberService
-    public void debugLog (String stage, String token, String vector)
-    {
-        // used for WRLD-465 - TODO: remove after the test is over
-
-        if (vector == null) {
-            Matcher m = P.matcher(token);
-            if (m.find() && m.groupCount() > 0) {
-                vector = m.group(1) + " ?";
-            }
-        }
-
-        log.info(String.format("WRLD-465 %s [%s %s]", stage, token, vector));
-    }
-
     // our dependencies
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;

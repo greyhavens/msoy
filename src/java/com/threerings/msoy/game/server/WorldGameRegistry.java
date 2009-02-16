@@ -270,12 +270,12 @@ public class WorldGameRegistry
             new ResultListener<String>() {
             public void requestCompleted (String nodeName) {
                 if (_peerMan.getNodeObject().nodeName.equals(nodeName)) {
-                    log.info("Got lock, resolving " + game.name + ".");
+                    log.debug("Got lock, resolving " + game.name + ".");
                     hostGame(game, listener);
 
                 } else if (nodeName != null) {
                     // some other peer got the lock before we could; send them there
-                    log.info("Didn't get lock, going remote " + game.gameId + "@" + nodeName + ".");
+                    log.debug("Didn't get lock, going to " + game.gameId + "@" + nodeName + ".");
                     if (!checkAndSendToNode(game.gameId, listener)) {
                         log.warning("Failed to acquire lock but no registered host for game!?",
                                     "id", game.gameId);

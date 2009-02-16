@@ -116,7 +116,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // if our member object was forwarded from another server, it will already be fully ready
         // to go so we can avoid the expensive resolution process
         if (memobj.memberName != null) {
-            log.info("Resolved forwarded session", "clobj", clobj.who());
+            log.debug("Resolved forwarded session", "clobj", clobj.who());
             return;
         }
 
@@ -141,7 +141,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             resolveMember(memobj);
         }
 
-        log.info("Resolved unforwarded session", "clobj", clobj.who());
+        log.debug("Resolved unforwarded session", "clobj", clobj.who());
     }
 
     /**
@@ -254,8 +254,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         //memobj.experiences = new DSet<MemberExperience>(
         //        _memberLogic.getExperiences(member.memberId));
 
-        log.info("Client resolution complete", "memberId", member.memberId,
-            "timing", resolutionStamps);
+//         log.info("Client resolution complete", "memberId", member.memberId,
+//             "timing", resolutionStamps);
     }
 
     @Override // from ClientResolver

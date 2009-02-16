@@ -182,13 +182,12 @@ public class GameGameRegistry
             log.warning("Requested invalid score distribution", "gameId", gameId, "mode", gameMode);
             gameMode = 0;
         }
-        log.info("Attempting to locate score distribution", "gameId", gameId, "mp", multiplayer,
-                 "gameMode", gameMode);
+        log.debug("Attempting to locate score distribution", "gameId", gameId, "mp", multiplayer,
+                  "gameMode", gameMode);
         TilerKey key = new TilerKey(gameId, multiplayer, gameMode);
         Percentiler tiler = _distribs.get(key);
         if (tiler == null) {
             // a game wants to register a score for a previously unseen mode; return a fresh tiler
-            log.info("Creating & stashing fresh percentiler!");
             _distribs.put(key, tiler = new Percentiler());
         }
         return tiler;
@@ -1010,7 +1009,6 @@ public class GameGameRegistry
                 }
             });
 
-        log.info("Returning " + trophies.size() + " trophies for " + gameId + ".");
         lner.requestProcessed(trophies.toArray(new Trophy[trophies.size()]));
     }
 

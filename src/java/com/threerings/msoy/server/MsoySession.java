@@ -206,7 +206,8 @@ public class MsoySession extends WhirledSession
                         _memoryRepo.storeMemories(memrec);
                         resolutionStamps.add(System.currentTimeMillis() - startStamp);
                     }
-                    log.info("Session persisted", "memberId", memberId, "timing", resolutionStamps);
+//                     log.info("Session persisted", "memberId", memberId,
+//                              "timing", resolutionStamps);
                 }
             });
         }
