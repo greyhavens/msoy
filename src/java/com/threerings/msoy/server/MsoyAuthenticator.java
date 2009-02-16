@@ -53,9 +53,10 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 @Singleton
 public class MsoyAuthenticator extends Authenticator
 {
-    /** Whether we create accounts for guests. */
+    /** Whether we create accounts for guests.
+     * TODO: enable permaguests all the time and remove old guest code. */
     public static final boolean PERMAGUESTS_ENABLED = DeploymentConfig.devDeployment &&
-        "true".equals(System.getProperty("permaguests", null));
+        (true || "true".equals(System.getProperty("permaguests", null)));
 
     /**
      * Verifies that an ident is valid.

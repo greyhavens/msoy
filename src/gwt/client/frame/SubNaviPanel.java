@@ -43,8 +43,10 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "Me", Pages.ME, "");
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
                 addLink(null, "My Rooms", Pages.PEOPLE, Args.compose("rooms", memberId));
-                addLink(null, "Friends", Pages.PEOPLE, "");
-                addLink(null, "Account", Pages.ACCOUNT, "edit");
+                if (!CShell.isPermaguest()) {
+                    addLink(null, "Friends", Pages.PEOPLE, "");
+                    addLink(null, "Account", Pages.ACCOUNT, "edit");
+                }
                 if (CShell.isSupport()) {
                     addLink(null, "Admin", Pages.ADMINZ, "");
                 }
@@ -76,7 +78,7 @@ public class SubNaviPanel extends FlowPanel
 
         case GROUPS:
             addLink(null, "Groups", Pages.GROUPS, "");
-            if (!CShell.isGuest()) {
+            if (!CShell.isGuest() && !CShell.isPermaguest()) {
                 addLink(null, "My Groups", Pages.GROUPS, "mygroups");
                 addLink(null, "My Discussions", Pages.GROUPS, "unread");
                 if (CShell.isSupport()) {
@@ -89,7 +91,7 @@ public class SubNaviPanel extends FlowPanel
         case SHOP:
             addLink(null, "Shop", Pages.SHOP, "");
             addLink(null, "My Favorites", Pages.SHOP, "f");
-            if (!CShell.isGuest()) {
+            if (!CShell.isGuest() && !CShell.isPermaguest()) {
                 addLink(null, "Transactions", Pages.ME, "transactions");
                 addExternalLink("Buy Bars", NaviUtil.onBuyBars(), true);
             }
