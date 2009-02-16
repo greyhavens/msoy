@@ -113,7 +113,7 @@ public class PetHandler
      */
     public void enterRoom (final int sceneId)
     {
-        log.info("Entering room [pet=" + this + ", sceneId=" + sceneId + "].");
+        log.debug("Entering room", "pet", this, "sceneId", sceneId);
 
         // then enter the scene like a proper scene entity
         _sceneReg.moveTo(_petobj, sceneId, Integer.MAX_VALUE, new SceneMoveAdapter() {
