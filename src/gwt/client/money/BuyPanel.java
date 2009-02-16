@@ -158,8 +158,11 @@ public abstract class BuyPanel<T> extends SmartTable
         _barPanel.setVisible(quote.getCoins() > 0);
         _buyBars.setAmount(quote.getBars());
         if (quote.getListedCurrency() == Currency.BARS) {
-            _barLabel.setText(_msgs.barCost(NumberFormat.getCurrencyFormat().format(
-                quote.getUSDPerBarCost() * quote.getBars())));
+            float dollars = quote.getUSDPerBarCost() * quote.getBars();
+            int cents = (int)Math.ceil(100 * dollars);
+            String msg = (cents < 100) ? _msgs.centsCost(""+cents) :
+                _msgs.dollarCost(NumberFormat.getFormat("$0.00").format(dollars));
+            _barLabel.setText(msg);
             _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(
                 (int)Math.floor(quote.getExchangeRate()))));
             _addenda.add(_wikiLink);
