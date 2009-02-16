@@ -20,6 +20,7 @@ import flash.utils.Timer;
 
 import caurina.transitions.Tweener;
 
+import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.ResultAdapter;
@@ -33,16 +34,22 @@ import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
+import com.threerings.util.Name;
 
 import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.GuestSessionCapture;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.PlaceBox;
+import com.threerings.msoy.client.Prefs;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -89,13 +96,6 @@ public class GameLiaison
         if (ghost != null && gport != 0) {
             gameLocated(ghost, gport);
 
-            // we may be doing a pre-logon go but were passed all the necessary information in our
-            // Flash parameters, in which case we need to let the world client know that it's cool
-            // to log in now
-            if (!_wctx.getClient().isLoggedOn()) {
-                _wctx.getClient().logon();
-            }
-
         } else if (_wctx.getClient().isLoggedOn()) {
             log.info("Resolving location of game [id=" + _gameId + "].");
             var mgsvc :WorldGameService =
@@ -108,32 +108,42 @@ public class GameLiaison
             loader.addEventListener(Event.COMPLETE, function () :void {
                 loader.removeEventListener(Event.COMPLETE, arguments.callee);
                 var bits :Array = (loader.data as String).split(":");
-                var guestId :int = int(bits[4]);
-                var guestToken :String = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
-                var guestName :MemberName = new MemberName("Guest" + (-guestId), guestId);
-
-                // start connecting to the game server first
-                var gcreds :GameCredentials  =
-                    (_gctx.getClient().getCredentials() as GameCredentials);
-                gcreds.sessionToken = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
-                if (gcreds.getUsername() == null) {
-                    gcreds.setUsername(new MemberName("Guest" + (-guestId), guestId));
-                }
-                gameLocated(bits[0], int(bits[1]));
-
-                log.info("Got group world server info, logging on [server=" + bits[2] +
-                    ", port=" + bits[3] + "].");
 
                 // now configure the world client to connect to the server that hosts our group
                 // room so that when we get into the lobby, we'll be ready to roll
                 _wctx.getClient().setServer(bits[2], [ int(bits[3]) ]);
-                var wcreds :MsoyCredentials =
-                    (_wctx.getClient().getCredentials() as MsoyCredentials);
-                wcreds.sessionToken = guestToken;
-                if (wcreds.getUsername() == null) {
-                    wcreds.setUsername(guestName);
+
+                // TODO: tempaguest removal: the guestId will not be required
+
+                var guestId :int = int(bits[4]);
+                var gcreds :MsoyCredentials = MsoyCredentials(_gctx.getClient().getCredentials());
+                var wcreds :MsoyCredentials = MsoyCredentials(_wctx.getClient().getCredentials());
+
+                // fake the creds if we're a tempaguest
+                if (guestId != 0) {
+                    var guestToken :String = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
+                    var guestName :MemberName = new MemberName("Guest" + (-guestId), guestId);
+
+                    gcreds.sessionToken = guestToken;
+                    if (gcreds.getUsername() == null) {
+                        gcreds.setUsername(guestName);
+                    }
+
+                    wcreds.sessionToken = guestToken;
+                    if (wcreds.getUsername() == null) {
+                        wcreds.setUsername(guestName);
+                    }
+
+                // returning permaguest, copy in the name
+                } else if (Prefs.getPermaguestUsername() != null) {
+                    gcreds.setUsername(new Name(Prefs.getPermaguestUsername()));
+
+                // brand new guest, we'd better generate a visitor id
+                } else {
+                    gcreds.visitorId = VisitorInfo.createLocalId();
                 }
-                _wctx.getClient().logon();
+
+                gameLocated(bits[0], int(bits[1]));
             });
             // TODO: add listeners for failure events? give feedback on failure?
             loader.load(new URLRequest(DeploymentConfig.serverURL + "embed/g" + _gameId));
@@ -185,10 +195,32 @@ public class GameLiaison
     // from interface WorldGameService_LocationListener
     public function gameLocated (hostname :String, port :int) :void
     {
-        log.info("Got server for " + _gameId + " [host=" + hostname + ", port=" + port + "].");
-        _gctx.getClient().setServer(hostname, [ port ]);
-        _gctx.getClient().setVersion(DeploymentConfig.version);
-        _gctx.getClient().logon();
+        var gclient :Client = _gctx.getClient();
+        var wclient :Client = _wctx.getClient();
+
+        log.info("Game located - logging in", "gameId", _gameId, "host", hostname, "port", port);
+
+        // make sure we grab & stash the session details if this is a permaguest login
+        GuestSessionCapture.capture(gclient, didLogon);
+
+        gclient.setServer(hostname, [ port ]);
+        gclient.setVersion(DeploymentConfig.version);
+        gclient.logon();
+
+        // called once the game server login finishes
+        function didLogon () :void {
+            // save the session token for future use
+            _wctx.saveSessionToken(gclient);
+
+            // copy credentials into world client and logon
+            if (!wclient.isLoggedOn()) {
+                var gcreds :MsoyCredentials = (gclient.getCredentials() as MsoyCredentials);
+                var wcreds :MsoyCredentials = (wclient.getCredentials() as MsoyCredentials);
+                wcreds.setUsername(gcreds.getUsername());
+                wcreds.sessionToken = gcreds.sessionToken;
+                wclient.logon();
+            }
+        }
     }
 
     // from interface WorldGameService_LocationListener

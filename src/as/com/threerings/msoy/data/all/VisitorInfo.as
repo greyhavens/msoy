@@ -31,6 +31,25 @@ public class VisitorInfo
     public var isAuthoritative :Boolean;
 
     /**
+     * Generates a new visitor id using the current time and builtin random number generator. This
+     * is needed because an embedded client can sometimes create a new account (without GWT
+     * intervention).
+     */
+    public static function createLocalId () :String
+    {
+        // take current system time in milliseconds, shift left by eight bits,
+        // and fill in the newly emptied bits with a random value. return as a hex string.
+        // this gives us a resolution of 256 unique tracking numbers per millisecond.
+        //
+        // note: this corresponds to a similar function in VisitorInfo.java
+        var now :Number = (new Date()).time * 256;
+        var rand :Number = Math.floor(Math.random() * 256);
+        var total :Number = now + rand;
+        var info :VisitorInfo = new VisitorInfo();
+        return total.toString(16);
+    }
+
+    /**
      * Return the argument string that will append a tracking id to a GWT page url.
      */
     public function getTrackingArgs () :String

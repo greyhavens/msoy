@@ -120,6 +120,7 @@ public class WorldClient extends Widget
             embedClient(args, parent);
         }
         // TODO: let jclient know about logon?
+        // TODO: propagate creds to our flash SharedObject in case next login is from an embed?
     }
 
     protected static void embedClient (String flashArgs, Panel parent)

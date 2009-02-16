@@ -71,12 +71,17 @@ public class Prefs
 
     public static function getPermaguestUsername () :String
     {
-        return (config.getValue(PERMAGUEST_USERNAME, "") as String);
+        return (config.getValue(PERMAGUEST_USERNAME, null) as String);
     }
 
     public static function setPermaguestUsername (username :String) :void
     {
-        config.setValue(PERMAGUEST_USERNAME, username);
+        if (username == null) {
+            config.remove(PERMAGUEST_USERNAME);
+
+        } else {
+            config.setValue(PERMAGUEST_USERNAME, username);
+        }
     }
 
     public static function getSessionToken () :String

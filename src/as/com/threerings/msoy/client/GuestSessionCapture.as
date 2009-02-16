@@ -90,6 +90,8 @@ public class GuestSessionCapture
 
         // the rest is only for permaguests
         if (!MemberName.isPermaguest(username)) {
+            // if we just registered or otherwise logged in as a non-permaguest, clear the cookie
+            Prefs.setPermaguestUsername(null);
             return;
         }
 

@@ -354,6 +354,10 @@ public class WorldClient extends MsoyClient
         if ((params["pass"] != null) && (params["user"] != null)) {
             creds = new WorldCredentials(
                 new Name(String(params["user"])), MD5.hash(String(params["pass"])));
+
+        } else if (Prefs.getPermaguestUsername() != null) {
+            creds = new WorldCredentials(new Name(Prefs.getPermaguestUsername()), "");
+
         } else {
             creds = new WorldCredentials(null, null);
         }
