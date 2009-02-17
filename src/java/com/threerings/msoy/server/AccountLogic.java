@@ -28,6 +28,7 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -68,8 +69,9 @@ public class AccountLogic
         String cookie, int[] birthdayYMD)
         throws ServiceException
     {
+        boolean registering = true;
         return createAccount(email, password, displayName, realName, invite, vinfo, cookie,
-            birthdayYMD, null, null);
+            registering, birthdayYMD, null, null);
     }
 
     /**
@@ -131,7 +133,8 @@ public class AccountLogic
             throw se;
         }
 
-        // TODO: event logging, this is really the account creation
+        // TODO: we don't have access to the invite id anymore, is this important?
+        _eventLog.accountCreated(mrec.memberId, null, mrec.affiliateMemberId, mrec.visitorId);
 
         // fill in fields so we are returning up-to-date information
         mrec.accountName = email;
@@ -150,6 +153,15 @@ public class AccountLogic
             // move along
         }
 
+        // award coins
+        try {
+            _moneyLogic.awardCoins(memberId, CoinAwards.CREATED_ACCOUNT, true,
+                UserAction.createdAccount(memberId));
+
+        } catch (Exception e) {
+            log.warning("Failed to award coins for new account", "memberId", memberId, e);
+        }
+        
         return mrec;
     }
 
@@ -163,9 +175,10 @@ public class AccountLogic
         throws ServiceException
     {
         String name = _serverMsgs.getBundle("server").get("m.permaguest_name");
+        boolean registering = false;
         MemberRecord guest =  createAccount(createPermaguestAccountName(inetAddress),
-            PERMAGUEST_PASSWORD, name, null, null, new VisitorInfo(visitorId, false), null, null,
-            null, null);
+            PERMAGUEST_PASSWORD, name, null, null, new VisitorInfo(visitorId, false), null,
+            registering, null, null, null);
         guest.name = generatePermaguestDisplayName(guest.memberId);
         _memberRepo.configureDisplayName(guest.memberId, guest.name);
         log.info("Created permaguest account", "username", guest.accountName,
@@ -182,7 +195,8 @@ public class AccountLogic
         VisitorInfo vinfo, ExternalAuther exAuther, String exAuthUserId)
         throws ServiceException
     {
-        return createAccount(email, "", displayName, null, null, vinfo, null,
+        boolean registering = true;
+        return createAccount(email, "", displayName, null, null, vinfo, null, registering,
             null, exAuther, exAuthUserId);
     }
 
@@ -250,7 +264,8 @@ public class AccountLogic
      */
     protected MemberRecord createAccount (String email, String password,
         String displayName, String realName, InvitationRecord invite, VisitorInfo vinfo,
-        String cookie, int[] birthdayYMD, ExternalAuther exAuther, String exAuthUserId)
+        String cookie, boolean registering, int[] birthdayYMD, ExternalAuther exAuther,
+        String exAuthUserId)
         throws ServiceException
     {
         displayName = displayName.trim();
@@ -258,8 +273,8 @@ public class AccountLogic
         validateRegistrationInfo(birthdayYMD, email, displayName);
 
         // attempt to create the account
-        final MemberRecord mrec = createAccount(
-            email, password, displayName, invite, vinfo, cookie, exAuther, exAuthUserId);
+        final MemberRecord mrec = createAccount(email, password, displayName, invite, vinfo,
+            cookie, registering, exAuther, exAuthUserId);
 
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();
@@ -281,7 +296,8 @@ public class AccountLogic
      */
     protected MemberRecord createAccount (
         String email, String password, String displayName, InvitationRecord invite,
-        VisitorInfo visitor, String affiliate, ExternalAuther exAuther, String externalId)
+        VisitorInfo visitor, String affiliate, boolean registering, ExternalAuther exAuther,
+        String externalId)
         throws ServiceException
     {
         // make sure we're dealing with a lower cased email
@@ -331,7 +347,8 @@ public class AccountLogic
             _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
             // create their money account, granting them some starting flow
-            _moneyLogic.createMoneyAccount(mrec.memberId, CoinAwards.CREATED_ACCOUNT);
+            _moneyLogic.createMoneyAccount(
+                mrec.memberId, registering ? CoinAwards.CREATED_ACCOUNT : 0);
 
             // store their affiliate, if any (may also be the inviter's memberId)
             if (affiliate != null) {
@@ -339,10 +356,11 @@ public class AccountLogic
             }
 
             // record to the event log that we created a new account
-            // TODO: correct/remove for permaguests
-            final String iid = (invite == null) ? null : invite.inviteId;
-            final String vid = (visitor == null) ? null : visitor.id;
-            _eventLog.accountCreated(mrec.memberId, iid, mrec.affiliateMemberId, vid);
+            if (registering) {
+                final String iid = (invite == null) ? null : invite.inviteId;
+                final String vid = (visitor == null) ? null : visitor.id;
+                _eventLog.accountCreated(mrec.memberId, iid, mrec.affiliateMemberId, vid);
+            }
 
             // clear out account and stalerec to let the finally block know that all went well and
             // we need not roll back the domain account and member record creation
