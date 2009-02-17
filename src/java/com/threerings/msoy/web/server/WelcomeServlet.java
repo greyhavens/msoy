@@ -20,7 +20,11 @@ import com.threerings.util.MessageBundle;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerMessages;
 
+import com.threerings.msoy.web.gwt.ServiceException;
+
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
@@ -127,6 +131,22 @@ public class WelcomeServlet extends HttpServlet
                 title = msgs.get("m.game_share_title", game.name);
                 desc = msgs.get("m.game_share_desc");
 
+            } else if (path.startsWith(SHARE_ITEM_PREFIX)) {
+                String spec = path.substring(SHARE_ITEM_PREFIX.length());
+                String[] pieces = spec.split("_");
+                byte itemType = Byte.parseByte(pieces[0]);
+                int catalogId = Integer.parseInt(pieces[1]);
+                CatalogRecord listing;
+                try {
+                    listing = _itemLogic.requireListing(itemType, catalogId, true);
+                } catch (ServiceException se) {
+                    log.warning("Facebook requested share of nonexistant listing?", "path", path);
+                    return false;
+                }
+                image = listing.item.getThumbMediaDesc();
+                title = msgs.get("m.item_share_title", listing.item.name);
+                desc = msgs.get("m.item_share_desc", listing.item.description);
+
             } else {
                 log.warning("Unknown facebook share request", "path", path);
                 return false;
@@ -172,8 +192,10 @@ public class WelcomeServlet extends HttpServlet
     protected static final String SHARE_ROOM_PREFIX = "world-s";
     //protected static final String SHARE_GAME_PREFIX = "world-game_l_";
     protected static final String SHARE_GAME_PREFIX = "games-d_";
+    protected static final String SHARE_ITEM_PREFIX = "shop-l_";
 
     // our dependencies
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected ServerMessages _serverMsgs;
