@@ -41,7 +41,7 @@ public class DisconnectedPanel extends VBox
         addChild(_message);
 
         if (msg != null) {
-            setMessage(msg);
+            setMessage(msg, true);
         }
     }
 
