@@ -206,7 +206,9 @@ public class ReviewItem extends FlowPanel
                 new AsyncCallback<AdminService.ItemDeletionResult>() {
                     public void onSuccess (AdminService.ItemDeletionResult result) {
                         MsoyUI.info(_msgs.reviewDeletionSuccess(
-                            String.valueOf(result.deletionCount), String.valueOf(result.refunds)));
+                            String.valueOf(result.deletionCount), String.valueOf(result.refunds),
+                            String.valueOf(result.reclaimCount),
+                            String.valueOf(result.reclaimErrors)));
                         if (_mark != null) {
                             _mark.setEnabled(false);
                         }

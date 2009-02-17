@@ -56,6 +56,12 @@ public interface AdminService extends RemoteService
 
         /** Number of refund transactions created. */
         public int refunds;
+
+        /** Number of items reclaimed. */
+        public int reclaimCount;
+
+        /** Number of items that cause an error during reclaim. */
+        public int reclaimErrors;
     }
 
     /**

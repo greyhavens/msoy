@@ -449,9 +449,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
             // if the item didn't update, point that out to log readers
             if (0 == result) {
-                log.info("Attempt to mark item usage matched zero rows [type=" + _itemType +
-                         ", itemId=" + itemId + ", usageType=" + usageType +
-                         ", location=" + location + "].");
+                log.info("Attempt to mark item usage matched zero rows", "type", _itemType,
+                    "itemId", itemId, "usageType", usageType, "location", location);
             }
         }
     }
