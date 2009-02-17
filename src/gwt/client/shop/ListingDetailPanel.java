@@ -121,6 +121,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // "bought" interface when the buying is done
         _details.add(new ItemBuyPanel(_listing, null));
 
+        _details.add(MsoyUI.makeShareButton(
+            Pages.SHOP, Args.compose("l", _item.getType(), _listing.catalogId),
+            _dmsgs.xlate("itemType" + _item.getType()),
+            _item.name, _item.description, _item.getThumbnailMedia()));
+
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId, true), true);
 

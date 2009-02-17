@@ -34,6 +34,7 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.comment.CommentsPanel;
 import client.item.FavoriteIndicator;
 import client.shell.CShell;
+import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.Rating;
 import client.ui.StyledTabPanel;
@@ -101,7 +102,8 @@ public class GameDetailPanel extends SmartTable
                 mbits.add(new FavoriteIndicator(game, detail.memberItemInfo));
                 mbits.add(WidgetUtil.makeShim(10, 10));
             }
-            mbits.add(MsoyUI.makeShareButton(Pages.GAMES, Args.compose("d", gameId),
+            mbits.add(MsoyUI.makeShareButton(
+                Pages.GAMES, Args.compose("d", gameId), _dmsgs.xlate("itemType" + Game.GAME),
                 detail.item.name, detail.item.description, game.getShotMedia()));
             shot.add(mbits);
         }
@@ -233,6 +235,7 @@ public class GameDetailPanel extends SmartTable
     protected GameDetails _seltab;
     protected Map<GameDetails, Integer> _tabmap = new HashMap<GameDetails, Integer>();
 
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);

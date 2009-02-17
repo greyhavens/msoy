@@ -3,6 +3,8 @@
 
 package client.ui;
 
+import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.http.client.URL;
 
 import com.google.gwt.user.client.Window;
@@ -17,18 +19,19 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
 
-// TODO:
-// - translations
-// - UI love
-// - share things other than games: items. Why not!?
+/**
+ * A wee dialog that pops up to allow the user to share whirled content on other
+ * sites.
+ */
 public class ShareDialog extends BorderedDialog
 {
     public ShareDialog (
-        String token, String title, String desc, final MediaDesc image)
+        String token, String shareObject, String title, String desc, final MediaDesc image)
     {
         super(true); // autohide
-        setHeaderTitle("Share this game!"); // TODO: xlate, we'll have more than games...
+        setHeaderTitle(_cmsgs.shareTitle(shareObject));
 
         SmartTable panel = new SmartTable();
         panel.setCellPadding(20);
@@ -51,7 +54,7 @@ public class ShareDialog extends BorderedDialog
             MsoyUI.createActionImage(
                 "http://b.static.ak.fbcdn.net/images/share/facebook_share_icon.gif?8:26981",
                 facebookListener),
-            MsoyUI.createActionLabel("Share on Facebook", facebookListener)));
+            MsoyUI.createActionLabel(_cmsgs.shareFacebook(), facebookListener)));
 
         // myspace
         ClickListener myspaceListener = new ClickListener() {
@@ -67,7 +70,7 @@ public class ShareDialog extends BorderedDialog
         panel.setWidget(0, 1, MsoyUI.createButtonPair(
             MsoyUI.createActionImage(
                 "http://cms.myspacecdn.com/cms/post_myspace_icon.gif", myspaceListener),
-            MsoyUI.createActionLabel("Share on MySpace", myspaceListener)));
+            MsoyUI.createActionLabel(_cmsgs.shareMyspace(), myspaceListener)));
 
         // Digg:
         // ... is a little different: we need to use the "go" url because all submitted
@@ -81,4 +84,6 @@ public class ShareDialog extends BorderedDialog
 
         setContents(panel);
     }
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

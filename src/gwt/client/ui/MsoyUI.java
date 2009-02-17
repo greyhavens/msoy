@@ -716,16 +716,19 @@ public class MsoyUI
     /**
      * Creates a button that allows a Digg submission for the specified page with the supplied
      * title and description.
+     *
+     * @param shareObject a pre-translationed singular subject like "game" or "avatar",
+     * for plugging into "share this [shareObject]".
      */
     public static Widget makeShareButton (
-        Pages page, String args, final String title, final String desc, final MediaDesc image)
+        Pages page, String args, final String shareObject,
+        final String title, final String desc, final MediaDesc image)
     {
-        // TODO: xlate
         final String token = Link.createToken(page, args);
-        // TODO: better than a button
-        Button trigger = new Button("Share", new ClickListener() {
+        // TODO: better than a grey button?
+        Button trigger = new Button(_cmsgs.share(), new ClickListener() {
             public void onClick (Widget sender) {
-                new ShareDialog(token, title, desc, image).show();
+                new ShareDialog(token, shareObject, title, desc, image).show();
             }
         });
         return trigger;
