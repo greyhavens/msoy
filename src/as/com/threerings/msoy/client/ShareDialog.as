@@ -344,7 +344,7 @@ public class ShareDialog extends FloatingPanel
         var page :String;
         if (_inGame) {
             //page = "world-game_l_" + _placeId;
-            page = "game-d_" + _placeId;
+            page = "games-d_" + _placeId;
         } else if (_placeId != 0) {
             page = "world-s" + _placeId;
         }
