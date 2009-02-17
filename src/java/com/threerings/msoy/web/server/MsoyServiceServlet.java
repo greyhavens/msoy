@@ -7,10 +7,12 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.UnexpectedException;
+
 import com.google.inject.Inject;
 import com.samskivert.servlet.util.CookieUtil;
 
@@ -172,15 +174,23 @@ public class MsoyServiceServlet extends RemoteServiceServlet
             return; // no need to write a 500 response, our output stream is hosed
         }
 
-        log.warning("Servlet service failure", "servlet", path,
-                    (e instanceof UnexpectedException) ? e.getCause() : e);
+        String errmsg;
+        if (e instanceof IncompatibleRemoteServiceException) {
+            log.info("Rejecting out of date client", "servlet", path);
+            errmsg = "This application is out of date, please click the refresh button on " +
+                "your browser.";
+        } else {
+            log.warning("Servlet service failure", "servlet", path,
+                        (e instanceof UnexpectedException) ? e.getCause() : e);
+            errmsg = "We are experiencing technical difficults. Eet broke!";
+        }
 
         // send a generic failure message with 500 status
         try {
             HttpServletResponse rsp = getThreadLocalResponse();
             rsp.setContentType("text/plain");
             rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            rsp.getWriter().write("We are experiencing technical difficults. Eet broke!");
+            rsp.getWriter().write(errmsg);
         } catch (IOException ioe) {
             log.warning("Failed writing faiure response", ioe);
         }
