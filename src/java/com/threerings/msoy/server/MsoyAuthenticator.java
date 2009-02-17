@@ -26,6 +26,7 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.GwtAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -106,7 +107,11 @@ public class MsoyAuthenticator extends Authenticator
             account.firstLogon = (mrec.sessions == 0);
 
             // validate that they can logon from the domain
-            domain.validateAccount(account);
+            try {
+                domain.validateAccount(account);
+            } catch (ServiceException se) {
+                checkBan(se, mrec.memberId);
+            }
 
             // validate that they can logon locally
             checkWarnAndBan(mrec.memberId);
@@ -333,7 +338,11 @@ public class MsoyAuthenticator extends Authenticator
 
         // check to see whether this account has been banned or if this is a first time user
         // logging in from a tainted machine
-        domain.validateAccount(account, creds.ident, newIdent);
+        try {
+            domain.validateAccount(account, creds.ident, newIdent);
+        } catch (ServiceException se) {
+            checkBan(se, member.memberId);
+        }
 
         // validate the account locally
         rdata.warning = checkWarnAndBan(member.memberId);
@@ -355,6 +364,22 @@ public class MsoyAuthenticator extends Authenticator
                                member.created.getTime());
 
         return account;
+    }
+
+    /**
+     * Transforms a  {@link GwtAuthCodes#BANNED} {@link ServiceException} into a
+     * {@link BannedException} annotated with the warning supplied for the ban.
+     */
+    protected void checkBan (ServiceException se, int memberId)
+        throws ServiceException
+    {
+        // peek at the guts of the exception
+        if (!MsoyAuthCodes.BANNED.equals(se.getMessage())) {
+            throw se;
+        }
+        // if it's BANNED, mutate it!
+        MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);
+        throw new BannedException(MsoyAuthCodes.BANNED, (record != null) ? record.warning : null);
     }
 
     /**

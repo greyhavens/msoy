@@ -139,7 +139,11 @@ public class LogonPanel extends SmartTable
                 String message = null;
                 if (caught instanceof BannedException) {
                     BannedException be = (BannedException)caught;
-                    message = _cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
+                    if (be.getExpires() >= 0) {
+                        message = _cmsgs.tempBan(be.getWarning(), "" + be.getExpires());
+                    } else {
+                        message = _cmsgs.ban(be.getWarning());
+                    }
                 } else {
                     message = CShell.serverError(caught);
                 }

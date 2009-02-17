@@ -9,6 +9,14 @@ package com.threerings.msoy.web.gwt;
 public class BannedException extends ServiceException
 {
     /**
+     * Creates a permanent bann exception with the supplied translation message and warning.
+     */
+    public BannedException (String message, String warning)
+    {
+        this(message, warning, -1);
+    }
+
+    /**
      * Creates a banned exception with the supplied translation message, warning and time until
      * ban expires in hours or -1 for permanent ban.
      */
