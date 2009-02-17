@@ -505,6 +505,11 @@ public class WebUserServlet extends MsoyServiceServlet
         if (mrec == null) {
             return false;
         }
+        // TEMP: remove a few weeks after 2009-02-17
+        if (code.endsWith("==")) {
+            code = code.substring(0, code.length()-2);
+        }
+        // END TEMP
         if (!_accountLogic.generateValidationCode(mrec).equals(code)) {
             return false;
         }

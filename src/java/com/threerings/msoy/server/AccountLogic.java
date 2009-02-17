@@ -260,7 +260,8 @@ public class AccountLogic
     public String generateValidationCode (MemberRecord mrec)
     {
         String data = ServerConfig.sharedSecret + mrec.memberId + mrec.accountName;
-        return new String(Base64.encodeBase64(StringUtil.md5(data)));
+        String code = new String(Base64.encodeBase64(StringUtil.md5(data)));
+        return code.substring(0, code.length()-2); // strip off the trailing ==
     }
 
     /**
