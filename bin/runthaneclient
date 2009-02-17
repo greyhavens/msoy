@@ -66,7 +66,7 @@ echo "           Main: $MAIN"
 echo "   Window Token: $WINDOW_TOKEN"
 echo "------------------------------------------------------------------------------"
 
-$THANE_INTERPRETER -Dinterp $LIBS $MAIN -- $BUREAU_ID $CONNECT_TOKEN \
+$THANE_INTERPRETER -Dinterp -Dtimeout $LIBS $MAIN -- $BUREAU_ID $CONNECT_TOKEN \
     $CONNECT_SERVER $CONNECT_PORT $WINDOW_TOKEN 2>&1
 EXIT_CODE=$?
 
