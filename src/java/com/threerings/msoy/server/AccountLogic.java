@@ -3,11 +3,14 @@
 
 package com.threerings.msoy.server;
 
-import java.security.MessageDigest;
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
+import javax.mail.internet.MimeUtility;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import org.apache.commons.codec.binary.Base64;
 
 import com.samskivert.depot.DuplicateKeyException;
 
@@ -256,7 +259,8 @@ public class AccountLogic
      */
     public String generateValidationCode (MemberRecord mrec)
     {
-        return StringUtil.md5hex(ServerConfig.sharedSecret + mrec.memberId + mrec.accountName);
+        String data = ServerConfig.sharedSecret + mrec.memberId + mrec.accountName;
+        return new String(Base64.encodeBase64(StringUtil.md5(data)));
     }
 
     /**
@@ -459,24 +463,8 @@ public class AccountLogic
      */
     protected static String createPermaguestAccountName (String ipAddress)
     {
-        // generate some unique stuff
-        String hashSource = "" + System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random();
-
-        // hash it
-        byte[] digest;
-        try {
-            digest = MessageDigest.getInstance("MD5").digest(hashSource.getBytes());
-
-        } catch (java.security.NoSuchAlgorithmException nsae) {
-            throw new RuntimeException("MD5 not found!?");
-        }
-
-        if (digest.length != 16) {
-            throw new RuntimeException("Odd MD5 digest: " + StringUtil.hexlate(digest));
-        }
-
-        // convert to an email address
-        return MemberName.PERMAGUEST_EMAIL_PREFIX + StringUtil.hexlate(digest) +
+        return MemberName.PERMAGUEST_EMAIL_PREFIX +
+            StringUtil.md5hex(System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random()) +
             MemberName.PERMAGUEST_EMAIL_SUFFIX;
     }
 

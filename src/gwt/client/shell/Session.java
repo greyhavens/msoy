@@ -149,6 +149,42 @@ public class Session
     }
 
     /**
+     * Reconfigures our role based on whether our email is now or is no longer validated.
+     */
+    public static void updateEmailValid (boolean validated)
+    {
+        if (CShell.creds == null) {
+            return; // bogosity!
+        }
+        if (validated) {
+            switch (CShell.creds.role) {
+            case PERMAGUEST: break; // bogosity!
+            case REGISTERED:
+                CShell.creds.role = WebCreds.Role.VALIDATED;
+                break;
+            case VALIDATED:
+            case SUPPORT:
+            case ADMIN:
+            case MAINTAINER:
+                break; // leave them as is
+            }
+
+        } else {
+            switch (CShell.creds.role) {
+            case PERMAGUEST: break; // bogosity!
+            case REGISTERED: break; // bogosity!
+            case VALIDATED:
+                CShell.creds.role = WebCreds.Role.REGISTERED;
+                break;
+            case SUPPORT:
+            case ADMIN:
+            case MAINTAINER:
+                break; // leave them as is
+            }
+        }
+    }
+
+    /**
      * Assigns our session token to the value obtained from the server by flash and re-validates it
      * without disturbing the current state of the flash client.
      */

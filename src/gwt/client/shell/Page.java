@@ -86,6 +86,10 @@ public abstract class Page
                     List<String> fdata = data.flatten();
                     frameCall(Frame.Calls.DID_LOGON, fdata.toArray(new String[fdata.size()]));
                 }
+                public void updateValidated (boolean validated) {
+                    Session.updateEmailValid(validated);
+                    frameCall(Frame.Calls.UPDATE_VALIDATED, String.valueOf(validated));
+                }
                 public String md5hex (String text) {
                     return frameCall(Frame.Calls.GET_MD5, text)[0];
                 }
@@ -140,6 +144,9 @@ public abstract class Page
                 }
                 public void dispatchDidLogon (SessionData data) {
                     Session.didLogon(data);
+                }
+                public void updateValidated (boolean validated) {
+                    Session.updateEmailValid(validated);
                 }
                 public String md5hex (String text) {
                     CShell.log("Pants! No md5 in standalone mode.");

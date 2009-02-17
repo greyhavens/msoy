@@ -21,8 +21,8 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#externalLogon}.
      */
-    void externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo, int expireDays,
-                        AsyncCallback<SessionData> callback);
+    void externalLogon (String clientVersion, ExternalCreds creds, VisitorInfo vinfo,
+                        int expireDays, AsyncCallback<SessionData> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#register}.
@@ -102,4 +102,9 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#resendValidationEmail}.
      */
     void resendValidationEmail (AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link WebUserService#validateEmail}.
+     */
+    void validateEmail (int memberId, String code, AsyncCallback<Boolean> callback);
 }

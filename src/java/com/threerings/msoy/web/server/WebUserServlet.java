@@ -353,6 +353,14 @@ public class WebUserServlet extends MsoyServiceServlet
             }
             throw se;
         }
+
+        // if we made it this far, mark the account as no longer validated
+        mrec.setFlag(MemberRecord.Flag.VALIDATED, false);
+        _memberRepo.storeFlags(mrec);
+
+        // and send a new validation email
+        mrec.accountName = newEmail;
+        sendValidationEmail(mrec);
     }
 
     // from interface WebUserService
@@ -488,11 +496,23 @@ public class WebUserServlet extends MsoyServiceServlet
         if (mrec.isValidated()) {
             throw new ServiceException("e.already_validated");
         }
+        sendValidationEmail(mrec);
+    }
 
-        _mailer.sendTemplateEmail(
-            mrec.accountName, ServerConfig.getFromAddress(), "revalidateEmail",
-            "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
-            "memberId", mrec.memberId, "code", _accountLogic.generateValidationCode(mrec));
+    // from interface WebUserService
+    public boolean validateEmail (int memberId, String code)
+        throws ServiceException
+    {
+        MemberRecord mrec = _memberRepo.loadMember(memberId);
+        if (mrec == null) {
+            return false;
+        }
+        if (!_accountLogic.generateValidationCode(mrec).equals(code)) {
+            return false;
+        }
+        mrec.setFlag(MemberRecord.Flag.VALIDATED, true);
+        _memberRepo.storeFlags(mrec);
+        return true;
     }
 
     protected void checkClientVersion (String clientVersion, String who)
@@ -503,6 +523,14 @@ public class WebUserServlet extends MsoyServiceServlet
                      ", svers=" + DeploymentConfig.version + "].");
             throw new ServiceException(MsoyAuthCodes.VERSION_MISMATCH);
         }
+    }
+
+    protected void sendValidationEmail (MemberRecord mrec)
+    {
+        _mailer.sendTemplateEmail(
+            mrec.accountName, ServerConfig.getFromAddress(), "revalidateEmail",
+            "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
+            "memberId", mrec.memberId, "code", _accountLogic.generateValidationCode(mrec));
     }
 
     protected void verifyCaptcha (String challenge, String response)

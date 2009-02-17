@@ -83,6 +83,12 @@ public class EditAccountPanel extends FlowPanel
         add(new TongueBox(_msgs.fbconnectHeader(), makeFacebookConnectSection()));
     }
 
+    protected void refresh ()
+    {
+        clear();
+        init(_accountInfo);
+    }
+
     protected Widget makePermanameSection ()
     {
         _perma = new SmartTable(0, 10);
@@ -335,7 +341,8 @@ public class EditAccountPanel extends FlowPanel
             public void onSuccess (Void result) {
                 CShell.creds.accountName = email;
                 MsoyUI.infoNear(_msgs.emailUpdated(), _upemail);
-                // TODO: reset email validation UI
+                CShell.frame.updateValidated(false);
+                refresh();
             }
             public void onFailure (Throwable cause) {
                 _upemail.setEnabled(true);

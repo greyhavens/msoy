@@ -430,6 +430,12 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
+    public void updateValidated (boolean validated)
+    {
+        Session.updateEmailValid(validated);
+    }
+
+    // from interface Frame
     public String md5hex (String text)
     {
         return nmd5hex(text);
@@ -867,6 +873,9 @@ public class FrameEntryPoint
             return null;
         case DID_LOGON:
             Session.didLogon(SessionData.unflatten(ArrayUtil.toIterator(args)));
+            return null;
+        case UPDATE_VALIDATED:
+            updateValidated(Boolean.parseBoolean(args[0]));
             return null;
         case GET_WEB_CREDS:
             return (CShell.creds == null) ? null : CShell.creds.flatten().toArray(new String[0]);

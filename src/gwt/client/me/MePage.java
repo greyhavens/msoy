@@ -52,6 +52,9 @@ public class MePage extends Page
         } else if (CShell.isPermaguest()) {
             Link.go(Pages.ACCOUNT, "create");
 
+        } else if (!CShell.isValidated()) {
+            Link.go(Pages.ACCOUNT, "edit");
+
         } else if (!CShell.isGuest()) {
             setContent(new MyWhirled());
 
