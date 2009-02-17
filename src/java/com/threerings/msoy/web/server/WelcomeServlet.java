@@ -20,6 +20,7 @@ import com.threerings.util.MessageBundle;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.ServerMessages;
 
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -189,10 +190,10 @@ public class WelcomeServlet extends HttpServlet
         return input.replace('\"', '\'');
     }
 
-    protected static final String SHARE_ROOM_PREFIX = "world-s";
-    //protected static final String SHARE_GAME_PREFIX = "world-game_l_";
-    protected static final String SHARE_GAME_PREFIX = "games-d_";
-    protected static final String SHARE_ITEM_PREFIX = "shop-l_";
+    protected static final String SHARE_ROOM_PREFIX = Pages.WORLD.getPath() + "-s";
+    //protected static final String SHARE_GAME_PREFIX = Pages.WORLD.getPath() + "-game_l_";
+    protected static final String SHARE_GAME_PREFIX = Pages.GAMES.getPath() + "-d_";
+    protected static final String SHARE_ITEM_PREFIX = Pages.SHOP.getPath() + "-l_";
 
     // our dependencies
     @Inject protected ItemLogic _itemLogic;
