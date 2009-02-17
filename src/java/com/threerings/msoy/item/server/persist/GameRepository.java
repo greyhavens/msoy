@@ -23,6 +23,7 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Conditionals;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.SQLOperator;
 
@@ -32,6 +33,8 @@ import com.threerings.msoy.server.persist.RatingRecord;
 import com.threerings.msoy.server.persist.RatingRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRecord;
+
+import com.threerings.msoy.game.server.persist.GameDetailRecord;
 
 /**
  * Manages the persistent store of {@link Game} items.
@@ -103,6 +106,7 @@ public class GameRepository extends ItemRepository<GameRecord>
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Join(GameRecord.ITEM_ID, GameCatalogRecord.LISTED_ITEM_ID));
+        clauses.add(new Join(GameRecord.GAME_ID, GameDetailRecord.GAME_ID));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
         }
@@ -122,9 +126,9 @@ public class GameRepository extends ItemRepository<GameRecord>
         if (search != null && search.length() > 0) {
             whereBits.add(buildSearchClause(search));
         }
-        if (whereBits.size() > 0) {
-            clauses.add(new Where(new And(whereBits)));
-        }
+        // filter out games that have 0 plays (ie. aren't integrated with Whirled)
+        whereBits.add(new Conditionals.GreaterThan(GameDetailRecord.GAMES_PLAYED, 0));
+        clauses.add(new Where(new And(whereBits)));
 
         // finally fetch all the game records of interest
         return findAll(getItemClass(), clauses);
