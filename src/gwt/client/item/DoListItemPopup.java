@@ -92,8 +92,9 @@ public class DoListItemPopup extends VerticalPanel
 
             int row = pricing.addText(_imsgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
-            int selectedPricingIndex = (_item instanceof SubItem && !((SubItem) _item).isSalable())
-                ? 0 /* hidden */ : 1 /* manual */;
+            boolean isSalable = (_item instanceof SubItem && !((SubItem) _item).isSalable());
+            int selectedPricingIndex =
+                (isSalable ? CatalogListing.PRICING_HIDDEN : CatalogListing.PRICING_ESCALATE)-1;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
                 _pricingBox.addItem(_dmsgs.xlate(key));
@@ -264,7 +265,7 @@ public class DoListItemPopup extends VerticalPanel
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 
     protected static final int DEFAULT_COIN_COST = 1000;
-    protected static final int DEFAULT_SALES_TARGET = 500;
+    protected static final int DEFAULT_SALES_TARGET = 50;
 
     protected static final Currency[] LISTABLE_CURRENCIES = { Currency.COINS, Currency.BARS };
 }
