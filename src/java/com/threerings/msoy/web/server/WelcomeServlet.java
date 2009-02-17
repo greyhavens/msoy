@@ -130,7 +130,7 @@ public class WelcomeServlet extends HttpServlet
                     image = Item.getDefaultThumbnailMediaFor(Item.GAME);
                 }
                 title = msgs.get("m.game_share_title", game.name);
-                desc = msgs.get("m.game_share_desc");
+                desc = game.description;
 
             } else if (path.startsWith(SHARE_ITEM_PREFIX)) {
                 String spec = path.substring(SHARE_ITEM_PREFIX.length());
@@ -146,7 +146,7 @@ public class WelcomeServlet extends HttpServlet
                 }
                 image = listing.item.getThumbMediaDesc();
                 title = msgs.get("m.item_share_title", listing.item.name);
-                desc = msgs.get("m.item_share_desc", listing.item.description);
+                desc = listing.item.description;
 
             } else {
                 log.warning("Unknown facebook share request", "path", path);
