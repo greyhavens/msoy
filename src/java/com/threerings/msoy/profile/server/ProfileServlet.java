@@ -328,9 +328,13 @@ public class ProfileServlet extends MsoyServiceServlet
             EarnedMedalRecord earnedMedalRec =
                 _medalRepo.loadEarnedMedal(tgtrec.memberId, profile.award.awardId);
             MedalRecord medalRec = _medalRepo.loadMedal(profile.award.awardId);
-            profile.award.whenEarned = earnedMedalRec.whenEarned.getTime();
-            profile.award.name = medalRec.name;
-            profile.award.icon = medalRec.createIconMedia();
+            if (medalRec != null) {
+                profile.award.whenEarned = earnedMedalRec.whenEarned.getTime();
+                profile.award.name = medalRec.name;
+                profile.award.icon = medalRec.createIconMedia();
+            } else {
+                profile.award = null;
+            }
         }
 
         // TODO: if they're online right now, show that
