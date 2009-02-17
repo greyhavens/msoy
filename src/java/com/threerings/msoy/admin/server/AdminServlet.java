@@ -118,8 +118,10 @@ public class AdminServlet extends MsoyServiceServlet
             info.role = WebCreds.Role.ADMIN;
         } else if (tgtrec.isSet(MemberRecord.Flag.SUPPORT)) {
             info.role = WebCreds.Role.SUPPORT;
+        } else if (tgtrec.isSet(MemberRecord.Flag.VALIDATED)) {
+            info.role = WebCreds.Role.VALIDATED;
         } else {
-            info.role = WebCreds.Role.USER;
+            info.role = WebCreds.Role.REGISTERED;
         }
         info.flow = money.coins;
         info.accFlow = (int)money.accCoins;
@@ -187,6 +189,7 @@ public class AdminServlet extends MsoyServiceServlet
         // log this as a warning so that it shows up in the nightly filtered logs
         log.warning("Configuring role", "setter", memrec.who(), "target", tgtrec.who(),
                     "role", role);
+        tgtrec.setFlag(MemberRecord.Flag.VALIDATED, role != WebCreds.Role.REGISTERED);
         tgtrec.setFlag(MemberRecord.Flag.SUPPORT, role == WebCreds.Role.SUPPORT);
         if (memrec.isMaintainer()) {
             tgtrec.setFlag(MemberRecord.Flag.ADMIN, role == WebCreds.Role.ADMIN);

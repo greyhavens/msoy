@@ -116,7 +116,7 @@ public class ItemServlet extends MsoyServiceServlet
     public RatingResult rateItem (ItemIdent iident, byte rating)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireValidatedUser();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
         ItemRecord item = repo.loadItem(iident.itemId);

@@ -127,4 +127,10 @@ public interface WebUserService extends RemoteService
      */
     void updateCharity (int selectedCharityId)
         throws ServiceException;
+
+    /**
+     * Requests to resend the validation email for the calling account.
+     */
+    void resendValidationEmail ()
+        throws ServiceException;
 }

@@ -97,4 +97,9 @@ public interface WebUserServiceAsync
      * The asynchronous version of {@link WebUserService#updateCharity}.
      */
     void updateCharity (int selectedCharityId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link WebUserService#resendValidationEmail}.
+     */
+    void resendValidationEmail (AsyncCallback<Void> callback);
 }

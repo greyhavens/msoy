@@ -49,7 +49,7 @@ public class CShell
     }
 
     /**
-     * Returns true if we're a guest, false if we're a member.
+     * Returns true if we're an ephemeral guest, false if we're a permaguest or registered member.
      */
     public static boolean isGuest ()
     {
@@ -57,11 +57,29 @@ public class CShell
     }
 
     /**
-     * Returns true if we're a permaguest, false if we're a registered member.
+     * Returns true if we're a permaguest, false if we're an ephemeral guest or registered member.
      */
     public static boolean isPermaguest ()
     {
-        return creds != null && MemberName.isPermaguest(creds.accountName);
+        return creds != null && (creds.role == WebCreds.Role.PERMAGUEST);
+    }
+
+    /**
+     * Returns true if we are a registered user that may or may not have a validate email address,
+     * false if we're a guest or permaguest.
+     */
+    public static boolean isRegistered ()
+    {
+        return creds != null && creds.isRegistered();
+    }
+
+    /**
+     * Returns true if we are a registered user with a validated email address, false if we're a
+     * guest, permaguest or a registered member with an unvalidated email address.
+     */
+    public static boolean isValidated ()
+    {
+        return creds != null && creds.isValidated();
     }
 
     /**
@@ -107,7 +125,7 @@ public class CShell
                         // not accessible to GWT currently for unrelated technical reasons
                         "G" + event.getGuestId(), null,
                         new MemberName("Guest" + event.getGuestId(), event.getGuestId()), null,
-                        WebCreds.Role.USER);
+                        WebCreds.Role.PERMAGUEST);
                 }
             }
         });

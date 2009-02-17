@@ -61,9 +61,11 @@ public class ForumPanel extends TitledListPanel
 
     public void startNewThread (int groupId)
     {
-        ForumModels.GroupThreads gthreads = _fmodels.getGroupThreads(groupId);
-        setContents(_mmsgs.ntpTitle(), new NewThreadPanel(groupId, gthreads.isManager(),
-                                                          gthreads.isAnnounce()));
+        if (MsoyUI.requireValidated()) {
+            ForumModels.GroupThreads gthreads = _fmodels.getGroupThreads(groupId);
+            setContents(_mmsgs.ntpTitle(), new NewThreadPanel(groupId, gthreads.isManager(),
+                                                              gthreads.isAnnounce()));
+        }
     }
 
     protected SmartTable createHeader (int groupId, String title, SearchBox.Listener listener)

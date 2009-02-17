@@ -731,6 +731,21 @@ public class MsoyUI
         return trigger;
     }
 
+    /**
+     * Returns true if the logged on member has a validated email address, false if they do not. In
+     * the false case, a popup will be displayed telling the user that they need to validate their
+     * email address with a link to the page that allows them to do so.
+     */
+    public static boolean requireValidated ()
+    {
+        if (CShell.isValidated()) {
+            return true;
+        }
+        infoAction(_cmsgs.requiresValidated(), _cmsgs.goValidate(),
+                   Link.createListener(Pages.ACCOUNT, "edit"));
+        return false;
+    }
+
     protected static class TextBoxSelector
         implements FocusListener, ClickListener
     {

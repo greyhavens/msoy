@@ -281,7 +281,7 @@ public class ForumServlet extends MsoyServiceServlet
                                      String subject, String message)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
 
         // make sure they're allowed to create a thread in this group
         Group group = checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
@@ -333,7 +333,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void updateThreadFlags (int threadId, int flags)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
         ForumThreadRecord ftr = _forumRepo.loadThread(threadId);
         if (ftr == null) {
             throw new ServiceException(ForumCodes.E_INVALID_THREAD);
@@ -355,7 +355,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void ignoreThread (int threadId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
         _forumRepo.noteLastReadPostId(mrec.memberId, threadId, Integer.MAX_VALUE, 0);
     }
 
@@ -363,7 +363,7 @@ public class ForumServlet extends MsoyServiceServlet
     public ForumMessage postMessage (int threadId, int inReplyTo, String message)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
 
         // make sure they're allowed to post a message to this thread's group
         ForumThreadRecord ftr = _forumRepo.loadThread(threadId);
@@ -400,7 +400,7 @@ public class ForumServlet extends MsoyServiceServlet
     public ForumMessage editMessage (int messageId, String message)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
 
         // make sure they are the message author
         ForumMessageRecord fmr = _forumRepo.loadMessage(messageId);
@@ -426,7 +426,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void deleteMessage (int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
 
         // make sure they are the message author or a group admin or whirled support+
         ForumMessageRecord fmr = _forumRepo.loadMessage(messageId);
@@ -451,7 +451,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void complainMessage (String complaint, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
 
         // load up the message details
         ForumMessageRecord fmr = _forumRepo.loadMessage(messageId);

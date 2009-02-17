@@ -89,12 +89,14 @@ public class CommentsPanel extends PagedGrid<Comment>
     {
         super.addCustomControls(controls);
 
-        // if we're logged in, display a button for posting a comment
-        if (!CShell.isGuest()) {
+        // if we're a validated member, display a button for posting a comment
+        if (CShell.isRegistered()) {
             _post = new Button(_cmsgs.postComment(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    _post.setEnabled(false);
-                    showPostPanel();
+                    if (MsoyUI.requireValidated()) {
+                        _post.setEnabled(false);
+                        showPostPanel();
+                    }
                 }
             });
             controls.setWidget(0, 0, _post);
@@ -144,7 +146,7 @@ public class CommentsPanel extends PagedGrid<Comment>
      */
     protected boolean canComplain (Comment comment)
     {
-        return (_etype != Comment.TYPE_PROFILE_WALL) && !CShell.isGuest() &&
+        return (_etype != Comment.TYPE_PROFILE_WALL) && CShell.isValidated() &&
             (CShell.getMemberId() != comment.commentor.getMemberId());
     }
 

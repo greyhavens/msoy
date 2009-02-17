@@ -116,8 +116,8 @@ public class CommentPanel extends MessagePanel
             return tools;
         }
 
-        if (_rated || CShell.isGuest() ||
-                CShell.getMemberId() == _comment.commentor.getMemberId()) {
+        if (_rated || !CShell.isValidated() ||
+            CShell.getMemberId() == _comment.commentor.getMemberId()) {
             return tools;
         }
 

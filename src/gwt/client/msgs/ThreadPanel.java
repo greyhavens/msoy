@@ -90,23 +90,31 @@ public class ThreadPanel extends TitledListPanel
 
     public void editFlags ()
     {
-        new ThreadFlagsEditorPanel().show();
+        if (MsoyUI.requireValidated()) {
+            new ThreadFlagsEditorPanel().show();
+        }
     }
 
     public void postReply (ForumMessage inReplyTo, boolean quote)
     {
-        setContents(_mmsgs.threadReplyHeader(_thread.subject),
-                    new ReplyPanel(inReplyTo, quote));
+        if (MsoyUI.requireValidated()) {
+            setContents(_mmsgs.threadReplyHeader(_thread.subject),
+                        new ReplyPanel(inReplyTo, quote));
+        }
     }
 
     public void editPost (ForumMessage message, AsyncCallback<ForumMessage> callback)
     {
-        setContents(_thread.subject, new PostEditorPanel(message, callback));
+        if (MsoyUI.requireValidated()) {
+            setContents(_thread.subject, new PostEditorPanel(message, callback));
+        }
     }
 
     public void newIssue (ForumMessage message)
     {
-        setContents(_mmsgs.newIssue(), new EditIssuePanel(this, message));
+        if (MsoyUI.requireValidated()) {
+            setContents(_mmsgs.newIssue(), new EditIssuePanel(this, message));
+        }
     }
 
     // from interface SearchBox.Listener

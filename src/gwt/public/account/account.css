@@ -129,6 +129,11 @@
   font-size: 14px;
 }
 
+.editAccount .Warning {
+  font-weight: bold;
+  color: #990000;
+}
+
 .editAccount .FBLink img {
   margin: 0;
 }

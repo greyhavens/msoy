@@ -36,7 +36,8 @@ public abstract class Rating extends FlexTable
         _ratingCount.setStyleName(STYLE_COUNT);
         setRatingCount(ratingCount);
 
-        boolean writable = !CShell.isGuest();
+        // only validated members can rate things
+        boolean writable = CShell.isValidated();
 
         if (writable) {
             _memberRating = myRating;

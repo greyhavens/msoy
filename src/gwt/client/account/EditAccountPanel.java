@@ -40,6 +40,7 @@ import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.ui.TongueBox;
+import client.util.ClickCallback;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -113,6 +114,8 @@ public class EditAccountPanel extends FlowPanel
     protected Widget makeChangeEmailSection ()
     {
         SmartTable table = new SmartTable(0, 10);
+
+        // the first row allows changing of their address
         table.setText(0, 0, _msgs.editEmail(), 1, "rightLabel");
         table.setWidget(0, 1, _email = MsoyUI.createTextBox("", MemberName.MAX_EMAIL_LENGTH, -1));
         _email.setText(CShell.creds.accountName);
@@ -121,13 +124,31 @@ public class EditAccountPanel extends FlowPanel
                 validateEmail();
             }
         });
-        _upemail = new Button(_cmsgs.update(), new ClickListener() {
+        table.setWidget(0, 2, _upemail = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
                 updateEmail();
             }
-        });
+        }));
         _upemail.setEnabled(false);
-        table.setWidget(0, 2, _upemail);
+
+        // the second row informs of their validation status and allows resend of validation email
+        table.setText(1, 0, _msgs.editEmailValid(), 1, "rightLabel");
+        if (CShell.creds.isValidated()) {
+            table.setText(1, 1, _msgs.editEmailIsValid(), 2, null);
+        } else {
+            table.setText(1, 1, _msgs.editEmailNotValid(), 2, "Warning");
+            table.setWidget(2, 2, _revalidate = new Button(_msgs.editEmailResend()));
+            new ClickCallback<Void>(_revalidate) {
+                protected boolean callService () {
+                    _usersvc.resendValidationEmail(this);
+                    return true;
+                }
+                protected boolean gotResult (Void result) {
+                    MsoyUI.infoNear(_msgs.editEmailResent(CShell.creds.accountName), _revalidate);
+                    return true;
+                }
+            };
+        }
         return table;
     }
 
@@ -314,6 +335,7 @@ public class EditAccountPanel extends FlowPanel
             public void onSuccess (Void result) {
                 CShell.creds.accountName = email;
                 MsoyUI.infoNear(_msgs.emailUpdated(), _upemail);
+                // TODO: reset email validation UI
             }
             public void onFailure (Throwable cause) {
                 _upemail.setEnabled(true);
@@ -481,7 +503,7 @@ public class EditAccountPanel extends FlowPanel
     protected TextBox _email, _pname, _rname;
     protected CheckBox _whirledEmail, _announceEmail;
     protected PasswordTextBox _password, _confirm;
-    protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname, _upcharity;
+    protected Button _upemail, _upeprefs, _uppass, _uppname, _uprname, _upcharity, _revalidate;
 
     protected FBConnect _fbconnect = new FBConnect();
 

@@ -128,8 +128,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         // ephmera to determine how they lay themselves out
         if (_model == _tmodel) {
             _parent.gotThread(_tmodel.getThread());
-            _postReply.setEnabled((_tmodel.canPostReply() && !_tmodel.getThread().isLocked())
-                    || CShell.isSupport());
+            boolean canReply = _tmodel.canPostReply() && !_tmodel.getThread().isLocked();
+            _postReply.setEnabled(canReply || CShell.isSupport());
             _editFlags.setEnabled(_tmodel.isManager() || CShell.isSupport());
         }
 
@@ -148,8 +148,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     @Override // from PagedGrid
     protected Widget createWidget (ForumMessage message)
     {
-        ThreadMessagePanel panel = new ThreadMessagePanel(_tmodel.getThread(), message,
-            _tmodel.isManager());
+        ThreadMessagePanel panel = new ThreadMessagePanel(
+            _tmodel.getThread(), message, _tmodel.isManager());
         if (message.messageId == _scrollToId) {
             _scrollToId = 0;
             _scrollToPanel = panel;
@@ -252,19 +252,20 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         {
             super.addInfo(info);
 
-            if (!CShell.isGuest() && CShell.getMemberId() != _message.poster.name.getMemberId()) {
+            final int memberId = CShell.getMemberId();
+            final boolean isPoster = (memberId == _message.poster.name.getMemberId());
+            if (!isPoster) {
                 String args = Args.compose("w", "m", ""+_message.poster.name.getMemberId());
-                info.add(makeInfoImage(
-                    _images.sendmail(), _mmsgs.inlineMail(),
-                    Link.createListener(Pages.MAIL, args)));
+                info.add(makeInfoImage(_images.sendmail(), _mmsgs.inlineMail(),
+                                       Link.createListener(Pages.MAIL, args)));
             }
 
             FlowPanel toolBar = MsoyUI.createFlowPanel("ToolBar");
             info.insert(toolBar, 0);
 
-            if (CShell.getMemberId() == _message.poster.name.getMemberId() || CShell.isSupport()) {
-                toolBar.add(makeInfoImage(_images.edit_post(),
-                                                _mmsgs.inlineEdit(), new ClickListener() {
+            if (isPoster || CShell.isSupport()) {
+                toolBar.add(makeInfoImage(_images.edit_post(), _mmsgs.inlineEdit(),
+                                          new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.editPost(_message, new MsoyCallback<ForumMessage>() {
                             public void onSuccess (ForumMessage message) {
@@ -275,28 +276,27 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                 }));
             }
 
-            if (!CShell.isGuest() && CShell.getMemberId() != _message.poster.name.getMemberId()) {
+            if (!isPoster) {
                 toolBar.add(makeInfoImage(_images.complain_post(), _mmsgs.inlineComplain(),
                     new ClickListener() {
                         public void onClick (Widget sender) {
-                            new ForumMessageComplainPopup(_message).show();
+                            if (MsoyUI.requireValidated()) {
+                                new ForumMessageComplainPopup(_message).show();
+                            }
                         }
                     }));
             }
 
-            if (_isManager || CShell.getMemberId() == _message.poster.name.getMemberId()
-                || CShell.isSupport()) {
-                toolBar.add(makeInfoImage(_images.delete_post(),
-                                                _mmsgs.inlineDelete(),
-                                                new PromptPopup(_mmsgs.confirmDelete(),
-                                                                deletePost(_message))));
+            if ((CShell.isValidated() && (_isManager || isPoster)) || CShell.isSupport()) {
+                toolBar.add(makeInfoImage(_images.delete_post(), _mmsgs.inlineDelete(),
+                                          new PromptPopup(_mmsgs.confirmDelete(),
+                                                          deletePost(_message))));
             }
 
             if (_message.issueId > 0) {
                 ClickListener viewClick = Link.createListener(
                     Pages.GROUPS, Args.compose("i", _message.issueId));
-                toolBar.add(makeInfoImage(_images.view_issue(),
-                                                _mmsgs.inlineIssue(), viewClick));
+                toolBar.add(makeInfoImage(_images.view_issue(), _mmsgs.inlineIssue(), viewClick));
 
             } else if (CShell.isSupport()) {
                 ClickListener newClick = new ClickListener() {
@@ -304,12 +304,10 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                         _parent.newIssue(_message);
                     }
                 };
-                toolBar.add(makeInfoImage(_images.new_issue(),
-                                                _mmsgs.inlineNewIssue(), newClick));
+                toolBar.add(makeInfoImage(_images.new_issue(), _mmsgs.inlineNewIssue(), newClick));
+                String aargs = Args.compose("assign", _message.messageId, _page);
                 toolBar.add(makeInfoImage(_images.assign_issue(), _mmsgs.inlineAssignIssue(),
-                                       Link.createListener(
-                                           Pages.GROUPS, Args.compose(
-                                               "assign", ""+_message.messageId, ""+_page))));
+                                          Link.createListener(Pages.GROUPS, aargs)));
             }
         }
 

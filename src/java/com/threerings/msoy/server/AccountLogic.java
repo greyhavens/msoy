@@ -12,36 +12,30 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DuplicateKeyException;
 
 import com.samskivert.net.MailUtil;
-
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.web.gwt.ExternalAuther;
+import com.threerings.msoy.web.gwt.ServiceCodes;
+import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.MsoyAuthCodes;
-
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
-import com.threerings.msoy.money.server.MoneyLogic;
-
-import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-
-import com.threerings.msoy.room.data.MsoySceneModel;
-
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-
 import com.threerings.msoy.server.AuthenticationDomain.Account;
-
 import com.threerings.msoy.server.persist.AffiliateMapRepository;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.web.gwt.ExternalAuther;
-import com.threerings.msoy.web.gwt.ServiceCodes;
-import com.threerings.msoy.web.gwt.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -241,6 +235,14 @@ public class AccountLogic
         // make sure we're dealing with a lower cased email
         email = email.toLowerCase();
         return getDomain(email).validatePasswordResetCode(email, code);
+    }
+
+    /**
+     * Computes an email validation code for the supplied account.
+     */
+    public String generateValidationCode (MemberRecord mrec)
+    {
+        return StringUtil.md5hex(ServerConfig.sharedSecret + mrec.memberId + mrec.accountName);
     }
 
     /**
@@ -461,13 +463,13 @@ public class AccountLogic
     }
 
     @Inject protected AuthenticationDomain _defaultDomain;
+    @Inject protected ServerMessages _serverMsgs;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected AffiliateMapRepository _affMapRepo;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected ServerMessages _serverMsgs;
 
     /** Prefix of permaguest display names. They have to create an account to get a real one. */ 
     protected static final String PERMAGUEST_DISPLAY_PREFIX = "Guest";

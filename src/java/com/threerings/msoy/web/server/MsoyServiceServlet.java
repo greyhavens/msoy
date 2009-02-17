@@ -93,6 +93,20 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     }
 
     /**
+     * Returns the member record for the member making this request, requiring that they have a
+     * validated email address.
+     */
+    protected MemberRecord requireValidatedUser ()
+        throws ServiceException
+    {
+        final MemberRecord memrec = requireAuthedUser();
+        if (!memrec.isValidated()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+        return memrec;
+    }
+
+    /**
      * Returns the member record for the member making this request, requiring that they
      * be <b>support</b> or higher.
      */

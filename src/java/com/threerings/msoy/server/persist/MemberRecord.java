@@ -57,8 +57,11 @@ public class MemberRecord extends PersistentRecord
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
         TROUBLEMAKER(1 << 7),
 
+        /** Indicates that the user has validated their email address. */
+        VALIDATED(1 << 8),
+
         /** The next unused flag. Copy this and update the bit mask when making a new flag. */
-        UNUSED(1 << 8);
+        UNUSED(1 << 9);
 
         public int getBit () {
             return _bit;
@@ -226,8 +229,12 @@ public class MemberRecord extends PersistentRecord
             role = WebCreds.Role.ADMIN;
         } else if (isSet(Flag.SUPPORT)) {
             role = WebCreds.Role.SUPPORT;
+        } else if (isValidated()) {
+            role = WebCreds.Role.VALIDATED;
+        } else if (!isPermaguest()) {
+            role = WebCreds.Role.REGISTERED;
         } else {
-            role = WebCreds.Role.USER;
+            role = WebCreds.Role.PERMAGUEST;
         }
         return new WebCreds(authtok, accountName, getName(), permaName, role);
     }
@@ -292,6 +299,22 @@ public class MemberRecord extends PersistentRecord
     public boolean isTroublemaker ()
     {
         return isSet(Flag.TROUBLEMAKER);
+    }
+
+    /**
+     * Returns true if this member has validated their email address.
+     */
+    public boolean isValidated ()
+    {
+        return isSet(Flag.VALIDATED);
+    }
+
+    /**
+     * Returns true if this member is an anonymous guest.
+     */
+    public boolean isPermaguest ()
+    {
+        return MemberName.isPermaguest(accountName);
     }
 
     /**

@@ -472,11 +472,27 @@ public class WebUserServlet extends MsoyServiceServlet
         _profileRepo.storeProfile(prec);
     }
 
+    // from interface WebUserService
     public void updateCharity (int selectedCharityId)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
         _memberRepo.updateSelectedCharity(mrec.memberId, selectedCharityId);
+    }
+
+    // from interface WebUserService
+    public void resendValidationEmail ()
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        if (mrec.isValidated()) {
+            throw new ServiceException("e.already_validated");
+        }
+
+        _mailer.sendTemplateEmail(
+            mrec.accountName, ServerConfig.getFromAddress(), "revalidateEmail",
+            "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
+            "memberId", mrec.memberId, "code", _accountLogic.generateValidationCode(mrec));
     }
 
     protected void checkClientVersion (String clientVersion, String who)

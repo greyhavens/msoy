@@ -96,7 +96,7 @@ public class CommentServlet extends MsoyServiceServlet
     public Comment postComment (int etype, int eid, String text)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
 
         // validate the entity type and id (sort of; we can't *really* validate the id without a
         // bunch of entity specific befuckery which I don't particularly care to do)
@@ -172,7 +172,7 @@ public class CommentServlet extends MsoyServiceServlet
     public int rateComment (int etype, int eid, long posted, boolean rating)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
         return _commentRepo.rateComment(etype, eid, posted, mrec.memberId, rating);
     }
 
@@ -198,7 +198,7 @@ public class CommentServlet extends MsoyServiceServlet
     public void complainComment (String subject, int etype, int eid, long posted)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireValidatedUser();
         CommentRecord record = _commentRepo.loadComment(etype, eid, posted);
         if (record == null) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);

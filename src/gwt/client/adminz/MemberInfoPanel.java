@@ -79,7 +79,8 @@ public class MemberInfoPanel extends SmartTable
             role.addItem(rtype.toString());
         }
         role.setSelectedIndex(info.role.ordinal());
-        role.setEnabled(CShell.creds.role.ordinal() > info.role.ordinal());
+        role.setEnabled(info.role != WebCreds.Role.PERMAGUEST &&
+                        CShell.creds.role.ordinal() > info.role.ordinal());
 
         new ClickCallback<Void>(role) {
             @Override protected boolean callService () {

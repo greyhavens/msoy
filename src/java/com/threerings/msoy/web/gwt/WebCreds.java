@@ -18,7 +18,7 @@ import com.threerings.msoy.data.all.MemberName;
 public class WebCreds implements IsSerializable
 {
     /** This user's role. Each successive role has more privileges than the last. */
-    public static enum Role { USER, SUPPORT, ADMIN, MAINTAINER };
+    public static enum Role { PERMAGUEST, REGISTERED, VALIDATED, SUPPORT, ADMIN, MAINTAINER };
 
     /** Our session token. */
     public String token;
@@ -83,11 +83,35 @@ public class WebCreds implements IsSerializable
     }
 
     /**
+     * Returns true if this member is an unregistered (but persistent) guest account.
+     */
+    public boolean isPermaguest ()
+    {
+        return role == Role.PERMAGUEST || isRegistered();
+    }
+
+    /**
+     * Returns true if this member is registered but not validated.
+     */
+    public boolean isRegistered ()
+    {
+        return role == Role.REGISTERED || isValidated();
+    }
+
+    /**
+     * Returns true if this member is a validated user.
+     */
+    public boolean isValidated ()
+    {
+        return role == Role.VALIDATED || isSupport();
+    }
+
+    /**
      * Returns true if this member has the support role (or higher).
      */
     public boolean isSupport ()
     {
-        return role == Role.SUPPORT || role == Role.ADMIN || role == Role.MAINTAINER;
+        return role == Role.SUPPORT || isAdmin();
     }
 
     /**
@@ -95,7 +119,7 @@ public class WebCreds implements IsSerializable
      */
     public boolean isAdmin ()
     {
-        return role == Role.ADMIN || role == Role.MAINTAINER;
+        return role == Role.ADMIN || isMaintainer();
     }
 
     /**

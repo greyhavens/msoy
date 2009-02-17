@@ -24,6 +24,7 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.CShell;
 import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -124,7 +125,9 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
         // add a button for starting a new thread that will optionally be enabled later
         _startThread = new Button(_mmsgs.tlpStartNewThread(), new ClickListener() {
             public void onClick (Widget sender) {
-                _parent.startNewThread(_groupId);
+                if (MsoyUI.requireValidated()) {
+                    _parent.startNewThread(_groupId);
+                }
             }
         });
         _startThread.setEnabled(false);
