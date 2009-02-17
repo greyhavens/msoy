@@ -84,8 +84,12 @@
         
         <p>Your Whirled login is: <b>${email}</b></p>
         
-        <p>Congratulations on joining the player-created virtual world! We've given you 1,000 
-            coins to get you started, now here's all the fun things you can do:</p>
+        <p>Congratulations on joining the player-created virtual world! To get
+           started, please validate your email address by clicking this URL:</p>
+
+        <p><a href="${server_url}#account-v_${memberId}_${code}">${server_url}#account-v_${memberId}_${code}</a></p>
+
+        <p>We've given you 1,000 coins to get you started! Here are some fun things you can do:</p>
     
         <div class="action">
             <img src="${server_url}/images/welcome/email_icon_game.png" class="icon" alt="" />
