@@ -409,7 +409,7 @@ public class ThaneAVRGameController
             return;
         }
 
-        log.debug("Got room id", "binding", binding, "roomOid", oid);
+//        log.debug("Got room id", "binding", binding, "roomOid", oid);
 
         // subscribe to the room object
         var subscriber :SubscriberAdapter = new SubscriberAdapter(
@@ -435,7 +435,7 @@ public class ThaneAVRGameController
             return;
         }
 
-        log.info("Got room", "binding", binding, "roomOid", roomObj.getOid());
+//        log.debug("Got room", "binding", binding, "roomOid", roomObj.getOid());
 
         binding.room = roomObj;
         binding.avatarAdapter = _backend.createAvatarAdapter(roomObj);
@@ -529,7 +529,7 @@ public class ThaneAVRGameController
             return;
         }
 
-        log.info("Got room props", "binding", binding, "propsOid", propsObj.getOid());
+        log.debug("Got room props", "binding", binding, "propsOid", propsObj.getOid());
 
         binding.roomProps = propsObj;
 
