@@ -8,8 +8,6 @@ import com.threerings.msoy.web.gwt.WebCreds;
 
 /**
  * Contains methods to get URLs for various points in the billing system.
- *
- * @author Kyle Sampson <kyle@threerings.net>
  */
 public final class BillingURLs
 {
@@ -40,14 +38,11 @@ public final class BillingURLs
             (permaName == null ? accountName : permaName);
     }
 
-    static
+    protected static String capPath (String path)
     {
-        // Just to make sure this has an ending '/'.
-        BASE = DeploymentConfig.billingURL + (DeploymentConfig.billingURL.endsWith("/") ?
-            "" : "/");
+        return path.endsWith("/") ? path : (path + "/");
     }
 
-    protected static final String BASE;
-
+    protected static final String BASE = capPath(DeploymentConfig.billingURL);
     protected static final String LANDING = BASE + "whirled.wm";
 }
