@@ -761,6 +761,21 @@ public class MsoyUI
     }
 
     /**
+     * Returns true if the logged on member is registered (not a permaguest), false if they are
+     * not. In the false case, a popup will be displayed telling the user that they need to
+     * register with a link to the page that allows them to do so.
+     */
+    public static boolean requireRegistered ()
+    {
+        if (CShell.isRegistered()) {
+            return true;
+        }
+        infoAction(_cmsgs.requiresRegistered(), _cmsgs.goRegister(),
+                   Link.createListener(Pages.ACCOUNT, "create"));
+        return false;
+    }
+
+    /**
      * Returns true if the logged on member has a validated email address, false if they do not. In
      * the false case, a popup will be displayed telling the user that they need to validate their
      * email address with a link to the page that allows them to do so.
