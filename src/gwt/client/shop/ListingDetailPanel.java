@@ -31,6 +31,7 @@ import client.shell.DynamicLookup;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
+import client.ui.ShareDialog;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
@@ -121,11 +122,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // "bought" interface when the buying is done
         _details.add(new ItemBuyPanel(_listing, null));
 
-        _details.add(MsoyUI.makeShareButton(
-            Pages.SHOP, Args.compose("l", _item.getType(), _listing.catalogId),
-            _dmsgs.xlate("itemType" + _item.getType()),
-            _item.name, _item.description, _item.getThumbnailMedia()));
-
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId, true), true);
 
@@ -138,7 +134,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         }
     }
 
-    @Override
+    @Override // from BaseItemDetailPanel
     protected void addTagMenuItems (final String tag, PopupMenu menu)
     {
         menu.addMenuItem(_cmsgs.tagSearch(), new Command() {
@@ -146,6 +142,27 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
             }
         });
+    }
+
+    @Override // from BaseItemDetailPanel
+    protected void addRatableBits (HorizontalPanel row)
+    {
+        super.addRatableBits(row);
+
+        // we need to create our share info lazily because _listing is null right now as we're
+        // being called down to from our superclass constructor
+        row.add(MsoyUI.makeShareButton(new ClickListener() {
+            public void onClick (Widget sender) {
+                ShareDialog.Info info = new ShareDialog.Info();
+                info.page = Pages.SHOP;
+                info.args = Args.compose("l", _item.getType(), _listing.catalogId);
+                info.what = _dmsgs.xlate("itemType" + _item.getType());
+                info.title = _item.name;
+                info.descrip = _item.description;
+                info.image = _item.getThumbnailMedia();
+                new ShareDialog(info).show();
+           }
+        }));
     }
 
     protected static Widget createSeparator ()

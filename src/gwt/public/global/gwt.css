@@ -735,6 +735,13 @@ img, embed, applet, object {
   background: #6699CC;
 }
 
+.shareBox {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  padding: 5px;
+}
+
 .StyledTabs .gwt-TabBar {
   background: url(/images/ui/tabs/anchor_tile.png) repeat-x bottom;
 }

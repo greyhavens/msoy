@@ -67,7 +67,7 @@ public abstract class Rating extends FlexTable
             setWidget(1, 0, panel);
 
             if (writable) {
-                setWidget(0, 1, WidgetUtil.makeShim(35, 5));
+                setWidget(0, 1, WidgetUtil.makeShim(5, 5));
                 setWidget(0, 2, _ratingTip);
                 setWidget(0, 3, _ratingDesc);
                 setWidget(1, 2, _playerStars);

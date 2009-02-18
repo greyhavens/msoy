@@ -17,9 +17,11 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
+import client.util.Link;
 
 /**
  * A wee dialog that pops up to allow the user to share whirled content on other
@@ -27,49 +29,55 @@ import client.shell.ShellMessages;
  */
 public class ShareDialog extends BorderedDialog
 {
-    public ShareDialog (
-        String token, String shareObject, String title, String desc, final MediaDesc image)
+    public static class Info
+    {
+        public Pages page;
+        public String args;
+        public String what;
+        public String title;
+        public String descrip;
+        public MediaDesc image;
+    }
+
+    public ShareDialog (Info info)
     {
         super(true); // autohide
-        setHeaderTitle(_cmsgs.shareTitle(shareObject));
+        setHeaderTitle(_cmsgs.shareTitle(info.what));
 
         SmartTable panel = new SmartTable();
         panel.setCellPadding(20);
 
+        String token = Link.createToken(info.page, info.args);
         String goURL = URL.encodeComponent(DeploymentConfig.serverURL + "go/" + token);
-        final String welcURL = URL.encodeComponent(DeploymentConfig.serverURL + "welcome/" +
+        String welcURL = URL.encodeComponent(DeploymentConfig.serverURL + "welcome/" +
             (CShell.isGuest() ? "0" : CShell.getMemberId()) + "/" + token);
-        final String eTitle = URL.encodeComponent(title);
-        final String eDesc = URL.encodeComponent(desc);
+        String eTitle = URL.encodeComponent(info.title);
+        String eDesc = URL.encodeComponent(info.descrip);
 
         // facebook
+        final String facebookURL = "http://www.facebook.com/sharer.php" +
+            "?u=" + welcURL + "&t=" + eTitle;
         ClickListener facebookListener = new ClickListener() {
             public void onClick (Widget sender) {
-                String facebookURL = "http://www.facebook.com/sharer.php" +
-                    "?u=" + welcURL + "&t=" + eTitle;
                 Window.open(facebookURL, "Whirled", "width=620,height=440");
             }
         };
         panel.setWidget(0, 0, MsoyUI.createButtonPair(
-            MsoyUI.createActionImage(
-                "http://b.static.ak.fbcdn.net/images/share/facebook_share_icon.gif?8:26981",
-                facebookListener),
+            MsoyUI.createActionImage(FACEBOOK_IMG, facebookListener),
             MsoyUI.createActionLabel(_cmsgs.shareFacebook(), facebookListener)));
 
         // myspace
+        final String myspaceURL = "http://www.myspace.com/index.cfm?fuseaction=postto" +
+            "&u=" + welcURL + "&t=" + eTitle + "&l=1" +
+            // TODO: change this to the embed, and not the snapshot?
+            "&c=" + URL.encodeComponent("<img src='" + info.image.getMediaPath() + "'>");
         ClickListener myspaceListener = new ClickListener() {
             public void onClick (Widget sender) {
-                String myspaceURL = "http://www.myspace.com/index.cfm" +
-                    "?fuseaction=postto" +
-                    "&u=" + welcURL + "&t=" + eTitle + "&l=1" +
-                    // TODO: change this to the embed, and not the snapshot?
-                    "&c=" + URL.encodeComponent("<img src='" + image.getMediaPath() + "'>");
                 Window.open(myspaceURL, "Whirled", "width=1024,height=650");
             }
         };
         panel.setWidget(0, 1, MsoyUI.createButtonPair(
-            MsoyUI.createActionImage(
-                "http://cms.myspacecdn.com/cms/post_myspace_icon.gif", myspaceListener),
+            MsoyUI.createActionImage(MYSPACE_IMG, myspaceListener),
             MsoyUI.createActionLabel(_cmsgs.shareMyspace(), myspaceListener)));
 
         // Digg:
@@ -86,4 +94,8 @@ public class ShareDialog extends BorderedDialog
     }
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final String FACEBOOK_IMG =
+        "http://b.static.ak.fbcdn.net/images/share/facebook_share_icon.gif?8:26981";
+    protected static final String MYSPACE_IMG =
+        "http://cms.myspacecdn.com/cms/post_myspace_icon.gif";
 }

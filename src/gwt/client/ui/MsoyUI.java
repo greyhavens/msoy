@@ -37,6 +37,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.web.gwt.Pages;
 
+import client.images.misc.MiscImages;
 import client.shell.CShell;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
@@ -714,24 +715,49 @@ public class MsoyUI
     }
 
     /**
-     * Creates a button that allows a Digg submission for the specified page with the supplied
-     * title and description.
+     * Creates a button that allows a piece of Whirled content to be shared on Digg, Facebook,
+     * MySpace and potentially other handy places.
      *
-     * @param shareObject a pre-translationed singular subject like "game" or "avatar",
-     * for plugging into "share this [shareObject]".
+     * @param page the page being shared.
+     * @param args the args to the page being shared.
+     * @param what a pre-translationed singular subject like "game" or "avatar", for plugging into
+     * "Share this [what]".
+     * @param title the title for the share blurb.
+     * @param descrip the description for the share blurb.
+     * @param image the image to be included in the share blurb.
      */
-    public static Widget makeShareButton (
-        Pages page, String args, final String shareObject,
-        final String title, final String desc, final MediaDesc image)
+    public static Widget makeShareButton (Pages page, String args, String what,
+                                          String title, String descrip, MediaDesc image)
     {
-        final String token = Link.createToken(page, args);
-        // TODO: better than a grey button?
-        Button trigger = new Button(_cmsgs.share(), new ClickListener() {
+        final ShareDialog.Info info = new ShareDialog.Info();
+        info.page = page;
+        info.args = args;
+        info.what = what;
+        info.title = title;
+        info.descrip = descrip;
+        info.image = image;
+        return makeShareButton(new ClickListener() {
             public void onClick (Widget sender) {
-                new ShareDialog(token, shareObject, title, desc, image).show();
+                new ShareDialog(info).show();
             }
         });
-        return trigger;
+    }
+
+    /**
+     * Creates a button that allows a piece of Whirled content to be shared on Digg, Facebook,
+     * MySpace and potentially other handy places. The caller is responsible for providing a click
+     * listener that creates the share info and calls <code>new ShareDialog(info).show()</code> to
+     * display the share dialog.
+     */
+    public static Widget makeShareButton (final ClickListener onShare)
+    {
+        FlowPanel bits = createFlowPanel("shareBox");
+        bits.add(createLabel(_cmsgs.share(), null));
+        Image share = _mimgs.share().createImage();
+        share.addClickListener(onShare);
+        share.addStyleName("actionLabel");
+        bits.add(share);
+        return bits;
     }
 
     /**
@@ -778,4 +804,5 @@ public class MsoyUI
     protected static final SimpleDateFormat _yfmt = new SimpleDateFormat("MMM dd, yyyy");
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MiscImages _mimgs = GWT.create(MiscImages.class);
 }

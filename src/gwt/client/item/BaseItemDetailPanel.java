@@ -64,19 +64,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
         bits.add(preview);
         if (_item.isRatable()) {
             HorizontalPanel row = new HorizontalPanel();
-            Rating rating = new Rating(
-                _item.getRating(), _item.ratingCount, _detail.memberItemInfo.memberRating, true) {
-                @Override protected void handleRate (
-                    byte newRating , MsoyCallback<RatingResult> callback) {
-                    _itemsvc.rateItem(_item.getIdent(), newRating, callback);
-                }
-            };
-            row.add(rating);
-
-            if ( ! CShell.isGuest()) {
-                row.add(new FavoriteIndicator(_item, _detail.memberItemInfo));
-            }
-
+            row.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            addRatableBits(row);
             bits.add(row);
         }
         setWidget(0, 0, bits);
@@ -169,6 +158,22 @@ public abstract class BaseItemDetailPanel extends SmartTable
     protected void addTagMenuItems (String tag, PopupMenu menu)
     {
         // nothing here
+    }
+
+    protected void addRatableBits (HorizontalPanel row)
+    {
+        Rating rating = new Rating(
+            _item.getRating(), _item.ratingCount, _detail.memberItemInfo.memberRating, true) {
+            @Override protected void handleRate (
+                byte newRating , MsoyCallback<RatingResult> callback) {
+                _itemsvc.rateItem(_item.getIdent(), newRating, callback);
+            }
+        };
+        row.add(rating);
+
+        if (!CShell.isGuest()) {
+            row.add(new FavoriteIndicator(_item, _detail.memberItemInfo));
+        }
     }
 
     /**
