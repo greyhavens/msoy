@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data.all {
 
+import com.threerings.msoy.client.DeploymentConfig;
+
 /**
  * Utility routines relating to a member's email address.
  */
