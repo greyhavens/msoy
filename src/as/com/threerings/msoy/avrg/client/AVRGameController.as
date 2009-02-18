@@ -94,6 +94,7 @@ public class AVRGameController extends PlaceController
 
         gameAvailable(0);
 
+        leftRoom(_roomObj);
         maybeDispatchLeftRoom("shutdown");
 
         _wctx.getOccupantDirector().removeOccupantObserver(_occupantObserver);
@@ -238,9 +239,8 @@ public class AVRGameController extends PlaceController
             log.warning("Room changing to same room?");
         }
 
-        maybeDispatchLeftRoom("room change");
-
         leftRoom(_roomObj);
+        maybeDispatchLeftRoom("room change");
 
         _roomObj = roomObject;
 
