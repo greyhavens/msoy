@@ -20,6 +20,7 @@ import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -57,7 +58,23 @@ import com.threerings.msoy.web.gwt.Pages;
 
 public class NewSharePanel extends VerticalPanel
 {
-    public NewSharePanel (PeoplePage page)
+    public NewSharePanel (PeoplePage page, Args args)
+    {
+        _page = page;
+
+        int gameId = args.get(2, 0);
+        String message = args.get(3, "");
+        String token = args.get(4, "");
+        String gameType = args.get(5, "");
+        int roomId = args.get(6, 0);
+        if (gameId != 0 && gameType.equals("game")) {
+            initGameShare(gameId, message, token, gameType, roomId);
+        } else {
+            initVanilla();
+        }
+    }
+
+    protected void initVanilla()
     {
         setStylePrimaryName("sharePanel-wrapper");
         VerticalPanel subPanel = new VerticalPanel();
@@ -86,7 +103,7 @@ public class NewSharePanel extends VerticalPanel
         add(postGame);*/
 
         RollupBox emailBox = new RollupBox("Email Whirled to Your Friends", "emailRollup",
-            new InviteEmailPanel(page, ""));
+            new InviteEmailPanel(_page, ""));
         emailBox.setOpen(true);
         subPanel.add(emailBox);
 
@@ -105,16 +122,15 @@ public class NewSharePanel extends VerticalPanel
         });
     }
 
-    public NewSharePanel (final PeoplePage page, int gameId, final String gameToken, final String
-        gameType, String message)
+    protected void initGameShare (
+        int gameId, String message, final String token, final String gameType, int roomId)
     {
         setStylePrimaryName("sharePanel");
 
         // Top area
         final HorizontalPanel topPanel = new HorizontalPanel();
         topPanel.setStylePrimaryName("sharePanel-top");
-        topPanel.add(new ShareURLBox("Your Game URL", "Embed Game", gameId,
-            gameToken, gameType));
+        topPanel.add(new ShareURLBox("Your Game URL", "Embed Game", gameId, token, gameType));
         add(topPanel);
 
         // TODO: Add this in once we support this feature.
@@ -122,8 +138,10 @@ public class NewSharePanel extends VerticalPanel
         RollupBox postGame = new RollupBox("Post this game to...", "postGameRollup", testLabel);
         add(postGame);*/
 
+        message = decodeShareMessage(message);
+        
         RollupBox emailBox = new RollupBox("Email This Game to Your Friends", "emailRollup",
-            new InviteEmailPanel(page, message));
+            new InviteEmailPanel(_page, message));
         emailBox.setOpen(true);
         add(emailBox);
 
@@ -131,7 +149,7 @@ public class NewSharePanel extends VerticalPanel
             public void onSuccess (GameDetail result) {
                 topPanel.insert(new GameInfoPanel(result), 0);
                 RollupBox imageLinksBox = new RollupBox("Image Links to this Game",
-                    "imageLinksRollup", new GameLinksPanel(result, gameToken, gameType));
+                    "imageLinksRollup", new GameLinksPanel(result, token, gameType));
                 add(imageLinksBox);
             }
         });
@@ -608,6 +626,14 @@ public class NewSharePanel extends VerticalPanel
         }
     }
 
+    protected static String decodeShareMessage (String message)
+    {
+        message = URL.decodeComponent(message);
+        message = message.replace("@u", "_");
+        message = message.replace("@@", "@");
+        return message;
+    }
+
     protected static String createGameURL (int gameId, String gameToken, String type)
     {
         boolean isAVRG = type.startsWith("avrg");
@@ -643,6 +669,8 @@ public class NewSharePanel extends VerticalPanel
 
         return _cmsgs.embed(args.toString(), swfUrl, width, height, fullUrl);
     }
+
+    protected PeoplePage _page;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);

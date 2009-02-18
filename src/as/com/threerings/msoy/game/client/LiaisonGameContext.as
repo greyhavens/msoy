@@ -59,23 +59,6 @@ public class LiaisonGameContext
         }
     }
     
-    public function setShareToken (token :String) :void
-    {
-    	if (token == null || token == "") {
-    		_token = "";
-    	} else {
-	    	// Decode the token
-	    	var decoder :Base64Decoder = new Base64Decoder();
-	    	decoder.decode(token);
-	    	_token = decoder.toByteArray().toString();
-	    }
-    }
-    
-    public function setShareMemberId (shareMemberId :int) :void
-    {
-    	_shareMemberId = shareMemberId;
-    }
-
     // from PresentsContext
     public function getClient () :Client
     {
@@ -159,11 +142,11 @@ public class LiaisonGameContext
     {
         _wctx.getGameDirector().viewGameShop(itemType, catalogId);
     }
-    
+
     // from GameContext
     public function showSharePage (defmsg :String, token :String = "", roomId :int = 0) :void
     {
-        _wctx.getGameDirector().viewSharePage(defmsg, token, roomId);	
+        _wctx.getGameDirector().viewSharePage(defmsg, token, roomId);
     }
 
     // from GameContext
@@ -181,13 +164,13 @@ public class LiaisonGameContext
     // from GameContext
     public function getShareToken () :String
     {
-    	return _token;
+    	return _wctx.getGameDirector().getShareToken();
     }
     
     // from GameContext
     public function getShareMemberId () :int
     {
-    	return _shareMemberId;
+    	return _wctx.getGameDirector().getShareMemberId();
     }
 
     protected var _wctx :WorldContext;
@@ -195,7 +178,5 @@ public class LiaisonGameContext
     protected var _locDtr :LocationDirector;
     protected var _chatDtr :ChatDirector;
     protected var _parDtr :ParlorDirector;
-    protected var _token :String;
-    protected var _shareMemberId :int;
 }
 }

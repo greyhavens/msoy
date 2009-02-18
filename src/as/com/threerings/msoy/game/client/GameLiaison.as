@@ -68,10 +68,15 @@ public class GameLiaison
 {
     public static const log :Log = Log.getLog(GameLiaison);
 
-    public function GameLiaison (wctx :WorldContext, gameId :int)
+    public function GameLiaison (
+        wctx :WorldContext, gameId :int, shareToken :String, shareMemberId :int)
     {
+        log.info("Liaison created", "shareToken", shareToken, "shareMemberId", shareMemberId, new Error());
+
         _wctx = wctx;
         _gameId = gameId;
+        _shareToken = shareToken;
+        _shareMemberId = shareMemberId;
 
         // create our custom context which we'll use to connect to lobby/game servers
         _gctx = new LiaisonGameContext(wctx);
@@ -182,6 +187,16 @@ public class GameLiaison
     public function get gameGroupId () :int
     {
         return 0;
+    }
+
+    public function get shareToken () :String
+    {
+        return _shareToken;
+    }
+
+    public function get shareMemberId () :int
+    {
+        return _shareMemberId;
     }
 
     /**
@@ -430,6 +445,10 @@ public class GameLiaison
 
     /** The id of the game with which we're dealing. */
     protected var _gameId :int;
+
+    protected var _shareToken :String;
+
+    protected var _shareMemberId :int;
 
     /** The "guest earned flow" popup. */
     protected var _guestFlowPanel :DisplayObjectContainer;

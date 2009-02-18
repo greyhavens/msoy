@@ -86,7 +86,10 @@ public class PeoplePage extends Page
             boolean justRegistered = args.get(1, "").equals("newuser");
             boolean linksPage = args.get(1, "").equals("links");
             boolean sharePage = args.get(1, "").equals("share");
-            if (justRegistered) {
+            if (args.get(1, "").equals("sharegame")) {
+                setContent(_msgs.inviteTitle(), new NewSharePanel(this, args));
+
+            } else if (justRegistered) {
                 setContent(_msgs.justRegInviteTitle(), new InvitePanel(true, false, null));
 
             } else if (linksPage) {
@@ -100,13 +103,6 @@ public class PeoplePage extends Page
 
         } else if (action.equals("friendly")) { // !guest
             setContent(_msgs.greetersTitle(), new GreeterPanel());
-
-        } else if (action.equals("invitetest") && DeploymentConfig.devDeployment) {
-            setContent(_msgs.inviteTitle(), new NewSharePanel(this));
-
-        } else if (action.equals("invitetest2") && DeploymentConfig.devDeployment) {
-            setContent(_msgs.inviteTitle(), new NewSharePanel(this, -13, "ABEXGhi283--", "game",
-                "Try and beat my score!"));
 
         } else { // !guest
             setContent(new FriendsPanel(CShell.getMemberId()));

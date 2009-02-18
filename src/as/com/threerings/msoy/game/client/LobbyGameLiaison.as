@@ -32,9 +32,9 @@ public class LobbyGameLiaison extends GameLiaison
     public static const log :Log = Log.getLog(LobbyGameLiaison);
 
     public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :LobbyDef,
-        playerId :int = 0, token :String = "", shareMemberId :int = 0)
+        playerId :int = 0, shareToken :String = null, shareMemberId :int = 0)
     {
-        super(ctx, gameId);
+        super(ctx, gameId, shareToken, shareMemberId);
 
         _mode = mode;
         _playerIdGame = playerId;
@@ -55,10 +55,6 @@ public class LobbyGameLiaison extends GameLiaison
 
         // get a notification about logins to the world server
         _wctx.getWorldClient().addClientObserver(new ClientAdapter(null, worldClientDidLogon));
-
-        // Set the token on the game context, so it can get passed to the game.
-        (_gctx as LiaisonGameContext).setShareToken(token);
-        (_gctx as LiaisonGameContext).setShareMemberId(shareMemberId);
 
         // listen for changes in world location so that we can shutdown if we move
         var loc :LocationDirector = _wctx.getLocationDirector();

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.utils.ByteArray;
+
 import mx.styles.StyleManager;
 
 import com.threerings.util.Log;
@@ -245,17 +247,27 @@ public class GameDirector extends BasicDirector
         _wctx.getMsoyClient().trackClientAction("flashViewGameShop", null);
         _wctx.getWorldController().displayPage("shop", args);
     }
-    
+
+    /**
+     * Brings up the share page in our shell, as requested by the game the user is playing.
+     */
     public function viewSharePage (defmsg :String, token :String = "", roomId :int = 0) :void
     {
-        // The default message and token can by anything.  We will parse the underscores specially,
-        // so encode them before adding them as arguments to the invites page.
-        var encoder :Base64Encoder = new Base64Encoder();
-        encoder.encodeUTFBytes(token);
-        var encodedToken :String = encoder.toString();
-        var args :String = "invites_share_" + getGameId() + "_" + encodeShareString(defmsg) + "_" + 
-           encodedToken + (_liaison is AVRGameLiaison ? "_avrg" + roomId : "_game");
-        _wctx.getWorldController().displayPage("people", args);
+        // we encode the strings so they are valid as part of the URL and the user cannot trivially
+        // see them
+        var args :Array = ["invites", "sharegame", getGameId(), encodeForURI(defmsg),
+            encodeForURI(token), _liaison is AVRGameLiaison ? "avrg" : "game"];
+
+        if (roomId != 0) {
+            args.push(roomId);
+        }
+
+        var loc :String = String(args[0]);
+        for each (var arg :String in args.slice(1)) {
+            loc = loc + "_" + arg;
+        }
+
+        _wctx.getWorldController().displayPage("people", loc);
     }
 
     /**
@@ -265,8 +277,9 @@ public class GameDirector extends BasicDirector
      * anyone quick game.
      */
     public function playNow (gameId :int, modeStr: String, ghost :String, gport :int, 
-        token :String, shareMemberId :int) :void
+        shareToken :String, shareMemberId :int) :void
     {
+        shareToken = decodeFromURI(shareToken);
         var mode :int = LobbyCodes.PLAY_NOW_SINGLE;
         if (modeStr == "m") {
             mode = LobbyCodes.PLAY_NOW_ANYONE;
@@ -282,7 +295,7 @@ public class GameDirector extends BasicDirector
         if (_liaison == null) {
             // create our new liaison, which will head on into the game once we're logged on
             const def :LobbyDef = new LobbyDef(true, mode);
-            _liaison = new LobbyGameLiaison(_wctx, gameId, def, 0, token, shareMemberId);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, def, 0, shareToken, shareMemberId);
             _liaison.start(ghost, gport);
         }
     }
@@ -367,8 +380,9 @@ public class GameDirector extends BasicDirector
      * Activates the specified AVR game, connecting to the appropriate game server and clearing any
      * existing game server connection.
      */
-    public function activateAVRGame (gameId :int, token :String = "", shareMemberId :int = 0) :void
+    public function activateAVRGame (gameId :int, shareToken :String = "", shareMemberId :int = 0) :void
     {
+        shareToken = decodeFromURI(shareToken);
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison) {
                 log.warning("Eek, asked to join an AVRG while in a lobbied game.");
@@ -386,7 +400,7 @@ public class GameDirector extends BasicDirector
 
         displayFeedback("m.locating_game");
 
-        _liaison = new AVRGameLiaison(_wctx, gameId, token, shareMemberId);
+        _liaison = new AVRGameLiaison(_wctx, gameId, shareToken, shareMemberId);
         _liaison.start();
     }
 
@@ -456,20 +470,21 @@ public class GameDirector extends BasicDirector
             _liaison.shutdown();
         }
     }
-    
-    protected function encodeShareString (src :String) :String
+
+    public function getShareToken () :String
     {
-        var output :String = "";
-        for (var i: int = 0; i < src.length; i++) {
-            if (src.charAt(i) == '_') {
-                output += "\\-";
-            } else if (src.charAt(i) == '\\') {
-                output += "\\\\";
-            } else {
-                output += src.charAt(i);
-            }
+        if (_liaison != null) {
+            return _liaison.shareToken;
         }
-        return output;
+        return "";
+    }
+    
+    public function getShareMemberId () :int
+    {
+        if (_liaison != null) {
+            return _liaison.shareMemberId;
+        }
+    	return 0;
     }
 
     /**
@@ -484,6 +499,39 @@ public class GameDirector extends BasicDirector
     override protected function registerServices (client :Client) :void
     {
         client.addServiceGroup(MsoyCodes.GAME_GROUP);
+    }
+
+    protected static function replaceAll (str :String, pattern :String, repl :String) :String
+    {
+        var pos :int = 0;
+        var buf :String = "";
+        while (true) {
+            var patpos :int = str.indexOf(pattern, pos);
+            if (patpos == -1) {
+                break;
+            }
+            buf += str.substring(pos, patpos);
+            buf += repl;
+            pos = patpos + pattern.length;
+        }
+        buf += str.substr(pos);
+        return buf.toString();
+    }
+
+    protected static function encodeForURI (str :String) :String
+    {
+        str = replaceAll(str, "@", "@@");
+        str = replaceAll(str, "_", "@u");
+        str = encodeURIComponent(str);
+        return str;
+    }
+
+    protected static function decodeFromURI (str :String) :String
+    {
+        str = decodeURIComponent(str);
+        str = replaceAll(str, "@u", "_");
+        str = replaceAll(str, "@@", "@");
+        return str;
     }
 
     /** A casted ref to the msoy context. */
