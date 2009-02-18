@@ -164,9 +164,9 @@ public class WorldClient extends MsoyClient
             return;
         }
 
-        log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
         var co :MemberObject = _wctx.getMemberObject();
         if (co == null || co.getMemberId() != memberId) {
+            log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
             _wctx.getMsoyController().handleLogon(createStartupCreds(token));
         }
     }
