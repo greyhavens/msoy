@@ -50,17 +50,17 @@ public class WorldClient extends Widget
 
         // if we're currently already displaying exactly what we've been asked to display; then
         // stop here because we're just restoring our client after closing a GWT page
-        if (flashArgs.equals(_curFlashArgs)) {
+        if (flashArgs.equals(_flashArgs)) {
             return;
         }
 
         // create our client if necessary
-        if (_curFlashArgs == null) {
+        if (_flashPanel == null) {
             embedClient(flashArgs, pprov.get());
 
         } else {
             // note our new current flash args
-            clientGo("asclient", _curFlashArgs = flashArgs);
+            clientGo("asclient", _flashArgs = flashArgs);
             clientMinimized(false);
         }
     }
@@ -83,12 +83,12 @@ public class WorldClient extends Widget
     public static void displayJava (Widget client, PanelProvider pprov)
     {
         // clear out any flash page stuff
-        _curFlashArgs = null;
-        _curFlashEmbedParent = null;
+        _flashArgs = null;
+        _flashPanel = null;
 
-        if (_jclient != client) {
+        if (_javaPanel != client) {
             clientWillClose(); // clear out our flash client if we have one
-            pprov.get().add(_jclient = client);
+            pprov.get().add(_javaPanel = client);
         } else {
             clientMinimized(false);
         }
@@ -101,23 +101,20 @@ public class WorldClient extends Widget
 
     public static void clientWillClose ()
     {
-        if (_curFlashArgs != null || _jclient != null) {
-            if (_curFlashArgs != null) {
+        if (_flashPanel != null || _javaPanel != null) {
+            if (_flashPanel != null) {
                 clientUnload(); // TODO: make this work for jclient
             }
-            _curFlashArgs = null;
-            _curFlashEmbedParent = null;
-            _jclient = null;
+            _flashArgs = null;
+            _flashPanel = null;
+            _javaPanel = null;
         }
     }
 
     public static void didLogon (WebCreds creds)
     {
-        if (_curFlashArgs != null) {
-            String args = _curFlashArgs;
-            Panel parent = _curFlashEmbedParent;
+        if (_flashPanel != null) {
             clientLogon(creds.getMemberId(), creds.token);
-            embedClient(args, parent);
         }
         // TODO: let jclient know about logon?
         // TODO: propagate creds to our flash SharedObject in case next login is from an embed?
@@ -127,8 +124,8 @@ public class WorldClient extends Widget
     {
         clientWillClose(); // clear our Java client if we have one
 
-        _curFlashEmbedParent = parent;
-        _curFlashArgs = flashArgs;
+        _flashPanel = parent;
+        _flashArgs = flashArgs;
 
         // augment the arguments with things that are only relevant to the initial embed,
         // i.e. not logically part of the location of the client
@@ -195,9 +192,9 @@ public class WorldClient extends Widget
         }
     }-*/;
 
-    protected static String _curFlashArgs;
-    protected static Panel  _curFlashEmbedParent;
-    protected static Widget _jclient;
+    protected static String _flashArgs;
+    protected static Panel  _flashPanel;
+    protected static Widget _javaPanel;
 
     /** Our default world server host and port. Configured the first time Flash is used. */
     protected static String _defaultHost;

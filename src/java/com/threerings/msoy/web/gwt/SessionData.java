@@ -36,9 +36,6 @@ public class SessionData implements IsSerializable
     /** If we've just created an account, this will be set to true. */
     public transient boolean justCreated;
 
-    /** Set if the current session started in flash and was then transferred to the browser. */
-    public transient boolean originatedInFlash;
-
     /**
      * Creates and initializes an instance from supplied {@link #flatten}ed string.
      */
@@ -56,9 +53,6 @@ public class SessionData implements IsSerializable
         sdata.newMailCount = Integer.valueOf(data.next());
         sdata.visitor = VisitorInfo.unflatten(data);
         sdata.justCreated = Boolean.valueOf(data.next());
-        if (data.hasNext()) {
-            sdata.originatedInFlash = Boolean.valueOf(data.next());
-        }
         return sdata;
     }
 
@@ -75,7 +69,6 @@ public class SessionData implements IsSerializable
         data.add(String.valueOf(newMailCount));
         data.addAll(visitor.flatten());
         data.add(String.valueOf(justCreated));
-        data.add(String.valueOf(originatedInFlash));
         return data;
     }
 }

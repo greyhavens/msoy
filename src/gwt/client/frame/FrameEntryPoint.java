@@ -276,10 +276,9 @@ public class FrameEntryPoint
     // from interface Session.Observer
     public void didLogon (SessionData data)
     {
-        // update the world client to relogin, unless that is where we logged in from
-        if (!data.originatedInFlash) {
-            WorldClient.didLogon(data.creds);
-        }
+        // update the world client to relogin (this will NOOP if we're logging in now because Flash
+        // just told us to do so)
+        WorldClient.didLogon(data.creds);
 
         // TODO: preserve their current world location and log them into their new account; this
         // will require fixing a whole bunch of shit

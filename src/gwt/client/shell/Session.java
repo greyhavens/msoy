@@ -74,7 +74,16 @@ public class Session
      */
     public static void validate ()
     {
-        validate(false);
+        validate(CookieUtil.get(WebCreds.credsCookie()));
+    }
+
+    /**
+     * Assigns our session token to the value obtained from the server by flash and re-validates it
+     * without disturbing the current state of the Flash client.
+     */
+    public static void conveyLoginFromFlash (String token)
+    {
+        validate(token);
     }
 
     /**
@@ -184,25 +193,14 @@ public class Session
         }
     }
 
-    /**
-     * Assigns our session token to the value obtained from the server by flash and re-validates it
-     * without disturbing the current state of the flash client.
-     */
-    public static void conveyLoginFromFlash (String token)
-    {
-        setSessionCookie(token);
-        validate(true);
-    }
-
     protected static void setSessionCookie (String token)
     {
         CookieUtil.set("/", SESSION_DAYS, WebCreds.credsCookie(), token);
     }
 
-    protected static void validate (final boolean originatedInFlash)
+    protected static void validate (String token)
     {
         // if we have no creds token, we are definitely not logged in
-        String token = CookieUtil.get(WebCreds.credsCookie());
         if (token == null) {
             // defer execution of didLogoff so that the caller sees the same behavior in both
             // situations: immediate return of this method and a call to didLogon or didLogoff at
@@ -221,7 +219,6 @@ public class Session
                 if (data == null) {
                     didLogoff(LogoffCondition.LOGON_ATTEMPT_FAILED);
                 } else {
-                    data.originatedInFlash = originatedInFlash;
                     didLogon(data);
                 }
             }
