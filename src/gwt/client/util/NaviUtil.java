@@ -3,8 +3,6 @@
 
 package client.util;
 
-import client.shell.CShell;
-
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
@@ -12,6 +10,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.shell.CShell;
+import client.ui.MsoyUI;
 
 /**
  * A place where we can encapsulate the creation of arguments that link to complex pages in
@@ -57,7 +58,14 @@ public class NaviUtil
 
     public static ClickListener onCreateItem (byte type, byte ptype, int pitemId)
     {
-        return Link.createListener(Pages.STUFF, Args.compose("c", type, ptype, pitemId));
+        final String args = Args.compose("c", type, ptype, pitemId);
+        return new ClickListener() {
+            public void onClick (Widget sender) {
+                if (MsoyUI.requireRegistered()) {
+                    Link.go(Pages.STUFF, args);
+                }
+            }
+        };
     }
 
     public static ClickListener onEditItem (byte type, int itemId)
