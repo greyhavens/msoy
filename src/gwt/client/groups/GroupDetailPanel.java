@@ -180,7 +180,7 @@ public class GroupDetailPanel extends FlowPanel
                 Label join = MsoyUI.createLabel(_msgs.detailJoin(), null);
                 new ClickCallback<Void>(join, _msgs.detailJoinPrompt()) {
                     @Override protected boolean callService () {
-                        if (!MsoyUI.requireRegistered()) {
+                        if (!MsoyUI.requireValidated()) {
                             return false;
                         }
                         _groupsvc.joinGroup(_group.groupId, this);
