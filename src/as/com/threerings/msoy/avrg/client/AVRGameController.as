@@ -204,6 +204,9 @@ public class AVRGameController extends PlaceController
         // will be null if not a room
         _roomObj = (_wctx.getLocationDirector().getPlaceObject() as RoomObject);
 
+        // make sure we're listening for events
+        enteredRoom(_roomObj);
+
         var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
         panel.backendIsReady();
 
@@ -237,6 +240,8 @@ public class AVRGameController extends PlaceController
 
         maybeDispatchLeftRoom("room change");
 
+        leftRoom(_roomObj);
+
         _roomObj = roomObject;
 
         // establish a subscription to the properties of the room
@@ -269,15 +274,6 @@ public class AVRGameController extends PlaceController
                 }
             });
             roomObject.addListener(setListener);
-
-            // but do persistently listen for messages on the room object
-            roomObject.addListener(new MessageAdapter(function (event :MessageEvent) :void {
-                log.info("roomMessage", "event", event);
-                if (event.getName() == RoomCodes.SPRITE_SIGNAL) {
-                    var args :Array = event.getArgs();
-                    _backend.signalReceived(args[0] as String, args[1] as ByteArray);
-                }
-            }));
 
         } else {
             setRoomPropsOid(0);
@@ -389,6 +385,7 @@ public class AVRGameController extends PlaceController
             maybeDispatchLeftRoom("entered"); // no-op if left already
             log.debug(playerIdStr(), "Entered room  [sceneId=" + sceneId + ", why=" + why + "]");
             _backend.playerEnteredRoom(sceneId, roomProps);
+            enteredRoom(_roomObj);
             _lastDispatchedSceneId = sceneId;
 
         } else {
@@ -396,6 +393,21 @@ public class AVRGameController extends PlaceController
                 "Would dispatch but... [roomProps=" + roomProps + ", ploc=" + ploc +
                 ", sceneId=" + sceneId + ", placeId=" + placeId + ", roomOid=" + roomOid +
                 ", connected=" + connected + ", why=" + why + "]");
+        }
+    }
+
+    // called when we're in a room and fully AVRG-ready for it
+    protected function enteredRoom (roomObj :RoomObject) :void
+    {
+        // but do persistently listen for messages on the room object
+        roomObj.addListener(_roomMessageListener);
+    }
+
+    // called when we've left a room and should clean up
+    protected function leftRoom (roomObj :RoomObject) :void
+    {
+        if (roomObj != null) {
+            roomObj.removeListener(_roomMessageListener);
         }
     }
 
@@ -472,6 +484,14 @@ public class AVRGameController extends PlaceController
         }
     }
 
+    protected function roomMessage (event :MessageEvent) :void {
+        log.info("roomMessage", "event", event);
+        if (event.getName() == RoomCodes.SPRITE_SIGNAL) {
+            var args :Array = event.getArgs();
+            _backend.signalReceived(args[0] as String, args[1] as ByteArray);
+        }
+    }
+
     protected function playerMessage (event :MessageEvent) :void
     {
         var name :String = event.getName();
@@ -500,6 +520,9 @@ public class AVRGameController extends PlaceController
     protected var _roomObserver :LocationAdapter = new LocationAdapter(null, updateRoom);
 
     protected var _lastDispatchedSceneId :int;
+
+    protected var _roomMessageListener :MessageAdapter =
+        new MessageAdapter(roomMessage);
 
     protected var _playerListener :MessageAdapter =
         new MessageAdapter(playerMessage);
