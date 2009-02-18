@@ -253,22 +253,22 @@ public class StuffPanel extends FlowPanel
     protected static final List<Predicate<Item>> FILTERS = new ArrayList<Predicate<Item>>(); {
         FILTERS.add(new Predicate.TRUE<Item>()); // show all
         FILTERS.add(new Predicate<Item>() { // uploaded
-            public boolean isMatch (Item item) {
+            public boolean apply (Item item) {
                 return item.sourceId == 0;
             }
         });
         FILTERS.add(new Predicate<Item>() { // purchased
-            public boolean isMatch (Item item) {
+            public boolean apply (Item item) {
                 return item.sourceId != 0;
             }
         });
         FILTERS.add(new Predicate<Item>() { // unused
-            public boolean isMatch (Item item) {
+            public boolean apply (Item item) {
                 return !item.isUsed();
             }
         });
         FILTERS.add(new Predicate<Item>() { // used
-            public boolean isMatch (Item item) {
+            public boolean apply (Item item) {
                 return item.isUsed();
             }
         });

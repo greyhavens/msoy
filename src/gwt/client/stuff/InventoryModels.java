@@ -130,7 +130,7 @@ public class InventoryModels
     public Item findItem (byte type, final int itemId)
     {
         Predicate<Item> itemP = new Predicate<Item>() {
-            public boolean isMatch (Item item) {
+            public boolean apply (Item item) {
                 return item.itemId == itemId;
             }
         };
