@@ -108,6 +108,10 @@ public class MemberLogic
     public void establishFriendship (int memberId, int friendId)
         throws ServiceException
     {
+        if (memberId == friendId) {
+            // Let's just say that people are implicitly their own friends
+            return;
+        }
         try {
             MemberCard friend = _memberRepo.noteFriendship(memberId, friendId);
             if (friend == null) {
