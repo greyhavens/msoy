@@ -19,6 +19,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.utils.Base64Decoder;
 import com.threerings.msoy.utils.Base64Encoder;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -255,8 +256,8 @@ public class GameDirector extends BasicDirector
     {
         // we encode the strings so they are valid as part of the URL and the user cannot trivially
         // see them
-        var args :Array = ["invites", "sharegame", getGameId(), encodeForURI(defmsg),
-            encodeForURI(token), _liaison is AVRGameLiaison ? "avrg" : "game"];
+        var args :Array = ["invites", "game", getGameId(), encodeForURI(defmsg),
+            encodeForURIBase64(token), _liaison is AVRGameLiaison ? 1 : 0];
 
         if (roomId != 0) {
             args.push(roomId);
@@ -279,7 +280,7 @@ public class GameDirector extends BasicDirector
     public function playNow (gameId :int, modeStr: String, ghost :String, gport :int, 
         shareToken :String, shareMemberId :int) :void
     {
-        shareToken = decodeFromURI(shareToken);
+        shareToken = decodeFromURIBase64(shareToken);
         var mode :int = LobbyCodes.PLAY_NOW_SINGLE;
         if (modeStr == "m") {
             mode = LobbyCodes.PLAY_NOW_ANYONE;
@@ -383,7 +384,7 @@ public class GameDirector extends BasicDirector
     public function activateAVRGame (
         gameId :int, shareToken :String = "", shareMemberId :int = 0) :void
     {
-        shareToken = decodeFromURI(shareToken);
+        shareToken = decodeFromURIBase64(shareToken);
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison) {
                 log.warning("Eek, asked to join an AVRG while in a lobbied game.");
@@ -531,12 +532,33 @@ public class GameDirector extends BasicDirector
         return str;
     }
 
+    protected static function encodeForURIBase64 (str :String) :String
+    {
+        if (str == null || str == "") {
+            return "";
+        }
+        var encoder :Base64Encoder = new Base64Encoder();
+        encoder.encodeUTFBytes(str);
+        return encodeForURI(encoder.toString());
+    }
+
     protected static function decodeFromURI (str :String) :String
     {
         str = decodeURIComponent(str);
         str = replaceAll(str, "@u", "_");
         str = replaceAll(str, "@@", "@");
         return str;
+    }
+
+    protected static function decodeFromURIBase64 (str :String) :String
+    {
+        if (str == "") {
+            return "";
+        }
+        str = decodeFromURI(str);
+        var decoder :Base64Decoder = new Base64Decoder();
+        decoder.decode(str);
+        return decoder.toByteArray().toString();
     }
 
     /** A casted ref to the msoy context. */

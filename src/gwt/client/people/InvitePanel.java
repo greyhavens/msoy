@@ -467,7 +467,7 @@ public class InvitePanel extends VerticalPanel
         protected SmartTable _contents;
     }
 
-    protected class InviteList extends FlexTable
+    public static class InviteList extends FlexTable
     {
         public InviteList ()
         {
