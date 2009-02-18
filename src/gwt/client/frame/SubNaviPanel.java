@@ -14,8 +14,8 @@ import com.threerings.msoy.web.gwt.Tabs;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.util.BillingUtil;
 import client.util.Link;
-import client.util.NaviUtil;
 
 /**
  * Displays our sub-navigation.
@@ -93,7 +93,7 @@ public class SubNaviPanel extends FlowPanel
             addLink(null, "My Favorites", Pages.SHOP, "f");
             if (!CShell.isGuest() && !CShell.isPermaguest()) {
                 addLink(null, "Transactions", Pages.ME, "transactions");
-                addExternalLink("Buy Bars", NaviUtil.onBuyBars(), true);
+                addExternalLink("Buy Bars", BillingUtil.onBuyBars(), true);
             }
             break;
 

@@ -18,10 +18,8 @@ import com.threerings.msoy.web.gwt.Pages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
-import client.ui.StretchButton;
 import client.ui.TongueBox;
-import client.util.BillingURLs;
-import client.util.NaviUtil;
+import client.util.BillingUtil;
 import client.util.Link;
 
 public class TransactionsPanel extends FlowPanel
@@ -37,12 +35,10 @@ public class TransactionsPanel extends FlowPanel
         tip.add(MsoyUI.createHTML(REPORT_TIPS[reportIndex-1], null));
         blurb.setWidget(0, 0, tip);
 
-        FlowPanel billing = new FlowPanel();
-        StretchButton buyBars = new StretchButton(StretchButton.ORANGE_THICK,
-            MsoyUI.createLabel(_msgs.buyBars(), null));
-        buyBars.addClickListener(NaviUtil.onBuyBars());
-        billing.add(MsoyUI.createHTML(_msgs.billingTip(), "BillingTip"));
-        billing.add(buyBars);
+        FlowPanel billing = MsoyUI.createFlowPanel("BillingTip");
+        billing.add(MsoyUI.createHTML(_msgs.billingTip(), null));
+        billing.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.buyBars(),
+                                        BillingUtil.onBuyBars()));
         blurb.setWidget(0, 1, billing);
         blurb.getCellFormatter().setStyleName(0, 1, "Billing");
 
@@ -88,9 +84,7 @@ public class TransactionsPanel extends FlowPanel
     protected static final String[] REPORT_NAMES = {
         _msgs.reportCoins(), _msgs.reportBars(), _msgs.reportBling(), _msgs.reportCreator()
     };
-
     protected static final String[] REPORT_TIPS = {
-        _msgs.tipCoins(), _msgs.tipBars(BillingURLs.getEntryPoint(CShell.creds)), _msgs.tipBling(), 
-        _msgs.tipCreator()
+        _msgs.tipCoins(), _msgs.tipBars(), _msgs.tipBling(), _msgs.tipCreator()
     };
 }

@@ -30,7 +30,7 @@ import com.threerings.msoy.web.gwt.WebCreds;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.util.BillingURLs;
+import client.util.BillingUtil;
 import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -63,7 +63,7 @@ public class MemberInfoPanel extends SmartTable
         int row;
         setWidget(0, 0, Link.memberView(info.name), 2, "Name");
         setWidget(1, 0, Link.transactionsView("Transaction history", info.name.getMemberId()));
-        setWidget(2, 0, new Anchor(BillingURLs.getUserStatusPage(info.accountName, info.permaName),
+        setWidget(2, 0, new Anchor(BillingUtil.getUserStatusPage(info.accountName, info.permaName),
             "Billing Transactions", "_blank"));
         setWidget(3, 0, Link.create("Stuff Inventory", Pages.STUFF, Args.compose(Item.AVATAR,
             info.name.getMemberId())));

@@ -32,7 +32,7 @@ import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.ui.StretchButton;
-import client.util.BillingURLs;
+import client.util.BillingUtil;
 import client.util.ClickCallback;
 import client.util.MoneyUtil;
 import client.util.Link;
@@ -76,11 +76,8 @@ public abstract class BuyPanel<T> extends SmartTable
         getFlexCellFormatter().setColSpan(0, 0, 2);
         setWidget(0, 0, _barPanel);
 
-        _getBars = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.getBars(), new ClickListener() {
-            public void onClick (Widget sender) {
-                Window.open(BillingURLs.getEntryPoint(CShell.creds), "_blank", "");
-            }
-        });
+        _getBars = MsoyUI.createButton(
+            MsoyUI.MEDIUM_THIN, _msgs.getBars(), BillingUtil.onBuyBars());
         _getBars.addStyleName("buyPanelButton");
         setWidget(1, 0, _getBars);
 

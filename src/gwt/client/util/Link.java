@@ -59,14 +59,6 @@ public class Link
     }
 
     /**
-     * Returns link that pops up the billing page.
-     */
-    public static Anchor buyBars (String label)
-    {
-        return new Anchor(BillingURLs.getEntryPoint(CShell.creds), label, "_blank");
-    }
-
-    /**
      * Returns link that navigates to the specified application page with the specified arguments.
      * A page should use this method to pass itself arguments.
      */

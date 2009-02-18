@@ -439,6 +439,10 @@
   padding-bottom: 5px;
 }
 
+.transactions .Blurb .BillingTip .orangeButton {
+  margin: 10px auto 0px auto;
+}
+
 .transactions .Balance .row1 {
   background: #dbeffc;
 }

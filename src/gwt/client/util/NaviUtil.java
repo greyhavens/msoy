@@ -13,7 +13,6 @@ import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-
 /**
  * A place where we can encapsulate the creation of arguments that link to complex pages in
  * Whirled. We do this here so that we don't have references between otherwise unrelated classes
@@ -74,20 +73,5 @@ public class NaviUtil
     public static ClickListener onViewTransactions (ReportType report)
     {
         return Link.createListener(Pages.ME, Args.compose("transactions", report.toIndex()));
-    }
-
-    /**
-     * When clicked, popup up a window to billing to buy bars.
-     */
-    public static ClickListener onBuyBars ()
-    {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
-                Window.open(BillingURLs.getEntryPoint(CShell.creds), "_blank",
-                    // For those silly browsers that open this in a new window instead of a new
-                    // tab, enable all the chrome options on the new window.
-                    "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");
-            }
-        };
     }
 }
