@@ -1099,7 +1099,7 @@ public class FrameEntryPoint
     protected static native void forwardEvent (
         Element frame, String name, JavaScriptObject args) /*-{
         try {
-            if (frame.contentWindow.triggerEvent) {
+            if (frame.contentWindow && frame.contentWindow.triggerEvent) {
                 frame.contentWindow.triggerEvent(name, args);
             }
         } catch (e) {
