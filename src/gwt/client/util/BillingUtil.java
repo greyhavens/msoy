@@ -3,14 +3,19 @@
 
 package client.util;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MemberMailUtil;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
 
 import client.shell.CShell;
+import client.shell.ShellMessages;
+import client.ui.MsoyUI;
 
 /**
  * Contains methods to get URLs for various points in the billing system.
@@ -23,11 +28,23 @@ public class BillingUtil
      */
     public static void goBuyBars ()
     {
-        String args = ((CShell.creds == null) ? "" : ("?initUsername=" + CShell.creds.accountName));
-        Window.open(LANDING + args, "_blank",
-                    // For those silly browsers that open this in a new window instead of a new
-                    // tab, enable all the chrome options on the new window.
-                    "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");
+        if (CShell.isGuest()) {
+            MsoyUI.info(_cmsgs.gobuyMustLogon());
+
+        } else if (CShell.isPermaguest()) {
+            MsoyUI.infoAction(_cmsgs.gobuyMustRegister(), _cmsgs.gobuyRegister(),
+                              Link.createListener(Pages.ACCOUNT, "create"));
+
+        } else if (MemberMailUtil.isPlaceholderAddress(CShell.creds.accountName)) {
+            MsoyUI.infoAction(_cmsgs.gobuyMustConfigure(), _cmsgs.gobuyConfigure(),
+                              Link.createListener(Pages.ACCOUNT, "edit"));
+
+        } else {
+            Window.open(LANDING + "?initUsername=" + CShell.creds.accountName, "_blank",
+                        // For those silly browsers that open this in a new window instead of a new
+                        // tab, enable all the chrome options on the new window.
+                        "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");
+        }
     }
 
     /**
@@ -59,6 +76,8 @@ public class BillingUtil
     {
         return path.endsWith("/") ? path : (path + "/");
     }
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     protected static final String BASE = capPath(DeploymentConfig.billingURL);
     protected static final String LANDING = BASE + "whirled.wm";
