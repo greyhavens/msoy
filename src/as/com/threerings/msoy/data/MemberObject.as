@@ -16,6 +16,7 @@ import com.threerings.msoy.data.MemberExperience;
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.PlayerEntry;
 import com.threerings.msoy.data.all.VisitorInfo;
@@ -222,6 +223,14 @@ public class MemberObject extends MsoyBodyObject
     public function isGuest () :Boolean
     {
         return memberName.isGuest();
+    }
+
+    /**
+     * Returns true if this user is a permaguest.
+     */
+    public function isPermaguest () :Boolean
+    {
+        return MemberMailUtil.isPermaguest(username.toString());
     }
 
     /**
