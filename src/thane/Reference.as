@@ -7,7 +7,6 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VizMemberName;
 
-import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.FurniUpdate_Add;
 import com.threerings.msoy.room.data.FurniUpdate_Change;
@@ -44,7 +43,6 @@ public class Reference
     Trophy;
     MemberInfo;
     MsoyLocation;
-    ControllableAVRGame;
     ControllableEntity;
     MobInfo;
     ObserverInfo;
