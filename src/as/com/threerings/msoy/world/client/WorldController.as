@@ -621,7 +621,7 @@ public class WorldController extends MsoyController
         if (!inGWTApp() || !displayPage("world", "game_g_" + gameId + "_" + placeOid)) {
             // fall back to breaking the back button
             log.info("Going straight into game [oid=" + placeOid + "].");
-            _wctx.getGameDirector().enterGame(placeOid);
+            _wctx.getGameDirector().enterGame(gameId, placeOid);
             // TODO: if this is a Java game and we're in embedded mode, try popping up a new
             // browser window
             // NetUtil.navigateToURL("/#game-" + gameId + "_" + placeOid, false);
@@ -904,9 +904,9 @@ public class WorldController extends MsoyController
                 int(params["gameLobby"]), int(params["playerTable"]),
                 String(params["ghost"]), int(params["gport"]));
 
-        } else if (null != params["gameLocation"]) {
+        } else if (null != params["gameOid"]) {
             _suppressTokenForScene = true;
-            _wctx.getGameDirector().enterGame(int(params["gameLocation"]));
+            _wctx.getGameDirector().enterGame(int(params["gameId"]), int(params["gameOid"]));
 
         } else if (null != params["noplace"]) {
             // go to no place- we just want to chat with our friends

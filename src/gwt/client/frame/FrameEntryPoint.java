@@ -787,11 +787,11 @@ public class FrameEntryPoint
                     args += "&playerTable=" + otherId;
                 }
             } else if (action.equals("g")) {
-                args = "gameLocation=" + otherId + (token == null ? "" : "&shareToken=" + token);
+                args = "gameOid=" + otherId + "&gameId=" + config.gameId + 
+                    (token == null ? "" : "&shareToken=" + token);
             } else if (action.equals("m") || action.equals("s") || action.equals("t")) {
                 args = "playNow=" + config.gameId + "&gameMode=" + action;
-                // Add the token, if provided
-                if (!"".equals(token) && token != null) {
+                if (!"".equals(token) && token != null) { // add the token, if provided
                     args += "&shareToken=" + token + "&shareMemberId=" + otherId;
                 }
             } else {

@@ -380,7 +380,8 @@ public class GameDirector extends BasicDirector
      * Activates the specified AVR game, connecting to the appropriate game server and clearing any
      * existing game server connection.
      */
-    public function activateAVRGame (gameId :int, shareToken :String = "", shareMemberId :int = 0) :void
+    public function activateAVRGame (
+        gameId :int, shareToken :String = "", shareMemberId :int = 0) :void
     {
         shareToken = decodeFromURI(shareToken);
         if (_liaison != null) {
@@ -414,12 +415,16 @@ public class GameDirector extends BasicDirector
     /**
      * Requests that we move to the specified game location.
      */
-    public function enterGame (gameOid :int) :void
+    public function enterGame (gameId :int, gameOid :int) :void
     {
         if (_liaison == null) {
             log.warning("Requested to enter game but have no liaison?! [oid=" + gameOid + "].");
+            // probably we're following a URL that is super-double-plus out of date; fall back
+            _wctx.getWorldController().handleJoinGameLobby(gameId);
+
         } else if (!(_liaison is LobbyGameLiaison)) {
             log.warning("Requested to enter game but have AVRG liaison?! [oid=" + gameOid + "].");
+
         } else {
             // this is only used for testing game loading issues per WRLD-531,
             // and will be removed after the test is over. -- robert
