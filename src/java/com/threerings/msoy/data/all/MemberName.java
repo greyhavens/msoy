@@ -156,14 +156,6 @@ public class MemberName extends Name
     }
 
     /**
-     * Returns true if this name represent a guest account.
-     */
-    public boolean isPermaguest ()
-    {
-        return MemberMailUtil.isPermaguest(toString());
-    }
-
-    /**
      * Returns true if this name represents an anonymous viewer.
      */
     public boolean isViewer ()

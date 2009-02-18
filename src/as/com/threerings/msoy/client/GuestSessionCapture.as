@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import flash.external.ExternalInterface;
@@ -13,10 +16,12 @@ import com.threerings.presents.net.AuthResponseData
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
 
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.MemberMailUtil;
 
-/** Takes care of monitoring a client's logon and conditionally updating the guest session tokens
- * in flash and browser cookies. */
+/**
+ * Takes care of monitoring a client's logon and conditionally updating the guest session tokens
+ * in flash and browser cookies.
+ */
 public class GuestSessionCapture
 {
     /** Set up monitoring on the given client, with an optional function (taking no arguments) to
@@ -57,8 +62,7 @@ public class GuestSessionCapture
             cancel();
             return;
         }
-
-        _anonymous = creds.getUsername() == null && creds.sessionToken == null;
+        _anonymous = (creds.sessionToken == null);
     }
 
     /** Callback when client has successfully logged on. */
@@ -89,14 +93,14 @@ public class GuestSessionCapture
         var username :String = _client.getClientObject().username.toString();
 
         // the rest is only for permaguests
-        if (!MemberName.isPermaguest(username)) {
+        if (!MemberMailUtil.isPermaguest(username)) {
             // if we just registered or otherwise logged in as a non-permaguest, clear the cookie
             Prefs.setPermaguestUsername(null);
             return;
         }
 
         // set or reset our flash permaguest token
-        log.info("You are a permaguest", "client", _client, "name", username);
+        log.info("You are a permaguest", "client", _client, "name", username, "anon", _anonymous);
         Prefs.setPermaguestUsername(username);
 
         // if this is a new permagust account, transfer the credentials to gwt
@@ -112,7 +116,7 @@ public class GuestSessionCapture
             } else {
                 // the server has created an account for us, yippee! let gwt know
                 var serverToken :String = MsoyAuthResponseData(authdata).sessionToken;
-                log.info("Setting permaguest token to GWT", "token", serverToken);
+                log.info("Sending permaguest token to GWT", "token", serverToken);
                 ExternalInterface.call("setPermaguestInfo", username, serverToken);
             }
         }
