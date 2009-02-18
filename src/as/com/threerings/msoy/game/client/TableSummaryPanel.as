@@ -8,6 +8,10 @@ import mx.containers.VBox;
 
 import mx.controls.Label;
 
+import mx.events.ToolTipEvent;
+
+import mx.managers.ToolTipManager;
+
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
@@ -84,7 +88,9 @@ public class TableSummaryPanel extends HBox
         } else {
             _info.text = Msgs.GAME.get("m.tsp_in_progress"); // can't happen?
         }
-        _info.toolTip = createInfoTip(table);
+        var tip :String = createInfoTip(table);
+        _info.toolTip = tip;
+        _infoTipper.toolTip = tip;
 
         // if the game is in progress
         if (table.gameOid != -1) {
@@ -128,27 +134,34 @@ public class TableSummaryPanel extends HBox
         setStyle("paddingLeft", 10);
         setStyle("paddingRight", 10);
 
+        var infoBox :HBox = new HBox();
+        infoBox.percentWidth = 100;
+        infoBox.addChild(_info = FlexUtil.createLabel("", "tableSummaryStatus"));
+        _infoTipper = new CommandButton(Msgs.GAME.get("b.info"), function () :void {});
+        _infoTipper.enabled = false;
+        _infoTipper.styleName = "orangeButton";
+        _infoTipper.scaleX = .7;
+        _infoTipper.scaleY = .7;
+        infoBox.addChild(_infoTipper);
+        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_START, handleTipEvent);
+        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_HIDE, handleTipEvent);
+
         addChild(_icon = MediaWrapper.createView(null, MediaDesc.HALF_THUMBNAIL_SIZE));
         var bits :VBox = new VBox();
         bits.percentWidth = 100;
         bits.setStyle("verticalGap", 0);
         bits.addChild(_title = FlexUtil.createLabel("", "tableSummaryTitle"));
-        bits.addChild(_info = FlexUtil.createLabel("", "tableSummaryStatus"));
+        bits.addChild(infoBox);
+
         addChild(bits);
         addChild(_action = new CommandButton());
     }
 
     protected static function createInfoTip (table :Table) :String
     {
-        // display whether this game is rated
-        var info :String = Msgs.GAME.get(table.config.rated ? "l.is_rated" : "l.not_rated");
+        var info :String = "";
 
-        // display the non-players in the room (or everyone for party games)
-        if (table.watchers != null && table.watchers.length > 0) {
-            info = info + ", " + Msgs.GAME.get("l.people") + ": " + table.watchers.join(", ");
-        }
-
-        // and display any custom table configuration
+        // display any custom table configuration
         if (table.config is WhirledGameConfig) {
             var gconfig :WhirledGameConfig = (table.config as WhirledGameConfig);
             var params :Array = gconfig.getGameDefinition().params;
@@ -156,17 +169,35 @@ public class TableSummaryPanel extends HBox
                 for each (var param :Parameter in params) {
                     var name :String = StringUtil.isBlank(param.name) ? param.ident : param.name;
                     var value :String = String(gconfig.params.get(param.ident));
-                    info = info + ", " + name + ": "+ value;
+                    info += "\n" + name + ": " + value;
                 }
             }
         }
 
+        // display whether this game is rated
+        info += "\n" + Msgs.GAME.get(table.config.rated ? "l.is_rated" : "l.not_rated");
+
+        // display the non-players in the room (or everyone for party games)
+        if (table.watchers != null && table.watchers.length > 0) {
+            info += "\n" + Msgs.GAME.get("l.people") + ": " + table.watchers.join(", ");
+        }
+
+        // we've added a \n somewhere along the way, so remove it
+        info = info.substring(1);
+
         return info;
+    }
+
+    protected function handleTipEvent (event :ToolTipEvent) :void
+    {
+        // when we hover over the _infoTipper, show tips immediately, else: restore normal time
+        ToolTipManager.showDelay = (event.type == ToolTipEvent.TOOL_TIP_START) ? 0 : 500;
     }
 
     protected var _icon :MediaWrapper;
     protected var _title :Label;
     protected var _info :Label;
+    protected var _infoTipper :CommandButton;
     protected var _action :CommandButton;
 }
 }
