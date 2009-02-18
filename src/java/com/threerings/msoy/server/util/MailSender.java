@@ -35,6 +35,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.mail.server.SpamUtil;
 import com.threerings.presents.server.ShutdownManager;
@@ -61,22 +62,6 @@ public class MailSender
         }
 
         protected VelocityContext _ctx = new VelocityContext();
-    }
-
-    /**
-     * Returns true if the supplied address is not actually a valid address but rather a
-     * placeholder to which we should not send email. Because we use email address for our
-     * authentication username, we sometimes have to generate placeholder addresses for accounts
-     * created on behest of a partner who does not provide the user's actual email address.
-     */
-    public static boolean isPlaceholderAddress (String address)
-    {
-        for (Pattern pattern : PLACEHOLDER_PATTERNS) {
-            if (pattern.matcher(address).matches()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Inject public MailSender (ShutdownManager shutmgr)
@@ -312,11 +297,27 @@ public class MailSender
         CORE_POOL_SIZE, MAX_POOL_SIZE, IDLE_THREAD_LIFETIME, TimeUnit.MILLISECONDS,
         new LinkedBlockingQueue<Runnable>());
 
+    /**
+     * An optimized version of {@link MemberMailUtil#isPlaceholderAddress}.
+     */
+    protected static boolean isPlaceholderAddress (String address)
+    {
+        for (Pattern pattern : PLACEHOLDER_PATTERNS) {
+            if (pattern.matcher(address).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Used by {@link #isPlaceholderAddress}. */
-    protected static final Pattern[] PLACEHOLDER_PATTERNS = {
-        Pattern.compile("[0-9]+@facebook.com"),
-        Pattern.compile(MemberName.PERMAGUEST_EMAIL_PATTERN)
-    };
+    protected static final Pattern[] PLACEHOLDER_PATTERNS;
+    static {
+        PLACEHOLDER_PATTERNS = new Pattern[MemberMailUtil.PLACEHOLDER_PATTERNS.length];
+        for (int ii = 0; ii < PLACEHOLDER_PATTERNS.length; ii++) {
+            PLACEHOLDER_PATTERNS[ii] = Pattern.compile(MemberMailUtil.PLACEHOLDER_PATTERNS[ii]);
+        }
+    }
 
     protected static final Pattern CID_REGEX = Pattern.compile("cid\\:(\\S+\\....)");
 

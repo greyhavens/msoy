@@ -20,6 +20,7 @@ import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.WebCreds;
 
@@ -314,7 +315,7 @@ public class MemberRecord extends PersistentRecord
      */
     public boolean isPermaguest ()
     {
-        return MemberName.isPermaguest(accountName);
+        return MemberMailUtil.isPermaguest(accountName);
     }
 
     /**

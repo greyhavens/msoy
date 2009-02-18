@@ -47,16 +47,6 @@ public class MemberName extends Name
      * creator or mail message sender, etc. */
     public static final MemberName DELETED_MEMBER = new MemberName("", -1);
 
-    /** Prefix used when generating email addresses for permaguests. */
-    public static final String PERMAGUEST_EMAIL_PREFIX = "anon";
-
-    /** Suffix used when generating email addresses for permaguests. */
-    public static final String PERMAGUEST_EMAIL_SUFFIX = "@" + DeploymentConfig.serverHost;
-
-    /** Regular expression used to check if an email address is one assigned to a permaguest. */
-    public static final String PERMAGUEST_EMAIL_PATTERN =
-        PERMAGUEST_EMAIL_PREFIX + "[0-9a-f]{32}" + PERMAGUEST_EMAIL_SUFFIX;
-
     /** A comparator for sorting Names by their display portion, case insensitively. */
     public static final Comparator<MemberName> BY_DISPLAY_NAME = new Comparator<MemberName>() {
         public int compare (MemberName name1, MemberName name2) {
@@ -134,14 +124,6 @@ public class MemberName extends Name
         return memberId <= 0;
     }
 
-    /**
-     * Checks if an account name (email) matches {@link #PERMAGUEST_EMAIL_PATTERN}.
-     */
-    public static boolean isPermaguest (String email)
-    {
-        return email.matches(PERMAGUEST_EMAIL_PATTERN);
-    }
-
     /** For unserialization. */
     public MemberName ()
     {
@@ -178,7 +160,7 @@ public class MemberName extends Name
      */
     public boolean isPermaguest ()
     {
-        return isPermaguest(toString());
+        return MemberMailUtil.isPermaguest(toString());
     }
 
     /**

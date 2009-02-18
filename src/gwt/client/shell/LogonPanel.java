@@ -21,7 +21,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.web.gwt.BannedException;
 import com.threerings.msoy.web.gwt.SessionData;
 import com.threerings.msoy.web.gwt.WebUserService;
@@ -65,7 +65,7 @@ public class LogonPanel extends SmartTable
         // create the email entry widget
         _email = new TextBox();
         String who = CookieUtil.get("who");
-        if (who != null && !MemberName.isPermaguest(who)) {
+        if (who != null && !MemberMailUtil.isPermaguest(who)) {
             _email.setText(CookieUtil.get("who"));
             // since our email is already filled in, we can focus the password field; note: we
             // don't focus the email field by default because we rely on the unfocused state

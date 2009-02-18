@@ -39,6 +39,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.CharityInfo;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -127,8 +128,8 @@ public class WebUserServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAuthCodes.NO_REGISTRATIONS);
         }
 
-        // having registered users with permaguest emails would be a pain, so prevent it
-        if (MemberName.isPermaguest(info.email)) {
+        // having registered users with placeholder emails would be a pain, so prevent it
+        if (MemberMailUtil.isPlaceholderAddress(info.email)) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
         }
 

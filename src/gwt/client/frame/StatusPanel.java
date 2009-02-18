@@ -22,6 +22,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.SessionData;
@@ -107,7 +108,7 @@ public class StatusPanel extends SmartTable
         _creds = data.creds;
         CookieUtil.set("/", Session.SESSION_DAYS, "who", _creds.accountName);
 
-        boolean permaguest = MemberName.isPermaguest(_creds.accountName);
+        boolean permaguest = MemberMailUtil.isPermaguest(_creds.accountName);
 
         // mail, name, help, sign out in a box at top
         HorizontalPanel links = new HorizontalPanel();

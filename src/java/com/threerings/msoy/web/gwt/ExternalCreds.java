@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * etc.).
  *
  * <p> Note: if you create a new external credentials source, you must add a pattern that matches
- * your placeholder email address to MailSender.isPlaceholderAddress().
+ * your placeholder email address to MemberMailUtil.PLACEHOLDER_PATTERNS.
  *
  * @see ExternalAuther
  */

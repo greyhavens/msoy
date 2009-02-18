@@ -32,6 +32,7 @@ import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -96,7 +97,7 @@ public class AccountLogic
         }
 
         // sanity check permaguest-ness
-        if (!MemberName.isPermaguest(mrec.accountName)) {
+        if (!MemberMailUtil.isPermaguest(mrec.accountName)) {
             log.warning("Account not a permaguest", "email", mrec.accountName);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
@@ -174,14 +175,16 @@ public class AccountLogic
      * @return the new guest account record
      * @throws ServiceException if a runtime error occurs
      */
-    public MemberRecord createGuestAccount (String inetAddress, String visitorId)
+    public MemberRecord createGuestAccount (String ipAddress, String visitorId)
         throws ServiceException
     {
         String name = _serverMsgs.getBundle("server").get("m.permaguest_name");
         boolean registering = false;
-        MemberRecord guest =  createAccount(createPermaguestAccountName(inetAddress),
-            PERMAGUEST_PASSWORD, name, null, null, new VisitorInfo(visitorId, false), null,
-            registering, null, null, null);
+        String accountName = MemberMailUtil.makePermaguestEmail(
+            StringUtil.md5hex(System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random()));
+        MemberRecord guest =  createAccount(
+            accountName, PERMAGUEST_PASSWORD, name, null, null, new VisitorInfo(visitorId, false),
+            null, registering, null, null, null);
         guest.name = generatePermaguestDisplayName(guest.memberId);
         _memberRepo.configureDisplayName(guest.memberId, guest.name);
         log.info("Created permaguest account", "username", guest.accountName,
@@ -457,16 +460,6 @@ public class AccountLogic
             log.warning("Missing visitor id when creating user", "email", account);
             return null;
         }        
-    }
-
-    /**
-     * Creates a username to give permanence to unregistered users.
-     */
-    protected static String createPermaguestAccountName (String ipAddress)
-    {
-        return MemberName.PERMAGUEST_EMAIL_PREFIX +
-            StringUtil.md5hex(System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random()) +
-            MemberName.PERMAGUEST_EMAIL_SUFFIX;
     }
 
     @Inject protected AuthenticationDomain _defaultDomain;
