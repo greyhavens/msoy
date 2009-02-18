@@ -176,11 +176,13 @@ public class GroupDetailPanel extends FlowPanel
         }
 
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
-            // join this group
-            if (Group.canJoin(_group.policy) && !CShell.isGuest()) {
+            if (Group.canJoin(_group.policy)) {
                 Label join = MsoyUI.createLabel(_msgs.detailJoin(), null);
                 new ClickCallback<Void>(join, _msgs.detailJoinPrompt()) {
                     @Override protected boolean callService () {
+                        if (!MsoyUI.requireRegistered()) {
+                            return false;
+                        }
                         _groupsvc.joinGroup(_group.groupId, this);
                         return true;
                     }
