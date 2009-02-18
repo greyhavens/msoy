@@ -784,10 +784,13 @@ public class MsoyUI
     {
         if (CShell.isValidated()) {
             return true;
+        } else if (!requireRegistered()) {
+            return false;
+        } else {
+            infoAction(_cmsgs.requiresValidated(), _cmsgs.goValidate(),
+                       Link.createListener(Pages.ACCOUNT, "edit"));
+            return false;
         }
-        infoAction(_cmsgs.requiresValidated(), _cmsgs.goValidate(),
-                   Link.createListener(Pages.ACCOUNT, "edit"));
-        return false;
     }
 
     protected static class TextBoxSelector
