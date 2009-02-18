@@ -16,6 +16,7 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
 
+import client.images.misc.MiscImages;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -30,7 +31,8 @@ public class FavoriteIndicator extends FlowPanel
 
         add(new Label(_imsgs.favorite()));
 
-        ToggleButton toggle = new ToggleButton(ADD_FAVORITE_IMAGE, FAVORITE_IMAGE);
+        ToggleButton toggle = new ToggleButton(_mimgs.add_favorite().createImage(),
+                                               _mimgs.favorite().createImage());
         toggle.addStyleName("actionLabel");
         toggle.setDown(memberItemInfo.favorite);
         toggle.addClickListener(new ClickListener() {
@@ -53,9 +55,5 @@ public class FavoriteIndicator extends FlowPanel
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync) ServiceUtil.bind(
         GWT.create(ItemService.class), ItemService.ENTRY_POINT);
-
-    protected static final Image FAVORITE_IMAGE = MsoyUI.createImage(
-        "/images/ui/favorites/favorite.png", null);
-    protected static final Image ADD_FAVORITE_IMAGE = MsoyUI.createImage(
-        "/images/ui/favorites/add_favorite.png", null);
+    protected static final MiscImages _mimgs = GWT.create(MiscImages.class);
 }
