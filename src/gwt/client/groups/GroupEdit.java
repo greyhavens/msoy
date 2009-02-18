@@ -68,6 +68,15 @@ public class GroupEdit extends FlexTable
      */
     public GroupEdit (Group group, GroupExtras extras)
     {
+        // permaguests are not allowed to create groups
+        String error = CShell.isRegistered() ?
+            (CShell.isValidated() ? null : _msgs.editMustValidate()) : _msgs.editMustRegister();
+        if (error != null) {
+            setHTML(0, 0, error);
+            getFlexCellFormatter().setStyleName(0, 0, "infoLabel");
+            return;
+        }
+
         _group = group;
         _extras = extras;
         boolean isCreate = (_group.groupId == 0);
