@@ -58,7 +58,6 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.room.client.editor.DoorTargetEditController;
 
 import com.threerings.msoy.room.data.AudioData;
-import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemories;
@@ -278,8 +277,8 @@ public class RoomObjectView extends RoomView
                         (ctrl.controlled as ControllableEntity).getItemIdent());
 
                 } else {
-                    dispatchAVRGameGotControl(
-                        (ctrl.controlled as ControllableAVRGame).getGameId());
+                    log.warning("Did not expect to receive control of unknown type",
+                        "controlled", ctrl.controlled, "controllerOid", ctrl.controllerOid);
                 }
             }
         }
@@ -545,24 +544,6 @@ public class RoomObjectView extends RoomView
                     addBody(occInfo);
                 }
             }
-        }
-    }
-
-    /**
-     * Called when control of an AVRG is assigned to us.
-     */
-    protected function dispatchAVRGameGotControl (gameId :int) :void
-    {
-        if (gameId != _ctx.getGameDirector().getGameId()) {
-            log.warning("Got control over an AVRG we're not playing", "gameId", gameId);
-            return;
-        }
-        log.debug("AVRG got control", "gameId", gameId);
-
-        // TODO: remove this
-        var backend :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();
-        if (backend != null) {
-            return backend.gotControl();
         }
     }
 

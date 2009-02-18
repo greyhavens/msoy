@@ -33,6 +33,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.RoomObjectView;
+import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
@@ -43,6 +44,8 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
+
+import flash.utils.ByteArray;
 
 /**
  * Coordinates the client side of AVRG business.
@@ -252,17 +255,30 @@ public class AVRGameController extends PlaceController
 
         } else if (roomObject != null) {
             setRoomPropsOid(0);
+
+            // listen for the property space becoming available
             var setListener :SetAdapter;
             setListener = new SetAdapter(function (event :EntryAddedEvent) :void {
                 if (event.getName() == RoomObject.PROPERTY_SPACES) {
                     entry = event.getEntry() as RoomPropertiesEntry;
                     if (entry.ownerId == gameId) {
                         setRoomPropsOid(entry.propsOid);
+                        // unregister this listener once we have the property space oid
                         roomObject.removeListener(setListener);
                     }
                 }
             });
             roomObject.addListener(setListener);
+
+            // but do persistently listen for messages on the room object
+            roomObject.addListener(new MessageAdapter(function (event :MessageEvent) :void {
+                log.info("roomMessage", "event", event);
+                if (event.getName() == RoomCodes.SPRITE_SIGNAL) {
+                    var args :Array = event.getArgs();
+                    _backend.signalReceived(args[0] as String, args[1] as ByteArray);
+                }
+            }));
+
         } else {
             setRoomPropsOid(0);
         }

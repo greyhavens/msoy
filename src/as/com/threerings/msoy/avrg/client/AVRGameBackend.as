@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.client {
 
 import flash.display.DisplayObject;
+import flash.utils.ByteArray;
 import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -32,6 +33,7 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MethodQueue;
+import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
 import com.threerings.whirled.data.Scene;
 import com.whirled.game.data.WhirledPlayerObject;
@@ -168,6 +170,11 @@ public class AVRGameBackend extends ControlBackend
 
     public function gotControl () :void
     {
+    }
+
+    public function signalReceived (name :String, value :ByteArray) :void
+    {
+        callUserCode("signalReceived_v1", name, ObjectMarshaller.decode(value));        
     }
 
     override protected function handleUserCodeConnect (evt :Object) :void
