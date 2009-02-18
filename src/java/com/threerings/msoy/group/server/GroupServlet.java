@@ -298,7 +298,8 @@ public class GroupServlet extends MsoyServiceServlet
         Group group, GroupExtras extras, Currency currency, int authedAmount)
         throws ServiceException
     {
-        return _groupLogic.createGroup(requireAuthedUser(), group, extras, currency, authedAmount);
+        return _groupLogic.createGroup(
+            requireValidatedUser(), group, extras, currency, authedAmount);
     }
 
     // from interface GroupService
@@ -354,7 +355,7 @@ public class GroupServlet extends MsoyServiceServlet
     public void joinGroup (int groupId)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser();
+        final MemberRecord mrec = requireValidatedUser();
 
         // make sure the group in question exists
         final GroupRecord grec = _groupRepo.loadGroup(groupId);
