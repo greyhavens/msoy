@@ -485,7 +485,6 @@ public class AVRGameController extends PlaceController
     }
 
     protected function roomMessage (event :MessageEvent) :void {
-        log.info("roomMessage", "event", event);
         if (event.getName() == RoomCodes.SPRITE_SIGNAL) {
             var args :Array = event.getArgs();
             _backend.signalReceived(args[0] as String, args[1] as ByteArray);
