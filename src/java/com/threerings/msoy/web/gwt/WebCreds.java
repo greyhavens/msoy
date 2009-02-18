@@ -83,15 +83,15 @@ public class WebCreds implements IsSerializable
     }
 
     /**
-     * Returns true if this member is an unregistered (but persistent) guest account.
+     * Returns true if this user has an account (is not an anonymous guest).
      */
-    public boolean isPermaguest ()
+    public boolean isMember ()
     {
         return role == Role.PERMAGUEST || isRegistered();
     }
 
     /**
-     * Returns true if this member is registered but not validated.
+     * Returns true if this user is a registered member (or better).
      */
     public boolean isRegistered ()
     {
@@ -99,7 +99,7 @@ public class WebCreds implements IsSerializable
     }
 
     /**
-     * Returns true if this member is a validated user.
+     * Returns true if this user is a validated member (or better).
      */
     public boolean isValidated ()
     {

@@ -43,7 +43,7 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "Me", Pages.ME, "");
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
                 addLink(null, "My Rooms", Pages.PEOPLE, Args.compose("rooms", memberId));
-                if (!CShell.isPermaguest()) {
+                if (CShell.isRegistered()) {
                     addLink(null, "Friends", Pages.PEOPLE, "");
                     addLink(null, "Account", Pages.ACCOUNT, "edit");
                 }
@@ -54,14 +54,14 @@ public class SubNaviPanel extends FlowPanel
             break;
 
         case STUFF:
-            if (!CShell.isGuest()) {
+            if (CShell.isMember()) {
                 addLink(null, "My Stuff", Pages.STUFF, "");
             }
             break;
 
         case GAMES:
             addLink(null, "Games", Pages.GAMES, "");
-            if (!CShell.isGuest()) {
+            if (CShell.isMember()) {
                 addLink(null, "My Trophies", Pages.GAMES, Args.compose("t", memberId));
                 addLink(null, "My Favorites", Pages.SHOP, Args.compose("f", memberId, 4));
             }
@@ -70,7 +70,7 @@ public class SubNaviPanel extends FlowPanel
 
         case ROOMS:
             addLink(null, "Rooms", Pages.ROOMS, "");
-            if (!CShell.isGuest()) {
+            if (CShell.isMember()) {
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
                 addLink(null, "My Rooms", Pages.PEOPLE, Args.compose("rooms", memberId));
             }
@@ -78,7 +78,7 @@ public class SubNaviPanel extends FlowPanel
 
         case GROUPS:
             addLink(null, "Groups", Pages.GROUPS, "");
-            if (!CShell.isGuest() && !CShell.isPermaguest()) {
+            if (CShell.isRegistered()) {
                 addLink(null, "My Groups", Pages.GROUPS, "mygroups");
                 addLink(null, "My Discussions", Pages.GROUPS, "unread");
                 if (CShell.isSupport()) {
@@ -91,7 +91,7 @@ public class SubNaviPanel extends FlowPanel
         case SHOP:
             addLink(null, "Shop", Pages.SHOP, "");
             addLink(null, "My Favorites", Pages.SHOP, "f");
-            if (!CShell.isGuest() && !CShell.isPermaguest()) {
+            if (CShell.isRegistered()) {
                 addLink(null, "Transactions", Pages.ME, "transactions");
                 addExternalLink("Buy Bars", BillingUtil.onBuyBars(), true);
             }

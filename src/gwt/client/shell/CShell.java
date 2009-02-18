@@ -49,7 +49,7 @@ public class CShell
     }
 
     /**
-     * Returns true if we're an ephemeral guest, false if we're a permaguest or registered member.
+     * Returns true <em>iff</em> we're an ephemeral guest (not a permaguest or member).
      */
     public static boolean isGuest ()
     {
@@ -57,29 +57,37 @@ public class CShell
     }
 
     /**
-     * Returns true if we're a permaguest, false if we're an ephemeral guest or registered member.
+     * Returns true <em>iff</em> we're a permaguest (not an ephemeral guest or member).
      */
     public static boolean isPermaguest ()
     {
-        return creds != null && (creds.role == WebCreds.Role.PERMAGUEST);
+        return (creds != null) && (creds.role == WebCreds.Role.PERMAGUEST);
     }
 
     /**
-     * Returns true if we are a registered user that may or may not have a validate email address,
-     * false if we're a guest or permaguest.
+     * Returns true if we have some sort of account. We may be a permaguest or a registered member,
+     * or anything "greater" (validated, support, admin, etc.).
+     */
+    public static boolean isMember ()
+    {
+        return (creds != null) && creds.isMember();
+    }
+
+    /**
+     * Returns true if we are a registered user or "greater", false if we're a guest or permaguest.
      */
     public static boolean isRegistered ()
     {
-        return creds != null && creds.isRegistered();
+        return (creds != null) && creds.isRegistered();
     }
 
     /**
-     * Returns true if we are a registered user with a validated email address, false if we're a
-     * guest, permaguest or a registered member with an unvalidated email address.
+     * Returns true if we are a registered user with a validated email address or "greater", false
+     * if we're a guest, permaguest or a registered member with an unvalidated email address.
      */
     public static boolean isValidated ()
     {
-        return creds != null && creds.isValidated();
+        return (creds != null) && creds.isValidated();
     }
 
     /**
