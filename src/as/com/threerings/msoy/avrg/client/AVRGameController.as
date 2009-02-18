@@ -521,15 +521,10 @@ public class AVRGameController extends PlaceController
 
     protected var _lastDispatchedSceneId :int;
 
-    protected var _roomMessageListener :MessageAdapter =
-        new MessageAdapter(roomMessage);
-
-    protected var _playerListener :MessageAdapter =
-        new MessageAdapter(playerMessage);
-
+    protected var _roomMessageListener :MessageAdapter = new MessageAdapter(roomMessage);
+    protected var _playerListener :MessageAdapter = new MessageAdapter(playerMessage);
     protected var _gameListener :SetAdapter =
         new SetAdapter(gameEntryAdded, gameEntryUpdated, gameEntryRemoved);
-
     protected var _occupantObserver :OccupantObserver =
         new OccupantAdapter(occupantEntered, occupantLeft);
 }
