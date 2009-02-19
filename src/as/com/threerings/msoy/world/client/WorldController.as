@@ -623,7 +623,10 @@ public class WorldController extends MsoyController
         // route our entry to the game through GWT so that we can handle non-Flash games
         log.debug("Handling go game", "oid", placeOid, "shareMemberId", shareMemberId,
            "shareToken", shareToken);
-        var args :String = Args.join("game", "g", gameId, placeOid, shareToken, shareMemberId);
+        var args :String = Args.join("game", "g", gameId, placeOid);
+        if ((shareToken != null && shareToken.length > 0) || shareMemberId != 0) {
+            args = Args.join(args, shareToken, shareMemberId);
+        }
         if (!inGWTApp() || !displayPage("world", args)) {
             // fall back to breaking the back button
             log.info("Going straight into game [oid=" + placeOid + "].");
