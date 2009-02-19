@@ -21,6 +21,7 @@ import com.threerings.util.ValueEvent;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.net.Credentials;
 
+import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -661,10 +662,45 @@ public class WorldController extends MsoyController
     /**
      * Handles JOIN_AVR_GAME.
      */
-    public function handleJoinAVRGame (gameId :int, token :String = "", 
+    public function handleJoinAVRGame (gameId :int, sceneId :int = 0, token :String = "",
         inviterMemberId :int = 0) :void
     {
-        _wctx.getGameDirector().activateAVRGame(gameId, token == null ? "" : token, inviterMemberId);
+        // by default, kick off in current scene
+        if (sceneId == 0) {
+            sceneId = getCurrentSceneId();
+        }
+
+        // don't try and start avrgs before we are in a scene
+        if (sceneId <= 0) {
+            log.warning("Join avrg - invalid scene", "gameId", gameId, "sceneId", sceneId,
+                "currentSceneId", getCurrentSceneId());
+            return;
+        }
+
+        // yay! we're there, carry on
+        if (sceneId == getCurrentSceneId()) {
+            _wctx.getGameDirector().activateAVRGame(
+                gameId, token == null ? "" : token, inviterMemberId);
+            return;
+        }
+
+        // observe location changes
+        var adapter :LocationAdapter = new LocationAdapter(null, didChange, changeFailed);
+        _wctx.getLocationDirector().addLocationObserver(adapter);
+
+        // move to the scene
+        _wctx.getSceneDirector().moveTo(sceneId);
+
+        // retry this function on location change
+        function didChange (place :PlaceObject) :void {
+            _wctx.getLocationDirector().removeLocationObserver(adapter);
+            handleJoinAVRGame(gameId, sceneId, token, inviterMemberId);
+        }
+
+        // remove the observer on failure
+        function changeFailed (place :PlaceObject) :void {
+            _wctx.getLocationDirector().removeLocationObserver(adapter);
+        }
     }
 
     /**
@@ -956,8 +992,8 @@ public class WorldController extends MsoyController
                                             int(params["inviterMemberId"]));
 
         } else if (null != params["worldGame"]) {
-            handleJoinAVRGame(int(params["worldGame"]), params["inviteToken"] as String,
-                int(params["inviterMemberId"]));
+            handleJoinAVRGame(int(params["worldGame"]), int(params["inviteGameRoomId"]),
+                String(params["inviteToken"]), int(params["inviterMemberId"]));
 
         } else if ("true" == params["tour"]) {
             _wctx.getTourDirector().startTour();

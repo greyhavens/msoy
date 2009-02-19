@@ -758,7 +758,7 @@ public class FrameEntryPoint
             args = "worldGame=" + config.gameId;
             if (token.length() > 0 || otherId1 > 0 || otherId2 > 0) {
                 args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1 +
-                    "&shareGameRoom=" + otherId2;
+                    "&inviteGameRoomId=" + otherId2;
             }
             displayWorldClient(args, null);
             break;
