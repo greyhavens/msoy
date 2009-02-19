@@ -244,7 +244,7 @@ public class HeaderBar extends HBox
     protected function handleUIStateChange (event :UIStateChangeEvent) :void
     {
         var state :UIState = _ctx.getUIState();
-        _goBtn.visible = !state.embedded;
+        _goBtn.visible = !(state.embedded && state.inGame);
         _tabsContainer.visible = state.showChat;
     }
 
