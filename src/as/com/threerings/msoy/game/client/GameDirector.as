@@ -253,9 +253,9 @@ public class GameDirector extends BasicDirector
     }
 
     /**
-     * Brings up the share page in our shell, as requested by the game the user is playing.
+     * Brings up the game invite page in our shell, as requested by the game the user is playing.
      */
-    public function viewSharePage (defmsg :String, token :String = "", roomId :int = 0) :void
+    public function viewInvitePage (defmsg :String, token :String = "", roomId :int = 0) :void
     {
         // we encode the strings so they are valid as part of the URL and the user cannot trivially
         // see them
@@ -503,7 +503,7 @@ public class GameDirector extends BasicDirector
         }
     }
 
-    public function getShareToken () :String
+    public function getInviteToken () :String
     {
         if (_liaison != null) {
             return _liaison.inviteToken;
@@ -511,7 +511,7 @@ public class GameDirector extends BasicDirector
         return "";
     }
     
-    public function getShareMemberId () :int
+    public function getInviterMemberId () :int
     {
         if (_liaison != null) {
             return _liaison.inviterMemberId;

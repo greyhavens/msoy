@@ -144,9 +144,9 @@ public class LiaisonGameContext
     }
 
     // from GameContext
-    public function showSharePage (defmsg :String, token :String = "", roomId :int = 0) :void
+    public function showInvitePage (defmsg :String, token :String = "", roomId :int = 0) :void
     {
-        _wctx.getGameDirector().viewSharePage(defmsg, token, roomId);
+        _wctx.getGameDirector().viewInvitePage(defmsg, token, roomId);
     }
 
     // from GameContext
@@ -162,15 +162,15 @@ public class LiaisonGameContext
     }
     
     // from GameContext
-    public function getShareToken () :String
+    public function getInviteToken () :String
     {
-    	return _wctx.getGameDirector().getShareToken();
+    	return _wctx.getGameDirector().getInviteToken();
     }
     
     // from GameContext
-    public function getShareMemberId () :int
+    public function getInviterMemberId () :int
     {
-    	return _wctx.getGameDirector().getShareMemberId();
+    	return _wctx.getGameDirector().getInviterMemberId();
     }
 
     protected var _wctx :WorldContext;

@@ -45,9 +45,9 @@ public interface GameContext extends ParlorContext
     function showGameShop (itemType :int, catalogId :int = 0) :void;
     
     /**
-     * Requests that we open the share game page.
+     * Requests that we open the game invite page.
      */
-    function showSharePage (defmsg :String, token :String = "", roomId :int = 0) :void;
+    function showInvitePage (defmsg :String, token :String = "", roomId :int = 0) :void;
 
     /**
      * Requests that we display the trophies awarded by this game.
@@ -60,13 +60,13 @@ public interface GameContext extends ParlorContext
     function getOnlineFriends () :Array;
     
     /**
-     * Retrieves the share token that was passed to the game.
+     * Retrieves the invite token that was passed to the game.
      */
-    function getShareToken () :String;
+    function getInviteToken () :String;
     
     /**
-     * Retrieves the ID of the member who shared this game.
+     * Retrieves the ID of the member who invited the current player to this game.
      */
-    function getShareMemberId () :int;
+    function getInviterMemberId () :int;
 }
 }

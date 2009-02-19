@@ -258,9 +258,9 @@ public class AVRGameBackend extends ControlBackend
         o["locationToRoom_v1"] = locationToRoom_v1;
         o["roomToLocationAtDepth_v1"] = roomToLocationAtDepth_v1;
         o["roomToLocationAtHeight_v1"] = roomToLocationAtHeight_v1;
-        o["showSharePage_v1"] = showSharePage_v1;
-        o["getShareToken_v1"] = getShareToken_v1;
-        o["getShareMemberId_v1"] = getShareMemberId_v1;
+        o["showInvitePage_v1"] = showInvitePage_v1;
+        o["getInviteToken_v1"] = getInviteToken_v1;
+        o["getInviterMemberId_v1"] = getInviterMemberId_v1;
         o["getRoomBounds_vRay"] = getRoomBounds_vRay; // Added: Ray Jan 23, 2009.
 
         // AgentSubControl
@@ -660,21 +660,21 @@ public class AVRGameBackend extends ControlBackend
     }
     
     // LocalSubControl
-    protected function showSharePage_v1 (defmsg :String, token :String = "") :void
+    protected function showInvitePage_v1 (defmsg :String, token :String = "") :void
     {
-        _gctx.showSharePage(defmsg, token, getRoomId());
+        _gctx.showInvitePage(defmsg, token, getRoomId());
     }
     
     // LocalSubControl
-    protected function getShareToken_v1 () :String
+    protected function getInviteToken_v1 () :String
     {
-        return _gctx.getShareToken();
+        return _gctx.getInviteToken();
     }
     
     // LocalSubControl
-    protected function getShareMemberId_v1 () :int
+    protected function getInviterMemberId_v1 () :int
     {
-        return _gctx.getShareMemberId();
+        return _gctx.getInviterMemberId();
     }
 
     // LocalSubControl

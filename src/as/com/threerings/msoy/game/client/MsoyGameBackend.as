@@ -134,21 +134,21 @@ public class MsoyGameBackend extends WhirledGameBackend
     }
 
     // from WhirledGameBackend
-    override protected function showSharePage_v1 (defmsg :String, token :String = "") :void
+    override protected function showInvitePage_v1 (defmsg :String, token :String = "") :void
     {
-    	(_ctx as GameContext).showSharePage(defmsg, token);
+    	(_ctx as GameContext).showInvitePage(defmsg, token);
     }
 
     // from WhirledGameBackend
-    override protected function getShareToken_v1 () :String
+    override protected function getInviteToken_v1 () :String
     {
-    	return (_ctx as GameContext).getShareToken();
+    	return (_ctx as GameContext).getInviteToken();
     }
 
     // from WhirledGameBackend
-    override protected function getShareMemberId_v1 () :int
+    override protected function getInviterMemberId_v1 () :int
     {
-    	return (_ctx as GameContext).getShareMemberId();
+    	return (_ctx as GameContext).getInviterMemberId();
     }
 
     // from WhirledGameBackend
