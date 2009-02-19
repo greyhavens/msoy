@@ -110,9 +110,6 @@ public class AccountLogic
         // get the affiliate
         int affiliate = resolveAffiliate(email, cookie, invite);
 
-        // make sure the email is lowercase, it gots to be lower case
-        email = email.toLowerCase();
-
         // update member data
         try {
             _memberRepo.updateRegistration(memberId, email, displayName, affiliate);

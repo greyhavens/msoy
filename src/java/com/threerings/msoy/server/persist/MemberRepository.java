@@ -299,10 +299,11 @@ public class MemberRepository extends DepotRepository
     /**
      * Looks up a member name and id from by username.
      */
-    public MemberName loadMemberName (String username)
+    public MemberName loadMemberName (String accountName)
     {
         MemberNameRecord record = load(
-            MemberNameRecord.class, new Where(MemberRecord.ACCOUNT_NAME, username));
+            MemberNameRecord.class,
+            new Where(MemberRecord.ACCOUNT_NAME, accountName.toLowerCase()));
         return (record == null ? null : record.toMemberName());
     }
 
@@ -506,7 +507,7 @@ public class MemberRepository extends DepotRepository
      */
     public void insertMember (MemberRecord member)
     {
-        // flatten account name (email address) on insertion
+        // account name must always be lower case
         member.accountName = member.accountName.toLowerCase();
         if (member.created == null) {
             long now = System.currentTimeMillis();
@@ -523,8 +524,20 @@ public class MemberRepository extends DepotRepository
      */
     public void configureAccountName (int memberId, String accountName)
     {
+        accountName = accountName.toLowerCase(); // account name must always be lower case
         updatePartial(MemberRecord.class, memberId,
                       MemberRecord.ACCOUNT_NAME, accountName.toLowerCase());
+    }
+
+    /**
+     * Updates registration fields, for when a prevsiously inserted permaguest registers.
+     */
+    public void updateRegistration (
+        int memberId, String accountName, String displayName, int affiliate)
+    {
+        accountName = accountName.toLowerCase(); // account name must always be lower case
+        updatePartial(MemberRecord.class, memberId, MemberRecord.ACCOUNT_NAME, accountName,
+            MemberRecord.NAME, displayName, MemberRecord.AFFILIATE_MEMBER_ID, affiliate);
     }
 
     /**
@@ -575,15 +588,6 @@ public class MemberRepository extends DepotRepository
     public void updateBadgesVersion (int memberId, short badgesVersion)
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.BADGES_VERSION, badgesVersion);
-    }
-
-    /**
-     * Updates registration fields, for when a prevsiously inserted permaguest registers.
-     */
-    public void updateRegistration (int memberId, String email, String displayName, int affiliate)
-    {
-        updatePartial(MemberRecord.class, memberId, MemberRecord.ACCOUNT_NAME, email,
-            MemberRecord.NAME, displayName, MemberRecord.AFFILIATE_MEMBER_ID, affiliate);
     }
 
     /**
@@ -1162,7 +1166,7 @@ public class MemberRepository extends DepotRepository
      */
     public void clearFriendship (int memberId, int otherId)
     {
-        // TODO: migrate existing friend records to (firstId<secondId) format then just do one delete
+        // TODO: migrate existing friend records to (firstId<secondId) format then can do one delete
         delete(FriendRecord.class, FriendRecord.getKey(memberId, otherId));
         delete(FriendRecord.class, FriendRecord.getKey(otherId, memberId));
     }
@@ -1367,7 +1371,8 @@ public class MemberRepository extends DepotRepository
     {
         Preconditions.checkArgument(
             charityMemberId >= 0, "Charity member ID must be zero or positive.");
-        updatePartial(MemberRecord.class, memberId, MemberRecord.CHARITY_MEMBER_ID, charityMemberId);
+        updatePartial(MemberRecord.class, memberId,
+                      MemberRecord.CHARITY_MEMBER_ID, charityMemberId);
     }
 
     protected String randomInviteId ()
