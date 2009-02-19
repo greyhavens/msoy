@@ -66,14 +66,6 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
-     * Generates a guest name from the given member id.
-     */
-    public static String generateGuestName (final int memberId)
-    {
-        return "Guest" + Math.abs(memberId);
-    }
-
-    /**
      * Authenticates a web sesssion, verifying the supplied email and password and loading,
      * creating (or reusing) a member record.
      *
@@ -220,19 +212,13 @@ public class MsoyAuthenticator extends Authenticator
             }
 
             if (creds.sessionToken != null) {
-                if (WorldCredentials.isGuestSessionToken(creds.sessionToken)) {
-                    authenticateGuest(conn, creds, rdata,
-                                      WorldCredentials.getGuestMemberId(creds.sessionToken));
-
-                } else {
-                    final MemberRecord member =
-                        _memberRepo.loadMemberForSession(creds.sessionToken);
-                    if (member == null) {
-                        throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
-                    }
-                    rsp.authdata = authenticateMember(creds, rdata, member, false,
-                        member.accountName, AuthenticationDomain.PASSWORD_BYPASS);
+                final MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
+                if (member == null) {
+                    throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
                 }
+                rsp.authdata = authenticateMember(
+                    creds, rdata, member, false, member.accountName,
+                    AuthenticationDomain.PASSWORD_BYPASS);
 
             } else if (creds.getUsername() != null) {
                 final String aname = creds.getUsername().toString().toLowerCase();
@@ -268,17 +254,9 @@ public class MsoyAuthenticator extends Authenticator
             throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
         }
 
-        // if they're a "featured whirled" client, create a unique name for them
-        if (creds.featuredPlaceView) {
-            String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
-            creds.setUsername(new LurkerName(name));
-        } else {
-            // if they supplied a name with their credentials, use that, otherwise generate one
-            final String name = (creds.getUsername() == null) ?
-                generateGuestName(memberId) : creds.getUsername().toString();
-            creds.setUsername(new MemberName(name, memberId));
-        }
-        rdata.sessionToken = WorldCredentials.makeGuestSessionToken(memberId);
+        // they're a "featured whirled" client, create a unique name for them
+        String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
+        creds.setUsername(new LurkerName(name));
         rdata.code = MsoyAuthResponseData.SUCCESS;
         _eventLog.userLoggedIn(memberId, creds.visitorId, false, System.currentTimeMillis());
     }

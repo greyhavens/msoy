@@ -47,7 +47,6 @@ import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
@@ -193,24 +192,17 @@ public class GameLiaison
     // from interface WorldGameService_LocationListener
     public function gameLocated (hostname :String, port :int) :void
     {
-        var gclient :Client = _gctx.getClient();
-        var wclient :Client = _wctx.getClient();
-
         log.info("Game located - logging in", "gameId", _gameId, "host", hostname, "port", port);
 
-        // make sure we grab & stash the session details if this is a permaguest login
-        GuestSessionCapture.capture(gclient, didLogon);
-
-        gclient.setServer(hostname, [ port ]);
-        gclient.setVersion(DeploymentConfig.version);
-        gclient.logon();
-
-        // called once the game server login finishes
-        function didLogon () :void {
+        // make sure we grab & stash the session details if this is a permaguest login; the
+        // function we supply will be called once we've logged onto the game server
+        var gclient :Client = _gctx.getClient();
+        GuestSessionCapture.capture(gclient, function () :void {
             // save the session token for future use
             _wctx.saveSessionToken(gclient);
 
             // copy credentials into world client and logon
+            var wclient :Client = _wctx.getClient();
             if (!wclient.isLoggedOn()) {
                 var gcreds :MsoyCredentials = (gclient.getCredentials() as MsoyCredentials);
                 var wcreds :MsoyCredentials = (wclient.getCredentials() as MsoyCredentials);
@@ -218,7 +210,11 @@ public class GameLiaison
                 wcreds.sessionToken = gcreds.sessionToken;
                 wclient.logon();
             }
-        }
+        });
+
+        gclient.setServer(hostname, [ port ]);
+        gclient.setVersion(DeploymentConfig.version);
+        gclient.logon();
     }
 
     // from interface WorldGameService_LocationListener

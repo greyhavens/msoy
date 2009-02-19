@@ -116,11 +116,12 @@ public class GuestSessionCapture
             } else {
                 // the server has created an account for us, yippee! let gwt know
                 var serverToken :String = MsoyAuthResponseData(authdata).sessionToken;
-                log.info("Sending permaguest token to GWT", "token", serverToken);
-                ExternalInterface.call("setPermaguestInfo", username, serverToken);
+                if (serverToken != null) {
+                    log.info("Sending permaguest token to GWT", "token", serverToken);
+                    ExternalInterface.call("setPermaguestInfo", username, serverToken);
+                }
             }
         }
-        
     }
 
     /** Callback when logon fails for some reason. */

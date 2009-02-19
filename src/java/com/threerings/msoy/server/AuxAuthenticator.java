@@ -89,16 +89,6 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                 name = guest.name;
                 token = _memberRepo.startOrJoinSession(guest.memberId, 1);
 
-            } else if (MsoyCredentials.isGuestSessionToken(creds.sessionToken)) {
-                // if this is a guest, see if they supplied a guest id and if not, assign one
-                log.info("Authenticating guest", "token", creds.sessionToken);
-                memberId = MsoyCredentials.getGuestMemberId(creds.sessionToken);
-                Name credsName = creds.getUsername();
-                accountName = credsName != null ? credsName.toString() :
-                    MsoyAuthenticator.generateGuestName(memberId);
-                name = accountName;
-                token = creds.sessionToken;
-
             } else {
                 MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
                 if (member == null) {
