@@ -619,7 +619,6 @@ public class MemberManager
     // from interface MemberProvider
     public void complainMember (ClientObject caller, final int memberId, String complaint)
     {
-        log.info("complainMember()");
         MemberObject target = _locator.lookupMember(memberId);
         complainMember((BodyObject) caller, memberId,  complaint,
             (target != null) ? target.getMemberName() : null);
