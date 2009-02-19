@@ -35,6 +35,12 @@ public class GameGameDispatcher extends InvocationDispatcher<GameGameMarshaller>
         throws InvocationException
     {
         switch (methodId) {
+        case GameGameMarshaller.COMPLAIN_PLAYER:
+            ((GameGameProvider)provider).complainPlayer(
+                source, ((Integer)args[0]).intValue(), (String)args[1]
+            );
+            return;
+
         case GameGameMarshaller.GET_TROPHIES:
             ((GameGameProvider)provider).getTrophies(
                 source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]

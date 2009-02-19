@@ -3,14 +3,20 @@
 
 package com.threerings.msoy.underwire.server;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.util.Invoker;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.dobj.DObject;
 
 import com.threerings.user.OOOUser;
 
@@ -18,9 +24,14 @@ import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.server.persist.UnderwireRepository;
 import com.threerings.underwire.web.data.Event;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import static com.threerings.msoy.Log.log;
@@ -50,6 +61,61 @@ public class SupportLogic
         _underrepo.insertEvent(event);
     }
 
+    /**
+     * Compile server-side information for a complaint against a MemberObject or a PlayerObject
+     * and file it with the Underwire system. Note that this method must be called on the dobj
+     * thread. The target name is optional (only available when the complainee is online).
+     */
+    @EventThread
+    public void complainMember (
+        final DObject complainerObj, MemberName complainerName, final int targetId,
+        String complaint, MemberName optTargetName)
+    {
+        final EventRecord event = new EventRecord();
+        event.source = Integer.toString(complainerName.getMemberId());
+        event.sourceHandle = complainerName.toString();
+        event.status = Event.OPEN;
+        event.subject = complaint;
+
+        // format and provide the complainer's chat history
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+        StringBuilder chatHistory = new StringBuilder();
+        for (ChatMessage msg : SpeakUtil.getChatHistory(complainerName)) {
+            UserMessage umsg = (UserMessage)msg;
+            chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ').
+                append(StringUtil.pad(ChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ').
+                append(umsg.speaker);
+            if (umsg.speaker instanceof MemberName) {
+                chatHistory.append('(').append(((MemberName)umsg.speaker).getMemberId()).append(')');
+            }
+            chatHistory.append(": ").append(umsg.message).append('\n');
+        }
+        event.chatHistory = chatHistory.toString();
+
+        if (optTargetName != null) {
+            event.targetHandle = optTargetName.toString();
+            event.target = Integer.toString(optTargetName.getMemberId());
+        }
+
+        _invoker.postUnit(new Invoker.Unit("addComplaint") {
+            @Override public boolean invoke () {
+                try {
+                    addComplaint(event, targetId);
+                } catch (Exception e) {
+                    log.warning("Failed to add complaint event [event=" + event + "].", e);
+                    _failed = true;
+                }
+                return true;
+            }
+            @Override public void handleResult () {
+                SpeakUtil.sendFeedback(complainerObj, MsoyCodes.GENERAL_MSGS,
+                        _failed ? "m.complain_fail" : "m.complain_success");
+            }
+            protected boolean _failed = false;
+        });
+    }
+    
+    
     /**
      * Adds a complaint record to the underwire event queue.
      */

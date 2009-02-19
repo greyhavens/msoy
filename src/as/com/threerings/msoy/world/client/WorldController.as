@@ -42,7 +42,9 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.avrg.client.AVRGamePanel;
+import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.client.GameDirector;
+import com.threerings.msoy.game.client.GameGameService;
 import com.threerings.msoy.game.client.MsoyGamePanel;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
@@ -714,7 +716,25 @@ public class WorldController extends MsoyController
      */
     public function handleComplainMember (memberId :int, username :String) :void
     {
-        _topPanel.callLater(function () :void { new ComplainDialog(_wctx, memberId, username); });
+        var service :Function;
+        var gctx :GameContext = _wctx.getGameDirector().getGameContext();
+        // if we're playing a game, but it's not an AVRG, this complaint goes to the game server
+        if (gctx != null && _wctx.getGameDirector().getAVRGameBackend() == null) {
+            service = function (complaint :String) :void {
+                var gsvc :GameGameService =
+                    (gctx.getClient().requireService(GameGameService) as GameGameService);
+                gsvc.complainPlayer(gctx.getClient(), memberId, complaint);
+            };
+
+        } else {
+            service = function (complaint :String) :void {
+                var msvc :MemberService =
+                    (_wctx.getClient().requireService(MemberService) as MemberService);
+                msvc.complainMember(_wctx.getClient(), memberId, complaint);
+            };
+        }
+
+        _topPanel.callLater(function () :void { new ComplainDialog(_wctx, username, service); });
     }
 
     /**

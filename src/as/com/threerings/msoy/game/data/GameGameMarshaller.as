@@ -22,8 +22,19 @@ import com.threerings.util.Integer;
 public class GameGameMarshaller extends InvocationMarshaller
     implements GameGameService
 {
+    /** The method id used to dispatch <code>complainPlayer</code> requests. */
+    public static const COMPLAIN_PLAYER :int = 1;
+
+    // from interface GameGameService
+    public function complainPlayer (arg1 :Client, arg2 :int, arg3 :String) :void
+    {
+        sendRequest(arg1, COMPLAIN_PLAYER, [
+            Integer.valueOf(arg2), arg3
+        ]);
+    }
+
     /** The method id used to dispatch <code>getTrophies</code> requests. */
-    public static const GET_TROPHIES :int = 1;
+    public static const GET_TROPHIES :int = 2;
 
     // from interface GameGameService
     public function getTrophies (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -36,7 +47,7 @@ public class GameGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>removeDevelopmentTrophies</code> requests. */
-    public static const REMOVE_DEVELOPMENT_TROPHIES :int = 2;
+    public static const REMOVE_DEVELOPMENT_TROPHIES :int = 3;
 
     // from interface GameGameService
     public function removeDevelopmentTrophies (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void

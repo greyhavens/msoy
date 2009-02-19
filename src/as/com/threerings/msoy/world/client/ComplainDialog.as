@@ -20,10 +20,11 @@ public class ComplainDialog extends FloatingPanel
 {
     public static const MAX_COMPLAINT_CHARS :int = 255;
 
-    public function ComplainDialog (ctx :MsoyContext, memberId :int, name :String)
+    public function ComplainDialog (
+        ctx :MsoyContext, name :String, service :Function)
     {
         super(ctx, Msgs.GENERAL.xlate(MessageBundle.tcompose("t.complain", name)));
-        _memberId = memberId;
+        _service = service;
         open(true);
     }
 
@@ -54,14 +55,12 @@ public class ComplainDialog extends FloatingPanel
         }
         super.buttonClicked(buttonId);
         if (buttonId == OK_BUTTON) {
-            var msvc :MemberService =
-                (_ctx.getClient().requireService(MemberService) as MemberService);
-            msvc.complainMember(_ctx.getClient(), _memberId, _complaint.text);
+            _service(_complaint.text);
         }
     }
 
-    protected var _memberId :int;
     protected var _complaint :TextInput;
     protected var _status :Label;
+    protected var _service :Function;
 }
 }

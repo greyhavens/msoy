@@ -15,6 +15,11 @@ import com.threerings.presents.server.InvocationProvider;
 public interface GameGameProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link GameGameService#complainPlayer} request.
+     */
+    void complainPlayer (ClientObject caller, int arg1, String arg2);
+
+    /**
      * Handles a {@link GameGameService#getTrophies} request.
      */
     void getTrophies (ClientObject caller, int arg1, InvocationService.ResultListener arg2)

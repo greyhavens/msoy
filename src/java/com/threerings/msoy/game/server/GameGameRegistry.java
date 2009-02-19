@@ -61,6 +61,7 @@ import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.server.PropertySpaceDelegate;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
@@ -69,6 +70,7 @@ import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.BatchInvoker;
+import com.threerings.msoy.underwire.server.SupportLogic;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
@@ -1013,6 +1015,14 @@ public class GameGameRegistry
     }
 
     // from interface GameGameProvider
+    public void complainPlayer (ClientObject caller, final int memberId, String complaint)
+    {
+        PlayerObject target = _locator.lookupPlayer(memberId);
+        _supportLogic.complainMember(caller, ((MemberObject)caller).memberName, memberId,
+            complaint, (target != null) ? target.getMemberName() : null);
+    }
+
+    // from interface GameGameProvider
     public void removeDevelopmentTrophies (ClientObject caller, final int gameId,
                                            InvocationService.ConfirmListener lner)
         throws InvocationException
@@ -1250,6 +1260,7 @@ public class GameGameRegistry
     @Inject protected BureauRegistry _bureauReg;
     @Inject protected StatLogic _statLogic;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected SupportLogic _supportLogic;
 
     // various and sundry repositories for loading persistent data
     @Inject protected MsoyGameRepository _mgameRepo;

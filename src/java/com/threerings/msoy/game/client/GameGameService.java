@@ -21,4 +21,9 @@ public interface GameGameService extends InvocationService
      * Removes the trophies for this player from this in-development game.
      */
     void removeDevelopmentTrophies (Client client, int gameId, ConfirmListener listener);
+    
+    /**
+     * Posts a complaint event in underwire.
+     */
+    void complainPlayer (Client client, int memberId, String complaint);    
 }
