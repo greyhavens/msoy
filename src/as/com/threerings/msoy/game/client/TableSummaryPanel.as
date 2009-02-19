@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.events.MouseEvent;
+
 import mx.containers.HBox;
 import mx.containers.VBox;
 
@@ -89,7 +91,10 @@ public class TableSummaryPanel extends HBox
         } else {
             _info.text = Msgs.GAME.get("m.tsp_in_progress"); // can't happen?
         }
-        _infoTipper.toolTip = createInfoTip(table);
+        // We use "errorString" instead of "toolTip" to make an "error" tooltip, which
+        // doesn't go away when clicked. We style this tip in the show handler, so it
+        // doesn't end up looking like a an error. Lordy.
+        _infoTipper.errorString = createInfoTip(table);
 
         // if the game is in progress
         if (table.gameOid != -1) {
@@ -137,13 +142,12 @@ public class TableSummaryPanel extends HBox
         var infoBox :HBox = new HBox();
         infoBox.percentWidth = 100;
         _infoTipper = new CommandButton(Msgs.GAME.get("b.info"), function () :void {});
-        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_START, handleTipEvent);
-        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_HIDE, handleTipEvent);
+        _infoTipper.addEventListener(MouseEvent.ROLL_OVER, handleTipperRoll);
+        _infoTipper.addEventListener(MouseEvent.ROLL_OUT, handleTipperRoll);
         _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_SHOWN, handleTipShown);
-        _infoTipper.enabled = false;
         _infoTipper.styleName = "orangeButton";
-        _infoTipper.scaleX = .7;
-        _infoTipper.scaleY = .7;
+        _infoTipper.scaleX = .8;
+        _infoTipper.scaleY = .8;
         infoBox.addChild(_infoTipper);
         infoBox.addChild(_info = FlexUtil.createLabel("", "tableSummaryStatus"));
 
@@ -189,10 +193,13 @@ public class TableSummaryPanel extends HBox
         return info;
     }
 
-    protected function handleTipEvent (event :ToolTipEvent) :void
+    protected function handleTipperRoll (event :MouseEvent) :void
     {
+        const show :Boolean = (event.type == MouseEvent.ROLL_OVER);
         // when we hover over the _infoTipper, show tips immediately, else: restore normal time
-        ToolTipManager.showDelay = (event.type == ToolTipEvent.TOOL_TIP_START) ? 0 : 500;
+        ToolTipManager.showDelay = show ? 0 : 500;
+        ToolTipManager.hideDelay = show ? Infinity : 10000;
+        _infoTipper.enabled = !show;
     }
 
     protected function handleTipShown (event :ToolTipEvent) :void
