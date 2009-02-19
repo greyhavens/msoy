@@ -257,10 +257,12 @@ public class GameDirector extends BasicDirector
      */
     public function viewInvitePage (defmsg :String, token :String = "", roomId :int = 0) :void
     {
+        var encodedToken :String = encodeForURIBase64(token);
+        log.debug("Viewing invite", "token", token, "encoded", encodedToken);
         // we encode the strings so they are valid as part of the URL and the user cannot trivially
         // see them
         _wctx.getWorldController().displayPage("people", Args.join("invites", "game", getGameId(),
-            encodeForURI(defmsg), encodeForURIBase64(token), _liaison is AVRGameLiaison ? 1 : 0,
+            encodeForURI(defmsg), encodedToken, _liaison is AVRGameLiaison ? 1 : 0,
             roomId));
     }
 
@@ -489,8 +491,9 @@ public class GameDirector extends BasicDirector
     public function dispatchGameReady (
         gameId :int, gameOid :int, inviterMemberId :int, inviteToken :String) :void
     {
-        _wctx.getWorldController().handleGoGame(gameId, gameOid, inviterMemberId,
-            encodeForURIBase64(inviteToken));
+        var encodedToken :String = encodeForURIBase64(inviteToken);
+        log.debug("Dispatching game ready", "token", inviteToken, "encoded", encodedToken);
+        _wctx.getWorldController().handleGoGame(gameId, gameOid, inviterMemberId, encodedToken);
     }
 
     // from BasicDirector
@@ -554,9 +557,8 @@ public class GameDirector extends BasicDirector
 
     protected static function encodeForURI (str :String) :String
     {
-        str = replaceAll(str, "@", "@@");
-        str = replaceAll(str, "_", "@u");
-        str = encodeURIComponent(str);
+        str = replaceAll(str, "%", "%%");
+        str = replaceAll(str, "_", "%-");
         return str;
     }
 
@@ -573,8 +575,6 @@ public class GameDirector extends BasicDirector
     protected static function decodeFromURI (str :String) :String
     {
         str = decodeURIComponent(str);
-        str = replaceAll(str, "@u", "_");
-        str = replaceAll(str, "@@", "@");
         return str;
     }
 

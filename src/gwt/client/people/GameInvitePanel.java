@@ -1,7 +1,9 @@
+//
+// $Id$
+
 package client.people;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -80,8 +82,8 @@ public class GameInvitePanel extends VerticalPanel
         }
 
         // extract arguments
-        final String message = decodeInviteMessage(args.get(3, ""));
-        String token = args.get(4, ""); // don't decode this since we put it right back into a URL
+        final String message = args.get(3, "");
+        String token = args.get(4, "");
         int gameType = args.get(5, 0);
         int roomId = args.get(6, 0);
 
@@ -152,18 +154,6 @@ public class GameInvitePanel extends VerticalPanel
         if (panel != null) {
             add(panel);
         }
-    }
-
-    /**
-     * Decode the URI component. This uses the standard URI encoding plus a special thing to allow
-     * underscores.
-     */
-    protected static String decodeInviteMessage (String message)
-    {
-        message = URL.decodeComponent(message);
-        message = message.replace("@u", "_");
-        message = message.replace("@@", "@");
-        return message;
     }
 
     /**
