@@ -98,9 +98,10 @@ public class AwardDelegate extends RatingDelegate
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerOids.length; ii++) {
             int availFlow = getAwardableFlow(now, playerOids[ii]);
-            players.put(playerOids[ii], new Player(lookupName(playerOids[ii]), playerOids[ii],
-                                                   scores[ii], availFlow));
-            highestScore = Math.max(highestScore, scores[ii]);
+            Player player = new Player(
+                lookupName(playerOids[ii]), playerOids[ii], scores[ii], availFlow);
+            players.put(playerOids[ii], player);
+            highestScore = Math.max(highestScore, player.score); // used capped score
         }
 
         // note whether any guests were involved in this game
@@ -857,7 +858,7 @@ public class AwardDelegate extends RatingDelegate
         public Player (MemberName name, int playerOid, int score, int availFlow) {
             this.name = name;
             this.playerOid = playerOid;
-            this.score = score;
+            this.score = Math.max(0, Math.min(MAX_ALLOWED_SCORE, score));
             this.availFlow = availFlow;
         }
 
@@ -928,4 +929,8 @@ public class AwardDelegate extends RatingDelegate
 
     /** If we lack a valid or sufficiently large score distribution, we use this performance. */
     protected static final int DEFAULT_PERCENTILE = 50;
+
+    /** The highest allowed score. The lowest allowed score is zero. We choose this range to avoid
+     * having to guard against integer overflow in our various score calculations. */
+    protected static final int MAX_ALLOWED_SCORE = 1073741824; // 2^30
 }
