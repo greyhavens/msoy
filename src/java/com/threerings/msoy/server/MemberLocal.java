@@ -24,6 +24,8 @@ import com.threerings.msoy.room.data.EntityMemories;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.server.RoomManager;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Contains server-side only information for a member.
  */
@@ -140,8 +142,12 @@ public class MemberLocal extends BodyLocal
     {
         roomObj.startTransaction();
         try {
-            // add our avatar memories to this room
-            putAvatarMemoriesIntoRoom(roomObj);
+            if (memories != null) {
+                // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
+                log.info("AVAMEM: Putting memories into room", "avatar", memobj.avatar, 
+                    "memories", memories, "roomId", roomObj.getOid(), "source", "willEnter");
+                putAvatarMemoriesIntoRoom(roomObj);
+            }
 
             // if we're in a party, maybe put our party summary in the room as well
             if (party != null && !roomObj.parties.containsKey(party.id)) {
@@ -162,6 +168,11 @@ public class MemberLocal extends BodyLocal
         try {
             // remove our avatar memories from this room
             takeAvatarMemoriesFromRoom(memobj, roomObj);
+            if (memories != null) {
+                // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
+                log.info("AVAMEM: Took memories from room", "avatar", memobj.avatar,
+                    "memories", memories, "room", roomObj.getOid(), "source", "willLeave");
+            }
 
 //            // if we're in a party and the last member to leave this room, clean up our bits
 //            if (party != null && roomObj.parties.containsKey(party.id)) {

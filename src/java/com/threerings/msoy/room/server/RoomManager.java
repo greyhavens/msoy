@@ -1448,7 +1448,13 @@ public class RoomManager extends SpotSceneManager
         _roomObj.startTransaction();
         try {
             for (MemoriesRecord mrec : memories) {
-                _roomObj.putMemories(mrec.toEntry());
+                EntityMemories entry = mrec.toEntry();
+                if (entry.ident.type == Item.AVATAR) {
+                    // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
+                    log.info("AVAMEM: Putting memories into room", "memories", entry,
+                        "roomId", _plobj.getOid(), "source", "addMemoriesToRoom");
+                }
+                _roomObj.putMemories(entry);
             }
         } finally {
             _roomObj.commitTransaction();
@@ -1459,6 +1465,11 @@ public class RoomManager extends SpotSceneManager
     {
         EntityMemories removed = _roomObj.takeMemories(item);
         if (removed != null) {
+            if (removed.ident.type == Item.AVATAR) {
+                // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
+                log.info("AVAMEM: Took memories from room", "memories", removed,
+                    "roomId", _plobj.getOid(), "source", "removeAndFlush");
+            }
             // persist any of the old memories that were modified
             flushMemories(_invoker, _memoryRepo, Collections.singleton(removed));
         }

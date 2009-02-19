@@ -647,7 +647,7 @@ public class MemberManager
         }
         event.chatHistory = chatHistory.toString();
 
-        // if the target is online, get thir name from their member object
+        // if the target is online, get their name from their member object
         MemberObject target = _locator.lookupMember(memberId);
         if (target != null) {
             event.targetHandle = target.memberName.toString();
@@ -963,6 +963,11 @@ public class MemberManager
                     // if so, make absolutely sure the avatar memories are in place in the
                     // room before we update the occupant info (which triggers the avatar
                     // media change on the client).
+
+                    // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
+                    log.info("AVAMEM: Putting memories into room", "avatar", avatar,
+                        "memories", memories, "roomId", plobj.getOid(), "source", "setAvatar");
+
                     user.getLocal(MemberLocal.class).putAvatarMemoriesIntoRoom((RoomObject)plobj);
                 }
                 // if the player wasn't in a room, the avatar memories will just sit in
