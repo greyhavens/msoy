@@ -180,7 +180,7 @@ public class GameInvitePanel extends VerticalPanel
             setStyleName("email");
             setWidth("100%");
 
-            final InvitePanel.InviteList addressList = new InvitePanel.InviteList();
+            final InviteList addressList = new InviteList();
 
             // create our two control sets for getting email addresses
             final WebMailControls webmail = new WebMailControls(addressList);
@@ -236,7 +236,7 @@ public class GameInvitePanel extends VerticalPanel
         /**
          * Sends the invite to all the addresses added so far.
          */
-        void send (InvitePanel.InviteList addressList, TextArea message)
+        void send (InviteList addressList, TextArea message)
         {
             // TODO
             Window.alert("send");
@@ -248,7 +248,7 @@ public class GameInvitePanel extends VerticalPanel
      */
     protected static class WebMailControls extends VerticalPanel
     {
-        public WebMailControls (InvitePanel.InviteList addressList)
+        public WebMailControls (InviteList addressList)
         {
             setWidth("100%");
 
@@ -310,7 +310,7 @@ public class GameInvitePanel extends VerticalPanel
      */
     protected static class ManualControls extends VerticalPanel
     {
-        public ManualControls (InvitePanel.InviteList addressList)
+        public ManualControls (InviteList addressList)
         {
             setWidth("100%");
 

@@ -13,7 +13,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -465,85 +464,6 @@ public class InvitePanel extends VerticalPanel
         }
 
         protected SmartTable _contents;
-    }
-
-    public static class InviteList extends FlexTable
-    {
-        public InviteList ()
-        {
-            super();
-            setStyleName("InviteList");
-            setCellSpacing(0);
-            setText(0, 0, _msgs.inviteListName());
-            getFlexCellFormatter().setWidth(0, 0, "190px");
-            getFlexCellFormatter().setStyleName(0, 0, "Header");
-            setText(0, 1, _msgs.inviteListRemove());
-            getFlexCellFormatter().setWidth(0, 1, "40px");
-            getFlexCellFormatter().setStyleName(0, 1, "Header");
-            setText(0, 2, _msgs.inviteListEmail());
-            getFlexCellFormatter().setWidth(0, 2, "364px");
-            getFlexCellFormatter().setStyleName(0, 2, "Header");
-
-            _listTable = new SmartTable("InviteListTable", 0, 0);
-
-            ScrollPanel scroll = new ScrollPanel(_listTable);
-            scroll.setStyleName("Scroll");
-            setWidget(1, 0, scroll);
-            getFlexCellFormatter().setColSpan(1, 0, 3);
-        }
-
-        public List<EmailContact> getItems ()
-        {
-            return _items;
-        }
-
-        public void clear ()
-        {
-            _items.clear();
-            for (int ii = _listTable.getRowCount() - 1; ii >= 0; ii--) {
-                _listTable.removeRow(ii);
-            }
-        }
-
-        public boolean addItem (String name, String email)
-        {
-            EmailContact ec = new EmailContact();
-            ec.name = name.trim();
-            ec.email = email.trim();
-            if (_items.contains(ec)) {
-                return false;
-            }
-            _items.add(ec);
-            final int row = _listTable.getRowCount();
-            _listTable.setText(row, 0, name);
-            _listTable.getFlexCellFormatter().setWidth(row, 0, "190px");
-            setRemove(row);
-            _listTable.setText(row, 2, email);
-            return true;
-        }
-
-        public void removeItem (int row)
-        {
-            _items.remove(row);
-            _listTable.removeRow(row);
-            for (int ii = row; ii < _listTable.getRowCount(); ii++) {
-                setRemove(ii);
-            }
-        }
-
-        public void setRemove (final int row)
-        {
-            _listTable.setWidget(row, 1, MsoyUI.createActionImage(
-                        "/images/profile/remove.png", new ClickListener() {
-                public void onClick (Widget widget) {
-                    removeItem(row);
-                }
-            }));
-            _listTable.getFlexCellFormatter().setWidth(row, 1, "40px");
-        }
-
-        protected List<EmailContact> _items = new ArrayList<EmailContact>();
-        protected FlexTable _listTable;
     }
 
     protected MemberInvites _invites;
