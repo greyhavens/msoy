@@ -330,7 +330,6 @@ public class RoomObjectView extends RoomView
                                   (args[2] as ByteArray), (args[3] as Boolean));
             break;
         case RoomCodes.SPRITE_SIGNAL:
-            log.info("WTF: Got messsage here", "event", event);
             dispatchSpriteSignal((args[0] as String), (args[1] as ByteArray));
             break;
         }
