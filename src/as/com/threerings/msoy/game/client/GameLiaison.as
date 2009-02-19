@@ -46,13 +46,11 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
@@ -191,20 +189,17 @@ public class GameLiaison
     {
         log.info("Game located - logging in", "gameId", _gameId, "host", hostname, "port", port);
 
-        // make sure we grab & stash the session details if this is a permaguest login; the
-        // function we supply will be called once we've logged onto the game server
+        // grab & stash the session details (mainly only important if this is a permaguest login
+        // but benign otherwise); the callback will be called after game server logon succeeds
         var gclient :Client = _gctx.getClient();
         GuestSessionCapture.capture(gclient, function () :void {
-            // save the session token for future use
+            // save the session token for future use (this copies our session token into the world
+            // client's credentials)
             _wctx.saveSessionToken(gclient);
 
-            // copy credentials into world client and logon
+            // now log onto the world server with those credentials (if we're not already)
             var wclient :Client = _wctx.getClient();
             if (!wclient.isLoggedOn()) {
-                var gcreds :MsoyCredentials = (gclient.getCredentials() as MsoyCredentials);
-                var wcreds :MsoyCredentials = (wclient.getCredentials() as MsoyCredentials);
-                wcreds.setUsername(gcreds.getUsername());
-                wcreds.sessionToken = gcreds.sessionToken;
                 wclient.logon();
             }
         });
