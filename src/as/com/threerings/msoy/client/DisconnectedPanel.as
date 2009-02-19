@@ -4,11 +4,13 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObjectContainer;
+import flash.external.ExternalInterface;
 
 import mx.containers.VBox;
 
 import mx.controls.Text;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.ClientAdapter;
@@ -39,6 +41,12 @@ public class DisconnectedPanel extends VBox
         _message.setStyle("fontWeight", "bold");
         _message.styleName = "topLevelLabel";
         addChild(_message);
+
+        if (ExternalInterface.available) {
+            addChild(new CommandButton("Reconnect", function () :void {
+                ExternalInterface.call("rebootFlashClient");
+            }));
+        }
 
         if (msg != null) {
             setMessage(msg);

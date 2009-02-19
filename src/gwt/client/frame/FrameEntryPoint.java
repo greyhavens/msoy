@@ -725,21 +725,7 @@ public class FrameEntryPoint
         _header.selectTab(null);
 
         // finally actually display the client
-        WorldClient.displayFlash(args, new WorldClient.PanelProvider() {
-            public Panel get () {
-                // clear out any existing bits
-                _noclient = removeFromPage(_noclient);
-                _client = removeFromPage(_client);
-
-                Panel client = makeClientPanel();
-                client.setWidth("100%");
-                RootPanel.get(PAGE).add(client);
-                RootPanel.get(PAGE).setWidgetPosition(client, 0, NAVI_HEIGHT);
-
-                _client = client;
-                return client;
-            }
-        });
+        WorldClient.displayFlash(args, _flashPanelProvider);
     }
 
     protected void displayGame (
@@ -1023,6 +1009,11 @@ public class FrameEntryPoint
         });
     }
 
+    protected void rebootFlashClient ()
+    {
+        WorldClient.rebootFlash(_flashPanelProvider);
+    }
+
     /**
      * Configures top-level functions that can be called by Flash.
      */
@@ -1067,6 +1058,9 @@ public class FrameEntryPoint
         $wnd.refreshDisplayName = function () {
             entry.@client.frame.FrameEntryPoint::refreshDisplayName()();
         }
+        $wnd.rebootFlashClient = function () {
+            entry.@client.frame.FrameEntryPoint::rebootFlashClient()();
+        }
     }-*/;
 
     /**
@@ -1104,6 +1098,22 @@ public class FrameEntryPoint
     public native static String nmd5hex (String text) /*-{
         return $wnd.hex_md5(text);
     }-*/;
+
+    protected WorldClient.PanelProvider _flashPanelProvider = new WorldClient.PanelProvider() {
+        public Panel get () {
+            // clear out any existing bits
+            _noclient = removeFromPage(_noclient);
+            _client = removeFromPage(_client);
+
+            Panel client = makeClientPanel();
+            client.setWidth("100%");
+            RootPanel.get(PAGE).add(client);
+            RootPanel.get(PAGE).setWidgetPosition(client, 0, NAVI_HEIGHT);
+
+            _client = client;
+            return client;
+        }
+    };
 
     protected Pages _page;
     protected String _currentToken = "";

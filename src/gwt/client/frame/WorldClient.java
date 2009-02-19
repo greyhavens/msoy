@@ -65,6 +65,15 @@ public class WorldClient extends Widget
         }
     }
 
+    /**
+     * Called when the Flash client has determined that it's hosed (lost connection or otherwise
+     * died) and wants to be thrown away and recreated at its present location.
+     */
+    public static void rebootFlash (PanelProvider pprov)
+    {
+        embedClient(_flashArgs, pprov.get());
+    }
+
     public static void displayFlashLobby (LaunchConfig config, String action, PanelProvider pprov)
     {
         clientWillClose(); // clear our Java or Flash client if we have one
