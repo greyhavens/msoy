@@ -355,7 +355,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void ignoreThread (int threadId)
         throws ServiceException
     {
-        MemberRecord mrec = requireValidatedUser();
+        MemberRecord mrec = requireAuthedUser();
         _forumRepo.noteLastReadPostId(mrec.memberId, threadId, Integer.MAX_VALUE, 0);
     }
 
