@@ -55,13 +55,13 @@ public class WorldClient extends Widget
         }
 
         // create our client if necessary
-        if (_flashPanel == null) {
-            embedClient(flashArgs, pprov.get());
+        if (_flashPanel != null && clientGo("asclient", flashArgs)) {
+            _flashArgs = flashArgs; // note our new current flash args
+            clientMinimized(false);
 
         } else {
-            // note our new current flash args
-            clientGo("asclient", _flashArgs = flashArgs);
-            clientMinimized(false);
+            // flash is not resolved or it's hosed, create or recreate the client
+            embedClient(flashArgs, pprov.get());
         }
     }
 
@@ -122,7 +122,7 @@ public class WorldClient extends Widget
 
     protected static void embedClient (String flashArgs, Panel parent)
     {
-        clientWillClose(); // clear our Java client if we have one
+        clientWillClose(); // clear our clients if we have any
 
         _flashPanel = parent;
         _flashArgs = flashArgs;
@@ -153,8 +153,8 @@ public class WorldClient extends Widget
     protected static native boolean clientGo (String id, String where) /*-{
         var client = $doc.getElementById(id);
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
-            try { client.clientGo(where);  return true; } catch (e) {}
+            // exceptions from JavaScript break GWT; don't let that happen
+            try { return client.clientGo(where); } catch (e) {}
         }
         return false;
     }-*/;
@@ -165,7 +165,7 @@ public class WorldClient extends Widget
     protected static native void clientLogon (int memberId, String token) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
+            // exceptions from JavaScript break GWT; don't let that happen
             try { client.clientLogon(memberId, token); } catch (e) {}
         }
     }-*/;
@@ -176,7 +176,7 @@ public class WorldClient extends Widget
     protected static native void clientUnload () /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
+            // exceptions from JavaScript break GWT; don't let that happen
             try { client.onUnload(); } catch (e) {}
         }
     }-*/;
@@ -187,7 +187,7 @@ public class WorldClient extends Widget
     protected static native void clientMinimized (boolean mini) /*-{
         var client = $doc.getElementById("asclient");
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
+            // exceptions from JavaScript break GWT; don't let that happen
             try { client.setMinimized(mini); } catch (e) {}
         }
     }-*/;
