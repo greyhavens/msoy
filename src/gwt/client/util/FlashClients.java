@@ -295,7 +295,7 @@ public class FlashClients
      */
     protected static native int getSceneIdNative (Element client) /*-{
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
+            // exceptions from JavaScript break GWT; don't let that happen
             try { return client.getSceneId(); } catch (e) {}
         }
         return 0;
@@ -306,7 +306,7 @@ public class FlashClients
      */
     protected static native boolean inRoomNative (Element client) /*-{
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
+            // exceptions from JavaScript break GWT; don't let that happen
             try { return client.inRoom(); } catch (e) {}
         }
         return false;
@@ -317,7 +317,7 @@ public class FlashClients
      */
     protected static native void useItemNative (Element client, byte itemType, int itemId) /*-{
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
+            // exceptions from JavaScript break GWT; don't let that happen
             try { client.useItem(itemType, itemId); } catch (e) {}
         }
     }-*/;
@@ -327,7 +327,7 @@ public class FlashClients
      */
     protected static native void clearItemNative (Element client, byte itemType, int itemId) /*-{
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
+            // exceptions from JavaScript break GWT; don't let that happen
             try { client.clearItem(itemType, itemId); } catch (e) {}
         }
     }-*/;
@@ -337,7 +337,7 @@ public class FlashClients
      */
     protected static native void useAvatarNative (Element client, int avatarId) /*-{
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
+            // exceptions from JavaScript break GWT; don't let that happen
             try { client.useAvatar(avatarId); } catch (e) {}
         }
     }-*/;
@@ -347,7 +347,7 @@ public class FlashClients
      */
     protected static native void startTourNative (Element client) /*-{
         if (client) {
-            // exception from JavaScript break GWT; don't let that happen
+            // exceptions from JavaScript break GWT; don't let that happen
             try { client.startTour(); } catch (e) {}
         }
     }-*/;
