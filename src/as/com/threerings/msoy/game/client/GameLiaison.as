@@ -68,14 +68,14 @@ public class GameLiaison
     public static const log :Log = Log.getLog(GameLiaison);
 
     public function GameLiaison (
-        wctx :WorldContext, gameId :int, shareToken :String, shareMemberId :int)
+        wctx :WorldContext, gameId :int, inviteToken :String, inviterMemberId :int)
     {
-        log.info("Liaison created", "shareToken", shareToken, "shareMemberId", shareMemberId);
+        log.info("Liaison created", "inviteToken", inviteToken, "inviterMemberId", inviterMemberId);
 
         _wctx = wctx;
         _gameId = gameId;
-        _shareToken = shareToken == null ? "" : shareToken;
-        _shareMemberId = shareMemberId;
+        _inviteToken = inviteToken == null ? "" : inviteToken;
+        _inviterMemberId = inviterMemberId;
 
         // create our custom context which we'll use to connect to lobby/game servers
         _gctx = new LiaisonGameContext(wctx);
@@ -170,24 +170,24 @@ public class GameLiaison
         return 0;
     }
 
-    public function get shareToken () :String
+    public function get inviteToken () :String
     {
-        return _shareToken;
+        return _inviteToken;
     }
 
-    public function set shareToken (value :String) :void
+    public function set inviteToken (value :String) :void
     {
-        _shareToken = value;
+        _inviteToken = value;
     }
 
-    public function get shareMemberId () :int
+    public function get inviterMemberId () :int
     {
-        return _shareMemberId;
+        return _inviterMemberId;
     }
 
-    public function set shareMemberId (value :int) :void
+    public function set inviterMemberId (value :int) :void
     {
-        _shareMemberId = value;
+        _inviterMemberId = value;
     }
 
     /**
@@ -434,9 +434,9 @@ public class GameLiaison
     /** The id of the game with which we're dealing. */
     protected var _gameId :int;
 
-    protected var _shareToken :String;
+    protected var _inviteToken :String;
 
-    protected var _shareMemberId :int;
+    protected var _inviterMemberId :int;
 
     /** The "guest earned flow" popup. */
     protected var _guestFlowPanel :DisplayObjectContainer;

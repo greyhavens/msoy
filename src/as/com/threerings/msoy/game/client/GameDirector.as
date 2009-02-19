@@ -154,8 +154,8 @@ public class GameDirector extends BasicDirector
 
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
-                _liaison.shareToken = "";
-                _liaison.shareMemberId = 0;
+                _liaison.inviteToken = "";
+                _liaison.inviterMemberId = 0;
                 LobbyGameLiaison(_liaison).showLobby(defaultMode);
             } else {
                 _liaison.shutdown();
@@ -271,12 +271,12 @@ public class GameDirector extends BasicDirector
      * anyone quick game.
      */
     public function playNow (gameId :int, modeStr: String, ghost :String, gport :int, 
-        shareToken :String, shareMemberId :int) :void
+        inviteToken :String, inviterMemberId :int) :void
     {
-        shareToken = decodeFromURIBase64(shareToken);
+        inviteToken = decodeFromURIBase64(inviteToken);
 
-        log.debug("Playing now", "gameId", gameId, "shareMemberId", shareMemberId,
-                 "shareToken", shareToken);
+        log.debug("Playing now", "gameId", gameId, "inviterMemberId", inviterMemberId,
+                 "inviteToken", inviteToken);
 
         var mode :int = LobbyCodes.PLAY_NOW_SINGLE;
         if (modeStr == "m") {
@@ -284,8 +284,8 @@ public class GameDirector extends BasicDirector
         }
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
-                _liaison.shareToken = shareToken;
-                _liaison.shareMemberId = shareMemberId;
+                _liaison.inviteToken = inviteToken;
+                _liaison.inviterMemberId = inviterMemberId;
                 LobbyGameLiaison(_liaison).playNow(mode);
             } else {
                 _liaison.shutdown();
@@ -295,7 +295,7 @@ public class GameDirector extends BasicDirector
         if (_liaison == null) {
             // create our new liaison, which will head on into the game once we're logged on
             const def :LobbyDef = new LobbyDef(true, mode);
-            _liaison = new LobbyGameLiaison(_wctx, gameId, def, 0, shareToken, shareMemberId);
+            _liaison = new LobbyGameLiaison(_wctx, gameId, def, 0, inviteToken, inviterMemberId);
             _liaison.start(ghost, gport);
         }
     }
@@ -310,8 +310,8 @@ public class GameDirector extends BasicDirector
                 _liaison.shutdown();
                 _liaison = null;
             } else {
-                _liaison.shareToken = "";
-                _liaison.shareMemberId = 0;
+                _liaison.inviteToken = "";
+                _liaison.inviterMemberId = 0;
             }
         }
 
@@ -334,8 +334,8 @@ public class GameDirector extends BasicDirector
                 _liaison.shutdown();
                 _liaison = null;
             } else {
-                _liaison.shareToken = "";
-                _liaison.shareMemberId = 0;
+                _liaison.inviteToken = "";
+                _liaison.inviterMemberId = 0;
             }
         }
         displayLobby(gameId, ghost, gport);
@@ -387,9 +387,9 @@ public class GameDirector extends BasicDirector
      * existing game server connection.
      */
     public function activateAVRGame (
-        gameId :int, shareToken :String = "", shareMemberId :int = 0) :void
+        gameId :int, inviteToken :String = "", inviterMemberId :int = 0) :void
     {
-        shareToken = decodeFromURIBase64(shareToken);
+        inviteToken = decodeFromURIBase64(inviteToken);
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison) {
                 log.warning("Eek, asked to join an AVRG while in a lobbied game.");
@@ -407,7 +407,7 @@ public class GameDirector extends BasicDirector
 
         displayFeedback("m.locating_game");
 
-        _liaison = new AVRGameLiaison(_wctx, gameId, shareToken, shareMemberId);
+        _liaison = new AVRGameLiaison(_wctx, gameId, inviteToken, inviterMemberId);
         _liaison.start();
     }
 
@@ -422,12 +422,12 @@ public class GameDirector extends BasicDirector
      * Requests that we move to the specified game location.
      */
     public function enterGame (
-        gameId :int, gameOid :int, shareMemberId :int, shareToken :String) :void
+        gameId :int, gameOid :int, inviterMemberId :int, inviteToken :String) :void
     {
-        shareToken = decodeFromURIBase64(shareToken);
+        inviteToken = decodeFromURIBase64(inviteToken);
 
         log.debug("Entering game", "gameId", gameId, "gameOid", gameOid,
-                  "shareMemberId", shareMemberId, "shareToken", shareToken);
+                  "inviterMemberId", inviterMemberId, "inviteToken", inviteToken);
 
         if (_liaison == null) {
             log.warning("Requested to enter game but have no liaison?! [oid=" + gameOid + "].");
@@ -444,8 +444,8 @@ public class GameDirector extends BasicDirector
             // and will be removed after the test is over. -- robert
             _wctx.getMsoyClient().trackClientAction("WRLD-531-2 game started", "stage 6");
 
-            _liaison.shareMemberId = shareMemberId;
-            _liaison.shareToken = shareToken;
+            _liaison.inviterMemberId = inviterMemberId;
+            _liaison.inviteToken = inviteToken;
             LobbyGameLiaison(_liaison).enterGame(gameOid);
         }
     }
@@ -485,10 +485,10 @@ public class GameDirector extends BasicDirector
      * in a browser url change. Also takes care of encoding the token for outside consumption.
      */
     public function dispatchGameReady (
-        gameId :int, gameOid :int, shareMemberId :int, shareToken :String) :void
+        gameId :int, gameOid :int, inviterMemberId :int, inviteToken :String) :void
     {
-        _wctx.getWorldController().handleGoGame(gameId, gameOid, shareMemberId,
-            encodeForURIBase64(shareToken));
+        _wctx.getWorldController().handleGoGame(gameId, gameOid, inviterMemberId,
+            encodeForURIBase64(inviteToken));
     }
 
     // from BasicDirector
@@ -506,7 +506,7 @@ public class GameDirector extends BasicDirector
     public function getShareToken () :String
     {
         if (_liaison != null) {
-            return _liaison.shareToken;
+            return _liaison.inviteToken;
         }
         return "";
     }
@@ -514,7 +514,7 @@ public class GameDirector extends BasicDirector
     public function getShareMemberId () :int
     {
         if (_liaison != null) {
-            return _liaison.shareMemberId;
+            return _liaison.inviterMemberId;
         }
     	return 0;
     }

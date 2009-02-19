@@ -32,9 +32,9 @@ public class LobbyGameLiaison extends GameLiaison
     public static const log :Log = Log.getLog(LobbyGameLiaison);
 
     public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :LobbyDef,
-        playerId :int = 0, shareToken :String = null, shareMemberId :int = 0)
+        playerId :int = 0, inviteToken :String = null, inviterMemberId :int = 0)
     {
-        super(ctx, gameId, shareToken, shareMemberId);
+        super(ctx, gameId, inviteToken, inviterMemberId);
 
         _mode = mode;
         _playerIdGame = playerId;
@@ -231,7 +231,7 @@ public class LobbyGameLiaison extends GameLiaison
     // from interface GameReadyObserver
     public function receivedGameReady (gameOid :int) :Boolean
     {
-        _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid, shareMemberId, shareToken);
+        _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid, inviterMemberId, inviteToken);
 
         // this is only used for testing game loading issues per WRLD-531,
         // and will be removed after the test is over. -- robert
@@ -316,7 +316,7 @@ public class LobbyGameLiaison extends GameLiaison
             // if they're at a table, join them there
             joinPlayerTable(_playerIdGame);
         } else {
-            _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid, shareMemberId, shareToken);
+            _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid, inviterMemberId, inviteToken);
         }
     }
 

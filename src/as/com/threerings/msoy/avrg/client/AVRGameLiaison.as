@@ -39,10 +39,10 @@ public class AVRGameLiaison extends GameLiaison
     AVRGameMarshaller;
     AVRMarshaller;
 
-    public function AVRGameLiaison (ctx :WorldContext, gameId :int, shareToken :String = "",
-        shareMemberId :int = 0)
+    public function AVRGameLiaison (ctx :WorldContext, gameId :int, inviteToken :String = "",
+        inviterMemberId :int = 0)
     {
-        super(ctx, gameId, shareToken, shareMemberId);
+        super(ctx, gameId, inviteToken, inviterMemberId);
     }
 
     override public function clientWillLogon (event :ClientEvent) :void

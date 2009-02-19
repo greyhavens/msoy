@@ -618,19 +618,19 @@ public class WorldController extends MsoyController
      * Handles the GO_GAME command to go to a game.
      */
     public function handleGoGame (
-        gameId :int, placeOid :int, shareMemberId :int, shareToken :String) :void
+        gameId :int, placeOid :int, inviterMemberId :int, inviteToken :String) :void
     {
         // route our entry to the game through GWT so that we can handle non-Flash games
-        log.debug("Handling go game", "oid", placeOid, "shareMemberId", shareMemberId,
-           "shareToken", shareToken);
+        log.debug("Handling go game", "oid", placeOid, "inviterMemberId", inviterMemberId,
+           "inviteToken", inviteToken);
         var args :String = Args.join("game", "g", gameId, placeOid);
-        if ((shareToken != null && shareToken.length > 0) || shareMemberId != 0) {
-            args = Args.join(args, shareToken, shareMemberId);
+        if ((inviteToken != null && inviteToken.length > 0) || inviterMemberId != 0) {
+            args = Args.join(args, inviteToken, inviterMemberId);
         }
         if (!inGWTApp() || !displayPage("world", args)) {
             // fall back to breaking the back button
             log.info("Going straight into game [oid=" + placeOid + "].");
-            _wctx.getGameDirector().enterGame(gameId, placeOid, shareMemberId, shareToken);
+            _wctx.getGameDirector().enterGame(gameId, placeOid, inviterMemberId, inviteToken);
             // TODO: if this is a Java game and we're in embedded mode, try popping up a new
             // browser window
             // NetUtil.navigateToURL("/#game-" + gameId + "_" + placeOid, false);
@@ -644,7 +644,7 @@ public class WorldController extends MsoyController
      */
     public function handleJoinGameLobby (gameId :int, ghost :String = null, gport :int = 0) :void
     {
-        // TODO: support "shareToken" and "shareMemberId" here?
+        // TODO: support "inviteToken" and "inviterMemberId" here?
         // if we're running in the GWT app, we need to route through GWT to keep the URL valid
         if (inGWTApp() && displayPage("world", "game_l_" + gameId)) {
             log.info("Routed join lobby through URL", "game", gameId, "ghost", ghost,
@@ -660,9 +660,9 @@ public class WorldController extends MsoyController
      * Handles JOIN_AVR_GAME.
      */
     public function handleJoinAVRGame (gameId :int, token :String = "", 
-        shareMemberId :int = 0) :void
+        inviterMemberId :int = 0) :void
     {
-        _wctx.getGameDirector().activateAVRGame(gameId, token == null ? "" : token, shareMemberId);
+        _wctx.getGameDirector().activateAVRGame(gameId, token == null ? "" : token, inviterMemberId);
     }
 
     /**
@@ -916,28 +916,28 @@ public class WorldController extends MsoyController
 
         } else if (null != params["gameOid"]) {
             _suppressTokenForScene = true;
-            var token :String = params["shareToken"] != null ? String(params["shareToken"]) : "";
+            var token :String = params["inviteToken"] != null ? String(params["inviteToken"]) : "";
             _wctx.getGameDirector().enterGame(int(params["gameId"]), int(params["gameOid"]),
-                int(params["shareMemberId"]), token);
+                int(params["inviterMemberId"]), token);
 
         } else if (null != params["noplace"]) {
             // go to no place- we just want to chat with our friends
             _wctx.setPlaceView(new NoPlaceView());
 
         } else if (null != params["gameLobby"]) {
-            // TODO: support "shareToken" and "shareMemberId" here?
+            // TODO: support "inviteToken" and "inviterMemberId" here?
             _wctx.getGameDirector().displayLobby(
                 int(params["gameLobby"]), String(params["ghost"]), int(params["gport"]));
 
         } else if (null != params["playNow"]) {
             _wctx.getGameDirector().playNow(int(params["playNow"]), params["gameMode"] as String,
                                             String(params["ghost"]), int(params["gport"]),
-                                            params["shareToken"] as String, 
-                                            int(params["shareMemberId"]));
+                                            params["inviteToken"] as String, 
+                                            int(params["inviterMemberId"]));
 
         } else if (null != params["worldGame"]) {
-            handleJoinAVRGame(int(params["worldGame"]), params["shareToken"] as String,
-                int(params["shareMemberId"]));
+            handleJoinAVRGame(int(params["worldGame"]), params["inviteToken"] as String,
+                int(params["inviterMemberId"]));
 
         } else if ("true" == params["tour"]) {
             _wctx.getTourDirector().startTour();

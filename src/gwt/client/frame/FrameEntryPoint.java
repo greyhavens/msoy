@@ -757,7 +757,7 @@ public class FrameEntryPoint
         case LaunchConfig.FLASH_IN_WORLD:
             args = "worldGame=" + config.gameId;
             if (token.length() > 0 || otherId1 > 0 || otherId2 > 0) {
-                args += "&shareToken=" + token + "&shareMemberId=" + otherId1 +
+                args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1 +
                     "&shareGameRoom=" + otherId2;
             }
             displayWorldClient(args, null);
@@ -773,12 +773,12 @@ public class FrameEntryPoint
             } else if (action.equals("g")) {
                 args = "gameOid=" + otherId1 + "&gameId=" + config.gameId;
                 if (token.length() > 0 || otherId1 > 0) {
-                    args += "&shareToken=" + token + "&shareMemberId=" + otherId2;
+                    args += "&inviteToken=" + token + "&inviterMemberId=" + otherId2;
                 }
             } else if (action.equals("m") || action.equals("s") || action.equals("t")) {
                 args = "playNow=" + config.gameId + "&gameMode=" + action;
                 if (token.length() > 0 || otherId1 > 0) {
-                    args += "&shareToken=" + token + "&shareMemberId=" + otherId1;
+                    args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1;
                 }
             } else {
                 args = "gameLobby=" + config.gameId;
