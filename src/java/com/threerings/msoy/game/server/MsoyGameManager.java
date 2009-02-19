@@ -177,7 +177,11 @@ public class MsoyGameManager extends WhirledGameManager
                     plobj.startTransaction();
                     try {
                         for (GameContentOwnership ownership : _content) {
-                            plobj.addToGameContent(ownership);
+                            // a player may own multiple copies of a level pack, but we only want
+                            // to add a single content ownership record
+                            if (!plobj.gameContent.contains(ownership)) {
+                                plobj.addToGameContent(ownership);
+                            }
                         }
                     } finally {
                         plobj.removeFromGameContent(resolving);
