@@ -913,17 +913,14 @@
   GameInvitePanel
  --------------------------------- */
 
-.gameInvitePanel {
-    font-size: 12px;
-}
-
 .gameInvitePanel .intro {
     font-weight: bold;
     font-size: 14px;
     width: 75%;
 }
 
-.gameInvitePanel .methodButton {
+.gameInvitePanel .email {
+    font-size: 12px;
 }
 
 .gameInvitePanel .email .privacy, .gameInvitePanel .email .ImportSupportLink {
@@ -935,7 +932,7 @@
     font-size: 10px;
 }
 
-.gameInvitePanel .email .biglabel {
+.gameInvitePanel .email .biglabel, .gameInvitePanel .im .biglabel{
     color: #2356bf;
     font-weight: bold;
     font-size: 14px;
@@ -958,3 +955,19 @@
 .gameInvitePanel .email .message {
     width: 100%;
 }
+
+.gameInvitePanel .im {
+    font-size: 14px;
+}
+
+.gameInvitePanel .im .intro {
+    font-size: 12px;
+    width: 100%;
+    font-weight: normal;
+}
+
+.gameInvitePanel .im .urlBox {
+    border: 2px solid black;
+    width: 100%;
+}
+

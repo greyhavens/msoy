@@ -16,12 +16,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
+import client.shell.CShell;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -77,11 +80,16 @@ public class GameInvitePanel extends VerticalPanel
         }
 
         // extract arguments
-        // TODO: use all the arguments
         final String message = decodeInviteMessage(args.get(3, ""));
         String token = args.get(4, ""); // don't decode this since we put it right back into a URL
-        String gameType = args.get(5, "");
+        int gameType = args.get(5, 0);
         int roomId = args.get(6, 0);
+
+        // build the invite url; this will be a play now link for lobbied games (type 0) or a
+        // start-in-room link for avrgs (type 1)
+        final String url = DeploymentConfig.serverURL + Pages.makeLink(Pages.WORLD, gameType == 1 ? 
+            Args.compose("game", "s", detail.gameId, CShell.getMemberId(), token, roomId) :
+            Args.compose("game", "t", detail.gameId, CShell.getMemberId(), token));
 
         // game information
         SmartTable gameInfo = new SmartTable();
@@ -106,7 +114,7 @@ public class GameInvitePanel extends VerticalPanel
         addMethodButton("IM",
             new InviteMethodCreator () {
                 public Widget create () {
-                    return null; // CopyURLPanel
+                    return new IMPanel(url);
                 }
             });
         add(_methodButtons);
@@ -340,6 +348,31 @@ public class GameInvitePanel extends VerticalPanel
             });
             row.setWidget(0, col++, add);
             add(row);
+        }
+    }
+
+    /**
+     * Invite method consisting of a text area to copy a URL from.
+     */
+    protected static class IMPanel extends SmartTable
+    {
+        public IMPanel (String url)
+        {
+            setStyleName("im");
+            setWidth("100%");
+
+            // basic instructions
+            setText(0, 0, "Copy This URL", 1, "biglabel");
+
+            // a little detail
+            setText(1, 0, "Paste it somewhere your friends can open it and come join you in " +
+                "Whirled.", 1, "intro");
+
+            // link
+            TextArea link = MsoyUI.createTextArea(url, 60, 3);
+            MsoyUI.selectAllOnFocus(link);
+            link.setStyleName("urlBox");
+            setWidget(2, 0, link);
         }
     }
 
