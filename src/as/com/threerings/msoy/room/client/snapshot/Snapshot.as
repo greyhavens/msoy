@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.room.client.snapshot {
 
 import com.threerings.util.Log;
@@ -31,6 +34,7 @@ import com.threerings.util.ValueEvent;
 import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
@@ -266,6 +270,7 @@ public class Snapshot extends EventDispatcher
         var scene :Scene = _ctx.getSceneDirector().getScene();
         var itemName :String = StringUtil.truncate(
             Msgs.WORLD.get("m.sceneItemName", scene.getName()), MsoyCodes.MAX_NAME_LENGTH, "...");
+        var sessionToken :String = MsoyCredentials(_ctx.getClient().getCredentials()).sessionToken;
 
         const b :String = "--" + BOUNDARY + "\r\n";
         const mediaIds :String = "snapshot" + (createItem ? ";furni;thumb" : "");
@@ -273,7 +278,7 @@ public class Snapshot extends EventDispatcher
         output.writeUTFBytes(
             "\r\n" + b +
 //            "Content-Disposition: form-data; name=\"auth\"\r\n" +
-//            "\r\n" + Prefs.getSessionToken() + "\r\n" + b +
+//            "\r\n" + sessionToken + "\r\n" + b +
             "Content-Disposition: form-data; name=\"member\"\r\n" +
             "\r\n" + String(memberId) + "\r\n" + b +
             "Content-Disposition: form-data; name=\"scene\"\r\n" +

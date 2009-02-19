@@ -44,6 +44,7 @@ import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.room.client.RoomObjectView;
@@ -367,6 +368,11 @@ public class WorldClient extends MsoyClient
         creds.ident = Prefs.getMachineIdent();
         creds.featuredPlaceView = _featuredPlaceView;
         creds.visitorId = getVisitorId();
+
+        // if we're anonymous and in an embed and have no visitor id we need to generate one
+        if (creds.sessionToken == null && creds.getUsername() == null && creds.visitorId == null) {
+            creds.visitorId = VisitorInfo.createLocalId();
+        }
 
         return creds;
     }

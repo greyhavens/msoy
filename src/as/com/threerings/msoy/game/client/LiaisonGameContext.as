@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import com.threerings.util.Name;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObjectManager;
 
@@ -15,6 +17,7 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.parlor.client.ParlorDirector;
 
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.MemberName;
@@ -35,17 +38,22 @@ public class LiaisonGameContext
     {
         _wctx = wctx;
 
-        // set up our client with our world credentials
+        var gcreds :GameCredentials = new GameCredentials(null);
+
+        // inherit our visitor id from our world creds
         var wcreds :WorldCredentials = (wctx.getClient().getCredentials() as WorldCredentials);
-        // if we are a guest and have an assigned member name, pass it along to the game server so
-        // that it will show us the same guest name that we had on the server
-        var name :MemberName = null;
-        if (_wctx.getMemberObject() != null && _wctx.getMemberObject().isGuest()) {
-            name = _wctx.getMemberObject().memberName;
-        }
-        var gcreds :GameCredentials = new GameCredentials(name);
-        gcreds.sessionToken = wcreds.sessionToken;
         gcreds.visitorId = wcreds.visitorId;
+
+        // if we have a session token in our world credentials use that
+        if (wcreds.sessionToken != null) {
+            gcreds.sessionToken = wcreds.sessionToken;
+
+        // otherwise if we're a permaguest, use that username
+        } else if (Prefs.getPermaguestUsername() != null) {
+            gcreds.setUsername(new Name(Prefs.getPermaguestUsername()));
+        }
+        // otherwise we're a brand new guest so we leave everything else blank
+
         _client = new Client(gcreds);
         _client.addServiceGroup(MsoyCodes.GAME_GROUP);
 

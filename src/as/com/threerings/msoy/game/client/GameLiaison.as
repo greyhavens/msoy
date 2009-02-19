@@ -117,17 +117,6 @@ public class GameLiaison
                 // room so that when we get into the lobby, we'll be ready to roll
                 _wctx.getClient().setServer(bits[2], [ int(bits[3]) ]);
 
-                var gcreds :MsoyCredentials = MsoyCredentials(_gctx.getClient().getCredentials());
-
-                // returning permaguest, copy in the name
-                if (Prefs.getPermaguestUsername() != null) {
-                    gcreds.setUsername(new Name(Prefs.getPermaguestUsername()));
-
-                // brand new guest, we'd better generate a visitor id
-                } else {
-                    gcreds.visitorId = VisitorInfo.createLocalId();
-                }
-
                 gameLocated(bits[0], int(bits[1]));
             });
             // TODO: add listeners for failure events? give feedback on failure?

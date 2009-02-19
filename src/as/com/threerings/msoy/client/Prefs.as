@@ -84,16 +84,6 @@ public class Prefs
         }
     }
 
-    public static function getSessionToken () :String
-    {
-        return (config.getValue(SESSION_TOKEN, null) as String);
-    }
-
-    public static function setSessionToken (token :String) :void
-    {
-        config.setValue(SESSION_TOKEN, token);
-    }
-
     public static function getMachineIdent () :String
     {
         return (config.getValue(MACHINE_IDENT, "") as String);
