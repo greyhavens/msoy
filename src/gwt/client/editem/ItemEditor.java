@@ -14,16 +14,19 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -172,8 +175,7 @@ public abstract class ItemEditor extends FlowPanel
         setStyleName("itemEditor");
         add(MsoyUI.createImage("/images/item/editor_box_top.png", "RoundedTop"));
         add(_header = new AbsolutePanel());
-        add(_content = new FlexTable());
-        _content.setStyleName("Content");
+        add(_content = new SmartTable("Content", 0, 2));
         _currentTab = _content;
         add(MsoyUI.createImage("/images/item/editor_box_bottom.png", "RoundedBottom"));
 
@@ -181,23 +183,24 @@ public abstract class ItemEditor extends FlowPanel
         addExtras();
         addDescription();
 
-        _esubmit = new Button("submit");
-        _esubmit.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                commitEdit();
-            }
-        });
-        Button ecancel = new Button(_cmsgs.cancel());
-        ecancel.addClickListener(new ClickListener() {
+        addSpacer();
+        HorizontalPanel buttons = new HorizontalPanel();
+        buttons.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+        buttons.add(_econfirm = new CheckBox(_emsgs.copyrightConfirm()));
+        buttons.add(WidgetUtil.makeShim(5, 5));
+        buttons.add(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget widget) {
                 _parent.editComplete(null);
             }
-        });
-
-        addSpacer();
-        int row = _content.getRowCount();
-        _content.setWidget(row, 1, MsoyUI.createButtonPair(ecancel, _esubmit));
-        _content.getFlexCellFormatter().setHorizontalAlignment(row, 1, HasAlignment.ALIGN_RIGHT);
+        }));
+        buttons.add(WidgetUtil.makeShim(5, 5));
+        buttons.add(_esubmit = new Button("submit", new ClickListener() {
+            public void onClick (Widget widget) {
+                commitEdit();
+            }
+        }));
+        _content.setWidget(_content.getRowCount(), 1, buttons);
+        // _content.getFlexCellFormatter().setHorizontalAlignment(row, 1, HasAlignment.ALIGN_RIGHT);
     }
 
     /**
@@ -421,9 +424,8 @@ public abstract class ItemEditor extends FlowPanel
     {
         if (_tabs == null) {
             int row = _content.getRowCount();
-            _content.setWidget(row, 0, _tabs = new StyledTabPanel());
+            _content.setWidget(row, 0, _tabs = new StyledTabPanel(), 2, null);
             _tabs.setWidth("100%");
-            _content.getFlexCellFormatter().setColSpan(row, 0, 2);
         }
         _tabs.add(_currentTab = new FlexTable(), label);
         _tabs.selectTab(0);
@@ -728,6 +730,12 @@ public abstract class ItemEditor extends FlowPanel
             return;
         }
 
+        // make sure they claim to own all of the media in the item
+        if (!_econfirm.isChecked()) {
+            MsoyUI.error(_emsgs.mustConfirm());
+            return;
+        }
+
         if (_item.itemId == 0) {
             _stuffsvc.createItem(_item, _parentItem, new MsoyCallback<Item>() {
                 public void onSuccess (Item item) {
@@ -880,13 +888,13 @@ public abstract class ItemEditor extends FlowPanel
 
     protected TextBox _name;
     protected LimitedTextArea _description;
+    protected CheckBox _econfirm;
     protected Button _esubmit;
 
     protected AbsolutePanel _header;
     protected StyledTabPanel _tabs;
     protected FlexTable _currentTab;
-
-    protected FlexTable _content;
+    protected SmartTable _content;
 
     protected Map<String, ItemMediaUploader> _uploaders = new HashMap<String, ItemMediaUploader>();
 
