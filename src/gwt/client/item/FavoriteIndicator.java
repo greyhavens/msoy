@@ -6,7 +6,6 @@ package client.item;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -17,7 +16,6 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
 
 import client.images.misc.MiscImages;
-import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 

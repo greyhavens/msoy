@@ -15,10 +15,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupListener;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
@@ -33,7 +30,6 @@ import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
-import client.ui.RowPanel;
 import client.ui.SafeHTML;
 import client.util.MsoyCallback;
 import client.util.ServiceBackedDataModel;

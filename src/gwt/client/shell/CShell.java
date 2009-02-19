@@ -14,8 +14,6 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
-import client.util.events.FlashEvents;
-
 /**
  * Contains a reference to the various bits that we're likely to need in the web client interface.
  */

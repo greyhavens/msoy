@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.web.gwt.Pages;
-import com.threerings.msoy.web.gwt.WebCreds;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;

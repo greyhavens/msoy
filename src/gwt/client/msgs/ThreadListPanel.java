@@ -24,7 +24,6 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
-import client.shell.CShell;
 import client.ui.MiniNowLoadingWidget;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
