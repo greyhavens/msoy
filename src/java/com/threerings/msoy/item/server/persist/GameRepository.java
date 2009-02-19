@@ -77,6 +77,8 @@ public class GameRepository extends ItemRepository<GameRecord>
         for (GenreCountRecord gcr : findAll(
                  GenreCountRecord.class,
                  new Join(GameRecord.ITEM_ID, GameCatalogRecord.LISTED_ITEM_ID),
+                 new Join(GameRecord.GAME_ID, GameDetailRecord.GAME_ID),
+                 new Where(new Conditionals.GreaterThan(GameDetailRecord.GAMES_PLAYED, 0)),
                  new GroupBy(GameRecord.GENRE))) {
             counts.put(gcr.genre, gcr.count);
         }
