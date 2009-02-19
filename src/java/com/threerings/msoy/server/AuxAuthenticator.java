@@ -6,7 +6,6 @@ package com.threerings.msoy.server;
 import com.google.inject.Inject;
 
 import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
 
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.AuthResponse;

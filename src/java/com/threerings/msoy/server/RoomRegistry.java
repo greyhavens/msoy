@@ -95,7 +95,7 @@ public class RoomRegistry extends PlaceRegistry
         }
     }
 
-// TODO
+    // TODO
 //     @Override protected PlaceManager createPlaceManager (PlaceConfig config) throws Exception {
 //         ClassLoader loader = _hostedMan.getClassLoader(config);
 //         if (loader == null) {

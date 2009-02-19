@@ -23,7 +23,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;

@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.server;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
-import javax.mail.internet.MimeUtility;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

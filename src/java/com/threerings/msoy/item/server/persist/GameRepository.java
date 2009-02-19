@@ -23,7 +23,6 @@ import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.operator.Conditionals;
-import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.SQLOperator;
 
