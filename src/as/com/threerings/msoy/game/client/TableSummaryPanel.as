@@ -111,7 +111,8 @@ public class TableSummaryPanel extends HBox
 
             if (key != null) {
                 _action.label = Msgs.GAME.get(key);
-                _action.setCommand(MsoyController.GO_GAME, [ lobj.game.gameId, table.gameOid ]);
+                _action.setCommand(MsoyController.GO_GAME, [ lobj.game.gameId, table.gameOid, 0,
+                                                             "" ]);
             }
             _action.visible = (key != null);
             _action.enabled = (key != null);

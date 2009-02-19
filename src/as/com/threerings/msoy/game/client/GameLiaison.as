@@ -70,12 +70,11 @@ public class GameLiaison
     public function GameLiaison (
         wctx :WorldContext, gameId :int, shareToken :String, shareMemberId :int)
     {
-        log.info("Liaison created", "shareToken", shareToken, "shareMemberId", shareMemberId,
-            new Error());
+        log.info("Liaison created", "shareToken", shareToken, "shareMemberId", shareMemberId);
 
         _wctx = wctx;
         _gameId = gameId;
-        _shareToken = shareToken;
+        _shareToken = shareToken == null ? "" : shareToken;
         _shareMemberId = shareMemberId;
 
         // create our custom context which we'll use to connect to lobby/game servers
@@ -176,9 +175,19 @@ public class GameLiaison
         return _shareToken;
     }
 
+    public function set shareToken (value :String) :void
+    {
+        _shareToken = value;
+    }
+
     public function get shareMemberId () :int
     {
         return _shareMemberId;
+    }
+
+    public function set shareMemberId (value :int) :void
+    {
+        _shareMemberId = value;
     }
 
     /**

@@ -79,6 +79,8 @@ import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoySceneModel;
 
+import com.threerings.msoy.utils.Args;
+
 /**
  * Extends the MsoyController with World specific bits.
  */
@@ -613,20 +615,24 @@ public class WorldController extends MsoyController
     }
 
     /**
-     * Handles the GO_GAME command to go to a non-Flash game.
+     * Handles the GO_GAME command to go to a game.
      */
-    public function handleGoGame (gameId :int, placeOid :int) :void
+    public function handleGoGame (
+        gameId :int, placeOid :int, shareMemberId :int, shareToken :String) :void
     {
         // route our entry to the game through GWT so that we can handle non-Flash games
-        if (!inGWTApp() || !displayPage("world", "game_g_" + gameId + "_" + placeOid)) {
+        log.debug("Handling go game", "oid", placeOid, "shareMemberId", shareMemberId,
+           "shareToken", shareToken);
+        var args :String = Args.join("game", "g", gameId, placeOid, shareToken, shareMemberId);
+        if (!inGWTApp() || !displayPage("world", args)) {
             // fall back to breaking the back button
             log.info("Going straight into game [oid=" + placeOid + "].");
-            _wctx.getGameDirector().enterGame(gameId, placeOid);
+            _wctx.getGameDirector().enterGame(gameId, placeOid, shareMemberId, shareToken);
             // TODO: if this is a Java game and we're in embedded mode, try popping up a new
             // browser window
             // NetUtil.navigateToURL("/#game-" + gameId + "_" + placeOid, false);
         } else {
-            log.info("Routed game ready through URL [oid=" + placeOid + "].");
+            log.info("Routed game ready through URL", "oid", placeOid, "args", args);
         }
     }
 
@@ -635,6 +641,7 @@ public class WorldController extends MsoyController
      */
     public function handleJoinGameLobby (gameId :int, ghost :String = null, gport :int = 0) :void
     {
+        // TODO: support "shareToken" and "shareMemberId" here?
         // if we're running in the GWT app, we need to route through GWT to keep the URL valid
         if (inGWTApp() && displayPage("world", "game_l_" + gameId)) {
             log.info("Routed join lobby through URL", "game", gameId, "ghost", ghost,
@@ -906,13 +913,16 @@ public class WorldController extends MsoyController
 
         } else if (null != params["gameOid"]) {
             _suppressTokenForScene = true;
-            _wctx.getGameDirector().enterGame(int(params["gameId"]), int(params["gameOid"]));
+            var token :String = params["shareToken"] != null ? String(params["shareToken"]) : "";
+            _wctx.getGameDirector().enterGame(int(params["gameId"]), int(params["gameOid"]),
+                int(params["shareMemberId"]), token);
 
         } else if (null != params["noplace"]) {
             // go to no place- we just want to chat with our friends
             _wctx.setPlaceView(new NoPlaceView());
 
         } else if (null != params["gameLobby"]) {
+            // TODO: support "shareToken" and "shareMemberId" here?
             _wctx.getGameDirector().displayLobby(
                 int(params["gameLobby"]), String(params["ghost"]), int(params["gport"]));
 

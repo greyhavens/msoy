@@ -19,6 +19,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.utils.Args;
 import com.threerings.msoy.utils.Base64Decoder;
 import com.threerings.msoy.utils.Base64Encoder;
 
@@ -153,6 +154,8 @@ public class GameDirector extends BasicDirector
 
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
+                _liaison.shareToken = "";
+                _liaison.shareMemberId = 0;
                 LobbyGameLiaison(_liaison).showLobby(defaultMode);
             } else {
                 _liaison.shutdown();
@@ -256,19 +259,9 @@ public class GameDirector extends BasicDirector
     {
         // we encode the strings so they are valid as part of the URL and the user cannot trivially
         // see them
-        var args :Array = ["invites", "game", getGameId(), encodeForURI(defmsg),
-            encodeForURIBase64(token), _liaison is AVRGameLiaison ? 1 : 0];
-
-        if (roomId != 0) {
-            args.push(roomId);
-        }
-
-        var loc :String = String(args[0]);
-        for each (var arg :String in args.slice(1)) {
-            loc = loc + "_" + arg;
-        }
-
-        _wctx.getWorldController().displayPage("people", loc);
+        _wctx.getWorldController().displayPage("people", Args.join("invites", "game", getGameId(),
+            encodeForURI(defmsg), encodeForURIBase64(token), _liaison is AVRGameLiaison ? 1 : 0,
+            roomId));
     }
 
     /**
@@ -281,12 +274,18 @@ public class GameDirector extends BasicDirector
         shareToken :String, shareMemberId :int) :void
     {
         shareToken = decodeFromURIBase64(shareToken);
+
+        log.debug("Playing now", "gameId", gameId, "shareMemberId", shareMemberId,
+                 "shareToken", shareToken);
+
         var mode :int = LobbyCodes.PLAY_NOW_SINGLE;
         if (modeStr == "m") {
             mode = LobbyCodes.PLAY_NOW_ANYONE;
         }
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison && _liaison.gameId == gameId) {
+                _liaison.shareToken = shareToken;
+                _liaison.shareMemberId = shareMemberId;
                 LobbyGameLiaison(_liaison).playNow(mode);
             } else {
                 _liaison.shutdown();
@@ -310,6 +309,9 @@ public class GameDirector extends BasicDirector
             if (_liaison is AVRGameLiaison || _liaison.gameId != gameId) {
                 _liaison.shutdown();
                 _liaison = null;
+            } else {
+                _liaison.shareToken = "";
+                _liaison.shareMemberId = 0;
             }
         }
 
@@ -331,6 +333,9 @@ public class GameDirector extends BasicDirector
             if (_liaison is AVRGameLiaison || _liaison.gameId != gameId) {
                 _liaison.shutdown();
                 _liaison = null;
+            } else {
+                _liaison.shareToken = "";
+                _liaison.shareMemberId = 0;
             }
         }
         displayLobby(gameId, ghost, gport);
@@ -416,11 +421,19 @@ public class GameDirector extends BasicDirector
     /**
      * Requests that we move to the specified game location.
      */
-    public function enterGame (gameId :int, gameOid :int) :void
+    public function enterGame (
+        gameId :int, gameOid :int, shareMemberId :int, shareToken :String) :void
     {
+        shareToken = decodeFromURIBase64(shareToken);
+
+        log.debug("Entering game", "gameId", gameId, "gameOid", gameOid,
+                  "shareMemberId", shareMemberId, "shareToken", shareToken);
+
         if (_liaison == null) {
             log.warning("Requested to enter game but have no liaison?! [oid=" + gameOid + "].");
             // probably we're following a URL that is super-double-plus out of date; fall back
+            // Note we lose the share data here. It might not make sense to send this data
+            // back into a new game
             _wctx.getWorldController().handleJoinGameLobby(gameId);
 
         } else if (!(_liaison is LobbyGameLiaison)) {
@@ -431,6 +444,8 @@ public class GameDirector extends BasicDirector
             // and will be removed after the test is over. -- robert
             _wctx.getMsoyClient().trackClientAction("WRLD-531-2 game started", "stage 6");
 
+            _liaison.shareMemberId = shareMemberId;
+            _liaison.shareToken = shareToken;
             LobbyGameLiaison(_liaison).enterGame(gameOid);
         }
     }
@@ -463,6 +478,17 @@ public class GameDirector extends BasicDirector
                 checkMemberAVRGame();
             }
         }
+    }
+
+    /**
+     * Lets the world controller know that our game is now ready to enter, possibly resulting
+     * in a browser url change. Also takes care of encoding the token for outside consumption.
+     */
+    public function dispatchGameReady (
+        gameId :int, gameOid :int, shareMemberId :int, shareToken :String) :void
+    {
+        _wctx.getWorldController().handleGoGame(gameId, gameOid, shareMemberId,
+            encodeForURIBase64(shareToken));
     }
 
     // from BasicDirector

@@ -231,7 +231,7 @@ public class LobbyGameLiaison extends GameLiaison
     // from interface GameReadyObserver
     public function receivedGameReady (gameOid :int) :Boolean
     {
-        _wctx.getWorldController().handleGoGame(_gameId, gameOid);
+        _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid, shareMemberId, shareToken);
 
         // this is only used for testing game loading issues per WRLD-531,
         // and will be removed after the test is over. -- robert
@@ -316,7 +316,7 @@ public class LobbyGameLiaison extends GameLiaison
             // if they're at a table, join them there
             joinPlayerTable(_playerIdGame);
         } else {
-            _wctx.getWorldController().handleGoGame(_gameId, gameOid);
+            _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid, shareMemberId, shareToken);
         }
     }
 

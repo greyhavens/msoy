@@ -539,8 +539,9 @@ public class FrameEntryPoint
                 }
 
             } else if (action.equals("game")) {
-                // display a game lobby or enter a game (action_gameId_otherId)
-                displayGame(args.get(1, ""), args.get(2, 0), args.get(3, -1), args.get(4, ""));
+                // display a game lobby or enter a game (action_gameId_otherid1_token_otherid2)
+                displayGame(args.get(1, ""), args.get(2, 0), args.get(3, 0), args.get(4, ""),
+                    args.get(5, 0));
 
             } else if (action.equals("tour")) {
                 displayWorldClient("tour=true", null);
@@ -729,29 +730,35 @@ public class FrameEntryPoint
     }
 
     protected void displayGame (
-        final String action, int gameId, final int otherId, final String token)
+        final String action, int gameId, final int otherId1, final String token,
+        final int otherId2)
     {
         // load up the information needed to launch the game
         _usersvc.loadLaunchConfig(gameId, new MsoyCallback<LaunchConfig>() {
             public void onSuccess (LaunchConfig result) {
-                launchGame(result, otherId, action, token);
+                launchGame(result, otherId1, otherId2, action, token);
             }
         });
     }
 
     protected void launchGame (
-        final LaunchConfig config, final int otherId, String action, String token)
+        final LaunchConfig config, final int otherId1, final int otherId2, String action,
+        String token)
     {
         // configure our world client with a default host and port in case we're first to the party
         WorldClient.setDefaultServer(config.groupServer, config.groupPort);
+
+        if (token == null) {
+            token = "";
+        }
 
         String args;
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
             args = "worldGame=" + config.gameId;
-            // Add the token, if provided
-            if (!"".equals(token) && token != null) {
-                args += "&shareToken=" + token + "&shareMemberId=" + otherId;
+            if (token.length() > 0 || otherId1 > 0 || otherId2 > 0) {
+                args += "&shareToken=" + token + "&shareMemberId=" + otherId1 +
+                    "&shareGameRoom=" + otherId2;
             }
             displayWorldClient(args, null);
             break;
@@ -760,16 +767,18 @@ public class FrameEntryPoint
             String hostPort = "&ghost=" + config.gameServer + "&gport=" + config.gamePort;
             if (action.equals("l")) {
                 args = "gameLobby=" + config.gameId;
-                if (otherId != 0) {
-                    args += "&playerTable=" + otherId;
+                if (otherId1 != 0) {
+                    args += "&playerTable=" + otherId1;
                 }
             } else if (action.equals("g")) {
-                args = "gameOid=" + otherId + "&gameId=" + config.gameId + 
-                    (token == null ? "" : "&shareToken=" + token);
+                args = "gameOid=" + otherId1 + "&gameId=" + config.gameId;
+                if (token.length() > 0 || otherId1 > 0) {
+                    args += "&shareToken=" + token + "&shareMemberId=" + otherId2;
+                }
             } else if (action.equals("m") || action.equals("s") || action.equals("t")) {
                 args = "playNow=" + config.gameId + "&gameMode=" + action;
-                if (!"".equals(token) && token != null) { // add the token, if provided
-                    args += "&shareToken=" + token + "&shareMemberId=" + otherId;
+                if (token.length() > 0 || otherId1 > 0) {
+                    args += "&shareToken=" + token + "&shareMemberId=" + otherId1;
                 }
             } else {
                 args = "gameLobby=" + config.gameId;
@@ -779,7 +788,7 @@ public class FrameEntryPoint
 
         case LaunchConfig.JAVA_FLASH_LOBBIED:
         case LaunchConfig.JAVA_SELF_LOBBIED:
-            if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && otherId <= 0) {
+            if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && otherId1 <= 0) {
                 displayWorldClient("gameLobby=" + config.gameId, null);
 
             } else {
@@ -789,7 +798,7 @@ public class FrameEntryPoint
                 // prepare a command to be invoked once we know Java is loaded
                 _javaReadyCommand = new Command() {
                     public void execute () {
-                        displayJava(config, otherId);
+                        displayJava(config, otherId1);
                     }
                 };
 
