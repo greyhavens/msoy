@@ -146,8 +146,8 @@ public class MemberLocal extends BodyLocal
                 // TODO: AVAMEM: To remove once bug from hell has been vanquished. */
                 log.info("AVAMEM: Putting memories into room", "avatar", memobj.avatar, 
                     "memories", memories, "roomId", roomObj.getOid(), "source", "willEnter");
-                putAvatarMemoriesIntoRoom(roomObj);
             }
+            putAvatarMemoriesIntoRoom(roomObj);
 
             // if we're in a party, maybe put our party summary in the room as well
             if (party != null && !roomObj.parties.containsKey(party.id)) {
