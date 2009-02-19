@@ -42,7 +42,7 @@ public class UserAction extends SimpleStreamableObject
         EARNED_BADGE(40),
 
         // (purely) money related actions
-        BOUGHT_BARS(50), RECEIVED_PAYOUT(51), TRANSFER_FROM_GUEST(52), SUPPORT_ADJUST(53),
+        BOUGHT_BARS(50), RECEIVED_PAYOUT(51), /*obsolete(52),*/ SUPPORT_ADJUST(53),
         EXCHANGED_CURRENCY(54), CASHED_OUT_BLING(55),
 
         // buying shit from OOO
@@ -168,11 +168,6 @@ public class UserAction extends SimpleStreamableObject
     public static UserAction receivedPayout (int memberId)
     {
         return new UserAction(Type.RECEIVED_PAYOUT, memberId, null);
-    }
-
-    public static UserAction transferFromGuest (int memberId)
-    {
-        return new UserAction(Type.TRANSFER_FROM_GUEST, memberId, "m.transfer_from_guest");
     }
 
     public static UserAction supportAdjust (int memberId, MemberName support)

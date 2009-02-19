@@ -54,11 +54,6 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 @Singleton
 public class MsoyAuthenticator extends Authenticator
 {
-    /** Whether we create accounts for guests.
-     * TODO: enable permaguests all the time and remove old guest code. */
-    public static final boolean PERMAGUESTS_ENABLED = DeploymentConfig.devDeployment &&
-        (true || "true".equals(System.getProperty("permaguests", null)));
-
     /**
      * Verifies that an ident is valid.
      */
@@ -244,8 +239,7 @@ public class MsoyAuthenticator extends Authenticator
                 rsp.authdata = authenticateMember(
                     creds, rdata, null, true, aname, creds.getPassword());
 
-            } else if (PERMAGUESTS_ENABLED && !creds.featuredPlaceView) {
-
+            } else if (!creds.featuredPlaceView) {
                 // create a new guest account
                 MemberRecord newMember = _accountLogic.createGuestAccount(
                     conn.getInetAddress().toString(), creds.visitorId);
@@ -256,10 +250,8 @@ public class MsoyAuthenticator extends Authenticator
                     newMember.accountName, AccountLogic.PERMAGUEST_PASSWORD);
 
             } else {
-                // if this is not just a "featured whirled" client; assign this guest a member id
-                // for the duration of their session
-                final int memberId = creds.featuredPlaceView ? 0 : _peerMan.getNextGuestId();
-                authenticateGuest(conn, creds, rdata, memberId);
+                // we're a "featured whirled" client so we'll be an ephemeral guest with id 0
+                authenticateGuest(conn, creds, rdata, 0);
             }
 
         } catch (final ServiceException se) {

@@ -126,8 +126,7 @@ public class LobbyGameLiaison extends GameLiaison
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
         var cb :ResultAdapter = new ResultAdapter(
-            function (lobbyOid :int) :void
-            {
+            function (lobbyOid :int) :void {
                 // this is only used for testing game loading issues per WRLD-531,
                 // and will be removed after the test is over. -- robert
                 var stageName :String = "stage 3 " + ((lobbyOid == 0) ? "game" : "lobby");

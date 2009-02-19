@@ -15,8 +15,6 @@ import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.gwt.WebCreds;
 
 import client.util.events.FlashEvents;
-import client.util.events.GotGuestIdEvent;
-import client.util.events.GotGuestIdListener;
 
 /**
  * Contains a reference to the various bits that we're likely to need in the web client interface.
@@ -120,23 +118,6 @@ public class CShell
     public static void init (Frame frame)
     {
         CShell.frame = frame;
-
-        FlashEvents.addListener(new GotGuestIdListener() {
-            public void gotGuestId (GotGuestIdEvent event) {
-                if (getMemberId() > 0) {
-                    log("Warning: got guest id but appear to be logged in? " +
-                        "[memberId=" + getMemberId() + ", guestId=" + event.getGuestId() + "].");
-                } else {
-                    log("Got guest id from Flash " + event.getGuestId() + ".");
-                    creds = new WebCreds(
-                        // TODO: the code that knows how to do this is in MsoyCredentials which is
-                        // not accessible to GWT currently for unrelated technical reasons
-                        "G" + event.getGuestId(), null,
-                        new MemberName("Guest" + event.getGuestId(), event.getGuestId()), null,
-                        WebCreds.Role.PERMAGUEST);
-                }
-            }
-        });
     }
 
     /**

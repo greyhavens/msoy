@@ -49,7 +49,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#loadLaunchConfig}.
      */
-    void loadLaunchConfig (int gameId, boolean assignGuestId, AsyncCallback<LaunchConfig> callback);
+    void loadLaunchConfig (int gameId, AsyncCallback<LaunchConfig> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#sendForgotPasswordEmail}.

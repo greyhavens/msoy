@@ -22,7 +22,6 @@ public class RegisterInfo
     public int expireDays;
 
     public String inviteId;
-    public int guestId;
     public int permaguestId;
     public VisitorInfo visitor;
 

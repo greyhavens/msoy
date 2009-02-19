@@ -63,9 +63,8 @@ public class GameLogic
 {
     /**
      * Loads the launch config for the specified game, resolving it on this server if necessary.
-     * TODO: tempaguest removal: assignGuestId will not be needed here
      */
-    public LaunchConfig loadLaunchConfig (int gameId, boolean assignGuestId)
+    public LaunchConfig loadLaunchConfig (int gameId)
         throws ServiceException
     {
         // load up the metadata for this game
@@ -150,13 +149,6 @@ public class GameLogic
         Tuple<String, Integer> rhost = waiter.waitForResult();
         config.gameServer = rhost.left;
         config.gamePort = rhost.right;
-
-        // finally, if they are a guest and have not yet been assigned a guest id, do so now so
-        // that they can log directly into the game server; ignore the guest id request if we
-        // want to create permaguests for anonymous sessions
-        if (assignGuestId && !MsoyAuthenticator.PERMAGUESTS_ENABLED) {
-            config.guestId = _peerMan.getNextGuestId(); // this method is thread safe
-        }
 
         return config;
     }

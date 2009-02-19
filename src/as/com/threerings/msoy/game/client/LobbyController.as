@@ -419,7 +419,6 @@ public class LobbyController extends Controller
         setGameView(_lobj.game);
 
         _waitForWorldLogon.execute(function () :void {
-
             // set up our starting panel mode
             _panel.init(_lobj);
             _panel.open();

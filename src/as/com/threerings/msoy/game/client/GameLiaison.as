@@ -71,7 +71,8 @@ public class GameLiaison
     public function GameLiaison (
         wctx :WorldContext, gameId :int, shareToken :String, shareMemberId :int)
     {
-        log.info("Liaison created", "shareToken", shareToken, "shareMemberId", shareMemberId, new Error());
+        log.info("Liaison created", "shareToken", shareToken, "shareMemberId", shareMemberId,
+            new Error());
 
         _wctx = wctx;
         _gameId = gameId;
@@ -118,29 +119,11 @@ public class GameLiaison
                 // room so that when we get into the lobby, we'll be ready to roll
                 _wctx.getClient().setServer(bits[2], [ int(bits[3]) ]);
 
-                // TODO: tempaguest removal: the guestId will not be required
-
-                var guestId :int = int(bits[4]);
                 var gcreds :MsoyCredentials = MsoyCredentials(_gctx.getClient().getCredentials());
                 var wcreds :MsoyCredentials = MsoyCredentials(_wctx.getClient().getCredentials());
 
-                // fake the creds if we're a tempaguest
-                if (guestId != 0) {
-                    var guestToken :String = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
-                    var guestName :MemberName = new MemberName("Guest" + (-guestId), guestId);
-
-                    gcreds.sessionToken = guestToken;
-                    if (gcreds.getUsername() == null) {
-                        gcreds.setUsername(guestName);
-                    }
-
-                    wcreds.sessionToken = guestToken;
-                    if (wcreds.getUsername() == null) {
-                        wcreds.setUsername(guestName);
-                    }
-
                 // returning permaguest, copy in the name
-                } else if (Prefs.getPermaguestUsername() != null) {
+                if (Prefs.getPermaguestUsername() != null) {
                     gcreds.setUsername(new Name(Prefs.getPermaguestUsername()));
 
                 // brand new guest, we'd better generate a visitor id

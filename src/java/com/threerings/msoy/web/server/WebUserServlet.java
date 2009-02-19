@@ -148,12 +148,6 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // TODO: consider moving the below code into AccountLogic
 
-        // if they have accumulated flow as a guest, transfer that to their account (note: only
-        // negative ids are valid guest ids)
-        if (info.guestId < 0) {
-            _peerMan.invokeNodeAction(new TransferGuestFlowAction(info.guestId, mrec.memberId));
-        }
-
         // if we are responding to an invitation, wire that all up
         if (invite != null && invite.inviterId != 0) {
             _memberRepo.linkInvite(info.inviteId, mrec);
@@ -291,10 +285,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public LaunchConfig loadLaunchConfig (int gameId, boolean assignGuestId)
+    public LaunchConfig loadLaunchConfig (int gameId)
         throws ServiceException
     {
-        return _gameLogic.loadLaunchConfig(gameId, assignGuestId);
+        return _gameLogic.loadLaunchConfig(gameId);
     }
 
     // from interface WebUserService
@@ -629,45 +623,6 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         return data;
-    }
-
-    protected static class TransferGuestFlowAction extends MemberNodeAction
-    {
-        public TransferGuestFlowAction (int fromGuestId, int toMemberId) {
-            super(fromGuestId);
-            Preconditions.checkArgument(fromGuestId < 0, "guest id must be < 0: " + fromGuestId);
-            _toMemberId = toMemberId;
-        }
-
-        public TransferGuestFlowAction () {
-        }
-
-        @Override
-        protected void execute (MemberObject memobj) {
-            final int coins = memobj.coins;
-            if (coins > 0) {
-                log.info("Transfering guest-accumulated coins to user [guestId=" + _memberId +
-                         ", memberId=" + _toMemberId + "].");
-                _invoker.postUnit(new Invoker.Unit() {
-                    @Override public boolean invoke () {
-                        UserAction action = UserAction.transferFromGuest(_toMemberId);
-                        try {
-                            _moneyLogic.awardCoins(_toMemberId, coins, true, action);
-                            return true;
-                        } catch (Exception e) {
-                            log.warning("Unable to grant coins", "to", _toMemberId,
-                                        "action", action, "amount", coins, e);
-                            return false;
-                        }
-                    }
-                });
-            }
-        }
-
-        protected int _toMemberId;
-
-        @Inject protected transient MoneyLogic _moneyLogic;
-        @Inject @MainInvoker protected transient Invoker _invoker;
     }
 
     // our dependencies

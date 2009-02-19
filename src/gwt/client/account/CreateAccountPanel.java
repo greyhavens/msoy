@@ -171,7 +171,6 @@ public class CreateAccountPanel extends FlowPanel
                 info.expireDays = 1; // TODO: unmagick?
                 Invitation invite = CShell.frame.getActiveInvitation();
                 info.inviteId = (invite == null) ? null : invite.inviteId;
-                info.guestId = CShell.isGuest() ? CShell.getMemberId() : 0;
                 info.permaguestId = CShell.isPermaguest() ? CShell.getMemberId() : 0;
                 info.visitor = CShell.visitor;
                 info.captchaChallenge =

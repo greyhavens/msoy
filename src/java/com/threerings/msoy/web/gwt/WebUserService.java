@@ -71,7 +71,7 @@ public interface WebUserService extends RemoteService
     /**
      * Loads the configuration needed to play (launch) the specified game.
      */
-    LaunchConfig loadLaunchConfig (int gameId, boolean assignGuestId)
+    LaunchConfig loadLaunchConfig (int gameId)
         throws ServiceException;
 
     /**

@@ -355,20 +355,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     }
 
     /**
-     * Returns the next guest id that may be assigned by this server. Increments our internal guest
-     * id counter in the process. This is called by the authenticator and is thus synchronized in
-     * case we decide to switch to a pool of authenticator threads some day.
-     */
-    public synchronized int getNextGuestId ()
-    {
-        if (_guestIdCounter >= Integer.MAX_VALUE / MAX_NODES) {
-            log.warning("ZOMG! We plumb run out of id space [id=" + _guestIdCounter + "].");
-            _guestIdCounter = 0;
-        }
-        return -(ServerConfig.nodeId + MAX_NODES * ++_guestIdCounter);
-    }
-
-    /**
      * Returns the next party id that may be assigned by this server.
      * Only called from the PartyRegistry, does not need synchronization.
      */
@@ -607,26 +593,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     {
         super.connectedToPeer(peer);
 
-        // scan this peer for guests authenticated by a previous incarnation of this server and
-        // adjust our next guest id to account for those assigned ids
-        int maxGuestId = 0;
-        for (ClientInfo info : peer.nodeobj.clients) {
-            int memberId = ((MsoyClientInfo)info).getMemberId();
-            if (memberId < 0) { // guest ids are negative
-                int nodeId = (-memberId) % MAX_NODES;
-                if (nodeId == ServerConfig.nodeId) {
-                    maxGuestId = Math.max(maxGuestId, (-memberId) / MAX_NODES);
-                }
-            }
-        }
-        if (maxGuestId > 0) {
-            log.info("Adjusting next guest id due to extant users", "node", peer.nodeobj.nodeName,
-                     "maxGuestId", maxGuestId);
-            synchronized (this) {
-                _guestIdCounter = Math.max(_guestIdCounter, maxGuestId);
-            }
-        }
-
         // if we're on the dev server, maybe update our in-VM policy server
         if (DeploymentConfig.devDeployment && ServerConfig.socketPolicyPort > 1024 &&
                 ServerConfig.nodeId == 1) {
@@ -717,9 +683,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     @Inject protected SceneRegistry _screg;
     @Inject protected MsoyServer _msoyServer;
     @Inject protected MsoyReportManager _reportMan;
-
-    /** A counter used to assign guest ids on this server. See {@link #getNextGuestId}. */
-    protected static int _guestIdCounter;
 
     /** A counter used to assign party ids on this server. */
     protected static int _partyIdCounter;

@@ -38,9 +38,9 @@ public class EmbedRouterServlet extends HttpServlet
         try {
             if (info.startsWith("/g")) {
                 int gameId = Integer.parseInt(info.substring(2));
-                LaunchConfig config = _gameLogic.loadLaunchConfig(gameId, true);
+                LaunchConfig config = _gameLogic.loadLaunchConfig(gameId);
                 sendResponse(rsp, config.gameServer + ":" + config.gamePort + ":" +
-                             config.groupServer + ":" + config.groupPort + ":" + config.guestId);
+                             config.groupServer + ":" + config.groupPort);
 
             } else if (info.startsWith("/s")) {
                 // TODO: if someone is already hosting this scene, send them directly there

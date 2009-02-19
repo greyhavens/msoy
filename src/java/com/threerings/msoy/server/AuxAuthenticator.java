@@ -69,8 +69,8 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
             int memberId;
             String accountName, name, token;
 
-            // if permaguests are enabled, a null token will be passed, create an account for them
-            if (creds.sessionToken == null && MsoyAuthenticator.PERMAGUESTS_ENABLED) {
+            // if the client supplied no token, create a new permaguest account
+            if (creds.sessionToken == null) {
                 MemberRecord guest;
                 // a returning guest
                 if (creds.getUsername() != null) {
