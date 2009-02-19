@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.server;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -18,6 +20,8 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.google.common.collect.Lists;
+import com.threerings.underwire.server.persist.EventRecord;
+import com.threerings.underwire.web.data.Event;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.annotation.EventThread;
@@ -35,6 +39,11 @@ import com.threerings.presents.server.PresentsSession;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.util.PersistingUnit;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.UserMessage;
+import com.threerings.crowd.chat.server.SpeakUtil;
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
@@ -610,9 +619,65 @@ public class MemberManager
     // from interface MemberProvider
     public void complainMember (ClientObject caller, final int memberId, String complaint)
     {
+        log.info("complainMember()");
         MemberObject target = _locator.lookupMember(memberId);
-        _supportLogic.complainMember(caller, ((MemberObject)caller).memberName, memberId,
-            complaint, (target != null) ? target.getMemberName() : null);
+        complainMember((BodyObject) caller, memberId,  complaint,
+            (target != null) ? target.getMemberName() : null);
+    }
+
+    /**
+     * Compile server-side information for a complaint against a MemberObject or a PlayerObject
+     * and file it with the Underwire system. Note that this method must be called on the dobj
+     * thread. The target name is optional (only available when the complainee is online).
+     */
+    public void complainMember (
+        final BodyObject complainer, final int targetId,
+        String complaint, MemberName optTargetName)
+    {
+        MemberName complainerName = (MemberName) complainer.getVisibleName();
+        
+        final EventRecord event = new EventRecord();
+        event.source = Integer.toString(complainerName.getMemberId());
+        event.sourceHandle = complainerName.toString();
+        event.status = Event.OPEN;
+        event.subject = complaint;
+    
+        // format and provide the complainer's chat history
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+        StringBuilder chatHistory = new StringBuilder();
+        for (ChatMessage msg : SpeakUtil.getChatHistory(complainerName)) {
+            UserMessage umsg = (UserMessage)msg;
+            chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ').
+                append(StringUtil.pad(ChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ').
+                append(umsg.speaker);
+            if (umsg.speaker instanceof MemberName) {
+                chatHistory.append('(').append(((MemberName)umsg.speaker).getMemberId()).append(')');
+            }
+            chatHistory.append(": ").append(umsg.message).append('\n');
+        }
+        event.chatHistory = chatHistory.toString();
+    
+        if (optTargetName != null) {
+            event.targetHandle = optTargetName.toString();
+            event.target = Integer.toString(optTargetName.getMemberId());
+        }
+    
+        _invoker.postUnit(new Invoker.Unit("addComplaint") {
+            @Override public boolean invoke () {
+                try {
+                    _supportLogic.addComplaint(event, targetId);
+                } catch (Exception e) {
+                    log.warning("Failed to add complaint event [event=" + event + "].", e);
+                    _failed = true;
+                }
+                return true;
+            }
+            @Override public void handleResult () {
+                SpeakUtil.sendFeedback(complainer, MsoyCodes.GENERAL_MSGS,
+                        _failed ? "m.complain_fail" : "m.complain_success");
+            }
+            protected boolean _failed = false;
+        });
     }
 
     // from interface MemberProvider

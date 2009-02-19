@@ -41,6 +41,7 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultListenerList;
 
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
@@ -61,16 +62,15 @@ import com.whirled.game.data.GameContentOwnership;
 import com.whirled.game.data.GameData;
 import com.whirled.game.server.PropertySpaceDelegate;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.BureauManager;
+import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.BatchInvoker;
-import com.threerings.msoy.underwire.server.SupportLogic;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
@@ -1018,7 +1018,7 @@ public class GameGameRegistry
     public void complainPlayer (ClientObject caller, final int memberId, String complaint)
     {
         PlayerObject target = _locator.lookupPlayer(memberId);
-        _supportLogic.complainMember(caller, ((MemberObject)caller).memberName, memberId,
+        _memmgr.complainMember((BodyObject) caller, memberId,
             complaint, (target != null) ? target.getMemberName() : null);
     }
 
@@ -1260,7 +1260,7 @@ public class GameGameRegistry
     @Inject protected BureauRegistry _bureauReg;
     @Inject protected StatLogic _statLogic;
     @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected SupportLogic _supportLogic;
+    @Inject protected MemberManager _memmgr;
 
     // various and sundry repositories for loading persistent data
     @Inject protected MsoyGameRepository _mgameRepo;
