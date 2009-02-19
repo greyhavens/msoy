@@ -389,6 +389,8 @@ public class GameDirector extends BasicDirector
     public function activateAVRGame (
         gameId :int, inviteToken :String = "", inviterMemberId :int = 0) :void
     {
+        log.debug("Activating AVR game", "token", inviteToken, "inviter", inviterMemberId);
+
         inviteToken = decodeFromURIBase64(inviteToken);
         if (_liaison != null) {
             if (_liaison is LobbyGameLiaison) {
