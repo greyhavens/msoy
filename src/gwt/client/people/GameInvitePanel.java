@@ -87,9 +87,10 @@ public class GameInvitePanel extends VerticalPanel
 
         // build the invite url; this will be a play now link for lobbied games (type 0) or a
         // start-in-room link for avrgs (type 1)
-        final String url = DeploymentConfig.serverURL + Pages.makeLink(Pages.WORLD, gameType == 1 ? 
+        String pathToGame = Pages.makeLink(Pages.WORLD, gameType == 1 ? 
             Args.compose("game", "s", detail.gameId, CShell.getMemberId(), token, roomId) :
             Args.compose("game", "t", detail.gameId, CShell.getMemberId(), token));
+        final String url = DeploymentConfig.serverURL + pathToGame.substring(1);
 
         // game information
         SmartTable gameInfo = new SmartTable();
