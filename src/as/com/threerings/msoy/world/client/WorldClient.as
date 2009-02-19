@@ -125,7 +125,7 @@ public class WorldClient extends MsoyClient
         }
 
         // store the session token
-        _ctx.saveSessionToken(this);
+        _ctx.saveSessionToken(getAuthResponseData());
 
         log.info("Client logged on [built=" + DeploymentConfig.buildTime +
                  ", mediaURL=" + DeploymentConfig.mediaURL +

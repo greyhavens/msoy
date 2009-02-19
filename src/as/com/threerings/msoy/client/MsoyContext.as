@@ -21,6 +21,7 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.dobj.DObjectManager;
+import com.threerings.presents.net.AuthResponseData;
 
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
@@ -352,15 +353,16 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
-     * Saves the session token communicated via the auth response. It is stored in the credentials
-     * of the client so that we can log in more efficiently on a reconnect, so that we can log into
-     * game servers.
+     * Saves the session token communicated via the supplied auth response. It is stored in the
+     * credentials of the client so that we can log in more efficiently on a reconnect, and so that
+     * we can log into game servers.
      */
-    public function saveSessionToken (client :Client) :void
+    public function saveSessionToken (arsp :AuthResponseData) :void
     {
-        var rdata :MsoyAuthResponseData = (client.getAuthResponseData() as MsoyAuthResponseData);
+        var rdata :MsoyAuthResponseData = (arsp as MsoyAuthResponseData);
+        Log.getLog(MsoyContext).info("Using session token " + rdata.sessionToken);
         if (rdata.sessionToken != null) {
-            MsoyCredentials(client.getCredentials()).sessionToken = rdata.sessionToken;
+            MsoyCredentials(getClient().getCredentials()).sessionToken = rdata.sessionToken;
         }
     }
 

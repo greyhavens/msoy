@@ -195,7 +195,7 @@ public class GameLiaison
         GuestSessionCapture.capture(gclient, function () :void {
             // save the session token for future use (this copies our session token into the world
             // client's credentials)
-            _wctx.saveSessionToken(gclient);
+            _wctx.saveSessionToken(gclient.getAuthResponseData());
 
             // now log onto the world server with those credentials (if we're not already)
             var wclient :Client = _wctx.getClient();
