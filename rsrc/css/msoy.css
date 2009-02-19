@@ -1043,11 +1043,16 @@ ChatInput {
 }
 
 .roomToolTip {
-/** Crap, the fontSize=12 seems to fuck-up the background of the tooltip.
-    Something to debug later.
+  /** Sheeit I still can't force these tips to look good with a bigger font, even
+    though I can hack it for gameInfoTip. Another time.
   fontSize: 12;
   */
   backgroundColor: #000000;
+}
+
+.gameInfoTip {
+  fontSize: 12;
+  backgroundColor: #FFFFFF;
 }
 
 .contentsBox, .titleBox, .infoBox {

@@ -7,6 +7,7 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.controls.Label;
+import mx.controls.ToolTip;
 
 import mx.events.ToolTipEvent;
 
@@ -88,9 +89,7 @@ public class TableSummaryPanel extends HBox
         } else {
             _info.text = Msgs.GAME.get("m.tsp_in_progress"); // can't happen?
         }
-        var tip :String = createInfoTip(table);
-        _info.toolTip = tip;
-        _infoTipper.toolTip = tip;
+        _infoTipper.toolTip = createInfoTip(table);
 
         // if the game is in progress
         if (table.gameOid != -1) {
@@ -136,15 +135,16 @@ public class TableSummaryPanel extends HBox
 
         var infoBox :HBox = new HBox();
         infoBox.percentWidth = 100;
-        infoBox.addChild(_info = FlexUtil.createLabel("", "tableSummaryStatus"));
         _infoTipper = new CommandButton(Msgs.GAME.get("b.info"), function () :void {});
+        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_START, handleTipEvent);
+        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_HIDE, handleTipEvent);
+        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_SHOWN, handleTipShown);
         _infoTipper.enabled = false;
         _infoTipper.styleName = "orangeButton";
         _infoTipper.scaleX = .7;
         _infoTipper.scaleY = .7;
         infoBox.addChild(_infoTipper);
-        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_START, handleTipEvent);
-        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_HIDE, handleTipEvent);
+        infoBox.addChild(_info = FlexUtil.createLabel("", "tableSummaryStatus"));
 
         addChild(_icon = MediaWrapper.createView(null, MediaDesc.HALF_THUMBNAIL_SIZE));
         var bits :VBox = new VBox();
@@ -192,6 +192,15 @@ public class TableSummaryPanel extends HBox
     {
         // when we hover over the _infoTipper, show tips immediately, else: restore normal time
         ToolTipManager.showDelay = (event.type == ToolTipEvent.TOOL_TIP_START) ? 0 : 500;
+    }
+
+    protected function handleTipShown (event :ToolTipEvent) :void
+    {
+        var tip :ToolTip = ToolTip(event.toolTip);
+        tip.styleName = "gameInfoTip";
+        // text must be jiggled, otherwise the tip won't size properly after the style change
+        // fawking flex
+        tip.text = tip.text; // this is enough jiggling
     }
 
     protected var _icon :MediaWrapper;
