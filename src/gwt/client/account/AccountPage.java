@@ -30,7 +30,11 @@ public class AccountPage extends Page
             setContent(_msgs.createTitle(), new CreateAccountPanel());
 
         } else if (action.equals("edit")) {
-            setContent(_msgs.editTitle(), new EditAccountPanel());
+            if (CShell.isMember()) {
+                setContent(_msgs.editTitle(), new EditAccountPanel());
+            } else {
+                Link.go(Pages.ACCOUNT, "create"); // guests/permaguests have to register first
+            }
 
         } else if (action.equals("optout")) {
             setContent(new OptOutPanel(args.get(1, ""), args.get(2, 0)));
