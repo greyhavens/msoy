@@ -67,21 +67,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#addStream()">addStream</a>(seed:uint = 0):uint</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static] Adds a new random stream, and returns its streamId.</div>
 </td><td class="summaryTableOwnerCol">Rand</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#getStream()">getStream</a>(streamId:uint):Random</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static] Returns the Random object associated with the given streamId.</div>
 </td><td class="summaryTableOwnerCol">Rand</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#nextBoolean()">nextBoolean</a>(streamId:uint):Boolean</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static] Returns a Boolean.</div>
 </td><td class="summaryTableOwnerCol">Rand</td>
 </tr>
 <tr class="">
@@ -109,7 +109,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#nextNumber()">nextNumber</a>(streamId:uint):Number</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static] Returns a Number in the range [0.0, 1.0) </div>
 </td><td class="summaryTableOwnerCol">Rand</td>
 </tr>
 <tr class="">
@@ -123,14 +123,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#seedStream()">seedStream</a>(streamId:uint, seed:uint):void</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static] Sets a new seed for the given stream.</div>
 </td><td class="summaryTableOwnerCol">Rand</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#shuffleArray()">shuffleArray</a>(arr:Array, streamId:uint):void</div>
-<div class="summaryTableDescription">[static]</div>
+<div class="summaryTableDescription">[static] Randomizes the order of the elements in the given Array, in place.</div>
 </td><td class="summaryTableOwnerCol">Rand</td>
 </tr>
 </table>
@@ -177,7 +177,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function addStream(seed:uint = 0):uint</code><span class="label">Parameters</span>
+<code>public static function addStream(seed:uint = 0):uint</code><p> Adds a new random stream, and returns its streamId. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">seed</span>:uint</code> (default = <code>0</code>)<code></code></td>
@@ -198,7 +198,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getStream(streamId:uint):Random</code><span class="label">Parameters</span>
+<code>public static function getStream(streamId:uint):Random</code><p> Returns the Random object associated with the given streamId. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">streamId</span>:uint</code></td>
@@ -219,7 +219,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function nextBoolean(streamId:uint):Boolean</code><span class="label">Parameters</span>
+<code>public static function nextBoolean(streamId:uint):Boolean</code><p> Returns a Boolean. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">streamId</span>:uint</code></td>
@@ -321,7 +321,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function nextNumber(streamId:uint):Number</code><span class="label">Parameters</span>
+<code>public static function nextNumber(streamId:uint):Number</code><p> Returns a Number in the range [0.0, 1.0) </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">streamId</span>:uint</code></td>
@@ -375,7 +375,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function seedStream(streamId:uint, seed:uint):void</code><span class="label">Parameters</span>
+<code>public static function seedStream(streamId:uint, seed:uint):void</code><p> Sets a new seed for the given stream. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">streamId</span>:uint</code></td>
@@ -395,7 +395,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function shuffleArray(arr:Array, streamId:uint):void</code><span class="label">Parameters</span>
+<code>public static function shuffleArray(arr:Array, streamId:uint):void</code><p> Randomizes the order of the elements in the given Array, in place. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>

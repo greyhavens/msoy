@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="ColliderDetails,com.whirled.contrib.platformer.board.ColliderDetails,acolliders,alines,colliders,fcdX,fcdY,oX,oY,rdelta,pushActor,reset" name="keywords">
+<meta content="ColliderDetails,com.whirled.contrib.platformer.board.ColliderDetails,acolliders,alines,colliders,dx,dy,fcdX,fcdY,lineCol,oX,oY,rdelta,sX,sY,initActor,isValid,pushActor,reset" name="keywords">
 <title>com.whirled.contrib.platformer.board.ColliderDetails</title>
 </head>
 <body>
@@ -63,11 +63,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">ColliderDetails</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#dx">dx</a> : Number<div class="summaryTableDescription"> The starting dx and dy.</div>
+</td><td class="summaryTableOwnerCol">ColliderDetails</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#dy">dy</a> : Number<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ColliderDetails</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#fcdX">fcdX</a> : Number<div class="summaryTableDescription"> The x and y delta to reach the first collision.</div>
 </td><td class="summaryTableOwnerCol">ColliderDetails</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#fcdY">fcdY</a> : Number<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ColliderDetails</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#lineCol">lineCol</a> : Array<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ColliderDetails</td>
 </tr>
 <tr class="">
@@ -80,6 +92,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#rdelta">rdelta</a> : Number<div class="summaryTableDescription"> The remaining time (in seconds) after the collision.</div>
+</td><td class="summaryTableOwnerCol">ColliderDetails</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#sX">sX</a> : Number<div class="summaryTableDescription"> The starting x and y position.</div>
+</td><td class="summaryTableOwnerCol">ColliderDetails</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#sY">sY</a> : Number<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ColliderDetails</td>
 </tr>
 </table>
@@ -101,14 +121,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#pushActor()">pushActor</a>(db:<a href="DynamicBounds.html">DynamicBounds</a>):void</div>
+<a class="signatureLink" href="#initActor()">initActor</a>(a:<a href="../piece/Actor.html">Actor</a>):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ColliderDetails</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#reset()">reset</a>(delta:Number):void</div>
+<a class="signatureLink" href="#isValid()">isValid</a>(a:<a href="../piece/Actor.html">Actor</a>):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ColliderDetails</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#pushActor()">pushActor</a>(db:<a href="DynamicBounds.html">DynamicBounds</a>):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ColliderDetails</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#reset()">reset</a>(delta:Number, a:<a href="../piece/Actor.html">Actor</a> = null):Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ColliderDetails</td>
 </tr>
@@ -145,6 +179,23 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public var colliders:Array</code><p> An array of LineData static colliders. </p></div>
+<a name="dx"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dx</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var dx:Number</code><p> The starting dx and dy. </p></div>
+<a name="dy"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dy</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var dy:Number</code>
+</div>
 <a name="fcdX"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -161,6 +212,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public var fcdY:Number</code>
+</div>
+<a name="lineCol"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">lineCol</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var lineCol:Array</code>
 </div>
 <a name="oX"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -187,6 +247,23 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public var rdelta:Number</code><p> The remaining time (in seconds) after the collision. </p></div>
+<a name="sX"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">sX</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var sX:Number</code><p> The starting x and y position. </p></div>
+<a name="sY"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">sY</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var sY:Number</code>
+</div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="ColliderDetails()"></a>
@@ -217,17 +294,59 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="pushActor()"></a>
+<a name="initActor()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">pushActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">initActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function pushActor(db:<a href="DynamicBounds.html">DynamicBounds</a>):void</code><span class="label">Parameters</span>
+<code>public function initActor(a:<a href="../piece/Actor.html">Actor</a>):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">a</span>:<a href="../piece/Actor.html">Actor</a></code></td>
+</tr>
+</table>
+</div>
+<a name="isValid()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isValid</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isValid(a:<a href="../piece/Actor.html">Actor</a>):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">a</span>:<a href="../piece/Actor.html">Actor</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="pushActor()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">pushActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function pushActor(db:<a href="DynamicBounds.html">DynamicBounds</a>):Boolean</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">db</span>:<a href="DynamicBounds.html">DynamicBounds</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
@@ -238,10 +357,23 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function reset(delta:Number):void</code><span class="label">Parameters</span>
+<code>public function reset(delta:Number, a:<a href="../piece/Actor.html">Actor</a> = null):Boolean</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">delta</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">a</span>:<a href="../piece/Actor.html">Actor</a></code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>

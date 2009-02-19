@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="KeyboardController,com.whirled.contrib.platformer.client.KeyboardController,DOUBLE_TAP,IGNORE_DOUBLE,_doubleTap,_downKeys,_dx,_dy,_ed,_lastDown,_lastUp,_wasRead,getDx,getDy,init,isDoubleTap,isDown,jumping,keyPressed,keyReleased,markPressed,readOnce,shooting,shutdown,updateACS" name="keywords">
+<meta content="KeyboardController,com.whirled.contrib.platformer.client.KeyboardController,DOUBLE_TAP,IGNORE_DOUBLE,_doubleTap,_downKeys,_dx,_dy,_ed,_keyListener,_lastDown,_lastUp,_wasRead,addKeyListener,getDx,getDy,init,isDoubleTap,isDown,jumping,keyPressed,keyReleased,markPressed,readOnce,removeKeyListener,shooting,shutdown,updateACS" name="keywords">
 <title>com.whirled.contrib.platformer.client.KeyboardController</title>
 </head>
 <body>
@@ -71,6 +71,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">KeyboardController</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_keyListener">_keyListener</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">KeyboardController</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_lastDown">_lastDown</a> : Array<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">KeyboardController</td>
 </tr>
@@ -90,6 +94,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addKeyListener()">addKeyListener</a>(keyCode:int, listener:Function):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">KeyboardController</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -137,6 +148,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#readOnce()">readOnce</a>(keyCode:int):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">KeyboardController</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeKeyListener()">removeKeyListener</a>(keyCode:int, listener:Function):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">KeyboardController</td>
 </tr>
@@ -262,6 +280,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _ed:EventDispatcher</code>
 </div>
+<a name="_keyListener"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_keyListener</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _keyListener:Array</code>
+</div>
 <a name="_lastDown"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -291,10 +318,30 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
+<a name="addKeyListener()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addKeyListener</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addKeyListener(keyCode:int, listener:Function):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">keyCode</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">listener</span>:Function</code></td>
+</tr>
+</table>
+</div>
 <a name="getDx()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">getDx</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">getDx</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -455,6 +502,26 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="removeKeyListener()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeKeyListener</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function removeKeyListener(keyCode:int, listener:Function):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">keyCode</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">listener</span>:Function</code></td>
 </tr>
 </table>
 </div>

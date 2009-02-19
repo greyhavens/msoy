@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="ActorSprite,com.whirled.contrib.platformer.display.ActorSprite,TURN,_actor,_oldDx,_oldDy,actionComplete,changeState,getActor,handleActionComplete,setStatic,shutdown,update" name="keywords">
+<meta content="ActorSprite,com.whirled.contrib.platformer.display.ActorSprite,AS_COUNT,AS_STATES,TURN,_actor,_oldDx,_oldDy,actionComplete,changeState,getActor,getStateFrame,handleActionComplete,setStatic,shutdown,update" name="keywords">
 <title>com.whirled.contrib.platformer.display.ActorSprite</title>
 </head>
 <body>
@@ -100,7 +100,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol"><a href="DynamicSprite.html">DynamicSprite</a></td>
 </tr>
 <tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="DynamicSprite.html#_state">_state</a> : String = ""<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="DynamicSprite.html#_state">_state</a> : int = -1<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="DynamicSprite.html">DynamicSprite</a></td>
 </tr>
 <tr class="hideInheritedProtectedProperty">
@@ -230,7 +230,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#changeState()">changeState</a>(newState:String):void</div>
+<a class="signatureLink" href="#changeState()">changeState</a>(newState:int):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ActorSprite</td>
 </tr>
@@ -251,9 +251,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="DynamicSprite.html#generateParticleEffect()">generateParticleEffect</a>(name:String, node:DisplayObject, back:Boolean = false, recolor:String = null, filter:ColorMatrixFilter = null, scaleY:Number = 1):void</div>
+<a class="signatureLink" href="DynamicSprite.html#generateEffect()">generateEffect</a>(effect:<a href="../util/Effect.html">Effect</a>, node:DisplayObject, filter:ColorMatrixFilter = null, scaleY:Number = 1):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="DynamicSprite.html">DynamicSprite</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getStateFrame()">getStateFrame</a>(state:int):Object</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ActorSprite</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -293,6 +300,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="DynamicSprite.html#playSoundEffect()">playSoundEffect</a>(effect:<a href="../sound/SoundEffect.html">SoundEffect</a>):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="DynamicSprite.html">DynamicSprite</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="DynamicSprite.html#playState()">playState</a>():void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="DynamicSprite.html">DynamicSprite</a></td>
@@ -314,26 +328,27 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="DynamicSprite.html#setSoundEffectPlaying()">setSoundEffectPlaying</a>(effect:<a href="../sound/SoundEffect.html">SoundEffect</a>, playing:Boolean):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="DynamicSprite.html">DynamicSprite</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="DynamicSprite.html#showHit()">showHit</a>(filter:ColorMatrixFilter = null, length:Number):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="DynamicSprite.html">DynamicSprite</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="DynamicSprite.html#stopSoundEffect()">stopSoundEffect</a>(effect:<a href="../sound/SoundEffect.html">SoundEffect</a>):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="DynamicSprite.html">DynamicSprite</a></td>
 </tr>
 </table>
 </div>
-<a name="constantSummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Public Constants</div>
-<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TURN">TURN</a> : String = "turn"<div class="summaryTableDescription">[static]</div>
-</td><td class="summaryTableOwnerCol">ActorSprite</td>
-</tr>
-</table>
-</div>
-<a name="protectedConstantSummary"></a>
+<a name="constantSummary"></a><a name="protectedConstantSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Protected Constants</div>
 <div class="showHideLinks">
@@ -344,13 +359,25 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a onclick="javascript:setInheritedVisible(true,'ProtectedConstant');" href="#protectedConstantSummary" class="showHideLink"><img src="../../../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Constants</a>
 </div>
 </div>
-<table id="summaryTableProtectedConstant" class="summaryTable hideInheritedProtectedConstant" cellpadding="3" cellspacing="0">
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#AS_COUNT">AS_COUNT</a> : int = 1<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">ActorSprite</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#AS_STATES">AS_STATES</a> : Array<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">ActorSprite</td>
 </tr>
 <tr class="hideInheritedProtectedConstant">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="DynamicSprite.html#HIT_LENGTH">HIT_LENGTH</a> : Number = 0.1<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol"><a href="DynamicSprite.html">DynamicSprite</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TURN">TURN</a> : int = 0<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">ActorSprite</td>
 </tr>
 </table>
 </div>
@@ -433,10 +460,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected override function changeState(newState:String):void</code><span class="label">Parameters</span>
+<code>protected override function changeState(newState:int):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">newState</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">newState</span>:int</code></td>
 </tr>
 </table>
 </div>
@@ -453,6 +480,27 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code><a href="../piece/Actor.html">Actor</a></code></td>
+</tr>
+</table>
+</div>
+<a name="getStateFrame()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getStateFrame</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected override function getStateFrame(state:int):Object</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">state</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
 </div>
@@ -504,14 +552,32 @@ showHideInherited();
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
-<a name="TURN"></a>
+<a name="AS_COUNT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">TURN</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">AS_COUNT</td><td class="detailHeaderType">constant</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const TURN:String = "turn"</code>
+<code>protected static const AS_COUNT:int = 1</code>
+</div>
+<a name="AS_STATES"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">AS_STATES</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const AS_STATES:Array</code>
+</div>
+<a name="TURN"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">TURN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const TURN:int = 0</code>
 </div>
 <br>
 <br>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="ShootableController,com.whirled.contrib.platformer.game.ShootableController,doHit,doesCollide,doesHit,getCenterX,getCenterY" name="keywords">
+<meta content="ShootableController,com.whirled.contrib.platformer.game.ShootableController,doHit,doesCollide,doesHit,getCenterX,getCenterY,getLastDamager" name="keywords">
 <title>com.whirled.contrib.platformer.game.ShootableController</title>
 </head>
 <body>
@@ -70,7 +70,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#doHit()">doHit</a>(damage:Number, owner:int, inter:int):void</div>
+<a class="signatureLink" href="#doHit()">doHit</a>(damage:Number, owner:int, inter:int, sowner:int):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ShootableController</td>
 </tr>
@@ -85,6 +85,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#getCenterY()">getCenterY</a>():Number</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ShootableController</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getLastDamager()">getLastDamager</a>():int</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ShootableController</td>
 </tr>
@@ -153,7 +160,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function doHit(damage:Number, owner:int, inter:int):void</code><span class="label">Parameters</span>
+<code>public function doHit(damage:Number, owner:int, inter:int, sowner:int):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">damage</span>:Number</code></td>
@@ -169,6 +176,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">inter</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">sowner</span>:int</code></td>
 </tr>
 </table>
 </div>
@@ -201,6 +214,22 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Number</code></td>
+</tr>
+</table>
+</div>
+<a name="getLastDamager()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getLastDamager</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getLastDamager():int</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
 </div>

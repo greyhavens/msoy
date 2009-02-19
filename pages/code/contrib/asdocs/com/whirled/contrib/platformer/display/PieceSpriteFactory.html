@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="PieceSpriteFactory,com.whirled.contrib.platformer.display.PieceSpriteFactory,_clipCache,_contentDomain,_defaultDynamicSprite,_defaultPieceSprite,_duplicate,_instanceMap,_spriteMap,addDynamicClass,addPieceClass,blockShape,getDynamicSprite,getPieceSprite,init,initClasses,initZip,instantiateClip,instantiateDClip,instantiatePClip,loadCache,loadCacheDisp,loadCacheWrapper,pushCache,returnCacheWrapper" name="keywords">
+<meta content="PieceSpriteFactory,com.whirled.contrib.platformer.display.PieceSpriteFactory,_clipCache,_contentDomain,_defaultDynamicSprite,_defaultPieceSprite,_duplicate,_instanceMap,_mat,_spriteMap,addDynamicClass,addPieceClass,blockShape,clearOldBitmaps,getDynamicSprite,getPieceSprite,init,initClasses,initZip,instantiateClip,instantiateDClip,instantiatePBitmap,instantiatePClip,loadCache,loadCacheDisp,loadCacheWrapper,markOldBitmaps,pushCache,returnCacheWrapper" name="keywords">
 <title>com.whirled.contrib.platformer.display.PieceSpriteFactory</title>
 </head>
 <body>
@@ -72,7 +72,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_instanceMap">_instanceMap</a> : HashMap<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_instanceMap">_instanceMap</a> : Object<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mat">_mat</a> : Matrix<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
 </tr>
 <tr class="">
@@ -106,6 +110,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#blockShape()">blockShape</a>(w:int, h:int, offset:Number = 0):MovieClip</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#clearOldBitmaps()">clearOldBitmaps</a>():void</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
 </tr>
@@ -163,6 +174,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#instantiatePBitmap()">instantiatePBitmap</a>(p:<a href="../piece/Piece.html">Piece</a>):BitmapData</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#instantiatePClip()">instantiatePClip</a>(p:<a href="../piece/Piece.html">Piece</a>):DisplayObject</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
@@ -186,6 +204,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#loadCacheWrapper()">loadCacheWrapper</a>(name:String):<a href="../display/CacheWrapper.html">CacheWrapper</a>
 </div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#markOldBitmaps()">markOldBitmaps</a>():void</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PieceSpriteFactory</td>
 </tr>
@@ -264,7 +289,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static var _instanceMap:HashMap</code>
+<code>protected static var _instanceMap:Object</code>
+</div>
+<a name="_mat"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_mat</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static var _mat:Matrix</code>
 </div>
 <a name="_spriteMap"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -361,6 +395,15 @@ showHideInherited();
 <td width="20"></td><td><code>MovieClip</code></td>
 </tr>
 </table>
+</div>
+<a name="clearOldBitmaps()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">clearOldBitmaps</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function clearOldBitmaps():void</code>
 </div>
 <a name="getDynamicSprite()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -518,6 +561,27 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="instantiatePBitmap()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">instantiatePBitmap</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function instantiatePBitmap(p:<a href="../piece/Piece.html">Piece</a>):BitmapData</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">p</span>:<a href="../piece/Piece.html">Piece</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>BitmapData</code></td>
+</tr>
+</table>
+</div>
 <a name="instantiatePClip()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -601,6 +665,15 @@ showHideInherited();
 <td width="20"></td><td><code><a href="../display/CacheWrapper.html">CacheWrapper</a></code></td>
 </tr>
 </table>
+</div>
+<a name="markOldBitmaps()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">markOldBitmaps</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function markOldBitmaps():void</code>
 </div>
 <a name="pushCache()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

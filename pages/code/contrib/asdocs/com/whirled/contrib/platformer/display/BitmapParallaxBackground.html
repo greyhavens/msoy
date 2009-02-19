@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="BitmapParallaxBackground,com.whirled.contrib.platformer.display.BitmapParallaxBackground,_bd,_layers,addNewLayer,update" name="keywords">
+<meta content="BitmapParallaxBackground,com.whirled.contrib.platformer.display.BitmapParallaxBackground,_bd,_enabled,_hasDrawn,_layers,addNewLayer,setEnabled,shutdown,update" name="keywords">
 <title>com.whirled.contrib.platformer.display.BitmapParallaxBackground</title>
 </head>
 <body>
@@ -66,6 +66,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">BitmapParallaxBackground</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_enabled">_enabled</a> : Boolean = true<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BitmapParallaxBackground</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_hasDrawn">_hasDrawn</a> : Boolean<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BitmapParallaxBackground</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_layers">_layers</a> : Array<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BitmapParallaxBackground</td>
 </tr>
@@ -92,7 +100,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addNewLayer()">addNewLayer</a>(disp:DisplayObject, scaleX:int = 1, scaleY:int = 1, offX:int = 0, offY:int = 0):void</div>
+<a class="signatureLink" href="#addNewLayer()">addNewLayer</a>(disp:DisplayObject, scaleX:int = 1, scaleY:int = 1, offX:int = 0, offY:int = 0, tileY:Boolean = false):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BitmapParallaxBackground</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setEnabled()">setEnabled</a>(enabled:Boolean):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BitmapParallaxBackground</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#shutdown()">shutdown</a>():void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BitmapParallaxBackground</td>
 </tr>
@@ -120,6 +142,24 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _bd:BitmapData</code>
+</div>
+<a name="_enabled"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_enabled</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _enabled:Boolean = true</code>
+</div>
+<a name="_hasDrawn"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_hasDrawn</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _hasDrawn:Boolean</code>
 </div>
 <a name="_layers"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -150,7 +190,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function addNewLayer(disp:DisplayObject, scaleX:int = 1, scaleY:int = 1, offX:int = 0, offY:int = 0):void</code><span class="label">Parameters</span>
+<code>public function addNewLayer(disp:DisplayObject, scaleX:int = 1, scaleY:int = 1, offX:int = 0, offY:int = 0, tileY:Boolean = false):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">disp</span>:DisplayObject</code></td>
@@ -179,7 +219,36 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">offY</span>:int</code> (default = <code>0</code>)<code></code></td>
 </tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">tileY</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
 </table>
+</div>
+<a name="setEnabled()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setEnabled</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setEnabled(enabled:Boolean):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">enabled</span>:Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="shutdown()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">shutdown</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public override function shutdown():void</code>
 </div>
 <a name="update()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

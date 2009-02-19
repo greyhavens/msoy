@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="PlatformerContext,com.whirled.contrib.platformer.PlatformerContext,board,controller,gctrl,local,net,persist,pfac,platformer,inControl" name="keywords">
+<meta content="PlatformerContext,com.whirled.contrib.platformer.PlatformerContext,board,controller,dfac,effectEnum,gctrl,local,myId,net,persist,pfac,platformer,soundEffectEnum,inControl,getEffect,getSoundEffect" name="keywords">
 <title>com.whirled.contrib.platformer.PlatformerContext</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">Whirled "contrib" Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../all-classes.html')" href="../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../index-list.html')" href="../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../index.html?com/whirled/contrib/platformer/PlatformerContext.html&amp;com/whirled/contrib/platformer/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;PlatformerContext</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;PlatformerContext</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class PlatformerContext"); titleBar_setSubNav(false,true,false,false,false,false,false,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class PlatformerContext"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -64,6 +64,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">PlatformerContext</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#dfac">dfac</a> : <a href="piece/DynamicFactory.html">DynamicFactory</a>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PlatformerContext</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#effectEnum">effectEnum</a> : Class<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PlatformerContext</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#gctrl">gctrl</a> : GameControl<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PlatformerContext</td>
 </tr>
@@ -73,6 +82,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#local">local</a> : Boolean<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PlatformerContext</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#myId">myId</a> : int<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PlatformerContext</td>
 </tr>
 <tr class="">
@@ -92,6 +105,35 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#platformer">platformer</a> : <a href="../platformer/PlatformerController.html">PlatformerController</a>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PlatformerContext</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#soundEffectEnum">soundEffectEnum</a> : Class<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PlatformerContext</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getEffect()">getEffect</a>(name:String):<a href="util/Effect.html">Effect</a>
+</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PlatformerContext</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getSoundEffect()">getSoundEffect</a>(name:String):<a href="sound/SoundEffect.html">SoundEffect</a>
+</div>
 <div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PlatformerContext</td>
 </tr>
@@ -122,6 +164,24 @@ showHideInherited();
 <div class="detailBody">
 <code>public static var controller:<a href="game/GameController.html">GameController</a></code>
 </div>
+<a name="dfac"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dfac</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static var dfac:<a href="piece/DynamicFactory.html">DynamicFactory</a></code>
+</div>
+<a name="effectEnum"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">effectEnum</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static var effectEnum:Class</code>
+</div>
 <a name="gctrl"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -151,6 +211,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static var local:Boolean</code>
+</div>
+<a name="myId"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">myId</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static var myId:int</code>
 </div>
 <a name="net"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -187,6 +256,59 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static var platformer:<a href="../platformer/PlatformerController.html">PlatformerController</a></code>
+</div>
+<a name="soundEffectEnum"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">soundEffectEnum</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static var soundEffectEnum:Class</code>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="getEffect()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getEffect</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getEffect(name:String):<a href="util/Effect.html">Effect</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="util/Effect.html">Effect</a></code></td>
+</tr>
+</table>
+</div>
+<a name="getSoundEffect()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getSoundEffect</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getSoundEffect(name:String):<a href="sound/SoundEffect.html">SoundEffect</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="sound/SoundEffect.html">SoundEffect</a></code></td>
+</tr>
+</table>
 </div>
 <br>
 <br>

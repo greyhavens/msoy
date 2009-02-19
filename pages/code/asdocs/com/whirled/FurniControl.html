@@ -184,7 +184,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#getMicrophone()">getMicrophone</a>(index:int = 0):Microphone</div>
 <div class="summaryTableDescription">
-     Access the local user's camera.</div>
+     Access the local user's microphone.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -224,8 +224,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#hasControl()">hasControl</a>():Boolean</div>
 <div class="summaryTableDescription">
-     Is this client in control?
-          <p>Control is a mutually exclusive lock across all instances of the entity (i.e.</div>
+     Detects whether this client is in control.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -423,7 +422,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="EntityControl.html#event:signalReceived">signalReceived</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when any entity sends a message to all other entities.</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+ Dispatched when any entity or AVR game sends a message to all other entities.</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -513,15 +512,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedConstant">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#TYPE_AVATAR">TYPE_AVATAR</a> : String = "avatar"<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#TYPE_AVATAR">TYPE_AVATAR</a> : String = "avatar"<div class="summaryTableDescription">[static] The type of avatar entities.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedConstant">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#TYPE_FURNI">TYPE_FURNI</a> : String = "furni"<div class="summaryTableDescription">[static] Encompasses furniture, backdrops and toys.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#TYPE_FURNI">TYPE_FURNI</a> : String = "furni"<div class="summaryTableDescription">[static] The type of furniture entities.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedConstant">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#TYPE_PET">TYPE_PET</a> : String = "pet"<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#TYPE_PET">TYPE_PET</a> : String = "pet"<div class="summaryTableDescription">[static] The type of pet entities.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 </table>
@@ -566,11 +565,11 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">func</span>:Function</code> &mdash; signature: function () :DisplayObject
-     Your function should return a DisplayObject as a configuration panel.
+     <p>Your function should return a DisplayObject as a configuration panel.
      The width/height of the object at return time will be used to configure the amount
      of space given it. Any changes made by the user should effect immediately, or
-     you should provide buttons to apply the change, if absolutely necessary.
-     </td>
+     you should provide buttons to apply the change, if absolutely necessary.</p>
+          </td>
 </tr>
 </table>
 </div>
@@ -628,9 +627,9 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const BODY_ENTERED:String = "bodyEntered"</code><p> An action triggered when someone arrives at the location at which
      this furniture is placed, if this piece of furniture is a doorway.
-          This will arrive via an ACTION_TRIGGERED event with the name property set
-     to BODY_ENTERED.
-     </p></div>
+          </p><p>This will arrive via an ACTION_TRIGGERED event with the name property set
+     to BODY_ENTERED.</p>
+     </div>
 <a name="BODY_LEFT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -640,9 +639,9 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const BODY_LEFT:String = "bodyLeft"</code><p> An action triggered when someone leaves via this piece of doorway
      furniture.
-          This will arrive via an ACTION_TRIGGERED event with the name property set
-     to BODY_LEFT.
-     </p></div>
+          </p><p>This will arrive via an ACTION_TRIGGERED event with the name property set
+     to BODY_LEFT.</p>
+     </div>
 <br>
 <br>
 <hr>

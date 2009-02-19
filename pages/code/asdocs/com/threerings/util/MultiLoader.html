@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="MultiLoader,com.threerings.util.MultiLoader,_activeMultiLoaders,_complete,_forEach,_remaining,_result,_targetsToKeys,checkReport,getContents,getLoaders,handleComplete,handleError,processProperty" name="keywords">
+<meta content="MultiLoader,com.threerings.util.MultiLoader,_activeMultiLoaders,_complete,_forEach,_remaining,_result,_targetsToKeys,checkReport,getContents,getLoaders,handleComplete,handleError,loadClasses,processProperty" name="keywords">
 <title>com.threerings.util.MultiLoader</title>
 </head>
 <body>
@@ -103,6 +103,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#getLoaders()">getLoaders</a>(sources:Object, completeCallback:Function, forEach:Boolean = false, appDom:ApplicationDomain = null):void</div>
 <div class="summaryTableDescription">[static]
      Exactly like getContents() only it returns the Loader objects rather than their contents.</div>
+</td><td class="summaryTableOwnerCol">MultiLoader</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#loadClasses()">loadClasses</a>(sources:Object, appDom:ApplicationDomain, completeCallback:Function):void</div>
+<div class="summaryTableDescription">[static]
+     Loads classes into the specified ApplicationDomain.</div>
 </td><td class="summaryTableOwnerCol">MultiLoader</td>
 </tr>
 </table>
@@ -457,6 +465,35 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">event</span>:ErrorEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="loadClasses()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">loadClasses</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function loadClasses(sources:Object, appDom:ApplicationDomain, completeCallback:Function):void</code><p>
+     Loads classes into the specified ApplicationDomain.
+     The complete callback receives either the same ApplicationDomain or no arguments.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">sources</span>:Object</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">appDom</span>:ApplicationDomain</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">completeCallback</span>:Function</code></td>
 </tr>
 </table>
 </div>

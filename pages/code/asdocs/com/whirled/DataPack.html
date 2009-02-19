@@ -156,7 +156,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#getLoaders()">getLoaders</a>(sources:Object, callback:Function, appDom:ApplicationDomain = null):void</div>
 <div class="summaryTableDescription">
-     Get SWF loaders for each SWF in the datapack.</div>
+     Get Loaders containing the specified files from the datapack.</div>
 </td><td class="summaryTableOwnerCol">DataPack</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -379,6 +379,10 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getDisplayObjects(sources:Object, callback:Function, appDom:ApplicationDomain = null):void</code><p>
      Get some display objects in the datapack.
+     <b>Note</b>: With the move to flash 10, it's now illegal to "reparent" a SWF that was
+     compiled with AVM1 (flash 8, or newer but compiled as actionscript 1/2). It will work
+     fine in flashplayer 9, but in flashplayer 10 it will give a runtime error. The workaround
+     is to use getLoaders() instead, and add the Loader to your hierarchy.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -413,7 +417,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getLoaders(sources:Object, callback:Function, appDom:ApplicationDomain = null):void</code><p>
-     Get SWF loaders for each SWF in the datapack.
+     Get Loaders containing the specified files from the datapack. These Loaders will hold the 
+     DisplayObject or Image files, and can be safely added to your display hierarchy without
+     causing any errors, even if loading an AVM1 swf.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -427,7 +433,7 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">callback</span>:Function</code> &mdash; a Function that will be called when all the display objects
                      are loaded (or were unable to load).
                      Signature: <code>function (results :Object) :void</code>.
-                     results will contain a mapping from name -> EmbeddedSwfLoader, or null.
+                     results will contain a mapping from name -> Loader, or null.
      </td>
 </tr>
 <tr>

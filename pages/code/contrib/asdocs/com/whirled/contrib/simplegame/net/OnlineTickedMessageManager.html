@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="OnlineTickedMessageManager,com.whirled.contrib.simplegame.net.OnlineTickedMessageManager,_events,_gameCtrl,_isFirstPlayer,_lastSendTime,_maxPendingSends,_messageTypes,_minSendDelayMS,_pendingSends,_receivedFirstTick,_tickIntervalMS,_tickName,_ticks,log,isReady,unprocessedTickCount,maxPendingSends,maxSendsPerSecond,addMessageType,canSendMessage,canSendMessageNow,deserializeMessage,getNextTick,onMessageReceived,run,sendMessage,sendMessageNow,stop,update" name="keywords">
+<meta content="OnlineTickedMessageManager,com.whirled.contrib.simplegame.net.OnlineTickedMessageManager,_events,_gameCtrl,_isInControl,_lastSendTime,_maxPendingSends,_minSendDelayMS,_pendingSends,_receivedFirstTick,_tickIntervalMS,_tickName,_ticks,log,isReady,unprocessedTickCount,maxPendingSends,maxSendsPerSecond,canSendMessage,canSendMessageNow,getNextTick,onMessageReceived,run,sendMessage,sendMessageNow,stop,update" name="keywords">
 <title>com.whirled.contrib.simplegame.net.OnlineTickedMessageManager</title>
 </head>
 <body>
@@ -36,6 +36,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr>
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class OnlineTickedMessageManager</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">OnlineTickedMessageManager <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../../images/inherit-arrow.gif"> <a href="BasicMessageManager.html">BasicMessageManager</a></td>
 </tr>
 <tr>
 <td class="classHeaderTableLabel">Implements</td><td><a href="TickedMessageManager.html">TickedMessageManager</a></td>
@@ -77,6 +80,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a name="protectedPropertySummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Protected Properties</div>
+<div class="showHideLinks">
+<div class="hideInheritedProtectedProperty" id="hideInheritedProtectedProperty">
+<a onclick="javascript:setInheritedVisible(false,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Protected Properties</a>
+</div>
+<div class="showInheritedProtectedProperty" id="showInheritedProtectedProperty">
+<a onclick="javascript:setInheritedVisible(true,'ProtectedProperty');" href="#protectedPropertySummary" class="showHideLink"><img src="../../../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Protected Properties</a>
+</div>
+</div>
 <table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
@@ -91,7 +102,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_isFirstPlayer">_isFirstPlayer</a> : Boolean<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_isInControl">_isInControl</a> : Boolean<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
 </tr>
 <tr class="">
@@ -102,9 +113,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_maxPendingSends">_maxPendingSends</a> : uint = 10<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_messageTypes">_messageTypes</a> : HashMap<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
+<tr class="hideInheritedProtectedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="BasicMessageManager.html#_messageTypes">_messageTypes</a> : HashMap<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="BasicMessageManager.html">BasicMessageManager</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_minSendDelayMS">_minSendDelayMS</a> : uint = 105<div class="summaryTableDescription"></div>
@@ -135,6 +146,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a name="methodSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Public Methods</div>
+<div class="showHideLinks">
+<div class="hideInheritedMethod" id="hideInheritedMethod">
+<a onclick="javascript:setInheritedVisible(false,'Method');" href="#methodSummary" class="showHideLink"><img src="../../../../../images/expanded.gif" class="showHideLinkImage"> Hide Inherited Public Methods</a>
+</div>
+<div class="showInheritedMethod" id="showInheritedMethod">
+<a onclick="javascript:setInheritedVisible(true,'Method');" href="#methodSummary" class="showHideLink"><img src="../../../../../images/collapsed.gif" class="showHideLinkImage"> Show Inherited Public Methods</a>
+</div>
+</div>
 <table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
@@ -142,16 +161,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#OnlineTickedMessageManager()">OnlineTickedMessageManager</a>(gameCtrl:GameControl, isFirstPlayer:Boolean, tickIntervalMS:int, tickMessageName:String = "t")</div>
+<a class="signatureLink" href="#OnlineTickedMessageManager()">OnlineTickedMessageManager</a>(gameCtrl:GameControl, isInControl:Boolean, tickIntervalMS:int, tickMessageName:String = "t")</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addMessageType()">addMessageType</a>(messageClass:Class):void</div>
+<a class="signatureLink" href="BasicMessageManager.html#addMessageType()">addMessageType</a>(messageClass:Class):void</div>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
+</td><td class="summaryTableOwnerCol"><a href="BasicMessageManager.html">BasicMessageManager</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -159,6 +178,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#canSendMessage()">canSendMessage</a>():Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="BasicMessageManager.html#deserializeMessage()">deserializeMessage</a>(name:String, val:Object):<a href="../net/Message.html">Message</a>
+</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="BasicMessageManager.html">BasicMessageManager</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -177,9 +204,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#sendMessage()">sendMessage</a>(msg:<a href="Message.html">Message</a>):void</div>
+<a class="signatureLink" href="#sendMessage()">sendMessage</a>(msg:<a href="Message.html">Message</a>, playerId:int = 0):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="BasicMessageManager.html#serializeMsg()">serializeMsg</a>(msg:<a href="../net/Message.html">Message</a>):Object</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="BasicMessageManager.html">BasicMessageManager</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -214,14 +248,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#deserializeMessage()">deserializeMessage</a>(name:String, val:Object):<a href="../net/Message.html">Message</a>
-</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="#onMessageReceived()">onMessageReceived</a>(event:MessageReceivedEvent):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
@@ -229,7 +255,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#sendMessageNow()">sendMessageNow</a>(msg:<a href="Message.html">Message</a>):void</div>
+<a class="signatureLink" href="#sendMessageNow()">sendMessageNow</a>(msg:<a href="Message.html">Message</a>, playerId:int):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">OnlineTickedMessageManager</td>
 </tr>
@@ -273,14 +299,14 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _gameCtrl:GameControl</code>
 </div>
-<a name="_isFirstPlayer"></a>
+<a name="_isInControl"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_isFirstPlayer</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_isInControl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _isFirstPlayer:Boolean</code>
+<code>protected var _isInControl:Boolean</code>
 </div>
 <a name="isReady"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -335,15 +361,6 @@ showHideInherited();
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function set maxSendsPerSecond(value:uint):void</code>
 <br>
-</div>
-<a name="_messageTypes"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_messageTypes</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _messageTypes:HashMap</code>
 </div>
 <a name="_minSendDelayMS"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -420,7 +437,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function OnlineTickedMessageManager(gameCtrl:GameControl, isFirstPlayer:Boolean, tickIntervalMS:int, tickMessageName:String = "t")</code><span class="label">Parameters</span>
+<code>public function OnlineTickedMessageManager(gameCtrl:GameControl, isInControl:Boolean, tickIntervalMS:int, tickMessageName:String = "t")</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">gameCtrl</span>:GameControl</code></td>
@@ -429,7 +446,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">isFirstPlayer</span>:Boolean</code></td>
+<td width="20px"></td><td><code><span class="label">isInControl</span>:Boolean</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -447,24 +464,10 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="addMessageType()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">addMessageType</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function addMessageType(messageClass:Class):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">messageClass</span>:Class</code></td>
-</tr>
-</table>
-</div>
 <a name="canSendMessage()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">canSendMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">canSendMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -490,33 +493,6 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
-</tr>
-</table>
-</div>
-<a name="deserializeMessage()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">deserializeMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function deserializeMessage(name:String, val:Object):<a href="../net/Message.html">Message</a></code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">val</span>:Object</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code><a href="../net/Message.html">Message</a></code></td>
 </tr>
 </table>
 </div>
@@ -566,10 +542,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function sendMessage(msg:<a href="Message.html">Message</a>):void</code><span class="label">Parameters</span>
+<code>public function sendMessage(msg:<a href="Message.html">Message</a>, playerId:int = 0):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">msg</span>:<a href="Message.html">Message</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> (default = <code>0</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -580,10 +562,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function sendMessageNow(msg:<a href="Message.html">Message</a>):void</code><span class="label">Parameters</span>
+<code>protected function sendMessageNow(msg:<a href="Message.html">Message</a>, playerId:int):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">msg</span>:<a href="Message.html">Message</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
 </tr>
 </table>
 </div>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="TickedMessageManager,com.whirled.contrib.simplegame.net.TickedMessageManager,isReady,unprocessedTickCount,addMessageType,canSendMessage,getNextTick,run,sendMessage,stop" name="keywords">
+<meta content="TickedMessageManager,com.whirled.contrib.simplegame.net.TickedMessageManager,isReady,unprocessedTickCount,canSendMessage,getNextTick,run,sendMessage,stop" name="keywords">
 <title>com.whirled.contrib.simplegame.net.TickedMessageManager</title>
 </head>
 <body>
@@ -35,7 +35,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib.simplegame.net</a></td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Interface</td><td class="classSignature">public interface TickedMessageManager extends <a href="../Updatable.html">Updatable</a></td>
+<td class="classHeaderTableLabel">Interface</td><td class="classSignature">public interface TickedMessageManager extends <a href="MessageManager.html">MessageManager</a>, <a href="../Updatable.html">Updatable</a></td>
 </tr>
 <tr>
 <td class="classHeaderTableLabel">Implementors</td><td><a href="../net/OfflineTickedMessageManager.html">OfflineTickedMessageManager</a>, <a href="../net/OnlineTickedMessageManager.html">OnlineTickedMessageManager</a></td>
@@ -80,13 +80,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <tr>
 <th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addMessageType()">addMessageType</a>(messageClass:Class):void</div>
+<a class="signatureLink" href="MessageManager.html#addMessageType()">addMessageType</a>(messageClass:Class):void</div>
 <div class="summaryTableDescription">
      Registers a message type with the TickedMessageManager.</div>
-</td><td class="summaryTableOwnerCol">TickedMessageManager</td>
+</td><td class="summaryTableOwnerCol"><a href="MessageManager.html">MessageManager</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -95,6 +95,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <div class="summaryTableDescription">
      </div>
 </td><td class="summaryTableOwnerCol">TickedMessageManager</td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="MessageManager.html#deserializeMessage()">deserializeMessage</a>(name:String, val:Object):<a href="../net/Message.html">Message</a>
+</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="MessageManager.html">MessageManager</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -116,10 +124,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#sendMessage()">sendMessage</a>(msg:<a href="Message.html">Message</a>):void</div>
+<a class="signatureLink" href="#sendMessage()">sendMessage</a>(msg:<a href="Message.html">Message</a>, playerId:int = 0):void</div>
 <div class="summaryTableDescription">
-     Sends a message to all other players in the game.</div>
+     Sends a message to the specified players.</div>
 </td><td class="summaryTableOwnerCol">TickedMessageManager</td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="MessageManager.html#serializeMsg()">serializeMsg</a>(msg:<a href="../net/Message.html">Message</a>):Object</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="MessageManager.html">MessageManager</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -182,28 +197,10 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="addMessageType()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">addMessageType</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function addMessageType(messageClass:Class):void</code><p>
-     Registers a message type with the TickedMessageManager. Shortly after setup() is called,
-     this function should be called once for each message type that the game will send or
-     receive.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">messageClass</span>:Class</code></td>
-</tr>
-</table>
-</div>
 <a name="canSendMessage()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">canSendMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">canSendMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -256,12 +253,18 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function sendMessage(msg:<a href="Message.html">Message</a>):void</code><p>
-     Sends a message to all other players in the game.
+<code>public function sendMessage(msg:<a href="Message.html">Message</a>, playerId:int = 0):void</code><p>
+     Sends a message to the specified players.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">msg</span>:<a href="Message.html">Message</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> (default = <code>0</code>)<code></code></td>
 </tr>
 </table>
 </div>

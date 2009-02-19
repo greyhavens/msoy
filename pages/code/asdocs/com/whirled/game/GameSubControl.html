@@ -524,6 +524,8 @@ showHideInherited();
 <code>public function endGameWithScore(score:int, gameMode:int = 0):void</code><p>
      A convenience function for ending a single player game with the supplied score. This is
      equivalent to: <code>endGameWithScores([ getMyId() ], [ score ], TO_EACH_THEIR_OWN)</code>.
+     Please read the <code>endGameWithScores</code> documentation for information on the range of
+     allowable scores.
           </p><p> Note that if a single player game is ended with a score of zero, it will be assumed
      that the player in question abandoned the game and no coins will be paid out, nor will
      their rating be updated. </p>
@@ -562,10 +564,11 @@ showHideInherited();
      of scores in the entire score history that are below the reported score. That percentile
      ranking will be used to adjust the players rating as well as to determine their individual
      coin payout. </p>
-          <p> Note that scores must be integers >= 0 and higher scores are considered better, so if
-     your game naturally operates with scores where lower is better (elapsed time in a racing
-     game, for example), then you must convert your score to a positive integer by, for example,
-     subtracting your score from a hypothentical worse possible score. For example: </p>
+          <p> Note that scores must be positive integers between 0 and 2^30 (1073741824) and higher
+     scores are considered better, so if your game naturally operates with scores where lower is
+     better (elapsed time in a racing game, for example), then you must convert your score to a
+     positive integer by, for example, subtracting your score from a hypothentical worse possible
+     score. For example: </p>
           <p><code>score = Math.max(WORST_POSSIBLE_TIME - actualTime, 1)</code></p>
           <p> Note that if a game is ended with all players scores equal of zero, it will be assumed
      that the players in question abandoned the game and no coins will be paid out, nor will

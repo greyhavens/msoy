@@ -138,8 +138,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#throttleOp()">throttleOp</a>():Boolean</div>
 <div class="summaryTableDescription">
-     Registers an attempt at an operation and returns true if the operation should be performed
-     or false if it should be throttled (meaning N operations have already been performed in the
+     Registers an attempt at an operation and returns false if the operation should be performed
+     or true if it should be throttled (meaning N operations have already been performed in the
      last M seconds).</div>
 </td><td class="summaryTableOwnerCol">Throttle</td>
 </tr>
@@ -148,8 +148,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#throttleOpAt()">throttleOpAt</a>(timeStamp:int):Boolean</div>
 <div class="summaryTableDescription">
-     Registers an attempt at an operation and returns true if the operation should be performed
-     or false if it should be throttled (meaning N operations have already been performed in the
+     Registers an attempt at an operation and returns false if the operation should be performed
+     or true if it should be throttled (meaning N operations have already been performed in the
      last M seconds).</div>
 </td><td class="summaryTableOwnerCol">Throttle</td>
 </tr>
@@ -320,8 +320,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function throttleOp():Boolean</code><p>
-     Registers an attempt at an operation and returns true if the operation should be performed
-     or false if it should be throttled (meaning N operations have already been performed in the
+     Registers an attempt at an operation and returns false if the operation should be performed
+     or true if it should be throttled (meaning N operations have already been performed in the
      last M seconds).
           </p><p></p>
 <span class="label">Returns</span>
@@ -340,8 +340,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function throttleOpAt(timeStamp:int):Boolean</code><p>
-     Registers an attempt at an operation and returns true if the operation should be performed
-     or false if it should be throttled (meaning N operations have already been performed in the
+     Registers an attempt at an operation and returns false if the operation should be performed
+     or true if it should be throttled (meaning N operations have already been performed in the
      last M seconds).
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">

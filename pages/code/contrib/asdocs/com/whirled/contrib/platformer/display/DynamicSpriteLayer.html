@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="DynamicSpriteLayer,com.whirled.contrib.platformer.display.DynamicSpriteLayer,BUFFER,_dynamics,addDS,addDynamicSprite,removeDS,removeDynamicSprite,showDS,update,updateSprites" name="keywords">
+<meta content="DynamicSpriteLayer,com.whirled.contrib.platformer.display.DynamicSpriteLayer,IN_BUFFER,OUT_BUFFER,_dynamics,addDS,addDynamicSprite,removeDS,removeDynamicSprite,showDS,shutdown,update,updateSprites" name="keywords">
 <title>com.whirled.contrib.platformer.display.DynamicSpriteLayer</title>
 </head>
 <body>
@@ -98,6 +98,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#shutdown()">shutdown</a>():void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">DynamicSpriteLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#update()">update</a>(nX:Number, nY:Number, scale:Number = 1):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">DynamicSpriteLayer</td>
@@ -149,7 +156,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#BUFFER">BUFFER</a> : int<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#IN_BUFFER">IN_BUFFER</a> : int<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">DynamicSpriteLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OUT_BUFFER">OUT_BUFFER</a> : int<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">DynamicSpriteLayer</td>
 </tr>
 </table>
@@ -242,6 +253,15 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="shutdown()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">shutdown</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public override function shutdown():void</code>
+</div>
 <a name="update()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -290,14 +310,23 @@ showHideInherited();
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
-<a name="BUFFER"></a>
+<a name="IN_BUFFER"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">BUFFER</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">IN_BUFFER</td><td class="detailHeaderType">constant</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const BUFFER:int</code>
+<code>protected static const IN_BUFFER:int</code>
+</div>
+<a name="OUT_BUFFER"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">OUT_BUFFER</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const OUT_BUFFER:int</code>
 </div>
 <br>
 <br>

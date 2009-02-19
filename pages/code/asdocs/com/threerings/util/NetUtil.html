@@ -53,7 +53,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#navigateToURL()">navigateToURL</a>(url:String, preferredWindow:String = "_self"):Boolean</div>
+<a class="signatureLink" href="#navigateToURL()">navigateToURL</a>(url:*, preferredWindow:String = "_self"):Boolean</div>
 <div class="summaryTableDescription">[static]
      Convenience method to load a web page in the browser window without
      having to worry about SecurityErrors in various conditions.</div>
@@ -75,19 +75,22 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function navigateToURL(url:String, preferredWindow:String = "_self"):Boolean</code><p>
+<code>public static function navigateToURL(url:*, preferredWindow:String = "_self"):Boolean</code><p>
      Convenience method to load a web page in the browser window without
      having to worry about SecurityErrors in various conditions.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">url</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">url</span>:*</code> &mdash; a String or a URLRequest.
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">preferredWindow</span>:String</code> (default = "<code>_self</code>")<code></code></td>
+<td width="20px"></td><td><code><span class="label">preferredWindow</span>:String</code> (default = "<code>_self</code>")<code></code> &mdash; the browser tab/window identifier in which to load. If you
+     specify a non-null window and it causes a security error, the request is retried with null.
+          </td>
 </tr>
 </table>
 <p></p>

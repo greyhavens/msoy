@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Shot,com.whirled.contrib.platformer.piece.Shot,bigHit,damage,force,hit,hitEffect,miss,missEffect,rotateHit,source,ttl,shouldSpawn,useCache" name="keywords">
+<meta content="Shot,com.whirled.contrib.platformer.piece.Shot,airEffect,bigHit,damage,fireSoundEffect,force,hit,hitEffect,hitSoundEffect,miss,missEffect,missSoundEffect,rotateHit,source,ttl,shouldSpawn,useCache" name="keywords">
 <title>com.whirled.contrib.platformer.piece.Shot</title>
 </head>
 <body>
@@ -66,6 +66,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#airEffect">airEffect</a> : <a href="../util/Effect.html">Effect</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Shot</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#bigHit">bigHit</a> : Boolean = false<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Shot</td>
 </tr>
@@ -86,6 +91,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol"><a href="Dynamic.html">Dynamic</a></td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#fireSoundEffect">fireSoundEffect</a> : <a href="../sound/SoundEffect.html">SoundEffect</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Shot</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#force">force</a> : Number = 0<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Shot</td>
 </tr>
@@ -94,7 +104,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Shot</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#hitEffect">hitEffect</a> : String<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#hitEffect">hitEffect</a> : <a href="../util/Effect.html">Effect</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Shot</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#hitSoundEffect">hitSoundEffect</a> : <a href="../sound/SoundEffect.html">SoundEffect</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Shot</td>
 </tr>
 <tr class="hideInheritedProperty">
@@ -110,7 +126,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Shot</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#missEffect">missEffect</a> : String<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#missEffect">missEffect</a> : <a href="../util/Effect.html">Effect</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Shot</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#missSoundEffect">missSoundEffect</a> : <a href="../sound/SoundEffect.html">SoundEffect</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Shot</td>
 </tr>
 <tr class="hideInheritedProperty">
@@ -132,6 +154,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ttl">ttl</a> : Number = 0<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Shot</td>
+</tr>
+<tr class="hideInheritedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="Dynamic.html#type">type</a> : String<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="Dynamic.html">Dynamic</a></td>
 </tr>
 <tr class="hideInheritedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="Dynamic.html#updateState">updateState</a> : int<div class="summaryTableDescription"></div>
@@ -365,10 +391,19 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="airEffect"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">airEffect</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var airEffect:<a href="../util/Effect.html">Effect</a></code>
+</div>
 <a name="bigHit"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">bigHit</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">bigHit</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -382,6 +417,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public var damage:Number = 0</code>
+</div>
+<a name="fireSoundEffect"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">fireSoundEffect</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var fireSoundEffect:<a href="../sound/SoundEffect.html">SoundEffect</a></code>
 </div>
 <a name="force"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -408,7 +452,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var hitEffect:String</code>
+<code>public var hitEffect:<a href="../util/Effect.html">Effect</a></code>
+</div>
+<a name="hitSoundEffect"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">hitSoundEffect</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var hitSoundEffect:<a href="../sound/SoundEffect.html">SoundEffect</a></code>
 </div>
 <a name="miss"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -426,7 +479,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var missEffect:String</code>
+<code>public var missEffect:<a href="../util/Effect.html">Effect</a></code>
+</div>
+<a name="missSoundEffect"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">missSoundEffect</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var missSoundEffect:<a href="../sound/SoundEffect.html">SoundEffect</a></code>
 </div>
 <a name="rotateHit"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
