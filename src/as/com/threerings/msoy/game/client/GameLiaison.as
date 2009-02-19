@@ -118,7 +118,6 @@ public class GameLiaison
                 _wctx.getClient().setServer(bits[2], [ int(bits[3]) ]);
 
                 var gcreds :MsoyCredentials = MsoyCredentials(_gctx.getClient().getCredentials());
-                var wcreds :MsoyCredentials = MsoyCredentials(_wctx.getClient().getCredentials());
 
                 // returning permaguest, copy in the name
                 if (Prefs.getPermaguestUsername() != null) {
