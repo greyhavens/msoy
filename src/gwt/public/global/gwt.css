@@ -961,6 +961,10 @@ img, embed, applet, object {
   font-size: 11px;
 }
 
+.PostComment {
+  padding: 15px 15px 0px 15px;
+}
+
 /** MessagePanel styles */
 .messagePanel .Photo {
   background: #EDEDED;

@@ -9,10 +9,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,9 +30,11 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
+import client.ui.BorderedDialog;
 import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
+import client.ui.SafeHTML;
 import client.util.MsoyCallback;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
@@ -55,6 +61,15 @@ public class CommentsPanel extends PagedGrid<Comment>
         _entityId = entityId;
 
         add(new Label(_cmsgs.loadingComments()));
+    }
+
+    public void showPostPopup ()
+    {
+        if (!MsoyUI.requireValidated()) {
+            return;
+        }
+        _post.setEnabled(false);
+        new PostPanel().show();
     }
 
     @Override // from UIObject
@@ -93,10 +108,7 @@ public class CommentsPanel extends PagedGrid<Comment>
         if (CShell.isRegistered()) {
             _post = new Button(_cmsgs.postComment(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    if (MsoyUI.requireValidated()) {
-                        _post.setEnabled(false);
-                        showPostPanel();
-                    }
+                    showPostPopup();
                 }
             });
             controls.setWidget(0, 0, _post);
@@ -150,11 +162,6 @@ public class CommentsPanel extends PagedGrid<Comment>
             (CShell.getMemberId() != comment.commentor.getMemberId());
     }
 
-    protected void showPostPanel ()
-    {
-        add(new PostPanel());
-    }
-
     protected void postComment (String text)
     {
         _commentsvc.postComment(_etype, _entityId, text, new MsoyCallback<Comment>() {
@@ -173,12 +180,6 @@ public class CommentsPanel extends PagedGrid<Comment>
         } else {
             MsoyUI.info(_cmsgs.commentPosted());
         }
-    }
-
-    protected void clearPostPanel (PostPanel panel)
-    {
-        remove(panel);
-        _post.setEnabled(true);
     }
 
     protected void rateComment (
@@ -236,36 +237,53 @@ public class CommentsPanel extends PagedGrid<Comment>
         }
     }
 
-    protected class PostPanel extends VerticalPanel
+    protected class PostPanel extends BorderedDialog
     {
         public PostPanel () {
-            add(new Label(_cmsgs.commentText()));
-            add(_text = new TextArea());
-            _text.setCharacterWidth(40);
+            super(false, false, false);
+            setHeaderTitle(_cmsgs.commentPostTitle());
+
+            FlowPanel contents = MsoyUI.createFlowPanel("PostComment");
+            contents.add(new Label(_cmsgs.commentText()));
+            contents.add(_text = new TextArea());
+            _text.setWidth("450px");
             _text.setVisibleLines(3);
-            add(_status = new Label(""));
-            RowPanel buttons = new RowPanel();
-            buttons.add(new Button(_cmsgs.cancel(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    clearPostPanel(PostPanel.this);
+            contents.add(MsoyUI.createLabel("", "clear")); // i hate the web
+            contents.add(_agree = new CheckBox() {
+                public void setHTML (String html) {
+                    super.setHTML(html); // i really hate the web
+                    SafeHTML.fixAnchors(getElement());
                 }
-            }));
-            buttons.add(new Button(_cmsgs.send(), new ClickListener() {
+            });
+            _agree.setHTML(_cmsgs.commentAmNotAsshole());
+            setContents(contents);
+
+            addButton(new Button(_cmsgs.cancel(), onCancel()));
+            addButton(new Button(_cmsgs.send(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    clearPostPanel(PostPanel.this);
-                    String text = _text.getText();
-                    if (mayPostComment(text)) {
-                        postComment(text);
-                    } else {
-                        MsoyUI.error(_cmsgs.commentInvalid());
+                    if (!_agree.isChecked()) {
+                        MsoyUI.errorNear(_cmsgs.commentMustNotBeAsshole(), _agree);
+                        return;
                     }
+                    hide(); // hide now, if they fail validation, they get to type everything anew
+
+                    String text = _text.getText();
+                    if (!mayPostComment(text)) {
+                        MsoyUI.error(_cmsgs.commentInvalid());
+                        return;
+                    }
+                    postComment(text);
                 }
             }));
-            add(buttons);
+        }
+
+        protected void onClosed (boolean autoClosed)
+        {
+            _post.setEnabled(true);
         }
 
         protected TextArea _text;
-        protected Label _status;
+        protected CheckBox _agree;
     }
 
     protected class CommentComplainPopup extends ComplainPopup
@@ -292,8 +310,6 @@ public class CommentsPanel extends PagedGrid<Comment>
     protected int _commentCount = -1;
 
     protected boolean _rated;
-
-    protected VerticalPanel _comments;
     protected Button _post;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

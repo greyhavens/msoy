@@ -32,15 +32,9 @@ public class CommentsBlurb extends Blurb
 
         setHeader(_msgs.commentsTitle());
         setContent(_wall = new WallPanel(pdata.name.getMemberId()));
-        restorePostFooter();
-    }
-
-    protected void restorePostFooter ()
-    {
         setFooterLabel(_cmsgs.postComment(), new ClickListener() {
             public void onClick (Widget sender) {
-                _wall.startPost();
-                setFooter(null);
+                _wall.showPostPopup();
             }
         });
     }
@@ -54,19 +48,9 @@ public class CommentsBlurb extends Blurb
             setVisible(true); // trigger immediate loading of our model
         }
 
-        public void startPost () {
-            showPostPanel();
-        }
-
         @Override // from PagedGrid
         protected boolean displayNavi (int items) {
             return (items > COMMENTS_PER_PAGE);
-        }
-
-        @Override // from CommentsPanel
-        protected void clearPostPanel (PostPanel panel) {
-            super.clearPostPanel(panel);
-            restorePostFooter();
         }
 
         @Override // from CommentsPanel
