@@ -216,6 +216,18 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Records the supplied visitorId to entry vector mapping for later correlation and analysis.
+     */
+    public void noteEntryVector (String visitorId, String vector)
+    {
+        EntryVectorRecord record = new EntryVectorRecord();
+        record.visitorId = visitorId;
+        record.vector = vector;
+        record.created = new Timestamp(System.currentTimeMillis());
+        insert(record);
+    }
+
+    /**
      * Loads the member records with the supplied set of ids.
      */
     public List<MemberRecord> loadMembers (Collection<Integer> memberIds)
@@ -517,6 +529,14 @@ public class MemberRepository extends DepotRepository
             member.humanity = MsoyCodes.STARTING_HUMANITY;
         }
         insert(member);
+
+        // note that that visitor id/entry vector pair is now associated with a proper member
+        // record (all accounts should have a visitor id, but a hacked client may provide no
+        // visitor id and we don't assign one on the server, so we accomodate this code path)
+        if (member.visitorId != null) {
+            updatePartial(EntryVectorRecord.class, member.visitorId,
+                          EntryVectorRecord.MEMBER_ID, member.memberId);
+        }
     }
 
     /**
@@ -612,6 +632,8 @@ public class MemberRepository extends DepotRepository
                   new Where(InviterRecord.MEMBER_ID, member.memberId));
         deleteAll(CharityRecord.class,
                   new Where(CharityRecord.MEMBER_ID, member.memberId));
+        deleteAll(EntryVectorRecord.class,
+                  new Where(EntryVectorRecord.MEMBER_ID, member.memberId));
 
         // TODO: delete a whole bunch of shit (not here, in whatever ends up calling this)
         // - inventory items
@@ -1417,6 +1439,7 @@ public class MemberRepository extends DepotRepository
         classes.add(ReferralRecord.class);
         classes.add(MemberExperienceRecord.class);
         classes.add(CharityRecord.class);
+        classes.add(EntryVectorRecord.class);
     }
 
     @Inject protected UserActionRepository _actionRepo;

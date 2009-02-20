@@ -282,13 +282,9 @@ public class MsoyEventLogger
 
     public void vectorAssociated (VisitorInfo info, String vector)
     {
-        if (info != null && vector != null) {
-            post(new MsoyEvents.VectorAssociated(info, vector));
-//             log.info(String.format("WRLD-465 stage 3 [? %s] %s %s",
-//                 vector, String.valueOf(info.id), String.valueOf(info.isAuthoritative)));
-        } else {
-            log.warning("Unexpected null VisitorInfo for vector: " + vector);
-        }
+        post(new MsoyEvents.VectorAssociated(info, vector));
+//         log.info(String.format("WRLD-465 stage 3 [? %s] %s %s", vector, String.valueOf(info.id),
+//                                String.valueOf(info.isAuthoritative)));
     }
 
     public void referrerAssociated (VisitorInfo info, String referrer)

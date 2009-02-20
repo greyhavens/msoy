@@ -397,6 +397,21 @@ public class MemberLogic
     }
 
     /**
+     * That the specified visitor is associated with the supplied entry vector. The values are
+     * sanity checked so it's safe to pass them straight through from the untrustworthy client.
+     */
+    public void trackVectorAssociation (VisitorInfo info, String vector)
+        throws ServiceException
+    {
+        if (info == null || info.id == null || vector == null) {
+            log.warning("Got bogus vector data", "info", info, "vector", vector);
+        } else {
+            _eventLog.vectorAssociated(info, vector);
+            _memberRepo.noteEntryVector(info.id, vector);
+        }
+    }
+
+    /**
      * Return true if the visitor's attributes match those required by the given a/b test
      */
     protected boolean eligibleForABTest (ABTest test, VisitorInfo info)

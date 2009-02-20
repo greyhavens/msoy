@@ -57,6 +57,7 @@ import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.BatchInvoker;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -700,10 +701,14 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void trackVectorAssociation (final ClientObject caller, final String vector)
+    public void trackVectorAssociation (ClientObject caller, final String vector)
     {
-        final MemberObject memObj = (MemberObject) caller;
-        _eventLog.vectorAssociated(memObj.visitorInfo, vector);
+        final VisitorInfo info = ((MemberObject)caller).visitorInfo;
+        _invoker.postUnit(new WriteOnlyUnit("trackVectorAssociation") {
+            @Override public void invokePersist () throws Exception {
+                _memberLogic.trackVectorAssociation(info, vector);
+            }
+        });
     }
 
     // from interface MemberProvider

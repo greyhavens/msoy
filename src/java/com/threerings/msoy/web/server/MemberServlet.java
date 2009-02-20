@@ -265,7 +265,7 @@ public class MemberServlet extends MsoyServiceServlet
     public void trackVectorAssociation (VisitorInfo info, String vector)
         throws ServiceException
     {
-        _eventLog.vectorAssociated(info, vector);
+        _memberLogic.trackVectorAssociation(info, vector);
     }
 
     // from WebMemberService
