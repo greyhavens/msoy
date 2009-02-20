@@ -635,7 +635,7 @@ public class MemberRepository extends DepotRepository
         deleteAll(EntryVectorRecord.class,
                   new Where(EntryVectorRecord.MEMBER_ID, member.memberId));
 
-        // TODO: anything else to do in here not handled by the called?
+        // TODO: anything else to do in here not handled by the caller?
     }
 
     // TODO: remove
