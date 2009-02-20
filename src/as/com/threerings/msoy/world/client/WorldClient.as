@@ -47,6 +47,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.room.client.RoomObjectView;
 
 /**
@@ -165,11 +166,20 @@ public class WorldClient extends MsoyClient
             return;
         }
 
+        // if we're logged into the world server or game server already with this id, ignore
         var co :MemberObject = _wctx.getMemberObject();
-        if (co == null || co.getMemberId() != memberId) {
-            log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
-            _wctx.getMsoyController().handleLogon(createStartupCreds(token));
+        if (co != null && co.getMemberId() == memberId) {
+            return;
         }
+        if (_wctx.getGameDirector().getGameContext() != null) {
+            var po :PlayerObject = _wctx.getGameDirector().getGameContext().getPlayerObject();
+            if (po != null && po.getMemberId() == memberId) {
+                return;
+            }
+        }
+
+        log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
+        _wctx.getMsoyController().handleLogon(createStartupCreds(token));
     }
 
     /** @inheritDoc */
