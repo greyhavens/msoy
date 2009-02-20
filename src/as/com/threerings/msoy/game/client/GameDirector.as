@@ -119,6 +119,8 @@ public class GameDirector extends BasicDirector
             return false;
         }
 
+        var config :MsoyGameConfig = getGameConfig();
+
         menuData.push({label: _liaison.gameName});
         menuData.push({type: "separator"});
         menuData.push({label: Msgs.GAME.get("b.gameInstructions"), command: viewGameInstructions,
@@ -134,6 +136,11 @@ public class GameDirector extends BasicDirector
         menuData.push({label: Msgs.GAME.get("b.gameInvite"), command: viewDefaultInvitePage});
         if (_liaison is AVRGameLiaison) {
             menuData.push({label: Msgs.GAME.get("b.gameExit"), command: leaveAVRGame});
+        }
+        if (_liaison is LobbyGameLiaison && config != null &&
+            config.getGameDefinition().match.getMaximumPlayers() > 1) {
+            menuData.push({label: Msgs.GAME.get("b.gameLobby"), command: displayCurrentGameLobby,
+                arg: false});
         }
         if (Game.isDevelopmentVersion(_liaison.gameId) && !_wctx.getMyName().isGuest() &&
             !(_liaison is AVRGameLiaison)) {
