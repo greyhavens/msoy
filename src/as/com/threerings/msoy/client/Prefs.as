@@ -104,13 +104,10 @@ public class Prefs
         config.setValue(GRID_AUTOSHOW, show);
     }
 
-    public static function setMediaBlocked (id :String, blocked :Boolean) :void
+    public static function setMediaBleeped (id :String, bleeped :Boolean) :void
     {
-        checkLoadBlockedMedia();
-        if (id == GLOBAL_BLEEP) {
-            _globalBleep = blocked;
-
-        } else if (blocked) {
+        checkLoadBleepedMedia();
+        if (bleeped) {
             _bleepedMedia[id] = true;
 
         } else {
@@ -120,13 +117,27 @@ public class Prefs
         // TODO: right now we don't persist this.
         //config.setValue(BLEEPED_MEDIA, _bleepedMedia, false);
 
-        config.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ id, blocked ]));
+        config.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ id, bleeped ]));
     }
 
-    public static function isMediaBlocked (id :String) :Boolean
+    /**
+     * Return true if the specified media is bleeped, regardless of the global bleep setting.
+     */
+    public static function isMediaBleeped (id :String) :Boolean
     {
-        checkLoadBlockedMedia();
-        return _globalBleep || (id in _bleepedMedia);
+        checkLoadBleepedMedia();
+        return (id in _bleepedMedia);
+    }
+
+    public static function setGlobalBleep (bleeped :Boolean) :void
+    {
+        _globalBleep = bleeped;
+        config.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ GLOBAL_BLEEP, bleeped ]));
+    }
+
+    public static function isGlobalBleep () :Boolean
+    {
+        return _globalBleep;
     }
 
     public static function getSoundVolume () :Number
@@ -254,7 +265,7 @@ public class Prefs
         config.setValue(PARTY_GROUP, groupId);
     }
 
-    protected static function checkLoadBlockedMedia () :void
+    protected static function checkLoadBleepedMedia () :void
     {
         if (_bleepedMedia == null) {
             _bleepedMedia = config.getValue(BLEEPED_MEDIA, null) as Dictionary;
@@ -278,6 +289,8 @@ public class Prefs
         // update our stored last build time
         if (lastBuild != DeploymentConfig.buildTime) {
             config.setValue("lastBuild", DeploymentConfig.buildTime);
+
+            // and right here we can do client-side transitions, if needed
         }
     }
 

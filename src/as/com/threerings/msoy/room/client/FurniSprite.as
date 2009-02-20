@@ -176,9 +176,9 @@ public class FurniSprite extends MsoySprite
         return new FurniBackend();
     }
 
-    override protected function setIsBlocked (blocked :Boolean) :void
+    override public function checkBlocked () :void
     {
-        super.setIsBlocked(blocked);
+        super.checkBlocked();
 
         checkPerspective();
     }

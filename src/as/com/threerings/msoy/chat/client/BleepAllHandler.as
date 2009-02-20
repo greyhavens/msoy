@@ -23,7 +23,7 @@ public class BleepAllHandler extends CommandHandler
         ctx :CrowdContext, speakSvc :SpeakService, cmd :String, args :String,
         history :Array) :String
     {
-        Prefs.setMediaBlocked(Prefs.GLOBAL_BLEEP, !Prefs.isMediaBlocked(Prefs.GLOBAL_BLEEP));
+        Prefs.setGlobalBleep(!Prefs.isGlobalBleep());
         return ChatCodes.SUCCESS;
     }
 

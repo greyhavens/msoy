@@ -15,6 +15,7 @@ import mx.controls.Button;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
@@ -26,6 +27,8 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
+
+import com.threerings.crowd.chat.client.MuteObserver;
 
 import com.threerings.whirled.data.SceneUpdate;
 
@@ -86,7 +89,7 @@ import com.threerings.msoy.chat.client.ChatOverlay;
  * Manages the various interactions that take place in a room scene.
  */
 public class RoomObjectController extends RoomController
-    implements BootablePlaceController
+    implements BootablePlaceController, MuteObserver
 {
     /** Some commands */
     public static const EDIT_DOOR :String = "EditDoor";
@@ -119,6 +122,16 @@ public class RoomObjectController extends RoomController
     public function canBoot () :Boolean
     {
         return canManageRoom();
+    }
+
+    // from interface MuteObserver
+    public function muteChanged (name :Name, nowMuted :Boolean) :void
+    {
+        // when someone becomes muted, it may affect the visibility of their sprite
+        var occ :OccupantSprite = _roomObjectView.getOccupantByName(name);
+        if (occ != null) {
+            occ.checkBlocked();
+        }
     }
 
     /**
@@ -183,10 +196,10 @@ public class RoomObjectController extends RoomController
                     var kind :String = Msgs.GENERAL.get(avatar.getDesc());
                     var flagItems :Array = [];
 
-                    if (avatar.isBlockable()) {
-                        var key :String = avatar.isBlocked() ? "b.unbleep_item" : "b.bleep_item";
+                    if (avatar.isBleepable()) {
+                        var key :String = avatar.isBleeped() ? "b.unbleep_item" : "b.bleep_item";
                         flagItems.push({ label: Msgs.GENERAL.get(key, kind),
-                                         callback: avatar.toggleBlocked, arg: _wdctx });
+                                         callback: avatar.toggleBleeped, arg: _wdctx });
                     }
 
                     var ident :ItemIdent = avatar.getItemIdent();
@@ -703,6 +716,7 @@ public class RoomObjectController extends RoomController
         _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
 
         _wdctx.getMsoyController().addGoMenuProvider(populateGoMenu);
+        _wdctx.getMuteDirector().addMuteObserver(this);
 
         var bar :WorldControlBar = WorldControlBar(_wdctx.getControlBar());
         _roomEditBtn = bar.roomEditBtn;
@@ -736,6 +750,7 @@ public class RoomObjectController extends RoomController
             cancelRoomEditing();
         }
 
+        _wdctx.getMuteDirector().removeMuteObserver(this);
         _wdctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
 
         _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);

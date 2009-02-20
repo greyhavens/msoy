@@ -480,11 +480,11 @@ public class RoomObjectView extends RoomView
                 }
             }
 
-            if (sprite.isBlockable()) {
-                var isBlocked :Boolean = sprite.isBlocked();
+            if (sprite.isBleepable()) {
+                var isBleeped :Boolean = sprite.isBleeped();
                 menuItems.push(MenuUtil.createControllerMenuItem(
-                    Msgs.GENERAL.get((isBlocked ? "b.unbleep_item" : "b.bleep_item"), kind),
-                    sprite.toggleBlocked, _ctx));
+                    Msgs.GENERAL.get((isBleeped ? "b.unbleep_item" : "b.bleep_item"), kind),
+                    sprite.toggleBleeped, _ctx));
             }
         }
 

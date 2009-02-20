@@ -256,6 +256,9 @@ public class OccupantSprite extends MsoySprite
         if (configureDecorations(oldInfo, newInfo)) {
             arrangeDecorations();
         }
+
+        // check to see if we're blocked
+        checkBlocked();
     }
 
     override public function snapshot (
@@ -419,6 +422,13 @@ public class OccupantSprite extends MsoySprite
     override public function getDesc () :String
     {
         return "m.occupant";
+    }
+
+    // from MsoyMediaContainer
+    override public function isBlocked () :Boolean
+    {
+        return super.isBlocked() ||
+            (_occInfo != null && _ctx.getMuteDirector().isMuted(_occInfo.username));
     }
 
     override protected function getSpecialProperty (name :String) :Object

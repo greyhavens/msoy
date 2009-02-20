@@ -60,53 +60,71 @@ public class MsoyMediaContainer extends MediaContainer
         }
 
         _desc = desc;
-        setIsBlocked(Prefs.isMediaBlocked(_desc.getMediaId()));
+        checkBlocked();
     }
 
     /**
      * Tests if this media may be blocked (aka bleeped) by the local user.
      */
-    public function isBlockable () :Boolean
+    public function isBleepable () :Boolean
     {
         return (_desc != null) && !(_desc is StaticMediaDesc) && (_desc.getMediaPath() != null);
     }
 
     /**
-     * Tests if this media is blocked (aka bleeped) for the local user. This can be due to either
-     * specific blocking of just this media or global blocking of all media. NOTE: this should
-     * never be called unless <code>isBlockable()</code> also returns true.
+     * Toggle the bleeped status of the media we're holding.
      */
-    public function isBlocked () :Boolean
+    public function toggleBleeped (ctx :MsoyContext = null) :void
     {
-        return Prefs.isMediaBlocked(_desc.getMediaId());
-    }
-
-    // TODO: doc
-    public function toggleBlocked (ctx :MsoyContext = null) :void
-    {
-        var nowBlocked :Boolean = !isBlocked();
+        var nowBleeped :Boolean = !isBleeped();
         // and change the setting. We'll get an event about the change, and react to that.
-        Prefs.setMediaBlocked(_desc.getMediaId(), nowBlocked);
+        Prefs.setMediaBleeped(_desc.getMediaId(), nowBleeped);
 
         // TEMP
         if (!_hasBleeped && ctx != null) {
-            _hasBleeped = true;
             ctx.displayInfo(Msgs.GENERAL.getPath(), "m.bleeping_todo");
+            _hasBleeped = true;
         }
+    }
+
+    /**
+     * Is the media contained herein specifically bleeped?
+     */
+    public function isBleeped () :Boolean
+    {
+        return isBleepable() && Prefs.isMediaBleeped(_desc.getMediaId());
+    }
+
+    /**
+     * Tests if this media is blocked because of bleeping OR ANY OTHER REASON for the local user.
+     * This can be due to either specific blocking of just this media, the global blocking of
+     * all media, or anything else.
+     */
+    public function isBlocked () :Boolean
+    {
+        return Prefs.isGlobalBleep() || isBleeped();
+    }
+
+    /**
+     * Re-check the blocked status of this media.
+     */
+    public function checkBlocked () :void
+    {
+        setIsBlocked(isBlocked());
     }
 
     // from ContextMenuProvider
     public function populateContextMenu (ctx :MsoyContext, menuItems :Array) :void
     {
-        if (isBlockable()) {
-            var isBlocked :Boolean = isBlocked();
+        if (isBleepable()) {
+            var isBleeped :Boolean = isBleeped();
             // TODO: if there happens to be another bleepable MsoyMediaContainer
             // also under the mouse, we'll probably clobber each other's menu items.
             // There's no human-meaningful identifier we can inject in the string from just
             // the MediaDesc. Punting!
             menuItems.push(MenuUtil.createControllerMenuItem(
-                Msgs.GENERAL.get(isBlocked ? "b.unbleep_media" : "b.bleep_media"),
-                toggleBlocked, ctx));
+                Msgs.GENERAL.get(isBleeped ? "b.unbleep_media" : "b.bleep_media"),
+                toggleBleeped, ctx));
         }
     }
 
@@ -160,16 +178,10 @@ public class MsoyMediaContainer extends MediaContainer
      */
     protected function handleBleepChange (event :ValueEvent) :void
     {
-        if (isBlockable()) {
+        if (isBleepable()) {
             const id :String = String(event.value[0]);
-            const ourId :String = _desc.getMediaId();
-            if (id == Prefs.GLOBAL_BLEEP || id == ourId) {
-                var blocked :Boolean = Boolean(event.value[1]);
-                if (id == Prefs.GLOBAL_BLEEP && !blocked) {
-                    // if unblocking globally, we might still be blocked.
-                    blocked = Prefs.isMediaBlocked(ourId);
-                }
-                setIsBlocked(blocked)
+            if (id == Prefs.GLOBAL_BLEEP || id == _desc.getMediaId()) {
+                checkBlocked();
             }
         }
     }

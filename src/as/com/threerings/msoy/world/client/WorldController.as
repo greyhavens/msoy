@@ -814,7 +814,7 @@ public class WorldController extends MsoyController
         _musicPlayer.unload();
 
         const play :Boolean = UberClient.isRegularClient() && (music != null) &&
-            (Prefs.getSoundVolume() > 0) && !Prefs.isMediaBlocked(music.getMediaId());
+            (Prefs.getSoundVolume() > 0) && !isMusicBleeped();
         if (play) {
             _musicPlayer.load(music.getMediaPath());
         }
@@ -1485,8 +1485,7 @@ public class WorldController extends MsoyController
         if (_musicDesc == null) {
             return; // couldn't possibly concern us..
         }
-        const isBleeped :Boolean = Prefs.isMediaBlocked(_musicDesc.getMediaId());
-        if (isBleeped == musicIsPlayingOrPaused()) {
+        if (isMusicBleeped() == musicIsPlayingOrPaused()) {
             // just call play again with the same music, it'll handle it
             handlePlayMusic(_musicDesc, _musicIdent);
         }
@@ -1499,6 +1498,12 @@ public class WorldController extends MsoyController
                !musicIsPlayingOrPaused()) {
             handlePlayMusic(_musicDesc, _musicIdent);
         }
+    }
+
+    protected function isMusicBleeped () :Boolean
+    {
+        return Prefs.isGlobalBleep() ||
+            (_musicDesc != null && Prefs.isMediaBleeped(_musicDesc.getMediaId()));
     }
 
     protected function musicIsPlayingOrPaused () :Boolean
