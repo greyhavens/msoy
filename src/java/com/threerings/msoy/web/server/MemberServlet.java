@@ -22,6 +22,7 @@ import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.persist.GameInvitationRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -176,10 +177,29 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
-    public void optOut (String inviteId)
+    public Invitation getGameInvitation (String inviteId)
         throws ServiceException
     {
-        if (_memberRepo.inviteAvailable(inviteId) != null) {
+        GameInvitationRecord invRec = _memberRepo.loadGameInviteById(inviteId);
+        if (invRec == null) {
+            throw new ServiceException("e.invite_not_found");
+        }
+        return invRec.toInvitation();
+    }
+
+    // from WebMemberService
+    public void optOut (boolean gameInvite, String inviteId)
+        throws ServiceException
+    {
+        if (gameInvite) {
+            GameInvitationRecord invRec = _memberRepo.loadGameInviteById(inviteId);
+            // check for funny business
+            if (invRec == null) {
+                throw new ServiceException("e.invite_not_found");
+            }
+            _memberRepo.addOptOutEmail(invRec.inviteeEmail);
+
+        } else if (_memberRepo.inviteAvailable(inviteId) != null) {
             _memberRepo.optOutInvite(inviteId);
         }
     }

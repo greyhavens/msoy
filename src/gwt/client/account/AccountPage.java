@@ -39,6 +39,9 @@ public class AccountPage extends Page
         } else if (action.equals("optout")) {
             setContent(new OptOutPanel(args.get(1, ""), args.get(2, 0)));
 
+        } else if (action.equals("optoutg")) {
+            setContent(new OptOutPanel(args.get(1, "")));
+
         } else if (action.equals("resetpw")) {
             setContent(new ResetPasswordPanel(args));
 

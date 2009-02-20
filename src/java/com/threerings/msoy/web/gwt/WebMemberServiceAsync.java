@@ -59,9 +59,14 @@ public interface WebMemberServiceAsync
     void getInvitation (String inviteId, boolean viewing, AsyncCallback<Invitation> callback);
 
     /**
+     * The asynchronous version of {@link WebMemberService#getGameInvitation}.
+     */
+    void getGameInvitation (String inviteId, AsyncCallback<Invitation> callback);
+
+    /**
      * The asynchronous version of {@link WebMemberService#optOut}.
      */
-    void optOut (String inviteId, AsyncCallback<Void> callback);
+    void optOut (boolean gameInvite, String inviteId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#optOutAnnounce}.

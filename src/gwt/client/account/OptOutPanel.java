@@ -34,7 +34,7 @@ public class OptOutPanel extends SmartTable
         if (memberId == 0) {
             _membersvc.getInvitation(arg1, false, new AsyncCallback<Invitation>() {
                 public void onSuccess (Invitation invite) {
-                    showInvite(invite);
+                    showInvite(invite, false);
                 }
                 public void onFailure (Throwable cause) {
                     setText(0, 0, CShell.serverError(cause));
@@ -56,7 +56,21 @@ public class OptOutPanel extends SmartTable
         }
     }
 
-    protected void showInvite (final Invitation invite)
+    public OptOutPanel (String gameInviteId)
+    {
+        super("optout", 0, 10);
+
+        _membersvc.getGameInvitation(gameInviteId, new AsyncCallback<Invitation>() {
+            public void onSuccess (Invitation invite) {
+                showInvite(invite, true);
+            }
+            public void onFailure (Throwable cause) {
+                setText(0, 0, CShell.serverError(cause));
+            }
+        });
+    }
+
+    protected void showInvite (final Invitation invite, final boolean game)
     {
         int row = 0;
         getFlexCellFormatter().setStyleName(row, 0, "Header");
@@ -69,7 +83,7 @@ public class OptOutPanel extends SmartTable
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(_msgs.optOutAccept(), new ClickListener() {
             public void onClick (Widget widget) {
-                _membersvc.optOut(invite.inviteId, new MsoyCallback<Void>() {
+                _membersvc.optOut(game, invite.inviteId, new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         clear();
                         setText(1, 0, _msgs.optOutSuccessful(invite.inviteeEmail));

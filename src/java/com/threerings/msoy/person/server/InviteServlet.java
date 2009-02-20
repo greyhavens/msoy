@@ -27,6 +27,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.server.persist.GameInvitationRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -305,9 +306,27 @@ public class InviteServlet extends MsoyServiceServlet
             throw new ServiceException(InvitationResults.INVALID_EMAIL);
         }
 
+        // TODO: if a user is trying to invite another registered user, we should just send a
+        // whirled mail message instead
+        MemberRecord invitee = _memberRepo.loadMember(email);
+        if (_memberRepo.loadMember(email) != null) {
+            throw new NameServiceException(
+                InvitationResults.ALREADY_REGISTERED, invitee.getName());
+        }
+
         // make sure this address isn't on the opt-out list
         if (_memberRepo.hasOptedOut(email)) {
             throw new ServiceException(InvitationResults.OPTED_OUT);
+        }
+
+        // we are fine to send multiple game invites, but we must provide an invite id so the
+        // recipient can opt out securely
+        String inviteId;
+        GameInvitationRecord invite = _memberRepo.loadGameInviteByEmail(email);
+        if (invite != null) {
+            inviteId = invite.inviteId;
+        } else {
+            inviteId = _memberRepo.generateGameInviteId();
         }
 
         // create and send the invitation email
@@ -325,11 +344,13 @@ public class InviteServlet extends MsoyServiceServlet
         params.set("server_url", ServerConfig.getServerURL());
         params.set("url", url);
         params.set("game", gameName);
+        params.set("invite_id", inviteId);
 
         String from = inviter.accountName;
         _mailer.sendTemplateEmail(email, from, "gameInvite", params);
 
         // record the invite and that we sent it
+        _memberRepo.addGameInvite(email, inviteId);
         _eventLog.gameInviteSent(gameId, inviter.memberId, email);
     }
 

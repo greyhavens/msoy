@@ -934,6 +934,49 @@ public class MemberRepository extends DepotRepository
             InvitationRecord.INVITER_ID, inviterId));
     }
 
+    public String generateGameInviteId ()
+    {
+        // find a free invite id
+        String inviteId;
+        int tries = 0;
+        while (loadGameInviteById(inviteId = randomInviteId()) != null) {
+            tries++;
+        }
+        if (tries > 5) {
+            log.warning(
+                "GameInvitationRecord.inviteId space is getting saturated", "tries", tries);
+        }
+        return inviteId;
+    }
+
+    /**
+     * Adds a new game invite sent to the given user with the given id.
+     */
+    public void addGameInvite (String inviteeEmail, String inviteId)
+    {
+        GameInvitationRecord invite = new GameInvitationRecord();
+        invite.inviteeEmail = inviteeEmail;
+        invite.inviteId = inviteId;
+        insert(invite);
+    }
+
+    /**
+     * Returns the game invitation record that corresponds to the given invitee.
+     */
+    public GameInvitationRecord loadGameInviteByEmail (String inviteeEmail)
+    {
+        return load(GameInvitationRecord.class, GameInvitationRecord.getKey(inviteeEmail));
+    }
+
+    /**
+     * Returns the game invitation record that corresponds to the given id.
+     */
+    public GameInvitationRecord loadGameInviteById (String inviteId)
+    {
+        return load(GameInvitationRecord.class,
+            new Where(GameInvitationRecord.INVITE_ID, inviteId));
+    }
+
     /**
      * Delete the InvitationRecord that corresponds to the given unique code.
      */
@@ -1440,6 +1483,7 @@ public class MemberRepository extends DepotRepository
         classes.add(MemberExperienceRecord.class);
         classes.add(CharityRecord.class);
         classes.add(EntryVectorRecord.class);
+        classes.add(GameInvitationRecord.class);
     }
 
     @Inject protected UserActionRepository _actionRepo;

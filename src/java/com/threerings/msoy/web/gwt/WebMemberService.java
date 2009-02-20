@@ -89,9 +89,18 @@ public interface WebMemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Adds the email address from the given invite to the opt-out list.
+     * Loads up the details of a game invitation. These work a bit differently than regular
+     * invitations. The inviter member will not be filled in.
      */
-    void optOut (String inviteId)
+    Invitation getGameInvitation (String inviteId)
+        throws ServiceException;
+
+    /**
+     * Adds the email address from the given invite to the opt-out list.
+     * 
+     * @param gameInvite distinguishes between an id from a game invite and that of a normal invite
+     */
+    void optOut (boolean gameInvite, String inviteId)
         throws ServiceException;
 
     /**
