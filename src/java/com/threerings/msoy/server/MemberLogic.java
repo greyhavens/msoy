@@ -407,7 +407,12 @@ public class MemberLogic
             log.warning("Got bogus vector data", "info", info, "vector", vector);
         } else {
             _eventLog.vectorAssociated(info, vector);
-            _memberRepo.noteEntryVector(info.id, vector);
+            try {
+                _memberRepo.noteEntryVector(info.id, vector);
+            } catch (DuplicateKeyException dke) {
+                // this is par for the course as the client will keep reporting its association
+                // until the cookie expires or the user registers
+            }
         }
     }
 
