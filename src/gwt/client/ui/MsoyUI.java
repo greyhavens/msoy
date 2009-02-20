@@ -616,7 +616,6 @@ public class MsoyUI
             panel.add(button);
             panel.add(WidgetUtil.makeShim(5, 10));
         }
-        panel.add(new Button(_cmsgs.dismiss(), hider));
         popup.show();
     }
 
