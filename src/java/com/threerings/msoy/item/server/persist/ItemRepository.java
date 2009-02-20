@@ -645,10 +645,20 @@ public abstract class ItemRepository<T extends ItemRecord>
         for (T iRec : loadAll(getItemClass(), Lists.transform(records, getItemId))) {
             map.put(iRec.itemId, iRec);
         }
+
+        // match up the listed items to their catalog records, filtering any records that are
+        // missing a listed item (shouldn't be possible but of course we're seeing it happen)
+        List<CatalogRecord> nrecords = Lists.newArrayList();
         for (CatalogRecord record : records) {
             record.item = map.get(record.listedItemId);
+            if (record.item == null) {
+                log.warning("CatalogRecord missing listed item " +
+                            record.getClass().getName() + record + "!");
+            } else {
+                nrecords.add(record);
+            }
         }
-        return records;
+        return nrecords;
     }
 
     /**
