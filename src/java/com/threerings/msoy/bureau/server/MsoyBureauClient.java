@@ -7,7 +7,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.InvocationResponseEvent;
-import com.threerings.presents.server.PresentsSession;
+import com.threerings.bureau.server.BureauSession;
 import com.threerings.msoy.game.data.PlayerObject;
 
 /**
@@ -16,7 +16,7 @@ import com.threerings.msoy.game.data.PlayerObject;
  * contain plain data, the transient fields and methods incur a very large import footprint
  * including many ui and mx classes. These do not compile under thane.
  */
-public class MsoyBureauClient extends PresentsSession
+public class MsoyBureauClient extends BureauSession
 {
     /**
      * Notifies this client that an agent has been added. Increases message allowance.
