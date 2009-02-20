@@ -139,6 +139,15 @@ public class InvitePanel extends VerticalPanel
         input.setText(row, 1, _msgs.inviteWebPassword());
         input.setWidget(row, 2, _webPassword = new PasswordTextBox());
         Button webImport = new Button(_msgs.inviteWebImport());
+        input.setWidget(row++, 3, webImport);
+        input.setText(row++, 0, _msgs.inviteNote(), 4, "Tip");
+        box.add(input);
+
+        // Shows the people that will be mailed
+        box.add(WidgetUtil.makeShim(10, 10));
+        box.add(_emailList = new InviteList());
+
+        // now that we have all of our components, create our importer
         new InviteUtils.WebmailImporter (webImport, _webAddress, _webPassword, _emailList, true) {
             // only add non-members to our list
             @Override protected boolean shouldAddToList (EmailContact contact) {
@@ -151,13 +160,6 @@ public class InvitePanel extends VerticalPanel
                 }
             }
         };
-        input.setWidget(row++, 3, webImport);
-        input.setText(row++, 0, _msgs.inviteNote(), 4, "Tip");
-        box.add(input);
-
-        // Shows the people that will be mailed
-        box.add(WidgetUtil.makeShim(10, 10));
-        box.add(_emailList = new InviteList());
 
         // From and custom message box
         SmartTable from = new SmartTable(0, 5);
