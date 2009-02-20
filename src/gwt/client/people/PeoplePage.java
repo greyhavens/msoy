@@ -88,7 +88,7 @@ public class PeoplePage extends Page
             if (args.get(1, "").equals("game")) {
                 setContent(_msgs.inviteTitle(), new GameInvitePanel(args));
             } else if (justRegistered) {
-                setContent(_msgs.justRegInviteTitle(), new InvitePanel(true, false, null));
+                setContent(_msgs.justRegInviteTitle(), new InvitePanel(true, null));
             } else if (linksPage) {
                 setContent(_msgs.inviteTitle(), new LinkToWhirledPanel());
             } else if (sharePage) {

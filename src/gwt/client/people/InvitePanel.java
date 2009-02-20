@@ -50,16 +50,12 @@ import client.util.ServiceUtil;
  */
 public class InvitePanel extends VerticalPanel
 {
-    public InvitePanel (boolean justRegistered, boolean showBanner, Widget topOfBox)
+    public InvitePanel (boolean justRegistered, Widget topOfBox)
     {
         _sendEvents = justRegistered;
 
         setSpacing(10);
         setStyleName("invite");
-
-        if (showBanner) {
-            add(MsoyUI.createHTML(_msgs.inviteBanner(), "Banner"));
-        }
 
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
         ClickListener addEmail = new ClickListener() {

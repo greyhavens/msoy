@@ -79,7 +79,7 @@ public class SharePanel extends VerticalPanel
         email.setStyleName("SubHeader");
         email.setWidget(0, 0, new Image("/images/people/send_email.png"));
         email.setWidget(0, 1, MsoyUI.createHTML(_msgs.shareSendEmail(), "SubHeaderText"));
-        _invitePanel = new InvitePanel(false, false, email);
+        _invitePanel = new InvitePanel(false, email);
         _invitePanel.setSpacing(0);
         add(_invitePanel);
     }
