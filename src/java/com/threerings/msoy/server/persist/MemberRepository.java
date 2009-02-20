@@ -826,17 +826,7 @@ public class MemberRepository extends DepotRepository
 
     public String generateInviteId ()
     {
-        // find a free invite id
-        String inviteId;
-        int tries = 0;
-        while (loadInvite(inviteId = randomInviteId(), false) != null) {
-            tries++;
-        }
-        if (tries > 5) {
-            log.warning("InvitationRecord.inviteId space is getting saturated, it took " + tries +
-                " tries to find a free id");
-        }
-        return inviteId;
+        return _inviteIdGenerator.generate();
     }
 
     /**
@@ -918,19 +908,12 @@ public class MemberRepository extends DepotRepository
             InvitationRecord.INVITER_ID, inviterId));
     }
 
+    /**
+     * Gets a new unique random id for use with game invitations.
+     */
     public String generateGameInviteId ()
     {
-        // find a free invite id
-        String inviteId;
-        int tries = 0;
-        while (loadGameInviteById(inviteId = randomInviteId()) != null) {
-            tries++;
-        }
-        if (tries > 5) {
-            log.warning(
-                "GameInvitationRecord.inviteId space is getting saturated", "tries", tries);
-        }
-        return inviteId;
+        return _gameInviteIdGenerator.generate();
     }
 
     /**
@@ -1424,16 +1407,6 @@ public class MemberRepository extends DepotRepository
                       MemberRecord.CHARITY_MEMBER_ID, charityMemberId);
     }
 
-    protected String randomInviteId ()
-    {
-        String rand = "";
-        for (int ii = 0; ii < INVITE_ID_LENGTH; ii++) {
-            rand += INVITE_ID_CHARACTERS.charAt((int)(Math.random() *
-                INVITE_ID_CHARACTERS.length()));
-        }
-        return rand;
-    }
-
     /**
      * Update the expiration time of an existing session. Returns the loaded session or
      * null if none previously existed.
@@ -1469,6 +1442,74 @@ public class MemberRepository extends DepotRepository
         classes.add(EntryVectorRecord.class);
         classes.add(GameInvitationRecord.class);
     }
+
+    /**
+     * Abstract algorithm for generating new unique invite ids. Delegates the testing for existence
+     * to implementation.
+     */
+    protected static abstract class InviteIDGenerator
+    {
+        /**
+         * Creates a new invite id generator.
+         */
+        public InviteIDGenerator (String name)
+        {
+            _name = name;
+        }
+
+        /**
+         * Generates a new, unique invite id.
+         */
+        public String generate ()
+        {
+            // find a free invite id
+            String inviteId;
+            int tries = 0;
+            while (exists(inviteId = randomId())) {
+                tries++;
+            }
+            if (tries > 5) {
+                log.warning(_name + " inviteId space is getting saturated", "tries", tries);
+            }
+            return inviteId;
+        }
+
+        /**
+         * Tests if a given invite id already exists.
+         */
+        abstract protected boolean exists (String id);
+
+        /**
+         * Generates an arbitrary non-unique id.
+         */
+        protected static String randomId ()
+        {
+            String rand = "";
+            for (int ii = 0; ii < INVITE_ID_LENGTH; ii++) {
+                rand += INVITE_ID_CHARACTERS.charAt((int)(Math.random() *
+                    INVITE_ID_CHARACTERS.length()));
+            }
+            return rand;
+        }
+
+        /** Name to be used in saturation warnings. */
+        protected String _name;
+    }
+
+    /** Generator for normal invitations. */
+    protected InviteIDGenerator _inviteIdGenerator = new InviteIDGenerator ("InvitationRecord") {
+        protected boolean exists (String id) {
+            return loadInvite(id, false) != null;
+        }
+    };
+
+    /** Generator for normal game invitations. */
+    protected InviteIDGenerator _gameInviteIdGenerator =
+        new InviteIDGenerator ("GameInvitationRecord") {
+            protected boolean exists (String id) {
+                return loadGameInviteById(id) != null;
+            }
+        };
 
     @Inject protected UserActionRepository _actionRepo;
 
