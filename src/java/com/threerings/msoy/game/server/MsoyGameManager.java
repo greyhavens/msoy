@@ -128,15 +128,17 @@ public class MsoyGameManager extends WhirledGameManager
     @Override // from PlaceManager
     public String where ()
     {
-        if (_config == null || _plobj == null) {
+        if (_config == null) {
             return super.where();
         }
         MsoyGameConfig cfg = (MsoyGameConfig)_config;
         StringBuilder sbuf = new StringBuilder();
         sbuf.append("[");
         sbuf.append(cfg.game.name).append(":").append(cfg.getGameId());
-        sbuf.append(":").append(_gameObj.getOid());
-        StringUtil.toString(sbuf, _gameobj.players);
+        if (_gameObj != null) {
+            sbuf.append(":").append(_gameObj.getOid());
+            StringUtil.toString(sbuf, _gameobj.players);
+        }
         sbuf.append("]");
         return sbuf.toString();
     }
