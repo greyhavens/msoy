@@ -80,9 +80,13 @@ public class InviteServlet extends MsoyServiceServlet
                 ec.email = contact.getEmail();
                 MemberRecord member = _memberRepo.loadMember(ec.email);
                 if (member != null) {
-                    if (_memberRepo.getFriendStatus(memrec.memberId, member.memberId) ||
-                        member.memberId == memrec.memberId) {
-                        // just skip people who are already friends or are me
+                    if (member.memberId == memrec.memberId) {
+                        // skip self invites
+                        continue;
+                    }
+                    ec.friend = _memberRepo.getFriendStatus(memrec.memberId, member.memberId);
+                    if (skipFriends && ec.friend) {
+                        // skip friends if requested
                         continue;
                     }
                     ec.mname = member.getName();

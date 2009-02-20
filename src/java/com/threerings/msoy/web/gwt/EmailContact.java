@@ -19,6 +19,9 @@ public class EmailContact
     /** The memberName. */
     public MemberName mname;
 
+    /** If the user is a friend. */
+    public boolean friend;
+
     public EmailContact () { /* For serialization. */ }
 
     public EmailContact (String name, String email)
