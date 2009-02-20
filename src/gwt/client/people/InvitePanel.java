@@ -217,7 +217,7 @@ public class InvitePanel extends VerticalPanel
 
     protected void addEmail ()
     {
-        InviteUtils.addEmailIfValid(_friendEmail, _friendName, _emailList);
+        InviteUtils.addEmailIfValid(_friendName, _friendEmail, _emailList);
     }
 
     protected void gotStatus (MemberInvites invites)
