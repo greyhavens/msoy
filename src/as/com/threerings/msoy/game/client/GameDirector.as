@@ -130,21 +130,21 @@ public class GameDirector extends BasicDirector
                            command: MsoyController.VIEW_GROUP, arg: _liaison.gameGroupId });
         }
         menuData.push({label: Msgs.GAME.get("b.gameShop"), command: viewGameShop });
-        menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments,
-            icon: StyleManager.getStyleDeclaration(".controlBarButtonComment").getStyle("image")});
-        menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
-        menuData.push({label: Msgs.GAME.get("b.gameInvite"), command: viewDefaultInvitePage});
-        if (_liaison is AVRGameLiaison) {
-            menuData.push({label: Msgs.GAME.get("b.gameExit"), command: leaveAVRGame});
-        }
         if (_liaison is LobbyGameLiaison && config != null &&
             config.getGameDefinition().match.getMaximumPlayers() > 1) {
             menuData.push({label: Msgs.GAME.get("b.gameLobby"), command: displayCurrentGameLobby,
                 arg: false});
         }
+        menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments,
+            icon: StyleManager.getStyleDeclaration(".controlBarButtonComment").getStyle("image")});
+        menuData.push({label: Msgs.GAME.get("b.gameInvite"), command: viewDefaultInvitePage});
+        menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
         if (Game.isDevelopmentVersion(_liaison.gameId) && !_wctx.getMyName().isGuest() &&
             !(_liaison is AVRGameLiaison)) {
             menuData.push({label: Msgs.GAME.get("b.gameRemoveTrophies"), command: removeTrophies});
+        }
+        if (_liaison is AVRGameLiaison) {
+            menuData.push({label: Msgs.GAME.get("b.gameExit"), command: leaveAVRGame});
         }
 
         return true;
