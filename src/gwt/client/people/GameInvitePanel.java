@@ -226,7 +226,8 @@ public class GameInvitePanel extends VerticalPanel
             // from
             setText(row, 0, "From:", 1, "biglabel");
             _from = MsoyUI.createTextBox(
-                CShell.creds.name.toString(), InviteUtils.MAX_NAME_LENGTH, 0);
+                CShell.creds.name.toString(), InviteUtils.MAX_NAME_LENGTH, 25);
+            _from.addStyleName("input");
             setWidget(row++, 1, _from);
 
             // message label
@@ -322,7 +323,7 @@ public class GameInvitePanel extends VerticalPanel
 
             col = 0;
             row.setText(0, col++, "Account", 1, "smalllabel");
-            TextBox account = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 0);
+            TextBox account = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 25);
             account.setStyleName("input");
             DefaultTextListener.configure(account, _msgs.inviteWebAddress());
             row.setWidget(0, col++, account);
@@ -338,8 +339,8 @@ public class GameInvitePanel extends VerticalPanel
             // privacy soother
             row = new SmartTable(0, 5);
             row.setWidth("100%");
-            row.setText(0, 0, "We do not store these contacts and only use them for this " +
-                "invitation. We will never spam your friends.", 1, "privacy");
+            row.setText(0, 0, "We will not store any of your contacts and will only use them " +
+                "for this invitation. We will never spam your friends.", 1, "privacy");
             add(row);
         }
     }
@@ -365,12 +366,12 @@ public class GameInvitePanel extends VerticalPanel
 
             int col = 0;
             row.setText(0, col++, "Name", 1, "smalllabel");
-            _name = MsoyUI.createTextBox("", InviteUtils.MAX_NAME_LENGTH, 0);
+            _name = MsoyUI.createTextBox("", InviteUtils.MAX_NAME_LENGTH, 25);
             _name.setStyleName("input");
             DefaultTextListener.configure(_name, _msgs.inviteFriendName());
             row.setWidget(0, col++, _name);
             row.setText(0, col++, "Address", 1, "smalllabel");
-            _address = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 0);
+            _address = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 25);
             _address.setStyleName("input");
             DefaultTextListener.configure(_address, _msgs.inviteFriendEmail());
             row.setWidget(0, col++, _address);
