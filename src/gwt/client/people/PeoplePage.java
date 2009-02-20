@@ -90,7 +90,7 @@ public class PeoplePage extends Page
             } else if (justRegistered) {
                 setContent(_msgs.justRegInviteTitle(), new InvitePanel(true, null));
             } else if (linksPage) {
-                setContent(_msgs.inviteTitle(), new LinkToWhirledPanel());
+                setContent(_msgs.linkToWhirledTitle(), new LinkToWhirledPanel());
             } else if (sharePage) {
                 setContent(_msgs.inviteTitle(), new SharePanel(args.get(2, ""), args.get(3, ""),
                     args.get(4, ""), args.get(5, "")));

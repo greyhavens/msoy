@@ -33,13 +33,6 @@ public class LinkToWhirledPanel extends VerticalPanel
         setSpacing(0);
         setStyleName("linkToWhirled");
 
-        SmartTable top = new SmartTable(0, 0);
-        top.setWidget(0, 0, MsoyUI.createLabel(_msgs.linkToWhirledTitle(), "Title"));
-        top.setWidget(0, 1, MsoyUI.createHTML(
-            _msgs.linkToWhirledIntro(), "Intro"), 1, "IntroCell");
-        top.setWidth("100%");
-        add(top);
-
         add(MsoyUI.createHTML(_msgs.linkToWhirledInstructions(), "Instructions"));
 
         add(_htmlCode = new TextArea());
