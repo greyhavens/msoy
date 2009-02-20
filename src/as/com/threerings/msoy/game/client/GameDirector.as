@@ -131,8 +131,8 @@ public class GameDirector extends BasicDirector
         menuData.push({label: Msgs.GAME.get("b.gameComment"), command: viewGameComments,
             icon: StyleManager.getStyleDeclaration(".controlBarButtonComment").getStyle("image")});
         menuData.push({label: Msgs.GAME.get("b.gameTrophies"), command: viewGameTrophies});
+        menuData.push({label: Msgs.GAME.get("b.gameInvite"), command: viewDefaultInvitePage});
         if (_liaison is AVRGameLiaison) {
-            menuData.push({label: Msgs.GAME.get("b.gameInvite"), enabled: false});
             menuData.push({label: Msgs.GAME.get("b.gameExit"), command: leaveAVRGame});
         }
         if (Game.isDevelopmentVersion(_liaison.gameId) && !_wctx.getMyName().isGuest() &&
@@ -264,6 +264,16 @@ public class GameDirector extends BasicDirector
         _wctx.getWorldController().displayPage("people", Args.join("invites", "game", getGameId(),
             encodeForURI(defmsg), encodedToken, _liaison is AVRGameLiaison ? 1 : 0,
             roomId));
+    }
+
+    /**
+     * Brings up a default game invite page.
+     */
+    public function viewDefaultInvitePage () :void
+    {
+        _wctx.getWorldController().displayPage("people", Args.join("invites", "game", getGameId(),
+            "", "", _liaison is AVRGameLiaison ? 1 : 0,
+            _wctx.getWorldController().getCurrentSceneId()));
     }
 
     /**
