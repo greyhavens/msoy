@@ -15,6 +15,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
+import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.person.FriendsFeedPanel;
@@ -53,6 +54,8 @@ public class MyWhirled extends FlowPanel
                 rbits.add(makeQuickLink("My Profile", Pages.PEOPLE, ""+CShell.getMemberId()));
                 rbits.add(makeQuickLink("My Passport", Pages.ME, "passport"));
                 rbits.add(makeQuickLink("Invite Friends", Pages.PEOPLE, "invites"));
+                rbits.add(makeQuickLink("Share Whirled", Pages.PEOPLE,
+                                        Args.compose("invites", "links")));
                 rbits.add(makeQuickLink("Contests", Pages.ME, "contests"));
 
                 String empty = data.friendCount > 0 ?
