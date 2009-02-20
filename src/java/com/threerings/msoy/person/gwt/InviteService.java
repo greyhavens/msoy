@@ -21,7 +21,7 @@ public interface InviteService extends RemoteService
     /**
      * Loads up e-mail addresses from a user's webmail account.
      */
-    List<EmailContact> getWebMailAddresses (String email, String password)
+    List<EmailContact> getWebMailAddresses (String email, String password, boolean skipFriends)
         throws ServiceException;
 
     /**
@@ -38,6 +38,15 @@ public interface InviteService extends RemoteService
      */
     InvitationResults sendInvites (List<EmailContact> addresses, String fromName,
                                    String customMessage, boolean anonymous)
+        throws ServiceException;
+
+    /**
+     * Send out invitations to a game. This is a little bit different from the normal invite
+     * sending. We don't count the sender's invites and we automatically use the display name
+     * as the from field on the email.
+     */
+    InvitationResults sendGameInvites (
+        List<EmailContact> addresses, int gameId, String from, String url, String customMessage)
         throws ServiceException;
 
     /**

@@ -3,10 +3,7 @@
 
 package client.people;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -42,7 +39,6 @@ import client.ui.BorderedPopup;
 import client.ui.DefaultTextListener;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
-import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.NoopAsyncCallback;
@@ -115,9 +111,10 @@ public class InvitePanel extends VerticalPanel
         int row = 0;
         if (!justRegistered) {
             input.setText(row++, 0, _msgs.inviteManualTitle(), 3, null);
-            input.setWidget(row, 0, _friendName = MsoyUI.createTextBox("", MAX_NAME_LENGTH, 0));
+            input.setWidget(row, 0, _friendName = MsoyUI.createTextBox(
+                "", InviteUtils.MAX_NAME_LENGTH, 0));
             DefaultTextListener.configure(_friendName, _msgs.inviteFriendName());
-            _friendEmail = MsoyUI.createTextBox("", MAX_WEBMAIL_LENGTH, 0);
+            _friendEmail = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 0);
             _friendEmail.addKeyboardListener(new EnterClickAdapter(addEmail));
             DefaultTextListener.configure(_friendEmail, _msgs.inviteFriendEmail());
             input.setWidget(row, 1, _friendEmail, 2, null);
@@ -142,46 +139,22 @@ public class InvitePanel extends VerticalPanel
             input.setWidget(row++, 1, showSupported);
         }
 
-        input.setWidget(row, 0, _webAddress = MsoyUI.createTextBox("", MAX_WEBMAIL_LENGTH, 0));
+        input.setWidget(row, 0, _webAddress = MsoyUI.createTextBox(
+            "", InviteUtils.MAX_MAIL_LENGTH, 0));
         DefaultTextListener.configure(_webAddress, _msgs.inviteWebAddress());
         input.setText(row, 1, _msgs.inviteWebPassword());
         input.setWidget(row, 2, _webPassword = new PasswordTextBox());
         Button webImport = new Button(_msgs.inviteWebImport());
-        new ClickCallback<List<EmailContact>>(webImport) {
-            String webAddress;
-            @Override protected boolean callService () {
-                if ("".equals(_webAddress.getText())) {
-                    MsoyUI.info(_msgs.inviteEnterWebAddress());
-                    return false;
-                }
-                if ("".equals(_webPassword.getText())) {
-                    MsoyUI.info(_msgs.inviteEnterWebPassword());
-                    return false;
-                }
-                _invitesvc.getWebMailAddresses(
-                    webAddress = _webAddress.getText(), _webPassword.getText(), this);
-                return true;
+        new InviteUtils.WebmailImporter (webImport, _webAddress, _webPassword, _emailList, true) {
+            // only add non-members to our list
+            @Override protected boolean shouldAddToList (EmailContact contact) {
+                return contact.mname == null;
             }
-            @Override protected boolean gotResult (List<EmailContact> addresses) {
-                if (addresses.size() == 0) {
-                    MsoyUI.info(_msgs.inviteNoContacts(webAddress));
-                    return true;
+            // offer to make friends with the ones on the list who are not our friends already
+            @Override protected void handleLeftovers (List<EmailContact> leftovers) {
+                if (leftovers.size() > 0) {
+                    webmailResults(leftovers);
                 }
-                int added = 0;
-                for (EmailContact ec : addresses) {
-                    if (ec.mname == null) {
-                        if (_emailList.addItem(ec.name, ec.email)) {
-                            added++;
-                        }
-                    }
-                }
-                _webAddress.setText(_msgs.inviteWebAddress());
-                _webPassword.setText("");
-                webmailResults(addresses);
-                if (added == 0) {
-                    MsoyUI.info(_msgs.inviteNoNewNonMembers(webAddress));
-                }
-                return true;
             }
         };
         input.setWidget(row++, 3, webImport);
@@ -197,7 +170,8 @@ public class InvitePanel extends VerticalPanel
         from.setWidth("100%");
         from.setText(0, 0, _msgs.inviteFrom(), 1, "Title");
         from.getFlexCellFormatter().setWidth(0, 0, "10px");
-        _fromName = MsoyUI.createTextBox(CShell.creds.name.toString(), MAX_NAME_LENGTH, 0);
+        _fromName = MsoyUI.createTextBox(CShell.creds.name.toString(),
+            InviteUtils.MAX_NAME_LENGTH, 0);
         from.setWidget(0, 1, _fromName);
         _customMessage = MsoyUI.createTextArea("", -1, 3);
         from.setWidget(1, 0, _customMessage, 2, null);
@@ -249,21 +223,7 @@ public class InvitePanel extends VerticalPanel
 
     protected void addEmail ()
     {
-        if ("".equals(_friendEmail.getText())) {
-            return;
-
-        } else if (!_friendEmail.getText().matches(MsoyUI.EMAIL_REGEX)) {
-            MsoyUI.info(_msgs.inviteInvalidEmail());
-
-        } else if (_friendName.getText().length() == 0 ||
-            _friendName.getText().equals(_msgs.inviteFriendName())) {
-            MsoyUI.info(_msgs.inviteInvalidName());
-
-        } else {
-            _emailList.addItem(_friendName.getText(), _friendEmail.getText());
-            _friendName.setText(_msgs.inviteFriendName());
-            _friendEmail.setText(_msgs.inviteFriendEmail());
-        }
+        InviteUtils.addEmailIfValid(_friendEmail, _friendName, _emailList);
     }
 
     protected void gotStatus (MemberInvites invites)
@@ -306,19 +266,7 @@ public class InvitePanel extends VerticalPanel
 
     protected void checkAndSend ()
     {
-        final List<EmailContact> invited = new ArrayList<EmailContact>();
-        Set<String> accepted = new HashSet<String>();
-        for (EmailContact contact : _emailList.getItems()) {
-            if (!contact.email.matches(MsoyUI.EMAIL_REGEX)) {
-                MsoyUI.error(_msgs.inviteInvalidAddress(contact.email));
-                return;
-            }
-            String laddr = contact.email.toLowerCase();
-            if (!accepted.contains(laddr)) {
-                accepted.add(laddr);
-                invited.add(contact);
-            }
-        }
+        final List<EmailContact> invited = InviteUtils.getValidUniqueAddresses(_emailList);
 
         boolean anon = _anonymous.isChecked();
         String from = _fromName.getText().trim();
@@ -416,26 +364,20 @@ public class InvitePanel extends VerticalPanel
     protected void webmailResults (List<EmailContact> contacts)
     {
         ResultsPopup rp = new ResultsPopup(_msgs.webmailResults());
-        boolean showResults = false;
         int row = 0;
         SmartTable contents = rp.getContents();
 
         contents.setText(row++, 0, _msgs.inviteResultsMembers());
         for (EmailContact ec : contacts) {
-            if (ec.mname != null) {
-                showResults = true;
-                contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
-                ClickListener onClick = new FriendInviter(ec.mname, "InvitePanel");
-                contents.setWidget(row, 1, MsoyUI.createActionImage(
-                            "/images/profile/addfriend.png", onClick));
-                contents.setWidget(row++, 2, MsoyUI.createActionLabel(
-                            _msgs.mlAddFriend(), onClick));
-            }
+            contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
+            ClickListener onClick = new FriendInviter(ec.mname, "InvitePanel");
+            contents.setWidget(row, 1, MsoyUI.createActionImage(
+                        "/images/profile/addfriend.png", onClick));
+            contents.setWidget(row++, 2, MsoyUI.createActionLabel(
+                        _msgs.mlAddFriend(), onClick));
         }
 
-        if (showResults) {
-            rp.show();
-        }
+        rp.show();
     }
 
     protected class ResultsPopup extends BorderedDialog
@@ -487,7 +429,4 @@ public class InvitePanel extends VerticalPanel
         ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
-
-    protected static final int MAX_NAME_LENGTH = 80;
-    protected static final int MAX_WEBMAIL_LENGTH = 200;
 }

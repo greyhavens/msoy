@@ -3,13 +3,15 @@
 
 package client.people;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -23,7 +25,11 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
+import com.threerings.msoy.person.gwt.InvitationResults;
+import com.threerings.msoy.person.gwt.InviteService;
+import com.threerings.msoy.person.gwt.InviteServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -31,6 +37,7 @@ import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 import client.ui.BorderedPopup;
+import client.ui.DefaultTextListener;
 import client.ui.MsoyUI;
 import client.ui.NowLoadingWidget;
 import client.ui.ThumbBox;
@@ -111,7 +118,7 @@ public class GameInvitePanel extends VerticalPanel
         _methodButtons.setWidth("100%");
         addMethodButton("Email", new InviteMethodCreator () {
             public Widget create () {
-                return new EmailPanel(message);
+                return new EmailPanel(message, detail.gameId, url);
             }
         });
         addMethodButton("IM",
@@ -175,16 +182,18 @@ public class GameInvitePanel extends VerticalPanel
         /**
          * Creates a new email panel.
          */
-        public EmailPanel (String defaultMessage)
+        public EmailPanel (String defaultMessage, int gameId, String url)
         {
+            _gameId = gameId;
+            _url = url;
             setStyleName("email");
             setWidth("100%");
 
-            final InviteList addressList = new InviteList();
+            _addressList = new InviteList();
 
             // create our two control sets for getting email addresses
-            final WebMailControls webmail = new WebMailControls(addressList);
-            final ManualControls manual = new ManualControls(addressList);
+            final WebMailControls webmail = new WebMailControls(_addressList);
+            final ManualControls manual = new ManualControls(_addressList);
 
             int row = 0;
 
@@ -196,7 +205,7 @@ public class GameInvitePanel extends VerticalPanel
             final int methodColumn = 0;
 
             // the address list
-            setWidget(row++, 0, addressList, 2, null);
+            setWidget(row++, 0, _addressList, 2, null);
 
             // method toggle
             Label toggle = MsoyUI.createActionLabel("Enter More Addresses...", "toggle",
@@ -214,18 +223,24 @@ public class GameInvitePanel extends VerticalPanel
                 });
             setWidget(row++, 0, toggle, 2, "toggle");
 
+            // from
+            setText(row, 0, "From:", 1, "biglabel");
+            _from = MsoyUI.createTextBox(
+                CShell.creds.name.toString(), InviteUtils.MAX_NAME_LENGTH, 0);
+            setWidget(row++, 1, _from);
+
             // message label
             setText(row, 0, "Message", 1, "biglabel");
             setText(row++, 1, "(optional)", 1, "labelparen");
 
-            final TextArea message = MsoyUI.createTextArea(defaultMessage, 80, 4);
-            message.setStyleName("message");
-            message.addStyleName("input");
-            setWidget(row++, 0, message, 2, null);
+            _message = MsoyUI.createTextArea(defaultMessage, 80, 4);
+            _message.setStyleName("message");
+            _message.addStyleName("input");
+            setWidget(row++, 0, _message, 2, null);
 
             PushButton send = MsoyUI.createButton("shortThin", "Send", new ClickListener() {
                 public void onClick (Widget sender) {
-                    send(addressList, message);
+                    send();
                 }
             });
             setWidget(row, 0, send, 2, null);
@@ -236,11 +251,38 @@ public class GameInvitePanel extends VerticalPanel
         /**
          * Sends the invite to all the addresses added so far.
          */
-        void send (InviteList addressList, TextArea message)
+        protected void send ()
         {
-            // TODO
-            Window.alert("send");
+            final List<EmailContact> contacts = InviteUtils.getValidUniqueAddresses(_addressList);
+
+            String from = _from.getText().trim();
+            if (from.length() == 0) {
+                MsoyUI.error(_msgs.inviteEmptyFromField());
+                _from.setFocus(true);
+                return;
+            }
+            String msg = _message.getText().trim();
+            _invitesvc.sendGameInvites(contacts, _gameId, from, _url, msg,
+                new MsoyCallback<InvitationResults>() {
+                    public void onSuccess (InvitationResults ir) {
+                        _addressList.clear();
+                        inviteResults(contacts, ir);
+                    }
+                });
         }
+
+        /**
+         * Displays the results of the invites.
+         */
+        protected void inviteResults (List<EmailContact> addrs, InvitationResults invRes)
+        {
+        }
+
+        int _gameId;
+        String _url;
+        InviteList _addressList;
+        TextArea _message;
+        TextBox _from;
     }
 
     /**
@@ -280,19 +322,16 @@ public class GameInvitePanel extends VerticalPanel
 
             col = 0;
             row.setText(0, col++, "Account", 1, "smalllabel");
-            TextBox account = new TextBox();
+            TextBox account = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 0);
             account.setStyleName("input");
+            DefaultTextListener.configure(account, _msgs.inviteWebAddress());
             row.setWidget(0, col++, account);
             row.setText(0, col++, "Password", 1, "smalllabel");
-            TextBox password = new TextBox();
+            TextBox password = new PasswordTextBox();
             password.setStyleName("input");
             row.setWidget(0, col++, password);
-            PushButton doimport = MsoyUI.createButton("shortThin", "Import", new ClickListener() {
-                public void onClick (Widget sender) {
-                    // TODO: add the addresses to the invite list
-                    Window.alert("import");
-                }
-            });
+            PushButton doimport = MsoyUI.createButton("shortThin", "Import", null);
+            new InviteUtils.WebmailImporter(doimport, account, password, addressList, false);
             row.setWidget(0, col++, doimport);
             add(row);
 
@@ -312,6 +351,8 @@ public class GameInvitePanel extends VerticalPanel
     {
         public ManualControls (InviteList addressList)
         {
+            _list = addressList;
+
             setWidth("100%");
 
             SmartTable row = new SmartTable(0, 5);
@@ -324,22 +365,27 @@ public class GameInvitePanel extends VerticalPanel
 
             int col = 0;
             row.setText(0, col++, "Name", 1, "smalllabel");
-            TextBox name = new TextBox();
-            name.setStyleName("input");
-            row.setWidget(0, col++, name);
+            _name = MsoyUI.createTextBox("", InviteUtils.MAX_NAME_LENGTH, 0);
+            _name.setStyleName("input");
+            DefaultTextListener.configure(_name, _msgs.inviteFriendName());
+            row.setWidget(0, col++, _name);
             row.setText(0, col++, "Address", 1, "smalllabel");
-            TextBox address = new TextBox();
-            address.setStyleName("input");
-            row.setWidget(0, col++, address);
+            _address = MsoyUI.createTextBox("", InviteUtils.MAX_MAIL_LENGTH, 0);
+            _address.setStyleName("input");
+            DefaultTextListener.configure(_address, _msgs.inviteFriendEmail());
+            row.setWidget(0, col++, _address);
             PushButton add = MsoyUI.createButton("shortThin", "Add", new ClickListener() {
                 public void onClick (Widget sender) {
-                    // TODO: add the address to the invite list
-                    Window.alert("add");
+                    InviteUtils.addEmailIfValid(_name, _address, _list);
                 }
             });
             row.setWidget(0, col++, add);
             add(row);
         }
+
+        InviteList _list;
+        TextBox _name;
+        TextBox _address;
     }
 
     /**
@@ -376,4 +422,6 @@ public class GameInvitePanel extends VerticalPanel
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+    protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
+        ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
 }

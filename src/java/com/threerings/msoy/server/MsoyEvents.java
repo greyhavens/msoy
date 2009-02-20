@@ -394,6 +394,23 @@ public class MsoyEvents
         }
     }
 
+    @Event(name="GameInviteSent") // note: do not change this event name
+    public static class GameInviteSent implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public int gameId;
+        @Field final public int inviterId;
+        @Field final public String recipient;
+
+        public GameInviteSent (int gameId, int inviterId, String recipient)
+        {
+            this.timestamp = new Date();
+            this.gameId = gameId;
+            this.inviterId = inviterId;
+            this.recipient = toValue(recipient);
+        }
+    }
+
     @Event(name="InviteViewed") // note: do not change this event name
     public static class InviteViewed implements MsoyEvent
     {

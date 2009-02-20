@@ -1,0 +1,26 @@
+You have been invited to play ${game} on Whirled
+#if ($name)
+${name},
+
+#end
+You have been invited to join ${friend} and play ${game} on Whirled, Three Rings' exciting new
+player-created online world of games, chat and adventure.
+
+#if ($custom_message)
+${friend} <${email}> sent you this invitation and said:
+
+"${custom_message}"
+
+#end
+Play ${game} here:
+
+${url}
+
+-- The Keepers of the Peas
+
+
+--------
+If you would prefer not to receive any more invitations to Whirled from your friends,
+please visit this link:
+
+${server_url}#account-optoutemail_${to}

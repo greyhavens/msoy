@@ -17,8 +17,8 @@ public interface InviteServiceAsync
     /**
      * The asynchronous version of {@link InviteService#getWebMailAddresses}.
      */
-    void getWebMailAddresses (String email, String password,
-                              AsyncCallback<List<EmailContact>> callback);
+    void getWebMailAddresses (String email, String password, boolean skipFriends,
+        AsyncCallback<List<EmailContact>> callback);
 
     /**
      * The asynchronous version of {@link InviteService#getInvitationsStatus}.
@@ -30,6 +30,12 @@ public interface InviteServiceAsync
      */
     void sendInvites (List<EmailContact> addresses, String fromName, String customMessage,
                       boolean anonymous, AsyncCallback<InvitationResults> callback);
+
+    /**
+     * The asynchronous version of {@link InviteService#sendGameInvites}.
+     */
+    void sendGameInvites (List<EmailContact> addresses, int gameId, String from,
+        String url, String customMessage, AsyncCallback<InvitationResults> callback);
 
     /**
      * The asynchronous version of {@link InviteService#removeInvitation}.

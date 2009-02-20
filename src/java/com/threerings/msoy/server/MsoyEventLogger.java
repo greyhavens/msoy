@@ -268,6 +268,11 @@ public class MsoyEventLogger
         post(new MsoyEvents.InviteSent(inviteId, inviterId, recipient));
     }
 
+    public void gameInviteSent (int gameId, int inviterId, String recipient)
+    {
+        post(new MsoyEvents.GameInviteSent(gameId, inviterId, recipient));
+    }
+
     public void inviteViewed (String inviteId)
     {
         post(new MsoyEvents.InviteViewed(inviteId));

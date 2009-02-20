@@ -19,7 +19,12 @@ import com.samskivert.net.MailUtil;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.persist.InvitationRecord;
@@ -45,7 +50,8 @@ public class InviteServlet extends MsoyServiceServlet
     implements InviteService
 {
     // from InviteService
-    public List<EmailContact> getWebMailAddresses (String email, String password)
+    public List<EmailContact> getWebMailAddresses (
+        String email, String password, boolean skipFriends)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -158,6 +164,49 @@ public class InviteServlet extends MsoyServiceServlet
         return ir;
     }
 
+    public InvitationResults sendGameInvites (
+        List<EmailContact> addresses, int gameId, String from, String url, String customMessage)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+
+        boolean isDevVersion = Game.isDevelopmentVersion(gameId);
+        if (isDevVersion) {
+            // TODO: this is not really an end-user exception and could arguably be done in the
+            // client. At least let the creator know something is wrong for now
+            throw new ServiceException("e.game_not_listed");
+        }
+
+        GameDetailRecord gdr = _mgameRepo.loadGameDetail(gameId);
+        if (gdr == null) {
+            throw new ServiceException(MsoyCodes.INTERNAL_ERROR);
+        }
+
+        if (gdr.listedItemId == 0) {
+            throw new ServiceException("e.game_not_listed"); // TODO
+        }
+
+        String gameName = _gameRepo.loadItem(gdr.listedItemId).name;
+
+        InvitationResults ir = new InvitationResults();
+        ir.results = new String[addresses.size()];
+        ir.names = new MemberName[addresses.size()];
+        for (int ii = 0; ii < addresses.size(); ii++) {
+            EmailContact contact = addresses.get(ii);
+            if (contact.name.equals(contact.email)) {
+                contact.name = null;
+            }
+            try {
+                sendGameInvite(gameName, gameId, mrec, contact.email, contact.name, from,
+                    url, customMessage);
+
+            } catch (ServiceException se) {
+                ir.results[ii] = se.getMessage();
+            }
+        }
+        return ir;
+    }
+
     // from InviteService
     public void removeInvitation (String inviteId)
         throws ServiceException
@@ -244,6 +293,46 @@ public class InviteServlet extends MsoyServiceServlet
         return invite;
     }
 
+    /**
+     * Helper function for {@link #sendGameInvites}.
+     */
+    protected void sendGameInvite (String gameName, int gameId, MemberRecord inviter, String email,
+        String toName, String fromName, String url, String customMessage)
+        throws ServiceException
+    {
+        // make sure this address is valid
+        if (!MailUtil.isValidAddress(email)) {
+            throw new ServiceException(InvitationResults.INVALID_EMAIL);
+        }
+
+        // make sure this address isn't on the opt-out list
+        if (_memberRepo.hasOptedOut(email)) {
+            throw new ServiceException(InvitationResults.OPTED_OUT);
+        }
+
+        // create and send the invitation email
+        MailSender.Parameters params = new MailSender.Parameters();
+        if (inviter != null) {
+            params.set("friend", fromName);
+            params.set("email", inviter.accountName);
+        }
+        if (!StringUtil.isBlank(toName)) {
+            params.set("name", toName);
+        }
+        if (!StringUtil.isBlank(customMessage)) {
+            params.set("custom_message", customMessage);
+        }
+        params.set("server_url", ServerConfig.getServerURL());
+        params.set("url", url);
+        params.set("game", gameName);
+
+        String from = inviter.accountName;
+        _mailer.sendTemplateEmail(email, from, "gameInvite", params);
+
+        // record the invite and that we sent it
+        _eventLog.gameInviteSent(gameId, inviter.memberId, email);
+    }
+
     protected class NameServiceException extends ServiceException
     {
         public MemberName name;
@@ -259,6 +348,8 @@ public class InviteServlet extends MsoyServiceServlet
     protected long _webmailCleared = System.currentTimeMillis();
 
     @Inject protected MailSender _mailer;
+    @Inject protected MsoyGameRepository _mgameRepo;
+    @Inject protected GameRepository _gameRepo;
 
     protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
     protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;
