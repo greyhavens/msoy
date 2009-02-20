@@ -181,6 +181,8 @@ public class GameInvitePanel extends VerticalPanel
     {
         /**
          * Creates a new email panel.
+         * TODO: support a more advanced address list that shows whether each of your contacts is
+         * a non-member, a member non-friend or a friend. 
          */
         public EmailPanel (String defaultMessage, int gameId, String url)
         {
@@ -267,16 +269,11 @@ public class GameInvitePanel extends VerticalPanel
                 new MsoyCallback<InvitationResults>() {
                     public void onSuccess (InvitationResults ir) {
                         _addressList.clear();
-                        inviteResults(contacts, ir);
+                        // show the results (once we implement sending invites to registered users,
+                        // it will just serve as an error dialog)
+                        InviteUtils.showInviteResults(contacts, ir);
                     }
                 });
-        }
-
-        /**
-         * Displays the results of the invites.
-         */
-        protected void inviteResults (List<EmailContact> addrs, InvitationResults invRes)
-        {
         }
 
         int _gameId;

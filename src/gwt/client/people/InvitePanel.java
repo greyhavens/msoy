@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -34,7 +33,6 @@ import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
-import client.ui.BorderedDialog;
 import client.ui.BorderedPopup;
 import client.ui.DefaultTextListener;
 import client.ui.MsoyUI;
@@ -282,7 +280,7 @@ public class InvitePanel extends VerticalPanel
             public void onSuccess (InvitationResults ir) {
                 addPendingInvites(ir.pendingInvitations);
                 _emailList.clear();
-                inviteResults(invited, ir);
+                InviteUtils.showInviteResults(invited, ir);
             }
         });
     }
@@ -297,69 +295,9 @@ public class InvitePanel extends VerticalPanel
         }
     }
 
-    protected void inviteResults (List<EmailContact> addrs, InvitationResults invRes)
-    {
-        ResultsPopup rp = new ResultsPopup(_msgs.inviteResults());
-        int row = 0;
-        boolean success = false;
-        SmartTable contents = rp.getContents();
-
-        for (int ii = 0; ii < invRes.results.length; ii++) {
-            if (invRes.results[ii] == InvitationResults.SUCCESS) { // null == null;
-                EmailContact ec = addrs.get(ii);
-                if (!success) {
-                    contents.setText(row++, 0, _msgs.inviteResultsSuccessful());
-                    success = true;
-                }
-                contents.setText(row++, 0, _msgs.inviteMember(ec.name, ec.email), 3, null);
-            }
-        }
-        if (success) {
-            contents.setWidget(row++, 0, WidgetUtil.makeShim(10, 10));
-        }
-
-        boolean members = false;
-        for (int ii = 0; ii < invRes.results.length; ii++) {
-            if (invRes.names[ii] != null) {
-                EmailContact ec = addrs.get(ii);
-                if (!members) {
-                    contents.setText(row++, 0, _msgs.inviteResultsMembers());
-                    members = true;
-                }
-                contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
-                ClickListener onClick = new FriendInviter(invRes.names[ii], "InvitePanel");
-                contents.setWidget(row, 1, MsoyUI.createActionImage(
-                            "/images/profile/addfriend.png", onClick));
-                contents.setWidget(row++, 2, MsoyUI.createActionLabel(
-                            _msgs.mlAddFriend(), onClick));
-            }
-        }
-        if (members) {
-            contents.setWidget(row++, 0, WidgetUtil.makeShim(10, 10));
-        }
-
-        boolean failed = false;
-        for (int ii = 0; ii < invRes.results.length; ii++) {
-            if (invRes.results[ii] == InvitationResults.SUCCESS || invRes.names[ii] != null) {
-                continue;
-            }
-            if (!failed) {
-                contents.setText(row++, 0, _msgs.inviteResultsFailed());
-                failed = true;
-            }
-            EmailContact ec = addrs.get(ii);
-            String name = _msgs.inviteMember(ec.name, ec.email);
-            String result = invRes.results[ii].startsWith("e.") ?
-                _msgs.inviteResultsNote(name, CShell.serverError(invRes.results[ii])) :
-                _msgs.inviteResultsNote(name, invRes.results[ii]);
-            contents.setText(row++, 0, result, 3, null);
-        }
-        rp.show();
-    }
-
     protected void webmailResults (List<EmailContact> contacts)
     {
-        ResultsPopup rp = new ResultsPopup(_msgs.webmailResults());
+        InviteUtils.ResultsPopup rp = new InviteUtils.ResultsPopup(_msgs.webmailResults());
         int row = 0;
         SmartTable contents = rp.getContents();
 
@@ -374,34 +312,6 @@ public class InvitePanel extends VerticalPanel
         }
 
         rp.show();
-    }
-
-    protected class ResultsPopup extends BorderedDialog
-    {
-        public ResultsPopup (String title)
-        {
-            addStyleName("sendInvitesResultsPopup");
-            setHeaderTitle(title);
-
-            _contents = new SmartTable();
-            _contents.setCellSpacing(3);
-            ScrollPanel scroll = new ScrollPanel(_contents);
-            scroll.setStyleName("ScrollPanel");
-            setContents(scroll);
-
-            addButton(new Button(_cmsgs.close(), new ClickListener() {
-                public void onClick (Widget widget) {
-                    hide();
-                }
-            }));
-        }
-
-        public SmartTable getContents ()
-        {
-            return _contents;
-        }
-
-        protected SmartTable _contents;
     }
 
     protected MemberInvites _invites;
