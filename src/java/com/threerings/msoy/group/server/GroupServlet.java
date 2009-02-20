@@ -332,6 +332,8 @@ public class GroupServlet extends MsoyServiceServlet
             }
         }
 
+        // TODO: if this was the group's last manager, auto-promote e.g. the oldest member?
+        
         // if we made it this far, go ahead and remove the member from the group
         _groupRepo.leaveGroup(groupId, memberId);
 
