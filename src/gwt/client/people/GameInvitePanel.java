@@ -57,6 +57,7 @@ public class GameInvitePanel extends VerticalPanel
     {
         setStyleName("gameInvitePanel");
         setWidth("100%");
+        setSpacing(10);
 
         int gameId = args.get(2, 0);
 
@@ -105,11 +106,11 @@ public class GameInvitePanel extends VerticalPanel
         SmartTable gameInfo = new SmartTable();
         gameInfo.setWidth("100%");
         gameInfo.setStyleName("gameInfo");
-        gameInfo.setWidth("100%");
         ThumbBox thumbnail = new ThumbBox(
             detail.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
-        thumbnail.addStyleName("thumbnail");
-        gameInfo.setWidget(0, 0, thumbnail);
+        gameInfo.setWidget(0, 0, thumbnail, 1, "thumbnail");
+        gameInfo.getFlexCellFormatter().setHorizontalAlignment(
+            0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
         gameInfo.setText(0, 1, _msgs.gameInviteIntro(detail.item.name), 1, "intro");
         add(gameInfo);
 
