@@ -400,6 +400,9 @@ public class AdminServlet extends MsoyServiceServlet
         result.reclaimCount += reclaimer.succeeded;
         result.reclaimErrors += reclaimer.failed;
 
+        // TODO: what about memories? tags? comments?
+        // TODO: we need some intermediate logic classes. e.g. items will be deleted elsewhere too
+
         // delete the clones and add each to the reclaimer
         for (final CloneRecord record : repo.loadCloneRecords(item.itemId)) {
             repo.deleteItem(record.itemId);

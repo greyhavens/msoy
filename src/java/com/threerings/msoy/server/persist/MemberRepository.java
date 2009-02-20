@@ -611,7 +611,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Deletes the specified member from the repository.
+     * Deletes the specified member and our associated managed records from the repository.
      */
     public void deleteMember (MemberRecord member)
     {
@@ -635,23 +635,7 @@ public class MemberRepository extends DepotRepository
         deleteAll(EntryVectorRecord.class,
                   new Where(EntryVectorRecord.MEMBER_ID, member.memberId));
 
-        // TODO: delete a whole bunch of shit (not here, in whatever ends up calling this)
-        // - inventory items
-        // - item tags
-        // - item ratings
-        // - game ratings
-        // - game cookies
-        // - trophies
-        // - comments
-        // - rooms, furni, etc.
-        // - mail messages
-        // - profile data
-        // - swiftly projects (?)
-        // - invitations
-        // - friendships
-        // - group memberships
-        // - member action records, action summary record
-        // - thread read tracking info
+        // TODO: anything else to do in here not handled by the called?
     }
 
     // TODO: remove

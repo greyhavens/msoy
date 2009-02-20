@@ -34,9 +34,21 @@ import com.threerings.msoy.data.all.NavItemData;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
+import com.threerings.msoy.server.persist.AffiliateRecord;
+import com.threerings.msoy.server.persist.CharityRecord;
+import com.threerings.msoy.server.persist.EntryVectorRecord;
+import com.threerings.msoy.server.persist.ExternalMapRecord;
+import com.threerings.msoy.server.persist.FriendRecord;
+import com.threerings.msoy.server.persist.GameInvitationRecord;
+import com.threerings.msoy.server.persist.InvitationRecord;
+import com.threerings.msoy.server.persist.InviterRecord;
 import com.threerings.msoy.server.persist.MemberExperienceRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.persist.MemberWarningRecord;
+import com.threerings.msoy.server.persist.OptOutRecord;
+import com.threerings.msoy.server.persist.ReferralRecord;
+import com.threerings.msoy.server.persist.SessionRecord;
 
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.server.persist.ABTestRecord;
@@ -409,6 +421,108 @@ public class MemberLogic
             _eventLog.vectorAssociated(info, vector);
             _memberRepo.noteEntryVector(info.id, vector);
         }
+    }
+
+    /**
+     * Delete all traces of a member, with some exceptions.
+     * TODO: implement this
+     */
+    public void deleteMember (int memberId)
+    {
+        _memberRepo.deleteMember(_memberRepo.loadMember(memberId));
+
+        // Strategy: report if the member has done anything that may be worthwhile and/or annoying
+        // to delete that admin/support can delete manually. Once all of those are clear, move on
+        // to the deletion of the rest of the stuff.
+
+        // Records that prevent the member deletion
+        //    ForumThreadRecord
+        //    ForumMessageRecord
+        //    GroupRecord
+        //    CatalogRecord
+        //    GameDetailRecord
+
+        // Records that refer directly to a member id (there may be sub-records that refer
+        // indirectly):
+        //    AffiliateMapRecord
+        //    PlayerGameStateRecord
+        //    EarnedBadgeRecord
+        //    InProgressBadgeRecord
+        //    CommentRecord
+        //    CommentRatingRecord
+        //    OOOUserRecord
+        //    UserIdentRecord
+        //    TaintedIdentRecord?
+        //    BannedIdentRecord?
+        //    HistoricalUserRecord?
+        //    FavoriteItemRecord
+        //    FriendFeedMessageRecord
+        //    SelfFeedMessageRecord
+        //    ReadTrackingRecord
+        //    GalleryRecord
+        //    GameCookieRecord
+        //    GroupMembershipRecord
+        //    IssueRecord
+        //    ItemFlagRecord
+        //    ItemListInfoRecord - to be removed?
+        //    ItemRepository (audio, avatar, decor, document, furniture, game, item pack, level
+        //         pack, pet, photo, prize, prop, toy, trophy source, video) x (item, rating,
+        //         catalog, clone records)
+        //    ConversationRecord
+        //    ConvMessageRecord
+        //    ParticipantRecord
+        //    ConversationComplaintRecord
+        //    EarnedMedalRecord
+        //    FriendRecord
+        //    SessionRecord
+        //    InvitationRecord
+        //    InviterRecord
+        //    ExternalMapRecord
+        //    MemberWarningRecord
+        //    AffiliateRecord
+        //    ReferralRecord - to be removed
+        //    MemberExperienceRecord - not active
+        //    CharityRecord - meh
+        //    EntryVectorRecord
+        //    GameInvitationRecord
+        //    MemoriesRecord - part of item deletion
+        //    MemberAccountRecord
+        //    MoneyTransactionRecord
+        //    BlingCashOutRecord
+        //    SceneRecord
+        //    SceneRatingRecord
+        //    ProfileRecord
+        //    InterestRecord
+        //    RatingRecord
+        //    StatRecord
+        //    SwiftlyProjectRecord
+        //    SwiftlyCollaboratorsRecord
+        //    TagHistoryRecord
+        //    TrophyRecord
+        //    MessageRecord
+        //    EventRecord
+        //    MemberActionLogRecord
+        //    MemberActionSummaryRecord
+
+
+        // OLD TODO comment from MemberRepository:
+        // delete a whole bunch of shit
+        // - inventory items
+        // - item tags
+        // - item ratings
+        // - game ratings
+        // - game cookies
+        // - trophies
+        // - comments
+        // - rooms, furni, etc.
+        // - mail messages
+        // - profile data
+        // - swiftly projects (?)
+        // - invitations
+        // - friendships
+        // - group memberships
+        // - member action records, action summary record
+        // - thread read tracking info
     }
 
     /**
