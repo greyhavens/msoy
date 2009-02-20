@@ -169,19 +169,16 @@ public abstract class BuyPanel<T> extends SmartTable
 
     protected class BuyCallback extends ClickCallback<PurchaseResult<T>>
     {
-        public BuyCallback (SourcesClickEvents button, Currency currency)
-        {
+        public BuyCallback (SourcesClickEvents button, Currency currency) {
             super(button);
             _currency = currency;
         }
 
-        @Override protected boolean callService ()
-        {
+        @Override protected boolean callService () {
             return makePurchase(_currency, _quote.getAmount(_currency), this);
         }
 
-        @Override protected boolean gotResult (PurchaseResult<T> result)
-        {
+        @Override protected boolean gotResult (PurchaseResult<T> result) {
             _timesBought++;
             MoneyUtil.updateBalances(result.balances);
             if (result.quote != null) {
@@ -194,8 +191,7 @@ public abstract class BuyPanel<T> extends SmartTable
             return true;
         }
 
-        public void onFailure (Throwable cause)
-        {
+        @Override public void onFailure (Throwable cause) {
             super.onFailure(cause);
 
             if (cause instanceof CostUpdatedException) {
@@ -204,6 +200,26 @@ public abstract class BuyPanel<T> extends SmartTable
 
             } else if (cause instanceof InsufficientFundsException) {
                 MoneyUtil.updateBalances(((InsufficientFundsException) cause).getBalances());
+            }
+        }
+
+        @Override protected void reportFailure (Throwable cause) {
+            // if we have NSF, we want a custom error message
+            String msg = null;
+            if (cause instanceof InsufficientFundsException) {
+                switch (((InsufficientFundsException)cause).getCurrency()) {
+                case COINS:
+                    msg = _msgs.insufficientCoins();
+                    break;
+                case BARS:
+                    msg = _msgs.insufficientBars();
+                    break;
+                }
+            }
+            if (msg == null) {
+                super.reportFailure(cause);
+            } else {
+                MsoyUI.infoAction(msg, _msgs.getBars(), BillingUtil.onBuyBars());
             }
         }
 

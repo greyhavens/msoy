@@ -53,7 +53,7 @@ public class NotEnoughMoneyException extends MoneyException
             break;
         }
 
-        return new InsufficientFundsException(balances);
+        return new InsufficientFundsException(_currency, balances);
     }
 
     public int getMemberId ()
