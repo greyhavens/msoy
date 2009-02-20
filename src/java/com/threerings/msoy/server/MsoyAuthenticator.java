@@ -279,8 +279,7 @@ public class MsoyAuthenticator extends Authenticator
             }
         }
         if (StringUtil.isBlank(creds.ident)) {
-            log.warning("Unable to generate unique machIdent for user [accountName=" +
-                    accountName + "].");
+            log.warning("Unable to generate unique machIdent for user", "accountName", accountName);
             creds.ident = "";
         }
 
