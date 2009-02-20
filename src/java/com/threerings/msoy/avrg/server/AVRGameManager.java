@@ -977,8 +977,9 @@ public class AVRGameManager extends PlaceManager
         public String toString ()
         {
             StringBuilder buf = new StringBuilder();
-            buf.append("AVRGameManager.Scene");
+            buf.append("[");
             StringUtil.fieldsToString(buf, this);
+            buf.append("]");
             return buf.toString();
         }
     }
