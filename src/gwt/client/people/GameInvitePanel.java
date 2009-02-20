@@ -299,7 +299,7 @@ public class GameInvitePanel extends VerticalPanel
             int col = 0;
             row.setText(0, col++, "Import Webmail Contacts", 1, "biglabel");
             row.setWidget(0, col++, new Image(
-                "/people/invite/webmail_providers_small_horizontal.png"));
+                "/images/people/invite/webmail_providers_small_horizontal.png"));
             Widget showSupported = MsoyUI.createActionLabel("Show Supported Accounts",
                 "ImportSupportLink", new ClickListener() {
                     public void onClick (Widget widget) {
