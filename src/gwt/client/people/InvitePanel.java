@@ -393,7 +393,7 @@ public class InvitePanel extends VerticalPanel
             scroll.setStyleName("ScrollPanel");
             setContents(scroll);
 
-            addButton(new Button(_cmsgs.dismiss(), new ClickListener() {
+            addButton(new Button(_cmsgs.close(), new ClickListener() {
                 public void onClick (Widget widget) {
                     hide();
                 }
