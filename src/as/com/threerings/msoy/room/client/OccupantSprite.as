@@ -258,7 +258,9 @@ public class OccupantSprite extends MsoySprite
         }
 
         // check to see if we're blocked
-        checkBlocked();
+        if (_desc != null) {
+            checkBlocked();
+        }
     }
 
     override public function snapshot (
