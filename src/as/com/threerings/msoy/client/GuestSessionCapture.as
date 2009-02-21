@@ -118,7 +118,11 @@ public class GuestSessionCapture
                 var serverToken :String = MsoyAuthResponseData(authdata).sessionToken;
                 if (serverToken != null) {
                     log.info("Sending permaguest token to GWT", "token", serverToken);
-                    ExternalInterface.call("setPermaguestInfo", username, serverToken);
+                    try {
+                        ExternalInterface.call("setPermaguestInfo", username, serverToken);
+                    } catch (e :Error) {
+                        // oh fuckin' well
+                    }
                 }
             }
         }
