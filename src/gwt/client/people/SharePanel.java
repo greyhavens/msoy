@@ -46,34 +46,6 @@ public class SharePanel extends VerticalPanel
         intro.setWidget(0, 1, MsoyUI.createHTML(_msgs.shareIntro(), "MainHeaderText"));
         add(intro);
 
-        // link to whirled
-        SmartTable linkToWhirled = new SmartTable();
-        linkToWhirled.setStyleName("SubHeader");
-        linkToWhirled.setWidget(0, 0, Link.createImage("/images/people/link_to_whirled.png", null,
-            Pages.PEOPLE, Args.compose("invites", "links")));
-        TextBox embedText = new TextBox();
-        embedText.setText(url);
-        embedText.setMaxLength(100);
-        embedText.setWidth("100%");
-        MsoyUI.selectAllOnFocus(embedText);
-        VerticalPanel shareText = new VerticalPanel();
-        shareText.setSpacing(5);
-        shareText.add(MsoyUI.createHTML(_msgs.shareLinkToWhirled(), null));
-        shareText.add(embedText);
-        linkToWhirled.setWidget(0, 1, shareText, 1, "SubHeaderText");
-        RoundBox linkToWhirledBox = new RoundBox(RoundBox.DARK_BLUE);
-        linkToWhirledBox.add(linkToWhirled);
-        add(linkToWhirledBox);
-
-        // share content
-        SmartTable share = new SmartTable();
-        share.setStyleName("SubHeader");
-        share.setWidget(0, 0, new Image("/images/people/share.png"));
-        share.setWidget(0, 1, MsoyUI.createHTML(_msgs.shareLinkToContent(), "SubHeaderText"));
-        RoundBox shareBox = new RoundBox(RoundBox.DARK_BLUE);
-        shareBox.add(share);
-        add(shareBox);
-
         // invite friends
         SmartTable email = new SmartTable();
         email.setStyleName("SubHeader");
