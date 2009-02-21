@@ -428,7 +428,8 @@ public class OccupantSprite extends MsoySprite
     override public function isBlocked () :Boolean
     {
         return super.isBlocked() ||
-            (_occInfo != null && _ctx.getMuteDirector().isMuted(_occInfo.username));
+            (_occInfo != null && _ctx.getMuteDirector() != null &&
+             _ctx.getMuteDirector().isMuted(_occInfo.username));
     }
 
     override protected function getSpecialProperty (name :String) :Object
