@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.gwt.EmailContact;
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceException;
 
 /**
@@ -62,5 +63,11 @@ public interface InviteService extends RemoteService
      * @return ID of the current user's home room.
      */
     int getHomeSceneId ()
+        throws ServiceException;
+
+    /**
+     * Gets the user's friends, up to the given maximum, sorted by most recently online.
+     */
+    List<MemberCard> getFriends (int count)
         throws ServiceException;
 }

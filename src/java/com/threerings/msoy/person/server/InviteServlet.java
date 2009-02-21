@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.IntIntMap;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.MsoyCodes;
@@ -29,10 +30,12 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.server.persist.GameInvitationRecord;
 import com.threerings.msoy.server.persist.InvitationRecord;
+import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Invitation;
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -232,6 +235,18 @@ public class InviteServlet extends MsoyServiceServlet
         throws ServiceException
     {
         return requireAuthedUser().homeSceneId;
+    }
+
+    public List<MemberCard> getFriends (int count)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+        IntSet friendsIds = _memberRepo.loadFriendIds(memrec.memberId);
+        List<MemberCard> cards = Lists.newArrayList();
+        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(friendsIds, 0, count, true)) {
+            cards.add(mcr.toMemberCard());
+        }
+        return cards;
     }
 
     /**

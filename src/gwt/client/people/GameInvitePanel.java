@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
@@ -30,6 +31,7 @@ import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.InviteServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.EmailContact;
+import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
@@ -128,6 +130,14 @@ public class GameInvitePanel extends VerticalPanel
                     return new IMPanel(url);
                 }
             });
+        if (DeploymentConfig.devDeployment) {
+            addMethodButton("Whirled",
+                new InviteMethodCreator () {
+                    public Widget create () {
+                        return new WhirledFriendsPanel(url);
+                    }
+                });
+        }
         add(_methodButtons);
 
         // method panel will on the bottom row
@@ -410,6 +420,86 @@ public class GameInvitePanel extends VerticalPanel
             link.setStyleName("urlBox");
             setWidget(2, 0, link);
         }
+    }
+
+    /**
+     * Invite method showing the in-Whirled friends of the user with check boxes.
+     */
+    protected static class WhirledFriendsPanel extends SmartTable
+    {
+        /**
+         * Creates a new friends panel.
+         */
+        public WhirledFriendsPanel (String url)
+        {
+            super(0, 5);
+            setStyleName("whirled");
+            setWidth("100%");
+            setText(0, 0, "Recently Online Friends", 2, "biglabel");
+            setText(1, 0, "Select the friends you want to invite.", 2, null);
+            setWidget(2, 0, MsoyUI.createActionLabel("Select All", new ClickListener () {
+                public void onClick (Widget source) {
+                    selectAll(true);
+                }
+            }));
+            setWidget(2, 1, MsoyUI.createActionLabel("Deselect All", new ClickListener () {
+                public void onClick (Widget source) {
+                    selectAll(false);
+                }
+            }));
+            _grid = new SmartTable(0, 2);
+            _grid.setWidth("100%");
+            _grid.setText(0, 0, "Loading friends...");
+            setWidget(3, 0, _grid, 2, "");
+            _invitesvc.getFriends(ROWS * COLS, new MsoyCallback<List<MemberCard>>() {
+                public void onSuccess (List<MemberCard> result) {
+                    _grid.clear();
+                    for (int ii = 0; ii < result.size(); ++ii) {
+                        SelectaFriend friend = new SelectaFriend(result.get(ii));
+                        _grid.setWidget(ii / COLS, ii % COLS, friend);
+                    }
+                }
+            });
+        }
+
+        protected void selectAll (boolean select)
+        {
+            for (int row = 0; row < _grid.getRowCount(); ++row) {
+                for (int col = 0; col < _grid.getCellCount(row); ++col) {
+                    ((SelectaFriend)_grid.getWidget(row, col)).select(select);
+                }
+            }
+        }
+
+        protected SmartTable _grid;
+        protected static final int ROWS = 10;
+        protected static final int COLS = 5;
+    }
+
+    /**
+     * Cell content for a friend.
+     */
+    protected static class SelectaFriend extends SmartTable
+    {
+        public SelectaFriend (MemberCard member)
+        {
+            // TODO: styles
+            setWidget(0, 0, new ThumbBox(member.photo));
+            setText(1, 0, member.name.toString());
+            setWidget(2, 0, _check = new CheckBox());
+        }
+
+        boolean isSelected ()
+        {
+            return _check.isChecked();
+        }
+
+        void select (boolean sel)
+        {
+            _check.setChecked(sel);
+        }
+
+        protected CheckBox _check;
     }
 
     /** The row where the invite method is. */

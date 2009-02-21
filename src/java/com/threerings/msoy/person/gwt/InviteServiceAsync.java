@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.gwt.EmailContact;
+import com.threerings.msoy.web.gwt.MemberCard;
 
 /**
  * The asynchronous (client-side) version of {@link InviteService}.
@@ -46,4 +47,9 @@ public interface InviteServiceAsync
      * The asynchronous version of {@link InviteService#getHomeSceneId}.
      */
     void getHomeSceneId (AsyncCallback<Integer> callback);
+
+    /**
+     * The asynchronous version of {@link InviteService#getRecentlyOnlineFriends}.
+     */
+    void getFriends (int count, AsyncCallback<List<MemberCard>> callback);
 }
