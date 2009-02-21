@@ -144,7 +144,7 @@ public class TableSummaryPanel extends HBox
         _infoTipper = new CommandButton(Msgs.GAME.get("b.info"), function () :void {});
         _infoTipper.addEventListener(MouseEvent.ROLL_OVER, handleTipperRoll);
         _infoTipper.addEventListener(MouseEvent.ROLL_OUT, handleTipperRoll);
-        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_SHOWN, handleTipShown);
+        _infoTipper.addEventListener(ToolTipEvent.TOOL_TIP_SHOW, handleTipShow);
         _infoTipper.styleName = "orangeButton";
         _infoTipper.scaleX = .8;
         _infoTipper.scaleY = .8;
@@ -202,7 +202,7 @@ public class TableSummaryPanel extends HBox
         _infoTipper.enabled = !show;
     }
 
-    protected function handleTipShown (event :ToolTipEvent) :void
+    protected function handleTipShow (event :ToolTipEvent) :void
     {
         var tip :ToolTip = ToolTip(event.toolTip);
         tip.styleName = "gameInfoTip";
