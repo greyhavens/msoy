@@ -156,6 +156,7 @@ public class TableSummaryPanel extends HBox
         bits.percentWidth = 100;
         bits.setStyle("verticalGap", 0);
         bits.addChild(_title = FlexUtil.createLabel("", "tableSummaryTitle"));
+        _title.maxWidth = 180;
         bits.addChild(infoBox);
 
         addChild(bits);
