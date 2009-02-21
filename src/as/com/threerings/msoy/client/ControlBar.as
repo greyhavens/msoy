@@ -259,7 +259,7 @@ public class ControlBar extends HBox
         }
 
         function showShare () :Boolean {
-            return state.inRoom || (!state.embedded && state.inGame);
+            return state.inRoom || state.inGame;
         }
 
         function showComment () :Boolean {
