@@ -52,14 +52,14 @@ public class MePage extends Page
         } else if (CShell.isPermaguest()) {
             Link.go(Pages.ACCOUNT, "create");
 
-        } else if (!CShell.isValidated()) {
-            Link.go(Pages.ACCOUNT, "edit");
+        } else if (CShell.isPermaguest()) {
+            Link.go(Pages.ACCOUNT, "edit"); // permaguest must first register
 
-        } else if (!CShell.isGuest()) {
-            setContent(new MyWhirled());
+        } else if (CShell.isGuest()) {
+            Link.go(Pages.ACCOUNT, "create"); // redirect to create/logon page
 
         } else {
-            Link.go(Pages.ACCOUNT, "create"); // redirect to create/logon page
+            setContent(new MyWhirled());
         }
     }
 
