@@ -1053,6 +1053,12 @@ ChatInput {
 .gameInfoTip {
   fontSize: 12;
   backgroundColor: #FFFFFF;
+  borderColor: #FFFFFF;
+  borderStyle: "errorTipRight";
+  paddingBottom: 8;
+  paddingLeft: 4;
+  paddingRight: 8;
+  paddingTop: 4;
 }
 
 .contentsBox, .titleBox, .infoBox {
