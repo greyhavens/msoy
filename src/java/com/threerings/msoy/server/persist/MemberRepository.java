@@ -519,6 +519,8 @@ public class MemberRepository extends DepotRepository
      */
     public void insertMember (MemberRecord member)
     {
+        Preconditions.checkNotNull(member.visitorId, "MemberRecord.visitorId must be non-null");
+
         // account name must always be lower case
         member.accountName = member.accountName.toLowerCase();
         if (member.created == null) {
@@ -530,13 +532,9 @@ public class MemberRepository extends DepotRepository
         }
         insert(member);
 
-        // note that that visitor id/entry vector pair is now associated with a proper member
-        // record (all accounts should have a visitor id, but a hacked client may provide no
-        // visitor id and we don't assign one on the server, so we accomodate this code path)
-        if (member.visitorId != null) {
-            updatePartial(EntryVectorRecord.class, member.visitorId,
-                          EntryVectorRecord.MEMBER_ID, member.memberId);
-        }
+        // note that this visitor id/entry vector pair is now associated with a member record
+        updatePartial(EntryVectorRecord.class, member.visitorId,
+                      EntryVectorRecord.MEMBER_ID, member.memberId);
     }
 
     /**

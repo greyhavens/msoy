@@ -43,6 +43,9 @@ public class VisitorInfo
     /** Creates a new instance with the given tracking id. */
     public VisitorInfo (String id, boolean isAuthoritative)
     {
+        if (id == null) {
+            throw new NullPointerException("VisitorId.id must be non-null");
+        }
         this.id = id;
         this.isAuthoritative = isAuthoritative;
     }

@@ -77,7 +77,7 @@ public class AccountLogic
     }
 
     /**
-     * Registers a previously created permaguest account. 
+     * Registers a previously created permaguest account.
      */
     public MemberRecord savePermaguestAccount (int memberId, String email, String password,
         String displayName, String realName, InvitationRecord invite, VisitorInfo vinfo,
@@ -101,7 +101,7 @@ public class AccountLogic
         }
 
         // visitor id can't change, can it?
-        String visitorId = checkVisitorInfo(mrec.accountName, vinfo);
+        String visitorId = checkCreateId(mrec.accountName, vinfo);
         if (visitorId != null && !visitorId.equals(mrec.visitorId)) {
             log.warning("Permaguest visitor id changed", "original", mrec.visitorId,
                 "new", visitorId, "memberId", mrec.memberId);
@@ -163,7 +163,7 @@ public class AccountLogic
         } catch (Exception e) {
             log.warning("Failed to award coins for new account", "memberId", memberId, e);
         }
-        
+
         return mrec;
     }
 
@@ -180,9 +180,9 @@ public class AccountLogic
         boolean registering = false;
         String accountName = MemberMailUtil.makePermaguestEmail(
             StringUtil.md5hex(System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random()));
-        MemberRecord guest =  createAccount(
-            accountName, PERMAGUEST_PASSWORD, name, null, null, new VisitorInfo(visitorId, false),
-            null, registering, null, null, null);
+        VisitorInfo vinfo = new VisitorInfo(checkCreateId(accountName, visitorId), false);
+        MemberRecord guest =  createAccount(accountName, PERMAGUEST_PASSWORD, name, null, null,
+                                            vinfo, null, registering, null, null, null);
         guest.name = generatePermaguestDisplayName(guest.memberId);
         _memberRepo.configureDisplayName(guest.memberId, guest.name);
         log.info("Created permaguest account", "username", guest.accountName,
@@ -336,7 +336,7 @@ public class AccountLogic
             mrec.accountName = account.accountName;
             mrec.name = displayName;
             mrec.affiliateMemberId = resolveAffiliate(account.accountName, affiliate, invite);
-            mrec.visitorId = checkVisitorInfo(account.accountName, visitor);
+            mrec.visitorId = checkCreateId(account.accountName, visitor);
 
             // store their member record in the repository making them a real Whirled citizen
             _memberRepo.insertMember(mrec);
@@ -450,14 +450,19 @@ public class AccountLogic
         return 0;
     }
 
-    protected String checkVisitorInfo (String account, VisitorInfo visitor)
+    protected String checkCreateId (String account, VisitorInfo visitor)
     {
-        if (visitor != null) {
-            return visitor.id;
+        return checkCreateId(account, visitor == null ? null : visitor.id);
+    }
+
+    protected String checkCreateId (String account, String visitorId)
+    {
+        if (visitorId != null) {
+            return visitorId;
         } else {
             log.warning("Missing visitor id when creating user", "email", account);
-            return null;
-        }        
+            return new VisitorInfo().id; // create a new id for the account
+        }
     }
 
     @Inject protected AuthenticationDomain _defaultDomain;
@@ -469,6 +474,6 @@ public class AccountLogic
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
 
-    /** Prefix of permaguest display names. They have to create an account to get a real one. */ 
+    /** Prefix of permaguest display names. They have to create an account to get a real one. */
     protected static final String PERMAGUEST_DISPLAY_PREFIX = "Guest";
 }
