@@ -156,8 +156,9 @@ public class TextUtil
         return fmt;
     }
 
-    /** Matches "special links", which are in the format "[text|url]". */
-    protected static const SPECIAL_LINK_REGEXP :RegExp = new RegExp("\\[(.+?)\\|(.+?)\\]");
+    /** Matches "special links", which are in the format "\uFFFCtext\uFFFCurl\uFFFD" */
+    protected static const SPECIAL_LINK_REGEXP :RegExp =
+        new RegExp("\\\uFFFC(.+?)\\\uFFFC(.+?)\\\uFFFD");
     protected static const FONT :String = "Arial";
 }
 }
