@@ -16,7 +16,7 @@ public interface WebUserService extends RemoteService
     public static final String ENTRY_POINT = "/usersvc";
 
     /** The default length of a session. */
-    public static final int DEFAULT_SESSION_DAYS = 3;
+    public static final int SESSION_DAYS = 3;
 
     /**
      * Requests that the client be logged on as the specified user with the supplied (MD5-encoded)

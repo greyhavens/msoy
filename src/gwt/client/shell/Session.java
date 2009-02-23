@@ -49,9 +49,6 @@ public class Session
         void didLogoff ();
     }
 
-    /** The lifespan of our session cookie. */
-    public static final int SESSION_DAYS = 7;
-
     /**
      * Registers to be notified when we logon or logoff.
      */
@@ -195,7 +192,7 @@ public class Session
 
     protected static void setSessionCookie (String token)
     {
-        CookieUtil.set("/", SESSION_DAYS, WebCreds.credsCookie(), token);
+        CookieUtil.set("/", WebUserService.SESSION_DAYS, WebCreds.credsCookie(), token);
     }
 
     protected static void validate (String token)

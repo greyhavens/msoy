@@ -129,7 +129,7 @@ public class LogonPanel extends SmartTable
             return;
         }
         _usersvc.logon(DeploymentConfig.version, account, CShell.frame.md5hex(password),
-                       WebUserService.DEFAULT_SESSION_DAYS, new AsyncCallback<SessionData>() {
+                       WebUserService.SESSION_DAYS, new AsyncCallback<SessionData>() {
             public void onSuccess (SessionData data) {
                 CShell.frame.dispatchDidLogon(data);
                 didLogon();
