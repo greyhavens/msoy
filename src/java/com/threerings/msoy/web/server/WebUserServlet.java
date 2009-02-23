@@ -99,8 +99,8 @@ public class WebUserServlet extends MsoyServiceServlet
     {
         // TODO: deal with joining to the permaguest account, if any
         checkClientVersion(clientVersion, creds.getPlaceholderAddress());
-        String affiliate = AffiliateCookie.get(getThreadLocalRequest());
-        return startSession(_author.authenticateSession(creds, vinfo, affiliate), expireDays);
+        int affiliateId = AffiliateCookie.get(getThreadLocalRequest());
+        return startSession(_author.authenticateSession(creds, vinfo, affiliateId), expireDays);
     }
 
     // from interface WebUserService
@@ -133,13 +133,13 @@ public class WebUserServlet extends MsoyServiceServlet
             verifyCaptcha(info.captchaChallenge, info.captchaResponse);
         }
 
-        final MemberRecord mrec = info.permaguestId > 0 ? 
-            _accountLogic.savePermaguestAccount(info.permaguestId, info.email,
-                info.password, info.displayName, info.info.realName, invite, info.visitor,
-                AffiliateCookie.get(getThreadLocalRequest()), info.birthday) :
-            _accountLogic.createWebAccount(info.email, info.password,
-                info.displayName, info.info.realName, invite, info.visitor,
-                AffiliateCookie.get(getThreadLocalRequest()), info.birthday);
+        final MemberRecord mrec = (info.permaguestId > 0) ? 
+            _accountLogic.savePermaguestAccount(
+                info.permaguestId, info.email, info.password, info.displayName, info.info.realName,
+                invite, info.visitor, info.birthday) :
+            _accountLogic.createWebAccount(
+                info.email, info.password, info.displayName, info.info.realName, invite,
+                info.visitor, AffiliateCookie.get(getThreadLocalRequest()), info.birthday);
 
         // TODO: consider moving the below code into AccountLogic
 

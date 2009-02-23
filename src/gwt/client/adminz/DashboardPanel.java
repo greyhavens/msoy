@@ -83,7 +83,6 @@ public class DashboardPanel extends SmartTable
         FlowPanel support = new FlowPanel();
         support.add(MsoyUI.createLabel(_msgs.supportControls(), "Title"));
         support.add(makeLink(_msgs.reviewButton(), "review"));
-        support.add(makeLink(_msgs.affMapButton(), "affmap"));
         support.add(makeLink(_msgs.promosButton(), "promos"));
         support.add(makeLink(_msgs.contestsButton(), "contests"));
         support.add(makeLink(_msgs.browseButton(), "browser"));

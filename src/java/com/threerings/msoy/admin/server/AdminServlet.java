@@ -33,8 +33,6 @@ import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.BureauManager;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.persist.AffiliateMapRecord;
-import com.threerings.msoy.server.persist.AffiliateMapRepository;
 import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.ContestRecord;
 import com.threerings.msoy.server.persist.ContestRepository;
@@ -73,7 +71,6 @@ import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
-import com.threerings.msoy.admin.gwt.AffiliateMapping;
 import com.threerings.msoy.admin.gwt.BureauLauncherInfo;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.MemberInviteResult;
@@ -139,7 +136,6 @@ public class AdminServlet extends MsoyServiceServlet
         }
         info.humanity = tgtrec.humanity;
         if (tgtrec.affiliateMemberId != 0) {
-            // TODO: could be your inviter, but really just your affiliate
             info.inviter = _memberRepo.loadMemberName(tgtrec.affiliateMemberId);
         }
         info.invitees = _memberRepo.loadMembersInvitedBy(memberId);
@@ -170,7 +166,6 @@ public class AdminServlet extends MsoyServiceServlet
             res.name = memRec.permaName == null || memRec.permaName.equals("") ?
                 memRec.name : memRec.permaName;
             res.memberId = inviterId;
-            // TODO: your affiliate is not necessarily your inviter
             res.invitingFriendId = memRec.affiliateMemberId;
         }
 
@@ -240,32 +235,6 @@ public class AdminServlet extends MsoyServiceServlet
             throw new ServiceException(MsoyAdminCodes.E_AB_TEST_DUPLICATE_NAME);
         }
         _testRepo.updateABTest(test);
-    }
-
-    // from interface AdminService
-    public PagedResult<AffiliateMapping> getAffiliateMappings (
-        int start, int count, boolean needTotal)
-        throws ServiceException
-    {
-        requireSupportUser();
-
-        PagedResult<AffiliateMapping> result = new PagedResult<AffiliateMapping>();
-        result.page = Lists.newArrayList(Iterables.transform(
-            _affMapRepo.getMappings(start, count), AffiliateMapRecord.TO_MAPPING));
-        if (needTotal) {
-            result.total = _affMapRepo.getMappingCount();
-        }
-        return result;
-    }
-
-    // from interface AdminService
-    public void mapAffiliate (String affiliate, int memberId)
-        throws ServiceException
-    {
-        requireSupportUser();
-
-        _affMapRepo.storeMapping(affiliate, memberId);
-        _memberRepo.updateAffiliateMemberId(affiliate, memberId);
     }
 
     // from interface AdminService
@@ -774,7 +743,6 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected ABTestRepository _testRepo;
-    @Inject protected AffiliateMapRepository _affMapRepo;
     @Inject protected PromotionRepository _promoRepo;
     @Inject protected ContestRepository _contestRepo;
     @Inject protected MsoyEventLogger _eventLogger;

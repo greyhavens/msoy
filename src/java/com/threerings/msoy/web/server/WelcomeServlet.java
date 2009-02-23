@@ -47,26 +47,19 @@ public class WelcomeServlet extends HttpServlet
         throws IOException
     {
         String path = StringUtil.deNull(req.getPathInfo());
-        String affiliate;
-        // the path will now either be "", "/<affiliate>", or "/<affiliate>/<token>".
-        // <affiliate> may be 0 to indicate "no affiliate" (we just want the redirect through
-        // this servlet).
+        int affiliateId = 0;
+
+        // the path will now either be "", "/<affiliate>", or "/<affiliate>/<token>". <affiliate>
+        // may be 0 to indicate "no affiliate" (we just want the redirect through this servlet).
         if (path.startsWith("/")) {
             int nextSlash = path.indexOf("/", 1);
             if (nextSlash == -1) {
-                affiliate = path.substring(1);
+                affiliateId = parseAffiliate(path.substring(1));
                 path = "";
             } else {
-                affiliate = path.substring(1, nextSlash);
+                affiliateId = parseAffiliate(path.substring(1, nextSlash));
                 path = path.substring(nextSlash + 1);
             }
-            // Set up the affiliate for this welcomed user.
-            if (!StringUtil.isBlank(affiliate) && !"0".equals(affiliate)) {
-                AffiliateCookie.set(rsp, affiliate);
-            }
-
-        } else {
-            affiliate = null;
         }
 
         // possibly hand out special content to certain requesters
@@ -77,13 +70,22 @@ public class WelcomeServlet extends HttpServlet
             }
         }
 
-        // satisfy a normal request by a user (or if there were problems serving special)
-        if (!StringUtil.isBlank(affiliate) && !"0".equals(affiliate)) {
-            // TODO: we need to fix affiliates to be first-seen, as well as always set
-            // up a OOO affiliate cookie for the unaffiliated.
-            AffiliateCookie.set(rsp, affiliate);
+        // set their affiliate cookie if appropriate
+        if (affiliateId > 0) {
+            AffiliateCookie.set(rsp, affiliateId);
         }
+
         rsp.sendRedirect("/#" + path);
+    }
+
+    protected int parseAffiliate (String affiliate)
+    {
+        try {
+            return Integer.parseInt(affiliate);
+        } catch (Exception e) {
+            log.info("Ignoring bogus affiliate", "aff", affiliate);
+            return 0;
+        }
     }
 
     /**

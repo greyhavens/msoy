@@ -13,6 +13,8 @@ import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.web.gwt.TrackingCookieUtil;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Handles the getting and setting of the affiliate cookie.
  */
@@ -24,19 +26,25 @@ public class AffiliateCookie
     /**
      * Return the affiliate cookie value.
      */
-    public static String get (HttpServletRequest req)
+    public static int get (HttpServletRequest req)
     {
-        return TrackingCookieUtil.decode(
+        String aff = TrackingCookieUtil.decode(
             StringUtil.unhexlate(CookieUtil.getCookieValue(req, NAME)));
+        try {
+            return (aff == null) ? 0 : Integer.parseInt(aff);
+        } catch (Exception e) {
+            log.info("Rejecting bogus affiliate cookie", "aff", aff);
+            return 0;
+        }
     }
 
     /**
      * Stores a new Affiliate cookie with the specified value.
      */
-    public static void set (HttpServletResponse rsp, String affiliate)
+    public static void set (HttpServletResponse rsp, int affiliateId)
     {
-        Cookie cookie = new Cookie(NAME,
-            StringUtil.hexlate(TrackingCookieUtil.encode(affiliate.trim())));
+        Cookie cookie = new Cookie(
+            NAME, StringUtil.hexlate(TrackingCookieUtil.encode(String.valueOf(affiliateId))));
         cookie.setMaxAge(365 * 24 * 60 * 60); // 1 year
         cookie.setPath("/");
         rsp.addCookie(cookie);

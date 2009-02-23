@@ -26,18 +26,6 @@ import com.threerings.msoy.web.gwt.WebCreds;
 public interface AdminServiceAsync
 {
     /**
-     * The asynchronous version of {@link AdminService#getAffiliateMappings}.
-     */
-    void getAffiliateMappings (
-        int start, int count, boolean needTotal,
-        AsyncCallback<PagedResult<AffiliateMapping>> callback);
-
-    /**
-     * The asynchronous version of {@link AdminService#mapAffiliate}.
-     */
-    void mapAffiliate (String affiliate, int memberId, AsyncCallback<Void> callback);
-
-    /**
      * The asynchronous version of {@link AdminService#grantInvitations}.
      */
     void grantInvitations (int numberInvitations, int memberId, AsyncCallback<Void> callback);

@@ -116,8 +116,8 @@ public class MsoyAuthenticator extends Authenticator
      *
      * @return the user's member record.
      */
-    public MemberRecord authenticateSession (ExternalCreds creds, VisitorInfo visitor,
-                                             String affiliate)
+    public MemberRecord authenticateSession (
+        ExternalCreds creds, VisitorInfo vinfo, int affiliateId)
         throws ServiceException
     {
         try {
@@ -150,8 +150,8 @@ public class MsoyAuthenticator extends Authenticator
 
             // create their account
             MemberRecord mrec = _accountLogic.createExternalAccount(
-                creds.getPlaceholderAddress(), info.displayName, visitor, creds.getAuthSource(),
-                creds.getUserId());
+                creds.getPlaceholderAddress(), info.displayName, vinfo, affiliateId,
+                creds.getAuthSource(), creds.getUserId());
 
             // wire them up to any friends they might have
             if (info.friendIds != null) {
@@ -227,7 +227,7 @@ public class MsoyAuthenticator extends Authenticator
             } else if (!creds.featuredPlaceView) {
                 // create a new guest account
                 MemberRecord newMember = _accountLogic.createGuestAccount(
-                    conn.getInetAddress().toString(), creds.visitorId);
+                    conn.getInetAddress().toString(), creds.visitorId, creds.affiliateId);
 
                 // now authenticate just to make sure everything is in order and get the token
                 creds.setUsername(new Name(newMember.accountName));

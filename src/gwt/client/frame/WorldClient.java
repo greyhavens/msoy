@@ -7,6 +7,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.util.CookieUtil;
+
 import com.threerings.msoy.web.gwt.ConnectConfig;
 import com.threerings.msoy.web.gwt.LaunchConfig;
 import com.threerings.msoy.web.gwt.WebCreds;
@@ -17,6 +19,7 @@ import client.shell.CShell;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+import client.util.StringUtil;
 
 /**
  * Manages our World client (which also handles Flash games).
@@ -86,6 +89,7 @@ public class WorldClient extends Widget
         if (CShell.getAuthToken() != null) {
             flashArgs += "&token=" + CShell.getAuthToken();
         }
+        flashArgs += getAffiliateArg();
         FlashClients.embedGameClient(pprov.get(), flashArgs);
     }
 
@@ -151,9 +155,16 @@ public class WorldClient extends Widget
         if (CShell.getAuthToken() != null) {
             flashArgs += "&token=" + CShell.getAuthToken();
         }
+        flashArgs += getAffiliateArg();
 
         parent.clear();
         FlashClients.embedWorldClient(parent, flashArgs);
+    }
+
+    protected static String getAffiliateArg ()
+    {
+        String affstr = CookieUtil.get(AFF_COOKIE_NAME);
+        return StringUtil.isBlank(affstr) ? "" : ("&aff=" + affstr);
     }
 
     /**
@@ -208,6 +219,8 @@ public class WorldClient extends Widget
     /** Our default world server host and port. Configured the first time Flash is used. */
     protected static String _defaultHost;
     protected static int _defaultPort;
+
+    protected static final String AFF_COOKIE_NAME = "a"; // from (non-gwt-visible) AffiliateCookie
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);

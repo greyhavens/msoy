@@ -62,9 +62,6 @@ public class AdminPage extends Page
         } else if (action.equals("testlist")) {
             setContent(_msgs.abTestListTitle(), new ABTestListPanel());
 
-        } else if (action.equals("affmap")) {
-            setContent(_msgs.affMapTitle(), new AffiliateMapPanel());
-
         } else if (action.equals("cashout")) {
             setContent(_msgs.cashOutTitle(), new BlingCashOutPanel());
 

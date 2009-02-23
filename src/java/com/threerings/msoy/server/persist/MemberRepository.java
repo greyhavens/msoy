@@ -174,23 +174,6 @@ public class MemberRepository extends DepotRepository
             }
         });
 
-        // TEMP: blow away bogus AffiliateRecords, repopulate
-        registerMigration(new DataMigration("2008_09_26_populateAffiliateRecords") {
-            public void invoke () throws DatabaseException
-            {
-                // first blow away the old broken records
-                deleteAll(AffiliateRecord.class, new Where(new LiteralExp("true")));
-
-                // re-populate the AffiliateRecords using the affiliateMemberId field of
-                // everyone's MemberRecord
-                List<MemberRecord> memRecs = findAll(MemberRecord.class,
-                    new Where(new Conditionals.NotEquals(MemberRecord.AFFILIATE_MEMBER_ID, 0)));
-                for (MemberRecord rec : memRecs) {
-                    setAffiliate(rec.memberId, String.valueOf(rec.affiliateMemberId));
-                }
-            }
-        });
-
         // drop this superfluous index
         ctx.registerMigration(MemberExperienceRecord.class,
             new SchemaMigration.DropIndex(2, "ixDateOccurred"));
@@ -550,12 +533,22 @@ public class MemberRepository extends DepotRepository
     /**
      * Updates registration fields, for when a prevsiously inserted permaguest registers.
      */
-    public void updateRegistration (
-        int memberId, String accountName, String displayName, int affiliate)
+    public void updateRegistration (int memberId, String accountName, String displayName)
     {
         accountName = accountName.toLowerCase(); // account name must always be lower case
-        updatePartial(MemberRecord.class, memberId, MemberRecord.ACCOUNT_NAME, accountName,
-            MemberRecord.NAME, displayName, MemberRecord.AFFILIATE_MEMBER_ID, affiliate);
+        updatePartial(MemberRecord.class, memberId,
+                      MemberRecord.ACCOUNT_NAME, accountName,
+                      MemberRecord.NAME, displayName);
+    }
+
+    /**
+     * Updates the specified member's affiliate member id. This only happens in one very rare
+     * circumstance where we want your inviting member's id to trump a preexisting affiliate id.
+     */
+    public void updateAffiliateMemberId (int memberId, int affiliateMemberId)
+    {
+        updatePartial(MemberRecord.class, memberId,
+                      MemberRecord.AFFILIATE_MEMBER_ID, affiliateMemberId);
     }
 
     /**
@@ -978,45 +971,6 @@ public class MemberRepository extends DepotRepository
             update(invRec, InvitationRecord.INVITEE_ID);
             addOptOutEmail(invRec.inviteeEmail);
         }
-    }
-
-    /**
-     * Set the affiliate for a newly registered user.
-     */
-    public void setAffiliate (int memberId, String affiliate)
-    {
-        AffiliateRecord affRec = new AffiliateRecord();
-        affRec.memberId = memberId;
-        affRec.affiliate = affiliate;
-        insert(affRec);
-    }
-
-    /**
-     * For every ReferralRecord with a matching affiliate, update the associated MemberRecords
-     * to have the specified affiliateMemberId.
-     */
-    public void updateAffiliateMemberId (String affiliate, int affiliateMemberId)
-    {
-        // Note: apparently we do not want to do this with a join, as one day the MemberRecord
-        // may live on a different database than the AffiliateRecord.
-
-        // get all the memberIds that have the specified affiliate in their AffiliateRecord
-        List<Key<AffiliateRecord>> affKeys = findAllKeys(AffiliateRecord.class, false,
-            new Where(AffiliateRecord.AFFILIATE, affiliate));
-
-        // then transform the AffiliateRecord keys to MemberRecord keys
-        // (we make a new ArrayList so that we only transform each key once, instead
-        // of just creating a "view" list and re-transforming on every iteration,
-        // since this collection is used in the KeySet for both querying and cache invalidating.)
-        List<Integer> memKeys = Lists.newArrayList(
-            Iterables.transform(affKeys, RecordFunctions.<AffiliateRecord>getIntKey()));
-
-        // create a KeySet representing these keys
-        KeySet<MemberRecord> keySet = KeySet.newSimpleKeySet(MemberRecord.class, memKeys);
-
-        // then update all those members to have the new affiliateMemberId
-        updatePartial(MemberRecord.class, keySet, keySet,
-            MemberRecord.AFFILIATE_MEMBER_ID, affiliateMemberId);
     }
 
     /**

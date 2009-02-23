@@ -78,18 +78,6 @@ public interface AdminService extends RemoteService
     }
 
     /**
-     * Get the specified page of affiliate mappings.
-     */
-    PagedResult<AffiliateMapping> getAffiliateMappings (int start, int count, boolean needTotal)
-        throws ServiceException;
-
-    /**
-     * Set the specified affiliate to map to the specified memberId.
-     */
-    void mapAffiliate (String affiliate, int memberId)
-        throws ServiceException;
-
-    /**
      * Grants the given number of invitations to the given user.
      */
     void grantInvitations (int numberInvitations, int memberId)

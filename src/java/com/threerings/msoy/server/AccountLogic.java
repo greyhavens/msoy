@@ -35,7 +35,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.server.AuthenticationDomain.Account;
-import com.threerings.msoy.server.persist.AffiliateMapRepository;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -66,22 +65,24 @@ public class AccountLogic
      * @return the new MemberRecord for the account
      * @throws ServiceException if any provided information is invalid or a runtime error occurs
      */
-    public MemberRecord createWebAccount (String email, String password,
-        String displayName, String realName, InvitationRecord invite, VisitorInfo vinfo,
-        String cookie, int[] birthdayYMD)
+    public MemberRecord createWebAccount (
+        String email, String password, String displayName, String realName, InvitationRecord invite,
+        VisitorInfo vinfo, int affiliateId, int[] birthdayYMD)
         throws ServiceException
     {
-        boolean registering = true;
-        return createAccount(email, password, displayName, realName, invite, vinfo, cookie,
-            registering, birthdayYMD, null, null);
+        AccountData data = new AccountData(true, email, password, displayName, vinfo, affiliateId);
+        data.realName = realName;
+        data.invite = invite;
+        data.birthdayYMD = birthdayYMD;
+        return createAccount(data);
     }
 
     /**
      * Registers a previously created permaguest account.
      */
-    public MemberRecord savePermaguestAccount (int memberId, String email, String password,
-        String displayName, String realName, InvitationRecord invite, VisitorInfo vinfo,
-        String cookie, int[] birthdayYMD)
+    public MemberRecord savePermaguestAccount (
+        int memberId, String email, String password, String displayName, String realName,
+        InvitationRecord invite, VisitorInfo vinfo, int[] birthdayYMD)
         throws ServiceException
     {
         // check basic validity and age limit
@@ -107,13 +108,9 @@ public class AccountLogic
                 "new", visitorId, "memberId", mrec.memberId);
         }
 
-        // get the affiliate
-        int affiliate = resolveAffiliate(email, cookie, invite);
-
         // update member data
         try {
-            _memberRepo.updateRegistration(memberId, email, displayName, affiliate);
-
+            _memberRepo.updateRegistration(memberId, email, displayName);
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
         }
@@ -121,13 +118,11 @@ public class AccountLogic
         try {
             // update the account name and password with the domain
             updateAccount(mrec.accountName, email, null, password);
-
         } catch (ServiceException se) {
             // we need to roll back the account name change to preserve a proper mapping between
             // MemberRecord and the authenticator's record
             try {
                 _memberRepo.configureAccountName(mrec.memberId, mrec.accountName);
-
             } catch (Exception e) {
                 log.warning("Failed to roll back account name change", "who", mrec.who(),
                             "newEmail", email, "oldEmail", mrec.accountName, e);
@@ -135,13 +130,22 @@ public class AccountLogic
             throw se;
         }
 
-        // TODO: we don't have access to the invite id anymore, is this important?
-        _eventLog.accountCreated(mrec.memberId, null, mrec.affiliateMemberId, mrec.visitorId);
+        // if they have an invitation record, this overrides any cookied affiliate (that we stored
+        // when they created their original permaguest account); this code path only happens if you
+        // register via GWT during the *same session* from which you clicked your invite email
+        // link, so clearly that's who wins
+        if (invite != null) {
+            _memberRepo.updateAffiliateMemberId(memberId, invite.inviterId);
+            mrec.affiliateMemberId = invite.inviterId;
+        }
+
+        // tell panopticon that we "created" an account
+        final String inviteId = (invite == null) ? null : invite.inviteId;
+        _eventLog.accountCreated(mrec.memberId, inviteId, mrec.affiliateMemberId, mrec.visitorId);
 
         // fill in fields so we are returning up-to-date information
         mrec.accountName = email;
         mrec.name = displayName;
-        mrec.affiliateMemberId = affiliate;
 
         // update profile
         ProfileRecord prec = _profileRepo.loadProfile(memberId);
@@ -149,7 +153,6 @@ public class AccountLogic
         prec.realName = realName;
         try {
             _profileRepo.storeProfile(prec);
-
         } catch (Exception e) {
             log.warning("Failed to create profile", "prec", prec, e);
             // move along
@@ -159,7 +162,6 @@ public class AccountLogic
         try {
             _moneyLogic.awardCoins(memberId, CoinAwards.CREATED_ACCOUNT, true,
                 UserAction.createdAccount(memberId));
-
         } catch (Exception e) {
             log.warning("Failed to award coins for new account", "memberId", memberId, e);
         }
@@ -170,19 +172,20 @@ public class AccountLogic
     /**
      * Creates a new account for a guest user. All profile data will be default. The credentials
      * will be a placeholder email address and a default password.
-     * @return the new guest account record
-     * @throws ServiceException if a runtime error occurs
+     *
+     * @return the newly created member record.
      */
-    public MemberRecord createGuestAccount (String ipAddress, String visitorId)
+    public MemberRecord createGuestAccount (String ipAddress, String visitorId, int affiliateId)
         throws ServiceException
     {
-        String name = _serverMsgs.getBundle("server").get("m.permaguest_name");
-        boolean registering = false;
-        String accountName = MemberMailUtil.makePermaguestEmail(
+        String email = MemberMailUtil.makePermaguestEmail(
             StringUtil.md5hex(System.currentTimeMillis() + ":" + ipAddress + ":" + Math.random()));
-        VisitorInfo vinfo = new VisitorInfo(checkCreateId(accountName, visitorId), false);
-        MemberRecord guest =  createAccount(accountName, PERMAGUEST_PASSWORD, name, null, null,
-                                            vinfo, null, registering, null, null, null);
+        String displayName = _serverMsgs.getBundle("server").get("m.permaguest_name");
+        AccountData data = new AccountData(
+            false, email, PERMAGUEST_PASSWORD, displayName,
+            new VisitorInfo(checkCreateId(email, visitorId), false), affiliateId);
+        MemberRecord guest =  createAccount(data);
+        // now that we have their member id, we can update their display name with it
         guest.name = generatePermaguestDisplayName(guest.memberId);
         _memberRepo.configureDisplayName(guest.memberId, guest.name);
         log.info("Created permaguest account", "username", guest.accountName,
@@ -192,16 +195,18 @@ public class AccountLogic
 
     /**
      * Creates a new account linked to an external account.
-     * @return the newly created member record
-     * @throws ServiceException if a runtime error occurs
+     *
+     * @return the newly created member record.
      */
-    public MemberRecord createExternalAccount (String email, String displayName,
-        VisitorInfo vinfo, ExternalAuther exAuther, String exAuthUserId)
+    public MemberRecord createExternalAccount (
+        String email, String displayName, VisitorInfo vinfo, int affiliateId,
+        ExternalAuther exAuther, String exAuthUserId)
         throws ServiceException
     {
-        boolean registering = true;
-        return createAccount(email, "", displayName, null, null, vinfo, null, registering,
-            null, exAuther, exAuthUserId);
+        AccountData data = new AccountData(true, email, "", displayName, vinfo, affiliateId);
+        data.exAuther = exAuther;
+        data.exAuthUserId = exAuthUserId;
+        return createAccount(data);
     }
 
     /**
@@ -268,25 +273,20 @@ public class AccountLogic
     /**
      * Creates an account and profile record, with some validation.
      */
-    protected MemberRecord createAccount (String email, String password,
-        String displayName, String realName, InvitationRecord invite, VisitorInfo vinfo,
-        String cookie, boolean registering, int[] birthdayYMD, ExternalAuther exAuther,
-        String exAuthUserId)
+    protected MemberRecord createAccount (AccountData data)
         throws ServiceException
     {
-        displayName = displayName.trim();
+        validateRegistrationInfo(data.birthdayYMD, data.email, data.displayName);
 
-        validateRegistrationInfo(birthdayYMD, email, displayName);
-
-        // attempt to create the account
-        final MemberRecord mrec = createAccount(email, password, displayName, invite, vinfo,
-            cookie, registering, exAuther, exAuthUserId);
+        // attempt to create the member record (and other bits)
+        final MemberRecord mrec = createMember(data);
 
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();
         prec.memberId = mrec.memberId;
-        prec.birthday = birthdayYMD != null ? ProfileRecord.fromDateVec(birthdayYMD) : null;
-        prec.realName = realName != null ? realName : "";
+        prec.birthday = (data.birthdayYMD != null) ?
+            ProfileRecord.fromDateVec(data.birthdayYMD) : null;
+        prec.realName = (data.realName != null) ? data.realName : "";
         try {
             _profileRepo.storeProfile(prec);
         } catch (Exception e) {
@@ -298,35 +298,21 @@ public class AccountLogic
     }
 
     /**
-     * Does the complicated and failure complex account creation process. Whee!
+     * Creates a new member record and its various associated records. Handles the various
+     * complicated failure fallbackery. Don't call this, call {@link #createAccount}.
      */
-    protected MemberRecord createAccount (
-        String email, String password, String displayName, InvitationRecord invite,
-        VisitorInfo visitor, String affiliate, boolean registering, ExternalAuther exAuther,
-        String externalId)
+    protected MemberRecord createMember (AccountData data)
         throws ServiceException
     {
-        // make sure we're dealing with a lower cased email
-        email = email.toLowerCase();
-
         AuthenticationDomain domain = null;
         Account account = null;
         MemberRecord stalerec = null;
         try {
             // create and validate the new account
-            domain = getDomain(email);
-            account = domain.createAccount(email, password);
+            domain = getDomain(data.email);
+            account = domain.createAccount(data.email, data.password);
             account.firstLogon = true;
             domain.validateAccount(account);
-
-//             // create a new member record for the account
-//             MemberRecord mrec = createMember(
-//                 account.accountName, displayName, invite, visitor, affiliate);
-
-            // normalize blank affiliates to null
-            if (StringUtil.isBlank(affiliate)) {
-                affiliate = null;
-            }
 
             // create their main member record
             final MemberRecord mrec = new MemberRecord();
@@ -334,16 +320,21 @@ public class AccountLogic
 
             // set the required fields for registration
             mrec.accountName = account.accountName;
-            mrec.name = displayName;
-            mrec.affiliateMemberId = resolveAffiliate(account.accountName, affiliate, invite);
-            mrec.visitorId = checkCreateId(account.accountName, visitor);
+            mrec.name = data.displayName;
+            // invite will only be non-null if we are registering (without first logging in via
+            // Flash no less) during the same session that we started by clicking on our invite
+            // email link; in that case we want the invite member id to be our affiliate regardless
+            // of what other affiliate we might have lurking around in cookies
+            mrec.affiliateMemberId = (data.invite == null) ?
+                data.affiliateId : data.invite.inviterId;
+            mrec.visitorId = checkCreateId(account.accountName, data.vinfo);
 
             // store their member record in the repository making them a real Whirled citizen
             _memberRepo.insertMember(mrec);
 
             // if we're coming from an external authentication source, note that
-            if (exAuther != null) {
-                _memberRepo.mapExternalAccount(exAuther, externalId, mrec.memberId);
+            if (data.exAuther != null) {
+                _memberRepo.mapExternalAccount(data.exAuther, data.exAuthUserId, mrec.memberId);
             }
 
             // create a blank room for them, store it
@@ -354,17 +345,12 @@ public class AccountLogic
 
             // create their money account, granting them some starting flow
             _moneyLogic.createMoneyAccount(
-                mrec.memberId, registering ? CoinAwards.CREATED_ACCOUNT : 0);
-
-            // store their affiliate, if any (may also be the inviter's memberId)
-            if (affiliate != null) {
-                _memberRepo.setAffiliate(mrec.memberId, affiliate);
-            }
+                mrec.memberId, data.isRegistering ? CoinAwards.CREATED_ACCOUNT : 0);
 
             // record to the event log that we created a new account
-            if (registering) {
-                final String iid = (invite == null) ? null : invite.inviteId;
-                final String vid = (visitor == null) ? null : visitor.id;
+            if (data.isRegistering) {
+                final String iid = (data.invite == null) ? null : data.invite.inviteId;
+                final String vid = (data.vinfo == null) ? null : data.vinfo.id;
                 _eventLog.accountCreated(mrec.memberId, iid, mrec.affiliateMemberId, vid);
             }
 
@@ -376,15 +362,15 @@ public class AccountLogic
             return mrec;
 
         } catch (final RuntimeException e) {
-            log.warning("Error creating member record", "for", email, e);
+            log.warning("Error creating member record", "for", data.email, e);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
 
         } finally {
             if (account != null) {
                 try {
-                    domain.uncreateAccount(email);
+                    domain.uncreateAccount(data.email);
                 } catch (final RuntimeException e) {
-                    log.warning("Failed to rollback account creation", "email", email, e);
+                    log.warning("Failed to rollback account creation", "email", data.email, e);
                 }
             }
             if (stalerec != null) {
@@ -433,21 +419,9 @@ public class AccountLogic
         }
     }
 
-    protected int resolveAffiliate (String account, String affiliate, InvitationRecord invite)
+    protected int resolveAffiliate (int affiliateId, InvitationRecord invite)
     {
-        if (invite != null) {
-            String inviterStr = String.valueOf(invite.inviterId);
-            if (affiliate != null && !affiliate.equals(inviterStr)) {
-                log.warning("New member has both an inviter and an affiliate. Using inviter.",
-                    "email", account, "inviter", inviterStr, "affiliate", affiliate);
-            }
-            affiliate = inviterStr; // turn the inviter into an affiliate
-        }
-        if (affiliate != null) {
-            // look up their affiliate's memberId, if any
-            return _affMapRepo.getAffiliateMemberId(affiliate);
-        }
-        return 0;
+        return (invite == null) ? affiliateId : invite.inviterId;
     }
 
     protected String checkCreateId (String account, VisitorInfo visitor)
@@ -465,12 +439,40 @@ public class AccountLogic
         }
     }
 
+    protected static class AccountData
+    {
+        // mandatory bits
+        public final boolean isRegistering;
+        public final String email;
+        public final String password;
+        public final String displayName;
+        public final VisitorInfo vinfo;
+        public final int affiliateId;
+
+        // optional bits
+        public String realName;
+        public InvitationRecord invite;
+        public int[] birthdayYMD;
+        public ExternalAuther exAuther;
+        public String exAuthUserId;
+
+        public AccountData (boolean isRegistering, String email, String password,
+                            String displayName, VisitorInfo vinfo, int affiliateId)
+        {
+            this.isRegistering = isRegistering;
+            this.email = email.trim().toLowerCase();
+            this.password = password.trim();
+            this.displayName = displayName.trim();
+            this.vinfo = vinfo;
+            this.affiliateId = affiliateId;
+        }
+    }
+
     @Inject protected AuthenticationDomain _defaultDomain;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected ProfileRepository _profileRepo;
-    @Inject protected AffiliateMapRepository _affMapRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
 

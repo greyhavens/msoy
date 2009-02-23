@@ -81,7 +81,7 @@ public abstract class AuxAuthenticator<T extends MsoyCredentials> extends Chaine
                 } else {
                     // a brand new guest
                     guest = _accountLogic.createGuestAccount(
-                        conn.getInetAddress().toString(), creds.visitorId);
+                        conn.getInetAddress().toString(), creds.visitorId, creds.affiliateId);
                 }
                 memberId = guest.memberId;
                 accountName = guest.accountName;
