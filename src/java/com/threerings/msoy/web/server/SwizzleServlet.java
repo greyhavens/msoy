@@ -15,8 +15,6 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.web.gwt.WebCreds;
 import com.threerings.msoy.web.gwt.WebUserService;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Swizzles a session token into a browser cookie to effect a logon from a Flash embed. URLs are of
  * the following form: /swizzle/SESSION_TOKEN/page_token_and_args
@@ -38,7 +36,6 @@ public class SwizzleServlet extends HttpServlet
                 path = path.substring(nextSlash + 1);
             }
         }
-        log.info("Swizzling!", "token", token, "path", path);
         if (token != null && !StringUtil.isBlank(token)) {
             Cookie cookie = new Cookie(WebCreds.credsCookie(), token);
             cookie.setMaxAge(WebUserService.SESSION_DAYS * 24*60*60);
