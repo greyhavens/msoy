@@ -109,7 +109,7 @@ public class ShareDialog extends FloatingPanel
             flashVars += "&featuredPlace=true";
         }
 
-        const fullLink :String = _ctx.getMsoyController().createPageLink("", false);
+        const fullLink :String = _ctx.getMsoyController().createSharableLink("");
         const swfUrl :String = DeploymentConfig.serverURL.replace(
             /(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
 
@@ -343,17 +343,16 @@ public class ShareDialog extends FloatingPanel
     {
         var page :String;
         if (_inGame) {
-            //page = "world-game_l_" + _placeId;
             page = "games-d_" + _placeId;
         } else if (_placeId != 0) {
             page = "world-s" + _placeId;
         }
         if (forDigg) {
-            // we want to give out the same URL for everyone. :(
+            // we want everyone to "digg" the same URL, so we can't include affiliate information
+            // in the URLs we share on Digg
             return DeploymentConfig.serverURL + "go/" + page;
-
         } else {
-            return _ctx.getMsoyController().createPageLink(page, false);
+            return _ctx.getMsoyController().createSharableLink(page);
         }
     }
 

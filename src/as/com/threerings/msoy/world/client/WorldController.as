@@ -67,6 +67,7 @@ import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.MediaDesc;
 
@@ -870,15 +871,15 @@ public class WorldController extends MsoyController
     {
         if (inGWTApp()) {
             return displayPageGWT(page, args);
-
-        } else {
-            const tracking :String = _wctx.getMemberObject().visitorInfo.getTrackingArgs();
-            const pageToken :String = StringUtil.isBlank(page) ? tracking
-                                                               : (page + "-" + args + tracking);
-            const url :String = createPageLink(pageToken, true);
-            log.info("Showing external URL " + url);
-            return super.handleViewUrl(url, null);
         }
+
+        // otherwise we're embedded and we need to route through the swizzle servlet to stuff our
+        // session token into a cookie which will magically authenticate us with GWT
+        const ptoken :String = page + (StringUtil.isBlank(args) ? "" : ("-" + args));
+        const stoken :String = (_wctx.getClient().getCredentials() as MsoyCredentials).sessionToken;
+        const url :String = DeploymentConfig.serverURL + "swizzle/" + stoken + "/" + ptoken;
+        log.info("Showing external URL " + url);
+        return super.handleViewUrl(url, null);
     }
 
     /**

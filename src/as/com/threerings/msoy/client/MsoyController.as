@@ -190,29 +190,13 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Create a link to a page at www.whirled.com, either for us or to share, with the
-     * appropriate affiliate information tacked-on, if necessary.
+     * Creates a link to a page at www.whirled.com that we will be sharing (not following
+     * ourselves). This will have appropriate affiliate information included.
      */
-    public function createPageLink (page :String, forUs :Boolean) :String
+    public function createSharableLink (page :String) :String
     {
-        const memName :MemberName = _mctx.getMyName();
-        const isGuest :Boolean = memName.isGuest();
-        var affiliate :String = null;
-        if (forUs && isGuest) {
-            affiliate = MsoyParameters.get()["aff"] as String;
-
-        } else if (!forUs) {
-            // If the link isn't for us, we now want to always route through /welcome/. Always.
-            // Trust me. Things like the facebook sharing link need to work even if you're a guest.
-            affiliate = isGuest ? "0" : String(memName.getMemberId());
-        }
-        var url :String = DeploymentConfig.serverURL;
-        if (StringUtil.isBlank(affiliate)) {
-            return url + "#" + page; // just a straight page visit
-
-        } else {
-            return url + "welcome/" + encodeURIComponent(StringUtil.trim(affiliate)) + "/" + page;
-        }
+        return DeploymentConfig.serverURL + "welcome/" +
+            _mctx.getMyName().getMemberId() + "/" + page;
     }
 
     /**

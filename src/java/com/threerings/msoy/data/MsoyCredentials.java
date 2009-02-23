@@ -19,6 +19,9 @@ public class MsoyCredentials extends Credentials
     /** The unique tracking id for this client, if one is assigned */
     public String visitorId;
 
+    /** The affiliate id provided to the client via Flash parameters or 0. */
+    public int affiliateId;
+
     /**
      * Creates credentials with the specified username. {@link #sessionToken} should be set before
      * logging in.
@@ -41,5 +44,6 @@ public class MsoyCredentials extends Credentials
         super.toString(buf);
         buf.append(", token=").append(sessionToken);
         buf.append(", visitorId=").append(visitorId);
+        buf.append(", affiliateId=").append(affiliateId);
     }
 }

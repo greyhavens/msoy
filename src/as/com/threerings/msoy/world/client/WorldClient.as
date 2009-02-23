@@ -378,6 +378,7 @@ public class WorldClient extends MsoyClient
         creds.ident = Prefs.getMachineIdent();
         creds.featuredPlaceView = _featuredPlaceView;
         creds.visitorId = getVisitorId();
+        creds.affiliateId = getAffiliateId();
 
         // if we're anonymous and in an embed and have no visitor id we need to generate one
         if (creds.sessionToken == null && creds.getUsername() == null && creds.visitorId == null) {

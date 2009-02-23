@@ -416,6 +416,15 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
+     * Returns the affiliate idq provided to the Flash client in our movie parameters. Will be 0 to
+     * indicate that we have no affiliate or a positive integer.
+     */
+    public function getAffiliateId () :int
+    {
+        return int(MsoyParameters.get()["aff"]);
+    }
+
+    /**
      * Returns the hostname of the game server to which we should connect, or null if that is not
      * configured in our parameters.
      */
