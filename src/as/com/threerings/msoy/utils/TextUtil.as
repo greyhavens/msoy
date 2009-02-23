@@ -72,8 +72,8 @@ public class TextUtil
      * @param defaultFmt The format to use when none is provided for a String field.  If left null,
      *        ChatOverlay.createChatFormat() will be used.
      */
-    public static function setText (txt :TextField, texts :Array,
-        defaultFmt :TextFormat = null) :void
+    public static function setText (
+        txt :TextField, texts :Array, defaultFmt :TextFormat = null) :void
     {
         defaultFmt = defaultFmt || ChatOverlay.createChatFormat();
         var fmt :TextFormat = null;
@@ -100,12 +100,12 @@ public class TextUtil
     }
 
     /**
-     * Parse any "special links" (in the format "[text|url]") in the specified text.
+     * Parse any "special links" (in the format "\uFFFCtext\uFFFCurl\uFFFD") in the specified text.
      *
      * @return an array containing [ format, text, format, text, ... ].
      */
-    protected static function parseSpecialLinks (text :String, defaultFormat :TextFormat,
-        useDefaultColor :Boolean) :Array
+    protected static function parseSpecialLinks (
+        text :String, defaultFormat :TextFormat, useDefaultColor :Boolean) :Array
     {
         var array :Array = [];
 
@@ -137,8 +137,9 @@ public class TextUtil
      * Create a link format for the specified link text.
      * @param isURL Whether to treat this link as a true URL or a link event dispatcher.
      */
-    protected static function createLinkFormat (url :String, defaultFormat :TextFormat,
-        useDefaultColor :Boolean, isURL :Boolean) :TextFormat
+    protected static function createLinkFormat (
+        url :String, defaultFormat :TextFormat, useDefaultColor :Boolean, isURL :Boolean)
+        :TextFormat
     {
         var fmt :TextFormat = new TextFormat();
         fmt.align = defaultFormat.align;
