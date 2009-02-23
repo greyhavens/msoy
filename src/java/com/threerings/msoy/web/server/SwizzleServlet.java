@@ -43,6 +43,9 @@ public class SwizzleServlet extends HttpServlet
             Cookie cookie = new Cookie(WebCreds.credsCookie(), token);
             cookie.setMaxAge(WebUserService.SESSION_DAYS * 24*60*60);
             cookie.setPath("/");
+            // we need to strip our domain to match how GWT handles this cookie
+            String server = req.getServerName();
+            cookie.setDomain(server.substring(server.indexOf(".")+1));
             rsp.addCookie(cookie);
         }
         rsp.sendRedirect("/#" + path);
