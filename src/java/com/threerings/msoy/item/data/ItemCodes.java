@@ -32,11 +32,16 @@ public interface ItemCodes extends InvocationCodes
     public static final String E_SUPER_ITEM_NOT_LISTED = "e.list_super_item";
 
     /** An error code for delisting super items that have listed sub items. */
-    public static final String E_NO_DELIST_LISTED_SUBITEM_HAVER = "e.no_delist_listed_subitem_haver";
+    public static final String E_NO_DELIST_LISTED_SUBITEM_HAVER =
+        "e.no_delist_listed_subitem_haver";
 
     /** An error code indicating charities cannot list an item for bars. */
-    public static final String E_CHARITIES_CANNOT_LIST_FOR_BARS = "e.charities_cannot_list_for_bars";
+    public static final String E_CHARITIES_CANNOT_LIST_FOR_BARS =
+        "e.charities_cannot_list_for_bars";
 
     /** Error when a user flags an item more than once (with the same flag). */
     public static final String E_ITEM_ALREADY_FLAGGED = "e.item_already_flagged";
+
+    /** Error when a user tries to rerate an item they created and listed. */
+    public static final String E_NO_RERATE_OWN_ITEM = "e.no_rerate_own_item";
 }

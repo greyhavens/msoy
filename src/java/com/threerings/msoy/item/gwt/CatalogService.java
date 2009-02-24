@@ -94,7 +94,7 @@ public interface CatalogService extends RemoteService
      *
      * @return the catalog id of the newly listed item.
      */
-    int listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
+    int listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
                   Currency currency, int cost)
         throws ServiceException;
 
@@ -107,7 +107,7 @@ public interface CatalogService extends RemoteService
     /**
      * Updates the catalog listing associated with the supplied catalog original.
      */
-    void updateListing (ItemIdent item, String descrip)
+    void updateListing (ItemIdent item)
         throws ServiceException;
 
     /**

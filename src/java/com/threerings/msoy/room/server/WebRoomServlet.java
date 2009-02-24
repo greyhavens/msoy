@@ -179,34 +179,22 @@ public class WebRoomServlet extends MsoyServiceServlet
     {
         final MemberRecord mrec = requireAuthedUser();
 
-        MoneyLogic.BuyOperation<RoomInfo> buyOp = new MoneyLogic.BuyOperation<RoomInfo>() {
+        MoneyLogic.BuyOperation<RoomInfo> buyOp;
+        BuyResult result = _moneyLogic.buyRoom(
+            mrec, ROOM_PURCHASE_KEY, currency, authedCost, Currency.COINS, getRoomCoinCost(),
+            buyOp = new MoneyLogic.BuyOperation<RoomInfo>() {
             public boolean create (boolean magicFree, Currency currency, int amountPaid) {
                 String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
                 _newScene = _sceneRepo.createBlankRoom(
                     MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, false);
                 return true;
             }
-
             public RoomInfo getWare () {
                 return _newScene.toRoomInfo();
             }
-
             protected SceneRecord _newScene;
-        };
-
-        BuyResult result;
-        try {
-            result = _moneyLogic.buyRoom(mrec, ROOM_PURCHASE_KEY, currency, authedCost,
-                Currency.COINS, getRoomCoinCost(), buyOp);
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
-        if (result == null) {
-            // this won't happen because our buyOp always returns true.
-            log.warning("This isn't supposed to happen.");
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
+        });
+        // result will never be null beceause our BuyOp.create() always returns true
         return new PurchaseResult<RoomInfo>(
             buyOp.getWare(), result.getBuyerBalances(), getRoomQuote(mrec.memberId));
     }

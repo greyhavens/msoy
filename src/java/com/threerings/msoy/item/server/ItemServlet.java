@@ -139,9 +139,15 @@ public class ItemServlet extends MsoyServiceServlet
             originalId = iident.itemId;
         }
 
-        // if this is the first time the player has rated this item, increment the stat.
-        if (item.creatorId != memrec.memberId &&
-            repo.getRatingRepository().getRating(originalId, memrec.memberId) == 0) {
+        // if they are the creator of the item, they're not allowed to re-rate it (otherwise they
+        // could circumvent the minimum listing fee)
+        byte oldRating = repo.getRatingRepository().getRating(originalId, memrec.memberId);
+        if (item.creatorId == memrec.memberId && oldRating != 0) {
+            throw new ServiceException(ItemCodes.E_NO_RERATE_OWN_ITEM);
+        }
+
+        // if this is the first time the player has rated this item, increment items rated stat
+        if (item.creatorId != memrec.memberId && oldRating == 0) {
             _statLogic.incrementStat(memrec.memberId, StatType.ITEMS_RATED, 1);
         }
 

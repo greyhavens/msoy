@@ -39,6 +39,7 @@ import com.threerings.msoy.server.persist.CharityRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.UserActionRepository;
+import com.threerings.msoy.web.gwt.ServiceException;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
@@ -378,11 +379,16 @@ public class MoneyLogic
     public BuyResult buyRoom (
         MemberRecord buyerRec, Object roomKey, Currency buyCurrency, int authedAmount,
         Currency listCurrency, int listAmount, BuyOperation<?> buyOp)
-        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
+        throws ServiceException
     {
-        return buyFromOOO(buyerRec, roomKey, buyCurrency, authedAmount,
-            listCurrency, listAmount, buyOp, UserAction.Type.BOUGHT_ROOM,
-            "m.room_bought", TransactionType.ROOM_PURCHASE, "m.change_rcvd_room");
+        try {
+            return buyFromOOO(
+                buyerRec, roomKey, buyCurrency, authedAmount, listCurrency, listAmount,
+                buyOp, UserAction.Type.BOUGHT_ROOM, "m.room_bought", TransactionType.ROOM_PURCHASE,
+                "m.change_rcvd_room");
+        } catch (MoneyException me) {
+            throw me.toServiceException();
+        }
     }
 
     /**
@@ -390,13 +396,34 @@ public class MoneyLogic
      */
     public BuyResult buyGroup (
         MemberRecord buyerRec, Object groupKey, Currency buyCurrency, int authedAmount,
-        Currency listCurrency, int listAmount, BuyOperation<?> buyOp, String groupName)
-        throws NotEnoughMoneyException, NotSecuredException, MoneyServiceException
+        Currency listCurrency, int listAmount, String groupName, BuyOperation<?> buyOp)
+        throws ServiceException
     {
-        return buyFromOOO(buyerRec, groupKey, buyCurrency, authedAmount,
-            listCurrency, listAmount, buyOp, UserAction.Type.BOUGHT_GROUP,
-            MessageBundle.tcompose("m.group_created", groupName), TransactionType.GROUP_PURCHASE,
-            "m.change_rcvd_group");
+        try {
+            return buyFromOOO(
+                buyerRec, groupKey, buyCurrency, authedAmount, listCurrency, listAmount, buyOp,
+                UserAction.Type.BOUGHT_GROUP, MessageBundle.tcompose("m.group_created", groupName),
+                TransactionType.GROUP_PURCHASE, "m.change_rcvd_group");
+        } catch (MoneyException me) {
+            throw me.toServiceException();
+        }
+    }
+
+    /**
+     * Processes the fee charged when listing an item.
+     */
+    public BuyResult listItem (
+        MemberRecord listerRec, int listFee, String itemName, BuyOperation<?> buyOp)
+        throws ServiceException
+    {
+        try {
+            return buyFromOOO(
+                listerRec, LIST_ITEM_KEY, Currency.COINS, listFee, Currency.COINS, listFee, buyOp,
+                UserAction.Type.LISTED_ITEM, MessageBundle.tcompose("m.created_listing", itemName),
+                TransactionType.CREATED_LISTING, null /* never any change */);
+        } catch (MoneyException me) {
+            throw me.toServiceException();
+        }
     }
 
     /**
@@ -446,8 +473,8 @@ public class MoneyLogic
     }
 
     /**
-     * Purchases SOMETHING. This will only update the appropriate
-     * accounts of an exchange of money -- item fulfillment must be handled separately.
+     * Purchases SOMETHING. This will only update the appropriate accounts of an exchange of money
+     * -- item fulfillment must be handled separately.
      *
      * @param buyerRec the member record of the buying user.
      * @param wareKey the key identifying the ware being sold.
@@ -1246,4 +1273,7 @@ public class MoneyLogic
     @Inject protected MoneyNodeActions _nodeActions;
     @Inject protected BlingPoolDistributor _blingDistributor;
     @Inject protected MemberRepository _memberRepo;
+
+    /** An arbitrary key for tracking quotes in {@link #listItem}. */
+    protected static final Object LIST_ITEM_KEY = new Object();
 }

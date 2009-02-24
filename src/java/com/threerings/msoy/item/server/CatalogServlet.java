@@ -56,6 +56,7 @@ import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
+import com.threerings.msoy.item.gwt.ItemPrices;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -267,11 +268,11 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public int listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
+    public int listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
                          Currency currency, int cost)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        final MemberRecord mrec = requireRegisteredUser();
 
         // validate the listing cost
         if (!currency.isValidCost(cost)) {
@@ -280,7 +281,15 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
-        // Charities cannot list items in bars
+        // make sure they didn't hack their client and violate the pricing minimums
+        int minPrice = ItemPrices.getMinimumPrice(currency, item.type, rating);
+        if (cost < minPrice) {
+            log.warning("Requested to price an item too low", "who", mrec.who(), "item", item,
+                        "rating", rating, "price", cost, "minPrice", minPrice);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+
+        // charities cannot list items in bars
         if (currency == Currency.BARS) {
             CharityRecord charityRec = _memberRepo.getCharityRecord(mrec.memberId);
             if (charityRec != null) {
@@ -289,12 +298,15 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // load a copy of the original item
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
+        final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
         ItemRecord originalItem = repo.loadOriginalItem(item.itemId);
         if (originalItem == null) {
             log.warning("Can't find item to list", "item", item);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
+
+        // sanitize the sales target
+        salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
         // make sure we own AND created this item
         requireIsUser(mrec, originalItem.ownerId, "listItem", originalItem);
@@ -308,8 +320,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // we will modify the original item (it's a clone, no need to worry) to create the new
         // catalog listing master item
-        int originalItemId = originalItem.itemId;
-        ItemRecord master = originalItem;
+        final int originalItemId = originalItem.itemId;
+        final ItemRecord master = originalItem;
         master.prepareForListing(null);
 
         // if this item has a suite id (it's part of another item's suite), we need to configure
@@ -329,23 +341,36 @@ public class CatalogServlet extends MsoyServiceServlet
             ((SubItemRecord)master).suiteId = -suiteMaster.catalogId;
         }
 
-        // use the updated description (the client should prevent this from being too long, but
-        // we'll trim the description rather than fail the insert if something is haywire)
-        master.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
-
-        // create our new immutable catalog master item
-        repo.insertOriginalItem(master, true);
+        // process the payment of the listing fee and create the listing if it succeeds
+        final long now = System.currentTimeMillis();
+        final Currency fcurrency = currency;
+        final int fpricing = pricing, fsalesTarget = salesTarget, fcost = cost;
+        // the coin minimum price is the listing fee
+        int listFee = ItemPrices.getMinimumPrice(Currency.COINS, item.type, rating);
+        MoneyLogic.BuyOperation<CatalogRecord> buyOp;
+        BuyResult result = _moneyLogic.listItem(
+            mrec, minPrice, master.name, buyOp = new MoneyLogic.BuyOperation<CatalogRecord>() {
+            public boolean create (boolean magicFree, Currency currency, int amountPaid) {
+                // create our new immutable catalog master item
+                repo.insertOriginalItem(master, true);
+                // create & insert the catalog record
+                _record = repo.insertListing(
+                    master, originalItemId, fpricing, fsalesTarget, fcurrency, fcost, now);
+                return true;
+            }
+            public CatalogRecord getWare () {
+                return _record;
+            }
+            protected CatalogRecord _record;
+        });
+        // result will never return null beceause our BuyOp.create() always returns true
+        CatalogRecord record = buyOp.getWare();
 
         // copy tags from the original item to the new listing item
-        long now = System.currentTimeMillis();
         repo.getTagRepository().copyTags(originalItemId, master.itemId, mrec.memberId, now);
 
-        // sanitize the sales target
-        salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
-
-        // create & insert the catalog record
-        CatalogRecord record = repo.insertListing(
-            master, originalItemId, pricing, salesTarget, currency, cost, now);
+        // apply the first rating
+        repo.getRatingRepository().rate(master.itemId, mrec.memberId, rating);
 
         // note in the user action system that they listed an item
         _userActionRepo.logUserAction(UserAction.listedItem(mrec.memberId));
@@ -432,10 +457,10 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public void updateListing (ItemIdent item, String descrip)
+    public void updateListing (ItemIdent item)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireRegisteredUser();
 
         // load a copy of the original item
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
@@ -464,10 +489,6 @@ public class CatalogServlet extends MsoyServiceServlet
         ItemRecord master = originalItem;
         master.prepareForListing(oldListItem);
 
-        // use the updated description (the client should prevent this from being too long, but
-        // we'll trim the description rather than fail the insert if something is haywire)
-        master.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
-
         // update our catalog master item
         repo.updateOriginalItem(master);
 
@@ -480,7 +501,7 @@ public class CatalogServlet extends MsoyServiceServlet
                                Currency currency, int cost)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireRegisteredUser();
 
         // validate the listing cost
         if (!currency.isValidCost(cost)) {
@@ -491,10 +512,17 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // load up the listing we're updating
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
-        CatalogRecord record = repo.loadListing(catalogId, false);
+        CatalogRecord record = repo.loadListing(catalogId, true);
         if (record == null) {
             log.warning("Missing listing for update [who=" + mrec.who() + ", type=" + itemType +
                         ", catId=" + catalogId + "].");
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+
+        // make sure they didn't hack their client and violate the pricing minimums
+        if (cost < ItemPrices.getMinimumPrice(currency, itemType, (byte)record.item.getRating())) {
+            log.warning("Requested to price an item too low", "who", mrec.who(), "type", itemType,
+                        "catId", catalogId, "rating", record.item.getRating(), "cost", cost);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
@@ -522,7 +550,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public void removeListing (byte itemType, int catalogId)
         throws ServiceException
     {
-        _itemLogic.removeListing(requireAuthedUser(), itemType, catalogId);
+        _itemLogic.removeListing(requireRegisteredUser(), itemType, catalogId);
     }
 
     // from interface CatalogService

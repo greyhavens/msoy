@@ -31,6 +31,7 @@ public enum TransactionType
     REFUND_DEDUCTED(16),
     ROOM_PURCHASE(17),
     GROUP_PURCHASE(18),
+    CREATED_LISTING(19),
     ;
 
     // Required by ByteEnum

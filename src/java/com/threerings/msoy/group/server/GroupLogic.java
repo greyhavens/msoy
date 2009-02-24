@@ -104,7 +104,10 @@ public class GroupLogic
         // we fill this in ourselves
         grec.creatorId = mrec.memberId;
 
-        MoneyLogic.BuyOperation<Group> buyOp = new MoneyLogic.BuyOperation<Group>() {
+        MoneyLogic.BuyOperation<Group> buyOp;
+        BuyResult result = _moneyLogic.buyGroup(
+            mrec, GROUP_PURCHASE_KEY, currency, authedAmount, Currency.COINS, getGroupCoinCost(),
+            grec.name, buyOp = new MoneyLogic.BuyOperation<Group>() {
             public boolean create (boolean magicFree, Currency currency, int amountPaid)
                 throws MoneyServiceException
             {
@@ -133,20 +136,8 @@ public class GroupLogic
             public Group getWare () {
                 return grec.toGroupObject();
             }
-        };
-
-        BuyResult result;
-        try {
-            result = _moneyLogic.buyGroup(mrec, GROUP_PURCHASE_KEY, currency, authedAmount,
-                Currency.COINS, getGroupCoinCost(), buyOp, grec.name);
-        } catch (MoneyException me) {
-            throw me.toServiceException();
-        }
-        if (result == null) {
-            log.warning("This isn't supposed to happen.");
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-        // no need to quote them another group..
+        });
+        // result will never be null beceause our BuyOp.create() always returns true
         return new PurchaseResult<Group>(buyOp.getWare(), result.getBuyerBalances(), null);
     }
 
@@ -222,7 +213,7 @@ public class GroupLogic
         return _runtime.getCoinCost(CostsConfigObject.NEW_GROUP);
     }
 
-    /** An arbitrary key for quoting group creation(purchase). */
+    /** An arbitrary key for quoting group creation (purchase). */
     protected static final Object GROUP_PURCHASE_KEY = new Object();
 
     // our dependencies

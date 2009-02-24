@@ -89,11 +89,11 @@ public abstract class Rating extends FlexTable
     }
 
     // from interface Stars.StarMouseListener
-    public void starClicked (byte newRating)
+    public void starClicked (final byte newRating)
     {
-        _playerStars.setRating(_memberRating = newRating);
         handleRate(newRating, new MsoyCallback<RatingResult>() {
             public void onSuccess (RatingResult result) {
+                _playerStars.setRating(_memberRating = newRating);
                 _averageStars.setRating(result.getRating());
                 setRatingCount(result.ratingCount);
             }

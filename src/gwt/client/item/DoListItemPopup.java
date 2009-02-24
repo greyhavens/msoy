@@ -19,16 +19,23 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
-import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
+import com.threerings.msoy.item.gwt.ItemPrices;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.web.gwt.Args;
+import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;
+import client.ui.MoneyLabel;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
+import client.ui.Stars;
 import client.util.ClickCallback;
+import client.util.Link;
+import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 public class DoListItemPopup extends VerticalPanel
@@ -52,9 +59,6 @@ public class DoListItemPopup extends VerticalPanel
         _item = item;
         _listener = listener;
 
-        _status = new Label("");
-        _status.addStyleName("Status");
-
         // determine whether or not this item is salable
         boolean salableItem = !(_item instanceof SubItem) || ((SubItem)_item).isSalable();
 
@@ -73,24 +77,42 @@ public class DoListItemPopup extends VerticalPanel
             add(MsoyUI.createHTML(message, "Blurb"));
         }
 
-        // only add the description if we're not repricing
+        // add the description (if we're not just repricing)
         if (!repricing) {
             add(MsoyUI.createLabel(_imsgs.doListDescripHeader(), "Header"));
             add(MsoyUI.createLabel(firstTime ? _imsgs.doListNeedsDescrip() :
                                    _imsgs.doUpdateNeedsDescrip(), "Blurb"));
-            add(_description = new TextArea());
-            _description.setText(item.description);
-            _description.setCharacterWidth(50);
-            _description.setVisibleLines(3);
+            add(MsoyUI.createLabel(item.description, "Descrip"));
+            add(Link.create("Edit description...", Pages.STUFF,
+                            Args.compose("e", item.getType(), item.itemId)));
+        } else {
+            _stars.setRating(listing.detail.item.getRating());
+        }
+
+        // add a rating interface
+        if (salableItem && firstTime) {
+            SmartTable rating = new SmartTable(0, 3);
+            rating.addWidget(MsoyUI.createHTML(_imsgs.doListRatingIntro(), null), 2, null);
+            rating.addWidget(WidgetUtil.makeShim(5, 5), 2, null);
+            int row = rating.addText(_imsgs.doListRating(), 1, null);
+            rating.getFlexCellFormatter().setWidth(row, 0, "150px"); // yay html!
+            rating.setWidget(row, 1, _stars, 1, null);
+            row = rating.addText(_imsgs.doListFee(), 1, null);
+            _fee = new MoneyLabel(Currency.COINS, getMinimumPrice(Currency.COINS));
+            rating.setWidget(row, 1, _fee, 1, null);
+            add(MsoyUI.createLabel(_imsgs.doListRatingHeader(), "Header"));
+            add(rating);
         }
 
         // possibly add the pricing selection UI
         if (salableItem && (firstTime || repricing)) {
-            SmartTable pricing = new SmartTable();
-            pricing.setCellPadding(0);
-            pricing.setCellSpacing(3);
+            SmartTable pricing = new SmartTable(0, 3);
 
-            int row = pricing.addText(_imsgs.doListStrategy(), 1, "rightLabel");
+            int row = pricing.addWidget(
+                MsoyUI.createHTML(_imsgs.doListPricingIntro(), null), 3, null);
+            pricing.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
+
+            row = pricing.addText(_imsgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
             boolean isSalable = (_item instanceof SubItem && !((SubItem) _item).isSalable());
             int selectedPricingIndex =
@@ -123,6 +145,8 @@ public class DoListItemPopup extends VerticalPanel
             int salesTarget = (listing == null) ? DEFAULT_SALES_TARGET : listing.salesTarget;
             _salesTarget.setText(String.valueOf(salesTarget));
 
+            pricing.addWidget(WidgetUtil.makeShim(5, 5), 3, null);
+
             _currencyBox = new ListBox();
             for (int i=0; i<LISTABLE_CURRENCIES.length; ++i) {
                 _currencyBox.addItem(_dmsgs.xlate(LISTABLE_CURRENCIES[i].getLabel()));
@@ -148,8 +172,6 @@ public class DoListItemPopup extends VerticalPanel
             tipper.onChange(_pricingBox); // alas setSelectedIndex() doesn't do this, yay DHTML
         }
 
-        add(_status);
-
         // create buttons for listing and
         HorizontalPanel footer = new HorizontalPanel();
         footer.add(new Button(_imsgs.doListBtnCancel(), new ClickListener() {
@@ -168,10 +190,16 @@ public class DoListItemPopup extends VerticalPanel
             final String resultMsg = firstTime ? _imsgs.doListListed() : _imsgs.doListUpdated();
             new ClickCallback<Integer>(_doIt) {
                 @Override protected boolean callService () {
-                    int cost = getCost();
-                    Currency currency = (cost == 0) ? Currency.COINS : getCurrency();
-                    _catalogsvc.listItem(_item.getIdent(), _description.getText(), getPricing(),
-                                         getSalesTarget(), currency, cost, this);
+                    byte rating = (byte)_stars.getRating();
+                    if (rating == 0) {
+                        MsoyUI.error(_imsgs.doListNeedRating());
+                        return false;
+                    }
+                    if (!validatePricing()) {
+                        return false;
+                    }
+                    _catalogsvc.listItem(_item.getIdent(), rating, getPricing(), getSalesTarget(),
+                                         getCurrency(), getCost(), this);
                     return true;
                 }
                 @Override protected boolean gotResult (Integer result) {
@@ -192,6 +220,9 @@ public class DoListItemPopup extends VerticalPanel
                         MsoyUI.error(_imsgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
+                    if (!validatePricing()) {
+                        return false;
+                    }
                     _catalogsvc.updatePricing(_item.getType(), _item.catalogId, pricing,
                                               salesTarget, getCurrency(), getCost(), this);
                     return true;
@@ -207,7 +238,7 @@ public class DoListItemPopup extends VerticalPanel
         } else {
             new ClickCallback<Void>(_doIt) {
                 @Override protected boolean callService () {
-                    _catalogsvc.updateListing(_item.getIdent(), _description.getText(), this);
+                    _catalogsvc.updateListing(_item.getIdent(), this);
                     return true;
                 }
                 @Override protected boolean gotResult (Void result) {
@@ -217,6 +248,15 @@ public class DoListItemPopup extends VerticalPanel
                 }
             };
         }
+    }
+
+    protected boolean validatePricing ()
+    {
+        if (getCost() < getMinimumPrice(getCurrency())) {
+            MsoyUI.error(_imsgs.doListMissedMinimum(""+getMinimumPrice(Currency.COINS)));
+            return false;
+        }
+        return true;
     }
 
     protected int getPricing ()
@@ -247,16 +287,33 @@ public class DoListItemPopup extends VerticalPanel
         return (_cost == null) ? 100 : _cost.getValue().intValue();
     }
 
+    protected int getMinimumPrice (Currency currency)
+    {
+        return ItemPrices.getMinimumPrice(currency, _item.getType(), (byte)_stars.getRating());
+    }
+
+    protected Stars _stars = new Stars(0f, false, false, new Stars.StarMouseListener() {
+        public void starClicked (byte newRating) {
+            _stars.setRating(newRating);
+            _fee.update(Currency.COINS, getMinimumPrice(Currency.COINS));
+        }
+        public void starMouseOn (byte rating) {
+            // nada
+        }
+        public void starMouseOff () {
+            // nada
+        }
+    });
+
     protected Item _item;
     protected ListedListener _listener;
 
-    protected TextArea _description;
     protected ListBox _pricingBox;
     protected ListBox _currencyBox;
     protected Label _pricingTip, _salesTargetLabel;
     protected NumberTextBox _salesTarget, _cost;
 
-    protected Label _status;
+    protected MoneyLabel _fee;
     protected Button _doIt;
 
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);

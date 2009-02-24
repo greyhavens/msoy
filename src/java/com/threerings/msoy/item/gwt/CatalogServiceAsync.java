@@ -37,7 +37,7 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#listItem}
      */
-    void listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
+    void listItem (ItemIdent item, byte rating, int pricing, int salesTarget,
                    Currency currency, int cost, AsyncCallback<Integer> callback);
 
     /**
@@ -48,7 +48,7 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#updateListing}
      */
-    void updateListing (ItemIdent item, String descrip, AsyncCallback<Void> callback);
+    void updateListing (ItemIdent item, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#updatePricing}

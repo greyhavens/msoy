@@ -154,8 +154,10 @@
   font-size: 13px;
 }
 
-.doListItem .Status {
-  padding-top: 5px;
+.doListItem .Descrip {
+  padding: 5px;
+  border: 1px solid;
+  margin: 5px 0px;
 }
 
 /** ListingBox styles */
