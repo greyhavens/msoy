@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -31,9 +32,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import client.shell.DynamicLookup;
 import client.ui.HeaderBox;
+import client.ui.MoneyLabel;
 import client.ui.MsoyUI;
 import client.ui.NowLoadingWidget;
-import client.ui.PriceLabel;
 import client.ui.SearchBox;
 import client.ui.Stars;
 import client.ui.ThumbBox;
@@ -169,7 +170,9 @@ public class ShopPanel extends FlowPanel
         contents.setWidget(0, 1, right);
         contents.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         contents.setWidget(1, 0, WidgetUtil.makeShim(5, 5), 2, null);
-        contents.setWidget(2, 0, new PriceLabel(card.currency, card.cost));
+        MoneyLabel price = new MoneyLabel(card.currency, card.cost);
+        price.insert(new InlineLabel(_msgs.shopPrice(), false, false, true), 0);
+        contents.setWidget(2, 0, price);
         contents.setWidget(2, 1, new Stars(card.rating, true, false, null));
 
         String ipath = "/images/shop/icon_" + icon + ".png";
