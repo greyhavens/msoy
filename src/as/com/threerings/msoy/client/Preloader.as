@@ -140,18 +140,20 @@ public class Preloader extends Sprite
             value.addEventListener(FlexEvent.INIT_COMPLETE, handleComplete);
         });
 
-        // figure out what upsell message to use (_Whirled_! will be tacked on)
-        var msg :String = getContentPage().indexOf("game") == -1 ?
-            "Create your own world in " : "Play more multiplayer games on";
+        if (isEmbed()) {
+            // figure out what upsell message to use (_Whirled_! will be tacked on)
+            var msg :String = getContentPage().indexOf("game") == -1 ?
+                "Create your own world in " : "Play more multiplayer games on";
 
-        var field :TextField = new TextField();
-        field.autoSize = TextFieldAutoSize.CENTER;
-        field.defaultTextFormat = LoadingSpinner.makeTextFormat(18);
-        field.htmlText = 
-            msg + " <a href=\"" + getWhirledPage("") + "\" target=\"_blank\"><u>Whirled</u></a>!";
-        field.x = (_stageW - field.width) / 2;
-        field.y = 3 * (_stageH - field.height) / 4;
-        addChild(field);
+            var field :TextField = new TextField();
+            field.autoSize = TextFieldAutoSize.CENTER;
+            field.defaultTextFormat = LoadingSpinner.makeTextFormat(18);
+            field.htmlText = msg +
+                " <a href=\"" + getWhirledPage("") + "\" target=\"_blank\"><u>Whirled</u></a>!";
+            field.x = (_stageW - field.width) / 2;
+            field.y = 3 * (_stageH - field.height) / 4;
+            addChild(field);
+        }
     }
 
     // from IPreloaderDisplay
@@ -313,6 +315,12 @@ public class Preloader extends Sprite
         } else {
             return DeploymentConfig.serverURL + "#" + token;
         }
+    }
+
+    protected function isEmbed () :Boolean
+    {
+        // this is sort of a hack to determine whether we're an embedded game/room or not
+        return MsoyParameters.get()["vec"] != null;
     }
 
     protected function handleProgress (event :ProgressEvent) :void
