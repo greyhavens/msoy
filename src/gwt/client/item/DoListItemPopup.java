@@ -85,8 +85,6 @@ public class DoListItemPopup extends VerticalPanel
             add(MsoyUI.createLabel(item.description, "Descrip"));
             add(Link.create("Edit description...", Pages.STUFF,
                             Args.compose("e", item.getType(), item.itemId)));
-        } else {
-            _stars.setRating(listing.detail.item.getRating());
         }
 
         // add a rating interface
@@ -102,6 +100,13 @@ public class DoListItemPopup extends VerticalPanel
             rating.setWidget(row, 1, _fee, 1, null);
             add(MsoyUI.createLabel(_imsgs.doListRatingHeader(), "Header"));
             add(rating);
+
+        } else if (firstTime) {
+            // it's not a salable item, so the rating doesn't matter, but we need something
+            _stars.setRating(5);
+
+        } else if (repricing) {
+            _stars.setRating(listing.detail.item.getRating());
         }
 
         // possibly add the pricing selection UI
@@ -284,7 +289,7 @@ public class DoListItemPopup extends VerticalPanel
     protected int getCost ()
     {
         // non-salable items have no pricing interface and a default flow cost
-        return (_cost == null) ? 100 : _cost.getValue().intValue();
+        return (_cost == null) ? ItemPrices.DEFAULT_MIN_PRICE : _cost.getValue().intValue();
     }
 
     protected int getMinimumPrice (Currency currency)

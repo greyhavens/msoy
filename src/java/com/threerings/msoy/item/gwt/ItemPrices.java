@@ -14,6 +14,9 @@ import com.threerings.msoy.money.data.all.Currency;
  */
 public class ItemPrices
 {
+    /** The default minimum item price. */
+    public static final int DEFAULT_MIN_PRICE = 10;
+
     /**
      * Returns the minimum pricing for an item of the specified type with the specified rating.
      */
@@ -31,8 +34,6 @@ public class ItemPrices
         }
     }
 
-    protected static final int DEFAULT_MIN_PRICE = 10;
-
     protected static final Map<Byte, int[]> MIN_PRICES = new HashMap<Byte, int[]>();
     static {
         MIN_PRICES.put(Item.AVATAR, new int[] { 100, 200, 500, 1500, 5000 });
@@ -44,5 +45,9 @@ public class ItemPrices
         MIN_PRICES.put(Item.GAME, new int[] { 200, 300, 700, 2500, 5000 });
         MIN_PRICES.put(Item.PHOTO, new int[] { 10, 50, 100, 500, 1000 });
         MIN_PRICES.put(Item.VIDEO, new int[] { 10, 50, 100, 500, 1000 });
+        MIN_PRICES.put(Item.DOCUMENT, new int[] { 10, 50, 100, 500, 1000 });
+        MIN_PRICES.put(Item.LEVEL_PACK, new int[] { 200, 300, 700, 2500, 5000 });
+        MIN_PRICES.put(Item.ITEM_PACK, new int[] { 200, 300, 700, 2500, 5000 });
+        // these use the default of 10 TROPHY_SOURCE, PRIZE, PROP
     }
 }
