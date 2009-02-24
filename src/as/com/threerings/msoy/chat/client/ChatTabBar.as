@@ -33,13 +33,14 @@ import com.threerings.crowd.chat.data.SystemMessage;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
 
+import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
@@ -166,11 +167,14 @@ public class ChatTabBar extends HBox
         // NOOP
     }
 
-    public function openChannelTab (channel :MsoyChatChannel, andSelect :Boolean) :void
+    /**
+     * @param fromUserAction if this is the result of the user choosing to open the channel.
+     */
+    public function openChannelTab (channel :MsoyChatChannel, fromUserAction :Boolean) :void
     {
         var index :int = getLocalTypeIndex(channel.toLocalType());
         if (index != -1) {
-            if (andSelect) {
+            if (fromUserAction) {
                 selectedIndex = index;
             }
             return;
@@ -178,8 +182,16 @@ public class ChatTabBar extends HBox
 
         // this tab hasn't been created yet.
         addTab(new ChatTab(_ctx, this, channel, ""+channel.ident));
-        if (andSelect) {
+        if (fromUserAction) {
             selectedIndex = _tabs.length - 1;
+
+            // when the user opens a group channel explicitly, we want to make sure
+            // we always tell the server that they want to hear it, just in case.
+            if (channel.type == MsoyChatChannel.GROUP_CHANNEL) {
+                (_ctx.getClient().getService(MemberService) as MemberService).setHearingGroupChat(
+                    _ctx.getClient(), (channel.ident as GroupName).getGroupId(), true,
+                    _ctx.confirmListener());
+            }
         }
     }
 
@@ -403,8 +415,8 @@ public class ChatTabBar extends HBox
 
     protected function addTab (tab :ChatTab, index :int = -1) :void
     {
-        tab.addEventListener(ChatTab.TAB_CLICK, selectTab);
-        tab.addEventListener(ChatTab.TAB_CLOSE_CLICK, removeTab);
+        tab.addEventListener(ChatTab.TAB_CLICK, handleSelectTab);
+        tab.addEventListener(ChatTab.TAB_CLOSE_CLICK, handleRemoveTab);
         if (index == -1) {
             addChild(tab);
             _tabs.push(tab);
@@ -423,32 +435,45 @@ public class ChatTabBar extends HBox
         checkScrollTabs();
     }
 
-    protected function selectTab (event :Event) :void
+    protected function handleSelectTab (event :Event) :void
     {
         var tab :ChatTab = event.target as ChatTab;
-        if (tab == null) {
-            return;
-        }
-
-        var ii :int = ArrayUtil.indexOf(_tabs, tab);
-        if (ii >= 0) {
-            selectedIndex = ii;
+        if (tab != null) {
+            var ii :int = ArrayUtil.indexOf(_tabs, tab);
+            if (ii != -1) {
+                selectedIndex = ii;
+            }
         }
     }
 
-    protected function removeTab (event :Event) :void
+    protected function handleRemoveTab (event :Event) :void
     {
         var tab :ChatTab = event.target as ChatTab;
         if (tab == null) {
             return;
         }
 
-        var index :int = ArrayUtil.indexOf(_tabs, event.target);
-        if (index < 0) {
-            return;
-        }
+        // if they are trying to close a GroupTab, we want to wait until we confirm with
+        // the server that it will deliver no more
+        if (tab.channel.type == MsoyChatChannel.GROUP_CHANNEL) {
+            tab.displayCloseBox(false);
+            (_ctx.getClient().getService(MemberService) as MemberService).setHearingGroupChat(
+                _ctx.getClient(), (tab.channel.ident as GroupName).getGroupId(), false,
+                _ctx.confirmListener(function () :void {
+                    removeTab(tab);
+                }));
 
-        removeTabAt(index);
+        } else {
+            removeTab(tab);
+        }
+    }
+
+    protected function removeTab (tab :ChatTab) :void
+    {
+        var index :int = ArrayUtil.indexOf(_tabs, tab);
+        if (index != -1) {
+            removeTabAt(index);
+        }
     }
 
     protected function removeTabAt (index :int, shutdown :Boolean = true) :void

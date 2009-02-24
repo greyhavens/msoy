@@ -22,8 +22,10 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.crowd.data.BodyObject;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberLocal;
 import com.threerings.msoy.server.MemberLocator;
 
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -79,7 +81,13 @@ public class MsoyChatChannelManager extends ChatChannelManager
     @Override // from ChatChannelManager
     protected boolean shouldDeliverSpeak (ChatChannel channel, UserMessage message, BodyObject body)
     {
-        return true; // TODO: implement channel suppression
+        MsoyChatChannel chan = (MsoyChatChannel) channel;
+        if (chan.type == MsoyChatChannel.GROUP_CHANNEL) {
+            return body.getLocal(MemberLocal.class).isHearingGroupChat(
+                ((GroupName) chan.ident).getGroupId());
+        }
+        // otherwise: we loves it!
+        return true;
     }
 
     protected void finishResolveGroupChannel (final MsoyChatChannel channel)

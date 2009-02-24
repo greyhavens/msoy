@@ -266,8 +266,21 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #setHearingGroupChat} requests. */
+    public static final int SET_HEARING_GROUP_CHAT = 21;
+
+    // from interface MemberService
+    public void setHearingGroupChat (Client arg1, int arg2, boolean arg3, InvocationService.ConfirmListener arg4)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, SET_HEARING_GROUP_CHAT, new Object[] {
+            Integer.valueOf(arg2), Boolean.valueOf(arg3), listener4
+        });
+    }
+
     /** The method id used to dispatch {@link #setHomeSceneId} requests. */
-    public static final int SET_HOME_SCENE_ID = 21;
+    public static final int SET_HOME_SCENE_ID = 22;
 
     // from interface MemberService
     public void setHomeSceneId (Client arg1, int arg2, int arg3, int arg4, InvocationService.ConfirmListener arg5)
@@ -280,7 +293,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #trackClientAction} requests. */
-    public static final int TRACK_CLIENT_ACTION = 22;
+    public static final int TRACK_CLIENT_ACTION = 23;
 
     // from interface MemberService
     public void trackClientAction (Client arg1, String arg2, String arg3)
@@ -291,7 +304,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #trackTestAction} requests. */
-    public static final int TRACK_TEST_ACTION = 23;
+    public static final int TRACK_TEST_ACTION = 24;
 
     // from interface MemberService
     public void trackTestAction (Client arg1, String arg2, String arg3)
@@ -302,7 +315,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #trackVectorAssociation} requests. */
-    public static final int TRACK_VECTOR_ASSOCIATION = 24;
+    public static final int TRACK_VECTOR_ASSOCIATION = 25;
 
     // from interface MemberService
     public void trackVectorAssociation (Client arg1, String arg2)
@@ -313,7 +326,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateAvailability} requests. */
-    public static final int UPDATE_AVAILABILITY = 25;
+    public static final int UPDATE_AVAILABILITY = 26;
 
     // from interface MemberService
     public void updateAvailability (Client arg1, int arg2)
@@ -324,7 +337,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateStatus} requests. */
-    public static final int UPDATE_STATUS = 26;
+    public static final int UPDATE_STATUS = 27;
 
     // from interface MemberService
     public void updateStatus (Client arg1, String arg2, InvocationService.InvocationListener arg3)

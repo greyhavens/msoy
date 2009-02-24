@@ -98,6 +98,36 @@ public class MemberLocal extends BodyLocal
     }
 
     /**
+     * Is this user hearing the specified group's chat?
+     */
+    public boolean isHearingGroupChat (int groupId)
+    {
+        return (_suppressedGroupChats == null) || !_suppressedGroupChats.contains(groupId);
+    }
+
+    /**
+     * Sets whether this user hears group chat for the specified group.
+     */
+    public void setHearingGroupChat (int groupId, boolean hear)
+    {
+        System.err.println("setHearingGroupChat(" + groupId + ", " + hear + ")");
+        if (hear) {
+            if (_suppressedGroupChats != null) {
+                _suppressedGroupChats.remove(groupId);
+                if (_suppressedGroupChats.isEmpty()) {
+                    _suppressedGroupChats = null;
+                }
+            }
+
+        } else {
+            if (_suppressedGroupChats == null) {
+                _suppressedGroupChats = new StreamableArrayIntSet();
+            }
+            _suppressedGroupChats.add(groupId);
+        }
+    }
+
+    /**
      * Called when a player has just switched from one avatar to a new one or by {@link #willEnter}
      * below. In either case, {@link #memories} is expected to contain the memories for the avatar;
      * either because it was put there (and possibly serialized in the case of a peer move) when
@@ -183,4 +213,7 @@ public class MemberLocal extends BodyLocal
             roomObj.commitTransaction();
         }
     }
+
+    /** If not null, contains the set of group ids for which to suppress chat. */
+    protected StreamableArrayIntSet _suppressedGroupChats;
 }

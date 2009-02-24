@@ -97,6 +97,11 @@ public interface MemberService extends InvocationService
     void getGroupHomeSceneId (Client client, int groupId, ResultListener listener);
 
     /**
+     * Indicate whether we want to hear the group chat of the specified group.
+     */
+    void setHearingGroupChat (Client client, int groupId, boolean hear, ConfirmListener listener);
+
+    /**
      * Acknowledges that the user has read their warning message.
      */
     void acknowledgeWarning (Client client);

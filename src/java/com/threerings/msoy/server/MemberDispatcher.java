@@ -155,6 +155,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.SET_HEARING_GROUP_CHAT:
+            ((MemberProvider)provider).setHearingGroupChat(
+                source, ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
         case MemberMarshaller.SET_HOME_SCENE_ID:
             ((MemberProvider)provider).setHomeSceneId(
                 source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), ((Integer)args[2]).intValue(), (InvocationService.ConfirmListener)args[3]

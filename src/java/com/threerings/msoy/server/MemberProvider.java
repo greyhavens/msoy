@@ -131,6 +131,12 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#setHearingGroupChat} request.
+     */
+    void setHearingGroupChat (ClientObject caller, int arg1, boolean arg2, InvocationService.ConfirmListener arg3)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#setHomeSceneId} request.
      */
     void setHomeSceneId (ClientObject caller, int arg1, int arg2, int arg3, InvocationService.ConfirmListener arg4)
