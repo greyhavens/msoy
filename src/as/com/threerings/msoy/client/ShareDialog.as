@@ -199,8 +199,6 @@ public class ShareDialog extends FloatingPanel
     {
         const roomOrGame :String = (_inGame ? "game" : "room");
         var stubArgs :String = roomOrGame + "=" + _placeId;
-        // add a vector, either s.whirled.rooms.ID or s.whirled.games.ID
-        stubArgs += "&vec=s.whirled." + roomOrGame + "s." + _placeId;
         const memName :MemberName = _ctx.getMyName();
         if (!memName.isGuest()) {
             stubArgs += "&aff=" + memName.getMemberId();
