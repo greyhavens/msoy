@@ -1316,8 +1316,11 @@ public class WorldController extends MsoyController
      */
     public function refreshDisplayName () :void
     {
-        if (ExternalInterface.available) {
-            ExternalInterface.call("refreshDisplayName");
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("refreshDisplayName");
+            }
+        } catch (e :Error) {
         }
     }
 
