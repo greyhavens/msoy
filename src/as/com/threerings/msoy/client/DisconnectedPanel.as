@@ -43,9 +43,7 @@ public class DisconnectedPanel extends VBox
         addChild(_message);
 
         if (ExternalInterface.available) {
-            addChild(new CommandButton("Reconnect", function () :void {
-                ExternalInterface.call("rebootFlashClient");
-            }));
+            addChild(new CommandButton("Reconnect", ExternalInterface.call, "rebootFlashClient"));
         }
 
         if (msg != null) {
