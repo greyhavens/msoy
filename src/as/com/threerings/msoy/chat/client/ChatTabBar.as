@@ -20,6 +20,7 @@ import com.threerings.flex.FlexWrapper;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -44,6 +45,8 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
+
+import com.threerings.msoy.notify.data.Notification;
 
 /**
  * Displays our chat tabs.
@@ -461,6 +464,9 @@ public class ChatTabBar extends HBox
                 _ctx.getClient(), (tab.channel.ident as GroupName).getGroupId(), false,
                 _ctx.confirmListener(function () :void {
                     removeTab(tab);
+                    _ctx.getNotificationDirector().addGenericNotification(
+                        MessageBundle.tcompose("m.group_chat_closed", tab.channel.ident),
+                        Notification.SYSTEM);
                 }));
 
         } else {
