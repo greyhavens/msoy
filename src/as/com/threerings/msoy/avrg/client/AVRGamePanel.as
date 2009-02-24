@@ -4,10 +4,8 @@
 package com.threerings.msoy.avrg.client {
 
 import flash.events.Event;
-import flash.events.ProgressEvent;
 
 import flash.display.BitmapData;
-import flash.display.Loader;
 import flash.display.LoaderInfo;
 
 import flash.geom.Matrix;
@@ -25,7 +23,6 @@ import com.threerings.util.ValueEvent;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.Snapshottable;

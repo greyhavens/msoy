@@ -8,16 +8,11 @@ import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
 
-import flash.geom.Rectangle;
-
 import flash.net.FileReference;
 import flash.net.URLRequest;
 
-import flash.system.Capabilities;
 
 import mx.core.BitmapAsset;
-import mx.core.Container;
-import mx.core.UIComponent;
 import mx.controls.Image;
 import mx.controls.ProgressBar;
 import mx.controls.Label;
@@ -35,7 +30,6 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.RoomPostcardPanel;
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.room.data.MsoyScene;
 
 public class SnapshotPanel extends FloatingPanel
 {

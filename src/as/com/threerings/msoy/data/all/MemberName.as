@@ -11,8 +11,6 @@ import com.threerings.util.Name;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.msoy.client.DeploymentConfig;
-
 /**
  * Extends Name with persistent member information.
  */

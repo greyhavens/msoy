@@ -6,11 +6,9 @@ package com.threerings.msoy.world.client {
 import flash.geom.Rectangle;
 
 import flash.external.ExternalInterface;
-import flash.system.Capabilities;
 
 import mx.controls.Button;
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
@@ -64,7 +62,6 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
 
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -75,8 +72,6 @@ import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;

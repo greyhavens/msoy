@@ -3,26 +3,12 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.display.LoaderInfo;
-import flash.display.Sprite;
-
-import flash.events.Event;
-import flash.events.ErrorEvent;
-import flash.events.IEventDispatcher;
-import flash.events.IOErrorEvent;
-import flash.events.ProgressEvent;
-import flash.events.SecurityErrorEvent;
-
-import flash.utils.Dictionary;
-
 import caurina.transitions.Tweener;
 
-import mx.events.ResizeEvent;
 
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 
-import com.threerings.msoy.ui.LoadingSpinner;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
 public class GameLoadingDisplay extends PlaceLoadingDisplay 

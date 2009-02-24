@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.display.DisplayObjectContainer;
-
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Text;
@@ -16,11 +14,9 @@ import com.threerings.util.Name;
 
 import com.threerings.parlor.data.Table;
 
-import com.whirled.game.data.GameDefinition;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.MediaWrapper;
-import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.LobbyObject;

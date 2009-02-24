@@ -9,7 +9,6 @@ import mx.collections.ArrayCollection;
 import mx.collections.Sort;
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.controls.Label;
 import mx.controls.List;
 import mx.controls.Text;
 import mx.core.ClassFactory;
@@ -26,7 +25,6 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 /**
  * Displays the current tables list and related bits.

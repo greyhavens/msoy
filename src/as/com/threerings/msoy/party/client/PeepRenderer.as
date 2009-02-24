@@ -11,7 +11,6 @@ import mx.controls.Label;
 import mx.core.ClassFactory;
 import mx.core.IFactory;
 
-import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.PlayerRenderer;
@@ -19,7 +18,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 
 public class PeepRenderer extends PlayerRenderer

@@ -10,7 +10,6 @@ import com.threerings.io.SimpleStreamableObject;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.item.data.all.Audio;
-import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Contains immutable information on background audio in a scene.

@@ -4,17 +4,12 @@
 package com.threerings.msoy.applets {
 
 import flash.display.Loader;
-import flash.display.LoaderInfo;
 import flash.display.Sprite;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
 import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
-import flash.events.SecurityErrorEvent;
-import flash.external.ExternalInterface;
-import flash.net.LocalConnection;
-import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
@@ -33,7 +28,6 @@ import flash.text.TextFormat;
 
 // armorgames: dunno, submissions are reviewed, 1000 wide x 700 tall
 // was submit-able
-
 
 /**
  * Stub. A small wrapper to load up a whirled client and play a game or visit a room

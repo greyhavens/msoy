@@ -14,7 +14,6 @@ import mx.controls.CheckBox;
 import mx.controls.TextInput;
 import mx.core.UIComponent;
 import mx.events.FlexEvent;
-import mx.events.ListEvent;
 
 import com.threerings.util.StringUtil;
 

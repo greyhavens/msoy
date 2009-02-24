@@ -6,7 +6,6 @@ package com.threerings.msoy.ui {
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
-import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;

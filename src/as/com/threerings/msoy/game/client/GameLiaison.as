@@ -34,20 +34,15 @@ import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
-import com.threerings.util.Name;
 
 import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.GuestSessionCapture;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.PlaceBox;
-import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.world.client.WorldContext;
 

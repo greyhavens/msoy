@@ -18,7 +18,6 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.client.UIState;
-import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.room.client.RoomStudioView;
 import com.threerings.msoy.room.client.RoomView;

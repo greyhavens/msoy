@@ -7,7 +7,6 @@ import flash.events.Event;
 
 import mx.containers.HBox;
 
-import mx.controls.Spacer;
 import mx.controls.TextInput;
 import mx.controls.ToggleButtonBar;
 

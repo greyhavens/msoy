@@ -10,7 +10,6 @@ import com.threerings.crowd.chat.client.CommandHandler;
 import com.threerings.crowd.chat.client.SpeakService;
 import com.threerings.crowd.chat.data.ChatCodes;
 
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MemberObject;
 

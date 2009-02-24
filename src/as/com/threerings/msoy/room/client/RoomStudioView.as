@@ -10,8 +10,6 @@ import flash.system.Security;
 
 import flash.utils.ByteArray;
 
-import mx.binding.utils.BindingUtils;
-
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
@@ -38,8 +36,6 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.msoy.room.data.MsoyScene;
-import com.threerings.msoy.room.data.MsoySceneModel;
 
 /**
  * A non-network RoomView for testing avatars and other room entities.

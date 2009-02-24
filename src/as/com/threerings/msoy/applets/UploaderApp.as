@@ -29,8 +29,6 @@ import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.msoy.applets.net.MediaUploadUtil;
 
-import com.threerings.msoy.client.DeploymentConfig;
-
 [SWF(width="200", height="40")]
 public class UploaderApp extends Sprite
 {

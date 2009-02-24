@@ -4,40 +4,18 @@
 package com.threerings.msoy.game.client {
 
 import mx.containers.HBox;
-import mx.containers.VBox;
 import mx.core.UIComponent;
-import mx.controls.Label;
-import mx.controls.Spacer;
-import mx.controls.Text;
-import mx.controls.TextInput;
 
-import com.threerings.util.Log;
-
-import com.threerings.flash.TextFieldUtil;
-
-import com.threerings.flex.CommandButton;
-import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.parlor.data.Table;
-import com.threerings.parlor.game.data.GameConfig;
 
-import com.whirled.game.data.GameDefinition;
 
-import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.MediaWrapper;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.data.PlayerObject;
 
 /**
  * A panel that displays pending table games.

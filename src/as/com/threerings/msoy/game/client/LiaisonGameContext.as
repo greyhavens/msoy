@@ -20,13 +20,11 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.WorldCredentials;
-import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.GameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.utils.Base64Decoder;
 
 /**
  * Provides context for games running in the World client via a liaison.

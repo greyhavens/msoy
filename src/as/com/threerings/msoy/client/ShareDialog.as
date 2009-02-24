@@ -38,7 +38,6 @@ import com.threerings.io.TypedArray;
 import com.threerings.util.Command;
 import com.threerings.util.MailUtil;
 
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.ui.CopyableText;

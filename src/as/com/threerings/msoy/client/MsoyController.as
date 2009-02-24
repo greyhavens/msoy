@@ -52,7 +52,6 @@ import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.ui.SliderPopup;
 
 public class MsoyController extends Controller
     implements ClientObserver

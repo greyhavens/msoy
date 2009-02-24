@@ -12,8 +12,6 @@ import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 
 import flash.net.FileReference;
-import flash.net.URLRequest;
-import flash.net.URLRequestMethod;
 
 import mx.controls.Label;
 import mx.controls.ProgressBar;
@@ -29,7 +27,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.applets.AppletContext;
-import com.threerings.msoy.client.DeploymentConfig;
 
 /**
  * Dispatched when we're closed.

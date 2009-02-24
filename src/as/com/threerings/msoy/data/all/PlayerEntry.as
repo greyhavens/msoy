@@ -10,7 +10,6 @@ import com.threerings.util.Hashable;
 import com.threerings.presents.dobj.DSet_Entry;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.MediaDesc;
 
 /**
  * Represents a friend connection.

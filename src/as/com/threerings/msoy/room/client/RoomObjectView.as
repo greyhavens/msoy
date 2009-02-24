@@ -36,7 +36,6 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
-import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 

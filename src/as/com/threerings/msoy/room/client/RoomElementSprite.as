@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.client {
 
 import flash.display.BitmapData;
-import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.geom.Matrix;

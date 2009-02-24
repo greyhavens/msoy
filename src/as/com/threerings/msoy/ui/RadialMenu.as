@@ -10,8 +10,6 @@ import flash.display.DisplayObjectContainer;
 
 import mx.containers.Canvas;
 
-import mx.controls.MenuBar;
-
 import mx.core.Application;
 
 import mx.managers.PopUpManager;

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.utils.ByteArray;
-
 import mx.styles.StyleManager;
 
 import com.threerings.util.Log;

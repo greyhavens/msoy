@@ -16,7 +16,6 @@ import mx.controls.Label;
 import mx.controls.Text;
 import mx.core.Container;
 import mx.core.UIComponent;
-import mx.events.ListEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandComboBox;
@@ -27,9 +26,7 @@ import com.threerings.util.CommandEvent;
 import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.ui.SkinnableImage;
 
-import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
@@ -451,7 +448,6 @@ public class RoomEditorPanel extends FlyingPanel
         // END: temp
 
         updateTargetSelected(null); // disable most buttons
-
 
         // now populate advanced settings panel
 

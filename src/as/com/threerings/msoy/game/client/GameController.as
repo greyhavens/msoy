@@ -15,7 +15,6 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.game.client.LobbyService;
-import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 /**

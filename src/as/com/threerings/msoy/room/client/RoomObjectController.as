@@ -6,22 +6,15 @@ package com.threerings.msoy.room.client {
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
 import mx.controls.Button;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
-
-import com.threerings.presents.dobj.ChangeListener;
-import com.threerings.presents.dobj.MessageAdapter;
-import com.threerings.presents.dobj.MessageEvent;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
@@ -37,7 +30,6 @@ import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;

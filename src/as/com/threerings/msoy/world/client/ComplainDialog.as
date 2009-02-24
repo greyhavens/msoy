@@ -11,7 +11,6 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;

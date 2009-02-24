@@ -15,8 +15,6 @@ import com.threerings.flash.MediaContainer;
 
 import com.threerings.msoy.client.MsoyParameters;
 
-import com.threerings.msoy.data.UberClientModes;
-
 /**
  * A generic viewer, like the AvatarViewer, but for any item.
  * This will grow and change.

@@ -4,7 +4,6 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.BlendMode;
-import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.SimpleButton;
 import flash.display.Sprite;

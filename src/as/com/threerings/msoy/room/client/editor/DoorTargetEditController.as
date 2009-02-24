@@ -4,9 +4,7 @@
 package com.threerings.msoy.room.client.editor {
 
 import mx.containers.Canvas;
-import mx.containers.HBox;
 import mx.core.Container;
-import mx.core.ScrollPolicy;
 
 import com.threerings.util.Log;
 
@@ -27,7 +25,6 @@ import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
-import com.threerings.msoy.room.data.RoomObject;
 
 /**
  * This controller handles in-world door editing. The player picks a door to edit, then travels

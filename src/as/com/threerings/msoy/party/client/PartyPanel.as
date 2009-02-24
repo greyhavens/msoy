@@ -3,14 +3,11 @@
 
 package com.threerings.msoy.party.client {
 
-import mx.collections.ArrayCollection;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Spacer;
 import mx.controls.TextInput;
 import mx.events.FlexEvent;
-
-import com.threerings.util.Log;
 
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
@@ -22,7 +19,6 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Roster;
-import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
 

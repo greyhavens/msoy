@@ -12,7 +12,6 @@ import mx.core.UIComponent;
 
 import mx.containers.HBox;
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.Integer;
 
 import com.threerings.flash.DisplayUtil;

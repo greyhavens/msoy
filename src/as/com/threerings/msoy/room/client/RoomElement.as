@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import flash.display.BitmapData;
-
-import flash.geom.Matrix;
-
 import com.threerings.msoy.client.Snapshottable;
 
 import com.threerings.msoy.room.data.MsoyLocation;

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.applets.image {
 
-import flash.display.BitmapData;
-
 import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
@@ -15,23 +13,16 @@ import flash.external.ExternalInterface;
 import flash.utils.ByteArray;
 
 import mx.core.Application;
-import mx.core.UIComponent;
 
-import mx.containers.HBox;
-import mx.containers.VBox;
 import mx.containers.ViewStack;
 
-import mx.controls.Label;
 
-import com.adobe.images.JPGEncoder;
 
 import com.threerings.util.Log;
 import com.threerings.util.ParameterUtil;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.CameraSnapshotter;
 
-import com.threerings.flex.CommandLinkButton;
 
 import com.threerings.msoy.applets.image.CameraSnapshotControl;
 import com.threerings.msoy.applets.image.ImageContext;

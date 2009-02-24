@@ -228,7 +228,6 @@ public class BackendUtils
         return null;
     }
 
-
     public static function sendMessage (
         svc :WhirledGameMessageService, client :Client, msgName :String, msgValue :Object,
         svcName :String) :void

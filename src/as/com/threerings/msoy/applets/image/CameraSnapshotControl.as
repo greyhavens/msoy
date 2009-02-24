@@ -13,8 +13,6 @@ import mx.containers.VBox;
 
 import mx.core.UIComponent;
 
-import mx.events.ListEvent;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.flash.CameraSnapshotter;

@@ -17,7 +17,6 @@ import mx.controls.ProgressBar;
 import mx.controls.TextArea;
 
 import mx.containers.TitleWindow;
-import mx.containers.VBox;
 
 import mx.events.CloseEvent;
 

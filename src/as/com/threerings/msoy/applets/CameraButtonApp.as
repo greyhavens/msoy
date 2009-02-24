@@ -12,7 +12,6 @@ import flash.text.TextFieldAutoSize;
 import com.threerings.util.ParameterUtil;
 
 import com.threerings.flash.SimpleSkinButton;
-import com.threerings.flash.TextFieldUtil;
 
 [SWF(width="160", height="19")]
 public class CameraButtonApp extends Sprite

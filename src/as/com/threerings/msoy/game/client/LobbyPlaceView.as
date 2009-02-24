@@ -16,7 +16,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
-
 /**
  * View that displays the game's splash image underneath the lobby panel itself.
  */

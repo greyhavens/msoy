@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import flash.system.System;
-
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.CopyableText;

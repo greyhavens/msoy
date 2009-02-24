@@ -9,7 +9,6 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.util.Integer;
 
 import com.threerings.msoy.data.all.PlayerEntry;
-import com.threerings.msoy.data.all.VizMemberName;
 
 /**
  * Represents a fellow party-goer connection.

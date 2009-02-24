@@ -44,7 +44,6 @@ import com.threerings.msoy.party.data.PartyBoardMarshaller;
 import com.threerings.msoy.party.data.PartyBootstrapData;
 import com.threerings.msoy.party.data.PartyCodes;
 import com.threerings.msoy.party.data.PartyDetail;
-import com.threerings.msoy.party.data.PartyMarshaller;
 import com.threerings.msoy.party.data.PartyObject;
 import com.threerings.msoy.party.data.PartyPeep;
 

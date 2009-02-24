@@ -3,25 +3,19 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.display.DisplayObject;
-import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.filters.ColorMatrixFilter;
 import flash.geom.Rectangle;
 
 import mx.core.UIComponent;
-import mx.core.Container;
 import mx.containers.Tile;
 import mx.containers.Canvas;
 import mx.controls.Text;
 import mx.events.CloseEvent;
 
 import com.threerings.flash.GraphicsUtil;
-import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
-import com.threerings.flex.PopUpUtil;
 import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
@@ -30,7 +24,6 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.HomePageItem;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.AVRGameNavItemData;
 import com.threerings.msoy.data.BasicNavItemData;
 import com.threerings.msoy.badge.data.all.BadgeCodes;

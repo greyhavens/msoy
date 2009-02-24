@@ -15,12 +15,7 @@ import mx.containers.Canvas;
 import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
-import com.threerings.util.MessageBundle;
-import com.threerings.util.Log;
-
 import com.threerings.crowd.client.PlaceView;
-import com.threerings.crowd.client.LocationObserver;
-import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ChatOverlay;

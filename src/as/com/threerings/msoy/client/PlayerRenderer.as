@@ -3,30 +3,19 @@
 
 package com.threerings.msoy.client {
 
-import flash.events.MouseEvent;
-
 import mx.containers.HBox;
 import mx.containers.VBox;
 
-import mx.controls.Label;
-import mx.controls.Text;
 
-import mx.controls.scrollClasses.ScrollBar;
 
 import mx.core.ScrollPolicy;
 
-import com.threerings.util.CommandEvent;
-import com.threerings.flex.CommandMenu;
-import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.MediaWrapper;
 
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.PlayerEntry;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 
 public class PlayerRenderer extends HBox
 {

@@ -15,7 +15,6 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.ValueEvent;
 import com.threerings.util.MethodQueue;
 
 import com.threerings.flash.FilterUtil;

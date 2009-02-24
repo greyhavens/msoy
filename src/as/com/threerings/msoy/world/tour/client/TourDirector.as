@@ -5,14 +5,10 @@ package com.threerings.msoy.world.tour.client {
 
 import mx.core.UIComponent;
 
-import mx.events.CloseEvent;
-
-import com.threerings.util.Command;
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;

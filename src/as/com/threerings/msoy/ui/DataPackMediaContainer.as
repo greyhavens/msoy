@@ -25,7 +25,6 @@ import flash.system.Security;
 
 import flash.utils.ByteArray;
 
-import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 

@@ -4,12 +4,8 @@
 package com.threerings.msoy.world.tour.client {
 
 import flash.events.MouseEvent;
-import flash.net.URLRequest;
 
 import mx.containers.HBox;
-import mx.containers.VBox;
-import mx.controls.Image;
-import mx.controls.Text;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.ValueEvent;
@@ -17,20 +13,15 @@ import com.threerings.util.ValueEvent;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.data.all.RatingResult;
-
 import com.threerings.msoy.ui.FlyingPanel;
 import com.threerings.msoy.ui.Stars;
 
-import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 
-import com.threerings.msoy.room.client.RoomObjectView;
 
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
-import com.threerings.msoy.room.client.RoomObjectView;
 
 public class TourDialog extends FlyingPanel
 {

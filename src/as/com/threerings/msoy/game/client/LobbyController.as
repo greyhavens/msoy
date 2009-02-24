@@ -26,11 +26,9 @@ import com.threerings.presents.util.SafeSubscriber;
 
 import com.threerings.msoy.client.BlankPlaceView;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
@@ -39,11 +37,9 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.whirled.game.data.MatchConfig;
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.msoy.world.client.WorldContext;
 
 public class LobbyController extends Controller
     implements Subscriber, SeatednessObserver
@@ -78,7 +74,6 @@ public class LobbyController extends Controller
     // statically reference classes we require
     MsoyGameDefinition;
     LobbyMarshaller;
-
 
     public function LobbyController (gctx :GameContext, mode :LobbyDef, onClear :Function,
         playNow :Function, lobbyLoaded :Function, displaySplash :Boolean)

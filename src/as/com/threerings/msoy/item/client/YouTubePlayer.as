@@ -5,13 +5,10 @@ package com.threerings.msoy.item.client {
 
 import flash.display.DisplayObject;
 import flash.display.Loader;
-import flash.display.Sprite;
 
 import flash.events.ErrorEvent;
-import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
-import flash.events.MouseEvent;
 import flash.events.StatusEvent;
 
 import flash.geom.Point;
@@ -24,7 +21,6 @@ import flash.system.LoaderContext;
 
 import com.threerings.util.Log;
 import com.threerings.util.MethodQueue;
-import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.LoaderUtil;

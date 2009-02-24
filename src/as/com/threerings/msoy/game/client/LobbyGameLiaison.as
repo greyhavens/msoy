@@ -21,7 +21,6 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.presents.client.ClientAdapter;
-import com.threerings.presents.data.ClientObject;
 
 /**
  * Handles the lobby-specific aspects of the game server connection.

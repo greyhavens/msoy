@@ -4,11 +4,9 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
-import flash.events.Event;
 import flash.geom.ColorTransform;
 
 import mx.core.UIComponent;
-import mx.controls.Image;
 
 import mx.states.State;
 

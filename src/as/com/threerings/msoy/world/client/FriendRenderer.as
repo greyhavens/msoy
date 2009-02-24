@@ -9,24 +9,16 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.controls.Label;
-import mx.controls.Text;
-
-import mx.controls.scrollClasses.ScrollBar;
 
 import mx.core.ClassFactory;
 import mx.core.IFactory;
-import mx.core.ScrollPolicy;
 
-import com.threerings.util.CommandEvent;
 import com.threerings.flex.CommandMenu;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlayerRenderer;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.PlayerEntry;
 
 public class FriendRenderer extends PlayerRenderer
 {

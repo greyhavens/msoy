@@ -28,7 +28,6 @@ import com.threerings.msoy.item.data.all.ItemTypes;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-import com.threerings.msoy.game.data.PlayerObject;
 
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.

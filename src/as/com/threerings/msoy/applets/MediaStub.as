@@ -152,7 +152,6 @@ public class MediaStub extends Sprite
 //        "setShowFocusIndicatorRequest"
 //    ];
 
-
 //        "bridgeApplicationActivate",
 //        "bridgeFocusManagerActivate",
 //        "bridgeNewApplication",

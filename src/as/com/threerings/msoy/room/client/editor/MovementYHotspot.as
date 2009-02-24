@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.client.editor {
 
 import flash.display.Bitmap;
-import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 import flash.geom.ColorTransform;

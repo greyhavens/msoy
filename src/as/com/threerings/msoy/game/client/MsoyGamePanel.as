@@ -34,7 +34,6 @@ import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
 
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;

@@ -14,8 +14,6 @@ import flash.net.URLRequest;
 
 import com.threerings.util.Log;
 
-import com.threerings.msoy.data.all.MediaDesc;
-
 public class ExternalMediaUtil
 {
     public static function fetch (

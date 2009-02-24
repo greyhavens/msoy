@@ -21,8 +21,6 @@ import mx.containers.TitleWindow;
 
 import mx.managers.PopUpManager;
 
-import com.threerings.util.StringUtil;
-
 import com.threerings.msoy.applets.AppletContext;
 
 /**

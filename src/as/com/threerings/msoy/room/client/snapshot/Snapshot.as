@@ -39,7 +39,6 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
-import com.threerings.msoy.client.Snapshottable;
 
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -261,7 +260,6 @@ public class Snapshot extends EventDispatcher
 
         // call whatever we're supposed to call with the jpeg data now that we have it
     }
-
 
     /** Creates an HTTP POST upload request. */
     protected function makeMimeBody (data :ByteArray, createItem :Boolean) :ByteArray

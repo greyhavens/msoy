@@ -193,7 +193,6 @@ public class FurniSprite extends MsoySprite
         // PERSPECTIVIZATION DISABLED DURING ROOM LAYOUT REVAMP (ROBERT)
         return; // <- will abort any perspective updates
 
-
         if (_media == null) {
             return;
         }

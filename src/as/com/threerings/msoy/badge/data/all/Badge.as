@@ -72,7 +72,6 @@ public /* abstract */ class Badge extends SimpleStreamableObject
         return roman;
     }
 
-
     /**
      * Returns the public access image URL for this badge.
      */

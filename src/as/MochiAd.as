@@ -162,7 +162,6 @@ package {
             var fadeout_time:Number = options.fadeout_time;
             delete options.fadeout_time;
 
-
             /* Load targeting under clip._mochiad */
             if (!MochiAd.load(options)) {
                 options.ad_failed();

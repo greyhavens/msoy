@@ -13,14 +13,11 @@ import mx.controls.List;
 import mx.controls.Text;
 
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
 

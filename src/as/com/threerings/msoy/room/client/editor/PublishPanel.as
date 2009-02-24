@@ -6,14 +6,11 @@ package com.threerings.msoy.room.client.editor {
 import flash.events.ErrorEvent;
 import flash.events.Event;
 
-import mx.controls.Button;
 import mx.controls.CheckBox;
-import mx.controls.Text;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
-import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
