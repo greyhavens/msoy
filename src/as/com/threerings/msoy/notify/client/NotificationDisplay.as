@@ -292,7 +292,7 @@ public class NotificationDisplay extends HBox
     protected function getColor (notification :Notification) :uint
     {
         switch (notification.getCategory()) {
-        case Notification.SYSTEM: return 0xCC0000;
+        case Notification.SYSTEM: return 0xFFFFFF;
         case Notification.INVITE: return 0xFFA13D;
         case Notification.PERSONAL: return 0x40B8D2;
         case Notification.BUTTSCRATCHING: // fall through to default
