@@ -44,12 +44,21 @@ public class LoadingSpinner extends Sprite
     }
 
     /**
-     * Set the progress to be displayed on the spinner.
-     * Call with no args to set to "indeterminate" mode.
+     * Sets the progress to be displayed on the spinner.
      */
-    public function setProgress (partial :Number = NaN, total :Number = NaN) :void
+    public function setProgress (partial :Number, total :Number = NaN) :void
     {
+        _status = null;
         _progress = Math.round(partial * 100 / total); // evals to NaN if any args are NaN
+        updateSpinner();
+    }
+
+    /**
+     * Sets the spinner to indeterminate mode with the specified status text.
+     */
+    public function setStatus (status :String) :void
+    {
+        _status = status;
         updateSpinner();
     }
 
@@ -73,7 +82,13 @@ public class LoadingSpinner extends Sprite
             return;
         }
 
-        if (!isNaN(_progress)) {
+        if (_status != null) {
+            if (_spinner.currentFrame < 102) {
+                _spinner.gotoAndPlay(102);
+            }
+            _label.text = _status;
+
+        } else if (!isNaN(_progress)) {
             var frame :int = 1 + _progress;
             // avoid re-setting us to the same frame, as that causes the
             // inner swirls to halt (for some reason!)
@@ -82,17 +97,12 @@ public class LoadingSpinner extends Sprite
             }
             const text :String = _progress.toFixed(0) + "%";
             _label.text = (text == "0.%") ? "0%" : text; // jesus christ
-
-        } else if (_spinner.currentFrame < 102) {
-            _spinner.gotoAndPlay(102);
-            _label.text = "";
         }
     }
 
     protected var _progress :Number = NaN;
-
+    protected var _status :String;
     protected var _spinner :MovieClip;
-
     protected var _label :TextField;
 
     [Embed(source="../../../../../../rsrc/media/loading.swf", mimeType="application/octet-stream")]

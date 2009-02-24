@@ -19,8 +19,6 @@ import caurina.transitions.Tweener;
 
 import mx.events.ResizeEvent;
 
-import com.threerings.msoy.client.PlaceBox;
-
 import com.threerings.msoy.ui.LoadingSpinner;
 
 public class PlaceLoadingDisplay extends Sprite
@@ -61,7 +59,7 @@ public class PlaceLoadingDisplay extends Sprite
 
         } else {
             if (_secondaryCount == 0) {
-                _spinner.setProgress(); // put in "indeterminite" mode
+                _spinner.setStatus(Msgs.GENERAL.get("m.ls_loading")); // put in "indeterminite" mode
                 doTransitionOut();
             }
 
@@ -162,13 +160,9 @@ public class PlaceLoadingDisplay extends Sprite
     }
 
     protected var _box :PlaceBox;
-
     protected var _primary :LoaderInfo
-
     protected var _secondaryCount :int;
-
     protected var _spinner :LoadingSpinner;
-
     protected var _unloadies :Dictionary = new Dictionary(true);
 }
 }
