@@ -30,6 +30,11 @@ public class SupportPage extends Page
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
+        // tell them they need to register before they can do any support stuff
+        if (!MsoyUI.requireRegistered()) {
+            return;
+        }
+
         // create our auth credentials if we don't already have them
         if (_webctx.ainfo == null && CSupport.creds != null) {
             UnderwireService.AuthInfo ainfo = new UnderwireService.AuthInfo();
