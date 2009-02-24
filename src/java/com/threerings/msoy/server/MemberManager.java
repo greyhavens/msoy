@@ -877,7 +877,7 @@ public class MemberManager
         // the flow value at array index ii cooresponds to level ii+1
         level++;
 
-        if (member.level != level) {
+        if (member.level < level) {
             // update their level now so that we don't come along and do this again while the
             // invoker is off writing things to the database
             member.setLevel(level);
