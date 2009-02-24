@@ -203,6 +203,14 @@ public class FlashClients
     }
 
     /**
+     * Checks to see if the flash client exists and is connected to a server.
+     */
+    public static boolean clientConnected ()
+    {
+        return clientConnectedNative(findClient());
+    }
+
+    /**
      * Get the current sceneId of the flash client, or 0.
      */
     public static int getSceneId ()
@@ -350,6 +358,17 @@ public class FlashClients
             // exceptions from JavaScript break GWT; don't let that happen
             try { client.startTour(); } catch (e) {}
         }
+    }-*/;
+
+    /**
+     * Does the actual <code>clientConnected()</code> call.
+     */
+    protected static native boolean clientConnectedNative (Element client) /*-{
+        if (client) {
+            // exceptions from JavaScript break GWT; don't let that happen
+            try { return client.isConnected(); } catch (e) {}
+        }
+        return false;
     }-*/;
 
     /** TEMP: Whether or not the client is in full-height mode. */

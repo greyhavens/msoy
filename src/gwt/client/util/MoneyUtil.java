@@ -23,7 +23,7 @@ public class MoneyUtil
         // if the flash client is around, we don't want to update any balances, because the
         // values from the flash client could include earned money from games that have not
         // yet been persisted to the database.
-        if (FlashClients.clientExists()) {
+        if (FlashClients.clientConnected()) {
             return;
         }
 

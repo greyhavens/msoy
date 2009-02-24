@@ -321,6 +321,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     {
         ExternalInterface.addCallback("onUnload", externalOnUnload);
         ExternalInterface.addCallback("setMinimized", externalSetMinimized);
+        ExternalInterface.addCallback("isConnected", externalIsConnected);
 
         try {
             _embedded = !(ExternalInterface.call("helloWhirled") as Boolean);
@@ -344,6 +345,14 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected function externalSetMinimized (minimized :Boolean) :void
     {
         dispatchEvent(new ValueEvent(MINI_WILL_CHANGE, _minimized = minimized));
+    }
+
+    /**
+     * Exposed to javascript: are we connected?
+     */
+    protected function externalIsConnected () :Boolean
+    {
+        return _ctx.getClient().isLoggedOn();
     }
 
     /**
