@@ -50,6 +50,13 @@ public class DecorRecord extends ItemRecord
     public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
+    /** Update this version if you change fields specific to this derived class. */
+    public static final int ITEM_VERSION = 4;
+
+    /** This combines {@link #ITEM_VERSION} with {@link #BASE_SCHEMA_VERSION} to create a version
+     * that allows us to make ItemRecord-wide changes and specific derived class changes. */
+    public static final int SCHEMA_VERSION = ITEM_VERSION + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+
     /** Room type. Controls how the background wallpaper image is handled. */
     public byte type;
 
@@ -75,9 +82,6 @@ public class DecorRecord extends ItemRecord
     /** The adjusted scale of furni in this room. */
     @Column(defaultValue="1")
     public float furniScale;
-
-    public static final int SCHEMA_VERSION = 4 +
-        BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     @Override // from ItemRecord
     public byte getType ()

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.lang.reflect.Field;
+
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
@@ -121,35 +123,9 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
         };
 
-        _ctx.registerMigration(getRatingClass(),
-                new SchemaMigration.Rename(2, "itemId", RatingRecord.TARGET_ID));
-
-        _ctx.registerMigration(getCatalogClass(), new SchemaMigration.Drop(11, "goldCost"));
-        _ctx.registerMigration(getCatalogClass(),
-                new SchemaMigration.Rename(11, "flowCost", CatalogRecord.COST));
-        _ctx.registerMigration(getCatalogClass(),
-                new SchemaMigration.Add(11, CatalogRecord.CURRENCY, "0"));
-
-        int cloneCurrencyMigrationVersion = 8000; // NOTE: this seems wrong, but it works.
-        // mdb is on the case.
-        _ctx.registerMigration(getCloneClass(),
-            new SchemaMigration.Drop(cloneCurrencyMigrationVersion, "goldPaid"));
-        _ctx.registerMigration(getCloneClass(),
-            new SchemaMigration.Rename(cloneCurrencyMigrationVersion,
-                "flowPaid", CloneRecord.AMOUNT_PAID));
-        _ctx.registerMigration(getCloneClass(),
-            new SchemaMigration.Add(cloneCurrencyMigrationVersion, CloneRecord.CURRENCY, "0"));
-
-        // drop the flagged column
-        _ctx.registerMigration(getItemClass(), new SchemaMigration.Drop(18000, "flagged"));
-        
-        // drop useless index
-        _ctx.registerMigration(getCatalogClass(),
-            new SchemaMigration.DropIndex(13, "pricingIndex"));
-        
-        // drop another useless index
-        _ctx.registerMigration(getItemClass(),
-            new SchemaMigration.DropIndex(19 * ItemRecord.BASE_MULTIPLIER, "ixMature"));
+        // drop the now unused ItemRecord.rating column
+        _ctx.registerMigration(getItemClass(), new SchemaMigration.Drop(
+                                   getMigrationVersion(getItemClass(), 21), "rating"));
     }
 
     /**
@@ -168,6 +144,17 @@ public abstract class ItemRepository<T extends ItemRecord>
                         getItemColumn(ItemRecord.RATING)));
             }
         });
+
+//         // register some item data migrations
+//         MIN_PRICES.put(Item.AVATAR, new int[] { 100, 200, 500, 1500, 5000 });
+//         MIN_PRICES.put(Item.FURNITURE, new int[] { 10, 50, 100, 500, 1000 });
+//         MIN_PRICES.put(Item.DECOR, new int[] { 20, 100, 200, 1000, 2000 });
+//         MIN_PRICES.put(Item.TOY, new int[] { 200, 300, 700, 2500, 5000 });
+//         MIN_PRICES.put(Item.PET, new int[] { 100, 200, 500, 1500, 5000 });
+//         MIN_PRICES.put(Item.AVATAR, new int[] { 100, 200, 500, 1500, 5000 });
+//         MIN_PRICES.put(Item.GAME, new int[] { 200, 300, 700, 2500, 5000 });
+//         MIN_PRICES.put(Item.PHOTO, new int[] { 10, 50, 100, 500, 1000 });
+//         MIN_PRICES.put(Item.VIDEO, new int[] { 10, 50, 100, 500, 1000 });
     }
 
     /**
@@ -479,7 +466,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             for (OwnerIdRecord oidrec : findAll(
                      OwnerIdRecord.class, new FromOverride(getCloneClass()),
                      new FieldDefinition(CloneRecord.ITEM_ID, getCloneColumn(CloneRecord.ITEM_ID)),
-                     new FieldDefinition(CloneRecord.OWNER_ID, getCloneColumn(CloneRecord.OWNER_ID)),
+                     new FieldDefinition(CloneRecord.OWNER_ID,
+                                         getCloneColumn(CloneRecord.OWNER_ID)),
                      new Where(new In(getCloneColumn(CloneRecord.ITEM_ID), cloneIds)))) {
                 ownerIds.put(oidrec.itemId, oidrec.ownerId);
             }
@@ -1313,6 +1301,26 @@ public abstract class ItemRepository<T extends ItemRecord>
      * persistent record class.
      */
     protected abstract TagHistoryRecord createTagHistoryRecord ();
+
+    /**
+     * Returns the correct migration version for an item when {@link ItemRecord} is changing rather
+     * than the derived class.
+     *
+     * @param clazz the ItemRecord derivation being migrated.
+     * @param baseVersion the {@link ItemRecord#BASE_SCHEMA_VERSION} value for the new version of
+     * the class.
+     */
+    protected static int getMigrationVersion (Class<? extends ItemRecord> clazz, int baseVersion)
+    {
+        try {
+            Field ivfield = clazz.getField("ITEM_VERSION");
+            int itemVersion = (Integer)ivfield.get(null);
+            return baseVersion * ItemRecord.BASE_MULTIPLIER + itemVersion;
+        } catch (Exception e) {
+            throw new RuntimeException(
+                "Failed to compute " + clazz.getName() + " migration version.", e);
+        }
+    }
 
     /** Used to coerce CatalogRecord derivations when implementing {@link #getCatalogClass}. */
     protected static Class<CatalogRecord> coerceCatalog (Class<? extends CatalogRecord> clazz)

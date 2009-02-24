@@ -45,8 +45,12 @@ public class AvatarRecord extends ItemRecord
     public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2 +
-        BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+    /** Update this version if you change fields specific to this derived class. */
+    public static final int ITEM_VERSION = 2;
+
+    /** This combines {@link #ITEM_VERSION} with {@link #BASE_SCHEMA_VERSION} to create a version
+     * that allows us to make ItemRecord-wide changes and specific derived class changes. */
+    public static final int SCHEMA_VERSION = ITEM_VERSION + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     /** A hash code identifying the avatar media. */
     public byte[] avatarMediaHash;

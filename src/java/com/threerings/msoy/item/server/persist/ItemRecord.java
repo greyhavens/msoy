@@ -60,7 +60,12 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /** The identifier for the full text search index on Name, Description */
     public static final String FTS_ND = "ND";
 
-    public static final int BASE_SCHEMA_VERSION = 20;
+    /** This is the version of the base class persistent data. It is combined with ITEM_VERSION to
+     * create the actual version for each ItemRecord derived class. */
+    public static final int BASE_SCHEMA_VERSION = 21;
+
+    /** This is used to combine {@link #BASE_SCHEMA_VERSION} with ITEM_VERSION to create our
+     * per-record SCHEMA_VERSION. */
     public static final int BASE_MULTIPLIER = 1000;
 
     /** A function for converting this persistent record into a runtime record. */
@@ -112,9 +117,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
-
-    /** TODO: Delete when migrations have run. */
-    public float rating;
 
     /** How this item is being used (see {@link Item#USED_AS_FURNITURE}). */
     public byte used;

@@ -45,7 +45,8 @@ public abstract class SubItemRecord extends ItemRecord
     // AUTO-GENERATED: FIELDS END
 
     /** A function that extracts {@link #ident}. */
-    public static Function<SubItemRecord, String> GET_IDENT = new Function<SubItemRecord, String>() {
+    public static Function<SubItemRecord, String> GET_IDENT =
+        new Function<SubItemRecord, String>() {
         public String apply (SubItemRecord record) {
             return record.ident;
         }

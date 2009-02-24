@@ -44,7 +44,12 @@ public class FurnitureRecord extends ItemRecord
     public static final ColumnExp FURNI_CONSTRAINT = colexp(_R, "furniConstraint");
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 2 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
+    /** Update this version if you change fields specific to this derived class. */
+    public static final int ITEM_VERSION = 2;
+
+    /** This combines {@link #ITEM_VERSION} with {@link #BASE_SCHEMA_VERSION} to create a version
+     * that allows us to make ItemRecord-wide changes and specific derived class changes. */
+    public static final int SCHEMA_VERSION = ITEM_VERSION + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     /** An action associated with this furniture which is dispatched to the virtual world client
      * when the furniture is clicked on (max length 255 characters). */
