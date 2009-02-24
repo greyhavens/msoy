@@ -49,7 +49,7 @@ public class MailServlet extends MsoyServiceServlet
     public ConvosResult loadConversations (int offset, int count, boolean needCount)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireRegisteredUser();
         // load up the conversations in question
         List<Conversation> convos = Lists.newArrayList();
         List<ConversationRecord> conrecs =
@@ -88,7 +88,7 @@ public class MailServlet extends MsoyServiceServlet
     public ConvoResult loadConversation (int convoId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireRegisteredUser();
         ConvoResult convo = new ConvoResult();
 
         // make sure this member is a conversation participant or a member of support staff
@@ -155,7 +155,7 @@ public class MailServlet extends MsoyServiceServlet
     public void startConversation (int recipId, String subject, String body, MailPayload attachment)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireRegisteredUser();
 
         // make sure the recipient exists
         MemberRecord recip = _memberRepo.loadMember(recipId);
@@ -173,7 +173,7 @@ public class MailServlet extends MsoyServiceServlet
     public ConvMessage continueConversation (int convoId, String body, MailPayload attachment)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireRegisteredUser();
 
         // pass the buck to the mail manager
         ConvMessageRecord cmr = _mailLogic.continueConversation(memrec, convoId, body, attachment);
@@ -191,7 +191,7 @@ public class MailServlet extends MsoyServiceServlet
     public boolean deleteConversation (int convoId, boolean ignoreUnread)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireRegisteredUser();
         // the repository handles all the juicy goodness
         return _mailRepo.deleteConversation(convoId, memrec.memberId, ignoreUnread);
     }
@@ -200,7 +200,7 @@ public class MailServlet extends MsoyServiceServlet
     public void updatePayload (int convoId, long sent, MailPayload payload)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireRegisteredUser();
         try {
             // note: we don't validate memberId because this method is legacy and going away
             byte[] state = JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
@@ -217,7 +217,7 @@ public class MailServlet extends MsoyServiceServlet
     public void complainConversation (int convoId, String reason)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireRegisteredUser();
 
         // make sure this member is a conversation participant
         Long lastRead = _mailRepo.loadLastRead(convoId, memrec.memberId);

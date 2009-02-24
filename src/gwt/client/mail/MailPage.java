@@ -17,9 +17,8 @@ public class MailPage extends Page
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        // if we have no creds, just display a message saying logon
-        if (CShell.isGuest()) {
-            setContent(MsoyUI.createLabel(_msgs.logon(), "infoLabel"));
+        // tell them they need to register before they can do any mail stuff
+        if (!MsoyUI.requireRegistered()) {
             return;
         }
 
