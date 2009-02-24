@@ -44,6 +44,10 @@ public class FriendInviter
     // from ClickListener
     public void onClick (Widget sender)
     {
+        if (!MsoyUI.requireRegistered()) {
+            return; // permaguests can't make friends
+        }
+
         // guard against reentry
         if (_clicked) {
             return;

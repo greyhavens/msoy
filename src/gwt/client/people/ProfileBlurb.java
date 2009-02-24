@@ -178,7 +178,7 @@ public class ProfileBlurb extends Blurb
 
         // create our action buttons
         FlowPanel buttons = MsoyUI.createFlowPanel("Buttons");
-        if (!CShell.isGuest() && !_pdata.isOurFriend && !isMe) {
+        if (!_pdata.isOurFriend && !isMe) {
             addButton(buttons, "/images/profile/addfriend.png", _msgs.inviteFriend(),
                       new FriendInviter(_name, "Profile"));
         }
