@@ -5,8 +5,6 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
 
-import flash.external.ExternalInterface;
-
 import flash.system.Security;
 
 import mx.core.Application;
@@ -156,7 +154,6 @@ public class UberClient
             break;
 
         case UberClientModes.STUB:
-            setupStub(params);
             setMode(app, UberClientModes.CLIENT, params);
             break;
 
@@ -175,68 +172,6 @@ public class UberClient
         case UberClientModes.GENERIC_VIEWER:
             Object(app).setViewerObject(new Viewer(params));
             break;
-        }
-    }
-
-    protected static function setupStub (params :Object) :void
-    {
-        var stubURL :String = _app.root.loaderInfo.loaderURL;
-        var pageURL :String = null;
-        try {
-            pageURL = ExternalInterface.call("window.location.href.toString");
-        } catch (e :Error) {
-            // oh well
-        }
-        // TODO: possibly save these in msoyparameters?
-
-        const site :String = figureSiteFromUrl(pageURL || stubURL);
-        const gameId :int = int(params["game"]);
-        const roomId :int = int(params["room"]);
-        delete params["game"];
-        delete params["room"];
-
-        if (gameId != 0) {
-            params["gameLobby"] = gameId;
-            params["vec"] = "e." + site + ".games." + gameId;
-
-        } else if (roomId != 0) {
-            params["sceneId"] = roomId;
-            params["vec"] = "e." + site + ".rooms." + roomId;
-        }
-
-        //trace("Vec got set to " + params["vec"]);
-    }
-
-    protected static function figureSiteFromUrl (url :String) :String
-    {
-        const URL_REGEXP :RegExp = /^(\w+:\/\/)?\/?([^:\/\s]+)/; // protocol and host
-        var result :Object = URL_REGEXP.exec(url);
-        if (result == null) {
-            return "unknown";
-        }
-
-        // TODO?
-        // turn www.bullshit.twerk.com into "twerk"
-        var host :String = String(result[2]);
-        // strip the last part
-        var lastdot :int = host.lastIndexOf(".");
-        if (lastdot != -1) {
-            host = host.substring(0, lastdot);
-        }
-        // now just keep the last part
-        lastdot = host.lastIndexOf(".");
-        if (lastdot != -1) {
-            host = host.substring(lastdot + 1);
-        }
-        return massageHost(host);
-    }
-
-    // TEMP?
-    protected static function massageHost (host :String) :String
-    {
-        switch (host) {
-        case "ungrounded": return "newgrounds";
-        default: return host;
         }
     }
 

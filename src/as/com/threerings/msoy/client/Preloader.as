@@ -150,8 +150,8 @@ public class Preloader extends Sprite
             field.defaultTextFormat = LoadingSpinner.makeTextFormat(18);
             field.htmlText = msg +
                 " <a href=\"" + getWhirledPage("") + "\" target=\"_blank\"><u>Whirled</u></a>!";
-            field.x = (_stageW - field.width) / 2;
-            field.y = 3 * (_stageH - field.height) / 4;
+            field.x = (stage.stageWidth - field.width) / 2;
+            field.y = 3 * (stage.stageHeight - field.height) / 4;
             addChild(field);
         }
     }
