@@ -30,6 +30,11 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.ui.SliderPopup;
+import com.threerings.msoy.ui.skins.VolumeButton0;
+import com.threerings.msoy.ui.skins.VolumeButton1;
+import com.threerings.msoy.ui.skins.VolumeButton2;
+import com.threerings.msoy.ui.skins.VolumeButton3;
+import com.threerings.msoy.ui.skins.VolumeButton4;
 
 import com.threerings.msoy.notify.client.NotificationDisplay;
 
@@ -179,7 +184,8 @@ public class ControlBar extends HBox
         chatOptsBtn = createButton("controlBarButtonChat", "i.channel");
         chatOptsBtn.setCommand(WorldController.POP_CHANNEL_MENU, chatOptsBtn);
 
-        volBtn = createButton(getVolumeStyle(Prefs.getSoundVolume()), "i.volume");
+        volBtn = createButton("imageButton", "i.volume");
+        updateVolumeSkin(Prefs.getSoundVolume());
         volBtn.setCallback(handlePopVolume);
 
 //        fullBtn = createButton("controlBarButtonFull", "i.full");
@@ -350,14 +356,6 @@ public class ControlBar extends HBox
         }
     }
 
-    protected function getVolumeStyle (level :Number) :String
-    {
-        // if the level is 0, we want to show icon 0,
-        // otherwise show a smooth transition between levels 1 and 4
-        const icon :int = (level == 0) ? 0 : (1 + Math.round(level * 3));
-        return "controlBarButtonVolume" + icon;
-    }
-
     protected function handlePopVolume () :void
     {
         var dfmt :Function = function (value :Number) :String {
@@ -370,7 +368,15 @@ public class ControlBar extends HBox
     protected function updateVolume (level :Number) :void
     {
         Prefs.setSoundVolume(level);
-        volBtn.styleName = getVolumeStyle(level);
+        updateVolumeSkin(level);
+    }
+
+    protected function updateVolumeSkin (level :Number) :void
+    {
+        // if the level is 0, we want to show icon 0,
+        // otherwise show a smooth transition between levels 1 and 4
+        const icon :int = (level == 0) ? 0 : (1 + Math.round(level * 3));
+        volBtn.setStyle("image", VOLUME_SKINS[icon]);
     }
 
     protected function uiStateChanged (event :UIStateChangeEvent) :void
@@ -393,6 +399,9 @@ public class ControlBar extends HBox
     protected static const BUTTON_SECTION :int = -1;
     // implicit: custom controls section = 0
     protected static const NOTIFICATION_SECTION :int = 1;
+
+    protected static const VOLUME_SKINS :Array = [
+        VolumeButton0, VolumeButton1, VolumeButton2, VolumeButton3, VolumeButton4 ];
 
     /** Our clientside context. */
     protected var _ctx :MsoyContext;

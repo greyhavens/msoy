@@ -579,32 +579,12 @@ TabNavigator, TabBar {
   image: Embed(source="../media/skins/controlbar/editroom.png");
 }
 
-.controlBarButtonVolume0 {
-  image: Embed(source="../media/skins/controlbar/vol_01.png");
-}
-
-.controlBarButtonVolume1 {
-  image: Embed(source="../media/skins/controlbar/vol_02.png");
-}
-
-.controlBarButtonVolume2 {
-  image: Embed(source="../media/skins/controlbar/vol_03.png");
-}
-
-.controlBarButtonVolume3 {
-  image: Embed(source="../media/skins/controlbar/vol_04.png");
-}
-
-.controlBarButtonVolume4 {
-  image: Embed(source="../media/skins/controlbar/vol_05.png");
-}
-
 .controlBarButtonZoom {
   image: Embed(source="../media/skins/controlbar/zoom.png");
 }
 
 .controlBarButtonComment {
-  image: Embed(source="../media/skins/controlbar/comment.png");
+  image: ClassReference("com.threerings.msoy.ui.skins.CommentButton");
 }
 
 .controlBarButtonInstructions {

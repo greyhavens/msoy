@@ -25,6 +25,13 @@ import com.threerings.flash.TextFieldUtil;
 import com.threerings.flash.media.MediaPlayer;
 import com.threerings.flash.media.MediaPlayerCodes;
 
+import com.threerings.msoy.ui.skins.CommentButton;
+import com.threerings.msoy.ui.skins.VolumeButton0;
+import com.threerings.msoy.ui.skins.VolumeButton1;
+import com.threerings.msoy.ui.skins.VolumeButton2;
+import com.threerings.msoy.ui.skins.VolumeButton3;
+import com.threerings.msoy.ui.skins.VolumeButton4;
+
 // NOTE:
 // One feature that was possibly desired was showing the media load progress.
 // This, in theory, shouldn't be hard, but in practice it was enough of a mess that
@@ -97,7 +104,7 @@ public class MediaControls extends Sprite
     {
         _playBtn = new SimpleIconButton(PLAY_BTN);
         _pauseBtn = new SimpleIconButton(PAUSE_BTN);
-        _commentBtn = new SimpleIconButton(COMMENT_BTN);
+        _commentBtn = new SimpleIconButton(CommentButton);
         _volumeBtn = new SimpleIconButton(calcVolumeIcon(_player.getVolume()));
         _track = new Sprite();
         _knob = new Sprite();
@@ -473,32 +480,8 @@ public class MediaControls extends Sprite
     [Embed(source="../../../../../../rsrc/media/skins/mediaplayer/pause.png")]
     protected static const PAUSE_BTN :Class;
 
-    // TODO: re-use resource in css file, or have that use this. Or something!
-    [Embed(source="../../../../../../rsrc/media/skins/controlbar/comment.png")]
-    protected static const COMMENT_BTN :Class;
-
-    // TODO: re-use resource in css file, or have that use this. Or something!
-    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_05.png")]
-    protected static const VOLUME_4 :Class;
-
-    // TODO: re-use resource in css file, or have that use this. Or something!
-    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_04.png")]
-    protected static const VOLUME_3 :Class;
-
-    // TODO: re-use resource in css file, or have that use this. Or something!
-    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_03.png")]
-    protected static const VOLUME_2 :Class;
-
-    // TODO: re-use resource in css file, or have that use this. Or something!
-    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_02.png")]
-    protected static const VOLUME_1 :Class;
-
-    // TODO: re-use resource in css file, or have that use this. Or something!
-    [Embed(source="../../../../../../rsrc/media/skins/controlbar/vol_01.png")]
-    protected static const VOLUME_0 :Class;
-
     protected static const VOLUME_ICONS :Array = [
-        VOLUME_0, VOLUME_1, VOLUME_2, VOLUME_3, VOLUME_4 ];
+        VolumeButton0, VolumeButton1, VolumeButton2, VolumeButton3, VolumeButton4 ];
 
     [Embed(source="../../../../../../rsrc/media/skins/mediaplayer/knob.swf")]
     protected static const KNOB :Class;
