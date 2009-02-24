@@ -443,9 +443,11 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientDidLogoff (event :ClientEvent) :void
     {
-        if (!_mctx.getClient().isSwitchingServers()) {
+        if (_logoffMessage != null) {
             _topPanel.setPlaceView(new DisconnectedPanel(_mctx, _logoffMessage));
             _logoffMessage = null;
+        } else {
+            _topPanel.setPlaceView(new BlankPlaceView());
         }
     }
 
