@@ -13,8 +13,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-import com.threerings.util.MessageBundle;
-
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
@@ -183,12 +181,9 @@ public class WebRoomServlet extends MsoyServiceServlet
 
         MoneyLogic.BuyOperation<RoomInfo> buyOp = new MoneyLogic.BuyOperation<RoomInfo>() {
             public boolean create (boolean magicFree, Currency currency, int amountPaid) {
-                MessageBundle bundle = _serverMsgs.getBundle("server");
-                String name = bundle.get("m.new_room_name", mrec.name);
-                String portalAction = mrec.homeSceneId + ":" +
-                    bundle.get("m.new_room_door", mrec.name);
+                String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
                 _newScene = _sceneRepo.createBlankRoom(
-                    MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, portalAction, false);
+                    MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, false);
                 return true;
             }
 
