@@ -15,10 +15,6 @@ public class VolumeButton
         return IMAGES[image] as Class;
     }
 
-    /** The images used to skin the volume button. */
-    public static const IMAGES :Array = [
-        VOLUME_0, VOLUME_1, VOLUME_2, VOLUME_3, VOLUME_4 ];
-
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/vol_0.png")]
     public static const VOLUME_0 :Class;
 
@@ -33,5 +29,9 @@ public class VolumeButton
 
     [Embed(source="../../../../../../../rsrc/media/skins/controlbar/vol_4.png")]
     public static const VOLUME_4 :Class;
+
+    /** The images used to skin the volume button. */
+    public static const IMAGES :Array = [
+        VOLUME_0, VOLUME_1, VOLUME_2, VOLUME_3, VOLUME_4 ];
 }
 }
