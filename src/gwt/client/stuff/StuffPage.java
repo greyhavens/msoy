@@ -99,6 +99,9 @@ public class StuffPage extends Page
 
         // if we're editing an item, display that interface
         } else if ("e".equals(arg0) || "c".equals(arg0)) {
+            if (!MsoyUI.requireRegistered()) {
+                return; // permaguests can't create or edit items
+            }
             type = (byte)args.get(1, Item.AVATAR);
             final ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
             if ("e".equals(arg0)) {

@@ -72,7 +72,7 @@ public class StuffServlet extends MsoyServiceServlet
     public Item createItem (Item item, ItemIdent parent)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireRegisteredUser();
 
         item = _itemLogic.createItem(memrec.memberId, item, parent).toItem();
 
@@ -98,7 +98,7 @@ public class StuffServlet extends MsoyServiceServlet
     public void updateItem (Item item)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        MemberRecord memrec = requireRegisteredUser();
 
         // make sure the item in question is consistent as far as the item is concerned
         if (!item.isConsistent()) {
