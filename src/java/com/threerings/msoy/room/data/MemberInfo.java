@@ -148,7 +148,7 @@ public class MemberInfo extends ActorInfo
             _ident = memobj.avatar.getIdent();
             _scale = memobj.avatar.scale;
         } else {
-            _media = memobj.isGuest() ?
+            _media = (memobj.isGuest() || memobj.isPermaguest()) ?
                 Avatar.getDefaultGuestAvatarMedia() : Avatar.getDefaultMemberAvatarMedia();
             _ident = new ItemIdent(Item.OCCUPANT, getBodyOid());
             _scale = 1f;
