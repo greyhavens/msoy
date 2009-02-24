@@ -189,9 +189,7 @@ public class UberClient
         }
         // TODO: possibly save these in msoyparameters?
 
-        // TODO: massage those into a vector!
         const site :String = figureSiteFromUrl(pageURL || stubURL);
-
         const gameId :int = int(params["game"]);
         const roomId :int = int(params["room"]);
         delete params["game"];
