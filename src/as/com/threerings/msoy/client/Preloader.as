@@ -136,10 +136,22 @@ public class Preloader extends Sprite
             if (checkFlashUpgrade() || checkOldStub()) {
                 return;
             }
-
             value.addEventListener(ProgressEvent.PROGRESS, handleProgress);
             value.addEventListener(FlexEvent.INIT_COMPLETE, handleComplete);
         });
+
+        // figure out what upsell message to use (_Whirled_! will be tacked on)
+        var msg :String = getContentPage().indexOf("game") == -1 ?
+            "Create your own world in " : "Play more multiplayer games on";
+
+        var field :TextField = new TextField();
+        field.autoSize = TextFieldAutoSize.CENTER;
+        field.defaultTextFormat = LoadingSpinner.makeTextFormat(18);
+        field.htmlText = 
+            msg + " <a href=\"" + getWhirledPage("") + "\" target=\"_blank\"><u>Whirled</u></a>!";
+        field.x = (_stageW - field.width) / 2;
+        field.y = 3 * (_stageH - field.height) / 4;
+        addChild(field);
     }
 
     // from IPreloaderDisplay
@@ -257,18 +269,18 @@ public class Preloader extends Sprite
         field.width = _stageW;
         field.textColor = 0xFFFFFF;
         field.htmlText = "<font size=\"18\">" + msg + "<br/><br/>" +
-            "<a href=\"" + DeploymentConfig.serverURL + getWhirledPage() + "\" " +
-            "target=\"" + target + "\"><u>" + link + "</u></a></font>";
+            "<a href=\"" + getContentPage() + "\" target=\"" + target + "\">" +
+            "<u>" + link + "</u></a></font>";
         // TODO: remove debugging
-        trace("Computed page as " + getWhirledPage() + ".");
+        trace("Computed page as " + getContentPage() + ".");
         addChild(field);
     }
 
     /**
-     * Return a link back to whirled that attempts to visit the same page
-     * that was specified in the embed/stub parameters. Ugh!
+     * Return a link back to Whirled that attempts to visit the same page that was specified in the
+     * embed/stub parameters. Ugh!
      */
-    protected function getWhirledPage () :String
+    protected function getContentPage () :String
     {
         // This is so fucking brittle
         var p :Object = MsoyParameters.get();
@@ -286,13 +298,21 @@ public class Preloader extends Sprite
             }
         }
 
+        return getWhirledPage(page);
+    }
+
+    /**
+     * Returns the URL for the supplied Whirled page, using /welcome if appropriate.
+     */
+    protected function getWhirledPage (token :String) :String
+    {
         // if there's an affiliate, route them through /welcome/
+        var p :Object = MsoyParameters.get();
         if (null != p["aff"]) {
-            page = "welcome/" + p["aff"] + "/" + page;
+            return DeploymentConfig.serverURL + "welcome/" + p["aff"] + "/" + token;
         } else {
-            page = "#" + page;
+            return DeploymentConfig.serverURL + "#" + token;
         }
-        return page;
     }
 
     protected function handleProgress (event :ProgressEvent) :void

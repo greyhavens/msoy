@@ -23,6 +23,17 @@ public class LoadingSpinner extends Sprite
     public static const WIDTH :int = 168;
     public static const HEIGHT :int = 116;
 
+    public static function makeTextFormat (size :int) :TextFormat
+    {
+        const tf :TextFormat = new TextFormat();
+        tf.font = "_sans";
+        tf.align = "center";
+        tf.bold = true;
+        tf.color = 0xFFFFFF;
+        tf.size = size;
+        return tf;
+    }
+
     public function LoadingSpinner ()
     {
         // avoiding using MultiLoader to minimize dependancies
@@ -32,13 +43,7 @@ public class LoadingSpinner extends Sprite
 
         _label = new TextField();
         _label.width = WIDTH;
-        const tf :TextFormat = new TextFormat();
-        tf.font = "_sans";
-        tf.align = "center";
-        tf.bold = true;
-        tf.color = 0xFFFFFF;
-        tf.size = 16;
-        _label.defaultTextFormat = tf;
+        _label.defaultTextFormat = makeTextFormat(16);
         _label.y = HEIGHT;
         addChild(_label);
     }
