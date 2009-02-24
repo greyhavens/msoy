@@ -19,6 +19,7 @@ import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -220,6 +221,14 @@ public class MemberObject extends MsoyBodyObject
     public boolean isGuest ()
     {
         return memberName.isGuest();
+    }
+
+    /**
+     * Returns true if this user is a permaguest.
+     */
+    public boolean isPermaguest ()
+    {
+        return MemberMailUtil.isPermaguest(username.toString());
     }
 
     /**
