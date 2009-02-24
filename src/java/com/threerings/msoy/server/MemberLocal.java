@@ -110,7 +110,6 @@ public class MemberLocal extends BodyLocal
      */
     public void setHearingGroupChat (int groupId, boolean hear)
     {
-        System.err.println("setHearingGroupChat(" + groupId + ", " + hear + ")");
         if (hear) {
             if (_suppressedGroupChats != null) {
                 _suppressedGroupChats.remove(groupId);
