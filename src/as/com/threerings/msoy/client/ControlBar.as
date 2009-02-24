@@ -30,11 +30,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 import com.threerings.msoy.ui.SliderPopup;
-import com.threerings.msoy.ui.skins.VolumeButton0;
-import com.threerings.msoy.ui.skins.VolumeButton1;
-import com.threerings.msoy.ui.skins.VolumeButton2;
-import com.threerings.msoy.ui.skins.VolumeButton3;
-import com.threerings.msoy.ui.skins.VolumeButton4;
+import com.threerings.msoy.ui.skins.VolumeButton;
 
 import com.threerings.msoy.notify.client.NotificationDisplay;
 
@@ -373,10 +369,7 @@ public class ControlBar extends HBox
 
     protected function updateVolumeSkin (level :Number) :void
     {
-        // if the level is 0, we want to show icon 0,
-        // otherwise show a smooth transition between levels 1 and 4
-        const icon :int = (level == 0) ? 0 : (1 + Math.round(level * 3));
-        volBtn.setStyle("image", VOLUME_SKINS[icon]);
+        volBtn.setStyle("image", VolumeButton.getImage(level));
     }
 
     protected function uiStateChanged (event :UIStateChangeEvent) :void
@@ -399,9 +392,6 @@ public class ControlBar extends HBox
     protected static const BUTTON_SECTION :int = -1;
     // implicit: custom controls section = 0
     protected static const NOTIFICATION_SECTION :int = 1;
-
-    protected static const VOLUME_SKINS :Array = [
-        VolumeButton0, VolumeButton1, VolumeButton2, VolumeButton3, VolumeButton4 ];
 
     /** Our clientside context. */
     protected var _ctx :MsoyContext;

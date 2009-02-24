@@ -26,11 +26,7 @@ import com.threerings.flash.media.MediaPlayer;
 import com.threerings.flash.media.MediaPlayerCodes;
 
 import com.threerings.msoy.ui.skins.CommentButton;
-import com.threerings.msoy.ui.skins.VolumeButton0;
-import com.threerings.msoy.ui.skins.VolumeButton1;
-import com.threerings.msoy.ui.skins.VolumeButton2;
-import com.threerings.msoy.ui.skins.VolumeButton3;
-import com.threerings.msoy.ui.skins.VolumeButton4;
+import com.threerings.msoy.ui.skins.VolumeButton;
 
 // NOTE:
 // One feature that was possibly desired was showing the media load progress.
@@ -105,7 +101,7 @@ public class MediaControls extends Sprite
         _playBtn = new SimpleIconButton(PLAY_BTN);
         _pauseBtn = new SimpleIconButton(PAUSE_BTN);
         _commentBtn = new SimpleIconButton(CommentButton);
-        _volumeBtn = new SimpleIconButton(calcVolumeIcon(_player.getVolume()));
+        _volumeBtn = new SimpleIconButton(VolumeButton.getImage(_player.getVolume()));
         _track = new Sprite();
         _knob = new Sprite();
         var knobThing :DisplayObject = DisplayObject(new KNOB());
@@ -258,14 +254,7 @@ public class MediaControls extends Sprite
     {
         var volume :Number = 1 - ((_volumeKnob.y - VOLUME_TRACK_OFFSET) / VOLUME_TRACK_HEIGHT);
         _player.setVolume(volume);
-        _volumeBtn.setIcon(calcVolumeIcon(volume));
-    }
-
-    protected function calcVolumeIcon (volume :Number) :Object
-    {
-        // if the level is 0, show icon 0, else smoothly between 1 and 4
-        const icon :int = (volume == 0) ? 0 : (1 + Math.round(volume * 3));
-        return VOLUME_ICONS[icon];
+        _volumeBtn.setIcon(VolumeButton.getImage(volume));
     }
 
     protected function handleVolumeKnobUp (event :MouseEvent) :void
@@ -479,9 +468,6 @@ public class MediaControls extends Sprite
 
     [Embed(source="../../../../../../rsrc/media/skins/mediaplayer/pause.png")]
     protected static const PAUSE_BTN :Class;
-
-    protected static const VOLUME_ICONS :Array = [
-        VolumeButton0, VolumeButton1, VolumeButton2, VolumeButton3, VolumeButton4 ];
 
     [Embed(source="../../../../../../rsrc/media/skins/mediaplayer/knob.swf")]
     protected static const KNOB :Class;
