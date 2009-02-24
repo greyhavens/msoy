@@ -349,6 +349,8 @@ public class PartyManager
         Tuple<String, HostedRoom> room = _peerMgr.getSceneHost(_partyObj.sceneId);
         if (room != null) {
             setStatus(MessageBundle.tcompose("m.status_room", room.right.name));
+        } else {
+            setStatus("m.status_unknown");
         }
     }
 
