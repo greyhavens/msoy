@@ -4,7 +4,6 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -14,11 +13,8 @@ import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebMemberService;
 import com.threerings.msoy.web.gwt.WebMemberServiceAsync;
 
-import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.util.FlashClients;
 import client.util.Link;
-import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 /**

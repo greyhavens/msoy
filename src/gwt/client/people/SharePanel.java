@@ -5,12 +5,9 @@ package client.people;
 
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.ui.RoundBox;
-import client.util.Link;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;

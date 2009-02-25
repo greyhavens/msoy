@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -35,7 +34,6 @@ import client.ui.NumberTextBox;
 import client.ui.Stars;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 public class DoListItemPopup extends VerticalPanel
