@@ -18,7 +18,8 @@ public abstract class Notification extends SimpleStreamableObject
     public static final byte SYSTEM = 0;
     public static final byte INVITE = 1;
     public static final byte PERSONAL = 2;
-    public static final byte BUTTSCRATCHING = 3;
+    public static final byte BUTTSCRATCHING = 3; // your friends doing things
+    public static final byte LOWEST = 4;
 
     @ActionScript(omit=true)
     public Notification ()
