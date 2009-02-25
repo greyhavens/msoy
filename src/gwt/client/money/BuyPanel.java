@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 
-import com.threerings.gwt.ui.Anchor;
+// import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -64,11 +64,9 @@ public abstract class BuyPanel<T> extends SmartTable
         setStyleName("Buy");
 
         // Buy with bars, plus a link on how to acquire some
-        _buyBars = new BuyButton(Currency.BARS);
         _barPanel = new FlowPanel();
-        _barPanel.add(_buyBars);
-        _barLabel = new Label();
-        _barPanel.add(_barLabel);
+        _barPanel.add(_buyBars = new BuyButton(Currency.BARS));
+        _barPanel.add(_barLabel = new Label());
         getFlexCellFormatter().setColSpan(0, 0, 2);
         setWidget(0, 0, _barPanel);
 
@@ -80,13 +78,13 @@ public abstract class BuyPanel<T> extends SmartTable
         _buyCoins = new BuyButton(Currency.COINS);
         setWidget(1, 1, _buyCoins);
 
-        _addenda = new FlowPanel();
-        setWidget(2, 0, _addenda);
-        getFlexCellFormatter().setColSpan(2, 0, 2);
+//         _addenda = new FlowPanel();
+//         setWidget(2, 0, _addenda);
+//         getFlexCellFormatter().setColSpan(2, 0, 2);
 
-        // Display exchange rate
-        _wikiLink = MsoyUI.createExternalAnchor("http://wiki.whirled.com/Currency", "");
-        _wikiLink.setStyleName("exchangeRateLink");
+//         // displays exchange rate
+//         _wikiLink = MsoyUI.createExternalAnchor("http://wiki.whirled.com/Currency", "");
+//         _wikiLink.setStyleName("exchangeRateLink");
 
         updatePrice(quote);
     }
@@ -150,20 +148,18 @@ public abstract class BuyPanel<T> extends SmartTable
 
         _barPanel.setVisible(quote.getCoins() > 0);
         _buyBars.setAmount(quote.getBars());
-        if (quote.getListedCurrency() == Currency.BARS) {
-            int cents = quote.getCentsPerBar() * quote.getBars();
-            String msg = (cents < 100) ? _msgs.centsCost(""+cents) :
-                _msgs.dollarCost(NumberFormat.getFormat("$0.00").format(cents/100f));
-            _barLabel.setText(msg);
-            _wikiLink.setText(_msgs.exchangeRate(Currency.COINS.format(
-                (int)Math.floor(quote.getExchangeRate()))));
-            _addenda.add(_wikiLink);
-        } else {
-            _barLabel.setText(quote.getCoinChange() > 0 ?
-                _msgs.coinChange(Currency.COINS.format(quote.getCoinChange())) : "");
-            _addenda.remove(_wikiLink);
-        }
         _buyCoins.setAmount(quote.getCoins());
+
+        int cents = quote.getCentsPerBar() * quote.getBars();
+        _barLabel.setText((cents < 100) ? _msgs.centsCost(""+cents) :
+                          _msgs.dollarCost(NumberFormat.getFormat("$0.00").format(cents/100f)));
+
+//         if (quote.getCoinChange() > 0) ...
+//         Label change = new Label(_msgs.coinChange(Currency.COINS.format(quote.getCoinChange())));
+
+//         _wikiLink.setText(_msgs.exchangeRate(
+//                               Currency.COINS.format((int)Math.floor(quote.getExchangeRate()))));
+//         _addenda.add(_wikiLink);
     }
 
     protected class BuyCallback extends ClickCallback<PurchaseResult<T>>
@@ -260,9 +256,9 @@ public abstract class BuyPanel<T> extends SmartTable
     protected BuyButton _buyBars, _buyCoins;
     protected PushButton _getBars;
     protected FlowPanel _barPanel;
-    protected FlowPanel _addenda;
+//     protected FlowPanel _addenda;
     protected Label _barLabel;
-    protected Anchor _wikiLink;
+//     protected Anchor _wikiLink;
 
     protected int _timesBought;
 
