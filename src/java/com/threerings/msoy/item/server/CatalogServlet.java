@@ -15,7 +15,6 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.RandomUtil;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.StatType;
@@ -348,8 +347,8 @@ public class CatalogServlet extends MsoyServiceServlet
         // the coin minimum price is the listing fee
         int listFee = ItemPrices.getMinimumPrice(Currency.COINS, item.type, rating);
         MoneyLogic.BuyOperation<CatalogRecord> buyOp;
-        BuyResult result = _moneyLogic.listItem(
-            mrec, minPrice, master.name, buyOp = new MoneyLogic.BuyOperation<CatalogRecord>() {
+        _moneyLogic.listItem(
+            mrec, listFee, master.name, buyOp = new MoneyLogic.BuyOperation<CatalogRecord>() {
             public boolean create (boolean magicFree, Currency currency, int amountPaid) {
                 // create our new immutable catalog master item
                 repo.insertOriginalItem(master, true);
