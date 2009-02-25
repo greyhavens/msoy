@@ -60,14 +60,13 @@ public class MoneyExchange
             // if the coin price is 0, the bar price is 0.
             // but otherwise never let the bar price get below 1.
             int bars = (amount == 0) ? 0 : Math.max(1, ((int) Math.ceil(amount / _rate)));
-            return new PriceQuote(listedCurrency, amount, bars,
-                (int) (Math.floor(bars * _rate) - amount), _rate,
-                (float) _runtime.money.barCost / 100);
+            return new PriceQuote(
+                listedCurrency, amount, bars, (int) (Math.floor(bars * _rate) - amount), _rate,
+                _runtime.money.barCost);
 
         case BARS:
             int coins = (amount == 0) ? 0 : Math.max(1, ((int) Math.ceil(amount * _rate)));
-            return new PriceQuote(listedCurrency, coins, amount,
-                0, _rate, (float) _runtime.money.barCost / 100);
+            return new PriceQuote(listedCurrency, coins, amount, 0, _rate, _runtime.money.barCost);
 
         default:
             throw new RuntimeException("Error: listing not in bars or coins?");

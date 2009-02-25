@@ -23,14 +23,14 @@ public class PriceQuote extends SimpleStreamableObject
 {
     public PriceQuote (
         Currency listedCurrency, int coins, int bars, int coinChangeForBars,
-        float rate, float barCost)
+        float rate, int centsPerBar)
     {
         _listedCurrency = listedCurrency;
         _coins = coins;
         _bars = bars;
         _coinChange = coinChangeForBars;
         _rate = rate;
-        _barCost = barCost;
+        _centsPerBar = centsPerBar;
     }
 
     /** For serialization. */
@@ -104,13 +104,13 @@ public class PriceQuote extends SimpleStreamableObject
     {
         return _rate;
     }
-    
+
     /**
-     * Return the current cost in USD for a single bar.
+     * Return the current cost in cents for a single bar.
      */
-    public float getUSDPerBarCost ()
+    public int getCentsPerBar ()
     {
-        return _barCost;
+        return _centsPerBar;
     }
 
     /* For debugging */
@@ -125,7 +125,7 @@ public class PriceQuote extends SimpleStreamableObject
     protected int _bars;
     protected int _coinChange;
     protected float _rate;
-    protected float _barCost;
+    protected int _centsPerBar;
 
     /** The maximum amount the exchange rate can vary at purchase time. */
     protected static final float MAX_RATE_VARIANCE = .05f;
