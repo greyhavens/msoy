@@ -35,7 +35,7 @@ public class MsoyMediaContainer extends MediaContainer
         }
 
         // have this container listen for bleep changes during its lifetime
-        Prefs.config.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
+        Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
     }
 
     /**
