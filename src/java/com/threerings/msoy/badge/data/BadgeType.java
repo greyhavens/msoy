@@ -104,8 +104,8 @@ public enum BadgeType
 
     // game badges
     GAMER(StampCategory.GAME, StatType.GAME_SESSIONS, new Level[] {
-        new Level(1, 250),
-        new Level(5, 500),
+        new Level(2, 250),
+        new Level(10, 500),
         new Level(25, 1000),
         new Level(100, 2000),
         new Level(500, 3000),
@@ -126,8 +126,8 @@ public enum BadgeType
     },
 
     COLLECTOR(StampCategory.GAME, StatType.TROPHIES_EARNED, new Level[] {
-        new Level(1, 250),
-        new Level(10, 500),
+        new Level(5, 250),
+        new Level(15, 500),
         new Level(30, 1000),
         new Level(75, 2000),
         new Level(150, 3000),
