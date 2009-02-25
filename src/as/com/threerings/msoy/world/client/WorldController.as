@@ -529,9 +529,9 @@ public class WorldController extends MsoyController
     /**
      * Handles the VIEW_SHOP command.
      */
-    public function handleViewShop (itemType :int) :void
+    public function handleViewShop (itemType :int = Item.NOT_A_TYPE) :void
     {
-        displayPage("shop", ""+itemType);
+        displayPage("shop", (itemType == Item.NOT_A_TYPE) ? "" : (""+itemType));
     }
 
     /**
