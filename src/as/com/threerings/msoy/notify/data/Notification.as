@@ -20,7 +20,8 @@ public /* abstract */ class Notification extends SimpleStreamableObject
     public static const SYSTEM :int = 0;
     public static const INVITE :int = 1;
     public static const PERSONAL :int = 2;
-    public static const BUTTSCRATCHING :int = 3;
+    public static const BUTTSCRATCHING :int = 3; // your friends doing things
+    public static const LOWEST :int = 4; // people coming and going, other incidentals
 
     /**
      * Get the chat message used to announce this notification, or null.

@@ -14,9 +14,12 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.util.CrowdContext;
 
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.notify.data.Notification;
 
 /**
  * Listens for and reports occupant entry and exit.
@@ -25,7 +28,7 @@ public class OccupantReporter
     implements SetListener
 {
     public function willEnterPlace (
-        ctx :CrowdContext, plobj :PlaceObject, reportInitialOccupants :Boolean = true) :void
+        ctx :MsoyContext, plobj :PlaceObject, reportInitialOccupants :Boolean = true) :void
     {
         _ctx = ctx;
 
@@ -65,8 +68,13 @@ public class OccupantReporter
             if (isSelf(info)) {
                 return;
             }
-            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
-                MessageBundle.tcompose("m.entered_room", info.username));
+//            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
+//                MessageBundle.tcompose("m.entered_room", info.username));
+            // TODO: if we keep this, move the translation to the notify bundle
+            _ctx.getNotificationDirector().addGenericNotification(
+                MessageBundle.qualify(MsoyCodes.GENERAL_MSGS,
+                    MessageBundle.tcompose("m.entered_room", info.username)),
+                Notification.LOWEST, info.username as MemberName);
         }
     }
 
@@ -84,8 +92,13 @@ public class OccupantReporter
             if (isSelf(info)) {
                 return;
             }
-            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
-                MessageBundle.tcompose("m.left_room", info.username));
+//            _ctx.getChatDirector().displayInfo(MsoyCodes.GENERAL_MSGS,
+//                MessageBundle.tcompose("m.left_room", info.username));
+            // TODO: if we keep this, move the translation to the notify bundle
+            _ctx.getNotificationDirector().addGenericNotification(
+                MessageBundle.qualify(MsoyCodes.GENERAL_MSGS,
+                    MessageBundle.tcompose("m.left_room", info.username)),
+                Notification.LOWEST, info.username as MemberName);
         }
     }
 
@@ -95,6 +108,6 @@ public class OccupantReporter
             (_ctx.getClient().getClientObject() as BodyObject).getVisibleName());
     }
 
-    protected var _ctx :CrowdContext;
+    protected var _ctx :MsoyContext;
 }
 }

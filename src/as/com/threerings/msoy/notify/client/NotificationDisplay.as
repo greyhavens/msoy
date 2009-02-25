@@ -295,8 +295,9 @@ public class NotificationDisplay extends HBox
         case Notification.SYSTEM: return 0xFFFFFF;
         case Notification.INVITE: return 0xFFA13D;
         case Notification.PERSONAL: return 0x40B8D2;
-        case Notification.BUTTSCRATCHING: // fall through to default
-        default: return 0x999999;
+        case Notification.BUTTSCRATCHING: return 0x999999;
+        case Notification.LOWEST: // fall through to default
+        default: return 0x777777;
         }
     }
 
