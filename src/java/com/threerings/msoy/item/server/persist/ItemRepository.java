@@ -54,7 +54,6 @@ import com.samskivert.depot.expression.LiteralExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Conditionals.*;
 import com.samskivert.depot.operator.Logic.*;
 import com.samskivert.depot.operator.SQLOperator;
@@ -78,6 +77,7 @@ import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.item.gwt.ItemPrices;
 
 import com.threerings.msoy.money.server.MoneyExchange;
 
@@ -134,27 +134,39 @@ public abstract class ItemRepository<T extends ItemRecord>
     public void init (byte itemType)
     {
         _itemType = itemType;
-        
-        registerMigration(new DataMigration("2009_01_28_item" + _itemType + "_ratings") {
+
+        // TEMP: remove a few weeks after 2009/02/24
+        registerMigration(new DataMigration("2009_02_24_minprice_" + _itemType) {
             @Override public void invoke () throws DatabaseException {
-                updatePartial(getItemClass(), new Where(new ValueExp(true)), null,
-                    getItemColumn(ItemRecord.RATING_SUM),
-                    new Arithmetic.Mul(
-                        getItemColumn(ItemRecord.RATING_COUNT),
-                        getItemColumn(ItemRecord.RATING)));
+                int[] byrating = new int[5];
+                int adjusted = 0;
+                for (byte rating : new byte[] { 5, 4, 3, 2, 1 }) {
+                    int minPrice = ItemPrices.getMinimumPrice(Currency.COINS, _itemType, rating);
+                    // this is basically what we're doing except not as an update clause:
+                    // update CatalogRecord set pricing = minPrice
+                    // join ItemRecord on ItemRecord.listedItemId = ItemRecord.itemId
+                    // where currency = coins and rating() <= rating and rating() > (rating-1)
+                    // and cost < minPrice
+                    Join join = new Join(getCatalogColumn(CatalogRecord.LISTED_ITEM_ID),
+                                         getItemColumn(ItemRecord.ITEM_ID));
+                    Where where = new Where(
+                        new And(new Equals(getCatalogColumn(CatalogRecord.CURRENCY),
+                                           Currency.COINS.toByte()),
+                                new LessThanEquals(getRatingExpression(), rating),
+                                new GreaterThan(getRatingExpression(), rating-1),
+                                new LessThan(getCatalogColumn(CatalogRecord.COST), minPrice)));
+                    for (CatalogRecord crec : findAll(getCatalogClass(), join, where)) {
+                        updatePartial(getCatalogClass(), crec.catalogId,
+                                      CatalogRecord.COST, minPrice);
+                        adjusted++;
+                        byrating[rating-1]++;
+                    }
+                }
+                log.info("Enforced minimum prices", "type", getItemClass().getSimpleName(),
+                         "total", adjusted, "byrating", byrating);
             }
         });
-
-//         // register some item data migrations
-//         MIN_PRICES.put(Item.AVATAR, new int[] { 100, 200, 500, 1500, 5000 });
-//         MIN_PRICES.put(Item.FURNITURE, new int[] { 10, 50, 100, 500, 1000 });
-//         MIN_PRICES.put(Item.DECOR, new int[] { 20, 100, 200, 1000, 2000 });
-//         MIN_PRICES.put(Item.TOY, new int[] { 200, 300, 700, 2500, 5000 });
-//         MIN_PRICES.put(Item.PET, new int[] { 100, 200, 500, 1500, 5000 });
-//         MIN_PRICES.put(Item.AVATAR, new int[] { 100, 200, 500, 1500, 5000 });
-//         MIN_PRICES.put(Item.GAME, new int[] { 200, 300, 700, 2500, 5000 });
-//         MIN_PRICES.put(Item.PHOTO, new int[] { 10, 50, 100, 500, 1000 });
-//         MIN_PRICES.put(Item.VIDEO, new int[] { 10, 50, 100, 500, 1000 });
+        // END TEMP
     }
 
     /**
@@ -289,7 +301,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // locate all matching original items
         List<T> results = findAll(getItemClass(), new Where(
-            new And(new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
+            new And(new Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
                     makeSearchClause(matches))));
 
         // now add the tag match as cloned items can match tags
@@ -297,7 +309,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // add all matching cloned items
         results.addAll(loadClonedItems(new Where(
-            new And(new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
+            new And(new Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
                     makeSearchClause(matches)))));
 
         return results;
