@@ -66,19 +66,6 @@ public class PlayButton
             break;
         }
 
-        // this is only used for testing game loading issues per WRLD-531, and will
-        // be removed after the test is over. -- robert
-        if (! inWorld) {
-            play.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    // is the Flash client loaded and ready?
-                    String stage = "stage 1 " + (FlashClients.clientExists() ? "flash" : "none");
-                    _membersvc.trackClientAction(CShell.visitor, "WRLD-531-2 game started",
-                        stage, new NoopAsyncCallback());
-                }
-            });
-        }
-
         play.addClickListener(Link.createListener(Pages.WORLD, args));
         return play;
     }

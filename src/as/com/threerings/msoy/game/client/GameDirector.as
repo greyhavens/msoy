@@ -459,10 +459,6 @@ public class GameDirector extends BasicDirector
             log.warning("Requested to enter game but have AVRG liaison?! [oid=" + gameOid + "].");
 
         } else {
-            // this is only used for testing game loading issues per WRLD-531,
-            // and will be removed after the test is over. -- robert
-            _wctx.getMsoyClient().trackClientAction("WRLD-531-2 game started", "stage 6");
-
             _liaison.inviterMemberId = inviterMemberId;
             _liaison.inviteToken = inviteToken;
             LobbyGameLiaison(_liaison).enterGame(gameOid);
