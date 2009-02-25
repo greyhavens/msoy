@@ -136,7 +136,7 @@ public class NotificationDirector extends BasicDirector
             msg = MessageBundle.tcompose("m.badge_awarded", nm, badge.coinValue);
         }
         if (msg != null) {
-            addGenericNotification(msg, Notification.BUTTSCRATCHING);
+            addGenericNotification(msg, Notification.PERSONAL);
         }
     }
 
@@ -148,7 +148,7 @@ public class NotificationDirector extends BasicDirector
     {
         if (coins > 1) { // save ourselves the plurality headache
             addGenericNotification(MessageBundle.tcompose("m.payout_upsell", coins),
-                Notification.BUTTSCRATCHING);
+                Notification.PERSONAL);
         }
     }
 
