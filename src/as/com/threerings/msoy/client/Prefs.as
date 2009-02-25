@@ -212,7 +212,8 @@ public class Prefs
      */
     public static function getChatDecay () :int
     {
-        return (_config.getValue(CHAT_DECAY, 1) as int);
+        // in embedded mode (when configs don't persist, we default to fast chat clearing)
+        return (_config.getValue(CHAT_DECAY, _config.isPersisting() ? 1 : 0) as int);
     }
 
     /**
