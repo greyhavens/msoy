@@ -26,8 +26,6 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 import com.samskivert.util.Invoker.Unit;
 
-import com.threerings.gwt.util.PagedResult;
-
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.server.BureauManager;
@@ -609,7 +607,7 @@ public class AdminServlet extends MsoyServiceServlet
 
     /**
      * Detect if an item is in use in a scene.
-     * TODO: share code with {@link ItemManager#reclaimItem()}
+     * TODO: share code with {@link ItemManager#reclaimItem}
      */
     public static boolean isUsed (ItemRecord item)
     {

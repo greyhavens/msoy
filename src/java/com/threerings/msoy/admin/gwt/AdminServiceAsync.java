@@ -8,8 +8,6 @@ import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.gwt.util.PagedResult;
-
 import com.threerings.msoy.admin.gwt.AdminService.ItemDeletionResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemFlagsResult;
 import com.threerings.msoy.admin.gwt.AdminService.ItemTransactionResult;

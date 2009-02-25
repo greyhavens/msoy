@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -312,6 +311,4 @@ public class MemberServlet extends MsoyServiceServlet
 
     /** Cutoff for adding in online greeters. */
     protected static final int NEED_FRIENDS_FRIEND_COUNT = 10;
-
-    private static final Pattern P = Pattern.compile("vec_([^_]+)");
 }

@@ -57,7 +57,7 @@ public interface InviteServiceAsync
     void getHomeSceneId (AsyncCallback<Integer> callback);
 
     /**
-     * The asynchronous version of {@link InviteService#getRecentlyOnlineFriends}.
+     * The asynchronous version of {@link InviteService#getFriends}.
      */
     void getFriends (int count, AsyncCallback<List<MemberCard>> callback);
 }

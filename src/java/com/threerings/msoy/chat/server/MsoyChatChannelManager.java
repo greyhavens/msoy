@@ -22,7 +22,6 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.crowd.data.BodyObject;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberLocal;
