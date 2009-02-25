@@ -28,7 +28,6 @@ public class PropRecord extends SubItemRecord
     public static final ColumnExp CATALOG_ID = colexp(_R, "catalogId");
     public static final ColumnExp RATING_SUM = colexp(_R, "ratingSum");
     public static final ColumnExp RATING_COUNT = colexp(_R, "ratingCount");
-    public static final ColumnExp RATING = colexp(_R, "rating");
     public static final ColumnExp USED = colexp(_R, "used");
     public static final ColumnExp LOCATION = colexp(_R, "location");
     public static final ColumnExp LAST_TOUCHED = colexp(_R, "lastTouched");
