@@ -3,18 +3,21 @@
 
 package com.threerings.msoy.client {
 
+import flash.events.EventDispatcher;
+
 import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
 import flash.utils.Dictionary;
 
 import com.threerings.util.Config;
+import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
 /**
  * Dispatched when a piece of media is bleeped or unbleeped.
- * This is dispatched on the 'config' object.
+ * This is dispatched on the 'events' object.
  *
  * @eventType com.threerings.msoy.client.Prefs.BLEEPED_MEDIA;
  * arg: [ mediaId (String), bleeped (Boolean) ]
@@ -22,11 +25,18 @@ import com.threerings.util.ValueEvent;
  */
 [Event(name="bleepedMedia", type="com.threerings.util.ValueEvent")]
 
+/**
+ * Dispatched when a preference is changed.
+ * This is dispatched on the 'events' object.
+ *
+ * @eventType com.threerings.util.ConfigValueSetEvent.CONFIG_VALUE_SET;
+ */
+[Event(name="ConfigValSet", type="com.threerings.util.ConfigValueSetEvent")]
+
 public class Prefs
 {
-    /** The underlying config object used to store our prefs. A listener
-     * may be installed on this object to hear about changes to preferences. */
-    public static const config :Config = new Config("rsrc/config/msoy");
+    /** We're a static class, so events are dispatched here. */
+    public static const events :EventDispatcher = new EventDispatcher();
 
     public static const USERNAME :String = "username";
     public static const SESSION_TOKEN :String = "sessionTok";
@@ -50,6 +60,22 @@ public class Prefs
 
     public static const GLOBAL_BLEEP :String = "_bleep_";
 
+    public static function setEmbedded (embedded :Boolean) :void
+    {
+        _config.setPath(embedded ? null : "rsrc/config/msoy");
+        useSoundVolume();
+
+        if (!embedded) {
+            var lastBuild :String = (_config.getValue("lastBuild", null) as String);
+            // update our stored last build time
+            if (lastBuild != DeploymentConfig.buildTime) {
+                _config.setValue("lastBuild", DeploymentConfig.buildTime);
+
+                // and right here we can do client-side transitions, if needed
+            }
+        }
+    }
+
     /**
      * Effect the global sound volume.
      */
@@ -61,47 +87,47 @@ public class Prefs
 
     public static function getUsername () :String
     {
-        return (config.getValue(USERNAME, "") as String);
+        return (_config.getValue(USERNAME, "") as String);
     }
 
     public static function setUsername (username :String) :void
     {
-        config.setValue(USERNAME, username);
+        _config.setValue(USERNAME, username);
     }
 
     public static function getPermaguestUsername () :String
     {
-        return (config.getValue(PERMAGUEST_USERNAME, null) as String);
+        return (_config.getValue(PERMAGUEST_USERNAME, null) as String);
     }
 
     public static function setPermaguestUsername (username :String) :void
     {
         if (username == null) {
-            config.remove(PERMAGUEST_USERNAME);
+            _config.remove(PERMAGUEST_USERNAME);
 
         } else {
-            config.setValue(PERMAGUEST_USERNAME, username);
+            _config.setValue(PERMAGUEST_USERNAME, username);
         }
     }
 
     public static function getMachineIdent () :String
     {
-        return (config.getValue(MACHINE_IDENT, "") as String);
+        return (_config.getValue(MACHINE_IDENT, "") as String);
     }
 
     public static function setMachineIdent (ident :String) :void
     {
-        config.setValue(MACHINE_IDENT, ident);
+        _config.setValue(MACHINE_IDENT, ident);
     }
 
     public static function getGridAutoshow () :Boolean
     {
-        return Boolean(config.getValue(GRID_AUTOSHOW, true));
+        return Boolean(_config.getValue(GRID_AUTOSHOW, true));
     }
 
     public static function setGridAutoshow (show :Boolean) :void
     {
-        config.setValue(GRID_AUTOSHOW, show);
+        _config.setValue(GRID_AUTOSHOW, show);
     }
 
     public static function setMediaBleeped (id :String, bleeped :Boolean) :void
@@ -115,9 +141,9 @@ public class Prefs
         }
 
         // TODO: right now we don't persist this.
-        //config.setValue(BLEEPED_MEDIA, _bleepedMedia, false);
+        //_config.setValue(BLEEPED_MEDIA, _bleepedMedia, false);
 
-        config.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ id, bleeped ]));
+        events.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ id, bleeped ]));
     }
 
     /**
@@ -132,7 +158,7 @@ public class Prefs
     public static function setGlobalBleep (bleeped :Boolean) :void
     {
         _globalBleep = bleeped;
-        config.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ GLOBAL_BLEEP, bleeped ]));
+        events.dispatchEvent(new ValueEvent(BLEEPED_MEDIA, [ GLOBAL_BLEEP, bleeped ]));
     }
 
     public static function isGlobalBleep () :Boolean
@@ -142,23 +168,23 @@ public class Prefs
 
     public static function getSoundVolume () :Number
     {
-        return (config.getValue(VOLUME, 1) as Number);
+        return (_config.getValue(VOLUME, 1) as Number);
     }
 
     public static function setSoundVolume (vol :Number) :void
     {
-        config.setValue(VOLUME, vol);
+        _config.setValue(VOLUME, vol);
         useSoundVolume();
     }
 
     public static function getZoom () :Number
     {
-        return (config.getValue(ZOOM, 1) as Number);
+        return (_config.getValue(ZOOM, 1) as Number);
     }
 
     public static function setZoom (zoom :Number) :void
     {
-        config.setValue(ZOOM, zoom);
+        _config.setValue(ZOOM, zoom);
     }
 
     /**
@@ -167,7 +193,7 @@ public class Prefs
      */
     public static function getChatFontSize () :int
     {
-        return (config.getValue(CHAT_FONT_SIZE, 14) as int);
+        return (_config.getValue(CHAT_FONT_SIZE, 14) as int);
     }
 
     /**
@@ -175,7 +201,7 @@ public class Prefs
      */
     public static function setChatFontSize (newSize :int) :void
     {
-        config.setValue(CHAT_FONT_SIZE, newSize);
+        _config.setValue(CHAT_FONT_SIZE, newSize);
     }
 
     /**
@@ -186,7 +212,7 @@ public class Prefs
      */
     public static function getChatDecay () :int
     {
-        return (config.getValue(CHAT_DECAY, 1) as int);
+        return (_config.getValue(CHAT_DECAY, 1) as int);
     }
 
     /**
@@ -194,7 +220,7 @@ public class Prefs
      */
     public static function setChatDecay (value :int) :void
     {
-        config.setValue(CHAT_DECAY, value);
+        _config.setValue(CHAT_DECAY, value);
     }
 
     /**
@@ -205,7 +231,7 @@ public class Prefs
     {
         // 2 == CurseFilter.VERNACULAR, which is a bitch to import and
         // the subclass doesn't have it.
-        return (config.getValue(CHAT_FILTER, 2) as int);
+        return (_config.getValue(CHAT_FILTER, 2) as int);
     }
 
     /**
@@ -213,7 +239,7 @@ public class Prefs
      */
     public static function setChatFilterLevel (lvl :int) :void
     {
-        config.setValue(CHAT_FILTER, lvl);
+        _config.setValue(CHAT_FILTER, lvl);
     }
 
     /**
@@ -221,12 +247,12 @@ public class Prefs
      */
     public static function getShowingChatHistory () :Boolean
     {
-        return (config.getValue(CHAT_HISTORY, false) as Boolean);
+        return (_config.getValue(CHAT_HISTORY, false) as Boolean);
     }
 
     public static function setShowingChatHistory (showing :Boolean) :void
     {
-        config.setValue(CHAT_HISTORY, showing);
+        _config.setValue(CHAT_HISTORY, showing);
     }
 
     /**
@@ -234,12 +260,12 @@ public class Prefs
      */
     public static function getSidebarChat () :Boolean
     {
-        return (config.getValue(CHAT_SIDEBAR, false) as Boolean);
+        return (_config.getValue(CHAT_SIDEBAR, false) as Boolean);
     }
 
     public static function setSidebarChat (sidebar :Boolean) :void
     {
-        config.setValue(CHAT_SIDEBAR, sidebar);
+        _config.setValue(CHAT_SIDEBAR, sidebar);
     }
 
     /**
@@ -247,28 +273,28 @@ public class Prefs
      */
     public static function getShowingOccupantList () :Boolean
     {
-        return (config.getValue(OCCUPANT_LIST, false) as Boolean);
+        return (_config.getValue(OCCUPANT_LIST, false) as Boolean);
     }
 
     public static function setShowingOccupantList (showing :Boolean) :void
     {
-        config.setValue(OCCUPANT_LIST, showing);
+        _config.setValue(OCCUPANT_LIST, showing);
     }
 
     public static function getPartyGroup () :int
     {
-        return (config.getValue(PARTY_GROUP, 0) as int);
+        return (_config.getValue(PARTY_GROUP, 0) as int);
     }
 
     public static function setPartyGroup (groupId :int) :void
     {
-        config.setValue(PARTY_GROUP, groupId);
+        _config.setValue(PARTY_GROUP, groupId);
     }
 
     protected static function checkLoadBleepedMedia () :void
     {
         if (_bleepedMedia == null) {
-            _bleepedMedia = config.getValue(BLEEPED_MEDIA, null) as Dictionary;
+            _bleepedMedia = _config.getValue(BLEEPED_MEDIA, null) as Dictionary;
             if (_bleepedMedia == null) {
                 _bleepedMedia = new Dictionary();
             }
@@ -279,23 +305,18 @@ public class Prefs
     protected static var _bleepedMedia :Dictionary;
     protected static var _globalBleep :Boolean;
 
+    /** Our config object. */
+    protected static var _config :Config = new Config(null);
+
     /**
     * A static initializer.
     */
     private static function staticInit () :void
     {
-        var lastBuild :String = (config.getValue("lastBuild", null) as String);
-
-        // update our stored last build time
-        if (lastBuild != DeploymentConfig.buildTime) {
-            config.setValue("lastBuild", DeploymentConfig.buildTime);
-
-            // and right here we can do client-side transitions, if needed
-        }
+        // route events
+        _config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, events.dispatchEvent);
     }
 
     staticInit();
-
-    //private static const log :Log = Log.getLog(Prefs);
 }
 }

@@ -12,6 +12,7 @@ import mx.core.UIComponent;
 
 import mx.containers.HBox;
 
+import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.Integer;
 
 import com.threerings.flash.DisplayUtil;
@@ -75,6 +76,8 @@ public class ControlBar extends HBox
     {
         _ctx = ctx;
         // the rest is in init()
+
+        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, handleConfigValueSet);
     }
 
     public function init (top :TopPanel) :void
@@ -357,14 +360,15 @@ public class ControlBar extends HBox
         var dfmt :Function = function (value :Number) :String {
             return Msgs.GENERAL.get("i.percent_fmt", ""+Math.floor(value*100));
         };
-        SliderPopup.toggle(volBtn, Prefs.getSoundVolume(), updateVolume,
+        SliderPopup.toggle(volBtn, Prefs.getSoundVolume(), Prefs.setSoundVolume,
             { styleName: "volumeSlider", tickValues: [ 0, 1 ], dataTipFormatFunction: dfmt });
     }
 
-    protected function updateVolume (level :Number) :void
+    protected function handleConfigValueSet (event :ConfigValueSetEvent) :void
     {
-        Prefs.setSoundVolume(level);
-        updateVolumeSkin(level);
+        if (event.name == Prefs.VOLUME) {
+            updateVolumeSkin(Number(event.value));
+        }
     }
 
     protected function updateVolumeSkin (level :Number) :void

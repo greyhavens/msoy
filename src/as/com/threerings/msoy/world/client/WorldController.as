@@ -192,8 +192,8 @@ public class WorldController extends MsoyController
         super(ctx, topPanel);
         _wctx = ctx;
 
-        Prefs.config.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
-        Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, handleConfigValueSet,
+        Prefs.events.addEventListener(Prefs.BLEEPED_MEDIA, handleBleepChange, false, 0, true);
+        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, handleConfigValueSet,
             false, 0, true);
         _musicPlayer.addEventListener(MediaPlayerCodes.METADATA, handleMusicMetadata);
 

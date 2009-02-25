@@ -73,7 +73,7 @@ public class RoomView extends Sprite
         _layout = RoomLayoutFactory.createLayout(null, this);
 
         // listen for preferences changes, update zoom
-        Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
+        Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
             handlePrefsUpdated, false, 0, true);
     }
 
