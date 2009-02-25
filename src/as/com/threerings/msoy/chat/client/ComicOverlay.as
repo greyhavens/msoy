@@ -102,7 +102,9 @@ public class ComicOverlay extends ChatOverlay
         if (type == BROADCAST ||
             (msg is SystemMessage && (msg.localtype == ChatCodes.PLACE_CHAT_TYPE ||
                                       msg.localtype == ChatCodes.USER_CHAT_TYPE))) {
-            displayed = displayBubble(msg, type);
+            // We simply do not want to display system-type messages in bubbles
+            // 2009-02-24  Ray
+            //displayed = displayBubble(msg, type);
         } else if (_ctx is WorldContext) {
             var scene :MsoyScene =
                 (_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene;
