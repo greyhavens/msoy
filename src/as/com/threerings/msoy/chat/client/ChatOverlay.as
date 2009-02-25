@@ -126,6 +126,7 @@ public class ChatOverlay
         clearGlyphs(_subtitles);
         clearGlyphs(_showingHistory);
         _filteredMessages = [];
+        _lastExpire = 0;
     }
 
     // from ChatDisplay
