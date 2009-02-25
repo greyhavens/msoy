@@ -298,6 +298,10 @@ public class GameLiaison
                 // if a guest earns flow, we want to show them the "please register" dialog
                 displayGuestFlowEarnage(coins, hasCookie);
             }
+            // display a notification to permaguests about signing up
+            if (forReal && _gctx.getPlayerObject().isPermaguest()) {
+                _wctx.getNotificationDirector().displayPayoutUpsell(coins, hasCookie);
+            }
             // and always pass the buck to the panel, even if it doesn't care..
             gamePanel.displayGameOverCoinAward(forReal, coins, hasCookie);
         }

@@ -140,6 +140,18 @@ public class NotificationDirector extends BasicDirector
         }
     }
 
+    /**
+     * Displays a notification (generally to permaguests) saying something to the effect of "You
+     * earned coins! Sign up to save those mofongos!"
+     */
+    public function displayPayoutUpsell (coins :int, hasCookies :Boolean) :void
+    {
+        if (coins > 1) { // save ourselves the plurality headache
+            addGenericNotification(MessageBundle.tcompose("m.payout_upsell", coins),
+                Notification.BUTTSCRATCHING);
+        }
+    }
+
     // from interface AttributeChangeListener
     public function attributeChanged (event :AttributeChangedEvent) :void
     {
