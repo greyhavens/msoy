@@ -4,6 +4,7 @@
 package com.threerings.msoy.person.gwt;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -42,13 +43,19 @@ public interface InviteService extends RemoteService
         throws ServiceException;
 
     /**
-     * Send out invitations to a game. This is a little bit different from the normal invite
-     * sending. We don't count the sender's invites and we automatically use the display name
-     * as the from field on the email.
+     * Send out invitations to a game via email.
      */
     InvitationResults sendGameInvites (
         List<EmailContact> addresses, int gameId, String from, String url, String customMessage)
         throws ServiceException;
+
+    /**
+     * Send out invitations to a game via whirled mail.
+     */
+    void sendWhirledMailGameInvites (
+        Set<Integer> recipientIds, int gameId, String path, String customMessage)
+        throws ServiceException;
+
 
     /**
      * Removes a pending invitation.

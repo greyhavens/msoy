@@ -4,6 +4,7 @@
 package com.threerings.msoy.person.server;
 
 import java.util.List;
+import java.util.Set;
 
 import octazen.addressbook.AddressBookAuthenticationException;
 import octazen.addressbook.AddressBookException;
@@ -21,6 +22,7 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.server.persist.GameDetailRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
@@ -215,6 +217,13 @@ public class InviteServlet extends MsoyServiceServlet
         return ir;
     }
 
+    public void sendWhirledMailGameInvites (Set<Integer> recipientIds, int gameId, String path,
+        String customMessage)
+        throws ServiceException
+    {
+        // TODO: generate a new mail conversation for each recipient
+    }
+
     // from InviteService
     public void removeInvitation (String inviteId)
         throws ServiceException
@@ -243,8 +252,12 @@ public class InviteServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser();
         IntSet friendsIds = _memberRepo.loadFriendIds(memrec.memberId);
         List<MemberCard> cards = Lists.newArrayList();
-        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(friendsIds, 0, count, true)) {
-            cards.add(mcr.toMemberCard());
+        // fill in with dupes up to the requested count in dev deployments for testing
+        for (int ii = 0; ii < (DeploymentConfig.devDeployment ? 20 : 1); ++ii) {
+            for (MemberCardRecord mcr : _memberRepo.loadMemberCards(
+                friendsIds, 0, count - cards.size(), true)) {
+                cards.add(mcr.toMemberCard());
+            }
         }
         return cards;
     }

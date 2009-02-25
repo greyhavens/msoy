@@ -908,7 +908,7 @@
     width: 85%;
 }
 
-.gameInvitePanel .email {
+.gameInvitePanel .email, .gameInvitePanel .whirled {
     font-size: 12px;
 }
 
@@ -921,7 +921,7 @@
     font-size: 10px;
 }
 
-.gameInvitePanel .email .biglabel, .gameInvitePanel .im .biglabel {
+.gameInvitePanel .biglabel {
     color: #2356bf;
     font-weight: bold;
     font-size: 14px;
@@ -931,17 +931,17 @@
     color: #404040;
 }
 
-.gameInvitePanel .email .labelparen {
+.gameInvitePanel .labelparen {
    color: #303030;
    font-size: 10px;
    width: 90%;
 }
 
-.gameInvitePanel .email .input {
+.gameInvitePanel .input {
     border: 1px solid #cccccc;
 }
 
-.gameInvitePanel .email .message {
+.gameInvitePanel .message {
     width: 100%;
 }
 
@@ -960,3 +960,8 @@
     width: 100%;
 }
 
+.gameInvitePanel .whirled .memberName {
+    max-width: 165px; /* Overflow doesn't work without this */
+    overflow: hidden;
+    white-space: nowrap;
+}

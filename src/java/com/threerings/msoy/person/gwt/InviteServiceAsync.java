@@ -4,6 +4,7 @@
 package com.threerings.msoy.person.gwt;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -37,6 +38,13 @@ public interface InviteServiceAsync
      */
     void sendGameInvites (List<EmailContact> addresses, int gameId, String from,
         String url, String customMessage, AsyncCallback<InvitationResults> callback);
+
+    /**
+     * The asynchronous version of {@link InviteService#sendWhirledMailGameInvites}.
+     */
+    void sendWhirledMailGameInvites (
+        Set<Integer> recipientIds, int gameId, String path, String customMessage,
+        AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link InviteService#removeInvitation}.

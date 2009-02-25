@@ -3,10 +3,13 @@
 
 package client.people;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -35,6 +38,7 @@ import com.threerings.msoy.web.gwt.MemberCard;
 import com.threerings.msoy.web.gwt.Pages;
 
 import client.shell.CShell;
+import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -99,10 +103,10 @@ public class GameInvitePanel extends VerticalPanel
 
         // build the invite url; this will be a play now link for lobbied games (type 0) or a
         // start-in-room link for avrgs (type 1)
-        String pathToGame = Pages.makeLink(Pages.WORLD, gameType == 1 ? 
+        final String invitePath = Pages.makeLink(Pages.WORLD, gameType == 1 ? 
             Args.compose("game", "s", detail.gameId, CShell.getMemberId(), token, roomId) :
             Args.compose("game", "t", detail.gameId, CShell.getMemberId(), token));
-        final String url = DeploymentConfig.serverURL + pathToGame.substring(1);
+        final String url = DeploymentConfig.serverURL + invitePath.substring(1);
 
         // game information
         SmartTable gameInfo = new SmartTable();
@@ -134,7 +138,7 @@ public class GameInvitePanel extends VerticalPanel
             addMethodButton("Whirled",
                 new InviteMethodCreator () {
                     public Widget create () {
-                        return new WhirledFriendsPanel(url);
+                        return new WhirledFriendsPanel(message, detail.gameId, invitePath);
                     }
                 });
         }
@@ -177,7 +181,7 @@ public class GameInvitePanel extends VerticalPanel
     /**
      * Allows various invite methods to be hooked up to click listeners.
      */
-    interface InviteMethodCreator
+    protected static interface InviteMethodCreator
     {
         /**
          * Creates the widget that will display this invite method.
@@ -430,40 +434,100 @@ public class GameInvitePanel extends VerticalPanel
         /**
          * Creates a new friends panel.
          */
-        public WhirledFriendsPanel (String url)
+        public WhirledFriendsPanel (
+            final String defaultMessage, final int gameId, final String path)
         {
             super(0, 5);
             setStyleName("whirled");
             setWidth("100%");
-            setText(0, 0, "Recently Online Friends", 2, "biglabel");
-            setText(1, 0, "Select the friends you want to invite.", 2, null);
-            setWidget(2, 0, MsoyUI.createActionLabel("Select All", new ClickListener () {
+
+            int row = 0;
+
+            // instructions
+            setText(row++, 0, "Select the friends you want to invite", 1, "biglabel");
+            setText(row++, 0, "These are your most recently online friends. Select the ones you " +
+                "want to invite by checking the boxes next to their names. Then click Send to " +
+                "send a Whirled mail message to each selected friend.");
+
+            // buttons to select and deselect all friends
+            SmartTable selectors = new SmartTable();
+            selectors.setWidget(0, 0, new Button("Select All", new ClickListener () {
                 public void onClick (Widget source) {
                     selectAll(true);
                 }
             }));
-            setWidget(2, 1, MsoyUI.createActionLabel("Deselect All", new ClickListener () {
+            selectors.setWidget(0, 1, new Button("Deselect All", new ClickListener () {
                 public void onClick (Widget source) {
                     selectAll(false);
                 }
             }));
-            _grid = new SmartTable(0, 2);
+            setWidget(row++, 0, selectors);
+
+            // friends grid
+            _grid = new SmartTable(0, 0);
             _grid.setWidth("100%");
             _grid.setText(0, 0, "Loading friends...");
-            setWidget(3, 0, _grid, 2, "");
+            setWidget(row++, 0, _grid);
+
+            // message label
+            SmartTable messageLabel = new SmartTable();
+            messageLabel.setText(0, 0, "Message", 1, "biglabel");
+            messageLabel.setText(0, 1, "(optional)", 1, "labelparen");
+            setWidget(row++, 0, messageLabel);
+
+            // custom message
+            final TextArea message = MsoyUI.createTextArea(defaultMessage, 80, 4);
+            message.setStyleName("message");
+            message.addStyleName("input");
+            setWidget(row++, 0, message);
+
+            // send button
+            PushButton send = MsoyUI.createButton("shortThin", "Send", null);
+            new ClickCallback<Void>(send) {
+                public boolean callService () {
+                    Set<Integer> recipients = getRecipients();
+                    if (recipients == null) {
+                        return false;
+                    }
+                    _invitesvc.sendWhirledMailGameInvites(
+                        recipients, gameId, path, message.getText(), this);
+                    return true;
+                }
+
+                public boolean gotResult (Void result) {
+                    MsoyUI.info("Messages sent.");
+                    return true;
+                }
+            };
+            setWidget(row, 0, send, 2, null);
+            getFlexCellFormatter().setHorizontalAlignment(
+                row++, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+
+            // get friend list from the server; fill in our grid
             _invitesvc.getFriends(ROWS * COLS, new MsoyCallback<List<MemberCard>>() {
                 public void onSuccess (List<MemberCard> result) {
                     _grid.clear();
                     for (int ii = 0; ii < result.size(); ++ii) {
                         SelectaFriend friend = new SelectaFriend(result.get(ii));
                         _grid.setWidget(ii / COLS, ii % COLS, friend);
+                        _grid.getFlexCellFormatter().setWidth(ii / COLS, ii % COLS, COL_WIDTH);
+                    }
+                    _gridFilled = result.size() != 0;
+                    if (!_gridFilled) {
+                        _grid.setText(0, 0, "No Whirled friends found!");
                     }
                 }
             });
         }
 
+        /**
+         * Sets the check box state of all friends in the grid.
+         */
         protected void selectAll (boolean select)
         {
+            if (!_gridFilled) {
+                return;
+            }
             for (int row = 0; row < _grid.getRowCount(); ++row) {
                 for (int col = 0; col < _grid.getCellCount(row); ++col) {
                     ((SelectaFriend)_grid.getWidget(row, col)).select(select);
@@ -471,9 +535,37 @@ public class GameInvitePanel extends VerticalPanel
             }
         }
 
+        /**
+         * Gets the recipients for a message. If there are no recipients, shows an error and
+         * returns null.
+         */
+        protected Set<Integer> getRecipients ()
+        {
+            if (!_gridFilled) {
+                MsoyUI.error("There are no friends to send to.");
+                return null;
+            }
+            HashSet<Integer> selected = new HashSet<Integer>();
+            for (int row = 0; row < _grid.getRowCount(); ++row) {
+                for (int col = 0; col < _grid.getCellCount(row); ++col) {
+                    SelectaFriend saf = (SelectaFriend)_grid.getWidget(row, col);
+                    if (saf.isSelected()) {
+                        selected.add(saf.getMemberId());
+                    }
+                }
+            }
+            if (selected.size() == 0) {
+                MsoyUI.error("Select one or more friends by clicking the check boxes.");
+                return null;
+            }
+            return selected;
+        }
+
         protected SmartTable _grid;
-        protected static final int ROWS = 10;
-        protected static final int COLS = 5;
+        protected boolean _gridFilled;
+        protected static final int ROWS = 12;
+        protected static final int COLS = 3;
+        protected static final String COL_WIDTH = "33%";
     }
 
     /**
@@ -481,25 +573,33 @@ public class GameInvitePanel extends VerticalPanel
      */
     protected static class SelectaFriend extends SmartTable
     {
-        public SelectaFriend (MemberCard member)
+        public SelectaFriend (MemberCard card)
         {
-            // TODO: styles
-            setWidget(0, 0, new ThumbBox(member.photo));
-            setText(1, 0, member.name.toString());
-            setWidget(2, 0, _check = new CheckBox());
+            super(0, 1);
+            _card = card;
+            setWidget(0, 0, _check = new CheckBox());
+            setWidget(0, 1, new ThumbBox(card.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE));
+            setWidget(0, 2, MsoyUI.createHTML(card.name.toString(), "memberName"));
+            getFlexCellFormatter().setWidth(0, 2, "100%");
         }
 
-        boolean isSelected ()
+        public int getMemberId ()
+        {
+            return _card.name.getMemberId();
+        }
+
+        public boolean isSelected ()
         {
             return _check.isChecked();
         }
 
-        void select (boolean sel)
+        public void select (boolean sel)
         {
             _check.setChecked(sel);
         }
 
         protected CheckBox _check;
+        protected MemberCard _card;
     }
 
     /** The row where the invite method is. */
