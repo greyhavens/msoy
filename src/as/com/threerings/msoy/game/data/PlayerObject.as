@@ -15,6 +15,7 @@ import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
 
@@ -84,6 +85,14 @@ public class PlayerObject extends WhirledPlayerObject
     public function isGuest () :Boolean
     {
         return memberName.isGuest();
+    }
+
+    /**
+     * Returns true if this user is a permaguest.
+     */
+    public function isPermaguest () :Boolean
+    {
+        return MemberMailUtil.isPermaguest(username.toString());
     }
 
     /**
