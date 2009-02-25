@@ -95,6 +95,7 @@ public class TrophyPanel extends FloatingPanel
                 descrip.styleName = "trophyPanelHidden";
             }
             if (trophy.whenEarned == null) {
+                // TODO: this is a non-starter; it looks like ass.
                 tbox.alpha = 0.35;
                 name.setStyle("color", 0xAAAAAA);
                 descrip.setStyle("color", 0xAAAAAA);
