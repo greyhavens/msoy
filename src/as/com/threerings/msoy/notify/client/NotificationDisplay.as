@@ -145,17 +145,17 @@ public class NotificationDisplay extends HBox
 
         _clearTimer.stop();
         _currentlyAnimating = true;
-        var notification :UIComponent = createDisplay(_pendingNotifications.shift() as Notification);
+        var notification :UIComponent =
+            createDisplay(_pendingNotifications.shift() as Notification);
         notification.x = _canvas.width;
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
-        Tweener.addTween(notification,
-            {x: 0 /*_canvas.width - notification.width*/, time: 0.75, transition: "easeoutquart",
-                onComplete: function () :void {
-                    _currentlyAnimating = false;
-                    checkPendingNotifications();
-                }
-            });
+        Tweener.addTween(notification, { x: 0, time: 0.75, transition: "easeoutquart" });
+        Tweener.addTween(notification, { delay: 2, onComplete: function () :void {
+                _currentlyAnimating = false;
+                checkPendingNotifications();
+            }
+        });
     }
 
     protected function displayCustomNotification (notification :Notification) :void
