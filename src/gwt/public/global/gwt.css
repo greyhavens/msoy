@@ -1112,6 +1112,7 @@ img, embed, applet, object {
 
 .orangeThick .E {
   background-image: url(/images/ui/button/orange_thick_right.png);
+  background-position: right;
 }
 
 .orangeThick-up-hovering .W {
@@ -1124,6 +1125,7 @@ img, embed, applet, object {
 
 .orangeThick-up-hovering .E {
   background-image: url(/images/ui/button/orange_thick_right_over.png);
+  background-position: right;
 }
 
 .orangeThick-down-hovering .W {
@@ -1136,6 +1138,7 @@ img, embed, applet, object {
 
 .orangeThick-down-hovering .E {
   background-image: url(/images/ui/button/orange_thick_right_down.png);
+  background-position: right;
 }
 
 /** THIN BLUE BUTTON */
@@ -1151,6 +1154,7 @@ img, embed, applet, object {
 
 .blueThin .E {
   background-image: url(/images/ui/button/blue_thin_right.png);
+  background-position: right;
 }
 
 .blueThin-up-hovering .W {
@@ -1163,6 +1167,7 @@ img, embed, applet, object {
 
 .blueThin-up-hovering .E {
   background-image: url(/images/ui/button/blue_thin_right_over.png);
+  background-position: right;
 }
 
 .blueThin-down-hovering .W {
@@ -1175,6 +1180,7 @@ img, embed, applet, object {
 
 .blueThin-down-hovering .E {
   background-image: url(/images/ui/button/blue_thin_right_down.png);
+  background-position: right;
 }
 
 /* ------------------------------------
