@@ -111,18 +111,6 @@ public class MsoyChatDirector extends ChatDirector
     }
 
     /**
-     * Called when the user closes the tab associated with a particular chat channel.
-     */
-    public function tabClosed (localtype :String) :void
-    {
-        _displays.apply(function (disp :ChatDisplay) :void {
-            if (disp is TabbedChatDisplay) {
-                (disp as TabbedChatDisplay).tabClosed(localtype);
-            }
-        });
-    }
-
-    /**
      * Registers a user with an IM gateway and logs them in for chatting.
      */
     public function registerIM (gateway :String, username :String, password :String) :void

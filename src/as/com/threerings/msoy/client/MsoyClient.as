@@ -102,8 +102,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         _creds = createStartupCreds(null);
 
         _ctx = createContext();
-        // after we've created our context, dispatch the status of whether we're embedded
-        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
 
         // configure our starting global sound transform
         if (_featuredPlaceView) {
@@ -111,6 +109,9 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         } else {
             Prefs.setEmbedded(_embedded);
         }
+        // after we've created our context, dispatch the status of whether we're embedded
+        // AND: this must be done _after_ we set Prefs.setEmbedded().
+        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
 
         // allow connecting the media server if it differs from the game server
         if ((Security.sandboxType != Security.LOCAL_WITH_FILE) &&

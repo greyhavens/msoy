@@ -9,6 +9,7 @@ import flash.display.Graphics;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.geom.Point;
@@ -39,6 +40,7 @@ import com.threerings.util.MessageManager;
 
 import com.threerings.flash.ColorUtil;
 
+import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
@@ -48,6 +50,7 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.msoy.utils.TextUtil;
 
 import com.threerings.msoy.client.LayeredContainer;
+import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
@@ -59,7 +62,7 @@ import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.world.client.WorldContext;
 
 public class ChatOverlay
-    implements TabbedChatDisplay
+    implements ChatDisplay
 {
     public static const SCROLL_BAR_LEFT :int = 1;
     public static const SCROLL_BAR_RIGHT :int = 2;
@@ -88,10 +91,12 @@ public class ChatOverlay
         return fmt;
     }
 
-    public function ChatOverlay (ctx :MsoyContext, target :LayeredContainer,
+    public function ChatOverlay (
+        ctx :MsoyContext, target :LayeredContainer,
         scrollBarSide :int = SCROLL_BAR_LEFT, includeOccupantList :Boolean = true)
     {
         _ctx = ctx;
+        _ctx.getClient().addEventListener(MsoyClient.EMBEDDED_STATE_KNOWN, handleEmbeddedKnown);
         _msgMan = _ctx.getMessageManager();
         _includeOccList = includeOccupantList;
         _scrollBarSide = scrollBarSide;
@@ -105,8 +110,11 @@ public class ChatOverlay
         _target = target;
         layout();
         displayChat(true);
+    }
 
-        // listen for preferences changes, update history mode
+    protected function handleEmbeddedKnown (event :Event) :void
+    {
+        // we don't care about the embedded state, but we now know to listen for prefs changes
         Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
             handlePrefsUpdated, false, 0, true);
     }
@@ -147,12 +155,6 @@ public class ChatOverlay
             addSubtitle(createSubtitle(msg, getType(msg, false), true));
         }
         return true;
-    }
-
-    // from TabbedChatDisplay
-    public function tabClosed (localtype :String) :void
-    {
-        // TODO: remove?
     }
 
     public function displayChat (display :Boolean) :void

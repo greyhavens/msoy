@@ -482,7 +482,7 @@ public class ChatTabBar extends HBox
         }
     }
 
-    protected function removeTabAt (index :int, shutdown :Boolean = true) :void
+    protected function removeTabAt (index :int) :void
     {
         var tab :ChatTab = _tabs[index] as ChatTab;
         for (var ii :int = index; ii < _tabs.length; ii++) {
@@ -499,10 +499,6 @@ public class ChatTabBar extends HBox
 
         // default back to location chat when a tab is closed
         selectedIndex = 0;
-
-        if (shutdown) {
-            _ctx.getMsoyChatDirector().tabClosed(tab.localtype);
-        }
 
         checkScrollTabs();
     }
