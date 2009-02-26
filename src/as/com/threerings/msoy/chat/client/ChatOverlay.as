@@ -117,6 +117,7 @@ public class ChatOverlay
         // we don't care about the embedded state, but we now know to listen for prefs changes
         Prefs.events.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
             handlePrefsUpdated, false, 0, true);
+        createStandardFormats();
     }
 
     /**
