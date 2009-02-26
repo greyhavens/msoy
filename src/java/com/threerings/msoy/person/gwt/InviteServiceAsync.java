@@ -43,7 +43,7 @@ public interface InviteServiceAsync
      * The asynchronous version of {@link InviteService#sendWhirledMailGameInvites}.
      */
     void sendWhirledMailGameInvites (
-        Set<Integer> recipientIds, int gameId, String path, String customMessage,
+        Set<Integer> recipientIds, int gameId, String subject, String body, String args,
         AsyncCallback<Void> callback);
 
     /**

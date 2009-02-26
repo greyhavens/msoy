@@ -42,6 +42,8 @@ import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
+import com.threerings.msoy.mail.gwt.GameInvitePayload;
+import com.threerings.msoy.mail.server.MailLogic;
 import com.threerings.msoy.person.gwt.InvitationResults;
 import com.threerings.msoy.person.gwt.MemberInvites;
 import com.threerings.msoy.person.gwt.ProfileCodes;
@@ -217,11 +219,16 @@ public class InviteServlet extends MsoyServiceServlet
         return ir;
     }
 
-    public void sendWhirledMailGameInvites (Set<Integer> recipientIds, int gameId, String path,
-        String customMessage)
+    public void sendWhirledMailGameInvites (Set<Integer> recipientIds, int gameId, String subject,
+        String body, String args)
         throws ServiceException
     {
-        // TODO: generate a new mail conversation for each recipient
+        MemberRecord mrec = requireAuthedUser();
+        GameInvitePayload payload = new GameInvitePayload(args);
+        for (int memberId : recipientIds) {
+            MemberRecord recip = _memberRepo.loadMember(memberId);
+            _mailLogic.startBulkConversation(mrec, recip, subject, body, payload);
+        }
     }
 
     // from InviteService
@@ -253,7 +260,9 @@ public class InviteServlet extends MsoyServiceServlet
         IntSet friendsIds = _memberRepo.loadFriendIds(memrec.memberId);
         List<MemberCard> cards = Lists.newArrayList();
         // fill in with dupes up to the requested count in dev deployments for testing
-        for (int ii = 0; ii < (DeploymentConfig.devDeployment ? 20 : 1); ++ii) {
+        // TODO: remove duping
+        int passes = DeploymentConfig.devDeployment ? 20 : 1;
+        for (int ii = 0; ii < passes && cards.size() < count; ++ii) {
             for (MemberCardRecord mcr : _memberRepo.loadMemberCards(
                 friendsIds, 0, count - cards.size(), true)) {
                 cards.add(mcr.toMemberCard());
@@ -403,6 +412,7 @@ public class InviteServlet extends MsoyServiceServlet
     @Inject protected MailSender _mailer;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected MailLogic _mailLogic;
 
     protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
     protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;

@@ -46,16 +46,15 @@ public interface InviteService extends RemoteService
      * Send out invitations to a game via email.
      */
     InvitationResults sendGameInvites (
-        List<EmailContact> addresses, int gameId, String from, String url, String customMessage)
+        List<EmailContact> addresses, int gameId, String from, String subject, String body)
         throws ServiceException;
 
     /**
      * Send out invitations to a game via whirled mail.
      */
     void sendWhirledMailGameInvites (
-        Set<Integer> recipientIds, int gameId, String path, String customMessage)
+        Set<Integer> recipientIds, int gameId, String subject, String body, String args)
         throws ServiceException;
-
 
     /**
      * Removes a pending invitation.

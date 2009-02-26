@@ -73,11 +73,12 @@ public class MailLogic
      * inbox.
      */
     public void startBulkConversation (MemberRecord sender, MemberRecord recip, String subject,
-                                       String body)
+                                       String body, MailPayload payload)
         throws ServiceException
     {
         // now start the conversation (and deliver the message)
-        _mailRepo.startConversation(recip.memberId, sender.memberId, subject, body, null, false);
+        _mailRepo.startConversation(
+            recip.memberId, sender.memberId, subject, body, payload, false);
 
         // potentially send a real email to the recipient
         sendMailEmail(sender, recip, subject, body);

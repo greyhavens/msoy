@@ -103,10 +103,11 @@ public class GameInvitePanel extends VerticalPanel
 
         // build the invite url; this will be a play now link for lobbied games (type 0) or a
         // start-in-room link for avrgs (type 1)
-        final String invitePath = Pages.makeLink(Pages.WORLD, gameType == 1 ? 
+        final String inviteArgs = gameType == 1 ? 
             Args.compose("game", "s", detail.gameId, CShell.getMemberId(), token, roomId) :
-            Args.compose("game", "t", detail.gameId, CShell.getMemberId(), token));
-        final String url = DeploymentConfig.serverURL + invitePath.substring(1);
+            Args.compose("game", "t", detail.gameId, CShell.getMemberId(), token);
+        final String url =
+            DeploymentConfig.serverURL + "#" + Pages.makeToken(Pages.WORLD, inviteArgs);
 
         // game information
         SmartTable gameInfo = new SmartTable();
@@ -134,14 +135,13 @@ public class GameInvitePanel extends VerticalPanel
                     return new IMPanel(url);
                 }
             });
-        if (DeploymentConfig.devDeployment) {
-            addMethodButton("Whirled",
-                new InviteMethodCreator () {
-                    public Widget create () {
-                        return new WhirledFriendsPanel(message, detail.gameId, invitePath);
-                    }
-                });
-        }
+        addMethodButton("Whirled",
+            new InviteMethodCreator () {
+                public Widget create () {
+                    return new WhirledFriendsPanel(
+                        message, detail.gameId, detail.item.name, inviteArgs);
+                }
+            });
         add(_methodButtons);
 
         // method panel will on the bottom row
@@ -434,8 +434,8 @@ public class GameInvitePanel extends VerticalPanel
         /**
          * Creates a new friends panel.
          */
-        public WhirledFriendsPanel (
-            final String defaultMessage, final int gameId, final String path)
+        public WhirledFriendsPanel (final String defaultMessage, final int gameId,
+            final String gameName, final String args)
         {
             super(0, 5);
             setStyleName("whirled");
@@ -489,8 +489,12 @@ public class GameInvitePanel extends VerticalPanel
                     if (recipients == null) {
                         return false;
                     }
-                    _invitesvc.sendWhirledMailGameInvites(
-                        recipients, gameId, path, message.getText(), this);
+                    String inviter = CShell.creds.name.toString();
+                    String body = message.getText().length() == 0 ?
+                        _msgs.gameInviteWhirledMailBodyNoMessage(inviter, gameName) :
+                        _msgs.gameInviteWhirledMailBody(inviter, gameName, message.getText());
+                    _invitesvc.sendWhirledMailGameInvites(recipients, gameId,
+                        _msgs.gameInviteWhirledMailSubject(gameName), body, args, this);
                     return true;
                 }
 

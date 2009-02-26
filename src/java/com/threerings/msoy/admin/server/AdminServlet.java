@@ -388,7 +388,7 @@ public class AdminServlet extends MsoyServiceServlet
             }
             final MemberRecord owner = _memberRepo.loadMember(ownerId);
             if (owner != null) {
-                _mailLogic.startBulkConversation(memrec, owner, subject, body);
+                _mailLogic.startBulkConversation(memrec, owner, subject, body, null);
             }
         }
 

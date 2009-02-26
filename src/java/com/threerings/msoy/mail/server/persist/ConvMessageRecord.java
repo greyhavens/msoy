@@ -19,6 +19,7 @@ import com.threerings.msoy.server.util.JSONMarshaller;
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.FriendInvitePayload;
 import com.threerings.msoy.mail.gwt.GameAwardPayload;
+import com.threerings.msoy.mail.gwt.GameInvitePayload;
 import com.threerings.msoy.mail.gwt.GroupInvitePayload;
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
@@ -106,6 +107,8 @@ public class ConvMessageRecord extends PersistentRecord
             return GameAwardPayload.class;
         case MailPayload.TYPE_PRESENT:
             return PresentPayload.class;
+        case MailPayload.TYPE_GAME_INVITE:
+            return GameInvitePayload.class;
         }
         throw new IllegalArgumentException("Unknown payload [type= " + type + "]");
     }

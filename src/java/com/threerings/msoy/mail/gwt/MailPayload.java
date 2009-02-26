@@ -40,6 +40,11 @@ public abstract class MailPayload
     public static final int TYPE_PRESENT = 5;
 
     /**
+     * The identifying integer of a GameInvitePayload.
+     */
+    public static final int TYPE_GAME_INVITE = 6;
+
+    /**
      * Returns the type associated with this payload instance.
      */
     public abstract int getType ();

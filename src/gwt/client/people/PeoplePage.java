@@ -86,7 +86,7 @@ public class PeoplePage extends Page
             boolean linksPage = args.get(1, "").equals("links");
             boolean sharePage = args.get(1, "").equals("share");
             if (args.get(1, "").equals("game")) {
-                setContent(_msgs.inviteTitle(), new GameInvitePanel(args));
+                setContent(_msgs.gameInviteTitle(), new GameInvitePanel(args));
             } else if (justRegistered) {
                 setContent(_msgs.justRegInviteTitle(), new InvitePanel(true, null));
             } else if (linksPage) {
