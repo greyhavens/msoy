@@ -62,7 +62,7 @@ public class Prefs
 
     public static function setEmbedded (embedded :Boolean) :void
     {
-        _config.setPath(embedded ? null : "rsrc/config/msoy");
+        _config.setPath(embedded ? null : CONFIG_PATH);
         useSoundVolume();
 
         if (!embedded) {
@@ -97,16 +97,16 @@ public class Prefs
 
     public static function getPermaguestUsername () :String
     {
-        return (_config.getValue(PERMAGUEST_USERNAME, null) as String);
+        return (_machineConfig.getValue(PERMAGUEST_USERNAME, null) as String);
     }
 
     public static function setPermaguestUsername (username :String) :void
     {
         if (username == null) {
-            _config.remove(PERMAGUEST_USERNAME);
+            _machineConfig.remove(PERMAGUEST_USERNAME);
 
         } else {
-            _config.setValue(PERMAGUEST_USERNAME, username);
+            _machineConfig.setValue(PERMAGUEST_USERNAME, username);
         }
     }
 
@@ -302,12 +302,17 @@ public class Prefs
         }
     }
 
+    /** The path of our config object. */
+    protected static const CONFIG_PATH :String = "rsrc/config/msoy";
+
     /** A set of media ids that are bleeped (the keys of the dictionary). */
     protected static var _bleepedMedia :Dictionary;
     protected static var _globalBleep :Boolean;
 
     /** Our config object. */
     protected static var _config :Config = new Config(null);
+
+    protected static var _machineConfig :Config = new Config(CONFIG_PATH);
 
     /**
     * A static initializer.
@@ -316,6 +321,7 @@ public class Prefs
     {
         // route events
         _config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, events.dispatchEvent);
+        _machineConfig.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET, events.dispatchEvent);
     }
 
     staticInit();
