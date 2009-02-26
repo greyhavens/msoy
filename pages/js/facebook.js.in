@@ -27,3 +27,14 @@ window.FB_Logout = function() {
     FB.Connect.logout(null);
   });
 };
+window.FB_ShowGameInvite = function(fbml) {
+  /* TODO: why does FB_WithInit call my callback twice? Then I can remove this sentry. */
+  window.FB_waitingForGameInvite = true
+  FB_WithInit(function() {
+    if (window.FB_waitingForGameInvite) {
+      var dialog = new FB.UI.FBMLPopupDialog("Test", fbml);
+      dialog.show();
+      window.FB_waitingForGameInvite = false;
+    }
+  });
+};

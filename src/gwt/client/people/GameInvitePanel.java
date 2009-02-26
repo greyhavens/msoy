@@ -142,6 +142,15 @@ public class GameInvitePanel extends VerticalPanel
                         message, detail.gameId, detail.item.name, inviteArgs);
                 }
             });
+        if (DeploymentConfig.devDeployment) {
+            addMethodButton("Facebook",
+                new InviteMethodCreator () {
+                    public Widget create () {
+                        showFBInvitePopup("<b>Hello</b> <i>World</i>!");
+                        return null;
+                    }
+                });
+        }
         add(_methodButtons);
 
         // method panel will on the bottom row
@@ -605,6 +614,14 @@ public class GameInvitePanel extends VerticalPanel
         protected CheckBox _check;
         protected MemberCard _card;
     }
+
+    protected native void showFBInvitePopup (String fbml) /*-{
+        try {
+            $wnd.FB_ShowGameInvite(fbml);
+        } catch (e) {
+            $wnd.console.log("GameInvitePanel.showFBInvitePopup failure " + e);
+        }
+    }-*/;
 
     /** The row where the invite method is. */
     protected int _methodRow;
