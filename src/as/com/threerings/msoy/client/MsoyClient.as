@@ -245,12 +245,10 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public function trackClientAction (actionName :String, details :String) :void
     {
         var msvc :MemberService = getService(MemberService) as MemberService;
-        // Come talk to me (Ray) if you have a problem with this.
-        // But this was failing if the user was still logging in, like in the featured
-        // place view. So I say: fuck tracking shit if we can't track shit. I'd rather
-        // not piss off the user-- in this case ME.
         if (msvc != null) {
             msvc.trackClientAction(this, actionName, details);
+        } else {
+            log.warning("Dropping client action", "name", actionName, "details", details);
         }
     }
 
@@ -262,7 +260,11 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public function trackTestAction (actionName :String, testName :String) :void
     {
         var msvc :MemberService = requireService(MemberService) as MemberService;
-        msvc.trackTestAction(this, actionName, testName);
+        if (msvc != null) {
+            msvc.trackTestAction(this, actionName, testName);
+        } else {
+            log.warning("Dropping test action", "name", actionName, "test", testName);
+        }
     }
 
     /**
@@ -297,16 +299,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 msvc.trackVectorAssociation(this, vector);
             }
         }
-
-        if (_embedded && !_reportedLogon) {
-            trackClientAction("embeddedLogon", null);
-            _reportedLogon = true;
-        }
     }
-
-    // TEMP: quickHack. I'm not sure if switching servers makes you log in again,
-    // and I can't test that now before this release...
-    protected var _reportedLogon :Boolean;
 
     /**
      * Called after we log off.

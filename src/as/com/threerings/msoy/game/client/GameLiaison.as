@@ -376,15 +376,12 @@ public class GameLiaison
         var later :SimpleButton = (_guestFlowPanel.getChildByName("Later") as SimpleButton);
         later.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             clearGuestFlow();
-            _wctx.getMsoyClient().trackClientAction("2008 12 game over upsell 2 later click", null);
         });
 
         var signUp :SimpleButton = (_guestFlowPanel.getChildByName("SignUp") as SimpleButton);
         signUp.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
             _wctx.getWorldController().handleShowSignUp();
             clearGuestFlow();
-            _wctx.getMsoyClient().trackClientAction(
-                "2008 12 game over upsell 2 signup click", null);
         });
 
         // slide the panel onto the screen, and wait for a click

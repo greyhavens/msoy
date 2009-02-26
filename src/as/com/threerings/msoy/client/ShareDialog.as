@@ -391,7 +391,6 @@ public class ShareDialog extends FloatingPanel
             "?u=" + encodeURIComponent(createLink()) +
             "&t=" + encodeURIComponent(getShareTitle());
         popShareLink(shareURL, "Whirled", "width=620,height=440");
-        trackSocialShare("facebook");
     }
 
     /**
@@ -405,7 +404,6 @@ public class ShareDialog extends FloatingPanel
             "&l=1" + // post to their Blog
             "&c=" + encodeURIComponent(getEmbedCode(DEFAULT_SIZE));
         popShareLink(shareURL, "Whirled", "width=1024,height=650");
-        trackSocialShare("myspace");
     }
 
     protected function popDigg () :void
@@ -416,7 +414,6 @@ public class ShareDialog extends FloatingPanel
             "&title=" + encodeURIComponent(getShareTitle()) +
             "&bodytext=" + encodeURIComponent(getShareTitle()); // TODO
         _ctx.getMsoyController().handleViewUrl(shareURL, "_blank");
-        trackSocialShare("digg");
     }
 
     /**
@@ -435,24 +432,6 @@ public class ShareDialog extends FloatingPanel
         }
         // fall back to opening the URL in a new page
         _ctx.getMsoyController().handleViewUrl(shareURL);
-    }
-
-    /**
-     * TEMP?? Track the client action of sharing the place via a social network.
-     */
-    protected function trackSocialShare (extShareId :String) :void
-    {
-        _ctx.getMsoyClient().trackClientAction("share_" + extShareId,
-            (_inGame ? "game" : "room") + "=" + _placeId);
-    }
-
-    // from FloatingPanel
-    /** @inheritDoc */
-    protected override function didOpen () :void
-    {
-        // TODO: remove this method when A/B test is finished
-        super.didOpen();
-        _ctx.getMsoyClient().trackClientAction("2008 12 share hint dialog opened", null);
     }
 
     protected var _inGame :Boolean;

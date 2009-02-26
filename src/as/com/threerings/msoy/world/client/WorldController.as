@@ -440,9 +440,6 @@ public class WorldController extends MsoyController
      */
     public function handleViewFullVersion () :void
     {
-        // log that the full version button was clicked
-        _wctx.getMsoyClient().trackClientAction("flashFullVersionClicked", null);
-
         // then go to the appropriate place..
         const sceneId :int = getCurrentSceneId();
         if (sceneId != 0) {
@@ -513,8 +510,6 @@ public class WorldController extends MsoyController
      */
     override public function handleViewGames () :void
     {
-        // log that the view games event was fired
-        _wctx.getMsoyClient().trackClientAction("flashViewGames", null);
         displayPage("games", "");
     }
 
@@ -738,8 +733,6 @@ public class WorldController extends MsoyController
      */
     public function handleCreateAccount (invite :String = null) :void
     {
-        // log that the create account event was fired
-        _wctx.getMsoyClient().trackClientAction("flashCreateAccount", null);
         displayPage("account", (invite == null) ? "create" : ("create_" + invite));
     }
 

@@ -43,11 +43,6 @@ public class HomePageDialog extends FloatingPanel
         super(ctx);
         _wctx = ctx;
 
-        // when the close button is pressed, log a tracking event
-        addEventListener(CloseEvent.CLOSE, function () :void {
-            _wctx.getMsoyClient().trackClientAction("whirledPlacesCloseClicked", null);
-        });
-
         title = Msgs.GENERAL.get("t.home_page");
         showCloseButton = true;
         setStyle("paddingTop", EDGE_MARGIN);
@@ -261,8 +256,6 @@ public class HomePageDialog extends FloatingPanel
             log.info("No action for " + item);
             break;
         }
-
-        _wctx.getMsoyClient().trackClientAction("whirledPlacesItemClicked", trackingDetails);
     }
 
     protected function badgeClicked (code :int) :void

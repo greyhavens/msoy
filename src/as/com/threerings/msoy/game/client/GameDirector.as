@@ -200,7 +200,6 @@ public class GameDirector extends BasicDirector
      */
     public function viewGameInstructions () :void
     {
-        _wctx.getMsoyClient().trackClientAction("flashViewGameInstructions", null);
         _wctx.getWorldController().displayPage("games", "d_" + getGameId() + "_i");
     }
 
@@ -209,7 +208,6 @@ public class GameDirector extends BasicDirector
      */
     public function viewGameComments () :void
     {
-        _wctx.getMsoyClient().trackClientAction("flashViewGameComments", null);
         _wctx.getWorldController().displayPage("games", "d_" + getGameId() + "_c");
     }
 
@@ -253,7 +251,6 @@ public class GameDirector extends BasicDirector
                 args += "_" + itemType;
             }
         }
-        _wctx.getMsoyClient().trackClientAction("flashViewGameShop", null);
         _wctx.getWorldController().displayPage("shop", args);
     }
 
