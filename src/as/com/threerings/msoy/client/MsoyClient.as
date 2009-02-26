@@ -259,7 +259,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     public function trackTestAction (actionName :String, testName :String) :void
     {
-        var msvc :MemberService = requireService(MemberService) as MemberService;
+        var msvc :MemberService = getService(MemberService) as MemberService;
         if (msvc != null) {
             msvc.trackTestAction(this, actionName, testName);
         } else {
