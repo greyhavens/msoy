@@ -1,0 +1,71 @@
+<!-- project build configuration -->
+<project name="Whirled panopticon aggregations" default="compile" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+  <property file="ant.properties"/>  
+
+  <!-- the base directory from which we get our bundles and jar files -->
+  <property name="base.dir" value="../.."/>
+
+  <property name="app.name"        value="mcell"/>
+  <property name="src.pkg.name"    value="com.threerings.msoy"/>
+  <property name="deploy.dir" value="dist"/>
+
+  <!-- classpath available to the aggregators in hadoop -->
+  <path id="runtime.classpath">
+<!--    <pathelement location="${deploy.dir}/yohoho"/> -->
+    <pathelement location="${deploy.dir}/classes"/>
+    <fileset dir="${base.dir}/extlibs/java"
+        includes="hadoop/hadoop-core.jar,log4j.jar,commons-httpclient.jar"/>
+    <fileset dir="${deploy.dir}/lib" includes="*.jar,*.zip"/>
+  </path>
+
+  <!-- import common build targets -->
+  <import file="${base.dir}/build/etc/build-support.xml"/>
+
+  <target name="prepare">
+    <mkdir dir="${deploy.dir}/classes"/>
+
+    <!-- Fetch maven dependencies -->
+    <artifact:dependencies filesetId="dependency.fileset">
+      <remoteRepository refid="ooo.maven.depends.repo"/>
+      <dependency groupId="com.threerings.panopticon" artifactId="panopticon-hadoop-mr"
+          version="0.0-SNAPSHOT"/>
+    </artifact:dependencies>
+    <copy todir="${deploy.dir}/lib">
+      <fileset refid="dependency.fileset"/>
+      <mapper type="flatten"/>
+    </copy>
+    <copy todir="${deploy.dir}/lib">
+        <fileset dir="libs" includes="*.zip"/>
+    </copy>
+
+    <!-- Explicitly include used data classes from yohoho -->
+<!--
+    <copy todir="${deploy.dir}/yohoho">
+        <fileset dir="${base.dir}/dist/classes" includesfile="yohoho.includes"/>
+    </copy>
+-->
+  </target>
+
+  <target name="compile" depends="prepare">
+  </target>
+
+  <target name="dist" depends="prepare,compile">
+      <jar destfile="${deploy.dir}/msoy-hadoop-mr.jar" update="yes">
+          <zipgroupfileset dir="${deploy.dir}/lib" includes="*.jar"/>
+<!--          <fileset dir="${deploy.dir}/yohoho" includes="**/*"/> -->
+          <fileset dir="${deploy.dir}/classes" includes="**/*"/>
+      </jar>
+  </target>
+  <target name="package" depends="prepare">
+      <fileset file="${deploy.dir}/msoy-hadoop-mr.jar" id="external.files"/>
+      <ant dir="cell" inheritRefs="true"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="${deploy.dir}/classes"/>
+  </target>
+
+  <target name="distclean">
+    <delete dir="${deploy.dir}"/>
+  </target>
+</project>
