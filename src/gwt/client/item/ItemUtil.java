@@ -137,6 +137,11 @@ public class ItemUtil
             }
             break;
 
+        case UberClientModes.FURNI_VIEWER:
+            flashVars += "&hotSpotX=" + ((Furniture) item).hotSpotX +
+                "&hotSpotY=" + ((Furniture) item).hotSpotY;
+            break;
+
         case UberClientModes.DECOR_VIEWER:
             flashVars += "&" + createDecorViewerParams((Decor) item);
             break;

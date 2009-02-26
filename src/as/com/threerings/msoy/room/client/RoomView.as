@@ -386,6 +386,29 @@ public class RoomView extends Sprite
     }
 
     /**
+     * Given a newly-initialized FurniData, insert a guess for the initial location.
+     */
+    public function setInitialFurniLocation (furni :FurniData) :void
+    {
+        var x :Number = .5;
+        var y :Number = 0;
+        var z :Number = 0;
+        // TODO: this >0 check is used elsewhere, but it prevents 0,0 from being valid.
+        if (furni.hotSpotY > 0 || furni.hotSpotX > 0) {
+            // Crap. We don't know the actual dimensions of the media yet, so we can't
+            // make a reasonable guess for a height. But we can at least make it visible.
+            // We can't even wait for the media dimensions because this gets saved immediately
+            // in the case of new furni being added to a room.
+            // Since it has a y hotspot of 0 it's probably something like a carpet, so adjust
+            // the Z rather than the Y.
+            if (furni.hotSpotY == 0) {
+                z = .5;
+            }
+        }
+        furni.loc = new MsoyLocation(x, y, z);
+    }
+
+    /**
      * Add the specified sprite to this display and have the room track it.
      */
     public function addOtherSprite (sprite :MsoySprite) :void

@@ -624,12 +624,12 @@ public class RoomObjectController extends RoomController
                     furni.itemType = item.getType();
                     furni.itemId = item.itemId;
                     furni.media = item.getFurniMedia();
-                    // create it at the front of the scene, centered on the floor
-                    furni.loc = new MsoyLocation(0.5, 0, 0);
                     if (item is Furniture) {
                         furni.hotSpotX = (item as Furniture).hotSpotX;
                         furni.hotSpotY = (item as Furniture).hotSpotY;
                     }
+                    // create it at the front of the scene, centered on the floor
+                    _roomView.setInitialFurniLocation(furni);
                     if (item is Game) {
                         var game :Game = (item as Game);
                         furni.actionType = game.isInWorld() ?

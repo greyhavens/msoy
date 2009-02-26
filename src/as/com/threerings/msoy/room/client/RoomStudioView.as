@@ -281,7 +281,9 @@ public class RoomStudioView extends RoomView
         furni.itemType = Item.FURNITURE;
         furni.itemId = 150;
         furni.media = new StudioMediaDesc(params["media"] as String);
-        furni.loc = new MsoyLocation(0.5, 0, 0);
+        furni.hotSpotX = int(params["hotSpotX"]);
+        furni.hotSpotY = int(params["hotSpotY"]);
+        setInitialFurniLocation(furni);
 
         _testingSprite = addFurni(furni);
 
