@@ -273,6 +273,11 @@ public class MsoyEventLogger
         post(new MsoyEvents.GameInviteSent(gameId, inviterId, recipient));
     }
 
+    public void whirledMailGameInviteSent (int gameId, int inviterId, int recipId)
+    {
+        post(new MsoyEvents.WhieldMailGameInviteSent(gameId, inviterId, recipId));
+    }
+
     public void inviteViewed (String inviteId)
     {
         post(new MsoyEvents.InviteViewed(inviteId));

@@ -228,6 +228,7 @@ public class InviteServlet extends MsoyServiceServlet
         for (int memberId : recipientIds) {
             MemberRecord recip = _memberRepo.loadMember(memberId);
             _mailLogic.startBulkConversation(mrec, recip, subject, body, payload);
+            _eventLog.whirledMailGameInviteSent(gameId, mrec.memberId, recip.memberId);
         }
     }
 

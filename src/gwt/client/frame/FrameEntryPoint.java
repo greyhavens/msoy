@@ -757,6 +757,8 @@ public class FrameEntryPoint
         case LaunchConfig.FLASH_IN_WORLD:
             args = "worldGame=" + config.gameId;
             if (token.length() > 0 || otherId1 > 0 || otherId2 > 0) {
+                reportClientAction(
+                    null, "2009-02 game invite accepted", "gameId=" + config.gameId);
                 args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1 +
                     "&inviteGameRoomId=" + otherId2;
             }
@@ -776,6 +778,10 @@ public class FrameEntryPoint
                     args += "&inviteToken=" + token + "&inviterMemberId=" + otherId2;
                 }
             } else if (action.equals("m") || action.equals("s") || action.equals("t")) {
+                if (action.equals("s")) { // game invitation
+                    reportClientAction(
+                        null, "2009-02 game invite accepted", "gameId=" + config.gameId);
+                }
                 args = "playNow=" + config.gameId + "&gameMode=" + action;
                 if (token.length() > 0 || otherId1 > 0) {
                     args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1;

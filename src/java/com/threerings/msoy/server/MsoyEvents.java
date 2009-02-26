@@ -411,6 +411,23 @@ public class MsoyEvents
         }
     }
 
+    @Event(name="WhirledMailGameInviteSent") // note: do not change this event name
+    public static class WhieldMailGameInviteSent implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public int gameId;
+        @Field final public int inviterId;
+        @Field final public int recipientId;
+
+        public WhieldMailGameInviteSent (int gameId, int inviterId, int recipientId)
+        {
+            this.timestamp = new Date();
+            this.gameId = gameId;
+            this.inviterId = inviterId;
+            this.recipientId = recipientId;
+        }
+    }
+
     @Event(name="InviteViewed") // note: do not change this event name
     public static class InviteViewed implements MsoyEvent
     {
