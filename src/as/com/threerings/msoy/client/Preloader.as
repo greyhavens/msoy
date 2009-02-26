@@ -320,7 +320,10 @@ public class Preloader extends Sprite
     protected function isEmbed () :Boolean
     {
         // this is sort of a hack to determine whether we're an embedded game/room or not
-        return MsoyParameters.get()["vec"] != null;
+        var params :Object = MsoyParameters.get();
+        // params could be null here if loading async from the filesystem, in which case we're
+        // not an embed anyway.
+        return (params != null) && (params["vec"] != null);
     }
 
     protected function handleProgress (event :ProgressEvent) :void
