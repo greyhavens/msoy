@@ -63,11 +63,6 @@ public class FriendsFeedPanel extends FlowPanel
                 });
             }
         };
-        if (!fullSize) {
-            onClick = MsoyUI.makeTrackingListener("meClickedShowMore", categoryTitle, onClick);
-        } else {
-            onClick = MsoyUI.makeTrackingListener("meClickedShowLess", categoryTitle, onClick);
-        }
         String showMoreText = fullSize ? _pmsgs.shortFeed() : _pmsgs.fullFeed();
         Label showMore = MsoyUI.createActionLabel(showMoreText, "FeedShowMore", onClick);
         categoryPanel.add(showMore);
@@ -76,11 +71,8 @@ public class FriendsFeedPanel extends FlowPanel
 
         // combine feed items performed by the same person
         List<FeedMessage> messages = FeedMessageAggregator.aggregate(category.messages, false);
-
         for (FeedMessage message : messages) {
-            FeedMessagePanel messagePanel = new FeedMessagePanel(message, true);
-            MsoyUI.addTrackingListener(messagePanel, "meClickedNewsItem", categoryTitle);
-            categoryPanel.add(messagePanel);
+            categoryPanel.add(new FeedMessagePanel(message, true));
         }
     }
 

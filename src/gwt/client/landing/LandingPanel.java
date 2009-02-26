@@ -51,7 +51,6 @@ public class LandingPanel extends SimplePanel
 
         // join now
         ClickListener onJoin = Link.createListener(Pages.ACCOUNT, "create");
-        onJoin = MsoyUI.makeTrackingListener("landingJoinButtonClicked", null, onJoin);
         content.add(MsoyUI.createImageButton("JoinButton", onJoin), 475, 0);
 
         // logon box
@@ -73,7 +72,6 @@ public class LandingPanel extends SimplePanel
                     "preview", "/images/landing/landing_movie.swf", 208, 154, null), 34, 1);
             }
         };
-        onClick = MsoyUI.makeTrackingListener("landingVideoPlayed", null, onClick);
         final Image clickToPlayImage = MsoyUI.createActionImage(
             "/images/landing/play_screen.png", _msgs.landingClickToStart(), onClick);
         video.add(clickToPlayImage, 0, 0);

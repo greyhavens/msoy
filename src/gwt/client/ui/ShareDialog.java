@@ -62,7 +62,6 @@ public class ShareDialog extends BorderedDialog
                 Window.open(facebookURL, "Whirled", "width=620,height=440");
             }
         };
-        facebookListener = MsoyUI.makeTrackingListener("share_facebook", null, facebookListener);
         panel.setWidget(0, 0, MsoyUI.createButtonPair(
             MsoyUI.createActionImage(FACEBOOK_IMG, facebookListener),
             MsoyUI.createActionLabel(_cmsgs.shareFacebook(), facebookListener)));
@@ -77,7 +76,6 @@ public class ShareDialog extends BorderedDialog
                 Window.open(myspaceURL, "Whirled", "width=1024,height=650");
             }
         };
-        myspaceListener = MsoyUI.makeTrackingListener("share_myspace", null, myspaceListener);
         panel.setWidget(0, 1, MsoyUI.createButtonPair(
             MsoyUI.createActionImage(MYSPACE_IMG, myspaceListener),
             MsoyUI.createActionLabel(_cmsgs.shareMyspace(), myspaceListener)));
@@ -89,10 +87,8 @@ public class ShareDialog extends BorderedDialog
         String diggURL = "http://digg.com/submit" +
             "?url=" + goURL + "&title=" + eTitle + "&bodytext=" + eDesc +
             "&media=news&topic=playable_web_games";
-        HTML digg = new HTML("<a target='_blank' href='" + diggURL + "'>" +
-            "<img src='/images/ui/digg.png' border=0></a>");
-        MsoyUI.addTrackingListener(digg, "share_digg", null);
-        panel.setWidget(0, 2, digg);
+        panel.setWidget(0, 2, new HTML("<a target='_blank' href='" + diggURL + "'>" +
+                                       "<img src='/images/ui/digg.png' border=0></a>"));
 
         setContents(panel);
     }
