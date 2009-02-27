@@ -260,14 +260,8 @@ public class InviteServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser();
         IntSet friendsIds = _memberRepo.loadFriendIds(memrec.memberId);
         List<MemberCard> cards = Lists.newArrayList();
-        // fill in with dupes up to the requested count in dev deployments for testing
-        // TODO: remove duping
-        int passes = DeploymentConfig.devDeployment ? 20 : 1;
-        for (int ii = 0; ii < passes && cards.size() < count; ++ii) {
-            for (MemberCardRecord mcr : _memberRepo.loadMemberCards(
-                friendsIds, 0, count - cards.size(), true)) {
-                cards.add(mcr.toMemberCard());
-            }
+        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(friendsIds, 0, count, true)) {
+            cards.add(mcr.toMemberCard());
         }
         return cards;
     }
