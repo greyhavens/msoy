@@ -205,6 +205,7 @@ public class TableSummaryPanel extends HBox
         // text must be jiggled, otherwise the tip won't size properly after the style change
         // fawking flex
         tip.text = tip.text; // this is enough jiggling
+        tip.validateNow();
     }
 
     protected var _icon :MediaWrapper;
