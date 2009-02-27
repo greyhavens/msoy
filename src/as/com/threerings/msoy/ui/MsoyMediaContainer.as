@@ -4,6 +4,16 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
+import flash.display.Loader;
+import flash.display.LoaderInfo;
+
+import flash.events.Event;
+import flash.events.IEventDispatcher;
+
+import mx.core.Application;
+import mx.core.ISWFBridgeProvider;
+
+import mx.events.SWFBridgeEvent;
 
 import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
@@ -25,7 +35,7 @@ import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
 public class MsoyMediaContainer extends MediaContainer
-    implements ContextMenuProvider
+    implements ContextMenuProvider, ISWFBridgeProvider
 {
     public function MsoyMediaContainer (desc :MediaDesc = null)
     {
@@ -126,6 +136,44 @@ public class MsoyMediaContainer extends MediaContainer
         }
     }
 
+    // from ISWFBridgeProvider
+    public function get swfBridge () :IEventDispatcher
+    {
+        return _bridge;
+    }
+
+    // from ISWFBridgeProvider
+    public function get childAllowsParent () :Boolean
+    {
+        return true;
+    }
+
+    // from ISWFBridgeProvider
+    public function get parentAllowsChild () :Boolean
+    {
+        return false;
+    }
+
+    override protected function addListeners (info :LoaderInfo) :void
+    {
+        super.addListeners(info);
+
+        info.sharedEvents.addEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION, bridgeApp);
+    }
+
+    override protected function removeListeners (info :LoaderInfo) :void
+    {
+        super.removeListeners(info);
+
+        info.sharedEvents.removeEventListener(SWFBridgeEvent.BRIDGE_NEW_APPLICATION, bridgeApp);
+    }
+
+    protected function bridgeApp (event :Event) :void
+    {
+        _bridge = IEventDispatcher(event.currentTarget);
+        Application(Application.application).systemManager.addChildBridge(_bridge, this);
+    }
+
     override protected function showNewMedia (url :String) :void
     {
         switch (MediaDesc.suffixToMimeType(url)) {
@@ -196,6 +244,8 @@ public class MsoyMediaContainer extends MediaContainer
 
     /** Our Media descriptor. */
     protected var _desc :MediaDesc;
+
+    protected var _bridge :IEventDispatcher;
 
     // TEMP: have we bleeped something (and issued the bleep disclaimer?)
     protected static var _hasBleeped :Boolean
