@@ -79,7 +79,10 @@
       </copy>
   </target>
   <target name="package" depends="prepare">
-      <fileset file="${deploy.dir}/msoy-hadoop-mr.jar" id="external.files"/>
+      <fileset dir="cell" id="external.files">
+        <include name="msoy-hadoop-mr.jar"/>
+        <include name="tasks/*.properties"/>
+      </fileset>
       <ant dir="cell" inheritRefs="true"/>
   </target>
 
