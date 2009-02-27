@@ -92,5 +92,6 @@
 
   <target name="distclean">
     <delete dir="${deploy.dir}"/>
+    <ant dir="cell" target="distclean" inheritRefs="true"/>
   </target>
 </project>
