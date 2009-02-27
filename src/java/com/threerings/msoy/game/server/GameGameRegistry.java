@@ -104,7 +104,6 @@ import com.threerings.msoy.avrg.server.QuestDelegate;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 
-import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
