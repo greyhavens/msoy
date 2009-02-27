@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -32,10 +33,12 @@ import com.threerings.parlor.server.ParlorSender;
 import com.whirled.game.data.GameDefinition;
 import com.whirled.game.data.TableMatchConfig;
 
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
+
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -149,6 +152,25 @@ public class LobbyManager
     public void initConfig (MsoyGameConfig config)
     {
         config.init(_lobj.game, _lobj.gameDef, ServerConfig.getGameGroupId(_lobj.game.groupId));
+    }
+
+    /**
+     * Returns true if the specified player is waiting at a (pending) table in this lobby, false
+     * otherwise.
+     */
+    public boolean playerAtTable (int playerId)
+    {
+        for (Table table : _lobj.tables) {
+            if (table.inPlay()) {
+                continue;
+            }
+            for (Name name : table.getPlayers()) {
+                if (((MemberName)name).getMemberId() == playerId) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

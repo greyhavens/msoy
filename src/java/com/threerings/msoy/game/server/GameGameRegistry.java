@@ -858,24 +858,12 @@ public class GameGameRegistry
     }
 
     // from LobbyProvider
-    public void playNow (ClientObject caller, final int gameId, int playerId,
+    public void playNow (ClientObject caller, final int gameId, final int playerId,
                          final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final PlayerObject plobj = (PlayerObject)caller;
-
-        // if they want to join a player's game, try that first
-        if (playerId != 0) {
-            int gameOid = locatePlayerGame(playerId);
-            if (gameOid != 0) {
-                // deliver a game ready notification to the player
-                ParlorSender.gameIsReady(plobj, gameOid);
-                listener.requestProcessed(0);
-                return;
-            } // otherwise fall through and send them to the lobby or a game
-        }
-
         // we need to make sure the lobby is resolved, so route through identifyLobby
+        final PlayerObject plobj = (PlayerObject)caller;
         identifyLobby(caller, gameId, new InvocationService.ResultListener() {
             public void requestProcessed (Object result) {
                 LobbyManager mgr = _lobbies.get(gameId);
@@ -883,76 +871,14 @@ public class GameGameRegistry
                     log.warning("identifyLobby returned non-failure but lobby manager disappeared",
                                 "gameId", gameId);
                     requestFailed(InvocationCodes.E_INTERNAL_ERROR);
-                } else if (mgr.playNowSingle(plobj)) {
-                    listener.requestProcessed(0); // we'll send gameIsReady shortly
                 } else {
-                    listener.requestProcessed((Integer)result); // send back the lobbyOid
+                    listener.requestProcessed(finishPlayNow(mgr, plobj, playerId));
                 }
             }
             public void requestFailed (String cause) {
                 listener.requestFailed(cause);
             }
         });
-    }
-
-    protected int locatePlayerGame (int playerId)
-    {
-        PlayerObject player = _locator.lookupPlayer(playerId);
-        if (player == null) {
-            return 0;
-        }
-
-        int placeOid = player.getPlaceOid();
-        if (placeOid == -1) {
-            return 0;
-        }
-
-        PlaceManager plman = _placeReg.getPlaceManager(placeOid);
-        if (plman == null) {
-            log.warning("No PlaceManager for player's game?", "pid", playerId, "ploid", placeOid);
-            return 0;
-        }
-
-        // if this is an AVRG, we should be doing something different on the client
-        if (!(plman instanceof MsoyGameManager)) {
-            log.warning("Requested to join player that's probably in an AVRG ", "pid", playerId,
-                        "mgr", plman.getClass().getName());
-            return 0;
-        }
-
-        // check to make sure the game that they're in is watchable
-        MsoyGameConfig gameConfig = (MsoyGameConfig) plman.getConfig();
-        MsoyMatchConfig matchConfig = (MsoyMatchConfig) gameConfig.getGameDefinition().match;
-        if (matchConfig.unwatchable) {
-            return 0;
-        }
-
-        // check to make sure the game that they're in is not private
-        int gameId = gameConfig.getGameId();
-        LobbyManager lmgr = _lobbies.get(gameId);
-        if (lmgr == null) {
-            log.warning("No lobby manager found for existing game! [" + gameId + "]");
-            return 0;
-        }
-        LobbyObject lobj = lmgr.getLobbyObject();
-        for (Table table : lobj.tables) {
-            if (table.gameOid == placeOid) {
-                if (table.tconfig.privateTable) {
-                    return 0;
-                }
-                break;
-            }
-        }
-
-        // finally, hand off the game oid
-        return placeOid;
-    }
-
-    // from LobbyProvider
-    public void joinPlayerGame (ClientObject caller, int playerId,
-                                InvocationService.ResultListener listener)
-        throws InvocationException
-    {
     }
 
     // from interface GameGameProvider
@@ -1039,6 +965,93 @@ public class GameGameRegistry
 
             protected List<TrophyRecord> _trophies;
         });
+    }
+
+    /**
+     * Finishes a {@link #playNow} request, returning either the lobby oid if the player should
+     * enter the lobby or 0 if the player will be subsequently sent into a game.
+     */
+    protected int finishPlayNow (LobbyManager lmgr, PlayerObject plobj, int friendId)
+    {
+        // if they want to join a player's game, try that first
+        if (friendId != 0) {
+            // first check to see if that player is in a table and if so, send them to the lobby
+            // they can join that player's table
+            if (lmgr.playerAtTable(friendId)) {
+                return lmgr.getLobbyObject().getOid();
+            }
+
+            // next check to see if their friend is already in a game, and send them there if so
+            int gameOid = locatePlayerGame(friendId);
+            if (gameOid != 0) {
+                // deliver a game ready notification to the player
+                ParlorSender.gameIsReady(plobj, gameOid);
+                return 0;
+            }
+
+            // otherwise fall through and send them to the lobby or a new game
+        }
+
+        if (lmgr.playNowSingle(plobj)) {
+            return 0; // we'll send gameIsReady shortly
+        }
+        return lmgr.getLobbyObject().getOid();
+    }
+
+    /**
+     * Returns the oid of the game being played by the specified player or 0.
+     */
+    protected int locatePlayerGame (int playerId)
+    {
+        PlayerObject player = _locator.lookupPlayer(playerId);
+        if (player == null) {
+            return 0;
+        }
+
+        int placeOid = player.getPlaceOid();
+        if (placeOid == -1) {
+            return 0;
+        }
+
+        PlaceManager plman = _placeReg.getPlaceManager(placeOid);
+        if (plman == null) {
+            log.warning("No PlaceManager for player's game?", "pid", playerId, "ploid", placeOid);
+            return 0;
+        }
+
+        // if this is an AVRG, we should be doing something different on the client
+        if (!(plman instanceof MsoyGameManager)) {
+            log.warning("Requested to join player that's probably in an AVRG ", "pid", playerId,
+                        "mgr", plman.getClass().getName());
+            return 0;
+        }
+
+        // check to make sure the game that they're in is watchable
+        MsoyGameConfig gameConfig = (MsoyGameConfig) plman.getConfig();
+        MsoyMatchConfig matchConfig = (MsoyMatchConfig) gameConfig.getGameDefinition().match;
+        if (matchConfig.unwatchable) {
+            return 0;
+        }
+
+        // check to make sure the game that they're in is not private
+        int gameId = gameConfig.getGameId();
+        LobbyManager lmgr = _lobbies.get(gameId);
+        if (lmgr == null) {
+            log.warning("No lobby manager found for existing game! [" + gameId + "]");
+            return 0;
+        }
+        LobbyObject lobj = lmgr.getLobbyObject();
+        for (Table table : lobj.tables) {
+            if (table.gameOid == placeOid) {
+                if (table.tconfig.privateTable) {
+                    return 0;
+                }
+                break;
+            }
+        }
+
+        // finally, hand off the game oid
+        return placeOid;
     }
 
     protected GameContent assembleGameContent (int gameId)
