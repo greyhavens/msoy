@@ -753,11 +753,10 @@ public class FrameEntryPoint
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
             args = "worldGame=" + config.gameId;
-            if (token.length() > 0 || otherId1 > 0 || otherId2 > 0) {
-                reportClientAction(
-                    null, "2009-02 game invite accepted", "gameId=" + config.gameId);
+            if (action.equals("j")) {
                 args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1 +
                     "&inviteGameRoomId=" + otherId2;
+                reportClientAction(null, "2009-02 game invite accepted", "gameId=" + config.gameId);
             }
             displayWorldClient(args, null);
             break;
@@ -770,18 +769,15 @@ public class FrameEntryPoint
             if (action.equals("g")) {
                 args += "&gameOid=" + otherId1;
 
+            // "j" is from a game invite
+            } else if (action.equals("j")) {
+                args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1;
+                reportClientAction(
+                    null, "2009-02 game invite accepted", "gameId=" + config.gameId);
+
             // everything else ("p" and "i" and legacy codes) means 'play now'
-            } else {
-                if (otherId1 != 0) {
-                    args += "&playerId=" + otherId1;
-                }
-                if (token.length() > 0 || otherId1 > 0 || otherId2 > 0) {
-                    reportClientAction(
-                        null, "2009-02 game invite accepted", "gameId=" + config.gameId);
-                }
-                if (token.length() > 0 || otherId1 > 0) {
-                    args += "&inviteToken=" + token + "&inviterMemberId=" + otherId2;
-                }
+            } else if (otherId1 != 0) {
+                args += "&playerId=" + otherId1;
             }
             displayWorldClient(args + hostPort, null);
             break;
