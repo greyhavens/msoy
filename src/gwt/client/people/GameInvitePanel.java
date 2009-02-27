@@ -3,6 +3,7 @@
 
 package client.people;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -146,7 +147,7 @@ public class GameInvitePanel extends VerticalPanel
             addMethodButton("Facebook",
                 new InviteMethodCreator () {
                     public Widget create () {
-                        showFBInvitePopup("<b>Hello</b> <i>World</i>!");
+                        showFBInvitePopup();
                         return null;
                     }
                 });
@@ -186,6 +187,27 @@ public class GameInvitePanel extends VerticalPanel
             add(panel);
         }
     }
+
+    protected static void showFBInvitePopup ()
+    {
+        Builder b = new Builder();
+        b.open("fb:fbml");
+        b.open("fb:request-form", "type", "Game", "action", DeploymentConfig.serverURL,
+            "method", "POST", "invite", true, "content", "Need some content");
+        b.open("fb:multi-friend-selector", "showborder", false, "actiontext", "Select some " +
+            "friends to come play with you.", "rows", 4);
+
+        showFBInvitePopup(b.finish(), 0, -270, 650, 580);
+    }
+
+    protected static native void showFBInvitePopup (
+        String fbml, int x, int y, int width, int height) /*-{
+        try {
+            $wnd.FB_ShowGameInvite(fbml, x, y, width, height);
+        } catch (e) {
+            $wnd.console.log("GameInvitePanel.showFBInvitePopup failure " + e);
+        }
+    }-*/;
 
     /**
      * Allows various invite methods to be hooked up to click listeners.
@@ -615,13 +637,71 @@ public class GameInvitePanel extends VerticalPanel
         protected MemberCard _card;
     }
 
-    protected native void showFBInvitePopup (String fbml) /*-{
-        try {
-            $wnd.FB_ShowGameInvite(fbml);
-        } catch (e) {
-            $wnd.console.log("GameInvitePanel.showFBInvitePopup failure " + e);
+    /**
+     * Quick and dirty XML builder to avoid leaning toothpick syndrome when generating FBML.
+     */
+    protected static class Builder
+    {
+        /**
+         * Open up a tag with the given name and attributes.
+         */
+        public Builder open (String name, Object ... kvPairs)
+        {
+            int size = _tagcounts.size();
+            if (size > 0) {
+                int count = _tagcounts.get(size - 1);
+                if (count == 0) {
+                    _buff.append(">");
+                }
+                _tagcounts.set(size - 1, count + 1);
+            }
+            _tagcounts.add(0);
+            _tags.add(name);
+            _buff.append("<").append(name);
+            for (int ii = 0; ii < kvPairs.length; ii += 2) {
+                _buff.append(" ").append(kvPairs[ii]);
+                _buff.append("=\"").append(kvPairs[ii+1]).append("\"");
+            }
+            return this;
         }
-    }-*/;
+
+        /**
+         * Close the most recent tag.
+         */
+        public Builder close ()
+        {
+            int size = _tagcounts.size();
+            if (_tagcounts.get(size - 1) == 0) {
+                _buff.append("/>");
+            } else {
+                _buff.append("</").append(_tags.get(size - 1));
+            }
+            _tags.remove(size - 1);
+            _tagcounts.remove(size - 1);
+            return this;
+        }
+
+        /**
+         * Close all tags and return the document as a string.
+         */
+        public String finish ()
+        {
+            while (_tagcounts.size() > 0) {
+                close();
+            }
+            return toString();
+        }
+
+        // from Object
+        public String toString ()
+        {
+            return _buff.toString();
+        }
+
+        protected ArrayList<Integer> _tagcounts = new ArrayList<Integer>();
+        protected ArrayList<String> _tags = new ArrayList<String>();
+        protected StringBuilder _buff = new StringBuilder();
+    }
 
     /** The row where the invite method is. */
     protected int _methodRow;
