@@ -261,7 +261,7 @@ public class GameDirector extends BasicDirector
         log.debug("Resolving liaison", "host", ghost, "port", gport);
         resolveLobbyLiaison(gameId, ghost, gport);
 //         log.debug("Setting invite data", "token", inviteToken, "invId", inviterId);
-//         _liaison.setInviteData(inviteToken, inviterId);
+        _liaison.setInviteData(inviteToken, inviterId);
         log.debug("Playing now", "gameId", gameId, "playerId", playerId);
         LobbyGameLiaison(_liaison).playNow(playerId);
     }
