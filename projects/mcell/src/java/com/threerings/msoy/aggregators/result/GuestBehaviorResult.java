@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -32,10 +30,8 @@ import com.threerings.panopticon.reporter.aggregator.result.AggregatedResult;
  * Extracts a guest behavior table, including the time they first show up, the time they register
  * (if ever), and a short trace of actions in between.
  *
- * Acceptable input includes the following event types: ReferralCreated, AccountCreated, GameExit,
- * RoomExit.
- *
- * @author Robert Zubek <robert@threerings.net>
+ * Acceptable input includes the following event types: VisitorInfoCreated, AccountCreated, Experience,
+ * VectorAssociated.
  */
 public class GuestBehaviorResult
     implements AggregatedResult<GuestBehaviorResult>
@@ -45,7 +41,7 @@ public class GuestBehaviorResult
         final Map<String, Object> data = eventData.getData();
 
         // all records must have timestamp and tracker (also called visitorId in the past)
-        final GuestEntry entry = new GuestEntry();
+        _entry = new GuestEntry();
         final Date timestamp = (Date)data.get("timestamp");
 
         String tracker = (String)data.get("tracker");
@@ -60,80 +56,65 @@ public class GuestBehaviorResult
         final EventName name = eventData.getEventName();
 
         if (VISITOR_INFO_CREATED.equals(name)) {
-            entry.start = timestamp;
+            _entry.start = timestamp;
             Boolean web = (Boolean)data.get("web");
             if (web != null) {
-                entry.embed = !web;
+                _entry.embed = !web;
             }
 
         } else if (VECTOR_ASSOCIATED.equals(name)) {
-            entry.vector = (String)data.get("vector");
+            _entry.vector = (String)data.get("vector");
 
         } else if (ACCOUNT_CREATED.equals(name)) {
-            entry.conversion = timestamp;
-            entry.conversionMember = (Integer)data.get("newMemberId");
+            _entry.conversion = timestamp;
+            _entry.conversionMember = (Integer)data.get("newMemberId");
 
         } else if (EXPERIENCE.equals(name)) {
             final String action = (String)data.get("action");
+            data.get("memberId"); // throw away for testing -- TODO
             if (action == null) {
                 return false;
             }
-            entry.addEvent(action, timestamp);
+            _entry.addEvent(action, timestamp);
 
             final Integer memberId = (Integer)data.get("memberId");
             if (memberId != null && memberId > 0) {
-                if (entry.firstExperienceAsPlayer == null
-                    || timestamp.before(entry.firstExperienceAsPlayer)) {
-                    entry.firstExperienceAsPlayer = timestamp;
-                    entry.conversionMember = memberId;
+                if (_entry.firstExperienceAsPlayer != null) {
+                    throw new RuntimeException("Eek! Has had first experience!");
                 }
+                _entry.firstExperienceAsPlayer = timestamp;
+                _entry.conversionMember = memberId;
             }
         }
 
-        entry.tracker = tracker;
-        this.histories.put(tracker, entry);
+        _entry.tracker = tracker;
 
         return true;
     }
 
     public void combine (final GuestBehaviorResult other)
     {
-        for (Map.Entry<String, GuestEntry> entry : other.histories.entrySet()) {
-            String tracker = entry.getKey();
-            if (histories.containsKey(tracker)) {
-                histories.get(tracker).combine(entry.getValue());
-            } else {
-                histories.put(tracker, entry.getValue());
-            }
+        if (_entry == null) {
+            _entry = other.getEntry();
+        } else {
+            _entry.combine(other.getEntry());
         }
     }
 
     public boolean putData (Map<String, Object> result)
     {
-        if (historiter == null) {
-            historiter = histories.entrySet().iterator();
-        }
-
-        // did we run out of items?
-        if (!historiter.hasNext()) {
+        // only include entries that correspond to an actual created tracker
+        if (_entry.start == null) {
             return false;
         }
 
-        Entry<String, GuestEntry> tuple = historiter.next();
-        GuestEntry e = tuple.getValue();
-
-        // does this entry correspond to an actual new user visit?
-        if (!e.isSufficient()) {
-            return false;
-        }
-
-        result.put("acct_tracker", e.tracker);
+        result.put("acct_tracker", _entry.tracker);
 
         // data from VisitorInfoCreated
-        result.put("acct_start", e.start);
+        result.put("acct_start", _entry.start);
 
         // data from VectorAssociated
-        String vector = e.vector;
+        String vector = _entry.vector;
         if (vector != null) {
             int ampersand = vector.indexOf("&");
             if (ampersand > -1) {
@@ -145,19 +126,19 @@ public class GuestBehaviorResult
             }
         }
         if (vector == null || "".equals(vector)) {
-            vector = String.format("(no vector - from %s)", e.embedString());
+            vector = String.format("(no vector - from %s)", _entry.embedString());
         }
         result.put("acct_vector", vector);
         result.put("acct_vector_from_ad", vector.startsWith("a."));
 
         // data from AccountCreated
-        final Date conversion = e.getConversion();
+        final Date conversion = _entry.getConversion();
         result.put("conv", conversion != null ? 1 : 0); // 1 if someone converted, 0 otherwise
 
         // data from Experiences
-        final Map<String, Integer> conversionEvents = e.countByConversion(conversion,
+        final Map<String, Integer> conversionEvents = _entry.countByConversion(conversion,
             CheckType.CONVERSION_PERIOD);
-        final Map<String, Integer> retentionWeekEvents = e.countByConversion(conversion,
+        final Map<String, Integer> retentionWeekEvents = _entry.countByConversion(conversion,
             CheckType.RETENTION_WEEK);
 
         result.put("events_till_conversion", toCounts(conversionEvents));
@@ -168,15 +149,17 @@ public class GuestBehaviorResult
 
         // data from both
         int minutes = 0;
-        if (e.start != null && conversion != null) {
+        if (_entry.start != null && conversion != null) {
             result.put("conv_timestamp", conversion);
-            minutes = (int)(conversion.getTime() - e.start.getTime()) / (1000 * 60);
+            minutes = (int)(conversion.getTime() - _entry.start.getTime()) / (1000 * 60);
         } else {
             result.put("conv_timestamp", new Date(0L));
         }
         
-        if (e.conversionMember != null) {
-            result.put("conv_member", e.conversionMember);
+        if (_entry.conversionMember != null) {
+            result.put("conv_member", _entry.conversionMember);
+        } else {
+            result.put("conv_member", Integer.valueOf(0));
         }
 
         result.put("conv_minutes", minutes);
@@ -186,12 +169,12 @@ public class GuestBehaviorResult
         // pull out retention stats, as days and weeks from joining.
         // retention counts only if they have a valid start date, a valid conversion
         // date, and they had some experiences more than a week after converting.
-        Date lastEventDate = e.findLastEventDate();
-        boolean cameBack = (e.start != null) && (conversion != null) && (lastEventDate != null);
+        Date lastEventDate = _entry.findLastEventDate();
+        boolean cameBack = (_entry.start != null) && (conversion != null) && (lastEventDate != null);
 
         int days = 0;
         if (cameBack) {
-            long msecs = (lastEventDate.getTime() - e.start.getTime());
+            long msecs = (lastEventDate.getTime() - _entry.start.getTime());
             days = (int)(msecs / (1000 * 60 * 60 * 24));
         }
 
@@ -207,64 +190,41 @@ public class GuestBehaviorResult
         }
         result.put("conv_status", status);
 
-        return historiter.hasNext();
+        return false;
     }
 
     public void readFields (final DataInput in)
         throws IOException
     {
-        histories.clear();
-        final int count = in.readInt();
-        for (int ii = 0; ii < count; ii++) {
-            GuestEntry entry = new GuestEntry();
-            entry.read(in);
-            histories.put(entry.tracker, entry);
+        if ((Boolean)HadoopSerializationUtil.readObject(in)) {
+            _entry = new GuestEntry();
+            _entry.read(in);
         }
     }
-
+    
     public void write (final DataOutput out)
         throws IOException
     {
-        out.writeInt(histories.size());
-        for (final Entry<String, GuestEntry> entry : histories.entrySet()) {
-            entry.getValue().write(out);
+        if (_entry != null) {
+            HadoopSerializationUtil.writeObject(out, true);
+            _entry.write(out);
+        } else {
+            HadoopSerializationUtil.writeObject(out, false);
         }
     }
 
-    /**
-     * Produces a string mapping from experiences to counts. NOTE: this output format is consumed
-     * by {@link GuestBehaviorSplitterTransformer}.
-     */
-    private static String toCounts (Map<String, Integer> experienceCounts)
+    protected GuestEntry getEntry ()
     {
-        StringBuilder builder = new StringBuilder();
-        for (Entry<String, Integer> entry : experienceCounts.entrySet()) {
-            builder.append(entry.getKey()).append(':').append(entry.getValue()).append(' ');
-        }
-        return builder.toString();
+        return _entry;
     }
 
-    /**
-     * Produces an experience feature vector.
-     */
-    private static String toFeatures (Map<String, Integer> experienceCounts)
-    {
-        Iterable<String> results = Iterables.transform(experienceCounts.entrySet(),
-            new Function<Map.Entry<String, Integer>, String>() {
-                public String apply (Entry<String, Integer> entry)
-                {
-                    return (entry.getValue() != null && entry.getValue() > 0) ? entry.getKey()
-                        : "--";
-                }
-            });
-        return Join.join(" ", results);
-    }
+    protected GuestEntry _entry;
 
-    private enum CheckType {
+    protected enum CheckType {
         CONVERSION_PERIOD, RETENTION_WEEK;
     }
 
-    private class GuestEntry
+    protected class GuestEntry
     {
         public String vector;
         public String tracker;
@@ -393,8 +353,9 @@ public class GuestBehaviorResult
         /** Fills in any null fields on this instance from the other, and adds map entries. */
         public void combine (GuestEntry other)
         {
-            if (this.tracker == null) {
-                this.tracker = other.tracker;
+            if (!this.tracker.equals(other.tracker)) {
+                throw new RuntimeException(
+                    "Won't combine entries with different keys (" + this.tracker + ", " + other.tracker + ")");
             }
 
             final Boolean otherExperienceEarlier = other.firstExperienceAsPlayer != null
@@ -402,6 +363,7 @@ public class GuestBehaviorResult
                 && other.firstExperienceAsPlayer.before(this.firstExperienceAsPlayer);
 
             if (this.firstExperienceAsPlayer == null || otherExperienceEarlier) {
+                this.conversionMember = other.conversionMember;
                 this.firstExperienceAsPlayer = other.firstExperienceAsPlayer;
             }
 
@@ -419,9 +381,6 @@ public class GuestBehaviorResult
 
             if (this.conversion == null) {
                 this.conversion = other.conversion;
-            }
-
-            if (this.conversionMember == null) {
                 this.conversionMember = other.conversionMember;
             }
 
@@ -431,7 +390,7 @@ public class GuestBehaviorResult
                 }
             }
         }
-
+        
         public void write (final DataOutput out)
             throws IOException
         {
@@ -462,21 +421,45 @@ public class GuestBehaviorResult
             // data from AccountCreated
             this.conversion = (Date)HadoopSerializationUtil.readObject(in);
             this.conversionMember = (Integer)HadoopSerializationUtil.readObject(in);
-                        // more data from Experiences
+            // more data from Experiences
             this.events = (Multimap<String, Date>)HadoopSerializationUtil.readObject(in);
             this.firstExperienceAsPlayer = (Date)HadoopSerializationUtil.readObject(in);
         }
     }
 
-    private final static EventName VISITOR_INFO_CREATED = new EventName("VisitorInfoCreated");
-    private final static EventName VECTOR_ASSOCIATED = new EventName("VectorAssociated");
-    private final static EventName ACCOUNT_CREATED = new EventName("AccountCreated");
-    private final static EventName EXPERIENCE = new EventName("Experience");
+    /**
+     * Produces a string mapping from experiences to counts. NOTE: this output format is consumed
+     * by {@link GuestBehaviorSplitterTransformer}.
+     */
+    protected static String toCounts (Map<String, Integer> experienceCounts)
+    {
+        StringBuilder builder = new StringBuilder();
+        for (Entry<String, Integer> entry : experienceCounts.entrySet()) {
+            builder.append(entry.getKey()).append(':').append(entry.getValue()).append(' ');
+        }
+        return builder.toString();
+    }
 
-    private final static int MAX_VECTOR_LENGTH = 40;
+    /**
+     * Produces an experience feature vector.
+     */
+    protected static String toFeatures (Map<String, Integer> experienceCounts)
+    {
+        Iterable<String> results = Iterables.transform(experienceCounts.entrySet(),
+            new Function<Map.Entry<String, Integer>, String>() {
+                public String apply (Entry<String, Integer> entry)
+                {
+                    return (entry.getValue() != null && entry.getValue() > 0) ? entry.getKey()
+                        : "--";
+                }
+            });
+        return Join.join(" ", results);
+    }
 
-    private final Map<String, GuestEntry> histories = new HashMap<String, GuestEntry>();
+    protected final static EventName VISITOR_INFO_CREATED = new EventName("VisitorInfoCreated");
+    protected final static EventName VECTOR_ASSOCIATED = new EventName("VectorAssociated");
+    protected final static EventName ACCOUNT_CREATED = new EventName("AccountCreated");
+    protected final static EventName EXPERIENCE = new EventName("Experience");
 
-    // iterator over histories - only used by putData();
-    private Iterator<Map.Entry<String, GuestEntry>> historiter = null;
+    protected final static int MAX_VECTOR_LENGTH = 40;
 }
