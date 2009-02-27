@@ -268,17 +268,6 @@ public class MsoyGamePanel extends WhirledGamePanel
                 _gameOverPanel.close();
                 _gameOverPanel = null;
             }
-
-        } else {
-            if (gameOver == (_rematch.parent != null)) {
-                return;
-            }
-            if (gameOver) {
-                const bar :ControlBar = _gctx.getMsoyContext().getControlBar();
-                bar.addCustomComponent(_rematch);
-            } else {
-                _rematch.parent.removeChild(_rematch);
-            }
         }
     }
 
@@ -317,11 +306,10 @@ public class MsoyGamePanel extends WhirledGamePanel
     /** The loading display. */
     protected var _spinner :GameLoadingDisplay;
 
-    protected var _showPlayers :CommandButton;
-
-    protected var _goBtn :CommandButton;
-
     /** The game over panel, or null if not being shown. */
     protected var _gameOverPanel :GameOverPanel;
+
+    protected var _showPlayers :CommandButton;
+    protected var _goBtn :CommandButton;
 }
 }
