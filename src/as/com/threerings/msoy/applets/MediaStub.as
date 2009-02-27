@@ -10,7 +10,6 @@ import flash.display.LoaderInfo;
 import flash.display.Sprite;
 
 import flash.events.Event;
-import flash.events.EventPhase;
 import flash.events.IEventDispatcher;
 
 import flash.geom.Matrix;
@@ -76,32 +75,25 @@ public class MediaStub extends Sprite
         var loader :Loader = new Loader();
         addChild(loader);
 
-//        var sharedChild :IEventDispatcher = loader.contentLoaderInfo.sharedEvents;
-//        var sharedParent :IEventDispatcher = this.root.loaderInfo.sharedEvents;
-//
-//        var handler :Function = function (event :Event) :void {
-//            trace("Got event: " + event.type + ", phase: " + event.eventPhase +
-//                ", fromChild: " + (event.currentTarget == sharedChild));
-//            if (event.eventPhase == EventPhase.BUBBLING_PHASE) {
-//                sharedChild.dispatchEvent(event);
-//            } else {
-//                sharedParent.dispatchEvent(event);
-//            }
-//        };
-//
-//        // set up the pass-throughs
-//        var event :String;
-//        for each (event in PASS_UPS) {
-//            sharedChild.addEventListener(event, handler);
-//            sharedParent.addEventListener(event, handler);
-//        }
-//        for each (event in PASS_DOWNS) {
-//        }
+        // Some hackery to semi-support Flex bridging. I need to finalize this.
+        loader.addEventListener("mx.managers.SystemManager.isBootstrapRoot", handleIsBootRoot);
 
         loader.contentLoaderInfo.sharedEvents.addEventListener("controlConnect",
             this.root.loaderInfo.sharedEvents.dispatchEvent);
 
         return loader;
+    }
+
+    // TODO: hackery. Doesn't even work all the way.
+    protected var _nonFirst :Boolean;
+    protected function handleIsBootRoot (event :Event) :void
+    {
+        if (_nonFirst) {
+            event.preventDefault();
+        } else {
+            _nonFirst = true;
+        }
+        event.stopImmediatePropagation();
     }
 
     /**
@@ -116,67 +108,5 @@ public class MediaStub extends Sprite
             }
         }
     }
-
-//    protected static const PASS_UPS :Array = [
-//        "controlConnect", // for our *Control instances
-//
-//        // the following are all for the flex 3.2 feature of loading flex into security
-//        "bridgeApplicationActivate",
-//        "bridgeApplicationUnloading",
-//        "bridgeFocusManagerActivate",
-//        "bridgeFocusManagerActivate",
-//        "bridgeWindowActivate",
-//        "brdigeWindowDeactivate",
-//
-//        "activatePopUpRequest",
-//        "canActivateRequestPopUpRequest",
-//        "deactivatePopUpRequest",
-//        "getVisibleRectRequest",
-//        "isBridgeChildRequest",
-//        "invalidateRequest",
-//        "hideMouseCursorRequest",
-//        "showMouseCursorRequest",
-//        "resetMouseCursorRequest",
-//        "activateFocusRequest",
-//        "deactivateFocusRequest",
-//        "moveFocusRequest",
-//        "createModalWindowRequest",
-//        "showModalWindowRequest",
-//        "hideModalWindowRequest",
-//        "addPopUpRequest",
-//        "removePopUpRequest",
-//        "addPopUpPlaceHolderRequest",
-//        "removePopUpPlaceHolderRequest",
-//        "getSizeRequest",
-//        "setActualSizeRequest",
-//        "setShowFocusIndicatorRequest"
-//    ];
-
-//        "bridgeApplicationActivate",
-//        "bridgeFocusManagerActivate",
-//        "bridgeNewApplication",
-//        "bridgeWindowActivate",
-//        "brdigeWindowDeactivate",
-//        "activatePopUpRequest",
-//        "deactivatePopUpRequest",
-//        "getVisibleRectRequest",
-//        "invalidateRequest",
-//        "hideMouseCursorRequest",
-//        "showMouseCursorRequest",
-//        "resetMouseCursorRequest",
-//        // TODO: more? See SWFBridgeRequest.as and SWFBridgeEvent.as
-////    ];
-////
-////    protected static const PASS_DOWNS :Array = [
-//        // the following are all for the flex 3.2 feature of loading flex into security
-//        "bridgeApplicationUnloading",
-//        "bridgeFocusManagerActivate",
-//        "canActivateRequestPopUpRequest",
-//        "isBridgeChildRequest",
-//        "activateFocusRequest",
-//        "activateFocusRequest"
-//        // TODO: more? See SWFBridgeRequest.as and SWFBridgeEvent.as
-//    ];
-
 }
 }
