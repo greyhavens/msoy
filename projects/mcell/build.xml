@@ -78,7 +78,7 @@
         </fileset>
       </copy>
   </target>
-  <target name="package" depends="prepare">
+  <target name="package" depends="dist">
       <fileset dir="cell" id="external.files">
         <include name="msoy-hadoop-mr.jar"/>
         <include name="tasks/*.properties"/>
