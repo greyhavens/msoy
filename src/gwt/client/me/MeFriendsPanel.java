@@ -125,10 +125,9 @@ public class MeFriendsPanel extends FlowPanel
             } else if (card.status instanceof MemberCard.InGame) {
                 int gameId = ((MemberCard.InGame)card.status).gameId;
                 FlowPanel game = getPlacePanel(
-                    games, gameId,
-                    ((MemberCard.InGame)card.status).gameName, true);
-                Widget member =
-                    makeMemberWidget(card, size, Pages.WORLD, Args.compose("game", "l", ""+gameId));
+                    games, gameId, ((MemberCard.InGame)card.status).gameName, true);
+                String args = Args.compose("game", "j", gameId, card.name.getMemberId());
+                Widget member = makeMemberWidget(card, size, Pages.WORLD, args);
                 member.addStyleName("MemberGame");
                 game.add(member);
             }

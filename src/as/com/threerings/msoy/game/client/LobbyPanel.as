@@ -8,12 +8,8 @@ import mx.core.UIComponent;
 
 import com.threerings.flex.FlexUtil;
 
-
-
 import com.threerings.msoy.ui.FloatingPanel;
-
 import com.threerings.msoy.client.Msgs;
-
 
 import com.threerings.msoy.game.data.LobbyObject;
 
@@ -57,10 +53,6 @@ public class LobbyPanel extends FloatingPanel
     {
         var padding :int = 10;
         switch (mode) {
-        case LobbyController.MODE_SPLASH:
-            this.title = _lobbyObj.game.name;
-            setContents(new LobbySplashPanel(_gctx, _ctrl, _lobbyObj));
-            break;
         case LobbyController.MODE_MATCH:
             this.title = _lobbyObj.game.name;
             setContents(new LobbyMatchPanel(_gctx, _ctrl, _lobbyObj));

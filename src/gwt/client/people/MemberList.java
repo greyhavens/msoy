@@ -104,7 +104,7 @@ public class MemberList extends PagedGrid<MemberCard>
             if (card.headline != null && card.headline.length() > 0) {
                 setText(1, 0, card.headline);
             }
-            setWidget(2, 0, new MemberStatusLabel(card.status));
+            setWidget(2, 0, new MemberStatusLabel(card));
 
             boolean isNotMe = CShell.getMemberId() != card.name.getMemberId();
             SmartTable extras = new SmartTable("Extras", 0, 5);

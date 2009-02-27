@@ -129,7 +129,7 @@ public class WorldDirector extends BasicDirector
         // TODO: Do something more interesting for AVR Games.
         if (!location.avrGame && location.gameId != 0) {
             goToGame = function () :void {
-                _wctx.getGameDirector().joinPlayer(location.gameId, location.memberId);
+                _wctx.getGameDirector().playNow(location.gameId, location.memberId);
             };
         }
 

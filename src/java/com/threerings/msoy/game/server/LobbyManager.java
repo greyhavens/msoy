@@ -159,9 +159,7 @@ public class LobbyManager
     public boolean playNowSingle (PlayerObject player)
     {
         MsoyMatchConfig match = (MsoyMatchConfig)_lobj.gameDef.match;
-        if (match == null || (match.minSeats != 1 && !match.isPartyGame)) {
-            log.warning("Requested single player for non-single player game", "who", player.who(),
-                        "gameId", getGameId(), "match", match);
+        if (match == null || match.isPartyGame || match.minSeats != 1) {
             return false;
         }
 
@@ -176,7 +174,6 @@ public class LobbyManager
         MsoyTableConfig tconfig = new MsoyTableConfig();
         tconfig.title = player.memberName.toString();
         tconfig.desiredPlayerCount = tconfig.minimumPlayerCount = 1;
-        tconfig.privateTable = true; // they asked to play by themselves
         Table table = null;
         try {
             table = _tableMgr.createTable(player, tconfig, config);

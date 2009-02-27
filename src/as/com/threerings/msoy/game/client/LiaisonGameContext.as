@@ -132,9 +132,9 @@ public class LiaisonGameContext
     }
 
     // from GameContext 
-    public function showGameLobby (multiplayer :Boolean) :void
+    public function showGameLobby () :void
     {
-        _wctx.getGameDirector().displayCurrentGameLobby(multiplayer);
+        _wctx.getGameDirector().displayCurrentLobby();
     }
     
     // from GameContext

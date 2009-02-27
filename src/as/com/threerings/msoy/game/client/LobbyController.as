@@ -30,7 +30,6 @@ import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
@@ -62,11 +61,7 @@ public class LobbyController extends Controller
     /** A command to close the lobby. */
     public static const CLOSE_LOBBY :String = "CloseLobby";
 
-    /** A command to start a single player game immediately. */
-    public static const PLAY_SOLO :String = "PlaySolo";
-
     // modes for our user interface
-    public static const MODE_SPLASH :int = 0;
     public static const MODE_MATCH :int = 1;
     public static const MODE_CREATE :int = 2;
     public static const MODE_SEATED :int = 3;
@@ -75,43 +70,27 @@ public class LobbyController extends Controller
     MsoyGameDefinition;
     LobbyMarshaller;
 
-    public function LobbyController (gctx :GameContext, mode :LobbyDef, onClear :Function,
-        playNow :Function, lobbyLoaded :Function, displaySplash :Boolean)
+    public function LobbyController (
+        gctx :GameContext, lobbyOid :int, onClear :Function, displaySplash :Boolean)
     {
         _gctx = gctx;
         _mctx = gctx.getMsoyContext();
-        _mode = mode;
         _onClear = onClear;
-        _playNow = playNow;
-        _lobbyLoaded = lobbyLoaded;
         _displaySplash = displaySplash;
 
         _waitForWorldLogon = new GatedExecutor(function () :Boolean {
             return _gctx.getMsoyContext().getClient().isLoggedOn();
         });
 
-        _lobbyTimer = new LobbyResolutionTimer(_mctx);
-        _lobbyTimer.start();
-
         // create our lobby panel
         _panel = new LobbyPanel(_gctx, this);
         _panel.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
         Command.bind(_panel, CloseEvent.CLOSE, handleCloseLobby);
         setControlledPanel(_panel);
-    }
 
-    /**
-     * Subscribes to our lobby object.
-     */
-    public function enterLobby (lobbyOid :int) :void
-    {
-        if (_subscriber == null) {
-            _subscriber = new SafeSubscriber(lobbyOid, this);
-            _subscriber.subscribe(_gctx.getDObjectManager());
-        } else {
-            Log.getLog(this).warning("Asked to re-enter lobby [sub=" + _subscriber +
-                                     ", newOid=" + lobbyOid + "].");
-        }
+        // subscribe to the lobby object
+        _subscriber = new SafeSubscriber(lobbyOid, this);
+        _subscriber.subscribe(_gctx.getDObjectManager());
     }
 
     /**
@@ -157,6 +136,43 @@ public class LobbyController extends Controller
             }
         }
         return false;
+    }
+
+    /**
+     * Joins the specified player at their pending game table.
+     */
+    public function joinPlayerTable (playerId :int) :void
+    {
+        if (_lobj == null) {
+            // this function will be called again when we have our lobby object
+            _playerId = playerId;
+            return;
+        }
+
+        for each (var table :Table in _lobj.tables.toArray()) {
+            for each (var player :Name in table.players) {
+                var member :MemberName = (player as MemberName);
+                if (member == null || member.getMemberId() != playerId) {
+                    continue;
+                }
+
+                if (table.inPlay()) {
+                    _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_in_progress");
+                } else {
+                    var ii :int = 0;
+                    for (; ii < table.players.length; ii++) {
+                        if (table.players[ii] == null) {
+                            handleJoinTable(table.tableId, ii);
+                            break;
+                        }
+                    }
+                    if (ii == table.players.length) {
+                        _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_table_full");
+                    }
+                }
+                return;
+            }
+        }
     }
 
     /**
@@ -212,14 +228,6 @@ public class LobbyController extends Controller
         // if it's a private table, it's not actionable (TODO: what does private table really mean,
         // how does anyone ever join a private table?)
         return !(inPlayUnwatchable || table.tconfig.privateTable);
-    }
-
-    /**
-     * Handles PLAY_SOLO.
-     */
-    public function handlePlaySolo () :void
-    {
-        _playNow(LobbyCodes.PLAY_NOW_SINGLE);
     }
 
     /**
@@ -302,7 +310,6 @@ public class LobbyController extends Controller
     {
         // first do our UI cleanup
         _panel.close();
-        _lobbyTimer.stop();
         _mctx.getUIState().setInLobby(false);
 
         // then our distributed services cleanup
@@ -316,43 +323,6 @@ public class LobbyController extends Controller
 
         // finally let whoever cares know that we're gone
         _onClear(_closedByUser);
-    }
-
-    /**
-     * Joins the specified player at their pending game table.
-     */
-    public function joinPlayerTable (playerId :int) :void
-    {
-        if (_lobj == null) {
-            // this function will be called again when we have our lobby object
-            _playerId = playerId;
-            return;
-        }
-
-        for each (var table :Table in _lobj.tables.toArray()) {
-            for each (var player :Name in table.players) {
-                var member :MemberName = (player as MemberName);
-                if (member == null || member.getMemberId() != playerId) {
-                    continue;
-                }
-
-                if (table.inPlay()) {
-                    _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_in_progress");
-                } else {
-                    var ii :int = 0;
-                    for (; ii < table.players.length; ii++) {
-                        if (table.players[ii] == null) {
-                            handleJoinTable(table.tableId, ii);
-                            break;
-                        }
-                    }
-                    if (ii == table.players.length) {
-                        _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_table_full");
-                    }
-                }
-                return;
-            }
-        }
     }
 
     /**
@@ -377,28 +347,15 @@ public class LobbyController extends Controller
      */
     public function getStartMode (noCreate :Boolean = false) :int
     {
-        const match :MatchConfig = _lobj.gameDef.match;
-        const partyGame :Boolean = (match.getMatchType() == GameConfig.PARTY);
-        const multiplayerSupported :Boolean = (match.getMaximumPlayers() > 1);
-        const multiplayerRequired :Boolean = (match.getMinimumPlayers() > 1);
-        const lobbyMultiRequested :Boolean = (multiplayerSupported && _mode.multiplayerLobby);
-
-        // if we are a party game or multiplayer only...
-        if (partyGame || multiplayerRequired || lobbyMultiRequested) {
-            // either go to the matchmaking panel or right into create if there is nothing to show
-            // on the matchmaking panel
-            return (haveActionableTables() || noCreate) ? MODE_MATCH : MODE_CREATE;
-        } else {
-            // othrewise show the splash page so they can select single or multiplayer
-            return MODE_SPLASH;
-        }
+        // either go to the matchmaking panel or right into create if there is nothing to show
+        // on the matchmaking panel
+        return (haveActionableTables() || noCreate) ? MODE_MATCH : MODE_CREATE;
     }
 
     // from Subscriber
     public function objectAvailable (obj :DObject) :void
     {
         _lobj = obj as LobbyObject;
-        _lobbyTimer.stop();
 
         _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
 
@@ -420,20 +377,10 @@ public class LobbyController extends Controller
             _panel.setMode(getStartMode());
             _mctx.getUIState().setInLobby(true);
 
-            // pass group back to the caller now that the lobby has loaded
-            _lobbyLoaded(_lobj.groupId);
-
             // if we have a player table to join, do that now, otherwise
             if (_playerId != 0) {
                 joinPlayerTable(_playerId);
-
-            } else {
-                // otherwise do something appropriate based on our mode
-                switch (_mode) {
-                case LobbyCodes.PLAY_NOW_ANYONE:
-                    joinSomeTable();
-                    break;
-                }
+                _playerId = 0;
             }
         });
     }
@@ -467,30 +414,10 @@ public class LobbyController extends Controller
      */
     protected function setGameView (game :Game) :void
     {
-        if (! _displaySplash) {
+        if (!_displaySplash) {
             return;
         }
-
         _mctx.setPlaceView(new LobbyPlaceView(game));
-    }
-
-    /**
-     * Looks for a table that we can join and joins it.
-     */
-    protected function joinSomeTable () :Boolean
-    {
-        for each (var table :Table in _lobj.tables.toArray()) {
-            if (table.inPlay()) {
-                continue;
-            }
-            for (var ii :int; ii < table.players.length; ii++) {
-                if (table.players[ii] == null) {
-                    handleJoinTable(table.tableId, ii);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /** The provider of free cheese. */
@@ -499,17 +426,8 @@ public class LobbyController extends Controller
     /** The provider of game related services. */
     protected var _gctx :GameContext;
 
-    /** Lobby definition. */
-    protected var _mode :LobbyDef;
-
     /** Called when we shut ourselves down. */
     protected var _onClear :Function;
-
-    /** Called when the player wants instant action. */
-    protected var _playNow :Function;
-
-    /** Called when the lobby dialog is done loading, with the game's groupId as argument. */
-    protected var _lobbyLoaded :Function;
 
     /** Our distributed LobbyObject */
     protected var _lobj :LobbyObject;
@@ -535,58 +453,7 @@ public class LobbyController extends Controller
     /** Are we seated? */
     protected var _isSeated :Boolean;
 
-    /** Monitors whether we've successfully subscribed to a lobby object. */
-    protected var _lobbyTimer :LobbyResolutionTimer;
-
     /** Executes jobs only when the lobby object and the member object have been resolved. */
     protected var _waitForWorldLogon :GatedExecutor;
 }
-}
-
-import flash.utils.Timer;
-import flash.events.TimerEvent;
-
-import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MsoyCodes;
-
-/** Displays occasional feedback messages while we wait for a lobby. */
-class LobbyResolutionTimer
-{
-    /** Show a message every 5 seconds... */
-    public static const DELAY :int = 5000;
-    /** ... and show it only three times. */
-    public static const COUNT :int = 3;
-
-    public function LobbyResolutionTimer (mctx :MsoyContext)
-    {
-        _mctx = mctx;
-        _timer = new Timer(DELAY, COUNT);
-    }
-
-    public function start () :void
-    {
-        _timer.addEventListener(TimerEvent.TIMER, displayUpdate);
-        _timer.addEventListener(TimerEvent.TIMER_COMPLETE, displayFinalUpdate);
-        _timer.start();
-    }
-
-    public function stop () :void
-    {
-        _timer.stop();
-        _timer.removeEventListener(TimerEvent.TIMER, displayUpdate);
-        _timer.removeEventListener(TimerEvent.TIMER_COMPLETE, displayFinalUpdate);
-    }
-
-    public function displayUpdate (e :TimerEvent) :void
-    {
-        _mctx.displayInfo(MsoyCodes.GAME_MSGS, "e.waiting_for_lobby");
-    }
-
-    public function displayFinalUpdate (e :TimerEvent) :void
-    {
-        _mctx.displayInfo(MsoyCodes.GAME_MSGS, "e.waiting_for_lobby_failed");
-    }
-
-    protected var _mctx :MsoyContext;
-    protected var _timer :Timer;
 }

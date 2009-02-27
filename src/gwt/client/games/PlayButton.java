@@ -40,10 +40,8 @@ public class PlayButton
                 return MsoyUI.createLabel(noGroupMessage, null);
             }
             args = "g" + groupId;
-        } else if (minPlayers == 1 && maxPlayers == 1) {
-            args = Args.compose("game", "s", "" + gameId);
         } else {
-            args = Args.compose("game", "l", "" + gameId);
+            args = Args.compose("game", "p", gameId);
         }
 
         PushButton play;

@@ -31,21 +31,8 @@ public class LobbyMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #joinPlayerGame} requests. */
-    public static final int JOIN_PLAYER_GAME = 2;
-
-    // from interface LobbyService
-    public void joinPlayerGame (Client arg1, int arg2, InvocationService.ResultListener arg3)
-    {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, JOIN_PLAYER_GAME, new Object[] {
-            Integer.valueOf(arg2), listener3
-        });
-    }
-
     /** The method id used to dispatch {@link #playNow} requests. */
-    public static final int PLAY_NOW = 3;
+    public static final int PLAY_NOW = 2;
 
     // from interface LobbyService
     public void playNow (Client arg1, int arg2, int arg3, InvocationService.ResultListener arg4)

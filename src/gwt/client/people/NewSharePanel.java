@@ -6,19 +6,6 @@ package client.people;
 import java.util.ArrayList;
 import java.util.List;
 
-import client.shell.CShell;
-import client.shell.DynamicLookup;
-import client.shell.Page;
-import client.shell.ShellMessages;
-import client.ui.CreatorLabel;
-import client.ui.MsoyUI;
-import client.ui.RollupBox;
-import client.ui.ThumbBox;
-import client.util.Link;
-import client.util.MediaUtil;
-import client.util.MsoyCallback;
-import client.util.ServiceUtil;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
@@ -42,8 +29,10 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
@@ -55,6 +44,19 @@ import com.threerings.msoy.person.gwt.InviteServiceAsync;
 import com.threerings.msoy.web.gwt.Args;
 import com.threerings.msoy.web.gwt.EmailContact;
 import com.threerings.msoy.web.gwt.Pages;
+
+import client.shell.CShell;
+import client.shell.DynamicLookup;
+import client.shell.Page;
+import client.shell.ShellMessages;
+import client.ui.CreatorLabel;
+import client.ui.MsoyUI;
+import client.ui.RollupBox;
+import client.ui.ThumbBox;
+import client.util.Link;
+import client.util.MediaUtil;
+import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 public class NewSharePanel extends VerticalPanel
 {

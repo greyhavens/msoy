@@ -140,7 +140,7 @@ public class GroupMembersPanel extends PagedGrid<GroupMemberCard>
             setWidget(0, 1, Link.memberView(""+name, mid), 1, "Name");
             String rankStr = card.rank == GroupMembership.RANK_MANAGER ? "Manager" : "";
             setText(1, 0, rankStr, 1, "tipLabel");
-            setWidget(2, 0, new MemberStatusLabel(card.status), 2, null);
+            setWidget(2, 0, new MemberStatusLabel(card), 2, null);
 
             // if we're not a manager above this member in rank, or we're not support+ don't add
             // the edit controls

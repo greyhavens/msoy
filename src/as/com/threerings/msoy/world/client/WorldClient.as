@@ -76,10 +76,10 @@ public class WorldClient extends MsoyClient
             _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
         }
 
-        // if we are going right into a game lobby, do that now and once we get into the game, then
-        // we'll be able to logon to a world with our assigned credentials
-        if (params["gameLobby"]) {
-            log.info("Doing pre-logon go to join game lobby.");
+        // if we are going right into a game, do that now and once we get into the game, then we'll
+        // be able to logon to a world with our assigned credentials
+        if (params["gameId"]) {
+            log.info("Doing pre-logon go to join game", "gameId", params["gameId"]);
             _wctx.getWorldController().preLogonGo(params);
 
         } else if (getHostname() == null) {

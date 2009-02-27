@@ -219,7 +219,7 @@ public class HomePageDialog extends FloatingPanel
 
         case HomePageItem.ACTION_GAME:
             trackingDetails = "game_" + BasicNavItemData(item.getNavItemData()).getId();
-            _wctx.getWorldController().handleJoinGameLobby(
+            _wctx.getWorldController().handlePlayGame(
                 BasicNavItemData(item.getNavItemData()).getId());
             break;
 

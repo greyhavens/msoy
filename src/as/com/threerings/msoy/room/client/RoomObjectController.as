@@ -1031,7 +1031,7 @@ public class RoomObjectController extends RoomController
         }
         if (model.gameId != 0) {
             stuff.push({ label: Msgs.GENERAL.get("b.group_game"),
-                command: WorldController.JOIN_GAME_LOBBY, arg: model.gameId });
+                command: WorldController.PLAY_GAME, arg: model.gameId });
         }
         return stuff;
     }

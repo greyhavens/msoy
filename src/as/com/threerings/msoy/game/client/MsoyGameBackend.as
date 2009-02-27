@@ -95,7 +95,8 @@ public class MsoyGameBackend extends WhirledGameBackend
     // from WhirledGameBackend
     override protected function showGameLobby_v1 (multiplayer :Boolean) :void
     {
-        (_ctx as GameContext).showGameLobby(multiplayer);
+        // multiplayer is now ignored; it's always multiplayer
+        (_ctx as GameContext).showGameLobby();
     }
 
     // from WhirledGameBackend

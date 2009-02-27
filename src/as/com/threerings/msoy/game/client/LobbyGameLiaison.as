@@ -18,7 +18,6 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.presents.client.ClientAdapter;
 
@@ -30,19 +29,9 @@ public class LobbyGameLiaison extends GameLiaison
 {
     public static const log :Log = Log.getLog(LobbyGameLiaison);
 
-    public function LobbyGameLiaison (ctx :WorldContext, gameId :int, mode :LobbyDef,
-        playerId :int = 0, inviteToken :String = null, inviterMemberId :int = 0)
+    public function LobbyGameLiaison (ctx :WorldContext, gameId :int)
     {
-        super(ctx, gameId, inviteToken, inviterMemberId);
-
-        _mode = mode;
-        _playerIdGame = playerId;
-
-        _waitForWorldLogon = new GatedExecutor(function () :Boolean {
-            return _wctx.getClient().isLoggedOn();
-        });
-
-        log.info("Started game liaison [gameId=" + _gameId + ", mode=" + _mode + "].");
+        super(ctx, gameId);
 
         // listen for our game to be ready so that we can display it
         _gctx.getParlorDirector().addGameReadyObserver(this);
@@ -56,101 +45,42 @@ public class LobbyGameLiaison extends GameLiaison
         _wctx.getWorldClient().addClientObserver(new ClientAdapter(null, worldClientDidLogon));
 
         // listen for changes in world location so that we can shutdown if we move
-        var loc :LocationDirector = _wctx.getLocationDirector();
-        loc.addLocationObserver(_worldLocObs);
-
-        // create our lobby controller which will display a "locating game..." interface
-        var inRoom :Boolean = (loc.getPlaceObject() != null) || loc.movePending();
-        _lobby = new LobbyController(
-            _gctx, _mode, lobbyCleared, playNow, lobbyLoaded, !inRoom);
+        _worldLocObs = new LocationAdapter(null, worldLocationDidChange, null);
+        _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
     }
 
     /**
-     * Join the player in their running game if possible, otherwise simply display the game lobby,
-     * if it isn't up already.
+     * Displays the lobby for the game for which we liaise, on top of the existing view. If the
+     * lobby is already showing, this is a NOOP.
      */
-    public function joinPlayer (playerId :int) :void
+    public function showLobby () :void
     {
-        if (!_gctx.getClient().isLoggedOn()) {
-            // this function will be called again, once we've logged onto the game server.
-            _playerIdGame = playerId;
-            return;
+        if (_lobby != null) {
+            return; // it's already showing
         }
-
-        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultAdapter = new ResultAdapter(gotPlayerGameOid,
-            function (cause :String) :void {
-                _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-                // some failure cases are innocuous, and should be followed up by a display of the
-                // lobby; if we really are hosed, joinLobby() will cause the liaison to shut down
-                _wctx.getWorldController().restoreSceneURL();
-                joinLobby(LobbyDef.PLAY_NOW);
-            });
-        lsvc.joinPlayerGame(_gctx.getClient(), playerId, cb);
-    }
-
-    /**
-     * Join the player at their currently pending game table.
-     */
-    public function joinPlayerTable (playerId :int) :void
-    {
-        if (_lobby == null) {
-            // this function will be called again, once we've got our lobby
-            _playerIdTable = playerId;
-        } else {
-            _lobby.joinPlayerTable(playerId);
-        }
-    }
-
-    /**
-     * Displays the lobby for the game for which we liaise, on top of the existing view,
-     * in specified mode. If the lobby is already showing, this is a NOOP.
-     */
-    public function showLobby (mode :LobbyDef) :void
-    {
-        if (_lobby == null) {
-            _lobby = new LobbyController(
-                _gctx, mode, lobbyCleared, playNow, lobbyLoaded, false);
-            joinLobby(mode);
-        } // otherwise it's already showing
-    }
-
-    /**
-     * Attempts to go right into a game based on the supplied mode.
-     *
-     * @see LobbyCodes
-     */
-     // TODO: this probably shouldn't be public - just use joinLobby instead
-    public function playNow (mode :int) :void
-    {
-        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultAdapter = new ResultAdapter(
-            function (lobbyOid :int) :void {
-                if (lobbyOid != 0) {
-                    // we failed to start a game (see below) so join the lobby instead
-                    gotLobbyOid(lobbyOid);
-                }
-            },
-            function (cause :String) :void {
-                _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-                shutdown();
-            });
-
-        // once we're logged in to the world server, start the game!
-        _waitForWorldLogon.execute(function () :void {
-            // the playNow() call will resolve the lobby on the game server, then attempt to start
-            // a game for us; if it succeeds, it sends back a zero result and we need take no
-            // further action; if it fails, it sends back the lobby OID so we can join the lobby
-            lsvc.playNow(_gctx.getClient(), _gameId, mode, cb);
+        withLobbyService(function (lsvc :LobbyService) :void {
+            lsvc.identifyLobby(
+                _gctx.getClient(), _gameId, new ResultAdapter(gotLobbyOid, onFailure))
         });
     }
 
     /**
-     * Opens the game's group home scene if a scene isn't already displayed.
+     * Requests to play the specified game.
      */
-    public function lobbyLoaded (groupId :int) :void
+    public function playNow (playerId :int) :void
     {
-        // TODO: display loader?
+        withLobbyService(function (lsvc :LobbyService) :void {
+            // the playNow() call will attempt to send us into the appropriate game (that of our
+            // requested player or one for ourselves); if it succeeds, it sends back a zero result
+            // and we need take no further action; if it fails, it sends back the lobby oid so that
+            // we can display the lobby
+            lsvc.playNow(_gctx.getClient(), _gameId, playerId, new ResultAdapter(
+                function (lobbyOid :int) :void {
+                    if (lobbyOid != 0) {
+                        gotLobbyOid(lobbyOid, playerId);
+                    }
+                }, onFailure));
+        });
     }
 
     /**
@@ -168,7 +98,6 @@ public class LobbyGameLiaison extends GameLiaison
             _lobby.shutdown();
         }
 
-        log.info("Entering game");
         if (!_gctx.getLocationDirector().moveTo(gameOid)) {
             return false;
         }
@@ -193,6 +122,14 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
+    // from interface GameReadyObserver
+    public function receivedGameReady (gameOid :int) :Boolean
+    {
+        _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid);
+        return true;
+    }
+
+    // from GameLiaison
     override public function shutdown () :void
     {
         _shuttingDown = true;
@@ -211,22 +148,11 @@ public class LobbyGameLiaison extends GameLiaison
     {
         super.clientDidLogon(event);
 
-        // are we joining a game in progress?
-        if (_playerIdGame != 0) {
-            joinPlayer(_playerIdGame);
-        } else {
-            // just join whichever lobby we're supposed to join, however we're supposed to join
-            joinLobby(_mode);
+        // if we have a pending action, do that now
+        if (_onLogon != null) {
+            withLobbyService(_onLogon);
+            _onLogon = null;
         }
-
-        _mode = LobbyDef.LOBBY_ONLY; // in case we end up back here after the game
-    }
-
-    // from interface GameReadyObserver
-    public function receivedGameReady (gameOid :int) :Boolean
-    {
-        _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid, inviterMemberId, inviteToken);
-        return true;
     }
 
     // from GameLiaison
@@ -246,28 +172,9 @@ public class LobbyGameLiaison extends GameLiaison
     /** Listens for logins to the world server. */
     protected function worldClientDidLogon (event :ClientEvent) :void
     {
-        _waitForWorldLogon.update();
         if (_lobby != null) {
             _lobby.worldClientDidLogon(event);
         }
-    }
-
-    protected function joinLobby (mode :LobbyDef) :void
-    {
-        // if we're asked to play right away, let's try to do that
-        if (mode.playNow) {
-            playNow(mode.playNowMode);
-            return;
-        }
-
-        // otherwise just ask the server for the lobby
-        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultAdapter = new ResultAdapter(gotLobbyOid,
-            function (cause :String) :void {
-                _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
-                shutdown();
-            });
-        lsvc.identifyLobby(_gctx.getClient(), _gameId, cb);
     }
 
     protected function gameLocationDidChange (place :PlaceObject) :void
@@ -285,28 +192,37 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
-    protected function gotLobbyOid (lobbyOid :int) :void
+    protected function withLobbyService (action :Function) :void
     {
-        _lobby.enterLobby(lobbyOid);
-
-        // if we have a player table to enter do that now
-        if (_playerIdTable != 0) {
-            joinPlayerTable(_playerIdTable);
-            _playerIdTable = 0;
+        if (_gctx.getClient().isLoggedOn()) {
+            action(_gctx.getClient().requireService(LobbyService) as LobbyService);
+        } else {
+            _onLogon = action;
         }
     }
 
-    protected function gotPlayerGameOid (result :Object) :void
+    protected function gotLobbyOid (lobbyOid :int, playerId :int = 0) :void
     {
-        var gameOid :int = int(result);
-        if (gameOid == -1) {
-            // player isn't currently playing - show the lobby instead
-            joinLobby(_mode);
-            // if they're at a table, join them there
-            joinPlayerTable(_playerIdGame);
-        } else {
-            _wctx.getGameDirector().dispatchGameReady(_gameId, gameOid, inviterMemberId, inviteToken);
+        // if we have some old lobby for any reason, nix it
+        if (_lobby != null) {
+            _lobby.shutdown();
         }
+
+        // create our lobby controller which will create and open the lobby UI
+        var wloc :LocationDirector = _wctx.getLocationDirector();
+        var inRoom :Boolean = (wloc.getPlaceObject() != null) || wloc.movePending();
+        var gloc :LocationDirector = _gctx.getLocationDirector();
+        var inGame :Boolean = (gloc.getPlaceObject() != null) || gloc.movePending();
+        _lobby = new LobbyController(_gctx, lobbyOid, lobbyCleared, !inRoom && !inGame);
+        if (playerId != 0) {
+            _lobby.joinPlayerTable(playerId);
+        }
+    }
+
+    protected function onFailure (cause :String) :void
+    {
+        _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
+        shutdown();
     }
 
     protected function lobbyCleared (closedByUser :Boolean) :void
@@ -333,18 +249,11 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
-    /** Lobby action definition. */
-    protected var _mode :LobbyDef;
-
-    /** The id of the player we'd like to join. */
-    protected var _playerIdGame :int = 0;
-
-    /** The id of the player who's pending table we'd like to join. */
-    protected var _playerIdTable :int = 0;
+    /** Something to do once we're logged on. */
+    protected var _onLogon :Function;
 
     /** Listens for world location changes. */
-    protected var _worldLocObs :LocationAdapter =
-        new LocationAdapter(null, worldLocationDidChange, null);
+    protected var _worldLocObs :LocationAdapter;
 
     /** Our active lobby, if we have one. */
     protected var _lobby :LobbyController;
@@ -354,8 +263,5 @@ public class LobbyGameLiaison extends GameLiaison
 
     /** True if we're shutting down. */
     protected var _shuttingDown :Boolean;
-
-    /** Executor that waits for the world client to log in. */
-    protected var _waitForWorldLogon :GatedExecutor;
 }
 }

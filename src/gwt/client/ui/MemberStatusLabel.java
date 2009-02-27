@@ -22,29 +22,25 @@ import client.util.Link;
  */
 public class MemberStatusLabel extends FlowPanel
 {
-    public MemberStatusLabel (MemberCard.Status status)
+    public MemberStatusLabel (MemberCard card)
     {
         setStyleName("memberStatus");
 
-        if (status instanceof MemberCard.NotOnline) {
-            long lastLogon = ((MemberCard.NotOnline)status).lastLogon;
+        if (card.status instanceof MemberCard.NotOnline) {
+            long lastLogon = ((MemberCard.NotOnline)card.status).lastLogon;
             add(new InlineLabel(_cmsgs.mslLastOnline(MsoyUI.formatDateTime(new Date(lastLogon)))));
 
-        } else if (status instanceof MemberCard.InGame) {
-            MemberCard.InGame gs = (MemberCard.InGame)status;
+        } else if (card.status instanceof MemberCard.InGame) {
+            MemberCard.InGame gs = (MemberCard.InGame)card.status;
             add(new InlineLabel(_cmsgs.mslOnlinePlaying(gs.gameName), true, false, true));
-            
-            if (status instanceof MemberCard.InAVRGame) {
-                add(Link.create(_cmsgs.mslJoin(), Pages.WORLD, 
-                    "s" + ((MemberCard.InAVRGame)gs).sceneId));
 
-            } else {
-                add(Link.create(_cmsgs.mslJoin(), Pages.WORLD,
-                    Args.compose("game", gs.gameId)));
-            }
+            String args = (card.status instanceof MemberCard.InAVRGame) ?
+                "s" + ((MemberCard.InAVRGame)gs).sceneId :
+                Args.compose("game", "j", gs.gameId, card.name.getMemberId());
+            add(Link.create(_cmsgs.mslJoin(), Pages.WORLD, args));
 
-        } else if (status instanceof MemberCard.InScene) {
-            MemberCard.InScene ss = (MemberCard.InScene)status;
+        } else if (card.status instanceof MemberCard.InScene) {
+            MemberCard.InScene ss = (MemberCard.InScene)card.status;
             add(new InlineLabel(_cmsgs.mslOnlineIn(ss.sceneName), true, false, true));
             add(Link.create(_cmsgs.mslJoin(), Pages.WORLD, "s" + ss.sceneId));
         }

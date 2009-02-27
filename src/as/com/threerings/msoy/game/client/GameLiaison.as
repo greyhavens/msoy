@@ -20,6 +20,8 @@ import flash.utils.Timer;
 
 import caurina.transitions.Tweener;
 
+import com.threerings.msoy.utils.Base64Decoder;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
@@ -60,15 +62,10 @@ public class GameLiaison
 {
     public static const log :Log = Log.getLog(GameLiaison);
 
-    public function GameLiaison (
-        wctx :WorldContext, gameId :int, inviteToken :String, inviterMemberId :int)
+    public function GameLiaison (wctx :WorldContext, gameId :int)
     {
-        log.info("Liaison created", "inviteToken", inviteToken, "inviterMemberId", inviterMemberId);
-
         _wctx = wctx;
         _gameId = gameId;
-        _inviteToken = inviteToken == null ? "" : inviteToken;
-        _inviterMemberId = inviterMemberId;
 
         // create our custom context which we'll use to connect to lobby/game servers
         _gctx = new LiaisonGameContext(wctx);
@@ -81,40 +78,6 @@ public class GameLiaison
     public function getGameContext () :GameContext
     {
         return _gctx;
-    }
-
-    /**
-     * Starts this game liaison. If the game host and port are supplied, they will be used
-     * immediately, otherwise the liaison will first ask its world server to locate the game in
-     * question.
-     */
-    public function start (ghost :String = null, gport :int = 0) :void
-    {
-        if (ghost != null && gport != 0) {
-            gameLocated(ghost, gport);
-
-        } else if (_wctx.getClient().isLoggedOn()) {
-            log.info("Resolving location of game [id=" + _gameId + "].");
-            var mgsvc :WorldGameService =
-                (_wctx.getClient().requireService(WorldGameService) as WorldGameService);
-            mgsvc.locateGame(_wctx.getClient(), gameId, this);
-
-        } else {
-            log.info("Resolving location of game via HTTP [id=" + _gameId + "].");
-            var loader :URLLoader = new URLLoader();
-            loader.addEventListener(Event.COMPLETE, function () :void {
-                loader.removeEventListener(Event.COMPLETE, arguments.callee);
-                var bits :Array = (loader.data as String).split(":");
-
-                // now configure the world client to connect to the server that hosts our group
-                // room so that when we get into the lobby, we'll be ready to roll
-                _wctx.getClient().setServer(bits[2], [ int(bits[3]) ]);
-
-                gameLocated(bits[0], int(bits[1]));
-            });
-            // TODO: add listeners for failure events? give feedback on failure?
-            loader.load(new URLRequest(DeploymentConfig.serverURL + "embed/g" + _gameId));
-        }
     }
 
     /**
@@ -169,6 +132,56 @@ public class GameLiaison
     public function set inviterMemberId (value :int) :void
     {
         _inviterMemberId = value;
+    }
+
+    /**
+     * Configures the invite data received from GWT.
+     *
+     * @param token the base64 encoded invite token.
+     * @param inviterId the member id of the sender of the invitation.
+     */
+    public function setInviteData (token :String, inviterId :int) :void
+    {
+        if (token) {
+            var decoder :Base64Decoder = new Base64Decoder();
+            decoder.decode(token);
+            _inviteToken = decoder.toByteArray().toString();
+        }
+        _inviterMemberId = inviterId;
+    }
+
+    /**
+     * Starts this game liaison. If the game host and port are supplied, they will be used
+     * immediately, otherwise the liaison will first ask its world server to locate the game in
+     * question.
+     */
+    public function start (ghost :String = null, gport :int = 0) :void
+    {
+        if (ghost != null && gport != 0) {
+            gameLocated(ghost, gport);
+
+        } else if (_wctx.getClient().isLoggedOn()) {
+            log.info("Resolving location of game [id=" + _gameId + "].");
+            var mgsvc :WorldGameService =
+                (_wctx.getClient().requireService(WorldGameService) as WorldGameService);
+            mgsvc.locateGame(_wctx.getClient(), gameId, this);
+
+        } else {
+            log.info("Resolving location of game via HTTP [id=" + _gameId + "].");
+            var loader :URLLoader = new URLLoader();
+            loader.addEventListener(Event.COMPLETE, function () :void {
+                loader.removeEventListener(Event.COMPLETE, arguments.callee);
+                var bits :Array = (loader.data as String).split(":");
+
+                // now configure the world client to connect to the server that hosts our group
+                // room so that when we get into the lobby, we'll be ready to roll
+                _wctx.getClient().setServer(bits[2], [ int(bits[3]) ]);
+
+                gameLocated(bits[0], int(bits[1]));
+            });
+            // TODO: add listeners for failure events? give feedback on failure?
+            loader.load(new URLRequest(DeploymentConfig.serverURL + "embed/g" + _gameId));
+        }
     }
 
     /**

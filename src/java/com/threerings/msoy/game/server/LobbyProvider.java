@@ -21,12 +21,6 @@ public interface LobbyProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link LobbyService#joinPlayerGame} request.
-     */
-    void joinPlayerGame (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
-        throws InvocationException;
-
-    /**
      * Handles a {@link LobbyService#playNow} request.
      */
     void playNow (ClientObject caller, int arg1, int arg2, InvocationService.ResultListener arg3)

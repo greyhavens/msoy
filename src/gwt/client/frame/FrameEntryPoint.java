@@ -729,28 +729,25 @@ public class FrameEntryPoint
         WorldClient.displayFlash(args, _flashPanelProvider);
     }
 
-    protected void displayGame (
-        final String action, int gameId, final int otherId1, final String token,
-        final int otherId2)
+    protected void displayGame (final String action, int gameId, final int otherId1,
+                                final String token, final int otherId2)
     {
         // load up the information needed to launch the game
         _usersvc.loadLaunchConfig(gameId, new MsoyCallback<LaunchConfig>() {
             public void onSuccess (LaunchConfig result) {
-                launchGame(result, otherId1, otherId2, action, token);
+                launchGame(result, action, otherId1, token, otherId2);
             }
         });
     }
 
-    protected void launchGame (
-        final LaunchConfig config, final int otherId1, final int otherId2, String action,
-        String token)
+    protected void launchGame (final LaunchConfig config, String action, final int otherId1,
+                               String token, final int otherId2)
     {
         // configure our world client with a default host and port in case we're first to the party
         WorldClient.setDefaultServer(config.groupServer, config.groupPort);
 
-        if (token == null) {
-            token = "";
-        }
+        // sanitize our token
+        token = (token == null) ? "" : token;
 
         String args;
         switch (config.type) {
@@ -767,27 +764,24 @@ public class FrameEntryPoint
 
         case LaunchConfig.FLASH_LOBBIED:
             String hostPort = "&ghost=" + config.gameServer + "&gport=" + config.gamePort;
-            if (action.equals("l")) {
-                args = "gameLobby=" + config.gameId;
+            args = "gameId=" + config.gameId;
+
+            // "g" means we're going right into an already running game
+            if (action.equals("g")) {
+                args += "&gameOid=" + otherId1;
+
+            // everything else ("p" and "i" and legacy codes) means 'play now'
+            } else {
                 if (otherId1 != 0) {
-                    args += "&playerTable=" + otherId1;
+                    args += "&playerId=" + otherId1;
                 }
-            } else if (action.equals("g")) {
-                args = "gameOid=" + otherId1 + "&gameId=" + config.gameId;
-                if (token.length() > 0 || otherId1 > 0) {
-                    args += "&inviteToken=" + token + "&inviterMemberId=" + otherId2;
-                }
-            } else if (action.equals("m") || action.equals("s") || action.equals("t")) {
-                if (action.equals("s")) { // game invitation
+                if (token.length() > 0 || otherId1 > 0 || otherId2 > 0) {
                     reportClientAction(
                         null, "2009-02 game invite accepted", "gameId=" + config.gameId);
                 }
-                args = "playNow=" + config.gameId + "&gameMode=" + action;
                 if (token.length() > 0 || otherId1 > 0) {
-                    args += "&inviteToken=" + token + "&inviterMemberId=" + otherId1;
+                    args += "&inviteToken=" + token + "&inviterMemberId=" + otherId2;
                 }
-            } else {
-                args = "gameLobby=" + config.gameId;
             }
             displayWorldClient(args + hostPort, null);
             break;
@@ -795,7 +789,7 @@ public class FrameEntryPoint
         case LaunchConfig.JAVA_FLASH_LOBBIED:
         case LaunchConfig.JAVA_SELF_LOBBIED:
             if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && otherId1 <= 0) {
-                displayWorldClient("gameLobby=" + config.gameId, null);
+                displayWorldClient("gameId=" + config.gameId, null);
 
             } else {
                 // clear out the client as we're going into Java land

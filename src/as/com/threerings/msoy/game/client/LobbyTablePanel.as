@@ -102,7 +102,7 @@ public class LobbyTablePanel extends VBox
         var ilink :TextInput = new TextInput();
         const memId :int = _gctx.getPlayerObject().memberName.getMemberId(); // ok if guest
         ilink.text = _gctx.getMsoyContext().getMsoyController().createSharableLink(
-            "world-game_l_" + _lobj.game.gameId + "_" + memId);
+            "world-game_i_" + _lobj.game.gameId + "_" + memId);
         addChild(makeVBox(ititle, isubtitle, new CopyableText(ilink)));
 
         // create our seats grid
