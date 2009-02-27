@@ -142,12 +142,16 @@ public class GameLiaison
      */
     public function setInviteData (token :String, inviterId :int) :void
     {
-        if (token) {
-            var decoder :Base64Decoder = new Base64Decoder();
-            decoder.decode(token);
-            _inviteToken = decoder.toByteArray().toString();
+        try {
+            if (token != null) {
+                var decoder :Base64Decoder = new Base64Decoder();
+                decoder.decode(token);
+                _inviteToken = decoder.toByteArray().toString();
+            }
+            _inviterMemberId = inviterId;
+        } catch (err :Error) {
+            log.warning("Bogus invite data", "token", token, "iid", inviterId, "error", err);
         }
-        _inviterMemberId = inviterId;
     }
 
     /**
