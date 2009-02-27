@@ -5,9 +5,11 @@
   <!-- the base directory from which we get our bundles and jar files -->
   <property name="base.dir" value="../.."/>
 
+  <property name="src.dir"       value="src/java"/>
   <property name="app.name"        value="mcell"/>
   <property name="src.pkg.name"    value="com.threerings.msoy"/>
   <property name="deploy.dir" value="dist"/>
+  <property name="classes.dir"   value="${deploy.dir}/classes"/>
 
   <!-- classpath available to the aggregators in hadoop -->
   <path id="runtime.classpath">
@@ -47,6 +49,12 @@
   </target>
 
   <target name="compile" depends="prepare">
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
+           debug="on" optimize="off" deprecation="on" target="1.5">
+      <classpath refid="runtime.classpath"/>
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-Xlint:-serial"/>
+    </javac>
   </target>
 
   <target name="dist" depends="prepare,compile">
@@ -55,6 +63,20 @@
 <!--          <fileset dir="${deploy.dir}/yohoho" includes="**/*"/> -->
           <fileset dir="${deploy.dir}/classes" includes="**/*"/>
       </jar>
+      <copy todir="cell">
+        <fileset dir="etc">
+          <include name="cell.conf"/>
+          <include name="cell.properties"/>
+        </fileset>
+        <fileset dir="${deploy.dir}">
+          <include name="msoy-hadoop-mr.jar"/>
+        </fileset>
+      </copy>
+      <copy todir="cell/tasks">
+        <fileset dir="tasks">
+          <include name="*.properties"/>
+        </fileset>
+      </copy>
   </target>
   <target name="package" depends="prepare">
       <fileset file="${deploy.dir}/msoy-hadoop-mr.jar" id="external.files"/>
