@@ -151,26 +151,20 @@ public class LobbyController extends Controller
 
         for each (var table :Table in _lobj.tables.toArray()) {
             for each (var player :Name in table.players) {
+                if (table.inPlay()) {
+                    continue;
+                }
                 var member :MemberName = (player as MemberName);
                 if (member == null || member.getMemberId() != playerId) {
                     continue;
                 }
-
-                if (table.inPlay()) {
-                    _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_in_progress");
-                } else {
-                    var ii :int = 0;
-                    for (; ii < table.players.length; ii++) {
-                        if (table.players[ii] == null) {
-                            handleJoinTable(table.tableId, ii);
-                            break;
-                        }
-                    }
-                    if (ii == table.players.length) {
-                        _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_table_full");
+                for (var ii :int = 0; ii < table.players.length; ii++) {
+                    if (table.players[ii] == null) {
+                        handleJoinTable(table.tableId, ii);
+                        return;
                     }
                 }
-                return;
+                _mctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.game_table_full");
             }
         }
     }
