@@ -621,7 +621,7 @@ public class GameInvitePanel extends VerticalPanel
             _card = card;
             setWidget(0, 0, _check = new CheckBox());
             setWidget(0, 1, new ThumbBox(card.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE));
-            setWidget(0, 2, MsoyUI.createHTML(card.name.toString(), "memberName"));
+            setWidget(0, 2, MsoyUI.createLabel(card.name.toString(), "memberName"));
             getFlexCellFormatter().setWidth(0, 2, "100%");
         }
 
