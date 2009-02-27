@@ -536,6 +536,7 @@ public class GameInvitePanel extends VerticalPanel
                 }
 
                 public boolean gotResult (Void result) {
+                    selectAll(false);
                     MsoyUI.info("Messages sent.");
                     return true;
                 }
