@@ -943,8 +943,8 @@ public class WorldController extends MsoyController
         } else if (null != params["gameId"]) {
             _suppressTokenForScene = true;
             _wctx.getGameDirector().playNow(int(params["gameId"]), int(params["playerId"]),
-                String(params["ghost"]), int(params["gport"]),
-                String(params["inviteToken"]), int(params["inviterMemberId"]));
+                params["ghost"] as String, int(params["gport"]),
+                params["inviteToken"] as String, int(params["inviterMemberId"]));
 
         } else if (null != params["noplace"]) {
             // go to no place- we just want to chat with our friends
@@ -952,7 +952,7 @@ public class WorldController extends MsoyController
 
         } else if (null != params["worldGame"]) {
             handleJoinAVRGame(int(params["worldGame"]), int(params["inviteGameRoomId"]),
-                String(params["inviteToken"]), int(params["inviterMemberId"]));
+                params["inviteToken"] as String, int(params["inviterMemberId"]));
 
         } else if ("true" == params["tour"]) {
             _wctx.getTourDirector().startTour();
