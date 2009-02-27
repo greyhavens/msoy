@@ -615,9 +615,7 @@ public class WorldController extends MsoyController
     {
         // if we're running in the GWT app, we need to route through GWT to keep the URL valid
         if (inGWTApp() && displayPage("world", "game_p_" + gameId)) {
-            log.info("Routed join lobby through URL", "game", gameId, "ghost", ghost,
-                "gport", gport);
-
+            log.info("Doing play game via URL", "game", gameId, "ghost", ghost, "gport", gport);
         } else {
             // otherwise, play the game directly
             _wctx.getGameDirector().playNow(gameId, 0, ghost, gport);
@@ -629,7 +627,13 @@ public class WorldController extends MsoyController
      */
     public function handleJoinPlayerGame (gameId :int, playerId :int) :void
     {
-        _wctx.getGameDirector().playNow(gameId, playerId);
+        // if we're running in the GWT app, we need to route through GWT to keep the URL valid
+        if (inGWTApp() && displayPage("world", "game_p_" + gameId + "_" + playerId)) {
+            log.info("Doing join player via URL", "game", gameId, "player", playerId);
+        } else {
+            // otherwise, play the game directly
+            _wctx.getGameDirector().playNow(gameId, playerId);
+        }
     }
 
     /**
