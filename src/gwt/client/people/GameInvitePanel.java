@@ -147,7 +147,7 @@ public class GameInvitePanel extends VerticalPanel
             addMethodButton("Facebook",
                 new InviteMethodCreator () {
                     public Widget create () {
-                        showFBInvitePopup();
+                        showFBInvitePopup(detail.item.name, message, url);
                         return null;
                     }
                 });
@@ -188,15 +188,21 @@ public class GameInvitePanel extends VerticalPanel
         }
     }
 
-    protected static void showFBInvitePopup ()
+    protected static void showFBInvitePopup (String gameName, String message, String url)
     {
+        // some fbml code to assign to the content attribute
+        Builder accept = new Builder('\'');
+        accept.open("fb:req-choice", "url", url, "label", "Play " + gameName).close();
+
+        // now the actual popup code
         Builder b = new Builder();
         b.open("fb:fbml");
-        b.open("fb:request-form", "type", "Game", "action", DeploymentConfig.serverURL,
-            "method", "POST", "invite", true, "content", "Need some content");
+        b.open("fb:request-form", "type", gameName, "action", DeploymentConfig.serverURL,
+            "method", "GET", "invite", true, "content", message + accept);
         b.open("fb:multi-friend-selector", "showborder", false, "actiontext", "Select some " +
             "friends to come play with you.", "rows", 4);
 
+        // show the popup
         showFBInvitePopup(b.finish(), 0, -270, 650, 580);
     }
 
@@ -642,6 +648,16 @@ public class GameInvitePanel extends VerticalPanel
      */
     protected static class Builder
     {
+        public Builder ()
+        {
+            this('"');
+        }
+
+        public Builder (char quote)
+        {
+            _quote = quote;
+        }
+
         /**
          * Open up a tag with the given name and attributes.
          */
@@ -660,7 +676,7 @@ public class GameInvitePanel extends VerticalPanel
             _buff.append("<").append(name);
             for (int ii = 0; ii < kvPairs.length; ii += 2) {
                 _buff.append(" ").append(kvPairs[ii]);
-                _buff.append("=\"").append(kvPairs[ii+1]).append("\"");
+                _buff.append("=").append(_quote).append(kvPairs[ii+1]).append(_quote);
             }
             return this;
         }
@@ -701,6 +717,7 @@ public class GameInvitePanel extends VerticalPanel
         protected ArrayList<Integer> _tagcounts = new ArrayList<Integer>();
         protected ArrayList<String> _tags = new ArrayList<String>();
         protected StringBuilder _buff = new StringBuilder();
+        protected char _quote;
     }
 
     /** The row where the invite method is. */
