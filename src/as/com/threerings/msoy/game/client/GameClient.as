@@ -135,7 +135,7 @@ class GameContextImpl extends MsoyContext
     }
 
     // from GameContext
-    public function showGameLobby (multiplayer :Boolean) :void
+    public function showGameLobby () :void
     {
         return; // TODO
     }
