@@ -37,17 +37,24 @@ public class StubDownloadServlet extends HttpServlet
         // TODO: security: only allow room manager or game owner to create a stub
 
         String args = req.getParameter("args");
-        //System.err.println("Setting up stub with args: " + args);
+        String mochiId = req.getParameter("mochiId");
 
+        String file = (mochiId == null) ? STUB_LOCATION : MOCHI_LOCATION;
         SWFReader reader = new SWFReader(
-            new FileInputStream(new File(ServerConfig.serverRoot, STUB_LOCATION)));
+            new FileInputStream(new File(ServerConfig.serverRoot, file)));
         SWFDocumentReader docReader = new SWFDocumentReader();
         reader.addListener(docReader);
         reader.read();
         SWFDocument doc = docReader.getDocument();
 
-        if (modifySWF(doc, STUB_TOKEN, args) &&
-                modifySWF(doc, STUB_URL, DeploymentConfig.serverURL)) {
+        boolean success = modifySWF(doc, STUB_TOKEN, args) &&
+            modifySWF(doc, STUB_URL, DeploymentConfig.serverURL);
+
+        if (success && mochiId != null) {
+            success = modifySWF(doc, MOCHI_ID, mochiId);
+        }
+
+        if (success) {
             rsp.setContentType("application/x-shockwave-flash");
             SWFWriter writer = new SWFWriter(doc, rsp.getOutputStream());
             writer.write();
@@ -139,7 +146,9 @@ public class StubDownloadServlet extends HttpServlet
 
     /** The token we're looking to replace in the swf. */
     protected static final String STUB_TOKEN = "&&stubargs&&";
+    protected static final String MOCHI_ID = "&&mochiadid&&";
 
     /** The location of the raw stub. */
     protected static final String STUB_LOCATION = "/dist/embedstub-base.swf";
+    protected static final String MOCHI_LOCATION = "/dist/mochistub-base.swf";
 }

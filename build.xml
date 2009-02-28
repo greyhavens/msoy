@@ -675,6 +675,15 @@
     </antcall>
   </target>
 
+  <target name="mochistub">
+    <antcall target="ascompile">
+      <param name="aspath" value="applets/EmbedStubMochiAd.as"/>
+      <param name="swfname" value="mochistub-base"/>
+      <param name="flex.extra-arg" value="-use-network"/>
+      <param name="copydir" value=""/> <!-- don't copy anywhere -->
+    </antcall>
+  </target>
+
   <target name="remixer" depends="asprepare">
     <antcall target="ascompile">
       <param name="aspath" value="applets/remixer.mxml"/>
@@ -1022,7 +1031,7 @@
   <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a
        the API shuffle is done, and the tutorial code has been refactored -->
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,embedstub,videoplayer,audioplayer,remixer,imageeditor,camerabutton,uploader,asclient,asgclient"
+  <target name="flashapps" depends="asprepare,mediastub,embedstub,mochistub,videoplayer,audioplayer,remixer,imageeditor,camerabutton,uploader,asclient,asgclient"
           description="Rebuilds all of our Flash clients and applets.">
   </target>
 

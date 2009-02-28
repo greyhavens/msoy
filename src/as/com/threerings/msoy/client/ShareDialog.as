@@ -72,7 +72,7 @@ public class ShareDialog extends FloatingPanel
         tabs.setStyle("tabWidth", NaN);
         tabs.resizeToContent = true;
         tabs.width = 430;
-        tabs.height = 200;
+        tabs.height = 240;
 
         tabs.addChild(createSocialBox());
         // TODO: guests can't abuse the email thingy?
@@ -209,11 +209,41 @@ public class ShareDialog extends FloatingPanel
         var box :VBox = createContainer("t.stub_share");
         box.setStyle("horizontalAlign", "center");
         box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 350));
-        _downloadBtn = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
+        var stub :CommandButton = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
             startDownload, [ url, "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
-        _downloadBtn.styleName = "orangeButton";
-        box.addChild(_downloadBtn);
+        stub.styleName = "orangeButton";
+        box.addChild(stub);
+        _downloadBtns.push(stub);
+
+        if (_inGame) {
+            // add an additional button for mochiad -enabled games
+            box.addChild(FlexUtil.createSpacer(10, 10));
+
+            box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.mochi_share"), 350));
+            var hbox :HBox = new HBox();
+            hbox.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.mochi_id")));
+            var mochiIdField :TextInput = new TextInput();
+            mochiIdField.maxChars = 16;
+            mochiIdField.restrict = "0-9a-f";
+            hbox.addChild(mochiIdField);
+            var mochi :CommandButton = new CommandButton(Msgs.GENERAL.get("b.mochi_share"),
+                function () :void {
+                    if (mochiIdField.text.length != 16) {
+                        _downloadError.text = Msgs.GENERAL.get("e.mochi_id");
+                        return;
+                    }
+
+                    startDownload(url + "&mochiId=" + encodeURIComponent(mochiIdField.text),
+                        "Whirled-game-" + _placeId + "-mochi-stub.swf");
+                });
+            mochi.styleName = "orangeButton";
+            hbox.addChild(mochi);
+            box.addChild(hbox);
+            _downloadBtns.push(mochi);
+        }
+
         box.addChild(_downloadError = FlexUtil.createLabel(""));
+        _downloadError.setStyle("color", 0xFF0000);
         return box;
     }
 
@@ -357,7 +387,7 @@ public class ShareDialog extends FloatingPanel
 
     protected function startDownload (url :String, localFile :String) :void
     {
-        _downloadBtn.enabled = false;
+        enableDownloadButtons(false);
         _downloadError.text = "";
 
         _fileRef = new FileReference();
@@ -370,9 +400,16 @@ public class ShareDialog extends FloatingPanel
 
     protected function handleDownloadStopEvent (event :Event) :void
     {
-        _downloadBtn.enabled = true;
+        enableDownloadButtons(true);
         if (event is ErrorEvent) {
             _downloadError.text = ErrorEvent(event).text;
+        }
+    }
+
+    protected function enableDownloadButtons (setEnabled :Boolean) :void
+    {
+        for each (var btn :UIComponent in _downloadBtns) {
+            btn.enabled = setEnabled;
         }
     }
 
@@ -444,7 +481,7 @@ public class ShareDialog extends FloatingPanel
     protected var _sizeGroup :RadioButtonGroup = new RadioButtonGroup();
     protected var _status :Text;
 
-    protected var _downloadBtn :CommandButton;
+    protected var _downloadBtns :Array = [];
     protected var _downloadError :Label;
 
     protected static const EMBED_SIZES :Array = [
