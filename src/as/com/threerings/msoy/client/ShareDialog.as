@@ -208,7 +208,7 @@ public class ShareDialog extends FloatingPanel
 
         var box :VBox = createContainer("t.stub_share");
         box.setStyle("horizontalAlign", "center");
-        box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 350));
+        box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.stub_share"), 400));
         var stub :CommandButton = new CommandButton(Msgs.GENERAL.get("b.stub_share"),
             startDownload, [ url, "Whirled-" + roomOrGame + "-" + _placeId + "-stub.swf" ]);
         stub.styleName = "orangeButton";
@@ -219,7 +219,9 @@ public class ShareDialog extends FloatingPanel
             // add an additional button for mochiad -enabled games
             box.addChild(FlexUtil.createSpacer(10, 10));
 
-            box.addChild(FlexUtil.createText(Msgs.GENERAL.get("m.mochi_share"), 350));
+            box.addChild(FlexUtil.createText(
+                Msgs.GENERAL.get("m.mochi_share", EMBED_SIZES[2].join("x")),
+                400));
             var hbox :HBox = new HBox();
             hbox.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.mochi_id")));
             var mochiIdField :TextInput = new TextInput();
