@@ -88,7 +88,7 @@ public class MsoyParameters
         delete _params["room"];
 
         if (gameId != 0) {
-            _params["gameLobby"] = gameId;
+            _params["gameId"] = gameId;
             _params["vec"] = "e." + site + ".games." + gameId;
 
         } else if (roomId != 0) {
