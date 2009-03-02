@@ -351,7 +351,8 @@ public class Preloader extends Sprite
         [ "sceneId", "world-s" ],
         [ "room", "world-s" ], // alias used by stubs
         [ "memberHome", "world-h" ],
-        [ "gameLobby", "world-game_p_" ],
+        [ "gameLobby", "world-game_p_" ], // legacy?
+        [ "gameId", "world-game_p_" ],
         [ "game", "world-game_p_" ] // alias used by stubs
     ];
 }
