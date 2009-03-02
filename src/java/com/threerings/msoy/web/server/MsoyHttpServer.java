@@ -353,6 +353,7 @@ public class MsoyHttpServer extends Server
         .put("/info/*", PublicInfoServlet.class)
         .put("/rss/*", RSSServlet.class)
         .put("/go/*", GoServlet.class)
+        .put("/fbinvite/*", FacebookInviteServlet.class)
         .put(DeploymentConfig.PROXY_PREFIX + "*", MediaProxyServlet.class)
         // if -Dthrottle=true is set, serve up files as if we were on a slow connection
         .put("/*", (Boolean.getBoolean("throttle") || Boolean.getBoolean("throttleMedia"))

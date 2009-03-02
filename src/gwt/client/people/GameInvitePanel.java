@@ -3,13 +3,13 @@
 
 package client.people;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -147,7 +147,7 @@ public class GameInvitePanel extends VerticalPanel
             addMethodButton("Facebook",
                 new InviteMethodCreator () {
                     public Widget create () {
-                        showFBInvitePopup(detail.item.name, message, url);
+                        showFBInvitePopup(detail.item.gameId, message, inviteArgs);
                         return null;
                     }
                 });
@@ -188,32 +188,13 @@ public class GameInvitePanel extends VerticalPanel
         }
     }
 
-    protected static void showFBInvitePopup (String gameName, String message, String url)
+    protected static void showFBInvitePopup (int gameId, String message, String acceptPath)
     {
-        // some fbml code to assign to the content attribute
-        Builder accept = new Builder('\'');
-        accept.open("fb:req-choice", "url", url, "label", "Play " + gameName).close();
-
-        // now the actual popup code
-        Builder b = new Builder();
-        b.open("fb:fbml");
-        b.open("fb:request-form", "type", gameName, "action", DeploymentConfig.serverURL,
-            "method", "GET", "invite", true, "content", message + accept);
-        b.open("fb:multi-friend-selector", "showborder", false, "actiontext", "Select some " +
-            "friends to come play with you.", "rows", 4);
-
-        // show the popup
-        showFBInvitePopup(b.finish(), 0, -270, 650, 580);
+        // TODO: pass along the default message too. This is complicated because the servlet must
+        // convert it to javascript
+        String popupURL = "/fbinvite/do?gameId=" + gameId + "&path=" + acceptPath;
+        Window.open(popupURL, "Invite Friends To Play", "location=0,width=700,height=700");
     }
-
-    protected static native void showFBInvitePopup (
-        String fbml, int x, int y, int width, int height) /*-{
-        try {
-            $wnd.FB_ShowGameInvite(fbml, x, y, width, height);
-        } catch (e) {
-            $wnd.console.log("GameInvitePanel.showFBInvitePopup failure " + e);
-        }
-    }-*/;
 
     /**
      * Allows various invite methods to be hooked up to click listeners.
@@ -642,83 +623,6 @@ public class GameInvitePanel extends VerticalPanel
 
         protected CheckBox _check;
         protected MemberCard _card;
-    }
-
-    /**
-     * Quick and dirty XML builder to avoid leaning toothpick syndrome when generating FBML.
-     */
-    protected static class Builder
-    {
-        public Builder ()
-        {
-            this('"');
-        }
-
-        public Builder (char quote)
-        {
-            _quote = quote;
-        }
-
-        /**
-         * Open up a tag with the given name and attributes.
-         */
-        public Builder open (String name, Object ... kvPairs)
-        {
-            int size = _tagcounts.size();
-            if (size > 0) {
-                int count = _tagcounts.get(size - 1);
-                if (count == 0) {
-                    _buff.append(">");
-                }
-                _tagcounts.set(size - 1, count + 1);
-            }
-            _tagcounts.add(0);
-            _tags.add(name);
-            _buff.append("<").append(name);
-            for (int ii = 0; ii < kvPairs.length; ii += 2) {
-                _buff.append(" ").append(kvPairs[ii]);
-                _buff.append("=").append(_quote).append(kvPairs[ii+1]).append(_quote);
-            }
-            return this;
-        }
-
-        /**
-         * Close the most recent tag.
-         */
-        public Builder close ()
-        {
-            int size = _tagcounts.size();
-            if (_tagcounts.get(size - 1) == 0) {
-                _buff.append("/>");
-            } else {
-                _buff.append("</").append(_tags.get(size - 1));
-            }
-            _tags.remove(size - 1);
-            _tagcounts.remove(size - 1);
-            return this;
-        }
-
-        /**
-         * Close all tags and return the document as a string.
-         */
-        public String finish ()
-        {
-            while (_tagcounts.size() > 0) {
-                close();
-            }
-            return toString();
-        }
-
-        // from Object
-        public String toString ()
-        {
-            return _buff.toString();
-        }
-
-        protected ArrayList<Integer> _tagcounts = new ArrayList<Integer>();
-        protected ArrayList<String> _tags = new ArrayList<String>();
-        protected StringBuilder _buff = new StringBuilder();
-        protected char _quote;
     }
 
     /** The row where the invite method is. */
