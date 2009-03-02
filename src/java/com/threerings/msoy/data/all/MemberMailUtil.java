@@ -31,7 +31,7 @@ public class MemberMailUtil
     public static boolean isPlaceholderAddress (String email)
     {
         for (String pattern : PLACEHOLDER_PATTERNS) {
-            if (pattern.matches(email)) {
+            if (email.matches(pattern)) {
                 return true;
             }
         }
