@@ -77,22 +77,6 @@ public class WorldClient extends Widget
         embedClient(_flashArgs, pprov.get());
     }
 
-    public static void displayFlashLobby (LaunchConfig config, String action, PanelProvider pprov)
-    {
-        clientWillClose(); // clear our Java or Flash client if we have one
-
-        String flashArgs = "gameLobby=" + config.gameId;
-        if (!action.equals("")) {
-            flashArgs += "&gameMode=" + action;
-        }
-        flashArgs += ("&host=" + config.gameServer + "&port=" + config.gamePort);
-        if (CShell.getAuthToken() != null) {
-            flashArgs += "&token=" + CShell.getAuthToken();
-        }
-        flashArgs += getAffiliateArg();
-        FlashClients.embedGameClient(pprov.get(), flashArgs);
-    }
-
     public static void displayJava (Widget client, PanelProvider pprov)
     {
         // clear out any flash page stuff

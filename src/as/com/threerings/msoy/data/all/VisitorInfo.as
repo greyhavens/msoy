@@ -79,20 +79,19 @@ public class VisitorInfo
 
     /**
      * Return a list of variables suitable for the FlashVars embed param.
-     * @param placeId id of the room to throw people into (sceneId/gameLobby)
+     *
+     * @param placeId id of the room to throw people into (sceneId/gameId)
      * @param inGame true if the flash vars are for a game and placeId is a game lobby whirled
      */
     public static function makeFlashVars (placeId :int, inGame :Boolean) :String
     {
         // possibly create vars to direct the embed to a particular place
         if (inGame) {
-            return "gameLobby=" + placeId + "&" +
+            return "gameId=" + placeId + "&" +
                 VECTOR_ID + "=e.whirled." + GAME_VECTOR + "." + placeId;
-
         } else if (placeId != 0) {
             return "sceneId=" + placeId + "&" +
                 VECTOR_ID + "=e.whirled." + ROOM_VECTOR + "." + placeId;
-
         } else {
             return "";
         }

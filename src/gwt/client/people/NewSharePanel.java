@@ -650,24 +650,22 @@ public class NewSharePanel extends VerticalPanel
         // Flash args.
         StringBuilder args = new StringBuilder();
         if (isGame) {
-            args.append("gameLobby=").append(placeId).append("&vec=e.whirled.games.")
-                .append(placeId);
+            args.append("gameId=").append(placeId).append("&vec=e.whirled.games.").append(placeId);
         } else {
-            args.append("sceneId=").append(placeId).append("&vec=e.whirled.rooms.")
-            .append(placeId);
+            args.append("sceneId=").append(placeId).append("&vec=e.whirled.rooms.").append(placeId);
         }
         if (!CShell.isGuest()) {
             args.append("&aff=").append(CShell.getMemberId());
         }
 
         // URL to the swf.
-        String hostOnlyUrl = DeploymentConfig.serverURL.replaceFirst("(http:\\/\\/[^\\/]*).*",
-            "$1/");
+        String hostOnlyUrl =
+            DeploymentConfig.serverURL.replaceFirst("(http:\\/\\/[^\\/]*).*", "$1/");
         String swfUrl = hostOnlyUrl + "clients/world-client.swf";
 
         // URL to Whirled.
-        String fullUrl = hostOnlyUrl + (CShell.isGuest() ? "#" :
-            "welcome/" + CShell.getMemberId() + '/');
+        String fullUrl = hostOnlyUrl +
+            (CShell.isGuest() ? "#" : "welcome/" + CShell.getMemberId() + '/');
 
         return _cmsgs.embed(args.toString(), swfUrl, width, height, fullUrl);
     }

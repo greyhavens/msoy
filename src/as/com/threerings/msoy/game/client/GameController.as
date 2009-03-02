@@ -45,8 +45,8 @@ public class GameController extends MsoyController
             var gameOid :int = int(params["gameLocation"]);
             log.info("Entering game [oid=" + gameOid + "].");
             _gctx.getLocationDirector().moveTo(gameOid);
-        } else if (null != params["gameLobby"]) {
-            var gameId :int = int(params["gameLobby"]);
+        } else if (null != params["gameId"]) {
+            var gameId :int = int(params["gameId"]);
             log.info("Entering lobby [oid=" + gameOid + "].");
             joinGameLobby(gameId); // TODO: handle mode=(m|a|s)
         }
