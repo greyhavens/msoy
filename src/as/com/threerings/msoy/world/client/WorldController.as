@@ -944,9 +944,10 @@ public class WorldController extends MsoyController
             _suppressTokenForScene = true;
             _wctx.getGameDirector().enterGame(int(params["gameId"]), int(params["gameOid"]));
 
-        } else if (null != params["gameId"]) {
+        } else if (null != params["gameId"] || null != params["gameLobby"] /*legacy*/) {
             _suppressTokenForScene = true;
-            _wctx.getGameDirector().playNow(int(params["gameId"]), int(params["playerId"]),
+            var gameId :int = int(params["gameId"]) || int(params["gameLobby"]);
+            _wctx.getGameDirector().playNow(gameId, int(params["playerId"]),
                 params["ghost"] as String, int(params["gport"]),
                 params["inviteToken"] as String, int(params["inviterMemberId"]));
 
