@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.display.StageQuality;
 import flash.events.Event;
+import flash.events.IEventDispatcher;
 import flash.external.ExternalInterface;
 import flash.geom.Point;
 import flash.net.URLLoader;
@@ -20,6 +21,7 @@ import com.adobe.crypto.MD5;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 
+import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObjectManager;
@@ -40,6 +42,7 @@ import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
+import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.data.WorldCredentials;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
@@ -78,7 +81,7 @@ public class WorldClient extends MsoyClient
 
         // if we are going right into a game, do that now and once we get into the game, then we'll
         // be able to logon to a world with our assigned credentials
-        if (params["gameId"]) {
+        if (params["gameId"] || params["gameLobby"]) {
             log.info("Doing pre-logon go to join game", "gameId", params["gameId"]);
             _wctx.getWorldController().preLogonGo(params);
 
@@ -307,6 +310,42 @@ public class WorldClient extends MsoyClient
     protected function externalStartTour () :void
     {
         _wctx.getTourDirector().startTour();
+    }
+
+    // from MsoyClient
+    override protected function configureBridgeFunctions (dispatcher :IEventDispatcher) :void
+    {
+        super.configureBridgeFunctions(dispatcher);
+        dispatcher.addEventListener(UberClientModes.GOT_EXTERNAL_NAME, bridgeGotExternalName);
+    }
+
+    /**
+     * Called when the embedstub obtains a display name from the external site on which we're
+     * embedded. We use this to replace "Guest XXXX" for permaguests with their external site name.
+     */
+    protected function bridgeGotExternalName (event :Event) :void
+    {
+        var name :String = event["info"]; // EmbedStub.BridgeEvent.info via security boundary
+        log.info("Got external name", "name", name);
+
+// TODO: this is going to require a whole bunch of complicated shit
+//         function maybeConfigureGuest () :void {
+//             if (_wctx.getMemberObject().isPermaguest()) {
+//                 log.info("Using external name", "name", name);
+//                 _wctx.getMemberDirector().setDisplayName(name);
+//             } else {
+//                 log.info("Not using external name", "name", name);
+//             }
+//         }
+//         if (_wctx.getClient().isLoggedOn()) {
+//             maybeConfigureGuest();
+//         } else {
+//             var adapter :ClientAdapter = new ClientAdapter(null, function (event :*) :void {
+//                 _wctx.getClient().removeClientObserver(adapter);
+//                 maybeConfigureGuest();
+//             });
+//             _wctx.getClient().addClientObserver(adapter);
+//         }
     }
 
     // from MsoyClient
