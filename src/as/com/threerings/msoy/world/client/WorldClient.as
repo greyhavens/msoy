@@ -81,7 +81,7 @@ public class WorldClient extends MsoyClient
 
         // if we are going right into a game, do that now and once we get into the game, then we'll
         // be able to logon to a world with our assigned credentials
-        if (params["gameId"] || params["gameLobby"]) {
+        if (params["gameId"] || params["gameLobby"] /* legacy */) {
             log.info("Doing pre-logon go to join game", "gameId", params["gameId"]);
             _wctx.getWorldController().preLogonGo(params);
 
@@ -327,25 +327,21 @@ public class WorldClient extends MsoyClient
     {
         var name :String = event["info"]; // EmbedStub.BridgeEvent.info via security boundary
         log.info("Got external name", "name", name);
-
-// TODO: this is going to require a whole bunch of complicated shit
-//         function maybeConfigureGuest () :void {
-//             if (_wctx.getMemberObject().isPermaguest()) {
-//                 log.info("Using external name", "name", name);
-//                 _wctx.getMemberDirector().setDisplayName(name);
-//             } else {
-//                 log.info("Not using external name", "name", name);
-//             }
-//         }
-//         if (_wctx.getClient().isLoggedOn()) {
-//             maybeConfigureGuest();
-//         } else {
-//             var adapter :ClientAdapter = new ClientAdapter(null, function (event :*) :void {
-//                 _wctx.getClient().removeClientObserver(adapter);
-//                 maybeConfigureGuest();
-//             });
-//             _wctx.getClient().addClientObserver(adapter);
-//         }
+        function maybeConfigureGuest () :void {
+            if (_wctx.getMemberObject().isPermaguest()) {
+                log.info("Using external name", "name", name);
+                _wctx.getMemberDirector().setDisplayName(name);
+            }
+        }
+        if (_wctx.getClient().isLoggedOn()) {
+            maybeConfigureGuest();
+        } else {
+            var adapter :ClientAdapter = new ClientAdapter(null, function (event :*) :void {
+                _wctx.getClient().removeClientObserver(adapter);
+                maybeConfigureGuest();
+            });
+            _wctx.getClient().addClientObserver(adapter);
+        }
     }
 
     // from MsoyClient
