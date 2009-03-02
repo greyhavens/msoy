@@ -193,7 +193,8 @@ public class GameInvitePanel extends VerticalPanel
         // TODO: pass along the default message too. This is complicated because the servlet must
         // convert it to javascript
         String popupURL = "/fbinvite/do?gameId=" + gameId + "&path=" + acceptPath;
-        Window.open(popupURL, "Invite Friends To Play", "location=0,width=700,height=700");
+        Window.open(popupURL, FBINVITE_WINDOW_NAME,
+            "location=no,status=no,width=655,height=600,left=50,top=50");
     }
 
     /**
@@ -636,4 +637,5 @@ public class GameInvitePanel extends VerticalPanel
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
     protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
         ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);
+    protected static final String FBINVITE_WINDOW_NAME = "_whirled_fbinvite";
 }

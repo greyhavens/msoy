@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.ImmutableMap;
+
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
@@ -24,6 +25,7 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.gwt.MarkupBuilder;
+import com.threerings.msoy.web.gwt.Pages;
 import com.threerings.msoy.web.gwt.WebCreds;
 
 import static com.threerings.msoy.Log.log;
@@ -39,8 +41,6 @@ public class FacebookInviteServlet extends HttpServlet
         throws ServletException, IOException
     {
         try {
-            // TODO: check request to make sure this is /fbinvite/do
-
             // pull out session token from the request header
             String token = CookieUtil.getCookieValue(req, WebCreds.credsCookie());
             if (token == null) {
@@ -81,6 +81,14 @@ public class FacebookInviteServlet extends HttpServlet
                 outputInvitePage(rsp, gameId, gameName, member.memberId, acceptPath);
 
             } else if (req.getRequestURI().equals("/fbinvite/done")) {
+                String ids = req.getParameter("ids[]");
+                log.info("Facebook invite complete", "ids", ids);
+
+                // TODO: try overriding doPost... according to facebook docs, the ids, if present,
+                // should be a comma separated list of ids of invited friends, but it is in fact
+                // only a single id. However, all of their sample code uses method = 'POST', so
+                // maybe that's what is required
+
                 // TODO: record the number of invites sent
 
                 // just close the window
@@ -109,7 +117,8 @@ public class FacebookInviteServlet extends HttpServlet
         // javascript variables - squirted below and referenced by the static script INVITE_JS
         Map<String, String> vars = new ImmutableMap.Builder<String, String>()
             .put("gameId", String.valueOf(gameId))
-            .put("acceptPath", acceptPath)
+            .put("acceptPath", DeploymentConfig.serverURL + "#" + 
+                Pages.makeToken(Pages.WORLD, acceptPath))
             .put("acceptLabel", "Come Play " + gameName)
             .put("action", DeploymentConfig.serverURL + "fbinvite/done")
             .put("message", "Come And Play")
