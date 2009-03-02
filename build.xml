@@ -162,6 +162,7 @@
     <file name="lib/corelib.swc"/>
     <file name="lib/flexlib.swc"/>
     <file name="lib/tweener.swc"/>
+    <file name="lib/KongregateAPI.swc"/>
 
     <!-- The following are used to build abc files -->
     <file name="${extlibs.dir}/asc.jar"/>
@@ -992,6 +993,7 @@
       <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
       <arg line="-library-path ${flexsdk.dir}/frameworks/libs"/>
       <arg line="-library-path ${deploy.dir}/lib/tweener.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib/KongregateAPI.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/corelib.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/flexlib.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>

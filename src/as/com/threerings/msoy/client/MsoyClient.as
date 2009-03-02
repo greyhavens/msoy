@@ -7,6 +7,8 @@ import flash.display.Stage;
 import flash.ui.ContextMenu;
 
 import flash.events.ContextMenuEvent;
+import flash.events.Event;
+import flash.events.IEventDispatcher;
 import flash.external.ExternalInterface;
 import flash.system.Capabilities;
 import flash.system.Security;
@@ -36,6 +38,7 @@ import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
+import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
@@ -89,6 +92,16 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         LoggingTargets.configureLogging(_ctx);
         log.info("starting up", "capabilities", Capabilities.serverString);
 
+        // first things first: create our credentials and context
+        _creds = createStartupCreds(null);
+        _ctx = createContext();
+
+        // wire up a listener for bridge events from the embed stub
+        configureBridgeFunctions(UberClient.getApplication().loaderInfo.sharedEvents);
+        // then report to the embed stub that we're ready to receive bridge events
+        UberClient.getApplication().loaderInfo.sharedEvents.dispatchEvent(
+            new Event(UberClientModes.CLIENT_READY, true));
+
         // wire up our JavaScript bridge functions
         try {
             if (ExternalInterface.available) {
@@ -98,10 +111,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             // nada: ExternalInterface isn't there. Oh well!
             log.info("Unable to configure external functions.");
         }
-
-        _creds = createStartupCreds(null);
-
-        _ctx = createContext();
 
         // configure our starting global sound transform
         if (_featuredPlaceView) {
@@ -240,6 +249,34 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
+     * Returns visitor tracking info from the client cookies (GWT) if available.
+     */
+    public function getVisitorId () :String
+    {
+        if (!isEmbedded() && ExternalInterface.available) {
+            try {
+                log.debug("Querying browser cookie for visitor tracking info");
+                var result :Object = ExternalInterface.call("getVisitorId");
+                if (result != null) {
+                    return result as String;
+                }
+            } catch (e :Error) {
+                log.info("ExternalInterface.call('getVisitorId') failed", e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the affiliate idq provided to the Flash client in our movie parameters. Will be 0 to
+     * indicate that we have no affiliate or a positive integer.
+     */
+    public function getAffiliateId () :int
+    {
+        return int(MsoyParameters.get()["aff"]);
+    }
+
+    /**
      * Track a client action such as clicking a button
      */
     public function trackClientAction (actionName :String, details :String) :void
@@ -350,6 +387,14 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
+     * Wires up event listeners for any bridge events we expect to receive from the embedstub.
+     */
+    protected function configureBridgeFunctions (dispatcher :IEventDispatcher) :void
+    {
+        // nothing by default
+    }
+
+    /**
      * Creates the context we'll use with this client.
      */
     protected function createContext () :MsoyContext
@@ -397,34 +442,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected function createStartupCreds (token :String) :Credentials
     {
         throw new Error("abstract");
-    }
-
-    /**
-     * Returns visitor tracking info from the client cookies (GWT) if available.
-     */
-    public function getVisitorId () :String
-    {
-        if (!isEmbedded() && ExternalInterface.available) {
-            try {
-                log.debug("Querying browser cookie for visitor tracking info");
-                var result :Object = ExternalInterface.call("getVisitorId");
-                if (result != null) {
-                    return result as String;
-                }
-            } catch (e :Error) {
-                log.info("ExternalInterface.call('getVisitorId') failed", e);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the affiliate idq provided to the Flash client in our movie parameters. Will be 0 to
-     * indicate that we have no affiliate or a positive integer.
-     */
-    public function getAffiliateId () :int
-    {
-        return int(MsoyParameters.get()["aff"]);
     }
 
     /**

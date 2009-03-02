@@ -17,6 +17,11 @@ import flash.system.Security;
 import flash.text.TextField;
 import flash.text.TextFormat;
 
+import com.threerings.msoy.data.UberClientModes;
+
+import com.kongregate.as3.client.KongregateAPI;
+import com.kongregate.as3.client.events.KongregateEvent;
+
 // On Kongregate, the width limit is 700, but there appears to be
 // no height limit.
 
@@ -90,9 +95,24 @@ public class EmbedStub extends Sprite
         _clientLoader = new Loader();
         _clientLoader.contentLoaderInfo.addEventListener(Event.INIT, handleLoaded);
         _clientLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleLoadError);
+        _clientLoader.contentLoaderInfo.sharedEvents.addEventListener(
+            UberClientModes.CLIENT_READY, handleClientReady);
         _clientLoader.load(new URLRequest(SERVER_URL + CLIENT),
             new LoaderContext(true, new ApplicationDomain(null)));
         addChild(_clientLoader);
+
+        // if we're on Kongregate, try grabbing our username from the Kongregate API
+        var url :String = stage.root.loaderInfo.loaderURL;
+        if (url.indexOf("kongregate.com") != -1) {
+            var kapi :KongregateAPI = new KongregateAPI();
+            addChild(kapi);
+            kapi.addEventListener(KongregateEvent.COMPLETE, function (... ignored) :void {
+                if (kapi.user.getName() != "Guest") { // KAPI provides no constant for Guest
+                    dispatchBridgeEvent(UberClientModes.GOT_EXTERNAL_NAME, kapi.user.getName());
+                }
+                removeChild(kapi);
+            });
+        }
     }
 
     /**
@@ -109,6 +129,15 @@ public class EmbedStub extends Sprite
         _label = null;
     }
 
+    protected function handleClientReady (... ignored) :void
+    {
+        var onClientReady :Function = _onClientReady;
+        _onClientReady = CLIENT_IS_READY;
+        if (onClientReady != null) {
+            onClientReady();
+        }
+    }
+
     protected function handleLoadError (e :ErrorEvent) :void
     {
         removeChild(_clientLoader);
@@ -116,8 +145,43 @@ public class EmbedStub extends Sprite
         _label.text = "Error loading: " + e.text;
     }
 
-    protected var _clientLoader :Loader;
+    /**
+     * Dispatches a bridge event to MsoyClient. If this is called before the client has reported in
+     * as initialized, the event will be postponed until we do hear from the client.
+     */
+    protected function dispatchBridgeEvent (type :String, info :String) :void
+    {
+        if (_onClientReady == CLIENT_IS_READY) {
+            _clientLoader.contentLoaderInfo.sharedEvents.dispatchEvent(new BridgeEvent(type, info));
+        } else if (_onClientReady != null) {
+            var chainedReady :Function = _onClientReady;
+            _onClientReady = function () :void { chainedReady(); dispatchBridgeEvent(type, info); }
+        } else {
+            _onClientReady = function () :void { dispatchBridgeEvent(type, info); }
+        }
+    }
 
+    protected var _clientLoader :Loader;
     protected var _label :TextField;
+    protected var _onClientReady :Function;
+
+    /** A marker assigned to _onClientReady once the client has reported ready. */
+    protected static const CLIENT_IS_READY :Function = function () :void {}
 }
+}
+
+import flash.events.Event;
+
+class BridgeEvent extends Event
+{
+    public var info :String;
+
+    public function BridgeEvent (type :String, info :String) {
+        super(type);
+        this.info = info;
+    }
+
+    override public function clone () :Event {
+        return new BridgeEvent(type, info);
+    }
 }

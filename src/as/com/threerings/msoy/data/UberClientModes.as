@@ -22,5 +22,12 @@ public class UberClientModes
     public static const DECOR_EDITOR :int = 105;
 
     public static const GENERIC_VIEWER :int = 199;
+
+    /** The name of an event dispatched to the embed stub when the client is ready. */
+    public static const CLIENT_READY :String = "clientReady";
+
+    /** The name of an event dispatched to the client (from the embed stub) when an external
+     * display name has been provided by our containing site. */
+    public static const GOT_EXTERNAL_NAME :String = "gotExternalName";
 }
 }
