@@ -143,15 +143,13 @@ public class GameInvitePanel extends VerticalPanel
                         message, detail.gameId, detail.item.name, inviteArgs);
                 }
             });
-        if (DeploymentConfig.devDeployment) {
-            addMethodButton("Facebook",
-                new InviteMethodCreator () {
-                    public Widget create () {
-                        showFBInvitePopup(detail.item.gameId, message, inviteArgs);
-                        return null;
-                    }
-                });
-        }
+        addMethodButton("Facebook",
+            new InviteMethodCreator () {
+                public Widget create () {
+                    showFBInvitePopup(detail.item.gameId, message, inviteArgs);
+                    return null;
+                }
+            });
         add(_methodButtons);
 
         // method panel will on the bottom row

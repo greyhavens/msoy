@@ -21,6 +21,7 @@ import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.item.server.persist.GameRepository;
 
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -41,17 +42,8 @@ public class FacebookInviteServlet extends HttpServlet
         throws ServletException, IOException
     {
         try {
-            // pull out session token from the request header
-            String token = CookieUtil.getCookieValue(req, WebCreds.credsCookie());
-            if (token == null) {
-                rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
-
-            // make sure the user is authenticated, and pull out their record object
-            MemberRecord member = _mhelper.getAuthedUser(token);
-            if (member == null) {
-                rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            int memberId = getMemberId(req, rsp);
+            if (memberId == 0) {
                 return;
             }
 
@@ -78,20 +70,10 @@ public class FacebookInviteServlet extends HttpServlet
     
                 GameDetailRecord gdr = _mgameRepo.loadGameDetail(gameId);
                 String gameName = _gameRepo.loadItem(gdr.listedItemId).name;
-                outputInvitePage(rsp, gameId, gameName, member.memberId, acceptPath);
+                outputInvitePage(rsp, gameId, gameName, memberId, acceptPath);
 
             } else if (req.getRequestURI().equals("/fbinvite/done")) {
-                String ids = req.getParameter("ids[]");
-                log.info("Facebook invite complete", "ids", ids);
-
-                // TODO: try overriding doPost... according to facebook docs, the ids, if present,
-                // should be a comma separated list of ids of invited friends, but it is in fact
-                // only a single id. However, all of their sample code uses method = 'POST', so
-                // maybe that's what is required
-
-                // TODO: record the number of invites sent
-
-                // just close the window
+                logSentInvites(req, memberId);
                 outputCloseWindowPage(rsp);
 
             } else {
@@ -102,6 +84,24 @@ public class FacebookInviteServlet extends HttpServlet
             log.warning("Failed to output facebook invite page.", e);
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
+        }
+    }
+
+    @Override
+    protected void doPost (HttpServletRequest req, HttpServletResponse rsp)
+        throws ServletException, IOException
+    {
+        int memberId = getMemberId(req, rsp);
+        if (memberId == 0) {
+            return;
+        }
+
+        if (req.getRequestURI().equals("/fbinvite/done")) {
+            logSentInvites(req, memberId);
+            outputCloseWindowPage(rsp);
+
+        } else {
+            rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
@@ -119,13 +119,13 @@ public class FacebookInviteServlet extends HttpServlet
             .put("gameId", String.valueOf(gameId))
             .put("acceptPath", DeploymentConfig.serverURL + "#" + 
                 Pages.makeToken(Pages.WORLD, acceptPath))
-            .put("acceptLabel", "Come Play " + gameName)
-            .put("action", DeploymentConfig.serverURL + "fbinvite/done")
-            .put("message", "Come And Play")
+            .put("acceptLabel", "Play " + gameName)
+            .put("action", DeploymentConfig.serverURL + "fbinvite/done?gameId=" + gameId)
+            .put("message", "I'm playing " + gameName + " on Whirled, join me!")
             .put("apiKey", ServerConfig.config.getValue("facebook.api_key", ""))
             .put("formElemId", FORM_TAG_ID)
             .put("gameName", gameName)
-            .put("actionText", "Select some Faceook friends to come play " + gameName + " with you")
+            .put("actionText", "Select some Faceook friends to play " + gameName + " with you.")
             .put("receiverPath", RECEIVER_PATH)
             .build();
 
@@ -168,10 +168,65 @@ public class FacebookInviteServlet extends HttpServlet
         StreamUtil.close(rsp.getOutputStream());
     }
 
+    protected int getMemberId (HttpServletRequest req, HttpServletResponse rsp)
+        throws IOException
+    {
+        // pull out session token from the request header
+        String token = CookieUtil.getCookieValue(req, WebCreds.credsCookie());
+        if (token == null) {
+            rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return 0;
+        }
+
+        // make sure the user is authenticated, and pull out their record object
+        MemberRecord member = _mhelper.getAuthedUser(token);
+        if (member == null) {
+            rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return 0;
+        }
+
+        return member.memberId;
+    }
+
+    protected void logSentInvites (HttpServletRequest req, int memberId)
+    {
+        String ids = req.getParameter("ids[]");
+        log.info("Facebook invite complete", "ids", ids, "method", req.getMethod());
+
+        // null means they pressed skip (not all that relevant for a FB connect app)
+        if (ids == null) {
+            return;
+        }
+
+        int gameId = 0;
+        try {
+            gameId = Integer.parseInt(req.getParameter("gameId"));
+        } catch (Exception e) {
+            log.warning("Failed to get game id of sent invites", e);
+        }
+
+        // count the number of ids (it currently is always just 1)
+        // TODO: why is facebook not giving us the promised comma-separated list of users ids?
+        // http://wiki.developers.facebook.com/index.php/Fb:request-form#POST_Variables
+        int count = 0;
+        if (ids.length() > 0) {
+            for (int pos = 0; pos != -1; ++count) {
+                pos = ids.indexOf(',', pos);
+                if (pos != -1) {
+                    ++pos;
+                }
+            }
+        }
+
+        _logger.facebookGameInvitesSent(gameId, memberId, count);    
+
+    }
+
     // dependencies
     @Inject protected MemberHelper _mhelper;
     @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyEventLogger _logger;
 
     /** The facebook namespace url. */
     protected static final String FBMLNS = "http://www.facebook.com/2008/fbml";

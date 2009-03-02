@@ -278,6 +278,11 @@ public class MsoyEventLogger
         post(new MsoyEvents.WhieldMailGameInviteSent(gameId, inviterId, recipId));
     }
 
+    public void facebookGameInvitesSent (int gameId, int inviterId, int count)
+    {
+        post(new MsoyEvents.FacebookGameInvitesSent(gameId, inviterId, count));
+    }
+
     public void inviteViewed (String inviteId)
     {
         post(new MsoyEvents.InviteViewed(inviteId));

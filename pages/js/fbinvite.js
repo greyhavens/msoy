@@ -53,6 +53,9 @@ function FBParseDom ()
     }
 }
 
+/** Creates a wrapper function that will call a given function after facebook is initialized and
+ *  the user has logged in. FB connect will automatically show a popup offering the user to log in
+ *  if he or she is not already. */
 function FBWithSessionFunction (fnWorker)
 {
     return FBWithInitFunction(function () {
@@ -68,7 +71,7 @@ var FBShowInvite = FBWithSessionFunction(function (inviteData) {
     var elem = document.getElementById(inviteData.formElemId);
     var fbInviteTag = '<fb:serverfbml><script type="text/fbml"><fb:fbml><fb:request-form \
         action="'+ inviteData.action +'" \
-        method="GET" \
+        method="POST" \
         invite="true" \
         type="' + inviteData.gameName + '" \
         content="' + inviteData.message + ' \

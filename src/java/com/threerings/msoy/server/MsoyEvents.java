@@ -428,6 +428,23 @@ public class MsoyEvents
         }
     }
 
+    @Event(name="FacebookGameInvitesSent") // note: do not change this event name
+    public static class FacebookGameInvitesSent implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public int gameId;
+        @Field final public int inviterId;
+        @Field final public int count;
+
+        public FacebookGameInvitesSent (int gameId, int inviterId, int count)
+        {
+            this.timestamp = new Date();
+            this.gameId = gameId;
+            this.inviterId = inviterId;
+            this.count = count;
+        }
+    }
+
     @Event(name="InviteViewed") // note: do not change this event name
     public static class InviteViewed implements MsoyEvent
     {
