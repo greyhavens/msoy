@@ -185,10 +185,21 @@ public class MemberManager
         };
         _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
 
-        // schedule member-related periodic jobs
-        _cronLogic.scheduleEvery(2, new Runnable() {
+        // schedule member-related periodic jobs (note: these run on background threads)
+        _cronLogic.scheduleEvery(1, new Runnable() {
             public void run () {
                 _memberRepo.purgeEntryVectors();
+            }
+        });
+        _cronLogic.scheduleEvery(1, new Runnable() {
+            public void run () {
+                List<Integer> weakIds = _memberRepo.loadExpiredWeakPermaguestIds();
+                if (!weakIds.isEmpty()) {
+                    for (int memberId : weakIds) {
+                        _memberLogic.deleteMember(memberId);
+                    }
+                    log.info("Purged " + weakIds.size() + " expired weak permaguests.");
+                }
             }
         });
     }

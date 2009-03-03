@@ -80,6 +80,7 @@ import com.samskivert.util.Tuple;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberMailUtil;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.all.VizMemberName;
@@ -391,10 +392,8 @@ public class MemberRepository extends DepotRepository
         Where whereClause = new Where(new And(
             new In(MemberRecord.MEMBER_ID, memberIds),
             new Like(new FunctionExp("LOWER", MemberRecord.NAME), "%" + search + "%")));
-
-        return Lists.transform(
-            findAllKeys(MemberRecord.class, false, whereClause),
-            RecordFunctions.<MemberRecord>getIntKey());
+        return Lists.transform(findAllKeys(MemberRecord.class, false, whereClause),
+                               RecordFunctions.<MemberRecord>getIntKey());
     }
 
     /**
@@ -650,26 +649,6 @@ public class MemberRepository extends DepotRepository
                   new Where(EntryVectorRecord.MEMBER_ID, member.memberId));
 
         // TODO: anything else to do in here not handled by the caller?
-    }
-
-    // TODO: remove
-    // TEMP: to support a migration in MsoySceneRepository
-    public void removeAllUsedAvatars (Set<Integer> avatarIds)
-    {
-        for (MemberRecord rec :
-                findAll(MemberRecord.class, CacheStrategy.NONE, new ArrayList<QueryClause>())) {
-            avatarIds.remove(rec.avatarId);
-        }
-    }
-
-    // TODO: remove
-    // TEMP: to support a migration in MsoySceneRepository
-    public void removeAllHomes (Set<Integer> sceneIds)
-    {
-        for (MemberRecord rec :
-                findAll(MemberRecord.class, CacheStrategy.NONE, new ArrayList<QueryClause>())) {
-            sceneIds.remove(rec.homeSceneId);
-        }
     }
 
     /**
@@ -1074,11 +1053,7 @@ public class MemberRepository extends DepotRepository
         clauses.add(new Where(GREETER_FLAG_IS_SET));
         clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION));
         return Lists.transform(findAllKeys(MemberRecord.class, false, clauses),
-            new Function<Key<MemberRecord>, Integer>() {
-                public Integer apply (Key<MemberRecord> key) {
-                    return (Integer)key.getValues()[0];
-                }
-            });
+                               RecordFunctions.<MemberRecord>getIntKey());
     }
 
     /**
@@ -1383,6 +1358,20 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns the member ids of all permaguest accounts that have not logged in in the past 10
+     * days and have not achieved at least level 5.
+     */
+    public List<Integer> loadExpiredWeakPermaguestIds ()
+    {
+        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - WEAK_PERMAGUEST_EXPIRE);
+        And bits = new And(new Like(MemberRecord.ACCOUNT_NAME, PERMA_PATTERN),
+                           new LessThan(MemberRecord.LEVEL, STRONG_PERMAGUEST_LEVEL),
+                           new LessThan(MemberRecord.LAST_SESSION, cutoff));
+        return Lists.transform(findAllKeys(MemberRecord.class, false, new Where(bits)),
+                               RecordFunctions.<MemberRecord>getIntKey());
+    }
+
+    /**
      * Update the expiration time of an existing session. Returns the loaded session or
      * null if none previously existed.
      */
@@ -1495,4 +1484,13 @@ public class MemberRepository extends DepotRepository
 
     /** Period after which we expire entry vector records that are not associated with members. */
     protected static final long ENTRY_VECTOR_EXPIRE = 14 * 24*60*60*1000L;
+
+    /** A "like" pattern that matches permaguest accounts. */
+    protected static final String PERMA_PATTERN = MemberMailUtil.makePermaguestEmail("%");
+
+    /** Period after which we expire "weak" permaguest accounts (those of low level). */
+    protected static final long WEAK_PERMAGUEST_EXPIRE = 10 * 24*60*60*1000L;
+
+    /** A permaguest that fails to achieve this level is considered weak, and purged. */
+    protected static final int STRONG_PERMAGUEST_LEVEL = 5;
 }
