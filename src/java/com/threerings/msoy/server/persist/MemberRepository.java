@@ -59,10 +59,10 @@ import com.samskivert.depot.operator.Conditionals.FullTextMatch;
 import com.samskivert.depot.operator.Conditionals.GreaterThan;
 import com.samskivert.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.depot.operator.Conditionals.In;
+import com.samskivert.depot.operator.Conditionals.IsNull;
+import com.samskivert.depot.operator.Conditionals.LessThan;
 import com.samskivert.depot.operator.Conditionals.Like;
 import com.samskivert.depot.operator.Conditionals.NotEquals;
-
-import com.samskivert.depot.operator.Conditionals;
 
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.Logic.Or;
@@ -154,8 +154,7 @@ public class MemberRepository extends DepotRepository
 
                 // now fill in all missing trackers
                 List<MemberRecord> missing = findAll(
-                    MemberRecord.class, new Where(
-                        new Conditionals.IsNull(MemberRecord.VISITOR_ID)));
+                    MemberRecord.class, new Where(new IsNull(MemberRecord.VISITOR_ID)));
 
                 for (MemberRecord member : missing) {
                     // default visitorId will be based on registration time
@@ -206,6 +205,22 @@ public class MemberRepository extends DepotRepository
         record.vector = vector;
         record.created = new Timestamp(System.currentTimeMillis());
         insert(record);
+    }
+
+    /**
+     * Purges entry vector records that have not become associated with members and are older than
+     * two weeks.
+     */
+    public void purgeEntryVectors ()
+    {
+        Timestamp cutoff = new Timestamp(System.currentTimeMillis() - ENTRY_VECTOR_EXPIRE);
+        int deleted = deleteAll(
+            EntryVectorRecord.class,
+            new Where(new And(new Equals(EntryVectorRecord.MEMBER_ID, 0),
+                              new LessThan(EntryVectorRecord.CREATED, cutoff))));
+        if (deleted > 0) {
+            log.info("Purged " + deleted + " expired entry vector records.");
+        }
     }
 
     /**
@@ -1477,4 +1492,7 @@ public class MemberRepository extends DepotRepository
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";
     protected static final NotEquals GREETER_FLAG_IS_SET = new NotEquals(new Arithmetic.BitAnd(
         MemberRecord.FLAGS, MemberRecord.Flag.GREETER.getBit()), 0);
+
+    /** Period after which we expire entry vector records that are not associated with members. */
+    protected static final long ENTRY_VECTOR_EXPIRE = 14 * 24*60*60*1000L;
 }

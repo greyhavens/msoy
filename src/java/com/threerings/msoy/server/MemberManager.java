@@ -184,6 +184,13 @@ public class MemberManager
             }
         };
         _ppInvalidator.schedule(POP_PLACES_REFRESH_PERIOD, true);
+
+        // schedule member-related periodic jobs
+        _cronLogic.scheduleEvery(2, new Runnable() {
+            public void run () {
+                _memberRepo.purgeEntryVectors();
+            }
+        });
     }
 
     /**
@@ -644,13 +651,13 @@ public class MemberManager
         String complaint, MemberName optTargetName)
     {
         MemberName complainerName = (MemberName) complainer.getVisibleName();
-        
+
         final EventRecord event = new EventRecord();
         event.source = Integer.toString(complainerName.getMemberId());
         event.sourceHandle = complainerName.toString();
         event.status = Event.OPEN;
         event.subject = complaint;
-    
+
         // format and provide the complainer's chat history
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
         StringBuilder chatHistory = new StringBuilder();
@@ -665,12 +672,12 @@ public class MemberManager
             chatHistory.append(": ").append(umsg.message).append('\n');
         }
         event.chatHistory = chatHistory.toString();
-    
+
         if (optTargetName != null) {
             event.targetHandle = optTargetName.toString();
             event.target = Integer.toString(optTargetName.getMemberId());
         }
-    
+
         _invoker.postUnit(new Invoker.Unit("addComplaint") {
             @Override public boolean invoke () {
                 try {
@@ -1080,6 +1087,7 @@ public class MemberManager
     @Inject protected MailSender _mailer;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected SupportLogic _supportLogic;
+    @Inject protected CronLogic _cronLogic;
     @Inject protected BodyManager _bodyMan;
     @Inject protected BadgeManager _badgeMan;
     @Inject protected NotificationManager _notifyMan;
