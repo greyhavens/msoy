@@ -6,7 +6,6 @@ package com.threerings.msoy.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +29,6 @@ import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
-import com.samskivert.depot.Key;
 
 import com.samskivert.depot.PersistenceContext.CacheListener;
 
@@ -394,6 +392,20 @@ public class MemberRepository extends DepotRepository
             new In(MemberRecord.MEMBER_ID, memberIds),
             new Like(new FunctionExp("LOWER", MemberRecord.NAME), "%" + search + "%")));
         return Lists.transform(findAllKeys(MemberRecord.class, false, whereClause),
+                               RecordFunctions.<MemberRecord>getIntKey());
+    }
+
+    /**
+     * Loads ids of member records that have had their last session between two given times. This
+     * can be used, for example, to find all members who have logged in at some point in the last
+     * 30 days but not in the last 2 days.
+     */
+    public List<Integer> findMembersWithLastSessionInRange (long earliest, long latest)
+    {
+        Where where = new Where(new And(
+            new GreaterThan(MemberRecord.LAST_SESSION, new ValueExp(new Date(earliest))),
+            new LessThan(MemberRecord.LAST_SESSION, new ValueExp(new Date(latest)))));
+        return Lists.transform(findAllKeys(MemberRecord.class, false, where),
                                RecordFunctions.<MemberRecord>getIntKey());
     }
 
