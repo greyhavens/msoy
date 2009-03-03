@@ -182,7 +182,7 @@ public class WorldControlBar extends ControlBar
         }
 
         function showParty () :Boolean {
-            return !isInViewer() && !state.embedded;
+            return !isInViewer() && (state.inRoom || state.inAVRGame || !state.embedded);
         }
 
         addButton(musicBtn, showMusic, VOLUME_PRIORITY);
