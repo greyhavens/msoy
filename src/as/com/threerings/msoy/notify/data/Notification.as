@@ -44,6 +44,42 @@ public /* abstract */ class Notification extends SimpleStreamableObject
     }
 
     /**
+     * Get the minimum display time for this notification, in seconds.
+     */
+    public function getMinDisplayTime () :int
+    {
+        switch (getCategory()) {
+        case SYSTEM:
+        case INVITE:
+            return 5;
+
+        default:
+            return 2;
+
+        case LOWEST:
+            return 1;
+        }
+    }
+
+    /**
+     * Get the maximum display time for this notification, in seconds.
+     */
+    public function getMaxDisplayTime () :int
+    {
+        switch (getCategory()) {
+        case SYSTEM: // fall through to invite
+        case INVITE:
+            return 2 * 60; // 2 minutes
+
+        default:
+            return 60;
+
+        case LOWEST:
+            return 10;
+        }
+    }
+
+    /**
      * Get the username of the person who sent/triggered this notification, or null
      * if this notification is not associated with another user.
      */

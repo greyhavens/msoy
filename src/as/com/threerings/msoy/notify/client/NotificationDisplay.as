@@ -143,15 +143,19 @@ public class NotificationDisplay extends HBox
             return;
         }
 
-        _clearTimer.stop();
-        _currentlyAnimating = true;
-        var notification :UIComponent =
-            createDisplay(_pendingNotifications.shift() as Notification);
+        var notif :Notification = Notification(_pendingNotifications.shift());
+        var notification :UIComponent = createDisplay(notif);
         notification.x = _canvas.width;
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
         Tweener.addTween(notification, { x: 0, time: 0.75, transition: "easeoutquart" });
-        Tweener.addTween(notification, { delay: 2, onComplete: function () :void {
+
+        // set up the min/max display times
+        _currentlyAnimating = true;
+        _clearTimer.delay = 1000 * notif.getMaxDisplayTime();
+        _clearTimer.reset();
+        Tweener.addTween(notification, { delay: notif.getMinDisplayTime(),
+            onComplete: function () :void {
                 _currentlyAnimating = false;
                 checkPendingNotifications();
             }
@@ -309,6 +313,6 @@ public class NotificationDisplay extends HBox
     protected var _pendingNotifications :Array = [];
     protected var _currentlyAnimating :Boolean = false;
     protected var _nHistory :NotificationHistoryDisplay;
-    protected var _clearTimer :Timer = new Timer(60*1000, 1);
+    protected var _clearTimer :Timer = new Timer(1, 1);
 }
 }
