@@ -63,6 +63,14 @@ public class RoomsPanel extends FlowPanel
 
     protected void init (WebRoomService.OverviewResult overview)
     {
+        RoomsGrid active = new RoomsGrid();
+        active.setModel(new SimpleDataModel<RoomInfo>(overview.activeRooms), 0);
+        add(new TongueBox(_msgs.activeRooms(), active));
+
+        RoomsGrid cool = new RoomsGrid();
+        cool.setModel(new SimpleDataModel<RoomInfo>(overview.coolRooms), 0);
+        add(new TongueBox(_msgs.coolRooms(), cool));
+
         // give a title to each contest winning room based on its location in the list
         for (int ii = 0; ii < overview.winningRooms.size(); ii++) {
             RoomInfo room = overview.winningRooms.get(ii);
@@ -81,14 +89,6 @@ public class RoomsPanel extends FlowPanel
         RoomsGrid winners = new RoomsGrid();
         winners.setModel(new SimpleDataModel<RoomInfo>(overview.winningRooms), 0);
         add(new TongueBox(_msgs.winningRooms(), winners));
-
-        RoomsGrid active = new RoomsGrid();
-        active.setModel(new SimpleDataModel<RoomInfo>(overview.activeRooms), 0);
-        add(new TongueBox(_msgs.activeRooms(), active));
-
-        RoomsGrid cool = new RoomsGrid();
-        cool.setModel(new SimpleDataModel<RoomInfo>(overview.coolRooms), 0);
-        add(new TongueBox(_msgs.coolRooms(), cool));
     }
 
     protected static class RoomsGrid extends PagedGrid<RoomInfo>
