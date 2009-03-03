@@ -1104,14 +1104,17 @@ public class WorldController extends MsoyController
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
 
         } else if (!isUs) {
-            if (_mctx.getMuteDirector().isMuted(member)) {
-                menuItems.push({ label: Msgs.GENERAL.get("b.unmute"),
-                    callback: _mctx.getMuteDirector().setMuted, arg: [ member, false ] });
-            } else {
+            var muted :Boolean = _mctx.getMuteDirector().isMuted(member);
+            menuItems.push({ label: Msgs.GENERAL.get(muted ? "b.unmute" : "b.mute"),
+                callback: _mctx.getMuteDirector().setMuted, arg: [ member, !muted ] });
+            if (addAvatarItems && (placeCtrl is RoomObjectController)) {
+                RoomObjectController(placeCtrl).addBleepAvatar(member, menuItems);
+            }
+            CommandMenu.addSeparator(menuItems);
+
+            if (!muted) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                                  command: OPEN_CHANNEL, arg: member });
-                menuItems.push({ label: Msgs.GENERAL.get("b.mute"),
-                        callback: _mctx.getMuteDirector().setMuted, arg: [ member, true ] });
             }
             if (!isGuest) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),

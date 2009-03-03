@@ -23,6 +23,8 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.crowd.chat.client.MuteObserver;
 
+import com.threerings.flex.CommandMenu;
+
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.BootablePlaceController;
@@ -126,6 +128,16 @@ public class RoomObjectController extends RoomController
         }
     }
 
+    public function addBleepAvatar (name :MemberName, menuItems :Array) :void
+    {
+        const avatar :MemberSprite = _roomObjectView.getOccupantByName(name) as MemberSprite;
+        if (avatar != null && avatar.isBleepable()) {
+            var key :String = avatar.isBleeped() ? "b.unbleep_avatar" : "b.bleep_avatar";
+            menuItems.push({ label: Msgs.GENERAL.get(key),
+                             callback: avatar.toggleBleeped, arg: _wdctx });
+        }
+    }
+
     /**
      * Add to the specified menu, any room/avatar related menu items.
      */
@@ -205,8 +217,7 @@ public class RoomObjectController extends RoomController
                     }
 
                     if (flagItems.length > 0) {
-                        menuItems.push({ type: "separator"},
-                                       { label: Msgs.GENERAL.get("l.item_menu", kind),
+                        menuItems.push({ label: Msgs.GENERAL.get("l.item_menu", kind),
                                          children: flagItems });
                     }
                 }
@@ -469,8 +480,14 @@ public class RoomObjectController extends RoomController
 
         menuItems.push({ label: Msgs.GENERAL.get(isMuted ? "b.unmute_pet" : "b.mute_pet"),
             callback: _wdctx.getMuteDirector().setMuted, arg: [ occInfo.username, !isMuted ] });
+        if (pet.isBleepable()) {
+            var key :String = pet.isBleeped() ? "b.unbleep_pet" : "b.bleep_pet";
+            menuItems.push({ label: Msgs.GENERAL.get(key),
+                             callback: pet.toggleBleeped, arg: _wdctx });
+        }
 
         if (isPetOwner) {
+            CommandMenu.addSeparator(menuItems);
             var isWalking :Boolean = (memObj.walkingId != 0);
             menuItems.push(
             { label: Msgs.GENERAL.get("b.order_pet_stay"),
@@ -481,6 +498,7 @@ public class RoomObjectController extends RoomController
               command: ORDER_PET, arg: [ petId, Pet.ORDER_GO_HOME ] });
         }
         if (isPetOwner || canManageRoom()) {
+            CommandMenu.addSeparator(menuItems);
             // and any old room manager can put the pet to sleep
             menuItems.push({ label: Msgs.GENERAL.get("b.order_pet_sleep"),
                 command: ORDER_PET, arg: [ petId, Pet.ORDER_SLEEP ] });
