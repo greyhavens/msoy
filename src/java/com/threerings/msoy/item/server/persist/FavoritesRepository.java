@@ -17,10 +17,10 @@ import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
-import com.samskivert.depot.operator.SQLOperator;
 import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Conditionals.In;
 import com.samskivert.depot.operator.Logic.And;
+import com.samskivert.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -109,6 +109,16 @@ public class FavoritesRepository extends DepotRepository
     public void clearFavorite (int memberId, byte itemType, int catalogId)
     {
         delete(FavoriteItemRecord.class, FavoriteItemRecord.getKey(memberId, itemType, catalogId));
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(FavoriteItemRecord.class,
+                  new Where(new In(FavoriteItemRecord.MEMBER_ID, memberIds)));
     }
 
     @Override // from DepotRepository

@@ -5,6 +5,7 @@ package com.threerings.msoy.comment.server.persist;
 
 import java.sql.Timestamp;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,16 +19,18 @@ import com.samskivert.depot.DatabaseException;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.DuplicateKeyException;
 import com.samskivert.depot.Key;
+import com.samskivert.depot.KeySet;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
-import com.samskivert.depot.operator.Arithmetic;
-import com.samskivert.depot.expression.ColumnExp;
-import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.clause.FromOverride;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.QueryClause;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.expression.ColumnExp;
+import com.samskivert.depot.expression.SQLExpression;
+import com.samskivert.depot.operator.Arithmetic;
+import com.samskivert.depot.operator.Conditionals;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -202,6 +205,27 @@ public class CommentRepository extends DepotRepository
                   new Where(CommentRatingRecord.ENTITY_TYPE, entityType,
                             CommentRatingRecord.ENTITY_ID, entityId,
                             CommentRatingRecord.POSTED, postedStamp));
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging *
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        // delete all ratings made by these members
+        deleteAll(CommentRatingRecord.class,
+                  new Where(new Conditionals.In(CommentRatingRecord.MEMBER_ID, memberIds)));
+
+        // load up the ids of all comments made by these members
+        List<Key<CommentRecord>> keys = findAllKeys(
+            CommentRecord.class, false,
+            new Where(new Conditionals.In(CommentRecord.MEMBER_ID, memberIds)));
+
+        // delete those comments
+        deleteAll(CommentRecord.class, KeySet.newKeySet(CommentRecord.class, keys));
+
+        // TODO: delete all rating records made on the above comments
     }
 
     @Override // from DepotRepository

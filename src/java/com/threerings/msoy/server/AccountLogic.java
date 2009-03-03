@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.util.Calendar;
+import java.util.Collections;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -375,6 +376,7 @@ public class AccountLogic
             }
             if (stalerec != null) {
                 try {
+                    _memberRepo.purgeMembers(Collections.singletonList(stalerec.memberId));
                     _memberRepo.deleteMember(stalerec);
                 } catch (RuntimeException e) {
                     log.warning("Failed to rollback MemberRecord creation", "mrec", stalerec, e);

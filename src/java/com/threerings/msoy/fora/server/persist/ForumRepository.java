@@ -4,6 +4,7 @@
 package com.threerings.msoy.fora.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import com.samskivert.depot.expression.ColumnExp;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic.*;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Conditionals.*;
 import com.samskivert.depot.operator.Logic.*;
 
@@ -383,6 +385,17 @@ public class ForumRepository extends DepotRepository
         record.lastReadPostId = lastReadPostId;
         record.lastReadPostIndex = lastReadPostIndex;
         store(record);
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts. NOTE: members' posts and threads are not deleted. Those live on into
+     * glorious eternity.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(ReadTrackingRecord.class,
+                  new Where(new Conditionals.In(ReadTrackingRecord.MEMBER_ID, memberIds)));
     }
 
     @Override // from DepotRepository

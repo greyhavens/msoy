@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.avrg.server.persist;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import com.google.inject.Singleton;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -73,6 +75,16 @@ public class AVRGameRepository extends DepotRepository
     public void deletePlayerProperty (int gameId, int memberId, String key)
     {
         delete(PlayerGameStateRecord.class, PlayerGameStateRecord.getKey(gameId, memberId, key));
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(PlayerGameStateRecord.class,
+                  new Where(new Conditionals.In(PlayerGameStateRecord.MEMBER_ID, memberIds)));
     }
 
     @Override

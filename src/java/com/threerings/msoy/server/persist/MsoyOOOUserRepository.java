@@ -4,9 +4,12 @@
 package com.threerings.msoy.server.persist;
 
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
 
 import java.sql.Date;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -14,12 +17,14 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.clause.Join;
 import com.samskivert.depot.clause.Where;
 import com.samskivert.depot.operator.Conditionals.Equals;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Logic.And;
 import com.samskivert.depot.operator.SQLOperator;
 
 import com.samskivert.servlet.user.User;
 import com.samskivert.servlet.user.UserUtil;
 
+import com.threerings.msoy.server.persist.RecordFunctions;
 import com.threerings.user.OOOUser;
 import com.threerings.user.depot.DepotUserRepository;
 import com.threerings.user.depot.HistoricalUserRecord;
@@ -54,30 +59,6 @@ public class MsoyOOOUserRepository extends DepotUserRepository
         deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID, userId));
     }
 
-    // from SupportRepository
-    public OOOUser loadUserByAccountName (String accountName)
-    {
-        int memberId;
-        try {
-            memberId = Integer.valueOf(accountName);
-        } catch (NumberFormatException nfe) {
-            return null;
-        }
-        SQLOperator joinCondition = new And(
-                new Equals(MemberRecord.MEMBER_ID, memberId),
-                new Equals(OOOUserRecord.EMAIL, MemberRecord.ACCOUNT_NAME));
-        return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));
-    }
-
-    // from SupportRepository
-    public User loadUserBySession (String sessionKey)
-    {
-        SQLOperator joinCondition = new And(
-                new Equals(OOOUserRecord.USER_ID, SessionRecord.MEMBER_ID),
-                new Equals(SessionRecord.TOKEN, sessionKey));
-        return toUser(load(OOOUserRecord.class, new Join(SessionRecord.class, joinCondition)));
-    }
-
     /**
      * Creates a new session for the specified user and returns the randomly generated session
      * identifier for that session.  If a session entry already exists for the specified user it
@@ -108,6 +89,48 @@ public class MsoyOOOUserRepository extends DepotUserRepository
             store(session);
         }
         return session.token;
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<String> emails)
+    {
+        List<Integer> userIds = Lists.transform(
+            findAllKeys(OOOUserRecord.class, false,
+                        new Where(new Conditionals.In(OOOUserRecord.EMAIL, emails))),
+            RecordFunctions.<OOOUserRecord>getIntKey());
+        deleteAll(OOOUserRecord.class,
+                  new Where(new Conditionals.In(OOOUserRecord.USER_ID, userIds)));
+        deleteAll(HistoricalUserRecord.class,
+                  new Where(new Conditionals.In(HistoricalUserRecord.USER_ID, userIds)));
+        deleteAll(UserIdentRecord.class,
+                  new Where(new Conditionals.In(UserIdentRecord.USER_ID, userIds)));
+    }
+
+    // from SupportRepository
+    public OOOUser loadUserByAccountName (String accountName)
+    {
+        int memberId;
+        try {
+            memberId = Integer.valueOf(accountName);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
+        SQLOperator joinCondition = new And(
+                new Equals(MemberRecord.MEMBER_ID, memberId),
+                new Equals(OOOUserRecord.EMAIL, MemberRecord.ACCOUNT_NAME));
+        return toUser(load(OOOUserRecord.class, new Join(MemberRecord.class, joinCondition)));
+    }
+
+    // from SupportRepository
+    public User loadUserBySession (String sessionKey)
+    {
+        SQLOperator joinCondition = new And(
+                new Equals(OOOUserRecord.USER_ID, SessionRecord.MEMBER_ID),
+                new Equals(SessionRecord.TOKEN, sessionKey));
+        return toUser(load(OOOUserRecord.class, new Join(SessionRecord.class, joinCondition)));
     }
 
     // from SupportRepository

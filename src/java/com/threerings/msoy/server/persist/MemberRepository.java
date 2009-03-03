@@ -637,31 +637,39 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Deletes the specified member and our associated managed records from the repository.
+     * Deletes <em>only</em> the supplied member record. You should not call this method, use
+     * MemberLogic.deleteMember().
      */
     public void deleteMember (MemberRecord member)
     {
         delete(member);
+    }
 
-        // delete a whole heap of auxiliary stuffs
+    /**
+     * Deletes all data associated with the supplied member (except their MemberRecord). This is
+     * done as a part of purging a member's account.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
         deleteAll(ExternalMapRecord.class,
-                  new Where(ExternalMapRecord.MEMBER_ID, member.memberId));
+                  new Where(new In(ExternalMapRecord.MEMBER_ID, memberIds)));
         deleteAll(SessionRecord.class,
-                  new Where(SessionRecord.MEMBER_ID, member.memberId));
+                  new Where(new In(SessionRecord.MEMBER_ID, memberIds)));
         deleteAll(MemberExperienceRecord.class,
-                  new Where(MemberExperienceRecord.MEMBER_ID, member.memberId));
+                  new Where(new In(MemberExperienceRecord.MEMBER_ID, memberIds)));
         deleteAll(MemberWarningRecord.class,
-                  new Where(MemberWarningRecord.MEMBER_ID, member.memberId));
+                  new Where(new In(MemberWarningRecord.MEMBER_ID, memberIds)));
         deleteAll(AffiliateRecord.class,
-                  new Where(AffiliateRecord.MEMBER_ID, member.memberId));
+                  new Where(new In(AffiliateRecord.MEMBER_ID, memberIds)));
         deleteAll(InviterRecord.class,
-                  new Where(InviterRecord.MEMBER_ID, member.memberId));
+                  new Where(new In(InviterRecord.MEMBER_ID, memberIds)));
         deleteAll(CharityRecord.class,
-                  new Where(CharityRecord.MEMBER_ID, member.memberId));
+                  new Where(new In(CharityRecord.MEMBER_ID, memberIds)));
         deleteAll(EntryVectorRecord.class,
-                  new Where(EntryVectorRecord.MEMBER_ID, member.memberId));
-
-        // TODO: anything else to do in here not handled by the caller?
+                  new Where(new In(EntryVectorRecord.MEMBER_ID, memberIds)));
+        deleteAll(FriendRecord.class,
+                  new Where(new Or(new In(FriendRecord.INVITER_ID, memberIds),
+                                   new In(FriendRecord.INVITEE_ID, memberIds))));
     }
 
     /**
@@ -1148,17 +1156,6 @@ public class MemberRepository extends DepotRepository
         // TODO: migrate existing friend records to (firstId<secondId) format then can do one delete
         delete(FriendRecord.class, FriendRecord.getKey(memberId, otherId));
         delete(FriendRecord.class, FriendRecord.getKey(otherId, memberId));
-    }
-
-    /**
-     * Delete all the friend relations involving the specified memberId, usually because that
-     * member is being deleted.
-     */
-    public void deleteAllFriends (int memberId)
-    {
-        deleteAll(FriendRecord.class,
-                  new Where(new Or(new Equals(FriendRecord.INVITER_ID, memberId),
-                                   new Equals(FriendRecord.INVITEE_ID, memberId))));
     }
 
     /**

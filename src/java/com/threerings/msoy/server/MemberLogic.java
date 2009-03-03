@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -21,6 +22,38 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.whirled.game.server.persist.GameCookieRepository;
+
+import com.threerings.msoy.peer.server.MemberNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.web.gwt.MemberCard;
+import com.threerings.msoy.web.gwt.ServiceException;
+
+import com.threerings.msoy.admin.gwt.ABTest;
+import com.threerings.msoy.admin.server.persist.ABTestRecord;
+import com.threerings.msoy.admin.server.persist.ABTestRepository;
+import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.badge.server.BadgeLogic;
+import com.threerings.msoy.badge.server.persist.BadgeRepository;
+import com.threerings.msoy.comment.server.persist.CommentRepository;
+import com.threerings.msoy.fora.server.persist.ForumRepository;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.FavoritesRepository;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.mail.server.persist.MailRepository;
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.persist.GalleryRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.RoomCodes;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
+
 import com.threerings.msoy.data.AVRGameNavItemData;
 import com.threerings.msoy.data.BasicNavItemData;
 import com.threerings.msoy.data.HomePageItem;
@@ -37,28 +70,7 @@ import com.threerings.msoy.data.all.VizMemberName;
 import com.threerings.msoy.server.persist.MemberExperienceRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.admin.gwt.ABTest;
-import com.threerings.msoy.admin.server.persist.ABTestRecord;
-import com.threerings.msoy.admin.server.persist.ABTestRepository;
-import com.threerings.msoy.badge.data.all.InProgressBadge;
-import com.threerings.msoy.badge.server.BadgeLogic;
-import com.threerings.msoy.game.server.persist.MsoyGameRepository;
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.peer.server.MemberNodeAction;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.data.RoomCodes;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
-import com.threerings.msoy.web.gwt.MemberCard;
-import com.threerings.msoy.web.gwt.ServiceException;
+import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -417,66 +429,48 @@ public class MemberLogic
     }
 
     /**
-     * Delete all traces of a member, with some exceptions.
-     * TODO: implement this
+     * Delete all traces of the specified members, with some exceptions. If a member is a
+     * permaguest, then all traces are indeed deleted. If they are registered member, then some
+     * traces of the member are retained to allow certain parts of their participation in Whirled
+     * to remain (forum posts, listed items), but their account is deactivated and most of their
+     * crap is deleted.
      */
-    public void deleteMember (int memberId)
+    public void deleteMembers (Collection<Integer> memberIds)
     {
-        _memberRepo.deleteMember(_memberRepo.loadMember(memberId));
+        // make sure all of the supplied ids are actually members and grab their account names
+        List<Integer> deadIds = Lists.newArrayList();
+        List<String> deadNames = Lists.newArrayList();
+        for (MemberRecord mrec : _memberRepo.loadMembers(memberIds)) {
+            deadIds.add(mrec.memberId);
+            deadNames.add(mrec.accountName);
+        }
 
-        // Strategy: report if the member has done anything that may be worthwhile and/or annoying
-        // to delete that admin/support can delete manually. Once all of those are clear, move on
-        // to the deletion of the rest of the stuff.
+        // purge their authentication information
+        _oooAuthRepo.purgeMembers(deadNames);
 
-        // Records that prevent the member deletion
-        //    ForumThreadRecord
-        //    ForumMessageRecord
-        //    GroupRecord
-        //    CatalogRecord
-        //    GameDetailRecord
+        // delete everything that we can unequivocally delete
+        _memberRepo.purgeMembers(deadIds);
+        _avrGameRepo.purgeMembers(deadIds);
+        _badgeRepo.purgeMembers(deadIds);
+        _commentRepo.purgeMembers(deadIds);
+        _faveRepo.purgeMembers(deadIds);
+        _feedRepo.purgeMembers(deadIds);
+        _forumRepo.purgeMembers(deadIds);
+        _galleryRepo.purgeMembers(deadIds);
+        _gcookRepo.purgePlayers(deadIds);
+        _groupRepo.purgeMembers(deadIds);
+        //    ItemListInfoRecord - to be removed?
+        _mailRepo.purgeMembers(deadIds);
+
 
         // Records that refer directly to a member id (there may be sub-records that refer
         // indirectly):
-        //    AffiliateMapRecord
-        //    PlayerGameStateRecord
-        //    EarnedBadgeRecord
-        //    InProgressBadgeRecord
-        //    CommentRecord
-        //    CommentRatingRecord
-        //    OOOUserRecord
-        //    UserIdentRecord
-        //    TaintedIdentRecord?
-        //    BannedIdentRecord?
-        //    HistoricalUserRecord?
-        //    FavoriteItemRecord
-        //    FriendFeedMessageRecord
-        //    SelfFeedMessageRecord
-        //    ReadTrackingRecord
-        //    GalleryRecord
-        //    GameCookieRecord
-        //    GroupMembershipRecord
-        //    IssueRecord
-        //    ItemFlagRecord
-        //    ItemListInfoRecord - to be removed?
         //    ItemRepository (audio, avatar, decor, document, furniture, game, item pack, level
         //         pack, pet, photo, prize, prop, toy, trophy source, video) x (item, rating,
         //         catalog, clone records)
-        //    ConversationRecord
-        //    ConvMessageRecord
-        //    ParticipantRecord
-        //    ConversationComplaintRecord
         //    EarnedMedalRecord
-        //    FriendRecord
-        //    SessionRecord
         //    InvitationRecord
-        //    InviterRecord
-        //    ExternalMapRecord
-        //    MemberWarningRecord
-        //    AffiliateRecord
         //    ReferralRecord - to be removed
-        //    MemberExperienceRecord - not active
-        //    CharityRecord - meh
-        //    EntryVectorRecord
         //    GameInvitationRecord
         //    MemoriesRecord - part of item deletion
         //    MemberAccountRecord
@@ -496,6 +490,19 @@ public class MemberLogic
         //    EventRecord
         //    MemberActionLogRecord
         //    MemberActionSummaryRecord
+
+//         _memberRepo.deleteMember(_memberRepo.loadMember(memberId));
+
+        // Strategy: report if the member has done anything that may be worthwhile and/or annoying
+        // to delete that admin/support can delete manually. Once all of those are clear, move on
+        // to the deletion of the rest of the stuff.
+
+        // Records that prevent the member deletion
+        //    ForumThreadRecord
+        //    ForumMessageRecord
+        //    GroupRecord
+        //    CatalogRecord
+        //    GameDetailRecord
 
 
         // OLD TODO comment from MemberRepository:
@@ -741,7 +748,7 @@ public class MemberLogic
         @Inject protected transient FriendManager _friendMan;
     }
 
-    // dependencies
+    // general dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MemberManager _memberMan;
@@ -754,6 +761,17 @@ public class MemberLogic
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyGameRepository _msoyGameRepo;
     @Inject protected GameRepository _gameRepo;
+
+    // member purging dependencies
+    @Inject protected AVRGameRepository _avrGameRepo;
+    @Inject protected BadgeRepository _badgeRepo;
+    @Inject protected CommentRepository _commentRepo;
+    @Inject protected FavoritesRepository _faveRepo;
+    @Inject protected ForumRepository _forumRepo;
+    @Inject protected GalleryRepository _galleryRepo;
+    @Inject protected GameCookieRepository _gcookRepo;
+    @Inject protected MailRepository _mailRepo;
+    @Inject protected MsoyOOOUserRepository _oooAuthRepo;
 
     /** The whirled tour home page item. */
     protected static final HomePageItem EXPLORE_ITEM = new HomePageItem(

@@ -195,9 +195,7 @@ public class MemberManager
             public void run () {
                 List<Integer> weakIds = _memberRepo.loadExpiredWeakPermaguestIds();
                 if (!weakIds.isEmpty()) {
-                    for (int memberId : weakIds) {
-                        _memberLogic.deleteMember(memberId);
-                    }
+                    _memberLogic.deleteMembers(weakIds);
                     log.info("Purged " + weakIds.size() + " expired weak permaguests.");
                 }
             }

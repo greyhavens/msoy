@@ -20,9 +20,6 @@ import com.threerings.msoy.person.gwt.Gallery;
 /**
  * This represents just the gallery meta data, id and name, needed by {@link
  * GalleryRepository#loadGalleries}, etc.
- *
- * @author mdb
- * @author mjensen
  */
 @Entity @Computed(shadowOf=GalleryRecord.class)
 public class GalleryInfoRecord extends PersistentRecord

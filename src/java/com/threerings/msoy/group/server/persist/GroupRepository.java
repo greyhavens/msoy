@@ -34,6 +34,7 @@ import com.samskivert.depot.expression.EpochSeconds;
 import com.samskivert.depot.expression.SQLExpression;
 import com.samskivert.depot.expression.ValueExp;
 import com.samskivert.depot.operator.Arithmetic;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Conditionals.FullTextMatch;
 import com.samskivert.depot.operator.Conditionals.In;
@@ -500,6 +501,18 @@ public class GroupRepository extends DepotRepository
         }
 
         return rec.homeSceneId;
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(GroupMembershipRecord.class,
+                  new Where(new Conditionals.In(GroupMembershipRecord.MEMBER_ID, memberIds)));
+        // note: if these members were the last manager of any groups, they are left high and dry;
+        // given that we only purge permaguests currently, this is a non-issue
     }
 
     protected GroupMembershipRecord loadMembership (int groupId, int memberId)

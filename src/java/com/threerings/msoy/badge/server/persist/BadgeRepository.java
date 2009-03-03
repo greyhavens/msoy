@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.badge.server.persist;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import com.samskivert.depot.DataMigration;
 import com.samskivert.depot.DepotRepository;
 import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.clause.Limit;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
@@ -106,6 +108,18 @@ public class BadgeRepository extends DepotRepository
     {
         return (delete(InProgressBadgeRecord.class,
                        InProgressBadgeRecord.getKey(memberId, badgeCode)) > 0);
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(EarnedBadgeRecord.class,
+                  new Where(new Conditionals.In(EarnedBadgeRecord.MEMBER_ID, memberIds)));
+        deleteAll(InProgressBadgeRecord.class,
+                  new Where(new Conditionals.In(InProgressBadgeRecord.MEMBER_ID, memberIds)));
     }
 
     @Override

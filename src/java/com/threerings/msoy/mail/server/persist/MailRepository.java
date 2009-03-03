@@ -4,6 +4,7 @@
 package com.threerings.msoy.mail.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -272,7 +273,7 @@ public class MailRepository extends DepotRepository
     /**
      * Loads all complaints about a conversation.
      */
-    public List<ConversationComplaintRecord> loadComplaints(int convoId)
+    public List<ConversationComplaintRecord> loadComplaints (int convoId)
     {
         return findAll(ConversationComplaintRecord.class,
             new Where(ConversationComplaintRecord.CONVERSATION_ID, convoId));
@@ -287,6 +288,22 @@ public class MailRepository extends DepotRepository
         complaint.complainerId = complainerId;
         complaint.conversationId = convoId;
         insert(complaint);
+    }
+
+    /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        // note: this may leave some stale conversations around if these members were the only one
+        // who had participant records for their convos; since we only purge permaguests (who can't
+        // converse) this is a non-issue for now
+        deleteAll(ParticipantRecord.class,
+                  new Where(new Conditionals.In(ParticipantRecord.PARTICIPANT_ID, memberIds)));
+        deleteAll(ConversationComplaintRecord.class,
+                  new Where(new Conditionals.In(ConversationComplaintRecord.COMPLAINER_ID,
+                                                memberIds)));
     }
 
     @Override // from DepotRepository

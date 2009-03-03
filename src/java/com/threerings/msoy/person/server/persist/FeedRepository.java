@@ -216,6 +216,18 @@ public class FeedRepository extends DepotRepository
     }
 
     /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(FriendFeedMessageRecord.class,
+                  new Where(new Conditionals.In(FriendFeedMessageRecord.ACTOR_ID, memberIds)));
+        deleteAll(SelfFeedMessageRecord.class,
+                  new Where(new Conditionals.In(SelfFeedMessageRecord.TARGET_ID, memberIds)));
+    }
+
+    /**
      * Helper function for {@link #loadMemberFeed}.
      */
     protected void loadFeedMessages (List<FeedMessageRecord> messages,

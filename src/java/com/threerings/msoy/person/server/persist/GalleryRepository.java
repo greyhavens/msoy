@@ -4,11 +4,11 @@
 package com.threerings.msoy.person.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.threerings.msoy.person.gwt.Gallery;
-
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -17,15 +17,16 @@ import com.samskivert.depot.PersistenceContext;
 import com.samskivert.depot.PersistentRecord;
 import com.samskivert.depot.clause.OrderBy;
 import com.samskivert.depot.clause.Where;
+import com.samskivert.depot.operator.Conditionals;
 import com.samskivert.depot.operator.Conditionals.Equals;
 import com.samskivert.depot.operator.Conditionals.IsNull;
 import com.samskivert.depot.operator.Logic.And;
 
+import com.threerings.msoy.person.gwt.Gallery;
+import com.threerings.msoy.server.persist.RecordFunctions;
+
 /**
  * Provides access to gallery persistence.
- *
- * @author mdb
- * @author mjensen
  */
 @Singleton
 public class GalleryRepository extends DepotRepository
@@ -102,6 +103,16 @@ public class GalleryRepository extends DepotRepository
     }
 
     /**
+     * Deletes all data associated with the supplied members. This is done as a part of purging
+     * member accounts.
+     */
+    public void purgeMembers (Collection<Integer> memberIds)
+    {
+        deleteAll(GalleryRecord.class,
+                  new Where(new Conditionals.In(GalleryRecord.OWNER_ID, memberIds)));
+    }
+
+    /**
      * Returns the current time as a {@link Timestamp}.
      */
     protected static Timestamp currentTimestamp ()
@@ -113,6 +124,5 @@ public class GalleryRepository extends DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(GalleryRecord.class);
-        classes.add(GalleryInfoRecord.class);
     }
 }
