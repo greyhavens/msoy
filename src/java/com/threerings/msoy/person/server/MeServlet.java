@@ -5,11 +5,9 @@ package com.threerings.msoy.person.server;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -24,7 +22,6 @@ import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.group.server.persist.EarnedMedalRecord;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.group.server.persist.MedalRecord;
@@ -44,19 +41,13 @@ import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 
-import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MyWhirledData.FeedCategory;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.PassportData;
-import com.threerings.msoy.person.server.persist.FeedMessageRecord;
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.server.persist.FriendFeedMessageRecord;
-import com.threerings.msoy.person.server.persist.GroupFeedMessageRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.person.util.FeedMessageType.Category;
-import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.ContestRecord;
 import com.threerings.msoy.server.persist.ContestRepository;
@@ -70,7 +61,6 @@ import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.RPCProfiler;
-import com.threerings.msoy.web.server.ServletLogic;
 
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
@@ -114,7 +104,8 @@ public class MeServlet extends MsoyServiceServlet
         }
 
         // load their feed
-        data.feed = loadFeedCategories(mrec, friendIds, FeedCategory.DEFAULT_COUNT, null);
+        data.feed = _feedLogic.loadFeedCategories(
+            mrec, friendIds, FeedCategory.DEFAULT_COUNT, null);
 
         if (PROFILING_ENABLED) {
             _profiler.swap("greeters");
@@ -149,7 +140,7 @@ public class MeServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
         int itemsPerCategory = fullSize ? FeedCategory.FULL_COUNT : FeedCategory.DEFAULT_COUNT;
-        List<FeedCategory> categories = loadFeedCategories(
+        List<FeedCategory> categories = _feedLogic.loadFeedCategories(
             mrec, _memberRepo.loadFriendIds(mrec.memberId), itemsPerCategory,
             Category.values()[category]);
         return (categories.size() > 0) ? categories.get(0) : null;
@@ -322,119 +313,6 @@ public class MeServlet extends MsoyServiceServlet
         _profileRepo.updateProfileAward(mrec.memberId, badgeCode, medalId);
     }
 
-    /**
-     * Pull up a list of news feed events for the current member, grouped by category. Only
-     * itemsPerCategory items will be returned, or in the case of aggregation only items from the
-     * first itemsPerCategory actors.
-     *
-     * @param category If null, load all categories, otherwise only load that one.
-     */
-    protected List<FeedCategory> loadFeedCategories (
-        MemberRecord mrec, IntSet friendIds, int itemsPerCategory, Category onlyCategory)
-        throws ServiceException
-    {
-        int feedDays = MAX_PERSONAL_FEED_CUTOFF_DAYS;
-
-        // if we're loading all categories, adjust the number of days of data we load based on how
-        // many friends this member has
-        if (onlyCategory == null) {
-            feedDays = Math.max(
-                MIN_PERSONAL_FEED_CUTOFF_DAYS, feedDays - friendIds.size() / FRIENDS_PER_DAY);
-        }
-
-        // fetch all messages for the member's friends & groups from the past feedDays days
-        Set<Integer> groupMemberships = Sets.newHashSet(Iterables.transform(
-            _groupRepo.getMemberships(mrec.memberId), GroupMembershipRecord.TO_GROUP_ID));
-        List<FeedMessageRecord> allRecords = Lists.newArrayList();
-        long now = System.currentTimeMillis();
-        _feedRepo.loadPersonalFeed(
-            mrec.memberId, allRecords, friendIds, now - feedDays * 24*60*60*1000L);
-        // TODO: use different cutoffs for different groupMemberships.size()?
-        _feedRepo.loadGroupFeeds(
-            allRecords, groupMemberships, now - GROUP_FEED_CUTOFF_DAYS * 24*60*60*1000L);
-
-        // sort all the records by date
-        Collections.sort(allRecords, new Comparator<FeedMessageRecord>() {
-            public int compare (FeedMessageRecord f1, FeedMessageRecord f2) {
-                return f2.posted.compareTo(f1.posted);
-            }
-        });
-
-        List<FeedMessageRecord> allChosenRecords = Lists.newArrayList();
-        Map<Category, List<String>> keysByCategory = Maps.newHashMap();
-
-        // limit the feed messages to itemsPerCategory per category
-        for (FeedMessageRecord record : allRecords) {
-            Category category = FeedMessageType.getCategory(record.type);
-
-            // skip all categories except the one we care about
-            if (onlyCategory != null && category != onlyCategory) {
-                continue;
-            }
-
-            List<String> typeKeys = keysByCategory.get(category);
-            if (typeKeys == null) {
-                typeKeys = Lists.newArrayList();
-                keysByCategory.put(category, typeKeys);
-            }
-
-            String key;
-            if (record.type == FeedMessageType.FRIEND_GAINED_LEVEL.getCode()) {
-                // all levelling records are returned, they get aggregated into a single item
-                key = "";
-            } else if (record.type == FeedMessageType.GROUP_UPDATED_ROOM.getCode()) {
-                // include room updates from the first itemsPerCategory groups
-                key = "group_" + ((GroupFeedMessageRecord)record).groupId + "";
-            } else if (record.type == FeedMessageType.SELF_ROOM_COMMENT.getCode()) {
-                // include comments on the first itemsPerCategory rooms and/or items
-                key = "room_" + record.data.split("\t")[0];
-            } else if (record.type == FeedMessageType.SELF_ITEM_COMMENT.getCode()) {
-                // include comments on the first itemsPerCategory rooms and/or items
-                key = "item_" + record.data.split("\t")[1];
-            } else if (record instanceof FriendFeedMessageRecord) {
-                // include friend activities from the first itemsPerCategory friends
-                key = "member_" + ((FriendFeedMessageRecord)record).actorId + "";
-            } else {
-                // include the first itemsPerCategory non-friend messages in each category
-                key = typeKeys.size() + "";
-            }
-
-            if (typeKeys.contains(key)) {
-                allChosenRecords.add(record);
-            } else if (typeKeys.size() < itemsPerCategory) {
-                allChosenRecords.add(record);
-                typeKeys.add(key);
-            }
-        }
-
-        // resolve all the chosen messages at the same time
-        List<FeedMessage> allChosenMessages = _servletLogic.resolveFeedMessages(allChosenRecords);
-
-        // group up the resolved messages by category
-        List<FeedCategory> feed = Lists.newArrayList();
-        for (Category category : FeedMessageType.Category.values()) {
-
-            // pull out messages of the right category (combine global & group announcements)
-            List<FeedMessage> typeMessages = Lists.newArrayList();
-            for (FeedMessage message : allChosenMessages) {
-                if (FeedMessageType.getCategory(message.type) == category) {
-                    typeMessages.add(message);
-                }
-            }
-            allChosenMessages.removeAll(typeMessages);
-
-            if (typeMessages.size() == 0) {
-                continue;
-            }
-
-            FeedCategory feedCategory = new FeedCategory();
-            feedCategory.category = category.ordinal();
-            feedCategory.messages = typeMessages.toArray(new FeedMessage[typeMessages.size()]);
-            feed.add(feedCategory);
-        }
-        return feed;
-    }
-
     /** Helper for loadBadges */
     protected static class FilterByCategory implements Predicate<Badge>
     {
@@ -469,11 +347,10 @@ public class MeServlet extends MsoyServiceServlet
     // our dependencies
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected ServletLogic _servletLogic;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected MedalRepository _medalRepo;
     @Inject protected ProfileRepository _profileRepo;
-    @Inject protected FeedRepository _feedRepo;
     @Inject protected PromotionRepository _promoRepo;
     @Inject protected ContestRepository _contestRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
@@ -483,8 +360,4 @@ public class MeServlet extends MsoyServiceServlet
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int MAX_GREETERS_TO_SHOW = 10;
-    protected static final int MAX_PERSONAL_FEED_CUTOFF_DAYS = 7;
-    protected static final int MIN_PERSONAL_FEED_CUTOFF_DAYS = 2;
-    protected static final int FRIENDS_PER_DAY = 25;
-    protected static final int GROUP_FEED_CUTOFF_DAYS = 7;
 }

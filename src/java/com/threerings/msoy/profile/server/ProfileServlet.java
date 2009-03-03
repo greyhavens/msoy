@@ -38,7 +38,6 @@ import com.threerings.msoy.web.gwt.ServiceCodes;
 import com.threerings.msoy.web.gwt.ServiceException;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
-import com.threerings.msoy.web.server.ServletLogic;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.Badge;
@@ -62,6 +61,7 @@ import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
+import com.threerings.msoy.person.server.FeedLogic;
 import com.threerings.msoy.person.server.GalleryLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.InterestRecord;
@@ -307,7 +307,7 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         // load up the feed records for the target member
         long since = System.currentTimeMillis() - cutoffDays * 24*60*60*1000L;
-        return _servletLogic.resolveFeedMessages(_feedRepo.loadMemberFeed(profileMemberId, since));
+        return _feedLogic.resolveFeedMessages(_feedRepo.loadMemberFeed(profileMemberId, since));
     }
 
     protected Profile resolveProfileData (MemberRecord reqrec, MemberRecord tgtrec)
@@ -429,7 +429,7 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ServletLogic _servletLogic;
+    @Inject protected FeedLogic _feedLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected GalleryLogic _galleryLogic;
