@@ -294,8 +294,26 @@ public class MeServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        _profileRepo.updateProfileAward(mrec.memberId, type == AwardType.BADGE ? awardId : 0,
-            type == AwardType.MEDAL ? awardId : 0);
+
+        int badgeCode = 0, medalId = 0;
+        if (type == AwardType.BADGE) {
+            if (_badgeRepo.loadEarnedBadge(mrec.memberId, awardId) == null) {
+                log.warning("Player selected unowned badge for their profile",
+                    "memberId", mrec.memberId, "badgeCode", awardId);
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+            }
+            badgeCode = awardId;
+
+        } else {
+            if (_medalRepo.loadEarnedMedal(mrec.memberId, awardId) == null) {
+                log.warning("Player selected unowned medal for their profile",
+                    "memberId", mrec.memberId, "medalId", awardId);
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+            }
+            medalId = awardId;
+        }
+        
+        _profileRepo.updateProfileAward(mrec.memberId, badgeCode, medalId);
     }
 
     /**
